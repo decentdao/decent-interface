@@ -1,6 +1,6 @@
 function App() {
   return (
-    <div>
+    <div className="container my-2">
       <header>
         <p>
           Interface
