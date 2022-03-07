@@ -1,17 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Web3Provider } from './web3';
+import AppRoutes from './app-routes';
 
 ReactDOM.render(
   <React.StrictMode>
-    <Web3Provider>
-      <ToastContainer />
-      <App />
-    </Web3Provider>
+    <HashRouter>
+      <Web3Provider>
+        <ToastContainer />
+        <AppRoutes />
+      </Web3Provider>
+    </HashRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );
