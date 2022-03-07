@@ -71,36 +71,6 @@ function Header() {
               fractal
             </Link>
           </div>
-          <div className="">
-            <Link to="/foo">
-              foo
-            </Link>
-          </div>
-          <div className="ml-2">
-            <Link to="/foo/baz">
-              baz
-            </Link>
-          </div>
-          <div className="ml-2">
-            <Link to="/foo/qux">
-              qux
-            </Link>
-          </div>
-          <div className="">
-            <Link to="/bar">
-              bar
-            </Link>
-          </div>
-          <div className="ml-2">
-            <Link to="/bar/baz">
-              baz
-            </Link>
-          </div>
-          <div className="ml-2">
-            <Link to="/bar/qux">
-              qux
-            </Link>
-          </div>
         </div>
         <div className="sm:text-right">
           {!account && (
