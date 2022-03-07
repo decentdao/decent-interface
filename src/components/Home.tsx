@@ -7,32 +7,30 @@ import useAddress from '../hooks/useAddress';
 
 function Searching({
   searchAddress,
+  address,
   validAddress,
   addressLoading,
 }: {
   searchAddress: string | undefined,
+  address: string | undefined,
   validAddress: boolean | undefined,
   addressLoading: boolean,
 }) {
   if (addressLoading === true) {
     return (
-      <div>
-        looking up <span className="break-all">{searchAddress}</span>
-      </div>
+      <div>loading up <span className="break-all">{searchAddress}</span></div>
     );
   }
 
   if (validAddress === false) {
     return (
-      <div>
-        <span className="break-all">{searchAddress}</span> is an invalid address
-      </div>
+      <div><span className="break-all">{searchAddress}</span> is an invalid address</div>
     );
   }
 
-  if (validAddress === true && searchAddress !== undefined) {
+  if (validAddress === true && searchAddress !== undefined && address !== undefined) {
     return (
-      <Navigate to={searchAddress} />
+      <Navigate to={searchAddress} state={{ validatedAddress: address }} />
     );
   }
 
@@ -44,7 +42,7 @@ function Searching({
 function Home() {
   const [searchAddressInput, setSearchAddressInput] = useState("");
   const [searchAddress, setSearchAddress] = useState<string>();
-  const [, validAddress, addressLoading] = useAddress(searchAddress);
+  const [address, validAddress, addressLoading] = useAddress(searchAddress);
 
   const [searchDisabled, setSearchDisabled] = useState(true);
   useEffect(() => {
@@ -90,6 +88,7 @@ function Home() {
       </div>
       <Searching
         searchAddress={searchAddress}
+        address={address}
         validAddress={validAddress}
         addressLoading={addressLoading}
       />
