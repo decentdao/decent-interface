@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import packageJson from '../../../package.json'
-import { useWeb3 } from '../../web3';
+import packageJson from '../../package.json'
+import { useWeb3 } from '../web3';
 
 function Footer() {
   const { networkName, providerName } = useWeb3();
