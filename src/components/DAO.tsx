@@ -1,15 +1,26 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useLocation } from 'react-router-dom';
 
+import EtherscanLink from './ui/EtherscanLink';
 import useAddress from '../hooks/useAddress';
+import useIsDAO from '../hooks/useIsDAO';
 
 function ValidDAO({
   address,
 }: {
   address: string,
 }) {
+  const isDAO = useIsDAO(address);
+
   return (
-    <div><span className="break-all">{address}</span> is a valid DAO!</div>
+    <div>
+      <div>
+        <EtherscanLink address={address}>
+          <span className="break-all">{address}</span>
+        </EtherscanLink> is a valid address!
+      </div>
+      <div>but is it a fractal dao? {isDAO !== undefined && isDAO.toString()}</div>
+    </div>
   );
 }
 
