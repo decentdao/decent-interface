@@ -20,7 +20,7 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface DAOModuleBaseInterface extends ethers.utils.Interface {
+interface ModuleBaseInterface extends ethers.utils.Interface {
   functions: {
     "accessControl()": FunctionFragment;
     "initialize(address)": FunctionFragment;
@@ -87,7 +87,7 @@ export type BeaconUpgradedEvent = TypedEvent<[string] & { beacon: string }>;
 
 export type UpgradedEvent = TypedEvent<[string] & { implementation: string }>;
 
-export class DAOModuleBase extends BaseContract {
+export class ModuleBase extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -128,7 +128,7 @@ export class DAOModuleBase extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: DAOModuleBaseInterface;
+  interface: ModuleBaseInterface;
 
   functions: {
     accessControl(overrides?: CallOverrides): Promise<[string]>;

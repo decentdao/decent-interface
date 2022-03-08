@@ -11,25 +11,92 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "UnequalArrayLengths",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "bytes32",
+        indexed: false,
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "functionDesc",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "bytes4",
+        name: "encodedSig",
+        type: "bytes4",
+      },
+      {
+        indexed: false,
+        internalType: "string",
         name: "role",
-        type: "bytes32",
+        type: "string",
+      },
+    ],
+    name: "ActionRoleAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "target",
+        type: "address",
       },
       {
-        indexed: true,
-        internalType: "bytes32",
+        indexed: false,
+        internalType: "string",
+        name: "functionDesc",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "bytes4",
+        name: "encodedSig",
+        type: "bytes4",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "role",
+        type: "string",
+      },
+    ],
+    name: "ActionRoleRemoved",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "string",
+        name: "role",
+        type: "string",
+      },
+      {
+        indexed: false,
+        internalType: "string",
         name: "previousAdminRole",
-        type: "bytes32",
+        type: "string",
       },
       {
-        indexed: true,
-        internalType: "bytes32",
-        name: "newAdminRole",
-        type: "bytes32",
+        indexed: false,
+        internalType: "string",
+        name: "adminRole",
+        type: "string",
       },
     ],
     name: "RoleAdminChanged",
@@ -39,21 +106,21 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "bytes32",
+        indexed: false,
+        internalType: "string",
         name: "role",
-        type: "bytes32",
+        type: "string",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "account",
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "sender",
+        name: "admin",
         type: "address",
       },
     ],
@@ -64,21 +131,21 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: true,
-        internalType: "bytes32",
+        indexed: false,
+        internalType: "string",
         name: "role",
-        type: "bytes32",
+        type: "string",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
         name: "account",
         type: "address",
       },
       {
-        indexed: true,
+        indexed: false,
         internalType: "address",
-        name: "sender",
+        name: "admin",
         type: "address",
       },
     ],
@@ -86,19 +153,13 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [
-      {
-        internalType: "bytes32",
-        name: "role",
-        type: "bytes32",
-      },
-    ],
-    name: "getRoleAdmin",
+    inputs: [],
+    name: "DAO_ROLE",
     outputs: [
       {
-        internalType: "bytes32",
+        internalType: "string",
         name: "",
-        type: "bytes32",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -107,9 +168,104 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
+        internalType: "address",
+        name: "caller",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        internalType: "bytes4",
+        name: "sig",
+        type: "bytes4",
+      },
+    ],
+    name: "actionIsAuthorized",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isAuthorized",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "targets",
+        type: "address[]",
+      },
+      {
+        internalType: "string[]",
+        name: "functionDescs",
+        type: "string[]",
+      },
+      {
+        internalType: "string[][]",
+        name: "roles",
+        type: "string[][]",
+      },
+    ],
+    name: "addActionsRoles",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "functionDesc",
+        type: "string",
+      },
+    ],
+    name: "getActionRoles",
+    outputs: [
+      {
+        internalType: "string[]",
+        name: "roles",
+        type: "string[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
         name: "role",
-        type: "bytes32",
+        type: "string",
+      },
+    ],
+    name: "getRoleAdmin",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "role",
+        type: "string",
       },
       {
         internalType: "address",
@@ -125,9 +281,32 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
+        internalType: "string[]",
+        name: "roles",
+        type: "string[]",
+      },
+      {
+        internalType: "string[]",
+        name: "roleAdmins",
+        type: "string[]",
+      },
+      {
+        internalType: "address[][]",
+        name: "members",
+        type: "address[][]",
+      },
+    ],
+    name: "grantRolesAndAdmins",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
         name: "role",
-        type: "bytes32",
+        type: "string",
       },
       {
         internalType: "address",
@@ -149,9 +328,104 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
+        internalType: "address",
+        name: "dao",
+        type: "address",
+      },
+      {
+        internalType: "string[]",
+        name: "roles",
+        type: "string[]",
+      },
+      {
+        internalType: "string[]",
+        name: "roleAdmins",
+        type: "string[]",
+      },
+      {
+        internalType: "address[][]",
+        name: "members",
+        type: "address[][]",
+      },
+      {
+        internalType: "address[]",
+        name: "targets",
+        type: "address[]",
+      },
+      {
+        internalType: "string[]",
+        name: "functionDescs",
+        type: "string[]",
+      },
+      {
+        internalType: "string[][]",
+        name: "actionRoles",
+        type: "string[][]",
+      },
+    ],
+    name: "initialize",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
         name: "role",
-        type: "bytes32",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "target",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "functionDesc",
+        type: "string",
+      },
+    ],
+    name: "isRoleAuthorized",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "isAuthorized",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "targets",
+        type: "address[]",
+      },
+      {
+        internalType: "string[]",
+        name: "functionDescs",
+        type: "string[]",
+      },
+      {
+        internalType: "string[][]",
+        name: "roles",
+        type: "string[][]",
+      },
+    ],
+    name: "removeActionsRoles",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "role",
+        type: "string",
       },
       {
         internalType: "address",
@@ -167,9 +441,9 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes32",
+        internalType: "string",
         name: "role",
-        type: "bytes32",
+        type: "string",
       },
       {
         internalType: "address",

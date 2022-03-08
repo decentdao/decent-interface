@@ -4,7 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type { DAOModuleBase, DAOModuleBaseInterface } from "../DAOModuleBase";
+import type { ModuleBase, ModuleBaseInterface } from "../ModuleBase";
 
 const _abi = [
   {
@@ -62,7 +62,7 @@ const _abi = [
     name: "accessControl",
     outputs: [
       {
-        internalType: "contract IDAOAccessControl",
+        internalType: "contract IAccessControl",
         name: "",
         type: "address",
       },
@@ -148,15 +148,15 @@ const _abi = [
   },
 ];
 
-export class DAOModuleBase__factory {
+export class ModuleBase__factory {
   static readonly abi = _abi;
-  static createInterface(): DAOModuleBaseInterface {
-    return new utils.Interface(_abi) as DAOModuleBaseInterface;
+  static createInterface(): ModuleBaseInterface {
+    return new utils.Interface(_abi) as ModuleBaseInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): DAOModuleBase {
-    return new Contract(address, _abi, signerOrProvider) as DAOModuleBase;
+  ): ModuleBase {
+    return new Contract(address, _abi, signerOrProvider) as ModuleBase;
   }
 }

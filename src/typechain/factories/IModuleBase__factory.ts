@@ -4,10 +4,7 @@
 
 import { Contract, Signer, utils } from "ethers";
 import { Provider } from "@ethersproject/providers";
-import type {
-  IDAOModuleBase,
-  IDAOModuleBaseInterface,
-} from "../IDAOModuleBase";
+import type { IModuleBase, IModuleBaseInterface } from "../IModuleBase";
 
 const _abi = [
   {
@@ -20,7 +17,7 @@ const _abi = [
     name: "accessControl",
     outputs: [
       {
-        internalType: "contract IDAOAccessControl",
+        internalType: "contract IAccessControl",
         name: "",
         type: "address",
       },
@@ -43,15 +40,15 @@ const _abi = [
   },
 ];
 
-export class IDAOModuleBase__factory {
+export class IModuleBase__factory {
   static readonly abi = _abi;
-  static createInterface(): IDAOModuleBaseInterface {
-    return new utils.Interface(_abi) as IDAOModuleBaseInterface;
+  static createInterface(): IModuleBaseInterface {
+    return new utils.Interface(_abi) as IModuleBaseInterface;
   }
   static connect(
     address: string,
     signerOrProvider: Signer | Provider
-  ): IDAOModuleBase {
-    return new Contract(address, _abi, signerOrProvider) as IDAOModuleBase;
+  ): IModuleBase {
+    return new Contract(address, _abi, signerOrProvider) as IModuleBase;
   }
 }

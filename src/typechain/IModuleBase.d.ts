@@ -19,25 +19,28 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface IERC721ReceiverInterface extends ethers.utils.Interface {
+interface IModuleBaseInterface extends ethers.utils.Interface {
   functions: {
-    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
+    "accessControl()": FunctionFragment;
+    "initialize(address)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "onERC721Received",
-    values: [string, string, BigNumberish, BytesLike]
+    functionFragment: "accessControl",
+    values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
 
   decodeFunctionResult(
-    functionFragment: "onERC721Received",
+    functionFragment: "accessControl",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
 
   events: {};
 }
 
-export class IERC721Receiver extends BaseContract {
+export class IModuleBase extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -78,54 +81,57 @@ export class IERC721Receiver extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IERC721ReceiverInterface;
+  interface: IModuleBaseInterface;
 
   functions: {
-    onERC721Received(
-      operator: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
+    accessControl(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    initialize(
+      _accessControl: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  onERC721Received(
-    operator: string,
-    from: string,
-    tokenId: BigNumberish,
-    data: BytesLike,
+  accessControl(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  initialize(
+    _accessControl: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    onERC721Received(
-      operator: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
+    accessControl(overrides?: CallOverrides): Promise<string>;
+
+    initialize(
+      _accessControl: string,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
   };
 
   filters: {};
 
   estimateGas: {
-    onERC721Received(
-      operator: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
+    accessControl(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    initialize(
+      _accessControl: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    onERC721Received(
-      operator: string,
-      from: string,
-      tokenId: BigNumberish,
-      data: BytesLike,
+    accessControl(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    initialize(
+      _accessControl: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };
