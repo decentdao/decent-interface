@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import useENSName from './useENSName';
 
 export const createAccountSubstring = (account: string) => {

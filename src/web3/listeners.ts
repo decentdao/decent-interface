@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
+
 import { supportedChains } from './chains';
 
 const useListeners = (provider: ethers.providers.Provider | undefined, web3Modal: Web3Modal) => {

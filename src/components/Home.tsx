@@ -4,56 +4,56 @@ import { Navigate } from 'react-router-dom';
 import Button from './ui/Button';
 import { InputAddress } from './ui/Input';
 import useAddress from '../hooks/useAddress';
+import useIsDAO from '../hooks/useIsDAO';
+import SearchingDAO from './SearchingDAO';
 
-function Searching({
+function FoundValidDAO({
   searchAddress,
   address,
-  validAddress,
-  addressLoading,
 }: {
   searchAddress: string | undefined,
   address: string | undefined,
-  validAddress: boolean | undefined,
-  addressLoading: boolean,
 }) {
-  if (addressLoading === true) {
-    return (
-      <div>loading up <span className="break-all">{searchAddress}</span></div>
-    );
-  }
-
-  if (validAddress === false) {
-    return (
-      <div><span className="break-all">{searchAddress}</span> is an invalid address</div>
-    );
-  }
-
-  if (validAddress === true && searchAddress !== undefined && address !== undefined) {
+  if (searchAddress !== undefined && address !== undefined) {
     return (
       <Navigate to={searchAddress} state={{ validatedAddress: address }} />
     );
   }
 
+  return <></>;
+}
+
+function Search({
+  searchAddress,
+}: {
+  searchAddress: string | undefined,
+}) {
+  const [address, validAddress, addressLoading] = useAddress(searchAddress);
+  const [addressIsDAO, isDAOLoading] = useIsDAO(address);
+
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(addressLoading || isDAOLoading);
+  }, [addressLoading, isDAOLoading]);
+
   return (
-    <></>
-  );
+    <SearchingDAO
+      searchAddress={searchAddress}
+      loading={loading}
+      validAddress={validAddress}
+      address={address}
+      addressIsDAO={addressIsDAO}
+      validDAOComponent={<FoundValidDAO searchAddress={searchAddress} address={address} />}
+    />
+  )
 }
 
 function Home() {
   const [searchAddressInput, setSearchAddressInput] = useState("");
   const [searchAddress, setSearchAddress] = useState<string>();
-  const [address, validAddress, addressLoading] = useAddress(searchAddress);
 
-  const [searchDisabled, setSearchDisabled] = useState(true);
-  useEffect(() => {
-    setSearchDisabled(
-      searchAddressInput.trim().length === 0 ||
-      addressLoading
-    );
-  }, [searchAddressInput, addressLoading]);
-
-  const setQuery = (address: string) => {
-    setSearchAddress(address)
+  const doSearch = (address: string) => {
+    setSearchAddress(address);
   }
 
   return (
@@ -63,7 +63,7 @@ function Home() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            setQuery(searchAddressInput);
+            doSearch(searchAddressInput);
           }}
         >
           <div className="flex items-end">
@@ -77,8 +77,8 @@ function Home() {
             </div>
             <div className="ml-2 mb-3">
               <Button
-                disabled={searchDisabled}
-                onClick={() => setQuery(searchAddressInput)}
+                disabled={false}
+                onClick={() => doSearch(searchAddressInput)}
               >
                 search
               </Button>
@@ -86,12 +86,7 @@ function Home() {
           </div>
         </form>
       </div>
-      <Searching
-        searchAddress={searchAddress}
-        address={address}
-        validAddress={validAddress}
-        addressLoading={addressLoading}
-      />
+      <Search searchAddress={searchAddress} />
     </div>
   );
 }

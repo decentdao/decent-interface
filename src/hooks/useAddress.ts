@@ -1,22 +1,23 @@
 import { useState, useEffect } from 'react';
 import { ethers, constants } from 'ethers';
+
 import { useWeb3 } from '../web3';
 
 const useAddress = (addressInput: string | undefined) => {
   const { provider } = useWeb3();
 
   const [address, setAddress] = useState<string>();
-  const [validAddress, setValidAddress] = useState<boolean>();
+  const [validAddress, setValidAddress] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setAddress(undefined);
-    setValidAddress(undefined);
+    setValidAddress(false);
     setLoading(true);
 
     if (addressInput === undefined) {
       setAddress(undefined);
-      setValidAddress(undefined);
+      setValidAddress(false);
       setLoading(false);
       return;
     }
@@ -40,31 +41,25 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     setAddress(undefined);
-    setValidAddress(undefined);
+    setValidAddress(false);
 
-    const timeout = setTimeout(() => {
-      provider.resolveName(addressInput)
-        .then(resolvedAddress => {
-          if (!resolvedAddress) {
-            setAddress(undefined);
-            setValidAddress(false);
-            setLoading(false);
-            return;
-          }
-          setAddress(resolvedAddress);
-          setValidAddress(true);
-          setLoading(false);
-        })
-        .catch(() => {
+    provider.resolveName(addressInput)
+      .then(resolvedAddress => {
+        if (!resolvedAddress) {
           setAddress(undefined);
           setValidAddress(false);
           setLoading(false);
-        });
-    }, 500);
-
-    return () => {
-      clearTimeout(timeout);
-    }
+          return;
+        }
+        setAddress(resolvedAddress);
+        setValidAddress(true);
+        setLoading(false);
+      })
+      .catch(() => {
+        setAddress(undefined);
+        setValidAddress(false);
+        setLoading(false);
+      });
   }, [provider, addressInput]);
 
   return [address, validAddress, loading] as const;

@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Jazzicon } from '@ukstv/jazzicon-react';
-import { useImage } from 'react-image'
+import { useImage } from 'react-image';
+
 import { useWeb3 } from '../web3';
 import { connect } from '../web3/providers';
 import Button from './ui/Button';

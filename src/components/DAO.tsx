@@ -1,57 +1,65 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 
 import EtherscanLink from './ui/EtherscanLink';
 import useAddress from '../hooks/useAddress';
 import useIsDAO from '../hooks/useIsDAO';
+import SearchingDAO from './SearchingDAO';
 
 function ValidDAO({
   address,
 }: {
   address: string,
 }) {
-  const isDAO = useIsDAO(address);
-
   return (
     <div>
-      <div>
-        <EtherscanLink address={address}>
-          <span className="break-all">{address}</span>
-        </EtherscanLink> is a valid address!
-      </div>
-      <div>but is it a fractal dao? {isDAO !== undefined && isDAO.toString()}</div>
+      <EtherscanLink address={address}>
+        <span className="break-all">{address}</span>
+      </EtherscanLink> is a valid dao!
     </div>
   );
 }
 
-function SearchForDAO() {
-  const params = useParams();
-  const [address, , addressLoading] = useAddress(params.address);
-
+function FoundValidDAO({
+  address,
+}: {
+  address: string | undefined,
+}) {
   if (address !== undefined) {
     return (
       <ValidDAO address={address} />
     );
   }
 
-  if (addressLoading === true) {
-    return (
-      <div>loading up <span className="break-all">{params.address}</span></div>
-    );
-  }
+  return <></>;
+}
+
+function Search() {
+  const params = useParams();
+  const [address, validAddress, addressLoading] = useAddress(params.address);
+  const [addressIsDAO, isDAOLoading] = useIsDAO(address);
+
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    setLoading(addressLoading || isDAOLoading);
+  }, [addressLoading, isDAOLoading]);
 
   return (
-    <div>
-      <div><span className="break-all">{params.address}</span> is an invalid address</div>
-      <Link to="/">go back home</Link>
-    </div>
-  );
+    <SearchingDAO
+      searchAddress={params.address}
+      loading={loading}
+      validAddress={validAddress}
+      address={address}
+      addressIsDAO={addressIsDAO}
+      validDAOComponent={<FoundValidDAO address={address} />}
+    />
+  )
 }
 
 function DAO() {
   const location = useLocation();
 
-  const [validatedAddress, setValidatedAddress] = useState<string>();
+  const [validatedAddress, setValidatedAddress] = useState((location.state as { validatedAddress: string } | null)?.validatedAddress);
   useEffect(() => {
     if (!location || !location.state) {
       setValidatedAddress(undefined);
@@ -69,7 +77,7 @@ function DAO() {
   }
 
   return (
-    <SearchForDAO />
+    <Search />
   );
 }
 

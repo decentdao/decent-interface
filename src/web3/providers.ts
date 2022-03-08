@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { ethers, getDefaultProvider } from 'ethers';
 import Web3Modal from 'web3modal';
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
+
 import { supportedChains } from './chains';
 import { useListeners } from './listeners';
 
