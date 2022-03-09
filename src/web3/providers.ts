@@ -176,4 +176,9 @@ const connect = () => {
   web3Modal.connect().catch(console.error);
 }
 
-export { useProvider, connect };
+const disconnect = () => {
+  web3Modal.clearCachedProvider();
+  window.location.reload();
+}
+
+export { useProvider, connect, disconnect };
