@@ -1,9 +1,10 @@
 import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Jazzicon } from '@ukstv/jazzicon-react';
-import { useImage } from 'react-image'
+import { useImage } from 'react-image';
+
 import { useWeb3 } from '../web3';
-import { connect } from '../web3/providers';
+import { connect, disconnect } from '../web3/providers';
 import Button from './ui/Button';
 import useDisplayName from '../hooks/useDisplayName';
 import useAvatar from '../hooks/useAvatar';
@@ -66,7 +67,7 @@ function Header() {
     <header className="py-4 border-b">
       <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mr-2 mb-4 sm:mb-0">
-          <div className="mr-2">
+          <div className="mr-2 text-2xl">
             <Link to="/">
               fractal
             </Link>
@@ -82,12 +83,24 @@ function Header() {
             </Button>
           )}
           {account && (
-            <EtherscanLink address={account}>
-              <div className="flex items-center">
-                <div>{accountDisplayName}</div>
-                <Avatar address={account} url={avatarURL} />
+            <div className="flex items-center">
+              <div className="flex flex-col items-end">
+                <div className="text-xl">
+                  <EtherscanLink address={account}>
+                    {accountDisplayName}
+                  </EtherscanLink>
+                </div>
+                <button
+                  className="px-0.5 border rounded shadow text-xs block"
+                  onClick={disconnect}
+                >
+                  disconnect
+                </button>
               </div>
-            </EtherscanLink>
+              <EtherscanLink address={account}>
+                <Avatar address={account} url={avatarURL} />
+              </EtherscanLink>
+            </div>
           )}
         </div>
       </div>

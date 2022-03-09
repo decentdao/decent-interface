@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { Web3Provider } from './web3';
@@ -11,7 +12,7 @@ ReactDOM.render(
   <React.StrictMode>
     <HashRouter>
       <Web3Provider>
-        <ToastContainer />
+        <ToastContainer position="bottom-center" />
         <App />
       </Web3Provider>
     </HashRouter>
