@@ -12,7 +12,7 @@ ReactDOM.render(
   <React.StrictMode>
     <HashRouter>
       <Web3Provider>
-        <ToastContainer />
+        <ToastContainer position="bottom-center" />
         <App />
       </Web3Provider>
     </HashRouter>
