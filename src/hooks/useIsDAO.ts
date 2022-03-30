@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import use165Contract from './use165Contract';
-import { IDAO__factory, IModuleBase__factory } from '../typechain';
+import { IDAO__factory, IModuleBase__factory } from '../typechain-types';
 import useSupportsInterfaces from './useSupportsInterfaces';
 
 const useIsDAO = (address: string | undefined) => {

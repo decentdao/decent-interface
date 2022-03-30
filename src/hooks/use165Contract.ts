@@ -4,7 +4,7 @@ import { useWeb3 } from '../web3';
 import {
   IERC165,
   IERC165__factory,
-} from '../typechain';
+} from '../typechain-types';
 
 const use165Contract = (address: string | undefined) => {
   const { signerOrProvider } = useWeb3();

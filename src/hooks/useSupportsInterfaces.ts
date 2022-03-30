@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { utils } from 'ethers';
 
-import { ERC165 } from '../typechain';
+import { ERC165 } from '../typechain-types';
 import useInterfaceSelectors from './useInterfaceSelectors';
 
 const useSupportsInterfaces = (contract: ERC165 | undefined, interfaces: utils.Interface[]) => {
