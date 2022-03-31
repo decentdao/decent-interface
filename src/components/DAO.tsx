@@ -12,7 +12,7 @@ function ValidDAO({
 }: {
   address: string,
 }) {
-  const [, setDAOAddress] = useDAOData();
+  const [{ name, accessControlAddress }, setDAOAddress] = useDAOData();
 
   useEffect(() => {
     setDAOAddress(address);
@@ -20,9 +20,15 @@ function ValidDAO({
 
   return (
     <div>
-      <EtherscanLink address={address}>
-        <span className="break-all">{address}</span>
-      </EtherscanLink> is a valid dao!
+      <div>
+        <EtherscanLink address={address}>
+          <span className="break-all">{address}</span>
+        </EtherscanLink> is a valid dao!
+      </div>
+      <div>
+        <div>name: {name}</div>
+        <div>access control address: {accessControlAddress}</div>
+      </div>
     </div>
   );
 }
