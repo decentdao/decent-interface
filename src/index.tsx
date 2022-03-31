@@ -6,14 +6,17 @@ import { ToastContainer } from 'react-toastify';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { Web3Provider } from './web3';
+import { DAODataProvider } from './daoData';
 import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
     <HashRouter>
       <Web3Provider>
-        <ToastContainer position="bottom-center" />
-        <App />
+        <DAODataProvider>
+          <ToastContainer position="bottom-center" />
+          <App />
+        </DAODataProvider>
       </Web3Provider>
     </HashRouter>
   </React.StrictMode>,
