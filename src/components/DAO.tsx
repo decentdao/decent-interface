@@ -5,17 +5,30 @@ import EtherscanLink from './ui/EtherscanLink';
 import useAddress from '../hooks/useAddress';
 import useIsDAO from '../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
+import { useDAOData } from '../daoData';
 
 function ValidDAO({
   address,
 }: {
   address: string,
 }) {
+  const [{ name, accessControlAddress }, setDAOAddress] = useDAOData();
+
+  useEffect(() => {
+    setDAOAddress(address);
+  }, [address, setDAOAddress]);
+
   return (
     <div>
-      <EtherscanLink address={address}>
-        <span className="break-all">{address}</span>
-      </EtherscanLink> is a valid dao!
+      <div>
+        <EtherscanLink address={address}>
+          <span className="break-all">{address}</span>
+        </EtherscanLink> is a valid dao!
+      </div>
+      <div>
+        <div>name: {name}</div>
+        <div>access control address: {accessControlAddress}</div>
+      </div>
     </div>
   );
 }
