@@ -1,7 +1,9 @@
+import CreateDAO from "../CreateDAO";
+
 function New() {
     return (
       <div>
-        make a new DAO
+        {<CreateDAO/>}
       </div>
     );
   }
