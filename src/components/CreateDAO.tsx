@@ -56,7 +56,7 @@ const CreateDAO = () => {
                   setStep((currPage) => currPage + 1)}
                 }
               }> 
-              {step === FormTitles.length - 1 ? "Submit" : "Next"}
+              {step === FormTitles.length - 1 ? "Create DAO" : "Next"}
           </button>
       </div>
     </div>
