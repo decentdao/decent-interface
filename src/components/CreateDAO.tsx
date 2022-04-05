@@ -5,9 +5,12 @@ import GovernanceDetails from './GovernanceDetails';
 import TokenDetails from './TokenDetails';
 import { useWeb3 } from '../web3';
 import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts';
+import { Navigate, useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 
 const CreateDAO = () => {
+  let navigate = useNavigate();
   const[step, setStep] = useState(0);
   const[formData, setFormData] = useState({
     DAOName: "",
@@ -64,7 +67,8 @@ const CreateDAO = () => {
       ) {
         return "";
       } else {
-        console.log( treasuryCreatedEvent[0].args.daoAddress);
+        console.log(treasuryCreatedEvent[0].args.daoAddress );
+        navigate(`/daos/${treasuryCreatedEvent[0].args.daoAddress}`,)
       }
   }
 
@@ -92,7 +96,9 @@ const CreateDAO = () => {
             onClick={ () =>
               {
                 if(step === FormTitles.length - 1) {
-                  DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply)
+                  const address = DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply)
+                  
+                  
                 } else {
                   setStep((currPage) => currPage + 1)}
                 }
