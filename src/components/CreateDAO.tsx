@@ -1,7 +1,10 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
+import { DAOFactory, DAOFactory__factory } from '../typechain-types';
 import DAODetails from './DAODetails';
 import GovernanceDetails from './GovernanceDetails';
 import TokenDetails from './TokenDetails';
+import { useWeb3 } from '../web3';
+
 
 const CreateDAO = () => {
   const[step, setStep] = useState(0);
@@ -25,6 +28,31 @@ const CreateDAO = () => {
     } else {
       return <GovernanceDetails formData={formData} setFormData={setFormData}/>
     }
+  }
+
+  const { signerOrProvider } = useWeb3();
+  const DeployDAO = (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
+      if (!DAOName || !tokenName || !tokenSymbol || !tokenSupply || !signerOrProvider) {
+        return;
+      }
+      const factory: DAOFactory = DAOFactory__factory.connect("0x5FbDB2315678afecb367f032d93F642f64180aa3", signerOrProvider)
+
+      const createDAOParams = {
+        daoImplementation: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        accessControlImplementation: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+        daoName: DAOName,
+        roles: ['EXECUTE_ROLE','UPGRADE_ROLE'],
+        rolesAdmins: ['DAO_ROLE','DAO_ROLE'],
+        members: [['0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266','0x70997970c51812dc3a010c7d01b50e0d17dc79c8'],['0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266']],
+        daoFunctionDescs: ['execute(address[],uint256[],bytes[])','upgradeTo(address)'],
+        daoActionRoles: [['EXECUTE_ROLE'],['EXECUTE_ROLE','UPGRADE_ROLE']],
+        moduleTargets: [],
+        moduleFunctionDescs: [],
+        moduleActionRoles: []
+      } 
+  
+      factory.createDAO("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266", createDAOParams)
+        .catch(console.error);
   }
 
 
@@ -51,7 +79,7 @@ const CreateDAO = () => {
             onClick={ () =>
               {
                 if(step === FormTitles.length - 1) {
-                  console.log(formData)
+                  DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply)
                 } else {
                   setStep((currPage) => currPage + 1)}
                 }
