@@ -4,6 +4,7 @@ import DAODetails from './DAODetails';
 import GovernanceDetails from './GovernanceDetails';
 import TokenDetails from './TokenDetails';
 import { useWeb3 } from '../web3';
+import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts';
 
 
 const CreateDAO = () => {
@@ -31,7 +32,7 @@ const CreateDAO = () => {
   }
 
   const { signerOrProvider } = useWeb3();
-  const DeployDAO = (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
+  const DeployDAO = async (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
       if (!DAOName || !tokenName || !tokenSymbol || !tokenSupply || !signerOrProvider) {
         return;
       }
@@ -50,9 +51,21 @@ const CreateDAO = () => {
         moduleFunctionDescs: [],
         moduleActionRoles: []
       } 
-  
-      factory.createDAO("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266", createDAOParams)
-        .catch(console.error);
+      
+      const receipt: ContractReceipt = await (await factory.connect(signerOrProvider).createDAO("0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266", createDAOParams)).wait()
+      const treasuryCreatedEvent = receipt.events?.filter((x) => {
+        return x.event === "DAOCreated";
+      });
+
+      if (
+        treasuryCreatedEvent === undefined ||
+        treasuryCreatedEvent[0].args === undefined ||
+        treasuryCreatedEvent[0].args.daoAddress === undefined
+      ) {
+        return "";
+      } else {
+        console.log( treasuryCreatedEvent[0].args.daoAddress);
+      }
   }
 
 
