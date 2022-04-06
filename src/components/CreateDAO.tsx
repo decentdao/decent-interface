@@ -7,6 +7,9 @@ import { useWeb3 } from '../web3';
 import { ContractReceipt, ContractTransaction } from '@ethersproject/contracts';
 import { Navigate, useNavigate } from 'react-router';
 import { Link } from 'react-router-dom';
+import Button from './ui/Button';
+import { connect } from '../web3/providers';
+import ConnectModal from './ConnectModal';
 
 
 const CreateDAO = () => {
@@ -35,6 +38,7 @@ const CreateDAO = () => {
   }
 
   const { signerOrProvider } = useWeb3();
+  const { account } = useWeb3();
   const DeployDAO = async (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
       if (!DAOName || !tokenName || !tokenSymbol || !tokenSupply || !signerOrProvider) {
         return;
@@ -71,43 +75,61 @@ const CreateDAO = () => {
         navigate(`/daos/${treasuryCreatedEvent[0].args.daoAddress}`,)
       }
   }
-
-
-  return (
-    <div className= "mx-24">
-      <div className="mt-24 text-xl">{formData.DAOName === "" ? "New Fractal Configuration" : formData.DAOName + " - Configuration" }</div>
-      <div className="container mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
-        <div className= "pb-8 text-lg">{FormTitles[step]}</div>
-        <form>
-          <div>{StepDisplay()}</div>
-        </form>
-      </div>
-      <div className= "flex items-center justify-center">
-        <button 
-            disabled = {step === 0}
-            className = "px-8 py-2 border rounded shadow items-center"
-            onClick={ () =>
-            {setStep((currPage) => currPage - 1)}
-        }>
-              Prev
-        </button>
-        <button 
-          className = "px-8 py-2 border rounded shadow"
-            onClick={ () =>
-              {
-                if(step === FormTitles.length - 1) {
-                  const address = DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply)
-                  
-                  
-                } else {
-                  setStep((currPage) => currPage + 1)}
-                }
-              }> 
-              {step === FormTitles.length - 1 ? "Create DAO" : "Next"}
-          </button>
-      </div>
-    </div>
-  )
-}
+    
+      // Able to send transaction / checks for web3 connection - if not - it has a popup and asks for connection
+      // todo: DRY code - createDao page multiple... when checking for account 
+      // todo: DRY code - move inputs/buttons from other pages into its own components
+      // todo DRY code - move transactions into its own component on data layer
+      // todo: connect to real metafactory not dao creator
+      // todo: move creat dao components to its own folder
+      // todo: Create pop up to connect for the create fractal on home page?
+        // Able to send transaction / checks for web3 connection - if not - it has a popup and asks for connection
+        // todo: DRY code - createDao page multiple... when checking for account 
+        // todo: DRY code - move inputs/buttons from other pages into its own components
+        // todo DRY code - move transactions into its own component on data layer
+        // todo: connect to real metafactory not dao creator
+        // todo: move creat dao components to its own folder
+        // todo: Create pop up to connect for the create fractal on home page?
+      return (
+      <div> 
+        {
+          !account ? <ConnectModal/> : <div/>
+        }
+        <div className= "mx-24">
+          <div className="mt-24 text-xl">{formData.DAOName === "" ? "New Fractal Configuration" : formData.DAOName + " - Configuration" }</div>
+          <div className="container mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
+            <div className= "pb-8 text-lg">{FormTitles[step]}</div>
+            <form>
+              <div>{StepDisplay()}</div>
+            </form>
+          </div>
+          <div className= "flex items-center justify-center">
+            <button 
+                disabled = {step === 0}
+                className = "px-8 py-2 border rounded shadow items-center"
+                onClick={ () =>
+                {setStep((currPage) => currPage - 1)}
+            }>
+                  Prev
+            </button>
+            <button 
+              className = "px-8 py-2 border rounded shadow"
+                onClick={ () =>
+                  {
+                    if(step === FormTitles.length - 1) {
+                      const address = DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply)
+                      
+                      
+                    } else {
+                      setStep((currPage) => currPage + 1)}
+                    }
+                  }> 
+                  {step === FormTitles.length - 1 ? "Create DAO" : "Next"}
+              </button>
+          </div>
+        </div>
+  
+      </div>)
+  }
 
 export default CreateDAO
