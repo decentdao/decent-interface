@@ -1,4 +1,5 @@
 import React from 'react'
+import CreateDAOInput from './ui/CreateDAOInput'
 
 const TokenDetails = ({formData, setFormData}:
   {
@@ -9,41 +10,45 @@ const TokenDetails = ({formData, setFormData}:
     },
     setFormData:any,
   }
-  
-  
   ) => {
+  const handleNameChange = (event:any) => {
+    setFormData({...formData, tokenName: event.target.value})
+  }
+
+  const handleSymbolChange = (event:any) => {
+    setFormData({...formData, tokenSymbol: event.target.value})
+  }
+  const handleSupplyChange = (event:any) => {
+    setFormData({...formData, tokenSupply: event.target.value})
+  }
   return (
     <div>
-      <div className="text-sm">Token Name</div>
-      <div className = "grid grid-cols-3 gap-4">
-        <input 
-        className="col-span-2 w-full border rounded py-1 px-2 shadow-inner"
-        type ="text" 
-        value= {formData.tokenName} 
-        onChange = {(event) => setFormData({...formData, tokenName: event.target.value})}
+        <CreateDAOInput
+          dataType = "text"
+          value = {formData.tokenName}
+          onChange = {handleNameChange}
+          label= "Token Name"
+          helperText = "What is your governance token called?"
+          disabled= {false}
         />
-        <div className="text-sm text-center">What is your governance token called?</div>
-      </div>
-      <div className="text-sm pt-4">Token Symbol</div>
-      <div className = "grid grid-cols-3 gap-4">
-        <input 
-          className="col-span-2 w-full border rounded py-1 px-2 shadow-inner"
-          type ="text" 
-          value= {formData.tokenSymbol} 
-          onChange = {(event) => setFormData({...formData, tokenSymbol: event.target.value})}
-          />
-        <div className="text-sm text-center">Max: 5 chars</div>
-      </div>
-      <div className="text-sm pt-4">Token Supply</div>
-      <div className = "grid grid-cols-3 gap-4"> 
-        <input 
-          className="col-span-2 w-full border rounded py-1 px-2 shadow-inner"
-          type ="number" 
-          value= {formData.tokenSupply === 0 ? "" : formData.tokenSupply} 
-          onChange = {(event) => setFormData({...formData, tokenSupply: event.target.value})}
+
+        <CreateDAOInput
+          dataType = "text"
+          value = {formData.tokenSymbol}
+          onChange = {handleSymbolChange}
+          label= "Token Symbol"
+          helperText = "Max: 5 chars"
+          disabled= {false}
         />
-        <div className="text-sm text-center">Whole numbers only</div>
-      </div>
+
+        <CreateDAOInput
+          dataType = "text"
+          value = {formData.tokenSupply === 0 ? "" : formData.tokenSupply}
+          onChange = {handleSupplyChange}
+          label= "Token Supply"
+          helperText = "Whole numbers only"
+          disabled= {false}
+        />
     </div>
   )
 }
