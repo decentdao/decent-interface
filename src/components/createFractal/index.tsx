@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react'
 import DAODetails from './DAODetails';
 import GovernanceDetails from './GovernanceDetails';
 import TokenDetails from './TokenDetails';
-import { useWeb3 } from '../web3';
+import { useWeb3 } from '../../web3';
 import { useNavigate } from 'react-router';
-import Button from './ui/Button';
-import ConnectModal from './ConnectModal';
-import DeployDAO from './DeployDAO';
+import Button from '../ui/Button';
+import ConnectModal from '../ConnectModal';
+import DeployDAO from '../transactions/DeployDAO';
 
 
 const CreateDAO = () => {
@@ -45,7 +45,7 @@ const CreateDAO = () => {
       // Able to send transaction / checks for web3 connection - if not - it has a popup and asks for connection
       // todo: connect to real metafactory not dao creator
       // todo: move creat dao components to its own folder
-      // todo: Create pop up to connect for the create fractal on home page?
+      // todo: create Pending page during transction
   return (
     <div> 
       {

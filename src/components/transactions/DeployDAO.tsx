@@ -1,6 +1,6 @@
 import { ContractReceipt } from 'ethers';
 import React from 'react'
-import { DAOFactory, DAOFactory__factory } from '../typechain-types';
+import { DAOFactory, DAOFactory__factory } from '../../typechain-types';
 
     const DeployDAO = async (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number, signer: any, navigate: any) => {
         if (!DAOName || !tokenName || !tokenSymbol || !tokenSupply || !signer) {

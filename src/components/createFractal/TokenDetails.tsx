@@ -1,5 +1,5 @@
 import React from 'react'
-import CreateDAOInput from './ui/CreateDAOInput'
+import CreateDAOInput from '../ui/CreateDAOInput'
 
 const TokenDetails = ({formData, setFormData}:
   {

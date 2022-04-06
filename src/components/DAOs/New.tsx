@@ -1,4 +1,4 @@
-import CreateDAO from "../CreateDAO";
+import CreateDAO from "../createFractal";
 
 function New() {
     return (
