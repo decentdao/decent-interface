@@ -37,6 +37,14 @@ const CreateDAO = () => {
     }
   }
 
+  const decrement = () => {
+    setStep((currPage) => currPage - 1)
+  }
+
+  const increment = () => {
+    setStep((currPage) => currPage + 1)
+  }
+
   const { signerOrProvider } = useWeb3();
   const { account } = useWeb3();
   const DeployDAO = async (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
@@ -77,19 +85,11 @@ const CreateDAO = () => {
   }
     
       // Able to send transaction / checks for web3 connection - if not - it has a popup and asks for connection
-      // todo: DRY code - createDao page multiple... when checking for account 
-      // todo: DRY code - move inputs/buttons from other pages into its own components
+      // todo: DRY code - move inputs/
       // todo DRY code - move transactions into its own component on data layer
       // todo: connect to real metafactory not dao creator
       // todo: move creat dao components to its own folder
       // todo: Create pop up to connect for the create fractal on home page?
-        // Able to send transaction / checks for web3 connection - if not - it has a popup and asks for connection
-        // todo: DRY code - createDao page multiple... when checking for account 
-        // todo: DRY code - move inputs/buttons from other pages into its own components
-        // todo DRY code - move transactions into its own component on data layer
-        // todo: connect to real metafactory not dao creator
-        // todo: move creat dao components to its own folder
-        // todo: Create pop up to connect for the create fractal on home page?
       return (
       <div> 
         {
@@ -104,28 +104,24 @@ const CreateDAO = () => {
             </form>
           </div>
           <div className= "flex items-center justify-center">
-            <button 
-                disabled = {step === 0}
-                className = "px-8 py-2 border rounded shadow items-center"
-                onClick={ () =>
-                {setStep((currPage) => currPage - 1)}
-            }>
-                  Prev
-            </button>
-            <button 
-              className = "px-8 py-2 border rounded shadow"
-                onClick={ () =>
-                  {
-                    if(step === FormTitles.length - 1) {
-                      const address = DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply)
-                      
-                      
-                    } else {
-                      setStep((currPage) => currPage + 1)}
-                    }
-                  }> 
-                  {step === FormTitles.length - 1 ? "Create DAO" : "Next"}
-              </button>
+            <Button 
+              onClick = {decrement}
+              disabled = {step === 0}
+            >
+            Prev
+            </Button>
+
+            <Button 
+              onClick = { () => {
+                step === FormTitles.length - 1 ? 
+                DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply) : 
+                increment()
+              }
+              }
+              disabled = {false}
+            >
+            {step === FormTitles.length - 1 ? "Create DAO" : "Next"}
+            </Button>
           </div>
         </div>
   
