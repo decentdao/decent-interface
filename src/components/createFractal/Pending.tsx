@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Pending = () => {
     return (
         <div className="w-full h-screen overflow-hidden  opacity-75 flex flex-col items-center justify-center">

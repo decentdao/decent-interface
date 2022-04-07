@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useState } from 'react'
 import DAODetails from './DAODetails';
 import GovernanceDetails from './GovernanceDetails';
 import TokenDetails from './TokenDetails';
@@ -9,7 +9,6 @@ import ConnectModal from '../ConnectModal';
 import DeployDAO from '../transactions/DeployDAO';
 import { useTransaction } from '../transactions';
 import Pending from './Pending';
-
 
 const CreateDAO = () => {
   let navigate = useNavigate();
@@ -49,14 +48,12 @@ const CreateDAO = () => {
     setPending((currPending) => !currPending);
   }
 
-  // Able to send transaction / checks for web3 connection - if not - it has a popup and asks for connection
-  // todo: connect to real metafactory not dao creator
   return (
 
     <div>
       {
         pending ?
-         <Pending/>
+          <Pending />
           :
           <div>
             {
