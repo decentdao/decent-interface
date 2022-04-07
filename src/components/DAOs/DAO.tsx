@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 
-import EtherscanLink from './ui/EtherscanLink';
-import useAddress from '../hooks/useAddress';
-import useIsDAO from '../hooks/useIsDAO';
+import EtherscanLink from '../ui/EtherscanLink';
+import useAddress from '../../hooks/useAddress';
+import useIsDAO from '../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
-import { useDAOData } from '../daoData';
+import { useDAOData } from '../../daoData';
 
 function ValidDAO({
   address,
