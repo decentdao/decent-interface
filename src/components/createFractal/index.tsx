@@ -7,12 +7,14 @@ import { useNavigate } from 'react-router';
 import Button from '../ui/Button';
 import ConnectModal from '../ConnectModal';
 import DeployDAO from '../transactions/DeployDAO';
+import { useTransaction } from '../transaction';
 
 
 const CreateDAO = () => {
   let navigate = useNavigate();
   const { signerOrProvider } = useWeb3();
   const { account } = useWeb3();
+  const { contractCall: contractCallDeploy } = useTransaction();
 
   const[step, setStep] = useState(0);
   const[formData, setFormData] = useState({
@@ -70,7 +72,7 @@ const CreateDAO = () => {
           <Button 
             onClick = { () => {
               step === FormTitles.length - 1 ? 
-              DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply, signerOrProvider, navigate) : 
+              DeployDAO(formData.DAOName, formData.tokenName, formData.tokenSymbol, formData.tokenSupply, signerOrProvider, navigate, contractCallDeploy) : 
               increment()
             }
             }
