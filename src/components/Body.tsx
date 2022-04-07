@@ -1,17 +1,17 @@
 import { Routes, Route } from 'react-router-dom';
 
 import Home from './Home';
-import DAO from './DAO';
+import DAOs from './DAOs/index';
 
-function AppRoutes() {
+function Body() {
   return (
     <div>
       <Routes>
         <Route index element={<Home />} />
-        <Route path=":address" element={<DAO />} />
+        <Route path="daos/*" element={<DAOs />} />
       </Routes>
     </div>
   )
 }
 
-export default AppRoutes;
+export default Body;
