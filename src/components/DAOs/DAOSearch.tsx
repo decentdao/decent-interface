@@ -75,6 +75,7 @@ function DAOSearch() {
                       title=""
                       value={searchAddressInput}
                       disabled={false}
+                      placeholder=""
                       onChange={setSearchAddressInput}
                     />
                   </div>

@@ -5,6 +5,7 @@ function Input({
   type,
   min,
   disabled,
+  placeholder,
   onChange,
   onKeyDown,
 }: {
@@ -14,6 +15,7 @@ function Input({
   type: string,
   min: string | number | undefined,
   disabled: boolean,
+  placeholder:string,
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined,
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement> | undefined,
 }) {
@@ -30,6 +32,7 @@ function Input({
         value={value}
         onChange={onChange}
         disabled={disabled}
+        placeholder = {placeholder}
         onKeyDown={onKeyDown}
         onWheel={e => (e.target as HTMLInputElement).blur()}
         autoCorrect="off"
@@ -45,12 +48,14 @@ function InputAddress({
   status,
   value,
   disabled,
+  placeholder,
   onChange,
 }: {
   title: string,
   status?: React.ReactNode,
   value: string,
   disabled: boolean,
+  placeholder: string,
   onChange: (newValue: string) => void,
 }) {
   return (
@@ -61,6 +66,7 @@ function InputAddress({
       type="text"
       min={undefined}
       disabled={disabled}
+      placeholder = {placeholder}
       onChange={e => onChange(e.target.value)}
       onKeyDown={undefined}
     />
