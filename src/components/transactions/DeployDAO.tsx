@@ -1,7 +1,5 @@
 import { ContractReceipt } from 'ethers';
-import React from 'react'
 import { DAOFactory, DAOFactory__factory } from '../../typechain-types';
-import { useTransaction } from '.';
 
 
 const handleDeploy = (receipt: ContractReceipt, navigate: any) => {
@@ -16,14 +14,11 @@ const handleDeploy = (receipt: ContractReceipt, navigate: any) => {
   ) {
     return "";
   } else {
-    console.log(treasuryCreatedEvent[0].args.daoAddress);
     navigate(`/daos/${treasuryCreatedEvent[0].args.daoAddress}`,)
   }
 }
 
-const DeployDAO = async (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number, signer: any, navigate: any, contractCallDeploy: any) => {
-
-
+const DeployDAO = async (DAOName: string, tokenName: string, tokenSymbol: string, tokenSupply: number, signer: any, navigate: any, contractCallDeploy: any, togglePending: any) => {
   if (!DAOName || !tokenName || !tokenSymbol || !tokenSupply || !signer) {
     return;
   }
@@ -50,7 +45,9 @@ const DeployDAO = async (DAOName: string, tokenName: string, tokenSymbol: string
     'Deploy failed',
     'Deploy succeeded',
     undefined,
-    undefined,
+    () => {
+      togglePending()
+    },
     (tx: ContractReceipt) => {
       handleDeploy(tx, navigate)
     }
