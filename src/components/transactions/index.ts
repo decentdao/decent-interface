@@ -1,7 +1,7 @@
 import { ContractReceipt, ethers } from 'ethers';
 import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
-import { useWeb3 } from '../web3';
+import { useWeb3 } from '../../web3';
 
 interface ProviderRpcError extends Error {
     message: string;

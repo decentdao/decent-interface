@@ -1,7 +1,7 @@
 import { ContractReceipt } from 'ethers';
 import React from 'react'
 import { DAOFactory, DAOFactory__factory } from '../../typechain-types';
-import { useTransaction } from '../transaction';
+import { useTransaction } from '.';
 
 
 const handleDeploy = (receipt: ContractReceipt, navigate: any) => {

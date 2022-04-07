@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router';
 import Button from '../ui/Button';
 import ConnectModal from '../ConnectModal';
 import DeployDAO from '../transactions/DeployDAO';
-import { useTransaction } from '../transaction';
+import { useTransaction } from '../transactions';
 
 
 const CreateDAO = () => {
