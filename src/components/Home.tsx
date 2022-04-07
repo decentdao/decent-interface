@@ -72,6 +72,7 @@ function Home() {
                 title="load a dao"
                 value={searchAddressInput}
                 disabled={false}
+                placeholder=""
                 onChange={setSearchAddressInput}
               />
             </div>
