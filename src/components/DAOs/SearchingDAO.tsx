@@ -1,4 +1,4 @@
-import EtherscanLink from './ui/EtherscanLink';
+import EtherscanLink from '../ui/EtherscanLink';
 
 function SearchingDAO({
   searchAddress,
@@ -23,7 +23,7 @@ function SearchingDAO({
 
   if (searchAddress !== undefined && validAddress === false) {
     return (
-      <div><span className="break-all">{searchAddress}</span> is an invalid address</div>
+      <div className="text-center text-red-500 text-sm"><span className="break-all"></span>Please use a valid Fractal ETH address or ENS domain</div>
     );
   }
 

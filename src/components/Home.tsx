@@ -1,95 +1,23 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import Button from './ui/Button';
-import { InputAddress } from './ui/Input';
-import useAddress from '../hooks/useAddress';
-import useIsDAO from '../hooks/useIsDAO';
-import SearchingDAO from './SearchingDAO';
-
-function FoundValidDAO({
-  searchAddress,
-  address,
-}: {
-  searchAddress: string | undefined,
-  address: string | undefined,
-}) {
-  if (searchAddress !== undefined && address !== undefined) {
-    return (
-      <Navigate to={searchAddress} state={{ validatedAddress: address }} />
-    );
-  }
-
-  return <></>;
-}
-
-function Search({
-  searchAddress,
-}: {
-  searchAddress: string | undefined,
-}) {
-  const [address, validAddress, addressLoading] = useAddress(searchAddress);
-  const [addressIsDAO, isDAOLoading] = useIsDAO(address);
-
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(addressLoading || isDAOLoading);
-  }, [addressLoading, isDAOLoading]);
-
+const Home = () => {
   return (
-    <SearchingDAO
-      searchAddress={searchAddress}
-      loading={loading}
-      validAddress={validAddress}
-      address={address}
-      addressIsDAO={addressIsDAO}
-      validDAOComponent={<FoundValidDAO searchAddress={searchAddress} address={address} />}
-    />
-  )
-}
-
-function Home() {
-  const [searchAddressInput, setSearchAddressInput] = useState("");
-  const [searchAddress, setSearchAddress] = useState<string>();
-
-  const doSearch = (address: string) => {
-    setSearchAddress(address);
-  }
-
-  return (
-    <div>
-      <div className="mb-4">welcome to fractal</div>
-      <div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            doSearch(searchAddressInput);
-          }}
-        >
-          <div className="flex items-end">
-            <div className="flex-grow">
-              <InputAddress
-                title="load a dao"
-                value={searchAddressInput}
-                disabled={false}
-                placeholder=""
-                onChange={setSearchAddressInput}
-              />
-            </div>
-            <div className="ml-2 mb-3">
-              <Button
-                disabled={false}
-                onClick={() => doSearch(searchAddressInput)}
-              >
-                search
-              </Button>
-            </div>
+    <div >
+      <p className="text-center pt-24 pb-8 text-xl">Welcome to Fractal?</p>
+      <div className="container mx-auto bg-slate-100 content-center px-32 pt-8">
+        <p className="text-center">Where would you like to start?</p>
+        <div className="grid grid-cols-2 gap-2 py-8">
+          <div className="bg-black">
+            <Link to="/daos/new" className="col-span-1 btn"><div className="p-8 text-white text-center">Create a new Fractal</div></Link>
           </div>
-        </form>
+          <div className="bg-black">
+            <Link to="/daos" className="btn btn-primary"> <div className="p-8 text-white text-center">Find an existing Fractal</div></Link>
+          </div>
+        </div>
       </div>
-      <Search searchAddress={searchAddress} />
     </div>
   );
 }
+
 
 export default Home;
