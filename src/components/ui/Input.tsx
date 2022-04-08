@@ -15,12 +15,12 @@ function Input({
   type: string,
   min: string | number | undefined,
   disabled: boolean,
-  placeholder:string,
+  placeholder: string,
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined,
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement> | undefined,
 }) {
   return (
-    <div className="mb-4">
+    <div>
       <div className="flex items-baseline">
         <div className="mr-1">{title}</div>
         <div>{status}</div>
@@ -32,7 +32,7 @@ function Input({
         value={value}
         onChange={onChange}
         disabled={disabled}
-        placeholder = {placeholder}
+        placeholder={placeholder}
         onKeyDown={onKeyDown}
         onWheel={e => (e.target as HTMLInputElement).blur()}
         autoCorrect="off"
@@ -66,7 +66,7 @@ function InputAddress({
       type="text"
       min={undefined}
       disabled={disabled}
-      placeholder = {placeholder}
+      placeholder={placeholder}
       onChange={e => onChange(e.target.value)}
       onKeyDown={undefined}
     />
