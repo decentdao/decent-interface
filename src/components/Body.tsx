@@ -5,12 +5,10 @@ import DAOs from './DAOs/index';
 
 function Body() {
   return (
-    <div>
-      <Routes>
-        <Route index element={<Home />} />
-        <Route path="daos/*" element={<DAOs />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route index element={<Home />} />
+      <Route path="daos/*" element={<DAOs />} />
+    </Routes>
   )
 }
 
