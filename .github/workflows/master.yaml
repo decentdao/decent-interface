@@ -1,0 +1,34 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Edit package.json
+        run: npx json -I -f package.json -e 'this.homepage="${{ secrets.HOMEPAGE_URL }}"'
+
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+        env:
+          REACT_APP_SECRET: ${{ secrets.SECRET }}
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        with:
+          branch: gh-pages
+          folder: build
