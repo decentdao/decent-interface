@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import GreyBox from "./ui/GreyBox";
 import H1 from "./ui/H1";
 
 const BlackButton = ({
@@ -21,15 +22,14 @@ const BlackButton = ({
 
 const Home = () => {
   return (
-    <div >
+    <div>
       <H1>Welcome to Fractal?</H1>
-      <div className="container mx-auto bg-slate-100 content-center px-32 pt-8">
-        <p className="text-center">Where would you like to start?</p>
-        <div className="grid grid-cols-2 gap-2 py-8">
+      <GreyBox title="Where would you like to start?">
+        <div className="grid grid-cols-2 gap-2">
           <BlackButton to="/daos/new">Create a new Fractal</BlackButton>
           <BlackButton to="/daos">Find an existing Fractal</BlackButton>
         </div>
-      </div>
+      </GreyBox>
     </div>
   );
 }

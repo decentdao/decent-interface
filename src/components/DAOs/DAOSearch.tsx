@@ -7,6 +7,7 @@ import useAddress from '../../hooks/useAddress';
 import useIsDAO from '../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
 import H1 from '../ui/H1';
+import GreyBox from '../ui/GreyBox';
 
 function FoundValidDAO({
   searchAddress,
@@ -60,9 +61,8 @@ function DAOSearch() {
   return (
     <div>
       <H1>Welcome to Fractal App</H1>
-      <div>
-        <div className="container mx-auto bg-slate-100 content-center px-32 p-8">
-          <p className="text-center pb-2 text-lg">Find A Fractal</p>
+      <GreyBox title="Find A Fractal">
+        <div>
           <p className="text-center pb-4">Use a valid Fractal ETH address or ENS domain</p>
           <form
             onSubmit={(e) => {
@@ -70,7 +70,7 @@ function DAOSearch() {
               doSearch(searchAddressInput);
             }}
           >
-            <div className="flex items-end">
+            <div className="flex items-center">
               <div className="flex-grow">
                 <InputAddress
                   title=""
@@ -80,7 +80,7 @@ function DAOSearch() {
                   onChange={setSearchAddressInput}
                 />
               </div>
-              <div className="ml-2 mb-3">
+              <div className="ml-2">
                 <Button
                   disabled={false}
                   onClick={() => doSearch(searchAddressInput)}
@@ -92,7 +92,7 @@ function DAOSearch() {
           </form>
           <Search searchAddress={searchAddress} />
         </div>
-      </div>
+      </GreyBox>
     </div >
   );
 }
