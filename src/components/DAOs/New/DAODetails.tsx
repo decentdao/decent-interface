@@ -1,4 +1,4 @@
-import CreateDAOInput from '../ui/CreateDAOInput';
+import CreateDAOInput from '../../ui/CreateDAOInput';
 
 const DAODetails = ({ formData, setFormData }:
   {

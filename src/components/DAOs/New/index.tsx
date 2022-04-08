@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import DAODetails from './DAODetails';
 import GovernanceDetails from './GovernanceDetails';
 import TokenDetails from './TokenDetails';
-import { useWeb3 } from '../../web3';
+import { useWeb3 } from '../../../web3';
 import { useNavigate } from 'react-router';
-import Button from '../ui/Button';
-import ConnectModal from '../ConnectModal';
-import DeployDAO from '../transactions/DeployDAO';
+import Button from '../../ui/Button';
+import ConnectModal from '../../ConnectModal';
+import DeployDAO from '../../transactions/DeployDAO';
 
-const CreateDAO = () => {
+const New = () => {
   let navigate = useNavigate();
   const { signerOrProvider } = useWeb3();
   const { account } = useWeb3();
@@ -52,7 +52,7 @@ const CreateDAO = () => {
       }
       <div className="mx-24">
         <div className="mt-24 text-xl">{formData.DAOName === "" ? "New Fractal Configuration" : formData.DAOName + " - Configuration"}</div>
-        <div className="container mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
+        <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
           <div className="pb-8 text-lg">{FormTitles[step]}</div>
           <form>
             <div>{StepDisplay()}</div>
@@ -83,4 +83,4 @@ const CreateDAO = () => {
   );
 }
 
-export default CreateDAO;
+export default New;
