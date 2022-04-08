@@ -20,7 +20,7 @@ function Input({
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement> | undefined,
 }) {
   return (
-    <div className="mb-4">
+    <div>
       <div className="flex items-baseline">
         <div className="mr-1">{title}</div>
         <div>{status}</div>
