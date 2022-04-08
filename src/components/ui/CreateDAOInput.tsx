@@ -1,8 +1,8 @@
 const CreateDAOInput = ({ dataType, value, onChange, label, helperText, disabled }:
   {
     dataType: string,
-    value: any,
-    onChange: any,
+    value: string | undefined,
+    onChange: (e: string) => void,
     label: string,
     helperText: string,
     disabled: boolean
@@ -14,8 +14,8 @@ const CreateDAOInput = ({ dataType, value, onChange, label, helperText, disabled
         <input
           className="col-span-2 w-full border rounded py-1 px-2 shadow-inner"
           type={dataType}
-          value={value}
-          onChange={onChange}
+          value={value || ""}
+          onChange={(event) => onChange(event.target.value)}
           disabled={disabled}
         />
         <div className="text-sm text-center">{helperText}</div>

@@ -12,7 +12,8 @@ const GovernanceDetails = ({ formData }:
 ) => {
   return (
     <div>
-      <CreateDAOInput
+      <div className="pb-8 text-lg">Governance Setup</div>
+      {/* <CreateDAOInput
         dataType="text"
         value={formData.proposalThreshold}
         onChange={true}
@@ -35,7 +36,7 @@ const GovernanceDetails = ({ formData }:
         label="Execution Delay"
         helperText="How long after a proposal passes must people wait until it can be executed?"
         disabled={true}
-      />
+      /> */}
     </div>
   );
 }

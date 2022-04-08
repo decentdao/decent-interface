@@ -1,31 +1,44 @@
+import { useEffect } from 'react';
 import CreateDAOInput from '../../ui/CreateDAOInput';
 
-const TokenDetails = ({ formData, setFormData }:
-  {
-    formData: {
-      tokenName: string,
-      tokenSymbol: string,
-      tokenSupply: number,
-    },
-    setFormData: any,
-  }
-) => {
-  const handleNameChange = (event: any) => {
-    setFormData({ ...formData, tokenName: event.target.value });
-  }
+const TokenDetails = ({
+  setPrevEnabled,
+  setNextEnabled,
+  name,
+  setName,
+  symbol,
+  setSymbol,
+  supply,
+  setSupply,
+}: {
+  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>,
+  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>,
+  name: string | undefined,
+  setName: React.Dispatch<React.SetStateAction<string | undefined>>,
+  symbol: string | undefined,
+  setSymbol: React.Dispatch<React.SetStateAction<string | undefined>>,
+  supply: number | undefined,
+  setSupply: React.Dispatch<React.SetStateAction<number | undefined>>,
+}) => {
+  useEffect(() => {
+    setPrevEnabled(true);
+  }, [setPrevEnabled]);
 
-  const handleSymbolChange = (event: any) => {
-    setFormData({ ...formData, tokenSymbol: event.target.value });
-  }
-  const handleSupplyChange = (event: any) => {
-    setFormData({ ...formData, tokenSupply: event.target.value });
-  }
+  useEffect(() => {
+    setNextEnabled(
+      name !== undefined && name.trim() !== "" &&
+      symbol !== undefined && symbol.trim() !== "" &&
+      supply !== undefined && supply !== 0
+    );
+  }, [name, setNextEnabled, supply, symbol]);
+
   return (
     <div>
+      <div className="pb-8 text-lg">Mint a New Token</div>
       <CreateDAOInput
         dataType="text"
-        value={formData.tokenName}
-        onChange={handleNameChange}
+        value={name}
+        onChange={setName}
         label="Token Name"
         helperText="What is your governance token called?"
         disabled={false}
@@ -33,17 +46,17 @@ const TokenDetails = ({ formData, setFormData }:
 
       <CreateDAOInput
         dataType="text"
-        value={formData.tokenSymbol}
-        onChange={handleSymbolChange}
+        value={symbol}
+        onChange={setSymbol}
         label="Token Symbol"
         helperText="Max: 5 chars"
         disabled={false}
       />
 
       <CreateDAOInput
-        dataType="text"
-        value={formData.tokenSupply === 0 ? "" : formData.tokenSupply}
-        onChange={handleSupplyChange}
+        dataType="number"
+        value={supply?.toString()}
+        onChange={e => setSupply(Number(e))}
         label="Token Supply"
         helperText="Whole numbers only"
         disabled={false}
