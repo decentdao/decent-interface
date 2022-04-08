@@ -6,6 +6,7 @@ import useAddress from '../../hooks/useAddress';
 import useIsDAO from '../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
 import { useDAOData } from '../../daoData';
+import H1 from '../ui/H1';
 
 function ValidDAO({
   address,
@@ -20,11 +21,11 @@ function ValidDAO({
 
   return (
     <div>
-      <div>
+      <H1>
         <EtherscanLink address={address}>
           <span className="break-all">{address}</span>
         </EtherscanLink> is a valid dao!
-      </div>
+      </H1>
       <div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>

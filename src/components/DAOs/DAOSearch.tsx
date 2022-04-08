@@ -6,6 +6,7 @@ import { InputAddress } from '../ui/Input';
 import useAddress from '../../hooks/useAddress';
 import useIsDAO from '../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
+import H1 from '../ui/H1';
 
 function FoundValidDAO({
   searchAddress,
@@ -58,7 +59,7 @@ function DAOSearch() {
 
   return (
     <div>
-      <div className="text-center pt-24 pb-8 text-xl">Welcome to Fractal App</div>
+      <H1>Welcome to Fractal App</H1>
       <div>
         <div className="container mx-auto bg-slate-100 content-center px-32 p-8">
           <p className="text-center pb-2 text-lg">Find A Fractal</p>
