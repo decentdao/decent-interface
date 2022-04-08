@@ -26,6 +26,8 @@ jobs:
           npm run build
         env:
           REACT_APP_SECRET: ${{ secrets.SECRET }}
+          REACT_APP_FALLBACK_CHAIN_ID: ${{ secrets.FALLBACK_CHAIN_ID }}
+          REACT_APP_SUPPORTED_CHAIN_IDS: ${{ secrets.SUPPORTED_CHAIN_IDS }}
           REACT_APP_METAFACTORY_ADDRESSES: ${{ secrets.METAFACTORY_ADDRESSES }}
 
       - name: Deploy
