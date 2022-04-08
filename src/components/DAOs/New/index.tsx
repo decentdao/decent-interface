@@ -11,7 +11,6 @@ import DeployDAO from '../../transactions/DeployDAO';
 const New = () => {
   let navigate = useNavigate();
   const { signerOrProvider } = useWeb3();
-  const { account } = useWeb3();
 
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
@@ -47,9 +46,7 @@ const New = () => {
   // todo: create Pending page during transction
   return (
     <div>
-      {
-        !account ? <ConnectModal /> : <div />
-      }
+      <ConnectModal />
       <div className="mx-24">
         <div className="mt-24 text-xl">{formData.DAOName === "" ? "New Fractal Configuration" : formData.DAOName + " - Configuration"}</div>
         <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
