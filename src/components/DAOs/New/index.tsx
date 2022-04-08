@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import DAODetails from './DAODetails';
 import TokenDetails from './TokenDetails';
 import GovernanceDetails from './GovernanceDetails';
@@ -58,18 +58,18 @@ const StepDisplay = ({
         setSupply={setTokenSupply}
       />
     );
-  } else if (step === 2)  {
-      return (
-        <GovernanceDetails 
+  } else if (step === 2) {
+    return (
+      <GovernanceDetails
         setPrevEnabled={setPrevEnabled}
-        proposalThreshold= {proposalThreshold}
-        quorum= {quorum}
-        executionDelay = {executionDelay}
-        />
-      );
-    }
-    return <></>
+        proposalThreshold={proposalThreshold}
+        quorum={quorum}
+        executionDelay={executionDelay}
+      />
+    );
   }
+  return <></>
+}
 
 const New = () => {
   const [step, setStep] = useState(0);
@@ -112,9 +112,9 @@ const New = () => {
               setTokenSymbol={setTokenSymbol}
               tokenSupply={tokenSupply}
               setTokenSupply={setTokenSupply}
-              proposalThreshold= {proposalThreshold}
-              quorum= {quorum}
-              executionDelay = {executionDelay}
+              proposalThreshold={proposalThreshold}
+              quorum={quorum}
+              executionDelay={executionDelay}
             />
           </form>
         </div>
