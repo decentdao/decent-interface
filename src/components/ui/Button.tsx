@@ -1,11 +1,11 @@
 function Button({
-  disabled,
+  disabled = false,
   onClick,
   children,
   type = "button",
   ...rest
 }: {
-  disabled: boolean,
+  disabled?: boolean,
   onClick: () => void,
   children: React.ReactNode,
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
