@@ -59,40 +59,40 @@ function DAOSearch() {
   return (
     <div>
       <div className="text-center pt-24 pb-8 text-xl">Welcome to Fractal App</div>
-        <div>
-            <div className="container mx-auto bg-slate-100 content-center px-32 p-8">
-              <p className= "text-center pb-2 text-lg">Find A Fractal</p>
-              <p className= "text-center pb-4">Use a valid Fractal ETH address or ENS domain</p>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  doSearch(searchAddressInput);
-                }}
-              >
-                <div className="flex items-end">
-                  <div className="flex-grow">
-                    <InputAddress
-                      title=""
-                      value={searchAddressInput}
-                      disabled={false}
-                      placeholder=""
-                      onChange={setSearchAddressInput}
-                    />
-                  </div>
-                  <div className="ml-2 mb-3">
-                    <Button
-                      disabled={false}
-                      onClick={() => doSearch(searchAddressInput)}
-                    >
-                      search
-                    </Button>
-                  </div>
-                </div>
-              </form>
-              <Search searchAddress={searchAddress} />  
+      <div>
+        <div className="container mx-auto bg-slate-100 content-center px-32 p-8">
+          <p className="text-center pb-2 text-lg">Find A Fractal</p>
+          <p className="text-center pb-4">Use a valid Fractal ETH address or ENS domain</p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              doSearch(searchAddressInput);
+            }}
+          >
+            <div className="flex items-end">
+              <div className="flex-grow">
+                <InputAddress
+                  title=""
+                  value={searchAddressInput}
+                  disabled={false}
+                  placeholder=""
+                  onChange={setSearchAddressInput}
+                />
+              </div>
+              <div className="ml-2 mb-3">
+                <Button
+                  disabled={false}
+                  onClick={() => doSearch(searchAddressInput)}
+                >
+                  search
+                </Button>
+              </div>
             </div>
+          </form>
+          <Search searchAddress={searchAddress} />
         </div>
-    </div>
+      </div>
+    </div >
   );
 }
 

@@ -13,7 +13,7 @@ function DAOs() {
         <Route path=":address" element={<DAO />} />
       </Routes>
     </div>
-  )
+  );
 }
 
 export default DAOs;
