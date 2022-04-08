@@ -90,21 +90,6 @@ const _abi = [
             name: "daoActionRoles",
             type: "string[][]",
           },
-          {
-            internalType: "address[]",
-            name: "moduleTargets",
-            type: "address[]",
-          },
-          {
-            internalType: "string[]",
-            name: "moduleFunctionDescs",
-            type: "string[]",
-          },
-          {
-            internalType: "string[][]",
-            name: "moduleActionRoles",
-            type: "string[][]",
-          },
         ],
         internalType: "struct IDAOFactory.CreateDAOParams",
         name: "createDAOParams",

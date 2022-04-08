@@ -12,3 +12,4 @@ export type { DAO } from "./DAO";
 export type { DAOFactory } from "./DAOFactory";
 export type { MetaFactory } from "./MetaFactory";
 export type { ModuleBase } from "./ModuleBase";
+export type { TokenFactory } from "./TokenFactory";

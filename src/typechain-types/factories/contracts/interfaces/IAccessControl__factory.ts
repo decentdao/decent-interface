@@ -307,6 +307,24 @@ const _abi = [
         type: "string[]",
       },
       {
+        internalType: "address[][]",
+        name: "members",
+        type: "address[][]",
+      },
+    ],
+    name: "grantRoles",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string[]",
+        name: "roles",
+        type: "string[]",
+      },
+      {
         internalType: "string[]",
         name: "roleAdmins",
         type: "string[]",

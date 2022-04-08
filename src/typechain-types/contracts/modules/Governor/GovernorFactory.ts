@@ -4,7 +4,6 @@
 import type {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
@@ -26,68 +25,23 @@ import type {
   OnEvent,
 } from "../../../common";
 
-export declare namespace IGovernorFactory {
-  export type CreateGovernorParamsStruct = {
-    _govImpl: string;
-    _token: string;
-    _timelockImpl: string;
-    _name: string;
-    _initialVoteExtension: BigNumberish;
-    _initialVotingDelay: BigNumberish;
-    _initialVotingPeriod: BigNumberish;
-    _initialProposalThreshold: BigNumberish;
-    _initialQuorumNumeratorValue: BigNumberish;
-    _minDelay: BigNumberish;
-  };
-
-  export type CreateGovernorParamsStructOutput = [
-    string,
-    string,
-    string,
-    string,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber
-  ] & {
-    _govImpl: string;
-    _token: string;
-    _timelockImpl: string;
-    _name: string;
-    _initialVoteExtension: BigNumber;
-    _initialVotingDelay: BigNumber;
-    _initialVotingPeriod: BigNumber;
-    _initialProposalThreshold: BigNumber;
-    _initialQuorumNumeratorValue: BigNumber;
-    _minDelay: BigNumber;
-  };
-}
-
 export interface GovernorFactoryInterface extends utils.Interface {
   functions: {
-    "createGovernor(address,address,(address,address,address,string,uint64,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "create(bytes[])": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
   getFunction(
-    nameOrSignatureOrTopic: "createGovernor" | "supportsInterface"
+    nameOrSignatureOrTopic: "create" | "supportsInterface"
   ): FunctionFragment;
 
-  encodeFunctionData(
-    functionFragment: "createGovernor",
-    values: [string, string, IGovernorFactory.CreateGovernorParamsStruct]
-  ): string;
+  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "createGovernor",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -138,10 +92,8 @@ export interface GovernorFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    createGovernor(
-      _dao: string,
-      _accessControl: string,
-      _createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+    create(
+      data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -151,10 +103,8 @@ export interface GovernorFactory extends BaseContract {
     ): Promise<[boolean]>;
   };
 
-  createGovernor(
-    _dao: string,
-    _accessControl: string,
-    _createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+  create(
+    data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -164,12 +114,7 @@ export interface GovernorFactory extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    createGovernor(
-      _dao: string,
-      _accessControl: string,
-      _createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
-      overrides?: CallOverrides
-    ): Promise<[string, string] & { timelock: string; governorModule: string }>;
+    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -189,10 +134,8 @@ export interface GovernorFactory extends BaseContract {
   };
 
   estimateGas: {
-    createGovernor(
-      _dao: string,
-      _accessControl: string,
-      _createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+    create(
+      data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -203,10 +146,8 @@ export interface GovernorFactory extends BaseContract {
   };
 
   populateTransaction: {
-    createGovernor(
-      _dao: string,
-      _accessControl: string,
-      _createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+    create(
+      data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

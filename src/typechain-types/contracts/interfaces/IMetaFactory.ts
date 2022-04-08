@@ -13,7 +13,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -32,9 +36,6 @@ export declare namespace IDAOFactory {
     members: string[][];
     daoFunctionDescs: string[];
     daoActionRoles: string[][];
-    moduleTargets: string[];
-    moduleFunctionDescs: string[];
-    moduleActionRoles: string[][];
   };
 
   export type CreateDAOParamsStructOutput = [
@@ -44,9 +45,6 @@ export declare namespace IDAOFactory {
     string[],
     string[],
     string[][],
-    string[],
-    string[][],
-    string[],
     string[],
     string[][]
   ] & {
@@ -58,54 +56,52 @@ export declare namespace IDAOFactory {
     members: string[][];
     daoFunctionDescs: string[];
     daoActionRoles: string[][];
-    moduleTargets: string[];
-    moduleFunctionDescs: string[];
-    moduleActionRoles: string[][];
   };
 }
 
-export declare namespace IGovernorFactory {
-  export type CreateGovernorParamsStruct = {
-    _govImpl: string;
-    _token: string;
-    _timelockImpl: string;
-    _name: string;
-    _initialVoteExtension: BigNumberish;
-    _initialVotingDelay: BigNumberish;
-    _initialVotingPeriod: BigNumberish;
-    _initialProposalThreshold: BigNumberish;
-    _initialQuorumNumeratorValue: BigNumberish;
-    _minDelay: BigNumberish;
+export declare namespace IMetaFactory {
+  export type ModuleFactoryCallDataStruct = {
+    factory: string;
+    data: BytesLike[];
+    value: BigNumberish;
+    newContractAddressesToPass: BigNumberish[];
+    addressesReturned: BigNumberish;
   };
 
-  export type CreateGovernorParamsStructOutput = [
+  export type ModuleFactoryCallDataStructOutput = [
     string,
-    string,
-    string,
-    string,
+    string[],
     BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
+    BigNumber[],
     BigNumber
   ] & {
-    _govImpl: string;
-    _token: string;
-    _timelockImpl: string;
-    _name: string;
-    _initialVoteExtension: BigNumber;
-    _initialVotingDelay: BigNumber;
-    _initialVotingPeriod: BigNumber;
-    _initialProposalThreshold: BigNumber;
-    _initialQuorumNumeratorValue: BigNumber;
-    _minDelay: BigNumber;
+    factory: string;
+    data: string[];
+    value: BigNumber;
+    newContractAddressesToPass: BigNumber[];
+    addressesReturned: BigNumber;
+  };
+
+  export type ModuleActionDataStruct = {
+    contractIndexes: BigNumberish[];
+    functionDescs: string[];
+    roles: string[][];
+  };
+
+  export type ModuleActionDataStructOutput = [
+    BigNumber[],
+    string[],
+    string[][]
+  ] & {
+    contractIndexes: BigNumber[];
+    functionDescs: string[];
+    roles: string[][];
   };
 }
 
 export interface IMetaFactoryInterface extends utils.Interface {
   functions: {
-    "createDAOAndModules(address,address,address,address,(address,address,string,string[],string[],address[][],string[],string[][],address[],string[],string[][]),(address,address,address,string,uint64,uint256,uint256,uint256,uint256,uint256))": FunctionFragment;
+    "createDAOAndModules(address,uint256,(address,address,string,string[],string[],address[][],string[],string[][]),(address,bytes[],uint256,uint256[],uint256)[],(uint256[],string[],string[][]),uint256[][])": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "createDAOAndModules"): FunctionFragment;
@@ -114,11 +110,11 @@ export interface IMetaFactoryInterface extends utils.Interface {
     functionFragment: "createDAOAndModules",
     values: [
       string,
-      string,
-      string,
-      string,
+      BigNumberish,
       IDAOFactory.CreateDAOParamsStruct,
-      IGovernorFactory.CreateGovernorParamsStruct
+      IMetaFactory.ModuleFactoryCallDataStruct[],
+      IMetaFactory.ModuleActionDataStruct,
+      BigNumberish[][]
     ]
   ): string;
 
@@ -127,8 +123,25 @@ export interface IMetaFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "DAOAndModulesCreated(address,address,address[])": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "DAOAndModulesCreated"): EventFragment;
 }
+
+export interface DAOAndModulesCreatedEventObject {
+  dao: string;
+  accessControl: string;
+  modules: string[];
+}
+export type DAOAndModulesCreatedEvent = TypedEvent<
+  [string, string, string[]],
+  DAOAndModulesCreatedEventObject
+>;
+
+export type DAOAndModulesCreatedEventFilter =
+  TypedEventFilter<DAOAndModulesCreatedEvent>;
 
 export interface IMetaFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -159,55 +172,58 @@ export interface IMetaFactory extends BaseContract {
   functions: {
     createDAOAndModules(
       daoFactory: string,
-      governorFactory: string,
-      treasuryFactory: string,
-      treasuryImplementation: string,
+      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
+      moduleActionData: IMetaFactory.ModuleActionDataStruct,
+      roleModuleMembers: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   createDAOAndModules(
     daoFactory: string,
-    governorFactory: string,
-    treasuryFactory: string,
-    treasuryImplementation: string,
+    metaFactoryTempRoleIndex: BigNumberish,
     createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-    createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+    moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
+    moduleActionData: IMetaFactory.ModuleActionDataStruct,
+    roleModuleMembers: BigNumberish[][],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     createDAOAndModules(
       daoFactory: string,
-      governorFactory: string,
-      treasuryFactory: string,
-      treasuryImplementation: string,
+      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
+      moduleActionData: IMetaFactory.ModuleActionDataStruct,
+      roleModuleMembers: BigNumberish[][],
       overrides?: CallOverrides
-    ): Promise<
-      [string, string, string, string, string] & {
-        dao: string;
-        accessControl: string;
-        timelock: string;
-        governor: string;
-        treasury: string;
-      }
-    >;
+    ): Promise<string[]>;
   };
 
-  filters: {};
+  filters: {
+    "DAOAndModulesCreated(address,address,address[])"(
+      dao?: null,
+      accessControl?: null,
+      modules?: null
+    ): DAOAndModulesCreatedEventFilter;
+    DAOAndModulesCreated(
+      dao?: null,
+      accessControl?: null,
+      modules?: null
+    ): DAOAndModulesCreatedEventFilter;
+  };
 
   estimateGas: {
     createDAOAndModules(
       daoFactory: string,
-      governorFactory: string,
-      treasuryFactory: string,
-      treasuryImplementation: string,
+      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
+      moduleActionData: IMetaFactory.ModuleActionDataStruct,
+      roleModuleMembers: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -215,11 +231,11 @@ export interface IMetaFactory extends BaseContract {
   populateTransaction: {
     createDAOAndModules(
       daoFactory: string,
-      governorFactory: string,
-      treasuryFactory: string,
-      treasuryImplementation: string,
+      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      createGovernorParams: IGovernorFactory.CreateGovernorParamsStruct,
+      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
+      moduleActionData: IMetaFactory.ModuleActionDataStruct,
+      roleModuleMembers: BigNumberish[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

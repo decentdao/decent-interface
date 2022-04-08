@@ -12,18 +12,43 @@ import type {
 const _abi = [
   {
     inputs: [],
-    name: "CreateDAOReverted",
+    name: "FactoryCallFailed",
     type: "error",
   },
   {
     inputs: [],
-    name: "CreateGovernorReverted",
+    name: "InvalidModuleAddressToPass",
     type: "error",
   },
   {
     inputs: [],
-    name: "CreateTreasuryReverted",
+    name: "UnequalArrayLengths",
     type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "dao",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "accessControl",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "modules",
+        type: "address[]",
+      },
+    ],
+    name: "DAOAndModulesCreated",
+    type: "event",
   },
   {
     inputs: [
@@ -33,19 +58,9 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "address",
-        name: "governorFactory",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "treasuryFactory",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "treasuryImplementation",
-        type: "address",
+        internalType: "uint256",
+        name: "metaFactoryTempRoleIndex",
+        type: "uint256",
       },
       {
         components: [
@@ -89,21 +104,6 @@ const _abi = [
             name: "daoActionRoles",
             type: "string[][]",
           },
-          {
-            internalType: "address[]",
-            name: "moduleTargets",
-            type: "address[]",
-          },
-          {
-            internalType: "string[]",
-            name: "moduleFunctionDescs",
-            type: "string[]",
-          },
-          {
-            internalType: "string[][]",
-            name: "moduleActionRoles",
-            type: "string[][]",
-          },
         ],
         internalType: "struct IDAOFactory.CreateDAOParams",
         name: "createDAOParams",
@@ -112,87 +112,69 @@ const _abi = [
       {
         components: [
           {
-            internalType: "contract IGovernorModule",
-            name: "_govImpl",
+            internalType: "address",
+            name: "factory",
             type: "address",
           },
           {
-            internalType: "contract IVotesUpgradeable",
-            name: "_token",
-            type: "address",
-          },
-          {
-            internalType: "contract ITimelockUpgradeable",
-            name: "_timelockImpl",
-            type: "address",
-          },
-          {
-            internalType: "string",
-            name: "_name",
-            type: "string",
-          },
-          {
-            internalType: "uint64",
-            name: "_initialVoteExtension",
-            type: "uint64",
+            internalType: "bytes[]",
+            name: "data",
+            type: "bytes[]",
           },
           {
             internalType: "uint256",
-            name: "_initialVotingDelay",
+            name: "value",
             type: "uint256",
           },
           {
-            internalType: "uint256",
-            name: "_initialVotingPeriod",
-            type: "uint256",
+            internalType: "uint256[]",
+            name: "newContractAddressesToPass",
+            type: "uint256[]",
           },
           {
             internalType: "uint256",
-            name: "_initialProposalThreshold",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "_initialQuorumNumeratorValue",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "_minDelay",
+            name: "addressesReturned",
             type: "uint256",
           },
         ],
-        internalType: "struct IGovernorFactory.CreateGovernorParams",
-        name: "createGovernorParams",
+        internalType: "struct IMetaFactory.ModuleFactoryCallData[]",
+        name: "moduleFactoriesCallData",
+        type: "tuple[]",
+      },
+      {
+        components: [
+          {
+            internalType: "uint256[]",
+            name: "contractIndexes",
+            type: "uint256[]",
+          },
+          {
+            internalType: "string[]",
+            name: "functionDescs",
+            type: "string[]",
+          },
+          {
+            internalType: "string[][]",
+            name: "roles",
+            type: "string[][]",
+          },
+        ],
+        internalType: "struct IMetaFactory.ModuleActionData",
+        name: "moduleActionData",
         type: "tuple",
+      },
+      {
+        internalType: "uint256[][]",
+        name: "roleModuleMembers",
+        type: "uint256[][]",
       },
     ],
     name: "createDAOAndModules",
     outputs: [
       {
-        internalType: "address",
-        name: "dao",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "accessControl",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "timelock",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "governor",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "treasury",
-        type: "address",
+        internalType: "address[]",
+        name: "",
+        type: "address[]",
       },
     ],
     stateMutability: "nonpayable",
