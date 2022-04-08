@@ -6,13 +6,11 @@ import New from './New';
 
 function DAOs() {
   return (
-    <div>
-      <Routes>
-        <Route index element={<DAOSearch />} />
-        <Route path="new" element={<New />} />
-        <Route path=":address" element={<DAO />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route index element={<DAOSearch />} />
+      <Route path="new" element={<New />} />
+      <Route path=":address" element={<DAO />} />
+    </Routes>
   );
 }
 
