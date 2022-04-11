@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router';
 import { useWeb3 } from '../../../web3';
 import { ContractReceipt } from '@ethersproject/contracts';
 import { BigNumber, ethers } from 'ethers';
+import { useAddresses } from '../../../web3/chains';
 
 const StepDisplay = ({
   step,
@@ -78,7 +79,9 @@ const StepDisplay = ({
 }
 
 const New = () => {
-  const { signerOrProvider, provider } = useWeb3();
+  const { signerOrProvider, provider, chainId } = useWeb3();
+  const  addresses  = useAddresses(chainId);
+  console.log(addresses.metaFactory?.address)
   let navigate = useNavigate();
   const { contractCall: contractCallDeploy } = useTransaction();
 
@@ -104,17 +107,35 @@ const New = () => {
   }
 
   const deployDAO = async (daoName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
+    if (
+        !signerOrProvider || 
+        !provider || 
+        !daoName || 
+        !tokenName || 
+        !tokenSymbol || 
+        !tokenSupply || 
+        !proposalThreshold || 
+        !quorum || 
+        !executionDelay ||
+        !addresses.metaFactory?.address ||
+        !addresses.dao?.address ||
+        !addresses.accessControl?.address ||
+        !addresses.treasuryModuleFactory?.address ||
+        !addresses.treasuryModule?.address ||
+        !addresses.tokenFactory?.address ||
+        !addresses.governorFactory?.address ||
+        !addresses.governorModule?.address ||
+        !addresses.timelockUpgradeable?.address
 
-
-    if (!signerOrProvider || !provider || !daoName || !tokenName || !tokenSymbol || !tokenSupply) {
+      ) {
       return;
     }
-    const factory: MetaFactory = MetaFactory__factory.connect("0x5FbDB2315678afecb367f032d93F642f64180aa3", signerOrProvider)
+    const factory: MetaFactory = MetaFactory__factory.connect(addresses.metaFactory?.address, signerOrProvider)
     const abiCoder = new ethers.utils.AbiCoder();
 
     const createDAOParams = {
-      daoImplementation: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-      accessControlImplementation: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      daoImplementation: addresses.dao?.address,
+      accessControlImplementation: addresses.accessControl?.address,
       daoName: daoName,
       roles: [
         "EXECUTE_ROLE",
@@ -138,14 +159,14 @@ const New = () => {
 
     const moduleFactoriesCalldata = [
       {
-        factory: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-        data: [abiCoder.encode(["address"], ["0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"])],
+        factory: addresses.treasuryModuleFactory?.address, // Treasury Factory
+        data: [abiCoder.encode(["address"], [addresses.treasuryModule?.address])],
         value: 0,
         newContractAddressesToPass: [1],
         addressesReturned: 1,
       },
       {
-        factory: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+        factory: addresses.tokenFactory?.address, // Token Factory
         data: [
           abiCoder.encode(["string"], [tokenName]),
           abiCoder.encode(["string"], [tokenSymbol]),
@@ -163,10 +184,10 @@ const New = () => {
         addressesReturned: 1,
       },
       {
-        factory: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+        factory: addresses.governorFactory?.address, // Governor Factory
         data: [
-          abiCoder.encode(["address"], ["0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6"]),
-          abiCoder.encode(["address"], ["0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"]),
+          abiCoder.encode(["address"], [addresses.governorModule?.address]), // Governor Impl
+          abiCoder.encode(["address"], [addresses.timelockUpgradeable?.address]), // Timelock Impl
           abiCoder.encode(["string"], [""]),
           abiCoder.encode(["uint64"], [BigNumber.from("0")]),
           abiCoder.encode(["uint256"], [BigNumber.from("1")]),
