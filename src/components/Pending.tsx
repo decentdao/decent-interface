@@ -3,7 +3,6 @@ const Pending = ({
 }: {
   pending: boolean
 }) => {
-  console.log(pending)
   return (
     <div>
       {pending &&
