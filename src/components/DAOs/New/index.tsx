@@ -262,7 +262,6 @@ const New = () => {
       }
     );
   }
-
   return (
     <div>
       <ConnectModal />
