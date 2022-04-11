@@ -81,7 +81,6 @@ const StepDisplay = ({
 const New = () => {
   const { signerOrProvider, provider, chainId } = useWeb3();
   const  addresses  = useAddresses(chainId);
-  console.log(addresses.metaFactory?.address)
   let navigate = useNavigate();
   const { contractCall: contractCallDeploy } = useTransaction();
 
@@ -107,17 +106,18 @@ const New = () => {
   }
 
   const deployDAO = async (daoName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
+
     if (
         !signerOrProvider || 
-        !provider || 
         !daoName || 
         !tokenName || 
         !tokenSymbol || 
         !tokenSupply || 
-        !proposalThreshold || 
+        (!proposalThreshold && proposalThreshold !== 0) || 
         !quorum || 
         !executionDelay ||
         !addresses.metaFactory?.address ||
+        !addresses.daoFactory?.address ||
         !addresses.dao?.address ||
         !addresses.accessControl?.address ||
         !addresses.treasuryModuleFactory?.address ||
@@ -126,7 +126,6 @@ const New = () => {
         !addresses.governorFactory?.address ||
         !addresses.governorModule?.address ||
         !addresses.timelockUpgradeable?.address
-
       ) {
       return;
     }
@@ -236,7 +235,7 @@ const New = () => {
 
     contractCallDeploy(
       () => factory.createDAOAndModules(
-        "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        addresses.daoFactory?.address!,
         0,
         createDAOParams,
         moduleFactoriesCalldata,
@@ -250,7 +249,7 @@ const New = () => {
       undefined,
       async (receipt: ContractReceipt) => {
         const event = receipt.events?.filter((x) => {
-          return x.address === "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+          return x.address === addresses.daoFactory?.address;
         });
         if (
           event === undefined ||
