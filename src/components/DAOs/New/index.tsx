@@ -4,7 +4,7 @@ import TokenDetails from './TokenDetails';
 import GovernanceDetails from './GovernanceDetails';
 import Button from '../../ui/Button';
 import ConnectModal from '../../ConnectModal';
-import { useTransaction } from '../../transactions';
+import { useTransaction } from '../../../web3/transactions';
 import { MetaFactory, MetaFactory__factory } from '../../../typechain-types';
 import { useNavigate } from 'react-router';
 import { useWeb3 } from '../../../web3';

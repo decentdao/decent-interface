@@ -1,7 +1,6 @@
 import { ContractReceipt, ethers } from 'ethers';
 import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
-import { useWeb3 } from '../../web3';
 
 interface ProviderRpcError extends Error {
     message: string;
@@ -10,16 +9,6 @@ interface ProviderRpcError extends Error {
 }
 
 export const useTransaction = () => {
-    const { chainId } = useWeb3();
-    const exploreUrl =
-        chainId === 4
-            ? 'https://rinkeby.etherscan.io/tx/'
-            : chainId === 5
-                ? 'https://goerli.etherscan.io/tx/'
-                : chainId === 1
-                    ? 'https://etherscan.io/tx/'
-                    : '';
-
     const contractCall = useCallback(
         (
             contractFn: () => Promise<ethers.ContractTransaction>,
@@ -79,7 +68,7 @@ export const useTransaction = () => {
                     }
                 });
         },
-        [exploreUrl]
+        []
     );
 
     return { contractCall };
