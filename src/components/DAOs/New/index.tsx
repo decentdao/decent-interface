@@ -231,7 +231,6 @@ const New = () => {
         const event = receipt.events?.filter((x) => {
           return x.address === "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
         });
-        console.log(event)
         if (
           event === undefined ||
           event[0].topics[1] === undefined
