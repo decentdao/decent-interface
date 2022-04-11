@@ -35,9 +35,6 @@ export declare namespace IDAOFactory {
     members: string[][];
     daoFunctionDescs: string[];
     daoActionRoles: string[][];
-    moduleTargets: string[];
-    moduleFunctionDescs: string[];
-    moduleActionRoles: string[][];
   };
 
   export type CreateDAOParamsStructOutput = [
@@ -47,9 +44,6 @@ export declare namespace IDAOFactory {
     string[],
     string[],
     string[][],
-    string[],
-    string[][],
-    string[],
     string[],
     string[][]
   ] & {
@@ -61,15 +55,12 @@ export declare namespace IDAOFactory {
     members: string[][];
     daoFunctionDescs: string[];
     daoActionRoles: string[][];
-    moduleTargets: string[];
-    moduleFunctionDescs: string[];
-    moduleActionRoles: string[][];
   };
 }
 
 export interface DAOFactoryInterface extends utils.Interface {
   functions: {
-    "createDAO(address,(address,address,string,string[],string[],address[][],string[],string[][],address[],string[],string[][]))": FunctionFragment;
+    "createDAO(address,(address,address,string,string[],string[],address[][],string[],string[][]))": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 

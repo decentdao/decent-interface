@@ -9,3 +9,4 @@ export { DAO__factory } from "./DAO__factory";
 export { DAOFactory__factory } from "./DAOFactory__factory";
 export { MetaFactory__factory } from "./MetaFactory__factory";
 export { ModuleBase__factory } from "./ModuleBase__factory";
+export { TokenFactory__factory } from "./TokenFactory__factory";

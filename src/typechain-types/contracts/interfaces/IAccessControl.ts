@@ -33,6 +33,7 @@ export interface IAccessControlInterface extends utils.Interface {
     "getActionRoles(address,string)": FunctionFragment;
     "getRoleAdmin(string)": FunctionFragment;
     "grantRole(string,address)": FunctionFragment;
+    "grantRoles(string[],address[][])": FunctionFragment;
     "grantRolesAndAdmins(string[],string[],address[][])": FunctionFragment;
     "hasRole(string,address)": FunctionFragment;
     "initialize(address,string[],string[],address[][],address[],string[],string[][])": FunctionFragment;
@@ -50,6 +51,7 @@ export interface IAccessControlInterface extends utils.Interface {
       | "getActionRoles"
       | "getRoleAdmin"
       | "grantRole"
+      | "grantRoles"
       | "grantRolesAndAdmins"
       | "hasRole"
       | "initialize"
@@ -79,6 +81,10 @@ export interface IAccessControlInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "grantRole",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "grantRoles",
+    values: [string[], string[][]]
   ): string;
   encodeFunctionData(
     functionFragment: "grantRolesAndAdmins",
@@ -135,6 +141,7 @@ export interface IAccessControlInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "grantRoles", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "grantRolesAndAdmins",
     data: BytesLike
@@ -291,6 +298,12 @@ export interface IAccessControl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    grantRoles(
+      roles: string[],
+      members: string[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
     grantRolesAndAdmins(
       roles: string[],
       roleAdmins: string[],
@@ -372,6 +385,12 @@ export interface IAccessControl extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  grantRoles(
+    roles: string[],
+    members: string[][],
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
   grantRolesAndAdmins(
     roles: string[],
     roleAdmins: string[],
@@ -450,6 +469,12 @@ export interface IAccessControl extends BaseContract {
     grantRole(
       role: string,
       account: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    grantRoles(
+      roles: string[],
+      members: string[][],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -596,6 +621,12 @@ export interface IAccessControl extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    grantRoles(
+      roles: string[],
+      members: string[][],
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
     grantRolesAndAdmins(
       roles: string[],
       roleAdmins: string[],
@@ -678,6 +709,12 @@ export interface IAccessControl extends BaseContract {
     grantRole(
       role: string,
       account: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    grantRoles(
+      roles: string[],
+      members: string[][],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

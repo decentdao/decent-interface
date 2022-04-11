@@ -12,60 +12,46 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type {
-  FunctionFragment,
-  Result,
-  EventFragment,
-} from "@ethersproject/abi";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "../../common";
+} from "../common";
 
-export interface ITreasuryModuleFactoryInterface extends utils.Interface {
+export interface TokenFactoryInterface extends utils.Interface {
   functions: {
-    "createTreasury(address,address)": FunctionFragment;
+    "create(bytes[])": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "createTreasury"): FunctionFragment;
+  getFunction(
+    nameOrSignatureOrTopic: "create" | "supportsInterface"
+  ): FunctionFragment;
 
+  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
   encodeFunctionData(
-    functionFragment: "createTreasury",
-    values: [string, string]
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
   ): string;
 
+  decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "createTreasury",
+    functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
 
-  events: {
-    "TreasuryCreated(address,address)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "TreasuryCreated"): EventFragment;
+  events: {};
 }
 
-export interface TreasuryCreatedEventObject {
-  treasuryAddress: string;
-  accessControl: string;
-}
-export type TreasuryCreatedEvent = TypedEvent<
-  [string, string],
-  TreasuryCreatedEventObject
->;
-
-export type TreasuryCreatedEventFilter = TypedEventFilter<TreasuryCreatedEvent>;
-
-export interface ITreasuryModuleFactory extends BaseContract {
+export interface TokenFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ITreasuryModuleFactoryInterface;
+  interface: TokenFactoryInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -87,51 +73,59 @@ export interface ITreasuryModuleFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    createTreasury(
-      accessControl: string,
-      treasuryImplementation: string,
+    create(
+      data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
   };
 
-  createTreasury(
-    accessControl: string,
-    treasuryImplementation: string,
+  create(
+    data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  supportsInterface(
+    interfaceId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
   callStatic: {
-    createTreasury(
-      accessControl: string,
-      treasuryImplementation: string,
+    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<boolean>;
   };
 
-  filters: {
-    "TreasuryCreated(address,address)"(
-      treasuryAddress?: string | null,
-      accessControl?: string | null
-    ): TreasuryCreatedEventFilter;
-    TreasuryCreated(
-      treasuryAddress?: string | null,
-      accessControl?: string | null
-    ): TreasuryCreatedEventFilter;
-  };
+  filters: {};
 
   estimateGas: {
-    createTreasury(
-      accessControl: string,
-      treasuryImplementation: string,
+    create(
+      data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    createTreasury(
-      accessControl: string,
-      treasuryImplementation: string,
+    create(
+      data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    supportsInterface(
+      interfaceId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };
 }
