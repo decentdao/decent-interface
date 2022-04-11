@@ -79,13 +79,13 @@ const StepDisplay = ({
 }
 
 const New = () => {
-  const { signerOrProvider, provider, chainId } = useWeb3();
-  const  addresses  = useAddresses(chainId);
-  let navigate = useNavigate();
+  const { signerOrProvider, chainId } = useWeb3();
+  const addresses = useAddresses(chainId);
+
   const { contractCall: contractCallDeploy } = useTransaction();
+  const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
-
   const [prevEnabled, setPrevEnabled] = useState(false);
   const [nextEnabled, setNextEnabled] = useState(false);
 
@@ -105,28 +105,27 @@ const New = () => {
     setStep((currPage) => currPage + 1);
   }
 
-  const deployDAO = async (daoName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
-
+  const deployDAO = (daoName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
     if (
-        !signerOrProvider || 
-        !daoName || 
-        !tokenName || 
-        !tokenSymbol || 
-        !tokenSupply || 
-        (!proposalThreshold && proposalThreshold !== 0) || 
-        !quorum || 
-        !executionDelay ||
-        !addresses.metaFactory?.address ||
-        !addresses.daoFactory?.address ||
-        !addresses.dao?.address ||
-        !addresses.accessControl?.address ||
-        !addresses.treasuryModuleFactory?.address ||
-        !addresses.treasuryModule?.address ||
-        !addresses.tokenFactory?.address ||
-        !addresses.governorFactory?.address ||
-        !addresses.governorModule?.address ||
-        !addresses.timelockUpgradeable?.address
-      ) {
+      !signerOrProvider ||
+      !daoName ||
+      !tokenName ||
+      !tokenSymbol ||
+      !tokenSupply ||
+      (!proposalThreshold && proposalThreshold !== 0) ||
+      !quorum ||
+      !executionDelay ||
+      !addresses.metaFactory?.address ||
+      !addresses.daoFactory?.address ||
+      !addresses.dao?.address ||
+      !addresses.accessControl?.address ||
+      !addresses.treasuryModuleFactory?.address ||
+      !addresses.treasuryModule?.address ||
+      !addresses.tokenFactory?.address ||
+      !addresses.governorFactory?.address ||
+      !addresses.governorModule?.address ||
+      !addresses.timelockUpgradeable?.address
+    ) {
       return;
     }
     const factory: MetaFactory = MetaFactory__factory.connect(addresses.metaFactory?.address, signerOrProvider)
@@ -247,7 +246,7 @@ const New = () => {
       'Deploy succeeded',
       undefined,
       undefined,
-      async (receipt: ContractReceipt) => {
+      (receipt: ContractReceipt) => {
         const event = receipt.events?.filter((x) => {
           return x.address === addresses.daoFactory?.address;
         });
@@ -308,7 +307,7 @@ const New = () => {
             </Button>
           )}
           {step > 1 && (
-            <Button onClick={async () => {
+            <Button onClick={() => {
               if (!daoName || !tokenName || !tokenSymbol || !tokenSupply) { return }
               deployDAO(daoName, tokenName, tokenSymbol, tokenSupply)
             }
