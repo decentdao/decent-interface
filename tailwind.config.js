@@ -14,7 +14,10 @@ module.exports = {
         '2xl': '6rem',
       },
     },
-    extend: {},
+    fontFamily: {
+      sans: ['IBM Plex Sans'],
+      mono: ['IBM Plex Mono'],
+    },
   },
   plugins: [],
 }
