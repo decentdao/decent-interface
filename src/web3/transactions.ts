@@ -1,5 +1,5 @@
 import { ContractReceipt, ethers } from 'ethers';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 interface ProviderRpcError extends Error {
