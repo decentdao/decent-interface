@@ -97,14 +97,16 @@ const New = () => {
   }
 
   const deploy = useDeployDAO(
-    daoName,
-    tokenName,
-    tokenSymbol,
-    tokenSupply,
-    proposalThreshold,
-    quorum,
-    executionDelay,
-    setPending
+    {
+      daoName,
+      tokenName,
+      tokenSymbol,
+      tokenSupply,
+      proposalThreshold,
+      quorum,
+      executionDelay,
+      setPending
+    }
   )
   return (
     <div>
