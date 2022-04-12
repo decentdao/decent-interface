@@ -116,12 +116,12 @@ const useDeployDAO = ({
           abiCoder.encode(["address"], [addresses.governorModule?.address]), // Governor Impl
           abiCoder.encode(["address"], [addresses.timelockUpgradeable?.address]), // Timelock Impl
           abiCoder.encode(["string"], [""]),
-          abiCoder.encode(["uint64"], [BigNumber.from("0")]),
-          abiCoder.encode(["uint256"], [BigNumber.from("1")]),
-          abiCoder.encode(["uint256"], [BigNumber.from("5")]),
-          abiCoder.encode(["uint256"], [BigNumber.from("0")]),
-          abiCoder.encode(["uint256"], [BigNumber.from("4")]),
-          abiCoder.encode(["uint256"], [BigNumber.from("1")]),
+          abiCoder.encode(["uint64"], [BigNumber.from("0")]), // vote extension
+          abiCoder.encode(["uint256"], [BigNumber.from("6545")]), // voteDelay - 1 day
+          abiCoder.encode(["uint256"], [BigNumber.from("45818")]), // votingPeriod - 1 week
+          abiCoder.encode(["uint256"], [BigNumber.from(proposalThreshold.toString())]), // Threshold
+          abiCoder.encode(["uint256"], [BigNumber.from(quorum.toString())]), // Quorum
+          abiCoder.encode(["uint256"], [BigNumber.from("1")]), // Access Control Index
         ],
         value: 0,
         newContractAddressesToPass: [0, 1, 3],
