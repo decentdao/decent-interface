@@ -1,4 +1,19 @@
+import { ReactNode } from 'react';
 import EtherscanLink from '../ui/EtherscanLink';
+
+const SearchError = ({
+  children
+}: {
+  children: ReactNode
+}) => {
+  return (
+    <div className="text-center text-red-500 text-sm">
+      <span className="break-all">
+        {children}
+      </span>
+    </div>
+  )
+}
 
 function SearchingDAO({
   searchAddress,
@@ -23,7 +38,7 @@ function SearchingDAO({
 
   if (searchAddress !== undefined && validAddress === false) {
     return (
-      <div className="text-center text-red-500 text-sm"><span className="break-all"></span>Please use a valid Fractal ETH address or ENS domain</div>
+      <SearchError>Please use a valid Fractal ETH address or ENS domain</SearchError>
     );
   }
 
@@ -31,8 +46,14 @@ function SearchingDAO({
     return (
       <div>
         <EtherscanLink address={searchAddress}>
-          <span className="break-all">{searchAddress}</span>
-        </EtherscanLink> is not a dao
+          <SearchError>
+            <div className="text-center text-red-500 text-sm">
+              <span className="break-all">
+                {searchAddress} is not a dao...
+              </span>
+            </div>
+          </SearchError>
+        </EtherscanLink>
       </div>
     );
   }
