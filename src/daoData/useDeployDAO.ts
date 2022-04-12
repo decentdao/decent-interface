@@ -19,7 +19,7 @@ const useDeployDAO = (
   const addresses = useAddresses(chainId);
 
   const [contractCallDeploy] = useTransaction();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   let result = useCallback(() => {
     if (
@@ -160,6 +160,20 @@ const useDeployDAO = (
       pendingMessage: "Deploying",
       failedMessage: "Deployment Failed",
       successMessage: "DAO Created",
+      successCallback: (receipt) => {
+        const event = receipt.events?.filter((x) => {
+          return x.address === addresses.daoFactory?.address;
+        });
+        if (
+          event === undefined ||
+          event[0].topics[1] === undefined
+        ) {
+          return "";
+        } else {
+          const daoAddress = abiCoder.decode(["address"], event[0].topics[1]);
+          navigate(`/daos/${daoAddress}`,)
+        }
+      },
       rpcErrorCallback: (error: any) => {
         console.error(error)
       },
