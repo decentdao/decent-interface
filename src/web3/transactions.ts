@@ -13,6 +13,7 @@ interface ContractCallParams {
   pendingMessage: string;
   failedMessage: string;
   successMessage: string;
+  setPending?: React.Dispatch<React.SetStateAction<boolean>>;
   failedCallback?: () => void;
   successCallback?: (txReceipt: ContractReceipt) => void;
   completedCallback?: () => void;
@@ -20,10 +21,7 @@ interface ContractCallParams {
 }
 
 const useTransaction = () => {
-  const [pending, setPending] = useState(false);
-
   const contractCall = useCallback((params: ContractCallParams) => {
-    setPending(true);
     let toastId: React.ReactText;
     toastId = toast(params.pendingMessage, {
       autoClose: false,
@@ -31,6 +29,7 @@ const useTransaction = () => {
       draggable: false,
       closeButton: false,
     });
+    if (params.setPending) params.setPending(true);
 
     params.contractFn()
       .then((txResponse: ethers.ContractTransaction) => {
@@ -50,7 +49,6 @@ const useTransaction = () => {
         ]);
       })
       .then(([txReceipt, toastId]) => {
-        setPending(false);
         toast.dismiss(toastId);
         if (txReceipt.status === 0) {
           toast.error(params.failedMessage);
@@ -63,11 +61,12 @@ const useTransaction = () => {
           if (params.failedCallback) params.failedCallback();
         }
         if (params.completedCallback) params.completedCallback();
+        if (params.setPending) params.setPending(false);
       })
       .catch((error: ProviderRpcError) => {
         console.error(error);
-        setPending(false);
         toast.dismiss(toastId);
+        if (params.setPending) params.setPending(false);
 
         if (error.code === 4001) {
           toast.error("User denied transaction");
@@ -88,7 +87,7 @@ const useTransaction = () => {
       });
   }, []);
 
-  return [contractCall, pending] as const;
+  return [contractCall] as const;
 }
 
 function _formatContractError(error: string) {
