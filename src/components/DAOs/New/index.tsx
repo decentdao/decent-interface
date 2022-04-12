@@ -108,10 +108,6 @@ const New = () => {
     setStep((currPage) => currPage + 1);
   }
 
-  const togglePending = () => {
-    setPending((currPending) => !currPending);
-  }
-
   const deployDAO = (daoName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
     if (
       !signerOrProvider ||
@@ -252,9 +248,11 @@ const New = () => {
       'Deploy failed',
       'Deploy succeeded',
       () => {
-        togglePending()
+        setPending(false);
       },
-      undefined,
+      () => {
+        setPending(true);
+      },
       (receipt: ContractReceipt) => {
         const event = receipt.events?.filter((x) => {
           return x.address === addresses.daoFactory?.address;
