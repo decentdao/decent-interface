@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback } from 'react'
 import { useTransaction } from '../web3/transactions';
 import { useNavigate } from 'react-router';
 import { useWeb3 } from '../web3';
@@ -6,7 +6,16 @@ import { BigNumber, ethers } from 'ethers';
 import { useAddresses } from '../web3/chains';
 import { MetaFactory, MetaFactory__factory } from '../typechain-types';
 
-const useDeployDAO = (
+const useDeployDAO = ({
+  daoName,
+  tokenName,
+  tokenSymbol,
+  tokenSupply,
+  proposalThreshold,
+  quorum,
+  executionDelay,
+  setPending,
+}: {
   daoName: string | undefined,
   tokenName: string | undefined,
   tokenSymbol: string | undefined,
@@ -15,7 +24,7 @@ const useDeployDAO = (
   quorum: number | undefined,
   executionDelay: number | undefined,
   setPending: React.Dispatch<React.SetStateAction<boolean>>
-
+}
 ) => {
   const { signerOrProvider, chainId } = useWeb3();
   const addresses = useAddresses(chainId);
@@ -23,7 +32,7 @@ const useDeployDAO = (
   const [contractCallDeploy] = useTransaction();
   const navigate = useNavigate();
 
-  let result = useCallback(() => {
+  let deployDao = useCallback(() => {
     if (
       !signerOrProvider ||
       !daoName ||
@@ -193,7 +202,6 @@ const useDeployDAO = (
     tokenSymbol,
     tokenSupply,
     proposalThreshold,
-    (proposalThreshold !== 0),
     quorum,
     executionDelay,
     setPending,
@@ -210,7 +218,7 @@ const useDeployDAO = (
     contractCallDeploy,
     navigate
   ])
-  return result;
+  return deployDao;
 }
 
 export default useDeployDAO;
