@@ -7,14 +7,16 @@ import { useAddresses } from '../web3/chains';
 import { MetaFactory, MetaFactory__factory } from '../typechain-types';
 
 const useDeployDAO = (
-  daoName: string | undefined, 
-  tokenName: string | undefined, 
-  tokenSymbol: string | undefined, 
+  daoName: string | undefined,
+  tokenName: string | undefined,
+  tokenSymbol: string | undefined,
   tokenSupply: number | undefined,
   proposalThreshold: number | undefined,
   quorum: number | undefined,
   executionDelay: number | undefined,
-  ) => {
+  setPending: React.Dispatch<React.SetStateAction<boolean>>
+
+) => {
   const { signerOrProvider, chainId } = useWeb3();
   const addresses = useAddresses(chainId);
 
@@ -31,6 +33,7 @@ const useDeployDAO = (
       (!proposalThreshold && proposalThreshold !== 0) ||
       !quorum ||
       !executionDelay ||
+      !setPending ||
       !addresses.metaFactory?.address ||
       !addresses.daoFactory?.address ||
       !addresses.dao?.address ||
@@ -160,6 +163,7 @@ const useDeployDAO = (
       pendingMessage: "Deploying",
       failedMessage: "Deployment Failed",
       successMessage: "DAO Created",
+      setPending,
       successCallback: (receipt) => {
         const event = receipt.events?.filter((x) => {
           return x.address === addresses.daoFactory?.address;
@@ -174,7 +178,11 @@ const useDeployDAO = (
           navigate(`/daos/${daoAddress}`,)
         }
       },
+      completedCallback: () => {
+        setPending(false)
+      },
       rpcErrorCallback: (error: any) => {
+        setPending(false);
         console.error(error)
       },
     });
@@ -184,10 +192,11 @@ const useDeployDAO = (
     tokenName,
     tokenSymbol,
     tokenSupply,
-    proposalThreshold, 
+    proposalThreshold,
     (proposalThreshold !== 0),
     quorum,
     executionDelay,
+    setPending,
     addresses.metaFactory?.address,
     addresses.daoFactory?.address,
     addresses.dao?.address,
@@ -198,7 +207,8 @@ const useDeployDAO = (
     addresses.governorFactory?.address,
     addresses.governorModule?.address,
     addresses.timelockUpgradeable?.address,
-    contractCallDeploy
+    contractCallDeploy,
+    navigate
   ])
   return result;
 }
