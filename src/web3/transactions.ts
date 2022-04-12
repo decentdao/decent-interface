@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ContractReceipt, ethers } from 'ethers';
 import React, { useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
@@ -14,7 +14,7 @@ interface ContractCallParams {
   failedMessage: string;
   successMessage: string;
   failedCallback?: () => void;
-  successCallback?: () => void;
+  successCallback?: (txReceipt: ContractReceipt) => void;
   completedCallback?: () => void;
   rpcErrorCallback?: (reason: string) => void;
 }
@@ -57,7 +57,7 @@ const useTransaction = () => {
           if (params.failedCallback) params.failedCallback();
         } else if (txReceipt.status === 1) {
           toast(params.successMessage);
-          if (params.successCallback) params.successCallback();
+          if (params.successCallback) params.successCallback(txReceipt);
         } else {
           toast.error("Not sure what happened with that transaction");
           if (params.failedCallback) params.failedCallback();
