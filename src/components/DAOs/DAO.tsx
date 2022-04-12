@@ -7,9 +7,30 @@ import useIsDAO from "../../hooks/useIsDAO";
 import SearchingDAO from "./SearchingDAO";
 import { useDAOData } from "../../daoData";
 import H1 from "../ui/H1";
+import Button from "../ui/Button";
 
 function ValidDAO({ address }: { address: string }) {
-  const [{ name, accessControlAddress, moduleAddresses }, setDAOAddress] =
+  const [showDetails, setShowDetails] = useState(false);
+
+  if (showDetails) {
+    return (
+      <ValidDAODetails address={address} setShowDetails={setShowDetails} />
+    );
+  } else {
+    return (
+      <ValidDAOSummary address={address} setShowDetails={setShowDetails} />
+    );
+  }
+}
+
+function ValidDAOSummary({
+  address,
+  setShowDetails,
+}: {
+  address: string;
+  setShowDetails: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [{ name, accessControlAddress }, setDAOAddress] =
     useDAOData();
 
   useEffect(() => {
@@ -25,6 +46,42 @@ function ValidDAO({ address }: { address: string }) {
         is a valid dao!
       </H1>
       <div>
+        <Button disabled={false} onClick={() => setShowDetails(true)}>
+          DAO Details
+        </Button>
+        <div>name: {name}</div>
+        <div>access control address: {accessControlAddress}</div>
+      </div>
+    </div>
+  );
+}
+
+function ValidDAODetails({
+  address,
+  setShowDetails,
+}: {
+  address: string;
+  setShowDetails: React.Dispatch<React.SetStateAction<boolean>>;
+}) {
+  const [{ name, accessControlAddress, moduleAddresses }, setDAOAddress] =
+    useDAOData();
+
+  useEffect(() => {
+    setDAOAddress(address);
+  }, [address, setDAOAddress]);
+
+  return (
+    <div>
+      <H1>
+        <EtherscanLink address={address}>
+          <span className="break-all">{address}</span>
+        </EtherscanLink>{" "}
+        Details
+      </H1>
+      <div>
+        <Button disabled={false} onClick={() => setShowDetails(false)}>
+          Back
+        </Button>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>
         {moduleAddresses?.map((address, index) => (
