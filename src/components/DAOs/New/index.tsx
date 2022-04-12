@@ -11,6 +11,7 @@ import { useWeb3 } from '../../../web3';
 import { ContractReceipt } from '@ethersproject/contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useAddresses } from '../../../web3/chains';
+import Pending from '../../Pending';
 
 const StepDisplay = ({
   step,
@@ -88,6 +89,8 @@ const New = () => {
   const [step, setStep] = useState(0);
   const [prevEnabled, setPrevEnabled] = useState(false);
   const [nextEnabled, setNextEnabled] = useState(false);
+  const [pending, setPending] = useState(false);
+
 
   const [daoName, setDAOName] = useState<string>();
   const [tokenName, setTokenName] = useState<string>();
@@ -103,6 +106,10 @@ const New = () => {
 
   const increment = () => {
     setStep((currPage) => currPage + 1);
+  }
+
+  const togglePending = () => {
+    setPending((currPending) => !currPending);
   }
 
   const deployDAO = (daoName: string, tokenName: string, tokenSymbol: string, tokenSupply: number) => {
@@ -244,7 +251,9 @@ const New = () => {
       'Deploying',
       'Deploy failed',
       'Deploy succeeded',
-      undefined,
+      () => {
+        togglePending()
+      },
       undefined,
       (receipt: ContractReceipt) => {
         const event = receipt.events?.filter((x) => {
@@ -264,6 +273,9 @@ const New = () => {
   }
   return (
     <div>
+      <Pending
+        pending={pending}
+      />
       <ConnectModal />
       <div className="mx-24">
         <div className="mt-24 text-xl">{!daoName || daoName.trim() === "" ? "New Fractal Configuration" : daoName + " - Configuration"}</div>
