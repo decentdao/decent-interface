@@ -26,23 +26,24 @@ export const useTransaction = () => {
           toast(
             pendingMessage,
           );
-          if (stoppedCallback) stoppedCallback();
+          if (waitingCallback) waitingCallback();
           return Promise.all([txResponse.wait(), toastId]);
         })
         .then(([txReceipt, toastId]) => {
           toast.dismiss(toastId);
           if (txReceipt.status === 0) {
             toast(failedMessage);
+            if (stoppedCallback) stoppedCallback();
           } else if (txReceipt.status === 1) {
             toast(successMessage);
             if (waitingCallback) waitingCallback();
           } else {
             toast(failedMessage);
+            if (stoppedCallback) stoppedCallback();
           }
           if (completedCallback) completedCallback(txReceipt);
 
           if (txnHashCallback) txnHashCallback(txReceipt.transactionHash);
-          return txReceipt;
         })
         .catch((error: ProviderRpcError) => {
           if (stoppedCallback) stoppedCallback();
