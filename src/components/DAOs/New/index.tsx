@@ -97,74 +97,74 @@ const New = () => {
   }
 
   const deploy = useDeployDAO(
-    daoName, 
-    tokenName, 
-    tokenSymbol, 
+    daoName,
+    tokenName,
+    tokenSymbol,
     tokenSupply,
     proposalThreshold,
     quorum,
     executionDelay,
     setPending
-    )
-return (
-  <div>
-    <Pending
-      pending={pending}
-    />
-    <ConnectModal />
-    <div className="mx-24">
-      <div className="mt-24 text-xl">{!daoName || daoName.trim() === "" ? "New Fractal Configuration" : daoName + " - Configuration"}</div>
-      <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
-        <form onSubmit={e => e.preventDefault()}>
-          <StepDisplay
-            step={step}
-            setPrevEnabled={setPrevEnabled}
-            setNextEnabled={setNextEnabled}
-            daoName={daoName}
-            setDAOName={setDAOName}
-            tokenName={tokenName}
-            setTokenName={setTokenName}
-            tokenSymbol={tokenSymbol}
-            setTokenSymbol={setTokenSymbol}
-            tokenSupply={tokenSupply}
-            setTokenSupply={setTokenSupply}
-            proposalThreshold={proposalThreshold}
-            quorum={quorum}
-            executionDelay={executionDelay}
-          />
-        </form>
-      </div>
+  )
+  return (
+    <div>
+      <Pending
+        pending={pending}
+      />
+      <ConnectModal />
+      <div className="mx-24">
+        <div className="mt-24 text-xl">{!daoName || daoName.trim() === "" ? "New Fractal Configuration" : daoName + " - Configuration"}</div>
+        <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
+          <form onSubmit={e => e.preventDefault()}>
+            <StepDisplay
+              step={step}
+              setPrevEnabled={setPrevEnabled}
+              setNextEnabled={setNextEnabled}
+              daoName={daoName}
+              setDAOName={setDAOName}
+              tokenName={tokenName}
+              setTokenName={setTokenName}
+              tokenSymbol={tokenSymbol}
+              setTokenSymbol={setTokenSymbol}
+              tokenSupply={tokenSupply}
+              setTokenSupply={setTokenSupply}
+              proposalThreshold={proposalThreshold}
+              quorum={quorum}
+              executionDelay={executionDelay}
+            />
+          </form>
+        </div>
 
-      <div className="flex items-center justify-center">
-        {step > 0 && (
-          <Button
-            onClick={decrement}
-            disabled={!prevEnabled}
-          >
-            Prev
-          </Button>
-        )}
-        {step < 2 && (
-          <Button
-            onClick={increment}
-            disabled={!nextEnabled}
-          >
-            Next
-          </Button>
-        )}
-        {step > 1 && (
-          <Button onClick={() => {
-            if (!daoName || !tokenName || !tokenSymbol || !tokenSupply) { return }
-            deploy();
-          }
-          }>
-            Create DAO
-          </Button>
-        )}
+        <div className="flex items-center justify-center">
+          {step > 0 && (
+            <Button
+              onClick={decrement}
+              disabled={!prevEnabled}
+            >
+              Prev
+            </Button>
+          )}
+          {step < 2 && (
+            <Button
+              onClick={increment}
+              disabled={!nextEnabled}
+            >
+              Next
+            </Button>
+          )}
+          {step > 1 && (
+            <Button onClick={() => {
+              if (!daoName || !tokenName || !tokenSymbol || !tokenSupply) { return }
+              deploy();
+            }
+            }>
+              Create DAO
+            </Button>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default New;
