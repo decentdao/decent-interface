@@ -1,76 +1,102 @@
-import { ContractReceipt, ContractTransaction } from 'ethers';
-import React, { useCallback } from 'react';
+import { ethers } from 'ethers';
+import React, { useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
 
 interface ProviderRpcError extends Error {
   message: string;
   code: number;
-  data?: unknown;
+  data?: any;
 }
 
-export const useTransaction = () => {
-  const contractCall = useCallback(
-    (
-      contractFn: () => Promise<ContractTransaction>,
-      pendingMessage: string,
-      failedMessage: string,
-      successMessage: string,
-      stoppedCallback?: () => void,
-      waitingCallback?: () => void,
-      completedCallback?: (txReceipt: ContractReceipt) => void,
-      txnHashCallback?: (hash: string) => void
-    ) => {
-      let toastId: React.ReactText;
-      contractFn()
-        .then((txResponse: ContractTransaction) => {
-          toast(
-            pendingMessage,
-          );
-          if (waitingCallback) waitingCallback();
-          return Promise.all([txResponse.wait(), toastId]);
-        })
-        .then(([txReceipt, toastId]) => {
-          toast.dismiss(toastId);
-          if (txReceipt.status === 0) {
-            toast(failedMessage);
-            if (stoppedCallback) stoppedCallback();
-          } else if (txReceipt.status === 1) {
-            toast(successMessage);
-            if (waitingCallback) waitingCallback();
-          } else {
-            toast(failedMessage);
-            if (stoppedCallback) stoppedCallback();
-          }
-          if (completedCallback) completedCallback(txReceipt);
+interface ContractCallParams {
+  contractFn: () => Promise<ethers.ContractTransaction>;
+  pendingMessage: string;
+  failedMessage: string;
+  successMessage: string;
+  failedCallback?: () => void;
+  successCallback?: () => void;
+  completedCallback?: () => void;
+  rpcErrorCallback?: (reason: string) => void;
+}
 
-          if (txnHashCallback) txnHashCallback(txReceipt.transactionHash);
-        })
-        .catch((error: ProviderRpcError) => {
-          if (stoppedCallback) stoppedCallback();
-          toast.dismiss(toastId);
-          console.error(error);
-          if (error.code !== 4001) {
-            switch (error.code) {
-              case 4100:
-                toast(failedMessage);
-                break;
-              case 4200:
-                toast(failedMessage);
-                break;
-              case 4900:
-                toast(failedMessage);
-                break;
-              case 4901:
-                toast(failedMessage);
-                break;
-            }
-          } else {
-            toast(failedMessage);
-          }
-        });
-    },
-    []
-  );
+const useTransaction = () => {
+  const [pending, setPending] = useState(false);
 
-  return { contractCall };
-};
+  const contractCall = useCallback((params: ContractCallParams) => {
+    setPending(true);
+    let toastId: React.ReactText;
+    toastId = toast(params.pendingMessage, {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      closeButton: false,
+    });
+
+    params.contractFn()
+      .then((txResponse: ethers.ContractTransaction) => {
+        const wait =
+          process.env.NODE_ENV !== "development"
+            ? 0
+            : process.env.REACT_APP_DEVELOPMENT_TX_WAIT_MS
+              ? parseInt(process.env.REACT_APP_DEVELOPMENT_TX_WAIT_MS)
+              : 0
+
+        return Promise.all([
+          new Promise(resolve => setTimeout(
+            () => resolve(null),
+            wait
+          )).then(() => txResponse.wait()),
+          toastId
+        ]);
+      })
+      .then(([txReceipt, toastId]) => {
+        setPending(false);
+        toast.dismiss(toastId);
+        if (txReceipt.status === 0) {
+          toast.error(params.failedMessage);
+          if (params.failedCallback) params.failedCallback();
+        } else if (txReceipt.status === 1) {
+          toast(params.successMessage);
+          if (params.successCallback) params.successCallback();
+        } else {
+          toast.error("Not sure what happened with that transaction");
+          if (params.failedCallback) params.failedCallback();
+        }
+        if (params.completedCallback) params.completedCallback();
+      })
+      .catch((error: ProviderRpcError) => {
+        console.error(error);
+        setPending(false);
+        toast.dismiss(toastId);
+
+        if (error.code === 4001) {
+          toast.error("User denied transaction");
+          return;
+        }
+
+        if (params.rpcErrorCallback) {
+          let msg = (error.data?.message ?? "No reason") as string;
+
+          if (msg.includes('reason string')) {
+            msg = msg.split('reason string')[1];
+          }
+
+          params.rpcErrorCallback(_formatContractError(msg));
+        } else {
+          toast.error("There was an error! Check your browser's console logs for more details.");
+        }
+      });
+  }, []);
+
+  return [contractCall, pending] as const;
+}
+
+function _formatContractError(error: string) {
+  if (error.includes('not the owner')) { // surely there's a better way to do this... right? T_T
+    return "Only the contract owner can do this";
+  }
+
+  return error;
+}
+
+export { useTransaction };
