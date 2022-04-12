@@ -103,7 +103,8 @@ const New = () => {
     tokenSupply,
     proposalThreshold,
     quorum,
-    executionDelay
+    executionDelay,
+    setPending
     )
 return (
   <div>
