@@ -18,6 +18,11 @@ module.exports = {
       sans: ['IBM Plex Sans'],
       mono: ['IBM Plex Mono'],
     },
+    extend: {   
+       colors: {
+      'header-black': '#1b1a1a',
+       } 
+    }
   },
   plugins: [],
 }
