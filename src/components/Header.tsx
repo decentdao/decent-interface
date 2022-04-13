@@ -73,7 +73,7 @@ function Header() {
         <div className="mr-2 mb-4 sm:mb-0">
           <div className="mr-2 text-2xl text-white tracking-widest">
             <Link to="/">
-            <img src={logo} alt="Logo" />
+              <img src={logo} alt="Logo" />
             </Link>
           </div>
         </div>
