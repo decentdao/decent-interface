@@ -64,22 +64,22 @@ function Header() {
   const avatarURL = useAvatar(account);
 
   return (
-    <header className="py-4 border-b">
+    <header className="py-4 border-b bg-header-black">
       <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mr-2 mb-4 sm:mb-0">
-          <div className="mr-2 text-2xl">
+          <div className="mr-2 text-2xl text-white tracking-widest">
             <Link to="/">
-              fractal
+              FRACTAL
             </Link>
           </div>
         </div>
-        <div className="sm:text-right">
+        <div className="sm:text-right text-white">
           {!account && (
             <Button
               onClick={connect}
               disabled={false}
             >
-              connect wallet
+              Connect Wallet
             </Button>
           )}
           {account && (
