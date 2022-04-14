@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTransaction } from '../web3/transactions';
 import { useNavigate } from 'react-router';
 import { useWeb3 } from '../web3';
@@ -29,8 +29,12 @@ const useDeployDAO = ({
   const { signerOrProvider, chainId } = useWeb3();
   const addresses = useAddresses(chainId);
 
-  const [contractCallDeploy] = useTransaction();
+  const [contractCallDeploy, contractCallPending] = useTransaction();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setPending(contractCallPending);
+  }, [setPending, contractCallPending]);
 
   let deployDao = useCallback(() => {
     if (
@@ -172,7 +176,6 @@ const useDeployDAO = ({
       pendingMessage: "Deploying",
       failedMessage: "Deployment Failed",
       successMessage: "DAO Created",
-      setPending,
       successCallback: (receipt) => {
         const event = receipt.events?.filter((x) => {
           return x.address === addresses.daoFactory?.address;
@@ -187,11 +190,7 @@ const useDeployDAO = ({
           navigate(`/daos/${daoAddress}`,)
         }
       },
-      completedCallback: () => {
-        setPending(false)
-      },
       rpcErrorCallback: (error: any) => {
-        setPending(false);
         console.error(error)
       },
     });
