@@ -16,7 +16,7 @@ function JazziconAvatar({
   address: string,
 }) {
   return (
-    <div className="ml-2 h-8 w-8">
+    <div className="h-7 w-7">
       <Jazzicon address={address} />
     </div>
   );
@@ -32,7 +32,7 @@ function URLAvatar({
   })
 
   return (
-    <div className="ml-2 h-8 w-8">
+    <div className="ml-2 h-7 w-7">
       <img className="rounded-full" src={src} alt="avatar" />
     </div>
   );
