@@ -2,13 +2,12 @@ import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Jazzicon } from '@ukstv/jazzicon-react';
 import { useImage } from 'react-image';
-
 import { useWeb3 } from '../web3';
 import { connect, disconnect } from '../web3/providers';
-import Button from './ui/Button';
 import useDisplayName from '../hooks/useDisplayName';
 import useAvatar from '../hooks/useAvatar';
 import EtherscanLink from './ui/EtherscanLink';
+import HeaderDropdown from './ui/HeaderDropdown';
 
 function JazziconAvatar({
   address,
@@ -16,7 +15,7 @@ function JazziconAvatar({
   address: string,
 }) {
   return (
-    <div className="ml-2 h-10 w-10">
+    <div className="h-7 w-7">
       <Jazzicon address={address} />
     </div>
   );
@@ -32,7 +31,7 @@ function URLAvatar({
   })
 
   return (
-    <div className="ml-2 h-10 w-10">
+    <div className="h-7 w-7">
       <img className="rounded-full" src={src} alt="avatar" />
     </div>
   );
@@ -58,48 +57,43 @@ function Avatar({
   )
 }
 
+
 function Header() {
   const { account } = useWeb3();
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
 
   return (
-    <header className="py-4 border-b">
+    <header className="py-4 border-b bg-black">
       <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mr-2 mb-4 sm:mb-0">
-          <div className="mr-2 text-2xl">
+          <div className="mr-2 text-2xl uppercase text-white tracking-widest">
             <Link to="/">
               fractal
             </Link>
           </div>
         </div>
-        <div className="sm:text-right">
+        <div className="sm:text-right text-sm text-gold">
           {!account && (
-            <Button
+            <button
               onClick={connect}
-              disabled={false}
             >
-              connect wallet
-            </Button>
+              Connect Wallet
+            </button>
           )}
           {account && (
             <div className="flex items-center">
-              <div className="flex flex-col items-end">
-                <div className="text-xl">
+              <EtherscanLink address={account}>
+                <Avatar address={account} url={avatarURL} />
+              </EtherscanLink>
+              <div className="pl-2 flex flex-col items-end">
+                <div className="sm:text-right text-sm">
                   <EtherscanLink address={account}>
                     {accountDisplayName}
                   </EtherscanLink>
                 </div>
-                <button
-                  className="px-0.5 border rounded shadow text-xs block"
-                  onClick={disconnect}
-                >
-                  disconnect
-                </button>
               </div>
-              <EtherscanLink address={account}>
-                <Avatar address={account} url={avatarURL} />
-              </EtherscanLink>
+              <HeaderDropdown disconnect={disconnect} />
             </div>
           )}
         </div>
