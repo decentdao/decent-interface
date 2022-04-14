@@ -31,7 +31,7 @@ function URLAvatar({
   })
 
   return (
-    <div className="ml-2 h-7 w-7">
+    <div className="h-7 w-7">
       <img className="rounded-full" src={src} alt="avatar" />
     </div>
   );
@@ -64,20 +64,19 @@ function Header() {
   const avatarURL = useAvatar(account);
 
   return (
-    <header className="py-4 border-b bg-header-black">
+    <header className="py-4 border-b bg-black">
       <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mr-2 mb-4 sm:mb-0">
-          <div className="mr-2 text-2xl text-white tracking-logo">
+          <div className="mr-2 text-2xl uppercase text-white tracking-widest">
             <Link to="/">
-              FRACTAL
+              fractal
             </Link>
           </div>
         </div>
-        <div className="sm:text-right text-sm text-header-gold">
+        <div className="sm:text-right text-sm text-gold">
           {!account && (
             <button
               onClick={connect}
-              disabled={false}
             >
               Connect Wallet
             </button>
