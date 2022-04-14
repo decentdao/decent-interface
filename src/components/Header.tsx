@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Jazzicon } from '@ukstv/jazzicon-react';
 import { useImage } from 'react-image';
@@ -8,6 +8,7 @@ import { connect, disconnect } from '../web3/providers';
 import useDisplayName from '../hooks/useDisplayName';
 import useAvatar from '../hooks/useAvatar';
 import EtherscanLink from './ui/EtherscanLink';
+import HeaderDropdown from './ui/HeaderDropdown';
 
 function JazziconAvatar({
   address,
@@ -57,15 +58,11 @@ function Avatar({
   )
 }
 
+
 function Header() {
-  const [dropDown, setDropDown] = useState<boolean>(false);
   const { account } = useWeb3();
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
-
-  const toggleDropDown = () => {
-    setDropDown((curr) => !curr)
-  }
 
   return (
     <header className="py-4 border-b bg-header-black">
@@ -98,34 +95,7 @@ function Header() {
                   </EtherscanLink>
                 </div>
               </div>
-
-              <div className="relative">
-                <button
-                  id="dropdownInformationButton"
-                  data-dropdown-toggle="dropdownInformation"
-                  className="text-white"
-                  onClick={toggleDropDown}
-                  type="button">
-                  <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </button>
-
-                {
-                  dropDown &&
-                  <div id="dropdownInformation"
-                    className="bg-white absolute right-0 text-base z-50 list-none divide-y divide-gray-100 rounded shadow my-4">
-                    <div className="py-1">
-                      <button
-                        className="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                        onClick={disconnect}
-                      >
-                        Disconnect
-                      </button>
-
-                    </div>
-                  </div>
-                }
-              </div>
+              <HeaderDropdown disconnect={disconnect} />
             </div>
           )}
         </div>
