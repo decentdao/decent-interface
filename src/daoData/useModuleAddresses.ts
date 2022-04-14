@@ -29,14 +29,11 @@ const useModuleAddresses = (
     accessControlContract
       .queryFilter(filter)
       .then((events) => {
-        const newAddActionRoleTargets: string[] = [];
-        events.forEach((event) => {
-          if (event.args.target !== daoContract.address) {
-            newAddActionRoleTargets.push(event.args.target);
-          }
-        });
-
-        setAddActionRoleTargets(newAddActionRoleTargets);
+        setAddActionRoleTargets(
+          events
+            .filter(event => event.args.target !== daoContract.address)
+            .map(event => event.args.target)
+        );
       })
       .catch(console.error);
   }, [daoContract, accessControlContract]);
@@ -50,9 +47,11 @@ const useModuleAddresses = (
     const filter = accessControlContract.filters.ActionRoleAdded();
 
     const listenerCallback = (target: string, functionDesc: string, encodedSig: string, role: string, _: any) => {
-      if(target !== daoContract.address) {
-        setAddActionRoleTargets([...addActionRoleTargets, target]);
+      if (target === daoContract.address) {
+        return;
       }
+
+      setAddActionRoleTargets([...addActionRoleTargets, target]);
     }
 
     accessControlContract.on(filter, listenerCallback);
@@ -71,14 +70,11 @@ const useModuleAddresses = (
     accessControlContract
       .queryFilter(filter)
       .then((events) => {
-        const newRemoveActionRoleTargets: string[] = [];
-        events.forEach((event) => {
-          if (event.args.target !== daoContract.address) {
-            newRemoveActionRoleTargets.push(event.args.target);
-          }
-
-          setRemoveActionRoleTargets(newRemoveActionRoleTargets);
-        });
+        setRemoveActionRoleTargets(
+          events
+            .filter(event => event.args.target !== daoContract.address)
+            .map(event => event.args.target)
+        );
       })
       .catch(console.error);
   }, [daoContract, accessControlContract]);
@@ -92,10 +88,11 @@ const useModuleAddresses = (
     const filter = accessControlContract.filters.ActionRoleRemoved();
 
     const listenerCallback = (target: string, functionDesc: string, encodedSig: string, role: string, _: any) => {
-
-      if(target !== daoContract.address) {
-        setRemoveActionRoleTargets([...removeActionRoleTargets, target]);
+      if (target === daoContract.address) {
+        return;
       }
+
+      setRemoveActionRoleTargets([...removeActionRoleTargets, target]);
     }
 
     accessControlContract.on(filter, listenerCallback);
@@ -130,17 +127,12 @@ const useModuleAddresses = (
         return module.address === target;
       });
 
-      if (index !== -1) {
-        newModulesActionRoleEvents[index].removeEventCount++;
-      } else {
-        const newModuleActionRoleEvents: ModuleActionRoleEvents = {
-          address: target,
-          addEventCount: 0,
-          removeEventCount: 1,
-        };
-
-        newModulesActionRoleEvents.push(newModuleActionRoleEvents);
+      if (index === -1) {
+        console.error("shouldn't see this, trying to remove event that wasn't added")
+        return;
       }
+
+      newModulesActionRoleEvents[index].removeEventCount++;
     });
 
     setModulesActionRoleEvents(newModulesActionRoleEvents);
@@ -153,14 +145,11 @@ const useModuleAddresses = (
       return;
     }
 
-    const newModuleAddresses: string[] = [];
-    modulesActionRoleEvents.forEach((module) => {
-      if(module.addEventCount > module.removeEventCount) {
-        newModuleAddresses.push(module.address);
-      }
-    });
-
-    setModuleAddresses(newModuleAddresses);
+    setModuleAddresses(
+      modulesActionRoleEvents
+        .filter(module => module.addEventCount > module.removeEventCount)
+        .map(module => module.address)
+    );
     
   }, [modulesActionRoleEvents]);
 
