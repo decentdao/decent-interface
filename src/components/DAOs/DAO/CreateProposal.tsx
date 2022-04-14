@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../../ui/Button";
 import CreateDAOInput from "../../ui/CreateDAOInput";
 import { BigNumber, ethers } from "ethers";
