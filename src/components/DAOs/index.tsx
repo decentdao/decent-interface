@@ -9,7 +9,7 @@ function DAOs() {
     <Routes>
       <Route index element={<DAOSearch />} />
       <Route path="new" element={<New />} />
-      <Route path=":address" element={<DAO />} />
+      <Route path=":address/*" element={<DAO />} />
     </Routes>
   );
 }
