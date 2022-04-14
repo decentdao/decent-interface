@@ -21,11 +21,11 @@ module.exports = {
     letterSpacing: {
       logo: '.25em',
     },
-    extend: {   
-       colors: {
-      'header-black': '#1b1a1a',
-      'header-gold': '#fabd2e',
-       } 
+    extend: {
+      colors: {
+        'header-black': '#1b1a1a',
+        'header-gold': '#fabd2e',
+      }
     }
   },
   plugins: [],
