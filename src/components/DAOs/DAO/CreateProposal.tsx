@@ -21,7 +21,8 @@ const Transaction = ({
   transaction,
   transactionNumber,
   updateTransaction,
-  removeTransaction
+  removeTransaction,
+  transactionCount,
 }: {
   transaction: TransactionData;
   transactionNumber: number;
@@ -29,7 +30,8 @@ const Transaction = ({
     transactionData: TransactionData,
     transactionNumber: number,
   ) => void,
-  removeTransaction: (transactionNumber: number) => void
+  removeTransaction: (transactionNumber: number) => void,
+  transactionCount: number
 }) => {
   const updateTargetAddress = (targetAddress: string) => {
     const newTransactionData = {
@@ -79,9 +81,9 @@ const Transaction = ({
     <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
       <div className="flex flex-row">
         <div className="flex pb-8 text-lg">Transaction</div>
-        <div className="flex pb-8 text-sm cursor-pointer" onClick={() => removeTransaction(transactionNumber)}>
+        {transactionCount > 1 && <div className="flex pb-8 text-sm cursor-pointer" onClick={() => removeTransaction(transactionNumber)}>
           Remove Transaction
-        </div>
+        </div>}
       </div>
       <CreateDAOInput
         dataType="text"
@@ -149,6 +151,7 @@ const Transactions = ({
           transactionNumber={index}
           updateTransaction={updateTransaction}
           removeTransaction={removeTransaction}
+          transactionCount={transactions.length}
         />
       ))}
     </div>
