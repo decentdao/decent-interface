@@ -74,10 +74,10 @@ const StepDisplay = ({
 }
 
 const New = () => {
-  const [step, setStep] = useState(0);
-  const [prevEnabled, setPrevEnabled] = useState(false);
-  const [nextEnabled, setNextEnabled] = useState(false);
-  const [pending, setPending] = useState(false);
+  const [step, setStep] = useState<number>(0);
+  const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
+  const [nextEnabled, setNextEnabled] = useState<boolean>(false);
+  const [pending, setPending] = useState<boolean>(false);
 
 
   const [daoName, setDAOName] = useState<string>();
