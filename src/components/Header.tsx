@@ -68,9 +68,9 @@ function Header() {
     <header className="py-4 border-b bg-header-black">
       <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mr-2 mb-4 sm:mb-0">
-          <div className="mr-2 text-2xl text-white tracking-widest">
+          <div className="mr-2 text-2xl text-white tracking-logo">
             <Link to="/">
-              <img src={logo} alt="Logo" />
+              FRACTAL
             </Link>
           </div>
         </div>
