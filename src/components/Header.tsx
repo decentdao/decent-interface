@@ -2,7 +2,6 @@ import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Jazzicon } from '@ukstv/jazzicon-react';
 import { useImage } from 'react-image';
-import logo from "../assets/imgs/Logo.svg"
 import { useWeb3 } from '../web3';
 import { connect, disconnect } from '../web3/providers';
 import useDisplayName from '../hooks/useDisplayName';
