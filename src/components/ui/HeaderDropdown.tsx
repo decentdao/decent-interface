@@ -10,9 +10,9 @@ const HeaderDropdown = (
         <Menu>
           {({ open }) => (
             <>
-              <Menu.Button className="text-sm font-medium text-white transition duration-150 ease-in-out border-gray-300 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800">
+              <Menu.Button className="text-sm font-medium text-white transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue">
                 <svg
-                  className="w-5 h-5 ml-1 mt-1"
+                  className="w-5 h-5 ml-3 mt-1"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
