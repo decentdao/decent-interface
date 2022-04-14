@@ -10,10 +10,9 @@ const HeaderDropdown = (
         <Menu>
           {({ open }) => (
             <>
-              <span className="rounded-md shadow-sm">
-                <Menu.Button className="inline-flex justify-center text-sm font-medium text-white transition duration-150 ease-in-out border-gray-300 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800">
+                <Menu.Button className="text-sm font-medium text-white transition duration-150 ease-in-out border-gray-300 hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-50 active:text-gray-800">
                   <svg
-                    className="w-5 h-5 ml-2 -mr-1"
+                    className="w-5 h-5 ml-1 mt-1"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -24,7 +23,6 @@ const HeaderDropdown = (
                     />
                   </svg>
                 </Menu.Button>
-              </span>
 
               <Transition
                 show={open}
@@ -37,7 +35,7 @@ const HeaderDropdown = (
               >
                 <Menu.Items
                   static
-                  className="absolute right-0 w-56 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none"
+                  className="absolute right-0 w-36 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg outline-none"
                 >
                   <div className="py-1">
                     <Menu.Item>
