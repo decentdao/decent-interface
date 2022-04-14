@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../ui/Button";
 import CreateDAOInput from "../../ui/CreateDAOInput";
+import { BigNumber, ethers } from "ethers";
 
 type TransactionData = {
   targetAddress: string;
+  functionName: string;
   functionSignature: string;
   parameters: string;
 };
+
+type ProposalData = {
+  targets: string[];
+  values: BigNumber[];
+  calldatas: string[];
+  description: string;
+}
 
 const Transaction = ({
   transaction,
@@ -25,6 +34,18 @@ const Transaction = ({
   const updateTargetAddress = (targetAddress: string) => {
     const newTransactionData = {
       targetAddress: targetAddress,
+      functionName: transaction.functionName,
+      functionSignature: transaction.functionSignature,
+      parameters: transaction.parameters,
+    };
+
+    updateTransaction(newTransactionData, transactionNumber);
+  };
+
+  const updateFunctionName = (functionName: string) => {
+    const newTransactionData = {
+      targetAddress: transaction.targetAddress,
+      functionName: functionName,
       functionSignature: transaction.functionSignature,
       parameters: transaction.parameters,
     };
@@ -35,6 +56,7 @@ const Transaction = ({
   const updateFunctionSignature = (functionSignature: string) => {
     const newTransactionData = {
       targetAddress: transaction.targetAddress,
+      functionName: transaction.functionName,
       functionSignature: functionSignature,
       parameters: transaction.parameters,
     };
@@ -45,6 +67,7 @@ const Transaction = ({
   const updateParameters = (parameters: string) => {
     const newTransactionData = {
       targetAddress: transaction.targetAddress,
+      functionName: transaction.functionName,
       functionSignature: transaction.functionSignature,
       parameters: parameters,
     };
@@ -66,6 +89,14 @@ const Transaction = ({
         onChange={(e) => updateTargetAddress(e)}
         label="Target Address"
         helperText="The smart contract address this proposal will modify"
+        disabled={false}
+      />
+      <CreateDAOInput
+        dataType="text"
+        value={transaction.functionName}
+        onChange={(e) => updateFunctionName(e)}
+        label="Function Name"
+        helperText="The name of the function to be called if this proposal passes"
         disabled={false}
       />
       <CreateDAOInput
@@ -125,27 +156,15 @@ const Transactions = ({
 };
 
 const Essentials = ({
-  proposalTitle,
   proposalDescription,
-  setProposalTitle,
   setProposalDescription,
 }: {
-  proposalTitle: string;
   proposalDescription: string;
-  setProposalTitle: React.Dispatch<React.SetStateAction<string>>;
   setProposalDescription: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   return (
     <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
       <div className="pb-8 text-lg">Essentials</div>
-      <CreateDAOInput
-        dataType="text"
-        value={proposalTitle}
-        onChange={(e) => setProposalTitle(e)}
-        label="Proposal Title"
-        helperText="What's this proposal called? Good titles are brief yet descriptive"
-        disabled={false}
-      />
       <CreateDAOInput
         dataType="text"
         value={proposalDescription}
@@ -160,11 +179,11 @@ const Essentials = ({
 
 const CreateProposal = ({ address }: { address: string }) => {
   const [step, setStep] = useState(0);
-  const [proposalTitle, setProposalTitle] = useState("");
   const [proposalDescription, setProposalDescription] = useState("");
   const [transactions, setTransactions] = useState<TransactionData[]>([
     {
       targetAddress: "",
+      functionName: "",
       functionSignature: "",
       parameters: "",
     },
@@ -173,7 +192,7 @@ const CreateProposal = ({ address }: { address: string }) => {
   const addTransaction = () => {
     setTransactions([
       ...transactions,
-      { targetAddress: "", functionSignature: "", parameters: "" },
+      { targetAddress: "", functionName: "", functionSignature: "", parameters: "" },
     ]);
   };
 
@@ -192,6 +211,29 @@ const CreateProposal = ({ address }: { address: string }) => {
     setStep((currentStep) => currentStep + 1);
   };
 
+  const submitProposal = () => {
+    let proposalData: ProposalData = {
+      targets: [],
+      values: [],
+      calldatas: [],
+      description: proposalDescription,
+    };
+
+    proposalData.description = proposalDescription;
+
+    transactions.forEach((transaction) => {
+      proposalData.targets.push(transaction.targetAddress);
+      proposalData.values.push(BigNumber.from("0"));
+
+      const functionInterface = new ethers.utils.Interface([transaction.functionSignature]);
+      const functionData = functionInterface.encodeFunctionData(transaction.functionName, JSON.parse(transaction.parameters));
+      console.log("Function interface: ", functionInterface);
+      console.log("Function Name: ", transaction.functionName);
+      console.log("Parameters: ", JSON.parse(transaction.parameters));
+      console.log("Function data: ", functionData);
+    });
+  }
+
   return (
     <div className="mx-24">
       <div className="mt-24 text-xl">Create Proposal</div>
@@ -199,9 +241,7 @@ const CreateProposal = ({ address }: { address: string }) => {
       <div>
         {step === 0 && (
           <Essentials
-            proposalTitle={proposalTitle}
             proposalDescription={proposalDescription}
-            setProposalTitle={setProposalTitle}
             setProposalDescription={setProposalDescription}
           />
         )}
@@ -225,6 +265,11 @@ const CreateProposal = ({ address }: { address: string }) => {
         {step === 1 && (
           <Button onClick={decrementStep} disabled={false}>
             Back
+          </Button>
+        )}
+        {step === 1 && (
+          <Button onClick={submitProposal} disabled={false}>
+            Create Proposal
           </Button>
         )}
         {step === 0 && (
