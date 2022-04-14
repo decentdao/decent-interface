@@ -7,7 +7,6 @@ import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
-import Button from "../../ui/Button";
 
 function ValidDAO({
   address,
