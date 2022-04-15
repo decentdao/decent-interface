@@ -114,9 +114,9 @@ const New = () => {
         pending={pending}
       />
       <ConnectModal />
-      <div className="mx-24">
-        <div className="mt-24 text-xl">{!daoName || daoName.trim() === "" ? "New Fractal Configuration" : daoName + " - Configuration"}</div>
-        <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
+      <div >
+        <div className="text-2xl capitalize text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" :"Configure - " + daoName}</div>
+        <div className="rounded-lg bg-black px-4 mt-4 mb-8 pt-4 pb-6 content-center">
           <form onSubmit={e => e.preventDefault()}>
             <StepDisplay
               step={step}
