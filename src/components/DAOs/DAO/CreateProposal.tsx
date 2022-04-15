@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../ui/Button";
 import CreateDAOInput from "../../ui/CreateDAOInput";
 import { BigNumber, ethers } from "ethers";
+import useCreateProposal from "../../../daoData/useCreateProposal";
+import { useDAOData } from "../../../daoData";
+import ConnectModal from '../../ConnectModal';
+import Pending from '../../Pending';
 
 type TransactionData = {
   targetAddress: string;
@@ -15,7 +19,7 @@ type ProposalData = {
   values: BigNumber[];
   calldatas: string[];
   description: string;
-}
+};
 
 const Transaction = ({
   transaction,
@@ -28,10 +32,10 @@ const Transaction = ({
   transactionNumber: number;
   updateTransaction: (
     transactionData: TransactionData,
-    transactionNumber: number,
-  ) => void,
-  removeTransaction: (transactionNumber: number) => void,
-  transactionCount: number
+    transactionNumber: number
+  ) => void;
+  removeTransaction: (transactionNumber: number) => void;
+  transactionCount: number;
 }) => {
   const updateTargetAddress = (targetAddress: string) => {
     const newTransactionData = {
@@ -81,9 +85,14 @@ const Transaction = ({
     <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
       <div className="flex flex-row">
         <div className="flex pb-8 text-lg">Transaction</div>
-        {transactionCount > 1 && <div className="flex pb-8 text-sm cursor-pointer" onClick={() => removeTransaction(transactionNumber)}>
-          Remove Transaction
-        </div>}
+        {transactionCount > 1 && (
+          <div
+            className="flex pb-8 text-sm cursor-pointer"
+            onClick={() => removeTransaction(transactionNumber)}
+          >
+            Remove Transaction
+          </div>
+        )}
       </div>
       <CreateDAOInput
         dataType="text"
@@ -124,11 +133,11 @@ const Transaction = ({
 const Transactions = ({
   transactions,
   setTransactions,
-  removeTransaction
+  removeTransaction,
 }: {
-  transactions: TransactionData[],
-  setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>,
-  removeTransaction: (transactionNumber: number) => void
+  transactions: TransactionData[];
+  setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
+  removeTransaction: (transactionNumber: number) => void;
 }) => {
   const updateTransaction = (
     transactionData: TransactionData,
@@ -180,7 +189,9 @@ const Essentials = ({
   );
 };
 
-const CreateProposal = ({ address }: { address: string }) => {
+const CreateProposal = ({ address }: { address: string | undefined }) => {
+  const [{ moduleAddresses }] = useDAOData();
+
   const [step, setStep] = useState(0);
   const [proposalDescription, setProposalDescription] = useState("");
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -191,11 +202,28 @@ const CreateProposal = ({ address }: { address: string }) => {
       parameters: "",
     },
   ]);
+  const [pending, setPending] = useState<boolean>(false);
+  const [proposalData, setProposalData] = useState<ProposalData>();
+  const [governorAddress, setGovernorAddress] = useState<string>();
+
+  useEffect(() => {
+    if (moduleAddresses === undefined || moduleAddresses[1] === undefined) {
+      setGovernorAddress(undefined);
+      return;
+    }
+
+    setGovernorAddress(moduleAddresses[1]);
+  }, [moduleAddresses]);
 
   const addTransaction = () => {
     setTransactions([
       ...transactions,
-      { targetAddress: "", functionName: "", functionSignature: "", parameters: "" },
+      {
+        targetAddress: "",
+        functionName: "",
+        functionSignature: "",
+        parameters: "",
+      },
     ]);
   };
 
@@ -214,72 +242,78 @@ const CreateProposal = ({ address }: { address: string }) => {
     setStep((currentStep) => currentStep + 1);
   };
 
-  const submitProposal = () => {
-    let proposalData: ProposalData = {
-      targets: [],
-      values: [],
-      calldatas: [],
-      description: proposalDescription,
-    };
+  useEffect(() => {
+    try {
+      setProposalData({
+        targets: transactions.map((transaction) => transaction.targetAddress),
+        values: transactions.map(() => BigNumber.from("0")),
+        calldatas: transactions.map((transaction) =>
+          new ethers.utils.Interface([
+            transaction.functionSignature,
+          ]).encodeFunctionData(
+            transaction.functionName,
+            JSON.parse(transaction.parameters)
+          )
+        ),
+        description: proposalDescription,
+      });
+    } catch {}
+  }, [transactions, proposalDescription]);
 
-    proposalData.description = proposalDescription;
-
-    transactions.forEach((transaction) => {
-      proposalData.targets.push(transaction.targetAddress);
-      proposalData.values.push(BigNumber.from("0"));
-
-      const functionInterface = new ethers.utils.Interface([transaction.functionSignature]);
-      const functionData = functionInterface.encodeFunctionData(transaction.functionName, JSON.parse(transaction.parameters));
-      console.log("Function interface: ", functionInterface);
-      console.log("Function Name: ", transaction.functionName);
-      console.log("Parameters: ", JSON.parse(transaction.parameters));
-      console.log("Function data: ", functionData);
-    });
-  }
+  const createProposal = useCreateProposal({
+    daoAddress: address,
+    governorAddress,
+    proposalData,
+    setPending,
+  });
 
   return (
-    <div className="mx-24">
-      <div className="mt-24 text-xl">Create Proposal</div>
+    <div>
+      <Pending message="Creating Proposal..." pending={pending} />
+      <ConnectModal />
+      <div className="mx-24">
+        <div className="mt-24 text-xl">Create Proposal</div>
 
-      <div>
-        {step === 0 && (
-          <Essentials
-            proposalDescription={proposalDescription}
-            setProposalDescription={setProposalDescription}
-          />
-        )}
-        {step === 1 && (
-          <Transactions
-            transactions={transactions}
-            setTransactions={setTransactions}
-            removeTransaction={removeTransaction}
-          />
-        )}
-      </div>
-
-      {step === 1 && (
         <div>
-          <Button onClick={addTransaction} disabled={false}>
-            Add Transaction
-          </Button>
+          {step === 0 && (
+            <Essentials
+              proposalDescription={proposalDescription}
+              setProposalDescription={setProposalDescription}
+            />
+          )}
+          {step === 1 && (
+            <Transactions
+              transactions={transactions}
+              setTransactions={setTransactions}
+              removeTransaction={removeTransaction}
+            />
+          )}
         </div>
-      )}
-      <div>
+
         {step === 1 && (
-          <Button onClick={decrementStep} disabled={false}>
-            Back
-          </Button>
+          <div>
+            <Button onClick={addTransaction} disabled={false}>
+              Add Transaction
+            </Button>
+          </div>
         )}
-        {step === 1 && (
-          <Button onClick={submitProposal} disabled={false}>
-            Create Proposal
-          </Button>
-        )}
-        {step === 0 && (
-          <Button onClick={incrementStep} disabled={false}>
-            Next: Add Transactions
-          </Button>
-        )}
+        <div>
+          {step === 1 && (
+            <Button onClick={decrementStep} disabled={false}>
+              Back
+            </Button>
+          )}
+          {step === 1 && (
+            <Button onClick={createProposal} disabled={false}>
+              Create Proposal
+            </Button>
+          )}
+          {step === 0 && (
+            <Button onClick={incrementStep} disabled={false}>
+              Next: Add Transactions
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
