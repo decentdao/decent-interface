@@ -21,7 +21,11 @@ module.exports = {
     extend: {
       colors: {
         'black': '#1b1a1a',
+        'lighterBlack': '#212121',
+        'medBlack': '#2c2c2c',
+        'lightBlack': '#484848',
         'gold': '#fabd2e',
+        'mediumGray': '#b6b3ac',
       },
       letterSpacing: {
         widest: '.25em',
