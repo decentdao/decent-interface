@@ -78,8 +78,6 @@ const New = () => {
   const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
   const [nextEnabled, setNextEnabled] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
-
-
   const [daoName, setDAOName] = useState<string>();
   const [tokenName, setTokenName] = useState<string>();
   const [tokenSymbol, setTokenSymbol] = useState<string>();
@@ -111,6 +109,7 @@ const New = () => {
   return (
     <div>
       <Pending
+        message="Creating Fractal..."
         pending={pending}
       />
       <ConnectModal />
