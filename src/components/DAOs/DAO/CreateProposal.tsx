@@ -84,7 +84,7 @@ const Transaction = ({
   return (
     <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
       <div className="flex flex-row">
-        <div className="flex pb-8 text-lg">Transaction</div>
+        <div className="flex flex-grow pb-8 text-lg">Transaction</div>
         {transactionCount > 1 && (
           <div
             className="flex pb-8 text-sm cursor-pointer"
@@ -274,7 +274,7 @@ const CreateProposal = ({ address }: { address: string | undefined }) => {
       <div className="mx-24">
         <div className="mt-24 text-xl">Create Proposal</div>
 
-        <div>
+        <div className="flex">
           {step === 0 && (
             <Essentials
               proposalDescription={proposalDescription}
@@ -291,13 +291,13 @@ const CreateProposal = ({ address }: { address: string | undefined }) => {
         </div>
 
         {step === 1 && (
-          <div>
+          <div className="flex items-center justify-center">
             <Button onClick={addTransaction} disabled={false}>
               Add Transaction
             </Button>
           </div>
         )}
-        <div>
+        <div className="flex items-center justify-center mt-4 space-x-4">
           {step === 1 && (
             <Button onClick={decrementStep} disabled={false}>
               Back
