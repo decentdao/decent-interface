@@ -1,6 +1,5 @@
 import Header from './components/Header';
 import Body from './components/Body'
-import Footer from './components/Footer';
 import image from "./assets/images/bg-glow-top-left.png";
 
 function App() {
