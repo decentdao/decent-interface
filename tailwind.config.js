@@ -22,9 +22,11 @@ module.exports = {
       colors: {
         'black': '#1b1a1a',
         'lighterBlack': '#212121',
+        'chocolate': '#272520',
         'medBlack': '#2c2c2c',
         'lightBlack': '#484848',
         'gold': '#fabd2e',
+        'lightGold': '#ffd26a',
         'mediumGray': '#b6b3ac',
       },
       letterSpacing: {
