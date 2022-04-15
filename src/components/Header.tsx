@@ -64,7 +64,7 @@ function Header() {
   const avatarURL = useAvatar(account);
 
   return (
-    <header className="py-4 border-b bg-black">
+    <header className="py-4 bg-black">
       <div className="container flex flex-col sm:flex-row sm:justify-between sm:items-center">
         <div className="mr-2 mb-4 sm:mb-0">
           <div className="mr-2 text-2xl uppercase text-white tracking-widest">
