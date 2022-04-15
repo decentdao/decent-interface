@@ -6,7 +6,7 @@ const DetailsLabel = ({
     children: ReactNode
 }) => {
   return (
-    <div className="pb-8 text-lg text-mediumGray">{children}</div>
+    <div className="text-lg text-mediumGray">{children}</div>
   )
 }
 
