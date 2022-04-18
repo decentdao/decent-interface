@@ -6,9 +6,11 @@ const GreyBox = ({
   children: React.ReactNode,
 }) => {
   return (
-    <div className="bg-slate-100 p-8">
-      <p className="text-center mb-8 text-lg">{title}</p>
+    <div className="rounded-lg bg-black px-6 py-6 my-6">
+      <div className= "">
+      <p className="text-left text-md text-mediumGray pb-6">{title}</p>
       <div>{children}</div>
+      </div>
     </div>
   );
 }
