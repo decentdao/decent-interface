@@ -27,7 +27,7 @@ const ColoredButton = ({
 const Home = () => {
   return (
     <div>
-      <div className="text-4xl tracking-wider text-lightGray">Welcome to Fractal</div>
+      <H1>Welcome to Fractal</H1>
       <GreyBox title="What path will you take?">
         <div className="md:grid md:grid-cols-2 md:gap-6 flex flex-col items-center">
           <ColoredButton to="/daos/new" color="gold" textColor="black">Create a Fractal</ColoredButton>
