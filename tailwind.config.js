@@ -28,9 +28,17 @@ module.exports = {
         'gold': '#fabd2e',
         'lightGold': '#ffd26a',
         'mediumGray': '#b6b3ac',
+        'lightGray': '#f5f5f5',
       },
       letterSpacing: {
         widest: '.25em',
+      },
+      fontSize: {
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+        '6xl': '4rem',
+        '7xl': '5rem',
       }
     }
   },
