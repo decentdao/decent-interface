@@ -6,6 +6,7 @@ import Button from '../../ui/Button';
 import ConnectModal from '../../ConnectModal';
 import Pending from '../../Pending';
 import useDeployDAO from '../../../daoData/useDeployDAO';
+import ContentBox from '../../ui/ContentBox';
 
 const StepDisplay = ({
   step,
@@ -116,7 +117,7 @@ const New = () => {
       <ConnectModal />
       <div>
         <div className="text-2xl capitalize text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
-        <div className="rounded-lg bg-black px-4 mt-4 mb-6 py-4 content-center">
+        <ContentBox>
           <form onSubmit={e => e.preventDefault()}>
             <StepDisplay
               step={step}
@@ -135,7 +136,7 @@ const New = () => {
               executionDelay={executionDelay}
             />
           </form>
-        </div>
+        </ContentBox>
 
         <div className="flex items-center justify-center">
           {step > 0 && (
