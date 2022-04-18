@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import CreateDAOInput from '../../ui/CreateDAOInput';
-import DetailsLabel from '../../ui/DetailsLabel';
 
 const DAODetails = ({
   setPrevEnabled,
@@ -23,7 +23,9 @@ const DAODetails = ({
 
   return (
     <div>
-      <DetailsLabel>Essentials</DetailsLabel>
+      <ContentBoxTitle>
+        Essentials
+      </ContentBoxTitle>
       <CreateDAOInput
         dataType="text"
         value={name}
