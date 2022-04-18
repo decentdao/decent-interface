@@ -16,7 +16,7 @@ const ColoredButton = ({
   return (
     <div className={`bg-${color} border border-gold rounded-lg md:my-0 mb-4 md:w-full w-96`}>
       <Link to={to}>
-        <p className={`text-${textColor} text-center py-8 px-2`}>
+        <p className={`text-${textColor} text-center py-4 px-2`}>
           {children}
         </p>
       </Link>
