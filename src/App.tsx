@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen font-medium">
       <Header />
-      <main className="pt-24 px-72 flex-grow"
+      <main className="flex-grow"
         style={{ backgroundImage: `url(${image}), linear-gradient(to bottom, #272520, #1b1a18)` }}
       >
         <Body />
