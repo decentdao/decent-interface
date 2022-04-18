@@ -114,7 +114,7 @@ const New = () => {
         pending={pending}
       />
       <ConnectModal />
-      <div className= "lg:px-36 py-20">
+      <div>
         <div className="text-2xl capitalize text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
         <div className="rounded-lg bg-black px-4 mt-4 mb-6 py-4 content-center">
           <form onSubmit={e => e.preventDefault()}>

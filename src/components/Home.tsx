@@ -26,7 +26,7 @@ const ColoredButton = ({
 
 const Home = () => {
   return (
-    <div className="lg:px-36 py-20">
+    <div>
       <div className="text-4xl tracking-wider text-lightGray">Welcome to Fractal</div>
       <GreyBox title="What path will you take?">
         <div className="md:grid md:grid-cols-2 md:gap-6 flex flex-col items-center">
