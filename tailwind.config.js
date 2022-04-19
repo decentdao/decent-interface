@@ -20,13 +20,17 @@ module.exports = {
     },
     extend: {
       colors: {
-        'black': '#1b1a1a',
-        'lighterBlack': '#212121',
+        'black': {
+          '100': '#484848',
+          '300': '#212121',
+          '500': '#2c2c2c',
+          '900': '#1b1a1a',
+        },
         'chocolate': '#272520',
-        'medBlack': '#2c2c2c',
-        'lightBlack': '#484848',
-        'gold': '#fabd2e',
-        'lightGold': '#ffd26a',
+        'gold': {
+          '300': '#ffd26a',
+          '500': '#fabd2e'
+        },
         'mediumGray': '#b6b3ac',
         'lightGray': '#f5f5f5',
       },
@@ -39,6 +43,8 @@ module.exports = {
         '5xl': '3rem',
         '6xl': '4rem',
         '7xl': '5rem',
+      backgroundImage: {
+        'image-pattern': "url('./assets/images/bg-glow-top-left.png'), linear-gradient(to bottom, #272520, #1b1a18)",
       }
     }
   },
