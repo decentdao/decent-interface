@@ -27,7 +27,7 @@ const useCreateProposal = ({
   const { signerOrProvider } = useWeb3();
   const navigate = useNavigate();
 
-  const [contractCallDeploy, contractCallPending] = useTransaction();
+  const [contractCallCreateProposal, contractCallPending] = useTransaction();
 
   useEffect(() => {
     setPending(contractCallPending);
@@ -45,7 +45,7 @@ const useCreateProposal = ({
 
     const governor: GovernorModule = GovernorModule__factory.connect(governorAddress, signerOrProvider);
 
-    contractCallDeploy({
+    contractCallCreateProposal({
       contractFn: () => governor.propose(proposalData.targets, proposalData.values, proposalData.calldatas, proposalData.description),
       pendingMessage: "Creating Proposal",
       failedMessage: "Proposal Creation Failed",
@@ -57,7 +57,7 @@ const useCreateProposal = ({
         console.error(error)
       },
     });
-  }, [daoAddress, navigate, contractCallDeploy, governorAddress, proposalData, setPending, signerOrProvider])
+  }, [daoAddress, navigate, contractCallCreateProposal, governorAddress, proposalData, setPending, signerOrProvider])
   return createProposal;
 }
 
