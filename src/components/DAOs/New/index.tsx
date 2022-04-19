@@ -6,12 +6,9 @@ import Button from '../../ui/Button';
 import ConnectModal from '../../ConnectModal';
 import Pending from '../../Pending';
 import useDeployDAO from '../../../daoData/useDeployDAO';
-<<<<<<< HEAD
 import ContentBox from '../../ui/ContentBox';
-=======
 import LeftArrow from '../../ui/svg/LeftArrow';
 import RightArrow from '../../ui/svg/RightArrow';
->>>>>>> d55f99d6fc3f441aba0015f1c0a354b52cb92ffd
 
 const StepDisplay = ({
   step,
