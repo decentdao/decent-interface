@@ -30,6 +30,11 @@ function ValidDAO({ address }: { address: string }) {
           </Link>
         </div>
         <div>
+          <Link to="proposals" className="underline">
+            Proposal List
+          </Link>
+        </div>
+        <div>
           <Link to="proposals/new" className="underline">
             Create Proposal
           </Link>
