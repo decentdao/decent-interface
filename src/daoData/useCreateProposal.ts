@@ -50,7 +50,7 @@ const useCreateProposal = ({
       pendingMessage: "Creating Proposal",
       failedMessage: "Proposal Creation Failed",
       successMessage: "Proposal Created",
-      successCallback: (receipt) => {
+      successCallback: () => {
         navigate(`/daos/${daoAddress}`,);
       },
       rpcErrorCallback: (error: any) => {
