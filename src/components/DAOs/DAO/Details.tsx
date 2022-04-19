@@ -4,11 +4,7 @@ import EtherscanLink from "../../ui/EtherscanLink";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
 
-function Details({
-  address,
-}: {
-  address: string;
-}) {
+function Details({ address }: { address: string }) {
   const [{ name, accessControlAddress, moduleAddresses }, setDAOAddress] =
     useDAOData();
 
