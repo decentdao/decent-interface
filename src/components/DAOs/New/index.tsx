@@ -118,7 +118,7 @@ const New = () => {
       <ConnectModal />
       <div className= "lg:px-36 py-20">
         <div className="text-2xl text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
-        <div className="rounded-lg bg-black px-4 mt-4 mb-6 py-4 content-center">
+        <div className="rounded-lg bg-black-900 px-4 mt-4 mb-6 py-4 content-center">
           <form onSubmit={e => e.preventDefault()}>
             <StepDisplay
               step={step}

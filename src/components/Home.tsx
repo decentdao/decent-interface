@@ -10,7 +10,7 @@ const BlackButton = ({
   children: React.ReactNode,
 }) => {
   return (
-    <div className="bg-black">
+    <div className="bg-black-900">
       <Link to={to}>
         <div className="h-full flex flex-col justify-center">
           <p className="text-white text-center py-8 px-2">{children}</p>
