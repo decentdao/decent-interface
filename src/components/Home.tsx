@@ -14,7 +14,7 @@ const ColoredButton = ({
   children: React.ReactNode,
 }) => {
   return (
-    <div className={`border border-gold ${color} rounded-lg md:my-0 mb-4 md:w-full w-96`}>
+    <div className={`border border-gold-500 ${color} rounded-lg md:my-0 mb-4 md:w-full w-96`}>
       <Link to={to}>
         <p className={`${textColor} text-center py-4 px-2`}>
           {children}
@@ -30,8 +30,8 @@ const Home = () => {
       <H1>Welcome to Fractal</H1>
       <ContentBox title="What path will you take?">
         <div className="md:grid md:grid-cols-2 md:gap-6 flex flex-col items-center py-4">
-          <ColoredButton to="/daos/new" color='bg-gold' textColor="text-black">Create a Fractal</ColoredButton>
-          <ColoredButton to="/daos" color="bg-chocolate" textColor="text-gold">Find a Fractal</ColoredButton>
+          <ColoredButton to="/daos/new" color='bg-gold-500' textColor="text-black-900">Create a Fractal</ColoredButton>
+          <ColoredButton to="/daos" color="bg-chocolate" textColor="text-gold-500">Find a Fractal</ColoredButton>
         </div>
       </ContentBox>
     </div>
