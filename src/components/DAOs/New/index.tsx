@@ -6,6 +6,8 @@ import Button from '../../ui/Button';
 import ConnectModal from '../../ConnectModal';
 import Pending from '../../Pending';
 import useDeployDAO from '../../../daoData/useDeployDAO';
+import LeftArrow from '../../ui/svg/LeftArrow';
+import RightArrow from '../../ui/svg/RightArrow';
 
 const StepDisplay = ({
   step,
@@ -113,9 +115,9 @@ const New = () => {
         pending={pending}
       />
       <ConnectModal />
-      <div className="mx-24">
-        <div className="mt-24 text-xl">{!daoName || daoName.trim() === "" ? "New Fractal Configuration" : daoName + " - Configuration"}</div>
-        <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
+      <div className= "lg:px-36 py-20">
+        <div className="text-2xl text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
+        <div className="rounded-lg bg-black-900 px-4 mt-4 mb-6 py-4 content-center">
           <form onSubmit={e => e.preventDefault()}>
             <StepDisplay
               step={step}
@@ -142,7 +144,10 @@ const New = () => {
               onClick={decrement}
               disabled={!prevEnabled}
             >
-              Prev
+              <div className="flex">
+                <LeftArrow/>
+                <div >Prev</div>
+              </div>
             </Button>
           )}
           {step < 2 && (
@@ -150,7 +155,10 @@ const New = () => {
               onClick={increment}
               disabled={!nextEnabled}
             >
-              Next
+              <div className="flex">
+                <div >Next</div>
+                <RightArrow/>
+              </div>
             </Button>
           )}
           {step > 1 && (

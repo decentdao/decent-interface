@@ -1,15 +1,14 @@
 import Header from './components/Header';
 import Body from './components/Body'
-import Footer from './components/Footer';
 
 function App() {
   return (
     <div className="flex flex-col min-h-screen font-medium">
       <Header />
-      <main className="py-4 container flex-grow">
+      <main className="flex-grow bg-image-pattern"
+      >
         <Body />
       </main>
-      <Footer />
     </div>
   );
 }

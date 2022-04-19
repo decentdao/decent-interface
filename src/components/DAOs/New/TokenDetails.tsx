@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import CreateDAOInput from '../../ui/CreateDAOInput';
+import DetailsLabel from '../../ui/DetailsLabel';
 
 const TokenDetails = ({
   setPrevEnabled,
@@ -34,7 +35,7 @@ const TokenDetails = ({
 
   return (
     <div>
-      <div className="pb-8 text-lg">Mint a New Token</div>
+      <DetailsLabel>Mint a New Token</DetailsLabel>
       <CreateDAOInput
         dataType="text"
         value={name}

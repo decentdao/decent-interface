@@ -1,6 +1,23 @@
 import GreyBox from "./ui/GreyBox";
 import H1 from "./ui/H1";
-import BlackButton from "./ui/BlackButton";
+
+const BlackButton = ({
+  to,
+  children,
+}: {
+  to: string,
+  children: React.ReactNode,
+}) => {
+  return (
+    <div className="bg-black-900">
+      <Link to={to}>
+        <div className="h-full flex flex-col justify-center">
+          <p className="text-white text-center py-8 px-2">{children}</p>
+        </div>
+      </Link>
+    </div>
+  )
+}
 
 const Home = () => {
   return (
