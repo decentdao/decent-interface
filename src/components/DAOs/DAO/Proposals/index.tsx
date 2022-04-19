@@ -11,7 +11,6 @@ function Proposals({ address }: { address: string }) {
 
   return (
     <Routes>
-      <Route index element={<New address={address} />} />
       <Route path="new" element={<New address={address} />} />
     </Routes>
   );
