@@ -18,45 +18,29 @@ const Transaction = ({
   transactionCount: number;
 }) => {
   const updateTargetAddress = (targetAddress: string) => {
-    const newTransactionData = {
-      targetAddress: targetAddress,
-      functionName: transaction.functionName,
-      functionSignature: transaction.functionSignature,
-      parameters: transaction.parameters,
-    };
+    const newTransactionData = Object.assign({}, transaction);
+    newTransactionData.targetAddress = targetAddress; 
 
     updateTransaction(newTransactionData, transactionNumber);
   };
 
   const updateFunctionName = (functionName: string) => {
-    const newTransactionData = {
-      targetAddress: transaction.targetAddress,
-      functionName: functionName,
-      functionSignature: transaction.functionSignature,
-      parameters: transaction.parameters,
-    };
+    const newTransactionData = Object.assign({}, transaction);
+    newTransactionData.functionName = functionName; 
 
     updateTransaction(newTransactionData, transactionNumber);
   };
 
   const updateFunctionSignature = (functionSignature: string) => {
-    const newTransactionData = {
-      targetAddress: transaction.targetAddress,
-      functionName: transaction.functionName,
-      functionSignature: functionSignature,
-      parameters: transaction.parameters,
-    };
+    const newTransactionData = Object.assign({}, transaction);
+    newTransactionData.functionSignature = functionSignature; 
 
     updateTransaction(newTransactionData, transactionNumber);
   };
 
   const updateParameters = (parameters: string) => {
-    const newTransactionData = {
-      targetAddress: transaction.targetAddress,
-      functionName: transaction.functionName,
-      functionSignature: transaction.functionSignature,
-      parameters: parameters,
-    };
+    const newTransactionData = Object.assign({}, transaction);
+    newTransactionData.parameters = parameters; 
 
     updateTransaction(newTransactionData, transactionNumber);
   };
