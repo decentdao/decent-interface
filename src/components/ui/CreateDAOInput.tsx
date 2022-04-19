@@ -8,12 +8,12 @@ const CreateDAOInput = ({ dataType, value, onChange, label, helperText, disabled
     disabled: boolean
   }) => {
   return (
-    <div className="bg-lighterBlack rounded-lg my-4">
+    <div className="bg-black-300 rounded-lg my-4">
       <div className= "px-4 py-4">
       <div className="text-sm text-mediumGray pb-2">{label}</div>
       <div className="md:grid md:grid-cols-3 md:gap-4 flex flex-col items-center">
         <input
-          className="md:col-span-2 w-full border border-lightBlack bg-medBlack rounded py-1 px-2 text-mediumGray"
+          className="md:col-span-2 w-full border border-black-100 bg-black-500 rounded py-1 px-2 text-mediumGray"
           type={dataType}
           value={value || ""}
           onChange={(event) => onChange(event.target.value)}

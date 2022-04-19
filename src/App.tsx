@@ -1,13 +1,11 @@
 import Header from './components/Header';
 import Body from './components/Body'
-import image from "./assets/images/bg-glow-top-left.png";
 
 function App() {
   return (
     <div className="flex flex-col min-h-screen font-medium">
       <Header />
-      <main className="flex-grow"
-        style={{ backgroundImage: `url(${image}), linear-gradient(to bottom, #272520, #1b1a18)` }}
+      <main className="flex-grow bg-image-pattern"
       >
         <Body />
       </main>

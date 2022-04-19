@@ -73,7 +73,7 @@ function Header() {
             </Link>
           </div>
         </div>
-        <div className="sm:text-right text-sm text-gold">
+        <div className="sm:text-right text-sm text-gold-500">
           {!account && (
             <button
               onClick={connect}
