@@ -1,12 +1,12 @@
-import { Routes, Route, useParams } from 'react-router-dom';
+import { Routes, Route, useParams } from "react-router-dom";
 
-import New from './New';
+import New from "./New";
 
 function Proposals({ address }: { address: string }) {
   const params = useParams();
 
   if (!params.address) {
-    return <div>if you see this, it's a bug</div>
+    return <div>if you see this, it's a bug</div>;
   }
 
   return (

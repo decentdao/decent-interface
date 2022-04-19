@@ -1,6 +1,5 @@
-
 import CreateDAOInput from "../../../../ui/CreateDAOInput";
-import { TransactionData } from './index';
+import { TransactionData } from "./index";
 
 const Transaction = ({
   transaction,

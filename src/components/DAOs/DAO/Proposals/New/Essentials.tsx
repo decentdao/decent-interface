@@ -1,4 +1,3 @@
-
 import CreateDAOInput from "../../../../ui/CreateDAOInput";
 
 const Essentials = ({

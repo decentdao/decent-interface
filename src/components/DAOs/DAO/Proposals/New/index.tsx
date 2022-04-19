@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import Button from "../../../../ui/Button";
 import { BigNumber, ethers } from "ethers";
 import useCreateProposal from "../../../../../daoData/useCreateProposal";
-import ConnectModal from '../../../../ConnectModal';
-import Pending from '../../../../Pending';
-import Essentials from './Essentials';
-import Transactions from './Transactions';
+import ConnectModal from "../../../../ConnectModal";
+import Pending from "../../../../Pending";
+import Essentials from "./Essentials";
+import Transactions from "./Transactions";
 
 export type TransactionData = {
   targetAddress: string;

@@ -1,5 +1,5 @@
-import { TransactionData } from './index';
-import Transaction from './Transaction';
+import { TransactionData } from "./index";
+import Transaction from "./Transaction";
 
 const Transactions = ({
   transactions,
