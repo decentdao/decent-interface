@@ -4,6 +4,7 @@ import { useWeb3 } from '../web3';
 import { BigNumber } from 'ethers';
 import { useNavigate } from 'react-router';
 import { GovernorModule, GovernorModule__factory } from '../typechain-types';
+import { useDAOData } from './index';
 
 type ProposalData = {
   targets: string[];
@@ -14,18 +15,17 @@ type ProposalData = {
 
 const useCreateProposal = ({
   daoAddress,
-  governorAddress,
   proposalData,
   setPending,
 }: {
   daoAddress: string | undefined,
-  governorAddress: string | undefined,
   proposalData: ProposalData | undefined,
   setPending: React.Dispatch<React.SetStateAction<boolean>>
 }
 ) => {
   const { signerOrProvider } = useWeb3();
   const navigate = useNavigate();
+  const [ daoData, ] = useDAOData();
 
   const [contractCallCreateProposal, contractCallPending] = useTransaction();
 
@@ -38,12 +38,13 @@ const useCreateProposal = ({
       !signerOrProvider ||
       !proposalData ||
       !setPending ||
-      !governorAddress
+      !daoData ||
+      !daoData.moduleAddresses
     ) {
       return;
     }
 
-    const governor: GovernorModule = GovernorModule__factory.connect(governorAddress, signerOrProvider);
+    const governor: GovernorModule = GovernorModule__factory.connect(daoData.moduleAddresses[1], signerOrProvider);
 
     contractCallCreateProposal({
       contractFn: () => governor.propose(proposalData.targets, proposalData.values, proposalData.calldatas, proposalData.description),
@@ -57,7 +58,7 @@ const useCreateProposal = ({
         console.error(error)
       },
     });
-  }, [daoAddress, navigate, contractCallCreateProposal, governorAddress, proposalData, setPending, signerOrProvider])
+  }, [daoAddress, navigate, contractCallCreateProposal, daoData, proposalData, setPending, signerOrProvider])
   return createProposal;
 }
 

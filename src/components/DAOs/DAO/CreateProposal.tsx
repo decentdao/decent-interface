@@ -3,7 +3,6 @@ import Button from "../../ui/Button";
 import CreateDAOInput from "../../ui/CreateDAOInput";
 import { BigNumber, ethers } from "ethers";
 import useCreateProposal from "../../../daoData/useCreateProposal";
-import { useDAOData } from "../../../daoData";
 import ConnectModal from '../../ConnectModal';
 import Pending from '../../Pending';
 
@@ -190,8 +189,6 @@ const Essentials = ({
 };
 
 const CreateProposal = ({ address }: { address: string | undefined }) => {
-  const [{ moduleAddresses }] = useDAOData();
-
   const [step, setStep] = useState(0);
   const [proposalDescription, setProposalDescription] = useState("");
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -204,16 +201,6 @@ const CreateProposal = ({ address }: { address: string | undefined }) => {
   ]);
   const [pending, setPending] = useState<boolean>(false);
   const [proposalData, setProposalData] = useState<ProposalData>();
-  const [governorAddress, setGovernorAddress] = useState<string>();
-
-  useEffect(() => {
-    if (moduleAddresses === undefined || moduleAddresses[1] === undefined) {
-      setGovernorAddress(undefined);
-      return;
-    }
-
-    setGovernorAddress(moduleAddresses[1]);
-  }, [moduleAddresses]);
 
   const addTransaction = () => {
     setTransactions([
@@ -262,7 +249,6 @@ const CreateProposal = ({ address }: { address: string | undefined }) => {
 
   const createProposal = useCreateProposal({
     daoAddress: address,
-    governorAddress,
     proposalData,
     setPending,
   });

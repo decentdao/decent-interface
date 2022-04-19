@@ -20,6 +20,9 @@ const useModuleAddresses = (
 
   // Get initial add action targets
   useEffect(() => {
+    console.log("useMOduleAddresses");
+    console.log(daoContract);
+    console.log(accessControlContract);
     if (!daoContract || !accessControlContract) {
       return;
     }
