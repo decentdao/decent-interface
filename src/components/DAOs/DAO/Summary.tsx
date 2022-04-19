@@ -8,13 +8,8 @@ import SearchingDAO from "../SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
 
-function ValidDAO({
-  address,
-}: {
-  address: string;
-}) {
-  const [{ name, accessControlAddress }, setDAOAddress] =
-    useDAOData();
+function ValidDAO({ address }: { address: string }) {
+  const [{ name, accessControlAddress }, setDAOAddress] = useDAOData();
 
   useEffect(() => {
     setDAOAddress(address);
@@ -29,7 +24,16 @@ function ValidDAO({
         is a valid dao!
       </H1>
       <div>
-        <Link to="details">DAO Details</Link>
+        <div>
+          <Link to="details" className="underline">
+            DAO Details
+          </Link>
+        </div>
+        <div>
+          <Link to="proposals/new" className="underline">
+            Create Proposal
+          </Link>
+        </div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>
       </div>

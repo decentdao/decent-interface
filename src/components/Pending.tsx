@@ -1,15 +1,17 @@
 import Loading from "./ui/svg/Loading"
 
 const Pending = ({
-  pending
+  pending,
+  message
 }: {
-  pending: boolean
+  pending: boolean,
+  message: string
 }) => {
   return (
     <div>
       {pending &&
         <div className="fixed top-0 left-0 right-0 bottom-0 w-full h-screen overflow-hidden opacity-75 bg-gray-700 flex flex-col items-center justify-center">
-          <h2 className="text-center text-xl text-white font-semibold">Creating Fractal...</h2>
+          <h2 className="text-center text-xl text-white font-semibold">{message}</h2>
           <p className="w-1/3 text-center text-white pt-2 pb-4">Please be Patient</p>
           <Loading/>
           <svg role="status" className="inline mr-2 w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
