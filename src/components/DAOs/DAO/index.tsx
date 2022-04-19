@@ -2,7 +2,7 @@ import { Routes, Route, useParams } from 'react-router-dom';
 
 import Summary from './Summary';
 import Details from './Details';
-import CreateProposal from './CreateProposal';
+import Proposals from './Proposals';
 
 function DAOs() {
   const params = useParams();
@@ -15,7 +15,7 @@ function DAOs() {
     <Routes>
       <Route index element={<Summary />} />
       <Route path="details" element={<Details address={params.address} />} />
-      <Route path="createproposal" element={<CreateProposal address={params.address} />} />
+      <Route path="proposals/*" element={<Proposals address={params.address} />} />
     </Routes>
   );
 }

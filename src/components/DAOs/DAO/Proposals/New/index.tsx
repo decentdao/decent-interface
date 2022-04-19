@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Button from "../../../ui/Button";
+import Button from "../../../../ui/Button";
 import { BigNumber, ethers } from "ethers";
-import useCreateProposal from "../../../../daoData/useCreateProposal";
-import ConnectModal from '../../../ConnectModal';
-import Pending from '../../../Pending';
+import useCreateProposal from "../../../../../daoData/useCreateProposal";
+import ConnectModal from '../../../../ConnectModal';
+import Pending from '../../../../Pending';
 import Essentials from './Essentials';
 import Transactions from './Transactions';
 
@@ -21,7 +21,7 @@ export type ProposalData = {
   description: string;
 };
 
-const CreateProposal = ({ address }: { address: string | undefined }) => {
+const New = ({ address }: { address: string | undefined }) => {
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>("");
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -138,4 +138,4 @@ const CreateProposal = ({ address }: { address: string | undefined }) => {
   );
 };
 
-export default CreateProposal;
+export default New;

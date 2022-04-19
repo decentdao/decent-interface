@@ -33,7 +33,7 @@ function ValidDAO({
         <Link to="details" className="underline">DAO Details</Link>
         </div>
         <div>
-        <Link to="createproposal" className="underline">Create Proposal</Link>
+        <Link to="proposals/new" className="underline">Create Proposal</Link>
         </div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>

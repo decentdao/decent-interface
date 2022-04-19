@@ -1,5 +1,5 @@
 
-import CreateDAOInput from "../../../ui/CreateDAOInput";
+import CreateDAOInput from "../../../../ui/CreateDAOInput";
 
 const Essentials = ({
   proposalDescription,
