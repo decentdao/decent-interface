@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import EtherscanLink from '../ui/EtherscanLink';
+import EtherscanLink from '../../ui/EtherscanLink';
 
 const SearchError = ({
   children

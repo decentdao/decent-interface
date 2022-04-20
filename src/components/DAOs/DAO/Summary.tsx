@@ -4,7 +4,7 @@ import { useParams, useLocation, Link } from "react-router-dom";
 import EtherscanLink from "../../ui/EtherscanLink";
 import useAddress from "../../../hooks/useAddress";
 import useIsDAO from "../../../hooks/useIsDAO";
-import SearchingDAO from "../SearchingDAO";
+import SearchingDAO from "../Search/SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
 

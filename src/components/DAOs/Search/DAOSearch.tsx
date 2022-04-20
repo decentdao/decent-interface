@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
-import Button from '../ui/Button';
-import { InputAddress } from '../ui/Input';
-import useAddress from '../../hooks/useAddress';
-import useIsDAO from '../../hooks/useIsDAO';
+import Button from '../../ui/Button';
+import { InputAddress } from '../../ui/Input';
+import useAddress from '../../../hooks/useAddress';
+import useIsDAO from '../../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
-import H1 from '../ui/H1';
-import ContentBox from '../ui/ContentBox';
+import H1 from '../../ui/H1';
+import ContentBox from '../../ui/ContentBox';
 
 function FoundValidDAO({
   searchAddress,
