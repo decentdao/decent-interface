@@ -1,16 +1,42 @@
 import { ProposalData } from "../../../../daoData/useProposals";
+import { useState, useEffect } from "react";
+import { BigNumber } from "ethers";
 
 function ProposalCard({
   proposal
 }: {
   proposal: ProposalData
 }) {
+  const [forVotesPercent, setForVotesPercent] = useState<number>();
+  const [againstVotesPercent, setAgainstVotesPercent] = useState<number>();
+  const [abstainVotesPercent, setAbstainVotesPercent] = useState<number>();
+
+  useEffect(() => {
+    if(proposal.forVotes === undefined || proposal.againstVotes === undefined || proposal.abstainVotes === undefined) {
+      return;
+    }
+
+    const totalVotes = proposal.forVotes?.add(proposal.againstVotes).add(proposal.abstainVotes);
+
+    if(totalVotes.eq(BigNumber.from("0"))) {
+      setForVotesPercent(0);
+      setAgainstVotesPercent(0);
+      setAbstainVotesPercent(0);
+      return;
+    }
+
+    setForVotesPercent((proposal.forVotes.mul(BigNumber.from("1000000")).div(totalVotes).toNumber()) / 10000);
+    setAgainstVotesPercent((proposal.forVotes.mul(BigNumber.from("1000000")).div(totalVotes).toNumber()) / 10000);
+    setAbstainVotesPercent((proposal.abstainVotes.mul(BigNumber.from("1000000")).div(totalVotes).toNumber()) / 10000);
+
+  }, [proposal]);
+
   return (
     <div className="flex flex-col bg-gray-300 m-2 max-w-lg">
       <div>Proposal #{proposal.number}</div>
-      <div>For: {proposal.forVotes?.toString()}</div>
-      <div>Against: {proposal.againstVotes?.toString()}</div>
-      <div>Abstain: {proposal.abstainVotes?.toString()}</div>
+      <div>For: {forVotesPercent}%</div>
+      <div>Against: {againstVotesPercent}%</div>
+      <div>Abstain: {abstainVotesPercent}%</div>
     </div>
   );
 }
