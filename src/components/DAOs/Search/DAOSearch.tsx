@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import Button from '../../ui/Button';
-import { InputAddress } from '../../ui/Input';
+import InputAddress from '../../ui/InputAddress';
 import useAddress from '../../../hooks/useAddress';
 import useIsDAO from '../../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
 import H1 from '../../ui/H1';
 import ContentBox from '../../ui/ContentBox';
+import InputBox from '../../ui/InputBox';
 
 function FoundValidDAO({
   searchAddress,
@@ -60,10 +61,9 @@ function DAOSearch() {
 
   return (
     <div>
-      <H1>Welcome to Fractal App</H1>
-      <ContentBox title="Find A Fractal">
-        <div>
-          <p className="text-center pb-4">Use a valid Fractal ETH address or ENS domain</p>
+      <H1>Find a Fractal</H1>
+      <ContentBox>
+        <InputBox label="test">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -73,7 +73,6 @@ function DAOSearch() {
             <div className="flex items-center">
               <div className="flex-grow">
                 <InputAddress
-                  title=""
                   value={searchAddressInput}
                   disabled={false}
                   placeholder=""
@@ -91,7 +90,7 @@ function DAOSearch() {
             </div>
           </form>
           <Search searchAddress={searchAddress} />
-        </div>
+        </InputBox>
       </ContentBox>
     </div >
   );
