@@ -19,15 +19,11 @@ function ProposalsList({ address }: { address: string }) {
           <span className="break-all">{address}</span>
         </EtherscanLink>{" "}
         Proposal List
+        <div className="grid grid-cols-3 gap-4">
         {proposals?.map((proposal) => (
-          <ProposalCard
-            key={proposal.number}
-            number={proposal.number}
-            yesVotes={proposal.yesVotes}
-            noVotes={proposal.noVotes}
-            abstainVotes={proposal.abstainVotes}
-          />
+          <ProposalCard key={proposal.number} proposal={proposal} />
         ))}
+        </div>
       </H1>
     </div>
   );
