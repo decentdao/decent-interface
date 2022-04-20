@@ -7,9 +7,10 @@ import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
+import ProposalCard from "./Proposals/ProposalCard";
 
 function ValidDAO({ address }: { address: string }) {
-  const [{ name, accessControlAddress }, setDAOAddress] = useDAOData();
+  const [{ name, accessControlAddress, proposals }, setDAOAddress] = useDAOData();
 
   useEffect(() => {
     setDAOAddress(address);
@@ -41,6 +42,11 @@ function ValidDAO({ address }: { address: string }) {
         </div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>
+        <div className="grid grid-cols-3 gap-4">
+        {proposals?.map((proposal) => (
+          <ProposalCard key={proposal.number} proposal={proposal} />
+        ))}
+        </div>
       </div>
     </div>
   );
