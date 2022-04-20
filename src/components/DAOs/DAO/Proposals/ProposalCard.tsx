@@ -1,34 +1,51 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import { useState, useEffect } from "react";
 import { BigNumber } from "ethers";
+import { Link } from "react-router-dom";
 
-function ProposalCard({
-  proposal
-}: {
-  proposal: ProposalData
-}) {
+function ProposalCard({ proposal }: { proposal: ProposalData }) {
   const [forVotesPercent, setForVotesPercent] = useState<number>();
   const [againstVotesPercent, setAgainstVotesPercent] = useState<number>();
   const [abstainVotesPercent, setAbstainVotesPercent] = useState<number>();
 
   useEffect(() => {
-    if(proposal.forVotes === undefined || proposal.againstVotes === undefined || proposal.abstainVotes === undefined) {
+    if (
+      proposal.forVotes === undefined ||
+      proposal.againstVotes === undefined ||
+      proposal.abstainVotes === undefined
+    ) {
       return;
     }
 
-    const totalVotes = proposal.forVotes?.add(proposal.againstVotes).add(proposal.abstainVotes);
+    const totalVotes = proposal.forVotes
+      ?.add(proposal.againstVotes)
+      .add(proposal.abstainVotes);
 
-    if(totalVotes.eq(BigNumber.from("0"))) {
+    if (totalVotes.eq(BigNumber.from("0"))) {
       setForVotesPercent(0);
       setAgainstVotesPercent(0);
       setAbstainVotesPercent(0);
       return;
     }
 
-    setForVotesPercent((proposal.forVotes.mul(BigNumber.from("1000000")).div(totalVotes).toNumber()) / 10000);
-    setAgainstVotesPercent((proposal.forVotes.mul(BigNumber.from("1000000")).div(totalVotes).toNumber()) / 10000);
-    setAbstainVotesPercent((proposal.abstainVotes.mul(BigNumber.from("1000000")).div(totalVotes).toNumber()) / 10000);
-
+    setForVotesPercent(
+      proposal.forVotes
+        .mul(BigNumber.from("1000000"))
+        .div(totalVotes)
+        .toNumber() / 10000
+    );
+    setAgainstVotesPercent(
+      proposal.forVotes
+        .mul(BigNumber.from("1000000"))
+        .div(totalVotes)
+        .toNumber() / 10000
+    );
+    setAbstainVotesPercent(
+      proposal.abstainVotes
+        .mul(BigNumber.from("1000000"))
+        .div(totalVotes)
+        .toNumber() / 10000
+    );
   }, [proposal]);
 
   return (
@@ -37,6 +54,11 @@ function ProposalCard({
       <div>For: {forVotesPercent}%</div>
       <div>Against: {againstVotesPercent}%</div>
       <div>Abstain: {abstainVotesPercent}%</div>
+      <div className="m-4">
+        <Link to={`proposals/${proposal.number}`} className="underline">
+          View Proposal
+        </Link>
+      </div>
     </div>
   );
 }
