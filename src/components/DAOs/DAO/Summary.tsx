@@ -16,6 +16,10 @@ function ValidDAO({ address }: { address: string }) {
     setDAOAddress(address);
   }, [address, setDAOAddress]);
 
+  useEffect(() => {
+    console.log("Proposals: ", proposals);
+  }, [proposals]);
+
   return (
     <div>
       <H1>
