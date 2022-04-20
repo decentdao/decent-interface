@@ -18,6 +18,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const { signerOrProvider } = useWeb3();
 
+  // Get the vote counts for a given proposal
   const getProposalVotes = useCallback(
     (proposalId: BigNumber) => {
       if (governorModule === undefined) return;
@@ -27,6 +28,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     [governorModule]
   );
 
+  // Set the Governor module contract
   useEffect(() => {
     if (
       moduleAddresses === undefined ||
@@ -50,6 +52,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
 
     const filter = governorModule.filters.ProposalCreated();
 
+    // Get an array of all the ProposalCreated events
     governorModule
       .queryFilter(filter)
       .then((proposalEvents) => {
@@ -68,6 +71,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             return newProposal;
           });
 
+          // Get the vote counts for each proposal and add them to the newProposals object
           Promise.all(newProposals.map((proposal) => (getProposalVotes(proposal.id)))).then((votes) => {
             votes.forEach((vote, index) => {
               if(vote === undefined) return;
