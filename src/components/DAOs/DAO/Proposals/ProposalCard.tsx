@@ -1,24 +1,16 @@
-import { useState, useEffect } from "react";
-import { useParams, useLocation, Link } from "react-router-dom";
-import { BigNumber } from "ethers";
+import { ProposalData } from "../../../../daoData/useProposals";
 
 function ProposalCard({
-  number,
-  yesVotes,
-  noVotes,
-  abstainVotes,
+  proposal
 }: {
-  number: number;
-  yesVotes: BigNumber;
-  noVotes: BigNumber;
-  abstainVotes: BigNumber;
+  proposal: ProposalData
 }) {
   return (
-    <div className="flex flex-col">
-      <div>New Proposal #{number}</div>
-      <div>Yes Votes: {yesVotes.toString()}</div>
-      <div>No Votes: {noVotes.toString()}</div>
-      <div>Abstain Votes: {abstainVotes.toString()}</div>
+    <div className="flex flex-col bg-gray-300 m-2 max-w-lg">
+      <div>Proposal #{proposal.number}</div>
+      <div>For: {proposal.forVotes?.toString()}</div>
+      <div>Against: {proposal.againstVotes?.toString()}</div>
+      <div>Abstain: {proposal.abstainVotes?.toString()}</div>
     </div>
   );
 }
