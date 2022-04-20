@@ -1,26 +1,31 @@
-import { useState, useEffect } from "react";
-import { useDAOData } from "./index";
-import {
-  DAO,
-  AccessControl,
-  GovernorModule,
-  GovernorModule__factory,
-} from "../typechain-types";
+import { useState, useEffect, useCallback } from "react";
+import { GovernorModule, GovernorModule__factory } from "../typechain-types";
 import { useWeb3 } from "../web3";
 import { BigNumber } from "ethers";
 
 export type ProposalData = {
   number: number;
   id: BigNumber;
-  yesVotes: BigNumber;
-  noVotes: BigNumber;
-  abstainVotes: BigNumber;
+  startBlock: BigNumber;
+  endBlock: BigNumber;
+  forVotes: BigNumber | undefined;
+  againstVotes: BigNumber | undefined;
+  abstainVotes: BigNumber | undefined;
 };
 
 const useProposals = (moduleAddresses: string[] | undefined) => {
   const [governorModule, setGovernorModule] = useState<GovernorModule>();
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const { signerOrProvider } = useWeb3();
+
+  const getProposalVotes = useCallback(
+    (proposalId: BigNumber) => {
+      if (governorModule === undefined) return;
+
+      return governorModule.proposalVotes(proposalId);
+    },
+    [governorModule]
+  );
 
   useEffect(() => {
     if (
@@ -53,17 +58,26 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             const newProposal: ProposalData = {
               number: index,
               id: proposalEvent.args.proposalId,
-              yesVotes: BigNumber.from("0"),
-              noVotes: BigNumber.from("0"),
-              abstainVotes: BigNumber.from("0"),
+              startBlock: proposalEvent.args.startBlock,
+              endBlock: proposalEvent.args.endBlock,
+              forVotes: undefined,
+              againstVotes: undefined,
+              abstainVotes: undefined,
             };
+            getProposalVotes(proposalEvent.args.proposalId)
+              ?.then((proposalVotes) => {
+                newProposal.forVotes = proposalVotes[1];
+                newProposal.againstVotes = proposalVotes[0];
+                newProposal.abstainVotes = proposalVotes[2];
+              })
+              .catch(console.error);
 
             return newProposal;
           })
         );
       })
       .catch(console.error);
-  }, [governorModule]);
+  }, [getProposalVotes, governorModule]);
 
   // Setup proposal events listener
   useEffect(() => {
@@ -84,16 +98,25 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
       endBlock: BigNumber,
       _: any
     ) => {
-
       const newProposal: ProposalData = {
         number: proposals.length,
         id: proposalId,
-        yesVotes: BigNumber.from("0"),
-        noVotes: BigNumber.from("0"),
-        abstainVotes: BigNumber.from("0")
-      }
+        startBlock: startBlock,
+        endBlock: endBlock,
+        forVotes: undefined,
+        againstVotes: undefined,
+        abstainVotes: undefined,
+      };
 
-      setProposals([...proposals, newProposal]);
+      getProposalVotes(newProposal.id)
+        ?.then((proposalVotes) => {
+          newProposal.forVotes = proposalVotes[1];
+          newProposal.againstVotes = proposalVotes[0];
+          newProposal.abstainVotes = proposalVotes[2];
+
+          setProposals([...proposals, newProposal]);
+        })
+        .catch(console.error);
     };
 
     governorModule.on(filter, listenerCallback);
@@ -101,7 +124,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     return () => {
       governorModule.off(filter, listenerCallback);
     };
-  }, [governorModule, proposals]);
+  }, [governorModule, proposals, getProposalVotes]);
 
   return proposals;
 };
