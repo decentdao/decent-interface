@@ -53,7 +53,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     governorModule
       .queryFilter(filter)
       .then((proposalEvents) => {
-        setProposals(
+        const newProposals = 
           proposalEvents.map((proposalEvent, index) => {
             const newProposal: ProposalData = {
               number: index,
@@ -64,17 +64,21 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
               againstVotes: undefined,
               abstainVotes: undefined,
             };
-            getProposalVotes(proposalEvent.args.proposalId)
-              ?.then((proposalVotes) => {
-                newProposal.forVotes = proposalVotes[1];
-                newProposal.againstVotes = proposalVotes[0];
-                newProposal.abstainVotes = proposalVotes[2];
-              })
-              .catch(console.error);
-
+            
             return newProposal;
-          })
-        );
+          });
+
+          Promise.all(newProposals.map((proposal) => (getProposalVotes(proposal.id)))).then((votes) => {
+            votes.forEach((vote, index) => {
+              if(vote === undefined) return;
+              newProposals[index].forVotes = vote.forVotes;
+              newProposals[index].againstVotes = vote.againstVotes;
+              newProposals[index].abstainVotes = vote.abstainVotes;
+            });
+
+            setProposals(newProposals);
+          });
+
       })
       .catch(console.error);
   }, [getProposalVotes, governorModule]);
