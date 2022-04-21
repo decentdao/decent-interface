@@ -10,6 +10,7 @@ export type ProposalData = {
   endBlock: BigNumber;
   proposer: string;
   description: string;
+  state: number | undefined;
   forVotesPercent: number | undefined;
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
@@ -26,6 +27,16 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
       if (governorModule === undefined) return;
 
       return governorModule.proposalVotes(proposalId);
+    },
+    [governorModule]
+  );
+
+  // Get the state of a given proposal
+  const getProposalState = useCallback(
+    (proposalId: BigNumber) => {
+      if (governorModule === undefined) return;
+
+      return governorModule.state(proposalId);
     },
     [governorModule]
   );
@@ -66,6 +77,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             endBlock: proposalEvent.args.endBlock,
             proposer: proposalEvent.args.proposer,
             description: proposalEvent.args.description,
+            state: undefined,
             forVotesPercent: undefined,
             againstVotesPercent: undefined,
             abstainVotesPercent: undefined,
@@ -99,11 +111,16 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             }
           });
 
-          setProposals(newProposals);
+          Promise.all(newProposals.map((proposal) => getProposalState(proposal.id))).then((states) => {
+            states.forEach((state, index) => {
+              newProposals[index].state = state;
+            });
+            setProposals(newProposals);
+          });
         });
       })
       .catch(console.error);
-  }, [getProposalVotes, governorModule]);
+  }, [getProposalVotes, getProposalState, governorModule]);
 
   // Setup proposal events listener
   useEffect(() => {
@@ -132,6 +149,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
         endBlock: endBlock,
         proposer: proposer,
         description: description,
+        state: undefined,
         forVotesPercent: undefined,
         againstVotesPercent: undefined,
         abstainVotesPercent: undefined,
@@ -154,8 +172,11 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             newProposal.againstVotesPercent = 0;
             newProposal.abstainVotesPercent = 0;
           }
-
-          setProposals([...proposals, newProposal]);
+          
+          getProposalState(newProposal.id)?.then((state) => {
+            newProposal.state = state;
+            setProposals([...proposals, newProposal]);
+          })
         })
         .catch(console.error);
     };
@@ -165,7 +186,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     return () => {
       governorModule.off(filter, listenerCallback);
     };
-  }, [governorModule, proposals, getProposalVotes]);
+  }, [governorModule, proposals, getProposalVotes, getProposalState]);
 
   return proposals;
 };
