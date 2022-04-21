@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import CreateDAOInput from '../../ui/CreateDAOInput';
-import DetailsLabel from '../../ui/DetailsLabel';
 
 const GovernanceDetails = ({
   setPrevEnabled,
@@ -20,7 +20,9 @@ const GovernanceDetails = ({
 
   return (
     <div>
-      <DetailsLabel>Governance Setup</DetailsLabel>
+      <ContentBoxTitle>
+        Governance Setup
+      </ContentBoxTitle>
       <CreateDAOInput
         dataType="text"
         value={proposalThreshold?.toString()}

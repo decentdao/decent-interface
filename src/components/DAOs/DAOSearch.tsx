@@ -7,7 +7,7 @@ import useAddress from '../../hooks/useAddress';
 import useIsDAO from '../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
 import H1 from '../ui/H1';
-import GreyBox from '../ui/GreyBox';
+import ContentBox from '../ui/ContentBox';
 
 function FoundValidDAO({
   searchAddress,
@@ -61,7 +61,7 @@ function DAOSearch() {
   return (
     <div>
       <H1>Welcome to Fractal App</H1>
-      <GreyBox title="Find A Fractal">
+      <ContentBox title="Find A Fractal">
         <div>
           <p className="text-center pb-4">Use a valid Fractal ETH address or ENS domain</p>
           <form
@@ -92,7 +92,7 @@ function DAOSearch() {
           </form>
           <Search searchAddress={searchAddress} />
         </div>
-      </GreyBox>
+      </ContentBox>
     </div >
   );
 }
