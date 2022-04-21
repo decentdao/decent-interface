@@ -28,7 +28,7 @@ const CreateDAOInput = (
           onChange={e => onChange(e.target.value)}
           onKeyDown={undefined}
         />
-        <div className="md:pt-0 pt-2 text-sm text-black-300 text-center">{helperText}</div>
+        <div className="md:pt-0 pt-2 text-sm text-gray-50 text-center">{helperText}</div>
       </div>
     </InputBox>
   );
