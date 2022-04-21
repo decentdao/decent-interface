@@ -8,9 +8,9 @@ export type ProposalData = {
   id: BigNumber;
   startBlock: BigNumber;
   endBlock: BigNumber;
-  forVotes: BigNumber | undefined;
-  againstVotes: BigNumber | undefined;
-  abstainVotes: BigNumber | undefined;
+  forVotesPercent: number | undefined;
+  againstVotesPercent: number | undefined;
+  abstainVotesPercent: number | undefined;
 };
 
 const useProposals = (moduleAddresses: string[] | undefined) => {
@@ -56,33 +56,47 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     governorModule
       .queryFilter(filter)
       .then((proposalEvents) => {
-        const newProposals = 
-          proposalEvents.map((proposalEvent, index) => {
-            const newProposal: ProposalData = {
-              number: index,
-              id: proposalEvent.args.proposalId,
-              startBlock: proposalEvent.args.startBlock,
-              endBlock: proposalEvent.args.endBlock,
-              forVotes: undefined,
-              againstVotes: undefined,
-              abstainVotes: undefined,
-            };
-            
-            return newProposal;
+        const newProposals = proposalEvents.map((proposalEvent, index) => {
+          const newProposal: ProposalData = {
+            number: index,
+            id: proposalEvent.args.proposalId,
+            startBlock: proposalEvent.args.startBlock,
+            endBlock: proposalEvent.args.endBlock,
+            forVotesPercent: undefined,
+            againstVotesPercent: undefined,
+            abstainVotesPercent: undefined,
+          };
+
+          return newProposal;
+        });
+
+        // Get the vote counts for each proposal and add them to the newProposals object
+        Promise.all(
+          newProposals.map((proposal) => getProposalVotes(proposal.id))
+        ).then((votes) => {
+          votes.forEach((vote, index) => {
+            if (vote === undefined) return;
+            const totalVotes = vote.forVotes
+              .add(vote.againstVotes)
+              .add(vote.abstainVotes);
+            if (totalVotes.gt(0)) {
+              newProposals[index].forVotesPercent =
+                vote.forVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+              newProposals[index].againstVotesPercent =
+                vote.againstVotes.mul(1000000).div(totalVotes).toNumber() /
+                10000;
+              newProposals[index].abstainVotesPercent =
+                vote.abstainVotes.mul(1000000).div(totalVotes).toNumber() /
+                10000;
+            } else {
+              newProposals[index].forVotesPercent = 0;
+              newProposals[index].againstVotesPercent = 0;
+              newProposals[index].abstainVotesPercent = 0;
+            }
           });
 
-          // Get the vote counts for each proposal and add them to the newProposals object
-          Promise.all(newProposals.map((proposal) => (getProposalVotes(proposal.id)))).then((votes) => {
-            votes.forEach((vote, index) => {
-              if(vote === undefined) return;
-              newProposals[index].forVotes = vote.forVotes;
-              newProposals[index].againstVotes = vote.againstVotes;
-              newProposals[index].abstainVotes = vote.abstainVotes;
-            });
-
-            setProposals(newProposals);
-          });
-
+          setProposals(newProposals);
+        });
       })
       .catch(console.error);
   }, [getProposalVotes, governorModule]);
@@ -111,16 +125,28 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
         id: proposalId,
         startBlock: startBlock,
         endBlock: endBlock,
-        forVotes: undefined,
-        againstVotes: undefined,
-        abstainVotes: undefined,
+        forVotesPercent: undefined,
+        againstVotesPercent: undefined,
+        abstainVotesPercent: undefined,
       };
 
       getProposalVotes(newProposal.id)
-        ?.then((proposalVotes) => {
-          newProposal.forVotes = proposalVotes[1];
-          newProposal.againstVotes = proposalVotes[0];
-          newProposal.abstainVotes = proposalVotes[2];
+        ?.then((vote) => {
+          const totalVotes = vote.forVotes
+            .add(vote.againstVotes)
+            .add(vote.abstainVotes);
+          if (totalVotes.gt(0)) {
+            newProposal.forVotesPercent =
+              vote.forVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+            newProposal.againstVotesPercent =
+              vote.againstVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+            newProposal.abstainVotesPercent =
+              vote.abstainVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+          } else {
+            newProposal.forVotesPercent = 0;
+            newProposal.againstVotesPercent = 0;
+            newProposal.abstainVotesPercent = 0;
+          }
 
           setProposals([...proposals, newProposal]);
         })
