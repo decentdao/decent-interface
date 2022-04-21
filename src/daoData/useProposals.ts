@@ -8,6 +8,8 @@ export type ProposalData = {
   id: BigNumber;
   startBlock: BigNumber;
   endBlock: BigNumber;
+  proposer: string;
+  description: string;
   forVotesPercent: number | undefined;
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
@@ -62,6 +64,8 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             id: proposalEvent.args.proposalId,
             startBlock: proposalEvent.args.startBlock,
             endBlock: proposalEvent.args.endBlock,
+            proposer: proposalEvent.args.proposer,
+            description: proposalEvent.args.description,
             forVotesPercent: undefined,
             againstVotesPercent: undefined,
             abstainVotesPercent: undefined,
@@ -118,6 +122,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
       calldatas: string[],
       startBlock: BigNumber,
       endBlock: BigNumber,
+      description: string,
       _: any
     ) => {
       const newProposal: ProposalData = {
@@ -125,6 +130,8 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
         id: proposalId,
         startBlock: startBlock,
         endBlock: endBlock,
+        proposer: proposer,
+        description: description,
         forVotesPercent: undefined,
         againstVotesPercent: undefined,
         abstainVotesPercent: undefined,
