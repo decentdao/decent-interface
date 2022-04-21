@@ -30,8 +30,8 @@ const Home = () => {
       <H1>Welcome to Fractal</H1>
       <ContentBox title="What path will you take?">
         <div className="md:grid md:grid-cols-2 md:gap-6 flex flex-col items-center py-4">
-          <ColoredButton to="/daos/new" color='bg-gold-500' textColor="text-black-900">Create a Fractal</ColoredButton>
-          <ColoredButton to="/daos" color="bg-chocolate" textColor="text-gold-500">Find a Fractal</ColoredButton>
+          <ColoredButton to="/daos/new" color='bg-gold-500' textColor="text-gray-900">Create a Fractal</ColoredButton>
+          <ColoredButton to="/daos" color="bg-chocolate" textColor="text-gray-500">Find a Fractal</ColoredButton>
         </div>
       </ContentBox>
     </div>
