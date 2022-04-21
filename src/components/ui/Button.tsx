@@ -11,7 +11,7 @@ function Button({
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className={`px-8 py-2 mx-2 border rounded border-gold-300 bg-chocolate text-gold-300 ${disabled ? "opacity-50" : ""}`}
+      className={`px-8 py-2 mx-2 border rounded border-gold-300 bg-chocolate-400 text-gold-300 ${disabled ? "opacity-50" : ""}`}
       disabled={disabled}
       onClick={onClick}
       type={type}
