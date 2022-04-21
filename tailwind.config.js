@@ -21,9 +21,11 @@ module.exports = {
     extend: {
       colors: {
         'black': {
-          '100': '#484848',
-          '300': '#212121',
-          '500': '#2c2c2c',
+          '100': '#f5f5f5',
+          '300': '#b6b3ac',
+          '500': '#484848',
+          '700': '#2c2c2c',
+          '800': '#212121',
           '900': '#1b1a1a',
         },
         'chocolate': '#272520',
@@ -31,8 +33,6 @@ module.exports = {
           '300': '#ffd26a',
           '500': '#fabd2e'
         },
-        'mediumGray': '#b6b3ac',
-        'lightGray': '#f5f5f5',
       },
       letterSpacing: {
         widest: '.25em',

@@ -6,7 +6,7 @@ const ContentBoxTitle = ({
     children:ReactNode
 }) => {
   return (
-    <p className="text-left text-md text-mediumGray">{children}</p>
+    <p className="text-left text-md text-black-300">{children}</p>
   )
 }
 
