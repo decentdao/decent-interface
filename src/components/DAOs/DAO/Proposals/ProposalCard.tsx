@@ -1,6 +1,5 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import { useState, useEffect } from "react";
-import { BigNumber } from "ethers";
 import { Link } from "react-router-dom";
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
@@ -21,7 +20,7 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
       ?.add(proposal.againstVotes)
       .add(proposal.abstainVotes);
 
-    if (totalVotes.eq(BigNumber.from("0"))) {
+    if (totalVotes.eq(0)) {
       setForVotesPercent(0);
       setAgainstVotesPercent(0);
       setAbstainVotesPercent(0);
@@ -30,19 +29,19 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
 
     setForVotesPercent(
       proposal.forVotes
-        .mul(BigNumber.from("1000000"))
+        .mul(1000000)
         .div(totalVotes)
         .toNumber() / 10000
     );
     setAgainstVotesPercent(
       proposal.forVotes
-        .mul(BigNumber.from("1000000"))
+        .mul(1000000)
         .div(totalVotes)
         .toNumber() / 10000
     );
     setAbstainVotesPercent(
       proposal.abstainVotes
-        .mul(BigNumber.from("1000000"))
+        .mul(1000000)
         .div(totalVotes)
         .toNumber() / 10000
     );
