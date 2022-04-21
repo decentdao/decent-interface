@@ -9,9 +9,9 @@ const InputBox = (
     children: ReactNode
   }) => {
   return (
-    <div className="bg-black-300 rounded-lg my-4">
+    <div className="bg-black-800 rounded-lg my-4">
       <div className="px-4 py-4">
-        <div className="text-sm text-mediumGray pb-2">{label}</div>
+        <div className="text-sm text-black-300 pb-2">{label}</div>
         {children}
       </div>
     </div>
