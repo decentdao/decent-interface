@@ -37,7 +37,8 @@ module.exports = {
         },
         'gold': {
           '300': '#ffd26a',
-          '500': '#fabd2e'
+          '500': '#fabd2e',
+          '600': '#af8420',
         },
       },
       letterSpacing: {
