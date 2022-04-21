@@ -117,7 +117,7 @@ const New = () => {
       />
       <ConnectModal />
       <div>
-        <div className="text-2xl capitalize text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
+        <div className="text-2xl text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
         <ContentBox>
           <form onSubmit={e => e.preventDefault()}>
             <StepDisplay
