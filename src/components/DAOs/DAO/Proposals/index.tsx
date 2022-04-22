@@ -1,7 +1,6 @@
 import { Routes, Route, useParams } from "react-router-dom";
 
 import New from "./New";
-import ProposalsList from "./ProposalsList";
 
 function Proposals({ address }: { address: string }) {
   const params = useParams();
@@ -12,7 +11,6 @@ function Proposals({ address }: { address: string }) {
 
   return (
     <Routes>
-      <Route index element={<ProposalsList address={address} />} />
       <Route path="new" element={<New address={address} />} />
     </Routes>
   );
