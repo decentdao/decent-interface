@@ -28,8 +28,10 @@ function FoundValidDAO({
 
 function Search({
   searchAddress,
+  setSearchFailed,
 }: {
   searchAddress: string | undefined,
+  setSearchFailed: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
   const [address, validAddress, addressLoading] = useAddress(searchAddress);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
@@ -47,6 +49,7 @@ function Search({
       address={address}
       addressIsDAO={addressIsDAO}
       validDAOComponent={<FoundValidDAO searchAddress={searchAddress} address={address} />}
+      setSearchFailed = {setSearchFailed}
     />
   )
 }
@@ -54,6 +57,7 @@ function Search({
 function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState("");
   const [searchAddress, setSearchAddress] = useState<string>();
+  const [searchFailed, setSearchFailed] = useState<boolean>(false);
 
   const doSearch = (address: string) => {
     setSearchAddress(address);
@@ -63,7 +67,7 @@ function DAOSearch() {
     <div>
       <H1>Find a Fractal</H1>
       <ContentBox>
-        <InputBox label="test">
+        <InputBox label="Address">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -76,21 +80,30 @@ function DAOSearch() {
                   value={searchAddressInput}
                   disabled={false}
                   placeholder=""
+                  error = {searchFailed}
                   onChange={setSearchAddressInput}
                 />
               </div>
-              <div className="ml-2">
-                <Button
-                  disabled={false}
+              <div className="ml-1">
+                <button
+                  className="px-6 py-1 mx-2 border border-gold-500 rounded bg-gold-500 text-black-300 capitalize"
                   onClick={() => doSearch(searchAddressInput)}
                 >
                   search
-                </Button>
+                </button>
               </div>
             </div>
+            {searchFailed === false ? 
+            <p className="text-mediumGray pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p> : 
+            <div/>
+            }
           </form>
-          <Search searchAddress={searchAddress} />
+          <Search 
+          setSearchFailed={setSearchFailed}
+          searchAddress={searchAddress} 
+          />
         </InputBox>
+
       </ContentBox>
     </div >
   );
