@@ -7,10 +7,10 @@ import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
-import ProposalCard from "./Proposals/ProposalCard";
+import ProposalsList from "./Proposals/ProposalsList";
 
 function ValidDAO({ address }: { address: string }) {
-  const [{ name, accessControlAddress, proposals }, setDAOAddress] = useDAOData();
+  const [{ name, accessControlAddress }, setDAOAddress] = useDAOData();
 
   useEffect(() => {
     setDAOAddress(address);
@@ -31,22 +31,13 @@ function ValidDAO({ address }: { address: string }) {
           </Link>
         </div>
         <div>
-          <Link to="proposals" className="underline">
-            Proposal List
-          </Link>
-        </div>
-        <div>
           <Link to="proposals/new" className="underline">
             Create Proposal
           </Link>
         </div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>
-        <div className="grid grid-cols-3 gap-4">
-        {proposals?.map((proposal) => (
-          <ProposalCard key={proposal.number} proposal={proposal} />
-        ))}
-        </div>
+        <ProposalsList address={address} />
       </div>
     </div>
   );
