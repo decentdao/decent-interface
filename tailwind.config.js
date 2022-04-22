@@ -27,6 +27,7 @@ module.exports = {
           '900': '#1b1a1a',
         },
         'chocolate': '#272520',
+        'red': '#ff7373',
         'gold': {
           '300': '#ffd26a',
           '500': '#fabd2e'
