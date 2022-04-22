@@ -10,9 +10,12 @@ export type ProposalData = {
   endBlock: BigNumber;
   startTime: Date | undefined;
   endTime: Date | undefined;
+  startTimeString: string | undefined;
+  endTimeString: string | undefined;
   proposer: string;
   description: string;
   state: number | undefined;
+  stateString: string | undefined;
   forVotesPercent: number | undefined;
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
@@ -23,15 +26,35 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const { provider, signerOrProvider } = useWeb3();
 
-  const getBlockTimestamp = useCallback((blockNumber: number) => {
-    if (!provider) return;
-    return provider.getBlock(blockNumber)
-    .then((block) => {
-        console.log(block);
-        return new Date(block.timestamp * 1000);
-    });
+  const getStateString = (state: number | undefined) => {
+    if(state === 1) {
+      return "Open";
+    } else {
+      return "Closed";
+    }
+  };
 
-  }, [provider]);
+  const getTimestampString = (time: Date | undefined) => {
+    if (time === undefined) return;
+
+    return (
+      time.toLocaleDateString("en-US", { month: "short" }) +
+      " " +
+      time.toLocaleDateString("en-US", { day: "numeric" }) +
+      ", " +
+      time.toLocaleDateString("en-US", { year: "numeric" })
+    );
+  };
+
+  const getBlockTimestamp = useCallback(
+    (blockNumber: number) => {
+      if (!provider) return;
+      return provider.getBlock(blockNumber).then((block) => {
+        return new Date(block.timestamp * 1000);
+      });
+    },
+    [provider]
+  );
 
   // Get the vote counts for a given proposal
   const getProposalVotes = useCallback(
@@ -85,9 +108,12 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             endBlock: proposalEvent.args.endBlock,
             startTime: undefined,
             endTime: undefined,
+            startTimeString: undefined,
+            endTimeString: undefined,
             proposer: proposalEvent.args.proposer,
             description: proposalEvent.args.description,
             state: undefined,
+            stateString: undefined,
             forVotesPercent: undefined,
             againstVotesPercent: undefined,
             abstainVotesPercent: undefined,
@@ -107,12 +133,14 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             )
           ),
           Promise.all(
-            newProposals.map((proposal) => 
-              getBlockTimestamp(proposal.startBlock.toNumber()))
+            newProposals.map((proposal) =>
+              getBlockTimestamp(proposal.startBlock.toNumber())
+            )
           ),
           Promise.all(
-            newProposals.map((proposal) => 
-              getBlockTimestamp(proposal.endBlock.toNumber()))
+            newProposals.map((proposal) =>
+              getBlockTimestamp(proposal.endBlock.toNumber())
+            )
           ),
           newProposals,
         ]);
@@ -142,7 +170,10 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
 
           newProposals[index].state = state;
           newProposals[index].startTime = startTime;
-          newProposals[index].endTime = endTime;          
+          newProposals[index].endTime = endTime;
+          newProposals[index].startTimeString = getTimestampString(startTime);
+          newProposals[index].endTimeString = getTimestampString(endTime);
+          newProposals[index].stateString = getStateString(newProposals[index].state);
         });
 
         setProposals(newProposals);
@@ -177,9 +208,12 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
         endBlock: endBlock,
         startTime: undefined,
         endTime: undefined,
+        startTimeString: undefined,
+        endTimeString: undefined,
         proposer: proposer,
         description: description,
         state: undefined,
+        stateString: undefined,
         forVotesPercent: undefined,
         againstVotesPercent: undefined,
         abstainVotesPercent: undefined,
