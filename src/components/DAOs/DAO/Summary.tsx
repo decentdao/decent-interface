@@ -37,7 +37,7 @@ function ValidDAO({ address }: { address: string }) {
         </div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>
-        <ProposalsList address={address} />
+        <ProposalsList />
       </div>
     </div>
   );

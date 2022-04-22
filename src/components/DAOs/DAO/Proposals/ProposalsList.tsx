@@ -1,7 +1,7 @@
 import { useDAOData } from "../../../../daoData";
 import ProposalCard from "./ProposalCard";
 
-function ProposalsList({ address }: { address: string }) {
+function ProposalsList() {
   const [{ proposals }] = useDAOData();
 
   return (
