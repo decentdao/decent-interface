@@ -5,13 +5,13 @@ const ContentBox = ({
   children,
 }: {
   title?: string,
-  children?: React.ReactNode,
+  children: React.ReactNode,
 }) => {
   return (
-    <div className="rounded-lg bg-black-900 px-4 py-4 my-4">
-      <ContentBoxTitle>
+    <div className="rounded-lg bg-gray-600 px-4 py-4 my-4">
+      {title && <ContentBoxTitle>
         {title}
-      </ContentBoxTitle>
+      </ContentBoxTitle>}
       <div>{children}</div>
     </div>
   );
