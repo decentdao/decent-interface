@@ -27,6 +27,7 @@ const CreateDAOInput = (
           disabled={disabled}
           onChange={e => onChange(e.target.value)}
           onKeyDown={undefined}
+          borderColor = "border-black-100"
         />
         <div className="md:pt-0 pt-2 text-sm text-mediumGray text-center">{helperText}</div>
       </div>

@@ -5,6 +5,7 @@ function Input({
   disabled,
   placeholder,
   width,
+  borderColor,
   onChange,
   onKeyDown,
 }: {
@@ -14,14 +15,16 @@ function Input({
   disabled: boolean,
   placeholder?: string,
   width:string,
+  borderColor:string,
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined,
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement> | undefined,
 }) {
+  // border-black-100
   return (
     <input
       type={type}
       min={min}
-      className={`${width} border border-black-100 bg-black-500 rounded py-1 px-2 shadow-inner text-mediumGray ${disabled ? "disabled" : ""}`}
+      className={`${width} border ${borderColor} bg-black-500 rounded py-1 px-2 shadow-inner text-mediumGray ${disabled ? "disabled" : ""}`}
       value={value}
       onChange={onChange}
       disabled={disabled}
