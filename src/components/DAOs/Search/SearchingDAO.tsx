@@ -54,9 +54,7 @@ function SearchingDAO({
       <div>
         <EtherscanLink address={searchAddress}>
           <SearchError>
-            <div className="text-red-500 text-sm">
               {searchAddress} Sorry a fractal does not exist on this address
-            </div>
           </SearchError>
         </EtherscanLink>
       </div>

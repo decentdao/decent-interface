@@ -94,7 +94,7 @@ function DAOSearch() {
               </div>
             </div>
             {searchFailed === false ? 
-            <p className="text-mediumGray pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p> : 
+            <p className="text-gray-50 pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p> : 
             <div/>
             }
           </form>
