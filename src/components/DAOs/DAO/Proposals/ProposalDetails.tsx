@@ -2,8 +2,8 @@ import { ProposalData } from "../../../../daoData/useProposals";
 import { useDAOData } from "../../../../daoData";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import H1 from "../../../ui/H1";
 import ProposalCard from "./ProposalCard";
+import ProposalVotes from "./ProposalVotes";
 
 function ProposalDetails() {
   const params = useParams();
@@ -29,9 +29,9 @@ function ProposalDetails() {
   }
 
   return (
-    <div>
-      <H1>Proposal #{params.proposalNumber}</H1>
+    <div className="flex">
       <ProposalCard proposal={proposal} showId={true} />
+      <ProposalVotes proposal={proposal} />
     </div>
   );
 }
