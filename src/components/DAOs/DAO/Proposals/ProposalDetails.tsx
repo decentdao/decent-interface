@@ -2,7 +2,7 @@ import { ProposalData } from "../../../../daoData/useProposals";
 import { useDAOData } from "../../../../daoData";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ProposalCard from "./ProposalCard";
+import ProposalCardDetailed from "./ProposalCardDetailed";
 import ProposalVotes from "./ProposalVotes";
 
 function ProposalDetails() {
@@ -30,7 +30,7 @@ function ProposalDetails() {
 
   return (
     <div className="flex">
-      <ProposalCard proposal={proposal} showId={true} />
+      <ProposalCardDetailed proposal={proposal} />
       <ProposalVotes proposal={proposal} />
     </div>
   );
