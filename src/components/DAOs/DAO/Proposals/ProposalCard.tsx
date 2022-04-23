@@ -3,7 +3,13 @@ import useDisplayName from "../../../../hooks/useDisplayName";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 
-function ProposalCard({ proposal }: { proposal: ProposalData }) {
+function ProposalCard({
+  proposal,
+  showId,
+}: {
+  proposal: ProposalData;
+  showId: boolean;
+}) {
   const proposerDisplayName = useDisplayName(proposal.proposer);
 
   useEffect(() => {
@@ -16,10 +22,15 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
         <div className="flex flex-row mx-1">
           <div className="mx-1">{proposal.stateString}</div>
           <div className="mx-1">#{proposal.number}</div>
-          <div className="mx-1">{proposal.startTimeString} - {proposal.endTimeString}</div>
+          <div className="mx-1">
+            {proposal.startTimeString} - {proposal.endTimeString}
+          </div>
         </div>
         <div className="mx-2">{proposal.description}</div>
         <div className="mx-2">Created by {proposerDisplayName}</div>
+        {showId ? (
+          <div className="mx-2">Proposal ID {proposal.id.toString()}</div>
+        ) : null}
       </div>
     </Link>
   );
