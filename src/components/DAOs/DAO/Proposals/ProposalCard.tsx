@@ -18,7 +18,7 @@ function ProposalCard({
 
   return (
     <Link to={`proposals/${proposal.number}`}>
-      <div className="flex flex-col bg-gray-300 mx-2 max-w-lg py-2">
+      <div className="flex flex-col bg-gray-300 m-2 max-w-lg py-2 rounded-md">
         <div className="flex flex-row mx-1">
           <div className="mx-1">{proposal.stateString}</div>
           <div className="mx-1">#{proposal.number}</div>
@@ -27,9 +27,14 @@ function ProposalCard({
           </div>
         </div>
         <div className="mx-2">{proposal.description}</div>
-        <div className="mx-2">Created by {proposerDisplayName}</div>
+        <div className="mx-2">Created By: {proposerDisplayName}</div>
         {showId ? (
-          <div className="mx-2">Proposal ID {proposal.id.toString()}</div>
+          <div className="mx-2">
+            Proposal ID:{" "}
+            {`${proposal.id.toString().substring(0, 4)}...${proposal.id
+              .toString()
+              .slice(-4)}`}
+          </div>
         ) : null}
       </div>
     </Link>
