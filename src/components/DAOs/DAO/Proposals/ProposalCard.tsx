@@ -4,11 +4,9 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 
 function ProposalCard({
-  proposal,
-  showId,
+  proposal
 }: {
-  proposal: ProposalData;
-  showId: boolean;
+  proposal: ProposalData
 }) {
   const proposerDisplayName = useDisplayName(proposal.proposer);
 
@@ -28,14 +26,6 @@ function ProposalCard({
         </div>
         <div className="mx-2">{proposal.description}</div>
         <div className="mx-2">Created By: {proposerDisplayName}</div>
-        {showId ? (
-          <div className="mx-2">
-            Proposal ID:{" "}
-            {`${proposal.id.toString().substring(0, 4)}...${proposal.id
-              .toString()
-              .slice(-4)}`}
-          </div>
-        ) : null}
       </div>
     </Link>
   );
