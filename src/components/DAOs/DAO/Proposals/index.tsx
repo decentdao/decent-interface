@@ -1,6 +1,7 @@
 import { Routes, Route, useParams } from "react-router-dom";
 
 import New from "./New";
+import ProposalDetails from "./ProposalDetails";
 
 function Proposals({ address }: { address: string }) {
   const params = useParams();
@@ -12,6 +13,7 @@ function Proposals({ address }: { address: string }) {
   return (
     <Routes>
       <Route path="new" element={<New address={address} />} />
+      <Route path=":proposalNumber/*" element={<ProposalDetails />} />
     </Routes>
   );
 }

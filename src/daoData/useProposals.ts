@@ -6,6 +6,7 @@ import { BigNumber } from "ethers";
 export type ProposalData = {
   number: number;
   id: BigNumber;
+  idSubstring: string | undefined;
   startBlock: BigNumber;
   endBlock: BigNumber;
   startTime: Date | undefined;
@@ -50,23 +51,27 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     (blockNumber: number) => {
       if (!provider) return;
 
-      return provider.getBlockNumber()
-      .then((currentBlockNumber) => {
-        if(blockNumber <= currentBlockNumber) {
+      return provider.getBlockNumber().then((currentBlockNumber) => {
+        if (blockNumber <= currentBlockNumber) {
           // Requested block is in the past
           return provider.getBlock(blockNumber).then((block) => {
             return new Date(block.timestamp * 1000);
           });
         } else {
           // Requested block is in the future, need to estimate future block timestamp
-          return Promise.all([provider.getBlock(currentBlockNumber), provider.getBlock(currentBlockNumber - 1000)])
-          .then(([currentBlock, oldBlock]) => {
-            const averageBlockSeconds = (currentBlock.timestamp - oldBlock.timestamp) / 1000;
-            const futureBlockTimestamp = currentBlock.timestamp + ((blockNumber - currentBlockNumber) * averageBlockSeconds);
+          return Promise.all([
+            provider.getBlock(currentBlockNumber),
+            provider.getBlock(currentBlockNumber - 1000),
+          ]).then(([currentBlock, oldBlock]) => {
+            const averageBlockSeconds =
+              (currentBlock.timestamp - oldBlock.timestamp) / 1000;
+            const futureBlockTimestamp =
+              currentBlock.timestamp +
+              (blockNumber - currentBlockNumber) * averageBlockSeconds;
             return new Date(futureBlockTimestamp * 1000);
-          })
+          });
         }
-      })     
+      });
     },
     [provider]
   );
@@ -112,6 +117,9 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
           proposal.abstainVotesPercent = 0;
         }
 
+        proposal.idSubstring = `${proposal.id
+          .toString()
+          .substring(0, 4)}...${proposal.id.toString().slice(-4)}`;
         proposal.state = state;
         proposal.startTime = startTime;
         proposal.endTime = endTime;
@@ -157,6 +165,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
           const newProposal: ProposalData = {
             number: index,
             id: proposalEvent.args.proposalId,
+            idSubstring: undefined,
             startBlock: proposalEvent.args.startBlock,
             endBlock: proposalEvent.args.endBlock,
             startTime: undefined,
@@ -220,6 +229,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
       const newProposal: ProposalData = {
         number: proposals.length,
         id: proposalId,
+        idSubstring: undefined,
         startBlock: startBlock,
         endBlock: endBlock,
         startTime: undefined,
@@ -245,7 +255,13 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     return () => {
       governorModule.off(filter, listenerCallback);
     };
-  }, [getProposalData, governorModule, proposals, getProposalVotes, getProposalState]);
+  }, [
+    getProposalData,
+    governorModule,
+    proposals,
+    getProposalVotes,
+    getProposalState,
+  ]);
 
   return proposals;
 };
