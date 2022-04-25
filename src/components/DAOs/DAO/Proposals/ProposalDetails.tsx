@@ -11,14 +11,13 @@ function ProposalDetails() {
   const [proposal, setProposal] = useState<ProposalData>();
 
   useEffect(() => {
-    if (proposals === undefined || params.proposalNumber === undefined) return;
+    if (proposals === undefined || params.proposalNumber === undefined) {
+      setProposal(undefined);
+      return;
+    }
 
     setProposal(proposals[parseInt(params.proposalNumber, 10)]);
   }, [proposals, params.proposalNumber]);
-
-  useEffect(() => {
-    console.log(proposal);
-  }, [proposal]);
 
   if (!params.proposalNumber) {
     return <div>if you see this, it's a bug</div>;
