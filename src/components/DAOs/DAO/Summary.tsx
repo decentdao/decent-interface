@@ -7,6 +7,7 @@ import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
+import ProposalsList from "./Proposals/ProposalsList";
 
 function ValidDAO({ address }: { address: string }) {
   const [{ name, accessControlAddress }, setDAOAddress] = useDAOData();
@@ -36,6 +37,7 @@ function ValidDAO({ address }: { address: string }) {
         </div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>
+        <ProposalsList />
       </div>
     </div>
   );

@@ -5,11 +5,14 @@ import useDAOName from './useDAOName';
 import useAccessControlAddress from './useAccessControlAddress';
 import useAccessControlContract from './useAccessControlContract';
 import useModuleAddresses from './useModuleAddresses';
+import useProposals from './useProposals';
+import { ProposalData } from './useProposals';
 
 export interface DAOData {
   name: string | undefined,
   accessControlAddress: string | undefined,
   moduleAddresses: string[] | undefined,
+  proposals: ProposalData[] | undefined,
 };
 
 export const useDAODatas = () => {
@@ -20,11 +23,13 @@ export const useDAODatas = () => {
   const accessControlAddress = useAccessControlAddress(daoContract);
   const accessControlContract = useAccessControlContract(accessControlAddress);
   const moduleAddresses = useModuleAddresses(daoContract, accessControlContract);
+  const proposals = useProposals(moduleAddresses);
 
   const daoData: DAOData = {
     name,
     accessControlAddress,
-    moduleAddresses
+    moduleAddresses,
+    proposals
   };
 
   return [daoData, setDAOAddress] as const;
