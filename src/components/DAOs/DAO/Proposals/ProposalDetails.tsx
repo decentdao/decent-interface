@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ProposalCardDetailed from "./ProposalCardDetailed";
 import ProposalVotes from "./ProposalVotes";
+import CastVote from "./CastVote";
 
 function ProposalDetails() {
   const params = useParams();
@@ -15,10 +16,6 @@ function ProposalDetails() {
 
     setProposal(proposals[parseInt(params.proposalNumber, 10)]);
   }, [proposals, params.proposalNumber]);
-
-  useEffect(() => {
-    console.log(proposal);
-  }, [proposal]);
 
   if (!params.proposalNumber) {
     return <div>if you see this, it's a bug</div>;
@@ -32,6 +29,7 @@ function ProposalDetails() {
     <div className="flex">
       <ProposalCardDetailed proposal={proposal} />
       <ProposalVotes proposal={proposal} />
+      <CastVote proposal={proposal} />
     </div>
   );
 }
