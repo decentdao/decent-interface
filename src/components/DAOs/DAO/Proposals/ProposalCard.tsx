@@ -1,14 +1,9 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import useDisplayName from "../../../../hooks/useDisplayName";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
   const proposerDisplayName = useDisplayName(proposal.proposer);
-
-  useEffect(() => {
-    console.log(proposal);
-  }, [proposal]);
 
   return (
     <Link to={`proposals/${proposal.number}`}>
