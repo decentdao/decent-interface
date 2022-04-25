@@ -30,10 +30,7 @@ function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
         <CopyToClipboard textToCopy={proposal.proposer} />
       </div>
       <div className="flex flex-row mx-4 text-gray-50">
-        Proposal ID:{" "}
-        {`${proposal.id.toString().substring(0, 4)}...${proposal.id
-          .toString()
-          .slice(-4)}`}
+        Proposal ID: {proposal.idSubstring}
         <CopyToClipboard textToCopy={proposal.id.toString()} />
       </div>
     </div>
