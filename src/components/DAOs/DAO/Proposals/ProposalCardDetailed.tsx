@@ -1,15 +1,10 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import useDisplayName from "../../../../hooks/useDisplayName";
-import { useEffect } from "react";
 import CopyToClipboard from "../../../ui/CopyToClipboard";
 import Clock from "../../../ui/svg/Clock";
 
 function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
   const proposerDisplayName = useDisplayName(proposal.proposer);
-
-  useEffect(() => {
-    console.log(proposal);
-  }, [proposal]);
 
   return (
     <div className="flex flex-col bg-gray-600 m-2 max-w-lg py-2 rounded-md">
