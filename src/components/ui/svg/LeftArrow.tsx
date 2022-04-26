@@ -1,11 +1,9 @@
-import React from 'react'
-
 const LeftArrow = () => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-6 pr-1 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10.909 12 16 16.667 14.546 18 8 12l6.546-6L16 7.333 10.909 12z" fill="currentColor" />
     </svg>
-  )
+  );
 }
 
 export default LeftArrow
