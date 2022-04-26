@@ -1,36 +1,37 @@
-import { useCallback, useEffect } from 'react'
-import { useTransaction } from '../web3/transactions';
-import { useNavigate } from 'react-router';
-import { useWeb3 } from '../web3';
-import { BigNumber, ethers } from 'ethers';
-import { useAddresses } from '../web3/chains';
-import { MetaFactory, MetaFactory__factory } from '../typechain-types';
+import { useCallback, useEffect } from "react";
+import { useTransaction } from "../web3/transactions";
+import { useNavigate } from "react-router";
+import { useWeb3 } from "../web3";
+import { BigNumber, ethers } from "ethers";
+import { useAddresses } from "../web3/chains";
+import { MetaFactory, MetaFactory__factory } from "../typechain-types";
 
 export type TokenAllocation = {
   address: string;
-  amount: number
-}
+  amount: number;
+};
 
 const useDeployDAO = ({
   daoName,
   tokenName,
   tokenSymbol,
   tokenSupply,
+  tokenAllocations,
   proposalThreshold,
   quorum,
   executionDelay,
   setPending,
 }: {
-  daoName: string | undefined,
-  tokenName: string | undefined,
-  tokenSymbol: string | undefined,
-  tokenSupply: number | undefined,
-  proposalThreshold: number | undefined,
-  quorum: number | undefined,
-  executionDelay: number | undefined,
-  setPending: React.Dispatch<React.SetStateAction<boolean>>
-}
-) => {
+  daoName: string | undefined;
+  tokenName: string | undefined;
+  tokenSymbol: string | undefined;
+  tokenSupply: number | undefined;
+  tokenAllocations: TokenAllocation[] | undefined;
+  proposalThreshold: number | undefined;
+  quorum: number | undefined;
+  executionDelay: number | undefined;
+  setPending: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const { signerOrProvider, chainId } = useWeb3();
   const addresses = useAddresses(chainId);
 
@@ -48,6 +49,7 @@ const useDeployDAO = ({
       !tokenName ||
       !tokenSymbol ||
       !tokenSupply ||
+      !tokenAllocations ||
       (!proposalThreshold && proposalThreshold !== 0) ||
       !quorum ||
       !executionDelay ||
@@ -66,7 +68,10 @@ const useDeployDAO = ({
       return;
     }
 
-    const factory: MetaFactory = MetaFactory__factory.connect(addresses.metaFactory?.address, signerOrProvider)
+    const factory: MetaFactory = MetaFactory__factory.connect(
+      addresses.metaFactory?.address,
+      signerOrProvider
+    );
     const abiCoder = new ethers.utils.AbiCoder();
 
     const createDAOParams = {
@@ -80,12 +85,7 @@ const useDeployDAO = ({
         "GOVERNOR_ROLE",
       ],
       rolesAdmins: ["DAO_ROLE", "DAO_ROLE", "DAO_ROLE", "DAO_ROLE"],
-      members: [
-        [],
-        [],
-        [],
-        [],
-      ],
+      members: [[], [], [], []],
       daoFunctionDescs: [
         "execute(address[],uint256[],bytes[])",
         "upgradeTo(address)",
@@ -96,7 +96,9 @@ const useDeployDAO = ({
     const moduleFactoriesCalldata = [
       {
         factory: addresses.treasuryModuleFactory?.address, // Treasury Factory
-        data: [abiCoder.encode(["address"], [addresses.treasuryModule?.address])],
+        data: [
+          abiCoder.encode(["address"], [addresses.treasuryModule?.address]),
+        ],
         value: 0,
         newContractAddressesToPass: [1],
         addressesReturned: 1,
@@ -106,14 +108,22 @@ const useDeployDAO = ({
         data: [
           abiCoder.encode(["string"], [tokenName]),
           abiCoder.encode(["string"], [tokenSymbol]),
-          abiCoder.encode(["address[]"], [[]]),
+          abiCoder.encode(
+            ["address[]"],
+            [tokenAllocations.map((tokenAllocation) => tokenAllocation.address)]
+          ),
           abiCoder.encode(
             ["uint256[]"],
             [
-              [],
+              tokenAllocations.map((tokenAllocation) =>
+                ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
+              ),
             ]
           ),
-          abiCoder.encode(["uint256"], [ethers.utils.parseUnits(tokenSupply.toString(), 18)]),
+          abiCoder.encode(
+            ["uint256"],
+            [ethers.utils.parseUnits(tokenSupply.toString(), 18)]
+          ),
         ],
         value: 0,
         newContractAddressesToPass: [2],
@@ -123,12 +133,18 @@ const useDeployDAO = ({
         factory: addresses.governorFactory?.address, // Governor Factory
         data: [
           abiCoder.encode(["address"], [addresses.governorModule?.address]), // Governor Impl
-          abiCoder.encode(["address"], [addresses.timelockUpgradeable?.address]), // Timelock Impl
+          abiCoder.encode(
+            ["address"],
+            [addresses.timelockUpgradeable?.address]
+          ), // Timelock Impl
           abiCoder.encode(["string"], [""]),
           abiCoder.encode(["uint64"], [BigNumber.from("0")]), // vote extension
           abiCoder.encode(["uint256"], [BigNumber.from("6545")]), // voteDelay - 1 day
           abiCoder.encode(["uint256"], [BigNumber.from("45818")]), // votingPeriod - 1 week
-          abiCoder.encode(["uint256"], [BigNumber.from(proposalThreshold.toString())]), // Threshold
+          abiCoder.encode(
+            ["uint256"],
+            [BigNumber.from(proposalThreshold.toString())]
+          ), // Threshold
           abiCoder.encode(["uint256"], [BigNumber.from(quorum.toString())]), // Quorum
           abiCoder.encode(["uint256"], [BigNumber.from("1")]), // Access Control Index
         ],
@@ -170,14 +186,15 @@ const useDeployDAO = ({
       ],
     };
     contractCallDeploy({
-      contractFn: () => factory.createDAOAndModules(
-        addresses.daoFactory?.address!,
-        0,
-        createDAOParams,
-        moduleFactoriesCalldata,
-        moduleActionCalldata,
-        [[5], [0], [0], [4]]
-      ),
+      contractFn: () =>
+        factory.createDAOAndModules(
+          addresses.daoFactory?.address!,
+          0,
+          createDAOParams,
+          moduleFactoriesCalldata,
+          moduleActionCalldata,
+          [[5], [0], [0], [4]]
+        ),
       pendingMessage: "Deploying",
       failedMessage: "Deployment Failed",
       successMessage: "DAO Created",
@@ -185,18 +202,15 @@ const useDeployDAO = ({
         const event = receipt.events?.filter((x) => {
           return x.address === addresses.daoFactory?.address;
         });
-        if (
-          event === undefined ||
-          event[0].topics[1] === undefined
-        ) {
+        if (event === undefined || event[0].topics[1] === undefined) {
           return "";
         } else {
           const daoAddress = abiCoder.decode(["address"], event[0].topics[1]);
-          navigate(`/daos/${daoAddress}`,)
+          navigate(`/daos/${daoAddress}`);
         }
       },
       rpcErrorCallback: (error: any) => {
-        console.error(error)
+        console.error(error);
       },
     });
   }, [
@@ -205,6 +219,7 @@ const useDeployDAO = ({
     tokenName,
     tokenSymbol,
     tokenSupply,
+    tokenAllocations,
     proposalThreshold,
     quorum,
     executionDelay,
@@ -220,9 +235,9 @@ const useDeployDAO = ({
     addresses.governorModule?.address,
     addresses.timelockUpgradeable?.address,
     contractCallDeploy,
-    navigate
-  ])
+    navigate,
+  ]);
   return deployDao;
-}
+};
 
 export default useDeployDAO;
