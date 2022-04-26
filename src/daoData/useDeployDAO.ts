@@ -6,6 +6,11 @@ import { BigNumber, ethers } from 'ethers';
 import { useAddresses } from '../web3/chains';
 import { MetaFactory, MetaFactory__factory } from '../typechain-types';
 
+export type TokenAllocation = {
+  address: string;
+  amount: number
+}
+
 const useDeployDAO = ({
   daoName,
   tokenName,

@@ -9,11 +9,7 @@ import useDeployDAO from "../../../daoData/useDeployDAO";
 import ContentBox from "../../ui/ContentBox";
 import LeftArrow from "../../ui/svg/LeftArrow";
 import RightArrow from "../../ui/svg/RightArrow";
-
-export type TokenAllocation = {
-  address: string;
-  amount: number
-}
+import { TokenAllocation } from "../../../daoData/useDeployDAO";
 
 const StepDisplay = ({
   step,
