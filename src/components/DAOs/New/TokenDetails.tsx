@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import ContentBoxTitle from "../../ui/ContentBoxTitle";
 import CreateDAOInput from "../../ui/CreateDAOInput";
-import { TokenAllocation } from "./index";
+import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { ethers } from "ethers";
 
 const TokenAllocationInput = ({
   index,
   tokenAllocation,
   updateTokenAllocation,
+  removeTokenAllocation,
 }: {
   index: number;
   tokenAllocation: TokenAllocation;
@@ -15,6 +16,7 @@ const TokenAllocationInput = ({
     index: number,
     tokenAllocation: TokenAllocation
   ) => void;
+  removeTokenAllocation: (index: number) => void;
 }) => {
   const updateAddress = (address: string) => {
     updateTokenAllocation(index, {
@@ -33,17 +35,18 @@ const TokenAllocationInput = ({
   return (
     <>
       <input
-        className="md:col-span-2 w-full border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50"
+        className="md:col-span-8 w-full border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50"
         type="string"
         value={tokenAllocation.address || ""}
         onChange={(event) => updateAddress(event.target.value)}
       />
       <input
-        className="md:pt-0 border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50"
+        className="md:col-span-3 md:pt-0 border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50"
         type="number"
         value={tokenAllocation.amount || ""}
         onChange={(event) => updateAmount(event.target.value)}
       />
+      <div onClick={() => removeTokenAllocation(index)} className="md:col-span-1 text-gray-50 cursor-pointer m-1">Remove</div>
     </>
   );
 };
@@ -112,13 +115,22 @@ const TokenAllocations = ({
     ]);
   };
 
+  const removeTokenAllocation = (index: number) => {
+    if(tokenAllocations === undefined) return;
+
+    setTokenAllocations([
+      ...tokenAllocations.slice(0, index),
+      ...tokenAllocations.slice(index + 1),
+    ]);
+  }
+
   return (
     <div className="bg-gray-500 rounded-lg my-4">
       <div className="px-4 py-4">
         <div className="text-sm text-gray-50 pb-2">Token Allocations</div>
-        <div className="md:grid md:grid-cols-3 md:gap-4 flex flex-col items-center">
-          <div className="md:col-span-2 text-sm text-gray-50">Address</div>
-          <div className="md:pt-0 text-sm text-gray-50">Amount</div>
+        <div className="md:grid md:grid-cols-12 md:gap-4 flex flex-col items-center">
+          <div className="md:col-span-8 text-sm text-gray-50">Address</div>
+          <div className="md:col-span-3 text-sm text-gray-50">Amount</div>
           {tokenAllocations
             ? tokenAllocations.map((tokenAllocation, index) => (
                 <TokenAllocationInput
@@ -126,19 +138,21 @@ const TokenAllocations = ({
                   index={index}
                   tokenAllocation={tokenAllocation}
                   updateTokenAllocation={updateTokenAllocation}
+                  removeTokenAllocation={removeTokenAllocation}
                 />
               ))
             : null}
-          <div
-            className="text-sm text-gray-50 underline cursor-pointer"
+
+        </div>
+        <div
+            className="text-sm text-gray-50 underline cursor-pointer my-4"
             onClick={() => addTokenAllocation()}
           >
             Add Allocation
           </div>
           {errorMessage ? (
-            <div className="text-sm text-white">{errorMessage}</div>
+            <div className="text-center text-sm text-white">{errorMessage}</div>
           ) : null}
-        </div>
       </div>
     </div>
   );
