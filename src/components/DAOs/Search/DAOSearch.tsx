@@ -9,6 +9,7 @@ import SearchingDAO from './SearchingDAO';
 import H1 from '../../ui/H1';
 import ContentBox from '../../ui/ContentBox';
 import InputBox from '../../ui/InputBox';
+import SearchButton from '../../ui/SearchButton';
 
 function FoundValidDAO({
   searchAddress,
@@ -84,14 +85,7 @@ function DAOSearch() {
                   onChange={setSearchAddressInput}
                 />
               </div>
-              <div className="ml-1">
-                <button
-                  className="px-6 py-1 mx-2 border border-gold-500 rounded bg-gold-500 text-black-300 capitalize"
-                  onClick={() => doSearch(searchAddressInput)}
-                >
-                  search
-                </button>
-              </div>
+              <SearchButton/>
             </div>
             {
             searchFailed === false ? 
