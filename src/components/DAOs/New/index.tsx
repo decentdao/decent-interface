@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DAODetails from "./DAODetails";
 import TokenDetails from "./TokenDetails";
 import GovernanceDetails from "./GovernanceDetails";
@@ -99,10 +99,6 @@ const New = () => {
   const [quorum] = useState<number>(4);
   const [executionDelay] = useState<number>(24);
 
-  useEffect(() => {
-    console.log("token allocations: ", tokenAllocations);
-  }, [tokenAllocations]);
-
   const decrement = () => {
     setStep((currPage) => currPage - 1);
   };
@@ -116,6 +112,7 @@ const New = () => {
     tokenName,
     tokenSymbol,
     tokenSupply,
+    tokenAllocations,
     proposalThreshold,
     quorum,
     executionDelay,
