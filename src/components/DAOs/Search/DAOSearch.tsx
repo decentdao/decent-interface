@@ -93,9 +93,10 @@ function DAOSearch() {
                 </button>
               </div>
             </div>
-            {searchFailed === false ? 
+            {
+            searchFailed === false ? 
             <p className="text-gray-50 pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p> : 
-            <div/>
+            null
             }
           </form>
           <Search 
