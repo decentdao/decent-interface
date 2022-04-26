@@ -1,14 +1,19 @@
-import { useState } from 'react'
-import DAODetails from './DAODetails';
-import TokenDetails from './TokenDetails';
-import GovernanceDetails from './GovernanceDetails';
-import Button from '../../ui/Button';
-import ConnectModal from '../../ConnectModal';
-import Pending from '../../Pending';
-import useDeployDAO from '../../../daoData/useDeployDAO';
-import ContentBox from '../../ui/ContentBox';
-import LeftArrow from '../../ui/svg/LeftArrow';
-import RightArrow from '../../ui/svg/RightArrow';
+import { useState, useEffect } from "react";
+import DAODetails from "./DAODetails";
+import TokenDetails from "./TokenDetails";
+import GovernanceDetails from "./GovernanceDetails";
+import Button from "../../ui/Button";
+import ConnectModal from "../../ConnectModal";
+import Pending from "../../Pending";
+import useDeployDAO from "../../../daoData/useDeployDAO";
+import ContentBox from "../../ui/ContentBox";
+import LeftArrow from "../../ui/svg/LeftArrow";
+import RightArrow from "../../ui/svg/RightArrow";
+
+export type TokenAllocation = {
+  address: string;
+  amount: number
+}
 
 const StepDisplay = ({
   step,
@@ -22,24 +27,28 @@ const StepDisplay = ({
   setTokenSymbol,
   tokenSupply,
   setTokenSupply,
+  tokenAllocations,
+  setTokenAllocations,
   proposalThreshold,
   quorum,
   executionDelay,
 }: {
-  step: number,
-  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>,
-  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>,
-  daoName: string | undefined,
-  setDAOName: React.Dispatch<React.SetStateAction<string | undefined>>
-  tokenName: string | undefined,
-  setTokenName: React.Dispatch<React.SetStateAction<string | undefined>>,
-  tokenSymbol: string | undefined,
-  setTokenSymbol: React.Dispatch<React.SetStateAction<string | undefined>>,
-  tokenSupply: number | undefined,
-  setTokenSupply: React.Dispatch<React.SetStateAction<number | undefined>>,
-  proposalThreshold: number | undefined,
-  quorum: number | undefined,
-  executionDelay: number | undefined,
+  step: number;
+  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  daoName: string | undefined;
+  setDAOName: React.Dispatch<React.SetStateAction<string | undefined>>;
+  tokenName: string | undefined;
+  setTokenName: React.Dispatch<React.SetStateAction<string | undefined>>;
+  tokenSymbol: string | undefined;
+  setTokenSymbol: React.Dispatch<React.SetStateAction<string | undefined>>;
+  tokenSupply: number | undefined;
+  setTokenSupply: React.Dispatch<React.SetStateAction<number | undefined>>;
+  tokenAllocations: TokenAllocation[] | undefined;
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
+  proposalThreshold: number | undefined;
+  quorum: number | undefined;
+  executionDelay: number | undefined;
 }) => {
   if (step === 0) {
     return (
@@ -61,6 +70,9 @@ const StepDisplay = ({
         setSymbol={setTokenSymbol}
         supply={tokenSupply}
         setSupply={setTokenSupply}
+        tokenAllocations={tokenAllocations}
+        setTokenAllocations={setTokenAllocations}
+        tokenSupply={tokenSupply}
       />
     );
   } else if (step === 2) {
@@ -73,8 +85,8 @@ const StepDisplay = ({
       />
     );
   }
-  return <></>
-}
+  return <></>;
+};
 
 const New = () => {
   const [step, setStep] = useState<number>(0);
@@ -85,41 +97,46 @@ const New = () => {
   const [tokenName, setTokenName] = useState<string>();
   const [tokenSymbol, setTokenSymbol] = useState<string>();
   const [tokenSupply, setTokenSupply] = useState<number>();
+  const [tokenAllocations, setTokenAllocations] =
+    useState<TokenAllocation[]>();
   const [proposalThreshold] = useState<number>(0);
   const [quorum] = useState<number>(4);
   const [executionDelay] = useState<number>(24);
 
+  useEffect(() => {
+    console.log("token allocations: ", tokenAllocations);
+  }, [tokenAllocations]);
+
   const decrement = () => {
     setStep((currPage) => currPage - 1);
-  }
+  };
 
   const increment = () => {
     setStep((currPage) => currPage + 1);
-  }
+  };
 
-  const deploy = useDeployDAO(
-    {
-      daoName,
-      tokenName,
-      tokenSymbol,
-      tokenSupply,
-      proposalThreshold,
-      quorum,
-      executionDelay,
-      setPending
-    }
-  )
+  const deploy = useDeployDAO({
+    daoName,
+    tokenName,
+    tokenSymbol,
+    tokenSupply,
+    proposalThreshold,
+    quorum,
+    executionDelay,
+    setPending,
+  });
   return (
     <div>
-      <Pending
-        message="Creating Fractal..."
-        pending={pending}
-      />
+      <Pending message="Creating Fractal..." pending={pending} />
       <ConnectModal />
       <div>
-        <div className="text-2xl text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
+        <div className="text-2xl text-white">
+          {!daoName || daoName.trim() === ""
+            ? "Configure - New Fractal"
+            : "Configure - " + daoName}
+        </div>
         <ContentBox>
-          <form onSubmit={e => e.preventDefault()}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <StepDisplay
               step={step}
               setPrevEnabled={setPrevEnabled}
@@ -132,6 +149,8 @@ const New = () => {
               setTokenSymbol={setTokenSymbol}
               tokenSupply={tokenSupply}
               setTokenSupply={setTokenSupply}
+              tokenAllocations={tokenAllocations}
+              setTokenAllocations={setTokenAllocations}
               proposalThreshold={proposalThreshold}
               quorum={quorum}
               executionDelay={executionDelay}
@@ -141,33 +160,30 @@ const New = () => {
 
         <div className="flex items-center justify-center">
           {step > 0 && (
-            <Button
-              onClick={decrement}
-              disabled={!prevEnabled}
-            >
+            <Button onClick={decrement} disabled={!prevEnabled}>
               <div className="flex">
-                <LeftArrow/>
-                <div >Prev</div>
+                <LeftArrow />
+                <div>Prev</div>
               </div>
             </Button>
           )}
           {step < 2 && (
-            <Button
-              onClick={increment}
-              disabled={!nextEnabled}
-            >
+            <Button onClick={increment} disabled={!nextEnabled}>
               <div className="flex">
-                <div >Next</div>
-                <RightArrow/>
+                <div>Next</div>
+                <RightArrow />
               </div>
             </Button>
           )}
           {step > 1 && (
-            <Button onClick={() => {
-              if (!daoName || !tokenName || !tokenSymbol || !tokenSupply) { return }
-              deploy();
-            }
-            }>
+            <Button
+              onClick={() => {
+                if (!daoName || !tokenName || !tokenSymbol || !tokenSupply) {
+                  return;
+                }
+                deploy();
+              }}
+            >
               Create DAO
             </Button>
           )}
@@ -175,6 +191,6 @@ const New = () => {
       </div>
     </div>
   );
-}
+};
 
 export default New;
