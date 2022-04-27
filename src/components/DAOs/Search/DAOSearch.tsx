@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
-import InputAddress from '../../ui/InputAddress';
+import {InputAddress} from '../../ui/Input';
 import useAddress from '../../../hooks/useAddress';
 import useIsDAO from '../../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
