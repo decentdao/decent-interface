@@ -7,7 +7,7 @@ const SearchError = ({
   children: ReactNode
 }) => {
   return (
-    <div className="text-red text-sm">
+    <div className="text-red pt-1 text-sm">
       {children}
     </div>
   )
@@ -30,7 +30,7 @@ function SearchingDAO({
   validDAOComponent: React.ReactNode,
   setSearchFailed?: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
-  if (loading !== true && searchAddress === undefined || searchAddress === "") {
+  if ((loading !== true && searchAddress === undefined) || searchAddress === "") {
     if(setSearchFailed) {
       setSearchFailed(false);
     }
@@ -41,7 +41,7 @@ function SearchingDAO({
 
   if (loading === true) {
     return (
-      <div className="break-all text-gray-50">loading... {searchAddress}</div>
+      <div className="break-all text-gray-50 pt-1 text-sm">loading... {searchAddress}</div>
     );
   }
 
