@@ -142,17 +142,16 @@ const TokenAllocations = ({
         <div className="md:grid md:grid-cols-12 md:gap-4 flex flex-col items-center">
           <div className="md:col-span-8 text-sm text-gray-50">Address</div>
           <div className="md:col-span-3 text-sm text-gray-50">Amount</div>
-          {tokenAllocations
-            ? tokenAllocations.map((tokenAllocation, index) => (
-                <TokenAllocationInput
-                  key={index}
-                  index={index}
-                  tokenAllocation={tokenAllocation}
-                  updateTokenAllocation={updateTokenAllocation}
-                  removeTokenAllocation={removeTokenAllocation}
-                />
-              ))
-            : null}
+          {tokenAllocations &&
+            tokenAllocations.map((tokenAllocation, index) => (
+              <TokenAllocationInput
+                key={index}
+                index={index}
+                tokenAllocation={tokenAllocation}
+                updateTokenAllocation={updateTokenAllocation}
+                removeTokenAllocation={removeTokenAllocation}
+              />
+            ))}
         </div>
         <div
           className="text-sm text-gray-50 underline cursor-pointer my-4"
