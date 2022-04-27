@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
-import Button from '../../ui/Button';
 import InputAddress from '../../ui/InputAddress';
 import useAddress from '../../../hooks/useAddress';
 import useIsDAO from '../../../hooks/useIsDAO';
@@ -23,7 +22,6 @@ function FoundValidDAO({
       <Navigate to={`${searchAddress}`} state={{ validatedAddress: address }} />
     );
   }
-
   return <></>;
 }
 
@@ -50,7 +48,7 @@ function Search({
       address={address}
       addressIsDAO={addressIsDAO}
       validDAOComponent={<FoundValidDAO searchAddress={searchAddress} address={address} />}
-      setSearchFailed = {setSearchFailed}
+      setSearchFailed={setSearchFailed}
     />
   )
 }
@@ -81,24 +79,18 @@ function DAOSearch() {
                   value={searchAddressInput}
                   disabled={false}
                   placeholder=""
-                  error = {searchFailed}
+                  error={searchFailed}
                   onChange={setSearchAddressInput}
                 />
               </div>
-              <SearchButton/>
+              <SearchButton />
             </div>
-            {
-            searchFailed === false ? 
-            <p className="text-gray-50 pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p> : 
-            null
-            }
           </form>
-          <Search 
-          setSearchFailed={setSearchFailed}
-          searchAddress={searchAddress} 
+          <Search
+            setSearchFailed={setSearchFailed}
+            searchAddress={searchAddress}
           />
         </InputBox>
-
       </ContentBox>
     </div >
   );
