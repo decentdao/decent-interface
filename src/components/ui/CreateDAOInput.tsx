@@ -19,16 +19,17 @@ const CreateDAOInput = (
   return (
     <InputBox label={label}>
       <div className="md:grid md:grid-cols-3 md:gap-4 flex flex-col items-center">
-        <Input
-          width="md:col-span-2 w-full"
-          value={value || ""}
-          type={dataType}
-          min={undefined}
-          disabled={disabled}
-          onChange={e => onChange(e.target.value)}
-          onKeyDown={undefined}
-          borderColor = "border-black-100"
-        />
+        <div className="md:col-span-2 w-full">
+          <Input
+            value={value || ""}
+            type={dataType}
+            min={undefined}
+            disabled={disabled}
+            onChange={e => onChange(e.target.value)}
+            onKeyDown={undefined}
+            borderColor="border-black-100"
+          />
+        </div>
         <div className="md:pt-0 pt-2 text-sm text-gray-50 text-center">{helperText}</div>
       </div>
     </InputBox>
