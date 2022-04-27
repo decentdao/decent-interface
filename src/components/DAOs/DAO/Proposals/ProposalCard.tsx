@@ -3,6 +3,20 @@ import useDisplayName from "../../../../hooks/useDisplayName";
 import { Link } from "react-router-dom";
 import ContentBox from "../../../ui/ContentBox";
 import Clock from "../../../ui/svg/Clock";
+import { ReactNode } from "react";
+
+function TextBox({
+  children,
+  borderTextColor,
+}: {
+  children?: ReactNode
+  borderTextColor?: string,
+}) {
+  return (
+    <div className={`px-2 py-1 bg-chocolate-400 border ${borderTextColor} border-gold-500 rounded text-sm`}>{children}</div>
+  )
+
+}
 
 function ProposalCard({
   proposal
@@ -10,12 +24,14 @@ function ProposalCard({
   proposal: ProposalData
 }) {
   const proposerDisplayName = useDisplayName(proposal.proposer);
-
   return (
     <Link to={`proposals/${proposal.number}`}>
       <ContentBox onHover="hover:border-2 hover:border-gold-300 hover:shadow-sm hover:shadow-gold-300">
         <div className="flex flex-row">
-          <div className="px-2 py-1 bg-chocolate-400 border border-gold-500 rounded text-gold-500 text-sm">{proposal.stateString}</div>
+          {proposal.stateString === "Open" ?
+            <TextBox borderTextColor="border-gold-500">{proposal.stateString}</TextBox> :
+            <TextBox borderTextColor="border-gray-50 text-gray-50">{proposal.stateString}</TextBox>
+          }
           <div className="px-4 py-1 text-gray-25 text-sm">#{proposal.number}</div>
           <div className="py-1">
             <Clock />
