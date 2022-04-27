@@ -62,38 +62,14 @@ const TokenAllocationInput = ({
 const TokenAllocations = ({
   tokenAllocations,
   setTokenAllocations,
-  supply,
+  errorMessage,
 }: {
   tokenAllocations: TokenAllocation[] | undefined;
   setTokenAllocations: React.Dispatch<
     React.SetStateAction<TokenAllocation[] | undefined>
   >;
-  supply: number | undefined;
+  errorMessage: string | undefined;
 }) => {
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  useEffect(() => {
-    if (tokenAllocations === undefined || supply === undefined) return;
-
-    if (
-      tokenAllocations.some(
-        (tokenAllocation) =>
-          tokenAllocation.address !== "" &&
-          !ethers.utils.isAddress(tokenAllocation.address)
-      )
-    ) {
-      setErrorMessage("Invalid address");
-    } else if (
-      tokenAllocations
-        .map((tokenAllocation) => tokenAllocation.amount)
-        .reduce((prev, curr) => prev + curr, 0) > supply
-    ) {
-      setErrorMessage("Invalid token allocations");
-    } else {
-      setErrorMessage(undefined);
-    }
-  }, [tokenAllocations, supply]);
-
   const updateTokenAllocation = (
     index: number,
     tokenAllocation: TokenAllocation
@@ -190,6 +166,8 @@ const TokenDetails = ({
     React.SetStateAction<TokenAllocation[] | undefined>
   >;
 }) => {
+  const [errorMessage, setErrorMessage] = useState<string>();
+
   useEffect(() => {
     setPrevEnabled(true);
   }, [setPrevEnabled]);
@@ -214,6 +192,28 @@ const TokenDetails = ({
           .reduce((prev, curr) => prev + curr, 0) <= supply
     );
   }, [name, setNextEnabled, supply, symbol, tokenAllocations]);
+
+  useEffect(() => {
+    if (tokenAllocations === undefined || supply === undefined) return;
+
+    if (
+      tokenAllocations.some(
+        (tokenAllocation) =>
+          tokenAllocation.address !== "" &&
+          !ethers.utils.isAddress(tokenAllocation.address)
+      )
+    ) {
+      setErrorMessage("Invalid address");
+    } else if (
+      tokenAllocations
+        .map((tokenAllocation) => tokenAllocation.amount)
+        .reduce((prev, curr) => prev + curr, 0) > supply
+    ) {
+      setErrorMessage("Invalid token allocations");
+    } else {
+      setErrorMessage(undefined);
+    }
+  }, [tokenAllocations, supply]);
 
   return (
     <div>
@@ -248,7 +248,7 @@ const TokenDetails = ({
       <TokenAllocations
         tokenAllocations={tokenAllocations}
         setTokenAllocations={setTokenAllocations}
-        supply={supply}
+        errorMessage={errorMessage}
       />
     </div>
   );
