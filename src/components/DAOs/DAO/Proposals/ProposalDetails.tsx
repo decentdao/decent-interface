@@ -37,7 +37,6 @@ function ProposalDetails() {
     <div className="flex">
       <ProposalCardDetailed proposal={proposal} />
       <ProposalVotes proposal={proposal} />
-
     </div>
   );
 }
