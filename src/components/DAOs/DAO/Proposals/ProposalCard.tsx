@@ -13,9 +13,8 @@ function TextBox({
   borderTextColor?: string,
 }) {
   return (
-    <div className={`px-2 py-1 bg-chocolate-400 border ${borderTextColor} border-gold-500 rounded text-sm`}>{children}</div>
+    <div className={`px-2 py-1 bg-chocolate-400 border ${borderTextColor} rounded text-sm`}>{children}</div>
   )
-
 }
 
 function ProposalCard({
@@ -26,7 +25,7 @@ function ProposalCard({
   const proposerDisplayName = useDisplayName(proposal.proposer);
   return (
     <Link to={`proposals/${proposal.number}`}>
-      <ContentBox onHover="hover:border-2 hover:border-gold-300 hover:shadow-sm hover:shadow-gold-300">
+      <ContentBox onHover="border border-chocolate-400 hover:border-gold-300 hover:shadow-sm hover:shadow-gold-300">
         <div className="flex flex-row">
           {proposal.stateString === "Open" ?
             <TextBox borderTextColor="border-gold-500">{proposal.stateString}</TextBox> :
