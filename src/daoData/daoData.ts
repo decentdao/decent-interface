@@ -12,7 +12,7 @@ export interface DAOData {
   name: string | undefined,
   accessControlAddress: string | undefined,
   moduleAddresses: string[] | undefined,
-  proposals: ProposalData[] | undefined,
+  proposals: ProposalData[],
 };
 
 export const useDAODatas = () => {
