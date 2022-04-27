@@ -102,7 +102,7 @@ const MenuItems = () => {
   return (
     <Menu.Items
       static
-      className="absolute right-0 w-max mt-2 pb-1 origin-top-right bg-gray-500 border border-gray-200 rounded-md shadow-menu"
+      className="fixed left-0 w-full sm:absolute sm:left-auto sm:right-0 sm:w-max mt-6 pb-1 origin-top-right bg-gray-500 border border-gray-200 rounded-md shadow-menu"
     >
       <div className="font-mono">
         <section>
