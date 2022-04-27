@@ -8,6 +8,7 @@ import SearchingDAO from "../SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
 import ProposalsList from "./Proposals/ProposalsList";
+import DelegateVote from "./DelegateVote";
 
 function ValidDAO({ address }: { address: string }) {
   const [{ name, accessControlAddress }, setDAOAddress] = useDAOData();
@@ -25,6 +26,7 @@ function ValidDAO({ address }: { address: string }) {
         is a valid dao!
       </H1>
       <div>
+      <DelegateVote />
         <div>
           <Link to="details" className="underline">
             DAO Details
