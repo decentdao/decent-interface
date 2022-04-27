@@ -6,6 +6,8 @@ import Support from "../svg/Support";
 import Connect from "../svg/Connect";
 import Disconnect from "../svg/Disconnect";
 import Faq from "../svg/Faq";
+import CopyToClipboard from "../CopyToClipboard";
+import { truncateString } from "../../../utils";
 
 interface MenuItem {
   title: string;
@@ -51,8 +53,8 @@ const DISCONNECT: ActionMenuItem = {
   Icon: Disconnect,
 };
 
-const ItemWrapper = (props: { children: JSX.Element | JSX.Element[] }) => (
-  <div className="flex items-center gap-4 text-white hover:bg-slate-200 hover:text-black py-2 px-4">{props.children}</div>
+const ItemWrapper = (props: { children: JSX.Element | JSX.Element[], noHoverEffect?: boolean }) => (
+  <div className={`flex items-center gap-4 text-white ${!props.noHoverEffect ? "hover:bg-slate-200 hover:text-black" : ""} py-2 px-4`}>{props.children}</div>
 );
 
 const ActionItem = ({ title, action, Icon, isVisible }: ActionMenuItem) => {
@@ -63,9 +65,7 @@ const ActionItem = ({ title, action, Icon, isVisible }: ActionMenuItem) => {
     <Menu.Item>
       <ItemWrapper>
         <Icon />
-        <button onClick={action}>
-          {title}
-        </button>
+        <button onClick={action}>{title}</button>
       </ItemWrapper>
     </Menu.Item>
   );
@@ -84,10 +84,18 @@ const LinkItem = ({ title, link, Icon }: LinkMenuItem) => {
   );
 };
 
-// const AddressCopyItem = () => {
-//   // @todo use clipboard component?
-//   return <></>;
-// };
+const AddressCopyItem = ({ account }: { account?: string }) => {
+  if (!account) {
+    return null;
+  }
+
+  return (
+    <ItemWrapper noHoverEffect>
+      <span className="font-sans">{truncateString(account, 15)}</span>
+      <CopyToClipboard textToCopy={account} />
+    </ItemWrapper>
+  );
+};
 
 const MenuItems = () => {
   const { account } = useWeb3();
@@ -98,6 +106,7 @@ const MenuItems = () => {
     >
       <div className="font-mono">
         <section>
+          <AddressCopyItem account={account} />
           <ActionItem {...DISCONNECT} isVisible={!!account} />
           <ActionItem {...CONNECT_WALLET} isVisible={!account} />
         </section>

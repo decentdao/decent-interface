@@ -5,7 +5,7 @@ function CopyToClipboard({ textToCopy }: {
 }) {
 
   return (
-    <div className="cursor-pointer mx-2" onClick={() => navigator.clipboard.writeText(textToCopy)}>
+    <div className="cursor-pointer mx-2 hover:text-stone-300" onClick={() => navigator.clipboard.writeText(textToCopy)}>
       <Clipboard />
     </div>
   );

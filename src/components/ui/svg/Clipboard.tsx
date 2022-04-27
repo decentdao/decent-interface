@@ -9,7 +9,7 @@ const Clipboard = () => {
     >
       <path
         d="M7 6.5v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-3v3c0 .552-.45 1-1.007 1H4.007A1 1 0 0 1 3 21.5l.003-14c0-.552.45-1 1.007-1H7zm-1.997 2L5 20.5h10v-12H5.003zM9 6.5h8v10h2v-12H9v2z"
-        fill="#F5F5F5"
+        fill="currentColor"
       />
     </svg>
   );
