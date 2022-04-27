@@ -15,7 +15,10 @@ function ValidDAO({ address }: { address: string }) {
   }, [address, setDAOAddress]);
 
   return (
-    <ProposalsList />
+    <>
+      <DelegateVote />
+      <ProposalsList />
+    </>
   );
 }
 
