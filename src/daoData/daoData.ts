@@ -7,20 +7,23 @@ import useAccessControlContract from './useAccessControlContract';
 import useModuleAddresses from './useModuleAddresses';
 import useGovernorModuleContract from './useGovernorModuleContract';
 import useTokenContract from './useTokenContract';
+import useTokenData from './useTokenData';
 import useProposals from './useProposals';
 import { ProposalData } from './useProposals';
 import { GovernorModule, VotesTokenWithSupply } from '../typechain-types';
-import { BigNumber } from 'ethers';
 
 export interface DAOData {
   name: string | undefined,
   accessControlAddress: string | undefined,
   moduleAddresses: string[] | undefined,
-  proposals: ProposalData[] | undefined,
+  proposals: ProposalData[],
   governorModuleContract: GovernorModule | undefined,
   tokenContract: VotesTokenWithSupply | undefined,
   tokenData: {
-    userBalance: BigNumber | undefined,
+    name: string | undefined,
+    symbol: string | undefined,
+    decimals: number | undefined
+    userBalance: number | undefined,
     delegatee: string | undefined,
   }
 };
@@ -35,6 +38,7 @@ export const useDAODatas = () => {
   const moduleAddresses = useModuleAddresses(daoContract, accessControlContract);
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const tokenContract = useTokenContract(governorModuleContract);
+  const tokenData = useTokenData(tokenContract);
   const proposals = useProposals(moduleAddresses);
 
   const daoData: DAOData = {
@@ -44,10 +48,7 @@ export const useDAODatas = () => {
     proposals,
     governorModuleContract,
     tokenContract,
-    tokenData: {
-      userBalance: undefined,
-      delegatee: undefined
-    }
+    tokenData
   };
 
   return [daoData, setDAOAddress] as const;
