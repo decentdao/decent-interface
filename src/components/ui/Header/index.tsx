@@ -2,12 +2,13 @@ import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Jazzicon } from '@ukstv/jazzicon-react';
 import { useImage } from 'react-image';
-import { useWeb3 } from '../web3';
-import { connect, disconnect } from '../web3/providers';
-import useDisplayName from '../hooks/useDisplayName';
-import useAvatar from '../hooks/useAvatar';
-import EtherscanLink from './ui/EtherscanLink';
-import HeaderDropdown from './ui/HeaderDropdown';
+import HeaderDropdown from './HeaderDropdown';
+import { disconnect } from 'process';
+import useAvatar from '../../../hooks/useAvatar';
+import useDisplayName from '../../../hooks/useDisplayName';
+import { useWeb3 } from '../../../web3';
+import { connect } from '../../../web3/providers';
+import EtherscanLink from '../EtherscanLink';
 
 function JazziconAvatar({
   address,

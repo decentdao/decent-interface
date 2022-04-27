@@ -1,6 +1,6 @@
-import Header from './components/Header';
 import Body from './components/Body'
 import Breadcrumbs from './components/Breadcrumbs';
+import Header from './components/ui/Header';
 
 function App() {
   return (
