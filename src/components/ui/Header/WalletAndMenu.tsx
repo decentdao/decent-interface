@@ -1,30 +1,51 @@
-import { disconnect } from "process";
 import useAvatar from "../../../hooks/useAvatar";
 import useDisplayName from "../../../hooks/useDisplayName";
 import { useWeb3 } from "../../../web3";
-import { connect } from "../../../web3/providers";
+import { connect, disconnect } from "../../../web3/providers";
 import EtherscanLink from "../EtherscanLink";
 import Avatar from "./Avatar";
 import HeaderDropdown from "./HeaderDropdown";
 
-const WalletAndMenu = () => {
-  const { account } = useWeb3();
+const ConnectWallet = ({ account }: { account?: string }) => {
+  if(account) {
+    return null
+  }
+  return (
+    <>
+      <button className="text-sm text-gold-500" onClick={connect}>
+        Connect Wallet
+      </button>
+    </>
+  );
+};
+
+const WalletConnected = ({ account }: { account?: string }) => {
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
 
-  if (!account) {
-    return <button onClick={connect}>Connect Wallet</button>;
+  if(!account) {
+    return null
   }
   return (
-    <div className="flex items-center">
+    <>
       <EtherscanLink address={account}>
         <Avatar address={account} url={avatarURL} />
       </EtherscanLink>
       <div className="pl-2 flex flex-col items-end">
-        <div className="sm:text-right text-sm">
+        <div className="sm:text-right text-sm text-gold-500">
           <EtherscanLink address={account}>{accountDisplayName}</EtherscanLink>
         </div>
       </div>
+    </>
+  );
+};
+
+const WalletAndMenu = () => {
+  const { account } = useWeb3();
+  return (
+    <div className="flex items-center">
+      <ConnectWallet account={account} />
+      <WalletConnected account={account} />
       <HeaderDropdown disconnect={disconnect} />
     </div>
   );

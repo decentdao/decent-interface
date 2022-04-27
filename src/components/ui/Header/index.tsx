@@ -10,9 +10,7 @@ function Header() {
             <Link to="/">fractal</Link>
           </div>
         </div>
-        <div className="sm:text-right text-sm text-gold-500">
-          <WalletAndMenu />
-        </div>
+        <WalletAndMenu />
       </div>
     </header>
   );
