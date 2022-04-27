@@ -103,9 +103,7 @@ const TokenAllocations = ({
       return;
     }
 
-    const newTokenAllocations: TokenAllocation[] = tokenAllocations.map(
-      (tokenAllocation) => tokenAllocation
-    );
+    const newTokenAllocations = [...tokenAllocations];
     newTokenAllocations[index] = tokenAllocation;
 
     setTokenAllocations(newTokenAllocations);
