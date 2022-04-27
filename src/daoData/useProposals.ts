@@ -184,7 +184,6 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
           return newProposal;
         });
 
-        // setProposals(newProposals);
         return newProposals;
       })
       .then((newProposals) => {

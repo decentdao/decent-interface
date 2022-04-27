@@ -111,24 +111,40 @@ const New = ({ address }: { address: string | undefined }) => {
 
         {step === 1 && (
           <div className="flex items-center justify-center">
-            <Button onClick={addTransaction} disabled={false}>
+            <Button
+              onClick={addTransaction}
+              disabled={false}
+              addedClassNames="px-8 py-2 mx-2"
+            >
               Add Transaction
             </Button>
           </div>
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
           {step === 1 && (
-            <Button onClick={decrementStep} disabled={false}>
+            <Button
+              onClick={decrementStep}
+              disabled={false}
+              addedClassNames="px-8 py-2 mx-2"
+            >
               Back
             </Button>
           )}
           {step === 1 && (
-            <Button onClick={createProposal} disabled={false}>
+            <Button
+              onClick={createProposal}
+              disabled={false}
+              addedClassNames="px-8 py-2 mx-2"
+            >
               Create Proposal
             </Button>
           )}
           {step === 0 && (
-            <Button onClick={incrementStep} disabled={false}>
+            <Button
+              onClick={incrementStep}
+              disabled={false}
+              addedClassNames="px-8 py-2 mx-2"
+            >
               Next: Add Transactions
             </Button>
           )}

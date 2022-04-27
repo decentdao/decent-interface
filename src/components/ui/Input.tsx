@@ -1,78 +1,68 @@
 function Input({
-  title,
-  status,
   value,
   type,
   min,
   disabled,
   placeholder,
+  borderColor,
   onChange,
   onKeyDown,
 }: {
-  title: string,
-  status: React.ReactNode,
   value: string,
   type: string,
   min: string | number | undefined,
   disabled: boolean,
-  placeholder: string,
+  placeholder?: string,
+  borderColor:string,
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined,
   onKeyDown: React.KeyboardEventHandler<HTMLInputElement> | undefined,
 }) {
   return (
-    <div>
-      <div className="flex items-baseline">
-        <div className="mr-1">{title}</div>
-        <div>{status}</div>
-      </div>
-      <input
-        type={type}
-        min={min}
-        className={`w-full border rounded py-1 px-2 shadow-inner ${disabled ? "disabled" : ""}`}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        placeholder={placeholder}
-        onKeyDown={onKeyDown}
-        onWheel={e => (e.target as HTMLInputElement).blur()}
-        autoCorrect="off"
-        autoCapitalize="none"
-        spellCheck="false"
-      />
-    </div>
-  );
-}
-
-function InputAddress({
-  title,
-  status,
-  value,
-  disabled,
-  placeholder,
-  onChange,
-}: {
-  title: string,
-  status?: React.ReactNode,
-  value: string,
-  disabled: boolean,
-  placeholder: string,
-  onChange: (newValue: string) => void,
-}) {
-  return (
-    <Input
-      title={title}
-      status={status}
+    <input
+      type={type}
+      min={min}
+      className={`w-full border ${borderColor} border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-50 ${disabled ? "disabled" : ""}`}
       value={value}
-      type="text"
-      min={undefined}
+      onChange={onChange}
       disabled={disabled}
       placeholder={placeholder}
-      onChange={e => onChange(e.target.value)}
-      onKeyDown={undefined}
+      onKeyDown={onKeyDown}
+      onWheel={e => (e.target as HTMLInputElement).blur()}
+      autoCorrect="off"
+      autoCapitalize="none"
+      spellCheck="false"
     />
   );
 }
 
+const InputAddress = ({
+  value,
+  disabled,
+  placeholder,
+  error,
+  onChange,
+}: {
+  value: string,
+  disabled: boolean,
+  placeholder: string,
+  error: boolean,
+  onChange: (newValue: string) => void,
+}) => {
+return (
+  <Input
+  value={value}
+  type="text"
+  min={undefined}
+  disabled={disabled}
+  placeholder={placeholder}
+  borderColor={error ? "border-red" : "border-black-100"}
+  onChange={e => onChange(e.target.value)}
+  onKeyDown={undefined}
+/>
+)
+}
+
 export {
-  InputAddress,
+  Input,
+  InputAddress
 };
