@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 import {InputAddress} from '../../ui/Input';
 import useAddress from '../../../hooks/useAddress';
@@ -14,8 +14,8 @@ function FoundValidDAO({
   searchAddress,
   address,
 }: {
-  searchAddress: string | undefined,
-  address: string | undefined,
+  searchAddress: string | undefined;
+  address: string | undefined;
 }) {
   if (searchAddress !== undefined && address !== undefined) {
     return (
@@ -50,7 +50,7 @@ function Search({
       validDAOComponent={<FoundValidDAO searchAddress={searchAddress} address={address} />}
       setSearchFailed={setSearchFailed}
     />
-  )
+  );
 }
 
 function DAOSearch() {
@@ -60,7 +60,7 @@ function DAOSearch() {
 
   const doSearch = (address: string) => {
     setSearchAddress(address);
-  }
+  };
 
   return (
     <div>
@@ -92,7 +92,7 @@ function DAOSearch() {
           />
         </InputBox>
       </ContentBox>
-    </div >
+    </div>
   );
 }
 
