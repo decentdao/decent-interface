@@ -160,9 +160,9 @@ const TokenAllocations = ({
         >
           Add Allocation
         </div>
-        {errorMessage ? (
+        {errorMessage && (
           <div className="text-center text-sm text-white">{errorMessage}</div>
-        ) : null}
+        )}
       </div>
     </div>
   );
