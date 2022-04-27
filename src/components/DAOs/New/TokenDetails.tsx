@@ -212,7 +212,6 @@ const TokenDetails = ({
         !tokenAllocations.some(
           (tokenAllocation) =>
             !ethers.utils.isAddress(tokenAllocation.address) ||
-            tokenAllocation.amount === undefined ||
             tokenAllocation.amount === 0
         ) &&
         tokenSupply !== undefined &&
