@@ -1,19 +1,11 @@
-import React from 'react'
+import React from "react";
 
 const DownArrow = () => {
   return (
-    <svg
-      className="w-5 h-5 ml-3 mt-1"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-    >
-      <path
-        fillRule="evenodd"
-        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-        clipRule="evenodd"
-      />
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12.0008 14.9998L7.75781 10.7568L9.17281 9.34277L12.0008 12.1718L14.8288 9.34277L16.2438 10.7568L12.0008 14.9998Z" fill="currentColor" />
     </svg>
-  )
-}
+  );
+};
 
-export default DownArrow
+export default DownArrow;

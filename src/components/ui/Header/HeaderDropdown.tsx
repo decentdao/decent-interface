@@ -12,7 +12,7 @@ const HeaderDropdown = ({ disconnect }: HeaderDropdownProps) => {
         <Menu>
           {({ open }) => (
             <>
-              <Menu.Button className="text-sm font-medium text-white transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue">
+              <Menu.Button className="text-sm font-medium text-white transition duration-150 ease-in-out hover:text-stone-300 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue align-middle">
                 <DownArrow />
               </Menu.Button>
 
