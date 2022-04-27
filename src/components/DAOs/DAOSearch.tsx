@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
-import Button from '../ui/Button';
-import { InputAddress } from '../ui/Input';
-import useAddress from '../../hooks/useAddress';
-import useIsDAO from '../../hooks/useIsDAO';
-import SearchingDAO from './SearchingDAO';
-import H1 from '../ui/H1';
-import ContentBox from '../ui/ContentBox';
+import Button from "../ui/Button";
+import { InputAddress } from "../ui/Input";
+import useAddress from "../../hooks/useAddress";
+import useIsDAO from "../../hooks/useIsDAO";
+import SearchingDAO from "./SearchingDAO";
+import H1 from "../ui/H1";
+import ContentBox from "../ui/ContentBox";
 
 function FoundValidDAO({
   searchAddress,
   address,
 }: {
-  searchAddress: string | undefined,
-  address: string | undefined,
+  searchAddress: string | undefined;
+  address: string | undefined;
 }) {
   if (searchAddress !== undefined && address !== undefined) {
     return (
@@ -25,11 +25,7 @@ function FoundValidDAO({
   return <></>;
 }
 
-function Search({
-  searchAddress,
-}: {
-  searchAddress: string | undefined,
-}) {
+function Search({ searchAddress }: { searchAddress: string | undefined }) {
   const [address, validAddress, addressLoading] = useAddress(searchAddress);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
 
@@ -45,9 +41,11 @@ function Search({
       validAddress={validAddress}
       address={address}
       addressIsDAO={addressIsDAO}
-      validDAOComponent={<FoundValidDAO searchAddress={searchAddress} address={address} />}
+      validDAOComponent={
+        <FoundValidDAO searchAddress={searchAddress} address={address} />
+      }
     />
-  )
+  );
 }
 
 function DAOSearch() {
@@ -56,14 +54,16 @@ function DAOSearch() {
 
   const doSearch = (address: string) => {
     setSearchAddress(address);
-  }
+  };
 
   return (
     <div>
       <H1>Welcome to Fractal App</H1>
       <ContentBox title="Find A Fractal">
         <div>
-          <p className="text-center pb-4">Use a valid Fractal ETH address or ENS domain</p>
+          <p className="text-center pb-4">
+            Use a valid Fractal ETH address or ENS domain
+          </p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -84,6 +84,7 @@ function DAOSearch() {
                 <Button
                   disabled={false}
                   onClick={() => doSearch(searchAddressInput)}
+                  addedClassNames="px-8 py-2 mx-2"
                 >
                   search
                 </Button>
@@ -93,7 +94,7 @@ function DAOSearch() {
           <Search searchAddress={searchAddress} />
         </div>
       </ContentBox>
-    </div >
+    </div>
   );
 }
 

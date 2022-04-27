@@ -41,7 +41,9 @@ const StepDisplay = ({
   tokenSupply: number | undefined;
   setTokenSupply: React.Dispatch<React.SetStateAction<number | undefined>>;
   tokenAllocations: TokenAllocation[] | undefined;
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
+  setTokenAllocations: React.Dispatch<
+    React.SetStateAction<TokenAllocation[] | undefined>
+  >;
   proposalThreshold: number | undefined;
   quorum: number | undefined;
   executionDelay: number | undefined;
@@ -93,8 +95,7 @@ const New = () => {
   const [tokenName, setTokenName] = useState<string>();
   const [tokenSymbol, setTokenSymbol] = useState<string>();
   const [tokenSupply, setTokenSupply] = useState<number>();
-  const [tokenAllocations, setTokenAllocations] =
-    useState<TokenAllocation[]>();
+  const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>();
   const [proposalThreshold] = useState<number>(0);
   const [quorum] = useState<number>(4);
   const [executionDelay] = useState<number>(24);
@@ -153,7 +154,11 @@ const New = () => {
 
         <div className="flex items-center justify-center">
           {step > 0 && (
-            <Button onClick={decrement} disabled={!prevEnabled}>
+            <Button
+              onClick={decrement}
+              disabled={!prevEnabled}
+              addedClassNames="px-8 py-2 mx-2"
+            >
               <div className="flex">
                 <LeftArrow />
                 <div>Prev</div>
@@ -161,7 +166,11 @@ const New = () => {
             </Button>
           )}
           {step < 2 && (
-            <Button onClick={increment} disabled={!nextEnabled}>
+            <Button
+              onClick={increment}
+              disabled={!nextEnabled}
+              addedClassNames="px-8 py-2 mx-2"
+            >
               <div className="flex">
                 <div>Next</div>
                 <RightArrow />
@@ -176,6 +185,7 @@ const New = () => {
                 }
                 deploy();
               }}
+              addedClassNames="px-8 py-2 mx-2"
             >
               Create DAO
             </Button>
