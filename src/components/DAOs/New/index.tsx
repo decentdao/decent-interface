@@ -70,7 +70,6 @@ const StepDisplay = ({
         setSupply={setTokenSupply}
         tokenAllocations={tokenAllocations}
         setTokenAllocations={setTokenAllocations}
-        tokenSupply={tokenSupply}
       />
     );
   } else if (step === 2) {

@@ -62,18 +62,18 @@ const TokenAllocationInput = ({
 const TokenAllocations = ({
   tokenAllocations,
   setTokenAllocations,
-  tokenSupply,
+  supply,
 }: {
   tokenAllocations: TokenAllocation[] | undefined;
   setTokenAllocations: React.Dispatch<
     React.SetStateAction<TokenAllocation[] | undefined>
   >;
-  tokenSupply: number | undefined;
+  supply: number | undefined;
 }) => {
   const [errorMessage, setErrorMessage] = useState<string>();
 
   useEffect(() => {
-    if (tokenAllocations === undefined || tokenSupply === undefined) return;
+    if (tokenAllocations === undefined || supply === undefined) return;
 
     if (
       tokenAllocations.some(
@@ -86,13 +86,13 @@ const TokenAllocations = ({
     } else if (
       tokenAllocations
         .map((tokenAllocation) => tokenAllocation.amount)
-        .reduce((prev, curr) => prev + curr, 0) > tokenSupply
+        .reduce((prev, curr) => prev + curr, 0) > supply
     ) {
       setErrorMessage("Invalid token allocations");
     } else {
       setErrorMessage(undefined);
     }
-  }, [tokenAllocations, tokenSupply]);
+  }, [tokenAllocations, supply]);
 
   const updateTokenAllocation = (
     index: number,
@@ -176,7 +176,6 @@ const TokenDetails = ({
   setSupply,
   tokenAllocations,
   setTokenAllocations,
-  tokenSupply,
 }: {
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -190,7 +189,6 @@ const TokenDetails = ({
   setTokenAllocations: React.Dispatch<
     React.SetStateAction<TokenAllocation[] | undefined>
   >;
-  tokenSupply: number | undefined;
 }) => {
   useEffect(() => {
     setPrevEnabled(true);
@@ -211,12 +209,11 @@ const TokenDetails = ({
             !ethers.utils.isAddress(tokenAllocation.address) ||
             tokenAllocation.amount === 0
         ) &&
-        tokenSupply !== undefined &&
         tokenAllocations
           .map((tokenAllocation) => tokenAllocation.amount)
-          .reduce((prev, curr) => prev + curr, 0) <= tokenSupply
+          .reduce((prev, curr) => prev + curr, 0) <= supply
     );
-  }, [name, setNextEnabled, supply, symbol, tokenAllocations, tokenSupply]);
+  }, [name, setNextEnabled, supply, symbol, tokenAllocations]);
 
   return (
     <div>
@@ -251,7 +248,7 @@ const TokenDetails = ({
       <TokenAllocations
         tokenAllocations={tokenAllocations}
         setTokenAllocations={setTokenAllocations}
-        tokenSupply={tokenSupply}
+        supply={supply}
       />
     </div>
   );
