@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import ContentBoxTitle from "../../ui/ContentBoxTitle";
 import CreateDAOInput from "../../ui/CreateDAOInput";
 import Button from "../../ui/Button";
@@ -168,6 +168,15 @@ const TokenDetails = ({
 }) => {
   const [errorMessage, setErrorMessage] = useState<string>();
 
+  const allocationsValid = useCallback(() => {
+    if (tokenAllocations === undefined || supply === undefined) return true;
+    return (
+      tokenAllocations
+        .map((tokenAllocation) => tokenAllocation.amount)
+        .reduce((prev, curr) => prev + curr, 0) <= supply
+    );
+  }, [tokenAllocations, supply]);
+
   useEffect(() => {
     setPrevEnabled(true);
   }, [setPrevEnabled]);
@@ -187,14 +196,19 @@ const TokenDetails = ({
             !ethers.utils.isAddress(tokenAllocation.address) ||
             tokenAllocation.amount === 0
         ) &&
-        tokenAllocations
-          .map((tokenAllocation) => tokenAllocation.amount)
-          .reduce((prev, curr) => prev + curr, 0) <= supply
+        allocationsValid()
     );
-  }, [name, setNextEnabled, supply, symbol, tokenAllocations]);
+  }, [
+    name,
+    setNextEnabled,
+    supply,
+    symbol,
+    tokenAllocations,
+    allocationsValid,
+  ]);
 
   useEffect(() => {
-    if (tokenAllocations === undefined || supply === undefined) return;
+    if (tokenAllocations === undefined) return;
 
     if (
       tokenAllocations.some(
@@ -204,16 +218,12 @@ const TokenDetails = ({
       )
     ) {
       setErrorMessage("Invalid address");
-    } else if (
-      tokenAllocations
-        .map((tokenAllocation) => tokenAllocation.amount)
-        .reduce((prev, curr) => prev + curr, 0) > supply
-    ) {
+    } else if (!allocationsValid()) {
       setErrorMessage("Invalid token allocations");
     } else {
       setErrorMessage(undefined);
     }
-  }, [tokenAllocations, supply]);
+  }, [tokenAllocations, allocationsValid]);
 
   return (
     <div>
