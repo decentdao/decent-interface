@@ -50,6 +50,9 @@ function DelegateVote() {
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
         <div className="flex mx-2 my-1 text-gray-25">Delegate Vote</div>
         <hr className="mx-2 my-1 border-gray-200" />
+        <div className="flex mx-2 my-1 text-gray-50">
+          New Delegate Address
+        </div>
         <div className="flex flex-row m-2">
         <InputAddress
           value={newDelegatee}
