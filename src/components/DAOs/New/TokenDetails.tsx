@@ -50,7 +50,7 @@ const TokenAllocationInput = ({
       <div className="md:col-span-1">
         <Button
           onClick={() => removeTokenAllocation(index)}
-          addedClassNames="px-2 mx-1"
+          addedClassNames="px-2 mx-1 border-gold-300 bg-chocolate-500 text-gold-300"
         >
           X
         </Button>
