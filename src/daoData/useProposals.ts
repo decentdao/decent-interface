@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { GovernorModule, GovernorModule__factory } from "../typechain-types";
+import { GovernorModule, GovernorModule__factory, TimelockUpgradeable } from "../typechain-types";
 import { useWeb3 } from "../web3";
 import { BigNumber } from "ethers";
 
@@ -25,17 +25,31 @@ export type ProposalData = {
   abstainVotesPercent: number | undefined;
 };
 
-const useProposals = (governorModuleContract: GovernorModule | undefined) => {
-  // const [governorModule, setGovernorModule] = useState<GovernorModule>();
+const useProposals = (
+  governorModuleContract: GovernorModule | undefined,
+  timelockModuleContract: TimelockUpgradeable | undefined,
+) => {
   const [proposals, setProposals] = useState<ProposalData[]>([]);
-  const { provider, signerOrProvider } = useWeb3();
+  const { provider } = useWeb3();
 
 
   const getStateString = (state: number | undefined) => {
-    if (state === 1) {
-      return "Open";
-    } else {
-      return "Closed";
+    if (state === 0) {
+      return "Pending";
+    } else if (state === 1) {
+      return "Active";
+    } else if (state === 2) {
+      return "Canceled";
+    } else if (state === 3) {
+      return "Defeated";
+    } else if (state === 4) {
+      return "Succeeded";
+    } else if (state === 5) {
+      return "Queued";
+    } else if (state === 6) {
+      return "Expired";
+    } else if (state === 7) {
+      return "Executed";
     }
   };
 
