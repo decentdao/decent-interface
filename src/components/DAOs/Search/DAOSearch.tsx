@@ -8,7 +8,7 @@ import SearchingDAO from './SearchingDAO';
 import H1 from '../../ui/H1';
 import ContentBox from '../../ui/ContentBox';
 import InputBox from '../../ui/InputBox';
-import SearchButton from '../../ui/SearchButton';
+import Button from "../../ui/Button";
 
 function FoundValidDAO({
   searchAddress,
@@ -83,7 +83,12 @@ function DAOSearch() {
                   onChange={setSearchAddressInput}
                 />
               </div>
-              <SearchButton />
+              <Button 
+              onClick = {()=>doSearch(searchAddressInput)}
+              addedClassNames = "bg-gold-500 border-gold-500 rounded text-black-300 px-6 py-1 mx-2"
+              > 
+                Search
+              </Button>
             </div>
           </form>
           <Search
