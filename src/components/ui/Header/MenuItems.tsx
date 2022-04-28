@@ -93,7 +93,7 @@ const AddressCopyItem = ({ account }: { account?: string }) => {
   }
   return (
     <ItemWrapper noHoverEffect>
-      <span className="font-sans text-gold-300">
+      <span className="text-gold-300">
         <EtherscanLink address={account}>{accountDisplayName}</EtherscanLink>
       </span>
       <CopyToClipboard textToCopy={account} />
