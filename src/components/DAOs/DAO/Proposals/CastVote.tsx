@@ -13,10 +13,15 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   const [voteButtonString, setVoteButtonString] = useState<string>();
 
   useEffect(() => {
-    if(proposal.state !== 1) {
+    if (proposal.state !== 1) {
       setVoteButtonString("Voting Closed");
-    } else if(proposal.userVote !== undefined) {
+    } else if (proposal.userVote !== undefined) {
       setVoteButtonString("Already Voted");
+    } else if (
+      proposal.userVotePower === undefined ||
+      proposal.userVotePower.eq(0)
+    ) {
+      setVoteButtonString("No Vote Power");
     } else {
       setVoteButtonString("Cast Vote");
     }
@@ -35,7 +40,12 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <SelectVoteButton
           onClick={() => setNewVote(1)}
           selected={newVote === 1 || proposal.userVote === 1}
-          disabled={proposal.state !== 1 || proposal.userVote !== undefined}
+          disabled={
+            proposal.state !== 1 ||
+            proposal.userVote !== undefined ||
+            proposal.userVotePower === undefined ||
+            proposal.userVotePower.eq(0)
+          }
         >
           Vote Yes
         </SelectVoteButton>
@@ -43,7 +53,12 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <SelectVoteButton
           onClick={() => setNewVote(0)}
           selected={newVote === 0 || proposal.userVote === 0}
-          disabled={proposal.state !== 1 || proposal.userVote !== undefined}
+          disabled={
+            proposal.state !== 1 ||
+            proposal.userVote !== undefined ||
+            proposal.userVotePower === undefined ||
+            proposal.userVotePower.eq(0)
+          }
         >
           Vote No
         </SelectVoteButton>
@@ -51,14 +66,25 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <SelectVoteButton
           onClick={() => setNewVote(2)}
           selected={newVote === 2 || proposal.userVote === 2}
-          disabled={proposal.state !== 1 || proposal.userVote !== undefined}
+          disabled={
+            proposal.state !== 1 ||
+            proposal.userVote !== undefined ||
+            proposal.userVotePower === undefined ||
+            proposal.userVotePower.eq(0)
+          }
         >
           Abstain
         </SelectVoteButton>
         <hr className="mx-2 my-2 border-gray-200" />
         <Button
           onClick={() => castVote()}
-          disabled={newVote === undefined || proposal.state !== 1 || proposal.userVote !== undefined}
+          disabled={
+            newVote === undefined ||
+            proposal.state !== 1 ||
+            proposal.userVote !== undefined ||
+            proposal.userVotePower === undefined ||
+            proposal.userVotePower.eq(0)
+          }
           addedClassNames="text-gold-500 border-gold-500 mx-2 py-2"
         >
           {voteButtonString}
