@@ -23,7 +23,7 @@ interface LinkMenuItem extends MenuItem {
 }
 
 const CONTACT: LinkMenuItem = {
-  title: "Contract",
+  title: "Contact",
   link: "https://discord.gg/24HFVzYVRF",
   Icon: Contact,
 };
@@ -113,7 +113,7 @@ const MenuItems = () => {
         <section className="border-t border-gray-300">
           <LinkItem {...CONTACT} />
           <LinkItem {...SUPPORT} />
-          <LinkItem {...FAQ} />
+          {/* <LinkItem {...FAQ} /> */}
         </section>
       </div>
     </Menu.Items>
