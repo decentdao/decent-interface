@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import WalletAndMenu from "./WalletAndMenu";
 import FractalLogo from '../svg/Logo';
+import HeaderMenu from "./HeaderMenu";
 
 function Header() {
   return (
@@ -11,7 +11,7 @@ function Header() {
             <Link to="/"><FractalLogo /></Link>
           </div>
         </div>
-        <WalletAndMenu />
+        <HeaderMenu />
       </div>
     </header>
   );
