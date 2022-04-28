@@ -34,7 +34,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
           onClick={() => setNewVote(1)}
-          selected={newVote === 1 || proposal.userVote === "For"}
+          selected={newVote === 1 || proposal.userVote === 1}
           disabled={proposal.state !== 1 || proposal.userVote !== undefined}
         >
           Vote Yes
@@ -42,7 +42,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
           onClick={() => setNewVote(0)}
-          selected={newVote === 0 || proposal.userVote === "Against"}
+          selected={newVote === 0 || proposal.userVote === 0}
           disabled={proposal.state !== 1 || proposal.userVote !== undefined}
         >
           Vote No
@@ -50,7 +50,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
           onClick={() => setNewVote(2)}
-          selected={newVote === 2 || proposal.userVote === "Abstain"}
+          selected={newVote === 2 || proposal.userVote === 2}
           disabled={proposal.state !== 1 || proposal.userVote !== undefined}
         >
           Abstain

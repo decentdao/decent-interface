@@ -23,12 +23,13 @@ type ProposalDataWithoutVotes = {
 };
 
 export interface ProposalData extends ProposalDataWithoutVotes {
-  userVote: "For" | "Against" | "Abstain" | undefined;
+  userVote: number | undefined,
+  userVoteString: "For" | "Against" | "Abstain" | undefined;
 }
 
 type UserVote = {
   proposalId: BigNumber;
-  vote: "For" | "Against" | "Abstain" | undefined;
+  vote: number | undefined;
 };
 
 const useProposals = (governorModule: GovernorModule | undefined) => {
@@ -171,7 +172,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
           voteCastEvents.map((voteCastEvent) => {
             const userVote: UserVote = {
               proposalId: voteCastEvent.args.proposalId,
-              vote: getVoteString(voteCastEvent.args.support),
+              vote: voteCastEvent.args.support,
             };
             return userVote;
           })
@@ -203,6 +204,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
         againstVotesPercent: proposal.againstVotesPercent,
         abstainVotesPercent: proposal.abstainVotesPercent,
         userVote: userProposalVote ? userProposalVote.vote : undefined,
+        userVoteString: userProposalVote && userProposalVote.vote ? getVoteString(userProposalVote.vote) : undefined,
       };
       
       return newProposal;
@@ -342,7 +344,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     ) => {
       const newUserVote: UserVote = {
         proposalId: proposalId,
-        vote: getVoteString(support),
+        vote: support,
       }
 
       setUserVotes([...userVotes, newUserVote]);
