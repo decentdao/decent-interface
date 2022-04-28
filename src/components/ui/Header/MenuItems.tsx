@@ -63,10 +63,12 @@ const ActionItem = ({ title, action, Icon, isVisible }: ActionMenuItem) => {
   }
   return (
     <Menu.Item>
-      <ItemWrapper>
-        <Icon />
-        <button onClick={action}>{title}</button>
-      </ItemWrapper>
+      <button onClick={action} className="w-full">
+        <ItemWrapper>
+          <Icon />
+          <span>{title}</span>
+        </ItemWrapper>
+      </button>
     </Menu.Item>
   );
 };
@@ -74,12 +76,12 @@ const ActionItem = ({ title, action, Icon, isVisible }: ActionMenuItem) => {
 const LinkItem = ({ title, link, Icon }: LinkMenuItem) => {
   return (
     <Menu.Item>
-      <ItemWrapper>
-        <Icon />
-        <a href={link} target="_blank" rel="noopener noreferrer">
-          {title}
-        </a>
-      </ItemWrapper>
+      <a href={link} target="_blank" rel="noopener noreferrer">
+        <ItemWrapper>
+          <Icon />
+          <span>{title}</span>
+        </ItemWrapper>
+      </a>
     </Menu.Item>
   );
 };
