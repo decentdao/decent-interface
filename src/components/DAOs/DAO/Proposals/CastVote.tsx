@@ -3,8 +3,6 @@ import { useState, useEffect } from "react";
 import Button from "../../../ui/Button";
 import SelectVoteButton from "../../../ui/SelectVoteButton";
 import useCastVote from "../../../../daoData/useCastVote";
-import ConnectModal from "../../../ConnectModal";
-import Pending from "../../../Pending";
 
 function CastVote({ proposal }: { proposal: ProposalData }) {
   // Vote Enum
@@ -12,7 +10,6 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   // For => 1
   // Abstain => 2
   const [newVote, setNewVote] = useState<number>();
-  const [pending, setPending] = useState<boolean>(false);
   const [voteButtonString, setVoteButtonString] = useState<string>();
 
   useEffect(() => {
@@ -28,13 +25,10 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   const castVote = useCastVote({
     proposalId: proposal.id,
     vote: newVote,
-    setPending,
   });
 
   return (
     <>
-      <Pending message="Casting Vote..." pending={pending} />
-      <ConnectModal />
       <div className="flex flex-col bg-gray-600 m-2 p-2 max-w-xs py-2 rounded-md">
         <div className="flex mx-2 my-2 text-gray-25">Cast Vote</div>
         <hr className="mx-2 my-2 border-gray-200" />

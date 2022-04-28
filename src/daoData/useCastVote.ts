@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useTransaction } from '../web3/transactions';
 import { useWeb3 } from '../web3';
 import { BigNumber } from 'ethers';
@@ -8,26 +8,19 @@ import { useDAOData } from './index';
 const useCastVote = ({
   proposalId,
   vote,
-  setPending,
 }: {
   proposalId: BigNumber | undefined,
   vote: number | undefined,
-  setPending: React.Dispatch<React.SetStateAction<boolean>>
 }
 ) => {
   const { signerOrProvider } = useWeb3();
   const [ daoData, ] = useDAOData();
 
-  const [contractCallCastVote, contractCallPending] = useTransaction();
-
-  useEffect(() => {
-    setPending(contractCallPending);
-  }, [setPending, contractCallPending]);
+  const [contractCallCastVote] = useTransaction();
 
   let castVote = useCallback(() => {
     if (
       signerOrProvider === undefined ||
-      setPending === undefined ||
       daoData.moduleAddresses === undefined ||
       proposalId === undefined ||
       vote === undefined 
@@ -46,7 +39,7 @@ const useCastVote = ({
         console.error(error)
       },
     });
-  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, setPending, signerOrProvider, vote])
+  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signerOrProvider, vote])
   return castVote;
 }
 
