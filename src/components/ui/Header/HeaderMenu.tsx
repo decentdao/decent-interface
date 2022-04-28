@@ -2,7 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import DownArrow from "../svg/DownArrow";
 import MenuItems from "./MenuItems";
 
-const HeaderDropdown = () => {
+const HeaderMenu = () => {
   return (
     <div className="flex items-center justify-center relative">
       <Menu>
@@ -30,4 +30,4 @@ const HeaderDropdown = () => {
   );
 };
 
-export default HeaderDropdown;
+export default HeaderMenu;

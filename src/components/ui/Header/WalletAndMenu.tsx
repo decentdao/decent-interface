@@ -4,7 +4,7 @@ import { useWeb3 } from "../../../web3";
 import { connect } from "../../../web3/providers";
 import EtherscanLink from "../EtherscanLink";
 import Avatar from "./Avatar";
-import HeaderDropdown from "./HeaderDropdown";
+import HeaderMenu from "./HeaderMenu";
 
 const ConnectWallet = ({ account }: { account?: string }) => {
   if(account) {
@@ -44,9 +44,7 @@ const WalletAndMenu = () => {
   const { account } = useWeb3();
   return (
     <div className="flex items-center">
-      <ConnectWallet account={account} />
-      <WalletConnected account={account} />
-      <HeaderDropdown />
+      <HeaderMenu />
     </div>
   );
 };
