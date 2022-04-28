@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useTransaction } from '../web3/transactions';
 import { useWeb3 } from '../web3';
 import { GovernorModule, GovernorModule__factory } from '../typechain-types';
@@ -30,10 +30,10 @@ const useQueueTransaction = ({
 
     const governor: GovernorModule = GovernorModule__factory.connect(daoData.moduleAddresses[1], signerOrProvider);
     contractCallQueueTransaction({
-      contractFn: () => governor.queue(proposalData.targets, [], proposalData.calldatas, ethers.utils.id(proposalData.description)),
-      pendingMessage: "Queueing Transaction",
-      failedMessage: "Queueing Failed",
-      successMessage: "Queueing Completed",
+      contractFn: () => governor.queue(proposalData.targets, [0], proposalData.calldatas, ethers.utils.id(proposalData.description)),
+      pendingMessage: "Queuing Transaction",
+      failedMessage: "Queuing Failed",
+      successMessage: "Queuing Completed",
       rpcErrorCallback: (error: any) => {
         console.error(error)
       },
