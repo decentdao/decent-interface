@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import ProposalCardDetailed from "./ProposalCardDetailed";
 import ProposalVotes from "./ProposalVotes";
 import CastVote from "./CastVote";
-import DelegateVote from "./DelegateVote";
 
 function ProposalDetails() {
   const params = useParams();
@@ -46,7 +45,6 @@ function ProposalDetails() {
       <ProposalCardDetailed proposal={proposal} />
       <ProposalVotes proposal={proposal} />
       <CastVote proposal={proposal} />
-      <DelegateVote />
     </div>
   );
 }
