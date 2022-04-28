@@ -8,27 +8,20 @@ import { ethers } from 'ethers';
 
 
 const useQueueTransaction = ({
-  proposalData,
-  setPending,
+  proposalData
 }: {
-  proposalData: ProposalData,
-  setPending: React.Dispatch<React.SetStateAction<boolean>>
+  proposalData: ProposalData
 }
 ) => {
   const { signerOrProvider } = useWeb3();
   const [daoData,] = useDAOData();
 
-  const [contractCallQueueTransaction, contractCallPending] = useTransaction();
-
-  useEffect(() => {
-    setPending(contractCallPending);
-  }, [setPending, contractCallPending]);
+  const [contractCallQueueTransaction] = useTransaction();
 
   let queueTransaction = useCallback(() => {
     if (
       !signerOrProvider ||
       !proposalData ||
-      !setPending ||
       !daoData ||
       !daoData.moduleAddresses
     ) {
@@ -45,7 +38,7 @@ const useQueueTransaction = ({
         console.error(error)
       },
     });
-  }, [contractCallQueueTransaction, daoData, proposalData, setPending, signerOrProvider])
+  }, [contractCallQueueTransaction, daoData, proposalData, signerOrProvider])
   return queueTransaction;
 }
 

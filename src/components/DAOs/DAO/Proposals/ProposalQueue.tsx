@@ -5,10 +5,8 @@ import useQueueTransaction from "../../../../daoData/useQueueTransaction";
 import Button from "../../../ui/Button";
 
 function ProposalQueue({ proposal }: { proposal: ProposalData }) {
-  const [pending, setPending] = useState<boolean>(false);
   const queueTransaction = useQueueTransaction({
-    proposalData: proposal,
-    setPending: setPending
+    proposalData: proposal
   });
   return (
     <div>
