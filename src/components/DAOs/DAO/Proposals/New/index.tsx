@@ -114,7 +114,7 @@ const New = ({ address }: { address: string | undefined }) => {
             <Button
               onClick={addTransaction}
               disabled={false}
-              addedClassNames="px-8 py-2 mx-2"
+              addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
             >
               Add Transaction
             </Button>
@@ -125,7 +125,7 @@ const New = ({ address }: { address: string | undefined }) => {
             <Button
               onClick={decrementStep}
               disabled={false}
-              addedClassNames="px-8 py-2 mx-2"
+              addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
             >
               Back
             </Button>
@@ -134,7 +134,7 @@ const New = ({ address }: { address: string | undefined }) => {
             <Button
               onClick={createProposal}
               disabled={false}
-              addedClassNames="px-8 py-2 mx-2"
+              addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
             >
               Create Proposal
             </Button>
@@ -143,7 +143,7 @@ const New = ({ address }: { address: string | undefined }) => {
             <Button
               onClick={incrementStep}
               disabled={false}
-              addedClassNames="px-8 py-2 mx-2"
+              addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
             >
               Next: Add Transactions
             </Button>
