@@ -36,7 +36,7 @@ function ProposalDetails() {
   }
 
   if (proposal === undefined) {
-    return <div>Proposal not found</div>;
+    return <div className="text-white">Proposals loading...</div>
   }
 
   return (
