@@ -14,6 +14,9 @@ export type ProposalData = {
   startTimeString: string | undefined;
   endTimeString: string | undefined;
   proposer: string;
+  targets: string[];
+  signatures: string[];
+  calldatas: string[];
   description: string;
   state: number | undefined;
   stateString: string | undefined;
@@ -173,6 +176,9 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             startTimeString: undefined,
             endTimeString: undefined,
             proposer: proposalEvent.args.proposer,
+            targets: proposalEvent.args.targets,
+            signatures: proposalEvent.args.signatures,
+            calldatas: proposalEvent.args.calldatas,
             description: proposalEvent.args.description,
             state: undefined,
             stateString: undefined,
@@ -180,7 +186,6 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
             againstVotesPercent: undefined,
             abstainVotesPercent: undefined,
           };
-
           return newProposal;
         });
 
@@ -236,6 +241,9 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
         startTimeString: undefined,
         endTimeString: undefined,
         proposer: proposer,
+        targets: targets,
+        signatures: signatures,
+        calldatas: calldatas,
         description: description,
         state: undefined,
         stateString: undefined,
