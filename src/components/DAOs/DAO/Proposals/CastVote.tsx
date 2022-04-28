@@ -13,7 +13,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   const [voteButtonString, setVoteButtonString] = useState<string>();
 
   useEffect(() => {
-    if(proposal.stateString === "Closed") {
+    if(proposal.state !== 1) {
       setVoteButtonString("Voting Closed");
     } else if(proposal.userVote !== undefined) {
       setVoteButtonString("Already Voted");
@@ -35,7 +35,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <SelectVoteButton
           onClick={() => setNewVote(1)}
           selected={newVote === 1 || proposal.userVote === "For"}
-          disabled={proposal.stateString !== "Open" || proposal.userVote !== undefined}
+          disabled={proposal.state !== 1 || proposal.userVote !== undefined}
         >
           Vote Yes
         </SelectVoteButton>
@@ -43,7 +43,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <SelectVoteButton
           onClick={() => setNewVote(0)}
           selected={newVote === 0 || proposal.userVote === "Against"}
-          disabled={proposal.stateString !== "Open" || proposal.userVote !== undefined}
+          disabled={proposal.state !== 1 || proposal.userVote !== undefined}
         >
           Vote No
         </SelectVoteButton>
@@ -51,14 +51,14 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <SelectVoteButton
           onClick={() => setNewVote(2)}
           selected={newVote === 2 || proposal.userVote === "Abstain"}
-          disabled={proposal.stateString !== "Open" || proposal.userVote !== undefined}
+          disabled={proposal.state !== 1 || proposal.userVote !== undefined}
         >
           Abstain
         </SelectVoteButton>
         <hr className="mx-2 my-2 border-gray-200" />
         <Button
           onClick={() => castVote()}
-          disabled={newVote === undefined || proposal.stateString !== "Open" || proposal.userVote !== undefined}
+          disabled={newVote === undefined || proposal.state !== 1 || proposal.userVote !== undefined}
           addedClassNames="text-gold-500 border-gold-500 mx-2 py-2"
         >
           {voteButtonString}
