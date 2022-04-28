@@ -5,6 +5,7 @@ import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../Search/SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import ProposalsList from "./Proposals/ProposalsList";
+import DelegateVote from "./DelegateVote";
 
 function ValidDAO({ address }: { address: string }) {
   const [, setDAOAddress] = useDAOData();
@@ -14,7 +15,10 @@ function ValidDAO({ address }: { address: string }) {
   }, [address, setDAOAddress]);
 
   return (
-    <ProposalsList />
+    <>
+      <DelegateVote />
+      <ProposalsList />
+    </>
   );
 }
 
