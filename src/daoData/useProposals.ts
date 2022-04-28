@@ -3,7 +3,7 @@ import { GovernorModule } from "../typechain-types";
 import { useWeb3 } from "../web3";
 import { BigNumber } from "ethers";
 
-export type ProposalData = {
+type ProposalDataWithoutVotes = {
   number: number;
   id: BigNumber;
   idSubstring: string | undefined;
@@ -22,9 +22,32 @@ export type ProposalData = {
   abstainVotesPercent: number | undefined;
 };
 
+export interface ProposalData extends ProposalDataWithoutVotes {
+  userVote: "For" | "Against" | "Abstain" | undefined;
+}
+
+type UserVote = {
+  proposalId: BigNumber;
+  vote: "For" | "Against" | "Abstain" | undefined;
+};
+
 const useProposals = (governorModule: GovernorModule | undefined) => {
+  const [userVotes, setUserVotes] = useState<UserVote[]>([]);
+  const [proposalsWithoutVotes, setProposalsWithoutVotes] = useState<ProposalDataWithoutVotes[]>([]);
   const [proposals, setProposals] = useState<ProposalData[]>([]);
-  const { provider } = useWeb3();
+  const { provider, account } = useWeb3();
+
+  const getVoteString = (voteNumber: number) => {
+    if (voteNumber === 0) {
+      return "Against";
+    } else if (voteNumber === 1) {
+      return "For";
+    } else if (voteNumber === 2) {
+      return "Abstain";
+    } else {
+      return undefined;
+    }
+  };
 
   const getStateString = (state: number | undefined) => {
     if (state === 1) {
@@ -91,8 +114,9 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     []
   );
 
+  // Get proposal data that isn't included in the proposal created event
   const getProposalData = useCallback(
-    (governorModule: GovernorModule, proposal: ProposalData) => {
+    (governorModule: GovernorModule, proposal: ProposalDataWithoutVotes) => {
       return Promise.all([
         getProposalVotes(governorModule, proposal.id),
         getProposalState(governorModule, proposal.id),
@@ -132,6 +156,61 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     [getBlockTimestamp, getProposalState, getProposalVotes]
   );
 
+  // Get all of the current users votes
+  useEffect(() => {
+    if (governorModule === undefined || account === undefined) {
+      return;
+    }
+
+    const filter = governorModule.filters.VoteCast(account);
+
+    governorModule
+      .queryFilter(filter)
+      .then((voteCastEvents) => {
+        setUserVotes(
+          voteCastEvents.map((voteCastEvent) => {
+            const userVote: UserVote = {
+              proposalId: voteCastEvent.args.proposalId,
+              vote: getVoteString(voteCastEvent.args.support),
+            };
+            return userVote;
+          })
+        );
+      })
+      .catch(console.error);
+  }, [governorModule, account]);
+
+  // Combine proposalsWithoutVotes and userVotes into proposals
+  useEffect(() => {
+    const newProposals: ProposalData[] = proposalsWithoutVotes.map((proposal) => {
+      const userProposalVote = userVotes.find(userVote => userVote.proposalId.eq(proposal.id));
+
+      const newProposal: ProposalData = {
+        number: proposal.number,
+        id: proposal.id,
+        idSubstring: proposal.idSubstring,
+        startBlock: proposal.startBlock,
+        endBlock: proposal.endBlock,
+        startTime: proposal.startTime,
+        endTime: proposal.endTime,
+        startTimeString: proposal.startTimeString,
+        endTimeString: proposal.endTimeString,
+        proposer: proposal.proposer,
+        description: proposal.description,
+        state: proposal.state,
+        stateString: proposal.stateString,
+        forVotesPercent: proposal.forVotesPercent,
+        againstVotesPercent: proposal.againstVotesPercent,
+        abstainVotesPercent: proposal.abstainVotesPercent,
+        userVote: userProposalVote ? userProposalVote.vote : undefined,
+      };
+      
+      return newProposal;
+    });
+
+    setProposals(newProposals);
+  }, [proposalsWithoutVotes, userVotes]);
+
   // Get initial proposal events
   useEffect(() => {
     if (governorModule === undefined) {
@@ -145,7 +224,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       .queryFilter(filter)
       .then((proposalEvents) => {
         const newProposals = proposalEvents.map((proposalEvent, index) => {
-          const newProposal: ProposalData = {
+          const newProposal: ProposalDataWithoutVotes = {
             number: index,
             id: proposalEvent.args.proposalId,
             idSubstring: undefined,
@@ -177,7 +256,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
         );
       })
       .then((newProposals) => {
-        setProposals(newProposals);
+        setProposalsWithoutVotes(newProposals);
       })
       .catch(console.error);
   }, [
@@ -208,7 +287,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       description: string,
       _: any
     ) => {
-      const newProposal: ProposalData = {
+      const newProposal: ProposalDataWithoutVotes = {
         number: proposals.length,
         id: proposalId,
         idSubstring: undefined,
@@ -228,7 +307,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       };
 
       getProposalData(governorModule, newProposal)
-        .then((newProposal) => setProposals([...proposals, newProposal]))
+        .then((newProposal) => setProposalsWithoutVotes([...proposals, newProposal]))
         .catch(console.error);
     };
 
@@ -244,6 +323,37 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     getProposalVotes,
     getProposalState,
   ]);
+
+  // Setup user vote events listener
+  useEffect(() => {
+    if (governorModule === undefined) {
+      return;
+    }
+
+    const filter = governorModule.filters.VoteCast(account);
+
+    const listenerCallback = (
+      voter: string,
+      proposalId: BigNumber,
+      support: number,
+      weight: BigNumber,
+      reason: string,
+      _: any,
+    ) => {
+      const newUserVote: UserVote = {
+        proposalId: proposalId,
+        vote: getVoteString(support),
+      }
+
+      setUserVotes([...userVotes, newUserVote]);
+    }
+
+    governorModule.on(filter, listenerCallback);
+
+    return () => {
+      governorModule.off(filter, listenerCallback);
+    };
+  }, [account, governorModule, userVotes]);
 
   return proposals;
 };
