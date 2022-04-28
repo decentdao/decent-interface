@@ -7,6 +7,12 @@ import ProposalVotes from "./ProposalVotes";
 
 function ProposalDetails() {
   const params = useParams();
+  const [, setDAOAddress] = useDAOData();
+
+  useEffect(() => {
+    setDAOAddress(params.address);
+  }, [params.address, setDAOAddress]);
+
   const [{ proposals }] = useDAOData();
   const [proposal, setProposal] = useState<ProposalData>();
 
@@ -30,7 +36,7 @@ function ProposalDetails() {
   }
 
   if (proposal === undefined) {
-    return <div>Proposal not found</div>;
+    return <div className="text-white">Proposals loading...</div>
   }
 
   return (
