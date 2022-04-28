@@ -39,7 +39,7 @@ export const useDAODatas = () => {
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
-  const proposals = useProposals(moduleAddresses);
+  const proposals = useProposals(governorModuleContract);
 
   const daoData: DAOData = {
     name,

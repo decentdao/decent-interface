@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { GovernorModule, GovernorModule__factory } from "../typechain-types";
+import { GovernorModule } from "../typechain-types";
 import { useWeb3 } from "../web3";
 import { BigNumber } from "ethers";
 
@@ -22,10 +22,9 @@ export type ProposalData = {
   abstainVotesPercent: number | undefined;
 };
 
-const useProposals = (moduleAddresses: string[] | undefined) => {
-  const [governorModule, setGovernorModule] = useState<GovernorModule>();
+const useProposals = (governorModule: GovernorModule | undefined) => {
   const [proposals, setProposals] = useState<ProposalData[]>([]);
-  const { provider, signerOrProvider } = useWeb3();
+  const { provider } = useWeb3();
 
   const getStateString = (state: number | undefined) => {
     if (state === 1) {
@@ -132,22 +131,6 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     },
     [getBlockTimestamp, getProposalState, getProposalVotes]
   );
-
-  // Set the Governor module contract
-  useEffect(() => {
-    if (
-      moduleAddresses === undefined ||
-      moduleAddresses[1] === undefined ||
-      signerOrProvider === undefined
-    ) {
-      setGovernorModule(undefined);
-      return;
-    }
-
-    setGovernorModule(
-      GovernorModule__factory.connect(moduleAddresses[1], signerOrProvider)
-    );
-  }, [moduleAddresses, signerOrProvider]);
 
   // Get initial proposal events
   useEffect(() => {
