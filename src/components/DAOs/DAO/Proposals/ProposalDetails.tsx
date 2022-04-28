@@ -13,9 +13,18 @@ function ProposalDetails() {
   const [proposal, setProposal] = useState<ProposalData>();
 
   useEffect(() => {
-    if (proposals === undefined || params.proposalNumber === undefined) return;
+    if(proposals === undefined || params.proposalNumber === undefined) {
+      setProposal(undefined);
+      return;
+    }
 
-    setProposal(proposals[parseInt(params.proposalNumber, 10)]);
+    const proposalNumber = parseInt(params.proposalNumber);
+    const foundProposal = proposals.find(p => p.number === proposalNumber);
+    if (foundProposal === undefined) {
+      setProposal(undefined);
+      return;
+    }
+    setProposal(foundProposal);
   }, [proposals, params.proposalNumber]);
 
   if (!params.proposalNumber) {

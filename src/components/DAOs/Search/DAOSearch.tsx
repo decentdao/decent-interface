@@ -1,34 +1,36 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
-import Button from '../ui/Button';
-import { InputAddress } from '../ui/Input';
-import useAddress from '../../hooks/useAddress';
-import useIsDAO from '../../hooks/useIsDAO';
+import {InputAddress} from '../../ui/Input';
+import useAddress from '../../../hooks/useAddress';
+import useIsDAO from '../../../hooks/useIsDAO';
 import SearchingDAO from './SearchingDAO';
-import H1 from '../ui/H1';
-import ContentBox from '../ui/ContentBox';
+import H1 from '../../ui/H1';
+import ContentBox from '../../ui/ContentBox';
+import InputBox from '../../ui/InputBox';
+import SearchButton from '../../ui/SearchButton';
 
 function FoundValidDAO({
   searchAddress,
   address,
 }: {
-  searchAddress: string | undefined,
-  address: string | undefined,
+  searchAddress: string | undefined;
+  address: string | undefined;
 }) {
   if (searchAddress !== undefined && address !== undefined) {
     return (
       <Navigate to={`${searchAddress}`} state={{ validatedAddress: address }} />
     );
   }
-
   return <></>;
 }
 
 function Search({
   searchAddress,
+  setSearchFailed,
 }: {
   searchAddress: string | undefined,
+  setSearchFailed: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
   const [address, validAddress, addressLoading] = useAddress(searchAddress);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
@@ -46,24 +48,25 @@ function Search({
       address={address}
       addressIsDAO={addressIsDAO}
       validDAOComponent={<FoundValidDAO searchAddress={searchAddress} address={address} />}
+      setSearchFailed={setSearchFailed}
     />
-  )
+  );
 }
 
 function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState("");
   const [searchAddress, setSearchAddress] = useState<string>();
+  const [searchFailed, setSearchFailed] = useState<boolean>(false);
 
   const doSearch = (address: string) => {
     setSearchAddress(address);
-  }
+  };
 
   return (
     <div>
-      <H1>Welcome to Fractal App</H1>
-      <ContentBox title="Find A Fractal">
-        <div>
-          <p className="text-center pb-4">Use a valid Fractal ETH address or ENS domain</p>
+      <H1>Find a Fractal</H1>
+      <ContentBox>
+        <InputBox label="Address">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -73,27 +76,23 @@ function DAOSearch() {
             <div className="flex items-center">
               <div className="flex-grow">
                 <InputAddress
-                  title=""
                   value={searchAddressInput}
                   disabled={false}
                   placeholder=""
+                  error={searchFailed}
                   onChange={setSearchAddressInput}
                 />
               </div>
-              <div className="ml-2">
-                <Button
-                  disabled={false}
-                  onClick={() => doSearch(searchAddressInput)}
-                >
-                  search
-                </Button>
-              </div>
+              <SearchButton />
             </div>
           </form>
-          <Search searchAddress={searchAddress} />
-        </div>
+          <Search
+            setSearchFailed={setSearchFailed}
+            searchAddress={searchAddress}
+          />
+        </InputBox>
       </ContentBox>
-    </div >
+    </div>
   );
 }
 
