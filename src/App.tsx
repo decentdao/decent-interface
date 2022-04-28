@@ -9,7 +9,9 @@ function App() {
       <main className="flex-grow bg-image-pattern bg-cover">
         <Breadcrumbs />
         <div className="container pt-20">
-          <Body />
+          <div className="max-w-3xl mx-auto">
+            <Body />
+          </div>
         </div>
       </main>
     </div>
