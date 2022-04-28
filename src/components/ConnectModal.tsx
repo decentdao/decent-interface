@@ -20,7 +20,7 @@ const ConnectModal = () => {
       <Button
         onClick={connect}
         disabled={false}
-        addedClassNames="px-8 py-2 mx-2"
+        addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
       >
         connect wallet
       </Button>

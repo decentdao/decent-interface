@@ -13,7 +13,7 @@ function Button({
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className={`border rounded border-gold-300 bg-chocolate-500 text-gold-300 ${
+      className={`border rounded ${
         addedClassNames && addedClassNames
       } ${disabled && "opacity-50"}`}
       disabled={disabled}

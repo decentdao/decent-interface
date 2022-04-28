@@ -156,7 +156,7 @@ const New = () => {
             <Button
               onClick={decrement}
               disabled={!prevEnabled}
-              addedClassNames="px-8 py-2 mx-2"
+              addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
             >
               <div className="flex">
                 <LeftArrow />
@@ -168,7 +168,7 @@ const New = () => {
             <Button
               onClick={increment}
               disabled={!nextEnabled}
-              addedClassNames="px-8 py-2 mx-2"
+              addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
             >
               <div className="flex">
                 <div>Next</div>
@@ -184,7 +184,7 @@ const New = () => {
                 }
                 deploy();
               }}
-              addedClassNames="px-8 py-2 mx-2"
+              addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
             >
               Create DAO
             </Button>
