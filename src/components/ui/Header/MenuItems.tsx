@@ -7,7 +7,8 @@ import Connect from "../svg/Connect";
 import Disconnect from "../svg/Disconnect";
 import Faq from "../svg/Faq";
 import CopyToClipboard from "../CopyToClipboard";
-import { truncateString } from "../../../utils";
+import EtherscanLink from "../EtherscanLink";
+import useDisplayName from "../../../hooks/useDisplayName";
 
 interface MenuItem {
   title: string;
@@ -84,13 +85,15 @@ const LinkItem = ({ title, link, Icon }: LinkMenuItem) => {
 };
 
 const AddressCopyItem = ({ account }: { account?: string }) => {
+  const accountDisplayName = useDisplayName(account);
   if (!account) {
     return null;
   }
-
   return (
     <ItemWrapper noHoverEffect>
-      <span className="font-sans">{truncateString(account, 15)}</span>
+      <span className="font-sans text-gold-300">
+        <EtherscanLink address={account}>{accountDisplayName}</EtherscanLink>
+      </span>
       <CopyToClipboard textToCopy={account} />
     </ItemWrapper>
   );
