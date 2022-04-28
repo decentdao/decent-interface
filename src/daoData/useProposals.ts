@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { GovernorModule, GovernorModule__factory, TimelockUpgradeable } from "../typechain-types";
+import { GovernorModule } from "../typechain-types";
 import { useWeb3 } from "../web3";
 import { BigNumber } from "ethers";
 
@@ -26,8 +26,7 @@ export type ProposalData = {
 };
 
 const useProposals = (
-  governorModuleContract: GovernorModule | undefined,
-  timelockModuleContract: TimelockUpgradeable | undefined,
+  governorModuleContract: GovernorModule | undefined
 ) => {
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const { provider } = useWeb3();
