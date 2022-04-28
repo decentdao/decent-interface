@@ -36,8 +36,7 @@ const SUPPORT: LinkMenuItem = {
 
 const FAQ: LinkMenuItem = {
   title: "FAQ",
-  // @todo add link for FAQ
-  link: "#",
+  link: "https://fractalframework.xyz/faq",
   Icon: Faq,
 };
 
@@ -113,7 +112,7 @@ const MenuItems = () => {
         <section className="border-t border-gray-300">
           <LinkItem {...CONTACT} />
           <LinkItem {...SUPPORT} />
-          {/* <LinkItem {...FAQ} /> */}
+          <LinkItem {...FAQ} />
         </section>
       </div>
     </Menu.Items>
