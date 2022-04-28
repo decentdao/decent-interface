@@ -7,6 +7,12 @@ import ProposalVotes from "./ProposalVotes";
 
 function ProposalDetails() {
   const params = useParams();
+  const [, setDAOAddress] = useDAOData();
+
+  useEffect(() => {
+    setDAOAddress(params.address);
+  }, [params.address, setDAOAddress]);
+
   const [{ proposals }] = useDAOData();
   const [proposal, setProposal] = useState<ProposalData>();
 
