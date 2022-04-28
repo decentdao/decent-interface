@@ -25,10 +25,11 @@ export type ProposalData = {
   abstainVotesPercent: number | undefined;
 };
 
-const useProposals = (moduleAddresses: string[] | undefined) => {
-  const [governorModule, setGovernorModule] = useState<GovernorModule>();
+const useProposals = (governorModuleContract: GovernorModule | undefined) => {
+  // const [governorModule, setGovernorModule] = useState<GovernorModule>();
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const { provider, signerOrProvider } = useWeb3();
+
 
   const getStateString = (state: number | undefined) => {
     if (state === 1) {
@@ -136,32 +137,16 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     [getBlockTimestamp, getProposalState, getProposalVotes]
   );
 
-  // Set the Governor module contract
-  useEffect(() => {
-    if (
-      moduleAddresses === undefined ||
-      moduleAddresses[1] === undefined ||
-      signerOrProvider === undefined
-    ) {
-      setGovernorModule(undefined);
-      return;
-    }
-
-    setGovernorModule(
-      GovernorModule__factory.connect(moduleAddresses[1], signerOrProvider)
-    );
-  }, [moduleAddresses, signerOrProvider]);
-
   // Get initial proposal events
   useEffect(() => {
-    if (governorModule === undefined) {
+    if (governorModuleContract === undefined) {
       return;
     }
 
-    const filter = governorModule.filters.ProposalCreated();
+    const filter = governorModuleContract.filters.ProposalCreated();
 
     // Get an array of all the ProposalCreated events
-    governorModule
+    governorModuleContract
       .queryFilter(filter)
       .then((proposalEvents) => {
         const newProposals = proposalEvents.map((proposalEvent, index) => {
@@ -194,7 +179,7 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
       .then((newProposals) => {
         return Promise.all(
           newProposals.map((newProposal) =>
-            getProposalData(governorModule, newProposal)
+            getProposalData(governorModuleContract, newProposal)
           )
         );
       })
@@ -207,16 +192,16 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
     getBlockTimestamp,
     getProposalVotes,
     getProposalState,
-    governorModule,
+    governorModuleContract,
   ]);
 
   // Setup proposal events listener
   useEffect(() => {
-    if (governorModule === undefined) {
+    if (governorModuleContract === undefined) {
       return;
     }
 
-    const filter = governorModule.filters.ProposalCreated();
+    const filter = governorModuleContract.filters.ProposalCreated();
 
     const listenerCallback = (
       proposalId: BigNumber,
@@ -252,19 +237,19 @@ const useProposals = (moduleAddresses: string[] | undefined) => {
         abstainVotesPercent: undefined,
       };
 
-      getProposalData(governorModule, newProposal)
+      getProposalData(governorModuleContract, newProposal)
         .then((newProposal) => setProposals([...proposals, newProposal]))
         .catch(console.error);
     };
 
-    governorModule.on(filter, listenerCallback);
+    governorModuleContract.on(filter, listenerCallback);
 
     return () => {
-      governorModule.off(filter, listenerCallback);
+      governorModuleContract.off(filter, listenerCallback);
     };
   }, [
     getProposalData,
-    governorModule,
+    governorModuleContract,
     proposals,
     getProposalVotes,
     getProposalState,
