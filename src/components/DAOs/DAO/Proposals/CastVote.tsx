@@ -33,7 +33,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
 
   return (
     <>
-      <Pending message="Creating Proposal..." pending={pending} />
+      <Pending message="Casting Vote..." pending={pending} />
       <ConnectModal />
       <div className="flex flex-col bg-gray-600 m-2 p-2 max-w-xs py-2 rounded-md">
         <div className="flex mx-2 my-2 text-gray-25">Cast Vote</div>
