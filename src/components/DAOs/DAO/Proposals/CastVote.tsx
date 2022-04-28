@@ -1,5 +1,5 @@
 import { ProposalData } from "../../../../daoData/useProposals";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "../../../ui/Button";
 import SelectVoteButton from "../../../ui/SelectVoteButton";
 import useCastVote from "../../../../daoData/useCastVote";
@@ -11,12 +11,23 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   // Against => 0
   // For => 1
   // Abstain => 2
-  const [vote, setVote] = useState<number>();
+  const [newVote, setNewVote] = useState<number>();
   const [pending, setPending] = useState<boolean>(false);
+  const [voteButtonString, setVoteButtonString] = useState<string>();
+
+  useEffect(() => {
+    if(proposal.stateString === "Closed") {
+      setVoteButtonString("Voting Closed");
+    } else if(proposal.userVote !== undefined) {
+      setVoteButtonString("Already Voted");
+    } else {
+      setVoteButtonString("Cast Vote");
+    }
+  }, [proposal]);
 
   const castVote = useCastVote({
     proposalId: proposal.id,
-    vote: vote,
+    vote: newVote,
     setPending,
   });
 
@@ -28,38 +39,36 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         <div className="flex mx-2 my-2 text-gray-25">Cast Vote</div>
         <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
-          onClick={() => setVote(1)}
-          selected={vote === 1}
-          disabled={proposal.stateString !== "Open"}
+          onClick={() => setNewVote(1)}
+          selected={newVote === 1 || proposal.userVote === "For"}
+          disabled={proposal.stateString !== "Open" || proposal.userVote !== undefined}
         >
           Vote Yes
         </SelectVoteButton>
         <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
-          onClick={() => setVote(0)}
-          selected={vote === 0}
-          disabled={proposal.stateString !== "Open"}
+          onClick={() => setNewVote(0)}
+          selected={newVote === 0 || proposal.userVote === "Against"}
+          disabled={proposal.stateString !== "Open" || proposal.userVote !== undefined}
         >
           Vote No
         </SelectVoteButton>
         <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
-          onClick={() => setVote(2)}
-          selected={vote === 2}
-          disabled={proposal.stateString !== "Open"}
+          onClick={() => setNewVote(2)}
+          selected={newVote === 2 || proposal.userVote === "Abstain"}
+          disabled={proposal.stateString !== "Open" || proposal.userVote !== undefined}
         >
           Abstain
         </SelectVoteButton>
         <hr className="mx-2 my-2 border-gray-200" />
         <Button
           onClick={() => castVote()}
-          disabled={vote === undefined || proposal.stateString !== "Open"}
+          disabled={newVote === undefined || proposal.stateString !== "Open" || proposal.userVote !== undefined}
+          addedClassNames="text-gold-500 border-gold-500 mx-2 py-2"
         >
-          Cast Vote
+          {voteButtonString}
         </Button>
-        {proposal.stateString !== "Open" ? (
-          <div className="text-gray-50 m-2">Proposal is closed</div>
-        ) : null}
       </div>
     </>
   );
