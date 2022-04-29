@@ -19,10 +19,10 @@ function DAOSearch() {
   /**
    * search string is set inside useSearchDao hook which checks for validity and
    * if it matches an existing DAO
-   * 
-   * @dev event.preventDefault() is called after setting search string, 
+   *
+   * @dev event.preventDefault() is called after setting search string,
    * otherwise the search string will not correctly set
-   * 
+   *
    * @param event
    */
   const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -34,9 +34,9 @@ function DAOSearch() {
     <div>
       <H1>Find a Fractal</H1>
       <ContentBox>
-        <InputBox>
-          <form onSubmit={handleSearchSubmit} action="#">
-            <div className="flex items-center mx-8">
+        <form onSubmit={handleSearchSubmit}>
+          <InputBox>
+            <div className="flex items-center">
               <div className="flex-grow">
                 <Input
                   value={searchAddressInput}
@@ -47,12 +47,17 @@ function DAOSearch() {
                   errorMessage={errorMessage}
                 />
               </div>
-              <Button type="submit" onClick={() => null} disabled={!searchAddressInput.trim()} addedClassNames="bg-gold-500 border-gold-500 rounded text-black-300 px-6 py-1 mx-2">
+              <Button
+                type="submit"
+                onClick={() => null}
+                disabled={!searchAddressInput.trim()}
+                addedClassNames="bg-gold-500 border-gold-500 rounded text-black-300 px-6 py-1 mx-2"
+              >
                 Search
               </Button>
             </div>
-          </form>
-        </InputBox>
+          </InputBox>
+        </form>
       </ContentBox>
     </div>
   );
