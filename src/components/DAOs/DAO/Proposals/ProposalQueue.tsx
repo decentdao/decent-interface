@@ -1,7 +1,6 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import useQueueTransaction from "../../../../daoData/useQueueTransaction";
 import PrimaryButton from "../../../ui/PrimaryButton";
-import ContentBox from "../../../ui/ContentBox";
 
 function ProposalQueue({ proposal }: { proposal: ProposalData }) {
   const queueTransaction = useQueueTransaction({
@@ -13,17 +12,13 @@ function ProposalQueue({ proposal }: { proposal: ProposalData }) {
   }
 
   return (
-    <div className="flex flex-shrink m-2">
-      <ContentBox title="Queue Proposal">
-        <div className="flex justify-center">
+    <div className="flex flex-row m-2 bg-gray-600 py-2 rounded-md">
+      <div className="text-gray-50 mx-4">Proposal has succeeded and ready to queue</div>
+        <div className="flex flex-grow justify-end mx-4">
           <PrimaryButton onClick={queueTransaction}>
             Queue Proposal
           </PrimaryButton>
         </div>
-        <div className="text-sm text-gray-50 text-center py-2">
-          Proposal has succeeded and ready to queue
-        </div>
-      </ContentBox>
     </div>
   );
 }
