@@ -16,7 +16,7 @@ function ProposalQueue({ proposal }: { proposal: ProposalData }) {
           <div className="flex flex-col">
             <Button
               onClick={queueTransaction}
-              addedClassNames="px-2 py-2 mx-2 min-w-full border-gold-300 bg-chocolate-500 text-gold-300"
+              addedClassNames="px-2 py-2 min-w-full border-gold-300 bg-chocolate-500 text-gold-300"
             >
               Queue Proposal
             </Button>
