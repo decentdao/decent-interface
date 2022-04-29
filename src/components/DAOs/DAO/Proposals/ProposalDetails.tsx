@@ -43,11 +43,11 @@ function ProposalDetails() {
 
   return (
     <div className="flex flex-col">
+      <ProposalQueue proposal={proposal} />
       <ProposalCardDetailed proposal={proposal} />
-      <div>
+      <div className="flex">
         <CastVote proposal={proposal} />
         <ProposalVotes proposal={proposal} />
-        <ProposalQueue proposal={proposal} />
       </div>
     </div>
   );
