@@ -3,15 +3,17 @@ import { ProposalData } from "../../../../daoData/useProposals";
 import useExecuteTransaction from "../../../../daoData/useExecuteTransaction";
 import Button from "../../../ui/Button";
 import ContentBox from "../../../ui/ContentBox";
+import { ethers } from "ethers";
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const queueTransaction = useExecuteTransaction({
     proposalData: proposal
   });
+
   return (
     <div>
       {
-        proposal.stateString === "Expired" &&
+        // (proposal.stateString === "Queued" && proposal.stateString !== "Executed") &&
         <ContentBox>
           <div className="flex flex-col">
             <Button
