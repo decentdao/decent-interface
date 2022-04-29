@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { GovernorModule } from "../typechain-types";
 import { useWeb3 } from "../web3";
-import { BigNumber } from "ethers";
+import { BigNumber, providers } from "ethers";
 
 type ProposalDataWithoutVotes = {
   number: number;
@@ -36,6 +36,132 @@ type UserVote = {
   vote: number | undefined;
 };
 
+const getVoteString = (voteNumber: number) => {
+  if (voteNumber === 0) {
+    return "Against";
+  } else if (voteNumber === 1) {
+    return "For";
+  } else if (voteNumber === 2) {
+    return "Abstain";
+  } else {
+    return undefined;
+  }
+};
+
+const getStateString = (state: number | undefined) => {
+  if (state === 0) {
+    return "Pending";
+  } else if (state === 1) {
+    return "Active";
+  } else if (state === 2) {
+    return "Canceled";
+  } else if (state === 3) {
+    return "Defeated";
+  } else if (state === 4) {
+    return "Succeeded";
+  } else if (state === 5) {
+    return "Queued";
+  } else if (state === 6) {
+    return "Expired";
+  } else if (state === 7) {
+    return "Executed";
+  }
+};
+
+const getTimestampString = (time: Date | undefined) => {
+  if (time === undefined) return "...";
+
+  return (
+    time.toLocaleDateString("en-US", { month: "short" }) +
+    " " +
+    time.toLocaleDateString("en-US", { day: "numeric" }) +
+    ", " +
+    time.toLocaleDateString("en-US", { year: "numeric" })
+  );
+};
+
+const getBlockTimestamp = (provider: providers.BaseProvider | undefined, blockNumber: number) => {
+  if (!provider) return;
+
+  return provider.getBlockNumber().then((currentBlockNumber) => {
+    if (blockNumber <= currentBlockNumber) {
+      // Requested block is in the past
+      return provider.getBlock(blockNumber).then((block) => {
+        return new Date(block.timestamp * 1000);
+      });
+    } else {
+      // Requested block is in the future, need to estimate future block timestamp
+      return Promise.all([
+        provider.getBlock(currentBlockNumber),
+        provider.getBlock(currentBlockNumber - 1000),
+      ]).then(([currentBlock, oldBlock]) => {
+        const averageBlockSeconds =
+          (currentBlock.timestamp - oldBlock.timestamp) / 1000;
+        const futureBlockTimestamp =
+          currentBlock.timestamp +
+          (blockNumber - currentBlockNumber) * averageBlockSeconds;
+        return new Date(futureBlockTimestamp * 1000);
+      });
+    }
+  });
+}
+
+// Get the vote counts for a given proposal
+const getProposalVotes = (governorModule: GovernorModule, proposalId: BigNumber) => {
+  return governorModule.proposalVotes(proposalId);
+}
+
+// Get the state of a given proposal
+const getProposalState = (governorModule: GovernorModule, proposalId: BigNumber) => {
+  return governorModule.state(proposalId);
+}
+
+// Get user voting power at the startblock of the proposal
+const getUserVotePower = (governorModule: GovernorModule, account: string, blockNumber: BigNumber) => {
+  return governorModule.getVotes(account, blockNumber);
+}
+
+// Get proposal data that isn't included in the proposal created event
+const getProposalData = (provider: providers.BaseProvider | undefined, governorModule: GovernorModule, proposal: ProposalDataWithoutVotes, account: string) => {
+  return Promise.all([
+    getProposalVotes(governorModule, proposal.id),
+    getProposalState(governorModule, proposal.id),
+    getBlockTimestamp(provider, proposal.startBlock.toNumber()),
+    getBlockTimestamp(provider, proposal.endBlock.toNumber()),
+    getUserVotePower(governorModule, account, proposal.startBlock),
+    proposal,
+  ]).then(([votes, state, startTime, endTime, userVotePower, proposal]) => {
+    const totalVotes = votes.forVotes
+      .add(votes.againstVotes)
+      .add(votes.abstainVotes);
+    if (totalVotes.gt(0)) {
+      proposal.forVotesPercent =
+        votes.forVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+      proposal.againstVotesPercent =
+        votes.againstVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+      proposal.abstainVotesPercent =
+        votes.abstainVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+    } else {
+      proposal.forVotesPercent = 0;
+      proposal.againstVotesPercent = 0;
+      proposal.abstainVotesPercent = 0;
+    }
+
+    proposal.idSubstring = `${proposal.id
+      .toString()
+      .substring(0, 4)}...${proposal.id.toString().slice(-4)}`;
+    proposal.state = state;
+    proposal.startTime = startTime;
+    proposal.endTime = endTime;
+    proposal.startTimeString = getTimestampString(startTime);
+    proposal.endTimeString = getTimestampString(endTime);
+    proposal.stateString = getStateString(proposal.state);
+    proposal.userVotePower = userVotePower;
+
+    return proposal;
+  });
+}
+
 const useProposals = (governorModule: GovernorModule | undefined) => {
   const [userVotes, setUserVotes] = useState<UserVote[]>([]);
   const [proposalsWithoutVotes, setProposalsWithoutVotes] = useState<
@@ -43,147 +169,6 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
   >([]);
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const { provider, account } = useWeb3();
-
-  const getVoteString = (voteNumber: number) => {
-    if (voteNumber === 0) {
-      return "Against";
-    } else if (voteNumber === 1) {
-      return "For";
-    } else if (voteNumber === 2) {
-      return "Abstain";
-    } else {
-      return undefined;
-    }
-  };
-
-  const getStateString = useCallback((state: number | undefined) => {
-    if (state === 0) {
-      return "Pending";
-    } else if (state === 1) {
-      return "Active";
-    } else if (state === 2) {
-      return "Canceled";
-    } else if (state === 3) {
-      return "Defeated";
-    } else if (state === 4) {
-      return "Succeeded";
-    } else if (state === 5) {
-      return "Queued";
-    } else if (state === 6) {
-      return "Expired";
-    } else if (state === 7) {
-      return "Executed";
-    }
-  }, []);
-
-  const getTimestampString = (time: Date | undefined) => {
-    if (time === undefined) return;
-
-    return (
-      time.toLocaleDateString("en-US", { month: "short" }) +
-      " " +
-      time.toLocaleDateString("en-US", { day: "numeric" }) +
-      ", " +
-      time.toLocaleDateString("en-US", { year: "numeric" })
-    );
-  };
-
-  const getBlockTimestamp = useCallback(
-    (blockNumber: number) => {
-      if (!provider) return;
-
-      return provider.getBlockNumber().then((currentBlockNumber) => {
-        if (blockNumber <= currentBlockNumber) {
-          // Requested block is in the past
-          return provider.getBlock(blockNumber).then((block) => {
-            return new Date(block.timestamp * 1000);
-          });
-        } else {
-          // Requested block is in the future, need to estimate future block timestamp
-          return Promise.all([
-            provider.getBlock(currentBlockNumber),
-            provider.getBlock(currentBlockNumber - 1000),
-          ]).then(([currentBlock, oldBlock]) => {
-            const averageBlockSeconds =
-              (currentBlock.timestamp - oldBlock.timestamp) / 1000;
-            const futureBlockTimestamp =
-              currentBlock.timestamp +
-              (blockNumber - currentBlockNumber) * averageBlockSeconds;
-            return new Date(futureBlockTimestamp * 1000);
-          });
-        }
-      });
-    },
-    [provider]
-  );
-
-  // Get the vote counts for a given proposal
-  const getProposalVotes = useCallback(
-    (governorModule: GovernorModule, proposalId: BigNumber) => {
-      return governorModule.proposalVotes(proposalId);
-    },
-    []
-  );
-
-  // Get the state of a given proposal
-  const getProposalState = useCallback(
-    (governorModule: GovernorModule, proposalId: BigNumber) => {
-      return governorModule.state(proposalId);
-    },
-    []
-  );
-
-  // Get user voting power at the startblock of the proposal
-  const getUserVotePower = useCallback(
-    (governorModule: GovernorModule, account: string, blockNumber: BigNumber) => {
-      return governorModule.getVotes(account, blockNumber);
-    },
-    []
-  );
-
-  // Get proposal data that isn't included in the proposal created event
-  const getProposalData = useCallback(
-    (governorModule: GovernorModule, proposal: ProposalDataWithoutVotes, account: string) => {
-      return Promise.all([
-        getProposalVotes(governorModule, proposal.id),
-        getProposalState(governorModule, proposal.id),
-        getBlockTimestamp(proposal.startBlock.toNumber()),
-        getBlockTimestamp(proposal.endBlock.toNumber()),
-        getUserVotePower(governorModule, account, proposal.startBlock),
-        proposal,
-      ]).then(([votes, state, startTime, endTime, userVotePower, proposal]) => {
-        const totalVotes = votes.forVotes
-          .add(votes.againstVotes)
-          .add(votes.abstainVotes);
-        if (totalVotes.gt(0)) {
-          proposal.forVotesPercent =
-            votes.forVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-          proposal.againstVotesPercent =
-            votes.againstVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-          proposal.abstainVotesPercent =
-            votes.abstainVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-        } else {
-          proposal.forVotesPercent = 0;
-          proposal.againstVotesPercent = 0;
-          proposal.abstainVotesPercent = 0;
-        }
-
-        proposal.idSubstring = `${proposal.id
-          .toString()
-          .substring(0, 4)}...${proposal.id.toString().slice(-4)}`;
-        proposal.state = state;
-        proposal.startTime = startTime;
-        proposal.endTime = endTime;
-        proposal.startTimeString = getTimestampString(startTime);
-        proposal.endTimeString = getTimestampString(endTime);
-        proposal.stateString = getStateString(proposal.state);
-        proposal.userVotePower = userVotePower;
-
-        return proposal;
-      });
-    },
-    [getBlockTimestamp, getProposalState, getProposalVotes, getUserVotePower, getStateString]
-  );
 
   // Get all of the current users votes
   useEffect(() => {
@@ -295,7 +280,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       .then((newProposals) => {
         return Promise.all(
           newProposals.map((newProposal) =>
-            getProposalData(governorModule, newProposal, account)
+            getProposalData(provider, governorModule, newProposal, account)
           )
         );
       })
@@ -303,14 +288,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
         setProposalsWithoutVotes(newProposals);
       })
       .catch(console.error);
-  }, [
-    getProposalData,
-    getBlockTimestamp,
-    getProposalVotes,
-    getProposalState,
-    account,
-    governorModule,
-  ]);
+  }, [account, governorModule, provider]);
 
   // Setup proposal events listener
   useEffect(() => {
@@ -355,7 +333,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
         userVotePower: undefined,
       };
 
-      getProposalData(governorModule, newProposal, account)
+      getProposalData(provider, governorModule, newProposal, account)
         .then((newProposal) =>
           setProposalsWithoutVotes([...proposals, newProposal])
         )
@@ -367,14 +345,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     return () => {
       governorModule.off(filter, listenerCallback);
     };
-  }, [
-    getProposalData,
-    governorModule,
-    proposals,
-    getProposalVotes,
-    getProposalState,
-    account
-  ]);
+  }, [account, governorModule, proposals, provider]);
 
   // Setup state events listener
   useEffect(() => {
@@ -388,13 +359,15 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       proposalId: BigNumber,
       _: any
     ) => {
-      const updatedProposalIndex = proposals.findIndex((proposal) =>
-        proposalId.eq(proposal.id)
-      );
-      const newProposals = [...proposals];
-      newProposals[updatedProposalIndex].state = 5;
-      newProposals[updatedProposalIndex].stateString = getStateString(5);
-      setProposals(newProposals);
+      setProposals(existingProposals => {
+        const updatedProposalIndex = existingProposals.findIndex((proposal) =>
+          proposalId.eq(proposal.id)
+        );
+        const newProposals = [...existingProposals];
+        newProposals[updatedProposalIndex].state = 5;
+        newProposals[updatedProposalIndex].stateString = getStateString(5);
+        return newProposals;
+      });
     };
 
     governorModule.on(filter, listenerCallback);
@@ -402,12 +375,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     return () => {
       governorModule.off(filter, listenerCallback);
     };
-  }, [
-    governorModule,
-    proposals,
-    getStateString,
-    setProposals
-  ]);
+  }, [governorModule]);
 
   // Setup user vote events listener
   useEffect(() => {
