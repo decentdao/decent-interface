@@ -48,7 +48,7 @@ function DAOSearch() {
                 />
               </div>
 
-              <PrimaryButton type="submit" label="Search" isLoading={loading} disabled={loading || !searchAddressInput.trim()} />
+              <PrimaryButton type="submit" label="Search" isLoading={loading} disabled={!!errorMessage || loading || !searchAddressInput.trim()} />
             </div>
           </InputBox>
         </form>
