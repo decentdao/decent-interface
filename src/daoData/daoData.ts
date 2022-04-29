@@ -17,7 +17,7 @@ export interface DAOData {
   name: string | undefined,
   accessControlAddress: string | undefined,
   moduleAddresses: string[] | undefined,
-  proposals: ProposalData[],
+  proposals: ProposalData[] | undefined,
   governorModuleContract: GovernorModule | undefined,
   tokenContract: VotesTokenWithSupply | undefined,
   tokenData: {
