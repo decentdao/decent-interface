@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ProposalCardDetailed from "./ProposalCardDetailed";
 import ProposalVotes from "./ProposalVotes";
+import CastVote from "./CastVote";
 
 function ProposalDetails() {
   const params = useParams();
@@ -40,9 +41,12 @@ function ProposalDetails() {
   }
 
   return (
-    <div className="flex">
+    <div className="flex flex-col">
       <ProposalCardDetailed proposal={proposal} />
+      <div className="flex flex-row">
+      <CastVote proposal={proposal} />
       <ProposalVotes proposal={proposal} />
+      </div>
     </div>
   );
 }
