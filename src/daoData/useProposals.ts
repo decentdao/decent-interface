@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { GovernorModule } from "../typechain-types";
+import { GovernorModule, TimelockUpgradeable } from "../typechain-types";
 import { useWeb3 } from "../web3";
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 export type ProposalData = {
   number: number;
@@ -23,10 +23,12 @@ export type ProposalData = {
   forVotesPercent: number | undefined;
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
+  eta: boolean | undefined;
 };
 
 const useProposals = (
-  governorModuleContract: GovernorModule | undefined
+  governorModuleContract: GovernorModule | undefined,
+  timelockModuleContract: TimelockUpgradeable | undefined,
 ) => {
   const [proposals, setProposals] = useState<ProposalData[]>([]);
   const { provider } = useWeb3();
@@ -109,15 +111,27 @@ const useProposals = (
     []
   );
 
+  // Get the state of a given proposal
+  const getProposalEta = useCallback(
+    (timelockModule: TimelockUpgradeable, governorModule: GovernorModule, proposal) => {
+      const abiCoder = new ethers.utils.AbiCoder();
+      const data = abiCoder.encode([ "string[]","uint256[]","bytes[]","bytes32","bytes32"], [ proposal.targets, [0], proposal.calldatas , ethers.utils.formatBytes32String("0"), ethers.utils.id(proposal.description)]);
+      const hash = ethers.utils.keccak256(data);
+      return timelockModule.isOperationReady(hash)
+    },
+    []
+  );
+
   const getProposalData = useCallback(
-    (governorModule: GovernorModule, proposal: ProposalData) => {
+    (governorModule: GovernorModule, timelockModule: TimelockUpgradeable, proposal: ProposalData) => {
       return Promise.all([
         getProposalVotes(governorModule, proposal.id),
         getProposalState(governorModule, proposal.id),
         getBlockTimestamp(proposal.startBlock.toNumber()),
         getBlockTimestamp(proposal.endBlock.toNumber()),
+        getProposalEta(timelockModule, governorModule, proposal),
         proposal,
-      ]).then(([votes, state, startTime, endTime, proposal]) => {
+      ]).then(([votes, state, startTime, endTime, eta, proposal]) => {
         const totalVotes = votes.forVotes
           .add(votes.againstVotes)
           .add(votes.abstainVotes);
@@ -143,16 +157,17 @@ const useProposals = (
         proposal.startTimeString = getTimestampString(startTime);
         proposal.endTimeString = getTimestampString(endTime);
         proposal.stateString = getStateString(proposal.state);
+        proposal.eta = eta;
 
         return proposal;
       });
     },
-    [getBlockTimestamp, getProposalState, getProposalVotes]
+    [getBlockTimestamp, getProposalState, getProposalVotes, getProposalEta]
   );
 
   // Get initial proposal events
   useEffect(() => {
-    if (governorModuleContract === undefined) {
+    if (governorModuleContract === undefined || timelockModuleContract === undefined) {
       return;
     }
 
@@ -183,6 +198,7 @@ const useProposals = (
             forVotesPercent: undefined,
             againstVotesPercent: undefined,
             abstainVotesPercent: undefined,
+            eta: undefined,
           };
           return newProposal;
         });
@@ -192,7 +208,7 @@ const useProposals = (
       .then((newProposals) => {
         return Promise.all(
           newProposals.map((newProposal) =>
-            getProposalData(governorModuleContract, newProposal)
+            getProposalData(governorModuleContract, timelockModuleContract, newProposal)
           )
         );
       })
@@ -205,7 +221,9 @@ const useProposals = (
     getBlockTimestamp,
     getProposalVotes,
     getProposalState,
+    getProposalEta,
     governorModuleContract,
+    timelockModuleContract,
   ]);
 
   // Setup proposal events listener
@@ -248,9 +266,10 @@ const useProposals = (
         forVotesPercent: undefined,
         againstVotesPercent: undefined,
         abstainVotesPercent: undefined,
+        eta: undefined,
       };
-
-      getProposalData(governorModuleContract, newProposal)
+      if(!newProposal || !timelockModuleContract) return;
+      getProposalData(governorModuleContract, timelockModuleContract, newProposal)
         .then((newProposal) => setProposals([...proposals, newProposal]))
         .catch(console.error);
     };
@@ -266,6 +285,7 @@ const useProposals = (
     proposals,
     getProposalVotes,
     getProposalState,
+    timelockModuleContract
   ]);
 
   // Setup queue state events listener
