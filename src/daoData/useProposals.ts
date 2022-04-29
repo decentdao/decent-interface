@@ -106,29 +106,14 @@ const getBlockTimestamp = (provider: providers.BaseProvider | undefined, blockNu
   });
 }
 
-// Get the vote counts for a given proposal
-const getProposalVotes = (governorModule: GovernorModule, proposalId: BigNumber) => {
-  return governorModule.proposalVotes(proposalId);
-}
-
-// Get the state of a given proposal
-const getProposalState = (governorModule: GovernorModule, proposalId: BigNumber) => {
-  return governorModule.state(proposalId);
-}
-
-// Get user voting power at the startblock of the proposal
-const getUserVotePower = (governorModule: GovernorModule, account: string, blockNumber: BigNumber) => {
-  return governorModule.getVotes(account, blockNumber);
-}
-
 // Get proposal data that isn't included in the proposal created event
 const getProposalData = (provider: providers.BaseProvider | undefined, governorModule: GovernorModule, proposal: ProposalDataWithoutVotes, account: string) => {
   return Promise.all([
-    getProposalVotes(governorModule, proposal.id),
-    getProposalState(governorModule, proposal.id),
+    governorModule.proposalVotes(proposal.id),
+    governorModule.state(proposal.id),
     getBlockTimestamp(provider, proposal.startBlock.toNumber()),
     getBlockTimestamp(provider, proposal.endBlock.toNumber()),
-    getUserVotePower(governorModule, account, proposal.startBlock),
+    governorModule.getVotes(account, proposal.startBlock),
     proposal,
   ]).then(([votes, state, startTime, endTime, userVotePower, proposal]) => {
     const totalVotes = votes.forVotes
