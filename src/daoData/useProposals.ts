@@ -56,7 +56,6 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     }
   };
 
-
   const getStateString = useCallback((state: number | undefined) => {
     if (state === 0) {
       return "Pending";
@@ -389,13 +388,13 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       proposalId: BigNumber,
       _: any
     ) => {
-      const updateProposal = proposals.findIndex((proposal) =>
+      const updatedProposalIndex = proposals.findIndex((proposal) =>
         proposalId.eq(proposal.id)
       );
-      const updateProposals = [...proposals];
-      updateProposals[updateProposal].state = 6;
-      updateProposals[updateProposal].stateString = getStateString(6);
-      setProposals(updateProposals);
+      const newProposals = [...proposals];
+      newProposals[updatedProposalIndex].state = 5;
+      newProposals[updatedProposalIndex].stateString = getStateString(5);
+      setProposals(newProposals);
     };
 
     governorModule.on(filter, listenerCallback);
