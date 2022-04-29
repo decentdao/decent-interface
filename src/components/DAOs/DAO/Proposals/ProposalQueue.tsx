@@ -12,8 +12,8 @@ function ProposalQueue({ proposal }: { proposal: ProposalData }) {
   }
 
   return (
-    <div className="flex flex-row m-2 bg-gray-600 py-2 rounded-md">
-      <div className="text-gray-50 mx-4">Proposal has succeeded and ready to queue</div>
+    <div className="flex border-1 items-center m-2 bg-gray-600 py-2 rounded-md">
+      <div className="align-middle text-gray-25 mx-4">Proposal has succeeded and ready to queue</div>
         <div className="flex flex-grow justify-end mx-4">
           <PrimaryButton onClick={queueTransaction}>
             Queue Proposal
