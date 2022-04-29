@@ -22,11 +22,11 @@ function SearchingDAO({
   validDAOComponent,
   setSearchFailed,
 }: {
-  searchAddress: string | undefined,
+  searchAddress?: string,
   loading: boolean,
   validAddress: boolean,
-  address: string | undefined,
-  addressIsDAO: boolean,
+  address?: string,
+  addressIsDAO?: boolean,
   validDAOComponent: React.ReactNode,
   setSearchFailed?: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
