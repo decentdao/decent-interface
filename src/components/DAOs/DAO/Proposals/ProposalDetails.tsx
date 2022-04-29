@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ProposalCardDetailed from "./ProposalCardDetailed";
 import ProposalVotes from "./ProposalVotes";
 import ProposalQueue from "./ProposalQueue";
+import ProposalExecute from "./ProposalExecute"
 
 function ProposalDetails() {
   const params = useParams();
@@ -45,6 +46,7 @@ function ProposalDetails() {
       <ProposalCardDetailed proposal={proposal} />
       <ProposalVotes proposal={proposal} />
       <ProposalQueue proposal={proposal} />
+      <ProposalExecute proposal={proposal} />
     </div>
   );
 }
