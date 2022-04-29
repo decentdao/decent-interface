@@ -17,8 +17,10 @@ const useSearchDao = () => {
    *
    */
   const resetErrorState = () => {
+    setLoading(false);
     if (errorMessage) {
       setErrorMessage(undefined);
+      setSearchString(undefined);
     }
   };
 
@@ -41,7 +43,7 @@ const useSearchDao = () => {
 
   /**
    * handles errors
-   * 
+   *
    * @dev loading or addressIsDao are initialized as undefined to indicate these processses
    * have not been ran yet.
    */
