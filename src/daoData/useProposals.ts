@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { GovernorModule, TimelockUpgradeable } from "../typechain-types";
 import { useWeb3 } from "../web3";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 
 type ProposalDataWithoutVotes = {
   number: number;
@@ -23,7 +23,7 @@ type ProposalDataWithoutVotes = {
   forVotesPercent: number | undefined;
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
-  eta: boolean | undefined;
+  eta: number | undefined;
   userVotePower: BigNumber | undefined;
 };
 
@@ -144,19 +144,19 @@ const useProposals = (
       governorModule: GovernorModule,
       proposal
     ) => {
-      const abiCoder = new ethers.utils.AbiCoder();
-      const data = abiCoder.encode(
-        ["string[]", "uint256[]", "bytes[]", "bytes32", "bytes32"],
-        [
-          proposal.targets,
-          [0],
-          proposal.calldatas,
-          ethers.utils.formatBytes32String("0"),
-          ethers.utils.id(proposal.description),
-        ]
-      );
-      const hash = ethers.utils.keccak256(data);
-      return timelockModule.isOperationReady(hash);
+      // const abiCoder = new ethers.utils.AbiCoder();
+      // const data = abiCoder.encode(
+      //   ["string[]", "uint256[]", "bytes[]", "bytes32", "bytes32"],
+      //   [
+      //     proposal.targets,
+      //     [0],
+      //     proposal.calldatas,
+      //     ethers.utils.formatBytes32String("0"),
+      //     ethers.utils.id(proposal.description),
+      //   ]
+      // );
+      // const hash = ethers.utils.keccak256(data);
+      return governorModule.proposalEta(proposal.id);
     },
     []
   );
@@ -219,7 +219,7 @@ const useProposals = (
           proposal.startTimeString = getTimestampString(startTime);
           proposal.endTimeString = getTimestampString(endTime);
           proposal.stateString = getStateString(proposal.state);
-          proposal.eta = eta;
+          proposal.eta = eta.toNumber();
           proposal.userVotePower = userVotePower;
 
           return proposal;
