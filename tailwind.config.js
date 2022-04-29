@@ -54,6 +54,9 @@ module.exports = {
       },
       backgroundImage: {
         'image-pattern': "url('./assets/images/bg-glow-top-left.png'), linear-gradient(to bottom, #272520, #1b1a18)",
+      },
+      boxShadow: {
+        menu: '0px 8px 48px rgba(0, 0, 0, 0.5), 0px 0px 1px rgba(0, 0, 0, 0.25)'
       }
     }
   },

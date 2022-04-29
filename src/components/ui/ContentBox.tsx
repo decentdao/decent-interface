@@ -12,7 +12,7 @@ const ContentBox = ({
       {title && <ContentBoxTitle>
         {title}
       </ContentBoxTitle>}
-      <div>{children}</div>
+      <div className="rounded-lg bg-gray-600 px-4 py-2 my-2">{children}</div>
     </div>
   );
 }
