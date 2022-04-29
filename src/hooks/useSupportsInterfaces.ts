@@ -5,7 +5,7 @@ import { ERC165 } from '../typechain-types';
 import useInterfaceSelectors from './useInterfaceSelectors';
 
 const useSupportsInterfaces = (contract: ERC165 | undefined, interfaces: utils.Interface[]) => {
-  const [supportsInterfaces, setSupportsInterfaces] = useState(false);
+  const [supportsInterfaces, setSupportsInterfaces] = useState<boolean>();
   const interfaceSelectors = useInterfaceSelectors(interfaces);
   const [loading, setLoading] = useState(false);
 
@@ -13,7 +13,7 @@ const useSupportsInterfaces = (contract: ERC165 | undefined, interfaces: utils.I
     setLoading(true);
 
     if (!contract || !interfaceSelectors) {
-      setSupportsInterfaces(false);
+      setSupportsInterfaces(undefined);
       setLoading(false);
       return;
     }

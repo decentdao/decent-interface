@@ -31,7 +31,7 @@ const useQueueTransaction = ({
     const governor: GovernorModule = GovernorModule__factory.connect(daoData.moduleAddresses[1], signerOrProvider);
     contractCallQueueTransaction({
       contractFn: () => governor.queue(proposalData.targets, [0], proposalData.calldatas, ethers.utils.id(proposalData.description)),
-      pendingMessage: "Queuing Transaction",
+      pendingMessage: "Queuing Transaction...",
       failedMessage: "Queuing Failed",
       successMessage: "Queuing Completed",
       rpcErrorCallback: (error: any) => {
