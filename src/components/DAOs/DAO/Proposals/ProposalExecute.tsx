@@ -1,31 +1,39 @@
-
+import { useState, useEffect } from "react";
 import { ProposalData } from "../../../../daoData/useProposals";
 import useExecuteTransaction from "../../../../daoData/useExecuteTransaction";
-import Button from "../../../ui/Button";
-import ContentBox from "../../../ui/ContentBox";
-import { ethers } from "ethers";
+import PrimaryButton from "../../../ui/PrimaryButton";
+import useBlockTimestamp from "../../../../hooks/useBlockTimestamp";
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
-  const queueTransaction = useExecuteTransaction({
-    proposalData: proposal
+  const [show, setShow] = useState<boolean>(false);
+  const blockTimestamp = useBlockTimestamp();
+
+  useEffect(() => { 
+    if(proposal.eta === undefined || blockTimestamp === undefined) {
+      return;
+    }
+
+    if(proposal.eta !== 0 && proposal.eta < blockTimestamp) {
+      setShow(true);
+    }
+  }, [blockTimestamp, proposal]);
+
+  const executeTransaction = useExecuteTransaction({
+    proposalData: proposal,
   });
 
+  if (!show) return null;
+
   return (
-    <div>
-      {
-        // (proposal.stateString === "Queued" && proposal.stateString !== "Executed") &&
-        <ContentBox>
-          <div className="flex flex-col">
-            <Button
-              onClick={queueTransaction}
-              addedClassNames="px-2 py-2 min-w-full border-gold-300 bg-chocolate-500 text-gold-300"
-            >
-              Execute Proposal
-            </Button>
-            <div className="text-sm text-gray-25 text-center py-2">Queuing has completed. Anyone can now Execute the contract.</div>
-          </div>
-        </ContentBox>
-      }
+    <div className="flex border-1 items-center m-2 bg-gray-600 py-2 rounded-md">
+      <div className="align-middle text-gray-25 mx-4">
+        Proposal ready for execution
+      </div>
+      <div className="flex flex-grow justify-end mx-4">
+        <PrimaryButton onClick={executeTransaction}>
+          Execute Proposal
+        </PrimaryButton>
+      </div>
     </div>
   );
 }
