@@ -39,14 +39,13 @@ const useAddress = (addressInput: string | undefined) => {
       setLoading(false);
       return;
     }
-
     setAddress(undefined);
     setValidAddress(false);
 
     provider.resolveName(addressInput)
       .then(resolvedAddress => {
         if (!resolvedAddress) {
-          setAddress(undefined);
+          setAddress("");
           setValidAddress(false);
           setLoading(false);
           return;

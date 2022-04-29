@@ -36,10 +36,8 @@ const useSearchDao = () => {
    * handles loading state of search
    */
   useEffect(() => {
-    if (searchString) {
-      setLoading(addressLoading || isDAOLoading);
-    }
-  }, [searchString, addressLoading, isDAOLoading]);
+    setLoading(addressLoading || isDAOLoading);
+  }, [addressLoading, isDAOLoading]);
 
   /**
    * handles errors
@@ -48,10 +46,15 @@ const useSearchDao = () => {
    * have not been ran yet.
    */
   useEffect(() => {
-    if (!searchString || loading !== false) {
+    if (!searchString) {
       return;
     }
-    if (!validAddress) {
+    if(loading !== false) {
+      // @todo remove once button loader is added
+      setErrorMessage("Loading...")
+      return;
+    }
+    if (!validAddress && address !== undefined) {
       setErrorMessage("Please use a valid Fractal ETH address or ENS domain");
       return;
     }
@@ -59,7 +62,7 @@ const useSearchDao = () => {
       setErrorMessage("Sorry a Fractal does not exist on this address");
       return;
     }
-  }, [validAddress, searchString, addressIsDAO, loading]);
+  }, [address, validAddress, searchString, addressIsDAO, loading]);
 
   /**
    * handles navigation when valid address is submitted
