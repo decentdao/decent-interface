@@ -25,7 +25,7 @@ function ProposalCard({
   const proposerDisplayName = useDisplayName(proposal.proposer);
   return (
     <Link to={`proposals/${proposal.number}`}>
-      <div className={`rounded-lg bg-gray-600 p-4 border border-chocolate-400 hover:border-gold-300 hover:shadow-sm hover:shadow-gold-300`}>
+      <div className={`rounded-lg bg-gray-600 p-4 border border-chocolate-400 hover:border-gold-300 hover:shadow-sm hover:shadow-gold-300 my-2`}>
         <ContentBox>
           <div className="flex flex-row">
             {proposal.stateString === "Open" ?
