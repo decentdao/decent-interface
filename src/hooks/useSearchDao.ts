@@ -56,7 +56,7 @@ const useSearchDao = () => {
       return;
     }
     if (addressIsDAO === false) {
-      setErrorMessage("Sorry a fractal does not exist on this address");
+      setErrorMessage("Sorry a Fractal does not exist on this address");
       return;
     }
   }, [validAddress, searchString, addressIsDAO, loading]);
