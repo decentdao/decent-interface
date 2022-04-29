@@ -1,29 +1,24 @@
-
 import { ProposalData } from "../../../../daoData/useProposals";
 import useQueueTransaction from "../../../../daoData/useQueueTransaction";
-import Button from "../../../ui/Button";
-import ContentBox from "../../../ui/ContentBox";
+import PrimaryButton from "../../../ui/PrimaryButton";
 
 function ProposalQueue({ proposal }: { proposal: ProposalData }) {
   const queueTransaction = useQueueTransaction({
-    proposalData: proposal
+    proposalData: proposal,
   });
+
+  if (proposal.stateString !== "Succeeded") {
+    return null;
+  }
+
   return (
-    <div>
-      {
-        proposal.stateString === "Succeeded" &&
-        <ContentBox>
-          <div className="flex flex-col">
-            <Button
-              onClick={queueTransaction}
-              addedClassNames="px-2 py-2 min-w-full border-gold-300 bg-chocolate-500 text-gold-300"
-            >
-              Queue Proposal
-            </Button>
-            <div className="text-sm text-gray-25 text-center py-2">Voting has closed and the vote has passed. Anyone can now queue the contract.</div>
-          </div>
-        </ContentBox>
-      }
+    <div className="flex border-1 items-center m-2 bg-gray-600 py-2 rounded-md">
+      <div className="align-middle text-gray-25 mx-4">Proposal has succeeded and ready to queue</div>
+        <div className="flex flex-grow justify-end mx-4">
+          <PrimaryButton onClick={queueTransaction}>
+            Queue Proposal
+          </PrimaryButton>
+        </div>
     </div>
   );
 }
