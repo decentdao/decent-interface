@@ -11,7 +11,7 @@ function ProposalsList() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 lg:gap-4">
+    <div className="flex flex-col">
       {[...proposals].reverse().map((proposal) => (
         <ProposalCard key={proposal.number} proposal={proposal} />
       ))}

@@ -9,7 +9,7 @@ function CopyToClipboard({ textToCopy }: { textToCopy: string }) {
     })
   }
   return (
-    <div className="cursor-pointer mx-2 hover:text-stone-300" onClick={copyTextToClipboard}>
+    <div className="cursor-pointer mx-2 text-gray-25 hover:text-stone-300" onClick={copyTextToClipboard}>
       <Clipboard />
     </div>
   );
