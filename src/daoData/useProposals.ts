@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { GovernorModule } from "../typechain-types";
 import { useWeb3 } from "../web3";
-import { BigNumber } from "ethers";
+import { BigNumber, BigNumberish } from "ethers";
 
 export type ProposalData = {
   number: number;
@@ -266,6 +266,39 @@ const useProposals = (
     proposals,
     getProposalVotes,
     getProposalState,
+  ]);
+
+  // Setup state events listener
+  useEffect(() => {
+    if (governorModuleContract === undefined) {
+      return;
+    }
+
+    const filter = governorModuleContract.filters.ProposalQueued();
+
+    const listenerCallback = (
+      proposalId: BigNumber,
+      _: any
+    ) => {
+      const updateProposal = proposals.findIndex((proposal) =>
+        proposalId.eq(proposal.id)
+      );
+      const updateProposals = [...proposals];
+      updateProposals[updateProposal].state = 6;
+      updateProposals[updateProposal].stateString = getStateString(6);
+      setProposals(updateProposals);
+    };
+
+    governorModuleContract.on(filter, listenerCallback);
+
+    return () => {
+      governorModuleContract.off(filter, listenerCallback);
+    };
+  }, [
+    governorModuleContract,
+    proposals,
+    getStateString,
+    setProposals
   ]);
 
   return proposals;
