@@ -14,6 +14,9 @@ type ProposalDataWithoutVotes = {
   startTimeString: string | undefined;
   endTimeString: string | undefined;
   proposer: string;
+  targets: string[];
+  signatures: string[];
+  calldatas: string[];
   description: string;
   state: number | undefined;
   stateString: string | undefined;
@@ -53,13 +56,25 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     }
   };
 
-  const getStateString = (state: number | undefined) => {
-    if (state === 1) {
-      return "Open";
-    } else {
-      return "Closed";
+  const getStateString = useCallback((state: number | undefined) => {
+    if (state === 0) {
+      return "Pending";
+    } else if (state === 1) {
+      return "Active";
+    } else if (state === 2) {
+      return "Canceled";
+    } else if (state === 3) {
+      return "Defeated";
+    } else if (state === 4) {
+      return "Succeeded";
+    } else if (state === 5) {
+      return "Queued";
+    } else if (state === 6) {
+      return "Expired";
+    } else if (state === 7) {
+      return "Executed";
     }
-  };
+  }, []);
 
   const getTimestampString = (time: Date | undefined) => {
     if (time === undefined) return;
@@ -167,7 +182,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
         return proposal;
       });
     },
-    [getBlockTimestamp, getProposalState, getProposalVotes, getUserVotePower]
+    [getBlockTimestamp, getProposalState, getProposalVotes, getUserVotePower, getStateString]
   );
 
   // Get all of the current users votes
@@ -213,6 +228,9 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
           startTimeString: proposal.startTimeString,
           endTimeString: proposal.endTimeString,
           proposer: proposal.proposer,
+          targets: proposal.targets,
+          signatures: proposal.signatures,
+          calldatas: proposal.calldatas,
           description: proposal.description,
           state: proposal.state,
           stateString: proposal.stateString,
@@ -258,6 +276,9 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
             startTimeString: undefined,
             endTimeString: undefined,
             proposer: proposalEvent.args.proposer,
+            targets: proposalEvent.args.targets,
+            signatures: proposalEvent.args.signatures,
+            calldatas: proposalEvent.args.calldatas,
             description: proposalEvent.args.description,
             state: undefined,
             stateString: undefined,
@@ -266,7 +287,6 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
             abstainVotesPercent: undefined,
             userVotePower: undefined,
           };
-
           return newProposal;
         });
 
@@ -323,6 +343,9 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
         startTimeString: undefined,
         endTimeString: undefined,
         proposer: proposer,
+        targets: targets,
+        signatures: signatures,
+        calldatas: calldatas,
         description: description,
         state: undefined,
         stateString: undefined,
@@ -351,6 +374,39 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     getProposalVotes,
     getProposalState,
     account
+  ]);
+
+  // Setup state events listener
+  useEffect(() => {
+    if (governorModule === undefined) {
+      return;
+    }
+
+    const filter = governorModule.filters.ProposalQueued();
+
+    const listenerCallback = (
+      proposalId: BigNumber,
+      _: any
+    ) => {
+      const updatedProposalIndex = proposals.findIndex((proposal) =>
+        proposalId.eq(proposal.id)
+      );
+      const newProposals = [...proposals];
+      newProposals[updatedProposalIndex].state = 5;
+      newProposals[updatedProposalIndex].stateString = getStateString(5);
+      setProposals(newProposals);
+    };
+
+    governorModule.on(filter, listenerCallback);
+
+    return () => {
+      governorModule.off(filter, listenerCallback);
+    };
+  }, [
+    governorModule,
+    proposals,
+    getStateString,
+    setProposals
   ]);
 
   // Setup user vote events listener

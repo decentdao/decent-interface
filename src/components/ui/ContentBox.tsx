@@ -8,7 +8,7 @@ const ContentBox = ({
   children: React.ReactNode,
 }) => {
   return (
-    <div>
+    <div className="bg-gray-600 rounded-lg p-4">
       {title && <ContentBoxTitle>
         {title}
       </ContentBoxTitle>}
