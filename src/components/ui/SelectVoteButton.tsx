@@ -18,14 +18,18 @@ function SelectVoteButton({
     <Button
       onClick={onClick}
       disabled={disabled}
-      addedClassNames={`flex px-8 py-2 mx-2 ${
+      addedClassNames={`flex px-6 py-3 mx-2 my-2 ${
         selected
           ? "border-gold-500 bg-black-500 text-gold-500"
           : "border-gray-25 bg-chocolate-500 text-gray-25"
       }`}
     >
+      <div className="flex flex-grow">
       {children}
+      </div>
+      <div className="flex flex-grow place-content-end">
       {selected && <Check />}
+      </div>
     </Button>
   );
 }

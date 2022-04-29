@@ -7,7 +7,7 @@ function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
   const proposerDisplayName = useDisplayName(proposal.proposer);
 
   return (
-    <div className="flex flex-col bg-gray-600 m-2 max-w-lg py-2 rounded-md">
+    <div className="flex flex-col bg-gray-600 m-2 py-2 rounded-md">
       <div className="flex flex-row m-2 align-middle">
         <div className="flex self-center mx-1 bg-gold-500 p-2 rounded-lg">
           {proposal.stateString}

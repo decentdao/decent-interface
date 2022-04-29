@@ -1,6 +1,6 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import { useState, useEffect } from "react";
-import Button from "../../../ui/Button";
+import PrimaryButton from "../../../ui/PrimaryButton";
 import SelectVoteButton from "../../../ui/SelectVoteButton";
 import useCastVote from "../../../../daoData/useCastVote";
 
@@ -34,7 +34,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
 
   return (
     <>
-      <div className="flex flex-col bg-gray-600 m-2 p-2 max-w-xs py-2 rounded-md">
+      <div className="flex flex-col bg-gray-600 m-2 p-2 w-3/5 py-2 rounded-md">
         <div className="flex mx-2 my-2 text-gray-25">Cast Vote</div>
         <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
@@ -49,7 +49,6 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         >
           Vote Yes
         </SelectVoteButton>
-        <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
           onClick={() => setNewVote(0)}
           selected={newVote === 0 || proposal.userVote === 0}
@@ -62,7 +61,6 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         >
           Vote No
         </SelectVoteButton>
-        <hr className="mx-2 my-2 border-gray-200" />
         <SelectVoteButton
           onClick={() => setNewVote(2)}
           selected={newVote === 2 || proposal.userVote === 2}
@@ -75,8 +73,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
         >
           Abstain
         </SelectVoteButton>
-        <hr className="mx-2 my-2 border-gray-200" />
-        <Button
+        <PrimaryButton
           onClick={() => castVote()}
           disabled={
             newVote === undefined ||
@@ -85,10 +82,9 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             proposal.userVotePower === undefined ||
             proposal.userVotePower.eq(0)
           }
-          addedClassNames="text-gold-500 border-gold-500 mx-2 py-2"
         >
           {voteButtonString}
-        </Button>
+        </PrimaryButton>
       </div>
     </>
   );
