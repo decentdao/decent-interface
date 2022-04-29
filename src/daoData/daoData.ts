@@ -11,8 +11,6 @@ import useTokenData from './useTokenData';
 import useProposals from './useProposals';
 import { ProposalData } from './useProposals';
 import { GovernorModule, VotesTokenWithSupply } from '../typechain-types';
-import useTimelockModuleContract from './useTimelockModuleContract';
-
 export interface DAOData {
   name: string | undefined,
   accessControlAddress: string | undefined,
@@ -31,17 +29,15 @@ export interface DAOData {
 
 export const useDAODatas = () => {
   const [daoAddress, setDAOAddress] = useState<string>();
-
   const daoContract = useDAOContract(daoAddress);
   const name = useDAOName(daoContract);
   const accessControlAddress = useAccessControlAddress(daoContract);
   const accessControlContract = useAccessControlContract(accessControlAddress);
   const moduleAddresses = useModuleAddresses(daoContract, accessControlContract);
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
-  const timelockModuleContract = useTimelockModuleContract(moduleAddresses);
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
-  const proposals = useProposals(governorModuleContract, timelockModuleContract);
+  const proposals = useProposals(governorModuleContract);
 
   const daoData: DAOData = {
     name,
