@@ -11,7 +11,7 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   return (
     <div>
       {
-        // proposal.stateString === "Succeeded" &&
+        proposal.stateString === "Expired" &&
         <ContentBox>
           <div className="flex flex-col">
             <Button

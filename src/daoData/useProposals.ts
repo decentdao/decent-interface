@@ -316,8 +316,8 @@ const useProposals = (
         proposalId.eq(proposal.id)
       );
       const updateProposals = [...proposals];
-      updateProposals[updateProposal].state = 6;
-      updateProposals[updateProposal].stateString = getStateString(6);
+      updateProposals[updateProposal].state = 7;
+      updateProposals[updateProposal].stateString = getStateString(7);
       setProposals(updateProposals);
     };
 
