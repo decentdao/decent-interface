@@ -139,7 +139,7 @@ const useDeployDAO = ({
           ), // Timelock Impl
           abiCoder.encode(["string"], [""]),
           abiCoder.encode(["uint64"], [BigNumber.from("0")]), // vote extension
-          abiCoder.encode(["uint256"], [BigNumber.from("0")]), // voteDelay - 1 day was 6545 blocks
+          abiCoder.encode(["uint256"], [BigNumber.from("0")]), // Todo: change voteDelay back to 6545 blocks for prod
           abiCoder.encode(["uint256"], [BigNumber.from("45818")]), // votingPeriod - 1 week
           abiCoder.encode(
             ["uint256"],
