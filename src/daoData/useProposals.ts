@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { GovernorModule } from "../typechain-types";
 import { useWeb3 } from "../web3";
-import { BigNumber, BigNumberish } from "ethers";
+import { BigNumber } from "ethers";
 
 export type ProposalData = {
   number: number;
@@ -32,7 +32,7 @@ const useProposals = (
   const { provider } = useWeb3();
 
 
-  const getStateString = (state: number | undefined) => {
+  const getStateString = useCallback((state: number | undefined) => {
     if (state === 0) {
       return "Pending";
     } else if (state === 1) {
@@ -50,7 +50,7 @@ const useProposals = (
     } else if (state === 7) {
       return "Executed";
     }
-  };
+  }, []);
 
   const getTimestampString = (time: Date | undefined) => {
     if (time === undefined) return;
@@ -147,7 +147,7 @@ const useProposals = (
         return proposal;
       });
     },
-    [getBlockTimestamp, getProposalState, getProposalVotes]
+    [getBlockTimestamp, getProposalState, getProposalVotes, getStateString]
   );
 
   // Get initial proposal events
