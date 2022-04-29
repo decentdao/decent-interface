@@ -21,7 +21,6 @@ interface InputProps {
 const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, disabled, onChange, onKeyDown }: InputProps) => {
   const FieldType = type === "textarea" ? "textarea" : "input";
   const hasError = !!errorMessage;
-  const isDisabled = disabled;
 
   const Label = () =>
     !!label ? (
@@ -34,6 +33,7 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
   const ErrorMessage = () => (!!hasError ? <div className="text-red text-xs mt-1">{errorMessage}</div> : null);
 
   const INPUT_BASE_STYLES = "w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-50 focus:outline-none";
+  const INPUT_DISABLED_STYLED = "disabled:bg-gray-300 disabled:border-gray-200 disabled:text-gray-100"
   const borderColor = hasError ? "border border-red" : "";
   const inputTextColor = hasError ? "text-red" : "text-gray-25";
 
@@ -46,8 +46,8 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
         id="form-field"
         type={_type}
         placeholder={placeholder}
-        className={`${INPUT_BASE_STYLES} ${borderColor} ${inputTextColor}`}
-        disabled={isDisabled}
+        className={`${INPUT_BASE_STYLES} ${INPUT_DISABLED_STYLED} ${borderColor} ${inputTextColor}`}
+        disabled={disabled}
         value={value}
         min={min}
         onChange={onChange}
