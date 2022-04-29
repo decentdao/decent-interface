@@ -4,9 +4,15 @@ import ProposalCard from "./ProposalCard";
 function ProposalsList() {
   const [{ proposals }] = useDAOData();
 
-  if (!proposals.length) {
+  if (proposals === undefined) {
     return (
       <div className="text-white">Proposals loading...</div>
+    )
+  }
+
+  if (proposals.length === 0) {
+    return (
+      <div className="text-white">No proposals</div>
     )
   }
 

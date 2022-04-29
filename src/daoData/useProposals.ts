@@ -147,17 +147,14 @@ const getProposalData = (provider: providers.BaseProvider | undefined, governorM
   });
 }
 
-const useProposals = (governorModule: GovernorModule | undefined) => {
-  const [userVotes, setUserVotes] = useState<UserVote[]>([]);
-  const [proposalsWithoutVotes, setProposalsWithoutVotes] = useState<
-    ProposalDataWithoutVotes[]
-  >([]);
-  const [proposals, setProposals] = useState<ProposalData[]>([]);
-  const { provider, account } = useWeb3();
+const useUserVotes = (governorModule: GovernorModule | undefined) => {
+  const { account } = useWeb3();
+  const [userVotes, setUserVotes] = useState<UserVote[]>();
 
   // Get all of the current users votes
   useEffect(() => {
     if (governorModule === undefined || account === undefined) {
+      setUserVotes(undefined);
       return;
     }
 
@@ -179,52 +176,55 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       .catch(console.error);
   }, [governorModule, account]);
 
-  // Combine proposalsWithoutVotes and userVotes into proposals
+  // Setup user vote events listener
   useEffect(() => {
-    const newProposals: ProposalData[] = proposalsWithoutVotes.map(
-      (proposal) => {
-        const userProposalVote = userVotes.find((userVote) =>
-          userVote.proposalId.eq(proposal.id)
-        );
+    if (governorModule === undefined) {
+      setUserVotes(undefined);
+      return;
+    }
 
-        const newProposal: ProposalData = {
-          number: proposal.number,
-          id: proposal.id,
-          idSubstring: proposal.idSubstring,
-          startBlock: proposal.startBlock,
-          endBlock: proposal.endBlock,
-          startTime: proposal.startTime,
-          endTime: proposal.endTime,
-          startTimeString: proposal.startTimeString,
-          endTimeString: proposal.endTimeString,
-          proposer: proposal.proposer,
-          targets: proposal.targets,
-          signatures: proposal.signatures,
-          calldatas: proposal.calldatas,
-          description: proposal.description,
-          state: proposal.state,
-          stateString: proposal.stateString,
-          forVotesPercent: proposal.forVotesPercent,
-          againstVotesPercent: proposal.againstVotesPercent,
-          abstainVotesPercent: proposal.abstainVotesPercent,
-          userVotePower: proposal.userVotePower,
-          userVote: userProposalVote ? userProposalVote.vote : undefined,
-          userVoteString:
-            userProposalVote && userProposalVote.vote
-              ? getVoteString(userProposalVote.vote)
-              : undefined,
-        };
+    const filter = governorModule.filters.VoteCast(account);
 
-        return newProposal;
-      }
-    );
+    const listenerCallback = (
+      voter: string,
+      proposalId: BigNumber,
+      support: number,
+      weight: BigNumber,
+      reason: string,
+      _: any
+    ) => {
+      const newUserVote: UserVote = {
+        proposalId: proposalId,
+        vote: support,
+      };
 
-    setProposals(newProposals);
-  }, [proposalsWithoutVotes, userVotes]);
+      setUserVotes(existingUserVotes => {
+        if (existingUserVotes === undefined) {
+          return undefined;
+        }
 
+        return [...existingUserVotes, newUserVote]
+      });
+    };
+
+    governorModule.on(filter, listenerCallback);
+
+    return () => {
+      governorModule.off(filter, listenerCallback);
+    };
+  }, [account, governorModule]);
+
+  return userVotes;
+}
+
+const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) => {
+  const { account, provider } = useWeb3();
+  const [proposalsWithoutVotes, setProposalsWithoutVotes] = useState<ProposalDataWithoutVotes[]>();
+  
   // Get initial proposal events
   useEffect(() => {
     if (governorModule === undefined || account === undefined) {
+      setProposalsWithoutVotes(undefined);
       return;
     }
 
@@ -278,6 +278,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
   // Setup proposal events listener
   useEffect(() => {
     if (governorModule === undefined || account === undefined) {
+      setProposalsWithoutVotes(undefined);
       return;
     }
 
@@ -296,7 +297,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       _: any
     ) => {
       const newProposal: ProposalDataWithoutVotes = {
-        number: proposals.length,
+        number: -1,
         id: proposalId,
         idSubstring: undefined,
         startBlock: startBlock,
@@ -319,9 +320,16 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       };
 
       getProposalData(provider, governorModule, newProposal, account)
-        .then((newProposal) =>
-          setProposalsWithoutVotes([...proposals, newProposal])
-        )
+        .then((newProposal) => {
+          setProposalsWithoutVotes(existingProposalsWithoutVotes => {
+            if (existingProposalsWithoutVotes === undefined) {
+              return undefined;
+            }
+
+            newProposal.number = existingProposalsWithoutVotes.length;
+            return [...existingProposalsWithoutVotes, newProposal];
+          })
+        })
         .catch(console.error);
     };
 
@@ -330,7 +338,63 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
     return () => {
       governorModule.off(filter, listenerCallback);
     };
-  }, [account, governorModule, proposals, provider]);
+  }, [account, governorModule, provider]);
+
+  return proposalsWithoutVotes;
+}
+
+const useProposals = (governorModule: GovernorModule | undefined) => {
+  const userVotes = useUserVotes(governorModule);
+  const proposalsWithoutVotes = useProposalsWithoutVotes(governorModule);
+  const [proposals, setProposals] = useState<ProposalData[]>();
+
+  // Combine proposalsWithoutVotes and userVotes into proposals
+  useEffect(() => {
+    if (proposalsWithoutVotes === undefined || userVotes === undefined) {
+      setProposals(undefined);
+      return;
+    }
+
+    const newProposals: ProposalData[] = proposalsWithoutVotes.map(
+      (proposal) => {
+        const userProposalVote = userVotes.find((userVote) =>
+          userVote.proposalId.eq(proposal.id)
+        );
+
+        const newProposal: ProposalData = {
+          number: proposal.number,
+          id: proposal.id,
+          idSubstring: proposal.idSubstring,
+          startBlock: proposal.startBlock,
+          endBlock: proposal.endBlock,
+          startTime: proposal.startTime,
+          endTime: proposal.endTime,
+          startTimeString: proposal.startTimeString,
+          endTimeString: proposal.endTimeString,
+          proposer: proposal.proposer,
+          targets: proposal.targets,
+          signatures: proposal.signatures,
+          calldatas: proposal.calldatas,
+          description: proposal.description,
+          state: proposal.state,
+          stateString: proposal.stateString,
+          forVotesPercent: proposal.forVotesPercent,
+          againstVotesPercent: proposal.againstVotesPercent,
+          abstainVotesPercent: proposal.abstainVotesPercent,
+          userVotePower: proposal.userVotePower,
+          userVote: userProposalVote ? userProposalVote.vote : undefined,
+          userVoteString:
+            userProposalVote && userProposalVote.vote
+              ? getVoteString(userProposalVote.vote)
+              : undefined,
+        };
+
+        return newProposal;
+      }
+    );
+
+    setProposals(newProposals);
+  }, [proposalsWithoutVotes, userVotes]);
 
   // Setup state events listener
   useEffect(() => {
@@ -345,6 +409,10 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       _: any
     ) => {
       setProposals(existingProposals => {
+        if (existingProposals === undefined) {
+          return undefined;
+        }
+
         const updatedProposalIndex = existingProposals.findIndex((proposal) =>
           proposalId.eq(proposal.id)
         );
@@ -361,37 +429,6 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
       governorModule.off(filter, listenerCallback);
     };
   }, [governorModule]);
-
-  // Setup user vote events listener
-  useEffect(() => {
-    if (governorModule === undefined) {
-      return;
-    }
-
-    const filter = governorModule.filters.VoteCast(account);
-
-    const listenerCallback = (
-      voter: string,
-      proposalId: BigNumber,
-      support: number,
-      weight: BigNumber,
-      reason: string,
-      _: any
-    ) => {
-      const newUserVote: UserVote = {
-        proposalId: proposalId,
-        vote: support,
-      };
-
-      setUserVotes([...userVotes, newUserVote]);
-    };
-
-    governorModule.on(filter, listenerCallback);
-
-    return () => {
-      governorModule.off(filter, listenerCallback);
-    };
-  }, [account, governorModule, userVotes]);
 
   return proposals;
 };
