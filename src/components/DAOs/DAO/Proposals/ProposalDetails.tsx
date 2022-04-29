@@ -19,7 +19,7 @@ function ProposalDetails() {
   const [proposal, setProposal] = useState<ProposalData>();
 
   useEffect(() => {
-    if(proposals === undefined || params.proposalNumber === undefined) {
+    if (proposals === undefined || params.proposalNumber === undefined) {
       setProposal(undefined);
       return;
     }
