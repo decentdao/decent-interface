@@ -268,7 +268,7 @@ const useProposals = (
     getProposalState,
   ]);
 
-  // Setup state events listener
+  // Setup queue state events listener
   useEffect(() => {
     if (governorModuleContract === undefined) {
       return;
@@ -297,7 +297,38 @@ const useProposals = (
   }, [
     governorModuleContract,
     proposals,
-    getStateString,
+    setProposals
+  ]);
+
+  // Setup execute state events listener
+  useEffect(() => {
+    if (governorModuleContract === undefined) {
+      return;
+    }
+
+    const filter = governorModuleContract.filters.ProposalExecuted();
+
+    const listenerCallback = (
+      proposalId: BigNumber,
+      _: any
+    ) => {
+      const updateProposal = proposals.findIndex((proposal) =>
+        proposalId.eq(proposal.id)
+      );
+      const updateProposals = [...proposals];
+      updateProposals[updateProposal].state = 6;
+      updateProposals[updateProposal].stateString = getStateString(6);
+      setProposals(updateProposals);
+    };
+
+    governorModuleContract.on(filter, listenerCallback);
+
+    return () => {
+      governorModuleContract.off(filter, listenerCallback);
+    };
+  }, [
+    governorModuleContract,
+    proposals,
     setProposals
   ]);
 
