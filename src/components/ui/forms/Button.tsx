@@ -42,24 +42,31 @@ const Button = ({
   isLoading,
   ...rest
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-
   /****************************
    * Text and Loading Component
    ****************************/
   const Label = () => {
-    if (isLoading) {
-      return (
-        <div className={cx("flex items-center animate-pulse", {
-          'text-xs leading-6': !isFullWidth
-        })}>
-          Loading...
+    // @todo update button loader component
+    return (
+      <div className="flex justify-center relative">
+        <div
+          className={cx({
+            "animate-pulse absolute": isLoading,
+            hidden: !isLoading,
+          })}
+        >
+          * * *
         </div>
-      );
-    }
-    if (!label) {
-      return null;
-    }
-    return <span className="flex items-center">{label}</span>;
+        <div
+          className={cx({
+            invisible: isLoading,
+            visible: !isLoading,
+          })}
+        >
+          {label}
+        </div>
+      </div>
+    );
   };
 
   /****************************
