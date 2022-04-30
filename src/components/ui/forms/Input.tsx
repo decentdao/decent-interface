@@ -33,7 +33,7 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
   const HelperText = () => (!!helperText ? <div className="text-gray-50 font-sans text-xs sm:mx-2 sm:px-4 sm:pl-6 flex items-center pt-2 sm:pt-0 sm:border-l sm:border-gray-300 max-w-xxs min-w-xxs">{helperText}</div> : null);
 
   const SubLabel = () => (!!subLabel && !hasError ? <div className="text-gray-50 text-xs font-medium mt-1">{subLabel}</div> : null);
-  const ErrorMessage = () => (!!hasError ? <div className="text-red text-xs mt-1">{errorMessage}</div> : null);
+  const ErrorMessage = () => (!!hasError ? <div className="text-red text-xs mt-1">{errorMessage}</div> : <div className={cx({"mt-5": !subLabel})}/>);
 
   const INPUT_BASE_STYLES = "w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-50 focus:outline-none";
   const INPUT_DISABLED_STYLED = "disabled:bg-gray-300 disabled:border-gray-200 disabled:text-gray-100";

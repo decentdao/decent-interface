@@ -11,6 +11,7 @@ import { ethers } from "ethers";
 import Input from "../../ui/forms/Input";
 import { SecondaryButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
+import cx from 'classnames';
 
 function DelegateVote() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
@@ -58,10 +59,10 @@ function DelegateVote() {
                 value={newDelegatee}
                 disabled={false}
                 label="New Delegate Address"
-                errorMessage={invalidAddress ? " " : undefined}
+                errorMessage={invalidAddress ? "Invalid Address" : undefined}
                 onChange={(e) => setNewDelegatee(e.target.value)}
               />
-              <SecondaryButton onClick={() => delegateSelf()} label="Self" className="self-end" />
+              <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit")} />
             </div>
           </InputBox>
           <div className="flex mx-2 my-1 text-gray-50">
@@ -73,7 +74,6 @@ function DelegateVote() {
               <p className="text-gold-500">{delegateeDisplayName}</p>
             </EtherscanLink>
           </div>
-          {invalidAddress && <div className="flex mx-2 my-1 text-red">Invalid Address</div>}
           <SecondaryButton disabled={invalidAddress || newDelegatee === ""} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
         </ContentBox>
       </div>
