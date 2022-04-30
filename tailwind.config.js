@@ -41,6 +41,9 @@ module.exports = {
           '500': '#fabd2e',
           '600': '#af8420',
         },
+        'drab': {
+          500: '#746338'
+        }
       },
       letterSpacing: {
         widest: '.25em',
