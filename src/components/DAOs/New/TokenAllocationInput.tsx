@@ -1,5 +1,5 @@
 import { TokenAllocation } from "../../../daoData/useDeployDAO";
-import Button from "../../ui/Button";
+import { TextButton } from '../../ui/forms/Button';
 
 interface TokenAllocationProps {
   index: number;
@@ -26,21 +26,21 @@ const TokenAllocationInput = ({ index, tokenAllocation, updateTokenAllocation, r
   return (
     <>
       <input
-        className="md:col-span-8 w-full border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none"
+        className="col-start-1 col-span-4 md:col-span-5 w-full border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none placeholder:text-gray-200"
         type="string"
         value={tokenAllocation.address || ""}
+        placeholder="Address"
         onChange={(event) => updateAddress(event.target.value)}
       />
       <input
-        className="md:col-span-3 md:pt-0 border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none"
+        className="col-span-2 md:pt-0 border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none placeholder:text-gray-200"
         type="number"
+        placeholder="Amount"
         value={tokenAllocation.amount || ""}
         onChange={(event) => updateAmount(event.target.value)}
       />
       <div className="md:col-span-1">
-        <Button onClick={() => removeTokenAllocation(index)} addedClassNames="px-2 mx-1 border-gold-300 bg-chocolate-500 text-gold-300">
-          X
-        </Button>
+        <TextButton onClick={() => removeTokenAllocation(index)} label="Remove" className="px-0 mx-0" />
       </div>
     </>
   );

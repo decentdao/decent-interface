@@ -1,4 +1,5 @@
 import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import { TextButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
 import TokenAllocationInput from "./TokenAllocationInput";
 
@@ -41,9 +42,9 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
       <InputBox>
-        <div className="md:grid md:grid-cols-12 md:gap-4 flex flex-col items-center">
-          <div className="md:col-span-8 text-xs text-gray-25">Address</div>
-          <div className="md:col-span-3 text-xs text-gray-25">Amount</div>
+        <div className="grid grid-cols-8 gap-4">
+          <div className="col-span-4 md:col-span-5 text-xs text-gray-25">Address</div>
+          <div className="col-span-2 text-xs text-gray-25">Amount</div>
           {tokenAllocations &&
             tokenAllocations.map((tokenAllocation, index) => (
               <TokenAllocationInput
@@ -55,9 +56,7 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
               />
             ))}
         </div>
-        <div className="text-xs text-gray-50 underline cursor-pointer my-4" onClick={() => addTokenAllocation()}>
-          Add Allocation
-        </div>
+        <TextButton onClick={() => addTokenAllocation()} className="px-0 my-1" label="Add Allocation +" />
         {errorMessage && <div className="text-center text-sm text-white">{errorMessage}</div>}
       </InputBox>
     </div>
