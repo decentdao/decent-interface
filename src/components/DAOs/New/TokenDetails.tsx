@@ -13,10 +13,7 @@ const TokenAllocationInput = ({
 }: {
   index: number;
   tokenAllocation: TokenAllocation;
-  updateTokenAllocation: (
-    index: number,
-    tokenAllocation: TokenAllocation
-  ) => void;
+  updateTokenAllocation: (index: number, tokenAllocation: TokenAllocation) => void;
   removeTokenAllocation: (index: number) => void;
 }) => {
   const updateAddress = (address: string) => {
@@ -48,10 +45,7 @@ const TokenAllocationInput = ({
         onChange={(event) => updateAmount(event.target.value)}
       />
       <div className="md:col-span-1">
-        <Button
-          onClick={() => removeTokenAllocation(index)}
-          addedClassNames="px-2 mx-1 border-gold-300 bg-chocolate-500 text-gold-300"
-        >
+        <Button onClick={() => removeTokenAllocation(index)} addedClassNames="px-2 mx-1 border-gold-300 bg-chocolate-500 text-gold-300">
           X
         </Button>
       </div>
@@ -65,15 +59,10 @@ const TokenAllocations = ({
   errorMessage,
 }: {
   tokenAllocations: TokenAllocation[] | undefined;
-  setTokenAllocations: React.Dispatch<
-    React.SetStateAction<TokenAllocation[] | undefined>
-  >;
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
   errorMessage: string | undefined;
 }) => {
-  const updateTokenAllocation = (
-    index: number,
-    tokenAllocation: TokenAllocation
-  ) => {
+  const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
     if (tokenAllocations === undefined) {
       setTokenAllocations(undefined);
       return;
@@ -103,10 +92,7 @@ const TokenAllocations = ({
   const removeTokenAllocation = (index: number) => {
     if (tokenAllocations === undefined) return;
 
-    setTokenAllocations([
-      ...tokenAllocations.slice(0, index),
-      ...tokenAllocations.slice(index + 1),
-    ]);
+    setTokenAllocations([...tokenAllocations.slice(0, index), ...tokenAllocations.slice(index + 1)]);
   };
 
   return (
@@ -127,15 +113,10 @@ const TokenAllocations = ({
               />
             ))}
         </div>
-        <div
-          className="text-sm text-gray-50 underline cursor-pointer my-4"
-          onClick={() => addTokenAllocation()}
-        >
+        <div className="text-sm text-gray-50 underline cursor-pointer my-4" onClick={() => addTokenAllocation()}>
           Add Allocation
         </div>
-        {errorMessage && (
-          <div className="text-center text-sm text-white">{errorMessage}</div>
-        )}
+        {errorMessage && <div className="text-center text-sm text-white">{errorMessage}</div>}
       </div>
     </div>
   );
@@ -155,26 +136,20 @@ const TokenDetails = ({
 }: {
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  name: string | undefined;
-  setName: React.Dispatch<React.SetStateAction<string | undefined>>;
-  symbol: string | undefined;
-  setSymbol: React.Dispatch<React.SetStateAction<string | undefined>>;
-  supply: number | undefined;
-  setSupply: React.Dispatch<React.SetStateAction<number | undefined>>;
+  name: string;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+  symbol: string;
+  setSymbol: React.Dispatch<React.SetStateAction<string>>;
+  supply: number;
+  setSupply: React.Dispatch<React.SetStateAction<number>>;
   tokenAllocations: TokenAllocation[] | undefined;
-  setTokenAllocations: React.Dispatch<
-    React.SetStateAction<TokenAllocation[] | undefined>
-  >;
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
 }) => {
   const [errorMessage, setErrorMessage] = useState<string>();
 
   const allocationsValid = useCallback(() => {
     if (tokenAllocations === undefined || supply === undefined) return true;
-    return (
-      tokenAllocations
-        .map((tokenAllocation) => tokenAllocation.amount)
-        .reduce((prev, curr) => prev + curr, 0) <= supply
-    );
+    return tokenAllocations.map((tokenAllocation) => tokenAllocation.amount).reduce((prev, curr) => prev + curr, 0) <= supply;
   }, [tokenAllocations, supply]);
 
   useEffect(() => {
@@ -191,32 +166,15 @@ const TokenDetails = ({
         symbol.trim() !== "" &&
         supply !== undefined &&
         supply !== 0 &&
-        !tokenAllocations.some(
-          (tokenAllocation) =>
-            !ethers.utils.isAddress(tokenAllocation.address) ||
-            tokenAllocation.amount === 0
-        ) &&
+        !tokenAllocations.some((tokenAllocation) => !ethers.utils.isAddress(tokenAllocation.address) || tokenAllocation.amount === 0) &&
         allocationsValid()
     );
-  }, [
-    name,
-    setNextEnabled,
-    supply,
-    symbol,
-    tokenAllocations,
-    allocationsValid,
-  ]);
+  }, [name, setNextEnabled, supply, symbol, tokenAllocations, allocationsValid]);
 
   useEffect(() => {
     if (tokenAllocations === undefined) return;
 
-    if (
-      tokenAllocations.some(
-        (tokenAllocation) =>
-          tokenAllocation.address !== "" &&
-          !ethers.utils.isAddress(tokenAllocation.address)
-      )
-    ) {
+    if (tokenAllocations.some((tokenAllocation) => tokenAllocation.address !== "" && !ethers.utils.isAddress(tokenAllocation.address))) {
       setErrorMessage("Invalid address");
     } else if (!allocationsValid()) {
       setErrorMessage("Invalid token allocations");
@@ -228,23 +186,9 @@ const TokenDetails = ({
   return (
     <div>
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
-      <CreateDAOInput
-        dataType="text"
-        value={name}
-        onChange={setName}
-        label="Token Name"
-        helperText="What is your governance token called?"
-        disabled={false}
-      />
+      <CreateDAOInput dataType="text" value={name} onChange={setName} label="Token Name" helperText="What is your governance token called?" disabled={false} />
 
-      <CreateDAOInput
-        dataType="text"
-        value={symbol}
-        onChange={setSymbol}
-        label="Token Symbol"
-        helperText="Max: 5 chars"
-        disabled={false}
-      />
+      <CreateDAOInput dataType="text" value={symbol} onChange={setSymbol} label="Token Symbol" helperText="Max: 5 chars" disabled={false} />
 
       <CreateDAOInput
         dataType="number"
@@ -255,11 +199,7 @@ const TokenDetails = ({
         disabled={false}
       />
 
-      <TokenAllocations
-        tokenAllocations={tokenAllocations}
-        setTokenAllocations={setTokenAllocations}
-        errorMessage={errorMessage}
-      />
+      <TokenAllocations tokenAllocations={tokenAllocations} setTokenAllocations={setTokenAllocations} errorMessage={errorMessage} />
     </div>
   );
 };
