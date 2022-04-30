@@ -5,7 +5,7 @@ interface ButtonProps {
   label?: string;
   icon?: JSX.Element;
   isSpaceBetween?: boolean;
-  isFullWidth?: boolean;
+  isLarge?: boolean;
   isIconRight?: boolean;
   isLoading?: boolean;
 }
@@ -36,7 +36,7 @@ const Button = ({
   label,
   icon,
   className,
-  isFullWidth,
+  isLarge,
   isSpaceBetween,
   isIconRight,
   isLoading,
@@ -88,7 +88,7 @@ const Button = ({
         BASE_BUTTON_STYLES,
         className,
         {
-          "w-full h-16": isFullWidth,
+          "h-16": isLarge,
         },
         {
           "justify-center": !isSpaceBetween,
