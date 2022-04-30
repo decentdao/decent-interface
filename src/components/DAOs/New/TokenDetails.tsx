@@ -15,8 +15,8 @@ interface TokenDetailsProps {
   setSymbol: React.Dispatch<React.SetStateAction<string>>;
   supply: number;
   setSupply: React.Dispatch<React.SetStateAction<number>>;
-  tokenAllocations: TokenAllocation[] | undefined;
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
+  tokenAllocations: TokenAllocation[];
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
 
 const TokenDetails = ({

@@ -18,7 +18,7 @@ interface StepDisplayProps {
   tokenName: string;
   tokenSymbol: string;
   tokenSupply: number;
-  tokenAllocations?: TokenAllocation[];
+  tokenAllocations: TokenAllocation[];
   proposalThreshold?: number;
   quorum?: number;
   executionDelay?: number;
@@ -26,7 +26,7 @@ interface StepDisplayProps {
   setTokenName: React.Dispatch<React.SetStateAction<string>>;
   setTokenSymbol: React.Dispatch<React.SetStateAction<string>>;
   setTokenSupply: React.Dispatch<React.SetStateAction<number>>;
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -81,7 +81,7 @@ const New = () => {
   const [tokenName, setTokenName] = useState<string>("");
   const [tokenSymbol, setTokenSymbol] = useState<string>("");
   const [tokenSupply, setTokenSupply] = useState<number>(0);
-  const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>();
+  const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>([{ address: "", amount: 0 }]);
   const [proposalThreshold] = useState<number>(0);
   const [quorum] = useState<number>(4);
   const [executionDelay] = useState<number>(24);
@@ -105,7 +105,7 @@ const New = () => {
     executionDelay,
     setPending,
   });
-  
+
   return (
     <div>
       <Pending message="Creating Fractal..." pending={pending} />

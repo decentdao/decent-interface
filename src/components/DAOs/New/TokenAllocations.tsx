@@ -1,17 +1,14 @@
 import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import InputBox from "../../ui/forms/InputBox";
 import TokenAllocationInput from "./TokenAllocationInput";
 
 interface TokenAllocationsProps {
-  tokenAllocations: TokenAllocation[] | undefined;
+  tokenAllocations: TokenAllocation[];
   errorMessage: string | undefined;
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
 const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage }: TokenAllocationsProps) => {
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
-    if (tokenAllocations === undefined) {
-      setTokenAllocations(undefined);
-      return;
-    }
 
     const newTokenAllocations = [...tokenAllocations];
     newTokenAllocations[index] = tokenAllocation;
@@ -41,9 +38,9 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
   };
 
   return (
-    <div className="bg-gray-500 rounded-lg my-4">
-      <div className="px-4 py-4">
-        <div className="text-sm text-gray-50 pb-2">Token Allocations</div>
+    <div>
+      <div className=" text-gray-50 pb-2">Token Allocations</div>
+      <InputBox>
         <div className="md:grid md:grid-cols-12 md:gap-4 flex flex-col items-center">
           <div className="md:col-span-8 text-sm text-gray-50">Address</div>
           <div className="md:col-span-3 text-sm text-gray-50">Amount</div>
@@ -62,7 +59,7 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
           Add Allocation
         </div>
         {errorMessage && <div className="text-center text-sm text-white">{errorMessage}</div>}
-      </div>
+      </InputBox>
     </div>
   );
 };
