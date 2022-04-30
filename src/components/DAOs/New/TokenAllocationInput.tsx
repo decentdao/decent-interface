@@ -26,16 +26,14 @@ const TokenAllocationInput = ({ index, tokenAllocation, updateTokenAllocation, r
   return (
     <>
       <input
-        className="col-start-1 col-span-4 md:col-span-5 w-full border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none placeholder:text-gray-200"
+        className="col-start-1 col-span-4 md:col-span-5 w-full border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none"
         type="string"
         value={tokenAllocation.address || ""}
-        placeholder="Address"
         onChange={(event) => updateAddress(event.target.value)}
       />
       <input
-        className="col-span-2 md:pt-0 border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none placeholder:text-gray-200"
+        className="col-span-2 md:pt-0 border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none"
         type="number"
-        placeholder="Amount"
         value={tokenAllocation.amount || ""}
         onChange={(event) => updateAmount(event.target.value)}
       />
