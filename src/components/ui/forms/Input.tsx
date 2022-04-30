@@ -44,11 +44,11 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
 
   return (
     <div
-      className={cx({
+      className={cx("w-full", {
         'flex flex-wrap sm:flex-nowrap': !!helperText,
       })}
     >
-      <div className={cx("flex flex-col", {"w-full pr-4": !!helperText})}>
+      <div className={cx("flex flex-col w-full", {"pr-4": !!helperText})}>
         <Label />
         <FieldType
           id="form-field"

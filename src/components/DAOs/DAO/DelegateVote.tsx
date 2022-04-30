@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import Button from "../../ui/Button";
 import useDelegateVote from "../../../daoData/useDelegateVote";
 import useDisplayName from "../../../hooks/useDisplayName";
-import { InputAddress } from "../../ui/Input";
 import ContentBox from "../../ui/ContentBox";
 import EtherscanLink from "../../ui/EtherscanLink";
 import ConnectModal from "../../ConnectModal";
@@ -10,6 +8,9 @@ import Pending from "../../Pending";
 import { useWeb3 } from "../../../web3";
 import { useDAOData } from "../../../daoData";
 import { ethers } from "ethers";
+import Input from "../../ui/forms/Input";
+import { SecondaryButton } from "../../ui/forms/Button";
+import InputBox from "../../ui/forms/InputBox";
 
 function DelegateVote() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
@@ -50,24 +51,21 @@ function DelegateVote() {
       <ConnectModal />
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
         <ContentBox title="Delegate Vote">
-          <hr className="mx-2 my-1 border-gray-200" />
+          <InputBox>
+            <div className="flex m-2 w-full items-center">
+              <Input
+                type="text"
+                value={newDelegatee}
+                disabled={false}
+                label="New Delegate Address"
+                errorMessage={invalidAddress ? " " : undefined}
+                onChange={(e) => setNewDelegatee(e.target.value)}
+              />
+              <SecondaryButton onClick={() => delegateSelf()} label="Self" className="self-end" />
+            </div>
+          </InputBox>
           <div className="flex mx-2 my-1 text-gray-50">
-            New Delegate Address
-          </div>
-          <div className="flex flex-row m-2">
-            <InputAddress
-              value={newDelegatee}
-              disabled={false}
-              placeholder={""}
-              error={invalidAddress}
-              onChange={(e) => setNewDelegatee(e)}
-            />
-            <Button onClick={() => delegateSelf()} addedClassNames="mx-2 px-2">
-              Self
-            </Button>
-          </div>
-          <div className="flex mx-2 my-1 text-gray-50">
-            {`Balance: ${userBalance} ${symbol}`}
+            Balance: <span className="text-gray-25 ml-2">{`${userBalance} ${symbol}`}</span>
           </div>
           <div className="flex mx-2 my-1 text-gray-50">
             Current Delegatee: &nbsp;
@@ -75,16 +73,8 @@ function DelegateVote() {
               <p className="text-gold-500">{delegateeDisplayName}</p>
             </EtherscanLink>
           </div>
-          {invalidAddress && (
-            <div className="flex mx-2 my-1 text-red">Invalid Address</div>
-          )}
-          <Button
-            disabled={invalidAddress || newDelegatee === ""}
-            onClick={() => delegateVote()}
-            addedClassNames="m-2 px-4 py-1"
-          >
-            Delegate
-          </Button>
+          {invalidAddress && <div className="flex mx-2 my-1 text-red">Invalid Address</div>}
+          <SecondaryButton disabled={invalidAddress || newDelegatee === ""} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
         </ContentBox>
       </div>
     </>
