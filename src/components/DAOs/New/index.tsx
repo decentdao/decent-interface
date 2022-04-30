@@ -13,41 +13,43 @@ import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
 import H1 from "../../ui/H1";
 
+interface StepDisplayProps {
+  step: number;
+  daoName?: string;
+  tokenName?: string;
+  tokenSymbol?: string;
+  tokenSupply?: number;
+  tokenAllocations?: TokenAllocation[];
+  proposalThreshold?: number;
+  quorum?: number;
+  executionDelay?: number;
+  setDAOName: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setTokenName: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setTokenSymbol: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setTokenSupply: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
+  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
 const StepDisplay = ({
   step,
-  setPrevEnabled,
-  setNextEnabled,
   daoName,
-  setDAOName,
   tokenName,
-  setTokenName,
   tokenSymbol,
-  setTokenSymbol,
   tokenSupply,
-  setTokenSupply,
   tokenAllocations,
-  setTokenAllocations,
   proposalThreshold,
   quorum,
   executionDelay,
-}: {
-  step: number;
-  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  daoName: string | undefined;
-  setDAOName: React.Dispatch<React.SetStateAction<string | undefined>>;
-  tokenName: string | undefined;
-  setTokenName: React.Dispatch<React.SetStateAction<string | undefined>>;
-  tokenSymbol: string | undefined;
-  setTokenSymbol: React.Dispatch<React.SetStateAction<string | undefined>>;
-  tokenSupply: number | undefined;
-  setTokenSupply: React.Dispatch<React.SetStateAction<number | undefined>>;
-  tokenAllocations: TokenAllocation[] | undefined;
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[] | undefined>>;
-  proposalThreshold: number | undefined;
-  quorum: number | undefined;
-  executionDelay: number | undefined;
-}) => {
+  setDAOName,
+  setTokenName,
+  setTokenSymbol,
+  setTokenSupply,
+  setTokenAllocations,
+  setPrevEnabled,
+  setNextEnabled,
+}: StepDisplayProps) => {
   if (step === 0) {
     return <DAODetails setPrevEnabled={setPrevEnabled} setNextEnabled={setNextEnabled} name={daoName} setName={setDAOName} />;
   } else if (step === 1) {
