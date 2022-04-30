@@ -17,7 +17,7 @@ interface StepDisplayProps {
   daoName: string;
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: number;
+  tokenSupply: string;
   tokenAllocations: TokenAllocation[];
   proposalThreshold?: number;
   quorum?: number;
@@ -25,7 +25,7 @@ interface StepDisplayProps {
   setDAOName: React.Dispatch<React.SetStateAction<string>>;
   setTokenName: React.Dispatch<React.SetStateAction<string>>;
   setTokenSymbol: React.Dispatch<React.SetStateAction<string>>;
-  setTokenSupply: React.Dispatch<React.SetStateAction<number>>;
+  setTokenSupply: React.Dispatch<React.SetStateAction<string>>;
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -80,7 +80,7 @@ const New = () => {
   const [daoName, setDAOName] = useState<string>("");
   const [tokenName, setTokenName] = useState<string>("");
   const [tokenSymbol, setTokenSymbol] = useState<string>("");
-  const [tokenSupply, setTokenSupply] = useState<number>(0);
+  const [tokenSupply, setTokenSupply] = useState<string>("");
   const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>([{ address: "", amount: 0 }]);
   const [proposalThreshold] = useState<number>(0);
   const [quorum] = useState<number>(4);
@@ -98,7 +98,7 @@ const New = () => {
     daoName,
     tokenName,
     tokenSymbol,
-    tokenSupply,
+    tokenSupply: Number(tokenSupply),
     tokenAllocations,
     proposalThreshold,
     quorum,

@@ -13,8 +13,8 @@ interface TokenDetailsProps {
   setName: React.Dispatch<React.SetStateAction<string>>;
   symbol: string;
   setSymbol: React.Dispatch<React.SetStateAction<string>>;
-  supply: number;
-  setSupply: React.Dispatch<React.SetStateAction<number>>;
+  supply: string;
+  setSupply: React.Dispatch<React.SetStateAction<string>>;
   tokenAllocations: TokenAllocation[];
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
@@ -35,7 +35,7 @@ const TokenDetails = ({
 
   const allocationsValid = useCallback(() => {
     if (tokenAllocations === undefined || supply === undefined) return true;
-    return tokenAllocations.map((tokenAllocation) => tokenAllocation.amount).reduce((prev, curr) => prev + curr, 0) <= supply;
+    return tokenAllocations.map((tokenAllocation) => Number(tokenAllocation.amount)).reduce((prev, curr) => prev + curr, 0) <= Number(supply);
   }, [tokenAllocations, supply]);
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const TokenDetails = ({
         symbol !== undefined &&
         symbol.trim() !== "" &&
         supply !== undefined &&
-        supply !== 0 &&
+        Number(supply) !== 0 &&
         !tokenAllocations.some((tokenAllocation) => !ethers.utils.isAddress(tokenAllocation.address) || tokenAllocation.amount === 0) &&
         allocationsValid()
     );
@@ -82,8 +82,8 @@ const TokenDetails = ({
       <InputBox>
         <Input
           type="number"
-          value={supply || undefined}
-          onChange={(e) => setSupply(Number(e))}
+          value={supply}
+          onChange={(e) => setSupply(e.target.value)}
           label="Token Supply"
           helperText="Whole numbers only"
           disabled={false}
