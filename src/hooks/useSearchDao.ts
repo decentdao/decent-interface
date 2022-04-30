@@ -17,7 +17,6 @@ const useSearchDao = () => {
    *
    */
   const resetErrorState = () => {
-    setLoading(false);
     if (errorMessage) {
       setErrorMessage(undefined);
       setSearchString(undefined);
@@ -49,9 +48,7 @@ const useSearchDao = () => {
     if (!searchString) {
       return;
     }
-    if(loading !== false) {
-      // @todo remove once button loader is added
-      setErrorMessage("Loading...")
+    if (loading !== false) {
       return;
     }
     if (!validAddress && address !== undefined) {

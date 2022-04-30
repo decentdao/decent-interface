@@ -4,12 +4,12 @@ import H1 from "../../ui/H1";
 import ContentBox from "../../ui/ContentBox";
 import InputBox from "../../ui/forms/InputBox";
 import Input from "../../ui/forms/Input";
-import Button from "../../ui/Button";
 import useSearchDao from "../../../hooks/useSearchDao";
+import { PrimaryButton } from "../../ui/forms/Button";
 
 function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState("");
-  const { errorMessage, resetErrorState, updateSearchString } = useSearchDao();
+  const { errorMessage, loading, resetErrorState, updateSearchString } = useSearchDao();
 
   const searchOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     resetErrorState();
@@ -47,14 +47,8 @@ function DAOSearch() {
                   errorMessage={errorMessage}
                 />
               </div>
-              <Button
-                type="submit"
-                onClick={() => null}
-                disabled={!searchAddressInput.trim()}
-                addedClassNames="bg-gold-500 border-gold-500 rounded text-black-300 px-6 py-1 mx-2"
-              >
-                Search
-              </Button>
+
+              <PrimaryButton type="submit" label="Search" isLoading={loading} disabled={!!errorMessage || loading || !searchAddressInput.trim()} />
             </div>
           </InputBox>
         </form>
