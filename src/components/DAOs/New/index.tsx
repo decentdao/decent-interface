@@ -11,6 +11,7 @@ import LeftArrow from "../../ui/svg/LeftArrow";
 import RightArrow from "../../ui/svg/RightArrow";
 import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
+import H1 from "../../ui/H1";
 
 const StepDisplay = ({
   step,
@@ -109,7 +110,7 @@ const New = () => {
       <Pending message="Creating Fractal..." pending={pending} />
       <ConnectModal />
       <div>
-        <div className="text-2xl text-white">{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</div>
+        <H1>{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</H1>
         <ContentBox>
           <form onSubmit={(e) => e.preventDefault()}>
             <StepDisplay
