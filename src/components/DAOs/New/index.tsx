@@ -105,13 +105,13 @@ const New = () => {
     executionDelay,
     setPending,
   });
-
+  
   return (
     <div>
       <Pending message="Creating Fractal..." pending={pending} />
       <ConnectModal />
       <div>
-        <H1>{!daoName || daoName.trim() === "" ? "Configure - New Fractal" : "Configure - " + daoName}</H1>
+        <H1>{!daoName || daoName.trim() === "" || step === 0 ? "Configure New Fractal" : "Configure " + daoName}</H1>
         <ContentBox>
           <form onSubmit={(e) => e.preventDefault()}>
             <StepDisplay
