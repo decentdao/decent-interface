@@ -10,26 +10,26 @@ interface ButtonProps {
   isLoading?: boolean;
 }
 
-export const PrimaryButton = ({ ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+export const PrimaryButton = ({className, ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   const BASE_COLORS = "bg-gold-500 text-gray-500";
   const HOVER_STATE = "hover:bg-gold-300";
   const DISABLED_STATE = "disabled:bg-chocolate-500 disabled:text-gray-50";
 
-  return <Button className={cx(BASE_COLORS, HOVER_STATE, DISABLED_STATE)} {...rest} />;
+  return <Button className={cx(BASE_COLORS, HOVER_STATE, DISABLED_STATE, className)} {...rest} />;
 };
 
-export const SecondaryButton = ({ ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+export const SecondaryButton = ({className, ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   const BASE_COLORS = "bg-chocolate-500 border border-gold-500 text-gold-500";
   const HOVER_STATE = "hover:border-gold-300 hover:text-gold-300";
   const DISABLED_STATE = "disabled:border-gray-50 disabled:text-gray-50";
-  return <Button className={cx(BASE_COLORS, HOVER_STATE, DISABLED_STATE)} {...rest} />;
+  return <Button className={cx(BASE_COLORS, HOVER_STATE, DISABLED_STATE, className)} {...rest} />;
 };
 
-export const TextButton = ({ ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+export const TextButton = ({className, ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   const BASE_COLORS = "text-gold-500";
   const HOVER_STATE = "hover:text-gold-300";
   const DISABLED_STATE = "disabled:text-gray-50";
-  return <Button className={cx(BASE_COLORS, HOVER_STATE, DISABLED_STATE)} {...rest} />;
+  return <Button className={cx(BASE_COLORS, HOVER_STATE, DISABLED_STATE, className)} {...rest} />;
 };
 
 const Button = ({
