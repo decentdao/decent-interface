@@ -29,9 +29,9 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
     vote: newVote,
   });
 
-  const NoSelected = () => (newVote === 0 || proposal.userVote === 1 ? <Check /> : null);
+  const NoSelected = () => (newVote === 0 || proposal.userVote === 0 ? <Check /> : null);
   const YesSelected = () => (newVote === 1 || proposal.userVote === 1 ? <Check /> : null);
-  const AbstainedSelected = () => (newVote === 2 || proposal.userVote === 1 ? <Check /> : null);
+  const AbstainedSelected = () => (newVote === 2 || proposal.userVote === 2 ? <Check /> : null);
   return (
     <>
       <div className="flex flex-col bg-gray-600 m-2 p-2 pb-8 w-3/5 rounded-md">
