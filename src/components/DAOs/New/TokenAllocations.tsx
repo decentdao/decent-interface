@@ -56,7 +56,7 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
               />
             ))}
         </div>
-        <TextButton onClick={() => addTokenAllocation()} className="px-0 my-1" label="Add Allocation +" />
+        <TextButton onClick={() => addTokenAllocation()} className="px-0 my-1 mx-0" label="Add Allocation +" />
         {errorMessage && <div className="text-center text-sm text-white">{errorMessage}</div>}
       </InputBox>
     </div>
