@@ -30,7 +30,7 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
       </label>
     ) : null;
 
-  const HelperText = () => (!!helperText ? <div className="text-gray-50 font-sans text-xs px-4 py-1">{helperText}</div> : null);
+  const HelperText = () => (!!helperText ? <div className="text-gray-50 font-sans text-xs mx-2 px-4 py-1 max-w-xxs min-w-xxs">{helperText}</div> : null);
 
   const SubLabel = () => (!!subLabel && !hasError ? <div className="text-gray-50 text-xs font-medium mt-1">{subLabel}</div> : null);
   const ErrorMessage = () => (!!hasError ? <div className="text-red text-xs mt-1">{errorMessage}</div> : null);
@@ -48,7 +48,7 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
         flex: !!helperText,
       })}
     >
-      <div className={cx("flex flex-col", {"w-3/5": !!helperText})}>
+      <div className={cx("flex flex-col", {"w-full": !!helperText})}>
         <Label />
         <FieldType
           id="form-field"
