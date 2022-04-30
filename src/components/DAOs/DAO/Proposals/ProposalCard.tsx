@@ -25,8 +25,8 @@ function ProposalCard({
   const proposerDisplayName = useDisplayName(proposal.proposer);
   return (
     <Link to={`proposals/${proposal.number}`}>
-      <div className={`rounded-lg bg-gray-600 p-4 border border-chocolate-400 hover:border-gold-300 hover:shadow-sm hover:shadow-gold-300 my-2`}>
-        <ContentBox>
+      <div className="my-1">
+        <ContentBox isLightBackground>
           <div className="flex flex-row">
             {proposal.stateString === "Open" ?
               <TextBox borderTextColor="border-gold-500">{proposal.stateString}</TextBox> :
@@ -38,8 +38,8 @@ function ProposalCard({
               {proposal.startTimeString} - {proposal.endTimeString}
             </div>
           </div>
-          <div className="py-4 text-white">{proposal.description}</div>
-          <div className="text-gray-50 text-sm">Created By <span className="text-gold-500 text-sm">{proposerDisplayName}</span></div>
+          <div className="py-4 text-white text-lg font-mono">{proposal.description}</div>
+          <div className="text-gray-50 text-sm">Created By<span className="text-gold-500 text-sm ml-2">{proposerDisplayName}</span></div>
         </ContentBox>
       </div>
     </Link>
