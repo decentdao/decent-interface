@@ -1,9 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import ContentBoxTitle from "../../ui/ContentBoxTitle";
-import CreateDAOInput from "../../ui/CreateDAOInput";
 import Button from "../../ui/Button";
 import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { ethers } from "ethers";
+import Input from "../../ui/forms/Input";
+import InputBox from "../../ui/forms/InputBox";
 
 const TokenAllocationInput = ({
   index,
@@ -186,18 +187,23 @@ const TokenDetails = ({
   return (
     <div>
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
-      <CreateDAOInput dataType="text" value={name} onChange={setName} label="Token Name" helperText="What is your governance token called?" disabled={false} />
+      <InputBox>
+        <Input type="text" value={name} onChange={(e) => setName(e.target.value)} label="Token Name" helperText="What is your governance token called?" />
+      </InputBox>
+      <InputBox>
+        <Input type="text" value={symbol} onChange={(e) => setSymbol(e.target.value)} label="Token Symbol" helperText="Max: 5 chars" disabled={false} />
+      </InputBox>
 
-      <CreateDAOInput dataType="text" value={symbol} onChange={setSymbol} label="Token Symbol" helperText="Max: 5 chars" disabled={false} />
-
-      <CreateDAOInput
-        dataType="number"
-        value={supply?.toString()}
-        onChange={(e) => setSupply(Number(e))}
-        label="Token Supply"
-        helperText="Whole numbers only"
-        disabled={false}
-      />
+      <InputBox>
+        <Input
+          type="number"
+          value={supply || undefined}
+          onChange={(e) => setSupply(Number(e))}
+          label="Token Supply"
+          helperText="Whole numbers only"
+          disabled={false}
+        />
+      </InputBox>
 
       <TokenAllocations tokenAllocations={tokenAllocations} setTokenAllocations={setTokenAllocations} errorMessage={errorMessage} />
     </div>

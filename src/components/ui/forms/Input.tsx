@@ -2,7 +2,7 @@ import { ChangeEvent, FormEvent } from "react";
 import cx from "classnames";
 interface InputProps {
   type: "text" | "number" | "textarea";
-  value: string;
+  value?: string | number;
   label?: string;
   subLabel?: string;
   helperText?: string;
