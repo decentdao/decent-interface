@@ -76,7 +76,7 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
         <SubLabel />
         <ErrorMessage />
       </div>
-      <div className="flex flex-col gap-4 max-w-xxs min-w-xxs sm:ml-2 sm:pl-6 pt-2 sm:pt-0 sm:border-l sm:border-gray-300 ">
+      <div className="flex flex-col gap-4 sm:max-w-xxs sm:min-w-xxs sm:ml-2 sm:pl-6 pt-2 sm:pt-0 sm:border-l sm:border-gray-300 ">
         <HelperText />
         <HelperExampleText />
       </div>
