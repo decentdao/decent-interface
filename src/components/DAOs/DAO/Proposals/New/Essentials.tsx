@@ -1,4 +1,6 @@
-import CreateDAOInput from "../../../../ui/CreateDAOInput";
+import ContentBoxTitle from "../../../../ui/ContentBoxTitle";
+import Input from "../../../../ui/forms/Input";
+import InputBox from "../../../../ui/forms/InputBox";
 
 const Essentials = ({
   proposalDescription,
@@ -8,16 +10,18 @@ const Essentials = ({
   setProposalDescription: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   return (
-    <div className="mx-auto bg-slate-100 px-8 mt-4 mb-8 pt-8 pb-8 content-center">
-      <div className="pb-8 text-lg">Essentials</div>
-      <CreateDAOInput
-        dataType="text"
-        value={proposalDescription}
-        onChange={(e) => setProposalDescription(e)}
-        label="Proposal Description"
-        helperText="What's the goal of this proposal? Explain the desired outcome and why it matters"
-        disabled={false}
-      />
+    <div>
+      <ContentBoxTitle>Essentials</ContentBoxTitle>
+      <InputBox>
+        <Input
+          type="text"
+          value={proposalDescription}
+          onChange={(e) => setProposalDescription(e.target.value)}
+          label="Proposal Description"
+          helperText="What's the goal of this proposal? Explain the desired outcome and why it matters"
+          disabled={false}
+        />
+      </InputBox>
     </div>
   );
 };

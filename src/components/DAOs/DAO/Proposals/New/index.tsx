@@ -85,13 +85,13 @@ const New = ({ address }: { address: string | undefined }) => {
     <div>
       <Pending message="Creating Proposal..." pending={pending} />
       <ConnectModal />
-      <div className="mx-24">
+      <div>
         <H1>Create Proposal</H1>
         <ContentBox>
-          <div className="flex">
+          <form onSubmit={(e) => e.preventDefault()}>
             {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
             {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} />}
-          </div>
+          </form>
         </ContentBox>
         {step === 1 && (
           <div className="flex items-center justify-center">
