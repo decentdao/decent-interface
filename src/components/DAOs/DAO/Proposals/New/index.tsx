@@ -5,7 +5,6 @@ import ConnectModal from "../../../../ConnectModal";
 import Pending from "../../../../Pending";
 import Essentials from "./Essentials";
 import Transactions from "./Transactions";
-import ContentBox from "../../../../ui/ContentBox";
 import H1 from "../../../../ui/H1";
 import { PrimaryButton, SecondaryButton, TextButton } from "../../../../ui/forms/Button";
 import LeftArrow from "../../../../ui/svg/LeftArrow";
