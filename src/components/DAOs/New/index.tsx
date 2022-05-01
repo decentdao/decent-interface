@@ -138,7 +138,7 @@ const New = () => {
         <div className="flex items-center justify-center py-4">
           {step > 0 && <TextButton onClick={decrement} disabled={!prevEnabled} icon={<LeftArrow />} label="Prev" />}
           {step < 2 && <SecondaryButton onClick={increment} disabled={!nextEnabled} isIconRight icon={<RightArrow />} label="Next" />}
-          {step > 1 && <PrimaryButton onClick={deploy} label="Deploy" disabled={!daoName || !tokenName || !tokenSymbol || !tokenSupply} />}
+          {step > 1 && <PrimaryButton onClick={deploy} label="Deploy" isLarge disabled={!daoName || !tokenName || !tokenSymbol || !tokenSupply} />}
         </div>
       </div>
     </div>

@@ -87,20 +87,18 @@ const New = ({ address }: { address: string | undefined }) => {
       <ConnectModal />
       <div>
         <H1>Create Proposal</H1>
-        <ContentBox>
-          <form onSubmit={(e) => e.preventDefault()}>
-            {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
-            {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} />}
-          </form>
-        </ContentBox>
+        <form onSubmit={(e) => e.preventDefault()}>
+          {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
+          {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} />}
+        </form>
         {step === 1 && (
-          <div className="flex items-center justify-center">
-            <SecondaryButton onClick={addTransaction} disabled={false} label="Add Transaction" />
+          <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
+            <TextButton onClick={addTransaction} disabled={false} label="+ Add another transaction" />
           </div>
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
           {step === 1 && <TextButton onClick={decrementStep} disabled={false} icon={<LeftArrow />} label="Prev" />}
-          {step === 1 && <PrimaryButton onClick={createProposal} disabled={false} label="Create Proposal" />}
+          {step === 1 && <PrimaryButton onClick={createProposal} disabled={false} label="Create Proposal" isLarge/>}
           {step === 0 && <SecondaryButton onClick={incrementStep} disabled={false} label="Next: Add Transactions" />}
         </div>
       </div>

@@ -1,3 +1,4 @@
+import ContentBox from "../../../../ui/ContentBox";
 import ContentBoxTitle from "../../../../ui/ContentBoxTitle";
 import Input from "../../../../ui/forms/Input";
 import InputBox from "../../../../ui/forms/InputBox";
@@ -10,7 +11,7 @@ const Essentials = ({
   setProposalDescription: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   return (
-    <div>
+    <ContentBox>
       <ContentBoxTitle>Essentials</ContentBoxTitle>
       <InputBox>
         <Input
@@ -22,7 +23,7 @@ const Essentials = ({
           disabled={false}
         />
       </InputBox>
-    </div>
+    </ContentBox>
   );
 };
 
