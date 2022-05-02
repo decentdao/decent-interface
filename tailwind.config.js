@@ -41,16 +41,29 @@ module.exports = {
           '500': '#fabd2e',
           '600': '#af8420',
         },
+        'drab': {
+          500: '#746338'
+        },
+        'sand': {
+          500: '#FFDA85',
+        }
       },
       letterSpacing: {
         widest: '.25em',
       },
       fontSize: {
+        'xxs': '0.625rem',
         '3xl': '1.875rem',
         '4xl': '2.25rem',
         '5xl': '3rem',
         '6xl': '4rem',
         '7xl': '5rem',
+      },
+      maxWidth: {
+        'xxs': '18.5rem'
+      },
+      minWidth: {
+        'xxs': '18.5rem'
       },
       backgroundImage: {
         'image-pattern': "url('./assets/images/bg-glow-top-left.png'), linear-gradient(to bottom, #272520, #1b1a18)",

@@ -10,13 +10,8 @@ const Transactions = ({
   setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
   removeTransaction: (transactionNumber: number) => void;
 }) => {
-  const updateTransaction = (
-    transactionData: TransactionData,
-    transactionNumber: number
-  ) => {
-    const newTransactions: TransactionData[] = transactions.map(
-      (transaction) => transaction
-    );
+  const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
+    const newTransactions: TransactionData[] = transactions.map((transaction) => transaction);
     newTransactions[transactionNumber] = transactionData;
 
     setTransactions(newTransactions);

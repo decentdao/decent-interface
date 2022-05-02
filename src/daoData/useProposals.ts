@@ -416,6 +416,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
   // Setup state events listener
   useEffect(() => {
     if (governorModule === undefined) {
+      setProposals(undefined);
       return;
     }
 

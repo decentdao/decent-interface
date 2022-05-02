@@ -1,5 +1,4 @@
 import { connect } from "../web3/providers";
-import Button from "./ui/Button";
 import { useWeb3 } from "../web3";
 
 const ConnectModal = () => {
@@ -17,13 +16,12 @@ const ConnectModal = () => {
       <p className="w-1/3 text-center text-white pb-4">
         You need to connect your account to create a fractal
       </p>
-      <Button
+      <button
         onClick={connect}
         disabled={false}
-        addedClassNames="px-8 py-2 mx-2 border-gold-300 bg-chocolate-500 text-gold-300"
       >
         connect wallet
-      </Button>
+      </button>
     </div>
   );
 };
