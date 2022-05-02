@@ -43,6 +43,9 @@ module.exports = {
         },
         'drab': {
           500: '#746338'
+        },
+        'sand': {
+          500: '#FFDA85',
         }
       },
       letterSpacing: {
