@@ -1,4 +1,3 @@
-import CreateDAOInput from "../../../../ui/CreateDAOInput";
 import { TransactionData } from "./index";
 import ContentBoxTitle from "../../../../ui/ContentBoxTitle";
 import { TextButton } from "../../../../ui/forms/Button";
