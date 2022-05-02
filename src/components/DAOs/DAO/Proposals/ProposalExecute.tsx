@@ -2,20 +2,20 @@ import { useState, useEffect } from "react";
 import { ProposalData } from "../../../../daoData/useProposals";
 import useExecuteTransaction from "../../../../daoData/useExecuteTransaction";
 import PrimaryButton from "../../../ui/PrimaryButton";
-import useCurrentBlockTimestamp from "../../../../hooks/useCurrentBlockTimestamp";
+import { useDAOData } from "../../../../daoData";
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);
-  const blockTimestamp = useCurrentBlockTimestamp();
+  const [{ currentTimestamp }] = useDAOData();
 
   useEffect(() => { 
-    if(proposal.eta === undefined || blockTimestamp === undefined) {
+    if(proposal.eta === undefined || currentTimestamp === undefined) {
       setShow(false);
       return;
     }
 
-    setShow(proposal.eta !== 0 && proposal.eta < blockTimestamp);
-  }, [blockTimestamp, proposal]);
+    setShow(proposal.eta !== 0 && proposal.eta < currentTimestamp);
+  }, [currentTimestamp, proposal]);
 
   const executeTransaction = useExecuteTransaction({
     proposalData: proposal,
