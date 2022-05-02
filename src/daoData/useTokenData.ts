@@ -111,29 +111,29 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
     };
   }, [account, tokenContract, updateTokenBalance]);
 
-    // Setup token delegate changed events listener
-    useEffect(() => {
-      if (tokenContract === undefined || account === undefined) {
-        return;
-      }
-  
-      const filter = tokenContract.filters.DelegateChanged(account);
-  
-      const listenerCallback = (
-        delegator: string,
-        fromDelegate: string,
-        toDelegate: string,
-        _: any
-      ) => {
-        setTokenDelegatee(toDelegate);
-      };
-  
-      tokenContract.on(filter, listenerCallback);
-  
-      return () => {
-        tokenContract.off(filter, listenerCallback);
-      };
-    }, [account, tokenContract, updateTokenBalance]);
+  // Setup token delegate changed events listener
+  useEffect(() => {
+    if (tokenContract === undefined || account === undefined) {
+      return;
+    }
+
+    const filter = tokenContract.filters.DelegateChanged(account);
+
+    const listenerCallback = (
+      delegator: string,
+      fromDelegate: string,
+      toDelegate: string,
+      _: any
+    ) => {
+      setTokenDelegatee(toDelegate);
+    };
+
+    tokenContract.on(filter, listenerCallback);
+
+    return () => {
+      tokenContract.off(filter, listenerCallback);
+    };
+  }, [account, tokenContract, updateTokenBalance]);
 
   return { 
     name: tokenName,
