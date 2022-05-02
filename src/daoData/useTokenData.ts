@@ -87,6 +87,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   // Setup token transfer events listener
   useEffect(() => {
     if (tokenContract === undefined || account === undefined) {
+      setTokenBalance(undefined);
       return;
     }
 
