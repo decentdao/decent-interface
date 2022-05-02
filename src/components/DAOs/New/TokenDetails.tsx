@@ -126,7 +126,7 @@ const TokenDetails = ({
         <Input type="text" value={name} onChange={(e) => setName(e.target.value)} label="Token Name" helperText="What is your governance token called?" />
       </InputBox>
       <InputBox>
-        <Input type="text" value={symbol} onChange={onTokenChange} label="Token Symbol" helperText="Max: 5 chars" disabled={false} />
+        <Input type="text" value={symbol} onChange={onTokenChange} label="Token Symbol" helperText="Max: 5 characters" disabled={false} />
       </InputBox>
 
       <InputBox>
