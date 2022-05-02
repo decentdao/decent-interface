@@ -1,15 +1,15 @@
-import useBlockNumber from "./useBlockNumber";
+import useBlockNumber from "./useCurrentBlockNumber";
 import { useEffect, useState } from "react";
 import { useWeb3 } from "../web3";
 
-const useBlockTimestamp = () => {
-  const [blockTimestamp, setBlockTimestamp] = useState<number>(Date.now() / 1000);
+const useCurrentTimestamp = () => {
+  const [blockTimestamp, setBlockTimestamp] = useState<number>(Math.floor(Date.now() / 1000));
   const { provider } = useWeb3();
   const blockNumber = useBlockNumber();
 
   useEffect(() => {
     if (provider === undefined || blockNumber === undefined) {
-      setBlockTimestamp(Date.now() / 1000);
+      setBlockTimestamp(Math.floor(Date.now() / 1000));
       return;
     }
 
@@ -24,4 +24,4 @@ const useBlockTimestamp = () => {
   return blockTimestamp;
 };
 
-export default useBlockTimestamp;
+export default useCurrentTimestamp;
