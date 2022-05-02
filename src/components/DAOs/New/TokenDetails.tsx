@@ -141,7 +141,7 @@ const TokenDetails = ({
         />
       </InputBox>
 
-<TokenAllocations tokenAllocations={tokenAllocations} setTokenAllocations={setTokenAllocations} errorMap={errorMap} removeError={removeError} />
+      <TokenAllocations tokenAllocations={tokenAllocations} setTokenAllocations={setTokenAllocations} errorMap={errorMap} removeError={removeError} />
       <ContentBanner description="The Governance Setup values are not editable at this time. To change these values, a new proposal will need to be created and passed by your members." />
     </div>
   );
