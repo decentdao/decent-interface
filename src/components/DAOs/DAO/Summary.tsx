@@ -5,7 +5,6 @@ import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../Search/SearchingDAO";
 import { useDAOData } from "../../../daoData";
 import ProposalsList from "./Proposals/ProposalsList";
-import DelegateVote from "./DelegateVote";
 import H1 from "../../ui/H1";
 
 function ValidDAO({ address }: { address: string }) {
@@ -17,7 +16,6 @@ function ValidDAO({ address }: { address: string }) {
 
   return (
     <>
-      <DelegateVote />
       <H1>Proposals</H1>
       <ProposalsList />
     </>
