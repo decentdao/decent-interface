@@ -13,7 +13,7 @@ function ProposalCard({
   const proposerDisplayName = useDisplayName(proposal.proposer);
   return (
     <Link to={`proposals/${proposal.number}`}>
-      <div className="my-1">
+      <div>
         <ContentBox isLightBackground>
           <div className="flex flex-row">
             <StatusBox status={proposal.stateString} />

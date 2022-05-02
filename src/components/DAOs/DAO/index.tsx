@@ -4,6 +4,7 @@ import { Routes, Route, useParams } from "react-router-dom";
 import Summary from "./Summary";
 import Details from "./Details";
 import Proposals from "./Proposals";
+import Delegate from "./Delegate";
 import { useDAOData } from "../../../daoData";
 
 function DAO() {
@@ -21,6 +22,7 @@ function DAO() {
     <Routes>
       <Route index element={<Summary />} />
       <Route path="details" element={<Details address={params.address} />} />
+      <Route path="delegate" element={<Delegate />} />
       <Route
         path="proposals/*"
         element={<Proposals address={params.address} />}

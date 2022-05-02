@@ -13,7 +13,7 @@ import { SecondaryButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
 import cx from 'classnames';
 
-function DelegateVote() {
+function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
@@ -81,4 +81,4 @@ function DelegateVote() {
   );
 }
 
-export default DelegateVote;
+export default Delegate;

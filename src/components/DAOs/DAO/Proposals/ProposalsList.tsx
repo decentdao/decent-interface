@@ -17,7 +17,7 @@ function ProposalsList() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col -my-2">
       {[...proposals].reverse().map((proposal) => (
         <ProposalCard key={proposal.number} proposal={proposal} />
       ))}
