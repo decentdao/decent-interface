@@ -6,7 +6,7 @@ import Details from "./Details";
 import Proposals from "./Proposals";
 import { useDAOData } from "../../../daoData";
 
-function DAOs() {
+function DAO() {
   const params = useParams();
   const [, setAddress] = useDAOData();
 
@@ -29,4 +29,4 @@ function DAOs() {
   );
 }
 
-export default DAOs;
+export default DAO;
