@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useWeb3 } from "../web3";
 
-const useBlockNumber = () => {
+const useCurrentBlockNumber = () => {
   const [blockNumber, setBlockNumber] = useState<number>();
   const { provider } = useWeb3();
 
@@ -25,4 +25,4 @@ const useBlockNumber = () => {
   return blockNumber;
 };
 
-export default useBlockNumber;
+export default useCurrentBlockNumber;
