@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import useCastVote from "../../../../daoData/useCastVote";
 import { PrimaryButton, SecondaryButton } from "../../../ui/forms/Button";
 import Check from "../../../ui/svg/Check";
+import ContentBanner from "../../../ui/ContentBanner";
 
 function CastVote({ proposal }: { proposal: ProposalData }) {
   // Vote Enum
@@ -34,7 +35,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   const AbstainedSelected = () => (newVote === 2 || proposal.userVote === 2 ? <Check /> : null);
   return (
     <>
-      <div className="flex flex-col bg-gray-600 m-2 p-2 pb-8 w-3/5 rounded-md">
+      <div className="flex flex-col bg-gray-600 m-2 p-2 pb-4 w-3/5 rounded-md">
         <div className="flex mx-2 my-2 text-gray-25 text-lg font-semibold">Cast Vote</div>
         <hr className="mx-2 mb-6 border-gray-200" />
         <div className="flex flex-col gap-4">
@@ -78,6 +79,9 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             label={voteButtonString}
             isLarge
           />
+        </div>
+        <div className="mt-6 py-2 border-t border-gray-300">
+          <ContentBanner description="You only get one vote, make it count. (Copy WIP)" />
         </div>
       </div>
     </>
