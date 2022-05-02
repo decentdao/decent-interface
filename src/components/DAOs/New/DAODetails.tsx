@@ -1,41 +1,30 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import Input from "../../ui/forms/Input";
+import InputBox from "../../ui/forms/InputBox";
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import CreateDAOInput from '../../ui/CreateDAOInput';
-
-const DAODetails = ({
-  setPrevEnabled,
-  setNextEnabled,
-  name,
-  setName,
-}: {
-  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>,
-  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>,
-  name: string | undefined,
-  setName: React.Dispatch<React.SetStateAction<string | undefined>>,
-}) => {
+interface DaoDetailsProps {
+  name?: string;
+  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setName: React.Dispatch<React.SetStateAction<string>>;
+}
+const DAODetails = ({ name, setPrevEnabled, setNextEnabled, setName }: DaoDetailsProps) => {
   useEffect(() => {
     setPrevEnabled(false);
   }, [setPrevEnabled]);
 
   useEffect(() => {
-    setNextEnabled(name !== undefined && name.trim() !== "")
+    setNextEnabled(name !== undefined && name.trim() !== "");
   }, [name, setNextEnabled]);
 
   return (
     <div>
-      <ContentBoxTitle>
-        Essentials
-      </ContentBoxTitle>
-      <CreateDAOInput
-        dataType="text"
-        value={name}
-        onChange={setName}
-        label="Fractal Name"
-        helperText="What is your Fractal called?"
-        disabled={false}
-      />
+      <ContentBoxTitle>Essentials</ContentBoxTitle>
+      <InputBox>
+        <Input type="text" value={name!} onChange={(e) => setName(e.target.value)} label="Fractal Name" helperText="What is your Fractal called?" />
+      </InputBox>
     </div>
   );
-}
+};
 
 export default DAODetails;
