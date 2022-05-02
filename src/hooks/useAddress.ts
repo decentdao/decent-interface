@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { ethers, constants } from 'ethers';
+import { useState, useEffect } from "react";
+import { ethers, constants } from "ethers";
 
-import { useWeb3 } from '../web3';
+import { useWeb3 } from "../web3";
 
 const useAddress = (addressInput: string | undefined) => {
   const { provider } = useWeb3();
@@ -42,8 +42,9 @@ const useAddress = (addressInput: string | undefined) => {
     setAddress(undefined);
     setValidAddress(false);
 
-    provider.resolveName(addressInput)
-      .then(resolvedAddress => {
+    provider
+      .resolveName(addressInput)
+      .then((resolvedAddress) => {
         if (!resolvedAddress) {
           setAddress("");
           setValidAddress(false);
@@ -62,6 +63,33 @@ const useAddress = (addressInput: string | undefined) => {
   }, [provider, addressInput]);
 
   return [address, validAddress, loading] as const;
-}
+};
+
+export const checkAddress = async (provider: any, addressInput?: string): Promise<boolean> => {
+  if (addressInput === undefined) {
+    return false;
+  }
+
+  if (!provider || addressInput.trim() === "") {
+    return false;
+  }
+
+  if (addressInput === constants.AddressZero) {
+    return false;
+  }
+
+  if (ethers.utils.isAddress(addressInput)) {
+    return true;
+  }
+  try {
+    const resolvedAddress = await provider.resolveName(addressInput);
+    if (!resolvedAddress) {
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 export default useAddress;
