@@ -21,6 +21,7 @@ const useModuleAddresses = (
   // Get initial add action targets
   useEffect(() => {
     if (!daoContract || !accessControlContract) {
+      setModuleAddresses(undefined);
       return;
     }
 
@@ -41,6 +42,7 @@ const useModuleAddresses = (
   // Setup add action targets event listener
   useEffect(() => {
     if (!daoContract || !accessControlContract) {
+      setModuleAddresses(undefined);
       return;
     }
 
@@ -62,6 +64,7 @@ const useModuleAddresses = (
   // Get initial remove action targets
   useEffect(() => {
     if (!daoContract || !accessControlContract) {
+      setModuleAddresses(undefined);
       return;
     }
 
@@ -82,6 +85,7 @@ const useModuleAddresses = (
   // Setup remove action targets event listener
   useEffect(() => {
     if (!daoContract || !accessControlContract) {
+      setModuleAddresses(undefined);
       return;
     }
 
