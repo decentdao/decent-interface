@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import { useWeb3 } from "../web3";
 
 const useBlockNumber = () => {
@@ -6,22 +6,23 @@ const useBlockNumber = () => {
   const { provider } = useWeb3();
 
   useEffect(() => {
-    if(provider === undefined) {
+    if (provider === undefined) {
       setBlockNumber(undefined);
       return;
     }
 
-    const timer = setInterval(() => {
-      provider.getBlockNumber()
-      .then((blockNumber) => {
-        setBlockNumber(blockNumber)
-      })
-      .catch(console.error);
-    }, 1000);
-    return () => clearInterval(timer);
+    const updateBlockNumber = (blockNumber: number) => {
+      setBlockNumber(blockNumber);
+    }
+
+    provider.on("block", updateBlockNumber);
+
+    return () => {
+      provider.off("block", updateBlockNumber);
+    };
   }, [provider]);
 
   return blockNumber;
-}
+};
 
 export default useBlockNumber;
