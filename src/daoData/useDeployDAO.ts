@@ -10,6 +10,9 @@ export type TokenAllocation = {
   address: string;
   amount: number;
 };
+export interface AllocationInput extends TokenAllocation {
+  error: string | null,
+}
 
 const useDeployDAO = ({
   daoName,

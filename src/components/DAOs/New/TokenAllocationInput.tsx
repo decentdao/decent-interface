@@ -1,14 +1,17 @@
-import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import { AllocationInput, TokenAllocation } from "../../../daoData/useDeployDAO";
 import { TextButton } from '../../ui/forms/Button';
+import Input from "../../ui/forms/Input";
 
 interface TokenAllocationProps {
   index: number;
   tokenAllocation: TokenAllocation;
+  errorMap: Map<number, AllocationInput>
   updateTokenAllocation: (index: number, tokenAllocation: TokenAllocation) => void;
   removeTokenAllocation: (index: number) => void;
 }
 
-const TokenAllocationInput = ({ index, tokenAllocation, updateTokenAllocation, removeTokenAllocation }: TokenAllocationProps) => {
+const TokenAllocationInput = ({ index, tokenAllocation, errorMap, updateTokenAllocation, removeTokenAllocation }: TokenAllocationProps) => {
+  
   const updateAddress = (address: string) => {
     updateTokenAllocation(index, {
       address: address,
@@ -25,20 +28,22 @@ const TokenAllocationInput = ({ index, tokenAllocation, updateTokenAllocation, r
 
   return (
     <>
-      <input
-        className="col-start-1 col-span-4 md:col-span-5 w-full border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none"
-        type="string"
+      <Input
+        containerClassName="col-start-1 col-helperspan-4 md:col-span-5 w-full"
+        type="text"
         value={tokenAllocation.address || ""}
         onChange={(event) => updateAddress(event.target.value)}
+        errorMessage={errorMap.get(index)?.error || ""}
       />
-      <input
-        className="col-span-2 md:pt-0 border border-gray-200 bg-gray-400 rounded py-1 px-2 text-gray-50 focus:outline-none"
+      <Input
+        containerClassName="col-span-2 md:pt-0"
         type="number"
         value={tokenAllocation.amount || ""}
         onChange={(event) => updateAmount(event.target.value)}
+        isWholeNumberOnly
       />
       <div className="md:col-span-1">
-        <TextButton onClick={() => removeTokenAllocation(index)} label="Remove" className="px-0 mx-0" />
+        <TextButton type="button" onClick={() => removeTokenAllocation(index)} label="Remove" className="px-0 mx-0"/>
       </div>
     </>
   );

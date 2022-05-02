@@ -3,6 +3,8 @@ import cx from "classnames";
 interface InputProps {
   type: "text" | "number" | "textarea";
   value?: string | number;
+  containerClassName?: string;
+  inputClassName?: string;
   label?: string;
   subLabel?: string;
   helperText?: string;
@@ -11,8 +13,8 @@ interface InputProps {
   errorMessage?: string;
   placeholder?: string;
   min?: string | number;
+  isWholeNumberOnly?: boolean;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
-  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 }
 
 /**
@@ -20,7 +22,7 @@ interface InputProps {
  * includes: surrounding wrapper, label, input and error handling
  *
  */
-const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, disabled, helperText, exampleText, onChange, onKeyDown }: InputProps) => {
+const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, disabled, helperText, exampleText, isWholeNumberOnly, containerClassName, inputClassName, onChange }: InputProps) => {
   const FieldType = type === "textarea" ? "textarea" : "input";
   const hasError = !!errorMessage;
 
@@ -50,11 +52,15 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
 
   const _type = type !== "textarea" ? type : undefined;
 
+  const stripChars = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    return ['e', '+', '-'].includes(event.key) && event.preventDefault()
+  }
+
   return (
     <div
       className={cx("w-full", {
         "flex flex-wrap sm:flex-nowrap": !!helperText,
-      })}
+      }, containerClassName)}
     >
       <div className={cx("flex flex-col w-full", { "pr-4": !!helperText })}>
         <Label />
@@ -62,12 +68,12 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
           id="form-field"
           type={_type}
           placeholder={placeholder}
-          className={`${INPUT_BASE_STYLES} ${INPUT_DISABLED_STYLED} ${borderColor} ${inputTextColor}`}
+          className={`${INPUT_BASE_STYLES} ${INPUT_DISABLED_STYLED} ${borderColor} ${inputTextColor} ${inputClassName}`}
           disabled={disabled}
           value={value}
           min={min}
+          onKeyDown={isWholeNumberOnly ? stripChars : undefined}
           onChange={onChange}
-          onKeyDown={onKeyDown}
           onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target as HTMLInputElement).blur()}
           autoCorrect="off"
           autoCapitalize="none"

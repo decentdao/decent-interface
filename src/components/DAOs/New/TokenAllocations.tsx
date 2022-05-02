@@ -1,19 +1,21 @@
-import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import { AllocationInput, TokenAllocation } from "../../../daoData/useDeployDAO";
 import { TextButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
 import TokenAllocationInput from "./TokenAllocationInput";
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
-  errorMessage: string | undefined;
+  errorMap: Map<number, AllocationInput>;
+  removeError: (key: number) => void;
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
-const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage }: TokenAllocationsProps) => {
-  const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
 
+const TokenAllocations = ({ tokenAllocations, errorMap, removeError, setTokenAllocations }: TokenAllocationsProps) => {
+
+
+  const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
     const newTokenAllocations = [...tokenAllocations];
     newTokenAllocations[index] = tokenAllocation;
-
     setTokenAllocations(newTokenAllocations);
   };
 
@@ -22,7 +24,6 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
       setTokenAllocations([{ address: "", amount: 0 }]);
       return;
     }
-
     setTokenAllocations([
       ...tokenAllocations,
       {
@@ -34,7 +35,7 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
 
   const removeTokenAllocation = (index: number) => {
     if (tokenAllocations === undefined) return;
-
+    removeError(index)
     setTokenAllocations([...tokenAllocations.slice(0, index), ...tokenAllocations.slice(index + 1)]);
   };
 
@@ -53,11 +54,11 @@ const TokenAllocations = ({ tokenAllocations, setTokenAllocations, errorMessage 
                 tokenAllocation={tokenAllocation}
                 updateTokenAllocation={updateTokenAllocation}
                 removeTokenAllocation={removeTokenAllocation}
+                errorMap={errorMap}
               />
             ))}
         </div>
         <TextButton onClick={() => addTokenAllocation()} className="px-0 my-1 mx-0" label="Add Allocation +" />
-        {errorMessage && <div className="text-center text-sm text-white">{errorMessage}</div>}
       </InputBox>
     </div>
   );

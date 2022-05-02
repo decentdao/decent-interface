@@ -1,10 +1,11 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback, ChangeEvent, useState } from "react";
 import ContentBoxTitle from "../../ui/ContentBoxTitle";
-import { TokenAllocation } from "../../../daoData/useDeployDAO";
-import { ethers } from "ethers";
+import { AllocationInput, TokenAllocation } from "../../../daoData/useDeployDAO";
 import Input from "../../ui/forms/Input";
 import InputBox from "../../ui/forms/InputBox";
 import TokenAllocations from "./TokenAllocations";
+import { checkAddress } from "../../../hooks/useAddress";
+import { useWeb3 } from "../../../web3";
 
 interface TokenDetailsProps {
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,8 +32,8 @@ const TokenDetails = ({
   setPrevEnabled,
   setNextEnabled,
 }: TokenDetailsProps) => {
-  const [errorMessage, setErrorMessage] = useState<string>();
-
+  const [errorMap, setErrorMap] = useState<Map<number, AllocationInput>>(new Map());
+  const { provider } = useWeb3();
   const allocationsValid = useCallback(() => {
     if (tokenAllocations === undefined || supply === undefined) return true;
     return tokenAllocations.map((tokenAllocation) => Number(tokenAllocation.amount)).reduce((prev, curr) => prev + curr, 0) <= Number(supply);
@@ -52,22 +53,70 @@ const TokenDetails = ({
         symbol.trim() !== "" &&
         supply !== undefined &&
         Number(supply) !== 0 &&
-        !tokenAllocations.some((tokenAllocation) => !ethers.utils.isAddress(tokenAllocation.address) || tokenAllocation.amount === 0) &&
+        !tokenAllocations.some((tokenAllocation) => tokenAllocation.amount === 0) &&
+        !errorMap.size &&
         allocationsValid()
     );
-  }, [name, setNextEnabled, supply, symbol, tokenAllocations, allocationsValid]);
+  }, [name, setNextEnabled, supply, symbol, tokenAllocations, allocationsValid, errorMap]);
+
+  /**
+   * updates symbol state when typing
+   * @validation only allows 5 chars
+   *
+   * @param event
+   */
+  const onTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const symbol = event.target.value;
+
+    if (symbol.length <= 5) {
+      setSymbol(symbol);
+    }
+  };
+
+  /**
+   * adds new error to mapping
+   * @param key
+   * @param error
+   */
+  const setError = useCallback(
+    (key: number, allocation: TokenAllocation, error: string | null) => {
+      const errors = new Map(errorMap);
+      errors.set(key, { ...allocation, error });
+      setErrorMap(errors);
+    },
+    [errorMap]
+  );
+
+  /**
+   * removes error to mapping
+   * @param key
+   * @param error
+   */
+  const removeError = (key: number) => {
+    const errors = new Map(errorMap);
+    errors.delete(key);
+    setErrorMap(errors);
+  };
 
   useEffect(() => {
-    if (tokenAllocations === undefined) return;
-
-    if (tokenAllocations.some((tokenAllocation) => tokenAllocation.address !== "" && !ethers.utils.isAddress(tokenAllocation.address))) {
-      setErrorMessage("Invalid address");
-    } else if (!allocationsValid()) {
-      setErrorMessage("Invalid token allocations");
-    } else {
-      setErrorMessage(undefined);
-    }
-  }, [tokenAllocations, allocationsValid]);
+    if (!tokenAllocations || !provider) return;
+    Promise.all(
+      tokenAllocations.map(async (tokenAllocation: { address: string; amount: number }, index: number) => {
+        if (errorMap.get(index)?.address === tokenAllocation.address) {
+          // do nothing if address at index hasn't changed since last render
+          return;
+        }
+        if (tokenAllocation.address.trim().length) {
+          // validates address as valid eth address or ENS domain as sets/removes error
+          const isValidAddress = await checkAddress(provider, tokenAllocation.address);
+          if (!isValidAddress) {
+            return setError(index, tokenAllocation, "Invalid address");
+          }
+        }
+        return setError(index, tokenAllocation, null);
+      })
+    );
+  }, [tokenAllocations, provider, setError, errorMap]);
 
   return (
     <div>
@@ -76,7 +125,7 @@ const TokenDetails = ({
         <Input type="text" value={name} onChange={(e) => setName(e.target.value)} label="Token Name" helperText="What is your governance token called?" />
       </InputBox>
       <InputBox>
-        <Input type="text" value={symbol} onChange={(e) => setSymbol(e.target.value)} label="Token Symbol" helperText="Max: 5 chars" disabled={false} />
+        <Input type="text" value={symbol} onChange={onTokenChange} label="Token Symbol" helperText="Max: 5 chars" disabled={false} />
       </InputBox>
 
       <InputBox>
@@ -87,10 +136,11 @@ const TokenDetails = ({
           label="Token Supply"
           helperText="Whole numbers only"
           disabled={false}
+          isWholeNumberOnly
         />
       </InputBox>
 
-      <TokenAllocations tokenAllocations={tokenAllocations} setTokenAllocations={setTokenAllocations} errorMessage={errorMessage} />
+      <TokenAllocations tokenAllocations={tokenAllocations} setTokenAllocations={setTokenAllocations} errorMap={errorMap} removeError={removeError} />
     </div>
   );
 };
