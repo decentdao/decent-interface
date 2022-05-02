@@ -5,6 +5,7 @@ interface InputProps {
   value?: string | number;
   label?: string;
   subLabel?: string;
+  unit?: string;
   helperText?: string;
   exampleText?: string;
   disabled?: boolean;
@@ -20,13 +21,19 @@ interface InputProps {
  * includes: surrounding wrapper, label, input and error handling
  *
  */
-const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, disabled, helperText, exampleText, onChange, onKeyDown }: InputProps) => {
+const Input = ({ value, min, placeholder, type, label, subLabel, unit, errorMessage, disabled, helperText, exampleText, onChange, onKeyDown }: InputProps) => {
   const FieldType = type === "textarea" ? "textarea" : "input";
   const hasError = !!errorMessage;
 
   const Label = () =>
     !!label ? (
-      <label htmlFor="form-field" className="text-gray-25 text-xs font-medium mb-1">
+      <label
+        htmlFor="form-field"
+        className={cx("text-xs font-medium mb-1", {
+          "text-gray-50": disabled,
+          "text-gray-25": !disabled,
+        })}
+      >
         {label}
       </label>
     ) : null;
@@ -40,11 +47,13 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
       </div>
     ) : null;
 
+  const UnitsDisplay = () => (unit ? <div className="absolute text-gray-50 text-sm top-7 right-6">{unit}</div> : null);
+
   const SubLabel = () => (!!subLabel && !hasError ? <div className="text-gray-50 text-xs font-medium mt-1">{subLabel}</div> : null);
   const ErrorMessage = () => (!!hasError ? <div className="text-red text-xs mt-1">{errorMessage}</div> : <div className={cx({ "mt-5": !subLabel })} />);
 
-  const INPUT_BASE_STYLES = "w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-50 focus:outline-none";
-  const INPUT_DISABLED_STYLED = "disabled:bg-gray-300 disabled:border-gray-200 disabled:text-gray-100";
+  const INPUT_BASE_STYLES = "w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-25 focus:outline-none";
+  const INPUT_DISABLED_STYLED = "disabled:bg-gray-300 disabled:border-gray-200 disabled:text-gray-50";
   const borderColor = hasError ? "border border-red" : "";
   const inputTextColor = hasError ? "text-red" : "text-gray-25";
 
@@ -56,13 +65,13 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
         "flex flex-wrap sm:flex-nowrap": !!helperText,
       })}
     >
-      <div className={cx("flex flex-col w-full", { "pr-4": !!helperText })}>
+      <div className={cx("flex flex-col w-full relative", { "pr-4": !!helperText })}>
         <Label />
         <FieldType
           id="form-field"
           type={_type}
           placeholder={placeholder}
-          className={`${INPUT_BASE_STYLES} ${INPUT_DISABLED_STYLED} ${borderColor} ${inputTextColor}`}
+          className={cx(INPUT_BASE_STYLES, INPUT_DISABLED_STYLED, borderColor, inputTextColor)}
           disabled={disabled}
           value={value}
           min={min}
@@ -73,10 +82,11 @@ const Input = ({ value, min, placeholder, type, label, subLabel, errorMessage, d
           autoCapitalize="none"
           spellCheck="false"
         />
+        <UnitsDisplay />
         <SubLabel />
         <ErrorMessage />
       </div>
-      <div className="flex flex-col gap-4 sm:max-w-xxs sm:min-w-xxs sm:ml-2 sm:pl-6 pt-2 sm:pt-0 sm:border-l sm:border-gray-300 ">
+      <div className="flex flex-col gap-4 sm:max-w-xxs sm:min-w-xxs sm:ml-2 sm:pl-6 pt-2 sm:pt-0 sm:border-l sm:border-gray-300">
         <HelperText />
         <HelperExampleText />
       </div>
