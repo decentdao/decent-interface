@@ -80,7 +80,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             isLarge
           />
         </div>
-        <div className="mt-6 py-2 border-t border-gray-300">
+        <div className="mt-6 py-2 mx-2 border-t border-gray-300">
           <ContentBanner description="You only get one vote, make it count. (Copy WIP)" />
         </div>
       </div>
