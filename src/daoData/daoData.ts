@@ -10,8 +10,9 @@ import useTokenContract from './useTokenContract';
 import useTokenData from './useTokenData';
 import useProposals from './useProposals';
 import { ProposalData } from './useProposals';
+import useCurrentBlockNumber from '../hooks/useCurrentBlockNumber';
+import useCurrentTimestamp from '../hooks/useCurrentTimestamp';
 import { GovernorModule, VotesTokenWithSupply } from '../typechain-types';
-
 export interface DAOData {
   name: string | undefined,
   accessControlAddress: string | undefined,
@@ -25,12 +26,13 @@ export interface DAOData {
     decimals: number | undefined
     userBalance: number | undefined,
     delegatee: string | undefined,
-  }
+  },
+  currentBlockNumber: number | undefined,
+  currentTimestamp: number,
 };
 
 export const useDAODatas = () => {
   const [daoAddress, setDAOAddress] = useState<string>();
-
   const daoContract = useDAOContract(daoAddress);
   const name = useDAOName(daoContract);
   const accessControlAddress = useAccessControlAddress(daoContract);
@@ -40,6 +42,8 @@ export const useDAODatas = () => {
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
   const proposals = useProposals(governorModuleContract);
+  const currentBlockNumber = useCurrentBlockNumber();
+  const currentTimestamp = useCurrentTimestamp(currentBlockNumber);
 
   const daoData: DAOData = {
     name,
@@ -48,7 +52,9 @@ export const useDAODatas = () => {
     proposals,
     governorModuleContract,
     tokenContract,
-    tokenData
+    tokenData,
+    currentBlockNumber,
+    currentTimestamp,
   };
 
   return [daoData, setDAOAddress] as const;

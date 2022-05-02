@@ -23,6 +23,7 @@ type ProposalDataWithoutVotes = {
   forVotesPercent: number | undefined;
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
+  eta: number | undefined;
   userVotePower: BigNumber | undefined;
 };
 
@@ -80,7 +81,10 @@ const getTimestampString = (time: Date | undefined) => {
   );
 };
 
-const getBlockTimestamp = (provider: providers.BaseProvider | undefined, blockNumber: number) => {
+const getBlockTimestamp = (
+  provider: providers.BaseProvider | undefined,
+  blockNumber: number
+) => {
   if (!provider) return;
 
   return provider.getBlockNumber().then((currentBlockNumber) => {
@@ -104,48 +108,57 @@ const getBlockTimestamp = (provider: providers.BaseProvider | undefined, blockNu
       });
     }
   });
-}
+};
 
 // Get proposal data that isn't included in the proposal created event
-const getProposalData = (provider: providers.BaseProvider | undefined, governorModule: GovernorModule, proposal: ProposalDataWithoutVotes, account: string) => {
+const getProposalData = (
+  provider: providers.BaseProvider | undefined,
+  governorModule: GovernorModule,
+  proposal: ProposalDataWithoutVotes,
+  account: string
+) => {
   return Promise.all([
     governorModule.proposalVotes(proposal.id),
     governorModule.state(proposal.id),
     getBlockTimestamp(provider, proposal.startBlock.toNumber()),
     getBlockTimestamp(provider, proposal.endBlock.toNumber()),
     governorModule.getVotes(account, proposal.startBlock),
+    governorModule.proposalEta(proposal.id),
     proposal,
-  ]).then(([votes, state, startTime, endTime, userVotePower, proposal]) => {
-    const totalVotes = votes.forVotes
-      .add(votes.againstVotes)
-      .add(votes.abstainVotes);
-    if (totalVotes.gt(0)) {
-      proposal.forVotesPercent =
-        votes.forVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-      proposal.againstVotesPercent =
-        votes.againstVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-      proposal.abstainVotesPercent =
-        votes.abstainVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-    } else {
-      proposal.forVotesPercent = 0;
-      proposal.againstVotesPercent = 0;
-      proposal.abstainVotesPercent = 0;
+  ]).then(
+    ([votes, state, startTime, endTime, userVotePower, eta, proposal]) => {
+      const totalVotes = votes.forVotes
+        .add(votes.againstVotes)
+        .add(votes.abstainVotes);
+      if (totalVotes.gt(0)) {
+        proposal.forVotesPercent =
+          votes.forVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+        proposal.againstVotesPercent =
+          votes.againstVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+        proposal.abstainVotesPercent =
+          votes.abstainVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
+      } else {
+        proposal.forVotesPercent = 0;
+        proposal.againstVotesPercent = 0;
+        proposal.abstainVotesPercent = 0;
+      }
+
+      proposal.idSubstring = `${proposal.id
+        .toString()
+        .substring(0, 4)}...${proposal.id.toString().slice(-4)}`;
+      proposal.state = state;
+      proposal.startTime = startTime;
+      proposal.endTime = endTime;
+      proposal.startTimeString = getTimestampString(startTime);
+      proposal.endTimeString = getTimestampString(endTime);
+      proposal.stateString = getStateString(proposal.state);
+      proposal.userVotePower = userVotePower;
+      proposal.eta = eta.toNumber();
+
+      return proposal;
     }
-
-    proposal.idSubstring = `${proposal.id
-      .toString()
-      .substring(0, 4)}...${proposal.id.toString().slice(-4)}`;
-    proposal.state = state;
-    proposal.startTime = startTime;
-    proposal.endTime = endTime;
-    proposal.startTimeString = getTimestampString(startTime);
-    proposal.endTimeString = getTimestampString(endTime);
-    proposal.stateString = getStateString(proposal.state);
-    proposal.userVotePower = userVotePower;
-
-    return proposal;
-  });
-}
+  );
+};
 
 const useUserVotes = (governorModule: GovernorModule | undefined) => {
   const { account } = useWeb3();
@@ -255,6 +268,7 @@ const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) =>
             forVotesPercent: undefined,
             againstVotesPercent: undefined,
             abstainVotesPercent: undefined,
+            eta: undefined,
             userVotePower: undefined,
           };
           return newProposal;
@@ -316,6 +330,7 @@ const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) =>
         forVotesPercent: undefined,
         againstVotesPercent: undefined,
         abstainVotesPercent: undefined,
+        eta: undefined,
         userVotePower: undefined,
       };
 
@@ -338,6 +353,7 @@ const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) =>
     return () => {
       governorModule.off(filter, listenerCallback);
     };
+
   }, [account, governorModule, provider]);
 
   return proposalsWithoutVotes;
@@ -381,6 +397,7 @@ const useProposals = (governorModule: GovernorModule | undefined) => {
           forVotesPercent: proposal.forVotesPercent,
           againstVotesPercent: proposal.againstVotesPercent,
           abstainVotesPercent: proposal.abstainVotesPercent,
+          eta: proposal.eta,
           userVotePower: proposal.userVotePower,
           userVote: userProposalVote ? userProposalVote.vote : undefined,
           userVoteString:
