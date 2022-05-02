@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { ProposalData } from "../../../../daoData/useProposals";
 import useExecuteTransaction from "../../../../daoData/useExecuteTransaction";
-import PrimaryButton from "../../../ui/PrimaryButton";
+import { PrimaryButton } from "../../../ui/forms/Button";
 import { useDAOData } from "../../../../daoData";
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);
   const [{ currentTimestamp }] = useDAOData();
 
-  useEffect(() => { 
-    if(proposal.eta === undefined || currentTimestamp === undefined) {
+  useEffect(() => {
+    if (proposal.eta === undefined || currentTimestamp === undefined) {
       setShow(false);
       return;
     }
@@ -29,9 +29,10 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
         Proposal ready for execution
       </div>
       <div className="flex flex-grow justify-end mx-4">
-        <PrimaryButton onClick={executeTransaction}>
-          Execute Proposal
-        </PrimaryButton>
+        <PrimaryButton
+          onClick={() => executeTransaction()}
+          label="Execute"
+        />
       </div>
     </div>
   );
