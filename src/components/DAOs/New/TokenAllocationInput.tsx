@@ -29,7 +29,7 @@ const TokenAllocationInput = ({ index, tokenAllocation, errorMap, updateTokenAll
   return (
     <>
       <Input
-        containerClassName="col-start-1 col-helperspan-4 md:col-span-5 w-full"
+        containerClassName="col-start-1 col-span-4 md:col-span-5 w-full"
         type="text"
         value={tokenAllocation.address || ""}
         onChange={(event) => updateAddress(event.target.value)}
