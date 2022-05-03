@@ -6,7 +6,7 @@ import ProposalDetails from "./ProposalDetails";
 function Proposals({ address }: { address: string }) {
   return (
     <Routes>
-      <Route path="new" element={<New address={address} />} />
+      <Route path="new" element={<New />} />
       <Route path=":proposalNumber/*" element={<ProposalDetails />} />
     </Routes>
   );
