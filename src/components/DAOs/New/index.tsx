@@ -106,7 +106,7 @@ const New = () => {
   });
 
   return (
-    <div>
+    <div className="pb-16">
       <Pending message="Creating Fractal..." pending={pending} />
       <div>
         <H1>{!daoName || daoName.trim() === "" || step === 0 ? "Configure New Fractal" : "Configure " + daoName}</H1>
