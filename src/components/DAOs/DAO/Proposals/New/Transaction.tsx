@@ -4,24 +4,32 @@ import { TextButton } from "../../../../ui/forms/Button";
 import Input from "../../../../ui/forms/Input";
 import InputBox from "../../../../ui/forms/InputBox";
 import ContentBox from "../../../../ui/ContentBox";
+import { checkAddress } from "../../../../../hooks/useAddress";
+import { useWeb3 } from "../../../../../web3";
 
-const Transaction = ({
-  transaction,
-  transactionNumber,
-  updateTransaction,
-  removeTransaction,
-  transactionCount,
-}: {
+interface TransactionProps {
   transaction: TransactionData;
   transactionNumber: number;
   updateTransaction: (transactionData: TransactionData, transactionNumber: number) => void;
   removeTransaction: (transactionNumber: number) => void;
+  errorMap: Map<number, { address: string; error: string | null }>;
+  setError: (key: number, transaction: TransactionData, error: string | null) => void;
   transactionCount: number;
-}) => {
-  const updateTargetAddress = (targetAddress: string) => {
+}
+
+const Transaction = ({ transaction, transactionNumber, errorMap, setError, updateTransaction, removeTransaction, transactionCount }: TransactionProps) => {
+  const { provider } = useWeb3();
+  let error: string | null = null;
+  const updateTargetAddress = async (targetAddress: string) => {
     const newTransactionData = Object.assign({}, transaction);
     newTransactionData.targetAddress = targetAddress;
-
+    if (targetAddress.trim() && errorMap.get(transactionNumber)?.address !== targetAddress.trim()) {
+      const isValidAddress = await checkAddress(provider, targetAddress);
+      if (!isValidAddress) {
+        error = "Address Invalid";
+      }
+    }
+    setError(transactionNumber, newTransactionData, error);
     updateTransaction(newTransactionData, transactionNumber);
   };
 
@@ -64,6 +72,7 @@ const Transaction = ({
           label="Target Address"
           helperText="The smart contract address this proposal will modify"
           disabled={false}
+          errorMessage={errorMap.get(transactionNumber)?.error || ""}
         />
       </InputBox>
       <InputBox>

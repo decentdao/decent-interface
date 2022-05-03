@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import useCreateProposal from "../../../../../daoData/useCreateProposal";
 import ConnectModal from "../../../../ConnectModal";
@@ -26,6 +26,7 @@ export type ProposalData = {
 const New = ({ address }: { address: string | undefined }) => {
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>("");
+  const [errorMap, setErrorMap] = useState<Map<number, { address: string; error: string | null }>>(new Map());
   const [transactions, setTransactions] = useState<TransactionData[]>([
     {
       targetAddress: "",
@@ -50,6 +51,7 @@ const New = ({ address }: { address: string | undefined }) => {
   };
 
   const removeTransaction = (transactionNumber: number) => {
+    removeError(transactionNumber)
     setTransactions([...transactions.slice(0, transactionNumber), ...transactions.slice(transactionNumber + 1)]);
   };
 
@@ -59,6 +61,31 @@ const New = ({ address }: { address: string | undefined }) => {
 
   const incrementStep = () => {
     setStep((currentStep) => currentStep + 1);
+  };
+
+  /**
+   * adds new error to mapping
+   * @param key
+   * @param error
+   */
+  const setError = useCallback(
+    (key: number, transaction: TransactionData, error: string | null) => {
+      const errors = new Map(errorMap);
+      errors.set(key, { address: transaction.targetAddress, error });
+      setErrorMap(errors);
+    },
+    [errorMap]
+  );
+
+  /**
+   * removes error to mapping
+   * @param key
+   * @param error
+   */
+  const removeError = (key: number) => {
+    const errors = new Map(errorMap);
+    errors.delete(key);
+    setErrorMap(errors);
   };
 
   useEffect(() => {
@@ -88,7 +115,16 @@ const New = ({ address }: { address: string | undefined }) => {
         <H1>Create Proposal</H1>
         <form onSubmit={(e) => e.preventDefault()}>
           {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
-          {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} />}
+          {step === 1 && (
+            <Transactions
+              transactions={transactions}
+              setTransactions={setTransactions}
+              errorMap={errorMap}
+              removeTransaction={removeTransaction}
+              setError={setError}
+              removeError={removeError}
+            />
+          )}
         </form>
         {step === 1 && (
           <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
@@ -97,7 +133,7 @@ const New = ({ address }: { address: string | undefined }) => {
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
           {step === 1 && <TextButton onClick={decrementStep} disabled={false} icon={<LeftArrow />} label="Prev" />}
-          {step === 1 && <PrimaryButton onClick={createProposal} disabled={false} label="Create Proposal" isLarge/>}
+          {step === 1 && <PrimaryButton onClick={createProposal} disabled={false} label="Create Proposal" isLarge />}
           {step === 0 && <SecondaryButton onClick={incrementStep} disabled={false} label="Next: Add Transactions" />}
         </div>
       </div>
