@@ -9,9 +9,10 @@ import Faq from "../svg/Faq";
 import CopyToClipboard from "../CopyToClipboard";
 import EtherscanLink from "../EtherscanLink";
 import useDisplayName from "../../../hooks/useDisplayName";
-
+import cx from "classnames";
 interface MenuItem {
   title: string;
+  className?: string;
   Icon: () => JSX.Element;
 }
 
@@ -53,18 +54,24 @@ const DISCONNECT: ActionMenuItem = {
   Icon: Disconnect,
 };
 
-const ItemWrapper = (props: { children: JSX.Element | JSX.Element[]; noHoverEffect?: boolean }) => (
-  <div className={`flex items-center gap-4 text-white p-4 ${!props.noHoverEffect ? "hover:bg-slate-200 hover:text-black" : ""}`}>{props.children}</div>
+const ItemWrapper = (props: { children: JSX.Element | JSX.Element[]; noHoverEffect?: boolean; className?: string }) => (
+  <div
+    className={cx("flex items-center justify-start gap-4 text-white p-4", {
+      "hover:bg-slate-200 hover:text-black": !props.noHoverEffect,
+    }, props.className)}
+  >
+    {props.children}
+  </div>
 );
 
-const ActionItem = ({ title, action, Icon, isVisible }: ActionMenuItem) => {
+const ActionItem = ({ title, className, action, Icon, isVisible }: ActionMenuItem) => {
   if (!isVisible) {
     return null;
   }
   return (
     <Menu.Item>
-      <button onClick={action} className="w-full">
-        <ItemWrapper>
+      <button onClick={action} className={cx("w-full", className)}>
+        <ItemWrapper className={className}>
           <Icon />
           <span>{title}</span>
         </ItemWrapper>
@@ -106,12 +113,12 @@ const MenuItems = () => {
   return (
     <Menu.Items
       static
-      className="fixed left-0 w-full sm:absolute sm:left-auto sm:right-0 sm:w-max mt-6 pb-1 origin-top-right bg-gray-500 border border-gray-200 rounded-md shadow-menu"
+      className="fixed left-0 w-full sm:absolute z-10 sm:left-auto sm:right-0 sm:w-max mt-6 pb-1 origin-top-right bg-gray-500 border border-gray-200 rounded-md shadow-menu"
     >
       <div className="font-mono">
         <section>
           <AddressCopyItem account={account} />
-          <ActionItem {...DISCONNECT} isVisible={!!account} />
+          <ActionItem {...DISCONNECT} isVisible={!!account} className="text-red" />
           <ActionItem {...CONNECT_WALLET} isVisible={!account} />
         </section>
         <section className="border-t border-gray-300">

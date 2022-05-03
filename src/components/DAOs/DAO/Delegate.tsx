@@ -60,7 +60,7 @@ function Delegate() {
                 errorMessage={invalidAddress ? "Invalid Address" : undefined}
                 onChange={(e) => setNewDelegatee(e.target.value)}
               />
-              <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit")} />
+              <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit -mt-2 sm:mt-0")} />
             </div>
           </InputBox>
           <div className="flex mx-2 my-1 text-gray-50">
