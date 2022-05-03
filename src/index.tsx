@@ -14,7 +14,12 @@ ReactDOM.render(
     <HashRouter>
       <Web3Provider>
         <DAODataProvider>
-          <ToastContainer position="bottom-center" />
+          <ToastContainer
+            position="bottom-center"
+            closeButton={false}
+            newestOnTop={false}
+            pauseOnFocusLoss={false}
+          />
           <App />
         </DAODataProvider>
       </Web3Provider>
