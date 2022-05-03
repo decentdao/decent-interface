@@ -54,7 +54,7 @@ const DISCONNECT: ActionMenuItem = {
 };
 
 const ItemWrapper = (props: { children: JSX.Element | JSX.Element[]; noHoverEffect?: boolean }) => (
-  <div className={`flex items-center gap-4 text-white p-4 ${!props.noHoverEffect ? "hover:bg-slate-200 hover:text-black" : ""}`}>{props.children}</div>
+  <div className={`flex items-center justify-start gap-4 text-white p-4 ${!props.noHoverEffect ? "hover:bg-slate-200 hover:text-black" : ""}`}>{props.children}</div>
 );
 
 const ActionItem = ({ title, action, Icon, isVisible }: ActionMenuItem) => {
@@ -106,7 +106,7 @@ const MenuItems = () => {
   return (
     <Menu.Items
       static
-      className="fixed left-0 w-full sm:absolute sm:left-auto sm:right-0 sm:w-max mt-6 pb-1 origin-top-right bg-gray-500 border border-gray-200 rounded-md shadow-menu"
+      className="fixed left-0 w-full sm:absolute z-10 sm:left-auto sm:right-0 sm:w-max mt-6 pb-1 origin-top-right bg-gray-500 border border-gray-200 rounded-md shadow-menu"
     >
       <div className="font-mono">
         <section>
