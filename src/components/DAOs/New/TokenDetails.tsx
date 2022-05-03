@@ -35,6 +35,7 @@ const TokenDetails = ({
 }: TokenDetailsProps) => {
   const [errorMap, setErrorMap] = useState<Map<number, AllocationInput>>(new Map());
   const { provider } = useWeb3();
+  
   const allocationsValid = useCallback(() => {
     if (tokenAllocations === undefined || supply === undefined) return true;
     return tokenAllocations.map((tokenAllocation) => Number(tokenAllocation.amount)).reduce((prev, curr) => prev + curr, 0) <= Number(supply);
@@ -55,7 +56,7 @@ const TokenDetails = ({
         supply !== undefined &&
         Number(supply) !== 0 &&
         !tokenAllocations.some((tokenAllocation) => tokenAllocation.amount === 0) &&
-        !errorMap.size &&
+        !Array.from(errorMap.values()).some(error => error.error) &&
         allocationsValid()
     );
   }, [name, setNextEnabled, supply, symbol, tokenAllocations, allocationsValid, errorMap]);

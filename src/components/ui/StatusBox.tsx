@@ -14,7 +14,7 @@ const StatusBox = ({ status }: StatusBoxProps) => {
     }
   };
   return (
-    <div className={cx("px-4 py-1 rounded-lg font-medium", getStatusColors())}>
+    <div className={cx("px-4 py-1 rounded-lg font-medium h-fit", getStatusColors())}>
       <div>{status}</div>
     </div>
   );

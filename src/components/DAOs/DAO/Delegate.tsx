@@ -3,7 +3,6 @@ import useDelegateVote from "../../../daoData/useDelegateVote";
 import useDisplayName from "../../../hooks/useDisplayName";
 import ContentBox from "../../ui/ContentBox";
 import EtherscanLink from "../../ui/EtherscanLink";
-import ConnectModal from "../../ConnectModal";
 import Pending from "../../Pending";
 import { useWeb3 } from "../../../web3";
 import { useDAOData } from "../../../daoData";
@@ -49,7 +48,6 @@ function Delegate() {
   return (
     <>
       <Pending message="Delegating Vote..." pending={pending} />
-      <ConnectModal />
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
         <ContentBox title="Delegate Vote">
           <InputBox>
@@ -62,7 +60,7 @@ function Delegate() {
                 errorMessage={invalidAddress ? "Invalid Address" : undefined}
                 onChange={(e) => setNewDelegatee(e.target.value)}
               />
-              <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit")} />
+              <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit -mt-2 sm:mt-0")} />
             </div>
           </InputBox>
           <div className="flex mx-2 my-1 text-gray-50">
