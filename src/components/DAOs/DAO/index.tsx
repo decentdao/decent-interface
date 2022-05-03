@@ -25,7 +25,7 @@ function DAO() {
       <Route path="delegate" element={<Delegate />} />
       <Route
         path="proposals/*"
-        element={<Proposals address={params.address} />}
+        element={<Proposals />}
       />
     </Routes>
   );

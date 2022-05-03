@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import New from "./New";
 import ProposalDetails from "./ProposalDetails";
 
-function Proposals({ address }: { address: string }) {
+function Proposals() {
   return (
     <Routes>
       <Route path="new" element={<New />} />
