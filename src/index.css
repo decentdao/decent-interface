@@ -1,6 +1,6 @@
 @tailwind base;
 
-@import 'react-toastify/dist/ReactToastify.css';
+@import "react-toastify/dist/ReactToastify.css";
 
 @tailwind components;
 @tailwind utilities;
@@ -8,39 +8,55 @@
 @layer base {
   /* ibm-plex-sans-500 - latin */
   @font-face {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 500;
-    src: local(''),
-      url('./assets/fonts/ibm-plex-sans-v13-latin-500.woff2') format('woff2'),
-      url('./assets/fonts/ibm-plex-sans-v13-latin-500.woff') format('woff');
+    src: local(""), url("./assets/fonts/ibm-plex-sans-v13-latin-500.woff2") format("woff2"),
+      url("./assets/fonts/ibm-plex-sans-v13-latin-500.woff") format("woff");
   }
   /* ibm-plex-sans-600 - latin */
   @font-face {
-    font-family: 'IBM Plex Sans';
+    font-family: "IBM Plex Sans";
     font-style: normal;
     font-weight: 600;
-    src: local(''),
-      url('./assets/fonts/ibm-plex-sans-v13-latin-600.woff2') format('woff2'),
-      url('./assets/fonts/ibm-plex-sans-v13-latin-600.woff') format('woff');
+    src: local(""), url("./assets/fonts/ibm-plex-sans-v13-latin-600.woff2") format("woff2"),
+      url("./assets/fonts/ibm-plex-sans-v13-latin-600.woff") format("woff");
   }
 
   /* ibm-plex-mono-500 - latin */
   @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: "IBM Plex Mono";
     font-style: normal;
     font-weight: 500;
-    src: local(''),
-      url('./assets/fonts/ibm-plex-mono-v11-latin-500.woff2') format('woff2'),
-      url('./assets/fonts/ibm-plex-mono-v11-latin-500.woff') format('woff');
+    src: local(""), url("./assets/fonts/ibm-plex-mono-v11-latin-500.woff2") format("woff2"),
+      url("./assets/fonts/ibm-plex-mono-v11-latin-500.woff") format("woff");
   }
   /* ibm-plex-mono-600 - latin */
   @font-face {
-    font-family: 'IBM Plex Mono';
+    font-family: "IBM Plex Mono";
     font-style: normal;
     font-weight: 600;
-    src: local(''),
-      url('./assets/fonts/ibm-plex-mono-v11-latin-600.woff2') format('woff2'),
-      url('./assets/fonts/ibm-plex-mono-v11-latin-600.woff') format('woff');
+    src: local(""), url("./assets/fonts/ibm-plex-mono-v11-latin-600.woff2") format("woff2"),
+      url("./assets/fonts/ibm-plex-mono-v11-latin-600.woff") format("woff");
   }
+}
+
+.web3modal-modal-card {
+  @apply bg-gray-600 p-2 !important;
+}
+
+.web3modal-provider-wrapper {
+  @apply bg-gray-500 !important;
+}
+
+.web3modal-provider-container {
+  @apply bg-chocolate-500  border border-gold-500 !important;
+}
+
+.web3modal-provider-name {
+  @apply text-gold-500 !important;
+}
+
+.web3modal-provider-description {
+  @apply text-gray-25 !important;
 }
