@@ -1,16 +1,9 @@
-import { useEffect } from "react";
-
 import EtherscanLink from "../../ui/EtherscanLink";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
 
 function Details({ address }: { address: string }) {
-  const [{ name, accessControlAddress, moduleAddresses }, setDAOAddress] =
-    useDAOData();
-
-  useEffect(() => {
-    setDAOAddress(address);
-  }, [address, setDAOAddress]);
+  const [{ name, accessControlAddress, moduleAddresses }] = useDAOData();
 
   return (
     <div>
