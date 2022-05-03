@@ -11,7 +11,7 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
     <Link to={`proposals/${proposal.number}`}>
       <div>
         <ContentBox isLightBackground>
-          <div className="flex items-center">
+          <div className="flex sm:items-center">
             <StatusBox status={proposal.stateString} />
             <div className="px-4 text-gray-25 text-sm">#{proposal.number}</div>
             <Clock />
