@@ -21,7 +21,7 @@ function DAO() {
   return (
     <Routes>
       <Route index element={<Summary />} />
-      <Route path="details" element={<Details address={params.address} />} />
+      <Route path="details" element={<Details />} />
       <Route path="delegate" element={<Delegate />} />
       <Route
         path="proposals/*"

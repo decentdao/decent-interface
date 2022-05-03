@@ -1,18 +1,12 @@
-import EtherscanLink from "../../ui/EtherscanLink";
 import { useDAOData } from "../../../daoData";
 import H1 from "../../ui/H1";
 
-function Details({ address }: { address: string }) {
+function Details() {
   const [{ name, accessControlAddress, moduleAddresses }] = useDAOData();
 
   return (
     <div>
-      <H1>
-        <EtherscanLink address={address}>
-          <span className="break-all">{address}</span>
-        </EtherscanLink>{" "}
-        Details
-      </H1>
+      <H1>Details</H1>
       <div>
         <div>name: {name}</div>
         <div>access control address: {accessControlAddress}</div>
