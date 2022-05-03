@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import DAODetails from "./DAODetails";
 import TokenDetails from "./TokenDetails";
 import GovernanceDetails from "./GovernanceDetails";
-import ConnectModal from "../../ConnectModal";
 import Pending from "../../Pending";
 import useDeployDAO from "../../../daoData/useDeployDAO";
 import ContentBox from "../../ui/ContentBox";
@@ -11,6 +11,8 @@ import RightArrow from "../../ui/svg/RightArrow";
 import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
 import H1 from "../../ui/H1";
+import { useWeb3 } from "../../../web3";
+import { connect } from "../../../web3/providers";
 
 interface StepDisplayProps {
   step: number;
@@ -72,7 +74,17 @@ const StepDisplay = ({
   return <></>;
 };
 
+const ToastContent = () => {
+  return (
+    <div className="flex flex-col items-center">
+      <div>To deploy a new Fractal</div>
+      <TextButton label="Connect Wallet" onClick={connect} />
+    </div>
+  )
+};
+
 const New = () => {
+  const { account } = useWeb3();
   const [step, setStep] = useState<number>(0);
   const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
   const [nextEnabled, setNextEnabled] = useState<boolean>(false);
@@ -106,10 +118,24 @@ const New = () => {
     setPending,
   });
 
+  useEffect(() => {
+    if (account) {
+      return;
+    }
+
+    const toastId = toast(<ToastContent />, {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      progress: 1,
+    });
+
+    return () => toast.dismiss(toastId);
+  }, [account]);
+
   return (
-    <div>
+    <div className="pb-16">
       <Pending message="Creating Fractal..." pending={pending} />
-      <ConnectModal />
       <div>
         <H1>{!daoName || daoName.trim() === "" || step === 0 ? "Configure New Fractal" : "Configure " + daoName}</H1>
         <ContentBox>

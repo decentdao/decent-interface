@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import useCreateProposal from "../../../../../daoData/useCreateProposal";
-import ConnectModal from "../../../../ConnectModal";
 import Pending from "../../../../Pending";
 import Essentials from "./Essentials";
 import Transactions from "./Transactions";
@@ -150,7 +149,6 @@ const New = () => {
   return (
     <div>
       <Pending message="Creating Proposal..." pending={pending} />
-      <ConnectModal />
       <div>
         <H1>Create Proposal</H1>
         <form onSubmit={(e) => e.preventDefault()}>
