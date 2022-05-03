@@ -12,6 +12,7 @@ import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
 import H1 from "../../ui/H1";
 import { useWeb3 } from "../../../web3";
+import { connect } from "../../../web3/providers";
 
 interface StepDisplayProps {
   step: number;
@@ -73,6 +74,15 @@ const StepDisplay = ({
   return <></>;
 };
 
+const ToastContent = () => {
+  return (
+    <div className="flex flex-col items-center">
+      <div>To deploy a new Fractal</div>
+      <TextButton label="Connect Wallet" onClick={connect} />
+    </div>
+  )
+};
+
 const New = () => {
   const { account } = useWeb3();
   const [step, setStep] = useState<number>(0);
@@ -113,7 +123,7 @@ const New = () => {
       return;
     }
 
-    const toastId = toast("Connect an account to deploy a Fractal", {
+    const toastId = toast(<ToastContent />, {
       autoClose: false,
       closeOnClick: false,
       draggable: false,
