@@ -8,6 +8,7 @@ import Transactions from "./Transactions";
 import H1 from "../../../../ui/H1";
 import { PrimaryButton, SecondaryButton, TextButton } from "../../../../ui/forms/Button";
 import LeftArrow from "../../../../ui/svg/LeftArrow";
+import { useDAOData } from "../../../../../daoData";
 
 export type TransactionData = {
   targetAddress: string;
@@ -23,7 +24,8 @@ export type ProposalData = {
   description: string;
 };
 
-const New = ({ address }: { address: string | undefined }) => {
+const New = () => {
+  const [{ daoAddress }] = useDAOData();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>("");
   const [errorMap, setErrorMap] = useState<Map<number, { address: string; error: string | null }>>(new Map());
@@ -102,7 +104,7 @@ const New = ({ address }: { address: string | undefined }) => {
   }, [transactions, proposalDescription]);
 
   const createProposal = useCreateProposal({
-    daoAddress: address,
+    daoAddress,
     proposalData,
     setPending,
   });
