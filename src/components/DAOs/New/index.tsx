@@ -2,7 +2,6 @@ import { useState } from "react";
 import DAODetails from "./DAODetails";
 import TokenDetails from "./TokenDetails";
 import GovernanceDetails from "./GovernanceDetails";
-import ConnectModal from "../../ConnectModal";
 import Pending from "../../Pending";
 import useDeployDAO from "../../../daoData/useDeployDAO";
 import ContentBox from "../../ui/ContentBox";
@@ -109,7 +108,6 @@ const New = () => {
   return (
     <div>
       <Pending message="Creating Fractal..." pending={pending} />
-      <ConnectModal />
       <div>
         <H1>{!daoName || daoName.trim() === "" || step === 0 ? "Configure New Fractal" : "Configure " + daoName}</H1>
         <ContentBox>
