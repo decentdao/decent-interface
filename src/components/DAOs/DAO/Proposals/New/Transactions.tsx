@@ -3,8 +3,8 @@ import Transaction from "./Transaction";
 
 interface TransactionsProps {
   transactions: TransactionData[];
-  errorMap: Map<number, {address: string, error: string | null}>
-  setError: (key: number, transaction: TransactionData, error: string | null) => void;
+  errorMap: Map<number, { address: string | null; fragment: string | null }>
+  setError: (key: number, errorType: 'address' | 'fragment', error: string | null) => void;
   removeError: (key: number) => void;
   setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
   removeTransaction: (transactionNumber: number) => void;
