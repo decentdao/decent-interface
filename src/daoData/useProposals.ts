@@ -110,19 +110,28 @@ const getBlockTimestamp = (
   });
 };
 
+const getUserVotePower = (governorModule: GovernorModule, account: string, proposalStartBlockNumber: number, currentBlockNumber: number | undefined) => {
+  if(currentBlockNumber === undefined || proposalStartBlockNumber >= currentBlockNumber) {
+    return undefined;
+  }
+
+  return governorModule.getVotes(account, proposalStartBlockNumber);
+}
+
 // Get proposal data that isn't included in the proposal created event
 const getProposalData = (
   provider: providers.BaseProvider | undefined,
   governorModule: GovernorModule,
   proposal: ProposalDataWithoutVotes,
-  account: string
+  account: string,
+  currentBlockNumber: number | undefined,
 ) => {
   return Promise.all([
     governorModule.proposalVotes(proposal.id),
     governorModule.state(proposal.id),
     getBlockTimestamp(provider, proposal.startBlock.toNumber()),
     getBlockTimestamp(provider, proposal.endBlock.toNumber()),
-    governorModule.getVotes(account, proposal.startBlock),
+    getUserVotePower(governorModule, account, proposal.startBlock.toNumber(), currentBlockNumber),
     governorModule.proposalEta(proposal.id),
     proposal,
   ]).then(
@@ -230,10 +239,10 @@ const useUserVotes = (governorModule: GovernorModule | undefined) => {
   return userVotes;
 }
 
-const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) => {
+const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined, currentBlockNumber: number | undefined) => {
   const { account, provider } = useWeb3();
   const [proposalsWithoutVotes, setProposalsWithoutVotes] = useState<ProposalDataWithoutVotes[]>();
-  
+
   // Get initial proposal events
   useEffect(() => {
     if (governorModule === undefined || account === undefined) {
@@ -279,7 +288,7 @@ const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) =>
       .then((newProposals) => {
         return Promise.all(
           newProposals.map((newProposal) =>
-            getProposalData(provider, governorModule, newProposal, account)
+            getProposalData(provider, governorModule, newProposal, account, currentBlockNumber)
           )
         );
       })
@@ -287,7 +296,7 @@ const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) =>
         setProposalsWithoutVotes(newProposals);
       })
       .catch(console.error);
-  }, [account, governorModule, provider]);
+  }, [account, governorModule, provider, currentBlockNumber]);
 
   // Setup proposal events listener
   useEffect(() => {
@@ -334,7 +343,7 @@ const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) =>
         userVotePower: undefined,
       };
 
-      getProposalData(provider, governorModule, newProposal, account)
+      getProposalData(provider, governorModule, newProposal, account, currentBlockNumber)
         .then((newProposal) => {
           setProposalsWithoutVotes(existingProposalsWithoutVotes => {
             if (existingProposalsWithoutVotes === undefined) {
@@ -354,14 +363,14 @@ const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) =>
       governorModule.off(filter, listenerCallback);
     };
 
-  }, [account, governorModule, provider]);
+  }, [account, governorModule, provider, currentBlockNumber]);
 
   return proposalsWithoutVotes;
 }
 
-const useProposals = (governorModule: GovernorModule | undefined) => {
+const useProposals = (governorModule: GovernorModule | undefined, currentBlockNumber: number | undefined) => {
   const userVotes = useUserVotes(governorModule);
-  const proposalsWithoutVotes = useProposalsWithoutVotes(governorModule);
+  const proposalsWithoutVotes = useProposalsWithoutVotes(governorModule, currentBlockNumber);
   const [proposals, setProposals] = useState<ProposalData[]>();
 
   // Combine proposalsWithoutVotes and userVotes into proposals
