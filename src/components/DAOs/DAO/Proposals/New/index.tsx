@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import useCreateProposal from "../../../../../daoData/useCreateProposal";
 import ConnectModal from "../../../../ConnectModal";
@@ -28,6 +28,7 @@ const New = () => {
   const [{ daoAddress }] = useDAOData();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>("");
+  const [errorMap, setErrorMap] = useState<Map<number, { address: string | null; fragment: string | null }>>(new Map());
   const [transactions, setTransactions] = useState<TransactionData[]>([
     {
       targetAddress: "",
@@ -52,6 +53,7 @@ const New = () => {
   };
 
   const removeTransaction = (transactionNumber: number) => {
+    removeError(transactionNumber);
     setTransactions([...transactions.slice(0, transactionNumber), ...transactions.slice(transactionNumber + 1)]);
   };
 
@@ -63,17 +65,56 @@ const New = () => {
     setStep((currentStep) => currentStep + 1);
   };
 
+  /**
+   * adds new error to mapping
+   * @param key
+   * @param error
+   */
+  const setError = useCallback(
+    (key: number, errorType: "address" | "fragment", error: string | null) => {
+      const errors = new Map(errorMap);
+      const currentTransactionErrors = errors.get(key);
+      const prevAddress = currentTransactionErrors?.address || null;
+      const prevFragment = currentTransactionErrors?.fragment || null;
+
+      const currentErrors = {
+        address: errorType === "address" ? error : prevAddress,
+        fragment: errorType === "fragment" ? error : prevFragment,
+      };
+      errors.set(key, currentErrors);
+      setErrorMap(errors);
+    },
+    [errorMap]
+  );
+
+  /**
+   * removes error to mapping
+   * @param key
+   * @param error
+   */
+  const removeError = (key: number) => {
+    const errors = new Map(errorMap);
+    errors.delete(key);
+    setErrorMap(errors);
+  };
+
   useEffect(() => {
     try {
-      setProposalData({
+      const proposal = {
         targets: transactions.map((transaction) => transaction.targetAddress),
         values: transactions.map(() => BigNumber.from("0")),
-        calldatas: transactions.map((transaction) =>
-          new ethers.utils.Interface([transaction.functionSignature]).encodeFunctionData(transaction.functionName, JSON.parse(transaction.parameters))
-        ),
+        calldatas: transactions.map((transaction) => {
+          const _functionSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
+          const _parameters = `[${transaction.parameters}]`;
+          return new ethers.utils.Interface([_functionSignature]).encodeFunctionData(transaction.functionName, JSON.parse(_parameters));
+        }),
         description: proposalDescription,
-      });
-    } catch {}
+      };
+      setProposalData(proposal);
+    } catch {
+      // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData` these errors are handled in the onChange of the inputs
+      // these errors are handled in the onChange of the inputs in transactions
+    }
   }, [transactions, proposalDescription]);
 
   const createProposal = useCreateProposal({
@@ -81,6 +122,30 @@ const New = () => {
     proposalData,
     setPending,
   });
+
+  const isValidProposalValid = useCallback(() => {
+    // if proposalData doesn't exist
+    if (!proposalData) {
+      return false;
+    }
+    // if error in transactions
+    let hasError: boolean = false;
+    Array.from(errorMap.values()).forEach((error: { address: string | null; fragment: string | null }) => {
+      if (error.address || error.fragment) {
+        hasError = true;
+      }
+    });
+    if (hasError) {
+      return false;
+    }
+    // proposal data has length of 1 for each data set
+    let hasProposalData: boolean = !!proposalData.calldatas.length && !!proposalData.targets.length;
+    if (!hasProposalData) {
+      return false;
+    }
+    // validations pass
+    return true;
+  }, [proposalData, errorMap]);
 
   return (
     <div>
@@ -90,7 +155,16 @@ const New = () => {
         <H1>Create Proposal</H1>
         <form onSubmit={(e) => e.preventDefault()}>
           {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
-          {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} />}
+          {step === 1 && (
+            <Transactions
+              transactions={transactions}
+              setTransactions={setTransactions}
+              errorMap={errorMap}
+              removeTransaction={removeTransaction}
+              setError={setError}
+              removeError={removeError}
+            />
+          )}
         </form>
         {step === 1 && (
           <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
@@ -98,9 +172,9 @@ const New = () => {
           </div>
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
-          {step === 1 && <TextButton onClick={decrementStep} disabled={false} icon={<LeftArrow />} label="Prev" />}
-          {step === 1 && <PrimaryButton onClick={createProposal} disabled={false} label="Create Proposal" isLarge/>}
-          {step === 0 && <SecondaryButton onClick={incrementStep} disabled={false} label="Next: Add Transactions" />}
+          {step === 1 && <TextButton type="button" onClick={decrementStep} disabled={false} icon={<LeftArrow />} label="Prev" />}
+          {step === 1 && <PrimaryButton type="button" onClick={createProposal} disabled={!isValidProposalValid()} label="Create Proposal" isLarge />}
+          {step === 0 && <SecondaryButton type="button" onClick={incrementStep} disabled={!proposalDescription.trim().length} label="Next: Add Transactions" />}
         </div>
       </div>
     </div>
