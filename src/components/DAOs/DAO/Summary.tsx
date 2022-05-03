@@ -1,20 +1,9 @@
-import { useState, useEffect } from "react";
-import { Link, useParams, useLocation } from "react-router-dom";
-import useAddress from "../../../hooks/useAddress";
-import useIsDAO from "../../../hooks/useIsDAO";
-import SearchingDAO from "../Search/SearchingDAO";
-import { useDAOData } from "../../../daoData";
+import { Link } from "react-router-dom";
 import ProposalsList from "./Proposals/ProposalsList";
 import H1 from "../../ui/H1";
 import { SecondaryButton, TextButton } from '../../ui/forms/Button';
 
-function ValidDAO({ address }: { address: string }) {
-  const [, setDAOAddress] = useDAOData();
-
-  useEffect(() => {
-    setDAOAddress(address);
-  }, [address, setDAOAddress]);
-
+function Summary() {
   return (
     <>
       <div className="flex flex-col sm:flex-row sm:justify-between">
@@ -31,59 +20,6 @@ function ValidDAO({ address }: { address: string }) {
       <ProposalsList />
     </>
   );
-}
-
-function FoundValidDAO({ address }: { address: string | undefined }) {
-  if (address !== undefined) {
-    return <ValidDAO address={address} />;
-  }
-
-  return <></>;
-}
-
-function Search() {
-  const params = useParams();
-  const [address, validAddress, addressLoading] = useAddress(params.address);
-  const [addressIsDAO, isDAOLoading] = useIsDAO(address);
-
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(addressLoading || isDAOLoading);
-  }, [addressLoading, isDAOLoading]);
-
-  return (
-    <SearchingDAO
-      searchAddress={params.address}
-      loading={loading}
-      validAddress={validAddress}
-      address={address}
-      addressIsDAO={addressIsDAO}
-      validDAOComponent={<FoundValidDAO address={address} />}
-    />
-  );
-}
-
-function Summary() {
-  const location = useLocation();
-
-  const [validatedAddress, setValidatedAddress] = useState(
-    (location.state as { validatedAddress: string } | null)?.validatedAddress
-  );
-  useEffect(() => {
-    if (!location || !location.state) {
-      setValidatedAddress(undefined);
-      return;
-    }
-
-    const locationState = location.state as { validatedAddress: string };
-    setValidatedAddress(locationState.validatedAddress);
-  }, [location]);
-
-  if (validatedAddress) {
-    return <ValidDAO address={validatedAddress} />;
-  }
-
-  return <Search />;
 }
 
 export default Summary;

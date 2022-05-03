@@ -10,11 +10,6 @@ import CastVote from "./CastVote";
 
 function ProposalDetails() {
   const params = useParams();
-  const [, setDAOAddress] = useDAOData();
-
-  useEffect(() => {
-    setDAOAddress(params.address);
-  }, [params.address, setDAOAddress]);
 
   const [{ proposals }] = useDAOData();
   const [proposal, setProposal] = useState<ProposalData>();
@@ -33,10 +28,6 @@ function ProposalDetails() {
     }
     setProposal(foundProposal);
   }, [proposals, params.proposalNumber]);
-
-  if (!params.proposalNumber) {
-    return <div>if you see this, it's a bug</div>;
-  }
 
   if (proposal === undefined) {
     return <div className="text-white">Proposals loading...</div>;

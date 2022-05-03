@@ -14,6 +14,7 @@ import useCurrentBlockNumber from '../hooks/useCurrentBlockNumber';
 import useCurrentTimestamp from '../hooks/useCurrentTimestamp';
 import { GovernorModule, VotesTokenWithSupply } from '../typechain-types';
 export interface DAOData {
+  daoAddress: string | undefined,
   name: string | undefined,
   accessControlAddress: string | undefined,
   moduleAddresses: string[] | undefined,
@@ -46,6 +47,7 @@ export const useDAODatas = () => {
   const currentTimestamp = useCurrentTimestamp(currentBlockNumber);
 
   const daoData: DAOData = {
+    daoAddress,
     name,
     accessControlAddress,
     moduleAddresses,
