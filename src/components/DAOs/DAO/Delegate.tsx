@@ -59,13 +59,15 @@ function Delegate() {
           <div className="flex mx-2 my-1 text-gray-50">
             Balance:{" "}
             <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={!userBalance && !symbol}>{`${userBalance} ${symbol}`}</DataLoadingWrapper>
+              <DataLoadingWrapper isLoading={!userBalance || !symbol}>{`${userBalance} ${symbol}`}</DataLoadingWrapper>
             </span>
           </div>
           <div className="flex mx-2 my-1 text-gray-50">
-            Current Delegatee: &nbsp;
+            Current Delegatee:{" "}
             <EtherscanLink address={delegatee}>
-              <p className="text-gold-500">{delegateeDisplayName}</p>
+              <span className="text-gold-500 ml-2">
+                <DataLoadingWrapper isLoading={!delegateeDisplayName}>{delegateeDisplayName}</DataLoadingWrapper>
+              </span>
             </EtherscanLink>
           </div>
           <SecondaryButton disabled={!validAddress || newDelegatee.trim() === ""} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
