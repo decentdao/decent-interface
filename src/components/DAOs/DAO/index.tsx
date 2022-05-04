@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, useParams, useLocation } from "react-router-dom";
+import { Routes, Route, useParams, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import Summary from "./Summary";
 import Details from "./Details";
@@ -10,13 +11,9 @@ import { useDAOData } from "../../../daoData";
 import useAddress from "../../../hooks/useAddress";
 import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../Search/SearchingDAO";
+import { useWeb3 } from "../../../web3";
 
 function DAORoutes() {
-  const [, setAddress] = useDAOData();
-
-  // when this component unloads, setAddress back to undefined to clear app state
-  useEffect(() => () => setAddress(undefined), [setAddress]);
-
   return (
     <Routes>
       <Route index element={<Summary />} />
@@ -74,6 +71,9 @@ function Search() {
 
 function DAO() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [{ account, accountLoading }] = useWeb3();
+  const [, setAddress] = useDAOData();
 
   const [validatedAddress, setValidatedAddress] = useState(
     (location.state as { validatedAddress: string } | null)?.validatedAddress
@@ -87,6 +87,18 @@ function DAO() {
     const locationState = location.state as { validatedAddress: string };
     setValidatedAddress(locationState.validatedAddress);
   }, [location]);
+
+  useEffect(() => {
+    if (account || accountLoading) {
+      return;
+    }
+
+    navigate("/");
+    toast("Connect a wallet to load a DAO");
+  }, [account, accountLoading, navigate]);
+
+  // when this component unloads, setAddress back to undefined to clear app state
+  useEffect(() => () => setAddress(undefined), [setAddress]);
 
   if (validatedAddress) {
     return <ValidDAO address={validatedAddress} />;

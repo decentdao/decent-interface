@@ -1,20 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { DAO } from '../typechain-types';
+import useSafeRace from './useSafeRace';
 
 const useAccessControlAddress = (dao: DAO | undefined) => {
   const [accessControlAddress, setAccessControlAddress] = useState<string>();
 
-  useEffect(() => {
-    if (!dao) {
-      setAccessControlAddress(undefined);
-      return;
-    }
-
-    dao.accessControl()
-      .then(setAccessControlAddress)
-      .catch(console.error);
-  }, [dao]);
+  useSafeRace(
+    !dao,
+    () => setAccessControlAddress(undefined),
+    () => dao!.accessControl(),
+    (address) => setAccessControlAddress(address),
+  );
 
   return accessControlAddress;
 }
