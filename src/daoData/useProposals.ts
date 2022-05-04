@@ -136,11 +136,11 @@ const getUserVotePower = (
 const getVotePercentages = (
   againstVotesCount: BigNumber | undefined,
   forVotesCount: BigNumber | undefined,
-  abstainVotesCount: BigNumber | undefined,
+  abstainVotesCount: BigNumber | undefined
 ) => {
-  if(againstVotesCount === undefined) againstVotesCount = BigNumber.from("0");
-  if(forVotesCount === undefined) forVotesCount = BigNumber.from("0");
-  if(abstainVotesCount === undefined) abstainVotesCount = BigNumber.from("0");
+  if (againstVotesCount === undefined) againstVotesCount = BigNumber.from("0");
+  if (forVotesCount === undefined) forVotesCount = BigNumber.from("0");
+  if (abstainVotesCount === undefined) abstainVotesCount = BigNumber.from("0");
 
   const totalVotes = againstVotesCount
     .add(forVotesCount)
@@ -154,11 +154,14 @@ const getVotePercentages = (
     };
   }
   return {
-    againstVotesPercent: againstVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
-    forVotesPercent: forVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
-    abstainVotesPercent: abstainVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
+    againstVotesPercent:
+      againstVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
+    forVotesPercent:
+      forVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
+    abstainVotesPercent:
+      abstainVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
   };
-}
+};
 
 // Get proposal data that isn't included in the proposal created event
 const getProposalData = (
@@ -174,21 +177,15 @@ const getProposalData = (
     governorModule.proposalEta(proposal.id),
     proposal,
   ]).then(([votes, state, startTime, endTime, eta, proposal]) => {
-    const totalVotes = votes.forVotes
-      .add(votes.againstVotes)
-      .add(votes.abstainVotes);
-    if (totalVotes.gt(0)) {
-      proposal.forVotesPercent =
-        votes.forVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-      proposal.againstVotesPercent =
-        votes.againstVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-      proposal.abstainVotesPercent =
-        votes.abstainVotes.mul(1000000).div(totalVotes).toNumber() / 10000;
-    } else {
-      proposal.forVotesPercent = 0;
-      proposal.againstVotesPercent = 0;
-      proposal.abstainVotesPercent = 0;
-    }
+    const votePercentages = getVotePercentages(
+      votes.againstVotes,
+      votes.forVotes,
+      votes.abstainVotes
+    );
+
+    proposal.againstVotesPercent = votePercentages.againstVotesPercent;
+    proposal.forVotesPercent = votePercentages.forVotesPercent;
+    proposal.abstainVotesPercent = votePercentages.abstainVotesPercent;
 
     proposal.idSubstring = `${proposal.id
       .toString()
@@ -560,7 +557,6 @@ const useProposalsWithoutUserData = (
         const newProposal = newProposals[updatedProposalIndex];
 
         if (support === 0) {
-
           if (newProposal.againstVotesCount === undefined) {
             newProposal.againstVotesCount = weight;
           } else {
@@ -571,8 +567,7 @@ const useProposalsWithoutUserData = (
           if (newProposal.forVotesCount === undefined) {
             newProposal.forVotesCount = weight;
           } else {
-            newProposal.forVotesCount =
-              newProposal.forVotesCount.add(weight);
+            newProposal.forVotesCount = newProposal.forVotesCount.add(weight);
           }
         } else {
           if (newProposal.abstainVotesCount === undefined) {
@@ -583,7 +578,11 @@ const useProposalsWithoutUserData = (
           }
         }
 
-        const votePercentages = getVotePercentages(newProposal.againstVotesCount, newProposal.forVotesCount, newProposal.abstainVotesCount);
+        const votePercentages = getVotePercentages(
+          newProposal.againstVotesCount,
+          newProposal.forVotesCount,
+          newProposal.abstainVotesCount
+        );
 
         newProposal.againstVotesPercent = votePercentages.againstVotesPercent;
         newProposal.forVotesPercent = votePercentages.forVotesPercent;
