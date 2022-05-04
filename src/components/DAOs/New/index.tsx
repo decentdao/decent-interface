@@ -12,7 +12,6 @@ import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
 import H1 from "../../ui/H1";
 import { useWeb3 } from "../../../web3";
-import { connect } from "../../../web3/providers";
 
 interface StepDisplayProps {
   step: number;
@@ -75,6 +74,8 @@ const StepDisplay = ({
 };
 
 const ToastContent = () => {
+  const [, connect] = useWeb3();
+
   return (
     <div className="flex flex-col items-center">
       <div>To deploy a new Fractal</div>
@@ -84,7 +85,7 @@ const ToastContent = () => {
 };
 
 const New = () => {
-  const { account } = useWeb3();
+  const [{ account }] = useWeb3();
   const [step, setStep] = useState<number>(0);
   const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
   const [nextEnabled, setNextEnabled] = useState<boolean>(false);

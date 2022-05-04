@@ -1,8 +1,8 @@
 import React, { createContext, useContext } from 'react';
 
-import { Web3Custom, useProvider, defaultWeb3 } from './providers';
+import useProvider, { Web3Custom, defaultWeb3 } from './providers';
 
-const createWeb3Root = (context: React.Context<Web3Custom>) => {
+const createWeb3Root = (context: React.Context<readonly [Web3Custom, () => void, () => void]>) => {
   const Web3Root = ({ children }: { children: React.ReactNode }) => {
     const web3Provider = useProvider();
 
@@ -16,7 +16,7 @@ const createWeb3Root = (context: React.Context<Web3Custom>) => {
   return Web3Root;
 };
 
-const web3Context = createContext(defaultWeb3);
+const web3Context = createContext([defaultWeb3, () => {}, () => {}] as const);
 
 const Web3Provider = createWeb3Root(web3Context);
 

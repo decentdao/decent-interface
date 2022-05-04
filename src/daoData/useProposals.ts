@@ -161,7 +161,7 @@ const getProposalData = (
 };
 
 const useUserVotes = (governorModule: GovernorModule | undefined) => {
-  const { account } = useWeb3();
+  const [{ account }] = useWeb3();
   const [userVotes, setUserVotes] = useState<UserVote[]>();
 
   // Get all of the current users votes
@@ -231,7 +231,7 @@ const useUserVotes = (governorModule: GovernorModule | undefined) => {
 }
 
 const useProposalsWithoutVotes = (governorModule: GovernorModule | undefined) => {
-  const { account, provider } = useWeb3();
+  const [{ account, provider }] = useWeb3();
   const [proposalsWithoutVotes, setProposalsWithoutVotes] = useState<ProposalDataWithoutVotes[]>();
   
   // Get initial proposal events

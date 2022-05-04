@@ -16,7 +16,7 @@ function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
   const [invalidAddress, setInvalidAddress] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
-  const { account } = useWeb3();
+  const [{ account }] = useWeb3();
   const [
     {
       tokenData: { symbol, userBalance, delegatee },

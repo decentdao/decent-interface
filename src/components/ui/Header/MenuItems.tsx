@@ -1,5 +1,4 @@
 import { Menu } from "@headlessui/react";
-import { disconnect, connect } from "../../../web3/providers";
 import { useWeb3 } from "../../../web3";
 import Contact from "../svg/Contact";
 import Support from "../svg/Support";
@@ -10,6 +9,7 @@ import CopyToClipboard from "../CopyToClipboard";
 import EtherscanLink from "../EtherscanLink";
 import useDisplayName from "../../../hooks/useDisplayName";
 import cx from "classnames";
+
 interface MenuItem {
   title: string;
   className?: string;
@@ -42,17 +42,17 @@ const FAQ: LinkMenuItem = {
   Icon: Faq,
 };
 
-const CONNECT_WALLET: ActionMenuItem = {
+const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
   title: "Connect Wallet",
   action: connect,
   Icon: Connect,
-};
+});
 
-const DISCONNECT: ActionMenuItem = {
+const DISCONNECT = (disconnect: () => void): ActionMenuItem => ({
   title: "Disconnect",
   action: disconnect,
   Icon: Disconnect,
-};
+});
 
 const ItemWrapper = (props: { children: JSX.Element | JSX.Element[]; noHoverEffect?: boolean; className?: string }) => (
   <div
@@ -109,7 +109,7 @@ const AddressCopyItem = ({ account }: { account?: string }) => {
 };
 
 const MenuItems = () => {
-  const { account } = useWeb3();
+  const [{ account }, connect, disconnect] = useWeb3();
   return (
     <Menu.Items
       static
@@ -118,8 +118,8 @@ const MenuItems = () => {
       <div className="font-mono">
         <section>
           <AddressCopyItem account={account} />
-          <ActionItem {...DISCONNECT} isVisible={!!account} className="text-red" />
-          <ActionItem {...CONNECT_WALLET} isVisible={!account} />
+          <ActionItem {...DISCONNECT(disconnect)} isVisible={!!account} className="text-red" />
+          <ActionItem {...CONNECT_WALLET(connect)} isVisible={!account} />
         </section>
         <section className="border-t border-gray-300">
           <LinkItem {...CONTACT} />

@@ -4,7 +4,7 @@ import { useWeb3 } from '../web3';
 
 const useAccessControlContract = (accessControlAddress: string | undefined) => {
   const [accessControlContract, setAccessControlContract] = useState<AccessControl>();
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
 
   useEffect(() => {
     if(!accessControlAddress || !signerOrProvider) {

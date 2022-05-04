@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ethers, getDefaultProvider } from "ethers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
@@ -173,16 +173,16 @@ const useProvider = () => {
     setWeb3Provider(getFallbackProvider());
   }, [web3Provider.connected, web3Provider.provider]);
 
-  return web3Provider;
+  const connect = useCallback(() => {
+    web3Modal.connect().catch(console.error);
+  }, []);
+  
+  const disconnect = useCallback(() => {
+    web3Modal.clearCachedProvider();
+    window.location.reload();
+  }, []);
+
+  return [web3Provider, connect, disconnect] as const;
 };
 
-const connect = () => {
-  web3Modal.connect().catch(console.error);
-};
-
-const disconnect = () => {
-  web3Modal.clearCachedProvider();
-  window.location.reload();
-};
-
-export { useProvider, connect, disconnect };
+export default useProvider;
