@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { BigNumber } from 'ethers';
 
 import useDAOContract from './useDAOContract';
 import useDAOName from './useDAOName';
@@ -25,8 +26,9 @@ export interface DAOData {
     name: string | undefined,
     symbol: string | undefined,
     decimals: number | undefined
-    userBalance: number | undefined,
+    userBalance: BigNumber | undefined,
     delegatee: string | undefined,
+    votingWeight: BigNumber | undefined,
   },
   currentBlockNumber: number | undefined,
   currentTimestamp: number,

@@ -1,46 +1,32 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback } from 'react'
 import { useTransaction } from '../web3/transactions';
-import { useWeb3 } from '../web3';
 import { useDAOData } from './index';
 
 const useDelegateVote = ({
   delegatee,
-  setPending,
+  successCallback,
 }: {
   delegatee: string | undefined,
-  setPending: React.Dispatch<React.SetStateAction<boolean>>
-}
-) => {
-  const [{ signerOrProvider }] = useWeb3();
-  const [ daoData, ] = useDAOData();
+  successCallback: () => void,
+}) => {
+  const [{ tokenContract }] = useDAOData();
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
-  const token = daoData.tokenContract;
-
-  useEffect(() => {
-    setPending(contractCallPending);
-  }, [setPending, contractCallPending]);
 
   let delegateVote = useCallback(() => {
-    if (
-      signerOrProvider === undefined ||
-      setPending === undefined ||
-      token === undefined ||
-      delegatee === undefined
-    ) {
+    if (tokenContract === undefined || delegatee === undefined) {
       return;
     }
 
     contractCallDelegateVote({
-      contractFn: () => token.delegate(delegatee),
+      contractFn: () => tokenContract.delegate(delegatee),
       pendingMessage: "Delegating Vote",
       failedMessage: "Vote Delegation Failed",
       successMessage: "Vote Delegated",
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
-      },
+      successCallback: () => successCallback(),
     });
-  }, [contractCallDelegateVote, token, setPending, signerOrProvider, delegatee])
-  return delegateVote;
+  }, [contractCallDelegateVote, tokenContract, delegatee, successCallback]);
+
+  return [delegateVote, contractCallPending] as const;
 }
 
 export default useDelegateVote;

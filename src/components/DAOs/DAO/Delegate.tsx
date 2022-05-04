@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { utils } from "ethers";
 import useDelegateVote from "../../../daoData/useDelegateVote";
 import useDisplayName from "../../../hooks/useDisplayName";
 import ContentBox from "../../ui/ContentBox";
 import EtherscanLink from "../../ui/EtherscanLink";
-import Pending from "../../Pending";
 import { useWeb3 } from "../../../web3";
 import { useDAOData } from "../../../daoData";
 import Input from "../../ui/forms/Input";
@@ -15,14 +15,11 @@ import DataLoadingWrapper from "../../ui/loaders/DataLoadingWrapper";
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
-  const [pending, setPending] = useState<boolean>(false);
   const [{ account }] = useWeb3();
   const [, validAddress] = useAddress(newDelegatee);
-  const [
-    {
-      tokenData: { symbol, userBalance, delegatee },
-    },
-  ] = useDAOData();
+  const [{
+    tokenData: { decimals, symbol, userBalance, delegatee, votingWeight }
+  }] = useDAOData();
   const delegateeDisplayName = useDisplayName(delegatee);
 
   const delegateSelf = () => {
@@ -33,14 +30,33 @@ function Delegate() {
     setNewDelegatee(account);
   };
 
-  const delegateVote = useDelegateVote({
+  const [delegateVote, pending] = useDelegateVote({
     delegatee: newDelegatee,
-    setPending,
+    successCallback: () => setNewDelegatee(""),
   });
+
+  const [readableBalance, setReadableBalance] = useState<string>();
+  useEffect(() => {
+    if (userBalance === undefined || decimals === undefined || symbol === undefined) {
+      setReadableBalance(undefined);
+      return;
+    }
+
+    setReadableBalance(`${utils.formatUnits(userBalance, decimals)} ${symbol}`);
+  }, [decimals, userBalance, symbol]);
+
+  const [readableVotingWeight, setReadableVotingWeight] = useState<string>();
+  useEffect(() => {
+    if (votingWeight === undefined || decimals === undefined || symbol === undefined) {
+      setReadableVotingWeight(undefined);
+      return;
+    }
+
+    setReadableVotingWeight(`${utils.formatUnits(votingWeight, decimals)} ${symbol}`);
+  }, [decimals, votingWeight, symbol]);
 
   return (
     <>
-      <Pending message="Delegating Vote..." pending={pending} />
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
         <ContentBox title="Delegate Vote">
           <InputBox>
@@ -59,7 +75,7 @@ function Delegate() {
           <div className="flex mx-2 my-1 text-gray-50">
             Balance:{" "}
             <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={!userBalance || !symbol}>{`${userBalance} ${symbol}`}</DataLoadingWrapper>
+              <DataLoadingWrapper isLoading={readableBalance === undefined}>{readableBalance}</DataLoadingWrapper>
             </span>
           </div>
           <div className="flex mx-2 my-1 text-gray-50">
@@ -70,7 +86,13 @@ function Delegate() {
               </DataLoadingWrapper>
             </EtherscanLink>
           </div>
-          <SecondaryButton disabled={!validAddress || newDelegatee.trim() === ""} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
+          <div className="flex mx-2 my-1 text-gray-50">
+            Current Voting Weight:{" "}
+            <span className="text-gray-25 ml-2">
+              <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>{readableVotingWeight}</DataLoadingWrapper>
+            </span>
+          </div>
+          <SecondaryButton disabled={!validAddress || newDelegatee.trim() === "" || pending} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
         </ContentBox>
       </div>
     </>

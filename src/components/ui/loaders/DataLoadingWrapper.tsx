@@ -1,8 +1,6 @@
-import { ReactElement } from "react";
-
 interface DataLoadingWrapperProps {
   isLoading: boolean;
-  children: ReactElement<any, any> | string;
+  children: React.ReactNode;
 }
 /**
  *

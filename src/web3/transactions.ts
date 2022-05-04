@@ -28,6 +28,7 @@ const useTransaction = () => {
       closeOnClick: false,
       draggable: false,
       closeButton: false,
+      progress: 1,
     });
     setPending(true);
 
