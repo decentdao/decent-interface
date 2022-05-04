@@ -35,7 +35,7 @@ const useDeployDAO = ({
   executionDelay: number | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { signerOrProvider, chainId } = useWeb3();
+  const [{ signerOrProvider, chainId }] = useWeb3();
   const addresses = useAddresses(chainId);
 
   const [contractCallDeploy, contractCallPending] = useTransaction();

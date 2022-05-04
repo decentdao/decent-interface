@@ -11,7 +11,7 @@ const useDelegateVote = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>
 }
 ) => {
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
   const [ daoData, ] = useDAOData();
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
   const token = daoData.tokenContract;

@@ -34,7 +34,7 @@ const TokenDetails = ({
   setNextEnabled,
 }: TokenDetailsProps) => {
   const [errorMap, setErrorMap] = useState<Map<number, AllocationInput>>(new Map());
-  const { provider } = useWeb3();
+  const [{ provider }] = useWeb3();
   
   const allocationsValid = useCallback(() => {
     if (tokenAllocations === undefined || supply === undefined) return true;

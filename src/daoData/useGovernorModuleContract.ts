@@ -4,7 +4,7 @@ import { useWeb3 } from "../web3";
 
 const useGovernorModuleContract = (moduleAddresses: string[] | undefined) => {
   const [governorModule, setGovernorModule] = useState<GovernorModule>();
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
 
   useEffect(() => {
     if (

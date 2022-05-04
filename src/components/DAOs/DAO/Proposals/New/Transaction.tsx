@@ -19,7 +19,7 @@ interface TransactionProps {
 }
 
 const Transaction = ({ transaction, transactionNumber, errorMap, setError, updateTransaction, removeTransaction, transactionCount }: TransactionProps) => {
-  const { provider } = useWeb3();
+  const [{ provider }] = useWeb3();
   let error: string | null = null;
 
   const validateFunctionData = (functionName: string, functionSignature: string, parameters: string): string | null => {

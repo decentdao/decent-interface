@@ -23,7 +23,7 @@ const useCreateProposal = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>
 }
 ) => {
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
   const navigate = useNavigate();
   const [ daoData, ] = useDAOData();
 

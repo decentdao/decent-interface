@@ -10,7 +10,7 @@ import ConnectWalletToast from "../shared/ConnectWalletToast";
 import { useWeb3 } from "../../../web3";
 
 function DAOSearch() {
-  const { account } = useWeb3();
+  const [{ account }] = useWeb3();
   const [searchAddressInput, setSearchAddressInput] = useState("");
   const { errorMessage, loading, resetErrorState, updateSearchString } = useSearchDao();
 

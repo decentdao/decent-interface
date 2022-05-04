@@ -6,7 +6,7 @@ function EtherscanLink({ address, children }: {
   address: string | undefined,
   children: React.ReactNode,
 }) {
-  let { networkName } = useWeb3();
+  let [{ networkName }] = useWeb3();
   const [subdomain, setSubdomain] = useState("");
 
   useEffect(() => {
