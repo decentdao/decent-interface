@@ -42,9 +42,9 @@ export const useDAODatas = () => {
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
-  const proposals = useProposals(governorModuleContract);
   const currentBlockNumber = useCurrentBlockNumber();
   const currentTimestamp = useCurrentTimestamp(currentBlockNumber);
+  const proposals = useProposals(governorModuleContract, currentBlockNumber);
 
   const daoData: DAOData = {
     daoAddress,
