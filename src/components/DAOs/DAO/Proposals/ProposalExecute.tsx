@@ -14,7 +14,8 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
       return;
     }
 
-    setShow(proposal.eta !== 0 && proposal.eta < currentTimestamp);
+    // Show component if the proposal is Queued, and the execution ETA has elapsed
+    setShow(proposal.state === 5 && proposal.eta !== 0 && proposal.eta < currentTimestamp);
   }, [currentTimestamp, proposal]);
 
   const executeTransaction = useExecuteTransaction({
