@@ -4,14 +4,16 @@ import StatusInfo from "../../../ui/StatusInfo";
 
 function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
   return (
-    <ContentBox>
-      <StatusInfo
-        proposal={proposal}
-        includeHR
-        includeProposalId
-        includeClipboard
-      />
-    </ContentBox>
+    <div className = "m-2">
+      <ContentBox>
+        <StatusInfo
+          proposal={proposal}
+          includeHR
+          includeProposalId
+          includeClipboard
+        />
+      </ContentBox>
+    </div>
   );
 }
 
