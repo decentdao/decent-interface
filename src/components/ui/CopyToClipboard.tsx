@@ -1,8 +1,9 @@
 import Clipboard from "./svg/Clipboard";
 import { toast } from 'react-toastify';
 
-function CopyToClipboard({ textToCopy }: { textToCopy: string }) {
+function CopyToClipboard({ textToCopy }: { textToCopy: string | undefined }) {
   const copyTextToClipboard = () => {
+    if(!textToCopy) return;
     toast("Copied to clipboard", {
       onOpen: () => navigator.clipboard.writeText(textToCopy),
       autoClose: 1000
