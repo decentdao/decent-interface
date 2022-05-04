@@ -6,11 +6,12 @@ import { useDAOData } from './index';
 const useDelegateVote = ({
   delegatee,
   setPending,
+  successCallback,
 }: {
   delegatee: string | undefined,
   setPending: React.Dispatch<React.SetStateAction<boolean>>
-}
-) => {
+  successCallback: () => void,
+}) => {
   const [{ signerOrProvider }] = useWeb3();
   const [ daoData, ] = useDAOData();
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
@@ -38,8 +39,9 @@ const useDelegateVote = ({
       rpcErrorCallback: (error: any) => {
         console.error(error)
       },
+      successCallback: () => successCallback(),
     });
-  }, [contractCallDelegateVote, token, setPending, signerOrProvider, delegatee])
+  }, [contractCallDelegateVote, token, setPending, signerOrProvider, delegatee, successCallback])
   return delegateVote;
 }
 

@@ -35,6 +35,7 @@ function Delegate() {
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
     setPending,
+    successCallback: () => setNewDelegatee(""),
   });
 
   const [readableVotingWeight, setReadableVotingWeight] = useState<string>();
