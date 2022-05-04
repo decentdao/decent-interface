@@ -1,5 +1,6 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import ContentBox from "../../../ui/ContentBox";
+import DataLoadingWrapper from "../../../ui/loaders/DataLoadingWrapper";
 import ProposalCreatedBy from "../../../ui/ProposalCreatedBy";
 import ProposalDescription from "../../../ui/ProposalDescription";
 import ProposalId from "../../../ui/ProposalId";
@@ -8,7 +9,6 @@ import ProposalTime from "../../../ui/ProposalTime";
 import StatusBox from "../../../ui/StatusBox";
 
 function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
-  if (!proposal || !proposal.startTimeString || !proposal.endTimeString || !proposal.idSubstring) return (<div></div>)
   return (
     <div className="mx-2">
       <ContentBox >
@@ -17,24 +17,29 @@ function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
           <ProposalNumber
             proposalNumber={proposal.number}
           />
+          <DataLoadingWrapper isLoading={!proposal.startTimeString || !proposal.endTimeString}>
           <ProposalTime
             proposalStartString={proposal.startTimeString}
             proposalEndString={proposal.endTimeString}
           />
+          </DataLoadingWrapper>
         </div>
         <ProposalDescription proposalDesc={proposal.description} />
-        <div className="pt-4 border-t border-gray-200">
-          <ProposalCreatedBy
-            proposalProposer={proposal.proposer}
-            addedClasses={"justify-between items-center"}
-            includeClipboard
-          />
-          <ProposalId
-            proposalId={proposal.idSubstring}
-            addedClasses={"justify-between items-center"}
-            includeClipboard
-          />
-        </div>
+        <DataLoadingWrapper isLoading={!proposal.id || !proposal.idSubstring}>
+          <div className="pt-4 border-t border-gray-200">
+            <ProposalCreatedBy
+              proposalProposer={proposal.proposer}
+              addedClasses={"justify-between items-center"}
+              includeClipboard
+            />
+            <ProposalId
+              proposalId={proposal.id}
+              proposalIdSub={proposal.idSubstring}
+              addedClasses={"justify-between items-center"}
+              includeClipboard
+            />
+          </div>
+        </DataLoadingWrapper>
       </ContentBox>
     </div>
   );

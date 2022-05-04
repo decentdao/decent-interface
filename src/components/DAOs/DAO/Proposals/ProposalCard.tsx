@@ -6,9 +6,9 @@ import ProposalNumber from "../../../ui/ProposalNumber";
 import ProposalTime from "../../../ui/ProposalTime";
 import ProposalDescription from "../../../ui/ProposalDescription";
 import ProposalCreatedBy from "../../../ui/ProposalCreatedBy";
+import DataLoadingWrapper from "../../../ui/loaders/DataLoadingWrapper";
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
-  if (!proposal || !proposal.startTimeString || !proposal.endTimeString) return (<div></div>)
   return (
     <Link to={`proposals/${proposal.number}`}>
       <ContentBox isLightBackground>
@@ -18,11 +18,13 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
             proposalNumber={proposal.number}
             textSize="text-sm"
           />
-          <ProposalTime
-            proposalStartString={proposal.startTimeString}
-            proposalEndString={proposal.endTimeString}
-            textSize="text-sm"
-          />
+          <DataLoadingWrapper isLoading={!proposal.startTimeString || !proposal.endTimeString}>
+            <ProposalTime
+              proposalStartString={proposal.startTimeString}
+              proposalEndString={proposal.endTimeString}
+              textSize="text-sm"
+            />
+          </DataLoadingWrapper>
         </div>
         <ProposalDescription proposalDesc={proposal.description} />
         <ProposalCreatedBy
