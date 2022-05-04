@@ -18,13 +18,11 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
             proposalNumber={proposal.number}
             textSize="text-sm"
           />
-          <DataLoadingWrapper isLoading={!proposal.startTimeString || !proposal.endTimeString}>
-            <ProposalTime
-              proposalStartString={proposal.startTimeString}
-              proposalEndString={proposal.endTimeString}
-              textSize="text-sm"
-            />
-          </DataLoadingWrapper>
+          <ProposalTime
+            proposalStartString={proposal.startTimeString}
+            proposalEndString={proposal.endTimeString}
+            textSize="text-sm"
+          />
         </div>
         <ProposalDescription proposalDesc={proposal.description} />
         <ProposalCreatedBy

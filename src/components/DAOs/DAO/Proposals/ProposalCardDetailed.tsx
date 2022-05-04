@@ -17,29 +17,25 @@ function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
           <ProposalNumber
             proposalNumber={proposal.number}
           />
-          <DataLoadingWrapper isLoading={!proposal.startTimeString || !proposal.endTimeString}>
           <ProposalTime
             proposalStartString={proposal.startTimeString}
             proposalEndString={proposal.endTimeString}
           />
-          </DataLoadingWrapper>
         </div>
         <ProposalDescription proposalDesc={proposal.description} />
-        <DataLoadingWrapper isLoading={!proposal.id || !proposal.idSubstring}>
-          <div className="pt-4 border-t border-gray-200">
-            <ProposalCreatedBy
-              proposalProposer={proposal.proposer}
-              addedClasses={"justify-between items-center"}
-              includeClipboard
-            />
-            <ProposalId
-              proposalId={proposal.id}
-              proposalIdSub={proposal.idSubstring}
-              addedClasses={"justify-between items-center"}
-              includeClipboard
-            />
-          </div>
-        </DataLoadingWrapper>
+        <div className="pt-4 border-t border-gray-200">
+          <ProposalCreatedBy
+            proposalProposer={proposal.proposer}
+            addedClasses={"justify-between items-center"}
+            includeClipboard
+          />
+          <ProposalId
+            proposalId={proposal.id}
+            proposalIdSub={proposal.idSubstring}
+            addedClasses={"justify-between items-center"}
+            includeClipboard
+          />
+        </div>
       </ContentBox>
     </div>
   );
