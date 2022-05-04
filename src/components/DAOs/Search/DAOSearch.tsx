@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 
 import H1 from "../../ui/H1";
 import ContentBox from "../../ui/ContentBox";
@@ -8,15 +8,19 @@ import useSearchDao from "../../../hooks/useSearchDao";
 import { PrimaryButton } from "../../ui/forms/Button";
 import ConnectWalletToast from "../shared/ConnectWalletToast";
 import { useWeb3 } from "../../../web3";
+import { useNavigate } from "react-router-dom";
 
 function DAOSearch() {
   const [{ account }] = useWeb3();
+  const navigate = useNavigate();
+
   const [searchAddressInput, setSearchAddressInput] = useState("");
-  const { errorMessage, loading, resetErrorState, updateSearchString } = useSearchDao();
+  const [searchAddr, setSearchAddr] = useState<string>();
+  const { errorMessage, loading, address, addressIsDAO, validAddress, resetErrorState, updateSearchString } = useSearchDao();
 
   const searchOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     resetErrorState();
-    setSearchAddressInput(event.target.value);
+    setSearchAddr(event.target.value);
   };
 
   /**
@@ -29,9 +33,27 @@ function DAOSearch() {
    * @param event
    */
   const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
-    updateSearchString(searchAddressInput);
+    updateSearchString(searchAddressInput!);
     event.preventDefault();
   };
+
+  /**
+   * handles navigation when valid address is submitted
+   *
+   */
+  useEffect(() => {
+    if (address && validAddress && addressIsDAO) {
+      navigate(address!, { state: { validatedAddress: address } });
+    }
+  }, [navigate, address, validAddress, addressIsDAO]);
+
+  useEffect(() => {
+    if(searchAddr === undefined) {
+      setSearchAddressInput("")
+      return;
+    }
+    setSearchAddressInput(searchAddr)
+  }, [searchAddr])
 
   return (
     <div>
@@ -52,7 +74,7 @@ function DAOSearch() {
                 />
               </div>
 
-              <PrimaryButton type="submit" label="Search" isLoading={loading} disabled={!!errorMessage || loading || !searchAddressInput.trim() || !account} />
+              <PrimaryButton type="submit" label="Search" isLoading={loading} disabled={!!errorMessage || loading || !searchAddressInput || !account} />
             </div>
           </InputBox>
         </form>

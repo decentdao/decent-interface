@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import useAddress from "./useAddress";
 import useIsDAO from "./useIsDAO";
-import { useNavigate } from "react-router";
 
 const useSearchDao = () => {
   const [searchString, setSearchString] = useState<string>();
@@ -10,7 +9,6 @@ const useSearchDao = () => {
 
   const [address, validAddress, addressLoading] = useAddress(searchString);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
-  const navigate = useNavigate();
 
   /**
    * refresh error state if one exists
@@ -35,7 +33,9 @@ const useSearchDao = () => {
    * handles loading state of search
    */
   useEffect(() => {
-    setLoading(addressLoading || isDAOLoading);
+    if (addressLoading !== undefined) {
+      setLoading(addressLoading || isDAOLoading);
+    }
   }, [addressLoading, isDAOLoading]);
 
   /**
@@ -61,19 +61,12 @@ const useSearchDao = () => {
     }
   }, [address, validAddress, searchString, addressIsDAO, loading]);
 
-  /**
-   * handles navigation when valid address is submitted
-   *
-   */
-  useEffect(() => {
-    if (address && validAddress && addressIsDAO) {
-      navigate(address!, { state: { validatedAddress: address } });
-    }
-  }, [navigate, address, validAddress, addressIsDAO]);
-
   return {
     errorMessage,
     loading,
+    address,
+    addressIsDAO,
+    validAddress,
     updateSearchString,
     resetErrorState,
   };
