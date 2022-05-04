@@ -20,6 +20,9 @@ type ProposalDataWithoutUserData = {
   description: string;
   state: number | undefined;
   stateString: string | undefined;
+  forVotesCount: BigNumber | undefined;
+  againstVotesCount: BigNumber | undefined;
+  abstainVotesCount: BigNumber | undefined;
   forVotesPercent: number | undefined;
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
@@ -170,6 +173,9 @@ const getProposalData = (
     proposal.endTimeString = getTimestampString(endTime);
     proposal.stateString = getStateString(proposal.state);
     proposal.eta = eta.toNumber();
+    proposal.forVotesCount = votes.forVotes;
+    proposal.againstVotesCount = votes.againstVotes;
+    proposal.abstainVotesCount = votes.abstainVotes;
 
     return proposal;
   });
@@ -331,6 +337,9 @@ const useProposalsWithoutUserData = (
             description: proposalEvent.args.description,
             state: undefined,
             stateString: undefined,
+            forVotesCount: undefined,
+            againstVotesCount: undefined,
+            abstainVotesCount: undefined,
             forVotesPercent: undefined,
             againstVotesPercent: undefined,
             abstainVotesPercent: undefined,
@@ -392,6 +401,9 @@ const useProposalsWithoutUserData = (
         description: description,
         state: undefined,
         stateString: undefined,
+        forVotesCount: undefined,
+        againstVotesCount: undefined,
+        abstainVotesCount: undefined,
         forVotesPercent: undefined,
         againstVotesPercent: undefined,
         abstainVotesPercent: undefined,
@@ -545,6 +557,9 @@ const useProposals = (
           description: proposal.description,
           state: proposal.state,
           stateString: proposal.stateString,
+          forVotesCount: proposal.forVotesCount,
+          againstVotesCount: proposal.againstVotesCount,
+          abstainVotesCount: proposal.abstainVotesCount,
           forVotesPercent: proposal.forVotesPercent,
           againstVotesPercent: proposal.againstVotesPercent,
           abstainVotesPercent: proposal.abstainVotesPercent,
