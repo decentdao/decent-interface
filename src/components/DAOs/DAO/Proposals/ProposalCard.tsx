@@ -6,7 +6,6 @@ import ProposalNumber from "../../../ui/proposal/ProposalNumber";
 import ProposalTime from "../../../ui/proposal/ProposalTime";
 import ProposalDescription from "../../../ui/proposal/ProposalDescription";
 import ProposalCreatedBy from "../../../ui/proposal/ProposalCreatedBy";
-import DataLoadingWrapper from "../../../ui/loaders/DataLoadingWrapper";
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
   return (

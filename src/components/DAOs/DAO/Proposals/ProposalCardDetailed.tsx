@@ -1,6 +1,5 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import ContentBox from "../../../ui/ContentBox";
-import DataLoadingWrapper from "../../../ui/loaders/DataLoadingWrapper";
 import ProposalCreatedBy from "../../../ui/proposal/ProposalCreatedBy";
 import ProposalDescription from "../../../ui/proposal/ProposalDescription";
 import ProposalId from "../../../ui/proposal/ProposalId";
