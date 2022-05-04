@@ -1,15 +1,12 @@
-import { ProposalData } from "../../daoData/useProposals";
 import CopyToClipboard from "./CopyToClipboard";
 
-function ProposalCreatedBy({ proposal, includeClipboard }: { proposal: ProposalData, includeClipboard?: boolean }) {
+function ProposalCreatedBy({ proposalId, includeClipboard, addedClasses }: { proposalId: string, includeClipboard?: boolean, addedClasses?: string }) {
 
   return (
-    <div className="flex max-w-xs">
-      <div className="flex text-gray-50 max-w-xs py-2">
-        <div>Proposal ID:</div>
-        <div className="ml-1">{proposal.idSubstring}</div>
-        {includeClipboard && <CopyToClipboard textToCopy={proposal.id.toString()} />}
-      </div>
+    <div className={`flex text-gray-50 max-w-xs ${addedClasses}`}>
+      <div>Proposal ID:</div>
+      <div className="ml-1">{proposalId}</div>
+      {includeClipboard && <CopyToClipboard textToCopy={proposalId} />}
     </div>
   );
 }
