@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { utils } from "ethers";
 import useDelegateVote from "../../../daoData/useDelegateVote";
 import useDisplayName from "../../../hooks/useDisplayName";
 import ContentBox from "../../ui/ContentBox";
@@ -18,11 +19,9 @@ function Delegate() {
   const [pending, setPending] = useState<boolean>(false);
   const [{ account }] = useWeb3();
   const [, validAddress] = useAddress(newDelegatee);
-  const [
-    {
-      tokenData: { symbol, userBalance, delegatee },
-    },
-  ] = useDAOData();
+  const [{
+    tokenData: { decimals, symbol, userBalance, delegatee, votingWeight }
+  }] = useDAOData();
   const delegateeDisplayName = useDisplayName(delegatee);
 
   const delegateSelf = () => {
@@ -37,6 +36,16 @@ function Delegate() {
     delegatee: newDelegatee,
     setPending,
   });
+
+  const [readableVotingWeight, setReadableVotingWeight] = useState<string>();
+  useEffect(() => {
+    if (votingWeight === undefined || decimals === undefined || symbol === undefined) {
+      setReadableVotingWeight(undefined);
+      return;
+    }
+
+    setReadableVotingWeight(`${utils.formatUnits(votingWeight, decimals)} ${symbol}`);
+  }, [decimals, votingWeight, symbol]);
 
   return (
     <>
@@ -69,6 +78,12 @@ function Delegate() {
                 <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
               </DataLoadingWrapper>
             </EtherscanLink>
+          </div>
+          <div className="flex mx-2 my-1 text-gray-50">
+            Current Voting Weight:{" "}
+            <span className="text-gray-25 ml-2">
+              <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>{readableVotingWeight}</DataLoadingWrapper>
+            </span>
           </div>
           <SecondaryButton disabled={!validAddress || newDelegatee.trim() === ""} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
         </ContentBox>
