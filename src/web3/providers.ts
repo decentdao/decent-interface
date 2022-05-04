@@ -179,7 +179,7 @@ const useProvider = () => {
   
   const disconnect = useCallback(() => {
     web3Modal.clearCachedProvider();
-    window.location.reload();
+    setWeb3Provider(defaultWeb3);
   }, []);
 
   return [web3Provider, connect, disconnect] as const;
