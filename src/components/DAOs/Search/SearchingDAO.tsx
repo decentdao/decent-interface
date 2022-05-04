@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import H1 from '../../ui/H1';
 
 const SearchError = ({
   children
@@ -27,15 +28,17 @@ function SearchingDAO({
   addressIsDAO?: boolean,
   validDAOComponent: React.ReactNode,
 }) {
-  if ((loading !== true && searchAddress === undefined) || searchAddress === "") {
-    return (
-      <p className="text-gray-50 pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p>
-    )
-  }
+  // if ((loading !== true && searchAddress === undefined) || searchAddress === "") {
+  //   return (
+  //     <p className="text-gray-50 pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p>
+  //   )
+  // }
+
+  console.log({ searchAddress, loading, validAddress, address, addressIsDAO })
 
   if (loading === true) {
     return (
-      <div className="break-all text-gray-50 pt-1 text-sm">loading... {searchAddress}</div>
+      <H1>Loading...</H1>
     );
   }
 

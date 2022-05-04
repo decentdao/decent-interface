@@ -8,8 +8,9 @@ import Proposals from "./Proposals";
 import Delegate from "./Delegate";
 import { useDAOData } from "../../../daoData";
 
-import useAddress from "../../../hooks/useAddress";
-import useIsDAO from "../../../hooks/useIsDAO";
+import useSearchDao from "../../../hooks/useSearchDao";
+// import useAddress from "../../../hooks/useAddress";
+// import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../Search/SearchingDAO";
 import { useWeb3 } from "../../../web3";
 
@@ -49,13 +50,15 @@ function FoundValidDAO({ address }: { address: string | undefined }) {
 
 function Search() {
   const params = useParams();
-  const [address, validAddress, addressLoading] = useAddress(params.address);
-  const [addressIsDAO, isDAOLoading] = useIsDAO(address);
+  // const [address, validAddress, addressLoading] = useAddress(params.address);
+  // const [addressIsDAO, isDAOLoading] = useIsDAO(address);
 
-  const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    setLoading(addressLoading || isDAOLoading);
-  }, [addressLoading, isDAOLoading]);
+  const { errorMessage, loading, resetErrorState, updateSearchString } = useSearchDao();
+
+  // const [loading, setLoading] = useState(false);
+  // useEffect(() => {
+  //   setLoading(addressLoading || isDAOLoading);
+  // }, [addressLoading, isDAOLoading]);
 
   return (
     <SearchingDAO
