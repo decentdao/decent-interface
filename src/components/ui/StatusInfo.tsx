@@ -4,6 +4,7 @@ import Clock from "./svg/Clock";
 
 function StatusInfo({ proposal }: { proposal: ProposalData }) {
   return (
+    <div>
     <div className="flex flex-row align-middle mx-4 my-2">
       <StatusBox status={proposal.stateString} />
       <div className="flex self-center text-gray-25 mx-2">#{proposal.number}</div>
@@ -13,6 +14,8 @@ function StatusInfo({ proposal }: { proposal: ProposalData }) {
       <div className="flex self-center text-gray-50 mx-1">
         {proposal.startTimeString} - {proposal.endTimeString}
       </div>
+    </div>
+    <div className="py-4 text-white text-lg font-mono">{proposal.description}</div>
     </div>
   );
 }
