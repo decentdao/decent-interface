@@ -70,7 +70,16 @@ module.exports = {
       },
       boxShadow: {
         menu: '0px 8px 48px rgba(0, 0, 0, 0.5), 0px 0px 1px rgba(0, 0, 0, 0.25)'
-      }
+      },
+      animation: {
+        'loading-flash': 'flash linear 500ms infinite',
+      },
+      keyframes: {
+        'flash': {
+          '0%': { transform: 'translateX(0)', width: '10%', opacity: '1'},
+          '100%': { transform: 'translateX(100%)', width: '100%', opacity: '.1'}
+        },
+      },
     }
   },
   plugins: [],

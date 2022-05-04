@@ -12,6 +12,7 @@ interface Web3Custom {
   providerName: string;
   networkName: string | undefined;
   account: string | undefined;
+  accountLoading: boolean;
   chainId: number | undefined;
   provider: ethers.providers.BaseProvider | undefined;
   signerOrProvider: ethers.providers.BaseProvider | ethers.Signer | undefined;
@@ -54,6 +55,7 @@ export const defaultWeb3: Web3Custom = {
   providerName: "not connected",
   networkName: undefined,
   account: undefined,
+  accountLoading: true,
   chainId: undefined,
   provider: undefined,
   signerOrProvider: undefined,
@@ -70,10 +72,13 @@ const makeInjectedProvider = async (web3Provider: ethers.providers.Web3Provider)
     providerName: "injected provider",
     networkName: local ? "localhost" : (await web3Provider.getNetwork()).name,
     account: await web3Provider.getSigner().getAddress(),
+    accountLoading: true,
     chainId: (await web3Provider.getNetwork()).chainId,
     provider: web3Provider,
     signerOrProvider: web3Provider.getSigner(),
   };
+
+  customProvider.accountLoading = false;
 
   listenerProvider = web3Provider.provider as ethers.providers.BaseProvider;
 
@@ -102,6 +107,7 @@ const getLocalProvider = () => {
           providerName: "local provider",
           networkName: "localhost",
           account: undefined,
+          accountLoading: false,
           chainId: network.chainId,
           provider: localProvider,
           signerOrProvider: localProvider,
@@ -126,6 +132,7 @@ const getFallbackProvider = () => {
     providerName: "readonly provider",
     networkName: defaultProvider.network.name,
     account: undefined,
+    accountLoading: false,
     chainId: defaultProvider.network.chainId,
     provider: defaultProvider,
     signerOrProvider: defaultProvider,
