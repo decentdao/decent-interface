@@ -9,9 +9,6 @@ import Delegate from "./Delegate";
 import { useDAOData } from "../../../daoData";
 
 import useSearchDao from "../../../hooks/useSearchDao";
-// import useAddress from "../../../hooks/useAddress";
-// import useIsDAO from "../../../hooks/useIsDAO";
-import SearchingDAO from "../Search/SearchingDAO";
 import { useWeb3 } from "../../../web3";
 
 function DAORoutes() {
@@ -20,10 +17,7 @@ function DAORoutes() {
       <Route index element={<Summary />} />
       <Route path="details" element={<Details />} />
       <Route path="delegate" element={<Delegate />} />
-      <Route
-        path="proposals/*"
-        element={<Proposals />}
-      />
+      <Route path="proposals/*" element={<Proposals />} />
     </Routes>
   );
 }
@@ -34,42 +28,51 @@ function ValidDAO({ address }: { address: string }) {
   useEffect(() => {
     setDAOAddress(address);
   }, [address, setDAOAddress]);
-
-  return (
-    <DAORoutes />
-  );
-}
-
-function FoundValidDAO({ address }: { address: string | undefined }) {
-  if (address !== undefined) {
-    return <ValidDAO address={address} />;
-  }
-
-  return <></>;
+  return <DAORoutes />;
 }
 
 function Search() {
   const params = useParams();
-  // const [address, validAddress, addressLoading] = useAddress(params.address);
-  // const [addressIsDAO, isDAOLoading] = useIsDAO(address);
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const { errorMessage, loading, address, addressIsDAO, updateSearchString } = useSearchDao();
 
-  const { errorMessage, loading, resetErrorState, updateSearchString } = useSearchDao();
+  // passes address string to useSearchDao hook
+  useEffect(() => {
+    updateSearchString(params.address!);
+  }, [updateSearchString, params.address]);
 
-  // const [loading, setLoading] = useState(false);
-  // useEffect(() => {
-  //   setLoading(addressLoading || isDAOLoading);
-  // }, [addressLoading, isDAOLoading]);
+  // when there was error
+  useEffect(() => {
+    if (errorMessage) {
+      toast(errorMessage, {
+        onOpen: () => navigate("/"),
+      });
+    }
+  }, [errorMessage, navigate]);
 
-  return (
-    <SearchingDAO
-      searchAddress={params.address}
-      loading={loading}
-      validAddress={validAddress}
-      address={address}
-      addressIsDAO={addressIsDAO}
-      validDAOComponent={<FoundValidDAO address={address} />}
-    />
-  );
+  // when dao is valid
+  useEffect(() => {
+    if (addressIsDAO && loading === false && address) {
+      navigate(pathname!, { state: { validatedAddress: address } });
+    }
+  }, [addressIsDAO, loading, address, pathname, navigate]);
+
+  // while dao is loading
+  useEffect(() => {
+    const toastId = toast("Loading...", {
+      toastId: "0",
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      progress: 1,
+    });
+    return () => {
+      toast.dismiss(toastId);
+    };
+  }, []);
+
+  return <></>;
 }
 
 function DAO() {
@@ -78,9 +81,7 @@ function DAO() {
   const [{ account, accountLoading }] = useWeb3();
   const [, setAddress] = useDAOData();
 
-  const [validatedAddress, setValidatedAddress] = useState(
-    (location.state as { validatedAddress: string } | null)?.validatedAddress
-  );
+  const [validatedAddress, setValidatedAddress] = useState((location.state as { validatedAddress: string } | null)?.validatedAddress);
   useEffect(() => {
     if (!location || !location.state) {
       setValidatedAddress(undefined);
