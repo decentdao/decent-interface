@@ -20,7 +20,6 @@ function SearchingDAO({
   address,
   addressIsDAO,
   validDAOComponent,
-  setSearchFailed,
 }: {
   searchAddress?: string,
   loading: boolean,
@@ -28,12 +27,8 @@ function SearchingDAO({
   address?: string,
   addressIsDAO?: boolean,
   validDAOComponent: React.ReactNode,
-  setSearchFailed?: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
   if ((loading !== true && searchAddress === undefined) || searchAddress === "") {
-    if(setSearchFailed) {
-      setSearchFailed(false);
-    }
     return (
       <p className="text-gray-50 pt-1 text-sm">Use a valid Fractal ETH address or ENS domain</p>
     )
@@ -46,18 +41,12 @@ function SearchingDAO({
   }
 
   if (searchAddress !== undefined && validAddress === false) {
-    if(setSearchFailed) {
-      setSearchFailed(true);
-    }
     return (
       <SearchError>Please use a valid Fractal ETH address or ENS domain</SearchError>
     );
   }
 
   if (address !== undefined && addressIsDAO === false) {
-    if(setSearchFailed) {
-      setSearchFailed(true);
-    }
     return (
       <div>
         <EtherscanLink address={searchAddress}>
