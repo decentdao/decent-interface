@@ -172,7 +172,7 @@ const getProposalData = (
     proposal.eta = eta.toNumber();
 
     return proposal;
-  })
+  });
 };
 
 const useUserVotes = (governorModule: GovernorModule | undefined) => {
@@ -274,19 +274,20 @@ const useUserVotePowers = (
           currentBlockNumber
         );
       })
-    ).then((newUserVotePowerValues) => {
-      setUserVotePowers(
-        proposalsWithoutUserData.map((proposal, index) => {
-          const newUserVotePower: UserVotePower = {
-            proposalId: proposal.id,
-            votePower: newUserVotePowerValues[index],
-          };
+    )
+      .then((newUserVotePowerValues) => {
+        setUserVotePowers(
+          proposalsWithoutUserData.map((proposal, index) => {
+            const newUserVotePower: UserVotePower = {
+              proposalId: proposal.id,
+              votePower: newUserVotePowerValues[index],
+            };
 
-          return newUserVotePower;
-        })
-      );
-    })
-    .catch(console.error);
+            return newUserVotePower;
+          })
+        );
+      })
+      .catch(console.error);
   }, [governorModule, account, currentBlockNumber, proposalsWithoutUserData]);
 
   return userVotePowers;
@@ -418,6 +419,78 @@ const useProposalsWithoutUserData = (
     };
   }, [governorModule, provider]);
 
+  // Setup proposal queued events listener
+  useEffect(() => {
+    if (governorModule === undefined) {
+      setProposalsWithoutUserData(undefined);
+      return;
+    }
+
+    const filter = governorModule.filters.ProposalQueued();
+
+    const listenerCallback = (proposalId: BigNumber, _: any) => {
+      console.log("Inside queued callback");
+
+      governorModule
+        .proposalEta(proposalId)
+        .then((proposalEta) => {
+          setProposalsWithoutUserData((existingProposals) => {
+            if (existingProposals === undefined) {
+              return undefined;
+            }
+
+            const updatedProposalIndex = existingProposals.findIndex(
+              (proposal) => proposalId.eq(proposal.id)
+            );
+            const newProposals = [...existingProposals];
+            newProposals[updatedProposalIndex].state = 5;
+            newProposals[updatedProposalIndex].stateString = getStateString(5);
+            newProposals[updatedProposalIndex].eta = proposalEta.toNumber();
+            return newProposals;
+          });
+        })
+        .catch(console.error);
+    };
+    governorModule.on(filter, listenerCallback);
+
+    return () => {
+      governorModule.off(filter, listenerCallback);
+    };
+  }, [governorModule]);
+
+  // Setup proposal executed events listener
+  useEffect(() => {
+    if (governorModule === undefined) {
+      setProposalsWithoutUserData(undefined);
+      return;
+    }
+
+    const filter = governorModule.filters.ProposalExecuted();
+
+    const listenerCallback = (proposalId: BigNumber, _: any) => {
+      console.log("Inside executed callback");
+      setProposalsWithoutUserData((existingProposals) => {
+        if (existingProposals === undefined) {
+          return undefined;
+        }
+
+        const updatedProposalIndex = existingProposals.findIndex((proposal) =>
+          proposalId.eq(proposal.id)
+        );
+        const newProposals = [...existingProposals];
+        newProposals[updatedProposalIndex].state = 7;
+        newProposals[updatedProposalIndex].stateString = getStateString(7);
+        return newProposals;
+      });
+    };
+
+    governorModule.on(filter, listenerCallback);
+
+    return () => {
+      governorModule.off(filter, listenerCallback);
+    };
+  }, [governorModule]);
+
   return proposalsWithoutUserData;
 };
 
@@ -436,7 +509,11 @@ const useProposals = (
 
   // Combine proposalsWithoutUserData and user data into proposals
   useEffect(() => {
-    if (proposalsWithoutUserData === undefined || userVotes === undefined || userVotePowers === undefined) {
+    if (
+      proposalsWithoutUserData === undefined ||
+      userVotes === undefined ||
+      userVotePowers === undefined
+    ) {
       setProposals(undefined);
       return;
     }
@@ -447,7 +524,7 @@ const useProposals = (
           userVote.proposalId.eq(proposal.id)
         );
 
-        const userProposalVotePower = userVotePowers.find((userVotePower) => 
+        const userProposalVotePower = userVotePowers.find((userVotePower) =>
           userVotePower.proposalId.eq(proposal.id)
         );
 
@@ -472,7 +549,9 @@ const useProposals = (
           againstVotesPercent: proposal.againstVotesPercent,
           abstainVotesPercent: proposal.abstainVotesPercent,
           eta: proposal.eta,
-          userVotePower: userProposalVotePower ? userProposalVotePower.votePower : undefined,
+          userVotePower: userProposalVotePower
+            ? userProposalVotePower.votePower
+            : undefined,
           userVote: userProposalVote ? userProposalVote.vote : undefined,
           userVoteString:
             userProposalVote && userProposalVote.vote
@@ -486,38 +565,6 @@ const useProposals = (
 
     setProposals(newProposals);
   }, [proposalsWithoutUserData, userVotes, userVotePowers]);
-
-  // Setup proposal queued events listener
-  useEffect(() => {
-    if (governorModule === undefined) {
-      setProposals(undefined);
-      return;
-    }
-
-    const filter = governorModule.filters.ProposalQueued();
-
-    const listenerCallback = (proposalId: BigNumber, _: any) => {
-      setProposals((existingProposals) => {
-        if (existingProposals === undefined) {
-          return undefined;
-        }
-
-        const updatedProposalIndex = existingProposals.findIndex((proposal) =>
-          proposalId.eq(proposal.id)
-        );
-        const newProposals = [...existingProposals];
-        newProposals[updatedProposalIndex].state = 5;
-        newProposals[updatedProposalIndex].stateString = getStateString(5);
-        return newProposals;
-      });
-    };
-
-    governorModule.on(filter, listenerCallback);
-
-    return () => {
-      governorModule.off(filter, listenerCallback);
-    };
-  }, [governorModule]);
 
   return proposals;
 };
