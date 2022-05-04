@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { VotesTokenWithSupply } from "../typechain-types";
 import { useWeb3 } from "../web3";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber } from "ethers";
 
 const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const [{ account }] = useWeb3();
   const [tokenName, setTokenName] = useState<string>();
   const [tokenSymbol, setTokenSymbol] = useState<string>();
   const [tokenDecimals, setTokenDecimals] = useState<number>();
-  const [tokenBalance, setTokenBalance] = useState<number>();
+  const [tokenBalance, setTokenBalance] = useState<BigNumber>();
   const [tokenDelegatee, setTokenDelegatee] = useState<string>();
   const [tokenVotingWeight, setTokenVotingWeight] = useState<BigNumber>();
 
@@ -20,13 +20,9 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
     tokenContract
       .balanceOf(account)
-      .then((balance) =>
-        setTokenBalance(
-          Number(ethers.utils.formatUnits(balance, tokenDecimals))
-        )
-      )
+      .then(setTokenBalance)
       .catch(console.error);
-  }, [account, tokenContract, tokenDecimals]);
+  }, [account, tokenContract]);
 
   // Get token name
   useEffect(() => {

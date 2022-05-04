@@ -26,7 +26,7 @@ export interface DAOData {
     name: string | undefined,
     symbol: string | undefined,
     decimals: number | undefined
-    userBalance: number | undefined,
+    userBalance: BigNumber | undefined,
     delegatee: string | undefined,
     votingWeight: BigNumber | undefined,
   },

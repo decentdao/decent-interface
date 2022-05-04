@@ -35,6 +35,16 @@ function Delegate() {
     successCallback: () => setNewDelegatee(""),
   });
 
+  const [readableBalance, setReadableBalance] = useState<string>();
+  useEffect(() => {
+    if (userBalance === undefined || decimals === undefined || symbol === undefined) {
+      setReadableBalance(undefined);
+      return;
+    }
+
+    setReadableBalance(`${utils.formatUnits(userBalance, decimals)} ${symbol}`);
+  }, [decimals, userBalance, symbol]);
+
   const [readableVotingWeight, setReadableVotingWeight] = useState<string>();
   useEffect(() => {
     if (votingWeight === undefined || decimals === undefined || symbol === undefined) {
@@ -65,7 +75,7 @@ function Delegate() {
           <div className="flex mx-2 my-1 text-gray-50">
             Balance:{" "}
             <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={userBalance === undefined || !symbol}>{`${userBalance} ${symbol}`}</DataLoadingWrapper>
+              <DataLoadingWrapper isLoading={readableBalance === undefined}>{readableBalance}</DataLoadingWrapper>
             </span>
           </div>
           <div className="flex mx-2 my-1 text-gray-50">
