@@ -13,7 +13,7 @@ const useCastVote = ({
   vote: number | undefined,
 }
 ) => {
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
   const [ daoData, ] = useDAOData();
 
   const [contractCallCastVote] = useTransaction();

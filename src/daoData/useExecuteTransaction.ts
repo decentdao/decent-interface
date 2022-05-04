@@ -13,7 +13,7 @@ const useExecuteTransaction = ({
   proposalData: ProposalData
 }
 ) => {
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
   const [daoData,] = useDAOData();
 
   const [contractCallExecuteTransaction] = useTransaction();

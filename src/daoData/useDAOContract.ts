@@ -5,7 +5,7 @@ import { useWeb3 } from '../web3';
 
 const useDAOContract = (address: string | undefined) => {
   const [dao, setDAO] = useState<DAO>();
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
 
   useEffect(() => {
     if (!address || !signerOrProvider) {

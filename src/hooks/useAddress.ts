@@ -4,7 +4,7 @@ import { ethers, constants } from "ethers";
 import { useWeb3 } from "../web3";
 
 const useAddress = (addressInput: string | undefined) => {
-  const { provider } = useWeb3();
+  const [{ provider }] = useWeb3();
 
   const [address, setAddress] = useState<string>();
   const [validAddress, setValidAddress] = useState(false);

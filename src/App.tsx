@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="flex flex-col min-h-screen font-medium">
       <Header />
-      <main className="flex-grow bg-image-pattern bg-cover">
+      <main className="flex-grow bg-fixed bg-image-pattern bg-cover">
         <Breadcrumbs />
         <div className="container pt-20 pb-10">
           <div className="max-w-4xl mx-auto">

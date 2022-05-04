@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ethers, getDefaultProvider } from "ethers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
@@ -6,7 +6,7 @@ import WalletConnectProvider from "@walletconnect/ethereum-provider";
 import { supportedChains } from "./chains";
 import { useListeners } from "./listeners";
 
-export interface Web3Custom {
+interface Web3Custom {
   connected: boolean;
   provided: boolean;
   providerName: string;
@@ -16,6 +16,10 @@ export interface Web3Custom {
   provider: ethers.providers.BaseProvider | undefined;
   signerOrProvider: ethers.providers.BaseProvider | ethers.Signer | undefined;
 }
+
+type ConnectFn = () => null;
+type DisconnectFn = () => null;
+export type Web3Context = readonly [Web3Custom, ConnectFn, DisconnectFn];
 
 let listenerProvider: ethers.providers.BaseProvider;
 
@@ -54,6 +58,8 @@ export const defaultWeb3: Web3Custom = {
   provider: undefined,
   signerOrProvider: undefined,
 };
+
+export const defaultWeb3Response = [defaultWeb3, () => null, () => null] as const;
 
 const makeInjectedProvider = async (web3Provider: ethers.providers.Web3Provider) => {
   const local = process.env.REACT_APP_LOCAL_CHAIN_ID && (await web3Provider.getNetwork()).chainId === parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID, 10);
@@ -173,16 +179,18 @@ const useProvider = () => {
     setWeb3Provider(getFallbackProvider());
   }, [web3Provider.connected, web3Provider.provider]);
 
-  return web3Provider;
+  const connect: ConnectFn = useCallback(() => {
+    web3Modal.connect().catch(console.error);
+    return null;
+  }, []);
+  
+  const disconnect: DisconnectFn = useCallback(() => {
+    web3Modal.clearCachedProvider();
+    setWeb3Provider(defaultWeb3);
+    return null;
+  }, []);
+
+  return [web3Provider, connect, disconnect] as const;
 };
 
-const connect = () => {
-  web3Modal.connect().catch(console.error);
-};
-
-const disconnect = () => {
-  web3Modal.clearCachedProvider();
-  window.location.reload();
-};
-
-export { useProvider, connect, disconnect };
+export default useProvider;

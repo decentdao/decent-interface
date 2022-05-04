@@ -7,7 +7,7 @@ import {
 } from '../typechain-types';
 
 const use165Contract = (address: string | undefined) => {
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
 
   const [contract, setContract] = useState<IERC165>();
   const [loading, setLoading] = useState(false);
