@@ -466,8 +466,6 @@ const useProposalsWithoutUserData = (
     const filter = governorModule.filters.ProposalQueued();
 
     const listenerCallback = (proposalId: BigNumber, _: any) => {
-      console.log("Inside queued callback");
-
       governorModule
         .proposalEta(proposalId)
         .then((proposalEta) => {
@@ -505,7 +503,6 @@ const useProposalsWithoutUserData = (
     const filter = governorModule.filters.ProposalExecuted();
 
     const listenerCallback = (proposalId: BigNumber, _: any) => {
-      console.log("Inside executed callback");
       setProposalsWithoutUserData((existingProposals) => {
         if (existingProposals === undefined) {
           return undefined;
@@ -544,7 +541,6 @@ const useProposalsWithoutUserData = (
       weight: BigNumber,
       _: any
     ) => {
-      console.log("Inside vote cast callback");
       setProposalsWithoutUserData((existingProposals) => {
         if (existingProposals === undefined) {
           return undefined;
@@ -607,22 +603,23 @@ const useProposalsWithoutUserData = (
     if (currentBlockNumber === undefined) {
       return;
     }
-    console.log("CHecking state");
+
     setProposalsWithoutUserData((existingProposals) => {
-      if(existingProposals === undefined) return undefined;
+      if (existingProposals === undefined) return undefined;
 
       return existingProposals.map((existingProposal) => {
         const newProposal = existingProposal;
-        if(newProposal.state === 0 && newProposal.startBlock.toNumber() <= currentBlockNumber) {
-          console.log("Updating state");
+        if (
+          newProposal.state === 0 &&
+          newProposal.startBlock.toNumber() <= currentBlockNumber
+        ) {
           newProposal.state = 1;
           newProposal.stateString = getStateString(1);
         }
 
         return newProposal;
-      })
+      });
     });
-
   }, [currentBlockNumber]);
 
   return proposalsWithoutUserData;
@@ -630,10 +627,13 @@ const useProposalsWithoutUserData = (
 
 const useProposals = (
   governorModule: GovernorModule | undefined,
-  currentBlockNumber: number | undefined,
+  currentBlockNumber: number | undefined
 ) => {
   const userVotes = useUserVotes(governorModule);
-  const proposalsWithoutUserData = useProposalsWithoutUserData(currentBlockNumber, governorModule);
+  const proposalsWithoutUserData = useProposalsWithoutUserData(
+    currentBlockNumber,
+    governorModule
+  );
   const userVotePowers = useUserVotePowers(
     proposalsWithoutUserData,
     governorModule,
