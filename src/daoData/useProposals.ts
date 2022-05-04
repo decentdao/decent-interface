@@ -133,6 +133,33 @@ const getUserVotePower = (
   return governorModule.getVotes(account, proposalStartBlockNumber);
 };
 
+const getVotePercentages = (
+  againstVotesCount: BigNumber | undefined,
+  forVotesCount: BigNumber | undefined,
+  abstainVotesCount: BigNumber | undefined,
+) => {
+  if(againstVotesCount === undefined) againstVotesCount = BigNumber.from("0");
+  if(forVotesCount === undefined) forVotesCount = BigNumber.from("0");
+  if(abstainVotesCount === undefined) abstainVotesCount = BigNumber.from("0");
+
+  const totalVotes = againstVotesCount
+    .add(forVotesCount)
+    .add(abstainVotesCount);
+
+  if (totalVotes.eq(0)) {
+    return {
+      againstVotesPercent: 0,
+      forVotesPercent: 0,
+      abstainVotesPercent: 0,
+    };
+  }
+  return {
+    againstVotesPercent: againstVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
+    forVotesPercent: forVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
+    abstainVotesPercent: abstainVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
+  };
+}
+
 // Get proposal data that isn't included in the proposal created event
 const getProposalData = (
   provider: providers.BaseProvider | undefined,
@@ -492,6 +519,78 @@ const useProposalsWithoutUserData = (
         const newProposals = [...existingProposals];
         newProposals[updatedProposalIndex].state = 7;
         newProposals[updatedProposalIndex].stateString = getStateString(7);
+        return newProposals;
+      });
+    };
+
+    governorModule.on(filter, listenerCallback);
+
+    return () => {
+      governorModule.off(filter, listenerCallback);
+    };
+  }, [governorModule]);
+
+  // Setup vote cast events listener
+  useEffect(() => {
+    if (governorModule === undefined) {
+      setProposalsWithoutUserData(undefined);
+      return;
+    }
+
+    const filter = governorModule.filters.VoteCast();
+
+    const listenerCallback = (
+      voter: string,
+      proposalId: BigNumber,
+      support: number,
+      weight: BigNumber,
+      _: any
+    ) => {
+      console.log("Inside vote cast callback");
+      setProposalsWithoutUserData((existingProposals) => {
+        if (existingProposals === undefined) {
+          return undefined;
+        }
+
+        const updatedProposalIndex = existingProposals.findIndex((proposal) =>
+          proposalId.eq(proposal.id)
+        );
+
+        const newProposals = [...existingProposals];
+        const newProposal = newProposals[updatedProposalIndex];
+
+        if (support === 0) {
+
+          if (newProposal.againstVotesCount === undefined) {
+            newProposal.againstVotesCount = weight;
+          } else {
+            newProposal.againstVotesCount =
+              newProposal.againstVotesCount.add(weight);
+          }
+        } else if (support === 1) {
+          if (newProposal.forVotesCount === undefined) {
+            newProposal.forVotesCount = weight;
+          } else {
+            newProposal.forVotesCount =
+              newProposal.forVotesCount.add(weight);
+          }
+        } else {
+          if (newProposal.abstainVotesCount === undefined) {
+            newProposal.abstainVotesCount = weight;
+          } else {
+            newProposal.abstainVotesCount =
+              newProposal.abstainVotesCount.add(weight);
+          }
+        }
+
+        const votePercentages = getVotePercentages(newProposal.againstVotesCount, newProposal.forVotesCount, newProposal.abstainVotesCount);
+
+        newProposal.againstVotesPercent = votePercentages.againstVotesPercent;
+        newProposal.forVotesPercent = votePercentages.forVotesPercent;
+        newProposal.abstainVotesPercent = votePercentages.abstainVotesPercent;
+
+        newProposals[updatedProposalIndex] = newProposal;
+
         return newProposals;
       });
     };
