@@ -22,15 +22,15 @@ function StatusInfo({ proposal, includeHR, includeProposalId, includeClipboard }
       <div className="py-4 text-white text-lg font-mono">{proposal.description}</div>
       {includeHR && <hr />}
       <div className="flex max-w-xs my-1">
-          <div className="text-gray-50">Created By:</div>
-          <div className="text-gold-500 ml-1">{proposerDisplayName}</div>
-          {includeClipboard && <CopyToClipboard textToCopy={proposal.proposer} />}
-        </div>
-        {includeProposalId && <div className="flex text-gray-50 max-w-xs">
-          <div>Proposal ID:</div>
-          <div className="ml-1">{proposal.idSubstring}</div>
-          {includeClipboard && <CopyToClipboard textToCopy={proposal.id.toString()} />}
-        </div>}
+        <div className="text-gray-50">Created By:</div>
+        <div className="text-gold-500 ml-1">{proposerDisplayName}</div>
+        {includeClipboard && <CopyToClipboard textToCopy={proposal.proposer} />}
+      </div>
+      {includeProposalId && <div className="flex text-gray-50 max-w-xs">
+        <div>Proposal ID:</div>
+        <div className="ml-1">{proposal.idSubstring}</div>
+        {includeClipboard && <CopyToClipboard textToCopy={proposal.id.toString()} />}
+      </div>}
     </div>
   );
 }

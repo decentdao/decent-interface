@@ -8,8 +8,8 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
     <Link to={`proposals/${proposal.number}`}>
       <div>
         <ContentBox isLightBackground>
-          <StatusInfo 
-          proposal={proposal} 
+          <StatusInfo
+            proposal={proposal}
           />
         </ContentBox>
       </div>
