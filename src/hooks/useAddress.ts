@@ -7,12 +7,10 @@ const useAddress = (addressInput: string | undefined) => {
   const [{ provider }] = useWeb3();
 
   const [address, setAddress] = useState<string>();
-  const [validAddress, setValidAddress] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [validAddress, setValidAddress] = useState<boolean>();
+  const [loading, setLoading] = useState<boolean>();
 
   useEffect(() => {
-    setAddress(undefined);
-    setValidAddress(false);
     setLoading(true);
 
     if (addressInput === undefined) {
@@ -27,7 +25,7 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     if (addressInput === constants.AddressZero) {
-      setAddress(undefined);
+      setAddress("");
       setValidAddress(false);
       setLoading(false);
       return;
@@ -39,8 +37,6 @@ const useAddress = (addressInput: string | undefined) => {
       setLoading(false);
       return;
     }
-    setAddress(undefined);
-    setValidAddress(false);
 
     provider
       .resolveName(addressInput)
@@ -56,7 +52,7 @@ const useAddress = (addressInput: string | undefined) => {
         setLoading(false);
       })
       .catch(() => {
-        setAddress(undefined);
+        setAddress("");
         setValidAddress(false);
         setLoading(false);
       });
