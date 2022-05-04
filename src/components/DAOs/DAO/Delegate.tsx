@@ -57,7 +57,10 @@ function Delegate() {
             </div>
           </InputBox>
           <div className="flex mx-2 my-1 text-gray-50">
-            Balance: <span className="text-gray-25 ml-2"><DataLoadingWrapper isLoading={!userBalance && !symbol}>{`${userBalance} ${symbol}`}</DataLoadingWrapper></span>
+            Balance:{" "}
+            <span className="text-gray-25 ml-2">
+              <DataLoadingWrapper isLoading={!userBalance && !symbol}>{`${userBalance} ${symbol}`}</DataLoadingWrapper>
+            </span>
           </div>
           <div className="flex mx-2 my-1 text-gray-50">
             Current Delegatee: &nbsp;
