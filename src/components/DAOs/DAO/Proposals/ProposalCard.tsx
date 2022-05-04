@@ -13,7 +13,6 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
       <div>
         <ContentBox isLightBackground>
           <StatusInfo proposal={proposal} />
-          <div className="py-4 text-white text-lg font-mono">{proposal.description}</div>
           <div className="text-gray-50 text-sm">
             Created By<span className="text-gold-500 text-sm ml-2">{proposerDisplayName}</span>
           </div>

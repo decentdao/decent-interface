@@ -9,7 +9,6 @@ function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
   return (
     <div className="flex flex-col bg-gray-600 m-2 py-2 rounded-md">
       <StatusInfo proposal= {proposal}/>
-      <div className="text-gray-25 mx-4 my-2">{proposal.description}</div>
       {/* @todo add full description link */}
       <div className="mt-4 py-4 mx-4 border-t border-gray-200">
         <div className="flex justify-between items-center max-w-xs my-1">
