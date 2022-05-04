@@ -12,11 +12,6 @@ import useIsDAO from "../../../hooks/useIsDAO";
 import SearchingDAO from "../Search/SearchingDAO";
 
 function DAORoutes() {
-  const [, setAddress] = useDAOData();
-
-  // when this component unloads, setAddress back to undefined to clear app state
-  useEffect(() => () => setAddress(undefined), [setAddress]);
-
   return (
     <Routes>
       <Route index element={<Summary />} />
@@ -74,6 +69,7 @@ function Search() {
 
 function DAO() {
   const location = useLocation();
+  const [, setAddress] = useDAOData();
 
   const [validatedAddress, setValidatedAddress] = useState(
     (location.state as { validatedAddress: string } | null)?.validatedAddress
@@ -87,6 +83,9 @@ function DAO() {
     const locationState = location.state as { validatedAddress: string };
     setValidatedAddress(locationState.validatedAddress);
   }, [location]);
+
+  // when this component unloads, setAddress back to undefined to clear app state
+  useEffect(() => () => setAddress(undefined), [setAddress]);
 
   if (validatedAddress) {
     return <ValidDAO address={validatedAddress} />;
