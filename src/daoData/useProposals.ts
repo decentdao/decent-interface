@@ -172,7 +172,7 @@ const getProposalData = (
     proposal.eta = eta.toNumber();
 
     return proposal;
-  });
+  })
 };
 
 const useUserVotes = (governorModule: GovernorModule | undefined) => {
@@ -285,7 +285,8 @@ const useUserVotePowers = (
           return newUserVotePower;
         })
       );
-    });
+    })
+    .catch(console.error);
   }, [governorModule, account, currentBlockNumber, proposalsWithoutUserData]);
 
   return userVotePowers;
@@ -294,13 +295,13 @@ const useUserVotePowers = (
 const useProposalsWithoutUserData = (
   governorModule: GovernorModule | undefined
 ) => {
-  const { account, provider } = useWeb3();
+  const { provider } = useWeb3();
   const [proposalsWithoutUserData, setProposalsWithoutUserData] =
     useState<ProposalDataWithoutUserData[]>();
 
   // Get initial proposal events
   useEffect(() => {
-    if (governorModule === undefined || account === undefined) {
+    if (governorModule === undefined) {
       setProposalsWithoutUserData(undefined);
       return;
     }
@@ -350,11 +351,11 @@ const useProposalsWithoutUserData = (
         setProposalsWithoutUserData(newProposals);
       })
       .catch(console.error);
-  }, [account, governorModule, provider]);
+  }, [governorModule, provider]);
 
   // Setup proposal created events listener
   useEffect(() => {
-    if (governorModule === undefined || account === undefined) {
+    if (governorModule === undefined) {
       setProposalsWithoutUserData(undefined);
       return;
     }
@@ -415,7 +416,7 @@ const useProposalsWithoutUserData = (
     return () => {
       governorModule.off(filter, listenerCallback);
     };
-  }, [account, governorModule, provider]);
+  }, [governorModule, provider]);
 
   return proposalsWithoutUserData;
 };
