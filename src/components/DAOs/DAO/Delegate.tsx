@@ -9,13 +9,13 @@ import { useDAOData } from "../../../daoData";
 import Input from "../../ui/forms/Input";
 import { SecondaryButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
-import cx from 'classnames';
+import cx from "classnames";
 import useAddress from "../../../hooks/useAddress";
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
   const [pending, setPending] = useState<boolean>(false);
-  const { account } = useWeb3();
+  const [{ account }] = useWeb3();
   const [, validAddress] = useAddress(newDelegatee);
   const [
     {

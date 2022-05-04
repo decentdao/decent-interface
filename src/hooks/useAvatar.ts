@@ -4,7 +4,7 @@ import { useWeb3 } from '../web3';
 import useENSName from './useENSName';
 
 const useAvatar = (account: string | undefined) => {
-  const { provider } = useWeb3();
+  const [{ provider }] = useWeb3();
   const ensName = useENSName(account)
 
   const [avatarURL, setAvatarURL] = useState<string | null>(null);

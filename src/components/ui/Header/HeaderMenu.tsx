@@ -31,7 +31,7 @@ const WalletConnected = ({ account }: { account?: string }) => {
 };
 
 const HeaderMenu = () => {
-  const { account } = useWeb3();
+  const [{ account }] = useWeb3();
   return (
     <div className="flex items-center justify-center relative">
       <Menu>

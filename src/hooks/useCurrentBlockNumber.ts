@@ -3,7 +3,7 @@ import { useWeb3 } from "../web3";
 
 const useCurrentBlockNumber = () => {
   const [blockNumber, setBlockNumber] = useState<number>();
-  const { provider } = useWeb3();
+  const [{ provider }] = useWeb3();
 
   useEffect(() => {
     if (provider === undefined) {
