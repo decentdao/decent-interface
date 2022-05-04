@@ -324,6 +324,7 @@ const useUserVotePowers = (
 };
 
 const useProposalsWithoutUserData = (
+  currentBlockNumber: number | undefined,
   governorModule: GovernorModule | undefined
 ) => {
   const [{ provider }] = useWeb3();
@@ -601,15 +602,38 @@ const useProposalsWithoutUserData = (
     };
   }, [governorModule]);
 
+  // Check for pending proposals that have become active
+  useEffect(() => {
+    if (currentBlockNumber === undefined) {
+      return;
+    }
+    console.log("CHecking state");
+    setProposalsWithoutUserData((existingProposals) => {
+      if(existingProposals === undefined) return undefined;
+
+      return existingProposals.map((existingProposal) => {
+        const newProposal = existingProposal;
+        if(newProposal.state === 0 && newProposal.startBlock.toNumber() <= currentBlockNumber) {
+          console.log("Updating state");
+          newProposal.state = 1;
+          newProposal.stateString = getStateString(1);
+        }
+
+        return newProposal;
+      })
+    });
+
+  }, [currentBlockNumber]);
+
   return proposalsWithoutUserData;
 };
 
 const useProposals = (
   governorModule: GovernorModule | undefined,
-  currentBlockNumber: number | undefined
+  currentBlockNumber: number | undefined,
 ) => {
   const userVotes = useUserVotes(governorModule);
-  const proposalsWithoutUserData = useProposalsWithoutUserData(governorModule);
+  const proposalsWithoutUserData = useProposalsWithoutUserData(currentBlockNumber, governorModule);
   const userVotePowers = useUserVotePowers(
     proposalsWithoutUserData,
     governorModule,
