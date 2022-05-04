@@ -65,9 +65,9 @@ function Delegate() {
           <div className="flex mx-2 my-1 text-gray-50">
             Current Delegatee:{" "}
             <EtherscanLink address={delegatee}>
-              <span className="text-gold-500 ml-2">
-                <DataLoadingWrapper isLoading={!delegateeDisplayName}>{delegateeDisplayName}</DataLoadingWrapper>
-              </span>
+              <DataLoadingWrapper isLoading={!delegateeDisplayName}>
+                <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
+              </DataLoadingWrapper>
             </EtherscanLink>
           </div>
           <SecondaryButton disabled={!validAddress || newDelegatee.trim() === ""} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
