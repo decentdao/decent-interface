@@ -10,6 +10,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const [tokenDecimals, setTokenDecimals] = useState<number>();
   const [tokenBalance, setTokenBalance] = useState<number>();
   const [tokenDelegatee, setTokenDelegatee] = useState<string>();
+  const [tokenVotingWeight, setTokenVotingWeight] = useState<BigNumber>();
 
   const updateTokenBalance = useCallback(() => {
     if (tokenContract === undefined || account === undefined) {
@@ -137,12 +138,50 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
     };
   }, [account, tokenContract, updateTokenBalance]);
 
+  // Get initial token delegation weight
+  useEffect(() => {
+    if (!tokenContract || !account) {
+      setTokenVotingWeight(undefined);
+      return;
+    }
+
+    tokenContract.getVotes(account)
+      .then(setTokenVotingWeight)
+      .catch(console.error);
+  }, [account, tokenContract]);
+
+  // Setup listeners for when voting weight increases or decreases
+  useEffect(() => {
+    if (!tokenContract || !account) {
+      setTokenVotingWeight(undefined);
+      return;
+    }
+
+    const filter = tokenContract.filters.DelegateVotesChanged(account);
+
+    const callback = (
+      _delegate: string,
+      _previousBalance: BigNumber,
+      currentBalance: BigNumber,
+      _: any
+    ) => {
+      setTokenVotingWeight(currentBalance);
+    }
+
+    tokenContract.on(filter, callback);
+
+    return () => {
+      tokenContract.off(filter, callback);
+    }
+  }, [account, tokenContract]);
+
   return { 
     name: tokenName,
     symbol: tokenSymbol,
     decimals: tokenDecimals,
     userBalance: tokenBalance, 
-    delegatee: tokenDelegatee
+    delegatee: tokenDelegatee,
+    votingWeight: tokenVotingWeight,
   };
 };
 
