@@ -21,7 +21,7 @@ function StatusInfo({ proposal, includeHR, includeProposalId, includeClipboard }
       </div>
       <div className="py-4 text-white text-lg font-mono">{proposal.description}</div>
       {includeHR && <hr />}
-      <div className="flex max-w-xs my-1">
+      <div className="flex max-w-xs">
         <div className="text-gray-50">Created By:</div>
         <div className="text-gold-500 ml-1">{proposerDisplayName}</div>
         {includeClipboard && <CopyToClipboard textToCopy={proposal.proposer} />}
