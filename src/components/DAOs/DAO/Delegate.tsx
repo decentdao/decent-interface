@@ -11,6 +11,7 @@ import { SecondaryButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
 import cx from "classnames";
 import useAddress from "../../../hooks/useAddress";
+import DataLoadingWrapper from "../../ui/loaders/DataLoadingWrapper";
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
@@ -56,7 +57,7 @@ function Delegate() {
             </div>
           </InputBox>
           <div className="flex mx-2 my-1 text-gray-50">
-            Balance: <span className="text-gray-25 ml-2">{`${userBalance} ${symbol}`}</span>
+            Balance: <span className="text-gray-25 ml-2"><DataLoadingWrapper isLoading={!userBalance && !symbol}>{`${userBalance} ${symbol}`}</DataLoadingWrapper></span>
           </div>
           <div className="flex mx-2 my-1 text-gray-50">
             Current Delegatee: &nbsp;
