@@ -1,6 +1,6 @@
 import Clock from "./svg/Clock";
 
-function ProposalTime({ proposalStartString, proposalEndString, textSize }: { proposalStartString: string, proposalEndString: string, textSize?: string }) {
+function ProposalTime({ proposalStartString, proposalEndString, textSize }: { proposalStartString: string | undefined, proposalEndString: string | undefined, textSize?: string }) {
   return (
     <div className="flex">
       <Clock />
