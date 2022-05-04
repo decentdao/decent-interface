@@ -6,6 +6,7 @@ import InputBox from "../../ui/forms/InputBox";
 import Input from "../../ui/forms/Input";
 import useSearchDao from "../../../hooks/useSearchDao";
 import { PrimaryButton } from "../../ui/forms/Button";
+import ConnectWalletToast from "../shared/ConnectWalletToast";
 
 function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState("");
@@ -32,6 +33,7 @@ function DAOSearch() {
 
   return (
     <div>
+      <ConnectWalletToast label="To search for a Fractal" />
       <H1>Find a Fractal</H1>
       <ContentBox>
         <form onSubmit={handleSearchSubmit}>
