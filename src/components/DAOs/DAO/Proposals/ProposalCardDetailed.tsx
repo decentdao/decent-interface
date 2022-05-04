@@ -7,9 +7,9 @@ function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
     <ContentBox>
       <StatusInfo
         proposal={proposal}
-        includeHR={true}
-        includeProposalId={true}
-        includeClipboard={true}
+        includeHR
+        includeProposalId
+        includeClipboard
       />
     </ContentBox>
   );
