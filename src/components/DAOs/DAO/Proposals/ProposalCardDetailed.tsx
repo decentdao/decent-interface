@@ -1,24 +1,14 @@
 import { ProposalData } from "../../../../daoData/useProposals";
 import useDisplayName from "../../../../hooks/useDisplayName";
 import CopyToClipboard from "../../../ui/CopyToClipboard";
-import StatusBox from "../../../ui/StatusBox";
-import Clock from "../../../ui/svg/Clock";
+import StatusInfo from "../../../ui/StatusInfo";
 
 function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
   const proposerDisplayName = useDisplayName(proposal.proposer);
 
   return (
     <div className="flex flex-col bg-gray-600 m-2 py-2 rounded-md">
-      <div className="flex flex-row align-middle mx-4 my-2">
-        <StatusBox status={proposal.stateString} />
-        <div className="flex self-center text-gray-25 mx-2">#{proposal.number}</div>
-        <div className="flex self-center">
-          <Clock />
-        </div>
-        <div className="flex self-center text-gray-50 mx-1">
-          {proposal.startTimeString} - {proposal.endTimeString}
-        </div>
-      </div>
+      <StatusInfo proposal= {proposal}/>
       <div className="text-gray-25 mx-4 my-2">{proposal.description}</div>
       {/* @todo add full description link */}
       <div className="mt-4 py-4 mx-4 border-t border-gray-200">
