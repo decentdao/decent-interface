@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import CopyToClipboard from "./CopyToClipboard";
+import CopyToClipboard from "../CopyToClipboard";
 
 function ProposalCreatedBy({ proposalId, proposalIdSub, includeClipboard, addedClasses }: { proposalId: BigNumber | undefined ,proposalIdSub: string | undefined, includeClipboard?: boolean, addedClasses?: string }) {
   

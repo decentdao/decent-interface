@@ -1,5 +1,5 @@
-import useDisplayName from "../../hooks/useDisplayName";
-import CopyToClipboard from "./CopyToClipboard";
+import useDisplayName from "../../../hooks/useDisplayName";
+import CopyToClipboard from "../CopyToClipboard";
 
 function ProposalCreatedBy({ proposalProposer, includeClipboard, textSize, addedClasses }: { proposalProposer: string, includeClipboard?: boolean, textSize?: string, addedClasses?: string }) {
   const proposerDisplayName = useDisplayName(proposalProposer);

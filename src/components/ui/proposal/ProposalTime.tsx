@@ -1,4 +1,4 @@
-import Clock from "./svg/Clock";
+import Clock from "../svg/Clock";
 
 function ProposalTime({ proposalStartString, proposalEndString, textSize }: { proposalStartString: string | undefined, proposalEndString: string | undefined, textSize?: string }) {
   return (

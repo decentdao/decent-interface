@@ -2,10 +2,10 @@ import { ProposalData } from "../../../../daoData/useProposals";
 import { Link } from "react-router-dom";
 import ContentBox from "../../../ui/ContentBox";
 import StatusBox from "../../../ui/StatusBox";
-import ProposalNumber from "../../../ui/ProposalNumber";
-import ProposalTime from "../../../ui/ProposalTime";
-import ProposalDescription from "../../../ui/ProposalDescription";
-import ProposalCreatedBy from "../../../ui/ProposalCreatedBy";
+import ProposalNumber from "../../../ui/proposal/ProposalNumber";
+import ProposalTime from "../../../ui/proposal/ProposalTime";
+import ProposalDescription from "../../../ui/proposal/ProposalDescription";
+import ProposalCreatedBy from "../../../ui/proposal/ProposalCreatedBy";
 import DataLoadingWrapper from "../../../ui/loaders/DataLoadingWrapper";
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
