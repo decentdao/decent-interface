@@ -1,14 +1,15 @@
-import { NavLink, useMatch, useLocation } from 'react-router-dom';
+import { NavLink, useMatch, useLocation, useParams } from 'react-router-dom';
 import useBreadcrumbs, { BreadcrumbMatch } from 'use-react-router-breadcrumbs';
 
 import { useDAOData } from '../daoData';
 import RightArrow from './ui/svg/RightArrow';
 
 const DAOName = () => {
-  const [{ name }] = useDAOData();
+  const params = useParams();
+  const [{ name, daoAddress }] = useDAOData();
 
   return (
-    <span>{name || "..."}</span>
+    <span>{name || daoAddress || params.address || "..."}</span>
   );
 }
 

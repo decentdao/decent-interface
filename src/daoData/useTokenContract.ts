@@ -4,7 +4,7 @@ import { useWeb3 } from '../web3';
 
 const useTokenContract = (governorModule: GovernorModule | undefined) => {
   const [tokenContract, setTokenContract] = useState<VotesTokenWithSupply>();
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
 
   useEffect(() => {
     if (!governorModule || !signerOrProvider) {

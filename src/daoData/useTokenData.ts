@@ -4,7 +4,7 @@ import { useWeb3 } from "../web3";
 import { BigNumber, ethers } from "ethers";
 
 const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
-  const { account } = useWeb3();
+  const [{ account }] = useWeb3();
   const [tokenName, setTokenName] = useState<string>();
   const [tokenSymbol, setTokenSymbol] = useState<string>();
   const [tokenDecimals, setTokenDecimals] = useState<number>();
@@ -115,6 +115,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   // Setup token delegate changed events listener
   useEffect(() => {
     if (tokenContract === undefined || account === undefined) {
+      setTokenDelegatee(undefined);
       return;
     }
 

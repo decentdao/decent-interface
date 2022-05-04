@@ -5,7 +5,7 @@ const useCurrentTimestamp = (blockNumber: number | undefined) => {
   const [timestamp, setTimestamp] = useState<number>(
     Math.floor(Date.now() / 1000)
   );
-  const { provider } = useWeb3();
+  const [{ provider }] = useWeb3();
 
   useEffect(() => {
     const timer = setInterval(() => setTimestamp((oldTimestamp) => oldTimestamp + 1), 1000);

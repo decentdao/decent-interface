@@ -11,9 +11,9 @@ const useModuleAddresses = (
   daoContract: DAO | undefined,
   accessControlContract: AccessControl | undefined
 ) => {
-  const [addActionRoleTargets, setAddActionRoleTargets] = useState<string[]>([]);
+  const [addActionRoleTargets, setAddActionRoleTargets] = useState<string[]>();
   const [removeActionRoleTargets, setRemoveActionRoleTargets] =
-    useState<string[]>([]);
+    useState<string[]>();
   const [modulesActionRoleEvents, setModulesActionRoleEvents] =
     useState<ModuleActionRoleEvents[]>();
   const [moduleAddresses, setModuleAddresses] = useState<string[]>();
@@ -42,7 +42,7 @@ const useModuleAddresses = (
   // Setup add action targets event listener
   useEffect(() => {
     if (!daoContract || !accessControlContract) {
-      setModuleAddresses(undefined);
+      setAddActionRoleTargets(undefined);
       return;
     }
 
@@ -53,7 +53,13 @@ const useModuleAddresses = (
         return;
       }
 
-      setAddActionRoleTargets([...addActionRoleTargets, target]);
+      setAddActionRoleTargets(existingTargets => {
+        if (!existingTargets) {
+          return undefined;
+        }
+
+        return [...existingTargets, target]
+      });
     }
 
     accessControlContract.on(filter, listenerCallback);
@@ -64,7 +70,7 @@ const useModuleAddresses = (
   // Get initial remove action targets
   useEffect(() => {
     if (!daoContract || !accessControlContract) {
-      setModuleAddresses(undefined);
+      setRemoveActionRoleTargets(undefined);
       return;
     }
 
@@ -85,7 +91,7 @@ const useModuleAddresses = (
   // Setup remove action targets event listener
   useEffect(() => {
     if (!daoContract || !accessControlContract) {
-      setModuleAddresses(undefined);
+      setRemoveActionRoleTargets(undefined);
       return;
     }
 
@@ -96,7 +102,13 @@ const useModuleAddresses = (
         return;
       }
 
-      setRemoveActionRoleTargets([...removeActionRoleTargets, target]);
+      setRemoveActionRoleTargets(existingTargets => {
+        if (!existingTargets) {
+          return undefined;
+        }
+
+        return [...existingTargets, target];
+      });
     }
 
     accessControlContract.on(filter, listenerCallback);
@@ -106,6 +118,11 @@ const useModuleAddresses = (
 
   // Get Module action role events
   useEffect(() => {
+    if (!addActionRoleTargets || !removeActionRoleTargets) {
+      setModulesActionRoleEvents(undefined);
+      return;
+    }
+
     const newModulesActionRoleEvents: ModuleActionRoleEvents[] = [];
 
     addActionRoleTargets.forEach((target) => {

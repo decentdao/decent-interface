@@ -4,7 +4,7 @@ import { useWeb3 } from "../web3";
 
 const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
   const [timelockModule, setTimelockModule] = useState<TimelockUpgradeable>();
-  const { signerOrProvider } = useWeb3();
+  const [{ signerOrProvider }] = useWeb3();
 
   useEffect(() => {
     if (
