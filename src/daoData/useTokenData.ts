@@ -115,6 +115,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   // Setup token delegate changed events listener
   useEffect(() => {
     if (tokenContract === undefined || account === undefined) {
+      setTokenDelegatee(undefined);
       return;
     }
 
