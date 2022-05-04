@@ -15,6 +15,7 @@ import DataLoadingWrapper from "../../ui/loaders/DataLoadingWrapper";
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [{ account }] = useWeb3();
   const [, validAddress] = useAddress(newDelegatee);
   const [{
@@ -55,6 +56,11 @@ function Delegate() {
     setReadableVotingWeight(`${utils.formatUnits(votingWeight, decimals)} ${symbol}`);
   }, [decimals, votingWeight, symbol]);
 
+  useEffect(() => {
+    if(validAddress === false) {
+      setErrorMessage('Invalid address')
+    }
+  }, [validAddress])
   return (
     <>
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
@@ -66,7 +72,7 @@ function Delegate() {
                 value={newDelegatee}
                 disabled={false}
                 label="New Delegate Address"
-                errorMessage={!validAddress && newDelegatee.trim() !== "" ? "Invalid Address" : undefined}
+                errorMessage={errorMessage}
                 onChange={(e) => setNewDelegatee(e.target.value)}
               />
               <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit -mt-2 sm:mt-0")} />
