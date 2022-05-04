@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import EtherscanLink from '../../ui/EtherscanLink';
 
 const SearchError = ({
   children
@@ -48,13 +47,9 @@ function SearchingDAO({
 
   if (address !== undefined && addressIsDAO === false) {
     return (
-      <div>
-        <EtherscanLink address={searchAddress}>
-          <SearchError>
-            {searchAddress} Sorry a fractal does not exist on this address
-          </SearchError>
-        </EtherscanLink>
-      </div>
+      <SearchError>
+        Sorry a fractal does not exist on this address
+      </SearchError>
     );
   }
 
