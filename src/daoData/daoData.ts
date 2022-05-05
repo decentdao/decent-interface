@@ -11,9 +11,9 @@ import useTokenContract from './useTokenContract';
 import useTokenData from './useTokenData';
 import useProposals from './useProposals';
 import { ProposalData } from './useProposals';
-import useCurrentBlockNumber from '../hooks/useCurrentBlockNumber';
-import useCurrentTimestamp from '../hooks/useCurrentTimestamp';
 import { GovernorModule, VotesTokenWithSupply } from '../typechain-types';
+import { useBlockchainData } from '../blockchainData';
+
 export interface DAOData {
   daoAddress: string | undefined,
   name: string | undefined,
@@ -30,8 +30,6 @@ export interface DAOData {
     delegatee: string | undefined,
     votingWeight: BigNumber | undefined,
   },
-  currentBlockNumber: number | undefined,
-  currentTimestamp: number,
 };
 
 type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -49,8 +47,7 @@ const useDAODatas = () => {
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
-  const currentBlockNumber = useCurrentBlockNumber();
-  const currentTimestamp = useCurrentTimestamp(currentBlockNumber);
+  const { currentBlockNumber } = useBlockchainData()
   const proposals = useProposals(governorModuleContract, currentBlockNumber);
 
   const daoData: DAOData = {
@@ -62,8 +59,6 @@ const useDAODatas = () => {
     governorModuleContract,
     tokenContract,
     tokenData,
-    currentBlockNumber,
-    currentTimestamp,
   };
 
   return [daoData, setDAOAddress] as const;
