@@ -80,7 +80,7 @@ function DAO() {
   const navigate = useNavigate();
   const [{ account, accountLoading, chainId }] = useWeb3();
   const [, setAddress] = useDAOData();
-  
+
   const [validatedAddress, setValidatedAddress] = useState((location.state as { validatedAddress: string } | null)?.validatedAddress);
   useEffect(() => {
     if (!location || !location.state) {
@@ -104,7 +104,7 @@ function DAO() {
   // when this component unloads, setAddress back to undefined to clear app state
   useEffect(() => () => setAddress(undefined), [setAddress]);
   // if network changes remove address validation.
-  useEffect(() => () => setValidatedAddress(undefined), [chainId])
+  useEffect(() => () => setValidatedAddress(undefined), [chainId]);
 
   if (validatedAddress) {
     return <ValidDAO address={validatedAddress} />;
