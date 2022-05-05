@@ -42,7 +42,6 @@ const New = () => {
 
   /**
    * adds new transaction form
-   * @dev also adds new entry into errorMap to keep 1-1 to transactions form
    */
   const addTransaction = () => {
     setTransactions([...transactions, defaultTransaction]);
