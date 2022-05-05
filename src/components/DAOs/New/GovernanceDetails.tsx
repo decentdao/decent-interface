@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import ContentBanner from "../../ui/ContentBanner";
 import ContentBoxTitle from "../../ui/ContentBoxTitle";
 import Input from "../../ui/forms/Input";
 import InputBox from "../../ui/forms/InputBox";
@@ -59,6 +60,7 @@ const GovernanceDetails = ({
           disabled={true}
         />
       </InputBox>
+      <ContentBanner description="The Governance Setup values are not editable at this time. To change these values, a new proposal will need to be created and passed by your members." />
     </div>
   );
 };

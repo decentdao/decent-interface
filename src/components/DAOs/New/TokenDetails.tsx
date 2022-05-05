@@ -4,7 +4,6 @@ import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import Input from "../../ui/forms/Input";
 import InputBox from "../../ui/forms/InputBox";
 import TokenAllocations from "./TokenAllocations";
-import ContentBanner from "../../ui/ContentBanner";
 
 interface TokenDetailsProps {
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -92,7 +91,6 @@ const TokenDetails = ({
       </InputBox>
 
       <TokenAllocations tokenAllocations={tokenAllocations} supply={supply} setTokenAllocations={setTokenAllocations} />
-      <ContentBanner description="The Governance Setup values are not editable at this time. To change these values, a new proposal will need to be created and passed by your members." />
     </div>
   );
 };
