@@ -1,21 +1,29 @@
-import { AllocationInput, TokenAllocation } from "../../../daoData/useDeployDAO";
-import { TextButton } from '../../ui/forms/Button';
+import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import { checkAddress } from "../../../hooks/useAddress";
+import { useWeb3 } from "../../../web3";
+import { TextButton } from "../../ui/forms/Button";
 import Input from "../../ui/forms/Input";
 
 interface TokenAllocationProps {
   index: number;
   tokenAllocation: TokenAllocation;
-  errorMap: Map<number, AllocationInput>
+  hasAmountError: boolean;
   updateTokenAllocation: (index: number, tokenAllocation: TokenAllocation) => void;
   removeTokenAllocation: (index: number) => void;
 }
 
-const TokenAllocationInput = ({ index, tokenAllocation, errorMap, updateTokenAllocation, removeTokenAllocation }: TokenAllocationProps) => {
+const TokenAllocationInput = ({ index, tokenAllocation, hasAmountError, updateTokenAllocation, removeTokenAllocation }: TokenAllocationProps) => {
+  const [{ provider }] = useWeb3();
   
-  const updateAddress = (address: string) => {
+  const updateAddress = async (address: string) => {
+    let isValidAddress = false;
+    if (address.trim()) {
+      isValidAddress = await checkAddress(provider, address);
+    }
     updateTokenAllocation(index, {
       address: address,
       amount: tokenAllocation.amount,
+      addressError: !isValidAddress && address.trim() ? "Invalid address" : undefined,
     });
   };
 
@@ -33,17 +41,18 @@ const TokenAllocationInput = ({ index, tokenAllocation, errorMap, updateTokenAll
         type="text"
         value={tokenAllocation.address || ""}
         onChange={(event) => updateAddress(event.target.value)}
-        errorMessage={errorMap.get(index)?.error || ""}
+        errorMessage={tokenAllocation.addressError}
       />
       <Input
         containerClassName="col-span-2 md:pt-0"
         type="number"
         value={tokenAllocation.amount || ""}
         onChange={(event) => updateAmount(event.target.value)}
+        errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
         isWholeNumberOnly
       />
       <div className="md:col-span-1">
-        <TextButton type="button" onClick={() => removeTokenAllocation(index)} label="Remove" className="px-0 mx-0"/>
+        <TextButton type="button" onClick={() => removeTokenAllocation(index)} label="Remove" className="px-0 mx-0" />
       </div>
     </>
   );
