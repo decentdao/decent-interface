@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react';
 
-import { DAOData, useDAODatas } from './daoData';
+import useDAODatas, { DAODataContext, defaultDAODataResponse } from './daoData';
 
-const createDAODataRoot = (context: React.Context<readonly [DAOData, React.Dispatch<React.SetStateAction<string | undefined>>]>) => {
+const createDAODataRoot = (context: React.Context<DAODataContext>) => {
   const DAODataRoot = ({ children }: { children: React.ReactNode }) => {
     const daoData = useDAODatas();
 
@@ -16,8 +16,8 @@ const createDAODataRoot = (context: React.Context<readonly [DAOData, React.Dispa
   return DAODataRoot;
 };
 
-const daoDataContext = createContext<readonly [DAOData, React.Dispatch<React.SetStateAction<string | undefined>>]>([{} as DAOData, () => undefined]);
+const daoDataContext = createContext(defaultDAODataResponse);
 const DAODataProvider = createDAODataRoot(daoDataContext);
-const useDAOData = () => useContext(daoDataContext);
+const useDAOData: () => DAODataContext = () => useContext(daoDataContext);
 
 export { DAODataProvider, useDAOData };

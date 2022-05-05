@@ -34,7 +34,12 @@ export interface DAOData {
   currentTimestamp: number,
 };
 
-export const useDAODatas = () => {
+type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
+export type DAODataContext = readonly [DAOData, SetDAOAddressFn];
+
+export const defaultDAODataResponse = [{} as DAOData, (() => undefined) as SetDAOAddressFn] as const;
+
+const useDAODatas = () => {
   const [daoAddress, setDAOAddress] = useState<string>();
   const daoContract = useDAOContract(daoAddress);
   const name = useDAOName(daoContract);
@@ -63,3 +68,5 @@ export const useDAODatas = () => {
 
   return [daoData, setDAOAddress] as const;
 };
+
+export default useDAODatas;
