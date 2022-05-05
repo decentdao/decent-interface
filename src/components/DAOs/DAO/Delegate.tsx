@@ -11,16 +11,18 @@ import { SecondaryButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
 import cx from "classnames";
 import useAddress from "../../../hooks/useAddress";
-import DataLoadingWrapper from "../../ui/loaders/DataLoadingWrapper";
+import Label from "../../ui/Label";
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState("");
   const [{ account }] = useWeb3();
   const [, validAddress] = useAddress(newDelegatee);
-  const [{
-    tokenData: { decimals, symbol, userBalance, delegatee, votingWeight }
-  }] = useDAOData();
+  const [
+    {
+      tokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
+    },
+  ] = useDAOData();
   const delegateeDisplayName = useDisplayName(delegatee);
 
   const delegateSelf = () => {
@@ -57,10 +59,10 @@ function Delegate() {
   }, [decimals, votingWeight, symbol]);
 
   useEffect(() => {
-    if(validAddress === false) {
-      setErrorMessage('Invalid address')
+    if (validAddress === false) {
+      setErrorMessage("Invalid address");
     }
-  }, [validAddress])
+  }, [validAddress]);
   return (
     <>
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
@@ -78,26 +80,18 @@ function Delegate() {
               <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit -mt-2 sm:mt-0")} />
             </div>
           </InputBox>
-          <div className="flex mx-2 my-1 text-gray-50">
-            Balance:{" "}
-            <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={readableBalance === undefined}>{readableBalance}</DataLoadingWrapper>
-            </span>
-          </div>
-          <div className="flex mx-2 my-1 text-gray-50">
-            Current Delegatee:{" "}
+          <Label label="Balance:" isDataLoading={!readableBalance}>
+            <span className="text-gray-25 ml-2">{readableBalance}</span>
+          </Label>
+          <Label label="Current Delegatee:" isDataLoading={!delegateeDisplayName}>
             <EtherscanLink address={delegatee}>
-              <DataLoadingWrapper isLoading={!delegateeDisplayName}>
-                <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
-              </DataLoadingWrapper>
+              <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
             </EtherscanLink>
-          </div>
-          <div className="flex mx-2 my-1 text-gray-50">
-            Current Voting Weight:{" "}
-            <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>{readableVotingWeight}</DataLoadingWrapper>
-            </span>
-          </div>
+          </Label>
+          <Label label="Current Voting Weight:" isDataLoading={readableVotingWeight === undefined}>
+            <span className="text-gray-25 ml-2">{readableVotingWeight}</span>
+          </Label>
+
           <SecondaryButton disabled={!validAddress || newDelegatee.trim() === "" || pending} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
         </ContentBox>
       </div>
