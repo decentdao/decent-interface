@@ -13,6 +13,8 @@ export type TransactionData = {
   functionName: string;
   functionSignature: string;
   parameters: string;
+  addressError?: string;
+  fragmentError?: string;
 };
 
 export type ProposalData = {
@@ -22,37 +24,31 @@ export type ProposalData = {
   description: string;
 };
 
+const defaultTransaction = {
+  targetAddress: "",
+  functionName: "",
+  functionSignature: "",
+  parameters: "",
+};
+
 const New = () => {
   const [{ daoAddress }] = useDAOData();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>("");
-  const [errorMap, setErrorMap] = useState<Map<number, { address: string | null; fragment: string | null }>>(new Map());
-  const [transactions, setTransactions] = useState<TransactionData[]>([
-    {
-      targetAddress: "",
-      functionName: "",
-      functionSignature: "",
-      parameters: "",
-    },
-  ]);
+  const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [pending, setPending] = useState<boolean>(false);
   const [proposalData, setProposalData] = useState<ProposalData>();
 
+  /**
+   * adds new transaction form
+   */
   const addTransaction = () => {
-    setTransactions([
-      ...transactions,
-      {
-        targetAddress: "",
-        functionName: "",
-        functionSignature: "",
-        parameters: "",
-      },
-    ]);
+    setTransactions([...transactions, defaultTransaction]);
   };
 
   const removeTransaction = (transactionNumber: number) => {
-    removeError(transactionNumber);
-    setTransactions([...transactions.slice(0, transactionNumber), ...transactions.slice(transactionNumber + 1)]);
+    const _transactions = transactions.filter((_, i) => i !== transactionNumber);
+    setTransactions(_transactions);
   };
 
   const decrementStep = () => {
@@ -104,6 +100,15 @@ const New = () => {
 
   useEffect(() => {
     try {
+      let hasError: boolean = false;
+      transactions.forEach((transaction: TransactionData) => {
+        if (transaction.addressError || transaction.fragmentError) {
+          hasError = true;
+        }
+      });
+      if (hasError) {
+        return;
+      }
       const proposal = {
         targets: transactions.map((transaction) => transaction.targetAddress),
         values: transactions.map(() => BigNumber.from("0")),
@@ -135,8 +140,8 @@ const New = () => {
     }
     // if error in transactions
     let hasError: boolean = false;
-    Array.from(errorMap.values()).forEach((error: { address: string | null; fragment: string | null }) => {
-      if (error.address || error.fragment) {
+    transactions.forEach((transaction: TransactionData) => {
+      if (transaction.addressError || transaction.fragmentError) {
         hasError = true;
       }
     });
@@ -150,7 +155,7 @@ const New = () => {
     }
     // validations pass
     return true;
-  }, [proposalData, errorMap]);
+  }, [proposalData, transactions]);
 
   return (
     <div>
@@ -158,16 +163,7 @@ const New = () => {
         <H1>Create Proposal</H1>
         <form onSubmit={(e) => e.preventDefault()}>
           {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
-          {step === 1 && (
-            <Transactions
-              transactions={transactions}
-              setTransactions={setTransactions}
-              errorMap={errorMap}
-              removeTransaction={removeTransaction}
-              setError={setError}
-              removeError={removeError}
-            />
-          )}
+          {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} />}
         </form>
         {step === 1 && (
           <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">

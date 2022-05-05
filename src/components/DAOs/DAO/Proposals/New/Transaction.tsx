@@ -13,65 +13,57 @@ interface TransactionProps {
   transactionNumber: number;
   updateTransaction: (transactionData: TransactionData, transactionNumber: number) => void;
   removeTransaction: (transactionNumber: number) => void;
-  errorMap: Map<number, { address: string | null; fragment: string | null }>;
-  setError: (key: number, errorType: "address" | "fragment", error: string | null) => void;
   transactionCount: number;
 }
 
-const Transaction = ({ transaction, transactionNumber, errorMap, setError, updateTransaction, removeTransaction, transactionCount }: TransactionProps) => {
+const Transaction = ({ transaction, transactionNumber, updateTransaction, removeTransaction, transactionCount }: TransactionProps) => {
   const [{ provider }] = useWeb3();
-  let error: string | null = null;
 
-  const validateFunctionData = (functionName: string, functionSignature: string, parameters: string): string | null => {
-    const _functionSignature = `function ${functionName}(${functionSignature})`
-    const _parameters = `[${parameters}]`
-    let error: string | null = null;
+  const validateFunctionData = (functionName: string, functionSignature: string, parameters: string): boolean => {
+    const _functionSignature = `function ${functionName}(${functionSignature})`;
+    const _parameters = `[${parameters}]`;
     try {
       new ethers.utils.Interface([_functionSignature]).encodeFunctionData(functionName, JSON.parse(_parameters));
-    } catch (err) {
-      error = "Unsupported fragment";
-    } finally {
-      return error;
+      return true;
+    } catch {
+      return false;
     }
   };
 
   const updateTargetAddress = async (targetAddress: string) => {
     const newTransactionData = Object.assign({}, transaction);
     newTransactionData.targetAddress = targetAddress;
+    let isValidAddress = false;
     if (targetAddress.trim()) {
-      const isValidAddress = await checkAddress(provider, targetAddress);
-      if (!isValidAddress) {
-        error = "Address Invalid";
-      }
+      isValidAddress = await checkAddress(provider, targetAddress);
     }
-    setError(transactionNumber, "address", error);
+    newTransactionData.addressError = !isValidAddress && targetAddress.trim() ? "Invalid address" : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
 
   const updateFunctionName = (functionName: string) => {
     const newTransactionData = Object.assign({}, transaction);
     newTransactionData.functionName = functionName;
-    const error = validateFunctionData(functionName, transaction.functionSignature, transaction.parameters);
-    setError(transactionNumber, "fragment", error);
+    const isValidFragment = validateFunctionData(functionName, transaction.functionSignature, transaction.parameters);
+    newTransactionData.fragmentError = !isValidFragment ? "Invalid fragments" : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
 
   const updateFunctionSignature = (functionSignature: string) => {
     const newTransactionData = Object.assign({}, transaction);
     newTransactionData.functionSignature = functionSignature;
-    const error = validateFunctionData(transaction.functionName, functionSignature, transaction.parameters);
-    setError(transactionNumber, "fragment", error);
+    const isValidFragment = validateFunctionData(transaction.functionName, functionSignature, transaction.parameters);
+    newTransactionData.fragmentError = !isValidFragment ? "Invalid fragments" : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
 
   const updateParameters = (parameters: string) => {
     const newTransactionData = Object.assign({}, transaction);
     newTransactionData.parameters = parameters;
-    const error = validateFunctionData(transaction.functionName, transaction.functionSignature, parameters);
-    setError(transactionNumber, "fragment", error);
+    const isValidFragment = validateFunctionData(transaction.functionName, transaction.functionSignature, parameters);
+    newTransactionData.fragmentError = !isValidFragment ? "Invalid fragments" : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
-
   return (
     <ContentBox>
       <div className="flex justify-between">
@@ -90,7 +82,7 @@ const Transaction = ({ transaction, transactionNumber, errorMap, setError, updat
           label="Target Address"
           helperText="The smart contract address this proposal will modify"
           disabled={false}
-          errorMessage={errorMap.get(transactionNumber)?.address || ""}
+          errorMessage={transaction.addressError}
         />
       </InputBox>
       <InputBox>
@@ -101,7 +93,7 @@ const Transaction = ({ transaction, transactionNumber, errorMap, setError, updat
           label="Function Name"
           exampleText="transfer"
           helperText="The name of the function to be called if this proposal passes"
-          errorMessage={errorMap.get(transactionNumber)?.fragment || ""}
+          errorMessage={transaction.fragmentError}
         />
       </InputBox>
       <InputBox>
@@ -113,7 +105,7 @@ const Transaction = ({ transaction, transactionNumber, errorMap, setError, updat
           helperText="The function of the smart contract (above) to be called if this proposal passes"
           disabled={false}
           exampleText="address to, uint amount"
-          errorMessage={errorMap.get(transactionNumber)?.fragment || ""}
+          errorMessage={transaction.fragmentError}
         />
       </InputBox>
       <InputBox>
@@ -125,7 +117,7 @@ const Transaction = ({ transaction, transactionNumber, errorMap, setError, updat
           helperText="Values used to call the function (comma separated)"
           disabled={false}
           exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", 500'
-          errorMessage={errorMap.get(transactionNumber)?.fragment || ""}
+          errorMessage={transaction.fragmentError}
         />
       </InputBox>
     </ContentBox>
