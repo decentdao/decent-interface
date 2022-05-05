@@ -62,7 +62,7 @@ const Input = ({ value, min, placeholder, type, label, subLabel, unit, errorMess
   const _type = type !== "textarea" ? type : undefined;
 
   const stripChars = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    return ['e', '+', '-'].includes(event.key) && event.preventDefault()
+    return ['e', '+', '-', '.'].includes(event.key) && event.preventDefault()
   }
 
   return (
