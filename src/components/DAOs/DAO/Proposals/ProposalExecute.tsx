@@ -2,11 +2,11 @@ import { useState, useEffect } from "react";
 import { ProposalData } from "../../../../daoData/useProposals";
 import useExecuteTransaction from "../../../../daoData/useExecuteTransaction";
 import { PrimaryButton } from "../../../ui/forms/Button";
-import { useDAOData } from "../../../../daoData";
+import { useBlockchainData } from "../../../../blockchainData";
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);
-  const [{ currentTimestamp }] = useDAOData();
+  const { currentTimestamp } = useBlockchainData();
 
   useEffect(() => {
     if (proposal.eta === undefined || currentTimestamp === undefined) {
