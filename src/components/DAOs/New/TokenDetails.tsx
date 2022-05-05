@@ -1,6 +1,6 @@
 import { useEffect, useCallback, ChangeEvent } from "react";
 import ContentBoxTitle from "../../ui/ContentBoxTitle";
-import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import { TokenAllocation } from "../../../hooks/useDeployDAO";
 import Input from "../../ui/forms/Input";
 import InputBox from "../../ui/forms/InputBox";
 import TokenAllocations from "./TokenAllocations";

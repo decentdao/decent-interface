@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { DAO } from '../typechain-types';
+import { DAO } from '../../typechain-types';
 import useSafeRace from './useSafeRace';
 
 const useDAOName = (dao: DAO | undefined) => {

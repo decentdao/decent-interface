@@ -1,7 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import useAvatar from "../../../hooks/useAvatar";
 import useDisplayName from "../../../hooks/useDisplayName";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../contexts/web3Data";
 import DownArrow from "../svg/DownArrow";
 import Avatar from "./Avatar";
 import MenuItems from "./MenuItems";

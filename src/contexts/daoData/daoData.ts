@@ -11,9 +11,9 @@ import useTokenContract from './useTokenContract';
 import useTokenData from './useTokenData';
 import useProposals from './useProposals';
 import { ProposalData } from './useProposals';
-import useCurrentBlockNumber from '../hooks/useCurrentBlockNumber';
-import useCurrentTimestamp from '../hooks/useCurrentTimestamp';
-import { GovernorModule, VotesTokenWithSupply } from '../typechain-types';
+import { GovernorModule, VotesTokenWithSupply } from '../../typechain-types';
+import { useBlockchainData } from '../blockchainData';
+
 export interface DAOData {
   daoAddress: string | undefined,
   name: string | undefined,
@@ -30,11 +30,14 @@ export interface DAOData {
     delegatee: string | undefined,
     votingWeight: BigNumber | undefined,
   },
-  currentBlockNumber: number | undefined,
-  currentTimestamp: number,
 };
 
-export const useDAODatas = () => {
+type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
+export type DAODataContext = readonly [DAOData, SetDAOAddressFn];
+
+export const defaultDAODataResponse = [{} as DAOData, (() => undefined) as SetDAOAddressFn] as const;
+
+const useDAODatas = () => {
   const [daoAddress, setDAOAddress] = useState<string>();
   const daoContract = useDAOContract(daoAddress);
   const name = useDAOName(daoContract);
@@ -44,8 +47,7 @@ export const useDAODatas = () => {
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
-  const currentBlockNumber = useCurrentBlockNumber();
-  const currentTimestamp = useCurrentTimestamp(currentBlockNumber);
+  const { currentBlockNumber } = useBlockchainData()
   const proposals = useProposals(governorModuleContract, currentBlockNumber);
 
   const daoData: DAOData = {
@@ -57,9 +59,9 @@ export const useDAODatas = () => {
     governorModuleContract,
     tokenContract,
     tokenData,
-    currentBlockNumber,
-    currentTimestamp,
   };
 
   return [daoData, setDAOAddress] as const;
 };
+
+export default useDAODatas;

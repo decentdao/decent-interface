@@ -1,7 +1,7 @@
 import { NavLink, useMatch, useLocation, useParams } from 'react-router-dom';
 import useBreadcrumbs, { BreadcrumbMatch } from 'use-react-router-breadcrumbs';
 
-import { useDAOData } from '../daoData';
+import { useDAOData } from '../contexts/daoData';
 import RightArrow from './ui/svg/RightArrow';
 
 const DAOName = () => {

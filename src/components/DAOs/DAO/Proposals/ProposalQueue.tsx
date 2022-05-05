@@ -1,5 +1,5 @@
-import { ProposalData } from "../../../../daoData/useProposals";
-import useQueueTransaction from "../../../../daoData/useQueueTransaction";
+import { ProposalData } from "../../../../contexts/daoData/useProposals";
+import useQueueTransaction from "../../../../hooks/useQueueTransaction";
 import { PrimaryButton } from "../../../ui/forms/Button";
 
 function ProposalQueue({ proposal }: { proposal: ProposalData }) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { TimelockUpgradeable, TimelockUpgradeable__factory } from "../typechain-types";
-import { useWeb3 } from "../web3";
+import { TimelockUpgradeable, TimelockUpgradeable__factory } from "../../typechain-types";
+import { useWeb3 } from "../web3Data";
 
 const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
   const [timelockModule, setTimelockModule] = useState<TimelockUpgradeable>();

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { VotesTokenWithSupply, VotesTokenWithSupply__factory, GovernorModule } from '../typechain-types';
-import { useWeb3 } from '../web3';
+import { VotesTokenWithSupply, VotesTokenWithSupply__factory, GovernorModule } from '../../typechain-types';
+import { useWeb3 } from '../web3Data';
 
 const useTokenContract = (governorModule: GovernorModule | undefined) => {
   const [tokenContract, setTokenContract] = useState<VotesTokenWithSupply>();

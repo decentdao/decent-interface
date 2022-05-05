@@ -1,4 +1,4 @@
-import { ProposalData } from "../../../../daoData/useProposals";
+import { ProposalData } from "../../../../contexts/daoData/useProposals";
 import { Link } from "react-router-dom";
 import ContentBox from "../../../ui/ContentBox";
 import StatusBox from "../../../ui/StatusBox";

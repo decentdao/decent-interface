@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { VotesTokenWithSupply } from "../typechain-types";
-import { useWeb3 } from "../web3";
+import { VotesTokenWithSupply } from "../../typechain-types";
+import { useWeb3 } from "../web3Data";
 import { BigNumber } from "ethers";
 
 const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {

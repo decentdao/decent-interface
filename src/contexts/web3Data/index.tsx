@@ -17,11 +17,7 @@ const createWeb3Root = (context: React.Context<Web3Context>) => {
 };
 
 const web3Context = createContext(defaultWeb3Response);
-
 const Web3Provider = createWeb3Root(web3Context);
-
-const useWeb3: () => Web3Context = () => {
-  return useContext(web3Context);
-};
+const useWeb3: () => Web3Context = () => useContext(web3Context);
 
 export { Web3Provider, useWeb3 };

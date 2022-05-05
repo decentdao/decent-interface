@@ -2,15 +2,15 @@ import { useState } from "react";
 import DAODetails from "./DAODetails";
 import TokenDetails from "./TokenDetails";
 import GovernanceDetails from "./GovernanceDetails";
-import useDeployDAO from "../../../daoData/useDeployDAO";
+import useDeployDAO from "../../../hooks/useDeployDAO";
 import ContentBox from "../../ui/ContentBox";
 import LeftArrow from "../../ui/svg/LeftArrow";
 import RightArrow from "../../ui/svg/RightArrow";
-import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import { TokenAllocation } from "../../../hooks/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
 import H1 from "../../ui/H1";
 import ConnectWalletToast from "../shared/ConnectWalletToast";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../contexts/web3Data";
 
 interface StepDisplayProps {
   step: number;

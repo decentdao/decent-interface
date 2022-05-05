@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import { useTransaction } from '../web3/transactions';
-import { useDAOData } from './index';
+import { useTransaction } from '../contexts/web3Data/transactions';
+import { useDAOData } from '../contexts/daoData/index';
 
 const useDelegateVote = ({
   delegatee,

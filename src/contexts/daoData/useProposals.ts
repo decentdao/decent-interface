@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { GovernorModule } from "../typechain-types";
-import { useWeb3 } from "../web3";
+import { GovernorModule } from "../../typechain-types";
+import { useWeb3 } from "../web3Data";
 import { BigNumber, providers } from "ethers";
 
 type ProposalDataWithoutUserData = {

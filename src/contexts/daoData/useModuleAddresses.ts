@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { DAO, AccessControl } from "../typechain-types";
+import { DAO, AccessControl } from "../../typechain-types";
 
 type ModuleActionRoleEvents = {
   address: string;

@@ -6,10 +6,10 @@ import Summary from "./Summary";
 import Details from "./Details";
 import Proposals from "./Proposals";
 import Delegate from "./Delegate";
-import { useDAOData } from "../../../daoData";
+import { useDAOData } from "../../../contexts/daoData";
 
 import useSearchDao from "../../../hooks/useSearchDao";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../contexts/web3Data";
 
 function DAORoutes() {
   return (
