@@ -1,17 +1,17 @@
-import { AllocationInput, TokenAllocation } from "../../../daoData/useDeployDAO";
+import { useEffect, useState } from "react";
+import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { TextButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
 import TokenAllocationInput from "./TokenAllocationInput";
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
-  errorMap: Map<number, AllocationInput>;
-  removeError: (key: number) => void;
+  supply: string;
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
 
-const TokenAllocations = ({ tokenAllocations, errorMap, removeError, setTokenAllocations }: TokenAllocationsProps) => {
-
+const TokenAllocations = ({ tokenAllocations, supply, setTokenAllocations }: TokenAllocationsProps) => {
+  const [hasAmountError, setAmountError] = useState(false);
 
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
     const newTokenAllocations = [...tokenAllocations];
@@ -35,9 +35,15 @@ const TokenAllocations = ({ tokenAllocations, errorMap, removeError, setTokenAll
 
   const removeTokenAllocation = (index: number) => {
     if (tokenAllocations === undefined) return;
-    removeError(index)
     setTokenAllocations([...tokenAllocations.slice(0, index), ...tokenAllocations.slice(index + 1)]);
   };
+
+  useEffect(() => {
+    const totalAllocated = tokenAllocations.reduce((prev, cur) => Number(cur.amount) + prev, 0);
+    if (Number(supply) && totalAllocated) {
+      setAmountError(Number(supply) < totalAllocated);
+    }
+  }, [tokenAllocations, supply]);
 
   return (
     <div>
@@ -51,10 +57,10 @@ const TokenAllocations = ({ tokenAllocations, errorMap, removeError, setTokenAll
               <TokenAllocationInput
                 key={index}
                 index={index}
+                hasAmountError={hasAmountError}
                 tokenAllocation={tokenAllocation}
                 updateTokenAllocation={updateTokenAllocation}
                 removeTokenAllocation={removeTokenAllocation}
-                errorMap={errorMap}
               />
             ))}
         </div>

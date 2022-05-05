@@ -9,10 +9,8 @@ import { MetaFactory, MetaFactory__factory } from "../typechain-types";
 export type TokenAllocation = {
   address: string;
   amount: number;
+  addressError?: string;
 };
-export interface AllocationInput extends TokenAllocation {
-  error: string | null,
-}
 
 const useDeployDAO = ({
   daoName,
