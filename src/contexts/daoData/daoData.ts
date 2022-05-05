@@ -11,7 +11,7 @@ import useTokenContract from './useTokenContract';
 import useTokenData from './useTokenData';
 import useProposals from './useProposals';
 import { ProposalData } from './useProposals';
-import { GovernorModule, VotesTokenWithSupply } from '../typechain-types';
+import { GovernorModule, VotesTokenWithSupply } from '../../typechain-types';
 import { useBlockchainData } from '../blockchainData';
 
 export interface DAOData {

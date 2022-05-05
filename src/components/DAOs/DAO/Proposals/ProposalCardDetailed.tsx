@@ -1,4 +1,4 @@
-import { ProposalData } from "../../../../daoData/useProposals";
+import { ProposalData } from "../../../../contexts/daoData/useProposals";
 import ContentBox from "../../../ui/ContentBox";
 import ProposalCreatedBy from "../../../ui/proposal/ProposalCreatedBy";
 import ProposalDescription from "../../../ui/proposal/ProposalDescription";

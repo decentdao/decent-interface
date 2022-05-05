@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TokenAllocation } from "../../../daoData/useDeployDAO";
+import { TokenAllocation } from "../../../contexts/daoData/useDeployDAO";
 import { TextButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
 import TokenAllocationInput from "./TokenAllocationInput";

@@ -1,4 +1,4 @@
-import { useDAOData } from "../../../../daoData";
+import { useDAOData } from "../../../../contexts/daoData";
 import ProposalCard from "./ProposalCard";
 
 function ProposalsList() {

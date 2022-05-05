@@ -5,7 +5,7 @@ import Input from "../../../../ui/forms/Input";
 import InputBox from "../../../../ui/forms/InputBox";
 import ContentBox from "../../../../ui/ContentBox";
 import { checkAddress } from "../../../../../hooks/useAddress";
-import { useWeb3 } from "../../../../../web3Data";
+import { useWeb3 } from "../../../../../contexts/web3Data";
 import { ethers } from "ethers";
 
 interface TransactionProps {

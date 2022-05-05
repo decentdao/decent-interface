@@ -3,7 +3,7 @@ import { useTransaction } from '../web3Data/transactions';
 import { useWeb3 } from '../web3Data';
 import { BigNumber } from 'ethers';
 import { useNavigate } from 'react-router';
-import { GovernorModule, GovernorModule__factory } from '../typechain-types';
+import { GovernorModule, GovernorModule__factory } from '../../typechain-types';
 import { useDAOData } from './index';
 
 type ProposalData = {

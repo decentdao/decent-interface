@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { useWeb3 } from "../web3Data";
 import { BigNumber, ethers } from "ethers";
 import { useAddresses } from "../web3Data/chains";
-import { MetaFactory, MetaFactory__factory } from "../typechain-types";
+import { MetaFactory, MetaFactory__factory } from "../../typechain-types";
 
 export type TokenAllocation = {
   address: string;

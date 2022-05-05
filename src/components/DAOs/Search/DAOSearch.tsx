@@ -7,7 +7,7 @@ import Input from "../../ui/forms/Input";
 import useSearchDao from "../../../hooks/useSearchDao";
 import { PrimaryButton } from "../../ui/forms/Button";
 import ConnectWalletToast from "../shared/ConnectWalletToast";
-import { useWeb3 } from "../../../web3Data";
+import { useWeb3 } from "../../../contexts/web3Data";
 import { useNavigate } from "react-router-dom";
 
 function DAOSearch() {

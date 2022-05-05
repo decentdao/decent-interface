@@ -5,9 +5,9 @@ import { ToastContainer } from 'react-toastify';
 
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Web3Provider } from './web3Data';
-import { BlockchainDataProvider } from './blockchainData';
-import { DAODataProvider } from './daoData';
+import { Web3Provider } from './contexts/web3Data';
+import { BlockchainDataProvider } from './contexts/blockchainData';
+import { DAODataProvider } from './contexts/daoData';
 import App from './App';
 
 ReactDOM.render(

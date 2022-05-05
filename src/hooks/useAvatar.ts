@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useWeb3 } from '../web3Data';
+import { useWeb3 } from '../contexts/web3Data';
 import useENSName from './useENSName';
 
 const useAvatar = (account: string | undefined) => {

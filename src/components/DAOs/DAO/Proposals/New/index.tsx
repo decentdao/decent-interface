@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
-import useCreateProposal from "../../../../../daoData/useCreateProposal";
+import useCreateProposal from "../../../../../contexts/daoData/useCreateProposal";
 import Essentials from "./Essentials";
 import Transactions from "./Transactions";
 import H1 from "../../../../ui/H1";
 import { PrimaryButton, SecondaryButton, TextButton } from "../../../../ui/forms/Button";
 import LeftArrow from "../../../../ui/svg/LeftArrow";
-import { useDAOData } from "../../../../../daoData";
+import { useDAOData } from "../../../../../contexts/daoData";
 
 export type TransactionData = {
   targetAddress: string;

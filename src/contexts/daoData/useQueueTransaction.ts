@@ -1,9 +1,9 @@
 import { useCallback } from 'react'
 import { useTransaction } from '../web3Data/transactions';
 import { useWeb3 } from '../web3Data';
-import { GovernorModule, GovernorModule__factory } from '../typechain-types';
+import { GovernorModule, GovernorModule__factory } from '../../typechain-types';
 import { useDAOData } from './index';
-import { ProposalData } from "../daoData/useProposals";
+import { ProposalData } from "./useProposals";
 import { ethers } from 'ethers';
 
 

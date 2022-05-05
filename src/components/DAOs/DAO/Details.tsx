@@ -1,4 +1,4 @@
-import { useDAOData } from "../../../daoData";
+import { useDAOData } from "../../../contexts/daoData";
 import H1 from "../../ui/H1";
 
 function Details() {

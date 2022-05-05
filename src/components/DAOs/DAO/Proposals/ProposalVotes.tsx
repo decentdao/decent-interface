@@ -1,4 +1,4 @@
-import { ProposalData } from "../../../../daoData/useProposals";
+import { ProposalData } from "../../../../contexts/daoData/useProposals";
 
 const VotesPercentage = ({ label, percentage }: { label: string; percentage?: number }) => {
   return (

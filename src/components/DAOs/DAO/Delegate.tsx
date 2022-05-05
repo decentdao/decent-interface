@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { utils } from "ethers";
-import useDelegateVote from "../../../daoData/useDelegateVote";
+import useDelegateVote from "../../../contexts/daoData/useDelegateVote";
 import useDisplayName from "../../../hooks/useDisplayName";
 import ContentBox from "../../ui/ContentBox";
 import EtherscanLink from "../../ui/EtherscanLink";
-import { useWeb3 } from "../../../web3Data";
-import { useDAOData } from "../../../daoData";
+import { useWeb3 } from "../../../contexts/web3Data";
+import { useDAOData } from "../../../contexts/daoData";
 import Input from "../../ui/forms/Input";
 import { SecondaryButton } from "../../ui/forms/Button";
 import InputBox from "../../ui/forms/InputBox";
