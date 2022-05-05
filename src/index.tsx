@@ -6,6 +6,7 @@ import { ToastContainer } from 'react-toastify';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { Web3Provider } from './web3';
+import { BlockchainDataProvider } from './blockchainData';
 import { DAODataProvider } from './daoData';
 import App from './App';
 
@@ -13,17 +14,19 @@ ReactDOM.render(
   <React.StrictMode>
     <HashRouter>
       <Web3Provider>
-        <DAODataProvider>
-          <ToastContainer
-            position="bottom-center"
-            closeButton={false}
-            newestOnTop={false}
-            pauseOnFocusLoss={false}
-            toastClassName="bottom-0 mb-0 font-sans font-medium shadow bg-gray-400 text-gray-25 text-center cursor-pointer"
-            progressClassName="bg-none bg-gold-500"
-          />
-          <App />
-        </DAODataProvider>
+        <BlockchainDataProvider>
+          <DAODataProvider>
+            <ToastContainer
+              position="bottom-center"
+              closeButton={false}
+              newestOnTop={false}
+              pauseOnFocusLoss={false}
+              toastClassName="bottom-0 mb-0 font-sans font-medium shadow bg-gray-400 text-gray-25 text-center cursor-pointer"
+              progressClassName="bg-none bg-gold-500"
+            />
+            <App />
+          </DAODataProvider>
+        </BlockchainDataProvider>
       </Web3Provider>
     </HashRouter>
   </React.StrictMode>,
