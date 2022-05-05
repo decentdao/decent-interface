@@ -2,7 +2,6 @@ import { useState } from "react";
 import DAODetails from "./DAODetails";
 import TokenDetails from "./TokenDetails";
 import GovernanceDetails from "./GovernanceDetails";
-import Pending from "../../Pending";
 import useDeployDAO from "../../../daoData/useDeployDAO";
 import ContentBox from "../../ui/ContentBox";
 import LeftArrow from "../../ui/svg/LeftArrow";
@@ -11,6 +10,7 @@ import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
 import H1 from "../../ui/H1";
 import ConnectWalletToast from "../shared/ConnectWalletToast";
+import { useWeb3 } from "../../../web3";
 
 interface StepDisplayProps {
   step: number;
@@ -85,6 +85,7 @@ const New = () => {
   const [proposalThreshold] = useState<number>(0);
   const [quorum] = useState<number>(4);
   const [executionDelay] = useState<number>(24);
+  const [{ account }] = useWeb3();
 
   const decrement = () => {
     setStep((currPage) => currPage - 1);
@@ -93,6 +94,15 @@ const New = () => {
   const increment = () => {
     setStep((currPage) => currPage + 1);
   };
+
+  const clearState = () => {
+    setPending(false);
+    setDAOName("");
+    setTokenName("");
+    setTokenSymbol("");
+    setTokenSupply("");
+    setTokenAllocations([]);
+  }
 
   const deploy = useDeployDAO({
     daoName,
@@ -104,12 +114,12 @@ const New = () => {
     quorum,
     executionDelay,
     setPending,
+    clearState,
   });
 
   return (
     <div className="pb-16">
       <ConnectWalletToast label="To deploy a new Fractal" />
-      <Pending message="Creating Fractal..." pending={pending} />
       <div>
         <H1>{!daoName || daoName.trim() === "" || step === 0 ? "Configure New Fractal" : "Configure " + daoName}</H1>
         <ContentBox>
@@ -138,7 +148,7 @@ const New = () => {
         <div className="flex items-center justify-center py-4">
           {step > 0 && <TextButton onClick={decrement} disabled={!prevEnabled} icon={<LeftArrow />} label="Prev" />}
           {step < 2 && <SecondaryButton onClick={increment} disabled={!nextEnabled} isIconRight icon={<RightArrow />} label="Next" />}
-          {step > 1 && <PrimaryButton onClick={deploy} label="Deploy" isLarge disabled={!daoName || !tokenName || !tokenSymbol || !tokenSupply} />}
+          {step > 1 && <PrimaryButton onClick={deploy} label="Deploy" isLarge disabled={!daoName || !tokenName || !tokenSymbol || !tokenSupply || pending || !account} />}
         </div>
       </div>
     </div>
