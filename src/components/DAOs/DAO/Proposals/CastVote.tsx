@@ -1,6 +1,6 @@
 import { ProposalData } from "../../../../contexts/daoData/useProposals";
 import { useState, useEffect } from "react";
-import useCastVote from "../../../../contexts/daoData/useCastVote";
+import useCastVote from "../../../../hooks/useCastVote";
 import { PrimaryButton, SecondaryButton } from "../../../ui/forms/Button";
 import Check from "../../../ui/svg/Check";
 import ContentBanner from "../../../ui/ContentBanner";

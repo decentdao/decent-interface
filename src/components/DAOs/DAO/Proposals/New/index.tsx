@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
-import useCreateProposal from "../../../../../contexts/daoData/useCreateProposal";
+import useCreateProposal from "../../../../../hooks/useCreateProposal";
 import Essentials from "./Essentials";
 import Transactions from "./Transactions";
 import H1 from "../../../../ui/H1";

@@ -1,4 +1,4 @@
-import { TokenAllocation } from "../../../contexts/daoData/useDeployDAO";
+import { TokenAllocation } from "../../../hooks/useDeployDAO";
 import { checkAddress } from "../../../hooks/useAddress";
 import { useWeb3 } from "../../../contexts/web3Data";
 import { TextButton } from "../../ui/forms/Button";

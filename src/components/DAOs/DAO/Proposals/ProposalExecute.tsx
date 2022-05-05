@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ProposalData } from "../../../../contexts/daoData/useProposals";
-import useExecuteTransaction from "../../../../contexts/daoData/useExecuteTransaction";
+import useExecuteTransaction from "../../../../hooks/useExecuteTransaction";
 import { PrimaryButton } from "../../../ui/forms/Button";
 import { useBlockchainData } from "../../../../contexts/blockchainData";
 

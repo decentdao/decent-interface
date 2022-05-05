@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { utils } from "ethers";
-import useDelegateVote from "../../../contexts/daoData/useDelegateVote";
+import useDelegateVote from "../../../hooks/useDelegateVote";
 import useDisplayName from "../../../hooks/useDisplayName";
 import ContentBox from "../../ui/ContentBox";
 import EtherscanLink from "../../ui/EtherscanLink";
