@@ -65,39 +65,6 @@ const New = () => {
     setProposalData(undefined)
   }
 
-  /**
-   * adds new error to mapping
-   * @param key
-   * @param error
-   */
-  const setError = useCallback(
-    (key: number, errorType: "address" | "fragment", error: string | null) => {
-      const errors = new Map(errorMap);
-      const currentTransactionErrors = errors.get(key);
-      const prevAddress = currentTransactionErrors?.address || null;
-      const prevFragment = currentTransactionErrors?.fragment || null;
-
-      const currentErrors = {
-        address: errorType === "address" ? error : prevAddress,
-        fragment: errorType === "fragment" ? error : prevFragment,
-      };
-      errors.set(key, currentErrors);
-      setErrorMap(errors);
-    },
-    [errorMap]
-  );
-
-  /**
-   * removes error to mapping
-   * @param key
-   * @param error
-   */
-  const removeError = (key: number) => {
-    const errors = new Map(errorMap);
-    errors.delete(key);
-    setErrorMap(errors);
-  };
-
   useEffect(() => {
     try {
       let hasError: boolean = false;
