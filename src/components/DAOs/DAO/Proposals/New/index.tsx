@@ -176,8 +176,8 @@ const New = () => {
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
           {step === 1 && <TextButton type="button" onClick={decrementStep} disabled={false} icon={<LeftArrow />} label="Prev" />}
-          {step === 1 && <PrimaryButton type="button" onClick={createProposal} disabled={!isValidProposalValid()} label="Create Proposal" isLarge />}
-          {step === 0 && <SecondaryButton type="button" onClick={incrementStep} disabled={!proposalDescription.trim().length || pending} label="Next: Add Transactions" />}
+          {step === 1 && <PrimaryButton type="button" onClick={createProposal} disabled={!isValidProposalValid() || pending} label="Create Proposal" isLarge />}
+          {step === 0 && <SecondaryButton type="button" onClick={incrementStep} disabled={!proposalDescription.trim().length} label="Next: Add Transactions" />}
         </div>
       </div>
     </div>
