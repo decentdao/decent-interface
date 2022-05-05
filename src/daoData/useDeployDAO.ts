@@ -1,9 +1,9 @@
 import { useCallback, useEffect } from "react";
-import { useTransaction } from "../web3/transactions";
+import { useTransaction } from "../web3Data/transactions";
 import { useNavigate } from "react-router";
-import { useWeb3 } from "../web3";
+import { useWeb3 } from "../web3Data";
 import { BigNumber, ethers } from "ethers";
-import { useAddresses } from "../web3/chains";
+import { useAddresses } from "../web3Data/chains";
 import { MetaFactory, MetaFactory__factory } from "../typechain-types";
 
 export type TokenAllocation = {

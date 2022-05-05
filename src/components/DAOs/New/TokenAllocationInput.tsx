@@ -1,6 +1,6 @@
 import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { checkAddress } from "../../../hooks/useAddress";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../web3Data";
 import { TextButton } from "../../ui/forms/Button";
 import Input from "../../ui/forms/Input";
 

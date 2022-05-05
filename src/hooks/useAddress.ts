@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ethers, constants } from "ethers";
 
-import { useWeb3 } from "../web3";
+import { useWeb3 } from "../web3Data";
 
 const useAddress = (addressInput: string | undefined) => {
   const [{ provider }] = useWeb3();

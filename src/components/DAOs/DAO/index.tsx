@@ -9,7 +9,7 @@ import Delegate from "./Delegate";
 import { useDAOData } from "../../../daoData";
 
 import useSearchDao from "../../../hooks/useSearchDao";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../web3Data";
 
 function DAORoutes() {
   return (

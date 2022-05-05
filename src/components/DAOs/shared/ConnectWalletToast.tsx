@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { TextButton } from "../../ui/forms/Button";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../web3Data";
 
 const ToastContent = ({ label }: { label: string }) => {
   const [, connect] = useWeb3();

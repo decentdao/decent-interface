@@ -10,7 +10,7 @@ import { TokenAllocation } from "../../../daoData/useDeployDAO";
 import { SecondaryButton, TextButton, PrimaryButton } from "../../ui/forms/Button";
 import H1 from "../../ui/H1";
 import ConnectWalletToast from "../shared/ConnectWalletToast";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../web3Data";
 
 interface StepDisplayProps {
   step: number;

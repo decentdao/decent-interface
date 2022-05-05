@@ -4,7 +4,7 @@ import useDelegateVote from "../../../daoData/useDelegateVote";
 import useDisplayName from "../../../hooks/useDisplayName";
 import ContentBox from "../../ui/ContentBox";
 import EtherscanLink from "../../ui/EtherscanLink";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../web3Data";
 import { useDAOData } from "../../../daoData";
 import Input from "../../ui/forms/Input";
 import { SecondaryButton } from "../../ui/forms/Button";

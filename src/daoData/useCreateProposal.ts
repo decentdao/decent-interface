@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react'
-import { useTransaction } from '../web3/transactions';
-import { useWeb3 } from '../web3';
+import { useTransaction } from '../web3Data/transactions';
+import { useWeb3 } from '../web3Data';
 import { BigNumber } from 'ethers';
 import { useNavigate } from 'react-router';
 import { GovernorModule, GovernorModule__factory } from '../typechain-types';

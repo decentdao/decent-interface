@@ -5,7 +5,7 @@ import { ToastContainer } from 'react-toastify';
 
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Web3Provider } from './web3';
+import { Web3Provider } from './web3Data';
 import { BlockchainDataProvider } from './blockchainData';
 import { DAODataProvider } from './daoData';
 import App from './App';

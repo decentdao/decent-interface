@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { GovernorModule, GovernorModule__factory } from "../typechain-types";
-import { useWeb3 } from "../web3";
+import { useWeb3 } from "../web3Data";
 
 const useGovernorModuleContract = (moduleAddresses: string[] | undefined) => {
   const [governorModule, setGovernorModule] = useState<GovernorModule>();

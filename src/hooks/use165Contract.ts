@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { useWeb3 } from '../web3';
+import { useWeb3 } from '../web3Data';
 import {
   IERC165,
   IERC165__factory,

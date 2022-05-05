@@ -1,5 +1,5 @@
 import { Menu } from "@headlessui/react";
-import { useWeb3 } from "../../../web3";
+import { useWeb3 } from "../../../web3Data";
 import Contact from "../svg/Contact";
 import Support from "../svg/Support";
 import Connect from "../svg/Connect";
