@@ -22,6 +22,7 @@ const useDeployDAO = ({
   quorum,
   executionDelay,
   setPending,
+  clearState,
 }: {
   daoName: string | undefined;
   tokenName: string | undefined;
@@ -32,6 +33,7 @@ const useDeployDAO = ({
   quorum: number | undefined;
   executionDelay: number | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
+  clearState: () => void;
 }) => {
   const [{ signerOrProvider, chainId }] = useWeb3();
   const addresses = useAddresses(chainId);
@@ -196,7 +198,7 @@ const useDeployDAO = ({
           moduleActionCalldata,
           [[5], [0], [0], [4]]
         ),
-      pendingMessage: "Deploying",
+      pendingMessage: "Deploying Fractal...",
       failedMessage: "Deployment Failed",
       successMessage: "DAO Created",
       successCallback: (receipt) => {
@@ -207,6 +209,7 @@ const useDeployDAO = ({
           return "";
         } else {
           const daoAddress = abiCoder.decode(["address"], event[0].topics[1]);
+          clearState();
           navigate(`/daos/${daoAddress}`);
         }
       },
@@ -225,6 +228,7 @@ const useDeployDAO = ({
     quorum,
     executionDelay,
     setPending,
+    clearState,
     addresses.metaFactory?.address,
     addresses.daoFactory?.address,
     addresses.dao?.address,

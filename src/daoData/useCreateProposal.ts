@@ -17,10 +17,12 @@ const useCreateProposal = ({
   daoAddress,
   proposalData,
   setPending,
+  clearState
 }: {
   daoAddress: string | undefined,
   proposalData: ProposalData | undefined,
-  setPending: React.Dispatch<React.SetStateAction<boolean>>
+  setPending: React.Dispatch<React.SetStateAction<boolean>>,
+  clearState: () => void
 }
 ) => {
   const [{ signerOrProvider }] = useWeb3();
@@ -48,17 +50,18 @@ const useCreateProposal = ({
 
     contractCallCreateProposal({
       contractFn: () => governor.propose(proposalData.targets, proposalData.values, proposalData.calldatas, proposalData.description),
-      pendingMessage: "Creating Proposal",
+      pendingMessage: "Creating Proposal...",
       failedMessage: "Proposal Creation Failed",
       successMessage: "Proposal Created",
       successCallback: () => {
+        clearState();
         navigate(`/daos/${daoAddress}`,);
       },
       rpcErrorCallback: (error: any) => {
         console.error(error)
       },
     });
-  }, [daoAddress, navigate, contractCallCreateProposal, daoData, proposalData, setPending, signerOrProvider])
+  }, [daoAddress, navigate, contractCallCreateProposal, daoData, proposalData, setPending, signerOrProvider, clearState])
   return createProposal;
 }
 

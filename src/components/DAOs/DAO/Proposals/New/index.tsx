@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
 import useCreateProposal from "../../../../../daoData/useCreateProposal";
-import Pending from "../../../../Pending";
 import Essentials from "./Essentials";
 import Transactions from "./Transactions";
 import H1 from "../../../../ui/H1";
@@ -60,6 +59,45 @@ const New = () => {
     setStep((currentStep) => currentStep + 1);
   };
 
+  const clearState = () => {
+    setProposalDescription("");
+    setTransactions([]);
+    setProposalData(undefined)
+  }
+
+  /**
+   * adds new error to mapping
+   * @param key
+   * @param error
+   */
+  const setError = useCallback(
+    (key: number, errorType: "address" | "fragment", error: string | null) => {
+      const errors = new Map(errorMap);
+      const currentTransactionErrors = errors.get(key);
+      const prevAddress = currentTransactionErrors?.address || null;
+      const prevFragment = currentTransactionErrors?.fragment || null;
+
+      const currentErrors = {
+        address: errorType === "address" ? error : prevAddress,
+        fragment: errorType === "fragment" ? error : prevFragment,
+      };
+      errors.set(key, currentErrors);
+      setErrorMap(errors);
+    },
+    [errorMap]
+  );
+
+  /**
+   * removes error to mapping
+   * @param key
+   * @param error
+   */
+  const removeError = (key: number) => {
+    const errors = new Map(errorMap);
+    errors.delete(key);
+    setErrorMap(errors);
+  };
+
   useEffect(() => {
     try {
       let hasError: boolean = false;
@@ -92,6 +130,7 @@ const New = () => {
     daoAddress,
     proposalData,
     setPending,
+    clearState,
   });
 
   const isValidProposalValid = useCallback(() => {
@@ -120,7 +159,6 @@ const New = () => {
 
   return (
     <div>
-      <Pending message="Creating Proposal..." pending={pending} />
       <div>
         <H1>Create Proposal</H1>
         <form onSubmit={(e) => e.preventDefault()}>
@@ -134,7 +172,7 @@ const New = () => {
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
           {step === 1 && <TextButton type="button" onClick={decrementStep} disabled={false} icon={<LeftArrow />} label="Prev" />}
-          {step === 1 && <PrimaryButton type="button" onClick={createProposal} disabled={!isValidProposalValid()} label="Create Proposal" isLarge />}
+          {step === 1 && <PrimaryButton type="button" onClick={createProposal} disabled={!isValidProposalValid() || pending} label="Create Proposal" isLarge />}
           {step === 0 && <SecondaryButton type="button" onClick={incrementStep} disabled={!proposalDescription.trim().length} label="Next: Add Transactions" />}
         </div>
       </div>
