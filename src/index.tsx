@@ -26,7 +26,7 @@ ReactDOM.render(
                 closeButton={false}
                 newestOnTop={false}
                 pauseOnFocusLoss={false}
-                toastClassName="bottom-0 mb-0 font-sans font-medium shadow bg-gray-400 text-gray-25 text-center cursor-pointer"
+                toastClassName="mt-2 bottom-0 mb-0 font-sans font-medium shadow bg-gray-400 text-gray-25 text-center cursor-pointer"
                 progressClassName="bg-none bg-gold-500"
               />
               <App />
