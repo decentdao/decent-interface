@@ -14,7 +14,7 @@ import App from './App';
 ReactDOM.render(
   <React.StrictMode>
     <Helmet>
-      <title>Test Fractal</title>
+      <title>Test Fractal TEST</title>
     </Helmet>
     <HashRouter>
       <Web3Provider>
