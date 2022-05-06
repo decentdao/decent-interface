@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { Helmet } from 'react-helmet';
 
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -12,6 +13,9 @@ import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
+    <Helmet>
+      <title>Fractal</title>
+    </Helmet>
     <HashRouter>
       <Web3Provider>
         <BlockchainDataProvider>
