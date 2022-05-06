@@ -31,6 +31,7 @@ const TokenAllocationInput = ({ index, tokenAllocation, hasAmountError, updateTo
     updateTokenAllocation(index, {
       address: tokenAllocation.address,
       amount: Number(amount),
+      addressError: tokenAllocation.addressError
     });
   };
 
