@@ -1,0 +1,70 @@
+name: Build and Deploy PR
+
+on:
+  pull_request
+
+env:
+  ORG_NAME: fractal-framework
+  PR_REPO_NAME: fractal-interface-${{ github.event.pull_request.node_id }}
+
+jobs:
+  create-page-host:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pr-staging
+
+    steps:
+      - name: Create new repository for temporary deployment
+        uses: octobay/create-repository-action@v1
+        with:
+          name: ${{ env.PR_REPO_NAME }}
+          org: ${{ env.ORG_NAME }}
+          access-token: ${{ secrets.MANAGE_REPO_PAT }}
+
+  build-and-deploy-pr:
+    needs: create-page-host
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pr-staging
+      url: https://fractal-framework.github.io/${{ env.PR_REPO_NAME }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Edit package.json
+        run: npx json -I -f package.json -e 'this.homepage="https://fractal-framework.github.io/${{ env.PR_REPO_NAME }}"'
+
+      - name: Install and Build
+        run: |
+          npm install
+          npm run build
+        env:
+          REACT_APP_FALLBACK_CHAIN_ID: ${{ secrets.FALLBACK_CHAIN_ID }}
+          REACT_APP_SUPPORTED_CHAIN_IDS: ${{ secrets.SUPPORTED_CHAIN_IDS }}
+          REACT_APP_METAFACTORY_ADDRESSES: ${{ secrets.METAFACTORY_ADDRESSES }}
+          REACT_APP_DAOFACTORY_ADDRESSES: ${{ secrets.DAOFACTORY_ADDRESSES }}
+          REACT_APP_TREASURYMODULEFACTORY_ADDRESSES: ${{ secrets.TREASURYMODULEFACTORY_ADDRESSES }}
+          REACT_APP_TOKENFACTORY_ADDRESSES: ${{ secrets.TOKENFACTORY_ADDRESSES }}
+          REACT_APP_GOVERNORFACTORY_ADDRESSES: ${{ secrets.GOVERNORFACTORY_ADDRESSES }}
+          REACT_APP_DAO_ADDRESSES: ${{ secrets.DAO_ADDRESSES }}
+          REACT_APP_ACCESSCONTROL_ADDRESSES: ${{ secrets.ACCESSCONTROL_ADDRESSES }}
+          REACT_APP_TREASURYMODULE_ADDRESSES: ${{ secrets.TREASURYMODULE_ADDRESSES }}
+          REACT_APP_GOVERNORMODULE_ADDRESSES: ${{ secrets.GOVERNORMODULE_ADDRESSES }}
+          REACT_APP_TIMELOCKUPGRADEABLE_ADDRESSES: ${{ secrets.TIMELOCKUPGRADEABLE_ADDRESSES }}
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          repository-name: ${{ env.ORG_NAME }}/${{ env.PR_REPO_NAME }}
+          branch: gh-pages
+          folder: build
+          token: ${{ secrets.MANAGE_REPO_PAT }}
