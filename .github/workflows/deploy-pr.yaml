@@ -9,6 +9,7 @@ env:
 jobs:
   create-page-host:
     runs-on: ubuntu-latest
+
     steps:
       - name: Create new repository for temporary deployment
         uses: octobay/create-repository-action@v1
