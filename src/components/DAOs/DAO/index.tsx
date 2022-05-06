@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, useParams, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet";
 
@@ -9,8 +9,8 @@ import Proposals from "./Proposals";
 import Delegate from "./Delegate";
 import { useDAOData } from "../../../contexts/daoData";
 
-import useSearchDao from "../../../hooks/useSearchDao";
 import { useWeb3 } from "../../../contexts/web3Data";
+import useValidateDaoRoute from "../../../hooks/useValidateDaoRoute";
 
 function DAORoutes() {
   return (
@@ -40,56 +40,12 @@ function ValidDAO({ address }: { address: string }) {
   );
 }
 
-function Search() {
-  const params = useParams();
-  const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const { errorMessage, loading, address, addressIsDAO, updateSearchString } = useSearchDao();
-
-  // passes address string to useSearchDao hook
-  useEffect(() => {
-    updateSearchString(params.address!);
-  }, [updateSearchString, params.address]);
-
-  // when there was error
-  useEffect(() => {
-    if (errorMessage) {
-      toast(errorMessage, {
-        onOpen: () => navigate("/"),
-      });
-    }
-  }, [errorMessage, navigate]);
-
-  // when dao is valid
-  useEffect(() => {
-    if (addressIsDAO && loading === false && address) {
-      navigate(pathname!, { state: { validatedAddress: address } });
-    }
-  }, [addressIsDAO, loading, address, pathname, navigate]);
-
-  // while dao is loading
-  useEffect(() => {
-    const toastId = toast("Loading...", {
-      toastId: "0",
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false,
-      progress: 1,
-    });
-    return () => {
-      toast.dismiss(toastId);
-    };
-  }, []);
-
-  return <></>;
-}
-
 function DAO() {
   const location = useLocation();
   const navigate = useNavigate();
   const [{ account, accountLoading, chainId }] = useWeb3();
   const [, setAddress] = useDAOData();
-
+  useValidateDaoRoute()
   const [validatedAddress, setValidatedAddress] = useState((location.state as { validatedAddress: string } | null)?.validatedAddress);
   useEffect(() => {
     if (!location || !location.state) {
@@ -119,7 +75,7 @@ function DAO() {
     return <ValidDAO address={validatedAddress} />;
   }
 
-  return <Search />;
+  return <></>;
 }
 
 export default DAO;
