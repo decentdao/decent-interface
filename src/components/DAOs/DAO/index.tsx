@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Routes, Route, useParams, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { Helmet } from "react-helmet";
 
 import Summary from "./Summary";
 import Details from "./Details";
@@ -23,12 +24,20 @@ function DAORoutes() {
 }
 
 function ValidDAO({ address }: { address: string }) {
-  const [, setDAOAddress] = useDAOData();
+  const [{ name }, setDAOAddress] = useDAOData();
 
   useEffect(() => {
     setDAOAddress(address);
   }, [address, setDAOAddress]);
-  return <DAORoutes />;
+
+  return (
+    <div>
+      {name !== undefined && (<Helmet>
+        <title>Fractal | {name}</title>
+      </Helmet>)}
+      <DAORoutes />
+    </div>
+  );
 }
 
 function Search() {
