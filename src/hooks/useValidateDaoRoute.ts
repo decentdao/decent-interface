@@ -19,7 +19,7 @@ const useValidateDaoRoute = () => {
     if (errorMessage) {
       toast(errorMessage, {
         onOpen: () => {
-          navigate("/")
+          navigate("/", { replace: true })
           toast.dismiss(toastId.current);
         },
       });
@@ -29,7 +29,7 @@ const useValidateDaoRoute = () => {
   // when dao is valid
   useEffect(() => {
     if (addressIsDAO && loading === false && address) {
-      navigate(pathname!, { state: { validatedAddress: address } });
+      navigate(pathname!, { state: { validatedAddress: address }, replace: true });
       toast.dismiss(toastId.current);
     }
   }, [addressIsDAO, loading, address, pathname, navigate]);

@@ -62,7 +62,7 @@ function DAO() {
       return;
     }
 
-    navigate("/");
+    navigate("/", { replace: true });
     toast("Connect a wallet to load a DAO");
   }, [account, accountLoading, navigate]);
 
