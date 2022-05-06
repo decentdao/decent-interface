@@ -11,6 +11,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const [tokenBalance, setTokenBalance] = useState<BigNumber>();
   const [tokenDelegatee, setTokenDelegatee] = useState<string>();
   const [tokenVotingWeight, setTokenVotingWeight] = useState<BigNumber>();
+  const [tokenAddress, setTokenAddress] = useState<string>();
 
   const updateTokenBalance = useCallback(() => {
     if (tokenContract === undefined || account === undefined) {
@@ -18,10 +19,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
       return;
     }
 
-    tokenContract
-      .balanceOf(account)
-      .then(setTokenBalance)
-      .catch(console.error);
+    tokenContract.balanceOf(account).then(setTokenBalance).catch(console.error);
   }, [account, tokenContract]);
 
   // Get token name
@@ -141,7 +139,8 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
       return;
     }
 
-    tokenContract.getVotes(account)
+    tokenContract
+      .getVotes(account)
       .then(setTokenVotingWeight)
       .catch(console.error);
   }, [account, tokenContract]);
@@ -162,22 +161,33 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
       _: any
     ) => {
       setTokenVotingWeight(currentBalance);
-    }
+    };
 
     tokenContract.on(filter, callback);
 
     return () => {
       tokenContract.off(filter, callback);
-    }
+    };
   }, [account, tokenContract]);
 
-  return { 
+  // Get token address
+  useEffect(() => {
+    if (tokenContract === undefined) {
+      setTokenAddress(undefined);
+      return;
+    }
+
+    setTokenAddress(tokenContract.address);
+  }, [tokenContract]);
+
+  return {
     name: tokenName,
     symbol: tokenSymbol,
     decimals: tokenDecimals,
-    userBalance: tokenBalance, 
+    userBalance: tokenBalance,
     delegatee: tokenDelegatee,
     votingWeight: tokenVotingWeight,
+    address: tokenAddress,
   };
 };
 
