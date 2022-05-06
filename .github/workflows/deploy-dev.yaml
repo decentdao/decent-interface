@@ -1,13 +1,19 @@
-name: Build and Deploy
+name: Build and Deploy Dev
 
 on:
   push:
     branches:
-      - master
+      - develop
 
 jobs:
-  build-and-deploy:
+  build-and-deploy-dev:
     runs-on: ubuntu-latest
+
+    environment:
+      name: dev
+      # this would be great as a github secret, but can't do that
+      url: https://app.dev.fractalframework.xyz
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -16,9 +22,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version-file: '.nvmrc'
-
-      - name: Edit package.json
-        run: npx json -I -f package.json -e 'this.homepage="${{ secrets.HOMEPAGE_URL }}"'
 
       - name: Install and Build
         run: |
@@ -39,7 +42,9 @@ jobs:
           REACT_APP_TIMELOCKUPGRADEABLE_ADDRESSES: ${{ secrets.TIMELOCKUPGRADEABLE_ADDRESSES }}
 
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.3.0
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
+          repository-name: ${{ secrets.DEPLOY_REPOSITORY_NAME }}
           branch: gh-pages
           folder: build
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
