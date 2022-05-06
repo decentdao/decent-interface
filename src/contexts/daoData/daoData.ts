@@ -29,6 +29,7 @@ export interface DAOData {
     userBalance: BigNumber | undefined,
     delegatee: string | undefined,
     votingWeight: BigNumber | undefined,
+    address: string | undefined,
   },
 };
 
