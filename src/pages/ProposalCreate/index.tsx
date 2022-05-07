@@ -7,22 +7,8 @@ import H1 from "../../components/ui/H1";
 import LeftArrow from "../../components/ui/svg/LeftArrow";
 import { useDAOData } from "../../contexts/daoData";
 import useCreateProposal from "../../hooks/useCreateProposal";
-
-export type TransactionData = {
-  targetAddress: string;
-  functionName: string;
-  functionSignature: string;
-  parameters: string;
-  addressError?: string;
-  fragmentError?: string;
-};
-
-export type ProposalData = {
-  targets: string[];
-  values: BigNumber[];
-  calldatas: string[];
-  description: string;
-};
+import { TransactionData } from "../../types/transaction";
+import { ProposalData } from "../../types/proposal";
 
 const defaultTransaction = {
   targetAddress: "",
