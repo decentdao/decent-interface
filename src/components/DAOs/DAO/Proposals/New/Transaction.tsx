@@ -1,4 +1,3 @@
-import { TransactionData } from "./index";
 import ContentBoxTitle from "../../../../ui/ContentBoxTitle";
 import { TextButton } from "../../../../ui/forms/Button";
 import Input from "../../../../ui/forms/Input";
@@ -7,6 +6,7 @@ import ContentBox from "../../../../ui/ContentBox";
 import { checkAddress } from "../../../../../hooks/useAddress";
 import { useWeb3 } from "../../../../../contexts/web3Data";
 import { ethers } from "ethers";
+import { TransactionData } from "../../../../../types/transaction";
 
 interface TransactionProps {
   transaction: TransactionData;
