@@ -1,6 +1,5 @@
 {
   "name": "fractal-interface",
-  "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@headlessui/react": "^1.5.0",
@@ -30,10 +29,11 @@
     "web3modal": "^1.9.5"
   },
   "scripts": {
-    "start": "GENERATE_SOURCEMAP=false react-app-rewired start",
-    "start:windows": "set \"GENERATE_SOURCEMAP=false\" && react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "start": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired start",
+    "start:windows": "set \"GENERATE_SOURCEMAP=false\" && for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired start",
+    "build": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired build",
+    "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
+    "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
     "eject": "react-app-rewired eject"
   },
   "eslintConfig": {
