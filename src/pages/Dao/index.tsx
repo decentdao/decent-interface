@@ -3,14 +3,15 @@ import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Helmet } from "react-helmet-async";
 
-import Summary from "./Summary";
-import Details from "./Details";
-import Proposals from "./Proposals";
-import Delegate from "./Delegate";
-import { useDAOData } from "../../../contexts/daoData";
+import Delegate from "../../components/DAOs/DAO/Delegate";
+import Details from "../../components/DAOs/DAO/Details";
+import Proposals from "../../components/DAOs/DAO/Proposals";
+import Summary from "../../components/DAOs/DAO/Summary";
+import { useDAOData } from "../../contexts/daoData";
+import { useWeb3 } from "../../contexts/web3Data";
+import useValidateDaoRoute from "../../hooks/useValidateDaoRoute";
 
-import { useWeb3 } from "../../../contexts/web3Data";
-import useValidateDaoRoute from "../../../hooks/useValidateDaoRoute";
+
 
 function DAORoutes() {
   return (

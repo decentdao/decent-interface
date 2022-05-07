@@ -1,8 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import DAOSearch from '../../pages/DaoSearch';
 
-import DAO from './DAO';
 import DaoCreate from '../../pages/DaoCreate';
+import DAO from '../../pages/Dao';
 
 function DAOs() {
   return (
