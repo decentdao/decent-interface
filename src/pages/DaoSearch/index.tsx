@@ -2,7 +2,7 @@ import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 
 
 import { useNavigate } from "react-router-dom";
-import ConnectWalletToast from "../../components/DAOs/shared/ConnectWalletToast";
+import ConnectWalletToast from "../../components/ConnectWalletToast";
 import ContentBox from "../../components/ui/ContentBox";
 import { PrimaryButton } from "../../components/ui/forms/Button";
 import Input from "../../components/ui/forms/Input";

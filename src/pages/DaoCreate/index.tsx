@@ -1,7 +1,7 @@
 import { useState } from "react";
 import ButtonStepController from "../../components/DaoCreate/ButtonStepController";
 import StepController from "../../components/DaoCreate/DisplayStepController";
-import ConnectWalletToast from "../../components/DAOs/shared/ConnectWalletToast";
+import ConnectWalletToast from "../../components/ConnectWalletToast";
 import ContentBox from "../../components/ui/ContentBox";
 import H1 from "../../components/ui/H1";
 import { useWeb3 } from "../../contexts/web3Data";
