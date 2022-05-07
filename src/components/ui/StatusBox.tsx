@@ -7,7 +7,7 @@ interface StatusBoxProps {
 const StatusBox = ({ status }: StatusBoxProps) => {
   const getStatusColors = () => {
     switch (status) {
-      case "Open":
+      case "Active":
         return "bg-drab-500 text-gold-500";
       default:
         return "border border-gray-50 text-gray-50 bg-gray-400";
