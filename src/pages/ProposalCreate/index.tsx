@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
-import useCreateProposal from "../../../../../hooks/useCreateProposal";
-import Essentials from "./Essentials";
-import Transactions from "./Transactions";
-import H1 from "../../../../ui/H1";
-import { PrimaryButton, SecondaryButton, TextButton } from "../../../../ui/forms/Button";
-import LeftArrow from "../../../../ui/svg/LeftArrow";
-import { useDAOData } from "../../../../../contexts/daoData";
+import Essentials from "../../components/DAOs/DAO/Proposals/New/Essentials";
+import Transactions from "../../components/DAOs/DAO/Proposals/New/Transactions";
+import { TextButton, PrimaryButton, SecondaryButton } from "../../components/ui/forms/Button";
+import H1 from "../../components/ui/H1";
+import LeftArrow from "../../components/ui/svg/LeftArrow";
+import { useDAOData } from "../../contexts/daoData";
+import useCreateProposal from "../../hooks/useCreateProposal";
 
 export type TransactionData = {
   targetAddress: string;
@@ -31,7 +31,7 @@ const defaultTransaction = {
   parameters: "",
 };
 
-const New = () => {
+const ProposalCreate = () => {
   const [{ daoAddress }] = useDAOData();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>("");
@@ -147,4 +147,4 @@ const New = () => {
   );
 };
 
-export default New;
+export default ProposalCreate;

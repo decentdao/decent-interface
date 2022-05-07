@@ -5,7 +5,7 @@ import { Helmet } from "react-helmet-async";
 
 import Delegate from "../../components/DAOs/DAO/Delegate";
 import Details from "../../components/DAOs/DAO/Details";
-import Proposals from "../../components/DAOs/DAO/Proposals";
+import Proposals from "../Proposals";
 import Summary from "../../components/DAOs/DAO/Summary";
 import { useDAOData } from "../../contexts/daoData";
 import { useWeb3 } from "../../contexts/web3Data";
