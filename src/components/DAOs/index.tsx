@@ -2,13 +2,13 @@ import { Routes, Route } from 'react-router-dom';
 import DAOSearch from '../../pages/DaoSearch';
 
 import DAO from './DAO';
-import New from './New';
+import DaoCreate from '../../pages/DaoCreate';
 
 function DAOs() {
   return (
     <Routes>
       <Route index element={<DAOSearch />} />
-      <Route path="new" element={<New />} />
+      <Route path="new" element={<DaoCreate />} />
       <Route path=":address/*" element={<DAO />} />
     </Routes>
   );
