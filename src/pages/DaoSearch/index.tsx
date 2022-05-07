@@ -1,14 +1,15 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 
-import H1 from "../../ui/H1";
-import ContentBox from "../../ui/ContentBox";
-import InputBox from "../../ui/forms/InputBox";
-import Input from "../../ui/forms/Input";
-import useSearchDao from "../../../hooks/useSearchDao";
-import { PrimaryButton } from "../../ui/forms/Button";
-import ConnectWalletToast from "../shared/ConnectWalletToast";
-import { useWeb3 } from "../../../contexts/web3Data";
+
 import { useNavigate } from "react-router-dom";
+import ConnectWalletToast from "../../components/DAOs/shared/ConnectWalletToast";
+import ContentBox from "../../components/ui/ContentBox";
+import { PrimaryButton } from "../../components/ui/forms/Button";
+import Input from "../../components/ui/forms/Input";
+import InputBox from "../../components/ui/forms/InputBox";
+import H1 from "../../components/ui/H1";
+import { useWeb3 } from "../../contexts/web3Data";
+import useSearchDao from "../../hooks/useSearchDao";
 
 function DAOSearch() {
   const [{ account }] = useWeb3();
