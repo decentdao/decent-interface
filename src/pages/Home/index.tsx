@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import ContentBox from "./ui/ContentBox";
-import { PrimaryButton, SecondaryButton } from "./ui/forms/Button";
-import H1 from "./ui/H1";
+import ContentBox from "../../components/ui/ContentBox";
+import { PrimaryButton, SecondaryButton } from "../../components/ui/forms/Button";
+import H1 from "../../components/ui/H1";
 
 const Home = () => {
   return (
