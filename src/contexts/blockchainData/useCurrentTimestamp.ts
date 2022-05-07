@@ -24,6 +24,11 @@ const useCurrentTimestamp = (blockNumber: number | undefined) => {
     provider
       .getBlock(blockNumber)
       .then((block) => {
+        // sometimes block is null idk why
+        if (!block) {
+          return;
+        }
+
         setTimestamp(block.timestamp);
       })
       .catch(console.error);
