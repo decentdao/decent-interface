@@ -1,9 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
-import DAOSearch from '../../pages/DaoSearch';
+import DAOSearch from '../DaoSearch';
 
-import DaoCreate from '../../pages/DaoCreate';
-import DAO from '../../pages/Dao';
+import DaoCreate from '../DaoCreate';
+import DAO from '../Dao';
 
+// @todo refactor route files to own directory
 function DAOs() {
   return (
     <Routes>
