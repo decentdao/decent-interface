@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { utils } from "ethers";
-import useDelegateVote from "../../../hooks/useDelegateVote";
-import useDisplayName from "../../../hooks/useDisplayName";
-import ContentBox from "../../ui/ContentBox";
-import EtherscanLink from "../../ui/EtherscanLink";
-import { useWeb3 } from "../../../contexts/web3Data";
-import { useDAOData } from "../../../contexts/daoData";
-import Input from "../../ui/forms/Input";
-import { SecondaryButton } from "../../ui/forms/Button";
-import InputBox from "../../ui/forms/InputBox";
+import useDelegateVote from "../../hooks/useDelegateVote";
+import useDisplayName from "../../hooks/useDisplayName";
+import ContentBox from "../ui/ContentBox";
+import EtherscanLink from "../ui/EtherscanLink";
+import { useWeb3 } from "../../contexts/web3Data";
+import { useDAOData } from "../../contexts/daoData";
+import Input from "../ui/forms/Input";
+import { SecondaryButton } from "../ui/forms/Button";
+import InputBox from "../ui/forms/InputBox";
 import cx from "classnames";
-import useAddress from "../../../hooks/useAddress";
-import DataLoadingWrapper from "../../ui/loaders/DataLoadingWrapper";
+import useAddress from "../../hooks/useAddress";
+import DataLoadingWrapper from "../ui/loaders/DataLoadingWrapper";
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>("");
