@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { ProposalData } from "../../../../contexts/daoData/useProposals";
-import useExecuteTransaction from "../../../../hooks/useExecuteTransaction";
-import { PrimaryButton } from "../../../ui/forms/Button";
-import { useBlockchainData } from "../../../../contexts/blockchainData";
+import { ProposalData } from "../../contexts/daoData/useProposals";
+import useExecuteTransaction from "../../hooks/useExecuteTransaction";
+import { PrimaryButton } from "../ui/forms/Button";
+import { useBlockchainData } from "../../contexts/blockchainData";
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);

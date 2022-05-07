@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import ProposalDetails from "../../components/DAOs/DAO/Proposals/ProposalDetails";
+import ProposalDetails from "../../components/Proposals/ProposalDetails";
 import ProposalCreate from "../ProposalCreate";
 
 function Proposals() {

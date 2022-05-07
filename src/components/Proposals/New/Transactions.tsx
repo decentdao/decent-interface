@@ -1,4 +1,4 @@
-import { TransactionData } from "../../../../../types/transaction";
+import { TransactionData } from "../../../types/transaction";
 import Transaction from "./Transaction";
 
 interface TransactionsProps {

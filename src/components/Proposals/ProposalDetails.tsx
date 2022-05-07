@@ -1,5 +1,5 @@
-import { ProposalData } from "../../../../contexts/daoData/useProposals";
-import { useDAOData } from "../../../../contexts/daoData";
+import { ProposalData } from "../../contexts/daoData/useProposals";
+import { useDAOData } from "../../contexts/daoData";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ProposalCardDetailed from "./ProposalCardDetailed";

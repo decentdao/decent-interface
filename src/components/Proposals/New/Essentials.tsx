@@ -1,7 +1,7 @@
-import ContentBox from "../../../../ui/ContentBox";
-import ContentBoxTitle from "../../../../ui/ContentBoxTitle";
-import Input from "../../../../ui/forms/Input";
-import InputBox from "../../../../ui/forms/InputBox";
+import ContentBox from "../../ui/ContentBox";
+import ContentBoxTitle from "../../ui/ContentBoxTitle";
+import Input from "../../ui/forms/Input";
+import InputBox from "../../ui/forms/InputBox";
 
 const Essentials = ({
   proposalDescription,

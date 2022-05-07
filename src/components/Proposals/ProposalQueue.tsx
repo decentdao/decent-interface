@@ -1,6 +1,6 @@
-import { ProposalData } from "../../../../contexts/daoData/useProposals";
-import useQueueTransaction from "../../../../hooks/useQueueTransaction";
-import { PrimaryButton } from "../../../ui/forms/Button";
+import { ProposalData } from "../../contexts/daoData/useProposals";
+import useQueueTransaction from "../../hooks/useQueueTransaction";
+import { PrimaryButton } from "../ui/forms/Button";
 
 function ProposalQueue({ proposal }: { proposal: ProposalData }) {
   const queueTransaction = useQueueTransaction({

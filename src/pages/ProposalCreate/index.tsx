@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { BigNumber, ethers } from "ethers";
-import Essentials from "../../components/DAOs/DAO/Proposals/New/Essentials";
-import Transactions from "../../components/DAOs/DAO/Proposals/New/Transactions";
+import Essentials from "../../components/Proposals/New/Essentials";
+import Transactions from "../../components/Proposals/New/Transactions";
 import { TextButton, PrimaryButton, SecondaryButton } from "../../components/ui/forms/Button";
 import H1 from "../../components/ui/H1";
 import LeftArrow from "../../components/ui/svg/LeftArrow";

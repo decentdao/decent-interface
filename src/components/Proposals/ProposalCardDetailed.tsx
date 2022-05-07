@@ -1,11 +1,11 @@
-import { ProposalData } from "../../../../contexts/daoData/useProposals";
-import ContentBox from "../../../ui/ContentBox";
-import ProposalCreatedBy from "../../../ui/proposal/ProposalCreatedBy";
-import ProposalDescription from "../../../ui/proposal/ProposalDescription";
-import ProposalId from "../../../ui/proposal/ProposalId";
-import ProposalNumber from "../../../ui/proposal/ProposalNumber";
-import ProposalTime from "../../../ui/proposal/ProposalTime";
-import StatusBox from "../../../ui/StatusBox";
+import { ProposalData } from "../../contexts/daoData/useProposals";
+import ContentBox from "../ui/ContentBox";
+import ProposalCreatedBy from "../ui/proposal/ProposalCreatedBy";
+import ProposalDescription from "../ui/proposal/ProposalDescription";
+import ProposalId from "../ui/proposal/ProposalId";
+import ProposalNumber from "../ui/proposal/ProposalNumber";
+import ProposalTime from "../ui/proposal/ProposalTime";
+import StatusBox from "../ui/StatusBox";
 
 function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
   return (
