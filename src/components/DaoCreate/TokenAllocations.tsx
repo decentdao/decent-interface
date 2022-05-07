@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { TokenAllocation } from "../../../hooks/useDeployDAO";
-import { TextButton } from "../../ui/forms/Button";
-import InputBox from "../../ui/forms/InputBox";
+import { TokenAllocation } from "../../hooks/useDeployDAO";
+import { TextButton } from "../ui/forms/Button";
+import InputBox from "../ui/forms/InputBox";
 import TokenAllocationInput from "./TokenAllocationInput";
 
 interface TokenAllocationsProps {

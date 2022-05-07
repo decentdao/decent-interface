@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import Input from "../../ui/forms/Input";
-import InputBox from "../../ui/forms/InputBox";
-import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import Input from "../ui/forms/Input";
+import InputBox from "../ui/forms/InputBox";
+import ContentBoxTitle from '../ui/ContentBoxTitle';
 interface DaoDetailsProps {
   name?: string;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;

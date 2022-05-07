@@ -1,7 +1,7 @@
 import { TokenAllocation } from "../../hooks/useDeployDAO";
-import DAODetails from "../DAOs/New/DAODetails";
-import GovernanceDetails from "../DAOs/New/GovernanceDetails";
-import TokenDetails from "../DAOs/New/TokenDetails";
+import DAODetails from "./DAODetails";
+import GovernanceDetails from "./GovernanceDetails";
+import TokenDetails from "./TokenDetails";
 
 interface StepControllerProps {
   step: number;

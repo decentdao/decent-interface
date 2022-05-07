@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import ContentBanner from "../../ui/ContentBanner";
-import ContentBoxTitle from "../../ui/ContentBoxTitle";
-import Input from "../../ui/forms/Input";
-import InputBox from "../../ui/forms/InputBox";
-import Lock from "../../ui/svg/Lock";
+import ContentBanner from "../ui/ContentBanner";
+import ContentBoxTitle from "../ui/ContentBoxTitle";
+import Input from "../ui/forms/Input";
+import InputBox from "../ui/forms/InputBox";
+import Lock from "../ui/svg/Lock";
 
 const GovernanceDetails = ({
   setPrevEnabled,
