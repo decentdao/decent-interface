@@ -1,11 +1,13 @@
 import { useState } from "react";
-import ButtonStepController from "../../components/DaoCreate/ButtonStepController";
 import StepController from "../../components/DaoCreate/DisplayStepController";
 import ConnectWalletToast from "../../components/ConnectWalletToast";
 import ContentBox from "../../components/ui/ContentBox";
 import H1 from "../../components/ui/H1";
 import { useWeb3 } from "../../contexts/web3Data";
 import useDeployDAO, { TokenAllocation } from "../../hooks/useDeployDAO";
+import { TextButton, SecondaryButton, PrimaryButton } from "../../components/ui/forms/Button";
+import LeftArrow from "../../components/ui/svg/LeftArrow";
+import RightArrow from "../../components/ui/svg/RightArrow";
 
 const DaoCreate = () => {
   const [step, setStep] = useState<number>(0);
@@ -81,15 +83,11 @@ const DaoCreate = () => {
         </ContentBox>
 
         <div className="flex items-center justify-center py-4">
-          <ButtonStepController
-            step={step}
-            decrement={decrement}
-            increment={increment}
-            isPrevEnabled={prevEnabled}
-            isNextEnabled={nextEnabled}
-            isPrimaryDisabled={!daoName || !tokenName || !tokenSymbol || !tokenSupply || pending || !account}
-            deploy={deploy}
-          />
+          {step > 0 && <TextButton onClick={decrement} disabled={!prevEnabled} icon={<LeftArrow />} label="Prev" />}
+          {step < 2 && <SecondaryButton onClick={increment} disabled={!nextEnabled} isIconRight icon={<RightArrow />} label="Next" />}
+          {step > 1 && (
+            <PrimaryButton onClick={deploy} label="Deploy" isLarge className="w-48" disabled={!daoName || !tokenName || !tokenSymbol || !tokenSupply || pending || !account} />
+          )}
         </div>
       </div>
     </div>
