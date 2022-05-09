@@ -75,7 +75,7 @@ function DAOSearch() {
                 />
               </div>
 
-              <PrimaryButton type="submit" label="Search" isLoading={loading} disabled={!!errorMessage || loading || !searchAddressInput || !account} />
+              <PrimaryButton type="submit" className="self-start mt-5 " label="Search" isLoading={loading} disabled={!!errorMessage || loading || !searchAddressInput || !account} />
             </div>
           </InputBox>
         </form>
