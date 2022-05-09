@@ -34,7 +34,7 @@ function ProposalDetails() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div>
       <ProposalQueue proposal={proposal} />
       <ProposalExecute proposal={proposal} />
       <ProposalCardDetailed proposal={proposal} />

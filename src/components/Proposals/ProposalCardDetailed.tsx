@@ -9,7 +9,7 @@ import StatusBox from "../ui/StatusBox";
 
 function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
   return (
-    <div className="mx-2">
+    <div>
       <ContentBox >
         <div className="flex items-center">
           <StatusBox status={proposal.stateString} />
