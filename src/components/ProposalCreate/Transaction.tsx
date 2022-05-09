@@ -98,7 +98,7 @@ const Transaction = ({ transaction, transactionNumber, updateTransaction, remove
       </InputBox>
       <InputBox>
         <Input
-          type="text"
+          type="textarea"
           value={transaction.functionSignature}
           onChange={(e) => updateFunctionSignature(e.target.value)}
           label="Function Signature"
@@ -110,7 +110,7 @@ const Transaction = ({ transaction, transactionNumber, updateTransaction, remove
       </InputBox>
       <InputBox>
         <Input
-          type="text"
+          type="textarea"
           value={transaction.parameters}
           onChange={(e) => updateParameters(e.target.value)}
           label="Parameters"
