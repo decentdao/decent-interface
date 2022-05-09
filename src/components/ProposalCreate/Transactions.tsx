@@ -3,11 +3,12 @@ import Transaction from "./Transaction";
 
 interface TransactionsProps {
   transactions: TransactionData[];
+  pending: boolean;
   setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
   removeTransaction: (transactionNumber: number) => void;
 }
 
-const Transactions = ({ transactions, setTransactions, removeTransaction }: TransactionsProps) => {
+const Transactions = ({ transactions, pending, setTransactions, removeTransaction }: TransactionsProps) => {
   const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
     const _transactions = [...transactions]
       _transactions[transactionNumber] = {...transactionData} 
@@ -24,6 +25,7 @@ const Transactions = ({ transactions, setTransactions, removeTransaction }: Tran
           updateTransaction={updateTransaction}
           removeTransaction={removeTransaction}
           transactionCount={transactions.length}
+          pending={pending}
         />
       ))}
     </div>

@@ -11,12 +11,13 @@ import { TransactionData } from "../../types/transaction";
 interface TransactionProps {
   transaction: TransactionData;
   transactionNumber: number;
+  pending: boolean;
   updateTransaction: (transactionData: TransactionData, transactionNumber: number) => void;
   removeTransaction: (transactionNumber: number) => void;
   transactionCount: number;
 }
 
-const Transaction = ({ transaction, transactionNumber, updateTransaction, removeTransaction, transactionCount }: TransactionProps) => {
+const Transaction = ({ transaction, transactionNumber, pending, updateTransaction, removeTransaction, transactionCount }: TransactionProps) => {
   const [{ provider }] = useWeb3();
 
   const validateFunctionData = (functionName: string, functionSignature: string, parameters: string): boolean => {
@@ -70,7 +71,14 @@ const Transaction = ({ transaction, transactionNumber, updateTransaction, remove
         <ContentBoxTitle>Transaction</ContentBoxTitle>
         {transactionCount > 1 && (
           <div className="flex justify-end">
-            <TextButton className="mx-0 px-0 w-fit" onClick={() => removeTransaction(transactionNumber)} label="Remove Transaction" />
+            <TextButton className="mx-0 px-0 w-fit"
+              onClick={() => removeTransaction(transactionNumber)}
+              disabled={
+                pending &&
+                transaction.targetAddress.trim().length > 0 &&
+                validateFunctionData(transaction.functionName, transaction.functionSignature, transaction.parameters)
+              }
+              label="Remove Transaction" />
           </div>
         )}
       </div>
