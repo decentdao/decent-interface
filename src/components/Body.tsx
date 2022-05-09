@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
+import Home from '../pages/Home';
 
-import Home from './Home';
-import DAOs from './DAOs/index';
+import DAOs from '../pages/Daos/index';
 
 function Body() {
   return (
