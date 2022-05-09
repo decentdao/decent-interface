@@ -83,7 +83,7 @@ const DaoCreate = () => {
         </ContentBox>
 
         <div className="flex items-center justify-center py-4">
-          {step > 0 && <TextButton onClick={decrement} disabled={!prevEnabled} icon={<LeftArrow />} label="Prev" />}
+          {step > 0 && <TextButton onClick={decrement} disabled={!prevEnabled || pending} icon={<LeftArrow />} label="Prev" />}
           {step < 2 && <SecondaryButton onClick={increment} disabled={!nextEnabled} isIconRight icon={<RightArrow />} label="Next" />}
           {step > 1 && (
             <PrimaryButton onClick={deploy} label="Deploy" isLarge className="w-48" disabled={!daoName || !tokenName || !tokenSymbol || !tokenSupply || pending || !account} />
