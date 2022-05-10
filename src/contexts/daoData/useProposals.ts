@@ -3,6 +3,17 @@ import { GovernorModule } from "../../typechain-types";
 import { useWeb3 } from "../web3Data";
 import { BigNumber, providers } from "ethers";
 
+export enum ProposalState {
+  Pending = 0,
+  Active = 1,
+  Canceled = 2,
+  Defeated = 3,
+  Succeeded = 4,
+  Queued = 5,
+  Expired = 6,
+  Executed = 7,
+}
+
 type ProposalDataWithoutUserData = {
   number: number;
   id: BigNumber;
@@ -18,7 +29,7 @@ type ProposalDataWithoutUserData = {
   signatures: string[];
   calldatas: string[];
   description: string;
-  state: number | undefined;
+  state: ProposalState | undefined;
   stateString: string | undefined;
   forVotesCount: BigNumber | undefined;
   againstVotesCount: BigNumber | undefined;
@@ -478,8 +489,8 @@ const useProposalsWithoutUserData = (
               (proposal) => proposalId.eq(proposal.id)
             );
             const newProposals = [...existingProposals];
-            newProposals[updatedProposalIndex].state = 5;
-            newProposals[updatedProposalIndex].stateString = getStateString(5);
+            newProposals[updatedProposalIndex].state = ProposalState.Queued;
+            newProposals[updatedProposalIndex].stateString = getStateString(ProposalState.Queued);
             newProposals[updatedProposalIndex].eta = proposalEta.toNumber();
             return newProposals;
           });
@@ -512,8 +523,8 @@ const useProposalsWithoutUserData = (
           proposalId.eq(proposal.id)
         );
         const newProposals = [...existingProposals];
-        newProposals[updatedProposalIndex].state = 7;
-        newProposals[updatedProposalIndex].stateString = getStateString(7);
+        newProposals[updatedProposalIndex].state = ProposalState.Executed;
+        newProposals[updatedProposalIndex].stateString = getStateString(ProposalState.Executed);
         return newProposals;
       });
     };
@@ -610,11 +621,11 @@ const useProposalsWithoutUserData = (
       return existingProposals.map((existingProposal) => {
         const newProposal = existingProposal;
         if (
-          newProposal.state === 0 &&
+          newProposal.state === ProposalState.Pending &&
           newProposal.startBlock.toNumber() <= currentBlockNumber
         ) {
-          newProposal.state = 1;
-          newProposal.stateString = getStateString(1);
+          newProposal.state = ProposalState.Active;
+          newProposal.stateString = getStateString(ProposalState.Active);
         }
 
         return newProposal;
