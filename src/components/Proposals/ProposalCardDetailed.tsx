@@ -12,7 +12,7 @@ function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
     <div>
       <ContentBox >
         <div className="flex items-center">
-          <StatusBox status={proposal.stateString} />
+          <StatusBox status={proposal.state} />
           <ProposalNumber
             proposalNumber={proposal.number}
           />
