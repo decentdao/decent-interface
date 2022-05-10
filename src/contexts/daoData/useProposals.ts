@@ -3,6 +3,17 @@ import { GovernorModule } from "../../typechain-types";
 import { useWeb3 } from "../web3Data";
 import { BigNumber, providers } from "ethers";
 
+export enum ProposalState {
+  Pending = 0,
+  Active = 1,
+  Canceled = 2,
+  Defeated = 3,
+  Succeeded = 4,
+  Queued = 5,
+  Expired = 6,
+  Executed = 7,
+}
+
 type ProposalDataWithoutUserData = {
   number: number;
   id: BigNumber;
@@ -18,8 +29,7 @@ type ProposalDataWithoutUserData = {
   signatures: string[];
   calldatas: string[];
   description: string;
-  state: number | undefined;
-  stateString: string | undefined;
+  state: ProposalState | undefined;
   forVotesCount: BigNumber | undefined;
   againstVotesCount: BigNumber | undefined;
   abstainVotesCount: BigNumber | undefined;
@@ -53,26 +63,6 @@ const getVoteString = (voteNumber: number) => {
     return "Abstain";
   } else {
     return undefined;
-  }
-};
-
-const getStateString = (state: number | undefined) => {
-  if (state === 0) {
-    return "Pending";
-  } else if (state === 1) {
-    return "Active";
-  } else if (state === 2) {
-    return "Canceled";
-  } else if (state === 3) {
-    return "Defeated";
-  } else if (state === 4) {
-    return "Succeeded";
-  } else if (state === 5) {
-    return "Queued";
-  } else if (state === 6) {
-    return "Expired";
-  } else if (state === 7) {
-    return "Executed";
   }
 };
 
@@ -195,7 +185,6 @@ const getProposalData = (
     proposal.endTime = endTime;
     proposal.startTimeString = getTimestampString(startTime);
     proposal.endTimeString = getTimestampString(endTime);
-    proposal.stateString = getStateString(proposal.state);
     proposal.eta = eta.toNumber();
     proposal.forVotesCount = votes.forVotes;
     proposal.againstVotesCount = votes.againstVotes;
@@ -361,7 +350,6 @@ const useProposalsWithoutUserData = (
             calldatas: proposalEvent.args.calldatas,
             description: proposalEvent.args.description,
             state: undefined,
-            stateString: undefined,
             forVotesCount: undefined,
             againstVotesCount: undefined,
             abstainVotesCount: undefined,
@@ -425,7 +413,6 @@ const useProposalsWithoutUserData = (
         calldatas: calldatas,
         description: description,
         state: undefined,
-        stateString: undefined,
         forVotesCount: undefined,
         againstVotesCount: undefined,
         abstainVotesCount: undefined,
@@ -478,8 +465,7 @@ const useProposalsWithoutUserData = (
               (proposal) => proposalId.eq(proposal.id)
             );
             const newProposals = [...existingProposals];
-            newProposals[updatedProposalIndex].state = 5;
-            newProposals[updatedProposalIndex].stateString = getStateString(5);
+            newProposals[updatedProposalIndex].state = ProposalState.Queued;
             newProposals[updatedProposalIndex].eta = proposalEta.toNumber();
             return newProposals;
           });
@@ -512,8 +498,7 @@ const useProposalsWithoutUserData = (
           proposalId.eq(proposal.id)
         );
         const newProposals = [...existingProposals];
-        newProposals[updatedProposalIndex].state = 7;
-        newProposals[updatedProposalIndex].stateString = getStateString(7);
+        newProposals[updatedProposalIndex].state = ProposalState.Executed;
         return newProposals;
       });
     };
@@ -610,11 +595,10 @@ const useProposalsWithoutUserData = (
       return existingProposals.map((existingProposal) => {
         const newProposal = existingProposal;
         if (
-          newProposal.state === 0 &&
+          newProposal.state === ProposalState.Pending &&
           newProposal.startBlock.toNumber() <= currentBlockNumber
         ) {
-          newProposal.state = 1;
-          newProposal.stateString = getStateString(1);
+          newProposal.state = ProposalState.Active;
         }
 
         return newProposal;
@@ -678,7 +662,6 @@ const useProposals = (
           calldatas: proposal.calldatas,
           description: proposal.description,
           state: proposal.state,
-          stateString: proposal.stateString,
           forVotesCount: proposal.forVotesCount,
           againstVotesCount: proposal.againstVotesCount,
           abstainVotesCount: proposal.abstainVotesCount,

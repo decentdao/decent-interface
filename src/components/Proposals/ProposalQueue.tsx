@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ProposalData } from "../../contexts/daoData/useProposals";
+import { ProposalData, ProposalState } from "../../contexts/daoData/useProposals";
 import useQueueTransaction from "../../hooks/useQueueTransaction";
 import { PrimaryButton } from "../ui/forms/Button";
 
@@ -11,7 +11,7 @@ function ProposalQueue({ proposal }: { proposal: ProposalData }) {
     setPending
   });
 
-  if (proposal.stateString !== "Succeeded") {
+  if (proposal.state !== ProposalState.Succeeded) {
     return null;
   }
 

@@ -12,7 +12,7 @@ function ProposalCard({ proposal }: { proposal: ProposalData }) {
     <Link to={`proposals/${proposal.number}`}>
       <ContentBox isLightBackground>
         <div className="flex items-center">
-          <StatusBox status={proposal.stateString} />
+          <StatusBox status={proposal.state} />
           <ProposalNumber
             proposalNumber={proposal.number}
             textSize="text-sm"

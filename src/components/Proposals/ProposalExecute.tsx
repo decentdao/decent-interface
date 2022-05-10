@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ProposalData } from "../../contexts/daoData/useProposals";
+import { ProposalData, ProposalState } from "../../contexts/daoData/useProposals";
 import useExecuteTransaction from "../../hooks/useExecuteTransaction";
 import { PrimaryButton } from "../ui/forms/Button";
 import { useBlockchainData } from "../../contexts/blockchainData";
@@ -16,7 +16,7 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
     }
 
     // Show component if the proposal is Queued, and the execution ETA has elapsed
-    setShow(proposal.state === 5 && proposal.eta !== 0 && proposal.eta < currentTimestamp);
+    setShow(proposal.state === ProposalState.Queued && proposal.eta !== 0 && proposal.eta < currentTimestamp);
   }, [currentTimestamp, proposal]);
 
   const executeTransaction = useExecuteTransaction({

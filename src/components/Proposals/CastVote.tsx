@@ -1,4 +1,4 @@
-import { ProposalData } from "../../contexts/daoData/useProposals";
+import { ProposalData, ProposalState } from "../../contexts/daoData/useProposals";
 import { useState, useEffect } from "react";
 import useCastVote from "../../hooks/useCastVote";
 import { PrimaryButton, SecondaryButton } from "../ui/forms/Button";
@@ -15,7 +15,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   const [pending, setPending] = useState<boolean>(false);
 
   useEffect(() => {
-    if (proposal.state !== 1) {
+    if (proposal.state !== ProposalState.Active) {
       setVoteButtonString("Voting Closed");
     } else if (proposal.userVote !== undefined) {
       setVoteButtonString("Already Voted");
@@ -45,7 +45,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(1)}
             icon={<YesSelected />}
             disabled={
-              proposal.state !== 1 || 
+              proposal.state !== ProposalState.Active || 
               proposal.userVote !== undefined || 
               proposal.userVotePower === undefined || 
               proposal.userVotePower.eq(0) ||
@@ -60,7 +60,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(0)}
             icon={<NoSelected />}
             disabled={
-              proposal.state !== 1 || 
+              proposal.state !== ProposalState.Active || 
               proposal.userVote !== undefined || 
               proposal.userVotePower === undefined || 
               proposal.userVotePower.eq(0) ||
@@ -75,7 +75,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(2)}
             icon={<AbstainedSelected />}
             disabled={
-              proposal.state !== 1 || 
+              proposal.state !== ProposalState.Active || 
               proposal.userVote !== undefined || 
               proposal.userVotePower === undefined || 
               proposal.userVotePower.eq(0) ||
@@ -91,7 +91,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => castVote()}
             disabled={
               newVote === undefined ||
-              proposal.state !== 1 ||
+              proposal.state !== ProposalState.Active ||
               proposal.userVote !== undefined ||
               proposal.userVotePower === undefined ||
               proposal.userVotePower.eq(0) ||
