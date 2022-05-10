@@ -12,6 +12,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   // Abstain => 2
   const [newVote, setNewVote] = useState<number>();
   const [voteButtonString, setVoteButtonString] = useState<string>();
+  const [pending, setPending] = useState<boolean>(false);
 
   useEffect(() => {
     if (proposal.state !== 1) {
@@ -28,6 +29,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   const castVote = useCastVote({
     proposalId: proposal.id,
     vote: newVote,
+    setPending: setPending
   });
 
   const NoSelected = () => (newVote === 0 || proposal.userVote === 0 ? <Check /> : null);
@@ -42,7 +44,13 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
           <SecondaryButton
             onClick={() => setNewVote(1)}
             icon={<YesSelected />}
-            disabled={proposal.state !== 1 || proposal.userVote !== undefined || proposal.userVotePower === undefined || proposal.userVotePower.eq(0)}
+            disabled={
+              proposal.state !== 1 || 
+              proposal.userVote !== undefined || 
+              proposal.userVotePower === undefined || 
+              proposal.userVotePower.eq(0) ||
+              pending
+            }
             label="Vote Yes"
             isIconRight
             isSpaceBetween
@@ -51,7 +59,13 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
           <SecondaryButton
             onClick={() => setNewVote(0)}
             icon={<NoSelected />}
-            disabled={proposal.state !== 1 || proposal.userVote !== undefined || proposal.userVotePower === undefined || proposal.userVotePower.eq(0)}
+            disabled={
+              proposal.state !== 1 || 
+              proposal.userVote !== undefined || 
+              proposal.userVotePower === undefined || 
+              proposal.userVotePower.eq(0) ||
+              pending
+            }
             label="Vote Not"
             isIconRight
             isSpaceBetween
@@ -60,7 +74,13 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
           <SecondaryButton
             onClick={() => setNewVote(2)}
             icon={<AbstainedSelected />}
-            disabled={proposal.state !== 1 || proposal.userVote !== undefined || proposal.userVotePower === undefined || proposal.userVotePower.eq(0)}
+            disabled={
+              proposal.state !== 1 || 
+              proposal.userVote !== undefined || 
+              proposal.userVotePower === undefined || 
+              proposal.userVotePower.eq(0) ||
+              pending
+            }
             label="Abstain"
             isIconRight
             isSpaceBetween
@@ -74,7 +94,8 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
               proposal.state !== 1 ||
               proposal.userVote !== undefined ||
               proposal.userVotePower === undefined ||
-              proposal.userVotePower.eq(0)
+              proposal.userVotePower.eq(0) ||
+              pending
             }
             label={voteButtonString}
             isLarge

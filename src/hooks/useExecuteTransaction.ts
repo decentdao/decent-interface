@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3 } from '../contexts/web3Data';
 import { GovernorModule, GovernorModule__factory } from '../typechain-types';
@@ -8,15 +8,21 @@ import { ethers } from 'ethers';
 
 
 const useExecuteTransaction = ({
-  proposalData
+  proposalData,
+  setPending
 }: {
-  proposalData: ProposalData
+  proposalData: ProposalData,
+  setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }
 ) => {
   const [{ signerOrProvider }] = useWeb3();
   const [daoData,] = useDAOData();
 
-  const [contractCallExecuteTransaction] = useTransaction();
+  const [contractCallExecuteTransaction, contractCallPending] = useTransaction();
+
+  useEffect(() => {
+    setPending(contractCallPending);
+  }, [setPending, contractCallPending]);
 
   let executeTransaction = useCallback(() => {
     if (

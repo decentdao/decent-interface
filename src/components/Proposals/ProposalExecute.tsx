@@ -7,6 +7,7 @@ import { useBlockchainData } from "../../contexts/blockchainData";
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);
   const { currentTimestamp } = useBlockchainData();
+  const [pending, setPending] = useState<boolean>(false);
 
   useEffect(() => {
     if (proposal.eta === undefined || currentTimestamp === undefined) {
@@ -20,6 +21,7 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
 
   const executeTransaction = useExecuteTransaction({
     proposalData: proposal,
+    setPending
   });
 
   if (!show) return null;
@@ -33,6 +35,7 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
         <PrimaryButton
           onClick={() => executeTransaction()}
           label="Execute"
+          disabled= {pending}
         />
       </div>
     </div>
