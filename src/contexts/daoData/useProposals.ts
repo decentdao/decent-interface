@@ -30,7 +30,6 @@ type ProposalDataWithoutUserData = {
   calldatas: string[];
   description: string;
   state: ProposalState | undefined;
-  stateString: string | undefined;
   forVotesCount: BigNumber | undefined;
   againstVotesCount: BigNumber | undefined;
   abstainVotesCount: BigNumber | undefined;
@@ -64,26 +63,6 @@ const getVoteString = (voteNumber: number) => {
     return "Abstain";
   } else {
     return undefined;
-  }
-};
-
-const getStateString = (state: number | undefined) => {
-  if (state === 0) {
-    return "Pending";
-  } else if (state === 1) {
-    return "Active";
-  } else if (state === 2) {
-    return "Canceled";
-  } else if (state === 3) {
-    return "Defeated";
-  } else if (state === 4) {
-    return "Succeeded";
-  } else if (state === 5) {
-    return "Queued";
-  } else if (state === 6) {
-    return "Expired";
-  } else if (state === 7) {
-    return "Executed";
   }
 };
 
@@ -206,7 +185,6 @@ const getProposalData = (
     proposal.endTime = endTime;
     proposal.startTimeString = getTimestampString(startTime);
     proposal.endTimeString = getTimestampString(endTime);
-    proposal.stateString = getStateString(proposal.state);
     proposal.eta = eta.toNumber();
     proposal.forVotesCount = votes.forVotes;
     proposal.againstVotesCount = votes.againstVotes;
@@ -372,7 +350,6 @@ const useProposalsWithoutUserData = (
             calldatas: proposalEvent.args.calldatas,
             description: proposalEvent.args.description,
             state: undefined,
-            stateString: undefined,
             forVotesCount: undefined,
             againstVotesCount: undefined,
             abstainVotesCount: undefined,
@@ -436,7 +413,6 @@ const useProposalsWithoutUserData = (
         calldatas: calldatas,
         description: description,
         state: undefined,
-        stateString: undefined,
         forVotesCount: undefined,
         againstVotesCount: undefined,
         abstainVotesCount: undefined,
@@ -490,7 +466,6 @@ const useProposalsWithoutUserData = (
             );
             const newProposals = [...existingProposals];
             newProposals[updatedProposalIndex].state = ProposalState.Queued;
-            newProposals[updatedProposalIndex].stateString = getStateString(ProposalState.Queued);
             newProposals[updatedProposalIndex].eta = proposalEta.toNumber();
             return newProposals;
           });
@@ -524,7 +499,6 @@ const useProposalsWithoutUserData = (
         );
         const newProposals = [...existingProposals];
         newProposals[updatedProposalIndex].state = ProposalState.Executed;
-        newProposals[updatedProposalIndex].stateString = getStateString(ProposalState.Executed);
         return newProposals;
       });
     };
@@ -625,7 +599,6 @@ const useProposalsWithoutUserData = (
           newProposal.startBlock.toNumber() <= currentBlockNumber
         ) {
           newProposal.state = ProposalState.Active;
-          newProposal.stateString = getStateString(ProposalState.Active);
         }
 
         return newProposal;
@@ -689,7 +662,6 @@ const useProposals = (
           calldatas: proposal.calldatas,
           description: proposal.description,
           state: proposal.state,
-          stateString: proposal.stateString,
           forVotesCount: proposal.forVotesCount,
           againstVotesCount: proposal.againstVotesCount,
           abstainVotesCount: proposal.abstainVotesCount,
