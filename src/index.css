@@ -90,3 +90,38 @@
 .walletconnect-connect__button__text {
   @apply text-gray-25 !important;
 }
+
+/* Tippy tooltip arrow */
+#arrow,
+#arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+}
+
+#arrow {
+  visibility: hidden;
+}
+
+#arrow::before {
+  visibility: visible;
+  content: '';
+  transform: rotate(45deg);
+}
+
+#tooltip[data-placement^='top'] > #arrow {
+  top: -12px;
+}
+
+#tooltip[data-placement^='bottom'] > #arrow {
+  top: -4px;
+}
+
+#tooltip[data-placement^='left'] > #arrow {
+  right: -4px;
+}
+
+#tooltip[data-placement^='right'] > #arrow {
+  left: -4px;
+}

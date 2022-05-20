@@ -19,13 +19,15 @@ const TooltipWrapper = ({ content, placement = "bottom-start", children, isVisib
     <Tippy
       // allows for interactive content
       interactive={true}
+      visible={true}
       // default placement is bottom-start, other options typed above
       placement={placement}
       // allows for control over whether tool tip is triggered or not by changing it to a manual trigger.
       trigger={isVisible ? 'mouseenter focus' : 'manual'}
       // renders custom tooltip
       render={(attrs) => (
-        <div className="bg-gray-800 text-white rounded-lg py-2 px-4" {...attrs}>
+        <div id="tooltip" className="bg-gray-800 text-white rounded-lg py-2 px-4" {...attrs}>
+          <div id="arrow" data-popper-placement="top" ></div>
           {content}
         </div>
       )}
