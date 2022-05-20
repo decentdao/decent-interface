@@ -19,7 +19,6 @@ const TooltipWrapper = ({ content, placement = "bottom-start", children, isVisib
     <Tippy
       // allows for interactive content
       interactive={true}
-      visible={true}
       // default placement is bottom-start, other options typed above
       placement={placement}
       // allows for control over whether tool tip is triggered or not by changing it to a manual trigger.
