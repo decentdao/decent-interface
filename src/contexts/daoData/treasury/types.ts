@@ -1,12 +1,19 @@
 import { BigNumber } from "ethers";
 
 export interface TokenEvent {
-  address: string;
   amount: BigNumber;
   transactionHash: string;
   blockNumber: number;
 }
 
+export interface TokenDepositEvent extends TokenEvent {
+  address: string
+}
+
+export interface TokenWithdrawEvent extends TokenEvent {
+  addresses: string[];
+  amount: BigNumber;
+}
 export interface ERC20TokenEvent extends TokenEvent {
   contractAddress: string;
   sender: string;
@@ -18,4 +25,6 @@ export interface TreasuryAsset {
   symbol: string;
   decimals: string;
   contractAddress: string;
+  totalAmount: BigNumber;
+  formatedTotal: string;
 }

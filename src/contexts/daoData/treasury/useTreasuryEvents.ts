@@ -1,7 +1,8 @@
+import { BigNumber } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import { TreasuryModule } from "../../../typechain-types";
 import { TypedEvent } from "../../../typechain-types/common";
-import { ERC20TokenEvent, TokenEvent } from "./types";
+import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from "./types";
 
 // @todo eth deposits should be renamed to native deposits for future proofing
 // @todo eth deposit emitted event only returns sender address in listeners
@@ -9,10 +10,11 @@ import { ERC20TokenEvent, TokenEvent } from "./types";
 // @todo handle erc721 deposits/withdrawals
 
 const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
-  const [nativeDeposits, setNativeDeposits] = useState<TokenEvent[]>([]);
-  const [nativeWithdrawals, setNativeWithdrawals] = useState<TokenEvent[]>([]);
-  const [erc20Deposits, setErc20Deposits] = useState<ERC20TokenEvent[]>([]);
-  const [erc20Withdrawals, setErc20Withdrawals] = useState<ERC20TokenEvent[]>([]);
+  const [nativeDeposits, setNativeDeposits] = useState<TokenDepositEvent[]>();
+  const [nativeWithdrawals, setNativeWithdrawals] = useState<TokenWithdrawEvent[]>([]);
+  // @todo support erc20 deposits
+  const [erc20Deposits] = useState<ERC20TokenEvent[]>([]);
+  const [erc20Withdrawals] = useState<ERC20TokenEvent[]>([]);
 
   /**
    * retreives past events and sets it to state
@@ -55,7 +57,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     // adds listener for real-time events
     treasuryModuleContract.on(treasuryModuleContract.filters.EthDeposited(), (address, amount, event) => {
       setNativeDeposits((prevEvents) => [
-        ...prevEvents,
+        ...(prevEvents || []),
         {
           address,
           amount,
@@ -85,20 +87,28 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         return;
       }
       // normalize native deposit events
-      const depositEvents = events.map((event) => {
+      const withdrawEvents = events.map((event) => {
         return {
-          address: event.args[0],
-          amount: event.args[1],
+          addresses: event.args[0],
+          amount: event.args[1].reduce((cur: BigNumber, prev: BigNumber) => cur.add(prev), BigNumber.from(0)),
           transactionHash: event.transactionHash,
           blockNumber: event.blockNumber,
         };
       });
-      setNativeWithdrawals(depositEvents);
+      setNativeWithdrawals(withdrawEvents);
     });
 
     // adds listener for real-time events
     treasuryModuleContract.on(treasuryModuleContract.filters.EthWithdrawn(), (addresses, amounts, event) => {
-      // ? @todo Why is address and amount array types?
+      setNativeWithdrawals((prevWithDraws) => [
+        ...(prevWithDraws || []),
+        {
+          addresses,
+          amount: amounts.reduce((cur, prev) => cur.add(prev), BigNumber.from(0)),
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        },
+      ]);
     });
 
     return () => {
