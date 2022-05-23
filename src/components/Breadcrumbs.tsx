@@ -11,10 +11,8 @@ import TooltipWrapper from "./ui/TooltipWrapper";
 
 const DAOName = () => {
   const params = useParams();
-  const [{ name, daoAddress, isDaoLoaded }] = useDAOData();
-  if (!isDaoLoaded) {
-    return <></>;
-  }
+  const [{ name, daoAddress }] = useDAOData();
+
   return <span>{name || daoAddress || params.address || "..."}</span>;
 };
 
@@ -26,7 +24,7 @@ const ProposalId = ({ match }: { match: BreadcrumbMatch }) => {
 
 function Breadcrumbs() {
   const location = useLocation();
-  const [{ daoAddress, isDaoLoaded }] = useDAOData();
+  const [{ daoAddress }] = useDAOData();
   const excludePaths: Array<string> = [];
   const home = "/";
   excludePaths.push(home);
@@ -62,7 +60,7 @@ function Breadcrumbs() {
           content={
             daoAddress && (
               <div>
-                <h4 className="text-gray-50 text-xs">Dao Address:</h4>
+                <h4 className="text-gray-50 text-xs">DAO Address:</h4>
                 <div className="flex text-gold-500">
                   <EtherscanLink address={daoAddress}>
                     <span className="cursor-pointer text-sm">{createAccountSubstring(daoAddress)}</span>
@@ -88,7 +86,7 @@ function Breadcrumbs() {
                     <RightArrow />
                   </div>
                 )}
-                {breadcrumbs.length === 1 && isDaoLoaded && (
+                {breadcrumbs.length === 1 && daoAddress && (
                   <div className="ml-2">
                     <Info />
                   </div>
