@@ -60,7 +60,7 @@ function Breadcrumbs() {
           content={
             daoAddress && (
               <div>
-                <h4 className="text-gray-50 text-xs">Dao Address:</h4>
+                <h4 className="text-gray-50 text-xs">DAO Address:</h4>
                 <div className="flex text-gold-500">
                   <EtherscanLink address={daoAddress}>
                     <span className="cursor-pointer text-sm">{createAccountSubstring(daoAddress)}</span>
