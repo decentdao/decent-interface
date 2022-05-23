@@ -11,10 +11,8 @@ import TooltipWrapper from "./ui/TooltipWrapper";
 
 const DAOName = () => {
   const params = useParams();
-  const [{ name, daoAddress, isDaoLoaded }] = useDAOData();
-  if (!isDaoLoaded) {
-    return <></>;
-  }
+  const [{ name, daoAddress }] = useDAOData();
+
   return <span>{name || daoAddress || params.address || "..."}</span>;
 };
 
