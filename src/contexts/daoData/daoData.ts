@@ -13,6 +13,8 @@ import useProposals from "./useProposals";
 import { ProposalData } from "./useProposals";
 import { GovernorModule, VotesTokenWithSupply } from "../../typechain-types";
 import { useBlockchainData } from "../blockchainData";
+import useTreasuryModuleContract from "./treasury/useTreasuryModuleContract";
+import useTreasuryEvents from "./treasury/useTreasuryEvents";
 
 export interface DAOData {
   daoAddress: string | undefined;
@@ -46,11 +48,19 @@ const useDAODatas = () => {
   const accessControlAddress = useAccessControlAddress(daoContract);
   const accessControlContract = useAccessControlContract(accessControlAddress);
   const moduleAddresses = useModuleAddresses(daoContract, accessControlContract);
+
+  // ***** Module Hooks ****** //
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
+  const treasuryModule = useTreasuryModuleContract(moduleAddresses)
+  const treasuryEvents = useTreasuryEvents(treasuryModule);
+  // @todo add treasury data hook
+  // ************************* //
+
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
   const { currentBlockNumber } = useBlockchainData();
   const proposals = useProposals(governorModuleContract, currentBlockNumber);
+
   // variable to track when dao contracts have finished loading
   const isDaoLoaded = useMemo(
     () => !!(daoAddress && accessControlAddress && accessControlContract && governorModuleContract && tokenContract),
