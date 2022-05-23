@@ -24,7 +24,7 @@ const ProposalId = ({ match }: { match: BreadcrumbMatch }) => {
 
 function Breadcrumbs() {
   const location = useLocation();
-  const [{ daoAddress, isDaoLoaded }] = useDAOData();
+  const [{ daoAddress }] = useDAOData();
   const excludePaths: Array<string> = [];
   const home = "/";
   excludePaths.push(home);
@@ -86,7 +86,7 @@ function Breadcrumbs() {
                     <RightArrow />
                   </div>
                 )}
-                {breadcrumbs.length === 1 && isDaoLoaded && (
+                {breadcrumbs.length === 1 && daoAddress && (
                   <div className="ml-2">
                     <Info />
                   </div>

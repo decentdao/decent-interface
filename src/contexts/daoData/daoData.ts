@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { BigNumber } from "ethers";
 
 import useDAOContract from "./useDAOContract";
@@ -31,7 +31,6 @@ export interface DAOData {
     votingWeight: BigNumber | undefined;
     address: string | undefined;
   };
-  isDaoLoaded: boolean;
 }
 
 type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -51,11 +50,6 @@ const useDAODatas = () => {
   const tokenData = useTokenData(tokenContract);
   const { currentBlockNumber } = useBlockchainData();
   const proposals = useProposals(governorModuleContract, currentBlockNumber);
-  // variable to track when dao contracts have finished loading
-  const isDaoLoaded = useMemo(
-    () => !!(daoAddress && accessControlAddress && accessControlContract && governorModuleContract && tokenContract),
-    [daoAddress, accessControlAddress, accessControlContract, governorModuleContract, tokenContract]
-  );
   const daoData: DAOData = {
     daoAddress,
     name,
@@ -65,7 +59,6 @@ const useDAODatas = () => {
     governorModuleContract,
     tokenContract,
     tokenData,
-    isDaoLoaded,
   };
 
   return [daoData, setDAOAddress] as const;
