@@ -89,7 +89,7 @@ const Transaction = ({ transaction, transactionNumber, pending, updateTransactio
           onChange={(e) => updateTargetAddress(e.target.value)}
           label="Target Address"
           helperText="The smart contract address this proposal will modify"
-          disabled={false}
+          disabled={pending}
           errorMessage={transaction.addressError}
         />
       </InputBox>
@@ -100,6 +100,7 @@ const Transaction = ({ transaction, transactionNumber, pending, updateTransactio
           onChange={(e) => updateFunctionName(e.target.value)}
           label="Function Name"
           exampleText="transfer"
+          disabled={pending}
           helperText="The name of the function to be called if this proposal passes"
           errorMessage={transaction.fragmentError}
         />
@@ -111,7 +112,7 @@ const Transaction = ({ transaction, transactionNumber, pending, updateTransactio
           onChange={(e) => updateFunctionSignature(e.target.value)}
           label="Function Signature"
           helperText="The function of the smart contract (above) to be called if this proposal passes"
-          disabled={false}
+          disabled={pending}
           exampleText="address to, uint amount"
           errorMessage={transaction.fragmentError}
         />
@@ -123,7 +124,7 @@ const Transaction = ({ transaction, transactionNumber, pending, updateTransactio
           onChange={(e) => updateParameters(e.target.value)}
           label="Parameters"
           helperText="Values used to call the function (comma separated)"
-          disabled={false}
+          disabled={pending}
           exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", 500'
           errorMessage={transaction.fragmentError}
         />
