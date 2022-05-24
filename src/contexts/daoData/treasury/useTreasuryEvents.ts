@@ -26,6 +26,80 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
   }, []);
 
   /**
+   * listener for native deposits
+   * @param address
+   * @param amount
+   * @param event
+   */
+  const nativeDepositListener = (address: string, amount: BigNumber, event: TypedEvent<any, any>) => {
+    setNativeDeposits((prevEvents) => [
+      ...(prevEvents || []),
+      {
+        address,
+        amount,
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+      },
+    ]);
+  };
+
+  /**
+   * listener for native withdraws
+   * @param addresses 
+   * @param amounts 
+   * @param event 
+   */
+  const nativeWithdrawListener = (addresses: string[], amounts: BigNumber[], event: TypedEvent<any, any>) => {
+    setNativeWithdraws((prevWithDraws) => [
+      ...(prevWithDraws || []),
+      {
+        addresses,
+        amount: amounts.reduce((cur, prev) => cur.add(prev), BigNumber.from(0)),
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+      },
+    ]);
+  };
+
+  /**
+   * listener for erc20 token deposits
+   * @param contractAddresses 
+   * @param senders
+   * @param amounts 
+   * @param event 
+   */
+  const erc20DepositListener = (contractAddresses: string[], _: string[], amounts: BigNumber[], event: TypedEvent<any, any>) => {
+    setErc20TokenDeposits((prevDeposits) => [
+      ...(prevDeposits || []),
+      {
+        contractAddresses,
+        amounts,
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+      },
+    ]);
+  };
+
+  /**
+   * listners for erc20 token withdrawns
+   * @param contractAddresses 
+   * @param senders
+   * @param amounts 
+   * @param event 
+   */
+  const erc20WithdrawListener = (contractAddresses: string[], _: string[], amounts: BigNumber[], event: TypedEvent<any, any>) => {
+    setErc20TokenWithdraws((prevTokenWithdraws) => [
+      ...(prevTokenWithdraws || []),
+      {
+        contractAddresses,
+        amounts,
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+      },
+    ]);
+  };
+
+  /**
    * handles deposit events for native coins on treasury module contract
    * sets an event listener for native coin deposits
    */
@@ -52,20 +126,10 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     });
 
     // adds listener for real-time events
-    treasuryModuleContract.on(treasuryModuleContract.filters.EthDeposited(), (address, amount, event) => {
-      setNativeDeposits((prevEvents) => [
-        ...(prevEvents || []),
-        {
-          address,
-          amount,
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-        },
-      ]);
-    });
+    treasuryModuleContract.on(treasuryModuleContract.filters.EthDeposited(), nativeDepositListener);
 
     return () => {
-      treasuryModuleContract.off(treasuryModuleContract.filters.EthDeposited(), () => {});
+      treasuryModuleContract.off(treasuryModuleContract.filters.EthDeposited(), nativeDepositListener);
     };
   }, [treasuryModuleContract, getPastEvents]);
 
@@ -96,20 +160,10 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     });
 
     // adds listener for real-time events
-    treasuryModuleContract.on(treasuryModuleContract.filters.EthWithdrawn(), (addresses, amounts, event) => {
-      setNativeWithdraws((prevWithDraws) => [
-        ...(prevWithDraws || []),
-        {
-          addresses,
-          amount: amounts.reduce((cur, prev) => cur.add(prev), BigNumber.from(0)),
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-        },
-      ]);
-    });
+    treasuryModuleContract.on(treasuryModuleContract.filters.EthWithdrawn(), nativeWithdrawListener);
 
     return () => {
-      treasuryModuleContract.off(treasuryModuleContract.filters.EthWithdrawn(), () => {});
+      treasuryModuleContract.off(treasuryModuleContract.filters.EthWithdrawn(), nativeWithdrawListener);
     };
   }, [treasuryModuleContract, getPastEvents]);
 
@@ -140,20 +194,10 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     });
 
     // adds listener for real-time events
-    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensDeposited(), (contractAddresses, _, amounts, event) => {
-      setErc20TokenDeposits((prevDeposits) => [
-        ...(prevDeposits || []),
-        {
-          contractAddresses,
-          amounts,
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-        },
-      ]);
-    });
+    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensDeposited(), erc20DepositListener);
 
     return () => {
-      treasuryModuleContract.off(treasuryModuleContract.filters.ERC20TokensDeposited(), () => {});
+      treasuryModuleContract.off(treasuryModuleContract.filters.ERC20TokensDeposited(), erc20DepositListener);
     };
   }, [treasuryModuleContract, getPastEvents]);
 
@@ -183,20 +227,10 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     });
 
     // adds listener for real-time events
-    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensWithdrawn(), (contractAddresses, _, amounts, event) => {
-      setErc20TokenWithdraws((prevTokenWithdraws) => [
-        ...(prevTokenWithdraws || []),
-        {
-          contractAddresses,
-          amounts,
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-        },
-      ]);
-    });
+    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensWithdrawn(), erc20WithdrawListener);
 
     return () => {
-      treasuryModuleContract.off(treasuryModuleContract.filters.ERC20TokensWithdrawn(), () => {});
+      treasuryModuleContract.off(treasuryModuleContract.filters.ERC20TokensWithdrawn(), erc20WithdrawListener);
     };
   }, [treasuryModuleContract, getPastEvents]);
 
