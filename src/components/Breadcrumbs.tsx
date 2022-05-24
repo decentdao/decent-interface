@@ -2,9 +2,6 @@ import { NavLink, useMatch, useLocation, useParams } from "react-router-dom";
 import useBreadcrumbs, { BreadcrumbMatch } from "use-react-router-breadcrumbs";
 
 import { useDAOData } from "../contexts/daoData";
-import { createAccountSubstring } from "../hooks/useDisplayName";
-import CopyToClipboard from "./ui/CopyToClipboard";
-import EtherscanLink from "./ui/EtherscanLink";
 import Info from "./ui/svg/Info";
 import RightArrow from "./ui/svg/RightArrow";
 import TreasuryIcon from "./ui/svg/Treasury";
