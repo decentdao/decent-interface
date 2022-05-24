@@ -5,7 +5,6 @@ import { TypedEvent } from "../../../typechain-types/common";
 import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from "./types";
 
 // @todo eth deposits should be renamed to native deposits for future proofing
-// @todo eth deposit emitted event only returns sender address in listeners
 
 // @todo handle erc721 deposits/withdrawals
 
