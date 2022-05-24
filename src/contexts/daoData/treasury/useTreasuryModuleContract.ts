@@ -8,6 +8,7 @@ const useTreasuryModuleContract = (moduleAddresses?: string[]) => {
 
   useEffect(() => {
     if (moduleAddresses === undefined || !moduleAddresses.length || !moduleAddresses[0] || !signerOrProvider) {
+      setTreasuryModule(undefined)
       return;
     }
     setTreasuryModule(TreasuryModule__factory.connect(moduleAddresses[0], signerOrProvider));
