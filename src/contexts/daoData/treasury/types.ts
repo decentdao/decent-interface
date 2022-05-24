@@ -22,7 +22,7 @@ export interface ERC20TokenEvent extends TokenEvent {
 export interface TreasuryAsset {
   name: string;
   symbol: string;
-  decimals: string;
+  decimals: number;
   contractAddress: string;
   totalAmount: BigNumber;
   formatedTotal: string;

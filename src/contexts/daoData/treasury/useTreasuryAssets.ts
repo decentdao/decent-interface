@@ -45,7 +45,7 @@ const useTreasuryAssets = (
     treasuryAssets.set("0x", {
       name: "Ethereum",
       symbol: "ETH",
-      decimals: "18",
+      decimals: 18,
       contractAddress: "",
       totalAmount: amount,
       formatedTotal: utils.formatUnits(amount, 18),
