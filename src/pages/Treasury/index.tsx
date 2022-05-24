@@ -13,7 +13,7 @@ const Treasury = () => {
         <div className="my-2">
           <div className="flex justify-between items-end bg-gray-400 px-4 pb-2 h-10">
             <div className="flex">
-              <div className="text-gray-50 text-xs font-medium w-28">Symbol</div>
+              <div className="text-gray-50 text-xs font-medium w-16 sm:w-28">Symbol</div>
               <div className="text-gray-50 text-xs font-medium">Name</div>
             </div>
             <div className="text-gray-50 text-xs font-medium">Amount</div>
@@ -22,7 +22,7 @@ const Treasury = () => {
             <div className="flex justify-between items-center bg-gray-500 px-4 py-5 border-t border-b border-gray-200">
               <div className="flex">
                 <EtherscanLink address={asset.contractAddress}>
-                  <div className="text-gold-500 w-28">{asset.symbol}</div>
+                  <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
                 </EtherscanLink>
                 <div className="text-gray-25 font-medium">{asset.name}</div>
               </div>
