@@ -10,17 +10,15 @@ import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from "./types"
 
 const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
   const [nativeDeposits, setNativeDeposits] = useState<TokenDepositEvent[]>();
-  const [nativeWithdrawals, setNativeWithdrawals] = useState<TokenWithdrawEvent[]>([]);
-  // @todo support erc20 deposits
-  const [erc20Deposits] = useState<ERC20TokenEvent[]>([]);
-  const [erc20Withdrawals] = useState<ERC20TokenEvent[]>([]);
+  const [nativeWithdraws, setNativeWithdraws] = useState<TokenWithdrawEvent[]>([]);
+  const [erc20TokenDeposits, setErc20TokenDeposits] = useState<ERC20TokenEvent[]>([]);
+  const [erc20TokenWithdraws, setErc20TokenWithdraws] = useState<ERC20TokenEvent[]>([]);
 
   /**
    * retreives past events and sets it to state
    *
    * @param treasuryModuleContract
    * @param filter contract query filter for specific event
-   * @param setMethod state set method
    */
   const getPastEvents = useCallback(async (treasuryModuleContract: TreasuryModule, filter: any) => {
     const events = await treasuryModuleContract.queryFilter(filter);
@@ -73,7 +71,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
 
   /**
    * handles withdraw events for native coins on treasury module contract
-   * sets an event listener for native coin withdrawals
+   * sets an event listener for native coin withdraws
    */
   useEffect(() => {
     if (!treasuryModuleContract) {
@@ -94,12 +92,12 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
           blockNumber: event.blockNumber,
         };
       });
-      setNativeWithdrawals(withdrawEvents);
+      setNativeWithdraws(withdrawEvents);
     });
 
     // adds listener for real-time events
     treasuryModuleContract.on(treasuryModuleContract.filters.EthWithdrawn(), (addresses, amounts, event) => {
-      setNativeWithdrawals((prevWithDraws) => [
+      setNativeWithdraws((prevWithDraws) => [
         ...(prevWithDraws || []),
         {
           addresses,
@@ -116,21 +114,42 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
   }, [treasuryModuleContract, getPastEvents]);
 
   /**
-   * handles deposit events for erc20 coins on treasury module contract
-   * sets an event listener for erc20 coin deposit
+   * handles deposit events for erc20 tokens on treasury module contract
+   * sets an event listener for erc20 tokens deposit
    */
   useEffect(() => {
     if (!treasuryModuleContract) {
       return;
     }
-    // capture past erc20 deposit events
+    // retreive past erc20 token deposit events
     getPastEvents(treasuryModuleContract, treasuryModuleContract.filters.ERC20TokensDeposited()).then((events: TypedEvent<any, any>[]) => {
-      // @todo capture erc20 deposit events
+      // if no events do nothing
+      if (!events.length) {
+        return;
+      }
+      // normalize erc20 token deposit events
+      const erc20Deposits = events.map((event) => {
+        return {
+          contractAddresses: event.args[0],
+          amounts: event.args[2],
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        };
+      });
+      setErc20TokenDeposits(erc20Deposits);
     });
 
     // adds listener for real-time events
-    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensDeposited(), () => {
-      // @todo add listeners for erc20 deposit events
+    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensDeposited(), (contractAddresses, _, amounts, event) => {
+      setErc20TokenDeposits((prevDeposits) => [
+        ...(prevDeposits || []),
+        {
+          contractAddresses,
+          amounts,
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        },
+      ]);
     });
 
     return () => {
@@ -138,17 +157,42 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     };
   }, [treasuryModuleContract, getPastEvents]);
 
+  /**
+   * handles withdraw events for erc20 tokens on treasury module contract
+   * sets an event listener for erc20 tokens withdraws
+   */
   useEffect(() => {
     if (!treasuryModuleContract) {
       return;
     }
     getPastEvents(treasuryModuleContract, treasuryModuleContract.filters.ERC20TokensWithdrawn()).then((events: TypedEvent<any, any>[]) => {
-      // @todo capture erc20 withdraw events
+      // if no events do nothing
+      if (!events.length) {
+        return;
+      }
+      // normalize native deposit events
+      const erc20TokenWithdraws = events.map((event) => {
+        return {
+          contractAddresses: event.args[0],
+          amounts: event.args[2],
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        };
+      });
+      setErc20TokenWithdraws(erc20TokenWithdraws);
     });
 
     // adds listener for real-time events
-    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensWithdrawn(), () => {
-      // @todo add listeners for erc20 withdraw events
+    treasuryModuleContract.on(treasuryModuleContract.filters.ERC20TokensWithdrawn(), (contractAddresses, _, amounts, event) => {
+      setErc20TokenWithdraws((prevTokenWithdraws) => [
+        ...(prevTokenWithdraws || []),
+        {
+          contractAddresses,
+          amounts,
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        },
+      ]);
     });
 
     return () => {
@@ -156,7 +200,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     };
   }, [treasuryModuleContract, getPastEvents]);
 
-  return { nativeDeposits, nativeWithdrawals, erc20Deposits, erc20Withdrawals };
+  return { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws };
 };
 
 export default useTreasuryEvents;

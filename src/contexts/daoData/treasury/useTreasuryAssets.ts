@@ -1,26 +1,34 @@
 import { BigNumber, utils } from "ethers";
-import { useEffect, useMemo } from "react";
-import { ERC20TokenEvent, TokenDepositEvent, TokenEvent, TreasuryAsset } from "./types";
+import { useEffect, useState } from "react";
+import { useWeb3 } from "../../web3Data";
+import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent, TreasuryAsset } from "./types";
+import Web3Token from "./Web3Token";
 
 /**
  * handles events to generate a list of assets count and amounts.
  *
  * @param nativeDeposits
- * @param nativeWithdrawals
+ * @param nativeWithdraws
  * @param erc20Deposits
- * @param erc20Withdrawals
- * @returns
+ * @param erc20Withdraws
+ * @returns TreasuryAsset[]
  */
 const useTreasuryAssets = (
   nativeDeposits?: TokenDepositEvent[],
-  nativeWithdrawals?: TokenEvent[],
-  erc20Deposits?: ERC20TokenEvent[],
-  erc20Withdrawals?: ERC20TokenEvent[]
+  nativeWithdraws?: TokenWithdrawEvent[],
+  erc20TokenDeposits?: ERC20TokenEvent[],
+  erc20TokenWithdraws?: ERC20TokenEvent[]
 ) => {
-  const treasuryAssets = useMemo<Map<string, TreasuryAsset>>(() => new Map(), []);
+  // <Map<string, TreasuryAsset>>
+  const [treasuryAssets] = useState<Map<string, TreasuryAsset>>(new Map());
 
+  const [{ provider }] = useWeb3();
+
+  /**
+   * calculates native coin total amounts
+   */
   useEffect(() => {
-    if (!nativeDeposits || !nativeDeposits.length || !nativeWithdrawals) {
+    if (!nativeDeposits || !nativeDeposits.length || !nativeWithdraws) {
       return;
     }
     let amount = BigNumber.from(0);
@@ -28,20 +36,84 @@ const useTreasuryAssets = (
       amount = amount.add(event.amount);
     });
 
-    nativeWithdrawals.forEach((event: TokenEvent) => {
+    nativeWithdraws.forEach((event: TokenWithdrawEvent) => {
       amount = amount.sub(event.amount);
     });
-    
+
+    // native coins are set to "0x" key,
+    // @todo update to allow for any native tokens
     treasuryAssets.set("0x", {
       name: "Ethereum",
       symbol: "ETH",
       decimals: "18",
-      contractAddress: "0x",
+      contractAddress: "",
       totalAmount: amount,
       formatedTotal: utils.formatUnits(amount, 18),
     });
-    
-  }, [nativeDeposits, nativeWithdrawals, treasuryAssets]);
+  }, [nativeDeposits, nativeWithdraws, treasuryAssets]);
+
+  /**
+   * calculates erc20 token total amounts
+   */
+  useEffect(() => {
+    if (!erc20TokenDeposits || !erc20TokenDeposits.length || !erc20TokenWithdraws || !provider) {
+      return;
+    }
+
+    const tokens = new Map<string, { tokenData: Web3Token; amount: BigNumber }>();
+
+    // initlizes Web3Token class for each token
+    // for each event sets the addresses to tokens Map
+    // sums token amounts together for same token
+    erc20TokenDeposits.forEach((event: ERC20TokenEvent) => {
+      event.contractAddresses.forEach((contractAddress, i) => {
+        const token = tokens.get(contractAddress);
+        if (!token) {
+          tokens.set(contractAddress, {
+            tokenData: new Web3Token(contractAddress, provider),
+            amount: event.amounts[i],
+          });
+        }
+        if (token) {
+          tokens.set(contractAddress, {
+            tokenData: token.tokenData,
+            amount: token.amount.add(event.amounts[i]),
+          });
+        }
+      });
+    });
+
+    // subtracts token amounts together for same token
+    erc20TokenWithdraws.forEach((event: ERC20TokenEvent) => {
+      event.contractAddresses.forEach((contractAddress, i) => {
+        const token = tokens.get(contractAddress);
+        if (token) {
+          tokens.set(contractAddress, {
+            tokenData: token.tokenData,
+            amount: token.amount.sub(event.amounts[i]),
+          });
+        }
+      });
+    });
+
+    // promise using then web3Token class methods to retrive token data from blockchain.
+    Promise.all(
+      Array.from(tokens.values()).map(async (token) => {
+        const name = await token.tokenData.tokenName();
+        const symbol = await token.tokenData.tokenSymbol();
+        const decimals = await token.tokenData.tokenDecimals();
+        const tokenAddress = token.tokenData.tokenAddress;
+        treasuryAssets.set(tokenAddress, {
+          name: name,
+          symbol: symbol,
+          decimals: decimals,
+          contractAddress: tokenAddress,
+          totalAmount: token.amount,
+          formatedTotal: utils.formatUnits(token.amount, decimals),
+        });
+      })
+    );
+  }, [erc20TokenDeposits, erc20TokenWithdraws, provider, treasuryAssets]);
 
   return Array.from(treasuryAssets.values());
 };

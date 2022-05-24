@@ -36,7 +36,7 @@ export interface DAOData {
     address: string | undefined;
   };
   treasuryModuleContract?: TreasuryModule;
-  treasuryAssets: TreasuryAsset[]
+  treasuryAssets: TreasuryAsset[];
 }
 
 type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -54,9 +54,9 @@ const useDAODatas = () => {
 
   // ***** Module Hooks ****** //
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
-  const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses)
-  const {nativeDeposits, nativeWithdrawals, erc20Deposits, erc20Withdrawals} = useTreasuryEvents(treasuryModuleContract);
-  const treasuryAssets = useTreasuryAssets(nativeDeposits, nativeWithdrawals, erc20Deposits, erc20Withdrawals);
+  const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses);
+  const { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws } = useTreasuryEvents(treasuryModuleContract);
+  const treasuryAssets = useTreasuryAssets(nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws);
   // ************************* //
 
   const tokenContract = useTokenContract(governorModuleContract);
