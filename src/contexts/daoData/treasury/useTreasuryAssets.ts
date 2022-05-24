@@ -99,9 +99,9 @@ const useTreasuryAssets = (
     // promise using then web3Token class methods to retrive token data from blockchain.
     Promise.all(
       Array.from(tokens.values()).map(async (token) => {
-        const name = await token.tokenData.tokenName();
-        const symbol = await token.tokenData.tokenSymbol();
-        const decimals = await token.tokenData.tokenDecimals();
+        const name = await token.tokenData.name();
+        const symbol = await token.tokenData.symbol();
+        const decimals = await token.tokenData.decimals();
         const tokenAddress = token.tokenData.tokenAddress;
         treasuryAssets.set(tokenAddress, {
           name: name,
