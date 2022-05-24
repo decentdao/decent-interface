@@ -347,3 +347,5 @@ export class ERC20__factory extends ContractFactory {
     return new Contract(address, _abi, signerOrProvider) as ERC20;
   }
 }
+
+export const ERC20_TOKEN_ABI = _abi
