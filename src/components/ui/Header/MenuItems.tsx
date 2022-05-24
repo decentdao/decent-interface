@@ -24,21 +24,27 @@ interface LinkMenuItem extends MenuItem {
   link: string;
 }
 
-const CONTACT: LinkMenuItem = {
-  title: "Contact",
+const COMMUNITY: LinkMenuItem = {
+  title: "Community",
   link: "https://discord.gg/24HFVzYVRF",
   Icon: Contact,
 };
 
-const SUPPORT: LinkMenuItem = {
-  title: "Support",
-  link: "https://fractalframework.xyz/fractal-overview",
+const OVERVIEW: LinkMenuItem = {
+  title: "Overview",
+  link: "https://docs.fractalframework.xyz/welcome-to-fractal/overview/what-is-fractal",
   Icon: Support,
 };
 
 const FAQ: LinkMenuItem = {
   title: "FAQ",
-  link: "https://fractalframework.xyz/faq",
+  link: "https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq",
+  Icon: Faq,
+};
+
+const DOCS: LinkMenuItem = {
+  title: "Docs",
+  link: "https://docs.fractalframework.xyz/welcome-to-fractal",
   Icon: Faq,
 };
 
@@ -122,9 +128,10 @@ const MenuItems = () => {
           <ActionItem {...CONNECT_WALLET(connect)} isVisible={!account} />
         </section>
         <section className="border-t border-gray-300">
-          <LinkItem {...CONTACT} />
-          <LinkItem {...SUPPORT} />
+          <LinkItem {...COMMUNITY} />
+          <LinkItem {...OVERVIEW} />
           <LinkItem {...FAQ} />
+          <LinkItem {...DOCS} />
         </section>
       </div>
     </Menu.Items>
