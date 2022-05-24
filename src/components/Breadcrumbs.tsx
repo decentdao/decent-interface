@@ -84,7 +84,7 @@ function Breadcrumbs() {
         </div>
         {breadcrumbs.length === 1 && daoAddress && (
           <div className="flex gap-4 sm:gap-2">
-            <NavLink to={`/daos/${daoAddress}/treasury`} className="flex items-center gap-2 text-gold-500 hover:text-gold-300">
+            <NavLink to={`/daos/${daoAddress}/details`} className="flex items-center gap-2 text-gold-500 hover:text-gold-300">
               <div className="text-sm font-semibold">Details</div>
               <DetailsIcon />
             </NavLink>
