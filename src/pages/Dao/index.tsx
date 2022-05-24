@@ -10,6 +10,7 @@ import Summary from "../../components/Dao/Summary";
 import { useDAOData } from "../../contexts/daoData";
 import { useWeb3 } from "../../contexts/web3Data";
 import useValidateDaoRoute from "../../hooks/useValidateDaoRoute";
+import Treasury from "../Treasury";
 
 
 
@@ -19,6 +20,7 @@ function DAORoutes() {
       <Route index element={<Summary />} />
       <Route path="details" element={<Details />} />
       <Route path="delegate" element={<Delegate />} />
+      <Route path="treasury" element={<Treasury />} />
       <Route path="proposals/*" element={<Proposals />} />
     </Routes>
   );
