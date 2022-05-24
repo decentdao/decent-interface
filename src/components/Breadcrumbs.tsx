@@ -2,11 +2,10 @@ import { NavLink, useMatch, useLocation, useParams } from "react-router-dom";
 import useBreadcrumbs, { BreadcrumbMatch } from "use-react-router-breadcrumbs";
 
 import { useDAOData } from "../contexts/daoData";
-import { createAccountSubstring } from "../hooks/useDisplayName";
-import CopyToClipboard from "./ui/CopyToClipboard";
-import EtherscanLink from "./ui/EtherscanLink";
 import Info from "./ui/svg/Info";
 import RightArrow from "./ui/svg/RightArrow";
+import TreasuryIcon from "./ui/svg/Treasury";
+import TooltipAddressContent from "./ui/TooltipAddressContent";
 import TooltipWrapper from "./ui/TooltipWrapper";
 
 const DAOName = () => {
@@ -53,50 +52,42 @@ function Breadcrumbs() {
   }
 
   return (
-    <div className="py-2 text-white bg-gray-600 bg-opacity-70 font-mono tracking-wider flex justify-between">
-      <div className="container">
-        <TooltipWrapper
-          isVisible={breadcrumbs.length === 1}
-          content={
-            daoAddress && (
-              <div>
-                <h4 className="text-gray-50 text-xs">DAO Address:</h4>
-                <div className="flex text-gold-500">
-                  <EtherscanLink address={daoAddress}>
-                    <span className="cursor-pointer text-sm">{createAccountSubstring(daoAddress)}</span>
-                  </EtherscanLink>
-                  <CopyToClipboard textToCopy={daoAddress} />
+    <div className="py-2 text-white bg-gray-600 bg-opacity-70 font-mono tracking-wider">
+      <div className="container flex justify-between">
+        <div>
+          <TooltipWrapper isVisible={breadcrumbs.length === 1} content={daoAddress && <TooltipAddressContent address={daoAddress} title="DAO address:" />}>
+            <div className="flex">
+              {breadcrumbs.map(({ match, breadcrumb }, i) => (
+                <div key={match.pathname} className="flex">
+                  {match.pathname === location.pathname ? (
+                    <span>{breadcrumb}</span>
+                  ) : (
+                    <NavLink className="text-gold-500" to={match.pathname}>
+                      {breadcrumb}
+                    </NavLink>
+                  )}
+                  {i < breadcrumbs.length - 1 && (
+                    <div className="mx-1">
+                      <RightArrow />
+                    </div>
+                  )}
+                  {breadcrumbs.length === 1 && daoAddress && (
+                    <div className="ml-2">
+                      <Info />
+                    </div>
+                  )}
                 </div>
-              </div>
-            )
-          }
-        >
-          <div className="flex">
-            {breadcrumbs.map(({ match, breadcrumb }, i) => (
-              <div key={match.pathname} className="flex">
-                {match.pathname === location.pathname ? (
-                  <span>{breadcrumb}</span>
-                ) : (
-                  <NavLink className="text-gold-500" to={match.pathname}>
-                    {breadcrumb}
-                  </NavLink>
-                )}
-                {i < breadcrumbs.length - 1 && (
-                  <div className="mx-1">
-                    <RightArrow />
-                  </div>
-                )}
-                {breadcrumbs.length === 1 && daoAddress && (
-                  <div className="ml-2">
-                    <Info />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </TooltipWrapper>
+              ))}
+            </div>
+          </TooltipWrapper>
+        </div>
+        {breadcrumbs.length === 1 && daoAddress && (
+          <NavLink to={`/daos/${daoAddress}/treasury`} className="flex items-center gap-2 text-gold-500 hover:text-gold-300">
+            <div className="text-sm font-semibold">Treasury</div>
+            <TreasuryIcon />
+          </NavLink>
+        )}
       </div>
-      {/* @todo add  treasury link (space-between)*/}
     </div>
   );
 }

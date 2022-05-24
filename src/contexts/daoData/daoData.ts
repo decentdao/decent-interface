@@ -11,8 +11,12 @@ import useTokenContract from "./useTokenContract";
 import useTokenData from "./useTokenData";
 import useProposals from "./useProposals";
 import { ProposalData } from "./useProposals";
-import { GovernorModule, VotesTokenWithSupply } from "../../typechain-types";
+import { GovernorModule, TreasuryModule, VotesTokenWithSupply } from "../../typechain-types";
 import { useBlockchainData } from "../blockchainData";
+import useTreasuryModuleContract from "./treasury/useTreasuryModuleContract";
+import useTreasuryEvents from "./treasury/useTreasuryEvents";
+import useTreasuryAssets from "./treasury/useTreasuryAssets";
+import { TreasuryAsset } from "./treasury/types";
 
 export interface DAOData {
   daoAddress: string | undefined;
@@ -31,6 +35,8 @@ export interface DAOData {
     votingWeight: BigNumber | undefined;
     address: string | undefined;
   };
+  treasuryModuleContract?: TreasuryModule;
+  treasuryAssets: TreasuryAsset[];
 }
 
 type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -45,7 +51,14 @@ const useDAODatas = () => {
   const accessControlAddress = useAccessControlAddress(daoContract);
   const accessControlContract = useAccessControlContract(accessControlAddress);
   const moduleAddresses = useModuleAddresses(daoContract, accessControlContract);
+
+  // ***** Module Hooks ****** //
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
+  const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses);
+  const { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws } = useTreasuryEvents(treasuryModuleContract);
+  const treasuryAssets = useTreasuryAssets(nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws);
+  // ************************* //
+
   const tokenContract = useTokenContract(governorModuleContract);
   const tokenData = useTokenData(tokenContract);
   const { currentBlockNumber } = useBlockchainData();
@@ -59,6 +72,8 @@ const useDAODatas = () => {
     governorModuleContract,
     tokenContract,
     tokenData,
+    treasuryModuleContract,
+    treasuryAssets,
   };
 
   return [daoData, setDAOAddress] as const;
