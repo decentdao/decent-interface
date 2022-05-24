@@ -5,6 +5,7 @@ import Support from "../svg/Support";
 import Connect from "../svg/Connect";
 import Disconnect from "../svg/Disconnect";
 import Faq from "../svg/Faq";
+import Docs from "../svg/Docs";
 import CopyToClipboard from "../CopyToClipboard";
 import EtherscanLink from "../EtherscanLink";
 import useDisplayName from "../../../hooks/useDisplayName";
@@ -45,7 +46,7 @@ const FAQ: LinkMenuItem = {
 const DOCS: LinkMenuItem = {
   title: "Docs",
   link: "https://docs.fractalframework.xyz/welcome-to-fractal",
-  Icon: Faq,
+  Icon: Docs,
 };
 
 const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
