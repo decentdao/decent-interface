@@ -8,6 +8,7 @@ import EtherscanLink from "./ui/EtherscanLink";
 import Info from "./ui/svg/Info";
 import RightArrow from "./ui/svg/RightArrow";
 import TreasuryIcon from "./ui/svg/Treasury";
+import TooltipAddressContent from "./ui/TooltipAddressContent";
 import TooltipWrapper from "./ui/TooltipWrapper";
 
 const DAOName = () => {
@@ -57,22 +58,7 @@ function Breadcrumbs() {
     <div className="py-2 text-white bg-gray-600 bg-opacity-70 font-mono tracking-wider">
       <div className="container flex justify-between">
         <div>
-          <TooltipWrapper
-            isVisible={breadcrumbs.length === 1}
-            content={
-              daoAddress && (
-                <div>
-                  <h4 className="text-gray-50 text-xs">DAO Address:</h4>
-                  <div className="flex text-gold-500">
-                    <EtherscanLink address={daoAddress}>
-                      <span className="cursor-pointer text-sm">{createAccountSubstring(daoAddress)}</span>
-                    </EtherscanLink>
-                    <CopyToClipboard textToCopy={daoAddress} />
-                  </div>
-                </div>
-              )
-            }
-          >
+          <TooltipWrapper isVisible={breadcrumbs.length === 1} content={daoAddress && <TooltipAddressContent address={daoAddress} title="DAO address:" />}>
             <div className="flex">
               {breadcrumbs.map(({ match, breadcrumb }, i) => (
                 <div key={match.pathname} className="flex">
