@@ -2,6 +2,7 @@ import { NavLink, useMatch, useLocation, useParams } from "react-router-dom";
 import useBreadcrumbs, { BreadcrumbMatch } from "use-react-router-breadcrumbs";
 
 import { useDAOData } from "../contexts/daoData";
+import DetailsIcon from "./ui/svg/Details";
 import Info from "./ui/svg/Info";
 import RightArrow from "./ui/svg/RightArrow";
 import TreasuryIcon from "./ui/svg/Treasury";
@@ -53,7 +54,7 @@ function Breadcrumbs() {
 
   return (
     <div className="py-2 text-white bg-gray-600 bg-opacity-70 font-mono tracking-wider">
-      <div className="container flex justify-between">
+      <div className="container flex justify-between items-center">
         <div>
           <TooltipWrapper isVisible={breadcrumbs.length === 1} content={daoAddress && <TooltipAddressContent address={daoAddress} title="DAO address:" />}>
             <div className="flex">
@@ -82,10 +83,16 @@ function Breadcrumbs() {
           </TooltipWrapper>
         </div>
         {breadcrumbs.length === 1 && daoAddress && (
-          <NavLink to={`/daos/${daoAddress}/treasury`} className="flex items-center gap-2 text-gold-500 hover:text-gold-300">
-            <div className="text-sm font-semibold">Treasury</div>
-            <TreasuryIcon />
-          </NavLink>
+          <div className="flex gap-4 sm:gap-2">
+            <NavLink to={`/daos/${daoAddress}/details`} className="flex items-center gap-2 text-gold-500 hover:text-gold-300">
+              <div className="text-sm font-semibold">Details</div>
+              <DetailsIcon />
+            </NavLink>
+            <NavLink to={`/daos/${daoAddress}/treasury`} className="flex items-center gap-2 text-gold-500 hover:text-gold-300">
+              <div className="text-sm font-semibold">Treasury</div>
+              <TreasuryIcon />
+            </NavLink>
+          </div>
         )}
       </div>
     </div>
