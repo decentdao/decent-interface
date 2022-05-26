@@ -2,6 +2,16 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Deployment Notes
+
+This app is currently deployed via Netlify and IPFS (see the Github workflow files).
+
+On both platforms, the "dev" environments have no custom environment variables set; they pull their configuration from the `.env` file, so, it's **important** to realize that changes to `.env` will be reflected in the hosted "dev" environments!!
+
+The "prod" environments are where custom environment variables are configured. For Netlify, it's in the site's build settings in the Netlify project. For the IPFS build, it's in Github's "secrets", and exposed to the build script in `.github/workflows/release-ipfs-prod.yaml`.
+
+*When making changes to the production configuration, perform updates both on Netlify, and in Github Secrets / Workflow*
+
 ## Available Scripts
 
 In the project directory, you can run:
