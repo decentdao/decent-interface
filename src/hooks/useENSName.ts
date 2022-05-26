@@ -7,14 +7,22 @@ const useENSName = (account: string | undefined) => {
 
   const [ensName, setEnsName] = useState<string | null>(null);
   useEffect(() => {
+    let isMounted = true
     if (!provider || !account) {
       setEnsName(null);
       return;
     }
 
     provider.lookupAddress(account)
-      .then(setEnsName)
+      .then((value: string | null) => {
+        if(isMounted) {
+          setEnsName(value)
+        }
+      })
       .catch(console.error);
+      return () => {
+        isMounted = false;
+      }
   }, [account, provider]);
 
   return ensName;
