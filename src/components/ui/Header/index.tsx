@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link, useMatch } from "react-router-dom";
+import { useDAOData } from "../../../contexts/daoData";
 import FractalLogo from "../svg/Logo";
 import HeaderMenu from "./HeaderMenu";
 
 function Header() {
-  const daoHomeMatch = useMatch("/daos/:id/*");
+  const [{ daoAddress }] = useDAOData();
+  const daoHomeMatch = useMatch("/daos/:address/*");
   const [daoHome, setDaoHome] = useState("/");
   const [validatedAddress, setValidatedAddress] = useState<string>();
   
   useEffect(() => {
-    if (daoHomeMatch) {
+    if (daoHomeMatch && daoAddress) {
       setDaoHome(daoHomeMatch.pathnameBase);
-      setValidatedAddress(daoHomeMatch.params.id);
+      setValidatedAddress(daoHomeMatch.params.address);
     } else {
       setDaoHome("/");
       setValidatedAddress(undefined);
     }
-  }, [daoHomeMatch]);
+  }, [daoHomeMatch, daoAddress]);
 
   return (
     <header className="py-4 bg-gray-600">
