@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TreasuryModule, TreasuryModule__factory } from "../../../assets/module-typechain-types/module-treasury";
+import { TreasuryModule, TreasuryModule__factory } from "../../../assets/typechain-types/module-treasury";
 import { useWeb3 } from "../../web3Data";
 
 const useTreasuryModuleContract = (moduleAddresses?: string[]) => {

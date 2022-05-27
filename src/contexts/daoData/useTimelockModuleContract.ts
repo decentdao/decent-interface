@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { TimelockUpgradeable, TimelockUpgradeable__factory } from "../../assets/module-typechain-types/module-governor";
+import { TimelockUpgradeable, TimelockUpgradeable__factory } from "../../assets/typechain-types/module-governor";
 import { useWeb3 } from "../web3Data";
 
 const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {

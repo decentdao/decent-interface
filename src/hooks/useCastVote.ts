@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react'
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber } from 'ethers';
-import { GovernorModule, GovernorModule__factory } from '../assets/module-typechain-types/module-governor';
+import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 
 const useCastVote = ({

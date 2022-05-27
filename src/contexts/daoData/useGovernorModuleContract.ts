@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GovernorModule, GovernorModule__factory } from "../../assets/module-typechain-types/module-governor";
+import { GovernorModule, GovernorModule__factory } from "../../assets/typechain-types/module-governor";
 import { useWeb3 } from "../web3Data";
 
 const useGovernorModuleContract = (moduleAddresses: string[] | undefined) => {
