@@ -29,6 +29,7 @@ const useTreasuryAssets = (
    */
   useEffect(() => {
     if (!nativeDeposits || !nativeDeposits.length || !nativeWithdraws) {
+      treasuryAssets.clear()
       return;
     }
     let amount = BigNumber.from(0);
