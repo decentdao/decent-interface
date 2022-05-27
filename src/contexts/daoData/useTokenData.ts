@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { VotesTokenWithSupply } from "../../typechain-types";
+import { VotesTokenWithSupply } from "../../assets/module-typechain-types/votes-token";
 import { useWeb3 } from "../web3Data";
 import { BigNumber } from "ethers";
 

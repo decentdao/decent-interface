@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AccessControl, AccessControl__factory } from '../../typechain-types';
+import { AccessControl, AccessControl__factory } from '@fractal-framework/core-contracts/typechain-types';
 import { useWeb3 } from '../web3Data';
 
 const useAccessControlContract = (accessControlAddress: string | undefined) => {
