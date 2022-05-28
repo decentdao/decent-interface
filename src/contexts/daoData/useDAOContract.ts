@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { DAO, DAO__factory } from '../../typechain-types';
+import { DAO, DAO__factory } from '@fractal-framework/core-contracts';
 import { useWeb3 } from '../web3Data';
 
 const useDAOContract = (address: string | undefined) => {

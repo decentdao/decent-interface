@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 import { useCallback, useEffect, useState } from "react";
-import { TreasuryModule } from "../../../typechain-types";
-import { TypedEvent } from "../../../typechain-types/common";
+import { TreasuryModule } from "../../../assets/typechain-types/module-treasury";
+import { TypedEvent } from "../../../assets/typechain-types/module-treasury/common";
 import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from "./types";
 
 // @todo eth deposits should be renamed to native deposits for future proofing

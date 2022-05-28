@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import { useWeb3 } from "../contexts/web3Data";
 import { BigNumber, ethers } from "ethers";
 import { useAddresses } from "../contexts/web3Data/chains";
-import { MetaFactory, MetaFactory__factory } from "../typechain-types";
+import { MetaFactory, MetaFactory__factory } from "../assets/typechain-types/metafactory";
 
 export type TokenAllocation = {
   address: string;
@@ -79,6 +79,7 @@ const useDeployDAO = ({
 
     const createDAOParams = {
       daoImplementation: addresses.dao?.address,
+      daoFactory: addresses.daoFactory?.address,
       accessControlImplementation: addresses.accessControl?.address,
       daoName: daoName,
       roles: [
@@ -140,7 +141,6 @@ const useDeployDAO = ({
             ["address"],
             [addresses.timelockUpgradeable?.address]
           ), // Timelock Impl
-          abiCoder.encode(["string"], [""]),
           abiCoder.encode(["uint64"], [BigNumber.from("0")]), // vote extension
           abiCoder.encode(["uint256"], [BigNumber.from("0")]), // Todo: change voteDelay back to 6545 blocks for prod
           abiCoder.encode(["uint256"], [BigNumber.from("10")]), // Todo: change votingPeriod back to 45818 blocks (1 week)
