@@ -41,9 +41,6 @@ const useCastVote = ({
       pendingMessage: "Casting Vote",
       failedMessage: "Vote Cast Failed",
       successMessage: "Vote Casted",
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
-      },
     });
   }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signerOrProvider, vote])
   return castVote;

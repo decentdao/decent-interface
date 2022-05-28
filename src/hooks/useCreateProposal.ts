@@ -57,9 +57,6 @@ const useCreateProposal = ({
         clearState();
         navigate(`/daos/${daoAddress}`,);
       },
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
-      },
     });
   }, [daoAddress, navigate, contractCallCreateProposal, daoData, proposalData, setPending, signerOrProvider, clearState])
   return createProposal;

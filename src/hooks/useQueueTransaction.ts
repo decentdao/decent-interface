@@ -40,9 +40,6 @@ const useQueueTransaction = ({
       pendingMessage: "Queuing Transaction...",
       failedMessage: "Queuing Failed",
       successMessage: "Queuing Completed",
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
-      },
     });
   }, [contractCallQueueTransaction, daoData, proposalData, signerOrProvider])
   return queueTransaction;
