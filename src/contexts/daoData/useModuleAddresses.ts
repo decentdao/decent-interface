@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { DAO, AccessControlDAO } from "@fractal-framework/core-contracts/typechain-types";
+import { DAO, AccessControlDAO } from "@fractal-framework/core-contracts";
 
 type ModuleActionRoleEvents = {
   address: string;

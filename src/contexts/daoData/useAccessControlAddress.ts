@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { DAO } from '@fractal-framework/core-contracts/typechain-types';
+import { DAO } from '@fractal-framework/core-contracts';
 import useSafeRace from './useSafeRace';
 
 const useAccessControlAddress = (dao: DAO | undefined) => {
