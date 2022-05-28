@@ -79,6 +79,7 @@ const useDeployDAO = ({
 
     const createDAOParams = {
       daoImplementation: addresses.dao?.address,
+      daoFactory: addresses.daoFactory?.address,
       accessControlImplementation: addresses.accessControl?.address,
       daoName: daoName,
       roles: [
