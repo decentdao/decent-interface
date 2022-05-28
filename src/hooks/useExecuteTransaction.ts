@@ -40,9 +40,6 @@ const useExecuteTransaction = ({
       pendingMessage: "Executing Transaction",
       failedMessage: "Executing Failed",
       successMessage: "Executing Completed",
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
-      },
     });
   }, [contractCallExecuteTransaction, daoData, proposalData, signerOrProvider])
   return executeTransaction;

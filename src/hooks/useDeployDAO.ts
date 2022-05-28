@@ -213,9 +213,6 @@ const useDeployDAO = ({
           navigate(`/daos/${daoAddress}`);
         }
       },
-      rpcErrorCallback: (error: any) => {
-        console.error(error);
-      },
     });
   }, [
     signerOrProvider,
