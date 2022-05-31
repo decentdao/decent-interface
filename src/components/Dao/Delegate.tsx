@@ -3,6 +3,7 @@ import { utils } from "ethers";
 import useDelegateVote from "../../hooks/useDelegateVote";
 import useDisplayName from "../../hooks/useDisplayName";
 import ContentBox from "../ui/ContentBox";
+import ContentBanner from "../../components/ui/ContentBanner";
 import EtherscanLink from "../ui/EtherscanLink";
 import { useWeb3 } from "../../contexts/web3Data";
 import { useDAOData } from "../../contexts/daoData";
@@ -78,6 +79,9 @@ function Delegate() {
               <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit -mt-2 sm:mt-0")} />
             </div>
           </InputBox>
+          <div className="p-0">
+            <ContentBanner description={`Enter the address to delegate your vote to. Click "Self" to assign yourself.`} />
+          </div>
           <div className="flex mx-2 my-1 text-gray-50">
             Balance:{" "}
             <span className="text-gray-25 ml-2">
