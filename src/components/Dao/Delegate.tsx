@@ -79,16 +79,13 @@ function Delegate() {
               <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit -mt-2 sm:mt-0")} />
             </div>
           </InputBox>
-          <div className="p-0">
-            <ContentBanner description={`Enter the address to delegate your vote to. Click "Self" to assign yourself.`} />
-          </div>
-          <div className="flex mx-2 my-1 text-gray-50">
+          <div className="flex mr-2 my-1 text-gray-50">
             Balance:{" "}
             <span className="text-gray-25 ml-2">
               <DataLoadingWrapper isLoading={readableBalance === undefined}>{readableBalance}</DataLoadingWrapper>
             </span>
           </div>
-          <div className="flex mx-2 my-1 text-gray-50">
+          <div className="flex mr-2 my-1 text-gray-50">
             Current Delegatee:{" "}
             <EtherscanLink address={delegatee}>
               <DataLoadingWrapper isLoading={!delegateeDisplayName}>
@@ -96,14 +93,17 @@ function Delegate() {
               </DataLoadingWrapper>
             </EtherscanLink>
           </div>
-          <div className="flex mx-2 my-1 text-gray-50">
+          <div className="flex mr-2 my-1 text-gray-50">
             Current Voting Weight:{" "}
             <span className="text-gray-25 ml-2">
               <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>{readableVotingWeight}</DataLoadingWrapper>
             </span>
           </div>
-          <SecondaryButton disabled={!validAddress || newDelegatee.trim() === "" || pending} onClick={() => delegateVote()} label="Delegate" className="mt-4" />
+          <SecondaryButton disabled={!validAddress || newDelegatee.trim() === "" || pending} onClick={() => delegateVote()} label="Delegate" className="-ml-0 mt-4" />
         </ContentBox>
+      </div>
+      <div className="">
+        <ContentBanner description={`Enter the address to delegate your vote to. Click "Self" to assign yourself.`}/>
       </div>
     </>
   );
