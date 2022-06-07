@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react'
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber } from 'ethers';
-import { GovernorModule, GovernorModule__factory } from '../typechain-types';
+import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 
 const useCastVote = ({
@@ -41,9 +41,6 @@ const useCastVote = ({
       pendingMessage: "Casting Vote",
       failedMessage: "Vote Cast Failed",
       successMessage: "Vote Casted",
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
-      },
     });
   }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signerOrProvider, vote])
   return castVote;

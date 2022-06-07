@@ -3,7 +3,7 @@ import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber } from 'ethers';
 import { useNavigate } from 'react-router';
-import { GovernorModule, GovernorModule__factory } from '../typechain-types';
+import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 
 type ProposalData = {
@@ -56,9 +56,6 @@ const useCreateProposal = ({
       successCallback: () => {
         clearState();
         navigate(`/daos/${daoAddress}`,);
-      },
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
       },
     });
   }, [daoAddress, navigate, contractCallCreateProposal, daoData, proposalData, setPending, signerOrProvider, clearState])

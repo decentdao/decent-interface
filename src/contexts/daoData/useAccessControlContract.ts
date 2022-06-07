@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { AccessControl, AccessControl__factory } from '../../typechain-types';
+import { AccessControlDAO, AccessControlDAO__factory } from '@fractal-framework/core-contracts';
 import { useWeb3 } from '../web3Data';
 
 const useAccessControlContract = (accessControlAddress: string | undefined) => {
-  const [accessControlContract, setAccessControlContract] = useState<AccessControl>();
+  const [accessControlContract, setAccessControlContract] = useState<AccessControlDAO>();
   const [{ signerOrProvider }] = useWeb3();
 
   useEffect(() => {
@@ -12,7 +12,7 @@ const useAccessControlContract = (accessControlAddress: string | undefined) => {
       return;
     }
 
-    setAccessControlContract(AccessControl__factory.connect(accessControlAddress, signerOrProvider));
+    setAccessControlContract(AccessControlDAO__factory.connect(accessControlAddress, signerOrProvider));
   }, [accessControlAddress, signerOrProvider]);
 
   return accessControlContract;

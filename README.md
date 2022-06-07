@@ -4,13 +4,34 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Deployment Notes
 
-This app is currently deployed via Netlify and IPFS (see the Github workflow files).
+Both the "dev" and "prod" environments of this app are currently deployed via both Netlify and IPFS (see the Github workflow files).
 
-On both platforms, the "dev" environments have no custom environment variables set; they pull their configuration from the `.env` file, so, it's **important** to realize that changes to `.env` will be reflected in the hosted "dev" environments!!
+The "dev" environment tracks the `develop` branch, and the "prod" environment tracks the `master` branch.
 
-The "prod" environments are where custom environment variables are configured. For Netlify, it's in the site's build settings in the Netlify project. For the IPFS build, it's in Github's "secrets", and exposed to the build script in `.github/workflows/release-ipfs-prod.yaml`.
+On both hosting platforms, both the "dev" and "prod" environments are where custom environment variables are configured. For Netlify, it's in the site's build settings in the Netlify project. For the IPFS build, it's in Github's "secrets", and exposed to the build scripts in `.github/workflows/release-ipfs-[dev|prod].yaml`.
 
-*When making changes to the production configuration, perform updates both on Netlify, and in Github Secrets / Workflow*
+So at any given time, there are effectively four builds out there, and they are publicly accessible and privately configurable as follows:
+
+1. dev site via Netlify
+    - url: https://app.dev.fractalframework.xyz
+    - env vars
+      - netlify: https://app.netlify.com/sites/fractal-framework-interface-dev/settings/deploys#environment
+1. dev site via IPFS
+    - url: http://app.dev.fractalframework.xyz.ipns.localhost:8080/
+    - env vars
+      - github: https://github.com/decent-dao/fractal-interface/settings/environments/486034480/edit
+      - workflow: [./.github/workflows/release-ipfs-dev.yaml](./.github/workflows/release-ipfs-dev.yaml)
+1. prod site via Netlify
+    - url: https://app.fractalframework.xyz
+    - env vars
+      - netlify: https://app.netlify.com/sites/fractal-framework-interface/settings/deploys#environment
+1. prod site via IPFS
+    - url: http://app.fractalframework.xyz.ipns.localhost:8080/
+    - env vars
+      - github: https://github.com/decent-dao/fractal-interface/settings/environments/503834178/edit
+      - workflow: [./.github/workflows/release-ipfs-prod.yaml](./.github/workflows/release-ipfs-prod).
+
+*TL;DR: When making changes to either "dev" or "prod" configurations, perform updates both on Netlify and in Github Secrets / Workflow*
 
 ## Available Scripts
 

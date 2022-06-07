@@ -4,7 +4,7 @@ import { useWeb3 } from '../contexts/web3Data';
 import {
   IERC165,
   IERC165__factory,
-} from '../typechain-types';
+} from '@fractal-framework/core-contracts';
 
 const use165Contract = (address: string | undefined) => {
   const [{ signerOrProvider }] = useWeb3();

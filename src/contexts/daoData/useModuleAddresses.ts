@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { DAO, AccessControl } from "../../typechain-types";
+import { DAO, AccessControlDAO } from "@fractal-framework/core-contracts";
 
 type ModuleActionRoleEvents = {
   address: string;
@@ -9,7 +9,7 @@ type ModuleActionRoleEvents = {
 
 const useModuleAddresses = (
   daoContract: DAO | undefined,
-  accessControlContract: AccessControl | undefined
+  accessControlContract: AccessControlDAO | undefined
 ) => {
   const [addActionRoleTargets, setAddActionRoleTargets] = useState<string[]>();
   const [removeActionRoleTargets, setRemoveActionRoleTargets] =

@@ -16,7 +16,6 @@ interface ContractCallParams {
   failedCallback?: () => void;
   successCallback?: (txReceipt: ContractReceipt) => void;
   completedCallback?: () => void;
-  rpcErrorCallback?: (reason: string) => void;
 }
 
 const useTransaction = () => {
@@ -74,29 +73,11 @@ const useTransaction = () => {
           return;
         }
 
-        if (params.rpcErrorCallback) {
-          let msg = (error.data?.message ?? "No reason") as string;
-
-          if (msg.includes('reason string')) {
-            msg = msg.split('reason string')[1];
-          }
-
-          params.rpcErrorCallback(_formatContractError(msg));
-        } else {
-          toast.error("There was an error! Check your browser's console logs for more details.");
-        }
+        toast.error("There was an error! Check your browser's console logs for more details.");
       });
   }, []);
 
   return [contractCall, pending] as const;
-}
-
-function _formatContractError(error: string) {
-  if (error.includes('not the owner')) { // surely there's a better way to do this... right? T_T
-    return "Only the contract owner can do this";
-  }
-
-  return error;
 }
 
 export { useTransaction };

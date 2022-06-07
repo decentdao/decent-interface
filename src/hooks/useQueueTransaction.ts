@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3 } from '../contexts/web3Data';
-import { GovernorModule, GovernorModule__factory } from '../typechain-types';
+import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 import { ProposalData } from "../contexts/daoData/useProposals";
 import { ethers } from 'ethers';
@@ -40,9 +40,6 @@ const useQueueTransaction = ({
       pendingMessage: "Queuing Transaction...",
       failedMessage: "Queuing Failed",
       successMessage: "Queuing Completed",
-      rpcErrorCallback: (error: any) => {
-        console.error(error)
-      },
     });
   }, [contractCallQueueTransaction, daoData, proposalData, signerOrProvider])
   return queueTransaction;
