@@ -17,6 +17,6 @@ const useDAOContract = (address: string | undefined) => {
   }, [address, signerOrProvider]);
 
   return dao;
-}
+};
 
 export default useDAOContract;

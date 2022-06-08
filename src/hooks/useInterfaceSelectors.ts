@@ -5,18 +5,20 @@ const useInterfaceSelectors = (interfaces: utils.Interface[]) => {
   const [selectors, setSelectors] = useState<string[]>();
 
   useEffect(() => {
-    setSelectors(interfaces.map(iface => {
-      return Object.keys(iface.functions)
-        .reduce((p, c) => {
-          const functionFragment = iface.functions[c];
-          const sigHash = iface.getSighash(functionFragment);
-          return p.xor(BigNumber.from(sigHash))
-        }, BigNumber.from(0))
-        .toHexString();
-    }));
+    setSelectors(
+      interfaces.map(iface => {
+        return Object.keys(iface.functions)
+          .reduce((p, c) => {
+            const functionFragment = iface.functions[c];
+            const sigHash = iface.getSighash(functionFragment);
+            return p.xor(BigNumber.from(sigHash));
+          }, BigNumber.from(0))
+          .toHexString();
+      })
+    );
   }, [interfaces]);
 
-  return selectors
-}
+  return selectors;
+};
 
 export default useInterfaceSelectors;

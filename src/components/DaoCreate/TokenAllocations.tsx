@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { TokenAllocation } from "../../hooks/useDeployDAO";
-import { TextButton } from "../ui/forms/Button";
-import InputBox from "../ui/forms/InputBox";
-import TokenAllocationInput from "./TokenAllocationInput";
+import { useEffect, useState } from 'react';
+import { TokenAllocation } from '../../hooks/useDeployDAO';
+import { TextButton } from '../ui/forms/Button';
+import InputBox from '../ui/forms/InputBox';
+import TokenAllocationInput from './TokenAllocationInput';
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
@@ -10,7 +10,11 @@ interface TokenAllocationsProps {
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
 
-const TokenAllocations = ({ tokenAllocations, supply, setTokenAllocations }: TokenAllocationsProps) => {
+function TokenAllocations({
+  tokenAllocations,
+  supply,
+  setTokenAllocations,
+}: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
 
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
@@ -21,13 +25,13 @@ const TokenAllocations = ({ tokenAllocations, supply, setTokenAllocations }: Tok
 
   const addTokenAllocation = () => {
     if (tokenAllocations === undefined) {
-      setTokenAllocations([{ address: "", amount: 0 }]);
+      setTokenAllocations([{ address: '', amount: 0 }]);
       return;
     }
     setTokenAllocations([
       ...tokenAllocations,
       {
-        address: "",
+        address: '',
         amount: 0,
       },
     ]);
@@ -35,7 +39,10 @@ const TokenAllocations = ({ tokenAllocations, supply, setTokenAllocations }: Tok
 
   const removeTokenAllocation = (index: number) => {
     if (tokenAllocations === undefined) return;
-    setTokenAllocations([...tokenAllocations.slice(0, index), ...tokenAllocations.slice(index + 1)]);
+    setTokenAllocations([
+      ...tokenAllocations.slice(0, index),
+      ...tokenAllocations.slice(index + 1),
+    ]);
   };
 
   useEffect(() => {
@@ -64,10 +71,14 @@ const TokenAllocations = ({ tokenAllocations, supply, setTokenAllocations }: Tok
               />
             ))}
         </div>
-        <TextButton onClick={() => addTokenAllocation()} className="px-0 my-1 mx-0" label="Add Allocation +" />
+        <TextButton
+          onClick={() => addTokenAllocation()}
+          className="px-0 my-1 mx-0"
+          label="Add Allocation +"
+        />
       </InputBox>
     </div>
   );
-};
+}
 
 export default TokenAllocations;

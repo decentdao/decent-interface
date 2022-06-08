@@ -6,10 +6,16 @@ import DAOs from '../pages/Daos/index';
 function Body() {
   return (
     <Routes>
-      <Route index element={<Home />} />
-      <Route path="daos/*" element={<DAOs />} />
+      <Route
+        index
+        element={<Home />}
+      />
+      <Route
+        path="daos/*"
+        element={<DAOs />}
+      />
     </Routes>
-  )
+  );
 }
 
 export default Body;

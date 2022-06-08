@@ -1,0 +1,69 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "plugin:import/recommended",
+        "react-app/jest",
+        "airbnb-typescript/base"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": ["./tsconfig.json"],  //required for "type-aware linting"
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "import",
+        "@typescript-eslint",
+        "prettier"
+    ],
+    "settings": {
+        "import/resolver": { // resolves imports without file extensions for listed extensions
+            "node": {
+                "extensions": [
+                    ".ts",
+                    ".tsx"
+                ]
+            }
+        },
+        "react": {
+            "version": "detect"
+        }
+    },
+    "rules": {
+        // ignores need for "react" import
+        "react/react-in-jsx-scope": "off",
+        // rule for function component to be framed as function
+        "react/function-component-definition": [
+            2,
+            {
+                "namedComponents": "function-declaration"
+            }
+        ],
+        "comma-dangle": "off",
+        "@typescript-eslint/comma-dangle": [0],
+        "indent": "off",
+        "@typescript-eslint/indent": [0],
+        // prettier config
+        "prettier/prettier": [
+            1,
+            {
+                "printWidth": 100,
+                "endOfLine": "lf",
+                "tabWidth": 2,
+                "useTabs": false,
+                "singleQuote": true,
+                "semi": true,
+                "arrowParens": "avoid",
+                "singleAttributePerLine": true
+            }
+        ]
+    }
+}

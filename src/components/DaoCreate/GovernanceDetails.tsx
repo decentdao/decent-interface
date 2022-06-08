@@ -1,11 +1,11 @@
-import { useEffect } from "react";
-import ContentBanner from "../ui/ContentBanner";
-import ContentBoxTitle from "../ui/ContentBoxTitle";
-import Input from "../ui/forms/Input";
-import InputBox from "../ui/forms/InputBox";
-import Lock from "../ui/svg/Lock";
+import { useEffect } from 'react';
+import ContentBanner from '../ui/ContentBanner';
+import ContentBoxTitle from '../ui/ContentBoxTitle';
+import Input from '../ui/forms/Input';
+import InputBox from '../ui/forms/InputBox';
+import Lock from '../ui/svg/Lock';
 
-const GovernanceDetails = ({
+function GovernanceDetails({
   setPrevEnabled,
   proposalThreshold,
   quorum,
@@ -15,7 +15,7 @@ const GovernanceDetails = ({
   proposalThreshold: number | undefined;
   quorum: number | undefined;
   executionDelay: number | undefined;
-}) => {
+}) {
   useEffect(() => {
     setPrevEnabled(true);
   }, [setPrevEnabled]);
@@ -30,7 +30,7 @@ const GovernanceDetails = ({
         <Input
           type="text"
           value={proposalThreshold?.toString()}
-          unit='Tokens'
+          unit="Tokens"
           onChange={() => {}}
           label="Proposal Creation (Token Required)"
           helperText="How many tokens does a member need to have in order to create a new proposal. Recommend: 0 Tokens"
@@ -43,7 +43,7 @@ const GovernanceDetails = ({
           value={quorum?.toString()}
           onChange={() => {}}
           label="Quorum"
-          unit='%'
+          unit="%"
           helperText="The percentage of total votes required in order for a proposal to PASS. Recommend: 4%"
           disabled={true}
         />
@@ -63,6 +63,6 @@ const GovernanceDetails = ({
       <ContentBanner description="The Governance Setup values are not editable at this time. To change these values, a new proposal will need to be created and passed by your members." />
     </div>
   );
-};
+}
 
 export default GovernanceDetails;

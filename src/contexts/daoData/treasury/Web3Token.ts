@@ -1,9 +1,15 @@
-import { ethers } from "ethers";
-import { IERC20Metadata, IERC20Metadata__factory } from "../../../assets/typechain-types/votes-token";
+import { ethers } from 'ethers';
+import {
+  IERC20Metadata,
+  IERC20Metadata__factory,
+} from '../../../assets/typechain-types/votes-token';
 export default class Web3Token {
   public contract: IERC20Metadata;
+
   private _name?: string;
+
   private _symbol?: string;
+
   private _decimals?: number;
 
   constructor(public readonly tokenAddress: string, provider: ethers.providers.BaseProvider) {

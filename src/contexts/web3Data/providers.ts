@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback } from "react";
-import { ethers, getDefaultProvider } from "ethers";
-import Web3Modal from "web3modal";
-import WalletConnectProvider from "@walletconnect/ethereum-provider";
+import { useEffect, useState, useCallback } from 'react';
+import { ethers, getDefaultProvider } from 'ethers';
+import Web3Modal from 'web3modal';
+import WalletConnectProvider from '@walletconnect/ethereum-provider';
 
-import { supportedChains } from "./chains";
-import { useListeners } from "./listeners";
+import { supportedChains } from './chains';
+import { useListeners } from './listeners';
 
 interface Web3Custom {
   connected: boolean;
@@ -41,18 +41,18 @@ const web3Modal = new Web3Modal({
     },
   },
   theme: {
-    background: "none",
-    main: "none",
-    secondary: "none",
-    border: "none",
-    hover: "none",
+    background: 'none',
+    main: 'none',
+    secondary: 'none',
+    border: 'none',
+    hover: 'none',
   },
 });
 
 export const defaultWeb3: Web3Custom = {
   connected: false,
   provided: false,
-  providerName: "not connected",
+  providerName: 'not connected',
   networkName: undefined,
   account: undefined,
   accountLoading: true,
@@ -64,13 +64,16 @@ export const defaultWeb3: Web3Custom = {
 export const defaultWeb3Response = [defaultWeb3, () => null, () => null] as const;
 
 const makeInjectedProvider = async (web3Provider: ethers.providers.Web3Provider) => {
-  const local = process.env.REACT_APP_LOCAL_CHAIN_ID && (await web3Provider.getNetwork()).chainId === parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID, 10);
+  const local =
+    process.env.REACT_APP_LOCAL_CHAIN_ID &&
+    (await web3Provider.getNetwork()).chainId ===
+      parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID, 10);
 
   const customProvider: Web3Custom = {
     connected: true,
     provided: true,
-    providerName: "injected provider",
-    networkName: local ? "localhost" : (await web3Provider.getNetwork()).name,
+    providerName: 'injected provider',
+    networkName: local ? 'localhost' : (await web3Provider.getNetwork()).name,
     account: await web3Provider.getSigner().getAddress(),
     accountLoading: true,
     chainId: (await web3Provider.getNetwork()).chainId,
@@ -85,27 +88,31 @@ const makeInjectedProvider = async (web3Provider: ethers.providers.Web3Provider)
   return customProvider;
 };
 
-const getInjectedProvider = (web3Modal: Web3Modal) => {
+const getInjectedProvider = (web3ModalProvider: Web3Modal) => {
   return new Promise<Web3Custom>((resolve, reject) => {
-    web3Modal
+    web3ModalProvider
       .connect()
-      .then((userSuppliedProvider) => makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider)))
+      .then(userSuppliedProvider =>
+        makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider))
+      )
       .then(resolve)
       .catch(reject);
   });
 };
 
 const getLocalProvider = () => {
-  const localProvider = new ethers.providers.JsonRpcProvider(process.env.REACT_APP_LOCAL_PROVIDER_URL);
+  const localProvider = new ethers.providers.JsonRpcProvider(
+    process.env.REACT_APP_LOCAL_PROVIDER_URL
+  );
   return new Promise<Web3Custom>((resolve, reject) => {
     localProvider
       .detectNetwork()
-      .then((network) => {
+      .then(network => {
         resolve({
           connected: true,
           provided: true,
-          providerName: "local provider",
-          networkName: "localhost",
+          providerName: 'local provider',
+          networkName: 'localhost',
           account: undefined,
           accountLoading: false,
           chainId: network.chainId,
@@ -119,17 +126,22 @@ const getLocalProvider = () => {
 
 const getFallbackProvider = () => {
   const providerApiKeys: ProviderApiKeys = {};
-  if (process.env.REACT_APP_INFURA_API_KEY) providerApiKeys.infura = process.env.REACT_APP_INFURA_API_KEY;
-  if (process.env.REACT_APP_ALCHEMY_API_KEY) providerApiKeys.alchemy = process.env.REACT_APP_ALCHEMY_API_KEY;
-  if (process.env.REACT_APP_ETHERSCAN_API_KEY) providerApiKeys.etherscan = process.env.REACT_APP_ETHERSCAN_API_KEY;
+  if (process.env.REACT_APP_INFURA_API_KEY)
+    providerApiKeys.infura = process.env.REACT_APP_INFURA_API_KEY;
+  if (process.env.REACT_APP_ALCHEMY_API_KEY)
+    providerApiKeys.alchemy = process.env.REACT_APP_ALCHEMY_API_KEY;
+  if (process.env.REACT_APP_ETHERSCAN_API_KEY)
+    providerApiKeys.etherscan = process.env.REACT_APP_ETHERSCAN_API_KEY;
 
-  const network = ethers.providers.getNetwork(parseInt(process.env.REACT_APP_FALLBACK_CHAIN_ID || "0", 10));
+  const network = ethers.providers.getNetwork(
+    parseInt(process.env.REACT_APP_FALLBACK_CHAIN_ID || '0', 10)
+  );
   const defaultProvider = getDefaultProvider(network, providerApiKeys);
 
   const provider: Web3Custom = {
     connected: true,
     provided: false,
-    providerName: "readonly provider",
+    providerName: 'readonly provider',
     networkName: defaultProvider.network.name,
     account: undefined,
     accountLoading: false,
@@ -165,7 +177,7 @@ const useProvider = () => {
     if (web3Provider.provider) {
       web3Provider.provider
         .getNetwork()
-        .then((network) => {
+        .then(network => {
           if (supportedChains().includes(network.chainId)) {
             getInjectedProvider(web3Modal).then(setWeb3Provider).catch(console.error);
 
@@ -175,7 +187,7 @@ const useProvider = () => {
         .catch(console.error);
     }
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       getLocalProvider()
         .then(setWeb3Provider)
         .catch(() => setWeb3Provider(getFallbackProvider()));
@@ -190,7 +202,7 @@ const useProvider = () => {
     web3Modal.connect().catch(console.error);
     return null;
   }, []);
-  
+
   const disconnect: DisconnectFn = useCallback(() => {
     web3Modal.clearCachedProvider();
     setWeb3Provider(defaultWeb3);

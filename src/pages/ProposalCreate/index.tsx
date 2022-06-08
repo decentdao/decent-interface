@@ -1,26 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
-import { BigNumber, ethers } from "ethers";
-import Essentials from "../../components/ProposalCreate/Essentials";
-import Transactions from "../../components/ProposalCreate/Transactions";
-import { TextButton, PrimaryButton, SecondaryButton } from "../../components/ui/forms/Button";
-import H1 from "../../components/ui/H1";
-import LeftArrow from "../../components/ui/svg/LeftArrow";
-import { useDAOData } from "../../contexts/daoData";
-import useCreateProposal from "../../hooks/useCreateProposal";
-import { TransactionData } from "../../types/transaction";
-import { ProposalData } from "../../types/proposal";
+import { useCallback, useEffect, useState } from 'react';
+import { BigNumber, ethers } from 'ethers';
+import Essentials from '../../components/ProposalCreate/Essentials';
+import Transactions from '../../components/ProposalCreate/Transactions';
+import { TextButton, PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
+import H1 from '../../components/ui/H1';
+import LeftArrow from '../../components/ui/svg/LeftArrow';
+import { useDAOData } from '../../contexts/daoData';
+import useCreateProposal from '../../hooks/useCreateProposal';
+import { TransactionData } from '../../types/transaction';
+import { ProposalData } from '../../types/proposal';
 
 const defaultTransaction = {
-  targetAddress: "",
-  functionName: "",
-  functionSignature: "",
-  parameters: "",
+  targetAddress: '',
+  functionName: '',
+  functionSignature: '',
+  parameters: '',
 };
 
-const ProposalCreate = () => {
+function ProposalCreate() {
   const [{ daoAddress }] = useDAOData();
   const [step, setStep] = useState<number>(0);
-  const [proposalDescription, setProposalDescription] = useState<string>("");
+  const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [pending, setPending] = useState<boolean>(false);
   const [proposalData, setProposalData] = useState<ProposalData>();
@@ -33,23 +33,23 @@ const ProposalCreate = () => {
   };
 
   const removeTransaction = (transactionNumber: number) => {
-    const _transactions = transactions.filter((_, i) => i !== transactionNumber);
-    setTransactions(_transactions);
+    const filteredTransactions = transactions.filter((_, i) => i !== transactionNumber);
+    setTransactions(filteredTransactions);
   };
 
   const decrementStep = () => {
-    setStep((currentStep) => currentStep - 1);
+    setStep(currentStep => currentStep - 1);
   };
 
   const incrementStep = () => {
-    setStep((currentStep) => currentStep + 1);
+    setStep(currentStep => currentStep + 1);
   };
 
   const clearState = () => {
-    setProposalDescription("");
+    setProposalDescription('');
     setTransactions([]);
-    setProposalData(undefined)
-  }
+    setProposalData(undefined);
+  };
 
   useEffect(() => {
     try {
@@ -63,12 +63,15 @@ const ProposalCreate = () => {
         return;
       }
       const proposal = {
-        targets: transactions.map((transaction) => transaction.targetAddress),
-        values: transactions.map(() => BigNumber.from("0")),
-        calldatas: transactions.map((transaction) => {
-          const _functionSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
-          const _parameters = `[${transaction.parameters}]`;
-          return new ethers.utils.Interface([_functionSignature]).encodeFunctionData(transaction.functionName, JSON.parse(_parameters));
+        targets: transactions.map(transaction => transaction.targetAddress),
+        values: transactions.map(() => BigNumber.from('0')),
+        calldatas: transactions.map(transaction => {
+          const funcSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
+          const parametersArr = `[${transaction.parameters}]`;
+          return new ethers.utils.Interface([funcSignature]).encodeFunctionData(
+            transaction.functionName,
+            JSON.parse(parametersArr)
+          );
         }),
         description: proposalDescription,
       };
@@ -114,23 +117,62 @@ const ProposalCreate = () => {
     <div>
       <div>
         <H1>Create Proposal</H1>
-        <form onSubmit={(e) => e.preventDefault()}>
-          {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
-          {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} pending={pending} />}
+        <form onSubmit={e => e.preventDefault()}>
+          {step === 0 && (
+            <Essentials
+              proposalDescription={proposalDescription}
+              setProposalDescription={setProposalDescription}
+            />
+          )}
+          {step === 1 && (
+            <Transactions
+              transactions={transactions}
+              setTransactions={setTransactions}
+              removeTransaction={removeTransaction}
+              pending={pending}
+            />
+          )}
         </form>
         {step === 1 && (
           <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
-            <TextButton onClick={addTransaction} disabled={pending} label="+ Add another transaction" />
+            <TextButton
+              onClick={addTransaction}
+              disabled={pending}
+              label="+ Add another transaction"
+            />
           </div>
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
-          {step === 1 && <TextButton type="button" onClick={decrementStep} disabled={pending} icon={<LeftArrow />} label="Prev" />}
-          {step === 1 && <PrimaryButton type="button" onClick={createProposal} disabled={!isValidProposalValid() || pending} label="Create Proposal" isLarge />}
-          {step === 0 && <SecondaryButton type="button" onClick={incrementStep} disabled={!proposalDescription.trim().length} label="Next: Add Transactions" />}
+          {step === 1 && (
+            <TextButton
+              type="button"
+              onClick={decrementStep}
+              disabled={pending}
+              icon={<LeftArrow />}
+              label="Prev"
+            />
+          )}
+          {step === 1 && (
+            <PrimaryButton
+              type="button"
+              onClick={createProposal}
+              disabled={!isValidProposalValid() || pending}
+              label="Create Proposal"
+              isLarge
+            />
+          )}
+          {step === 0 && (
+            <SecondaryButton
+              type="button"
+              onClick={incrementStep}
+              disabled={!proposalDescription.trim().length}
+              label="Next: Add Transactions"
+            />
+          )}
         </div>
       </div>
     </div>
   );
-};
+}
 
 export default ProposalCreate;

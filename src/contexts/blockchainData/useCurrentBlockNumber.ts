@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useWeb3 } from "../web3Data";
+import { useEffect, useState } from 'react';
+import { useWeb3 } from '../web3Data';
 
 const useCurrentBlockNumber = () => {
   const [blockNumber, setBlockNumber] = useState<number>();
@@ -11,14 +11,14 @@ const useCurrentBlockNumber = () => {
       return;
     }
 
-    const updateBlockNumber = (blockNumber: number) => {
-      setBlockNumber(blockNumber);
-    }
+    const updateBlockNumber = (block: number) => {
+      setBlockNumber(block);
+    };
 
-    provider.on("block", updateBlockNumber);
+    provider.on('block', updateBlockNumber);
 
     return () => {
-      provider.off("block", updateBlockNumber);
+      provider.off('block', updateBlockNumber);
     };
   }, [provider]);
 

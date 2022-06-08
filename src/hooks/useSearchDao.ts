@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import useAddress from "./useAddress";
-import useIsDAO from "./useIsDAO";
+import { useEffect, useState } from 'react';
+import useAddress from './useAddress';
+import useIsDAO from './useIsDAO';
 
 const useSearchDao = () => {
   const [searchString, setSearchString] = useState<string>();
@@ -25,8 +25,8 @@ const useSearchDao = () => {
    * updates search string when 'form' is submited
    *
    */
-  const updateSearchString = (searchString: string) => {
-    setSearchString(searchString);
+  const updateSearchString = (searchStr: string) => {
+    setSearchString(searchStr);
   };
 
   /**
@@ -52,11 +52,11 @@ const useSearchDao = () => {
       return;
     }
     if (!validAddress && address !== undefined) {
-      setErrorMessage("Please use a valid Fractal ETH address or ENS domain");
+      setErrorMessage('Please use a valid Fractal ETH address or ENS domain');
       return;
     }
     if (addressIsDAO === false) {
-      setErrorMessage("Sorry a Fractal does not exist on this address");
+      setErrorMessage('Sorry a Fractal does not exist on this address');
       return;
     }
   }, [address, validAddress, searchString, addressIsDAO, loading]);

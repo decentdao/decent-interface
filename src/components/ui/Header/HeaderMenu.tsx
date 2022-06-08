@@ -1,19 +1,19 @@
-import { Menu, Transition } from "@headlessui/react";
-import useAvatar from "../../../hooks/useAvatar";
-import useDisplayName from "../../../hooks/useDisplayName";
-import { useWeb3 } from "../../../contexts/web3Data";
-import DownArrow from "../svg/DownArrow";
-import Avatar from "./Avatar";
-import MenuItems from "./MenuItems";
+import { Menu, Transition } from '@headlessui/react';
+import useAvatar from '../../../hooks/useAvatar';
+import useDisplayName from '../../../hooks/useDisplayName';
+import { useWeb3 } from '../../../contexts/web3Data';
+import DownArrow from '../svg/DownArrow';
+import Avatar from './Avatar';
+import MenuItems from './MenuItems';
 
-const ConnectWallet = ({ account }: { account?: string }) => {
+function ConnectWallet({ account }: { account?: string }) {
   if (account) {
     return null;
   }
   return <span className="text-sm text-gold-500">Connect Wallet</span>;
-};
+}
 
-const WalletConnected = ({ account }: { account?: string }) => {
+function WalletConnected({ account }: { account?: string }) {
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
 
@@ -22,15 +22,18 @@ const WalletConnected = ({ account }: { account?: string }) => {
   }
   return (
     <>
-      <Avatar address={account} url={avatarURL} />
+      <Avatar
+        address={account}
+        url={avatarURL}
+      />
       <div className="pl-2 flex flex-col items-end">
         <div className="sm:text-right text-sm text-gold-500">{accountDisplayName}</div>
       </div>
     </>
   );
-};
+}
 
-const HeaderMenu = () => {
+function HeaderMenu() {
   const [{ account }] = useWeb3();
   return (
     <div className="flex items-center justify-center relative">
@@ -61,6 +64,6 @@ const HeaderMenu = () => {
       </Menu>
     </div>
   );
-};
+}
 
 export default HeaderMenu;

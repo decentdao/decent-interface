@@ -10,10 +10,10 @@ const useDAOName = (dao: DAO | undefined) => {
     !dao,
     () => setName(undefined),
     () => dao!.name(),
-    (daoName) => setName(daoName),
+    daoName => setName(daoName)
   );
 
   return name;
-}
+};
 
 export default useDAOName;

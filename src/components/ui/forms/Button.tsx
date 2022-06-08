@@ -1,4 +1,4 @@
-import cx from "classnames";
+import cx from 'classnames';
 
 interface ButtonProps {
   onClick?: () => void;
@@ -9,30 +9,7 @@ interface ButtonProps {
   isIconRight?: boolean;
   isLoading?: boolean;
 }
-
-export const PrimaryButton = ({className, ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-  const BASE_STYLES = "bg-gold-500 text-gray-500 font-semibold";
-  const HOVER_STATE = "hover:bg-gold-300";
-  const DISABLED_STATE = "disabled:bg-chocolate-500 disabled:text-gray-50";
-
-  return <Button className={cx(BASE_STYLES, HOVER_STATE, DISABLED_STATE, className)} {...rest} />;
-};
-
-export const SecondaryButton = ({className, ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-  const BASE_STYLES = "bg-chocolate-500 border border-gold-500 text-gold-500 font-semibold";
-  const HOVER_STATE = "hover:border-gold-300 hover:text-gold-300";
-  const DISABLED_STATE = "disabled:border-gray-50 disabled:text-gray-50";
-  return <Button className={cx(BASE_STYLES, HOVER_STATE, DISABLED_STATE, className)} {...rest} />;
-};
-
-export const TextButton = ({className, ...rest }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
-  const BASE_STYLES = "text-gold-500 font-medium";
-  const HOVER_STATE = "hover:text-gold-300";
-  const DISABLED_STATE = "disabled:text-gray-50";
-  return <Button className={cx(BASE_STYLES, HOVER_STATE, DISABLED_STATE, className)} {...rest} />;
-};
-
-const Button = ({
+function Button({
   label,
   icon,
   className,
@@ -41,17 +18,17 @@ const Button = ({
   isIconRight,
   isLoading,
   ...rest
-}: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+}: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   /****************************
    * Text and Loading Component
    ****************************/
-  const Label = () => {
+  function Label() {
     // @todo update button loader component
     return (
       <div className="flex justify-center relative">
         <div
           className={cx({
-            "animate-pulse absolute": isLoading,
+            'animate-pulse absolute': isLoading,
             hidden: !isLoading,
           })}
         >
@@ -67,20 +44,26 @@ const Button = ({
         </div>
       </div>
     );
-  };
+  }
 
   /****************************
    * Icon Components
    ****************************/
-  const Icon = () => (!!icon && !isLoading ? icon : null);
-  const IconLeft = () => (!isIconRight ? <Icon /> : null);
-  const IconRight = () => (isIconRight ? <Icon /> : null);
+  function Icon() {
+    return !!icon && !isLoading ? icon : null;
+  }
+  function IconLeft() {
+    return !isIconRight ? <Icon /> : null;
+  }
+  function IconRight() {
+    return isIconRight ? <Icon /> : null;
+  }
 
   /****************************
    * Styles
    ****************************/
 
-  const BASE_BUTTON_STYLES = "py-1 px-4 mx-2 font-mono rounded flex items-center justify-center";
+  const BASE_BUTTON_STYLES = 'py-1 px-4 mx-2 font-mono rounded flex items-center justify-center';
 
   return (
     <button
@@ -88,11 +71,11 @@ const Button = ({
         BASE_BUTTON_STYLES,
         className,
         {
-          "h-16": isLarge,
+          'h-16': isLarge,
         },
         {
-          "justify-center": !isSpaceBetween,
-          "justify-between": isSpaceBetween,
+          'justify-center': !isSpaceBetween,
+          'justify-between': isSpaceBetween,
         }
       )}
       {...rest}
@@ -102,6 +85,52 @@ const Button = ({
       <IconRight />
     </button>
   );
-};
+}
 
 export default Button;
+
+export function PrimaryButton({
+  className,
+  ...rest
+}: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const BASE_STYLES = 'bg-gold-500 text-gray-500 font-semibold';
+  const HOVER_STATE = 'hover:bg-gold-300';
+  const DISABLED_STATE = 'disabled:bg-chocolate-500 disabled:text-gray-50';
+
+  return (
+    <Button
+      className={cx(BASE_STYLES, HOVER_STATE, DISABLED_STATE, className)}
+      {...rest}
+    />
+  );
+}
+
+export function SecondaryButton({
+  className,
+  ...rest
+}: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const BASE_STYLES = 'bg-chocolate-500 border border-gold-500 text-gold-500 font-semibold';
+  const HOVER_STATE = 'hover:border-gold-300 hover:text-gold-300';
+  const DISABLED_STATE = 'disabled:border-gray-50 disabled:text-gray-50';
+  return (
+    <Button
+      className={cx(BASE_STYLES, HOVER_STATE, DISABLED_STATE, className)}
+      {...rest}
+    />
+  );
+}
+
+export function TextButton({
+  className,
+  ...rest
+}: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  const BASE_STYLES = 'text-gold-500 font-medium';
+  const HOVER_STATE = 'hover:text-gold-300';
+  const DISABLED_STATE = 'disabled:text-gray-50';
+  return (
+    <Button
+      className={cx(BASE_STYLES, HOVER_STATE, DISABLED_STATE, className)}
+      {...rest}
+    />
+  );
+}

@@ -8,9 +8,18 @@ import DAO from '../Dao';
 function DAOs() {
   return (
     <Routes>
-      <Route index element={<DAOSearch />} />
-      <Route path="new" element={<DaoCreate />} />
-      <Route path=":address/*" element={<DAO />} />
+      <Route
+        index
+        element={<DAOSearch />}
+      />
+      <Route
+        path="new"
+        element={<DaoCreate />}
+      />
+      <Route
+        path=":address/*"
+        element={<DAO />}
+      />
     </Routes>
   );
 }

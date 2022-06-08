@@ -32,18 +32,14 @@
     "web3modal": "^1.9.5"
   },
   "scripts": {
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "start": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired start",
     "start:windows": "set \"GENERATE_SOURCEMAP=false\" && for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired start",
     "build": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired build",
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
     "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
     "eject": "react-app-rewired eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -58,8 +54,19 @@
     ]
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "@typescript-eslint/parser": "^5.27.1",
     "autoprefixer": "^10.4.2",
+    "eslint": "^8.17.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
     "postcss": "^8.4.7",
+    "prettier": "^2.6.2",
     "react-app-rewired": "^2.2.1",
     "tailwindcss": "^3.0.23"
   }

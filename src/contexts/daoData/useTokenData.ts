@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
-import { VotesTokenWithSupply } from "../../assets/typechain-types/votes-token";
-import { useWeb3 } from "../web3Data";
-import { BigNumber } from "ethers";
+import { useState, useEffect, useCallback } from 'react';
+import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
+import { useWeb3 } from '../web3Data';
+import { BigNumber } from 'ethers';
+
+// @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
+// current there are unused variables that because of typing can not be removed without a little thought
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const [{ account }] = useWeb3();
@@ -31,7 +35,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
     tokenContract
       .name()
-      .then((name) => setTokenName(name))
+      .then(name => setTokenName(name))
       .catch(console.error);
   }, [tokenContract]);
 
@@ -44,7 +48,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
     tokenContract
       .symbol()
-      .then((symbol) => setTokenSymbol(symbol))
+      .then(symbol => setTokenSymbol(symbol))
       .catch(console.error);
   }, [tokenContract]);
 
@@ -57,7 +61,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
     tokenContract
       .decimals()
-      .then((decimals) => setTokenDecimals(decimals))
+      .then(decimals => setTokenDecimals(decimals))
       .catch(console.error);
   }, [tokenContract]);
 
@@ -75,7 +79,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
     tokenContract
       .delegates(account)
-      .then((delegatee) => setTokenDelegatee(delegatee))
+      .then(delegatee => setTokenDelegatee(delegatee))
       .catch(console.error);
   }, [tokenContract, account]);
 
@@ -89,12 +93,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
     const filterTransferTo = tokenContract.filters.Transfer(null, account);
     const filterTransferFrom = tokenContract.filters.Transfer(account, null);
 
-    const listenerCallback = (
-      _from: string,
-      _to: string,
-      _value: BigNumber,
-      _: any
-    ) => {
+    const listenerCallback = (from: string, to: string, value: BigNumber, _: any) => {
       updateTokenBalance();
     };
 
@@ -139,10 +138,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
       return;
     }
 
-    tokenContract
-      .getVotes(account)
-      .then(setTokenVotingWeight)
-      .catch(console.error);
+    tokenContract.getVotes(account).then(setTokenVotingWeight).catch(console.error);
   }, [account, tokenContract]);
 
   // Setup listeners for when voting weight increases or decreases

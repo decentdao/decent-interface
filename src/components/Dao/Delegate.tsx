@@ -1,27 +1,29 @@
-import { useEffect, useState } from "react";
-import { utils } from "ethers";
-import useDelegateVote from "../../hooks/useDelegateVote";
-import useDisplayName from "../../hooks/useDisplayName";
-import ContentBox from "../ui/ContentBox";
-import ContentBanner from "../../components/ui/ContentBanner";
-import EtherscanLink from "../ui/EtherscanLink";
-import { useWeb3 } from "../../contexts/web3Data";
-import { useDAOData } from "../../contexts/daoData";
-import Input from "../ui/forms/Input";
-import { SecondaryButton } from "../ui/forms/Button";
-import InputBox from "../ui/forms/InputBox";
-import cx from "classnames";
-import useAddress from "../../hooks/useAddress";
-import DataLoadingWrapper from "../ui/loaders/DataLoadingWrapper";
+import { useEffect, useState } from 'react';
+import { utils } from 'ethers';
+import useDelegateVote from '../../hooks/useDelegateVote';
+import useDisplayName from '../../hooks/useDisplayName';
+import ContentBox from '../ui/ContentBox';
+import ContentBanner from '../../components/ui/ContentBanner';
+import EtherscanLink from '../ui/EtherscanLink';
+import { useWeb3 } from '../../contexts/web3Data';
+import { useDAOData } from '../../contexts/daoData';
+import Input from '../ui/forms/Input';
+import { SecondaryButton } from '../ui/forms/Button';
+import InputBox from '../ui/forms/InputBox';
+import cx from 'classnames';
+import useAddress from '../../hooks/useAddress';
+import DataLoadingWrapper from '../ui/loaders/DataLoadingWrapper';
 
 function Delegate() {
-  const [newDelegatee, setNewDelegatee] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [newDelegatee, setNewDelegatee] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [{ account }] = useWeb3();
   const [, validAddress] = useAddress(newDelegatee);
-  const [{
-    tokenData: { decimals, symbol, userBalance, delegatee, votingWeight }
-  }] = useDAOData();
+  const [
+    {
+      tokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
+    },
+  ] = useDAOData();
   const delegateeDisplayName = useDisplayName(delegatee);
 
   const delegateSelf = () => {
@@ -34,7 +36,7 @@ function Delegate() {
 
   const [delegateVote, pending] = useDelegateVote({
     delegatee: newDelegatee,
-    successCallback: () => setNewDelegatee(""),
+    successCallback: () => setNewDelegatee(''),
   });
 
   const [readableBalance, setReadableBalance] = useState<string>();
@@ -58,10 +60,10 @@ function Delegate() {
   }, [decimals, votingWeight, symbol]);
 
   useEffect(() => {
-    if(validAddress === false) {
-      setErrorMessage('Invalid address')
+    if (validAddress === false) {
+      setErrorMessage('Invalid address');
     }
-  }, [validAddress])
+  }, [validAddress]);
   return (
     <>
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
@@ -74,19 +76,25 @@ function Delegate() {
                 disabled={false}
                 label="New Delegate Address"
                 errorMessage={errorMessage}
-                onChange={(e) => setNewDelegatee(e.target.value)}
+                onChange={e => setNewDelegatee(e.target.value)}
               />
-              <SecondaryButton onClick={() => delegateSelf()} label="Self" className={cx("h-fit -mt-2 sm:mt-0")} />
+              <SecondaryButton
+                onClick={() => delegateSelf()}
+                label="Self"
+                className={cx('h-fit -mt-2 sm:mt-0')}
+              />
             </div>
           </InputBox>
           <div className="flex mr-2 my-1 text-gray-50">
-            Balance:{" "}
+            Balance:{' '}
             <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={readableBalance === undefined}>{readableBalance}</DataLoadingWrapper>
+              <DataLoadingWrapper isLoading={readableBalance === undefined}>
+                {readableBalance}
+              </DataLoadingWrapper>
             </span>
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
-            Current Delegatee:{" "}
+            Current Delegatee:{' '}
             <EtherscanLink address={delegatee}>
               <DataLoadingWrapper isLoading={!delegateeDisplayName}>
                 <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
@@ -94,16 +102,27 @@ function Delegate() {
             </EtherscanLink>
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
-            Current Voting Weight:{" "}
+            Current Voting Weight:{' '}
             <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>{readableVotingWeight}</DataLoadingWrapper>
+              <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>
+                {readableVotingWeight}
+              </DataLoadingWrapper>
             </span>
           </div>
-          <SecondaryButton disabled={!validAddress || newDelegatee.trim() === "" || pending} onClick={() => delegateVote()} label="Delegate" className="-ml-0 mt-4" />
+          <SecondaryButton
+            disabled={!validAddress || newDelegatee.trim() === '' || pending}
+            onClick={() => delegateVote()}
+            label="Delegate"
+            className="-ml-0 mt-4"
+          />
         </ContentBox>
       </div>
       <div className="">
-        <ContentBanner description={`Enter the address to delegate your vote to. Click "Self" to assign yourself.`}/>
+        <ContentBanner
+          description={
+            'Enter the address to delegate your vote to. Click "Self" to assign yourself.'
+          }
+        />
       </div>
     </>
   );

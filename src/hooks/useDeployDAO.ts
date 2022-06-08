@@ -1,10 +1,10 @@
-import { useCallback, useEffect } from "react";
-import { useTransaction } from "../contexts/web3Data/transactions";
-import { useNavigate } from "react-router";
-import { useWeb3 } from "../contexts/web3Data";
-import { BigNumber, ethers } from "ethers";
-import { useAddresses } from "../contexts/web3Data/chains";
-import { MetaFactory, MetaFactory__factory } from "../assets/typechain-types/metafactory";
+import { useCallback, useEffect } from 'react';
+import { useTransaction } from '../contexts/web3Data/transactions';
+import { useNavigate } from 'react-router-dom';
+import { useWeb3 } from '../contexts/web3Data';
+import { BigNumber, ethers } from 'ethers';
+import { useAddresses } from '../contexts/web3Data/chains';
+import { MetaFactory, MetaFactory__factory } from '../assets/typechain-types/metafactory';
 
 export type TokenAllocation = {
   address: string;
@@ -82,27 +82,17 @@ const useDeployDAO = ({
       daoFactory: addresses.daoFactory?.address,
       accessControlImplementation: addresses.accessControl?.address,
       daoName: daoName,
-      roles: [
-        "EXECUTE_ROLE",
-        "UPGRADE_ROLE",
-        "WITHDRAWER_ROLE",
-        "GOVERNOR_ROLE",
-      ],
-      rolesAdmins: ["DAO_ROLE", "DAO_ROLE", "DAO_ROLE", "DAO_ROLE"],
+      roles: ['EXECUTE_ROLE', 'UPGRADE_ROLE', 'WITHDRAWER_ROLE', 'GOVERNOR_ROLE'],
+      rolesAdmins: ['DAO_ROLE', 'DAO_ROLE', 'DAO_ROLE', 'DAO_ROLE'],
       members: [[], [], [], []],
-      daoFunctionDescs: [
-        "execute(address[],uint256[],bytes[])",
-        "upgradeTo(address)",
-      ],
-      daoActionRoles: [["EXECUTE_ROLE"], ["UPGRADE_ROLE"]],
+      daoFunctionDescs: ['execute(address[],uint256[],bytes[])', 'upgradeTo(address)'],
+      daoActionRoles: [['EXECUTE_ROLE'], ['UPGRADE_ROLE']],
     };
 
     const moduleFactoriesCalldata = [
       {
         factory: addresses.treasuryModuleFactory?.address, // Treasury Factory
-        data: [
-          abiCoder.encode(["address"], [addresses.treasuryModule?.address]),
-        ],
+        data: [abiCoder.encode(['address'], [addresses.treasuryModule?.address])],
         value: 0,
         newContractAddressesToPass: [1],
         addressesReturned: 1,
@@ -110,24 +100,21 @@ const useDeployDAO = ({
       {
         factory: addresses.tokenFactory?.address, // Token Factory
         data: [
-          abiCoder.encode(["string"], [tokenName]),
-          abiCoder.encode(["string"], [tokenSymbol]),
+          abiCoder.encode(['string'], [tokenName]),
+          abiCoder.encode(['string'], [tokenSymbol]),
           abiCoder.encode(
-            ["address[]"],
-            [tokenAllocations.map((tokenAllocation) => tokenAllocation.address)]
+            ['address[]'],
+            [tokenAllocations.map(tokenAllocation => tokenAllocation.address)]
           ),
           abiCoder.encode(
-            ["uint256[]"],
+            ['uint256[]'],
             [
-              tokenAllocations.map((tokenAllocation) =>
+              tokenAllocations.map(tokenAllocation =>
                 ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
               ),
             ]
           ),
-          abiCoder.encode(
-            ["uint256"],
-            [ethers.utils.parseUnits(tokenSupply.toString(), 18)]
-          ),
+          abiCoder.encode(['uint256'], [ethers.utils.parseUnits(tokenSupply.toString(), 18)]),
         ],
         value: 0,
         newContractAddressesToPass: [2],
@@ -136,20 +123,14 @@ const useDeployDAO = ({
       {
         factory: addresses.governorFactory?.address, // Governor Factory
         data: [
-          abiCoder.encode(["address"], [addresses.governorModule?.address]), // Governor Impl
-          abiCoder.encode(
-            ["address"],
-            [addresses.timelockUpgradeable?.address]
-          ), // Timelock Impl
-          abiCoder.encode(["uint64"], [BigNumber.from("0")]), // vote extension
-          abiCoder.encode(["uint256"], [BigNumber.from("0")]), // Todo: change voteDelay back to 6545 blocks for prod
-          abiCoder.encode(["uint256"], [BigNumber.from("10")]), // Todo: change votingPeriod back to 45818 blocks (1 week)
-          abiCoder.encode(
-            ["uint256"],
-            [BigNumber.from(proposalThreshold.toString())]
-          ), // Threshold
-          abiCoder.encode(["uint256"], [BigNumber.from(quorum.toString())]), // Quorum
-          abiCoder.encode(["uint256"], [BigNumber.from("1")]), // Access Control Index
+          abiCoder.encode(['address'], [addresses.governorModule?.address]), // Governor Impl
+          abiCoder.encode(['address'], [addresses.timelockUpgradeable?.address]), // Timelock Impl
+          abiCoder.encode(['uint64'], [BigNumber.from('0')]), // vote extension
+          abiCoder.encode(['uint256'], [BigNumber.from('0')]), // Todo: change voteDelay back to 6545 blocks for prod
+          abiCoder.encode(['uint256'], [BigNumber.from('10')]), // Todo: change votingPeriod back to 45818 blocks (1 week)
+          abiCoder.encode(['uint256'], [BigNumber.from(proposalThreshold.toString())]), // Threshold
+          abiCoder.encode(['uint256'], [BigNumber.from(quorum.toString())]), // Quorum
+          abiCoder.encode(['uint256'], [BigNumber.from('1')]), // Access Control Index
         ],
         value: 0,
         newContractAddressesToPass: [0, 1, 3],
@@ -160,32 +141,32 @@ const useDeployDAO = ({
     const moduleActionCalldata = {
       contractIndexes: [2, 2, 2, 2, 2, 2, 4, 5, 5, 5, 5, 5],
       functionDescs: [
-        "withdrawEth(address[],uint256[])",
-        "depositERC20Tokens(address[],address[],uint256[])",
-        "withdrawERC20Tokens(address[],address[],uint256[])",
-        "depositERC721Tokens(address[],address[],uint256[])",
-        "withdrawERC721Tokens(address[],address[],uint256[])",
-        "upgradeTo(address)",
-        "upgradeTo(address)",
-        "upgradeTo(address)",
-        "updateDelay(uint256)",
-        "scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)",
-        "cancel(bytes32)",
-        "executeBatch(address[],uint256[],bytes[],bytes32,bytes32)",
+        'withdrawEth(address[],uint256[])',
+        'depositERC20Tokens(address[],address[],uint256[])',
+        'withdrawERC20Tokens(address[],address[],uint256[])',
+        'depositERC721Tokens(address[],address[],uint256[])',
+        'withdrawERC721Tokens(address[],address[],uint256[])',
+        'upgradeTo(address)',
+        'upgradeTo(address)',
+        'upgradeTo(address)',
+        'updateDelay(uint256)',
+        'scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)',
+        'cancel(bytes32)',
+        'executeBatch(address[],uint256[],bytes[],bytes32,bytes32)',
       ],
       roles: [
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["UPGRADE_ROLE"],
-        ["UPGRADE_ROLE"],
-        ["UPGRADE_ROLE"],
-        ["GOVERNOR_ROLE"],
-        ["GOVERNOR_ROLE"],
-        ["GOVERNOR_ROLE"],
-        ["GOVERNOR_ROLE"],
+        ['WITHDRAWER_ROLE'],
+        ['WITHDRAWER_ROLE'],
+        ['WITHDRAWER_ROLE'],
+        ['WITHDRAWER_ROLE'],
+        ['WITHDRAWER_ROLE'],
+        ['UPGRADE_ROLE'],
+        ['UPGRADE_ROLE'],
+        ['UPGRADE_ROLE'],
+        ['GOVERNOR_ROLE'],
+        ['GOVERNOR_ROLE'],
+        ['GOVERNOR_ROLE'],
+        ['GOVERNOR_ROLE'],
       ],
     };
     contractCallDeploy({
@@ -198,17 +179,17 @@ const useDeployDAO = ({
           moduleActionCalldata,
           [[5], [0], [0], [4]]
         ),
-      pendingMessage: "Deploying Fractal...",
-      failedMessage: "Deployment Failed",
-      successMessage: "DAO Created",
-      successCallback: (receipt) => {
-        const event = receipt.events?.filter((x) => {
+      pendingMessage: 'Deploying Fractal...',
+      failedMessage: 'Deployment Failed',
+      successMessage: 'DAO Created',
+      successCallback: receipt => {
+        const event = receipt.events?.filter(x => {
           return x.address === addresses.daoFactory?.address;
         });
         if (event === undefined || event[0].topics[1] === undefined) {
-          return "";
+          return '';
         } else {
-          const daoAddress = abiCoder.decode(["address"], event[0].topics[1]);
+          const daoAddress = abiCoder.decode(['address'], event[0].topics[1]);
           clearState();
           navigate(`/daos/${daoAddress}`);
         }

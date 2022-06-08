@@ -1,13 +1,13 @@
-import { createAccountSubstring } from "../../hooks/useDisplayName";
-import CopyToClipboard from "./CopyToClipboard";
-import EtherscanLink from "./EtherscanLink";
+import { createAccountSubstring } from '../../hooks/useDisplayName';
+import CopyToClipboard from './CopyToClipboard';
+import EtherscanLink from './EtherscanLink';
 
 interface TooltipAddressContentProps {
   address: string;
   title: string;
 }
 
-const TooltipAddressContent = ({ address, title }: TooltipAddressContentProps) => {
+function TooltipAddressContent({ address, title }: TooltipAddressContentProps) {
   return (
     <div>
       <h4 className="text-gray-50 text-xs">{title}</h4>
@@ -19,6 +19,6 @@ const TooltipAddressContent = ({ address, title }: TooltipAddressContentProps) =
       </div>
     </div>
   );
-};
+}
 
 export default TooltipAddressContent;

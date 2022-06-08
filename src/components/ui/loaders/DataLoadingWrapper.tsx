@@ -8,7 +8,7 @@ interface DataLoadingWrapperProps {
  * @param children
  * @returns
  */
-const DataLoadingWrapper = ({ isLoading, children }: DataLoadingWrapperProps) => {
+function DataLoadingWrapper({ isLoading, children }: DataLoadingWrapperProps) {
   if (isLoading) {
     return (
       <div className="w-12 h-full">
@@ -17,6 +17,6 @@ const DataLoadingWrapper = ({ isLoading, children }: DataLoadingWrapperProps) =>
     );
   }
   return <>{children}</>;
-};
+}
 
 export default DataLoadingWrapper;

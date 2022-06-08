@@ -1,9 +1,9 @@
-import { ProposalData, ProposalState } from "../../contexts/daoData/useProposals";
-import { useState, useEffect } from "react";
-import useCastVote from "../../hooks/useCastVote";
-import { PrimaryButton, SecondaryButton } from "../ui/forms/Button";
-import Check from "../ui/svg/Check";
-import ContentBanner from "../ui/ContentBanner";
+import { ProposalData, ProposalState } from '../../contexts/daoData/useProposals';
+import { useState, useEffect } from 'react';
+import useCastVote from '../../hooks/useCastVote';
+import { PrimaryButton, SecondaryButton } from '../ui/forms/Button';
+import Check from '../ui/svg/Check';
+import ContentBanner from '../ui/ContentBanner';
 
 function CastVote({ proposal }: { proposal: ProposalData }) {
   // Vote Enum
@@ -16,25 +16,31 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
 
   useEffect(() => {
     if (proposal.state !== ProposalState.Active) {
-      setVoteButtonString("Voting Closed");
+      setVoteButtonString('Voting Closed');
     } else if (proposal.userVote !== undefined) {
-      setVoteButtonString("Already Voted");
+      setVoteButtonString('Already Voted');
     } else if (proposal.userVotePower === undefined || proposal.userVotePower.eq(0)) {
-      setVoteButtonString("No Vote Power");
+      setVoteButtonString('No Vote Power');
     } else {
-      setVoteButtonString("Cast Vote");
+      setVoteButtonString('Cast Vote');
     }
   }, [proposal]);
 
   const castVote = useCastVote({
     proposalId: proposal.id,
     vote: newVote,
-    setPending: setPending
+    setPending: setPending,
   });
 
-  const NoSelected = () => (newVote === 0 || proposal.userVote === 0 ? <Check /> : null);
-  const YesSelected = () => (newVote === 1 || proposal.userVote === 1 ? <Check /> : null);
-  const AbstainedSelected = () => (newVote === 2 || proposal.userVote === 2 ? <Check /> : null);
+  function NoSelected() {
+    return newVote === 0 || proposal.userVote === 0 ? <Check /> : null;
+  }
+  function YesSelected() {
+    return newVote === 1 || proposal.userVote === 1 ? <Check /> : null;
+  }
+  function AbstainedSelected() {
+    return newVote === 2 || proposal.userVote === 2 ? <Check /> : null;
+  }
   return (
     <>
       <div className="flex flex-col bg-gray-600 my-2 p-2 pb-4 w-3/5 rounded-md">
@@ -45,9 +51,9 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(1)}
             icon={<YesSelected />}
             disabled={
-              proposal.state !== ProposalState.Active || 
-              proposal.userVote !== undefined || 
-              proposal.userVotePower === undefined || 
+              proposal.state !== ProposalState.Active ||
+              proposal.userVote !== undefined ||
+              proposal.userVotePower === undefined ||
               proposal.userVotePower.eq(0) ||
               pending
             }
@@ -60,9 +66,9 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(0)}
             icon={<NoSelected />}
             disabled={
-              proposal.state !== ProposalState.Active || 
-              proposal.userVote !== undefined || 
-              proposal.userVotePower === undefined || 
+              proposal.state !== ProposalState.Active ||
+              proposal.userVote !== undefined ||
+              proposal.userVotePower === undefined ||
               proposal.userVotePower.eq(0) ||
               pending
             }
@@ -75,9 +81,9 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(2)}
             icon={<AbstainedSelected />}
             disabled={
-              proposal.state !== ProposalState.Active || 
-              proposal.userVote !== undefined || 
-              proposal.userVotePower === undefined || 
+              proposal.state !== ProposalState.Active ||
+              proposal.userVote !== undefined ||
+              proposal.userVotePower === undefined ||
               proposal.userVotePower.eq(0) ||
               pending
             }

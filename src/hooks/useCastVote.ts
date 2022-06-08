@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber } from 'ethers';
@@ -8,15 +8,14 @@ import { useDAOData } from '../contexts/daoData/index';
 const useCastVote = ({
   proposalId,
   vote,
-  setPending
+  setPending,
 }: {
-  proposalId: BigNumber | undefined,
-  vote: number | undefined,
+  proposalId: BigNumber | undefined;
+  vote: number | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
-}
-) => {
+}) => {
   const [{ signerOrProvider }] = useWeb3();
-  const [ daoData, ] = useDAOData();
+  const [daoData] = useDAOData();
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
@@ -29,21 +28,24 @@ const useCastVote = ({
       signerOrProvider === undefined ||
       daoData.moduleAddresses === undefined ||
       proposalId === undefined ||
-      vote === undefined 
+      vote === undefined
     ) {
       return;
     }
 
-    const governor: GovernorModule = GovernorModule__factory.connect(daoData.moduleAddresses[1], signerOrProvider);
+    const governor: GovernorModule = GovernorModule__factory.connect(
+      daoData.moduleAddresses[1],
+      signerOrProvider
+    );
 
     contractCallCastVote({
       contractFn: () => governor.castVote(proposalId, vote),
-      pendingMessage: "Casting Vote",
-      failedMessage: "Vote Cast Failed",
-      successMessage: "Vote Casted",
+      pendingMessage: 'Casting Vote',
+      failedMessage: 'Vote Cast Failed',
+      successMessage: 'Vote Casted',
     });
-  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signerOrProvider, vote])
+  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signerOrProvider, vote]);
   return castVote;
-}
+};
 
 export default useCastVote;

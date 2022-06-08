@@ -1,8 +1,8 @@
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber } from 'ethers';
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 
@@ -11,23 +11,22 @@ type ProposalData = {
   values: BigNumber[];
   calldatas: string[];
   description: string;
-}
+};
 
 const useCreateProposal = ({
   daoAddress,
   proposalData,
   setPending,
-  clearState
+  clearState,
 }: {
-  daoAddress: string | undefined,
-  proposalData: ProposalData | undefined,
-  setPending: React.Dispatch<React.SetStateAction<boolean>>,
-  clearState: () => void
-}
-) => {
+  daoAddress: string | undefined;
+  proposalData: ProposalData | undefined;
+  setPending: React.Dispatch<React.SetStateAction<boolean>>;
+  clearState: () => void;
+}) => {
   const [{ signerOrProvider }] = useWeb3();
   const navigate = useNavigate();
-  const [ daoData, ] = useDAOData();
+  const [daoData] = useDAOData();
 
   const [contractCallCreateProposal, contractCallPending] = useTransaction();
 
@@ -36,30 +35,42 @@ const useCreateProposal = ({
   }, [setPending, contractCallPending]);
 
   let createProposal = useCallback(() => {
-    if (
-      !signerOrProvider ||
-      !proposalData ||
-      !setPending ||
-      !daoData ||
-      !daoData.moduleAddresses
-    ) {
+    if (!signerOrProvider || !proposalData || !setPending || !daoData || !daoData.moduleAddresses) {
       return;
     }
 
-    const governor: GovernorModule = GovernorModule__factory.connect(daoData.moduleAddresses[1], signerOrProvider);
+    const governor: GovernorModule = GovernorModule__factory.connect(
+      daoData.moduleAddresses[1],
+      signerOrProvider
+    );
 
     contractCallCreateProposal({
-      contractFn: () => governor.propose(proposalData.targets, proposalData.values, proposalData.calldatas, proposalData.description),
-      pendingMessage: "Creating Proposal...",
-      failedMessage: "Proposal Creation Failed",
-      successMessage: "Proposal Created",
+      contractFn: () =>
+        governor.propose(
+          proposalData.targets,
+          proposalData.values,
+          proposalData.calldatas,
+          proposalData.description
+        ),
+      pendingMessage: 'Creating Proposal...',
+      failedMessage: 'Proposal Creation Failed',
+      successMessage: 'Proposal Created',
       successCallback: () => {
         clearState();
-        navigate(`/daos/${daoAddress}`,);
+        navigate(`/daos/${daoAddress}`);
       },
     });
-  }, [daoAddress, navigate, contractCallCreateProposal, daoData, proposalData, setPending, signerOrProvider, clearState])
+  }, [
+    daoAddress,
+    navigate,
+    contractCallCreateProposal,
+    daoData,
+    proposalData,
+    setPending,
+    signerOrProvider,
+    clearState,
+  ]);
   return createProposal;
-}
+};
 
 export default useCreateProposal;

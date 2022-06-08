@@ -6,7 +6,10 @@ import useSupportsInterfaces from './useSupportsInterfaces';
 
 const useIsDAO = (address: string | undefined) => {
   const [contract, contractLoading] = use165Contract(address);
-  const [interfaces] = useState([IDAO__factory.createInterface(), IModuleBase__factory.createInterface()]);
+  const [interfaces] = useState([
+    IDAO__factory.createInterface(),
+    IModuleBase__factory.createInterface(),
+  ]);
   const [isDAO, isDAOLoading] = useSupportsInterfaces(contract, interfaces);
 
   const [loading, setLoading] = useState(false);
@@ -15,6 +18,6 @@ const useIsDAO = (address: string | undefined) => {
   }, [contractLoading, isDAOLoading]);
 
   return [isDAO, loading] as const;
-}
+};
 
 export default useIsDAO;
