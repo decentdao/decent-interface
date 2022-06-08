@@ -36,7 +36,10 @@ function Details() {
       <ContentBox>
         <ContentBoxTitle>DAO Address</ContentBoxTitle>
         <InputBox>
-          <AddressDisplay address={daoAddress} label="" />
+          <AddressDisplay
+            address={daoAddress}
+            label=""
+          />
         </InputBox>
         <ContentBoxTitle>DAO Contracts Addresses</ContentBoxTitle>
         <InputBox>
