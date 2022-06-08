@@ -156,9 +156,9 @@ const useDeployDAO = ({
       ],
       roles: [
         ['WITHDRAWER_ROLE'],
+        ['OPEN_ROLE'],
         ['WITHDRAWER_ROLE'],
-        ['WITHDRAWER_ROLE'],
-        ['WITHDRAWER_ROLE'],
+        ['OPEN_ROLE'],
         ['WITHDRAWER_ROLE'],
         ['UPGRADE_ROLE'],
         ['UPGRADE_ROLE'],
