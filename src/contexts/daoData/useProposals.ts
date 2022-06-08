@@ -584,6 +584,7 @@ const useProposalsWithoutUserData = (
   }, [governorModule]);
 
   // Check for pending proposals that have become active
+  // Check for Active proposals that have become defeated/Succeeded
   useEffect(() => {
     if (currentBlockNumber === undefined) {
       return;
@@ -599,6 +600,20 @@ const useProposalsWithoutUserData = (
           newProposal.startBlock.toNumber() <= currentBlockNumber
         ) {
           newProposal.state = ProposalState.Active;
+        } 
+        else if (
+          newProposal.state === ProposalState.Active &&
+          currentBlockNumber >= newProposal.endBlock.toNumber() &&
+          newProposal.forVotesCount!.lte(newProposal.againstVotesCount!)
+        ) {
+          newProposal.state = ProposalState.Defeated
+        }
+        else if (
+          newProposal.state === ProposalState.Active &&
+          currentBlockNumber >= newProposal.endBlock.toNumber() &&
+          newProposal.forVotesCount!.gt(newProposal.againstVotesCount!)
+        ) {
+          newProposal.state = ProposalState.Succeeded
         }
 
         return newProposal;
