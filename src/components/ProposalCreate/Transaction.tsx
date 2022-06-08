@@ -125,7 +125,7 @@ const Transaction = ({ transaction, transactionNumber, pending, updateTransactio
           label="Parameters"
           helperText="Values used to call the function (comma separated)"
           disabled={pending}
-          exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", 500'
+          exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'
           errorMessage={transaction.fragmentError}
         />
       </InputBox>
