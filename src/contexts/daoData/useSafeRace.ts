@@ -15,12 +15,12 @@ function useSafeRace<T>(
     }
 
     asyncCallback()
-      .then((resolved) => {
+      .then(resolved => {
         if (pending) {
           setStateCallback(resolved);
         }
       })
-      .catch(console.error)
+      .catch(console.error);
 
     return () => {
       pending = false;

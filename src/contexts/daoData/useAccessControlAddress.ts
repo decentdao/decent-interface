@@ -10,10 +10,10 @@ const useAccessControlAddress = (dao: DAO | undefined) => {
     !dao,
     () => setAccessControlAddress(undefined),
     () => dao!.accessControl(),
-    (address) => setAccessControlAddress(address),
+    address => setAccessControlAddress(address)
   );
 
   return accessControlAddress;
-}
+};
 
 export default useAccessControlAddress;

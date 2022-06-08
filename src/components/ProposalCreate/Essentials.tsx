@@ -1,15 +1,15 @@
-import ContentBox from "../ui/ContentBox";
-import ContentBoxTitle from "../ui/ContentBoxTitle";
-import Input from "../ui/forms/Input";
-import InputBox from "../ui/forms/InputBox";
+import ContentBox from '../ui/ContentBox';
+import ContentBoxTitle from '../ui/ContentBoxTitle';
+import Input from '../ui/forms/Input';
+import InputBox from '../ui/forms/InputBox';
 
-const Essentials = ({
+function Essentials({
   proposalDescription,
   setProposalDescription,
 }: {
   proposalDescription: string;
   setProposalDescription: React.Dispatch<React.SetStateAction<string>>;
-}) => {
+}) {
   return (
     <ContentBox>
       <ContentBoxTitle>Essentials</ContentBoxTitle>
@@ -17,7 +17,7 @@ const Essentials = ({
         <Input
           type="text"
           value={proposalDescription}
-          onChange={(e) => setProposalDescription(e.target.value)}
+          onChange={e => setProposalDescription(e.target.value)}
           label="Proposal Description"
           helperText="What's the goal of this proposal? Explain the desired outcome and why it matters"
           disabled={false}
@@ -25,6 +25,6 @@ const Essentials = ({
       </InputBox>
     </ContentBox>
   );
-};
+}
 
 export default Essentials;

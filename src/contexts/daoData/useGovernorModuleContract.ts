@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
-import { GovernorModule, GovernorModule__factory } from "../../assets/typechain-types/module-governor";
-import { useWeb3 } from "../web3Data";
+import { useState, useEffect } from 'react';
+import {
+  GovernorModule,
+  GovernorModule__factory,
+} from '../../assets/typechain-types/module-governor';
+import { useWeb3 } from '../web3Data';
 
 const useGovernorModuleContract = (moduleAddresses: string[] | undefined) => {
   const [governorModule, setGovernorModule] = useState<GovernorModule>();
@@ -16,9 +19,7 @@ const useGovernorModuleContract = (moduleAddresses: string[] | undefined) => {
       return;
     }
 
-    setGovernorModule(
-      GovernorModule__factory.connect(moduleAddresses[1], signerOrProvider)
-    );
+    setGovernorModule(GovernorModule__factory.connect(moduleAddresses[1], signerOrProvider));
   }, [moduleAddresses, signerOrProvider]);
 
   return governorModule;

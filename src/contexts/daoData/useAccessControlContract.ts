@@ -7,15 +7,17 @@ const useAccessControlContract = (accessControlAddress: string | undefined) => {
   const [{ signerOrProvider }] = useWeb3();
 
   useEffect(() => {
-    if(!accessControlAddress || !signerOrProvider) {
+    if (!accessControlAddress || !signerOrProvider) {
       setAccessControlContract(undefined);
       return;
     }
 
-    setAccessControlContract(AccessControlDAO__factory.connect(accessControlAddress, signerOrProvider));
+    setAccessControlContract(
+      AccessControlDAO__factory.connect(accessControlAddress, signerOrProvider)
+    );
   }, [accessControlAddress, signerOrProvider]);
 
   return accessControlContract;
-}
+};
 
 export default useAccessControlContract;

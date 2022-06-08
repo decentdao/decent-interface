@@ -1,9 +1,9 @@
-import { useEffect, useCallback, ChangeEvent } from "react";
-import ContentBoxTitle from "../ui/ContentBoxTitle";
-import { TokenAllocation } from "../../hooks/useDeployDAO";
-import Input from "../ui/forms/Input";
-import InputBox from "../ui/forms/InputBox";
-import TokenAllocations from "./TokenAllocations";
+import { useEffect, useCallback, ChangeEvent } from 'react';
+import ContentBoxTitle from '../ui/ContentBoxTitle';
+import { TokenAllocation } from '../../hooks/useDeployDAO';
+import Input from '../ui/forms/Input';
+import InputBox from '../ui/forms/InputBox';
+import TokenAllocations from './TokenAllocations';
 
 interface TokenDetailsProps {
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,7 +18,7 @@ interface TokenDetailsProps {
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
 
-const TokenDetails = ({
+function TokenDetails({
   name,
   symbol,
   supply,
@@ -29,10 +29,14 @@ const TokenDetails = ({
   setTokenAllocations,
   setPrevEnabled,
   setNextEnabled,
-}: TokenDetailsProps) => {
+}: TokenDetailsProps) {
   const allocationsValid = useCallback(() => {
     if (tokenAllocations === undefined || supply === undefined) return true;
-    return tokenAllocations.map((tokenAllocation) => Number(tokenAllocation.amount)).reduce((prev, curr) => prev + curr, 0) <= Number(supply);
+    return (
+      tokenAllocations
+        .map(tokenAllocation => Number(tokenAllocation.amount))
+        .reduce((prev, curr) => prev + curr, 0) <= Number(supply)
+    );
   }, [tokenAllocations, supply]);
 
   useEffect(() => {
@@ -44,13 +48,13 @@ const TokenDetails = ({
 
     setNextEnabled(
       name !== undefined &&
-        name.trim() !== "" &&
+        name.trim() !== '' &&
         symbol !== undefined &&
-        symbol.trim() !== "" &&
+        symbol.trim() !== '' &&
         supply !== undefined &&
         Number(supply) !== 0 &&
-        !tokenAllocations.some((tokenAllocation) => tokenAllocation.amount === 0) &&
-        !tokenAllocations.some((tokenAllocation) => tokenAllocation.addressError) &&
+        !tokenAllocations.some(tokenAllocation => tokenAllocation.amount === 0) &&
+        !tokenAllocations.some(tokenAllocation => tokenAllocation.addressError) &&
         allocationsValid()
     );
   }, [name, setNextEnabled, supply, symbol, tokenAllocations, allocationsValid]);
@@ -62,27 +66,40 @@ const TokenDetails = ({
    * @param event
    */
   const onTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const symbol = event.target.value;
+    const tokenSymbol = event.target.value;
 
-    if (symbol.length <= 5) {
-      setSymbol(symbol);
+    if (tokenSymbol.length <= 5) {
+      setSymbol(tokenSymbol);
     }
   };
   return (
     <div>
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
       <InputBox>
-        <Input type="text" value={name} onChange={(e) => setName(e.target.value)} label="Token Name" helperText="What is your governance token called?" />
+        <Input
+          type="text"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          label="Token Name"
+          helperText="What is your governance token called?"
+        />
       </InputBox>
       <InputBox>
-        <Input type="text" value={symbol} onChange={onTokenChange} label="Token Symbol" helperText="Max: 5 characters" disabled={false} />
+        <Input
+          type="text"
+          value={symbol}
+          onChange={onTokenChange}
+          label="Token Symbol"
+          helperText="Max: 5 characters"
+          disabled={false}
+        />
       </InputBox>
 
       <InputBox>
         <Input
           type="number"
           value={supply}
-          onChange={(e) => setSupply(e.target.value)}
+          onChange={e => setSupply(e.target.value)}
           label="Token Supply"
           helperText="Whole numbers only"
           disabled={false}
@@ -90,9 +107,13 @@ const TokenDetails = ({
         />
       </InputBox>
 
-      <TokenAllocations tokenAllocations={tokenAllocations} supply={supply} setTokenAllocations={setTokenAllocations} />
+      <TokenAllocations
+        tokenAllocations={tokenAllocations}
+        supply={supply}
+        setTokenAllocations={setTokenAllocations}
+      />
     </div>
   );
-};
+}
 
 export default TokenDetails;

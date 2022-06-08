@@ -1,14 +1,14 @@
-import { ReactText, useEffect, useRef } from "react";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import useSearchDao from "./useSearchDao";
+import { ReactText, useEffect, useRef } from 'react';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import useSearchDao from './useSearchDao';
 
 const useValidateDaoRoute = () => {
   const params = useParams();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { errorMessage, loading, address, addressIsDAO, updateSearchString } = useSearchDao();
-  let toastId = useRef<ReactText>("")  
+  let toastId = useRef<ReactText>('');
   // passes address string to useSearchDao hook
   useEffect(() => {
     updateSearchString(params.address!);
@@ -19,7 +19,7 @@ const useValidateDaoRoute = () => {
     if (errorMessage) {
       toast(errorMessage, {
         onOpen: () => {
-          navigate("/", { replace: true })
+          navigate('/', { replace: true });
           toast.dismiss(toastId.current);
         },
       });
@@ -36,8 +36,8 @@ const useValidateDaoRoute = () => {
 
   // while dao is loading
   useEffect(() => {
-    toastId.current = toast("Loading...", {
-      toastId: "0",
+    toastId.current = toast('Loading...', {
+      toastId: '0',
       autoClose: false,
       closeOnClick: false,
       draggable: false,
@@ -47,6 +47,6 @@ const useValidateDaoRoute = () => {
       toast.dismiss(toastId.current);
     };
   }, []);
-}
+};
 
 export default useValidateDaoRoute;

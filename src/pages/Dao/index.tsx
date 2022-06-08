@@ -1,27 +1,40 @@
-import { useState, useEffect } from "react";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { Helmet } from "react-helmet-async";
+import { useState, useEffect } from 'react';
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { Helmet } from 'react-helmet-async';
 
-import Delegate from "../../components/Dao/Delegate";
-import Details from "../../components/Dao/Details";
-import Proposals from "../Proposals";
-import Summary from "../../components/Dao/Summary";
-import { useDAOData } from "../../contexts/daoData";
-import { useWeb3 } from "../../contexts/web3Data";
-import useValidateDaoRoute from "../../hooks/useValidateDaoRoute";
-import Treasury from "../Treasury";
-
-
+import Delegate from '../../components/Dao/Delegate';
+import Details from '../../components/Dao/Details';
+import Proposals from '../Proposals';
+import Summary from '../../components/Dao/Summary';
+import { useDAOData } from '../../contexts/daoData';
+import { useWeb3 } from '../../contexts/web3Data';
+import useValidateDaoRoute from '../../hooks/useValidateDaoRoute';
+import Treasury from '../Treasury';
 
 function DAORoutes() {
   return (
     <Routes>
-      <Route index element={<Summary />} />
-      <Route path="details" element={<Details />} />
-      <Route path="delegate" element={<Delegate />} />
-      <Route path="treasury" element={<Treasury />} />
-      <Route path="proposals/*" element={<Proposals />} />
+      <Route
+        index
+        element={<Summary />}
+      />
+      <Route
+        path="details"
+        element={<Details />}
+      />
+      <Route
+        path="delegate"
+        element={<Delegate />}
+      />
+      <Route
+        path="treasury"
+        element={<Treasury />}
+      />
+      <Route
+        path="proposals/*"
+        element={<Proposals />}
+      />
     </Routes>
   );
 }
@@ -35,9 +48,11 @@ function ValidDAO({ address }: { address: string }) {
 
   return (
     <div>
-      {name !== undefined && (<Helmet>
-        <title>Fractal | {name}</title>
-      </Helmet>)}
+      {name !== undefined && (
+        <Helmet>
+          <title>Fractal | {name}</title>
+        </Helmet>
+      )}
       <DAORoutes />
     </div>
   );
@@ -48,8 +63,10 @@ function DAO() {
   const navigate = useNavigate();
   const [{ account, accountLoading, chainId }] = useWeb3();
   const [, setAddress] = useDAOData();
-  useValidateDaoRoute()
-  const [validatedAddress, setValidatedAddress] = useState((location.state as { validatedAddress: string } | null)?.validatedAddress);
+  useValidateDaoRoute();
+  const [validatedAddress, setValidatedAddress] = useState(
+    (location.state as { validatedAddress: string } | null)?.validatedAddress
+  );
   useEffect(() => {
     if (!location || !location.state) {
       setValidatedAddress(undefined);
@@ -65,8 +82,8 @@ function DAO() {
       return;
     }
 
-    navigate("/", { replace: true });
-    toast("Connect a wallet to load a DAO");
+    navigate('/', { replace: true });
+    toast('Connect a wallet to load a DAO');
   }, [account, accountLoading, navigate]);
 
   // when this component unloads, setAddress back to undefined to clear app state

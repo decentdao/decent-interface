@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { ethers, constants } from "ethers";
+import { useState, useEffect } from 'react';
+import { ethers, constants } from 'ethers';
 
-import { useWeb3 } from "../contexts/web3Data";
+import { useWeb3 } from '../contexts/web3Data';
 
 const useAddress = (addressInput: string | undefined) => {
   const [{ provider }] = useWeb3();
@@ -20,12 +20,12 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
-    if (!provider || addressInput.trim() === "") {
+    if (!provider || addressInput.trim() === '') {
       return;
     }
 
     if (addressInput === constants.AddressZero) {
-      setAddress("");
+      setAddress('');
       setValidAddress(false);
       setLoading(false);
       return;
@@ -40,9 +40,9 @@ const useAddress = (addressInput: string | undefined) => {
 
     provider
       .resolveName(addressInput)
-      .then((resolvedAddress) => {
+      .then(resolvedAddress => {
         if (!resolvedAddress) {
-          setAddress("");
+          setAddress('');
           setValidAddress(false);
           setLoading(false);
           return;
@@ -52,7 +52,7 @@ const useAddress = (addressInput: string | undefined) => {
         setLoading(false);
       })
       .catch(() => {
-        setAddress("");
+        setAddress('');
         setValidAddress(false);
         setLoading(false);
       });
@@ -66,7 +66,7 @@ export const checkAddress = async (provider: any, addressInput?: string): Promis
     return false;
   }
 
-  if (!provider || addressInput.trim() === "") {
+  if (!provider || addressInput.trim() === '') {
     return false;
   }
 

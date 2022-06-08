@@ -1,14 +1,14 @@
-import { useState } from "react";
-import { ProposalData, ProposalState } from "../../contexts/daoData/useProposals";
-import useQueueTransaction from "../../hooks/useQueueTransaction";
-import { ProposalAction } from "./ProposalAction";
+import { useState } from 'react';
+import { ProposalData, ProposalState } from '../../contexts/daoData/useProposals';
+import useQueueTransaction from '../../hooks/useQueueTransaction';
+import { ProposalAction } from './ProposalAction';
 
 function ProposalQueue({ proposal }: { proposal: ProposalData }) {
   const [pending, setPending] = useState<boolean>(false);
 
   const queueTransaction = useQueueTransaction({
     proposalData: proposal,
-    setPending
+    setPending,
   });
 
   if (proposal.state !== ProposalState.Succeeded) {
@@ -20,8 +20,9 @@ function ProposalQueue({ proposal }: { proposal: ProposalData }) {
       btnLabel="Queue Proposal"
       label="Proposal has succeeded and ready to queue"
       actionFunc={queueTransaction}
-      pending={pending} />
-  )
+      pending={pending}
+    />
+  );
 }
 
 export default ProposalQueue;

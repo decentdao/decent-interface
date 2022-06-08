@@ -1,8 +1,8 @@
-import { Jazzicon } from "@ukstv/jazzicon-react";
-import { Suspense } from "react";
-import { useImage } from "react-image";
+import { Jazzicon } from '@ukstv/jazzicon-react';
+import { Suspense } from 'react';
+import { useImage } from 'react-image';
 
-const JazziconAvatar = ({ address }: { address: string }) => {
+function JazziconAvatar({ address }: { address: string }) {
   return (
     <div className="h-7 w-7">
       <Jazzicon address={address} />
@@ -10,19 +10,23 @@ const JazziconAvatar = ({ address }: { address: string }) => {
   );
 }
 
-const URLAvatar = ({ url }: { url: string }) => {
+function URLAvatar({ url }: { url: string }) {
   const { src } = useImage({
     srcList: url,
   });
 
   return (
     <div className="h-7 w-7">
-      <img className="rounded-full" src={src} alt="avatar" />
+      <img
+        className="rounded-full"
+        src={src}
+        alt="avatar"
+      />
     </div>
   );
 }
 
-const Avatar = ({ address, url }: { address: string; url: string | null }) => {
+function Avatar({ address, url }: { address: string; url: string | null }) {
   if (!url) {
     return <JazziconAvatar address={address} />;
   }
@@ -32,6 +36,6 @@ const Avatar = ({ address, url }: { address: string; url: string | null }) => {
       <URLAvatar url={url} />
     </Suspense>
   );
-};
+}
 
 export default Avatar;

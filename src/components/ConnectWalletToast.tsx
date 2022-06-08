@@ -1,19 +1,22 @@
-import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { TextButton } from "./ui/forms/Button";
-import { useWeb3 } from "../contexts/web3Data";
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { TextButton } from './ui/forms/Button';
+import { useWeb3 } from '../contexts/web3Data';
 
-const ToastContent = ({ label }: { label: string }) => {
+function ToastContent({ label }: { label: string }) {
   const [, connect] = useWeb3();
   return (
     <div className="flex flex-col items-center">
       <div>{label}</div>
-      <TextButton label="Connect Wallet" onClick={connect} />
+      <TextButton
+        label="Connect Wallet"
+        onClick={connect}
+      />
     </div>
   );
 }
 
-const ConnectWalletToast = ({ label }: { label: string }) => {
+function ConnectWalletToast({ label }: { label: string }) {
   const [{ account }] = useWeb3();
   useEffect(() => {
     if (account) {
@@ -31,7 +34,6 @@ const ConnectWalletToast = ({ label }: { label: string }) => {
   }, [account, label]);
 
   return null;
-};
+}
 
 export default ConnectWalletToast;
-

@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import ProposalsList from "../Proposals/ProposalsList";
-import H1 from "../ui/H1";
+import { Link } from 'react-router-dom';
+import ProposalsList from '../Proposals/ProposalsList';
+import H1 from '../ui/H1';
 import { SecondaryButton, TextButton } from '../ui/forms/Button';
 
 function Summary() {

@@ -1,23 +1,30 @@
-import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 
-
-import { useNavigate } from "react-router-dom";
-import ConnectWalletToast from "../../components/ConnectWalletToast";
-import ContentBox from "../../components/ui/ContentBox";
-import { PrimaryButton } from "../../components/ui/forms/Button";
-import Input from "../../components/ui/forms/Input";
-import InputBox from "../../components/ui/forms/InputBox";
-import H1 from "../../components/ui/H1";
-import { useWeb3 } from "../../contexts/web3Data";
-import useSearchDao from "../../hooks/useSearchDao";
+import { useNavigate } from 'react-router-dom';
+import ConnectWalletToast from '../../components/ConnectWalletToast';
+import ContentBox from '../../components/ui/ContentBox';
+import { PrimaryButton } from '../../components/ui/forms/Button';
+import Input from '../../components/ui/forms/Input';
+import InputBox from '../../components/ui/forms/InputBox';
+import H1 from '../../components/ui/H1';
+import { useWeb3 } from '../../contexts/web3Data';
+import useSearchDao from '../../hooks/useSearchDao';
 
 function DAOSearch() {
   const [{ account }] = useWeb3();
   const navigate = useNavigate();
 
-  const [searchAddressInput, setSearchAddressInput] = useState("");
+  const [searchAddressInput, setSearchAddressInput] = useState('');
   const [searchAddr, setSearchAddr] = useState<string>();
-  const { errorMessage, loading, address, addressIsDAO, validAddress, resetErrorState, updateSearchString } = useSearchDao();
+  const {
+    errorMessage,
+    loading,
+    address,
+    addressIsDAO,
+    validAddress,
+    resetErrorState,
+    updateSearchString,
+  } = useSearchDao();
 
   const searchOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     resetErrorState();
@@ -49,12 +56,12 @@ function DAOSearch() {
   }, [navigate, address, validAddress, addressIsDAO]);
 
   useEffect(() => {
-    if(searchAddr === undefined) {
-      setSearchAddressInput("")
+    if (searchAddr === undefined) {
+      setSearchAddressInput('');
       return;
     }
-    setSearchAddressInput(searchAddr)
-  }, [searchAddr])
+    setSearchAddressInput(searchAddr);
+  }, [searchAddr]);
 
   return (
     <div>
@@ -75,7 +82,13 @@ function DAOSearch() {
                 />
               </div>
 
-              <PrimaryButton type="submit" className="self-start mt-5 " label="Search" isLoading={loading} disabled={!!errorMessage || loading || !searchAddressInput || !account} />
+              <PrimaryButton
+                type="submit"
+                className="self-start mt-5 "
+                label="Search"
+                isLoading={loading}
+                disabled={!!errorMessage || loading || !searchAddressInput || !account}
+              />
             </div>
           </InputBox>
         </form>

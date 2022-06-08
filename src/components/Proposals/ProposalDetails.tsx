@@ -1,12 +1,12 @@
-import { ProposalData } from "../../contexts/daoData/useProposals";
-import { useDAOData } from "../../contexts/daoData";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import ProposalCardDetailed from "./ProposalCardDetailed";
-import ProposalVotes from "./ProposalVotes";
-import ProposalQueue from "./ProposalQueue";
-import ProposalExecute from "./ProposalExecute";
-import CastVote from "./CastVote";
+import { ProposalData } from '../../contexts/daoData/useProposals';
+import { useDAOData } from '../../contexts/daoData';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import ProposalCardDetailed from './ProposalCardDetailed';
+import ProposalVotes from './ProposalVotes';
+import ProposalQueue from './ProposalQueue';
+import ProposalExecute from './ProposalExecute';
+import CastVote from './CastVote';
 
 function ProposalDetails() {
   const params = useParams();
@@ -21,7 +21,7 @@ function ProposalDetails() {
     }
 
     const proposalNumber = parseInt(params.proposalNumber);
-    const foundProposal = proposals.find((p) => p.number === proposalNumber);
+    const foundProposal = proposals.find(p => p.number === proposalNumber);
     if (foundProposal === undefined) {
       setProposal(undefined);
       return;

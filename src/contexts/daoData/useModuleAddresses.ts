@@ -1,5 +1,9 @@
-import { useState, useEffect } from "react";
-import { DAO, AccessControlDAO } from "@fractal-framework/core-contracts";
+import { useState, useEffect } from 'react';
+import { DAO, AccessControlDAO } from '@fractal-framework/core-contracts';
+
+// @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
+// current there are unused variables that because of typing can not be removed without a little thought
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 type ModuleActionRoleEvents = {
   address: string;
@@ -12,8 +16,7 @@ const useModuleAddresses = (
   accessControlContract: AccessControlDAO | undefined
 ) => {
   const [addActionRoleTargets, setAddActionRoleTargets] = useState<string[]>();
-  const [removeActionRoleTargets, setRemoveActionRoleTargets] =
-    useState<string[]>();
+  const [removeActionRoleTargets, setRemoveActionRoleTargets] = useState<string[]>();
   const [modulesActionRoleEvents, setModulesActionRoleEvents] =
     useState<ModuleActionRoleEvents[]>();
   const [moduleAddresses, setModuleAddresses] = useState<string[]>();
@@ -29,7 +32,7 @@ const useModuleAddresses = (
 
     accessControlContract
       .queryFilter(filter)
-      .then((events) => {
+      .then(events => {
         setAddActionRoleTargets(
           events
             .filter(event => event.args.target !== daoContract.address)
@@ -48,7 +51,13 @@ const useModuleAddresses = (
 
     const filter = accessControlContract.filters.ActionRoleAdded();
 
-    const listenerCallback = (target: string, functionDesc: string, encodedSig: string, role: string, _: any) => {
+    const listenerCallback = (
+      target: string,
+      functionDesc: string,
+      encodedSig: string,
+      role: string,
+      _: any
+    ) => {
       if (target === daoContract.address) {
         return;
       }
@@ -58,13 +67,15 @@ const useModuleAddresses = (
           return undefined;
         }
 
-        return [...existingTargets, target]
+        return [...existingTargets, target];
       });
-    }
+    };
 
     accessControlContract.on(filter, listenerCallback);
 
-    return () => { accessControlContract.off(filter, listenerCallback) };
+    return () => {
+      accessControlContract.off(filter, listenerCallback);
+    };
   }, [daoContract, accessControlContract, addActionRoleTargets]);
 
   // Get initial remove action targets
@@ -78,7 +89,7 @@ const useModuleAddresses = (
 
     accessControlContract
       .queryFilter(filter)
-      .then((events) => {
+      .then(events => {
         setRemoveActionRoleTargets(
           events
             .filter(event => event.args.target !== daoContract.address)
@@ -97,7 +108,13 @@ const useModuleAddresses = (
 
     const filter = accessControlContract.filters.ActionRoleRemoved();
 
-    const listenerCallback = (target: string, functionDesc: string, encodedSig: string, role: string, _: any) => {
+    const listenerCallback = (
+      target: string,
+      functionDesc: string,
+      encodedSig: string,
+      role: string,
+      _: any
+    ) => {
       if (target === daoContract.address) {
         return;
       }
@@ -109,11 +126,13 @@ const useModuleAddresses = (
 
         return [...existingTargets, target];
       });
-    }
+    };
 
     accessControlContract.on(filter, listenerCallback);
 
-    return () => { accessControlContract.off(filter, listenerCallback) };
+    return () => {
+      accessControlContract.off(filter, listenerCallback);
+    };
   }, [daoContract, accessControlContract, removeActionRoleTargets]);
 
   // Get Module action role events
@@ -125,8 +144,8 @@ const useModuleAddresses = (
 
     const newModulesActionRoleEvents: ModuleActionRoleEvents[] = [];
 
-    addActionRoleTargets.forEach((target) => {
-      const index = newModulesActionRoleEvents.findIndex((module) => {
+    addActionRoleTargets.forEach(target => {
+      const index = newModulesActionRoleEvents.findIndex(module => {
         return module.address === target;
       });
 
@@ -143,13 +162,13 @@ const useModuleAddresses = (
       }
     });
 
-    removeActionRoleTargets.forEach((target) => {
-      const index = newModulesActionRoleEvents.findIndex((module) => {
+    removeActionRoleTargets.forEach(target => {
+      const index = newModulesActionRoleEvents.findIndex(module => {
         return module.address === target;
       });
 
       if (index === -1) {
-        console.error("shouldn't see this, trying to remove event that wasn't added")
+        console.error("shouldn't see this, trying to remove event that wasn't added");
         return;
       }
 
@@ -161,7 +180,7 @@ const useModuleAddresses = (
 
   // Get Module addresses
   useEffect(() => {
-    if(!modulesActionRoleEvents) {
+    if (!modulesActionRoleEvents) {
       setModuleAddresses(undefined);
       return;
     }
@@ -171,7 +190,6 @@ const useModuleAddresses = (
         .filter(module => module.addEventCount > module.removeEventCount)
         .map(module => module.address)
     );
-    
   }, [modulesActionRoleEvents]);
 
   return moduleAddresses;

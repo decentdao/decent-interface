@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { useWeb3 } from '../contexts/web3Data';
-import {
-  IERC165,
-  IERC165__factory,
-} from '@fractal-framework/core-contracts';
+import { IERC165, IERC165__factory } from '@fractal-framework/core-contracts';
 
 const use165Contract = (address: string | undefined) => {
   const [{ signerOrProvider }] = useWeb3();
@@ -15,7 +12,7 @@ const use165Contract = (address: string | undefined) => {
   useEffect(() => {
     setLoading(true);
 
-    if (!signerOrProvider || !address || address.trim() === "") {
+    if (!signerOrProvider || !address || address.trim() === '') {
       setContract(undefined);
       setLoading(false);
       return;
@@ -26,6 +23,6 @@ const use165Contract = (address: string | undefined) => {
   }, [signerOrProvider, address]);
 
   return [contract, loading] as const;
-}
+};
 
 export default use165Contract;

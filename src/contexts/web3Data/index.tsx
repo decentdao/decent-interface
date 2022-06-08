@@ -3,15 +3,11 @@ import React, { createContext, useContext } from 'react';
 import useProvider, { Web3Context, defaultWeb3Response } from './providers';
 
 const createWeb3Root = (context: React.Context<Web3Context>) => {
-  const Web3Root = ({ children }: { children: React.ReactNode }) => {
+  function Web3Root({ children }: { children: React.ReactNode }) {
     const web3Provider = useProvider();
 
-    return (
-      <context.Provider value={web3Provider}>
-        {children}
-      </context.Provider>
-    );
-  };
+    return <context.Provider value={web3Provider}>{children}</context.Provider>;
+  }
 
   return Web3Root;
 };

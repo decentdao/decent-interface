@@ -1,8 +1,8 @@
-import { BigNumber, utils } from "ethers";
-import { useEffect, useState } from "react";
-import { useWeb3 } from "../../web3Data";
-import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent, TreasuryAsset } from "./types";
-import Web3Token from "./Web3Token";
+import { BigNumber, utils } from 'ethers';
+import { useEffect, useState } from 'react';
+import { useWeb3 } from '../../web3Data';
+import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent, TreasuryAsset } from './types';
+import Web3Token from './Web3Token';
 
 /**
  * handles events to generate a list of assets count and amounts.
@@ -29,7 +29,7 @@ const useTreasuryAssets = (
    */
   useEffect(() => {
     if (!nativeDeposits || !nativeDeposits.length || !nativeWithdraws) {
-      treasuryAssets.clear()
+      treasuryAssets.clear();
       return;
     }
     let amount = BigNumber.from(0);
@@ -43,11 +43,11 @@ const useTreasuryAssets = (
 
     // native coins are set to "0x" key,
     // @todo update to allow for any native tokens
-    treasuryAssets.set("0x", {
-      name: "Ethereum",
-      symbol: "ETH",
+    treasuryAssets.set('0x', {
+      name: 'Ethereum',
+      symbol: 'ETH',
       decimals: 18,
-      contractAddress: "",
+      contractAddress: '',
       totalAmount: amount,
       formatedTotal: utils.formatUnits(amount, 18),
     });
@@ -99,7 +99,7 @@ const useTreasuryAssets = (
 
     // promise using then web3Token class methods to retrive token data from blockchain.
     Promise.all(
-      Array.from(tokens.values()).map(async (token) => {
+      Array.from(tokens.values()).map(async token => {
         const name = await token.tokenData.name();
         const symbol = await token.tokenData.symbol();
         const decimals = await token.tokenData.decimals();

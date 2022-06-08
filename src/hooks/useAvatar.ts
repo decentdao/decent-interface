@@ -5,7 +5,7 @@ import useENSName from './useENSName';
 
 const useAvatar = (account: string | undefined) => {
   const [{ provider }] = useWeb3();
-  const ensName = useENSName(account)
+  const ensName = useENSName(account);
 
   const [avatarURL, setAvatarURL] = useState<string | null>(null);
   useEffect(() => {
@@ -14,12 +14,10 @@ const useAvatar = (account: string | undefined) => {
       return;
     }
 
-    provider.getAvatar(ensName)
-      .then(setAvatarURL)
-      .catch(console.error);
+    provider.getAvatar(ensName).then(setAvatarURL).catch(console.error);
   }, [ensName, provider]);
 
   return avatarURL;
-}
+};
 
 export default useAvatar;

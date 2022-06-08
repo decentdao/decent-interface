@@ -31,25 +31,25 @@ const useTransaction = () => {
     });
     setPending(true);
 
-    params.contractFn()
+    params
+      .contractFn()
       .then((txResponse: ethers.ContractTransaction) => {
         const wait =
-          process.env.NODE_ENV !== "development"
+          process.env.NODE_ENV !== 'development'
             ? 0
             : process.env.REACT_APP_DEVELOPMENT_TX_WAIT_MS
-              ? parseInt(process.env.REACT_APP_DEVELOPMENT_TX_WAIT_MS)
-              : 0
+            ? parseInt(process.env.REACT_APP_DEVELOPMENT_TX_WAIT_MS)
+            : 0;
 
         return Promise.all([
-          new Promise(resolve => setTimeout(
-            () => resolve(null),
-            wait
-          )).then(() => txResponse.wait()),
-          toastId
+          new Promise(resolve => setTimeout(() => resolve(null), wait)).then(() =>
+            txResponse.wait()
+          ),
+          toastId,
         ]);
       })
-      .then(([txReceipt, toastId]) => {
-        toast.dismiss(toastId);
+      .then(([txReceipt, toastID]) => {
+        toast.dismiss(toastID);
         if (txReceipt.status === 0) {
           toast.error(params.failedMessage);
           if (params.failedCallback) params.failedCallback();
@@ -57,7 +57,7 @@ const useTransaction = () => {
           toast(params.successMessage);
           if (params.successCallback) params.successCallback(txReceipt);
         } else {
-          toast.error("Not sure what happened with that transaction");
+          toast.error('Not sure what happened with that transaction');
           if (params.failedCallback) params.failedCallback();
         }
         if (params.completedCallback) params.completedCallback();
@@ -69,7 +69,7 @@ const useTransaction = () => {
         setPending(false);
 
         if (error.code === 4001) {
-          toast.error("User denied transaction");
+          toast.error('User denied transaction');
           return;
         }
 
@@ -78,6 +78,6 @@ const useTransaction = () => {
   }, []);
 
   return [contractCall, pending] as const;
-}
+};
 
 export { useTransaction };

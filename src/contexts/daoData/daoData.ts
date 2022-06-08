@@ -1,24 +1,23 @@
-import { useState } from "react";
-import { BigNumber } from "ethers";
+import { useState } from 'react';
+import { BigNumber } from 'ethers';
 
-import useDAOContract from "./useDAOContract";
-import useDAOName from "./useDAOName";
-import useAccessControlAddress from "./useAccessControlAddress";
-import useAccessControlContract from "./useAccessControlContract";
-import useModuleAddresses from "./useModuleAddresses";
-import useGovernorModuleContract from "./useGovernorModuleContract";
-import useTokenContract from "./useTokenContract";
-import useTokenData from "./useTokenData";
-import useProposals from "./useProposals";
-import { ProposalData } from "./useProposals";
-import { GovernorModule } from "../../assets/typechain-types/module-governor";
-import { TreasuryModule } from "../../assets/typechain-types/module-treasury";
-import { VotesTokenWithSupply } from "../../assets/typechain-types/votes-token";
-import { useBlockchainData } from "../blockchainData";
-import useTreasuryModuleContract from "./treasury/useTreasuryModuleContract";
-import useTreasuryEvents from "./treasury/useTreasuryEvents";
-import useTreasuryAssets from "./treasury/useTreasuryAssets";
-import { TreasuryAsset } from "./treasury/types";
+import useDAOContract from './useDAOContract';
+import useDAOName from './useDAOName';
+import useAccessControlAddress from './useAccessControlAddress';
+import useAccessControlContract from './useAccessControlContract';
+import useModuleAddresses from './useModuleAddresses';
+import useGovernorModuleContract from './useGovernorModuleContract';
+import useTokenContract from './useTokenContract';
+import useTokenData from './useTokenData';
+import useProposals, { ProposalData } from './useProposals';
+import { GovernorModule } from '../../assets/typechain-types/module-governor';
+import { TreasuryModule } from '../../assets/typechain-types/module-treasury';
+import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
+import { useBlockchainData } from '../blockchainData';
+import useTreasuryModuleContract from './treasury/useTreasuryModuleContract';
+import useTreasuryEvents from './treasury/useTreasuryEvents';
+import useTreasuryAssets from './treasury/useTreasuryAssets';
+import { TreasuryAsset } from './treasury/types';
 
 export interface DAOData {
   daoAddress: string | undefined;
@@ -44,7 +43,10 @@ export interface DAOData {
 type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
 export type DAODataContext = readonly [DAOData, SetDAOAddressFn];
 
-export const defaultDAODataResponse = [{} as DAOData, (() => undefined) as SetDAOAddressFn] as const;
+export const defaultDAODataResponse = [
+  {} as DAOData,
+  (() => undefined) as SetDAOAddressFn,
+] as const;
 
 const useDAODatas = () => {
   const [daoAddress, setDAOAddress] = useState<string>();
@@ -57,8 +59,14 @@ const useDAODatas = () => {
   // ***** Module Hooks ****** //
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses);
-  const { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws } = useTreasuryEvents(treasuryModuleContract);
-  const treasuryAssets = useTreasuryAssets(nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws);
+  const { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws } =
+    useTreasuryEvents(treasuryModuleContract);
+  const treasuryAssets = useTreasuryAssets(
+    nativeDeposits,
+    nativeWithdraws,
+    erc20TokenDeposits,
+    erc20TokenWithdraws
+  );
   // ************************* //
 
   const tokenContract = useTokenContract(governorModuleContract);

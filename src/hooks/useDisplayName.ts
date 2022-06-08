@@ -4,7 +4,7 @@ import useENSName from './useENSName';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
-}
+};
 
 const useDisplayName = (account: string | undefined) => {
   const ensName = useENSName(account);
@@ -16,13 +16,13 @@ const useDisplayName = (account: string | undefined) => {
       return;
     }
 
-    setAccountSubstring(createAccountSubstring(account))
+    setAccountSubstring(createAccountSubstring(account));
   }, [account]);
 
-  const [displayName, setDisplayName] = useState<string>("");
+  const [displayName, setDisplayName] = useState<string>('');
   useEffect(() => {
     if (!accountSubstring) {
-      setDisplayName("");
+      setDisplayName('');
       return;
     }
 
@@ -35,6 +35,6 @@ const useDisplayName = (account: string | undefined) => {
   }, [accountSubstring, ensName]);
 
   return displayName;
-}
+};
 
 export default useDisplayName;

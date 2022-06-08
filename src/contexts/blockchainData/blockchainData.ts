@@ -2,9 +2,9 @@ import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useCurrentTimestamp from './useCurrentTimestamp';
 
 export interface BlockchainData {
-  currentBlockNumber: number | undefined,
-  currentTimestamp: number,
-};
+  currentBlockNumber: number | undefined;
+  currentTimestamp: number;
+}
 
 export type BlockchainDataContext = BlockchainData;
 

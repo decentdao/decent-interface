@@ -10,13 +10,15 @@ const useListeners = (provider: ethers.providers.Provider | undefined, web3Modal
 
   useEffect(() => {
     // subscribe to connect events
-    web3Modal.on('connect', provider => {
-      if (!supportedChains().includes(parseInt(provider.chainId))) {
-        toast(`Switch to a supported chain: ${supportedChains().join(", ")}`, { toastId: 'switchChain' });
+    web3Modal.on('connect', modalProvider => {
+      if (!supportedChains().includes(parseInt(modalProvider.chainId))) {
+        toast(`Switch to a supported chain: ${supportedChains().join(', ')}`, {
+          toastId: 'switchChain',
+        });
         web3Modal.clearCachedProvider();
         setMyProvider(null);
       } else {
-        const web3Provider = new ethers.providers.Web3Provider(provider);
+        const web3Provider = new ethers.providers.Web3Provider(modalProvider);
         setMyProvider(web3Provider);
         toast('Connected', { toastId: 'connected' });
       }
@@ -33,12 +35,14 @@ const useListeners = (provider: ethers.providers.Provider | undefined, web3Modal
     // subscribe to chain events
     provider.on('chainChanged', (chainId: string) => {
       if (!supportedChains().includes(parseInt(chainId))) {
-        toast(`Switch to a supported chain: ${supportedChains().join(", ")}`, { toastId: 'switchChain' });
+        toast(`Switch to a supported chain: ${supportedChains().join(', ')}`, {
+          toastId: 'switchChain',
+        });
         web3Modal.clearCachedProvider();
         setMyProvider(null);
       } else {
         window.location.reload();
-      };
+      }
     });
 
     // subscribe to account change events
@@ -67,6 +71,6 @@ const useListeners = (provider: ethers.providers.Provider | undefined, web3Modal
   }, [provider, web3Modal]);
 
   return myProvider;
-}
+};
 
 export { useListeners };

@@ -25,6 +25,6 @@ const useSupportsInterfaces = (contract: ERC165 | undefined, interfaces: utils.I
   }, [contract, interfaceSelectors]);
 
   return [supportsInterfaces, loading] as const;
-}
+};
 
 export default useSupportsInterfaces;

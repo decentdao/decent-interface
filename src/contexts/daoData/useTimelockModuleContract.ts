@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
-import { TimelockUpgradeable, TimelockUpgradeable__factory } from "../../assets/typechain-types/module-governor";
-import { useWeb3 } from "../web3Data";
+import { useState, useEffect } from 'react';
+import {
+  TimelockUpgradeable,
+  TimelockUpgradeable__factory,
+} from '../../assets/typechain-types/module-governor';
+import { useWeb3 } from '../web3Data';
 
 const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
   const [timelockModule, setTimelockModule] = useState<TimelockUpgradeable>();
@@ -16,9 +19,7 @@ const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
       return;
     }
 
-    setTimelockModule(
-      TimelockUpgradeable__factory.connect(moduleAddresses[2], signerOrProvider)
-    );
+    setTimelockModule(TimelockUpgradeable__factory.connect(moduleAddresses[2], signerOrProvider));
   }, [moduleAddresses, signerOrProvider]);
 
   return timelockModule;

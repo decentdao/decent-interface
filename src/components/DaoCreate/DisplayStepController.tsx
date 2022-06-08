@@ -1,7 +1,7 @@
-import { TokenAllocation } from "../../hooks/useDeployDAO";
-import DAODetails from "./DAODetails";
-import GovernanceDetails from "./GovernanceDetails";
-import TokenDetails from "./TokenDetails";
+import { TokenAllocation } from '../../hooks/useDeployDAO';
+import DAODetails from './DAODetails';
+import GovernanceDetails from './GovernanceDetails';
+import TokenDetails from './TokenDetails';
 
 interface StepControllerProps {
   step: number;
@@ -23,7 +23,7 @@ interface StepControllerProps {
 }
 
 // @todo look into reducing the number of props
-const StepController = ({
+function StepController({
   step,
   daoName,
   tokenName,
@@ -40,10 +40,17 @@ const StepController = ({
   setTokenAllocations,
   setPrevEnabled,
   setNextEnabled,
-}: StepControllerProps) => {
+}: StepControllerProps) {
   switch (step) {
     case 0:
-      return <DAODetails setPrevEnabled={setPrevEnabled} setNextEnabled={setNextEnabled} name={daoName} setName={setDAOName} />;
+      return (
+        <DAODetails
+          setPrevEnabled={setPrevEnabled}
+          setNextEnabled={setNextEnabled}
+          name={daoName}
+          setName={setDAOName}
+        />
+      );
     case 1:
       return (
         <TokenDetails
@@ -60,10 +67,17 @@ const StepController = ({
         />
       );
     case 2:
-      return <GovernanceDetails setPrevEnabled={setPrevEnabled} proposalThreshold={proposalThreshold} quorum={quorum} executionDelay={executionDelay} />;
+      return (
+        <GovernanceDetails
+          setPrevEnabled={setPrevEnabled}
+          proposalThreshold={proposalThreshold}
+          quorum={quorum}
+          executionDelay={executionDelay}
+        />
+      );
     default:
       return <></>;
   }
-};
+}
 
 export default StepController;

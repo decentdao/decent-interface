@@ -1,14 +1,12 @@
-import { useEffect, useState } from "react";
-import { useWeb3 } from "../web3Data";
+import { useEffect, useState } from 'react';
+import { useWeb3 } from '../web3Data';
 
 const useCurrentTimestamp = (blockNumber: number | undefined) => {
-  const [timestamp, setTimestamp] = useState<number>(
-    Math.floor(Date.now() / 1000)
-  );
+  const [timestamp, setTimestamp] = useState<number>(Math.floor(Date.now() / 1000));
   const [{ provider }] = useWeb3();
 
   useEffect(() => {
-    const timer = setInterval(() => setTimestamp((oldTimestamp) => oldTimestamp + 1), 1000);
+    const timer = setInterval(() => setTimestamp(oldTimestamp => oldTimestamp + 1), 1000);
 
     return () => {
       clearInterval(timer);
@@ -23,7 +21,7 @@ const useCurrentTimestamp = (blockNumber: number | undefined) => {
 
     provider
       .getBlock(blockNumber)
-      .then((block) => {
+      .then(block => {
         // sometimes block is null idk why
         if (!block) {
           return;

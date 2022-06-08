@@ -1,4 +1,4 @@
-const Check = () => {
+function Check() {
   return (
     <svg
       width="24"
@@ -13,6 +13,6 @@ const Check = () => {
       />
     </svg>
   );
-};
+}
 
 export default Check;
