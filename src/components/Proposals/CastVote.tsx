@@ -72,7 +72,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
               proposal.userVotePower.eq(0) ||
               pending
             }
-            label="Vote Not"
+            label="Vote No"
             isIconRight
             isSpaceBetween
             isLarge
