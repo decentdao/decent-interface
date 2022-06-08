@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { ProposalData, ProposalState } from "../../contexts/daoData/useProposals";
 import useExecuteTransaction from "../../hooks/useExecuteTransaction";
-import { PrimaryButton } from "../ui/forms/Button";
 import { useBlockchainData } from "../../contexts/blockchainData";
+import { ProposalAction } from "./ProposalAction";
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);
@@ -27,19 +27,12 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   if (!show) return null;
 
   return (
-    <div className="flex border-1 items-center m-2 bg-gray-600 py-2 rounded-md">
-      <div className="align-middle text-gray-25 mx-4">
-        Proposal ready for execution
-      </div>
-      <div className="flex flex-grow justify-end mx-4">
-        <PrimaryButton
-          onClick={() => executeTransaction()}
-          label="Execute"
-          disabled= {pending}
-        />
-      </div>
-    </div>
-  );
+    <ProposalAction 
+      btnLabel="Execute" 
+      label="Proposal ready for execution" 
+      actionFunc={executeTransaction} 
+      pending={pending} />
+  )
 }
 
 export default ProposalExecute;
