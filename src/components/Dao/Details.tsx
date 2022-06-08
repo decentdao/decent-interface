@@ -24,12 +24,16 @@ const AddressDisplay = ({ address, label }: AddressDisplayProps) => (
 );
 
 function Details() {
-  const [{ name, accessControlAddress, moduleAddresses, tokenData }] = useDAOData();
+  const [{ name, accessControlAddress, moduleAddresses, tokenData, daoAddress }] = useDAOData();
 
   return (
     <div>
       <H1>{name}</H1>
       <ContentBox>
+        <ContentBoxTitle>DAO Address</ContentBoxTitle>
+        <InputBox>
+          <AddressDisplay address={daoAddress} label="" />
+        </InputBox>
         <ContentBoxTitle>DAO Contracts Addresses</ContentBoxTitle>
         <InputBox>
           <AddressDisplay address={accessControlAddress} label="Access Control Address:" />
