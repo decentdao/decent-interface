@@ -601,20 +601,17 @@ const useProposalsWithoutUserData = (
         ) {
           newProposal.state = ProposalState.Active;
         } 
-        else if (
-          newProposal.state === ProposalState.Active &&
-          currentBlockNumber >= newProposal.endBlock.toNumber() &&
-          newProposal.forVotesCount!.lte(newProposal.againstVotesCount!)
-        ) {
-          newProposal.state = ProposalState.Defeated
-        }
-        else if (
-          newProposal.state === ProposalState.Active &&
-          currentBlockNumber >= newProposal.endBlock.toNumber() &&
-          newProposal.forVotesCount!.gt(newProposal.againstVotesCount!)
-        ) {
-          newProposal.state = ProposalState.Succeeded
-        }
+          else if (
+            newProposal.state === ProposalState.Active &&
+            currentBlockNumber >= newProposal.endBlock.toNumber()
+          ) {
+            if (newProposal.forVotesCount!.lte(newProposal.againstVotesCount!)) {
+              newProposal.state = ProposalState.Defeated
+            }
+            if (newProposal.forVotesCount!.gt(newProposal.againstVotesCount!)) {
+              newProposal.state = ProposalState.Succeeded
+            }
+          }
 
         return newProposal;
       });
