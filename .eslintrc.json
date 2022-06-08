@@ -11,7 +11,8 @@
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": ["./tsconfig.json"],  //required for "type-aware linting"
+        // required for "type-aware linting"
+        "project": ["./tsconfig.json"],
         "ecmaFeatures": {
             "jsx": true
         },
@@ -25,7 +26,8 @@
         "prettier"
     ],
     "settings": {
-        "import/resolver": { // resolves imports without file extensions for listed extensions
+        // resolves imports without file extensions for listed extensions
+        "import/resolver": {
             "node": {
                 "extensions": [
                     ".ts",
