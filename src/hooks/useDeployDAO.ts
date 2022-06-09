@@ -21,17 +21,23 @@ const useDeployDAO = ({
   proposalThreshold,
   quorum,
   executionDelay,
+  lateQuorumExecution,
+  voteStartDelay,
+  votingPeriod,
   setPending,
   clearState,
 }: {
-  daoName: string | undefined;
-  tokenName: string | undefined;
-  tokenSymbol: string | undefined;
-  tokenSupply: string | undefined;
-  tokenAllocations: TokenAllocation[] | undefined;
-  proposalThreshold: string | undefined;
-  quorum: string | undefined;
-  executionDelay: string | undefined;
+  daoName: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenSupply: string;
+  tokenAllocations: TokenAllocation[];
+  proposalThreshold: string;
+  quorum: string;
+  executionDelay: string;
+  lateQuorumExecution: string;
+  voteStartDelay: string;
+  votingPeriod: string;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
   clearState: () => void;
 }) => {
@@ -48,14 +54,6 @@ const useDeployDAO = ({
   let deployDao = useCallback(() => {
     if (
       !signerOrProvider ||
-      !daoName ||
-      !tokenName ||
-      !tokenSymbol ||
-      !tokenSupply ||
-      !tokenAllocations ||
-      !proposalThreshold ||
-      !quorum ||
-      !executionDelay ||
       !setPending ||
       !addresses.metaFactory?.address ||
       !addresses.daoFactory?.address ||
@@ -125,9 +123,9 @@ const useDeployDAO = ({
         data: [
           abiCoder.encode(['address'], [addresses.governorModule?.address]), // Governor Impl
           abiCoder.encode(['address'], [addresses.timelockUpgradeable?.address]), // Timelock Impl
-          abiCoder.encode(['uint64'], [BigNumber.from('0')]), // vote extension
-          abiCoder.encode(['uint256'], [BigNumber.from('0')]), // Todo: change voteDelay back to 6545 blocks (1 day) for prod
-          abiCoder.encode(['uint256'], [BigNumber.from('10')]), // Todo: change votingPeriod back to 45818 blocks (1 week)
+          abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // vote extension
+          abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // Todo: change voteDelay back to 6545 blocks (1 day) for prod
+          abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // Todo: change votingPeriod back to 45818 blocks (1 week)
           abiCoder.encode(['uint256'], [BigNumber.from(proposalThreshold)]), // Threshold
           abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
           abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution Delay_Timelock
