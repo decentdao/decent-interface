@@ -53,7 +53,9 @@ function GovernanceDetails({
           unit="Tokens"
           onChange={e => setProposalThreshold(e.target.value)}
           label="Proposal Creation (# of Tokens Required)"
-          helperText="How many tokens does a member need to have in order to create a new proposal. Recommend: 0 Tokens"
+          exampleLabel="Recommend"
+          exampleText="0 Tokens"
+          helperText="How many tokens does a member need to have in order to create a new proposal."
         />
       </InputBox>
       <InputBox>
@@ -62,9 +64,10 @@ function GovernanceDetails({
           value={voteStartDelay}
           onChange={e => setVoteStartDelay(e.target.value)}
           label="Vote Start Delay"
+          exampleLabel="Recommend"
+          exampleText="24 Hours / ~6545 Blocks"
           unit="Blocks"
-          helperText="How many blocks after a proposal is created, before DAO members may vote on the proposal
-          Recommend: 24 Hours / ~6545 Blocks"
+          helperText="How many blocks after a proposal is created, before DAO members may vote on the proposal."
         />
       </InputBox>
       <InputBox>
@@ -73,9 +76,10 @@ function GovernanceDetails({
           value={votingPeriod}
           onChange={e => setVotingPeriod(e.target.value)}
           label="Voting Period"
+          exampleLabel="Recommend"
+          exampleText="1 Week / ~45818 Blocks"
           unit="Blocks"
-          helperText="The length of time (in blocks) between a vote's starting and ending point
-          Recommend: 1 Week / ~45818 Blocks"
+          helperText="The length of time (in blocks) between a vote's starting and ending point."
         />
       </InputBox>
       <InputBox>
@@ -84,8 +88,10 @@ function GovernanceDetails({
           value={quorum}
           onChange={e => setQuorum(e.target.value)}
           label="Quorum"
+          exampleLabel="Recommend"
+          exampleText="4%"
           unit="%"
-          helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Recommend: 4%"
+          helperText="The percentage of total votes to total tokens required in order for a proposal to PASS."
         />
       </InputBox>
       <InputBox>
@@ -94,10 +100,11 @@ function GovernanceDetails({
           value={lateQuorumExecution}
           onChange={e => setLateQuorumExecution(e.target.value)}
           label="Late Quorum Delay"
+          exampleLabel="Recommend"
+          exampleText="0 Blocks"
           unit="Blocks"
           helperText="Minimum voting period after quorum is reached. 
-          This prevents a large voter from swaying a vote and triggering quorum at the last minute.
-          Recommend: 0 Blocks"
+          This prevents a large voter from swaying a vote and triggering quorum at the last minute."
         />
       </InputBox>
       <InputBox>
@@ -106,9 +113,10 @@ function GovernanceDetails({
           value={executionDelay}
           onChange={e => setExecutionDelay(e.target.value)}
           label="Proposal Execution Delay"
+          exampleLabel="Recommend"
+          exampleText="24 Hours / ~6545 Blocks"
           unit="Blocks"
-          helperText="How many hours after a proposal PASSES / QUEUED, must it wait until it can be executed?
-          Recommend: 24 Hours / ~6545 Blocks"
+          helperText="How many hours after a proposal PASSES / QUEUED, must it wait until it can be executed?"
         />
       </InputBox>
       <ContentBanner description="The Governance Setup values are editable at this time. A default value has been placed in each input box. To change these values, a new proposal will need to be created and passed by your members." />
