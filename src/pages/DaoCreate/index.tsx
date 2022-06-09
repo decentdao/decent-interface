@@ -21,9 +21,9 @@ function DaoCreate() {
   const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>([
     { address: '', amount: 0 },
   ]);
-  const [proposalThreshold] = useState<number>(0);
-  const [quorum] = useState<number>(4);
-  const [executionDelay] = useState<number>(24);
+  const [proposalThreshold, setProposalThreshold] = useState<string>('0');
+  const [quorum, setQuorum] = useState<string>('4');
+  const [executionDelay, setExecutionDelay] = useState<string>('6545');
   const [{ account }] = useWeb3();
 
   const decrement = () => {
@@ -41,13 +41,16 @@ function DaoCreate() {
     setTokenSymbol('');
     setTokenSupply('');
     setTokenAllocations([]);
+    setProposalThreshold('');
+    setQuorum('');
+    setExecutionDelay('');
   };
 
   const deploy = useDeployDAO({
     daoName,
     tokenName,
     tokenSymbol,
-    tokenSupply: Number(tokenSupply),
+    tokenSupply,
     tokenAllocations,
     proposalThreshold,
     quorum,
@@ -82,8 +85,11 @@ function DaoCreate() {
               tokenAllocations={tokenAllocations}
               setTokenAllocations={setTokenAllocations}
               proposalThreshold={proposalThreshold}
+              setProposalThreshold={setProposalThreshold}
               quorum={quorum}
+              setQuorum={setQuorum}
               executionDelay={executionDelay}
+              setExecutionDelay={setExecutionDelay}
             />
           </form>
         </ContentBox>
