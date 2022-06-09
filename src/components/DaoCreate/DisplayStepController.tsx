@@ -13,6 +13,9 @@ interface StepControllerProps {
   proposalThreshold: string;
   quorum: string;
   executionDelay: string;
+  lateQuorumExecution: string;
+  voteStartDelay: string;
+  votingPeriod: string;
   setDAOName: React.Dispatch<React.SetStateAction<string>>;
   setTokenName: React.Dispatch<React.SetStateAction<string>>;
   setTokenSymbol: React.Dispatch<React.SetStateAction<string>>;
@@ -21,6 +24,9 @@ interface StepControllerProps {
   setProposalThreshold: React.Dispatch<React.SetStateAction<string>>;
   setQuorum: React.Dispatch<React.SetStateAction<string>>;
   setExecutionDelay: React.Dispatch<React.SetStateAction<string>>;
+  setLateQuorumExecution: React.Dispatch<React.SetStateAction<string>>;
+  setVoteStartDelay: React.Dispatch<React.SetStateAction<string>>;
+  setVotingPeriod: React.Dispatch<React.SetStateAction<string>>;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -36,6 +42,9 @@ function StepController({
   proposalThreshold,
   quorum,
   executionDelay,
+  lateQuorumExecution,
+  voteStartDelay,
+  votingPeriod,
   setDAOName,
   setTokenName,
   setTokenSymbol,
@@ -44,6 +53,9 @@ function StepController({
   setProposalThreshold,
   setQuorum,
   setExecutionDelay,
+  setLateQuorumExecution,
+  setVoteStartDelay,
+  setVotingPeriod,
   setPrevEnabled,
   setNextEnabled,
 }: StepControllerProps) {
@@ -78,9 +90,15 @@ function StepController({
           proposalThreshold={proposalThreshold}
           quorum={quorum}
           executionDelay={executionDelay}
+          lateQuorumExecution={lateQuorumExecution}
+          voteStartDelay={voteStartDelay}
+          votingPeriod={votingPeriod}
           setProposalThreshold={setProposalThreshold}
           setQuorum={setQuorum}
           setExecutionDelay={setExecutionDelay}
+          setLateQuorumExecution={setLateQuorumExecution}
+          setVoteStartDelay={setVoteStartDelay}
+          setVotingPeriod={setVotingPeriod}
           setPrevEnabled={setPrevEnabled}
         />
       );
