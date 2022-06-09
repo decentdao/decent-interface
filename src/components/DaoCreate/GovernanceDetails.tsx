@@ -61,8 +61,8 @@ function GovernanceDetails({
           onChange={e => setExecutionDelay(e.target.value)}
           label="Execution Delay"
           unit="Hours"
-          helperText="How many hours after a proposal PASSES, must it wait until it can be executed?
-          Recommend: 24 Hours"
+          helperText="How many hours after a proposal PASSES / QUEUED, must it wait until it can be executed?
+          Recommend: 24 Hours / ~6545 Blocks"
         />
       </InputBox>
       <ContentBanner description="The Governance Setup values are not editable at this time. To change these values, a new proposal will need to be created and passed by your members." />
