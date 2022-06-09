@@ -130,7 +130,7 @@ const useDeployDAO = ({
           abiCoder.encode(['uint256'], [BigNumber.from('10')]), // Todo: change votingPeriod back to 45818 blocks (1 week)
           abiCoder.encode(['uint256'], [BigNumber.from(proposalThreshold)]), // Threshold
           abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
-          abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution Delay
+          abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution Delay_Timelock
         ],
         value: 0,
         newContractAddressesToPass: [0, 1, 3],
