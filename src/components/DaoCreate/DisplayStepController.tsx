@@ -10,14 +10,17 @@ interface StepControllerProps {
   tokenSymbol: string;
   tokenSupply: string;
   tokenAllocations: TokenAllocation[];
-  proposalThreshold?: number;
-  quorum?: number;
-  executionDelay?: number;
+  proposalThreshold: string;
+  quorum: string;
+  executionDelay: string;
   setDAOName: React.Dispatch<React.SetStateAction<string>>;
   setTokenName: React.Dispatch<React.SetStateAction<string>>;
   setTokenSymbol: React.Dispatch<React.SetStateAction<string>>;
   setTokenSupply: React.Dispatch<React.SetStateAction<string>>;
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
+  setProposalThreshold: React.Dispatch<React.SetStateAction<string>>;
+  setQuorum: React.Dispatch<React.SetStateAction<string>>;
+  setExecutionDelay: React.Dispatch<React.SetStateAction<string>>;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -38,6 +41,9 @@ function StepController({
   setTokenSymbol,
   setTokenSupply,
   setTokenAllocations,
+  setProposalThreshold,
+  setQuorum,
+  setExecutionDelay,
   setPrevEnabled,
   setNextEnabled,
 }: StepControllerProps) {
@@ -69,10 +75,13 @@ function StepController({
     case 2:
       return (
         <GovernanceDetails
-          setPrevEnabled={setPrevEnabled}
           proposalThreshold={proposalThreshold}
           quorum={quorum}
           executionDelay={executionDelay}
+          setProposalThreshold={setProposalThreshold}
+          setQuorum={setQuorum}
+          setExecutionDelay={setExecutionDelay}
+          setPrevEnabled={setPrevEnabled}
         />
       );
     default:
