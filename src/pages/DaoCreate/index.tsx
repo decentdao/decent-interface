@@ -24,6 +24,9 @@ function DaoCreate() {
   const [proposalThreshold, setProposalThreshold] = useState<string>('0');
   const [quorum, setQuorum] = useState<string>('4');
   const [executionDelay, setExecutionDelay] = useState<string>('6545');
+  const [lateQuorumExecution, setLateQuorumExecution] = useState<string>('0');
+  const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
+  const [votingPeriod, setVotingPeriod] = useState<string>('45818');
   const [{ account }] = useWeb3();
 
   const decrement = () => {
@@ -44,6 +47,9 @@ function DaoCreate() {
     setProposalThreshold('');
     setQuorum('');
     setExecutionDelay('');
+    setLateQuorumExecution('');
+    setVoteStartDelay('');
+    setVotingPeriod('');
   };
 
   const deploy = useDeployDAO({
@@ -55,6 +61,9 @@ function DaoCreate() {
     proposalThreshold,
     quorum,
     executionDelay,
+    lateQuorumExecution,
+    voteStartDelay,
+    votingPeriod,
     setPending,
     clearState,
   });
@@ -90,6 +99,12 @@ function DaoCreate() {
               setQuorum={setQuorum}
               executionDelay={executionDelay}
               setExecutionDelay={setExecutionDelay}
+              lateQuorumExecution={lateQuorumExecution}
+              setLateQuorumExecution={setLateQuorumExecution}
+              voteStartDelay={voteStartDelay}
+              setVoteStartDelay={setVoteStartDelay}
+              votingPeriod={votingPeriod}
+              setVotingPeriod={setVotingPeriod}
             />
           </form>
         </ContentBox>
