@@ -27,11 +27,11 @@ const useDeployDAO = ({
   daoName: string | undefined;
   tokenName: string | undefined;
   tokenSymbol: string | undefined;
-  tokenSupply: number | undefined;
+  tokenSupply: string | undefined;
   tokenAllocations: TokenAllocation[] | undefined;
-  proposalThreshold: number | undefined;
-  quorum: number | undefined;
-  executionDelay: number | undefined;
+  proposalThreshold: string | undefined;
+  quorum: string | undefined;
+  executionDelay: string | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
   clearState: () => void;
 }) => {
@@ -53,7 +53,7 @@ const useDeployDAO = ({
       !tokenSymbol ||
       !tokenSupply ||
       !tokenAllocations ||
-      (!proposalThreshold && proposalThreshold !== 0) ||
+      !proposalThreshold ||
       !quorum ||
       !executionDelay ||
       !setPending ||
@@ -126,11 +126,11 @@ const useDeployDAO = ({
           abiCoder.encode(['address'], [addresses.governorModule?.address]), // Governor Impl
           abiCoder.encode(['address'], [addresses.timelockUpgradeable?.address]), // Timelock Impl
           abiCoder.encode(['uint64'], [BigNumber.from('0')]), // vote extension
-          abiCoder.encode(['uint256'], [BigNumber.from('0')]), // Todo: change voteDelay back to 6545 blocks for prod
+          abiCoder.encode(['uint256'], [BigNumber.from('0')]), // Todo: change voteDelay back to 6545 blocks (1 day) for prod
           abiCoder.encode(['uint256'], [BigNumber.from('10')]), // Todo: change votingPeriod back to 45818 blocks (1 week)
-          abiCoder.encode(['uint256'], [BigNumber.from(proposalThreshold.toString())]), // Threshold
-          abiCoder.encode(['uint256'], [BigNumber.from(quorum.toString())]), // Quorum
-          abiCoder.encode(['uint256'], [BigNumber.from('1')]), // Access Control Index
+          abiCoder.encode(['uint256'], [BigNumber.from(proposalThreshold)]), // Threshold
+          abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
+          abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution Delay
         ],
         value: 0,
         newContractAddressesToPass: [0, 1, 3],
