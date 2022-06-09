@@ -587,18 +587,17 @@ const useProposalsWithoutUserData = (
           newProposal.startBlock.toNumber() <= currentBlockNumber
         ) {
           newProposal.state = ProposalState.Active;
-        } 
-          else if (
-            newProposal.state === ProposalState.Active &&
-            currentBlockNumber >= newProposal.endBlock.toNumber()
-          ) {
-            if (newProposal.forVotesCount!.lte(newProposal.againstVotesCount!)) {
-              newProposal.state = ProposalState.Defeated
-            }
-            if (newProposal.forVotesCount!.gt(newProposal.againstVotesCount!)) {
-              newProposal.state = ProposalState.Succeeded
-            }
+        } else if (
+          newProposal.state === ProposalState.Active &&
+          currentBlockNumber >= newProposal.endBlock.toNumber()
+        ) {
+          if (newProposal.forVotesCount!.lte(newProposal.againstVotesCount!)) {
+            newProposal.state = ProposalState.Defeated;
           }
+          if (newProposal.forVotesCount!.gt(newProposal.againstVotesCount!)) {
+            newProposal.state = ProposalState.Succeeded;
+          }
+        }
 
         return newProposal;
       });
