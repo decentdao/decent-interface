@@ -3,8 +3,8 @@ import { useTransaction } from '../contexts/web3Data/transactions';
 import { useNavigate } from 'react-router-dom';
 import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber, ethers } from 'ethers';
-import { useAddresses } from '../contexts/web3Data/chains';
 import { MetaFactory, MetaFactory__factory } from '../assets/typechain-types/metafactory';
+import { useAddresses } from '../contexts/daoData/useAddresses';
 
 export type TokenAllocation = {
   address: string;
