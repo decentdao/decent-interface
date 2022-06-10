@@ -89,6 +89,7 @@ function StepController({
     case 2:
       return (
         <GovernanceDetails
+          tokenSupply={tokenSupply}
           setDeployEnabled={setDeployEnabled}
           proposalThreshold={proposalThreshold}
           quorum={quorum}
