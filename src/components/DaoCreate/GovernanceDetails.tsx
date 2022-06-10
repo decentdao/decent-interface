@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 import ContentBanner from '../ui/ContentBanner';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import Input from '../ui/forms/Input';
@@ -68,8 +68,14 @@ function GovernanceDetails({
 
   /// validation
   // proposal creation should not be more than availabe tokens
-  // voting period should not be less than 1 block
   // qurom should not be more than 100
+  const onVotingPeriodChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newVotingPeriod = event.target.value;
+
+    if (Number(newVotingPeriod) > 0 || newVotingPeriod == '') {
+      setVotingPeriod(newVotingPeriod);
+    }
+  };
 
   return (
     <div>
@@ -108,12 +114,12 @@ function GovernanceDetails({
         <Input
           type="number"
           value={votingPeriod}
-          onChange={e => setVotingPeriod(e.target.value)}
+          onChange={onVotingPeriodChange}
           label="Voting Period"
           exampleLabel="Recommend"
           exampleText="1 Week / ~45818 Blocks"
           unit="Blocks"
-          helperText="The length of time (in blocks) between a vote's starting and ending point. Cannot be zero."
+          helperText="The length of time (in blocks) between a vote's starting and ending point. Must be greater than 0."
           isWholeNumberOnly
           min="1"
         />
