@@ -68,12 +68,19 @@ function GovernanceDetails({
 
   /// validation
   // proposal creation should not be more than availabe tokens
-  // qurom should not be more than 100
   const onVotingPeriodChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newVotingPeriod = event.target.value;
 
     if (Number(newVotingPeriod) > 0 || newVotingPeriod == '') {
       setVotingPeriod(newVotingPeriod);
+    }
+  };
+
+  const onQuorumChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newQuorumPeriod = event.target.value;
+
+    if (Number(newQuorumPeriod) <= 100) {
+      setQuorum(newQuorumPeriod);
     }
   };
 
@@ -128,12 +135,12 @@ function GovernanceDetails({
         <Input
           type="number"
           value={quorum}
-          onChange={e => setQuorum(e.target.value)}
+          onChange={onQuorumChange}
           label="Quorum"
           exampleLabel="Recommend"
           exampleText="4%"
           unit="%"
-          helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Must be less or equal to than 100%"
+          helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Must be less than or equal to than 100%"
           isWholeNumberOnly
           min="0"
         />
