@@ -13,6 +13,7 @@ function DaoCreate() {
   const [step, setStep] = useState<number>(0);
   const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
   const [nextEnabled, setNextEnabled] = useState<boolean>(false);
+  const [deployEnabled, setDeployEnabled] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
   const [daoName, setDAOName] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
@@ -21,9 +22,12 @@ function DaoCreate() {
   const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>([
     { address: '', amount: 0 },
   ]);
-  const [proposalThreshold] = useState<number>(0);
-  const [quorum] = useState<number>(4);
-  const [executionDelay] = useState<number>(24);
+  const [proposalThreshold, setProposalThreshold] = useState<string>('0');
+  const [quorum, setQuorum] = useState<string>('4');
+  const [executionDelay, setExecutionDelay] = useState<string>('6545');
+  const [lateQuorumExecution, setLateQuorumExecution] = useState<string>('0');
+  const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
+  const [votingPeriod, setVotingPeriod] = useState<string>('45818');
   const [{ account }] = useWeb3();
 
   const decrement = () => {
@@ -41,17 +45,26 @@ function DaoCreate() {
     setTokenSymbol('');
     setTokenSupply('');
     setTokenAllocations([]);
+    setProposalThreshold('');
+    setQuorum('');
+    setExecutionDelay('');
+    setLateQuorumExecution('');
+    setVoteStartDelay('');
+    setVotingPeriod('');
   };
 
   const deploy = useDeployDAO({
     daoName,
     tokenName,
     tokenSymbol,
-    tokenSupply: Number(tokenSupply),
+    tokenSupply,
     tokenAllocations,
     proposalThreshold,
     quorum,
     executionDelay,
+    lateQuorumExecution,
+    voteStartDelay,
+    votingPeriod,
     setPending,
     clearState,
   });
@@ -71,6 +84,7 @@ function DaoCreate() {
               step={step}
               setPrevEnabled={setPrevEnabled}
               setNextEnabled={setNextEnabled}
+              setDeployEnabled={setDeployEnabled}
               daoName={daoName}
               setDAOName={setDAOName}
               tokenName={tokenName}
@@ -82,8 +96,17 @@ function DaoCreate() {
               tokenAllocations={tokenAllocations}
               setTokenAllocations={setTokenAllocations}
               proposalThreshold={proposalThreshold}
+              setProposalThreshold={setProposalThreshold}
               quorum={quorum}
+              setQuorum={setQuorum}
               executionDelay={executionDelay}
+              setExecutionDelay={setExecutionDelay}
+              lateQuorumExecution={lateQuorumExecution}
+              setLateQuorumExecution={setLateQuorumExecution}
+              voteStartDelay={voteStartDelay}
+              setVoteStartDelay={setVoteStartDelay}
+              votingPeriod={votingPeriod}
+              setVotingPeriod={setVotingPeriod}
             />
           </form>
         </ContentBox>
@@ -112,9 +135,7 @@ function DaoCreate() {
               label="Deploy"
               isLarge
               className="w-48"
-              disabled={
-                !daoName || !tokenName || !tokenSymbol || !tokenSupply || pending || !account
-              }
+              disabled={pending || !account || !deployEnabled}
             />
           )}
         </div>

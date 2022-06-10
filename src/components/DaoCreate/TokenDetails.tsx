@@ -104,6 +104,7 @@ function TokenDetails({
           helperText="Whole numbers only"
           disabled={false}
           isWholeNumberOnly
+          min="0"
         />
       </InputBox>
 

@@ -21,17 +21,23 @@ const useDeployDAO = ({
   proposalThreshold,
   quorum,
   executionDelay,
+  lateQuorumExecution,
+  voteStartDelay,
+  votingPeriod,
   setPending,
   clearState,
 }: {
-  daoName: string | undefined;
-  tokenName: string | undefined;
-  tokenSymbol: string | undefined;
-  tokenSupply: number | undefined;
-  tokenAllocations: TokenAllocation[] | undefined;
-  proposalThreshold: number | undefined;
-  quorum: number | undefined;
-  executionDelay: number | undefined;
+  daoName: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenSupply: string;
+  tokenAllocations: TokenAllocation[];
+  proposalThreshold: string;
+  quorum: string;
+  executionDelay: string;
+  lateQuorumExecution: string;
+  voteStartDelay: string;
+  votingPeriod: string;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
   clearState: () => void;
 }) => {
@@ -48,14 +54,6 @@ const useDeployDAO = ({
   let deployDao = useCallback(() => {
     if (
       !signerOrProvider ||
-      !daoName ||
-      !tokenName ||
-      !tokenSymbol ||
-      !tokenSupply ||
-      !tokenAllocations ||
-      (!proposalThreshold && proposalThreshold !== 0) ||
-      !quorum ||
-      !executionDelay ||
       !setPending ||
       !addresses.metaFactory?.address ||
       !addresses.daoFactory?.address ||
@@ -125,12 +123,15 @@ const useDeployDAO = ({
         data: [
           abiCoder.encode(['address'], [addresses.governorModule?.address]), // Governor Impl
           abiCoder.encode(['address'], [addresses.timelockUpgradeable?.address]), // Timelock Impl
-          abiCoder.encode(['uint64'], [BigNumber.from('0')]), // vote extension
-          abiCoder.encode(['uint256'], [BigNumber.from('0')]), // Todo: change voteDelay back to 6545 blocks for prod
-          abiCoder.encode(['uint256'], [BigNumber.from('10')]), // Todo: change votingPeriod back to 45818 blocks (1 week)
-          abiCoder.encode(['uint256'], [BigNumber.from(proposalThreshold.toString())]), // Threshold
-          abiCoder.encode(['uint256'], [BigNumber.from(quorum.toString())]), // Quorum
-          abiCoder.encode(['uint256'], [BigNumber.from('1')]), // Access Control Index
+          abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // vote extension
+          abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // voteDelay
+          abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // votingPeriod
+          abiCoder.encode(
+            ['uint256'],
+            [BigNumber.from(ethers.utils.parseUnits(proposalThreshold, 18))]
+          ), // Threshold
+          abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
+          abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution Delay_Timelock
         ],
         value: 0,
         newContractAddressesToPass: [0, 1, 3],
