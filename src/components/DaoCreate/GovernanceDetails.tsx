@@ -18,6 +18,7 @@ interface GovernanceDetailsProps {
   setVoteStartDelay: React.Dispatch<React.SetStateAction<string>>;
   setVotingPeriod: React.Dispatch<React.SetStateAction<string>>;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setDeployEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function GovernanceDetails({
@@ -34,10 +35,41 @@ function GovernanceDetails({
   setVoteStartDelay,
   setVotingPeriod,
   setPrevEnabled,
+  setDeployEnabled,
 }: GovernanceDetailsProps) {
   useEffect(() => {
     setPrevEnabled(true);
   }, [setPrevEnabled]);
+
+  useEffect(() => {
+    setDeployEnabled(
+      Number(proposalThreshold) >= 0 &&
+        Number(quorum) >= 0 &&
+        Number(quorum) <= 100 &&
+        Number(executionDelay) >= 0 &&
+        Number(lateQuorumExecution) >= 0 &&
+        Number(voteStartDelay) >= 0 &&
+        Number(votingPeriod) > 0 &&
+        proposalThreshold.trim() !== '' &&
+        quorum.trim() !== '' &&
+        executionDelay.trim() !== '' &&
+        lateQuorumExecution.trim() !== '' &&
+        voteStartDelay.trim() !== '' &&
+        votingPeriod.trim() !== ''
+    );
+  }, [
+    proposalThreshold,
+    quorum,
+    executionDelay,
+    lateQuorumExecution,
+    voteStartDelay,
+    votingPeriod,
+  ]);
+
+  /// validation
+  // proposal creation should not be more than availabe tokens
+  // voting period should not be less than 1 block
+  // qurom should not be more than 100
 
   return (
     <div>
@@ -81,9 +113,9 @@ function GovernanceDetails({
           exampleLabel="Recommend"
           exampleText="1 Week / ~45818 Blocks"
           unit="Blocks"
-          helperText="The length of time (in blocks) between a vote's starting and ending point."
+          helperText="The length of time (in blocks) between a vote's starting and ending point. Cannot be zero."
           isWholeNumberOnly
-          min="0"
+          min="1"
         />
       </InputBox>
       <InputBox>
@@ -95,7 +127,7 @@ function GovernanceDetails({
           exampleLabel="Recommend"
           exampleText="4%"
           unit="%"
-          helperText="The percentage of total votes to total tokens required in order for a proposal to PASS."
+          helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Must be less or equal to than 100%"
           isWholeNumberOnly
           min="0"
         />
