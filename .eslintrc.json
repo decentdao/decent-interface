@@ -12,7 +12,9 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         // required for "type-aware linting"
-        "project": ["./tsconfig.json"],
+        "project": [
+            "./tsconfig.json"
+        ],
         "ecmaFeatures": {
             "jsx": true
         },
@@ -23,7 +25,8 @@
         "react",
         "import",
         "@typescript-eslint",
-        "prettier"
+        "prettier",
+        "react-hooks"
     ],
     "settings": {
         // resolves imports without file extensions for listed extensions
@@ -50,9 +53,13 @@
             }
         ],
         "comma-dangle": "off",
-        "@typescript-eslint/comma-dangle": [0],
+        "@typescript-eslint/comma-dangle": [
+            0
+        ],
         "indent": "off",
-        "@typescript-eslint/indent": [0],
+        "@typescript-eslint/indent": [
+            0
+        ],
         // prettier config
         "prettier/prettier": [
             1,
@@ -66,6 +73,8 @@
                 "arrowParens": "avoid",
                 "singleAttributePerLine": true
             }
-        ]
+        ],
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     }
 }
