@@ -13,6 +13,7 @@ function DaoCreate() {
   const [step, setStep] = useState<number>(0);
   const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
   const [nextEnabled, setNextEnabled] = useState<boolean>(false);
+  const [deployEnabled, setDeployEnabled] = useState<boolean>(false);
   const [pending, setPending] = useState<boolean>(false);
   const [daoName, setDAOName] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
@@ -83,6 +84,7 @@ function DaoCreate() {
               step={step}
               setPrevEnabled={setPrevEnabled}
               setNextEnabled={setNextEnabled}
+              setDeployEnabled={setDeployEnabled}
               daoName={daoName}
               setDAOName={setDAOName}
               tokenName={tokenName}
@@ -133,9 +135,7 @@ function DaoCreate() {
               label="Deploy"
               isLarge
               className="w-48"
-              disabled={
-                !daoName || !tokenName || !tokenSymbol || !tokenSupply || pending || !account
-              }
+              disabled={pending || !account || !deployEnabled}
             />
           )}
         </div>
