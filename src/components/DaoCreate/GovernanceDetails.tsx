@@ -5,6 +5,7 @@ import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 
 interface GovernanceDetailsProps {
+  tokenSupply: string;
   proposalThreshold: string;
   quorum: string;
   executionDelay: string;
@@ -22,6 +23,7 @@ interface GovernanceDetailsProps {
 }
 
 function GovernanceDetails({
+  tokenSupply,
   proposalThreshold,
   quorum,
   executionDelay,
@@ -66,8 +68,15 @@ function GovernanceDetails({
     votingPeriod,
   ]);
 
-  /// validation
-  // proposal creation should not be more than availabe tokens
+  const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newThreshold = event.target.value;
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    Number(newThreshold) <= Number(tokenSupply)
+      ? setProposalThreshold(newThreshold)
+      : setProposalThreshold(tokenSupply);
+  };
+
   const onVotingPeriodChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newVotingPeriod = event.target.value;
 
@@ -77,11 +86,9 @@ function GovernanceDetails({
   };
 
   const onQuorumChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newQuorumPeriod = event.target.value;
-
-    if (Number(newQuorumPeriod) <= 100) {
-      setQuorum(newQuorumPeriod);
-    }
+    const newQuorumNum = event.target.value;
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    Number(newQuorumNum) <= 100 ? setQuorum(newQuorumNum) : setQuorum('100');
   };
 
   return (
@@ -94,7 +101,7 @@ function GovernanceDetails({
           type="number"
           value={proposalThreshold}
           unit="Tokens"
-          onChange={e => setProposalThreshold(e.target.value)}
+          onChange={onThresholdChange}
           label="Proposal Creation (# of Tokens Required)"
           exampleLabel="Recommend"
           exampleText="0 Tokens"
