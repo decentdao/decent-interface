@@ -39,7 +39,7 @@ function FavoriteRow({ address }: { address: string }) {
       <div className="text-xs">
         <Link to={`/daos/${address}`}>
           <TextButton
-            label={`(${address})`}
+            label={address}
             className="-ml-4"
           />
         </Link>
