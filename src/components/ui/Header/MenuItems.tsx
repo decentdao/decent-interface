@@ -10,6 +10,7 @@ import CopyToClipboard from '../CopyToClipboard';
 import EtherscanLink from '../EtherscanLink';
 import useDisplayName from '../../../hooks/useDisplayName';
 import cx from 'classnames';
+import { Link } from 'react-router-dom';
 
 interface MenuItem {
   title: string;
@@ -49,6 +50,12 @@ const DOCS: LinkMenuItem = {
   Icon: Docs,
 };
 
+const FAVORITES: LinkMenuItem = {
+  title: 'Favorites',
+  link: '/daos/favorites',
+  Icon: () => <div>?</div>,
+};
+
 const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
   title: 'Connect Wallet',
   action: connect,
@@ -81,6 +88,23 @@ function ItemWrapper(props: {
   );
 }
 
+function ItemContent({
+  title,
+  className,
+  Icon,
+}: {
+  title: string;
+  className?: string;
+  Icon: () => JSX.Element;
+}) {
+  return (
+    <ItemWrapper className={className}>
+      <Icon />
+      <span>{title}</span>
+    </ItemWrapper>
+  );
+}
+
 function ActionItem({ title, className, action, Icon, isVisible }: ActionMenuItem) {
   if (!isVisible) {
     return null;
@@ -91,10 +115,11 @@ function ActionItem({ title, className, action, Icon, isVisible }: ActionMenuIte
         onClick={action}
         className={cx('w-full', className)}
       >
-        <ItemWrapper className={className}>
-          <Icon />
-          <span>{title}</span>
-        </ItemWrapper>
+        <ItemContent
+          title={title}
+          className={className}
+          Icon={Icon}
+        />
       </button>
     </Menu.Item>
   );
@@ -108,11 +133,24 @@ function LinkItem({ title, link, Icon }: LinkMenuItem) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        <ItemWrapper>
-          <Icon />
-          <span>{title}</span>
-        </ItemWrapper>
+        <ItemContent
+          title={title}
+          Icon={Icon}
+        />
       </a>
+    </Menu.Item>
+  );
+}
+
+function LinkItemInternal({ title, link, Icon }: LinkMenuItem) {
+  return (
+    <Menu.Item>
+      <Link to={link}>
+        <ItemContent
+          title={title}
+          Icon={Icon}
+        />
+      </Link>
     </Menu.Item>
   );
 }
@@ -153,6 +191,7 @@ function MenuItems() {
           />
         </section>
         <section className="border-t border-gray-300">
+          <LinkItemInternal {...FAVORITES} />
           <LinkItem {...COMMUNITY} />
           <LinkItem {...OVERVIEW} />
           <LinkItem {...FAQ} />
