@@ -59,6 +59,11 @@ function DAOFavorites() {
       return;
     }
 
+    if (!favorites[chainId]) {
+      setChainFavorites([]);
+      return;
+    }
+
     setChainFavorites(favorites[chainId]);
   }, [favorites, chainId]);
 
