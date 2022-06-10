@@ -29,6 +29,7 @@ interface StepControllerProps {
   setVotingPeriod: React.Dispatch<React.SetStateAction<string>>;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
   setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+  setDeployEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // @todo look into reducing the number of props
@@ -58,6 +59,7 @@ function StepController({
   setVotingPeriod,
   setPrevEnabled,
   setNextEnabled,
+  setDeployEnabled,
 }: StepControllerProps) {
   switch (step) {
     case 0:
@@ -87,6 +89,7 @@ function StepController({
     case 2:
       return (
         <GovernanceDetails
+          setDeployEnabled={setDeployEnabled}
           proposalThreshold={proposalThreshold}
           quorum={quorum}
           executionDelay={executionDelay}
