@@ -67,11 +67,6 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       web3Modal.clearCachedProvider();
       return { ...initialState };
     }
-    // might not need this?
-    case Web3ProviderActions.RESET_STATE:
-      return {
-        ...initialState,
-      };
     default:
       return state;
   }
