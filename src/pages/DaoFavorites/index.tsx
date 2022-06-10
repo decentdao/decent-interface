@@ -35,8 +35,8 @@ function FavoriteRow({ address }: { address: string }) {
 
   return (
     <div className="py-4 first:pt-0 last:pb-0 border-b border-gray-100 last:border-b-0 truncate">
-      <div>{daoNameDisplay}</div>
-      <div className="text-xs">
+      <div className="text-lg">{daoNameDisplay}</div>
+      <div>
         <Link to={`/daos/${address}`}>
           <TextButton
             label={address}
