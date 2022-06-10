@@ -94,7 +94,7 @@ function GovernanceDetails({
   return (
     <div>
       <div className="flex items-center gap-2">
-        <ContentBoxTitle>Governance Setup</ContentBoxTitle>
+        <ContentBoxTitle>Proposal Settings</ContentBoxTitle>
       </div>
       <InputBox>
         <Input
@@ -138,6 +138,7 @@ function GovernanceDetails({
           min="1"
         />
       </InputBox>
+      <ContentBoxTitle>Governance Setup</ContentBoxTitle>
       <InputBox>
         <Input
           type="number"
