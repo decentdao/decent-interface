@@ -66,6 +66,7 @@ function GovernanceDetails({
     lateQuorumExecution,
     voteStartDelay,
     votingPeriod,
+    setDeployEnabled,
   ]);
 
   const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
