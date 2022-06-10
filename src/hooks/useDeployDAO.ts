@@ -124,9 +124,12 @@ const useDeployDAO = ({
           abiCoder.encode(['address'], [addresses.governorModule?.address]), // Governor Impl
           abiCoder.encode(['address'], [addresses.timelockUpgradeable?.address]), // Timelock Impl
           abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // vote extension
-          abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // Todo: change voteDelay back to 6545 blocks (1 day) for prod
-          abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // Todo: change votingPeriod back to 45818 blocks (1 week)
-          abiCoder.encode(['uint256'], [BigNumber.from(proposalThreshold)]), // Threshold
+          abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // voteDelay
+          abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // votingPeriod
+          abiCoder.encode(
+            ['uint256'],
+            [BigNumber.from(ethers.utils.parseUnits(proposalThreshold, 18))]
+          ), // Threshold
           abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
           abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution Delay_Timelock
         ],
