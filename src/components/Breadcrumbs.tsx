@@ -8,6 +8,7 @@ import RightArrow from './ui/svg/RightArrow';
 import TreasuryIcon from './ui/svg/Treasury';
 import TooltipAddressContent from './ui/TooltipAddressContent';
 import TooltipWrapper from './ui/TooltipWrapper';
+import Favorite from './ui/Favorite';
 
 function DAOName() {
   const params = useParams();
@@ -120,6 +121,7 @@ function Breadcrumbs() {
               <div className="text-sm font-semibold">Treasury</div>
               <TreasuryIcon />
             </NavLink>
+            <Favorite />
           </div>
         )}
       </div>
