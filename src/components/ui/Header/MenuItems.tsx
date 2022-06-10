@@ -1,5 +1,4 @@
 import { Menu } from '@headlessui/react';
-import { useWeb3 } from '../../../contexts/web3Data';
 import Contact from '../svg/Contact';
 import Support from '../svg/Support';
 import Connect from '../svg/Connect';
@@ -10,6 +9,7 @@ import CopyToClipboard from '../CopyToClipboard';
 import EtherscanLink from '../EtherscanLink';
 import useDisplayName from '../../../hooks/useDisplayName';
 import cx from 'classnames';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 
 interface MenuItem {
   title: string;
@@ -117,7 +117,7 @@ function LinkItem({ title, link, Icon }: LinkMenuItem) {
   );
 }
 
-function AddressCopyItem({ account }: { account?: string }) {
+function AddressCopyItem({ account }: { account: string | null }) {
   const accountDisplayName = useDisplayName(account);
   if (!account) {
     return null;
@@ -133,7 +133,13 @@ function AddressCopyItem({ account }: { account?: string }) {
 }
 
 function MenuItems() {
-  const [{ account }, connect, disconnect] = useWeb3();
+  const {
+    state: {
+      wallet: { account },
+    },
+    connect,
+    disconnect,
+  } = useWeb3Provider();
   return (
     <Menu.Items
       static

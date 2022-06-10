@@ -1,6 +1,6 @@
+import { useWeb3Provider } from './../web3Data/hooks/useWeb3Provider';
 import { useState, useEffect, useCallback } from 'react';
 import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
-import { useWeb3 } from '../web3Data';
 import { BigNumber } from 'ethers';
 
 // @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
@@ -8,7 +8,11 @@ import { BigNumber } from 'ethers';
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
-  const [{ account }] = useWeb3();
+  const {
+    state: {
+      wallet: { account },
+    },
+  } = useWeb3Provider();
   const [tokenName, setTokenName] = useState<string>();
   const [tokenSymbol, setTokenSymbol] = useState<string>();
   const [tokenDecimals, setTokenDecimals] = useState<number>();
@@ -18,7 +22,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const [tokenAddress, setTokenAddress] = useState<string>();
 
   const updateTokenBalance = useCallback(() => {
-    if (tokenContract === undefined || account === undefined) {
+    if (tokenContract === undefined || !account) {
       setTokenBalance(undefined);
       return;
     }
@@ -72,7 +76,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
   // Get initial user token delegatee
   useEffect(() => {
-    if (tokenContract === undefined || account === undefined) {
+    if (tokenContract === undefined || !account) {
       setTokenDelegatee(undefined);
       return;
     }
@@ -85,7 +89,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
   // Setup token transfer events listener
   useEffect(() => {
-    if (tokenContract === undefined || account === undefined) {
+    if (tokenContract === undefined || !account) {
       setTokenBalance(undefined);
       return;
     }
@@ -108,7 +112,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
   // Setup token delegate changed events listener
   useEffect(() => {
-    if (tokenContract === undefined || account === undefined) {
+    if (tokenContract === undefined || !account) {
       setTokenDelegatee(undefined);
       return;
     }

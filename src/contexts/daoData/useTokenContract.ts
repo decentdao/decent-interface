@@ -4,14 +4,16 @@ import {
   VotesTokenWithSupply__factory,
 } from '../../assets/typechain-types/votes-token';
 import { GovernorModule } from '../../assets/typechain-types/module-governor';
-import { useWeb3 } from '../web3Data';
+import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 
 const useTokenContract = (governorModule: GovernorModule | undefined) => {
   const [tokenContract, setTokenContract] = useState<VotesTokenWithSupply>();
-  const [{ signerOrProvider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   useEffect(() => {
-    if (!governorModule || !signerOrProvider) {
+    if (!governorModule || !provider) {
       setTokenContract(undefined);
       return;
     }
@@ -19,10 +21,10 @@ const useTokenContract = (governorModule: GovernorModule | undefined) => {
     governorModule
       .token()
       .then(tokenAddress =>
-        setTokenContract(VotesTokenWithSupply__factory.connect(tokenAddress, signerOrProvider))
+        setTokenContract(VotesTokenWithSupply__factory.connect(tokenAddress, provider))
       )
       .catch(console.error);
-  }, [governorModule, signerOrProvider]);
+  }, [governorModule, provider]);
 
   return tokenContract;
 };

@@ -8,9 +8,9 @@ import Details from '../../components/Dao/Details';
 import Proposals from '../Proposals';
 import Summary from '../../components/Dao/Summary';
 import { useDAOData } from '../../contexts/daoData';
-import { useWeb3 } from '../../contexts/web3Data';
 import useValidateDaoRoute from '../../hooks/useValidateDaoRoute';
 import Treasury from '../Treasury';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 function DAORoutes() {
   return (
@@ -61,7 +61,13 @@ function ValidDAO({ address }: { address: string }) {
 function DAO() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [{ account, accountLoading, chainId }] = useWeb3();
+  const {
+    state: {
+      wallet: { account },
+      connection: { chainId },
+      isProviderLoading,
+    },
+  } = useWeb3Provider();
   const [, setAddress] = useDAOData();
   useValidateDaoRoute();
   const [validatedAddress, setValidatedAddress] = useState(
@@ -78,13 +84,13 @@ function DAO() {
   }, [location]);
 
   useEffect(() => {
-    if (account || accountLoading) {
+    if (account || isProviderLoading) {
       return;
     }
 
     navigate('/', { replace: true });
     toast('Connect a wallet to load a DAO');
-  }, [account, accountLoading, navigate]);
+  }, [account, isProviderLoading, navigate]);
 
   // when this component unloads, setAddress back to undefined to clear app state
   useEffect(() => () => setAddress(undefined), [setAddress]);

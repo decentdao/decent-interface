@@ -1,6 +1,6 @@
+import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber } from 'ethers';
 import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
@@ -14,7 +14,11 @@ const useCastVote = ({
   vote: number | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [{ signerOrProvider }] = useWeb3();
+  const {
+    state: {
+      wallet: { signer },
+    },
+  } = useWeb3Provider();
   const [daoData] = useDAOData();
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
@@ -25,7 +29,7 @@ const useCastVote = ({
 
   let castVote = useCallback(() => {
     if (
-      signerOrProvider === undefined ||
+      !signer ||
       daoData.moduleAddresses === undefined ||
       proposalId === undefined ||
       vote === undefined
@@ -33,9 +37,10 @@ const useCastVote = ({
       return;
     }
 
+    // @todo we could probably just pull contract from state here.
     const governor: GovernorModule = GovernorModule__factory.connect(
       daoData.moduleAddresses[1],
-      signerOrProvider
+      signer
     );
 
     contractCallCastVote({
@@ -44,7 +49,7 @@ const useCastVote = ({
       failedMessage: 'Vote Cast Failed',
       successMessage: 'Vote Casted',
     });
-  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signerOrProvider, vote]);
+  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signer, vote]);
   return castVote;
 };
 

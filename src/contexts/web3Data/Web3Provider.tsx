@@ -14,8 +14,8 @@ const initialState: InitialState = {
   },
   connection: {
     name: 'not connected',
-    network: undefined,
-    chainId: undefined,
+    network: '',
+    chainId: 0,
   },
   provider: null,
   isProviderLoading: false,
@@ -47,7 +47,10 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       const { connection, provider } = action.payload;
       return {
         ...initialState,
-        wallet: null,
+        wallet: {
+          account: null,
+          signer: null,
+        },
         provider,
         connection,
         isProviderLoading: false,

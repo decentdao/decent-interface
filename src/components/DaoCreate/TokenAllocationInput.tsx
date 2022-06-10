@@ -1,8 +1,8 @@
 import { TokenAllocation } from '../../hooks/useDeployDAO';
 import { checkAddress } from '../../hooks/useAddress';
-import { useWeb3 } from '../../contexts/web3Data';
 import { TextButton } from '../ui/forms/Button';
 import Input from '../ui/forms/Input';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 interface TokenAllocationProps {
   index: number;
@@ -19,7 +19,9 @@ function TokenAllocationInput({
   updateTokenAllocation,
   removeTokenAllocation,
 }: TokenAllocationProps) {
-  const [{ provider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   const updateAddress = async (address: string) => {
     let isValidAddress = false;

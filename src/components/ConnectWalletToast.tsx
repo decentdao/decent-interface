@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { TextButton } from './ui/forms/Button';
-import { useWeb3 } from '../contexts/web3Data';
 
 function ToastContent({ label }: { label: string }) {
-  const [, connect] = useWeb3();
+  const { connect } = useWeb3Provider();
   return (
     <div className="flex flex-col items-center">
       <div>{label}</div>
@@ -17,7 +17,9 @@ function ToastContent({ label }: { label: string }) {
 }
 
 function ConnectWalletToast({ label }: { label: string }) {
-  const [{ account }] = useWeb3();
+  const {
+    state: { wallet: account },
+  } = useWeb3Provider();
   useEffect(() => {
     if (account) {
       return;

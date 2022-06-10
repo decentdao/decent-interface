@@ -4,7 +4,7 @@ export type ConnectFn = () => null;
 export type DisconnectFn = () => null;
 
 export interface InitialState {
-  wallet: Wallet | null;
+  wallet: Wallet;
   provider: ethers.providers.BaseProvider | null;
   isCacheProvider?: boolean;
   connection: ConnectionInfo;
@@ -18,8 +18,8 @@ export type Wallet = {
 
 export type ConnectionInfo = {
   name: string;
-  network?: string;
-  chainId?: number;
+  network: string;
+  chainId: number;
 };
 
 export type InjectedProviderInfo = {

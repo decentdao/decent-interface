@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 
-import { useWeb3 } from '../contexts/web3Data';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import useENSName from './useENSName';
 
-const useAvatar = (account: string | undefined) => {
-  const [{ provider }] = useWeb3();
+const useAvatar = (account: string | null) => {
+  const {
+    state: { provider },
+  } = useWeb3Provider();
   const ensName = useENSName(account);
 
   const [avatarURL, setAvatarURL] = useState<string | null>(null);

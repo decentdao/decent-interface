@@ -3,24 +3,22 @@ import {
   TimelockUpgradeable,
   TimelockUpgradeable__factory,
 } from '../../assets/typechain-types/module-governor';
-import { useWeb3 } from '../web3Data';
+import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 
 const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
   const [timelockModule, setTimelockModule] = useState<TimelockUpgradeable>();
-  const [{ signerOrProvider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   useEffect(() => {
-    if (
-      moduleAddresses === undefined ||
-      moduleAddresses[2] === undefined ||
-      signerOrProvider === undefined
-    ) {
+    if (moduleAddresses === undefined || moduleAddresses[2] === undefined || !provider) {
       setTimelockModule(undefined);
       return;
     }
 
-    setTimelockModule(TimelockUpgradeable__factory.connect(moduleAddresses[2], signerOrProvider));
-  }, [moduleAddresses, signerOrProvider]);
+    setTimelockModule(TimelockUpgradeable__factory.connect(moduleAddresses[2], provider));
+  }, [moduleAddresses, provider]);
 
   return timelockModule;
 };
