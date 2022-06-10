@@ -61,7 +61,13 @@ const useTransaction = () => {
           if (params.failedCallback) params.failedCallback();
         }
         if (params.completedCallback) params.completedCallback();
-        setPending(false);
+
+        // Give the block event emitter a couple seconds to play the latest
+        // block on the app state, before informing app that the transaction
+        // is completed.
+        setTimeout(() => {
+          setPending(false);
+        }, 2000);
       })
       .catch((error: ProviderRpcError) => {
         console.error(error);
