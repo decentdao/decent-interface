@@ -4,6 +4,7 @@ import Contact from '../svg/Contact';
 import Support from '../svg/Support';
 import Connect from '../svg/Connect';
 import Disconnect from '../svg/Disconnect';
+import { StarEmpty } from '../svg/Star';
 import Faq from '../svg/Faq';
 import Docs from '../svg/Docs';
 import CopyToClipboard from '../CopyToClipboard';
@@ -53,7 +54,7 @@ const DOCS: LinkMenuItem = {
 const FAVORITES: LinkMenuItem = {
   title: 'Favorites',
   link: '/daos/favorites',
-  Icon: () => <div>?</div>,
+  Icon: StarEmpty,
 };
 
 const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
