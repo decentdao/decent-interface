@@ -1,19 +1,24 @@
 import { useDAOData } from '../../contexts/daoData';
 import { useWeb3 } from '../../contexts/web3Data';
 import useFavorites from '../../hooks/useFavorites';
-import Button from './forms/Button';
+import { StarFilled, StarEmpty } from '../ui/svg/Star';
+import TooltipWrapper from '../ui/TooltipWrapper';
 
-function FavoriteButton({ label, onClick }: { label: string; onClick: (() => void) | undefined }) {
+function FavoriteButton({
+  icon,
+  onClick,
+}: {
+  icon: React.ReactElement;
+  onClick: (() => void) | undefined;
+}) {
   return (
-    <Button
-      isLarge={false}
-      label={label}
-      onClick={onClick}
-    />
+    <div className="flex items-center">
+      <button onClick={onClick}>{icon}</button>
+    </div>
   );
 }
 
-function Favorite() {
+function Buttons() {
   const [{ chainId }] = useWeb3();
   const [{ daoAddress }] = useDAOData();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
@@ -21,7 +26,7 @@ function Favorite() {
   if (chainId === undefined || daoAddress === undefined) {
     return (
       <FavoriteButton
-        label="is no fav"
+        icon={<StarEmpty />}
         onClick={undefined}
       />
     );
@@ -31,19 +36,37 @@ function Favorite() {
 
   if (fav) {
     return (
-      <FavoriteButton
-        label="is fav"
-        onClick={() => removeFavorite(chainId, daoAddress)}
-      />
+      <TooltipWrapper
+        isVisible={true}
+        content="Remove from favorites"
+      >
+        <FavoriteButton
+          icon={<StarFilled />}
+          onClick={() => removeFavorite(chainId, daoAddress)}
+        />
+      </TooltipWrapper>
     );
   } else {
     return (
-      <FavoriteButton
-        label="is no fav"
-        onClick={() => addFavorite(chainId, daoAddress)}
-      />
+      <TooltipWrapper
+        isVisible={true}
+        content="Add to favorites"
+      >
+        <FavoriteButton
+          icon={<StarEmpty />}
+          onClick={() => addFavorite(chainId, daoAddress)}
+        />
+      </TooltipWrapper>
     );
   }
+}
+
+function Favorite() {
+  return (
+    <div className="text-gold-500 mr-2 font-sans text-sm">
+      <Buttons />
+    </div>
+  );
 }
 
 export default Favorite;

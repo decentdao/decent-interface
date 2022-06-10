@@ -3,11 +3,8 @@ import useBreadcrumbs, { BreadcrumbMatch } from 'use-react-router-breadcrumbs';
 
 import { useDAOData } from '../contexts/daoData';
 import DetailsIcon from './ui/svg/Details';
-import Info from './ui/svg/Info';
 import RightArrow from './ui/svg/RightArrow';
 import TreasuryIcon from './ui/svg/Treasury';
-import TooltipAddressContent from './ui/TooltipAddressContent';
-import TooltipWrapper from './ui/TooltipWrapper';
 import Favorite from './ui/Favorite';
 
 function DAOName() {
@@ -63,47 +60,31 @@ function Breadcrumbs() {
     <div className="py-2 text-white bg-gray-600 bg-opacity-70 font-mono tracking-wider">
       <div className="container flex justify-between items-center">
         <div>
-          <TooltipWrapper
-            isVisible={breadcrumbs.length === 1}
-            content={
-              daoAddress && (
-                <TooltipAddressContent
-                  address={daoAddress}
-                  title="DAO address:"
-                />
-              )
-            }
-          >
-            <div className="flex">
-              {breadcrumbs.map(({ match, breadcrumb }, i) => (
-                <div
-                  key={match.pathname}
-                  className="flex"
-                >
-                  {match.pathname === location.pathname ? (
-                    <span>{breadcrumb}</span>
-                  ) : (
-                    <NavLink
-                      className="text-gold-500"
-                      to={match.pathname}
-                    >
-                      {breadcrumb}
-                    </NavLink>
-                  )}
-                  {i < breadcrumbs.length - 1 && (
-                    <div className="mx-1">
-                      <RightArrow />
-                    </div>
-                  )}
-                  {breadcrumbs.length === 1 && daoAddress && (
-                    <div className="ml-2">
-                      <Info />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </TooltipWrapper>
+          <div className="flex items-center">
+            <Favorite />
+            {breadcrumbs.map(({ match, breadcrumb }, i) => (
+              <div
+                key={match.pathname}
+                className="flex"
+              >
+                {match.pathname === location.pathname ? (
+                  <span>{breadcrumb}</span>
+                ) : (
+                  <NavLink
+                    className="text-gold-500"
+                    to={match.pathname}
+                  >
+                    {breadcrumb}
+                  </NavLink>
+                )}
+                {i < breadcrumbs.length - 1 && (
+                  <div className="mx-1">
+                    <RightArrow />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
         {breadcrumbs.length === 1 && daoAddress && (
           <div className="flex gap-4 sm:gap-2">
@@ -121,7 +102,6 @@ function Breadcrumbs() {
               <div className="text-sm font-semibold">Treasury</div>
               <TreasuryIcon />
             </NavLink>
-            <Favorite />
           </div>
         )}
       </div>
