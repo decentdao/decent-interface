@@ -38,6 +38,10 @@ function Breadcrumbs() {
   excludePaths.push(daosNew);
   const matchDaosNew = useMatch(daosNew);
 
+  const daosFavorites = '/daos/favorites';
+  excludePaths.push(daosFavorites);
+  const matchDaosFavorites = useMatch(daosFavorites);
+
   const breadcrumbOptions = { excludePaths };
   const routes = [
     { path: '/daos/:address', breadcrumb: DAOName },
@@ -47,7 +51,9 @@ function Breadcrumbs() {
   ];
   const breadcrumbs = useBreadcrumbs(routes, breadcrumbOptions);
 
-  const anyExcludeMatch = [matchHome, matchDaos, matchDaosNew].some(match => match !== null);
+  const anyExcludeMatch = [matchHome, matchDaos, matchDaosNew, matchDaosFavorites].some(
+    match => match !== null
+  );
   if (anyExcludeMatch) {
     return <></>;
   }
