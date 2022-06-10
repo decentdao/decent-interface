@@ -4,7 +4,14 @@ import type { ConnectFn, DisconnectFn, InitialState } from './types';
 import { ActionTypes, Web3ProviderActions } from './actions';
 import { Web3ProviderContext } from './Web3ProviderContext';
 import { WEB3_MODAL_CONFIG } from './web3Modal.config';
-import { getLocalProvider, getFallbackProvider, getInjectedProvider } from './helpers';
+import {
+  getLocalProvider,
+  getFallbackProvider,
+  getInjectedProvider,
+  makeInjectedProvider,
+} from './helpers';
+import { useListeners } from './hooks/useLIsteners';
+import { toast } from 'react-toastify';
 
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
@@ -73,6 +80,24 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, getInitialState());
 
+  const reloadedProvider = useListeners(state.provider, dispatch, web3Modal);
+  useEffect(() => {
+    if (!reloadedProvider) {
+      dispatch({
+        type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
+        payload: getFallbackProvider(),
+      });
+    } else {
+      (async () => {
+        const injectedProvider = await makeInjectedProvider(reloadedProvider);
+        dispatch({
+          type: Web3ProviderActions.SET_INJECTED_PROVIDER,
+          payload: injectedProvider,
+        });
+      })();
+    }
+  }, [reloadedProvider]);
+
   const load = useCallback(() => {
     if (web3Modal.cachedProvider) {
       (async () => {
@@ -106,6 +131,8 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const disconnect: DisconnectFn = useCallback(() => {
+    web3Modal.clearCachedProvider();
+    toast('Account disconnected', { toastId: 'disconnected' });
     dispatch({ type: Web3ProviderActions.SET_FALLBACK_PROVIDER, payload: getFallbackProvider() });
     return null;
   }, []);

@@ -8,7 +8,7 @@ import { ActionTypes, Web3ProviderActions } from '../actions';
 import { getFallbackProvider, getInjectedProvider } from '../helpers';
 
 const useListeners = (
-  provider: ethers.providers.Provider | undefined,
+  provider: ethers.providers.Provider | null,
   dispatch: React.Dispatch<ActionTypes>,
   web3Modal: Web3Modal
 ) => {
