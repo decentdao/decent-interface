@@ -10,6 +10,7 @@ interface InputProps {
   unit?: string;
   helperText?: string;
   exampleText?: string;
+  exampleLabel?: string;
   disabled?: boolean;
   errorMessage?: string;
   placeholder?: string;
@@ -35,6 +36,7 @@ function Input({
   disabled,
   helperText,
   exampleText,
+  exampleLabel,
   isWholeNumberOnly,
   containerClassName,
   inputClassName,
@@ -63,7 +65,7 @@ function Input({
   function HelperExampleText() {
     return !!helperText && exampleText ? (
       <div className="text-gold-300 font-mono font-medium text-xxs mb-4">
-        <div>Example:</div>
+        <div>{exampleLabel ? exampleLabel : 'Example'}:</div>
         <div>{exampleText}</div>
       </div>
     ) : null;
