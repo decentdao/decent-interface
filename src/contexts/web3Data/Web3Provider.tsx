@@ -2,12 +2,12 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react';
 import Web3Modal from 'web3modal';
 import type { ConnectFn, DisconnectFn, InitialState } from './types';
 import { ActionTypes, Web3ProviderActions } from './actions';
-import { Web3ProviderContext } from './Web3ProviderContext';
 import { WEB3_MODAL_CONFIG } from './web3Modal.config';
 import { getLocalProvider, getFallbackProvider, getInjectedProvider } from './helpers';
 import { toast } from 'react-toastify';
 import { useListeners } from './hooks/useLIsteners';
 import { supportedChains } from './chains';
+import { Web3ProviderContext } from './hooks/useWeb3Provider';
 
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
