@@ -65,8 +65,19 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, getInitialState());
-
-  useListeners(web3Modal, dispatch);
+  const connectDefaultProvider = useCallback(async () => {
+    if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
+      dispatch({
+        type: Web3ProviderActions.SET_LOCAL_PROVIDER,
+        payload: await getLocalProvider(),
+      });
+    } else {
+      dispatch({
+        type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
+        payload: getFallbackProvider(),
+      });
+    }
+  }, []);
 
   const connect: ConnectFn = useCallback(async () => {
     const userInjectedProvider = await getInjectedProvider(web3Modal);
@@ -81,10 +92,14 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const disconnect: DisconnectFn = useCallback(() => {
-    web3Modal.clearCachedProvider();
     toast('Account disconnected', { toastId: 'disconnected' });
-    dispatch({ type: Web3ProviderActions.SET_FALLBACK_PROVIDER, payload: getFallbackProvider() });
-  }, []);
+    // switch to a default provider
+    connectDefaultProvider();
+    // remove cached provider
+    web3Modal.clearCachedProvider();
+  }, [connectDefaultProvider]);
+
+  useListeners(web3Modal, connectDefaultProvider, connect);
 
   const load = useCallback(() => {
     if (web3Modal.cachedProvider) {

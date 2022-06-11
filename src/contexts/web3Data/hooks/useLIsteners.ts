@@ -1,28 +1,17 @@
-import { useState, useEffect, useCallback } from 'react';
+import { ConnectFn } from './../types';
+import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
 import { supportedChains } from '../chains';
-import { ActionTypes, Web3ProviderActions } from '../actions';
-import { getFallbackProvider, getInjectedProvider, getLocalProvider } from '../helpers';
 
-const useListeners = (web3Modal: Web3Modal, dispatch: React.Dispatch<ActionTypes>) => {
+const useListeners = (
+  web3Modal: Web3Modal,
+  connectDefaultProvider: () => void,
+  connect: ConnectFn
+) => {
   const [modalProvider, setModalProvider] = useState<ethers.providers.Web3Provider | null>(null);
-
-  const connectDefaultProvider = useCallback(async () => {
-    if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
-      dispatch({
-        type: Web3ProviderActions.SET_LOCAL_PROVIDER,
-        payload: await getLocalProvider(),
-      });
-    } else {
-      dispatch({
-        type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
-        payload: getFallbackProvider(),
-      });
-    }
-  }, [dispatch]);
 
   useEffect(() => {
     // subscribe to connect events
@@ -61,13 +50,7 @@ const useListeners = (web3Modal: Web3Modal, dispatch: React.Dispatch<ActionTypes
         toast(`Chain changed: ${chainId}`, {
           toastId: 'connected',
         });
-        (async () => {
-          const userInjectedProvider = await getInjectedProvider(web3Modal);
-          dispatch({
-            type: Web3ProviderActions.SET_INJECTED_PROVIDER,
-            payload: userInjectedProvider,
-          });
-        })();
+        connect();
       }
     });
 
@@ -83,13 +66,7 @@ const useListeners = (web3Modal: Web3Modal, dispatch: React.Dispatch<ActionTypes
         setModalProvider(null);
       } else {
         toast('Account changed', { toastId: 'connected' });
-        (async () => {
-          const userInjectedProvider = await getInjectedProvider(web3Modal);
-          dispatch({
-            type: Web3ProviderActions.SET_INJECTED_PROVIDER,
-            payload: userInjectedProvider,
-          });
-        })();
+        connect();
       }
     });
 
@@ -108,7 +85,7 @@ const useListeners = (web3Modal: Web3Modal, dispatch: React.Dispatch<ActionTypes
     return () => {
       modalProvider.removeAllListeners();
     };
-  }, [modalProvider, web3Modal, dispatch, connectDefaultProvider]);
+  }, [modalProvider, web3Modal, connectDefaultProvider, connect]);
 };
 
 export { useListeners };
