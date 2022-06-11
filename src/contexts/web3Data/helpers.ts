@@ -12,16 +12,12 @@ export const makeInjectedProvider = async (
 
   const signer = web3Provider.getSigner();
   return {
-    wallet: {
-      account: await signer.getAddress(),
-      signer: signer,
-    },
+    account: await signer.getAddress(),
+    signer: signer,
     provider: web3Provider,
-    connection: {
-      name: 'injected provider',
-      network: local ? 'localhost' : (await web3Provider.getNetwork()).name,
-      chainId: (await web3Provider.getNetwork()).chainId,
-    },
+    connectionType: 'injected provider',
+    network: local ? 'localhost' : (await web3Provider.getNetwork()).name,
+    chainId: (await web3Provider.getNetwork()).chainId,
   };
 };
 
@@ -49,11 +45,9 @@ export const getLocalProvider = (): Promise<BaseProviderInfo> => {
       .then(network => {
         resolve({
           provider: localProvider,
-          connection: {
-            name: 'local provider',
-            network: 'localhost',
-            chainId: network.chainId,
-          },
+          connectionType: 'local provider',
+          network: 'localhost',
+          chainId: network.chainId,
         });
       })
       .catch(reject);
@@ -76,10 +70,8 @@ export const getFallbackProvider = (): BaseProviderInfo => {
 
   return {
     provider: defaultProvider,
-    connection: {
-      name: 'readonly provider',
-      network: defaultProvider.network.name,
-      chainId: defaultProvider.network.chainId,
-    },
+    connectionType: 'readonly provider',
+    network: defaultProvider.network.name,
+    chainId: defaultProvider.network.chainId,
   };
 };

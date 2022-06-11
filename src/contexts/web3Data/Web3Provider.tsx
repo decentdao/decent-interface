@@ -11,15 +11,11 @@ import { supportedChains } from './chains';
 
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
-  wallet: {
-    account: null,
-    signer: null,
-  },
-  connection: {
-    name: 'not connected',
-    network: '',
-    chainId: 0,
-  },
+  account: null,
+  signer: null,
+  connectionType: 'not connected',
+  network: '',
+  chainId: 0,
   provider: null,
   isProviderLoading: false,
 };
@@ -34,26 +30,27 @@ const getInitialState = () => {
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
     case Web3ProviderActions.SET_INJECTED_PROVIDER: {
-      const { wallet, connection, provider } = action.payload;
+      const { account, signer, provider, connectionType, network, chainId } = action.payload;
       return {
         ...state,
-        wallet,
+        account,
+        signer,
         provider,
-        connection,
+        connectionType,
+        network,
+        chainId,
         isProviderLoading: false,
       };
     }
     case Web3ProviderActions.SET_LOCAL_PROVIDER:
     case Web3ProviderActions.SET_FALLBACK_PROVIDER: {
-      const { connection, provider } = action.payload;
+      const { provider, connectionType, network, chainId } = action.payload;
       return {
         ...initialState,
-        wallet: {
-          account: null,
-          signer: null,
-        },
         provider,
-        connection,
+        connectionType,
+        network,
+        chainId,
         isProviderLoading: false,
       };
     }
@@ -73,7 +70,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
   const connect: ConnectFn = useCallback(async () => {
     const userInjectedProvider = await getInjectedProvider(web3Modal);
-    if (supportedChains().includes(userInjectedProvider.connection.chainId)) {
+    if (supportedChains().includes(userInjectedProvider.chainId)) {
       dispatch({
         type: Web3ProviderActions.SET_INJECTED_PROVIDER,
         payload: userInjectedProvider,

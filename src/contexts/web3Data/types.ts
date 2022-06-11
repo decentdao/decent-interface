@@ -8,43 +8,29 @@ export type Providers =
   | ethers.providers.BaseProvider;
 
 export interface InitialState {
-  wallet: Wallet;
+  connectionType: string;
+  network: string;
+  chainId: number;
   provider: Providers | null;
-  connection: ConnectionInfo;
+  account: string | null;
+  signer: ethers.Signer | null;
   isProviderLoading: boolean;
 }
 
-export type Wallet = {
-  account: string | null;
-  signer: ethers.Signer | null;
-};
-
-export type ConnectionInfo = {
-  name: string;
+export type InjectedProviderInfo = {
+  account: string;
+  signer: ethers.Signer;
+  provider: ethers.providers.Web3Provider;
+  connectionType: string;
   network: string;
   chainId: number;
 };
 
-export type InjectedProviderInfo = {
-  wallet: {
-    account: string;
-    signer: ethers.Signer;
-  };
-  provider: ethers.providers.Web3Provider;
-  connection: {
-    name: string;
-    network: string;
-    chainId: number;
-  };
-};
-
 export type BaseProviderInfo = {
   provider: Providers;
-  connection: {
-    name: string;
-    network: string;
-    chainId: number;
-  };
+  connectionType: string;
+  network: string;
+  chainId: number;
 };
 
 export type ProviderApiKeys = {
