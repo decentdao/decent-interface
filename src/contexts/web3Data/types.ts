@@ -1,12 +1,15 @@
 import { ethers } from 'ethers';
 
-export type ConnectFn = () => null;
-export type DisconnectFn = () => null;
+export type ConnectFn = () => Promise<void>;
+export type DisconnectFn = () => void;
+export type Providers =
+  | ethers.providers.Web3Provider
+  | ethers.providers.JsonRpcProvider
+  | ethers.providers.BaseProvider;
 
 export interface InitialState {
   wallet: Wallet;
-  provider: ethers.providers.BaseProvider | null;
-  isCacheProvider?: boolean;
+  provider: Providers | null;
   connection: ConnectionInfo;
   isProviderLoading: boolean;
 }
@@ -27,7 +30,7 @@ export type InjectedProviderInfo = {
     account: string;
     signer: ethers.Signer;
   };
-  provider: ethers.providers.BaseProvider;
+  provider: ethers.providers.Web3Provider;
   connection: {
     name: string;
     network: string;
@@ -36,7 +39,7 @@ export type InjectedProviderInfo = {
 };
 
 export type BaseProviderInfo = {
-  provider: ethers.providers.BaseProvider;
+  provider: Providers;
   connection: {
     name: string;
     network: string;

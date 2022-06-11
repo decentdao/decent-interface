@@ -1,4 +1,4 @@
-const supportedChains = () => {
+export const supportedChains = () => {
   const dev =
     process.env.NODE_ENV !== 'production'
       ? [parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID || '0')]
@@ -9,5 +9,3 @@ const supportedChains = () => {
   ];
   return supported;
 };
-
-export { supportedChains };

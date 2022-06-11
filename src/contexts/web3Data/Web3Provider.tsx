@@ -4,14 +4,10 @@ import type { ConnectFn, DisconnectFn, InitialState } from './types';
 import { ActionTypes, Web3ProviderActions } from './actions';
 import { Web3ProviderContext } from './Web3ProviderContext';
 import { WEB3_MODAL_CONFIG } from './web3Modal.config';
-import {
-  getLocalProvider,
-  getFallbackProvider,
-  getInjectedProvider,
-  makeInjectedProvider,
-} from './helpers';
-import { useListeners } from './hooks/useLIsteners';
+import { getLocalProvider, getFallbackProvider, getInjectedProvider } from './helpers';
 import { toast } from 'react-toastify';
+import { useListeners } from './hooks/useLIsteners';
+import { supportedChains } from './chains';
 
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
@@ -26,14 +22,12 @@ const initialState: InitialState = {
   },
   provider: null,
   isProviderLoading: false,
-  isCacheProvider: undefined,
 };
 
 const getInitialState = () => {
   return {
     ...initialState,
     isProviderLoading: true,
-    isCacheProvider: !!web3Modal.cachedProvider,
   };
 };
 
@@ -75,33 +69,29 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, getInitialState());
 
-  const reloadedProvider = useListeners(state.provider, dispatch, web3Modal);
-  useEffect(() => {
-    if (!reloadedProvider) {
+  useListeners(web3Modal, dispatch);
+
+  const connect: ConnectFn = useCallback(async () => {
+    const userInjectedProvider = await getInjectedProvider(web3Modal);
+    if (supportedChains().includes(userInjectedProvider.connection.chainId)) {
       dispatch({
-        type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
-        payload: getFallbackProvider(),
+        type: Web3ProviderActions.SET_INJECTED_PROVIDER,
+        payload: userInjectedProvider,
       });
     } else {
-      (async () => {
-        const injectedProvider = await makeInjectedProvider(reloadedProvider);
-        dispatch({
-          type: Web3ProviderActions.SET_INJECTED_PROVIDER,
-          payload: injectedProvider,
-        });
-      })();
+      web3Modal.clearCachedProvider();
     }
-  }, [reloadedProvider]);
+  }, []);
+
+  const disconnect: DisconnectFn = useCallback(() => {
+    web3Modal.clearCachedProvider();
+    toast('Account disconnected', { toastId: 'disconnected' });
+    dispatch({ type: Web3ProviderActions.SET_FALLBACK_PROVIDER, payload: getFallbackProvider() });
+  }, []);
 
   const load = useCallback(() => {
     if (web3Modal.cachedProvider) {
-      (async () => {
-        const userInjectedProvider = await getInjectedProvider(web3Modal);
-        dispatch({
-          type: Web3ProviderActions.SET_INJECTED_PROVIDER,
-          payload: userInjectedProvider,
-        });
-      })();
+      connect();
       return;
     }
     if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
@@ -118,19 +108,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
       type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
       payload: getFallbackProvider(),
     });
-  }, []);
-
-  const connect: ConnectFn = useCallback(() => {
-    web3Modal.connect().catch(console.error);
-    return null;
-  }, []);
-
-  const disconnect: DisconnectFn = useCallback(() => {
-    web3Modal.clearCachedProvider();
-    toast('Account disconnected', { toastId: 'disconnected' });
-    dispatch({ type: Web3ProviderActions.SET_FALLBACK_PROVIDER, payload: getFallbackProvider() });
-    return null;
-  }, []);
+  }, [connect]);
 
   useEffect(() => load(), [load]);
 
