@@ -25,9 +25,7 @@ const useCreateProposal = ({
   clearState: () => void;
 }) => {
   const {
-    state: {
-      wallet: { signer },
-    },
+    state: { signer },
   } = useWeb3Provider();
   const navigate = useNavigate();
   const [daoData] = useDAOData();

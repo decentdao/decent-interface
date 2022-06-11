@@ -15,9 +15,7 @@ const useCastVote = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {
-    state: {
-      wallet: { signer },
-    },
+    state: { signer },
   } = useWeb3Provider();
   const [daoData] = useDAOData();
 

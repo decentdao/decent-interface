@@ -12,9 +12,7 @@ import useSearchDao from '../../hooks/useSearchDao';
 
 function DAOSearch() {
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
   } = useWeb3Provider();
   const navigate = useNavigate();
 

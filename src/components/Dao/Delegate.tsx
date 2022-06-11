@@ -18,9 +18,7 @@ function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState('');
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
   } = useWeb3Provider();
   const [, validAddress] = useAddress(newDelegatee);
   const [

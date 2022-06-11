@@ -187,9 +187,7 @@ const getProposalData = (
 
 const useUserVotes = (governorModule: GovernorModule | undefined) => {
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
   } = useWeb3Provider();
   const [userVotes, setUserVotes] = useState<UserVote[]>();
 
@@ -265,9 +263,7 @@ const useUserVotePowers = (
   currentBlockNumber: number | undefined
 ) => {
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
   } = useWeb3Provider();
   const [userVotePowers, setUserVotePowers] = useState<UserVotePower[]>();
 

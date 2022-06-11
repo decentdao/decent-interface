@@ -18,7 +18,7 @@ function ToastContent({ label }: { label: string }) {
 
 function ConnectWalletToast({ label }: { label: string }) {
   const {
-    state: { wallet: account },
+    state: { account },
   } = useWeb3Provider();
   useEffect(() => {
     if (account) {

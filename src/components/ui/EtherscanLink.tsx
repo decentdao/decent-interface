@@ -9,9 +9,7 @@ function EtherscanLink({
   children: React.ReactNode;
 }) {
   let {
-    state: {
-      connection: { network },
-    },
+    state: { network },
   } = useWeb3Provider();
   const [subdomain, setSubdomain] = useState('');
 

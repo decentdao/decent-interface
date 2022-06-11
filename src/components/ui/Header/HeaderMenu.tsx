@@ -35,9 +35,7 @@ function WalletConnected({ account }: { account: string | null }) {
 
 function HeaderMenu() {
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
   } = useWeb3Provider();
 
   return (

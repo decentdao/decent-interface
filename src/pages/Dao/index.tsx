@@ -62,11 +62,7 @@ function DAO() {
   const location = useLocation();
   const navigate = useNavigate();
   const {
-    state: {
-      wallet: { account },
-      connection: { chainId },
-      isProviderLoading,
-    },
+    state: { account, chainId, isProviderLoading },
   } = useWeb3Provider();
   const [, setAddress] = useDAOData();
   useValidateDaoRoute();

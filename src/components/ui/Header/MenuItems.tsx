@@ -134,9 +134,7 @@ function AddressCopyItem({ account }: { account: string | null }) {
 
 function MenuItems() {
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
     connect,
     disconnect,
   } = useWeb3Provider();

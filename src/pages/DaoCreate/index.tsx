@@ -29,9 +29,7 @@ function DaoCreate() {
   const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
   const [votingPeriod, setVotingPeriod] = useState<string>('45818');
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
   } = useWeb3Provider();
 
   const decrement = () => {

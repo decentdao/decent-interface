@@ -9,9 +9,7 @@ import { BigNumber } from 'ethers';
 
 const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const {
-    state: {
-      wallet: { account },
-    },
+    state: { account },
   } = useWeb3Provider();
   const [tokenName, setTokenName] = useState<string>();
   const [tokenSymbol, setTokenSymbol] = useState<string>();

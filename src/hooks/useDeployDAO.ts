@@ -42,10 +42,7 @@ const useDeployDAO = ({
   clearState: () => void;
 }) => {
   const {
-    state: {
-      wallet: { signer },
-      connection: { chainId },
-    },
+    state: { signer, chainId },
   } = useWeb3Provider();
   const addresses = useAddresses(chainId);
 
