@@ -65,7 +65,9 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, getInitialState());
+
   const connectDefaultProvider = useCallback(async () => {
+    web3Modal.clearCachedProvider();
     if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
       dispatch({
         type: Web3ProviderActions.SET_LOCAL_PROVIDER,
@@ -87,16 +89,14 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
         payload: userInjectedProvider,
       });
     } else {
-      web3Modal.clearCachedProvider();
+      connectDefaultProvider();
     }
-  }, []);
+  }, [connectDefaultProvider]);
 
   const disconnect: DisconnectFn = useCallback(() => {
     toast('Account disconnected', { toastId: 'disconnected' });
     // switch to a default provider
     connectDefaultProvider();
-    // remove cached provider
-    web3Modal.clearCachedProvider();
   }, [connectDefaultProvider]);
 
   useListeners(web3Modal, connectDefaultProvider, connect);
@@ -106,21 +106,8 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
       connect();
       return;
     }
-    if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
-      (async () => {
-        const localProvider = await getLocalProvider();
-        dispatch({
-          type: Web3ProviderActions.SET_LOCAL_PROVIDER,
-          payload: localProvider,
-        });
-        return;
-      })();
-    }
-    dispatch({
-      type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
-      payload: getFallbackProvider(),
-    });
-  }, [connect]);
+    connectDefaultProvider();
+  }, [connect, connectDefaultProvider]);
 
   useEffect(() => load(), [load]);
 

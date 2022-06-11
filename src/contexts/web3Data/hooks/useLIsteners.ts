@@ -21,8 +21,6 @@ const useListeners = (
         toast(`Switch to a supported chain: ${supportedChains().join(', ')}`, {
           toastId: 'switchChain',
         });
-        // remove cached provider
-        web3Modal.clearCachedProvider();
         // switch to a default provider
         connectDefaultProvider();
       } else {
@@ -42,8 +40,6 @@ const useListeners = (
         toast(`Chain changed: Switch to a supported chain: ${supportedChains().join(', ')}`, {
           toastId: 'switchChain',
         });
-        // remove cached provider
-        web3Modal.clearCachedProvider();
         // switch to a default provider
         connectDefaultProvider();
       } else {
@@ -60,8 +56,6 @@ const useListeners = (
         toast('Account access revoked', { toastId: 'accessChanged' });
         // switch to a default provider
         connectDefaultProvider();
-        // remove cached provider
-        web3Modal.clearCachedProvider();
         // remove listeners
         setModalProvider(null);
       } else {
@@ -75,8 +69,6 @@ const useListeners = (
       toast('Account disconnected', { toastId: 'disconnected' });
       // switch to a default provider
       connectDefaultProvider();
-      // remove cached provider
-      web3Modal.clearCachedProvider();
       // remove listeners
       setModalProvider(null);
     });
