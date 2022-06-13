@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import DAOSearch from '../DaoSearch';
-
 import DaoCreate from '../DaoCreate';
+import DAOFavorites from '../DaoFavorites';
 import DAO from '../Dao';
 
 // @todo refactor route files to own directory
@@ -15,6 +15,10 @@ function DAOs() {
       <Route
         path="new"
         element={<DaoCreate />}
+      />
+      <Route
+        path="favorites"
+        element={<DAOFavorites />}
       />
       <Route
         path=":address/*"
