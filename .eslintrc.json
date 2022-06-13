@@ -53,13 +53,9 @@
             }
         ],
         "comma-dangle": "off",
-        "@typescript-eslint/comma-dangle": [
-            0
-        ],
+        "@typescript-eslint/comma-dangle": "off",
         "indent": "off",
-        "@typescript-eslint/indent": [
-            0
-        ],
+        "@typescript-eslint/indent": "off",
         // prettier config
         "prettier/prettier": [
             1,
@@ -74,7 +70,12 @@
                 "singleAttributePerLine": true
             }
         ],
+        // react hook rules
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
+        "react-hooks/exhaustive-deps": "warn",
+        // var rules
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "error",
+        "@typescript-eslint/no-unused-vars": "warn"
     }
 }
