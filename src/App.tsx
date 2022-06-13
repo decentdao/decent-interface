@@ -1,19 +1,20 @@
-import { useState, useEffect } from 'react';
-import { useCookies } from 'react-cookie';
+import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
 import Body from './components/Body';
 import Breadcrumbs from './components/Breadcrumbs';
 import Header from './components/ui/Header';
 import { TextButton } from './components/ui/forms/Button';
+import { useLocalStorage } from './hooks/useLocalStorage';
 
 function NotAuditedToast() {
-  const [cookieName] = useState('not-audited-acceptance');
-  const [cookieValue] = useState('true');
-  const [cookies, setCookie] = useCookies([cookieName]);
+  const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
+    'not_audited_acceptance',
+    false
+  );
 
   useEffect(() => {
-    if (cookies[cookieName] === cookieValue) {
+    if (notAuditedAcceptance) {
       return;
     }
 
@@ -22,7 +23,7 @@ function NotAuditedToast() {
         <div>WARNING: this project is not audited, use at your own risk.</div>
         <TextButton
           label="Accept"
-          onClick={() => setCookie(cookieName, cookieValue, { path: '/' })}
+          onClick={() => setNotAuditedAcceptance(true)}
         />
       </div>,
       {
@@ -34,7 +35,7 @@ function NotAuditedToast() {
     );
 
     return () => toast.dismiss(toastId);
-  }, [cookieName, cookieValue, cookies, setCookie]);
+  }, [notAuditedAcceptance, setNotAuditedAcceptance]);
 
   return null;
 }
