@@ -6,10 +6,10 @@ import { HelmetProvider, Helmet } from 'react-helmet-async';
 
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { Web3Provider } from './contexts/web3Data';
 import { BlockchainDataProvider } from './contexts/blockchainData';
 import { DAODataProvider } from './contexts/daoData';
 import App from './App';
+import { Web3Provider } from './contexts/web3Data/Web3Provider';
 
 ReactDOM.render(
   <React.StrictMode>

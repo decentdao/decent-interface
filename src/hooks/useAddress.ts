@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { ethers, constants } from 'ethers';
-
-import { useWeb3 } from '../contexts/web3Data';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 
 const useAddress = (addressInput: string | undefined) => {
-  const [{ provider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   const [address, setAddress] = useState<string>();
   const [validAddress, setValidAddress] = useState<boolean>();

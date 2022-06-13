@@ -1,10 +1,10 @@
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useNavigate } from 'react-router-dom';
-import { useWeb3 } from '../contexts/web3Data';
 import { BigNumber, ethers } from 'ethers';
-import { useAddresses } from '../contexts/web3Data/chains';
 import { MetaFactory, MetaFactory__factory } from '../assets/typechain-types/metafactory';
+import { useAddresses } from '../contexts/daoData/useAddresses';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 
 export type TokenAllocation = {
   address: string;
@@ -41,7 +41,9 @@ const useDeployDAO = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
   clearState: () => void;
 }) => {
-  const [{ signerOrProvider, chainId }] = useWeb3();
+  const {
+    state: { signer, chainId },
+  } = useWeb3Provider();
   const addresses = useAddresses(chainId);
 
   const [contractCallDeploy, contractCallPending] = useTransaction();
@@ -53,7 +55,7 @@ const useDeployDAO = ({
 
   let deployDao = useCallback(() => {
     if (
-      !signerOrProvider ||
+      !signer ||
       !setPending ||
       !addresses.metaFactory?.address ||
       !addresses.daoFactory?.address ||
@@ -71,7 +73,7 @@ const useDeployDAO = ({
 
     const factory: MetaFactory = MetaFactory__factory.connect(
       addresses.metaFactory?.address,
-      signerOrProvider
+      signer
     );
     const abiCoder = new ethers.utils.AbiCoder();
 
@@ -197,7 +199,7 @@ const useDeployDAO = ({
       },
     });
   }, [
-    signerOrProvider,
+    signer,
     daoName,
     tokenName,
     tokenSymbol,

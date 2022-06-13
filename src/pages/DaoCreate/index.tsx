@@ -3,11 +3,11 @@ import StepController from '../../components/DaoCreate/DisplayStepController';
 import ConnectWalletToast from '../../components/ConnectWalletToast';
 import ContentBox from '../../components/ui/ContentBox';
 import H1 from '../../components/ui/H1';
-import { useWeb3 } from '../../contexts/web3Data';
 import useDeployDAO, { TokenAllocation } from '../../hooks/useDeployDAO';
 import { TextButton, SecondaryButton, PrimaryButton } from '../../components/ui/forms/Button';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import RightArrow from '../../components/ui/svg/RightArrow';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 function DaoCreate() {
   const [step, setStep] = useState<number>(0);
@@ -28,7 +28,9 @@ function DaoCreate() {
   const [lateQuorumExecution, setLateQuorumExecution] = useState<string>('0');
   const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
   const [votingPeriod, setVotingPeriod] = useState<string>('45818');
-  const [{ account }] = useWeb3();
+  const {
+    state: { account },
+  } = useWeb3Provider();
 
   const decrement = () => {
     setStep(currPage => currPage - 1);

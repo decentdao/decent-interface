@@ -4,9 +4,9 @@ import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 import ContentBox from '../ui/ContentBox';
 import { checkAddress } from '../../hooks/useAddress';
-import { useWeb3 } from '../../contexts/web3Data';
 import { ethers } from 'ethers';
 import { TransactionData } from '../../types/transaction';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 interface TransactionProps {
   transaction: TransactionData;
@@ -25,7 +25,9 @@ function Transaction({
   removeTransaction,
   transactionCount,
 }: TransactionProps) {
-  const [{ provider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   const validateFunctionData = (
     functionName: string,

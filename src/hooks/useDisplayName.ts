@@ -6,7 +6,7 @@ export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
 };
 
-const useDisplayName = (account: string | undefined) => {
+const useDisplayName = (account?: string | null) => {
   const ensName = useENSName(account);
 
   const [accountSubstring, setAccountSubstring] = useState<string>();

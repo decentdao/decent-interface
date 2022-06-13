@@ -7,11 +7,13 @@ import { PrimaryButton } from '../../components/ui/forms/Button';
 import Input from '../../components/ui/forms/Input';
 import InputBox from '../../components/ui/forms/InputBox';
 import H1 from '../../components/ui/H1';
-import { useWeb3 } from '../../contexts/web3Data';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useSearchDao from '../../hooks/useSearchDao';
 
 function DAOSearch() {
-  const [{ account }] = useWeb3();
+  const {
+    state: { account },
+  } = useWeb3Provider();
   const navigate = useNavigate();
 
   const [searchAddressInput, setSearchAddressInput] = useState('');

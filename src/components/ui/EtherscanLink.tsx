@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-
-import { useWeb3 } from '../../contexts/web3Data';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 function EtherscanLink({
   address,
@@ -9,19 +8,21 @@ function EtherscanLink({
   address: string | undefined;
   children: React.ReactNode;
 }) {
-  let [{ networkName }] = useWeb3();
+  let {
+    state: { network },
+  } = useWeb3Provider();
   const [subdomain, setSubdomain] = useState('');
 
   useEffect(() => {
-    if (!networkName || ['localhost', 'homestead'].includes(networkName)) {
+    if (!network || ['localhost', 'homestead'].includes(network)) {
       setSubdomain('');
       return;
     }
 
-    setSubdomain(`${networkName}.`);
-  }, [networkName]);
+    setSubdomain(`${network}.`);
+  }, [network]);
 
-  if (!networkName || !address) {
+  if (!network || !address) {
     return <div>{children}</div>;
   }
 

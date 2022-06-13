@@ -1,19 +1,19 @@
 import { Menu, Transition } from '@headlessui/react';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useAvatar from '../../../hooks/useAvatar';
 import useDisplayName from '../../../hooks/useDisplayName';
-import { useWeb3 } from '../../../contexts/web3Data';
 import DownArrow from '../svg/DownArrow';
 import Avatar from './Avatar';
 import MenuItems from './MenuItems';
 
-function ConnectWallet({ account }: { account?: string }) {
+function ConnectWallet({ account }: { account: string | null }) {
   if (account) {
     return null;
   }
   return <span className="text-sm text-gold-500">Connect Wallet</span>;
 }
 
-function WalletConnected({ account }: { account?: string }) {
+function WalletConnected({ account }: { account: string | null }) {
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
 
@@ -34,7 +34,10 @@ function WalletConnected({ account }: { account?: string }) {
 }
 
 function HeaderMenu() {
-  const [{ account }] = useWeb3();
+  const {
+    state: { account },
+  } = useWeb3Provider();
+
   return (
     <div className="flex items-center justify-center relative">
       <Menu>

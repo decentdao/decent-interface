@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GovernorModule } from '../../assets/typechain-types/module-governor';
-import { useWeb3 } from '../web3Data';
 import { BigNumber, providers } from 'ethers';
+import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 
 // @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
 // current there are unused variables that because of typing can not be removed without a little thought
@@ -82,7 +82,7 @@ const getTimestampString = (time: Date | undefined) => {
   );
 };
 
-const getBlockTimestamp = (provider: providers.BaseProvider | undefined, blockNumber: number) => {
+const getBlockTimestamp = (provider: providers.BaseProvider | null, blockNumber: number) => {
   if (!provider) return;
 
   return provider.getBlockNumber().then(currentBlockNumber => {
@@ -146,7 +146,7 @@ const getVotePercentages = (
 
 // Get proposal data that isn't included in the proposal created event
 const getProposalData = (
-  provider: providers.BaseProvider | undefined,
+  provider: providers.BaseProvider | null,
   governorModule: GovernorModule,
   proposal: ProposalDataWithoutUserData
 ) => {
@@ -186,7 +186,9 @@ const getProposalData = (
 };
 
 const useUserVotes = (governorModule: GovernorModule | undefined) => {
-  const [{ account }] = useWeb3();
+  const {
+    state: { account },
+  } = useWeb3Provider();
   const [userVotes, setUserVotes] = useState<UserVote[]>();
 
   // Get all of the current users votes
@@ -260,14 +262,16 @@ const useUserVotePowers = (
   governorModule: GovernorModule | undefined,
   currentBlockNumber: number | undefined
 ) => {
-  const [{ account }] = useWeb3();
+  const {
+    state: { account },
+  } = useWeb3Provider();
   const [userVotePowers, setUserVotePowers] = useState<UserVotePower[]>();
 
   // Get user vote power
   useEffect(() => {
     if (
       governorModule === undefined ||
-      account === undefined ||
+      !account ||
       currentBlockNumber === undefined ||
       proposalsWithoutUserData === undefined
     ) {
@@ -307,7 +311,9 @@ const useProposalsWithoutUserData = (
   currentBlockNumber: number | undefined,
   governorModule: GovernorModule | undefined
 ) => {
-  const [{ provider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
   const [proposalsWithoutUserData, setProposalsWithoutUserData] =
     useState<ProposalDataWithoutUserData[]>();
 

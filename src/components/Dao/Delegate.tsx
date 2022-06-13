@@ -5,7 +5,6 @@ import useDisplayName from '../../hooks/useDisplayName';
 import ContentBox from '../ui/ContentBox';
 import ContentBanner from '../../components/ui/ContentBanner';
 import EtherscanLink from '../ui/EtherscanLink';
-import { useWeb3 } from '../../contexts/web3Data';
 import { useDAOData } from '../../contexts/daoData';
 import Input from '../ui/forms/Input';
 import { SecondaryButton } from '../ui/forms/Button';
@@ -13,11 +12,14 @@ import InputBox from '../ui/forms/InputBox';
 import cx from 'classnames';
 import useAddress from '../../hooks/useAddress';
 import DataLoadingWrapper from '../ui/loaders/DataLoadingWrapper';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [{ account }] = useWeb3();
+  const {
+    state: { account },
+  } = useWeb3Provider();
   const [, validAddress] = useAddress(newDelegatee);
   const [
     {
@@ -27,7 +29,7 @@ function Delegate() {
   const delegateeDisplayName = useDisplayName(delegatee);
 
   const delegateSelf = () => {
-    if (account === undefined) {
+    if (!account) {
       return;
     }
 

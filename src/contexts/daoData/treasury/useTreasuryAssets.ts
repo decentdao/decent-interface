@@ -1,6 +1,6 @@
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useWeb3 } from '../../web3Data';
+import { useWeb3Provider } from '../../web3Data/hooks/useWeb3Provider';
 import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent, TreasuryAsset } from './types';
 import Web3Token from './Web3Token';
 
@@ -22,7 +22,9 @@ const useTreasuryAssets = (
   // <Map<string, TreasuryAsset>>
   const [treasuryAssets] = useState<Map<string, TreasuryAsset>>(new Map());
 
-  const [{ provider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   /**
    * calculates native coin total amounts
