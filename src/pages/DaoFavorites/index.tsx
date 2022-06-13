@@ -5,7 +5,7 @@ import { TextButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
 import useDAOContract from '../../contexts/daoData/useDAOContract';
 import useDAOName from '../../contexts/daoData/useDAOName';
-import { useWeb3 } from '../../contexts/web3Data';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useFavorites from '../../hooks/useFavorites';
 import useIsDAO from '../../hooks/useIsDAO';
 
@@ -49,7 +49,9 @@ function FavoriteRow({ address }: { address: string }) {
 }
 
 function DAOFavorites() {
-  const [{ chainId }] = useWeb3();
+  const {
+    state: { chainId },
+  } = useWeb3Provider();
   const { favorites } = useFavorites();
 
   const [chainFavorites, setChainFavorites] = useState<string[]>([]);

@@ -1,5 +1,5 @@
 import { useDAOData } from '../../contexts/daoData';
-import { useWeb3 } from '../../contexts/web3Data';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useFavorites from '../../hooks/useFavorites';
 import { StarFilled, StarEmpty } from '../ui/svg/Star';
 import TooltipWrapper from '../ui/TooltipWrapper';
@@ -19,7 +19,9 @@ function FavoriteButton({
 }
 
 function Buttons() {
-  const [{ chainId }] = useWeb3();
+  const {
+    state: { chainId },
+  } = useWeb3Provider();
   const [{ daoAddress }] = useDAOData();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
 
