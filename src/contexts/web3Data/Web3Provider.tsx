@@ -107,10 +107,8 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   const load = useCallback(() => {
     if (web3Modal.cachedProvider) {
       connect();
-      return;
     }
-    connectDefaultProvider();
-  }, [connect, connectDefaultProvider]);
+  }, [connect]);
 
   useEffect(() => load(), [load]);
 
