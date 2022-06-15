@@ -17,13 +17,18 @@ const initialState: InitialState = {
   network: '',
   chainId: 0,
   provider: null,
-  isProviderLoading: false,
 };
 
 const getInitialState = () => {
+  if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
+    return {
+      ...initialState,
+      ...getLocalProvider(),
+    };
+  }
   return {
     ...initialState,
-    isProviderLoading: true,
+    ...getFallbackProvider(),
   };
 };
 
@@ -39,7 +44,6 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         connectionType,
         network,
         chainId,
-        isProviderLoading: false,
       };
     }
     case Web3ProviderActions.SET_LOCAL_PROVIDER:
@@ -51,7 +55,6 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         connectionType,
         network,
         chainId,
-        isProviderLoading: false,
       };
     }
     case Web3ProviderActions.DISCONNECT_WALLET: {
@@ -104,21 +107,18 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   const load = useCallback(() => {
     if (web3Modal.cachedProvider) {
       connect();
-      return;
     }
-    connectDefaultProvider();
-  }, [connect, connectDefaultProvider]);
+  }, [connect]);
 
   useEffect(() => load(), [load]);
 
   const contextValue = useMemo(
     () => ({
       state,
-      dispatch,
       connect,
       disconnect,
     }),
-    [state, dispatch, connect, disconnect]
+    [state, connect, disconnect]
   );
   return (
     <Web3ProviderContext.Provider value={contextValue}>{children}</Web3ProviderContext.Provider>
