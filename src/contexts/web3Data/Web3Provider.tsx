@@ -17,7 +17,6 @@ const initialState: InitialState = {
   network: '',
   chainId: 0,
   provider: null,
-  isProviderLoading: false,
 };
 
 const getInitialState = () => {
