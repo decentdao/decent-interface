@@ -118,11 +118,10 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   const contextValue = useMemo(
     () => ({
       state,
-      dispatch,
       connect,
       disconnect,
     }),
-    [state, dispatch, connect, disconnect]
+    [state, connect, disconnect]
   );
   return (
     <Web3ProviderContext.Provider value={contextValue}>{children}</Web3ProviderContext.Provider>
