@@ -21,9 +21,15 @@ const initialState: InitialState = {
 };
 
 const getInitialState = () => {
+  if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
+    return {
+      ...initialState,
+      ...getLocalProvider(),
+    };
+  }
   return {
     ...initialState,
-    isProviderLoading: true,
+    ...getFallbackProvider(),
   };
 };
 
@@ -39,7 +45,6 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         connectionType,
         network,
         chainId,
-        isProviderLoading: false,
       };
     }
     case Web3ProviderActions.SET_LOCAL_PROVIDER:
@@ -51,7 +56,6 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         connectionType,
         network,
         chainId,
-        isProviderLoading: false,
       };
     }
     case Web3ProviderActions.DISCONNECT_WALLET: {
