@@ -1,5 +1,7 @@
+import DaoCreator from '../../components/DaoCreator';
+
 function New() {
-  return <div className="text-white">Plugins here</div>;
+  return <DaoCreator />;
 }
 
 export default New;
