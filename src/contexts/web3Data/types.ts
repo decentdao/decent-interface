@@ -13,12 +13,12 @@ export interface InitialState {
   chainId: number;
   provider: Providers | null;
   account: string | null;
-  signer: ethers.Signer | null;
+  signerOrProvider: ethers.Signer | Providers | null;
 }
 
 export type InjectedProviderInfo = {
   account: string;
-  signer: ethers.Signer;
+  signerOrProvider: ethers.Signer;
   provider: ethers.providers.Web3Provider;
   connectionType: string;
   network: string;
@@ -27,6 +27,7 @@ export type InjectedProviderInfo = {
 
 export type BaseProviderInfo = {
   provider: Providers;
+  signerOrProvider: ethers.Signer | Providers;
   connectionType: string;
   network: string;
   chainId: number;

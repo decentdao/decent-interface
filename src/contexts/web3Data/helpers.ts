@@ -13,7 +13,7 @@ export const makeInjectedProvider = async (
   const signer = web3Provider.getSigner();
   return {
     account: await signer.getAddress(),
-    signer: signer,
+    signerOrProvider: signer,
     provider: web3Provider,
     connectionType: 'injected provider',
     network: local ? 'localhost' : (await web3Provider.getNetwork()).name,
@@ -45,6 +45,7 @@ export const getLocalProvider = (): Promise<BaseProviderInfo> => {
       .then(network => {
         resolve({
           provider: localProvider,
+          signerOrProvider: localProvider,
           connectionType: 'local provider',
           network: 'localhost',
           chainId: network.chainId,
@@ -70,6 +71,7 @@ export const getFallbackProvider = (): BaseProviderInfo => {
 
   return {
     provider: defaultProvider,
+    signerOrProvider: defaultProvider,
     connectionType: 'readonly provider',
     network: defaultProvider.network.name,
     chainId: defaultProvider.network.chainId,
