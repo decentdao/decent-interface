@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import StepController from '../../components/DaoCreate/DisplayStepController';
+import StepController from '../../components/DaoCreator/DisplayStepController';
 import ConnectWalletToast from '../../components/ConnectWalletToast';
 import ContentBox from '../../components/ui/ContentBox';
 import H1 from '../../components/ui/H1';
