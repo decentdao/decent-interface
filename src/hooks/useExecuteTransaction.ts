@@ -14,7 +14,7 @@ const useExecuteTransaction = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {
-    state: { signer },
+    state: { signerOrProvider },
   } = useWeb3Provider();
   const [daoData] = useDAOData();
 
@@ -25,13 +25,13 @@ const useExecuteTransaction = ({
   }, [setPending, contractCallPending]);
 
   let executeTransaction = useCallback(() => {
-    if (!signer || !proposalData || !daoData || !daoData.moduleAddresses) {
+    if (!signerOrProvider || !proposalData || !daoData || !daoData.moduleAddresses) {
       return;
     }
 
     const governor: GovernorModule = GovernorModule__factory.connect(
       daoData.moduleAddresses[1],
-      signer
+      signerOrProvider
     );
     contractCallExecuteTransaction({
       contractFn: () =>
@@ -45,7 +45,7 @@ const useExecuteTransaction = ({
       failedMessage: 'Executing Failed',
       successMessage: 'Executing Completed',
     });
-  }, [contractCallExecuteTransaction, daoData, proposalData, signer]);
+  }, [contractCallExecuteTransaction, daoData, proposalData, signerOrProvider]);
   return executeTransaction;
 };
 

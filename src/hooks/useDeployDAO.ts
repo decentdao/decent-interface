@@ -42,7 +42,7 @@ const useDeployDAO = ({
   clearState: () => void;
 }) => {
   const {
-    state: { signer, chainId },
+    state: { signerOrProvider, chainId },
   } = useWeb3Provider();
   const addresses = useAddresses(chainId);
 
@@ -55,7 +55,7 @@ const useDeployDAO = ({
 
   let deployDao = useCallback(() => {
     if (
-      !signer ||
+      !signerOrProvider ||
       !setPending ||
       !addresses.metaFactory?.address ||
       !addresses.daoFactory?.address ||
@@ -73,7 +73,7 @@ const useDeployDAO = ({
 
     const factory: MetaFactory = MetaFactory__factory.connect(
       addresses.metaFactory?.address,
-      signer
+      signerOrProvider
     );
     const abiCoder = new ethers.utils.AbiCoder();
 
@@ -199,7 +199,7 @@ const useDeployDAO = ({
       },
     });
   }, [
-    signer,
+    signerOrProvider,
     daoName,
     tokenName,
     tokenSymbol,

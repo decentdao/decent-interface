@@ -25,7 +25,7 @@ const useCreateProposal = ({
   clearState: () => void;
 }) => {
   const {
-    state: { signer },
+    state: { signerOrProvider },
   } = useWeb3Provider();
   const navigate = useNavigate();
   const [daoData] = useDAOData();
@@ -37,13 +37,13 @@ const useCreateProposal = ({
   }, [setPending, contractCallPending]);
 
   let createProposal = useCallback(() => {
-    if (!signer || !proposalData || !setPending || !daoData || !daoData.moduleAddresses) {
+    if (!signerOrProvider || !proposalData || !setPending || !daoData || !daoData.moduleAddresses) {
       return;
     }
 
     const governor: GovernorModule = GovernorModule__factory.connect(
       daoData.moduleAddresses[1],
-      signer
+      signerOrProvider
     );
 
     contractCallCreateProposal({
@@ -69,7 +69,7 @@ const useCreateProposal = ({
     daoData,
     proposalData,
     setPending,
-    signer,
+    signerOrProvider,
     clearState,
   ]);
   return createProposal;

@@ -14,7 +14,7 @@ const useQueueTransaction = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {
-    state: { signer },
+    state: { signerOrProvider },
   } = useWeb3Provider();
   const [daoData] = useDAOData();
 
@@ -25,13 +25,13 @@ const useQueueTransaction = ({
   }, [setPending, contractCallPending]);
 
   let queueTransaction = useCallback(() => {
-    if (!signer || !proposalData || !daoData || !daoData.moduleAddresses) {
+    if (!signerOrProvider || !proposalData || !daoData || !daoData.moduleAddresses) {
       return;
     }
 
     const governor: GovernorModule = GovernorModule__factory.connect(
       daoData.moduleAddresses[1],
-      signer
+      signerOrProvider
     );
     contractCallQueueTransaction({
       contractFn: () =>
@@ -45,7 +45,7 @@ const useQueueTransaction = ({
       failedMessage: 'Queuing Failed',
       successMessage: 'Queuing Completed',
     });
-  }, [contractCallQueueTransaction, daoData, proposalData, signer]);
+  }, [contractCallQueueTransaction, daoData, proposalData, signerOrProvider]);
   return queueTransaction;
 };
 
