@@ -9,11 +9,11 @@ import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 const useTokenContract = (governorModule: GovernorModule | undefined) => {
   const [tokenContract, setTokenContract] = useState<VotesTokenWithSupply>();
   const {
-    state: { provider },
+    state: { signerOrProvider },
   } = useWeb3Provider();
 
   useEffect(() => {
-    if (!governorModule || !provider) {
+    if (!governorModule || !signerOrProvider) {
       setTokenContract(undefined);
       return;
     }
@@ -21,10 +21,10 @@ const useTokenContract = (governorModule: GovernorModule | undefined) => {
     governorModule
       .token()
       .then(tokenAddress =>
-        setTokenContract(VotesTokenWithSupply__factory.connect(tokenAddress, provider))
+        setTokenContract(VotesTokenWithSupply__factory.connect(tokenAddress, signerOrProvider))
       )
       .catch(console.error);
-  }, [governorModule, provider]);
+  }, [governorModule, signerOrProvider]);
 
   return tokenContract;
 };

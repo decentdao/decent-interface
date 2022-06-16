@@ -15,7 +15,7 @@ const useCastVote = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {
-    state: { signer },
+    state: { signerOrProvider },
   } = useWeb3Provider();
   const [daoData] = useDAOData();
 
@@ -27,7 +27,7 @@ const useCastVote = ({
 
   let castVote = useCallback(() => {
     if (
-      !signer ||
+      !signerOrProvider ||
       daoData.moduleAddresses === undefined ||
       proposalId === undefined ||
       vote === undefined
@@ -38,7 +38,7 @@ const useCastVote = ({
     // @todo we could probably just pull contract from state here.
     const governor: GovernorModule = GovernorModule__factory.connect(
       daoData.moduleAddresses[1],
-      signer
+      signerOrProvider
     );
 
     contractCallCastVote({
@@ -47,7 +47,7 @@ const useCastVote = ({
       failedMessage: 'Vote Cast Failed',
       successMessage: 'Vote Casted',
     });
-  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signer, vote]);
+  }, [contractCallCastVote, daoData.moduleAddresses, proposalId, signerOrProvider, vote]);
   return castVote;
 };
 

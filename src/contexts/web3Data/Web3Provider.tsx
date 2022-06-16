@@ -12,7 +12,7 @@ import { Web3ProviderContext } from './hooks/useWeb3Provider';
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
   account: null,
-  signer: null,
+  signerOrProvider: null,
   connectionType: 'not connected',
   network: '',
   chainId: 0,
@@ -35,11 +35,12 @@ const getInitialState = () => {
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
     case Web3ProviderActions.SET_INJECTED_PROVIDER: {
-      const { account, signer, provider, connectionType, network, chainId } = action.payload;
+      const { account, signerOrProvider, provider, connectionType, network, chainId } =
+        action.payload;
       return {
         ...state,
         account,
-        signer,
+        signerOrProvider,
         provider,
         connectionType,
         network,
@@ -48,13 +49,14 @@ const reducer = (state: InitialState, action: ActionTypes) => {
     }
     case Web3ProviderActions.SET_LOCAL_PROVIDER:
     case Web3ProviderActions.SET_FALLBACK_PROVIDER: {
-      const { provider, connectionType, network, chainId } = action.payload;
+      const { provider, connectionType, network, chainId, signerOrProvider } = action.payload;
       return {
         ...initialState,
         provider,
         connectionType,
         network,
         chainId,
+        signerOrProvider,
       };
     }
     case Web3ProviderActions.DISCONNECT_WALLET: {
