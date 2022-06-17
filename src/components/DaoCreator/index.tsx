@@ -3,33 +3,69 @@ import StepController from './DisplayStepController';
 import ConnectWalletToast from '../ConnectWalletToast';
 import ContentBox from '../ui/ContentBox';
 import H1 from '../ui/H1';
-import useDeployDAO, { TokenAllocation } from '../../hooks/useDeployDAO';
+import { TokenAllocation } from '../../hooks/useDeployDAO';
 import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
 import LeftArrow from '../ui/svg/LeftArrow';
 import RightArrow from '../ui/svg/RightArrow';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { ethers } from 'ethers';
-import { useNavigate } from 'react-router-dom';
 
-function DaoCreator() {
+function DaoCreator({
+  pending,
+  daoName,
+  setDAOName,
+  tokenName,
+  setTokenName,
+  tokenSymbol,
+  setTokenSymbol,
+  tokenSupply,
+  setTokenSupply,
+  tokenAllocations,
+  setTokenAllocations,
+  proposalThreshold,
+  setProposalThreshold,
+  quorum,
+  setQuorum,
+  executionDelay,
+  setExecutionDelay,
+  lateQuorumExecution,
+  setLateQuorumExecution,
+  voteStartDelay,
+  setVoteStartDelay,
+  votingPeriod,
+  setVotingPeriod,
+  nextLabel,
+  nextTrigger,
+}: {
+  pending: boolean;
+  daoName: string;
+  setDAOName: React.Dispatch<React.SetStateAction<string>>;
+  tokenName: string;
+  setTokenName: React.Dispatch<React.SetStateAction<string>>;
+  tokenSymbol: string;
+  setTokenSymbol: React.Dispatch<React.SetStateAction<string>>;
+  tokenSupply: string;
+  setTokenSupply: React.Dispatch<React.SetStateAction<string>>;
+  tokenAllocations: TokenAllocation[];
+  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
+  proposalThreshold: string;
+  setProposalThreshold: React.Dispatch<React.SetStateAction<string>>;
+  quorum: string;
+  setQuorum: React.Dispatch<React.SetStateAction<string>>;
+  executionDelay: string;
+  setExecutionDelay: React.Dispatch<React.SetStateAction<string>>;
+  lateQuorumExecution: string;
+  setLateQuorumExecution: React.Dispatch<React.SetStateAction<string>>;
+  voteStartDelay: string;
+  setVoteStartDelay: React.Dispatch<React.SetStateAction<string>>;
+  votingPeriod: string;
+  setVotingPeriod: React.Dispatch<React.SetStateAction<string>>;
+  nextLabel: string;
+  nextTrigger: () => void;
+}) {
   const [step, setStep] = useState<number>(0);
   const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
   const [nextEnabled, setNextEnabled] = useState<boolean>(false);
   const [deployEnabled, setDeployEnabled] = useState<boolean>(false);
-  const [pending, setPending] = useState<boolean>(false);
-  const [daoName, setDAOName] = useState<string>('');
-  const [tokenName, setTokenName] = useState<string>('');
-  const [tokenSymbol, setTokenSymbol] = useState<string>('');
-  const [tokenSupply, setTokenSupply] = useState<string>('');
-  const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>([
-    { address: '', amount: 0 },
-  ]);
-  const [proposalThreshold, setProposalThreshold] = useState<string>('0');
-  const [quorum, setQuorum] = useState<string>('4');
-  const [executionDelay, setExecutionDelay] = useState<string>('6545');
-  const [lateQuorumExecution, setLateQuorumExecution] = useState<string>('0');
-  const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
-  const [votingPeriod, setVotingPeriod] = useState<string>('45818');
   const {
     state: { account },
   } = useWeb3Provider();
@@ -41,41 +77,6 @@ function DaoCreator() {
   const increment = () => {
     setStep(currPage => currPage + 1);
   };
-
-  const navigate = useNavigate();
-
-  const successCallback = (daoAddress: ethers.utils.Result) => {
-    setPending(false);
-    setDAOName('');
-    setTokenName('');
-    setTokenSymbol('');
-    setTokenSupply('');
-    setTokenAllocations([]);
-    setProposalThreshold('');
-    setQuorum('');
-    setExecutionDelay('');
-    setLateQuorumExecution('');
-    setVoteStartDelay('');
-    setVotingPeriod('');
-
-    navigate(`/daos/${daoAddress}`);
-  };
-
-  const deploy = useDeployDAO({
-    daoName,
-    tokenName,
-    tokenSymbol,
-    tokenSupply,
-    tokenAllocations,
-    proposalThreshold,
-    quorum,
-    executionDelay,
-    lateQuorumExecution,
-    voteStartDelay,
-    votingPeriod,
-    setPending,
-    successCallback,
-  });
 
   return (
     <div className="pb-16">
@@ -139,8 +140,8 @@ function DaoCreator() {
           )}
           {step > 1 && (
             <PrimaryButton
-              onClick={deploy}
-              label="Deploy"
+              onClick={nextTrigger}
+              label={nextLabel}
               isLarge
               className="w-48"
               disabled={pending || !account || !deployEnabled}

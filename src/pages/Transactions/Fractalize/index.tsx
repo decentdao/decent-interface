@@ -1,13 +1,9 @@
-import { ethers } from 'ethers';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import DaoCreator from '../../components/DaoCreator';
-import useDeployDAO, { TokenAllocation } from '../../hooks/useDeployDAO';
+import DaoCreator from '../../../components/DaoCreator';
+import { TokenAllocation } from '../../../hooks/useDeployDAO';
 
-function DaoCreate() {
-  const navigate = useNavigate();
-
-  const [pending, setPending] = useState<boolean>(false);
+function Fractalize() {
+  const [pending] = useState<boolean>(false);
   const [daoName, setDAOName] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
   const [tokenSymbol, setTokenSymbol] = useState<string>('');
@@ -22,38 +18,21 @@ function DaoCreate() {
   const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
   const [votingPeriod, setVotingPeriod] = useState<string>('45818');
 
-  const successCallback = (daoAddress: ethers.utils.Result) => {
-    setPending(false);
-    setDAOName('');
-    setTokenName('');
-    setTokenSymbol('');
-    setTokenSupply('');
-    setTokenAllocations([]);
-    setProposalThreshold('');
-    setQuorum('');
-    setExecutionDelay('');
-    setLateQuorumExecution('');
-    setVoteStartDelay('');
-    setVotingPeriod('');
-
-    navigate(`/daos/${daoAddress}`);
+  const logit = () => {
+    console.log({
+      daoName,
+      tokenName,
+      tokenSymbol,
+      tokenSupply,
+      tokenAllocations,
+      proposalThreshold,
+      quorum,
+      executionDelay,
+      lateQuorumExecution,
+      voteStartDelay,
+      votingPeriod,
+    });
   };
-
-  const deploy = useDeployDAO({
-    daoName,
-    tokenName,
-    tokenSymbol,
-    tokenSupply,
-    tokenAllocations,
-    proposalThreshold,
-    quorum,
-    executionDelay,
-    lateQuorumExecution,
-    voteStartDelay,
-    votingPeriod,
-    setPending,
-    successCallback,
-  });
 
   return (
     <DaoCreator
@@ -80,10 +59,10 @@ function DaoCreate() {
       setVoteStartDelay={setVoteStartDelay}
       votingPeriod={votingPeriod}
       setVotingPeriod={setVotingPeriod}
-      nextLabel="Deploy"
-      nextTrigger={deploy}
+      nextLabel="Log it"
+      nextTrigger={logit}
     />
   );
 }
 
-export default DaoCreate;
+export default Fractalize;
