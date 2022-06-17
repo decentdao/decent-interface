@@ -8,9 +8,11 @@ function Summary() {
     <div>
       <div className="mb-8">
         <H1>New Transaction</H1>
-        <Link to="transactions/new">
-          <PrimaryButton label="Make Transaction" />
-        </Link>
+        <div className="flex">
+          <Link to="transactions/new">
+            <PrimaryButton label="Make Transaction" />
+          </Link>
+        </div>
       </div>
       <div className="flex flex-col sm:flex-row sm:justify-between">
         <H1>Proposals</H1>
