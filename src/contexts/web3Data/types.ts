@@ -14,6 +14,7 @@ export interface InitialState {
   provider: Providers | null;
   account: string | null;
   signerOrProvider: ethers.Signer | Providers | null;
+  isProviderLoading: boolean;
 }
 
 export type InjectedProviderInfo = {
