@@ -8,6 +8,8 @@ import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
 import LeftArrow from '../ui/svg/LeftArrow';
 import RightArrow from '../ui/svg/RightArrow';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { ethers } from 'ethers';
+import { useNavigate } from 'react-router-dom';
 
 function DaoCreator() {
   const [step, setStep] = useState<number>(0);
@@ -40,7 +42,9 @@ function DaoCreator() {
     setStep(currPage => currPage + 1);
   };
 
-  const clearState = () => {
+  const navigate = useNavigate();
+
+  const successCallback = (daoAddress: ethers.utils.Result) => {
     setPending(false);
     setDAOName('');
     setTokenName('');
@@ -53,6 +57,8 @@ function DaoCreator() {
     setLateQuorumExecution('');
     setVoteStartDelay('');
     setVotingPeriod('');
+
+    navigate(`/daos/${daoAddress}`);
   };
 
   const deploy = useDeployDAO({
@@ -68,7 +74,7 @@ function DaoCreator() {
     voteStartDelay,
     votingPeriod,
     setPending,
-    clearState,
+    successCallback,
   });
 
   return (

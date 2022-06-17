@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useNavigate } from 'react-router-dom';
 import { BigNumber, ethers } from 'ethers';
 import { MetaFactory, MetaFactory__factory } from '../assets/typechain-types/metafactory';
 import { useAddresses } from '../contexts/daoData/useAddresses';
@@ -25,7 +24,7 @@ const useDeployDAO = ({
   voteStartDelay,
   votingPeriod,
   setPending,
-  clearState,
+  successCallback,
 }: {
   daoName: string;
   tokenName: string;
@@ -39,7 +38,7 @@ const useDeployDAO = ({
   voteStartDelay: string;
   votingPeriod: string;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
-  clearState: () => void;
+  successCallback: (daoAddress: ethers.utils.Result) => void;
 }) => {
   const {
     state: { signerOrProvider, chainId },
@@ -47,7 +46,6 @@ const useDeployDAO = ({
   const addresses = useAddresses(chainId);
 
   const [contractCallDeploy, contractCallPending] = useTransaction();
-  const navigate = useNavigate();
 
   useEffect(() => {
     setPending(contractCallPending);
@@ -190,11 +188,11 @@ const useDeployDAO = ({
           return x.address === addresses.daoFactory?.address;
         });
         if (event === undefined || event[0].topics[1] === undefined) {
+          // @TODO: what is being returned (to where) here?
           return '';
         } else {
           const daoAddress = abiCoder.decode(['address'], event[0].topics[1]);
-          clearState();
-          navigate(`/daos/${daoAddress}`);
+          successCallback(daoAddress);
         }
       },
     });
@@ -212,7 +210,7 @@ const useDeployDAO = ({
     executionDelay,
     lateQuorumExecution,
     setPending,
-    clearState,
+    successCallback,
     addresses.metaFactory?.address,
     addresses.daoFactory?.address,
     addresses.dao?.address,
@@ -224,7 +222,6 @@ const useDeployDAO = ({
     addresses.governorModule?.address,
     addresses.timelockUpgradeable?.address,
     contractCallDeploy,
-    navigate,
   ]);
   return deployDao;
 };
