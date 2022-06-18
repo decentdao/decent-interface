@@ -1,3 +1,4 @@
+import WalletConnectProvider from '@walletconnect/ethereum-provider';
 import { ethers } from 'ethers';
 
 export type ConnectFn = () => Promise<void>;
@@ -6,6 +7,8 @@ export type Providers =
   | ethers.providers.Web3Provider
   | ethers.providers.JsonRpcProvider
   | ethers.providers.BaseProvider;
+
+export type ModalProvider = ethers.providers.Web3Provider | WalletConnectProvider;
 
 export interface InitialState {
   connectionType: string;

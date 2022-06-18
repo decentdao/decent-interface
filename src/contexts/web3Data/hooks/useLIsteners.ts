@@ -1,4 +1,5 @@
-import { ConnectFn } from './../types';
+import WalletConnectProvider from '@walletconnect/ethereum-provider';
+import { ConnectFn, ModalProvider } from './../types';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
@@ -11,7 +12,7 @@ const useListeners = (
   connectDefaultProvider: () => void,
   connect: ConnectFn
 ) => {
-  const [modalProvider, setModalProvider] = useState<ethers.providers.Web3Provider | null>(null);
+  const [modalProvider, setModalProvider] = useState<ModalProvider | null>(null);
 
   useEffect(() => {
     // subscribe to connect events
@@ -28,13 +29,13 @@ const useListeners = (
         toast('Connected', { toastId: 'connected' });
       }
     });
+    return () => {
+      web3Modal.off('connect');
+    };
   }, [web3Modal, connectDefaultProvider]);
 
   useEffect(() => {
-    if (!modalProvider) return;
-
-    // subscribe to chain events
-    modalProvider.on('chainChanged', (chainId: string) => {
+    const chainChangedCallback = (chainId: string) => {
       if (!supportedChains().includes(parseInt(chainId))) {
         // check that connected chain is supported
         toast(`Chain changed: Switch to a supported chain: ${supportedChains().join(', ')}`, {
@@ -48,10 +49,9 @@ const useListeners = (
         });
         connect();
       }
-    });
+    };
 
-    // subscribe to account change events
-    modalProvider.on('accountsChanged', (accounts: string[]) => {
+    const accountsChangedCallback = (accounts: string[]) => {
       if (!accounts.length) {
         toast('Account access revoked', { toastId: 'accessChanged' });
         // switch to a default provider
@@ -62,20 +62,34 @@ const useListeners = (
         toast('Account changed', { toastId: 'connected' });
         connect();
       }
-    });
-
-    // subscribe to provider disconnection
-    modalProvider.on('disconnect', () => {
+    };
+    const disconnectCallback = () => {
       toast('Account disconnected', { toastId: 'disconnected' });
       // switch to a default provider
       connectDefaultProvider();
       // remove listeners
       setModalProvider(null);
-    });
+    };
+    if (!modalProvider) return;
+
+    // subscribe to chain events
+    modalProvider.on('chainChanged', chainChangedCallback);
+
+    // subscribe to account change events
+    modalProvider.on('accountsChanged', accountsChangedCallback);
+
+    // subscribe to provider disconnection
+    modalProvider.on('disconnect', disconnectCallback);
 
     // unsubscribe
     return () => {
-      modalProvider.removeAllListeners();
+      if ((modalProvider as WalletConnectProvider).isWalletConnect) {
+        modalProvider.off('accountsChanged', chainChangedCallback);
+        modalProvider.off('chainChanged', chainChangedCallback);
+        modalProvider.off('disconnect', disconnectCallback);
+      } else {
+        (modalProvider as ethers.providers.Web3Provider).removeAllListeners();
+      }
     };
   }, [modalProvider, web3Modal, connectDefaultProvider, connect]);
 };
