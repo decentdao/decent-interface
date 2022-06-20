@@ -1,16 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { BigNumber } from 'ethers';
 import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
-
-type ProposalData = {
-  targets: string[];
-  values: BigNumber[];
-  calldatas: string[];
-  description: string;
-};
+import { ProposalData } from '../types/proposal';
 
 const useCreateProposal = ({
   proposalData,
