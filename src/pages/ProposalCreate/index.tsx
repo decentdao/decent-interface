@@ -9,6 +9,7 @@ import { useDAOData } from '../../contexts/daoData';
 import useCreateProposal from '../../hooks/useCreateProposal';
 import { TransactionData } from '../../types/transaction';
 import { ProposalData } from '../../types/proposal';
+import { useNavigate } from 'react-router-dom';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -24,6 +25,8 @@ function ProposalCreate() {
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [pending, setPending] = useState<boolean>(false);
   const [proposalData, setProposalData] = useState<ProposalData>();
+
+  const navigate = useNavigate();
 
   /**
    * adds new transaction form
@@ -45,10 +48,12 @@ function ProposalCreate() {
     setStep(currentStep => currentStep + 1);
   };
 
-  const clearState = () => {
+  const successCallback = () => {
     setProposalDescription('');
     setTransactions([]);
     setProposalData(undefined);
+
+    navigate(`/daos/${daoAddress}`);
   };
 
   useEffect(() => {
@@ -83,10 +88,9 @@ function ProposalCreate() {
   }, [transactions, proposalDescription]);
 
   const createProposal = useCreateProposal({
-    daoAddress,
     proposalData,
     setPending,
-    clearState,
+    successCallback,
   });
 
   const isValidProposalValid = useCallback(() => {

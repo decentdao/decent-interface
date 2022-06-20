@@ -1,7 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { BigNumber } from 'ethers';
-import { useNavigate } from 'react-router-dom';
 import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
@@ -14,20 +13,17 @@ type ProposalData = {
 };
 
 const useCreateProposal = ({
-  daoAddress,
   proposalData,
   setPending,
-  clearState,
+  successCallback,
 }: {
-  daoAddress: string | undefined;
   proposalData: ProposalData | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
-  clearState: () => void;
+  successCallback: () => void;
 }) => {
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
-  const navigate = useNavigate();
   const [daoData] = useDAOData();
 
   const [contractCallCreateProposal, contractCallPending] = useTransaction();
@@ -58,19 +54,16 @@ const useCreateProposal = ({
       failedMessage: 'Proposal Creation Failed',
       successMessage: 'Proposal Created',
       successCallback: () => {
-        clearState();
-        navigate(`/daos/${daoAddress}`);
+        successCallback();
       },
     });
   }, [
-    daoAddress,
-    navigate,
     contractCallCreateProposal,
     daoData,
     proposalData,
     setPending,
     signerOrProvider,
-    clearState,
+    successCallback,
   ]);
   return createProposal;
 };
