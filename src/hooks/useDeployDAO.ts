@@ -2,9 +2,9 @@ import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useNavigate } from 'react-router-dom';
 import { BigNumber, ethers } from 'ethers';
-import { MetaFactory, MetaFactory__factory } from '../assets/typechain-types/metafactory';
 import { useAddresses } from '../contexts/daoData/useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { useBlockchainData } from '../contexts/blockchainData';
 
 export type TokenAllocation = {
   address: string;
@@ -49,6 +49,8 @@ const useDeployDAO = ({
   const [contractCallDeploy, contractCallPending] = useTransaction();
   const navigate = useNavigate();
 
+  const { metaFactoryContract } = useBlockchainData();
+
   useEffect(() => {
     setPending(contractCallPending);
   }, [setPending, contractCallPending]);
@@ -66,15 +68,12 @@ const useDeployDAO = ({
       !addresses.tokenFactory?.address ||
       !addresses.governorFactory?.address ||
       !addresses.governorModule?.address ||
-      !addresses.timelockUpgradeable?.address
+      !addresses.timelockUpgradeable?.address ||
+      !metaFactoryContract
     ) {
       return;
     }
 
-    const factory: MetaFactory = MetaFactory__factory.connect(
-      addresses.metaFactory?.address,
-      signerOrProvider
-    );
     const abiCoder = new ethers.utils.AbiCoder();
 
     const createDAOParams = {
@@ -174,7 +173,7 @@ const useDeployDAO = ({
     };
     contractCallDeploy({
       contractFn: () =>
-        factory.createDAOAndModules(
+        metaFactoryContract.createDAOAndModules(
           addresses.daoFactory?.address!,
           0,
           createDAOParams,
@@ -225,6 +224,7 @@ const useDeployDAO = ({
     addresses.timelockUpgradeable?.address,
     contractCallDeploy,
     navigate,
+    metaFactoryContract,
   ]);
   return deployDao;
 };
