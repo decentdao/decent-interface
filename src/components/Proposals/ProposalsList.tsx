@@ -2,7 +2,13 @@ import { useDAOData } from '../../contexts/daoData';
 import ProposalCard from './ProposalCard';
 
 function ProposalsList() {
-  const [{ proposals }] = useDAOData();
+  const [
+    {
+      modules: {
+        governor: { proposals },
+      },
+    },
+  ] = useDAOData();
 
   if (proposals === undefined) {
     return <div className="text-white">Proposals loading...</div>;

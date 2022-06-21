@@ -28,7 +28,19 @@ function AddressDisplay({ address, label }: AddressDisplayProps) {
 }
 
 function Details() {
-  const [{ name, accessControlAddress, moduleAddresses, tokenData, daoAddress }] = useDAOData();
+  const [
+    {
+      name,
+      accessControlAddress,
+      moduleAddresses,
+      daoAddress,
+      modules: {
+        governor: {
+          votingToken: { votingTokenData },
+        },
+      },
+    },
+  ] = useDAOData();
 
   return (
     <div>
@@ -50,7 +62,7 @@ function Details() {
         </InputBox>
         <InputBox>
           <AddressDisplay
-            address={tokenData.address}
+            address={votingTokenData.address}
             label="Governance Token Address:"
           />
         </InputBox>

@@ -15,7 +15,13 @@ const useQueueTransaction = ({
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
-  const [{ governorModuleContract }] = useDAOData();
+  const [
+    {
+      modules: {
+        governor: { governorModuleContract },
+      },
+    },
+  ] = useDAOData();
 
   const [contractCallQueueTransaction, contractCallPending] = useTransaction();
 

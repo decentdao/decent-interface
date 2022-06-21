@@ -27,7 +27,13 @@ const useCreateProposal = ({
     state: { signerOrProvider },
   } = useWeb3Provider();
   const navigate = useNavigate();
-  const [{ governorModuleContract }] = useDAOData();
+  const [
+    {
+      modules: {
+        governor: { governorModuleContract },
+      },
+    },
+  ] = useDAOData();
 
   const [contractCallCreateProposal, contractCallPending] = useTransaction();
 

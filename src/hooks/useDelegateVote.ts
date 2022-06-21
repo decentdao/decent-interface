@@ -9,22 +9,30 @@ const useDelegateVote = ({
   delegatee: string | undefined;
   successCallback: () => void;
 }) => {
-  const [{ tokenContract }] = useDAOData();
+  const [
+    {
+      modules: {
+        governor: {
+          votingToken: { votingTokenContract },
+        },
+      },
+    },
+  ] = useDAOData();
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
 
   let delegateVote = useCallback(() => {
-    if (tokenContract === undefined || delegatee === undefined) {
+    if (votingTokenContract === undefined || delegatee === undefined) {
       return;
     }
 
     contractCallDelegateVote({
-      contractFn: () => tokenContract.delegate(delegatee),
+      contractFn: () => votingTokenContract.delegate(delegatee),
       pendingMessage: 'Delegating Vote',
       failedMessage: 'Vote Delegation Failed',
       successMessage: 'Vote Delegated',
       successCallback: () => successCallback(),
     });
-  }, [contractCallDelegateVote, tokenContract, delegatee, successCallback]);
+  }, [contractCallDelegateVote, votingTokenContract, delegatee, successCallback]);
 
   return [delegateVote, contractCallPending] as const;
 };
