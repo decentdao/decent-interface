@@ -10,6 +10,7 @@ import Summary from '../../components/Dao/Summary';
 import { useDAOData } from '../../contexts/daoData';
 import useValidateDaoRoute from '../../hooks/useValidateDaoRoute';
 import Treasury from '../Treasury';
+import Transactions from '../Transactions';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 function DAORoutes() {
@@ -34,6 +35,10 @@ function DAORoutes() {
       <Route
         path="proposals/*"
         element={<Proposals />}
+      />
+      <Route
+        path="transactions/*"
+        element={<Transactions />}
       />
     </Routes>
   );

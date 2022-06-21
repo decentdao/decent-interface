@@ -1,11 +1,19 @@
 import { Link } from 'react-router-dom';
 import ProposalsList from '../Proposals/ProposalsList';
 import H1 from '../ui/H1';
-import { SecondaryButton, TextButton } from '../ui/forms/Button';
+import { PrimaryButton, SecondaryButton, TextButton } from '../ui/forms/Button';
 
 function Summary() {
   return (
-    <>
+    <div>
+      <div className="mb-8">
+        <H1>New Transaction</H1>
+        <div className="flex">
+          <Link to="transactions/new">
+            <PrimaryButton label="Make Transaction" />
+          </Link>
+        </div>
+      </div>
       <div className="flex flex-col sm:flex-row sm:justify-between">
         <H1>Proposals</H1>
         <div className="flex ml-auto mb-2 sm:mb-0 items-center sm:items-start">
@@ -18,7 +26,7 @@ function Summary() {
         </div>
       </div>
       <ProposalsList />
-    </>
+    </div>
   );
 }
 
