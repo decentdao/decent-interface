@@ -23,7 +23,6 @@ function ProposalCreate() {
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
-  const [pending, setPending] = useState<boolean>(false);
   const [proposalData, setProposalData] = useState<ProposalData>();
 
   const navigate = useNavigate();
@@ -82,16 +81,12 @@ function ProposalCreate() {
       };
       setProposalData(proposal);
     } catch {
-      // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData` these errors are handled in the onChange of the inputs
+      // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData`
       // these errors are handled in the onChange of the inputs in transactions
     }
   }, [transactions, proposalDescription]);
 
-  const createProposal = useCreateProposal({
-    proposalData,
-    setPending,
-    successCallback,
-  });
+  const [createProposal, pending] = useCreateProposal();
 
   const isValidProposalValid = useCallback(() => {
     // if proposalData doesn't exist
@@ -159,7 +154,12 @@ function ProposalCreate() {
           {step === 1 && (
             <PrimaryButton
               type="button"
-              onClick={createProposal}
+              onClick={() =>
+                createProposal({
+                  proposalData,
+                  successCallback,
+                })
+              }
               disabled={!isValidProposalValid() || pending}
               label="Create Proposal"
               isLarge
