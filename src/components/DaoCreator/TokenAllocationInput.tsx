@@ -1,4 +1,4 @@
-import { TokenAllocation } from '../../hooks/useDeployDAO';
+import { TokenAllocation } from '../../types/tokenAllocation';
 import { checkAddress } from '../../hooks/useAddress';
 import { TextButton } from '../ui/forms/Button';
 import Input from '../ui/forms/Input';

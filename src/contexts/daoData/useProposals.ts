@@ -595,7 +595,7 @@ const useProposalsWithoutUserData = (
           newProposal.state = ProposalState.Active;
         } else if (
           newProposal.state === ProposalState.Active &&
-          currentBlockNumber >= newProposal.endBlock.toNumber()
+          currentBlockNumber > newProposal.endBlock.toNumber()
         ) {
           if (newProposal.forVotesCount!.lte(newProposal.againstVotesCount!)) {
             newProposal.state = ProposalState.Defeated;

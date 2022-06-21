@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import DaoCreator from '../../components/DaoCreator';
+import Fractalize from './Fractalize';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
 
 enum View {
@@ -10,7 +10,7 @@ enum View {
 function CreateDAOCard({ onClick }: { onClick: () => void }) {
   return (
     <PrimaryButton
-      label="Create a SubDAO"
+      label="Create a subDAO"
       onClick={onClick}
     />
   );
@@ -42,7 +42,7 @@ function New() {
     case View.CreateDAO: {
       return (
         <CardDetails setView={setView}>
-          <DaoCreator />
+          <Fractalize />
         </CardDetails>
       );
     }

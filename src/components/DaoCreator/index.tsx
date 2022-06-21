@@ -3,18 +3,33 @@ import StepController from './DisplayStepController';
 import ConnectWalletToast from '../ConnectWalletToast';
 import ContentBox from '../ui/ContentBox';
 import H1 from '../ui/H1';
-import useDeployDAO, { TokenAllocation } from '../../hooks/useDeployDAO';
+import { TokenAllocation } from '../../types/tokenAllocation';
 import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
 import LeftArrow from '../ui/svg/LeftArrow';
 import RightArrow from '../ui/svg/RightArrow';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
-function DaoCreator() {
-  const [step, setStep] = useState<number>(0);
-  const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
-  const [nextEnabled, setNextEnabled] = useState<boolean>(false);
-  const [deployEnabled, setDeployEnabled] = useState<boolean>(false);
-  const [pending, setPending] = useState<boolean>(false);
+function DaoCreator({
+  pending,
+  nextLabel,
+  nextTrigger,
+}: {
+  pending: boolean;
+  nextLabel: string;
+  nextTrigger: (
+    daoName: string,
+    tokenName: string,
+    tokenSymbol: string,
+    tokenSupply: string,
+    tokenAllocations: TokenAllocation[],
+    proposalThreshold: string,
+    quorum: string,
+    executionDelay: string,
+    lateQuorumExecution: string,
+    voteStartDelay: string,
+    votingPeriod: string
+  ) => void;
+}) {
   const [daoName, setDAOName] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
   const [tokenSymbol, setTokenSymbol] = useState<string>('');
@@ -28,6 +43,11 @@ function DaoCreator() {
   const [lateQuorumExecution, setLateQuorumExecution] = useState<string>('0');
   const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
   const [votingPeriod, setVotingPeriod] = useState<string>('45818');
+
+  const [step, setStep] = useState<number>(0);
+  const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
+  const [nextEnabled, setNextEnabled] = useState<boolean>(false);
+  const [deployEnabled, setDeployEnabled] = useState<boolean>(false);
   const {
     state: { account },
   } = useWeb3Provider();
@@ -39,37 +59,6 @@ function DaoCreator() {
   const increment = () => {
     setStep(currPage => currPage + 1);
   };
-
-  const clearState = () => {
-    setPending(false);
-    setDAOName('');
-    setTokenName('');
-    setTokenSymbol('');
-    setTokenSupply('');
-    setTokenAllocations([]);
-    setProposalThreshold('');
-    setQuorum('');
-    setExecutionDelay('');
-    setLateQuorumExecution('');
-    setVoteStartDelay('');
-    setVotingPeriod('');
-  };
-
-  const deploy = useDeployDAO({
-    daoName,
-    tokenName,
-    tokenSymbol,
-    tokenSupply,
-    tokenAllocations,
-    proposalThreshold,
-    quorum,
-    executionDelay,
-    lateQuorumExecution,
-    voteStartDelay,
-    votingPeriod,
-    setPending,
-    clearState,
-  });
 
   return (
     <div className="pb-16">
@@ -133,8 +122,22 @@ function DaoCreator() {
           )}
           {step > 1 && (
             <PrimaryButton
-              onClick={deploy}
-              label="Deploy"
+              onClick={() =>
+                nextTrigger(
+                  daoName,
+                  tokenName,
+                  tokenSymbol,
+                  tokenSupply,
+                  tokenAllocations,
+                  proposalThreshold,
+                  quorum,
+                  executionDelay,
+                  lateQuorumExecution,
+                  voteStartDelay,
+                  votingPeriod
+                )
+              }
+              label={nextLabel}
               isLarge
               className="w-48"
               disabled={pending || !account || !deployEnabled}
