@@ -32,7 +32,7 @@ const useDeployDAO = ({
   lateQuorumExecution: string;
   voteStartDelay: string;
   votingPeriod: string;
-  successCallback: (daoAddress: ethers.utils.Result) => void;
+  successCallback: (daoAddress: string) => void;
 }) => {
   const {
     state: { signerOrProvider, chainId },
@@ -71,8 +71,6 @@ const useDeployDAO = ({
       return;
     }
 
-    const abiCoder = new ethers.utils.AbiCoder();
-
     const daoData = createDAOData();
     if (daoData === undefined) {
       console.error('dao data undefined');
@@ -93,25 +91,28 @@ const useDeployDAO = ({
       failedMessage: 'Deployment Failed',
       successMessage: 'DAO Created',
       successCallback: receipt => {
-        const event = receipt.events?.filter(x => {
-          return x.address === addresses.daoFactory?.address;
-        });
-        if (event === undefined || event[0].topics[1] === undefined) {
-          // @TODO: what is being returned (to where) here?
-          return '';
-        } else {
-          const daoAddress = abiCoder.decode(['address'], event[0].topics[1]);
-          successCallback(daoAddress);
+        if (!receipt.events) {
+          return;
         }
+
+        const event = receipt.events.find(x => {
+          if (addresses.daoFactory === undefined) {
+            return false;
+          }
+
+          return x.address === addresses.daoFactory.address;
+        });
+
+        if (event === undefined || event.topics[1] === undefined) {
+          return;
+        }
+
+        const abiCoder = new ethers.utils.AbiCoder();
+        const daoAddress: string = abiCoder.decode(['address'], event.topics[1])[0];
+        successCallback(daoAddress);
       },
     });
-  }, [
-    addresses.daoFactory?.address,
-    contractCallDeploy,
-    createDAOData,
-    metaFactory,
-    successCallback,
-  ]);
+  }, [addresses.daoFactory, contractCallDeploy, createDAOData, metaFactory, successCallback]);
 
   return [deployDao, contractCallPending] as const;
 };

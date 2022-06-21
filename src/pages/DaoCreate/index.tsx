@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
@@ -22,7 +21,7 @@ function DaoCreate() {
   const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
   const [votingPeriod, setVotingPeriod] = useState<string>('45818');
 
-  const successCallback = (daoAddress: ethers.utils.Result) => {
+  const successCallback = (daoAddress: string) => {
     setDAOName('');
     setTokenName('');
     setTokenSymbol('');
