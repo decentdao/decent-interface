@@ -8,17 +8,17 @@ import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 const useGovernorModuleContract = (moduleAddresses: string[] | undefined) => {
   const [governorModule, setGovernorModule] = useState<GovernorModule>();
   const {
-    state: { provider },
+    state: { signerOrProvider },
   } = useWeb3Provider();
 
   useEffect(() => {
-    if (moduleAddresses === undefined || moduleAddresses[1] === undefined || !provider) {
+    if (moduleAddresses === undefined || moduleAddresses[1] === undefined || !signerOrProvider) {
       setGovernorModule(undefined);
       return;
     }
 
-    setGovernorModule(GovernorModule__factory.connect(moduleAddresses[1], provider));
-  }, [moduleAddresses, provider]);
+    setGovernorModule(GovernorModule__factory.connect(moduleAddresses[1], signerOrProvider));
+  }, [moduleAddresses, signerOrProvider]);
 
   return governorModule;
 };
