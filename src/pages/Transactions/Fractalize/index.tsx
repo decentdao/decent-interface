@@ -1,16 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import DaoCreator from '../../../components/DaoCreator';
-import useCreateDAO from '../../../hooks/useCreateDAO';
+import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import useCreateProposal from '../../../hooks/useCreateProposal';
 import { TokenAllocation } from '../../../types/tokenAllocation';
-import { ProposalData } from '../../../types/proposal';
 import { ExecuteData } from '../../../types/execute';
-import { MetaFactory, MetaFactory__factory } from '../../../assets/typechain-types/metafactory';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { useAddresses } from '../../../contexts/daoData/useAddresses';
+import { useNavigate } from 'react-router-dom';
+import { useDAOData } from '../../../contexts/daoData';
+import { useBlockchainData } from '../../../contexts/blockchainData';
 
 function Fractalize() {
-  const [pending, setPending] = useState<boolean>(false);
   const [daoName, setDAOName] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
   const [tokenSymbol, setTokenSymbol] = useState<string>('');
@@ -24,76 +22,48 @@ function Fractalize() {
   const [lateQuorumExecution, setLateQuorumExecution] = useState<string>('0');
   const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
   const [votingPeriod, setVotingPeriod] = useState<string>('45818');
-  const [daoData, setDAOData] = useState<ExecuteData | undefined>();
 
-  const createDAOData = useCreateDAO({
-    daoName,
-    tokenName,
-    tokenSymbol,
-    tokenSupply,
-    tokenAllocations,
-    proposalThreshold,
-    quorum,
-    executionDelay,
-    lateQuorumExecution,
-    voteStartDelay,
-    votingPeriod,
-  });
+  const [{ daoAddress }] = useDAOData();
+  const navigate = useNavigate();
 
-  const [proposalData, setProposalData] = useState<ProposalData>();
-  useEffect(() => {
-    if (daoData === undefined) {
-      console.error('daoData undefined');
-      return;
-    }
+  const [createProposal, pending] = useCreateProposal();
 
-    setProposalData({ ...daoData, description: `New SubDAO: ${daoName}` });
-  }, [daoData, daoName]);
+  const createDAODataCreator = useCreateDAODataCreator();
+
+  const { metaFactoryContract } = useBlockchainData();
 
   const successCallback = () => {
-    console.log('success!');
+    if (!daoAddress) {
+      return;
+    }
+
+    navigate(`/daos/${daoAddress}`);
   };
 
-  const createProposal = useCreateProposal({
-    proposalData,
-    setPending,
-    successCallback,
-  });
-
-  const {
-    state: { signerOrProvider, chainId },
-  } = useWeb3Provider();
-
-  const addresses = useAddresses(chainId);
-
-  const [metaFactory, setMetaFactory] = useState<MetaFactory>();
-  useEffect(() => {
-    if (addresses.metaFactory === undefined || signerOrProvider === null) {
-      setMetaFactory(undefined);
-      return;
-    }
-
-    setMetaFactory(MetaFactory__factory.connect(addresses.metaFactory.address, signerOrProvider));
-  }, [addresses.metaFactory, signerOrProvider]);
-
   const createDAOTrigger = () => {
-    const newDAOData = createDAOData();
+    const newDAOData = createDAODataCreator({
+      daoName,
+      tokenName,
+      tokenSymbol,
+      tokenSupply,
+      tokenAllocations,
+      proposalThreshold,
+      quorum,
+      executionDelay,
+      lateQuorumExecution,
+      voteStartDelay,
+      votingPeriod,
+    });
 
-    if (metaFactory === undefined) {
-      console.error('metafactory is undefined');
-      return;
-    }
-
-    if (newDAOData === undefined) {
-      console.error('newDAOData is undefined');
+    if (!metaFactoryContract || !newDAOData) {
       return;
     }
 
     const data: ExecuteData = {
-      targets: [metaFactory.address],
+      targets: [metaFactoryContract.address],
       values: [0],
       calldatas: [
-        metaFactory.interface.encodeFunctionData('createDAOAndModules', [
+        metaFactoryContract.interface.encodeFunctionData('createDAOAndModules', [
           newDAOData.daoFactory,
           newDAOData.metaFactoryTempRoleIndex,
           newDAOData.createDAOParams,
@@ -104,9 +74,10 @@ function Fractalize() {
       ],
     };
 
-    setDAOData(data);
-
-    createProposal();
+    createProposal({
+      proposalData: { ...data, description: `New subDAO: ${daoName}` },
+      successCallback,
+    });
   };
 
   return (
