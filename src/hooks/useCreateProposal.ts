@@ -2,7 +2,6 @@ import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { BigNumber } from 'ethers';
 import { useNavigate } from 'react-router-dom';
-import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 
@@ -28,7 +27,13 @@ const useCreateProposal = ({
     state: { signerOrProvider },
   } = useWeb3Provider();
   const navigate = useNavigate();
-  const [daoData] = useDAOData();
+  const [
+    {
+      modules: {
+        governor: { governorModuleContract },
+      },
+    },
+  ] = useDAOData();
 
   const [contractCallCreateProposal, contractCallPending] = useTransaction();
 
@@ -37,18 +42,13 @@ const useCreateProposal = ({
   }, [setPending, contractCallPending]);
 
   let createProposal = useCallback(() => {
-    if (!signerOrProvider || !proposalData || !setPending || !daoData || !daoData.moduleAddresses) {
+    if (!signerOrProvider || !proposalData || !setPending || !governorModuleContract) {
       return;
     }
 
-    const governor: GovernorModule = GovernorModule__factory.connect(
-      daoData.moduleAddresses[1],
-      signerOrProvider
-    );
-
     contractCallCreateProposal({
       contractFn: () =>
-        governor.propose(
+        governorModuleContract.propose(
           proposalData.targets,
           proposalData.values,
           proposalData.calldatas,
@@ -66,7 +66,7 @@ const useCreateProposal = ({
     daoAddress,
     navigate,
     contractCallCreateProposal,
-    daoData,
+    governorModuleContract,
     proposalData,
     setPending,
     signerOrProvider,

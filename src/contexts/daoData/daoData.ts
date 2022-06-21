@@ -24,20 +24,28 @@ export interface DAOData {
   name: string | undefined;
   accessControlAddress: string | undefined;
   moduleAddresses: string[] | undefined;
-  proposals: ProposalData[] | undefined;
-  governorModuleContract: GovernorModule | undefined;
-  tokenContract: VotesTokenWithSupply | undefined;
-  tokenData: {
-    name: string | undefined;
-    symbol: string | undefined;
-    decimals: number | undefined;
-    userBalance: BigNumber | undefined;
-    delegatee: string | undefined;
-    votingWeight: BigNumber | undefined;
-    address: string | undefined;
+  modules: {
+    treasury: {
+      treasuryModuleContract: TreasuryModule | undefined;
+      treasuryAssets: TreasuryAsset[];
+    };
+    governor: {
+      governorModuleContract: GovernorModule | undefined;
+      proposals: ProposalData[] | undefined;
+      votingToken: {
+        votingTokenContract: VotesTokenWithSupply | undefined;
+        votingTokenData: {
+          name: string | undefined;
+          symbol: string | undefined;
+          decimals: number | undefined;
+          userBalance: BigNumber | undefined;
+          delegatee: string | undefined;
+          votingWeight: BigNumber | undefined;
+          address: string | undefined;
+        };
+      };
+    };
   };
-  treasuryModuleContract?: TreasuryModule;
-  treasuryAssets: TreasuryAsset[];
 }
 
 type SetDAOAddressFn = React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -69,8 +77,8 @@ const useDAODatas = () => {
   );
   // ************************* //
 
-  const tokenContract = useTokenContract(governorModuleContract);
-  const tokenData = useTokenData(tokenContract);
+  const votingTokenContract = useTokenContract(governorModuleContract);
+  const votingTokenData = useTokenData(votingTokenContract);
   const { currentBlockNumber } = useBlockchainData();
   const proposals = useProposals(governorModuleContract, currentBlockNumber);
   const daoData: DAOData = {
@@ -78,12 +86,20 @@ const useDAODatas = () => {
     name,
     accessControlAddress,
     moduleAddresses,
-    proposals,
-    governorModuleContract,
-    tokenContract,
-    tokenData,
-    treasuryModuleContract,
-    treasuryAssets,
+    modules: {
+      treasury: {
+        treasuryModuleContract,
+        treasuryAssets,
+      },
+      governor: {
+        governorModuleContract,
+        proposals,
+        votingToken: {
+          votingTokenContract,
+          votingTokenData,
+        },
+      },
+    },
   };
 
   return [daoData, setDAOAddress] as const;
