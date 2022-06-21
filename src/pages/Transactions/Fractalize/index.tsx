@@ -134,7 +134,7 @@ function Fractalize() {
       setVoteStartDelay={setVoteStartDelay}
       votingPeriod={votingPeriod}
       setVotingPeriod={setVotingPeriod}
-      nextLabel="Create new DAO Proposal"
+      nextLabel="Create subDAO Proposal"
       nextTrigger={createDAOTrigger}
     />
   );

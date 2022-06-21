@@ -10,7 +10,7 @@ enum View {
 function CreateDAOCard({ onClick }: { onClick: () => void }) {
   return (
     <PrimaryButton
-      label="Create a SubDAO"
+      label="Create a subDAO"
       onClick={onClick}
     />
   );
