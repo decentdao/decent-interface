@@ -11,57 +11,39 @@ import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 function DaoCreator({
   pending,
-  daoName,
-  setDAOName,
-  tokenName,
-  setTokenName,
-  tokenSymbol,
-  setTokenSymbol,
-  tokenSupply,
-  setTokenSupply,
-  tokenAllocations,
-  setTokenAllocations,
-  proposalThreshold,
-  setProposalThreshold,
-  quorum,
-  setQuorum,
-  executionDelay,
-  setExecutionDelay,
-  lateQuorumExecution,
-  setLateQuorumExecution,
-  voteStartDelay,
-  setVoteStartDelay,
-  votingPeriod,
-  setVotingPeriod,
   nextLabel,
   nextTrigger,
 }: {
   pending: boolean;
-  daoName: string;
-  setDAOName: React.Dispatch<React.SetStateAction<string>>;
-  tokenName: string;
-  setTokenName: React.Dispatch<React.SetStateAction<string>>;
-  tokenSymbol: string;
-  setTokenSymbol: React.Dispatch<React.SetStateAction<string>>;
-  tokenSupply: string;
-  setTokenSupply: React.Dispatch<React.SetStateAction<string>>;
-  tokenAllocations: TokenAllocation[];
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
-  proposalThreshold: string;
-  setProposalThreshold: React.Dispatch<React.SetStateAction<string>>;
-  quorum: string;
-  setQuorum: React.Dispatch<React.SetStateAction<string>>;
-  executionDelay: string;
-  setExecutionDelay: React.Dispatch<React.SetStateAction<string>>;
-  lateQuorumExecution: string;
-  setLateQuorumExecution: React.Dispatch<React.SetStateAction<string>>;
-  voteStartDelay: string;
-  setVoteStartDelay: React.Dispatch<React.SetStateAction<string>>;
-  votingPeriod: string;
-  setVotingPeriod: React.Dispatch<React.SetStateAction<string>>;
   nextLabel: string;
-  nextTrigger: () => void;
+  nextTrigger: (
+    daoName: string,
+    tokenName: string,
+    tokenSymbol: string,
+    tokenSupply: string,
+    tokenAllocations: TokenAllocation[],
+    proposalThreshold: string,
+    quorum: string,
+    executionDelay: string,
+    lateQuorumExecution: string,
+    voteStartDelay: string,
+    votingPeriod: string
+  ) => void;
 }) {
+  const [daoName, setDAOName] = useState<string>('');
+  const [tokenName, setTokenName] = useState<string>('');
+  const [tokenSymbol, setTokenSymbol] = useState<string>('');
+  const [tokenSupply, setTokenSupply] = useState<string>('');
+  const [tokenAllocations, setTokenAllocations] = useState<TokenAllocation[]>([
+    { address: '', amount: 0 },
+  ]);
+  const [proposalThreshold, setProposalThreshold] = useState<string>('0');
+  const [quorum, setQuorum] = useState<string>('4');
+  const [executionDelay, setExecutionDelay] = useState<string>('6545');
+  const [lateQuorumExecution, setLateQuorumExecution] = useState<string>('0');
+  const [voteStartDelay, setVoteStartDelay] = useState<string>('6545');
+  const [votingPeriod, setVotingPeriod] = useState<string>('45818');
+
   const [step, setStep] = useState<number>(0);
   const [prevEnabled, setPrevEnabled] = useState<boolean>(false);
   const [nextEnabled, setNextEnabled] = useState<boolean>(false);
@@ -140,7 +122,21 @@ function DaoCreator({
           )}
           {step > 1 && (
             <PrimaryButton
-              onClick={nextTrigger}
+              onClick={() =>
+                nextTrigger(
+                  daoName,
+                  tokenName,
+                  tokenSymbol,
+                  tokenSupply,
+                  tokenAllocations,
+                  proposalThreshold,
+                  quorum,
+                  executionDelay,
+                  lateQuorumExecution,
+                  voteStartDelay,
+                  votingPeriod
+                )
+              }
               label={nextLabel}
               isLarge
               className="w-48"

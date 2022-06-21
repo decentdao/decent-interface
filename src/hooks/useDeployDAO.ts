@@ -7,33 +7,7 @@ import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { TokenAllocation } from '../types/tokenAllocation';
 import { useBlockchainData } from '../contexts/blockchainData';
 
-const useDeployDAO = ({
-  daoName,
-  tokenName,
-  tokenSymbol,
-  tokenSupply,
-  tokenAllocations,
-  proposalThreshold,
-  quorum,
-  executionDelay,
-  lateQuorumExecution,
-  voteStartDelay,
-  votingPeriod,
-  successCallback,
-}: {
-  daoName: string;
-  tokenName: string;
-  tokenSymbol: string;
-  tokenSupply: string;
-  tokenAllocations: TokenAllocation[];
-  proposalThreshold: string;
-  quorum: string;
-  executionDelay: string;
-  lateQuorumExecution: string;
-  voteStartDelay: string;
-  votingPeriod: string;
-  successCallback: (daoAddress: string) => void;
-}) => {
+const useDeployDAO = () => {
   const {
     state: { chainId },
   } = useWeb3Provider();
@@ -46,12 +20,8 @@ const useDeployDAO = ({
 
   const { metaFactoryContract } = useBlockchainData();
 
-  const deployDao = useCallback(() => {
-    if (metaFactoryContract === undefined) {
-      return;
-    }
-
-    const createDAOData = createDAODataCreator({
+  const deployDao = useCallback(
+    ({
       daoName,
       tokenName,
       tokenSymbol,
@@ -63,67 +33,83 @@ const useDeployDAO = ({
       lateQuorumExecution,
       voteStartDelay,
       votingPeriod,
-    });
-
-    if (createDAOData === undefined) {
-      return;
-    }
-
-    const deployDAOSuccess = (receipt: ethers.ContractReceipt) => {
-      if (!receipt.events) {
+      successCallback,
+    }: {
+      daoName: string;
+      tokenName: string;
+      tokenSymbol: string;
+      tokenSupply: string;
+      tokenAllocations: TokenAllocation[];
+      proposalThreshold: string;
+      quorum: string;
+      executionDelay: string;
+      lateQuorumExecution: string;
+      voteStartDelay: string;
+      votingPeriod: string;
+      successCallback: (daoAddress: string) => void;
+    }) => {
+      if (metaFactoryContract === undefined) {
         return;
       }
 
-      const event = receipt.events.find(x => {
-        if (addresses.daoFactory === undefined) {
-          return false;
-        }
-
-        return x.address === addresses.daoFactory.address;
+      const createDAOData = createDAODataCreator({
+        daoName,
+        tokenName,
+        tokenSymbol,
+        tokenSupply,
+        tokenAllocations,
+        proposalThreshold,
+        quorum,
+        executionDelay,
+        lateQuorumExecution,
+        voteStartDelay,
+        votingPeriod,
       });
 
-      if (event === undefined || event.topics[1] === undefined) {
+      if (createDAOData === undefined) {
         return;
       }
 
-      const abiCoder = new ethers.utils.AbiCoder();
-      const daoAddress: string = abiCoder.decode(['address'], event.topics[1])[0];
-      successCallback(daoAddress);
-    };
+      const deployDAOSuccess = (receipt: ethers.ContractReceipt) => {
+        if (!receipt.events) {
+          return;
+        }
 
-    contractCallDeploy({
-      contractFn: () =>
-        metaFactoryContract.createDAOAndModules(
-          createDAOData.daoFactory,
-          createDAOData.metaFactoryTempRoleIndex,
-          createDAOData.createDAOParams,
-          createDAOData.moduleFactoriesCallData,
-          createDAOData.moduleActionData,
-          createDAOData.roleModuleMembers
-        ),
-      pendingMessage: 'Deploying Fractal...',
-      failedMessage: 'Deployment Failed',
-      successMessage: 'DAO Created',
-      successCallback: deployDAOSuccess,
-    });
-  }, [
-    addresses.daoFactory,
-    contractCallDeploy,
-    createDAODataCreator,
-    daoName,
-    executionDelay,
-    lateQuorumExecution,
-    metaFactoryContract,
-    proposalThreshold,
-    quorum,
-    successCallback,
-    tokenAllocations,
-    tokenName,
-    tokenSupply,
-    tokenSymbol,
-    voteStartDelay,
-    votingPeriod,
-  ]);
+        const event = receipt.events.find(x => {
+          if (addresses.daoFactory === undefined) {
+            return false;
+          }
+
+          return x.address === addresses.daoFactory.address;
+        });
+
+        if (event === undefined || event.topics[1] === undefined) {
+          return;
+        }
+
+        const abiCoder = new ethers.utils.AbiCoder();
+        const daoAddress: string = abiCoder.decode(['address'], event.topics[1])[0];
+        successCallback(daoAddress);
+      };
+
+      contractCallDeploy({
+        contractFn: () =>
+          metaFactoryContract.createDAOAndModules(
+            createDAOData.daoFactory,
+            createDAOData.metaFactoryTempRoleIndex,
+            createDAOData.createDAOParams,
+            createDAOData.moduleFactoriesCallData,
+            createDAOData.moduleActionData,
+            createDAOData.roleModuleMembers
+          ),
+        pendingMessage: 'Deploying Fractal...',
+        failedMessage: 'Deployment Failed',
+        successMessage: 'DAO Created',
+        successCallback: deployDAOSuccess,
+      });
+    },
+    [addresses.daoFactory, contractCallDeploy, createDAODataCreator, metaFactoryContract]
+  );
 
   return [deployDao, contractCallPending] as const;
 };
