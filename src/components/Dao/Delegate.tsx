@@ -23,7 +23,13 @@ function Delegate() {
   const [, validAddress] = useAddress(newDelegatee);
   const [
     {
-      tokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
+      modules: {
+        governor: {
+          votingToken: {
+            votingTokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
+          },
+        },
+      },
     },
   ] = useDAOData();
   const delegateeDisplayName = useDisplayName(delegatee);

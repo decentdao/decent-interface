@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
 import { useDAOData } from '../contexts/daoData/index';
 import { ProposalData } from '../contexts/daoData/useProposals';
 import { ethers } from 'ethers';
@@ -16,7 +15,13 @@ const useExecuteTransaction = ({
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
-  const [daoData] = useDAOData();
+  const [
+    {
+      modules: {
+        governor: { governorModuleContract },
+      },
+    },
+  ] = useDAOData();
 
   const [contractCallExecuteTransaction, contractCallPending] = useTransaction();
 
@@ -25,17 +30,13 @@ const useExecuteTransaction = ({
   }, [setPending, contractCallPending]);
 
   let executeTransaction = useCallback(() => {
-    if (!signerOrProvider || !proposalData || !daoData || !daoData.moduleAddresses) {
+    if (!signerOrProvider || !proposalData || !governorModuleContract) {
       return;
     }
 
-    const governor: GovernorModule = GovernorModule__factory.connect(
-      daoData.moduleAddresses[1],
-      signerOrProvider
-    );
     contractCallExecuteTransaction({
       contractFn: () =>
-        governor.execute(
+        governorModuleContract.execute(
           proposalData.targets,
           [0],
           proposalData.calldatas,
@@ -45,7 +46,7 @@ const useExecuteTransaction = ({
       failedMessage: 'Executing Failed',
       successMessage: 'Executing Completed',
     });
-  }, [contractCallExecuteTransaction, daoData, proposalData, signerOrProvider]);
+  }, [contractCallExecuteTransaction, governorModuleContract, proposalData, signerOrProvider]);
   return executeTransaction;
 };
 

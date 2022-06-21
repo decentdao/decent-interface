@@ -16,7 +16,14 @@ function TableRowWrapper({ children }: { children?: ReactNode }) {
 }
 
 function Treasury() {
-  const [{ treasuryAssets, name, treasuryModuleContract }] = useDAOData();
+  const [
+    {
+      name,
+      modules: {
+        treasury: { treasuryAssets, treasuryModuleContract },
+      },
+    },
+  ] = useDAOData();
   return (
     <div>
       <H1>{name} Treasury</H1>
