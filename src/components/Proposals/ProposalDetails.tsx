@@ -11,7 +11,13 @@ import CastVote from './CastVote';
 function ProposalDetails() {
   const params = useParams();
 
-  const [{ proposals }] = useDAOData();
+  const [
+    {
+      modules: {
+        governor: { proposals },
+      },
+    },
+  ] = useDAOData();
   const [proposal, setProposal] = useState<ProposalData>();
 
   useEffect(() => {
