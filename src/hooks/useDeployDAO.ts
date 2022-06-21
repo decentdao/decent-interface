@@ -19,7 +19,6 @@ const useDeployDAO = ({
   lateQuorumExecution,
   voteStartDelay,
   votingPeriod,
-  setPending,
   successCallback,
 }: {
   daoName: string;
@@ -33,12 +32,12 @@ const useDeployDAO = ({
   lateQuorumExecution: string;
   voteStartDelay: string;
   votingPeriod: string;
-  setPending: React.Dispatch<React.SetStateAction<boolean>>;
   successCallback: (daoAddress: ethers.utils.Result) => void;
 }) => {
   const {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
+
   const addresses = useAddresses(chainId);
 
   const createDAOData = useCreateDAO({
@@ -66,10 +65,6 @@ const useDeployDAO = ({
 
     setMetaFactory(MetaFactory__factory.connect(addresses.metaFactory.address, signerOrProvider));
   }, [addresses.metaFactory, signerOrProvider]);
-
-  useEffect(() => {
-    setPending(contractCallPending);
-  }, [setPending, contractCallPending]);
 
   let deployDao = useCallback(() => {
     if (metaFactory === undefined) {
@@ -118,7 +113,7 @@ const useDeployDAO = ({
     successCallback,
   ]);
 
-  return deployDao;
+  return [deployDao, contractCallPending] as const;
 };
 
 export default useDeployDAO;

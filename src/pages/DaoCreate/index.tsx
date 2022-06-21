@@ -8,7 +8,6 @@ import { TokenAllocation } from '../../types/tokenAllocation';
 function DaoCreate() {
   const navigate = useNavigate();
 
-  const [pending, setPending] = useState<boolean>(false);
   const [daoName, setDAOName] = useState<string>('');
   const [tokenName, setTokenName] = useState<string>('');
   const [tokenSymbol, setTokenSymbol] = useState<string>('');
@@ -24,7 +23,6 @@ function DaoCreate() {
   const [votingPeriod, setVotingPeriod] = useState<string>('45818');
 
   const successCallback = (daoAddress: ethers.utils.Result) => {
-    setPending(false);
     setDAOName('');
     setTokenName('');
     setTokenSymbol('');
@@ -40,7 +38,7 @@ function DaoCreate() {
     navigate(`/daos/${daoAddress}`);
   };
 
-  const deploy = useDeployDAO({
+  const [deploy, pending] = useDeployDAO({
     daoName,
     tokenName,
     tokenSymbol,
@@ -52,7 +50,6 @@ function DaoCreate() {
     lateQuorumExecution,
     voteStartDelay,
     votingPeriod,
-    setPending,
     successCallback,
   });
 
