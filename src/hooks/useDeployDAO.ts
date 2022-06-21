@@ -1,6 +1,7 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
+import { ethers } from 'ethers';
+import useCreateDAO from './useCreateDAO';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { BigNumber, ethers } from 'ethers';
 import { MetaFactory, MetaFactory__factory } from '../assets/typechain-types/metafactory';
 import { useAddresses } from '../contexts/daoData/useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
@@ -45,140 +46,58 @@ const useDeployDAO = ({
   } = useWeb3Provider();
   const addresses = useAddresses(chainId);
 
+  const createDAOData = useCreateDAO({
+    daoName,
+    tokenName,
+    tokenSymbol,
+    tokenSupply,
+    tokenAllocations,
+    proposalThreshold,
+    quorum,
+    executionDelay,
+    lateQuorumExecution,
+    voteStartDelay,
+    votingPeriod,
+  });
+
   const [contractCallDeploy, contractCallPending] = useTransaction();
+
+  const [metaFactory, setMetaFactory] = useState<MetaFactory>();
+  useEffect(() => {
+    if (addresses.metaFactory === undefined || signerOrProvider === null) {
+      setMetaFactory(undefined);
+      return;
+    }
+
+    setMetaFactory(MetaFactory__factory.connect(addresses.metaFactory.address, signerOrProvider));
+  }, [addresses.metaFactory, signerOrProvider]);
 
   useEffect(() => {
     setPending(contractCallPending);
   }, [setPending, contractCallPending]);
 
   let deployDao = useCallback(() => {
-    if (
-      !signerOrProvider ||
-      !setPending ||
-      !addresses.metaFactory?.address ||
-      !addresses.daoFactory?.address ||
-      !addresses.dao?.address ||
-      !addresses.accessControl?.address ||
-      !addresses.treasuryModuleFactory?.address ||
-      !addresses.treasuryModule?.address ||
-      !addresses.tokenFactory?.address ||
-      !addresses.governorFactory?.address ||
-      !addresses.governorModule?.address ||
-      !addresses.timelockUpgradeable?.address
-    ) {
+    if (metaFactory === undefined) {
       return;
     }
 
-    const factory: MetaFactory = MetaFactory__factory.connect(
-      addresses.metaFactory?.address,
-      signerOrProvider
-    );
     const abiCoder = new ethers.utils.AbiCoder();
 
-    const createDAOParams = {
-      daoImplementation: addresses.dao?.address,
-      daoFactory: addresses.daoFactory?.address,
-      accessControlImplementation: addresses.accessControl?.address,
-      daoName: daoName,
-      roles: ['EXECUTE_ROLE', 'UPGRADE_ROLE', 'WITHDRAWER_ROLE', 'GOVERNOR_ROLE'],
-      rolesAdmins: ['DAO_ROLE', 'DAO_ROLE', 'DAO_ROLE', 'DAO_ROLE'],
-      members: [[], [], [], []],
-      daoFunctionDescs: ['execute(address[],uint256[],bytes[])', 'upgradeTo(address)'],
-      daoActionRoles: [['EXECUTE_ROLE'], ['UPGRADE_ROLE']],
-    };
+    const daoData = createDAOData();
+    if (daoData === undefined) {
+      console.error('dao data undefined');
+      return;
+    }
 
-    const moduleFactoriesCalldata = [
-      {
-        factory: addresses.treasuryModuleFactory?.address, // Treasury Factory
-        data: [abiCoder.encode(['address'], [addresses.treasuryModule?.address])],
-        value: 0,
-        newContractAddressesToPass: [1],
-        addressesReturned: 1,
-      },
-      {
-        factory: addresses.tokenFactory?.address, // Token Factory
-        data: [
-          abiCoder.encode(['string'], [tokenName]),
-          abiCoder.encode(['string'], [tokenSymbol]),
-          abiCoder.encode(
-            ['address[]'],
-            [tokenAllocations.map(tokenAllocation => tokenAllocation.address)]
-          ),
-          abiCoder.encode(
-            ['uint256[]'],
-            [
-              tokenAllocations.map(tokenAllocation =>
-                ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
-              ),
-            ]
-          ),
-          abiCoder.encode(['uint256'], [ethers.utils.parseUnits(tokenSupply.toString(), 18)]),
-        ],
-        value: 0,
-        newContractAddressesToPass: [2],
-        addressesReturned: 1,
-      },
-      {
-        factory: addresses.governorFactory?.address, // Governor Factory
-        data: [
-          abiCoder.encode(['address'], [addresses.governorModule?.address]), // Governor Impl
-          abiCoder.encode(['address'], [addresses.timelockUpgradeable?.address]), // Timelock Impl
-          abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // vote extension
-          abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // voteDelay
-          abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // votingPeriod
-          abiCoder.encode(
-            ['uint256'],
-            [BigNumber.from(ethers.utils.parseUnits(proposalThreshold, 18))]
-          ), // Threshold
-          abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
-          abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution Delay_Timelock
-        ],
-        value: 0,
-        newContractAddressesToPass: [0, 1, 3],
-        addressesReturned: 2,
-      },
-    ];
-
-    const moduleActionCalldata = {
-      contractIndexes: [2, 2, 2, 2, 2, 2, 4, 5, 5, 5, 5, 5],
-      functionDescs: [
-        'withdrawEth(address[],uint256[])',
-        'depositERC20Tokens(address[],address[],uint256[])',
-        'withdrawERC20Tokens(address[],address[],uint256[])',
-        'depositERC721Tokens(address[],address[],uint256[])',
-        'withdrawERC721Tokens(address[],address[],uint256[])',
-        'upgradeTo(address)',
-        'upgradeTo(address)',
-        'upgradeTo(address)',
-        'updateDelay(uint256)',
-        'scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)',
-        'cancel(bytes32)',
-        'executeBatch(address[],uint256[],bytes[],bytes32,bytes32)',
-      ],
-      roles: [
-        ['WITHDRAWER_ROLE'],
-        ['OPEN_ROLE'],
-        ['WITHDRAWER_ROLE'],
-        ['OPEN_ROLE'],
-        ['WITHDRAWER_ROLE'],
-        ['UPGRADE_ROLE'],
-        ['UPGRADE_ROLE'],
-        ['UPGRADE_ROLE'],
-        ['GOVERNOR_ROLE'],
-        ['GOVERNOR_ROLE'],
-        ['GOVERNOR_ROLE'],
-        ['GOVERNOR_ROLE'],
-      ],
-    };
     contractCallDeploy({
       contractFn: () =>
-        factory.createDAOAndModules(
-          addresses.daoFactory?.address!,
-          0,
-          createDAOParams,
-          moduleFactoriesCalldata,
-          moduleActionCalldata,
-          [[5], [0], [0], [4]]
+        metaFactory.createDAOAndModules(
+          daoData.daoFactory,
+          daoData.metaFactoryTempRoleIndex,
+          daoData.createDAOParams,
+          daoData.moduleFactoriesCallData,
+          daoData.moduleActionData,
+          daoData.roleModuleMembers
         ),
       pendingMessage: 'Deploying Fractal...',
       failedMessage: 'Deployment Failed',
@@ -197,32 +116,13 @@ const useDeployDAO = ({
       },
     });
   }, [
-    signerOrProvider,
-    daoName,
-    tokenName,
-    tokenSymbol,
-    tokenSupply,
-    tokenAllocations,
-    proposalThreshold,
-    quorum,
-    voteStartDelay,
-    votingPeriod,
-    executionDelay,
-    lateQuorumExecution,
-    setPending,
-    successCallback,
-    addresses.metaFactory?.address,
     addresses.daoFactory?.address,
-    addresses.dao?.address,
-    addresses.accessControl?.address,
-    addresses.treasuryModuleFactory?.address,
-    addresses.treasuryModule?.address,
-    addresses.tokenFactory?.address,
-    addresses.governorFactory?.address,
-    addresses.governorModule?.address,
-    addresses.timelockUpgradeable?.address,
     contractCallDeploy,
+    createDAOData,
+    metaFactory,
+    successCallback,
   ]);
+
   return deployDao;
 };
 
