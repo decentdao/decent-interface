@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import DaoCreator from '../../../components/DaoCreator';
 import useCreateDAO from '../../../hooks/useCreateDAO';
 import useCreateProposal from '../../../hooks/useCreateProposal';
-import { TokenAllocation } from '../../../hooks/useDeployDAO';
+import { TokenAllocation } from '../../../types/tokenAllocation';
 import { ProposalData } from '../../../types/proposal';
 import { ExecuteData } from '../../../types/execute';
 import { MetaFactory, MetaFactory__factory } from '../../../assets/typechain-types/metafactory';

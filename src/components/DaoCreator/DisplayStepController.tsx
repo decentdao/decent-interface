@@ -1,4 +1,4 @@
-import { TokenAllocation } from '../../hooks/useDeployDAO';
+import { TokenAllocation } from '../../types/tokenAllocation';
 import DAODetails from './DAODetails';
 import GovernanceDetails from './GovernanceDetails';
 import TokenDetails from './TokenDetails';

@@ -5,12 +5,7 @@ import { useTransaction } from '../contexts/web3Data/transactions';
 import { MetaFactory, MetaFactory__factory } from '../assets/typechain-types/metafactory';
 import { useAddresses } from '../contexts/daoData/useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
-
-export type TokenAllocation = {
-  address: string;
-  amount: number;
-  addressError?: string;
-};
+import { TokenAllocation } from '../types/tokenAllocation';
 
 const useDeployDAO = ({
   daoName,

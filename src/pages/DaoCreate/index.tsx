@@ -2,7 +2,8 @@ import { ethers } from 'ethers';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
-import useDeployDAO, { TokenAllocation } from '../../hooks/useDeployDAO';
+import useDeployDAO from '../../hooks/useDeployDAO';
+import { TokenAllocation } from '../../types/tokenAllocation';
 
 function DaoCreate() {
   const navigate = useNavigate();

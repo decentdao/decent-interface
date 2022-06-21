@@ -3,7 +3,7 @@ import StepController from './DisplayStepController';
 import ConnectWalletToast from '../ConnectWalletToast';
 import ContentBox from '../ui/ContentBox';
 import H1 from '../ui/H1';
-import { TokenAllocation } from '../../hooks/useDeployDAO';
+import { TokenAllocation } from '../../types/tokenAllocation';
 import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
 import LeftArrow from '../ui/svg/LeftArrow';
 import RightArrow from '../ui/svg/RightArrow';
