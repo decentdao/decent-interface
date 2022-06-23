@@ -1,23 +1,37 @@
 import { useEffect, useState } from 'react';
 
-import use165Contract from './use165Contract';
+import use165Contracts from './use165Contracts';
 import { IDAO__factory, IModuleBase__factory } from '@fractal-framework/core-contracts';
 import useSupportsInterfaces from './useSupportsInterfaces';
 
 const useIsDAO = (address: string | undefined) => {
-  const [contract, contractLoading] = use165Contract(address);
+  const [potentialDAOContract, setPotentialDAOContract] = useState<string[]>();
+  useEffect(() => {
+    if (address === undefined) {
+      setPotentialDAOContract(undefined);
+      return;
+    }
+
+    setPotentialDAOContract([address]);
+  }, [address]);
+
+  const [contracts, contractsLoading] = use165Contracts(potentialDAOContract);
   const [interfaces] = useState([
-    IDAO__factory.createInterface(),
     IModuleBase__factory.createInterface(),
+    IDAO__factory.createInterface(),
   ]);
-  const [isDAO, isDAOLoading] = useSupportsInterfaces(contract, interfaces);
+  const [isDAO, isDAOLoading] = useSupportsInterfaces(contracts, interfaces);
 
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    setLoading(contractLoading || isDAOLoading);
-  }, [contractLoading, isDAOLoading]);
+    setLoading(contractsLoading || isDAOLoading);
+  }, [contractsLoading, isDAOLoading]);
 
-  return [isDAO, loading] as const;
+  if (isDAO === undefined) {
+    return [undefined, loading] as const;
+  }
+
+  return [isDAO[0].match, loading] as const;
 };
 
 export default useIsDAO;
