@@ -3,28 +3,28 @@ import { useState, useEffect } from 'react';
 import { IERC165, IERC165__factory } from '@fractal-framework/core-contracts';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 
-const use165Contract = (address: string | undefined) => {
+const use165Contracts = (addresses: string[] | undefined) => {
   const {
     state: { provider },
   } = useWeb3Provider();
 
-  const [contract, setContract] = useState<IERC165>();
+  const [contracts, setContracts] = useState<IERC165[]>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
 
-    if (!provider || !address || address.trim() === '') {
-      setContract(undefined);
+    if (!provider || !addresses) {
+      setContracts(undefined);
       setLoading(false);
       return;
     }
 
-    setContract(IERC165__factory.connect(address, provider));
+    setContracts(addresses.map(address => IERC165__factory.connect(address, provider)));
     setLoading(false);
-  }, [provider, address]);
+  }, [provider, addresses]);
 
-  return [contract, loading] as const;
+  return [contracts, loading] as const;
 };
 
-export default use165Contract;
+export default use165Contracts;
