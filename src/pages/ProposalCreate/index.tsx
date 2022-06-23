@@ -9,6 +9,7 @@ import { useDAOData } from '../../contexts/daoData';
 import useCreateProposal from '../../hooks/useCreateProposal';
 import { TransactionData } from '../../types/transaction';
 import { ProposalData } from '../../types/proposal';
+import { useNavigate } from 'react-router-dom';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -22,8 +23,9 @@ function ProposalCreate() {
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
-  const [pending, setPending] = useState<boolean>(false);
   const [proposalData, setProposalData] = useState<ProposalData>();
+
+  const navigate = useNavigate();
 
   /**
    * adds new transaction form
@@ -45,10 +47,12 @@ function ProposalCreate() {
     setStep(currentStep => currentStep + 1);
   };
 
-  const clearState = () => {
+  const successCallback = () => {
     setProposalDescription('');
     setTransactions([]);
     setProposalData(undefined);
+
+    navigate(`/daos/${daoAddress}`);
   };
 
   useEffect(() => {
@@ -77,17 +81,12 @@ function ProposalCreate() {
       };
       setProposalData(proposal);
     } catch {
-      // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData` these errors are handled in the onChange of the inputs
+      // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData`
       // these errors are handled in the onChange of the inputs in transactions
     }
   }, [transactions, proposalDescription]);
 
-  const createProposal = useCreateProposal({
-    daoAddress,
-    proposalData,
-    setPending,
-    clearState,
-  });
+  const [createProposal, pending] = useCreateProposal();
 
   const isValidProposalValid = useCallback(() => {
     // if proposalData doesn't exist
@@ -155,7 +154,12 @@ function ProposalCreate() {
           {step === 1 && (
             <PrimaryButton
               type="button"
-              onClick={createProposal}
+              onClick={() =>
+                createProposal({
+                  proposalData,
+                  successCallback,
+                })
+              }
               disabled={!isValidProposalValid() || pending}
               label="Create Proposal"
               isLarge

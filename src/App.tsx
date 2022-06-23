@@ -44,7 +44,7 @@ function App() {
   return (
     <>
       <NotAuditedToast />
-      <div className="flex flex-col min-h-screen font-medium">
+      <div className="flex flex-col min-h-screen font-medium text-gray-25">
         <Header />
         <main className="flex-grow bg-fixed bg-image-pattern bg-cover">
           <Breadcrumbs />
