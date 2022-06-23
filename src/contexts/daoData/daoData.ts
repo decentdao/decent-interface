@@ -7,10 +7,11 @@ import useAccessControlAddress from './useAccessControlAddress';
 import useAccessControlContract from './useAccessControlContract';
 import useModuleAddresses from './useModuleAddresses';
 import useGovernorModuleContract from './useGovernorModuleContract';
+import useTimelockModuleContract from './useTimelockModuleContract';
 import useTokenContract from './useTokenContract';
 import useTokenData from './useTokenData';
 import useProposals, { ProposalData } from './useProposals';
-import { GovernorModule } from '../../assets/typechain-types/module-governor';
+import { GovernorModule, TimelockUpgradeable } from '../../assets/typechain-types/module-governor';
 import { TreasuryModule } from '../../assets/typechain-types/module-treasury';
 import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
 import { useBlockchainData } from '../blockchainData';
@@ -31,6 +32,7 @@ export interface DAOData {
     };
     governor: {
       governorModuleContract: GovernorModule | undefined;
+      timelockModuleContract: TimelockUpgradeable | undefined;
       proposals: ProposalData[] | undefined;
       votingToken: {
         votingTokenContract: VotesTokenWithSupply | undefined;
@@ -66,6 +68,7 @@ const useDAODatas = () => {
 
   // ***** Module Hooks ****** //
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
+  const timelockModuleContract = useTimelockModuleContract(moduleAddresses);
   const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses);
   const { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws } =
     useTreasuryEvents(treasuryModuleContract);
@@ -93,6 +96,7 @@ const useDAODatas = () => {
       },
       governor: {
         governorModuleContract,
+        timelockModuleContract,
         proposals,
         votingToken: {
           votingTokenContract,
