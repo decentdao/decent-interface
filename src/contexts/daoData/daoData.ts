@@ -24,7 +24,6 @@ export interface DAOData {
   daoAddress: string | undefined;
   name: string | undefined;
   accessControlAddress: string | undefined;
-  moduleAddresses: string[] | undefined;
   modules: {
     treasury: {
       treasuryModuleContract: TreasuryModule | undefined;
@@ -88,7 +87,6 @@ const useDAODatas = () => {
     daoAddress,
     name,
     accessControlAddress,
-    moduleAddresses,
     modules: {
       treasury: {
         treasuryModuleContract,
