@@ -8,10 +8,10 @@ import Faq from '../svg/Faq';
 import Docs from '../svg/Docs';
 import CopyToClipboard from '../CopyToClipboard';
 import EtherscanLink from '../EtherscanLink';
-import useDisplayName from '../../../hooks/useDisplayName';
 import cx from 'classnames';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { Link } from 'react-router-dom';
+import { useBlockchainData } from '../../../contexts/blockchainData';
 
 interface MenuItem {
   title: string;
@@ -157,10 +157,8 @@ function LinkItemInternal({ title, link, Icon }: LinkMenuItem) {
 }
 
 function AddressCopyItem({ account }: { account: string | undefined }) {
-  const accountDisplayName = useDisplayName(account);
-  if (!account) {
-    return null;
-  }
+  const { accountDisplayName } = useBlockchainData();
+
   return (
     <ItemWrapper noHoverEffect>
       <span className="text-gold-300">
