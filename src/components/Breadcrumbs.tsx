@@ -58,8 +58,8 @@ function Breadcrumbs() {
 
   return (
     <div className="py-2 text-white bg-gray-600 bg-opacity-70 font-mono tracking-wider">
-      <div className="container flex justify-between items-center">
-        <div>
+      <div className="container flex justify-between items-center flex-col sm:flex-row">
+        <div className="mr-auto sm:mr-0">
           <div className="flex items-center">
             <Favorite />
             {breadcrumbs.map(({ match, breadcrumb }, i) => (
@@ -87,20 +87,27 @@ function Breadcrumbs() {
           </div>
         </div>
         {breadcrumbs.length === 1 && daoAddress && (
-          <div className="flex gap-4 sm:gap-2">
+          <div className="flex gap-3 mt-2 sm:mt-0 ml-auto sm:ml-0">
+            <NavLink
+              to={`/daos/${daoAddress}/transactions/new`}
+              className="flex items-center gap-2 text-gold-500 hover:text-gold-300"
+            >
+              <div className="text-sm font-semibold">+Transaction</div>
+            </NavLink>
+            <div className="border-r border-gray-100 mx-1" />
             <NavLink
               to={`/daos/${daoAddress}/details`}
               className="flex items-center gap-2 text-gold-500 hover:text-gold-300"
             >
-              <div className="text-sm font-semibold">Details</div>
               <DetailsIcon />
+              <div className="text-sm font-semibold">Details</div>
             </NavLink>
             <NavLink
               to={`/daos/${daoAddress}/treasury`}
               className="flex items-center gap-2 text-gold-500 hover:text-gold-300"
             >
-              <div className="text-sm font-semibold">Treasury</div>
               <TreasuryIcon />
+              <div className="text-sm font-semibold">Treasury</div>
             </NavLink>
           </div>
         )}
