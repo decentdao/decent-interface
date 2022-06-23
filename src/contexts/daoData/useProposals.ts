@@ -82,7 +82,7 @@ const getTimestampString = (time: Date | undefined) => {
   );
 };
 
-const getBlockTimestamp = (provider: providers.BaseProvider | undefined, blockNumber: number) => {
+const getBlockTimestamp = (provider: providers.BaseProvider | null, blockNumber: number) => {
   if (!provider) return;
 
   return provider.getBlockNumber().then(currentBlockNumber => {
@@ -146,7 +146,7 @@ const getVotePercentages = (
 
 // Get proposal data that isn't included in the proposal created event
 const getProposalData = (
-  provider: providers.BaseProvider | undefined,
+  provider: providers.BaseProvider | null,
   governorModule: GovernorModule,
   proposal: ProposalDataWithoutUserData
 ) => {

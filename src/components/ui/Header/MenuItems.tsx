@@ -156,7 +156,7 @@ function LinkItemInternal({ title, link, Icon }: LinkMenuItem) {
   );
 }
 
-function AddressCopyItem({ account }: { account: string | undefined }) {
+function AddressCopyItem({ account }: { account: string | null }) {
   const { accountDisplayName } = useBlockchainData();
 
   return (
