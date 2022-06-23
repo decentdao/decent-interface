@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useDAOData } from '../../contexts/daoData';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
@@ -8,13 +9,18 @@ import H1 from '../ui/H1';
 
 interface AddressDisplayProps {
   address?: string;
-  label: string;
+  label: string | Promise<string>;
 }
 
 function AddressDisplay({ address, label }: AddressDisplayProps) {
+  const [lbl, setLbl] = useState('');
+  useEffect(() => {
+    Promise.resolve(label).then(setLbl);
+  }, [label]);
+
   return (
     <div>
-      <div className="text-sm font-medium text-gray-50 pb-1">{label}</div>
+      <div className="text-sm font-medium text-gray-50 pb-1">{lbl}</div>
       <div className="flex items-center">
         <EtherscanLink address={address}>
           <div className="text-gold-500 hover:text-gold-300 font-semibold tracking-wider font-mono break-all">
@@ -32,12 +38,14 @@ function Details() {
     {
       name,
       accessControlAddress,
-      moduleAddresses,
       daoAddress,
       modules: {
         governor: {
+          governorModuleContract,
+          timelockModuleContract,
           votingToken: { votingTokenData },
         },
+        treasury: { treasuryModuleContract },
       },
     },
   ] = useDAOData();
@@ -46,50 +54,51 @@ function Details() {
     <div>
       <H1>{name}</H1>
       <ContentBox>
-        <ContentBoxTitle>DAO Address</ContentBoxTitle>
+        <ContentBoxTitle>Core DAO Address</ContentBoxTitle>
         <InputBox>
           <AddressDisplay
             address={daoAddress}
-            label=""
+            label="DAO"
           />
         </InputBox>
-        <ContentBoxTitle>DAO Contracts Addresses</ContentBoxTitle>
         <InputBox>
           <AddressDisplay
             address={accessControlAddress}
-            label="Access Control Address:"
+            label="Access Control"
           />
         </InputBox>
+        <ContentBoxTitle>Module Contract Addresses</ContentBoxTitle>
+        {treasuryModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={treasuryModuleContract.address}
+              label={treasuryModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        {governorModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={governorModuleContract.address}
+              label={governorModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        {timelockModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={timelockModuleContract.address}
+              label={timelockModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        <ContentBoxTitle>Auxiliary Contracts Addresses</ContentBoxTitle>
         <InputBox>
           <AddressDisplay
             address={votingTokenData.address}
-            label="Governance Token Address:"
+            label="Governance Token"
           />
         </InputBox>
-
-        {moduleAddresses && moduleAddresses.length && (
-          <>
-            <ContentBoxTitle>Module Contract Addresses</ContentBoxTitle>
-            <InputBox>
-              <AddressDisplay
-                address={moduleAddresses[0]}
-                label="Treasury Module Address:"
-              />
-            </InputBox>
-            <InputBox>
-              <AddressDisplay
-                address={moduleAddresses[1]}
-                label="Governor Module Address:"
-              />
-            </InputBox>
-            <InputBox>
-              <AddressDisplay
-                address={moduleAddresses[2]}
-                label="Timelock Controller Module Address:"
-              />
-            </InputBox>
-          </>
-        )}
       </ContentBox>
     </div>
   );
