@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import useENSName from './useENSName';
 
-const useAvatar = (account: string | null) => {
+const useAvatar = (account: string | undefined) => {
   const {
     state: { provider },
   } = useWeb3Provider();

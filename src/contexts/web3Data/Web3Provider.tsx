@@ -11,12 +11,12 @@ import { Web3ProviderContext } from './hooks/useWeb3Provider';
 
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
-  account: null,
-  signerOrProvider: null,
+  account: undefined,
+  signerOrProvider: undefined,
   connectionType: 'not connected',
   network: '',
   chainId: 0,
-  provider: null,
+  provider: undefined,
   isProviderLoading: false,
 };
 

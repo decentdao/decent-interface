@@ -156,7 +156,7 @@ function LinkItemInternal({ title, link, Icon }: LinkMenuItem) {
   );
 }
 
-function AddressCopyItem({ account }: { account: string | null }) {
+function AddressCopyItem({ account }: { account: string | undefined }) {
   const accountDisplayName = useDisplayName(account);
   if (!account) {
     return null;
