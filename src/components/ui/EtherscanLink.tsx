@@ -5,7 +5,7 @@ function EtherscanLink({
   address,
   children,
 }: {
-  address: string | undefined;
+  address: string | undefined | null;
   children: React.ReactNode;
 }) {
   let {
