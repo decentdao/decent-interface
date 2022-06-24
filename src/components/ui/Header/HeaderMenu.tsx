@@ -6,14 +6,14 @@ import DownArrow from '../svg/DownArrow';
 import Avatar from './Avatar';
 import MenuItems from './MenuItems';
 
-function ConnectWallet({ account }: { account: string | undefined }) {
+function ConnectWallet({ account }: { account: string | null }) {
   if (account) {
     return null;
   }
   return <span className="text-sm text-gold-500">Connect Wallet</span>;
 }
 
-function WalletConnected({ account }: { account: string | undefined }) {
+function WalletConnected({ account }: { account: string | null }) {
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
 

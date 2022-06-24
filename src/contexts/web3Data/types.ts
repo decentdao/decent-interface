@@ -14,9 +14,9 @@ export interface InitialState {
   connectionType: string;
   network: string;
   chainId: number;
-  provider: Providers | undefined;
-  account: string | undefined;
-  signerOrProvider: ethers.Signer | Providers | undefined;
+  provider: Providers | null;
+  account: string | null;
+  signerOrProvider: ethers.Signer | Providers | null;
   isProviderLoading: boolean;
 }
 
