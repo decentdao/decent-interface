@@ -158,7 +158,9 @@ function LinkItemInternal({ title, link, Icon }: LinkMenuItem) {
 
 function AddressCopyItem({ account }: { account: string | null }) {
   const { accountDisplayName } = useBlockchainData();
-
+  if (!account) {
+    return null;
+  }
   return (
     <ItemWrapper noHoverEffect>
       <span className="text-gold-300">
