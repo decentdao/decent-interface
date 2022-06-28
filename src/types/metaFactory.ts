@@ -6,5 +6,5 @@ export interface MetaFactoryCreateDAOData {
   createDAOParams: IDAOFactory.CreateDAOParamsStruct;
   targets: string[];
   values: BigNumberish[];
-  calldatas: Bytes[];
+  calldatas: string[];
 }

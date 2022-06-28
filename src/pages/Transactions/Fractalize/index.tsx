@@ -60,13 +60,12 @@ function Fractalize() {
       targets: [metaFactoryContract.address],
       values: [0],
       calldatas: [
-        metaFactoryContract.interface.encodeFunctionData('createDAOAndModules', [
+        metaFactoryContract.interface.encodeFunctionData('createDAOAndExecute', [
           newDAOData.daoFactory,
-          newDAOData.metaFactoryTempRoleIndex,
           newDAOData.createDAOParams,
-          newDAOData.moduleFactoriesCallData,
-          newDAOData.moduleActionData,
-          newDAOData.roleModuleMembers,
+          newDAOData.targets,
+          newDAOData.values,
+          newDAOData.calldatas,
         ]),
       ],
     };
