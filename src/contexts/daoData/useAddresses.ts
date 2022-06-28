@@ -11,7 +11,7 @@ export function useAddresses(chainId: number | undefined) {
     accessControl?: { address: string };
     treasuryModule?: { address: string };
     governorModule?: { address: string };
-    timelockUpgradeable?: { address: string };
+    timelock?: { address: string };
   }>({});
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export function useAddresses(chainId: number | undefined) {
         !process.env.REACT_APP_LOCAL_ACCESSCONTROL_ADDRESS ||
         !process.env.REACT_APP_LOCAL_TREASURYMODULE_ADDRESS ||
         !process.env.REACT_APP_LOCAL_GOVERNORMODULE_ADDRESS ||
-        !process.env.REACT_APP_LOCAL_TIMELOCKUPGRADEABLE_ADDRESS
+        !process.env.REACT_APP_LOCAL_TIMELOCK_ADDRESS
       ) {
         console.error('Local addresses not set!');
         setAddresses({});
@@ -50,7 +50,7 @@ export function useAddresses(chainId: number | undefined) {
         accessControl: JSON.parse(process.env.REACT_APP_LOCAL_ACCESSCONTROL_ADDRESS),
         treasuryModule: JSON.parse(process.env.REACT_APP_LOCAL_TREASURYMODULE_ADDRESS),
         governorModule: JSON.parse(process.env.REACT_APP_LOCAL_GOVERNORMODULE_ADDRESS),
-        timelockUpgradeable: JSON.parse(process.env.REACT_APP_LOCAL_TIMELOCKUPGRADEABLE_ADDRESS),
+        timelock: JSON.parse(process.env.REACT_APP_LOCAL_TIMELOCK_ADDRESS),
       });
     } else {
       if (
@@ -63,7 +63,7 @@ export function useAddresses(chainId: number | undefined) {
         !process.env.REACT_APP_ACCESSCONTROL_ADDRESSES ||
         !process.env.REACT_APP_TREASURYMODULE_ADDRESSES ||
         !process.env.REACT_APP_GOVERNORMODULE_ADDRESSES ||
-        !process.env.REACT_APP_TIMELOCKUPGRADEABLE_ADDRESSES
+        !process.env.REACT_APP_TIMELOCK_ADDRESSES
       ) {
         console.error('Addresses not set!');
         setAddresses({});
@@ -92,8 +92,8 @@ export function useAddresses(chainId: number | undefined) {
         JSON.parse(process.env.REACT_APP_TREASURYMODULE_ADDRESSES);
       const governorModuleNetworksAddresses: { [chaindId: number]: { address: string } } =
         JSON.parse(process.env.REACT_APP_GOVERNORMODULE_ADDRESSES);
-      const timelockUpgradeableNetworksAddresses: { [chaindId: number]: { address: string } } =
-        JSON.parse(process.env.REACT_APP_TIMELOCKUPGRADEABLE_ADDRESSES);
+      const timelockNetworksAddresses: { [chaindId: number]: { address: string } } =
+        JSON.parse(process.env.REACT_APP_TIMELOCK_ADDRESSES);
 
       const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
       const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
@@ -105,8 +105,7 @@ export function useAddresses(chainId: number | undefined) {
       const accessControlAddress: { address: string } = accessControlNetworksAddresses[chainId];
       const treasuryModuleAddress: { address: string } = treasuryModuleNetworksAddresses[chainId];
       const governorModuleAddress: { address: string } = governorModuleNetworksAddresses[chainId];
-      const timelockUpgradeableAddress: { address: string } =
-        timelockUpgradeableNetworksAddresses[chainId];
+      const timelockAddress: { address: string } = timelockNetworksAddresses[chainId];
 
       if (
         !metaFactoryAddress ||
@@ -118,7 +117,7 @@ export function useAddresses(chainId: number | undefined) {
         !accessControlAddress ||
         !treasuryModuleAddress ||
         !governorModuleAddress ||
-        !timelockUpgradeableAddress
+        !timelockAddress
       ) {
         console.error(`At least one address for network ${chainId} is not set!`);
         setAddresses({});
@@ -135,7 +134,7 @@ export function useAddresses(chainId: number | undefined) {
         accessControl: accessControlAddress,
         treasuryModule: treasuryModuleAddress,
         governorModule: governorModuleAddress,
-        timelockUpgradeable: timelockUpgradeableAddress,
+        timelock: timelockAddress,
       });
     }
   }, [chainId]);

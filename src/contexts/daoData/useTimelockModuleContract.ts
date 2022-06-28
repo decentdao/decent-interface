@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import {
-  TimelockUpgradeable,
-  TimelockUpgradeable__factory,
-  ITimelockUpgradeable__factory,
+  Timelock,
+  Timelock__factory,
+  ITimelock__factory,
 } from '../../assets/typechain-types/module-governor';
 import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 import use165Contracts from '../../hooks/use165Contracts';
@@ -10,7 +10,7 @@ import useSupportsInterfaces from '../../hooks/useSupportsInterfaces';
 import { IModuleBase__factory } from '@fractal-framework/core-contracts';
 
 const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
-  const [timelockControllerModule, setTimelockControllerModule] = useState<TimelockUpgradeable>();
+  const [timelockControllerModule, setTimelockControllerModule] = useState<Timelock>();
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
@@ -18,7 +18,7 @@ const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
   const [contracts] = use165Contracts(moduleAddresses);
   const [interfaces] = useState([
     IModuleBase__factory.createInterface(),
-    ITimelockUpgradeable__factory.createInterface(),
+    ITimelock__factory.createInterface(),
   ]);
 
   const [potentialTimelocks] = useSupportsInterfaces(contracts, interfaces);
@@ -36,7 +36,7 @@ const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
     }
 
     setTimelockControllerModule(
-      TimelockUpgradeable__factory.connect(timelock.address, signerOrProvider)
+      Timelock__factory.connect(timelock.address, signerOrProvider)
     );
   }, [potentialTimelocks, signerOrProvider]);
 

@@ -49,7 +49,7 @@ const useCreateDAODataCreator = () => {
         addresses.tokenFactory === undefined ||
         addresses.governorFactory === undefined ||
         addresses.governorModule === undefined ||
-        addresses.timelockUpgradeable === undefined
+        addresses.timelock === undefined
       ) {
         return undefined;
       }
@@ -101,7 +101,7 @@ const useCreateDAODataCreator = () => {
           factory: addresses.governorFactory.address, // Governor Factory
           data: [
             abiCoder.encode(['address'], [addresses.governorModule.address]), // Governor Impl
-            abiCoder.encode(['address'], [addresses.timelockUpgradeable.address]), // Timelock Impl
+            abiCoder.encode(['address'], [addresses.timelock.address]), // Timelock Impl
             abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // vote extension
             abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // voteDelay
             abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // votingPeriod
@@ -165,7 +165,7 @@ const useCreateDAODataCreator = () => {
       addresses.daoFactory,
       addresses.governorFactory,
       addresses.governorModule,
-      addresses.timelockUpgradeable,
+      addresses.timelock,
       addresses.tokenFactory,
       addresses.treasuryModule,
       addresses.treasuryModuleFactory,
