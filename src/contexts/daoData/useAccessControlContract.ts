@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { AccessControlDAO, AccessControlDAO__factory } from '@fractal-framework/core-contracts';
+import { DAOAccessControl, DAOAccessControl__factory } from '@fractal-framework/core-contracts';
 import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 
 const useAccessControlContract = (accessControlAddress: string | undefined) => {
-  const [accessControlContract, setAccessControlContract] = useState<AccessControlDAO>();
+  const [accessControlContract, setAccessControlContract] = useState<DAOAccessControl>();
   const {
     state: { provider },
   } = useWeb3Provider();
@@ -14,7 +14,7 @@ const useAccessControlContract = (accessControlAddress: string | undefined) => {
       return;
     }
 
-    setAccessControlContract(AccessControlDAO__factory.connect(accessControlAddress, provider));
+    setAccessControlContract(DAOAccessControl__factory.connect(accessControlAddress, provider));
   }, [accessControlAddress, provider]);
 
   return accessControlContract;
