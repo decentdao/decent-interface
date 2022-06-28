@@ -35,9 +35,7 @@ const useTimelockModuleContract = (moduleAddresses: string[] | undefined) => {
       return;
     }
 
-    setTimelockControllerModule(
-      Timelock__factory.connect(timelock.address, signerOrProvider)
-    );
+    setTimelockControllerModule(Timelock__factory.connect(timelock.address, signerOrProvider));
   }, [potentialTimelocks, signerOrProvider]);
 
   return timelockControllerModule;

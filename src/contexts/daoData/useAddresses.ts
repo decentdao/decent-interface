@@ -92,8 +92,9 @@ export function useAddresses(chainId: number | undefined) {
         JSON.parse(process.env.REACT_APP_TREASURYMODULE_ADDRESSES);
       const governorModuleNetworksAddresses: { [chaindId: number]: { address: string } } =
         JSON.parse(process.env.REACT_APP_GOVERNORMODULE_ADDRESSES);
-      const timelockNetworksAddresses: { [chaindId: number]: { address: string } } =
-        JSON.parse(process.env.REACT_APP_TIMELOCK_ADDRESSES);
+      const timelockNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
+        process.env.REACT_APP_TIMELOCK_ADDRESSES
+      );
 
       const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
       const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
