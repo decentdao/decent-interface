@@ -103,7 +103,7 @@ export interface IDAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -118,7 +118,7 @@ export interface IDAO extends BaseContract {
 
   initialize(
     _accessControl: string,
-    _moduleFactoryBase: string,
+    _moduleFactory: string,
     _name: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -133,7 +133,7 @@ export interface IDAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -162,7 +162,7 @@ export interface IDAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -178,7 +178,7 @@ export interface IDAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

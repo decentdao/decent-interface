@@ -20,7 +20,7 @@ const _abi = [
     name: "accessControl",
     outputs: [
       {
-        internalType: "contract IAccessControlDAO",
+        internalType: "contract IDAOAccessControl",
         name: "",
         type: "address",
       },
@@ -36,25 +36,6 @@ const _abi = [
         internalType: "string",
         name: "",
         type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "bytes4",
-        name: "interfaceId",
-        type: "bytes4",
-      },
-    ],
-    name: "supportsInterface",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
       },
     ],
     stateMutability: "view",

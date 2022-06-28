@@ -78,7 +78,7 @@ const _abi = [
     name: "accessControl",
     outputs: [
       {
-        internalType: "contract IAccessControlDAO",
+        internalType: "contract IDAOAccessControl",
         name: "",
         type: "address",
       },

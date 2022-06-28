@@ -12,7 +12,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -43,8 +47,19 @@ export interface TokenFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
 
-  events: {};
+  events: {
+    "TokenCreated(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "TokenCreated"): EventFragment;
 }
+
+export interface TokenCreatedEventObject {
+  tokenAddress: string;
+}
+export type TokenCreatedEvent = TypedEvent<[string], TokenCreatedEventObject>;
+
+export type TokenCreatedEventFilter = TypedEventFilter<TokenCreatedEvent>;
 
 export interface TokenFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -103,7 +118,12 @@ export interface TokenFactory extends BaseContract {
     ): Promise<boolean>;
   };
 
-  filters: {};
+  filters: {
+    "TokenCreated(address)"(
+      tokenAddress?: string | null
+    ): TokenCreatedEventFilter;
+    TokenCreated(tokenAddress?: string | null): TokenCreatedEventFilter;
+  };
 
   estimateGas: {
     create(

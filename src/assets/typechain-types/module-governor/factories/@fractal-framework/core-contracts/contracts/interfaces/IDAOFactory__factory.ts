@@ -57,13 +57,13 @@ const _abi = [
           },
           {
             internalType: "address",
-            name: "daoFactory",
+            name: "accessControlImplementation",
             type: "address",
           },
           {
-            internalType: "address",
-            name: "accessControlImplementation",
-            type: "address",
+            internalType: "bytes32",
+            name: "salt",
+            type: "bytes32",
           },
           {
             internalType: "string",
