@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { GovernorModule } from '../../assets/typechain-types/module-governor';
 import { BigNumber, providers } from 'ethers';
 import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
-
-// @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
-// current there are unused variables that because of typing can not be removed without a little thought
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import {
+  VoteCastListener,
+  ProposalCreatedListener,
+  ProposalQueuedListener,
+  ProposalExecutedListener,
+} from './types';
 
 export enum ProposalState {
   Pending = 0,
@@ -225,14 +227,7 @@ const useUserVotes = (governorModule: GovernorModule | undefined) => {
 
     const filter = governorModule.filters.VoteCast(account);
 
-    const listenerCallback = (
-      voter: string,
-      proposalId: BigNumber,
-      support: number,
-      weight: BigNumber,
-      reason: string,
-      _: any
-    ) => {
+    const listenerCallback: VoteCastListener = (_: any, proposalId: BigNumber, support: number) => {
       const newUserVote: UserVote = {
         proposalId: proposalId,
         vote: support,
@@ -380,17 +375,16 @@ const useProposalsWithoutUserData = (
 
     const filter = governorModule.filters.ProposalCreated();
 
-    const listenerCallback = (
+    const listenerCallback: ProposalCreatedListener = (
       proposalId: BigNumber,
       proposer: string,
       targets: string[],
-      values: BigNumber[],
+      _: any,
       signatures: string[],
       calldatas: string[],
       startBlock: BigNumber,
       endBlock: BigNumber,
-      description: string,
-      _: any
+      description: string
     ) => {
       const newProposal: ProposalDataWithoutUserData = {
         number: -1,
@@ -447,7 +441,7 @@ const useProposalsWithoutUserData = (
 
     const filter = governorModule.filters.ProposalQueued();
 
-    const listenerCallback = (proposalId: BigNumber, _: any) => {
+    const listenerCallback: ProposalQueuedListener = (proposalId: BigNumber) => {
       governorModule
         .proposalEta(proposalId)
         .then(proposalEta => {
@@ -483,7 +477,7 @@ const useProposalsWithoutUserData = (
 
     const filter = governorModule.filters.ProposalExecuted();
 
-    const listenerCallback = (proposalId: BigNumber, _: any) => {
+    const listenerCallback: ProposalExecutedListener = (proposalId: BigNumber) => {
       setProposalsWithoutUserData(existingProposals => {
         if (existingProposals === undefined) {
           return undefined;
@@ -514,12 +508,11 @@ const useProposalsWithoutUserData = (
 
     const filter = governorModule.filters.VoteCast();
 
-    const listenerCallback = (
-      voter: string,
+    const listenerCallback: VoteCastListener = (
+      _: any,
       proposalId: BigNumber,
       support: number,
-      weight: BigNumber,
-      _: any
+      weight: BigNumber
     ) => {
       setProposalsWithoutUserData(existingProposals => {
         if (existingProposals === undefined) {
