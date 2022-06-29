@@ -2,10 +2,7 @@ import { useWeb3Provider } from './../web3Data/hooks/useWeb3Provider';
 import { useState, useEffect, useCallback } from 'react';
 import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
 import { BigNumber } from 'ethers';
-
-// @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
-// current there are unused variables that because of typing can not be removed without a little thought
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { TransferListener, DelegateChangedListener, DelegateVotesChangedListener } from './types';
 
 const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const {
@@ -95,7 +92,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
     const filterTransferTo = tokenContract.filters.Transfer(null, account);
     const filterTransferFrom = tokenContract.filters.Transfer(account, null);
 
-    const listenerCallback = (from: string, to: string, value: BigNumber, _: any) => {
+    const listenerCallback: TransferListener = () => {
       updateTokenBalance();
     };
 
@@ -117,11 +114,10 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
     const filter = tokenContract.filters.DelegateChanged(account);
 
-    const listenerCallback = (
-      delegator: string,
-      fromDelegate: string,
-      toDelegate: string,
-      _: any
+    const listenerCallback: DelegateChangedListener = (
+      _delegator: string,
+      _fromDelegate: string,
+      toDelegate: string
     ) => {
       setTokenDelegatee(toDelegate);
     };
@@ -152,11 +148,10 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
 
     const filter = tokenContract.filters.DelegateVotesChanged(account);
 
-    const callback = (
+    const callback: DelegateVotesChangedListener = (
       _delegate: string,
       _previousBalance: BigNumber,
-      currentBalance: BigNumber,
-      _: any
+      currentBalance: BigNumber
     ) => {
       setTokenVotingWeight(currentBalance);
     };
