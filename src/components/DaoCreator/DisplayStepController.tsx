@@ -32,7 +32,6 @@ interface StepControllerProps {
   setDeployEnabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// @todo look into reducing the number of props
 function StepController({
   step,
   daoName,
