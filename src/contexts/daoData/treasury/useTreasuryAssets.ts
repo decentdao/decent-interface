@@ -44,7 +44,6 @@ const useTreasuryAssets = (
     });
 
     // native coins are set to "0x" key,
-    // @todo update to allow for any native tokens
     treasuryAssets.set('0x', {
       name: 'Ethereum',
       symbol: 'ETH',
