@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react';
 import { DAO, AccessControlDAO } from '@fractal-framework/core-contracts';
 import { ACRoleListener } from './types';
 
-// @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
-// current there are unused variables that because of typing can not be removed without a little thought
-
 type ModuleActionRoleEvents = {
   address: string;
   addEventCount: number;
