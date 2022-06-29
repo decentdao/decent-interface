@@ -23,7 +23,6 @@ function Button({
    * Text and Loading Component
    ****************************/
   function Label() {
-    // @todo update button loader component
     return (
       <div className="flex justify-center relative">
         <div
