@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { TokenAllocation } from '../../types/tokenAllocation';
 import { TextButton } from '../ui/forms/Button';
 import InputBox from '../ui/forms/InputBox';
@@ -6,17 +5,10 @@ import TokenAllocationInput from './TokenAllocationInput';
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
-  supply: string;
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
 
-function TokenAllocations({
-  tokenAllocations,
-  supply,
-  setTokenAllocations,
-}: TokenAllocationsProps) {
-  const [hasAmountError, setAmountError] = useState(false);
-
+function TokenAllocations({ tokenAllocations, setTokenAllocations }: TokenAllocationsProps) {
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
     const newTokenAllocations = [...tokenAllocations];
     newTokenAllocations[index] = tokenAllocation;
@@ -45,13 +37,6 @@ function TokenAllocations({
     ]);
   };
 
-  useEffect(() => {
-    const totalAllocated = tokenAllocations.reduce((prev, cur) => Number(cur.amount) + prev, 0);
-    if (Number(supply) && totalAllocated) {
-      setAmountError(Number(supply) < totalAllocated);
-    }
-  }, [tokenAllocations, supply]);
-
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
@@ -64,7 +49,6 @@ function TokenAllocations({
               <TokenAllocationInput
                 key={index}
                 index={index}
-                hasAmountError={hasAmountError}
                 tokenAllocation={tokenAllocation}
                 updateTokenAllocation={updateTokenAllocation}
                 removeTokenAllocation={removeTokenAllocation}

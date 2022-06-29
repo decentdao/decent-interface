@@ -48,7 +48,6 @@ function StepController({
   setDAOName,
   setTokenName,
   setTokenSymbol,
-  setTokenSupply,
   setTokenAllocations,
   setProposalThreshold,
   setQuorum,
@@ -79,8 +78,6 @@ function StepController({
           setName={setTokenName}
           symbol={tokenSymbol}
           setSymbol={setTokenSymbol}
-          supply={tokenSupply}
-          setSupply={setTokenSupply}
           tokenAllocations={tokenAllocations}
           setTokenAllocations={setTokenAllocations}
         />
