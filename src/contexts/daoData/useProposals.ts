@@ -227,7 +227,11 @@ const useUserVotes = (governorModule: GovernorModule | undefined) => {
 
     const filter = governorModule.filters.VoteCast(account);
 
-    const listenerCallback: VoteCastListener = (_: any, proposalId: BigNumber, support: number) => {
+    const listenerCallback: VoteCastListener = (
+      _voter: string,
+      proposalId: BigNumber,
+      support: number
+    ) => {
       const newUserVote: UserVote = {
         proposalId: proposalId,
         vote: support,
@@ -379,7 +383,7 @@ const useProposalsWithoutUserData = (
       proposalId: BigNumber,
       proposer: string,
       targets: string[],
-      _: any,
+      _values: BigNumber[],
       signatures: string[],
       calldatas: string[],
       startBlock: BigNumber,
@@ -509,7 +513,7 @@ const useProposalsWithoutUserData = (
     const filter = governorModule.filters.VoteCast();
 
     const listenerCallback: VoteCastListener = (
-      _: any,
+      _voter: string,
       proposalId: BigNumber,
       support: number,
       weight: BigNumber
