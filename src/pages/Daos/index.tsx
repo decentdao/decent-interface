@@ -4,7 +4,6 @@ import DaoCreate from '../DaoCreate';
 import DAOFavorites from '../DaoFavorites';
 import DAO from '../Dao';
 
-// @todo refactor route files to own directory
 function DAOs() {
   return (
     <Routes>

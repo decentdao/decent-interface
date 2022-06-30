@@ -4,10 +4,6 @@ import { TreasuryModule } from '../../../assets/typechain-types/module-treasury'
 import { TypedEvent } from '../../../assets/typechain-types/module-treasury/common';
 import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from './types';
 
-// @todo eth deposits should be renamed to native deposits for future proofing
-
-// @todo handle erc721 deposits/withdrawals
-
 const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
   const [nativeDeposits, setNativeDeposits] = useState<TokenDepositEvent[]>();
   const [nativeWithdraws, setNativeWithdraws] = useState<TokenWithdrawEvent[]>([]);
