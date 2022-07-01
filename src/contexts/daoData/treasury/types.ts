@@ -16,7 +16,7 @@ export interface TokenWithdrawEvent extends TokenEvent {
 }
 export interface ERC721TokenEvent extends TokenEvent {
   contractAddresses: string[];
-  amounts: BigNumber[];
+  tokenIds: BigNumber[];
 }
 export interface ERC20TokenEvent extends TokenEvent {
   contractAddresses: string[];
