@@ -115,11 +115,61 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     ]);
   };
 
+  /**
+   * listener for erc721 token deposits
+   * @param contractAddresses
+   * @param senders
+   * @param tokenIds
+   * @param event
+   */
+  const erc721DepositListener = (
+    contractAddresses: string[],
+    _: string[],
+    tokenIds: BigNumber[],
+    event: TypedEvent<any, any>
+  ) => {
+    setErc721TokenDeposits(prevDeposits => [
+      ...(prevDeposits || []),
+      {
+        contractAddresses,
+        tokenIds,
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+      },
+    ]);
+  };
+
+  /**
+   * listners for erc721 token withdrawns
+   * @param contractAddresses
+   * @param senders
+   * @param tokenIds
+   * @param event
+   */
+  const erc721WithdrawListener = (
+    contractAddresses: string[],
+    _: string[],
+    tokenIds: BigNumber[],
+    event: TypedEvent<any, any>
+  ) => {
+    setErc721TokenWithdraws(prevTokenWithdraws => [
+      ...(prevTokenWithdraws || []),
+      {
+        contractAddresses,
+        tokenIds,
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+      },
+    ]);
+  };
+
   const resetState = () => {
     setNativeDeposits(undefined);
     setNativeWithdraws([]);
     setErc20TokenDeposits([]);
     setErc20TokenWithdraws([]);
+    setErc721TokenDeposits([]);
+    setErc721TokenWithdraws([]);
   };
   /**
    * handles deposit events for native coins on treasury module contract
