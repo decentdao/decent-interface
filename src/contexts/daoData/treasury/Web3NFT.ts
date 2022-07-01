@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import {
   IERC721Metadata,
   IERC721Metadata__factory,
@@ -34,12 +34,12 @@ export default class Web3NFT {
     return symbol;
   }
 
-  // public async tokenURI(): Promise<string> {
-  //   if (this._tokenURI) {
-  //     return this._tokenURI;
-  //   }
-  //   const tokenURI = await this.contract.tokenURI();
-  //   this._tokenURI = tokenURI;
-  //   return tokenURI;
-  // }
+  public async tokenURI(tokenId: BigNumber): Promise<string> {
+    if (this._tokenURI) {
+      return this._tokenURI;
+    }
+    const tokenURI = await this.contract.tokenURI(tokenId);
+    this._tokenURI = tokenURI;
+    return tokenURI;
+  }
 }
