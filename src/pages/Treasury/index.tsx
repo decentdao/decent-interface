@@ -71,6 +71,59 @@ function Treasury() {
           ))}
         </div>
       </div>
+      <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
+        <ContentBoxTitle>NFT Treasury</ContentBoxTitle>
+        <div className="my-2">
+          <div className="flex justify-between items-end bg-gray-400 px-4 pb-2 h-10">
+            <div className="flex">
+              <div className="text-gray-50 text-xs font-medium w-16 sm:w-28">Symbol</div>
+              <div className="text-gray-50 text-xs font-medium">Name</div>
+              <div className="text-gray-50 text-xs font-medium">Token URI</div>
+            </div>
+            <div className="text-gray-50 text-xs font-medium">Token Id</div>
+          </div>
+          {!treasuryAssets.length && (
+            <TableRowWrapper>
+              <div className="text-gray-25 w-full flex justify-center">
+                <span>There are no tokens in this</span>
+                <TooltipWrapper
+                  content={
+                    <TooltipAddressContent
+                      address={treasuryModuleContract ? treasuryModuleContract.address : ''}
+                      title="Treasury address:"
+                    />
+                  }
+                  isVisible
+                >
+                  <span className="text-gold-500 hover:text-gold-300 mx-2">treasury</span>
+                </TooltipWrapper>{' '}
+                <span>at this time.</span>
+              </div>
+            </TableRowWrapper>
+          )}
+          {treasuryAssets
+            .filter(asset => asset.type.includes('erc721'))
+            .map(asset => (
+              <TableRowWrapper key={asset.contractAddress}>
+                <div className="flex">
+                  <EtherscanLink address={asset.contractAddress}>
+                    <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
+                  </EtherscanLink>
+                  <div className="text-gray-25 font-medium">{asset.name}</div>
+                </div>
+                <div className="text-gray-25 font-mono font-semibold tracking-wider">
+                  <a
+                    href={`https://${asset.tokenURI}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {asset.tokenId.toString()}
+                  </a>
+                </div>
+              </TableRowWrapper>
+            ))}
+        </div>
+      </div>
       {!treasuryAssets.length && (
         <div className="px-1">
           <ContentBanner
