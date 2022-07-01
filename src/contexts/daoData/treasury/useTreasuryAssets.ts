@@ -56,12 +56,15 @@ const useTreasuryAssets = (
 
     // native coins are set to "0x" key,
     treasuryAssets.set('0x', {
+      type: 'native',
       name: 'Ethereum',
       symbol: 'ETH',
       decimals: 18,
+      tokenId: BigNumber.from('0'),
       contractAddress: '',
       totalAmount: amount,
       formatedTotal: utils.formatUnits(amount, 18),
+      tokenURI: '',
     });
   }, [nativeDeposits, nativeWithdraws, treasuryAssets]);
 
@@ -117,12 +120,15 @@ const useTreasuryAssets = (
         const decimals = await token.tokenData.decimals();
         const tokenAddress = token.tokenData.tokenAddress;
         treasuryAssets.set(tokenAddress, {
+          type: 'erc20',
           name: name,
           symbol: symbol,
           decimals: decimals,
+          tokenId: BigNumber.from('0'),
           contractAddress: tokenAddress,
           totalAmount: token.amount,
           formatedTotal: utils.formatUnits(token.amount, decimals),
+          tokenURI: '',
         });
       })
     );
@@ -136,22 +142,24 @@ const useTreasuryAssets = (
       return;
     }
 
-    const tokens = new Map<string, { tokenData: Web3NFT }>();
+    const tokens = new Map<string, { tokenData: Web3NFT, tokenId: BigNumber }>();
 
     // initlizes Web3NFT class for each token
     // for each event sets the addresses to tokens Map
     // sums token amounts together for same token
     erc721TokenDeposits.forEach((event: ERC721TokenEvent) => {
-      event.contractAddresses.forEach(contractAddress => {
+      event.contractAddresses.forEach((contractAddress, i) => {
         const token = tokens.get(contractAddress);
         if (!token) {
           tokens.set(contractAddress, {
             tokenData: new Web3NFT(contractAddress, provider),
+            tokenId: event.tokenIds[i],
           });
         }
         if (token) {
           tokens.set(contractAddress, {
             tokenData: token.tokenData,
+            tokenId: event.tokenIds[i],
           });
         }
       });
@@ -159,11 +167,12 @@ const useTreasuryAssets = (
 
     // subtracts token amounts together for same token
     erc721TokenWithdraws.forEach((event: ERC721TokenEvent) => {
-      event.contractAddresses.forEach(contractAddress => {
+      event.contractAddresses.forEach((contractAddress, i) => {
         const token = tokens.get(contractAddress);
         if (token) {
           tokens.set(contractAddress, {
             tokenData: token.tokenData,
+            tokenId: event.tokenIds[i],
           });
         }
       });
@@ -175,13 +184,17 @@ const useTreasuryAssets = (
         const name = await token.tokenData.name();
         const symbol = await token.tokenData.symbol();
         const tokenAddress = token.tokenData.tokenAddress;
+        const tokenURI = await token.tokenData.tokenURI(token.tokenId);
         treasuryAssets.set(tokenAddress, {
+          type: 'erc721',
           name: name,
           symbol: symbol,
           decimals: 0,
+          tokenId: token.tokenId,
           contractAddress: tokenAddress,
           totalAmount: BigNumber.from('1'),
           formatedTotal: utils.formatUnits(BigNumber.from('1'), 0),
+          tokenURI: tokenURI,
         });
       })
     );
