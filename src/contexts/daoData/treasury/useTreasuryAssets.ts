@@ -1,8 +1,15 @@
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useWeb3Provider } from '../../web3Data/hooks/useWeb3Provider';
-import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent, TreasuryAsset } from './types';
+import {
+  ERC20TokenEvent,
+  ERC721TokenEvent,
+  TokenDepositEvent,
+  TokenWithdrawEvent,
+  TreasuryAsset,
+} from './types';
 import Web3Token from './Web3Token';
+import Web3NFT from './Web3NFT';
 
 /**
  * handles events to generate a list of assets count and amounts.
@@ -11,13 +18,17 @@ import Web3Token from './Web3Token';
  * @param nativeWithdraws
  * @param erc20Deposits
  * @param erc20Withdraws
+ * @param erc721Deposits
+ * @param erc721Withdraws
  * @returns TreasuryAsset[]
  */
 const useTreasuryAssets = (
   nativeDeposits?: TokenDepositEvent[],
   nativeWithdraws?: TokenWithdrawEvent[],
   erc20TokenDeposits?: ERC20TokenEvent[],
-  erc20TokenWithdraws?: ERC20TokenEvent[]
+  erc20TokenWithdraws?: ERC20TokenEvent[],
+  erc721TokenDeposits?: ERC721TokenEvent[],
+  erc721TokenWithdraws?: ERC721TokenEvent[]
 ) => {
   // <Map<string, TreasuryAsset>>
   const [treasuryAssets] = useState<Map<string, TreasuryAsset>>(new Map());
@@ -116,6 +127,65 @@ const useTreasuryAssets = (
       })
     );
   }, [erc20TokenDeposits, erc20TokenWithdraws, provider, treasuryAssets]);
+
+  /**
+   * calculates erc721 tokens
+   */
+  useEffect(() => {
+    if (!erc721TokenDeposits || !erc721TokenDeposits.length || !erc721TokenWithdraws || !provider) {
+      return;
+    }
+
+    const tokens = new Map<string, { tokenData: Web3NFT }>();
+
+    // initlizes Web3NFT class for each token
+    // for each event sets the addresses to tokens Map
+    // sums token amounts together for same token
+    erc721TokenDeposits.forEach((event: ERC721TokenEvent) => {
+      event.contractAddresses.forEach(contractAddress => {
+        const token = tokens.get(contractAddress);
+        if (!token) {
+          tokens.set(contractAddress, {
+            tokenData: new Web3NFT(contractAddress, provider),
+          });
+        }
+        if (token) {
+          tokens.set(contractAddress, {
+            tokenData: token.tokenData,
+          });
+        }
+      });
+    });
+
+    // subtracts token amounts together for same token
+    erc721TokenWithdraws.forEach((event: ERC721TokenEvent) => {
+      event.contractAddresses.forEach(contractAddress => {
+        const token = tokens.get(contractAddress);
+        if (token) {
+          tokens.set(contractAddress, {
+            tokenData: token.tokenData,
+          });
+        }
+      });
+    });
+
+    // promise using then web3Token class methods to retrive token data from blockchain.
+    Promise.all(
+      Array.from(tokens.values()).map(async token => {
+        const name = await token.tokenData.name();
+        const symbol = await token.tokenData.symbol();
+        const tokenAddress = token.tokenData.tokenAddress;
+        treasuryAssets.set(tokenAddress, {
+          name: name,
+          symbol: symbol,
+          decimals: 0,
+          contractAddress: tokenAddress,
+          totalAmount: BigNumber.from('1'),
+          formatedTotal: utils.formatUnits(BigNumber.from('1'), 0),
+        });
+      })
+    );
+  }, [erc721TokenDeposits, erc721TokenWithdraws, provider, treasuryAssets]);
 
   return Array.from(treasuryAssets.values());
 };
