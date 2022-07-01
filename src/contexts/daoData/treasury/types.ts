@@ -24,10 +24,13 @@ export interface ERC20TokenEvent extends TokenEvent {
 }
 
 export interface TreasuryAsset {
+  type: string;
   name: string;
   symbol: string;
   decimals: number;
+  tokenId: BigNumber;
   contractAddress: string;
   totalAmount: BigNumber;
   formatedTotal: string;
+  tokenURI: string;
 }
