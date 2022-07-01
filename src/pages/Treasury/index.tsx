@@ -37,7 +37,9 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">Amount</div>
           </div>
-          {!treasuryAssets.length && (
+          {!treasuryAssets.filter(
+            asset => asset.type.includes('erc20') || asset.type.includes('native')
+          ).length && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <span>There are no tokens in this</span>
@@ -83,10 +85,10 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">Token Id</div>
           </div>
-          {!treasuryAssets.length && (
+          {!treasuryAssets.filter(asset => asset.type.includes('erc721')).length && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
-                <span>There are no tokens in this</span>
+                <span>There are no NFTs in this</span>
                 <TooltipWrapper
                   content={
                     <TooltipAddressContent
