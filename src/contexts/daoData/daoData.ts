@@ -69,13 +69,21 @@ const useDAODatas = () => {
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const timelockModuleContract = useTimelockModuleContract(moduleAddresses);
   const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses);
-  const { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws } =
-    useTreasuryEvents(treasuryModuleContract);
+  const {
+    nativeDeposits,
+    nativeWithdraws,
+    erc20TokenDeposits,
+    erc20TokenWithdraws,
+    erc721TokenDeposits,
+    erc721TokenWithdraws,
+  } = useTreasuryEvents(treasuryModuleContract);
   const treasuryAssets = useTreasuryAssets(
     nativeDeposits,
     nativeWithdraws,
     erc20TokenDeposits,
-    erc20TokenWithdraws
+    erc20TokenWithdraws,
+    erc721TokenDeposits,
+    erc721TokenWithdraws
   );
   // ************************* //
 
