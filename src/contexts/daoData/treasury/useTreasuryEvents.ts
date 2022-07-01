@@ -2,13 +2,15 @@ import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { TreasuryModule } from '../../../assets/typechain-types/module-treasury';
 import { TypedEvent } from '../../../assets/typechain-types/module-treasury/common';
-import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from './types';
+import { ERC20TokenEvent, ERC721TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from './types';
 
 const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
   const [nativeDeposits, setNativeDeposits] = useState<TokenDepositEvent[]>();
   const [nativeWithdraws, setNativeWithdraws] = useState<TokenWithdrawEvent[]>([]);
   const [erc20TokenDeposits, setErc20TokenDeposits] = useState<ERC20TokenEvent[]>([]);
   const [erc20TokenWithdraws, setErc20TokenWithdraws] = useState<ERC20TokenEvent[]>([]);
+  const [erc721TokenDeposits, setErc721TokenDeposits] = useState<ERC721TokenEvent[]>([]);
+  const [erc721TokenWithdraws, setErc721TokenWithdraws] = useState<ERC721TokenEvent[]>([]);
 
   /**
    * retreives past events and sets it to state
