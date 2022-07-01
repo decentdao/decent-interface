@@ -142,7 +142,7 @@ const useTreasuryAssets = (
       return;
     }
 
-    const tokens = new Map<string, { tokenData: Web3NFT, tokenId: BigNumber }>();
+    const tokens = new Map<string, { tokenData: Web3NFT; tokenId: BigNumber }>();
 
     // initlizes Web3NFT class for each token
     // for each event sets the addresses to tokens Map
