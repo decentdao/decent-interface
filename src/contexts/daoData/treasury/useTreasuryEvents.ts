@@ -348,7 +348,103 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
     };
   }, [treasuryModuleContract, getPastEvents]);
 
-  return { nativeDeposits, nativeWithdraws, erc20TokenDeposits, erc20TokenWithdraws };
+  /**
+   * handles deposit events for erc721 tokens on treasury module contract
+   * sets an event listener for erc721 tokens deposit
+   */
+  useEffect(() => {
+    if (!treasuryModuleContract) {
+      resetState();
+      return;
+    }
+    // retreive past erc721 token deposit events
+    getPastEvents(
+      treasuryModuleContract,
+      treasuryModuleContract.filters.ERC721TokensDeposited()
+    ).then((events: TypedEvent<any, any>[]) => {
+      // if no events do nothing
+      if (!events.length) {
+        setErc721TokenDeposits([]);
+        return;
+      }
+      // normalize erc721 token deposit events
+      const erc721Deposits = events.map(event => {
+        return {
+          contractAddresses: event.args[0],
+          tokenIds: event.args[2],
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        };
+      });
+      setErc721TokenDeposits(erc721Deposits);
+    });
+
+    // adds listener for real-time events
+    treasuryModuleContract.on(
+      treasuryModuleContract.filters.ERC721TokensDeposited(),
+      erc721DepositListener
+    );
+
+    return () => {
+      treasuryModuleContract.off(
+        treasuryModuleContract.filters.ERC721TokensDeposited(),
+        erc721DepositListener
+      );
+    };
+  }, [treasuryModuleContract, getPastEvents]);
+
+  /**
+   * handles withdraw events for erc721 tokens on treasury module contract
+   * sets an event listener for erc721 tokens withdraws
+   */
+  useEffect(() => {
+    if (!treasuryModuleContract) {
+      resetState();
+      return;
+    }
+    getPastEvents(
+      treasuryModuleContract,
+      treasuryModuleContract.filters.ERC721TokensWithdrawn()
+    ).then((events: TypedEvent<any, any>[]) => {
+      // if no events do nothing
+      if (!events.length) {
+        setErc721TokenWithdraws([]);
+        return;
+      }
+      // normalize native deposit events
+      const erc721TokenWithdrawEvents = events.map(event => {
+        return {
+          contractAddresses: event.args[0],
+          tokenIds: event.args[2],
+          transactionHash: event.transactionHash,
+          blockNumber: event.blockNumber,
+        };
+      });
+      setErc721TokenWithdraws(erc721TokenWithdrawEvents);
+    });
+
+    // adds listener for real-time events
+    treasuryModuleContract.on(
+      treasuryModuleContract.filters.ERC721TokensWithdrawn(),
+      erc721WithdrawListener
+    );
+
+    return () => {
+      treasuryModuleContract.off(
+        treasuryModuleContract.filters.ERC721TokensWithdrawn(),
+        erc721WithdrawListener
+      );
+    };
+  }, [treasuryModuleContract, getPastEvents]);
+
+  return {
+    nativeDeposits,
+    nativeWithdraws,
+    erc20TokenDeposits,
+    erc20TokenWithdraws,
+    erc721TokenDeposits,
+    erc721TokenWithdraws,
+  };
 };
 
 export default useTreasuryEvents;
