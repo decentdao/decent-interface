@@ -20,7 +20,7 @@ function Treasury() {
     {
       name,
       modules: {
-        treasury: { treasuryAssets, treasuryModuleContract },
+        treasury: { treasuryAssetsFungible, treasuryAssetsNonFungible, treasuryModuleContract },
       },
     },
   ] = useDAOData();
@@ -37,9 +37,7 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">Amount</div>
           </div>
-          {!treasuryAssets.filter(
-            asset => asset.type.includes('erc20') || asset.type.includes('native')
-          ).length && (
+          {!treasuryAssetsFungible.length && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <span>There are no tokens in this</span>
@@ -58,21 +56,19 @@ function Treasury() {
               </div>
             </TableRowWrapper>
           )}
-          {treasuryAssets
-            .filter(asset => asset.type.includes('erc20') || asset.type.includes('native'))
-            .map(asset => (
-              <TableRowWrapper key={asset.contractAddress}>
-                <div className="flex">
-                  <EtherscanLink address={asset.contractAddress}>
-                    <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
-                  </EtherscanLink>
-                  <div className="text-gray-25 font-medium">{asset.name}</div>
-                </div>
-                <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                  {asset.formatedTotal}
-                </div>
-              </TableRowWrapper>
-            ))}
+          {treasuryAssetsFungible.map(asset => (
+            <TableRowWrapper key={asset.contractAddress}>
+              <div className="flex">
+                <EtherscanLink address={asset.contractAddress}>
+                  <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
+                </EtherscanLink>
+                <div className="text-gray-25 font-medium">{asset.name}</div>
+              </div>
+              <div className="text-gray-25 font-mono font-semibold tracking-wider">
+                {asset.formatedTotal}
+              </div>
+            </TableRowWrapper>
+          ))}
         </div>
       </div>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
@@ -85,7 +81,7 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">Token Id</div>
           </div>
-          {!treasuryAssets.filter(asset => asset.type.includes('erc721')).length && (
+          {!treasuryAssetsNonFungible.length && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <span>There are no NFTs in this</span>
@@ -104,30 +100,28 @@ function Treasury() {
               </div>
             </TableRowWrapper>
           )}
-          {treasuryAssets
-            .filter(asset => asset.type.includes('erc721'))
-            .map(asset => (
-              <TableRowWrapper key={asset.contractAddress}>
-                <div className="flex">
-                  <EtherscanLink address={asset.contractAddress}>
-                    <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
-                  </EtherscanLink>
-                  <div className="text-gray-25 font-medium">{asset.name}</div>
-                </div>
-                <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                  <a
-                    href={`https://${asset.tokenURI}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {asset.tokenId.toString()}
-                  </a>
-                </div>
-              </TableRowWrapper>
-            ))}
+          {treasuryAssetsNonFungible.map(asset => (
+            <TableRowWrapper key={asset.contractAddress}>
+              <div className="flex">
+                <EtherscanLink address={asset.contractAddress}>
+                  <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
+                </EtherscanLink>
+                <div className="text-gray-25 font-medium">{asset.name}</div>
+              </div>
+              <div className="text-gray-25 font-mono font-semibold tracking-wider">
+                <a
+                  href={`https://${asset.tokenURI}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {asset.tokenId.toString()}
+                </a>
+              </div>
+            </TableRowWrapper>
+          ))}
         </div>
       </div>
-      {!treasuryAssets.length && (
+      {!treasuryAssetsFungible.length && !treasuryAssetsNonFungible.length && (
         <div className="px-1">
           <ContentBanner
             description={`Here you will see the tokens that have been sent to the ${name} Treasury address.`}
