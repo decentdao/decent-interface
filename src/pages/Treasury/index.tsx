@@ -59,7 +59,10 @@ function Treasury() {
           {treasuryAssetsFungible.map(asset => (
             <TableRowWrapper key={asset.contractAddress}>
               <div className="flex">
-                <EtherscanLink address={asset.contractAddress}>
+                <EtherscanLink
+                  address={asset.contractAddress}
+                  linkType={'token'}
+                >
                   <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
                 </EtherscanLink>
                 <div className="text-gray-25 font-medium">{asset.name}</div>
