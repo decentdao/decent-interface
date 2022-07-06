@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 
 function EtherscanLink({
+  linkType,
   address,
+  tokenId,
   children,
 }: {
+  linkType?: 'address' | 'nft' | 'token';
   address: string | undefined | null;
+  tokenId?: string;
   children: React.ReactNode;
 }) {
   let {
@@ -25,10 +29,11 @@ function EtherscanLink({
   if (!network || !address) {
     return <div>{children}</div>;
   }
-
   return (
     <a
-      href={`https://${subdomain}etherscan.io/address/${address}`}
+      href={`https://${subdomain}etherscan.io/${!linkType ? 'address' : linkType}/${address}${
+        !tokenId ? '' : `/${tokenId}`
+      }`}
       target="_blank"
       rel="noreferrer"
     >
