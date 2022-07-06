@@ -109,13 +109,13 @@ function Treasury() {
                 <div className="text-gray-25 font-medium">{asset.name}</div>
               </div>
               <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                <a
-                  href={`https://${asset.tokenURI}`}
-                  target="_blank"
-                  rel="noreferrer"
+                <EtherscanLink
+                  linkType={'nft'}
+                  address={asset.contractAddress}
+                  tokenId={asset.tokenId.toString()}
                 >
-                  {asset.tokenId.toString()}
-                </a>
+                  <div className="text-gold-500 w-16 sm:w-28">{asset.tokenId.toString()}</div>
+                </EtherscanLink>
               </div>
             </TableRowWrapper>
           ))}
