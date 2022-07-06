@@ -17,8 +17,9 @@ import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
 import { useBlockchainData } from '../blockchainData';
 import useTreasuryModuleContract from './treasury/useTreasuryModuleContract';
 import useTreasuryEvents from './treasury/useTreasuryEvents';
-import useTreasuryAssets from './treasury/useTreasuryAssets';
-import { TreasuryAsset } from './treasury/types';
+import useTreasuryAssetsFungible from './treasury/useTreasuryAssetsFungible';
+import useTreasuryAssetsNonFungible from './treasury/useTreasuryAssetsNonFungible';
+import { TreasuryAssetFungible, TreasuryAssetNonFungible } from './treasury/types';
 
 export interface DAOData {
   daoAddress: string | undefined;
@@ -27,7 +28,8 @@ export interface DAOData {
   modules: {
     treasury: {
       treasuryModuleContract: TreasuryModule | undefined;
-      treasuryAssets: TreasuryAsset[];
+      treasuryAssetsFungible: TreasuryAssetFungible[];
+      treasuryAssetsNonFungible: TreasuryAssetNonFungible[];
     };
     governor: {
       governorModuleContract: GovernorModule | undefined;
@@ -77,11 +79,14 @@ const useDAODatas = () => {
     erc721TokenDeposits,
     erc721TokenWithdraws,
   } = useTreasuryEvents(treasuryModuleContract);
-  const treasuryAssets = useTreasuryAssets(
+  const treasuryAssetsFungible = useTreasuryAssetsFungible(
     nativeDeposits,
     nativeWithdraws,
     erc20TokenDeposits,
-    erc20TokenWithdraws,
+    erc20TokenWithdraws
+  );
+
+  const treasuryAssetsNonFungible = useTreasuryAssetsNonFungible(
     erc721TokenDeposits,
     erc721TokenWithdraws
   );
@@ -98,7 +103,8 @@ const useDAODatas = () => {
     modules: {
       treasury: {
         treasuryModuleContract,
-        treasuryAssets,
+        treasuryAssetsFungible,
+        treasuryAssetsNonFungible,
       },
       governor: {
         governorModuleContract,
