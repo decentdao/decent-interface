@@ -2,6 +2,8 @@ import { ReactNode } from 'react';
 import ContentBanner from '../../components/ui/ContentBanner';
 import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
 import EtherscanLink from '../../components/ui/EtherscanLink';
+import EtherscanLinkNFT from '../../components/ui/EtherscanLinkNFT';
+import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
 import H1 from '../../components/ui/H1';
 import TooltipAddressContent from '../../components/ui/TooltipAddressContent';
 import TooltipWrapper from '../../components/ui/TooltipWrapper';
@@ -59,12 +61,9 @@ function Treasury() {
           {treasuryAssetsFungible.map(asset => (
             <TableRowWrapper key={asset.contractAddress}>
               <div className="flex">
-                <EtherscanLink
-                  address={asset.contractAddress}
-                  linkType={'token'}
-                >
+                <EtherscanLinkToken address={asset.contractAddress}>
                   <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
-                </EtherscanLink>
+                </EtherscanLinkToken>
                 <div className="text-gray-25 font-medium">{asset.name}</div>
               </div>
               <div className="text-gray-25 font-mono font-semibold tracking-wider">
@@ -107,18 +106,19 @@ function Treasury() {
             <TableRowWrapper key={asset.contractAddress}>
               <div className="flex">
                 <EtherscanLink address={asset.contractAddress}>
-                  <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
+                  <div className="text-gold-500 truncate ... w-16 sm:w-28">{asset.symbol}</div>
                 </EtherscanLink>
                 <div className="text-gray-25 font-medium">{asset.name}</div>
               </div>
               <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                <EtherscanLink
-                  linkType={'nft'}
+                <EtherscanLinkNFT
                   address={asset.contractAddress}
                   tokenId={asset.tokenId.toString()}
                 >
-                  <div className="text-gold-500 w-16 sm:w-28">{asset.tokenId.toString()}</div>
-                </EtherscanLink>
+                  <div className="text-gray-25 font-mono font-semibold tracking-wider">
+                    {asset.tokenId.toString()}
+                  </div>
+                </EtherscanLinkNFT>
               </div>
             </TableRowWrapper>
           ))}
