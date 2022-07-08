@@ -7,7 +7,7 @@ import { StarEmpty } from '../svg/Star';
 import Faq from '../svg/Faq';
 import Docs from '../svg/Docs';
 import CopyToClipboard from '../CopyToClipboard';
-import EtherscanLink from '../EtherscanLink';
+import EtherscanLinkAddress from '../EtherscanLinkAddress';
 import cx from 'classnames';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { Link } from 'react-router-dom';
@@ -164,7 +164,7 @@ function AddressCopyItem({ account }: { account: string | null }) {
   return (
     <ItemWrapper noHoverEffect>
       <span className="text-gold-300">
-        <EtherscanLink address={account}>{accountDisplayName}</EtherscanLink>
+        <EtherscanLinkAddress address={account}>{accountDisplayName}</EtherscanLinkAddress>
       </span>
       <CopyToClipboard textToCopy={account} />
     </ItemWrapper>
