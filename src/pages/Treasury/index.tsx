@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import ContentBanner from '../../components/ui/ContentBanner';
 import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
-import EtherscanLink from '../../components/ui/EtherscanLink';
+import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../components/ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
 import H1 from '../../components/ui/H1';
@@ -105,9 +105,9 @@ function Treasury() {
           {treasuryAssetsNonFungible.map(asset => (
             <TableRowWrapper key={asset.contractAddress}>
               <div className="flex">
-                <EtherscanLink address={asset.contractAddress}>
+                <EtherscanLinkAddress address={asset.contractAddress}>
                   <div className="text-gold-500 truncate ... w-16 sm:w-28">{asset.symbol}</div>
-                </EtherscanLink>
+                </EtherscanLinkAddress>
                 <div className="text-gray-25 font-medium">{asset.name}</div>
               </div>
               <div className="text-gray-25 font-mono font-semibold tracking-wider">
