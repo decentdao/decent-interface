@@ -4,7 +4,7 @@ import useDelegateVote from '../../hooks/useDelegateVote';
 import useDisplayName from '../../hooks/useDisplayName';
 import ContentBox from '../ui/ContentBox';
 import ContentBanner from '../../components/ui/ContentBanner';
-import EtherscanLink from '../ui/EtherscanLink';
+import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
 import { useDAOData } from '../../contexts/daoData';
 import Input from '../ui/forms/Input';
 import { SecondaryButton } from '../ui/forms/Button';
@@ -103,11 +103,11 @@ function Delegate() {
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
             Current Delegatee:{' '}
-            <EtherscanLink address={delegatee}>
+            <EtherscanLinkAddress address={delegatee}>
               <DataLoadingWrapper isLoading={!delegateeDisplayName}>
                 <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
               </DataLoadingWrapper>
-            </EtherscanLink>
+            </EtherscanLinkAddress>
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
             Current Voting Weight:{' '}

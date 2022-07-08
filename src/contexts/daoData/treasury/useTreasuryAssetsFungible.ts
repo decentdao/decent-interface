@@ -1,7 +1,12 @@
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useWeb3Provider } from '../../web3Data/hooks/useWeb3Provider';
-import { ERC20TokenEvent, TokenDepositEvent, TokenWithdrawEvent, TreasuryAsset } from './types';
+import {
+  ERC20TokenEvent,
+  TokenDepositEvent,
+  TokenWithdrawEvent,
+  TreasuryAssetFungible,
+} from './types';
 import Web3Token from './Web3Token';
 
 /**
@@ -11,6 +16,8 @@ import Web3Token from './Web3Token';
  * @param nativeWithdraws
  * @param erc20Deposits
  * @param erc20Withdraws
+ * @param erc721Deposits
+ * @param erc721Withdraws
  * @returns TreasuryAsset[]
  */
 const useTreasuryAssets = (
@@ -20,7 +27,7 @@ const useTreasuryAssets = (
   erc20TokenWithdraws?: ERC20TokenEvent[]
 ) => {
   // <Map<string, TreasuryAsset>>
-  const [treasuryAssets] = useState<Map<string, TreasuryAsset>>(new Map());
+  const [treasuryAssets] = useState<Map<string, TreasuryAssetFungible>>(new Map());
 
   const {
     state: { provider },
