@@ -1,20 +1,15 @@
-import EtherscanLink from './EtherscanLink';
+import useEtherscanLink from '../../hooks/useSubDomain';
 
-function EtherscanLinkToken({
-  address,
-  children,
-}: {
-  address: string | undefined | null;
-  tokenId?: string;
-  children: React.ReactNode;
-}) {
+function EtherscanLinkToken({ address, children }: { address: string; children: React.ReactNode }) {
+  const subdomain = useEtherscanLink(address);
   return (
-    <EtherscanLink
-      linkType="token"
-      address={address}
+    <a
+      href={`https://${subdomain}etherscan.io/token/${address}`}
+      target="_blank"
+      rel="noreferrer"
     >
       {children}
-    </EtherscanLink>
+    </a>
   );
 }
 
