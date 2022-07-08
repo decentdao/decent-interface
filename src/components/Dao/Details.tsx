@@ -3,7 +3,7 @@ import { useDAOData } from '../../contexts/daoData';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import CopyToClipboard from '../ui/CopyToClipboard';
-import EtherscanLink from '../ui/EtherscanLink';
+import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
 import InputBox from '../ui/forms/InputBox';
 import H1 from '../ui/H1';
 
@@ -22,11 +22,11 @@ function AddressDisplay({ address, label }: AddressDisplayProps) {
     <div>
       <div className="text-sm font-medium text-gray-50 pb-1">{lbl}</div>
       <div className="flex items-center">
-        <EtherscanLink address={address}>
+        <EtherscanLinkAddress address={address}>
           <div className="text-gold-500 hover:text-gold-300 font-semibold tracking-wider font-mono break-all">
             {address}
           </div>
-        </EtherscanLink>
+        </EtherscanLinkAddress>
         <CopyToClipboard textToCopy={address} />
       </div>
     </div>
