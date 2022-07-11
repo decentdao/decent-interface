@@ -9,7 +9,7 @@ import { useBlockchainData } from '../contexts/blockchainData';
 
 const useDeployDAO = () => {
   const {
-    state: { chainId },
+    state: { chainId, account },
   } = useWeb3Provider();
 
   const addresses = useAddresses(chainId);
@@ -47,11 +47,12 @@ const useDeployDAO = () => {
       votingPeriod: string;
       successCallback: (daoAddress: string) => void;
     }) => {
-      if (metaFactoryContract === undefined) {
+      if (metaFactoryContract === undefined || account === null) {
         return;
       }
 
       const createDAOData = createDAODataCreator({
+        creator: account,
         daoName,
         tokenName,
         tokenSymbol,
@@ -95,6 +96,8 @@ const useDeployDAO = () => {
           metaFactoryContract.createDAOAndExecute(
             createDAOData.daoFactory,
             createDAOData.createDAOParams,
+            createDAOData.moduleFactories,
+            createDAOData.moduleFactoriesBytes,
             createDAOData.targets,
             createDAOData.values,
             createDAOData.calldatas
@@ -105,7 +108,7 @@ const useDeployDAO = () => {
         successCallback: deployDAOSuccess,
       });
     },
-    [addresses.daoFactory, contractCallDeploy, createDAODataCreator, metaFactoryContract]
+    [addresses.daoFactory, contractCallDeploy, createDAODataCreator, metaFactoryContract, account]
   );
 
   return [deployDao, contractCallPending] as const;
