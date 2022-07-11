@@ -29,7 +29,7 @@ import type {
 export interface TreasuryModuleFactoryInterface extends utils.Interface {
   functions: {
     "addVersion(string,string,address)": FunctionFragment;
-    "create(bytes[])": FunctionFragment;
+    "create(address,bytes[])": FunctionFragment;
     "initialize()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -54,7 +54,10 @@ export interface TreasuryModuleFactoryInterface extends utils.Interface {
     functionFragment: "addVersion",
     values: [string, string, string]
   ): string;
-  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
+  encodeFunctionData(
+    functionFragment: "create",
+    values: [string, BytesLike[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values?: undefined
@@ -188,6 +191,7 @@ export interface TreasuryModuleFactory extends BaseContract {
     ): Promise<ContractTransaction>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -232,6 +236,7 @@ export interface TreasuryModuleFactory extends BaseContract {
   ): Promise<ContractTransaction>;
 
   create(
+    creator: string,
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -275,7 +280,11 @@ export interface TreasuryModuleFactory extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+    create(
+      creator: string,
+      data: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     initialize(overrides?: CallOverrides): Promise<void>;
 
@@ -348,6 +357,7 @@ export interface TreasuryModuleFactory extends BaseContract {
     ): Promise<BigNumber>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -387,6 +397,7 @@ export interface TreasuryModuleFactory extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

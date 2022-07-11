@@ -64,7 +64,7 @@ export declare namespace IDAOFactory {
 
 export interface MetaFactoryInterface extends utils.Interface {
   functions: {
-    "createDAOAndExecute(address,(address,address,bytes32,string,string[],string[],address[][],string[],string[][]),address[],uint256[],bytes[])": FunctionFragment;
+    "createDAOAndExecute(address,(address,address,bytes32,string,string[],string[],address[][],string[],string[][]),address[],bytes[][],address[],uint256[],bytes[])": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
@@ -77,6 +77,8 @@ export interface MetaFactoryInterface extends utils.Interface {
     values: [
       string,
       IDAOFactory.CreateDAOParamsStruct,
+      string[],
+      BytesLike[][],
       string[],
       BigNumberish[],
       BytesLike[]
@@ -159,6 +161,8 @@ export interface MetaFactory extends BaseContract {
     createDAOAndExecute(
       daoFactory: string,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
       targets: string[],
       values: BigNumberish[],
       calldatas: BytesLike[],
@@ -174,6 +178,8 @@ export interface MetaFactory extends BaseContract {
   createDAOAndExecute(
     daoFactory: string,
     createDAOParams: IDAOFactory.CreateDAOParamsStruct,
+    moduleFactories: string[],
+    moduleFactoriesBytes: BytesLike[][],
     targets: string[],
     values: BigNumberish[],
     calldatas: BytesLike[],
@@ -189,6 +195,8 @@ export interface MetaFactory extends BaseContract {
     createDAOAndExecute(
       daoFactory: string,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
       targets: string[],
       values: BigNumberish[],
       calldatas: BytesLike[],
@@ -229,6 +237,8 @@ export interface MetaFactory extends BaseContract {
     createDAOAndExecute(
       daoFactory: string,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
       targets: string[],
       values: BigNumberish[],
       calldatas: BytesLike[],
@@ -245,6 +255,8 @@ export interface MetaFactory extends BaseContract {
     createDAOAndExecute(
       daoFactory: string,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
       targets: string[],
       values: BigNumberish[],
       calldatas: BytesLike[],

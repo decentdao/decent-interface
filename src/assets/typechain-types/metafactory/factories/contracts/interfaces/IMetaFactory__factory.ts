@@ -126,6 +126,16 @@ const _abi = [
       },
       {
         internalType: "address[]",
+        name: "moduleFactories",
+        type: "address[]",
+      },
+      {
+        internalType: "bytes[][]",
+        name: "moduleFactoriesBytes",
+        type: "bytes[][]",
+      },
+      {
+        internalType: "address[]",
         name: "targets",
         type: "address[]",
       },

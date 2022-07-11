@@ -27,7 +27,7 @@ import type {
 
 export interface TokenFactoryInterface extends utils.Interface {
   functions: {
-    "create(bytes[])": FunctionFragment;
+    "create(address,bytes[])": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
   };
 
@@ -35,7 +35,10 @@ export interface TokenFactoryInterface extends utils.Interface {
     nameOrSignatureOrTopic: "create" | "supportsInterface"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
+  encodeFunctionData(
+    functionFragment: "create",
+    values: [string, BytesLike[]]
+  ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
@@ -89,6 +92,7 @@ export interface TokenFactory extends BaseContract {
 
   functions: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -100,6 +104,7 @@ export interface TokenFactory extends BaseContract {
   };
 
   create(
+    creator: string,
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -110,7 +115,11 @@ export interface TokenFactory extends BaseContract {
   ): Promise<boolean>;
 
   callStatic: {
-    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+    create(
+      creator: string,
+      data: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -127,6 +136,7 @@ export interface TokenFactory extends BaseContract {
 
   estimateGas: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -139,6 +149,7 @@ export interface TokenFactory extends BaseContract {
 
   populateTransaction: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

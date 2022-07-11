@@ -23,12 +23,15 @@ import type {
 
 export interface ITokenFactoryInterface extends utils.Interface {
   functions: {
-    "create(bytes[])": FunctionFragment;
+    "create(address,bytes[])": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "create"): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
+  encodeFunctionData(
+    functionFragment: "create",
+    values: [string, BytesLike[]]
+  ): string;
 
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
 
@@ -63,24 +66,31 @@ export interface ITokenFactory extends BaseContract {
 
   functions: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   create(
+    creator: string,
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+    create(
+      creator: string,
+      data: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
   };
 
   filters: {};
 
   estimateGas: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -88,6 +98,7 @@ export interface ITokenFactory extends BaseContract {
 
   populateTransaction: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

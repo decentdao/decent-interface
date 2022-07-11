@@ -28,7 +28,7 @@ import type {
 export interface IModuleFactoryBaseInterface extends utils.Interface {
   functions: {
     "addVersion(string,string,address)": FunctionFragment;
-    "create(bytes[])": FunctionFragment;
+    "create(address,bytes[])": FunctionFragment;
   };
 
   getFunction(
@@ -39,7 +39,10 @@ export interface IModuleFactoryBaseInterface extends utils.Interface {
     functionFragment: "addVersion",
     values: [string, string, string]
   ): string;
-  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
+  encodeFunctionData(
+    functionFragment: "create",
+    values: [string, BytesLike[]]
+  ): string;
 
   decodeFunctionResult(functionFragment: "addVersion", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
@@ -98,6 +101,7 @@ export interface IModuleFactoryBase extends BaseContract {
     ): Promise<ContractTransaction>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -111,6 +115,7 @@ export interface IModuleFactoryBase extends BaseContract {
   ): Promise<ContractTransaction>;
 
   create(
+    creator: string,
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -123,7 +128,11 @@ export interface IModuleFactoryBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+    create(
+      creator: string,
+      data: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
   };
 
   filters: {
@@ -148,6 +157,7 @@ export interface IModuleFactoryBase extends BaseContract {
     ): Promise<BigNumber>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -162,6 +172,7 @@ export interface IModuleFactoryBase extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
