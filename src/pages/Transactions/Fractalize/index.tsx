@@ -38,7 +38,12 @@ function Fractalize() {
     voteStartDelay: string,
     votingPeriod: string
   ) => {
+    if (daoAddress === undefined) {
+      return;
+    }
+
     const newDAOData = createDAODataCreator({
+      creator: daoAddress,
       daoName,
       tokenName,
       tokenSymbol,
@@ -62,6 +67,8 @@ function Fractalize() {
         metaFactoryContract.interface.encodeFunctionData('createDAOAndExecute', [
           newDAOData.daoFactory,
           newDAOData.createDAOParams,
+          newDAOData.moduleFactories,
+          newDAOData.moduleFactoriesBytes,
           newDAOData.targets,
           newDAOData.values,
           newDAOData.calldatas,
