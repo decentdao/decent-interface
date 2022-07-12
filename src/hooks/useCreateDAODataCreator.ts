@@ -71,7 +71,7 @@ const useCreateDAODataCreator = () => {
         addresses.daoFactory.address,
         ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory, chainId, daoAndAccessControlSalt]
+          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
         ),
         ethers.utils.solidityKeccak256(
           ['bytes', 'bytes'],
@@ -86,7 +86,7 @@ const useCreateDAODataCreator = () => {
         addresses.daoFactory.address,
         ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory, chainId, daoAndAccessControlSalt]
+          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
         ),
         ethers.utils.solidityKeccak256(
           ['bytes', 'bytes'],
@@ -102,7 +102,7 @@ const useCreateDAODataCreator = () => {
         addresses.treasuryModuleFactory.address,
         ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory, chainId, treasurySalt]
+          [creator, addresses.metaFactory.address, chainId, treasurySalt]
         ),
         ethers.utils.solidityKeccak256(
           ['bytes', 'bytes'],
@@ -118,7 +118,7 @@ const useCreateDAODataCreator = () => {
         addresses.tokenFactory.address,
         ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory, chainId, tokenSalt]
+          [creator, addresses.metaFactory.address, chainId, tokenSalt]
         ),
         ethers.utils.solidityKeccak256(
           ['bytes', 'bytes'],
@@ -144,7 +144,7 @@ const useCreateDAODataCreator = () => {
         addresses.governorFactory.address,
         ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory, chainId, governorAndTimelockSalt]
+          [creator, addresses.metaFactory.address, chainId, governorAndTimelockSalt]
         ),
         ethers.utils.solidityKeccak256(
           ['bytes', 'bytes'],
@@ -160,7 +160,7 @@ const useCreateDAODataCreator = () => {
         addresses.governorFactory.address,
         ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory, chainId, governorAndTimelockSalt]
+          [creator, addresses.metaFactory.address, chainId, governorAndTimelockSalt]
         ),
         ethers.utils.solidityKeccak256(
           ['bytes', 'bytes'],
@@ -171,6 +171,13 @@ const useCreateDAODataCreator = () => {
           ]
         )
       );
+
+      console.log('PredictedDAODAddress: ', predictedDAOAddress);
+      console.log('PredictedAccessControlAddress: ', predictedAccessControlAddress);
+      console.log('PredictedTreasuryAddress: ', predictedTreasuryAddress);
+      console.log('PredictedToken address: ', predictedTokenAddress);
+      console.log('PredictedGovernorAddress: ', predictedGovernorAddress);
+      console.log('Predicted timelock address: ', predictedTimelockAddress);
 
       const createDAOParams = {
         daoImplementation: addresses.dao.address,
