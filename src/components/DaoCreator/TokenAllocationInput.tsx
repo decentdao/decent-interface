@@ -7,6 +7,7 @@ import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 interface TokenAllocationProps {
   index: number;
   tokenAllocation: TokenAllocation;
+  hasAmountError: boolean;
   updateTokenAllocation: (index: number, tokenAllocation: TokenAllocation) => void;
   removeTokenAllocation: (index: number) => void;
 }
@@ -14,6 +15,7 @@ interface TokenAllocationProps {
 function TokenAllocationInput({
   index,
   tokenAllocation,
+  hasAmountError,
   updateTokenAllocation,
   removeTokenAllocation,
 }: TokenAllocationProps) {
@@ -55,6 +57,7 @@ function TokenAllocationInput({
         type="number"
         value={tokenAllocation.amount || ''}
         onChange={event => updateAmount(event.target.value)}
+        errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
         isWholeNumberOnly
       />
       <div className="md:col-span-1">

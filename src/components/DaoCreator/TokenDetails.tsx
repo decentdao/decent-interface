@@ -1,4 +1,4 @@
-import { useEffect, ChangeEvent } from 'react';
+import { useEffect, useCallback, ChangeEvent } from 'react';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import { TokenAllocation } from '../../types/tokenAllocation';
 import Input from '../ui/forms/Input';
@@ -12,6 +12,8 @@ interface TokenDetailsProps {
   setName: React.Dispatch<React.SetStateAction<string>>;
   symbol: string;
   setSymbol: React.Dispatch<React.SetStateAction<string>>;
+  supply: string;
+  setSupply: React.Dispatch<React.SetStateAction<string>>;
   tokenAllocations: TokenAllocation[];
   setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
 }
@@ -19,13 +21,24 @@ interface TokenDetailsProps {
 function TokenDetails({
   name,
   symbol,
+  supply,
   tokenAllocations,
   setName,
   setSymbol,
+  setSupply,
   setTokenAllocations,
   setPrevEnabled,
   setNextEnabled,
 }: TokenDetailsProps) {
+  const allocationsValid = useCallback(() => {
+    if (tokenAllocations === undefined || supply === undefined) return true;
+    return (
+      tokenAllocations
+        .map(tokenAllocation => Number(tokenAllocation.amount))
+        .reduce((prev, curr) => prev + curr, 0) <= Number(supply)
+    );
+  }, [tokenAllocations, supply]);
+
   useEffect(() => {
     setPrevEnabled(true);
   }, [setPrevEnabled]);
@@ -38,10 +51,13 @@ function TokenDetails({
         name.trim() !== '' &&
         symbol !== undefined &&
         symbol.trim() !== '' &&
+        supply !== undefined &&
+        Number(supply) !== 0 &&
         !tokenAllocations.some(tokenAllocation => tokenAllocation.amount === 0) &&
-        !tokenAllocations.some(tokenAllocation => tokenAllocation.addressError)
+        !tokenAllocations.some(tokenAllocation => tokenAllocation.addressError) &&
+        allocationsValid()
     );
-  }, [name, setNextEnabled, symbol, tokenAllocations]);
+  }, [name, setNextEnabled, supply, symbol, tokenAllocations, allocationsValid]);
 
   /**
    * updates symbol state when typing
@@ -79,8 +95,22 @@ function TokenDetails({
         />
       </InputBox>
 
+      <InputBox>
+        <Input
+          type="number"
+          value={supply}
+          onChange={e => setSupply(e.target.value)}
+          label="Token Supply"
+          helperText="Whole numbers only"
+          disabled={false}
+          isWholeNumberOnly
+          min="0"
+        />
+      </InputBox>
+
       <TokenAllocations
         tokenAllocations={tokenAllocations}
+        supply={supply}
         setTokenAllocations={setTokenAllocations}
       />
     </div>

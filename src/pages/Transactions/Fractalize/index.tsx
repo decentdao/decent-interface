@@ -47,6 +47,7 @@ function Fractalize() {
       daoName,
       tokenName,
       tokenSymbol,
+      tokenSupply,
       tokenAllocations,
       proposalThreshold,
       quorum,
