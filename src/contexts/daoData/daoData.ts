@@ -20,11 +20,14 @@ import useTreasuryEvents from './treasury/useTreasuryEvents';
 import useTreasuryAssetsFungible from './treasury/useTreasuryAssetsFungible';
 import useTreasuryAssetsNonFungible from './treasury/useTreasuryAssetsNonFungible';
 import { TreasuryAssetFungible, TreasuryAssetNonFungible } from './treasury/types';
+import { useDAOLegacy } from './useDAOLegacy';
 
 export interface DAOData {
   daoAddress: string | undefined;
   name: string | undefined;
   accessControlAddress: string | undefined;
+  parentDAO?: string;
+  subsidiaryDAOs: string[];
   modules: {
     treasury: {
       treasuryModuleContract: TreasuryModule | undefined;
@@ -66,7 +69,7 @@ const useDAODatas = () => {
   const accessControlAddress = useAccessControlAddress(daoContract);
   const accessControlContract = useAccessControlContract(accessControlAddress);
   const moduleAddresses = useModuleAddresses(daoContract, accessControlContract);
-
+  const daoLegacy = useDAOLegacy(daoAddress);
   // ***** Module Hooks ****** //
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const timelockModuleContract = useTimelockModuleContract(moduleAddresses);
@@ -100,6 +103,7 @@ const useDAODatas = () => {
     daoAddress,
     name,
     accessControlAddress,
+    ...daoLegacy,
     modules: {
       treasury: {
         treasuryModuleContract,
