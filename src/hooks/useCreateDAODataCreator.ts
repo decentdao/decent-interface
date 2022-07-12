@@ -10,6 +10,7 @@ import {
   DAOAccessControl__factory,
 } from '@fractal-framework/core-contracts';
 import { VotesTokenWithSupply__factory } from '../assets/typechain-types/votes-token';
+import { TreasuryModule__factory } from '../assets/typechain-types/metafactory';
 
 const useCreateDAODataCreator = () => {
   const {
@@ -24,6 +25,7 @@ const useCreateDAODataCreator = () => {
       daoName,
       tokenName,
       tokenSymbol,
+      tokenSupply,
       tokenAllocations,
       proposalThreshold,
       quorum,
@@ -36,6 +38,7 @@ const useCreateDAODataCreator = () => {
       daoName: string;
       tokenName: string;
       tokenSymbol: string;
+      tokenSupply: string;
       tokenAllocations: TokenAllocation[];
       proposalThreshold: string;
       quorum: string;
@@ -114,6 +117,22 @@ const useCreateDAODataCreator = () => {
         )
       );
 
+      // If the total token supply is greater than the sum of allocations,
+      // Then mint the token difference into the Metafactory, to be deposited
+      // into the treasury
+      const tokenSupplyNumber = Number(tokenSupply);
+      const tokenAllocationSum = tokenAllocations.reduce((accumulator, tokenAllocation) => {
+        return accumulator + tokenAllocation.amount;
+      }, 0);
+
+      if (tokenSupplyNumber > tokenAllocationSum) {
+        const daoTokenAllocation: TokenAllocation = {
+          address: addresses.metaFactory.address,
+          amount: tokenSupplyNumber - tokenAllocationSum,
+        };
+        tokenAllocations.push(daoTokenAllocation);
+      }
+
       const predictedTokenAddress = ethers.utils.getCreate2Address(
         addresses.tokenFactory.address,
         ethers.utils.solidityKeccak256(
@@ -171,13 +190,6 @@ const useCreateDAODataCreator = () => {
           ]
         )
       );
-
-      console.log('PredictedDAODAddress: ', predictedDAOAddress);
-      console.log('PredictedAccessControlAddress: ', predictedAccessControlAddress);
-      console.log('PredictedTreasuryAddress: ', predictedTreasuryAddress);
-      console.log('PredictedToken address: ', predictedTokenAddress);
-      console.log('PredictedGovernorAddress: ', predictedGovernorAddress);
-      console.log('Predicted timelock address: ', predictedTimelockAddress);
 
       const createDAOParams = {
         daoImplementation: addresses.dao.address,
@@ -315,6 +327,27 @@ const useCreateDAODataCreator = () => {
         addActionsRolesCalldata, // Setup module action role configurations
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
+
+      if (tokenSupplyNumber > tokenAllocationSum) {
+        // DAO approve Treasury to transfer tokens
+        const approveDAOTokenTransferCalldata =
+          VotesTokenWithSupply__factory.createInterface().encodeFunctionData('approve', [
+            predictedTreasuryAddress,
+            ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18),
+          ]);
+
+        // DAO calls Treasury to deposit tokens into it
+        const depositTokensToTreasuryCalldata =
+          TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
+            [predictedTokenAddress],
+            [addresses.metaFactory.address],
+            [ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18)],
+          ]);
+
+        targets.push(predictedTokenAddress, predictedTreasuryAddress);
+        values.push(0, 0);
+        calldatas.push(approveDAOTokenTransferCalldata, depositTokensToTreasuryCalldata);
+      }
 
       return {
         daoFactory: addresses.daoFactory.address,
