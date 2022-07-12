@@ -64,11 +64,18 @@ const useCreateDAODataCreator = () => {
         return undefined;
       }
 
-      // todo: update salt to a more random value
-      const daoAndAccessControlSalt = ethers.utils.formatBytes32String(Math.random().toString());
-      const treasurySalt = ethers.utils.formatBytes32String(Math.random().toString());
-      const tokenSalt = ethers.utils.formatBytes32String(Math.random().toString());
-      const governorAndTimelockSalt = ethers.utils.formatBytes32String(Math.random().toString());
+      const daoAndAccessControlSalt = ethers.utils.formatBytes32String(
+        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
+      );
+      const treasurySalt = ethers.utils.formatBytes32String(
+        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
+      );
+      const tokenSalt = ethers.utils.formatBytes32String(
+        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
+      );
+      const governorAndTimelockSalt = ethers.utils.formatBytes32String(
+        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
+      );
 
       const predictedDAOAddress = ethers.utils.getCreate2Address(
         addresses.daoFactory.address,
