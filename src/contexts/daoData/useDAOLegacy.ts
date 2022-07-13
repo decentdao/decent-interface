@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { DAOFactory, DAOFactory__factory } from '@fractal-framework/core-contracts';
 import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 import { useAddresses } from './useAddresses';
+import { DAOCreationListener } from './types/daoLegacy';
 
 export function useDAOLegacy(daoAddress?: string) {
   const [parentDAO, setParentDAO] = useState<string>();
@@ -46,6 +47,29 @@ export function useDAOLegacy(daoAddress?: string) {
       setParentDAO(creatorEvent.length ? creator : undefined);
       setSubsidiaryDAOs(daoAddresses);
     })();
+
+    const createDAOEventListener: DAOCreationListener = async (
+      _daoAddress: string,
+      _accessControl: string,
+      _sender: string,
+      _creator: string
+    ) => {
+      if (_creator === daoAddress) {
+        setSubsidiaryDAOs(prevState => [...prevState, _daoAddress]);
+      }
+    };
+
+    daoFactoryContract.on(
+      daoFactoryContract.filters.DAOCreated(null, null, null, daoAddress),
+      createDAOEventListener
+    );
+
+    return () => {
+      daoFactoryContract.off(
+        daoFactoryContract.filters.DAOCreated(null, null, null, daoAddress),
+        createDAOEventListener
+      );
+    };
   }, [signerOrProvider, daoFactory, getPastEvents, daoAddress]);
 
   return { parentDAO, subsidiaryDAOs };
