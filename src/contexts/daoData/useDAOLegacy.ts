@@ -35,10 +35,12 @@ export function useDAOLegacy(daoAddress?: string) {
         daoFactoryContract,
         daoFactoryContract.filters.DAOCreated(creator)
       );
+
       const subsidiaries = await getPastEvents(
         daoFactoryContract,
-        daoFactoryContract.filters.DAOCreated(null, null, null, creator)
+        daoFactoryContract.filters.DAOCreated(null, null, null, daoAddress)
       );
+
       const daoAddresses = subsidiaries.length ? subsidiaries.map(event => event.args[0]) : [];
 
       setParentDAO(creatorEvent.length ? creator : undefined);
