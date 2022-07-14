@@ -4,6 +4,11 @@ import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 import { useAddresses } from './useAddresses';
 import { DAOCreationListener } from './types/daoLegacy';
 
+/**
+ *
+ * @param daoAddress address of current DAO
+ * @returns parentDAO (string) and subsidiaryDAOs (string[]) if these exists
+ */
 export function useDAOLegacy(daoAddress?: string) {
   const [parentDAO, setParentDAO] = useState<string>();
   const [subsidiaryDAOs, setSubsidiaryDAOs] = useState<string[]>([]);
@@ -23,7 +28,7 @@ export function useDAOLegacy(daoAddress?: string) {
     }
     const daoFactoryContract = DAOFactory__factory.connect(daoFactory.address, signerOrProvider);
 
-    // retrieves creation event
+    // retrieves creation event for current DAO
     (async () => {
       const creationEvent = await getPastEvents(
         daoFactoryContract,
@@ -31,12 +36,13 @@ export function useDAOLegacy(daoAddress?: string) {
       );
 
       const creator = creationEvent[0].args[3];
-      // check if creator is a Fractal DAO
-      const creatorEvent = await getPastEvents(
-        daoFactoryContract,
-        daoFactoryContract.filters.DAOCreated(creator)
-      );
 
+      // checks for DAO creation event for creator address
+      const isDaoParent = (
+        await getPastEvents(daoFactoryContract, daoFactoryContract.filters.DAOCreated(creator))
+      ).length;
+
+      // retrieves DAOs created by current DAO
       const subsidiaries = await getPastEvents(
         daoFactoryContract,
         daoFactoryContract.filters.DAOCreated(null, null, null, daoAddress)
@@ -44,7 +50,7 @@ export function useDAOLegacy(daoAddress?: string) {
 
       const daoAddresses = subsidiaries.length ? subsidiaries.map(event => event.args[0]) : [];
 
-      setParentDAO(creatorEvent.length ? creator : undefined);
+      setParentDAO(isDaoParent ? creator : undefined);
       setSubsidiaryDAOs(daoAddresses);
     })();
 
