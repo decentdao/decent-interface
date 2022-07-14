@@ -29,8 +29,8 @@ import type {
 export declare namespace IDAOFactory {
   export type CreateDAOParamsStruct = {
     daoImplementation: string;
-    daoFactory: string;
     accessControlImplementation: string;
+    salt: BytesLike;
     daoName: string;
     roles: string[];
     rolesAdmins: string[];
@@ -51,8 +51,8 @@ export declare namespace IDAOFactory {
     string[][]
   ] & {
     daoImplementation: string;
-    daoFactory: string;
     accessControlImplementation: string;
+    salt: string;
     daoName: string;
     roles: string[];
     rolesAdmins: string[];
@@ -62,89 +62,63 @@ export declare namespace IDAOFactory {
   };
 }
 
-export declare namespace IMetaFactory {
-  export type ModuleFactoryCallDataStruct = {
-    factory: string;
-    data: BytesLike[];
-    value: BigNumberish;
-    newContractAddressesToPass: BigNumberish[];
-    addressesReturned: BigNumberish;
-  };
-
-  export type ModuleFactoryCallDataStructOutput = [
-    string,
-    string[],
-    BigNumber,
-    BigNumber[],
-    BigNumber
-  ] & {
-    factory: string;
-    data: string[];
-    value: BigNumber;
-    newContractAddressesToPass: BigNumber[];
-    addressesReturned: BigNumber;
-  };
-
-  export type ModuleActionDataStruct = {
-    contractIndexes: BigNumberish[];
-    functionDescs: string[];
-    roles: string[][];
-  };
-
-  export type ModuleActionDataStructOutput = [
-    BigNumber[],
-    string[],
-    string[][]
-  ] & {
-    contractIndexes: BigNumber[];
-    functionDescs: string[];
-    roles: string[][];
-  };
-}
-
 export interface IMetaFactoryInterface extends utils.Interface {
   functions: {
-    "createDAOAndModules(address,uint256,(address,address,address,string,string[],string[],address[][],string[],string[][]),(address,bytes[],uint256,uint256[],uint256)[],(uint256[],string[],string[][]),uint256[][])": FunctionFragment;
+    "createDAOAndExecute(address,(address,address,bytes32,string,string[],string[],address[][],string[],string[][]),address[],bytes[][],address[],uint256[],bytes[])": FunctionFragment;
   };
 
-  getFunction(nameOrSignatureOrTopic: "createDAOAndModules"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: "createDAOAndExecute"): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "createDAOAndModules",
+    functionFragment: "createDAOAndExecute",
     values: [
       string,
-      BigNumberish,
       IDAOFactory.CreateDAOParamsStruct,
-      IMetaFactory.ModuleFactoryCallDataStruct[],
-      IMetaFactory.ModuleActionDataStruct,
-      BigNumberish[][]
+      string[],
+      BytesLike[][],
+      string[],
+      BigNumberish[],
+      BytesLike[]
     ]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "createDAOAndModules",
+    functionFragment: "createDAOAndExecute",
     data: BytesLike
   ): Result;
 
   events: {
-    "DAOAndModulesCreated(address,address,address[])": EventFragment;
+    "DAOCreated(address,address,address)": EventFragment;
+    "Executed(address[],uint256[],bytes[])": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "DAOAndModulesCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "DAOCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Executed"): EventFragment;
 }
 
-export interface DAOAndModulesCreatedEventObject {
-  dao: string;
+export interface DAOCreatedEventObject {
+  daoAddress: string;
   accessControl: string;
-  modules: string[];
+  creator: string;
 }
-export type DAOAndModulesCreatedEvent = TypedEvent<
-  [string, string, string[]],
-  DAOAndModulesCreatedEventObject
+export type DAOCreatedEvent = TypedEvent<
+  [string, string, string],
+  DAOCreatedEventObject
 >;
 
-export type DAOAndModulesCreatedEventFilter =
-  TypedEventFilter<DAOAndModulesCreatedEvent>;
+export type DAOCreatedEventFilter = TypedEventFilter<DAOCreatedEvent>;
+
+export interface ExecutedEventObject {
+  targets: string[];
+  values: BigNumber[];
+  calldatas: string[];
+}
+export type ExecutedEvent = TypedEvent<
+  [string[], BigNumber[], string[]],
+  ExecutedEventObject
+>;
+
+export type ExecutedEventFilter = TypedEventFilter<ExecutedEvent>;
 
 export interface IMetaFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -173,72 +147,88 @@ export interface IMetaFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    createDAOAndModules(
+    createDAOAndExecute(
       daoFactory: string,
-      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
-      moduleActionData: IMetaFactory.ModuleActionDataStruct,
-      roleModuleMembers: BigNumberish[][],
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
+      targets: string[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
-  createDAOAndModules(
+  createDAOAndExecute(
     daoFactory: string,
-    metaFactoryTempRoleIndex: BigNumberish,
     createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-    moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
-    moduleActionData: IMetaFactory.ModuleActionDataStruct,
-    roleModuleMembers: BigNumberish[][],
+    moduleFactories: string[],
+    moduleFactoriesBytes: BytesLike[][],
+    targets: string[],
+    values: BigNumberish[],
+    calldatas: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    createDAOAndModules(
+    createDAOAndExecute(
       daoFactory: string,
-      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
-      moduleActionData: IMetaFactory.ModuleActionDataStruct,
-      roleModuleMembers: BigNumberish[][],
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
+      targets: string[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
       overrides?: CallOverrides
-    ): Promise<string[]>;
+    ): Promise<void>;
   };
 
   filters: {
-    "DAOAndModulesCreated(address,address,address[])"(
-      dao?: null,
-      accessControl?: null,
-      modules?: null
-    ): DAOAndModulesCreatedEventFilter;
-    DAOAndModulesCreated(
-      dao?: null,
-      accessControl?: null,
-      modules?: null
-    ): DAOAndModulesCreatedEventFilter;
+    "DAOCreated(address,address,address)"(
+      daoAddress?: string | null,
+      accessControl?: string | null,
+      creator?: string | null
+    ): DAOCreatedEventFilter;
+    DAOCreated(
+      daoAddress?: string | null,
+      accessControl?: string | null,
+      creator?: string | null
+    ): DAOCreatedEventFilter;
+
+    "Executed(address[],uint256[],bytes[])"(
+      targets?: null,
+      values?: null,
+      calldatas?: null
+    ): ExecutedEventFilter;
+    Executed(
+      targets?: null,
+      values?: null,
+      calldatas?: null
+    ): ExecutedEventFilter;
   };
 
   estimateGas: {
-    createDAOAndModules(
+    createDAOAndExecute(
       daoFactory: string,
-      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
-      moduleActionData: IMetaFactory.ModuleActionDataStruct,
-      roleModuleMembers: BigNumberish[][],
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
+      targets: string[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    createDAOAndModules(
+    createDAOAndExecute(
       daoFactory: string,
-      metaFactoryTempRoleIndex: BigNumberish,
       createDAOParams: IDAOFactory.CreateDAOParamsStruct,
-      moduleFactoriesCallData: IMetaFactory.ModuleFactoryCallDataStruct[],
-      moduleActionData: IMetaFactory.ModuleActionDataStruct,
-      roleModuleMembers: BigNumberish[][],
+      moduleFactories: string[],
+      moduleFactoriesBytes: BytesLike[][],
+      targets: string[],
+      values: BigNumberish[],
+      calldatas: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

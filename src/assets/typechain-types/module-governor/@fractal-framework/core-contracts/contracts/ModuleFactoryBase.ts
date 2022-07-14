@@ -28,99 +28,65 @@ import type {
 
 export interface ModuleFactoryBaseInterface extends utils.Interface {
   functions: {
-    "DEFAULT_ADMIN_ROLE()": FunctionFragment;
-    "VERSION_ROLE()": FunctionFragment;
     "addVersion(string,string,address)": FunctionFragment;
-    "create(bytes[])": FunctionFragment;
-    "getRoleAdmin(bytes32)": FunctionFragment;
-    "grantRole(bytes32,address)": FunctionFragment;
-    "hasRole(bytes32,address)": FunctionFragment;
-    "renounceRole(bytes32,address)": FunctionFragment;
-    "revokeRole(bytes32,address)": FunctionFragment;
+    "create(address,bytes[])": FunctionFragment;
+    "owner()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
     "versionControl(uint256)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "DEFAULT_ADMIN_ROLE"
-      | "VERSION_ROLE"
       | "addVersion"
       | "create"
-      | "getRoleAdmin"
-      | "grantRole"
-      | "hasRole"
-      | "renounceRole"
-      | "revokeRole"
+      | "owner"
+      | "renounceOwnership"
       | "supportsInterface"
+      | "transferOwnership"
       | "versionControl"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "VERSION_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "addVersion",
     values: [string, string, string]
   ): string;
-  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
   encodeFunctionData(
-    functionFragment: "getRoleAdmin",
-    values: [BytesLike]
+    functionFragment: "create",
+    values: [string, BytesLike[]]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "grantRole",
-    values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "hasRole",
-    values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "renounceRole",
-    values: [BytesLike, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "revokeRole",
-    values: [BytesLike, string]
+    functionFragment: "renounceOwnership",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
   ): string;
   encodeFunctionData(
     functionFragment: "versionControl",
     values: [BigNumberish]
   ): string;
 
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "VERSION_ROLE",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "addVersion", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getRoleAdmin",
+    functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "renounceRole",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -129,54 +95,25 @@ export interface ModuleFactoryBaseInterface extends utils.Interface {
   ): Result;
 
   events: {
-    "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
-    "RoleGranted(bytes32,address,address)": EventFragment;
-    "RoleRevoked(bytes32,address,address)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
     "VersionCreated(string,string,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "VersionCreated"): EventFragment;
 }
 
-export interface RoleAdminChangedEventObject {
-  role: string;
-  previousAdminRole: string;
-  newAdminRole: string;
+export interface OwnershipTransferredEventObject {
+  previousOwner: string;
+  newOwner: string;
 }
-export type RoleAdminChangedEvent = TypedEvent<
-  [string, string, string],
-  RoleAdminChangedEventObject
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
 >;
 
-export type RoleAdminChangedEventFilter =
-  TypedEventFilter<RoleAdminChangedEvent>;
-
-export interface RoleGrantedEventObject {
-  role: string;
-  account: string;
-  sender: string;
-}
-export type RoleGrantedEvent = TypedEvent<
-  [string, string, string],
-  RoleGrantedEventObject
->;
-
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
-
-export interface RoleRevokedEventObject {
-  role: string;
-  account: string;
-  sender: string;
-}
-export type RoleRevokedEvent = TypedEvent<
-  [string, string, string],
-  RoleRevokedEventObject
->;
-
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface VersionCreatedEventObject {
   semanticVersion: string;
@@ -217,10 +154,6 @@ export interface ModuleFactoryBase extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
-    VERSION_ROLE(overrides?: CallOverrides): Promise<[string]>;
-
     addVersion(
       _semanticVersion: string,
       _frontendURI: string,
@@ -229,33 +162,14 @@ export interface ModuleFactoryBase extends BaseContract {
     ): Promise<ContractTransaction>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -263,6 +177,11 @@ export interface ModuleFactoryBase extends BaseContract {
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     versionControl(
       arg0: BigNumberish,
@@ -276,10 +195,6 @@ export interface ModuleFactoryBase extends BaseContract {
     >;
   };
 
-  DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-  VERSION_ROLE(overrides?: CallOverrides): Promise<string>;
-
   addVersion(
     _semanticVersion: string,
     _frontendURI: string,
@@ -288,33 +203,14 @@ export interface ModuleFactoryBase extends BaseContract {
   ): Promise<ContractTransaction>;
 
   create(
+    creator: string,
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
+  owner(overrides?: CallOverrides): Promise<string>;
 
-  grantRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  hasRole(
-    role: BytesLike,
-    account: string,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
-
-  renounceRole(
-    role: BytesLike,
-    account: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  revokeRole(
-    role: BytesLike,
-    account: string,
+  renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -322,6 +218,11 @@ export interface ModuleFactoryBase extends BaseContract {
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   versionControl(
     arg0: BigNumberish,
@@ -335,10 +236,6 @@ export interface ModuleFactoryBase extends BaseContract {
   >;
 
   callStatic: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
-
-    VERSION_ROLE(overrides?: CallOverrides): Promise<string>;
-
     addVersion(
       _semanticVersion: string,
       _frontendURI: string,
@@ -346,38 +243,25 @@ export interface ModuleFactoryBase extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
-
-    getRoleAdmin(role: BytesLike, overrides?: CallOverrides): Promise<string>;
-
-    grantRole(
-      role: BytesLike,
-      account: string,
+    create(
+      creator: string,
+      data: BytesLike[],
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<string[]>;
 
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
+    owner(overrides?: CallOverrides): Promise<string>;
 
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     versionControl(
       arg0: BigNumberish,
@@ -392,38 +276,14 @@ export interface ModuleFactoryBase extends BaseContract {
   };
 
   filters: {
-    "RoleAdminChanged(bytes32,bytes32,bytes32)"(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-    RoleAdminChanged(
-      role?: BytesLike | null,
-      previousAdminRole?: BytesLike | null,
-      newAdminRole?: BytesLike | null
-    ): RoleAdminChangedEventFilter;
-
-    "RoleGranted(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-    RoleGranted(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleGrantedEventFilter;
-
-    "RoleRevoked(bytes32,address,address)"(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
-    RoleRevoked(
-      role?: BytesLike | null,
-      account?: string | null,
-      sender?: string | null
-    ): RoleRevokedEventFilter;
+    "OwnershipTransferred(address,address)"(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
 
     "VersionCreated(string,string,address)"(
       semanticVersion?: null,
@@ -438,10 +298,6 @@ export interface ModuleFactoryBase extends BaseContract {
   };
 
   estimateGas: {
-    DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
-    VERSION_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-
     addVersion(
       _semanticVersion: string,
       _frontendURI: string,
@@ -450,42 +306,25 @@ export interface ModuleFactoryBase extends BaseContract {
     ): Promise<BigNumber>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     versionControl(
@@ -495,12 +334,6 @@ export interface ModuleFactoryBase extends BaseContract {
   };
 
   populateTransaction: {
-    DEFAULT_ADMIN_ROLE(
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    VERSION_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     addVersion(
       _semanticVersion: string,
       _frontendURI: string,
@@ -509,42 +342,25 @@ export interface ModuleFactoryBase extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getRoleAdmin(
-      role: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    grantRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    hasRole(
-      role: BytesLike,
-      account: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    renounceRole(
-      role: BytesLike,
-      account: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    revokeRole(
-      role: BytesLike,
-      account: string,
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     versionControl(

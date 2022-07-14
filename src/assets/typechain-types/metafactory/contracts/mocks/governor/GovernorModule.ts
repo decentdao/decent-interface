@@ -43,7 +43,7 @@ export interface GovernorModuleInterface extends utils.Interface {
     "getVotesWithParams(address,uint256,bytes)": FunctionFragment;
     "hasVoted(uint256,address)": FunctionFragment;
     "hashProposal(address[],uint256[],bytes[],bytes32)": FunctionFragment;
-    "initialize(string,address,address,uint64,uint256,uint256,uint256,uint256,address)": FunctionFragment;
+    "initialize(address,address,uint64,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "moduleFactory()": FunctionFragment;
     "name()": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
@@ -194,7 +194,6 @@ export interface GovernorModuleInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
-      string,
       string,
       string,
       BigNumberish,
@@ -782,7 +781,6 @@ export interface GovernorModule extends BaseContract {
     ): Promise<[BigNumber]>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,
@@ -1028,7 +1026,6 @@ export interface GovernorModule extends BaseContract {
   ): Promise<BigNumber>;
 
   initialize(
-    _name: string,
     _token: string,
     _timelock: string,
     _initialVoteExtension: BigNumberish,
@@ -1271,7 +1268,6 @@ export interface GovernorModule extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,
@@ -1649,7 +1645,6 @@ export interface GovernorModule extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,
@@ -1892,7 +1887,6 @@ export interface GovernorModule extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,

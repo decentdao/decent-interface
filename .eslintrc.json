@@ -61,7 +61,7 @@
             1,
             {
                 "printWidth": 100,
-                "endOfLine": "lf",
+                "endOfLine": "auto",
                 "tabWidth": 2,
                 "useTabs": false,
                 "singleQuote": true,

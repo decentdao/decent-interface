@@ -25,7 +25,7 @@ import type {
 export interface IGovernorModuleInterface extends utils.Interface {
   functions: {
     "getVotes(address,uint256)": FunctionFragment;
-    "initialize(string,address,address,uint64,uint256,uint256,uint256,uint256,address)": FunctionFragment;
+    "initialize(address,address,uint64,uint256,uint256,uint256,uint256,address)": FunctionFragment;
     "proposalDeadline(uint256)": FunctionFragment;
     "proposalThreshold()": FunctionFragment;
     "propose(address[],uint256[],bytes[],string)": FunctionFragment;
@@ -55,7 +55,6 @@ export interface IGovernorModuleInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
-      string,
       string,
       string,
       BigNumberish,
@@ -151,7 +150,6 @@ export interface IGovernorModule extends BaseContract {
     ): Promise<[BigNumber]>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,
@@ -200,7 +198,6 @@ export interface IGovernorModule extends BaseContract {
   ): Promise<BigNumber>;
 
   initialize(
-    _name: string,
     _token: string,
     _timelock: string,
     _initialVoteExtension: BigNumberish,
@@ -246,7 +243,6 @@ export interface IGovernorModule extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,
@@ -295,7 +291,6 @@ export interface IGovernorModule extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,
@@ -345,7 +340,6 @@ export interface IGovernorModule extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _name: string,
       _token: string,
       _timelock: string,
       _initialVoteExtension: BigNumberish,

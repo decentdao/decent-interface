@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { DAO, AccessControlDAO } from '@fractal-framework/core-contracts';
 import { ACRoleListener } from './types';
+import { DAO, DAOAccessControl } from '@fractal-framework/core-contracts';
+
+// @todo this will need to be fixed so that eslint doesn't have to be ignored for this file
+// current there are unused variables that because of typing can not be removed without a little thought
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 type ModuleActionRoleEvents = {
   address: string;
@@ -10,7 +14,7 @@ type ModuleActionRoleEvents = {
 
 const useModuleAddresses = (
   daoContract: DAO | undefined,
-  accessControlContract: AccessControlDAO | undefined
+  accessControlContract: DAOAccessControl | undefined
 ) => {
   const [addActionRoleTargets, setAddActionRoleTargets] = useState<string[]>();
   const [removeActionRoleTargets, setRemoveActionRoleTargets] = useState<string[]>();

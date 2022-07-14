@@ -88,7 +88,7 @@ const _abi = [
       },
       {
         internalType: "address",
-        name: "_moduleFactoryBase",
+        name: "_moduleFactory",
         type: "address",
       },
       {
