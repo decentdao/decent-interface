@@ -41,7 +41,7 @@ function HeaderMenu() {
   return (
     <div className="flex items-center justify-center relative">
       <Menu>
-        {({ open }) => (
+        {({ open }: { open: boolean }) => (
           <>
             <Menu.Button className="transition duration-150 ease-in-out hover:text-stone-300 focus:outline-none flex items-center">
               <ConnectWallet account={account} />

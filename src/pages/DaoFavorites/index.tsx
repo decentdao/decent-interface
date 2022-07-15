@@ -1,52 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { DAOAddress } from '../../components/AddressDisplay';
 import ContentBox from '../../components/ui/ContentBox';
-import { TextButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
-import useDAOContract from '../../contexts/daoData/useDAOContract';
-import useDAOName from '../../contexts/daoData/useDAOName';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useFavorites from '../../hooks/useFavorites';
-import useIsDAO from '../../hooks/useIsDAO';
-
-function FavoriteRow({ address }: { address: string }) {
-  const [isDAO, isDAOLoading] = useIsDAO(address);
-  const daoName = useDAOName(useDAOContract(address));
-  const [daoNameDisplay, setDAONameDisplay] = useState('...');
-
-  useEffect(() => {
-    if (isDAOLoading) {
-      setDAONameDisplay('...');
-      return;
-    }
-
-    if (!isDAO) {
-      setDAONameDisplay('unknown');
-      return;
-    }
-
-    if (!daoName) {
-      setDAONameDisplay('...');
-      return;
-    }
-
-    setDAONameDisplay(daoName);
-  }, [isDAOLoading, isDAO, daoName]);
-
-  return (
-    <div className="py-4 first:pt-0 last:pb-0 border-b border-gray-100 last:border-b-0 truncate">
-      <div className="text-lg">{daoNameDisplay}</div>
-      <div>
-        <Link to={`/daos/${address}`}>
-          <TextButton
-            label={address}
-            className="-ml-4"
-          />
-        </Link>
-      </div>
-    </div>
-  );
-}
 
 function DAOFavorites() {
   const {
@@ -78,9 +35,9 @@ function DAOFavorites() {
         ) : (
           <div>
             {chainFavorites.map(favorite => (
-              <FavoriteRow
+              <DAOAddress
                 key={favorite}
-                address={favorite}
+                daoAddress={favorite}
               />
             ))}
           </div>
