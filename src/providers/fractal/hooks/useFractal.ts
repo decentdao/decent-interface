@@ -1,5 +1,12 @@
 import { createContext, useContext, Context } from 'react';
+import { FractalDAO, IDaoLegacy } from '../types';
 
-export const FractalContext = createContext<any>(null);
+export interface IFractalContext {
+  dao: FractalDAO;
+  daoLegacy: IDaoLegacy;
+}
 
-export const useFractal = (): any => useContext({} as Context<any>);
+export const FractalContext = createContext<IFractalContext | null>(null);
+
+export const useFractal = (): IFractalContext =>
+  useContext(FractalContext as Context<IFractalContext>);

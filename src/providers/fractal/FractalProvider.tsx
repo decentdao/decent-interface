@@ -6,8 +6,15 @@ import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useSearchDao from '../../hooks/useSearchDao';
 import { initialState } from './constants';
 import { FractalAction } from './constants/enums';
+import { useDAOLegacy } from './hooks/useDAOLegacy';
 import { FractalContext } from './hooks/useFractal';
-import { ACRoleListener, FractalActions, FractalDAO, ModuleActionRoleEvents } from './types';
+import {
+  ACRoleListener,
+  FractalActions,
+  FractalDAO,
+  IDaoLegacy,
+  ModuleActionRoleEvents,
+} from './types';
 
 const initializeState = (_initialState: FractalDAO) => {
   return _initialState;
@@ -35,6 +42,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
+  const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
 
   const loadDAO = () => {
     if (dao.isLoading) {
@@ -51,7 +59,6 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       accessControlAddress,
       signerOrProvider!
     );
-
     // retrieves action roles added events
     const actionRoles = (
       await accessControlContract.queryFilter(accessControlContract.filters.ActionRoleAdded())
@@ -168,9 +175,9 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       dao,
-      dispatch,
+      daoLegacy,
     }),
-    [dao, dispatch]
+    [dao, daoLegacy]
   );
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
 }
