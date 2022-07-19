@@ -6,8 +6,20 @@ import { ExecuteData } from '../../../types/execute';
 import { useNavigate } from 'react-router-dom';
 import { useDAOData } from '../../../contexts/daoData';
 import { useBlockchainData } from '../../../contexts/blockchainData';
+import { ERC20Funding } from '../../../types/erc20Funding';
+import { ERC721Funding } from '../../../types/erc721Funding';
+import { useAddresses } from '../../../contexts/daoData/useAddresses';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { TreasuryModule__factory } from '../../../assets/typechain-types/module-treasury';
+import { VotesTokenWithSupply__factory } from '../../../assets/typechain-types/votes-token';
+import { ethers } from 'ethers';
 
 function Fractalize() {
+  const {
+    state: { chainId },
+  } = useWeb3Provider();
+
+  const addresses = useAddresses(chainId);
   const [{ daoAddress }] = useDAOData();
   const navigate = useNavigate();
 
@@ -36,9 +48,11 @@ function Fractalize() {
     executionDelay: string,
     lateQuorumExecution: string,
     voteStartDelay: string,
-    votingPeriod: string
+    votingPeriod: string,
+    erc20Funding: ERC20Funding[],
+    erc721Funding: ERC721Funding[]
   ) => {
-    if (daoAddress === undefined) {
+    if (daoAddress === undefined || addresses.treasuryModule === undefined) {
       return;
     }
 
@@ -66,16 +80,52 @@ function Fractalize() {
       values: [0],
       calldatas: [
         metaFactoryContract.interface.encodeFunctionData('createDAOAndExecute', [
-          newDAOData.daoFactory,
-          newDAOData.createDAOParams,
-          newDAOData.moduleFactories,
-          newDAOData.moduleFactoriesBytes,
-          newDAOData.targets,
-          newDAOData.values,
-          newDAOData.calldatas,
+          newDAOData.calldata.daoFactory,
+          newDAOData.calldata.createDAOParams,
+          newDAOData.calldata.moduleFactories,
+          newDAOData.calldata.moduleFactoriesBytes,
+          newDAOData.calldata.targets,
+          newDAOData.calldata.values,
+          newDAOData.calldata.calldatas,
         ]),
       ],
     };
+
+    if (erc20Funding.length > 0) {
+      // Approve the new treasury to transfer tokens from the DAO
+      erc20Funding.forEach(erc20Fund => {
+        data.targets.push(erc20Fund.address);
+        data.values.push(0);
+        data.calldatas.push(
+          VotesTokenWithSupply__factory.createInterface().encodeFunctionData('approve', [
+            newDAOData.predictedTreasuryAddress,
+            ethers.utils.parseUnits(erc20Fund.amount.toString(), 18),
+          ])
+        );
+      });
+
+      // Withdraw tokens from the parent treasury into the parent DAO
+      data.targets.push(addresses.treasuryModule.address);
+      data.values.push(0);
+      data.calldatas.push(
+        TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
+          erc20Funding.map(erc20Fund => erc20Fund.address),
+          new Array(erc20Funding.length).fill(daoAddress),
+          erc20Funding.map(erc20Fund => ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)),
+        ])
+      );
+
+      // Deposit tokens from the parent DAO into the child treasury
+      data.targets.push(newDAOData.predictedTreasuryAddress);
+      data.values.push(0);
+      data.calldatas.push(
+        TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
+          erc20Funding.map(erc20Fund => erc20Fund.address),
+          new Array(erc20Funding.length).fill(daoAddress),
+          erc20Funding.map(erc20Fund => ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)),
+        ])
+      );
+    }
 
     createProposal({
       proposalData: { ...data, description: `New subDAO: ${daoName}` },
