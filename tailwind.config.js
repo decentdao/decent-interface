@@ -81,6 +81,9 @@ module.exports = {
           '100%': { transform: 'translateX(100%)', width: '100%', opacity: '.1'}
         },
       },
+      gridTemplateColumns: {
+        'treasury': 'minmax(32px, 1fr) minmax(24px, 1fr) minmax(48px, 1fr) 2fr minmax(16px, 24px)'
+      },
     }
   },
   plugins: [],
