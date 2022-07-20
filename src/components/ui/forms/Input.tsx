@@ -15,7 +15,10 @@ interface InputProps {
   errorMessage?: string;
   placeholder?: string;
   min?: string | number;
+  max?: string | number;
+  onClickMax?: () => void;
   isWholeNumberOnly?: boolean;
+  isFloatNumbers?: boolean;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
 }
 
@@ -27,6 +30,7 @@ interface InputProps {
 function Input({
   value,
   min,
+  max,
   placeholder,
   type,
   label,
@@ -37,10 +41,12 @@ function Input({
   helperText,
   exampleText,
   exampleLabel,
+  isFloatNumbers,
   isWholeNumberOnly,
   containerClassName,
   inputClassName,
   onChange,
+  onClickMax,
 }: InputProps) {
   const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
@@ -88,8 +94,19 @@ function Input({
     );
   }
 
+  function SetMax() {
+    return !max ? null : (
+      <div
+        className="absolute text-sm text-gold-500 top-2 left-2"
+        onClick={onClickMax}
+      >
+        max
+      </div>
+    );
+  }
+
   const INPUT_BASE_STYLES =
-    'w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-25 focus:outline-none';
+    'w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-25 focus:outline-none placeholder:text-gray-100';
   const INPUT_DISABLED_STYLED =
     'disabled:bg-gray-300 disabled:border-gray-200 disabled:text-gray-50';
   const borderColor = hasError ? 'border border-red' : '';
@@ -97,8 +114,11 @@ function Input({
 
   const inputType = type !== 'textarea' ? type : undefined;
 
-  const stripChars = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const wholeNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     return ['e', '+', '-', '.'].includes(event.key) && event.preventDefault();
+  };
+  const floatNumbers = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    return ['e', '+', '-'].includes(event.key) && event.preventDefault();
   };
 
   return (
@@ -127,7 +147,10 @@ function Input({
           disabled={disabled}
           value={value}
           min={min}
-          onKeyDown={isWholeNumberOnly ? stripChars : undefined}
+          max={max}
+          onKeyDown={
+            isWholeNumberOnly ? wholeNumbersOnly : isFloatNumbers ? floatNumbers : undefined
+          }
           onChange={onChange}
           onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             (e.target as HTMLInputElement).blur()
@@ -136,6 +159,7 @@ function Input({
           autoCapitalize="none"
           spellCheck="false"
         />
+        <SetMax />
         <UnitsDisplay />
         <SubLabel />
         <ErrorMessage />
