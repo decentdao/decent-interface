@@ -10,8 +10,11 @@ import { ERC20Funding } from '../../../types/erc20Funding';
 import { ERC721Funding } from '../../../types/erc721Funding';
 import { useAddresses } from '../../../contexts/daoData/useAddresses';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { TreasuryModule__factory } from '../../../assets/typechain-types/module-treasury';
-import { VotesTokenWithSupply__factory } from '../../../assets/typechain-types/votes-token';
+import {
+  TreasuryModule__factory,
+  ERC721__factory,
+  ERC20__factory,
+} from '../../../assets/typechain-types/module-treasury';
 import { ethers } from 'ethers';
 
 function Fractalize() {
@@ -97,7 +100,7 @@ function Fractalize() {
         data.targets.push(erc20Fund.address);
         data.values.push(0);
         data.calldatas.push(
-          VotesTokenWithSupply__factory.createInterface().encodeFunctionData('approve', [
+          ERC20__factory.createInterface().encodeFunctionData('approve', [
             newDAOData.predictedTreasuryAddress,
             ethers.utils.parseUnits(erc20Fund.amount.toString(), 18),
           ])
@@ -123,6 +126,42 @@ function Fractalize() {
           erc20Funding.map(erc20Fund => erc20Fund.address),
           new Array(erc20Funding.length).fill(daoAddress),
           erc20Funding.map(erc20Fund => ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)),
+        ])
+      );
+    }
+
+    if (erc721Funding.length > 0) {
+      // Approve the new treasury to transfer tokens from the DAO
+      erc721Funding.forEach(erc721Fund => {
+        data.targets.push(erc721Fund.address);
+        data.values.push(0);
+        data.calldatas.push(
+          ERC721__factory.createInterface().encodeFunctionData('approve', [
+            newDAOData.predictedTreasuryAddress,
+            erc721Fund.tokenID,
+          ])
+        );
+      });
+
+      // Withdraw tokens from the parent treasury into the parent DAO
+      data.targets.push(addresses.treasuryModule.address);
+      data.values.push(0);
+      data.calldatas.push(
+        TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC721Tokens', [
+          erc721Funding.map(erc721Fund => erc721Fund.address),
+          new Array(erc721Funding.length).fill(daoAddress),
+          erc721Funding.map(erc721Fund => erc721Fund.tokenID),
+        ])
+      );
+
+      // Deposit tokens from the parent DAO into the child treasury
+      data.targets.push(newDAOData.predictedTreasuryAddress);
+      data.values.push(0);
+      data.calldatas.push(
+        TreasuryModule__factory.createInterface().encodeFunctionData('depositERC721Tokens', [
+          erc721Funding.map(erc721Fund => erc721Fund.address),
+          new Array(erc721Funding.length).fill(daoAddress),
+          erc721Funding.map(erc721Fund => erc721Fund.tokenID),
         ])
       );
     }
