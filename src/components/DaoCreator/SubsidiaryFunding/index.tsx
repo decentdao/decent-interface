@@ -1,9 +1,5 @@
 import { useState } from 'react';
 import { useDAOData } from '../../../contexts/daoData';
-import {
-  TreasuryAssetFungible,
-  TreasuryAssetNonFungible,
-} from '../../../contexts/daoData/treasury/types';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
@@ -15,21 +11,13 @@ import { TableRow } from '../../ui/table';
 import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
 import { FundingTableHeader } from '../../ui/table/TableHeaders';
 import { FundingOptions } from './FundingOptions';
-
-export type TokenToFund = {
-  asset: TreasuryAssetFungible;
-  amount: string;
-};
-
-export type NFTToFund = {
-  asset: TreasuryAssetNonFungible;
-  token_id: string;
-};
+import { TokenToFund, NFTToFund } from './types';
 
 export function SubsidiaryFunding() {
   const [tokensToFund, setTokensToFund] = useState<TokenToFund[]>([]);
   const [nftsToFund, setnftsToFund] = useState<NFTToFund[]>([]);
-  const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>(0);
+  const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
+  const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
   const [
     {
       modules: {
@@ -42,6 +30,9 @@ export function SubsidiaryFunding() {
   // @todo align input add padding
 
   const fundToken = () => {
+    if (selectedTokenIndex === undefined) {
+      return;
+    }
     const asset = treasuryAssetsFungible[selectedTokenIndex];
     // @todo check if token is already funded
     setTokensToFund(funds => [
@@ -67,13 +58,41 @@ export function SubsidiaryFunding() {
     setTokensToFund(assets);
   };
 
-  const fundNFT = () => {};
+  const selectToken = (index?: number) => {
+    setSelectedTokenIndex(index);
+  };
+  const selectNFT = (index?: number) => {
+    setSelectedNFTIndex(index);
+  };
+
+  const fundNFT = () => {
+    if (selectedNFTIndex === undefined) {
+      return;
+    }
+    const asset = treasuryAssetsNonFungible[selectedNFTIndex];
+    // @todo check if token is already funded
+    setnftsToFund(funds => [
+      ...funds,
+      {
+        asset,
+      },
+    ]);
+  };
 
   const removeNFTFund = () => {};
 
   return (
     <div>
-      <FundingOptions fundToken={fundToken} />
+      <FundingOptions
+        selectedTokenIndex={selectedTokenIndex}
+        selectToken={selectToken}
+        fundToken={fundToken}
+        tokensToFund={tokensToFund}
+        fundNFT={fundNFT}
+        selectedNFTIndex={selectedNFTIndex}
+        selectNFT={selectNFT}
+        nftsToFund={nftsToFund}
+      />
       <ContentBox title="<SubDAO> Treasury">
         <div className="my-2">
           <ContentBoxTitle>Tokens</ContentBoxTitle>

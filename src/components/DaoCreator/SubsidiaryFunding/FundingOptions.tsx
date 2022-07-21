@@ -1,12 +1,28 @@
+import { useMemo } from 'react';
 import { useDAOData } from '../../../contexts/daoData';
 import ContentBox from '../../ui/ContentBox';
 import { PrimaryButton } from '../../ui/forms/Button';
+import { NFTToFund, TokenToFund } from './types';
 
 interface IFundingOptions {
+  selectedTokenIndex?: number;
+  selectedNFTIndex?: number;
   fundToken: () => void;
+  fundNFT: () => void;
+  selectToken: (index?: number) => void;
+  selectNFT: () => void;
+  tokensToFund: TokenToFund[];
+  nftsToFund: NFTToFund[];
 }
 
-export function FundingOptions({ fundToken }: IFundingOptions) {
+export function FundingOptions({
+  fundToken,
+  selectToken,
+  selectNFT,
+  tokensToFund,
+  nftsToFund,
+  selectedTokenIndex,
+}: IFundingOptions) {
   const [
     {
       modules: {
@@ -14,10 +30,40 @@ export function FundingOptions({ fundToken }: IFundingOptions) {
       },
     },
   ] = useDAOData();
+
+  const isAddDisabled = useMemo(() => {
+    if (selectedTokenIndex === undefined) {
+      return true;
+    }
+    const isEmpty = !treasuryAssetsFungible.length;
+    const isSameLength = treasuryAssetsFungible.length === tokensToFund.length;
+    const asset = treasuryAssetsFungible[selectedTokenIndex];
+    const isAlreadyIncluded = !!tokensToFund.filter(
+      token => asset.contractAddress === token.asset.contractAddress
+    ).length;
+    return isEmpty || isAlreadyIncluded || isSameLength;
+  }, [tokensToFund, selectedTokenIndex, treasuryAssetsFungible]);
+
+  const isMoveDisabled = useMemo(() => {
+    if (selectedTokenIndex === undefined) {
+      return true;
+    }
+    const isEmpty = !treasuryAssetsNonFungible.length;
+    const isSameLength = treasuryAssetsNonFungible.length === nftsToFund.length;
+    const asset = treasuryAssetsNonFungible[selectedTokenIndex];
+    const isAlreadyIncluded = !!nftsToFund.filter(
+      token => asset.contractAddress === token.asset.contractAddress
+    ).length;
+    return isEmpty || isAlreadyIncluded || isSameLength;
+  }, [nftsToFund, selectedTokenIndex, treasuryAssetsNonFungible]);
+
   return (
     <ContentBox title="Parent Treasury">
       <div className="flex my-4">
-        <select className="bg-gray-400 border border-gray-200 px-2 rounded-md w-full focus:outline-none">
+        <select
+          className="bg-gray-400 border border-gray-200 px-2 rounded-md w-full focus:outline-none"
+          onChange={e => selectToken(e.target.value ? Number(e.target.value) : undefined)}
+        >
           <option
             value={undefined}
             label="Select Token"
@@ -34,10 +80,14 @@ export function FundingOptions({ fundToken }: IFundingOptions) {
         <PrimaryButton
           label="Add"
           onClick={fundToken}
+          disabled={isAddDisabled}
         />
       </div>
       <div className="flex">
-        <select className="bg-gray-400 border border-gray-200 px-2 rounded-md w-full focus:outline-none">
+        <select
+          className="bg-gray-400 border border-gray-200 px-2 rounded-md w-full focus:outline-none"
+          onChange={selectNFT}
+        >
           <option
             value={undefined}
             label="Select NFT"
@@ -54,6 +104,7 @@ export function FundingOptions({ fundToken }: IFundingOptions) {
         <PrimaryButton
           label="Move"
           onClick={() => null}
+          disabled={isMoveDisabled}
         />
       </div>
     </ContentBox>
