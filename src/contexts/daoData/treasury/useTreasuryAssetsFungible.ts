@@ -1,4 +1,4 @@
-import { BigNumber, utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useWeb3Provider } from '../../web3Data/hooks/useWeb3Provider';
 import {
@@ -55,7 +55,7 @@ const useTreasuryAssets = (
       name: 'Ethereum',
       symbol: 'ETH',
       decimals: 18,
-      contractAddress: '',
+      contractAddress: constants.AddressZero,
       totalAmount: amount,
       formatedTotal: utils.formatUnits(amount, 18),
     });
