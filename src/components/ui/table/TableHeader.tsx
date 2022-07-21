@@ -1,6 +1,6 @@
 import { Fragment } from 'react';
 import { TableHeaderItem } from './TableHeaderItem';
-
+import cx from 'classnames';
 interface ITableHeader {
   gridType: string;
   titles: string[];
@@ -22,7 +22,7 @@ export function TableHeader({ gridType, titles, positions }: ITableHeader) {
     );
   }
   return (
-    <div className={`grid grid-cols-${gridType} mt-4`}>
+    <div className={cx('grid mt-4', gridType)}>
       <Items />
     </div>
   );

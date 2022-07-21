@@ -9,7 +9,7 @@ import Input from '../../ui/forms/Input';
 import { Close } from '../../ui/svg/Close';
 import { TableRow } from '../../ui/table';
 import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
-import { FundingTableHeader } from '../../ui/table/TableHeaders';
+import { FundingTableHeader, NFTFundingTableHeader } from '../../ui/table/TableHeaders';
 import { FundingOptions } from './FundingOptions';
 import { TokenToFund, NFTToFund } from './types';
 
@@ -21,7 +21,7 @@ export function SubsidiaryFunding() {
   const [
     {
       modules: {
-        treasury: { treasuryAssetsFungible, treasuryAssetsNonFungible, treasuryModuleContract },
+        treasury: { treasuryAssetsFungible, treasuryAssetsNonFungible },
       },
     },
   ] = useDAOData();
@@ -79,7 +79,9 @@ export function SubsidiaryFunding() {
     ]);
   };
 
-  const removeNFTFund = () => {};
+  const removeNFTFund = (index: number) => {
+    setnftsToFund(nfts => nfts.filter((_, i) => index !== i));
+  };
 
   return (
     <div>
@@ -106,7 +108,7 @@ export function SubsidiaryFunding() {
           )}
           {tokensToFund.map((tokenToFund, index) => (
             <TableRow
-              gridType="treasury"
+              gridType="grid-cols-funding-token"
               key={tokenToFund.asset.contractAddress}
             >
               <EtherscanLinkToken address={tokenToFund.asset.contractAddress}>
@@ -133,17 +135,17 @@ export function SubsidiaryFunding() {
         </div>
         <div className="mt-4">
           <ContentBoxTitle>NFTs</ContentBoxTitle>
-          <FundingTableHeader />
-          {!tokensToFund.length && (
+          <NFTFundingTableHeader />
+          {!nftsToFund.length && (
             <TableBodyRowItem>
               <div className="flex items-center justify-center h-full w-full">
                 Add NFTs from your parent treasury above.
               </div>
             </TableBodyRowItem>
           )}
-          {nftsToFund.map(nftToFund => (
+          {nftsToFund.map((nftToFund, index) => (
             <TableRow
-              gridType="treasury"
+              gridType="grid-cols-funding-nft"
               key={nftToFund.asset.contractAddress}
             >
               <div className="flex">
@@ -163,6 +165,9 @@ export function SubsidiaryFunding() {
                     {nftToFund.asset.tokenId.toString()}
                   </div>
                 </EtherscanLinkNFT>
+              </div>
+              <div onClick={() => removeNFTFund(index)}>
+                <Close />
               </div>
             </TableRow>
           ))}
