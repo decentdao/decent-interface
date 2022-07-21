@@ -97,7 +97,7 @@ function Input({
   function SetMax() {
     return !max ? null : (
       <div
-        className="absolute text-sm text-gold-500 top-2 left-2"
+        className="absolute text-sm text-gold-500 top-1.5 right-2"
         onClick={onClickMax}
       >
         max

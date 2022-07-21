@@ -18,7 +18,7 @@ function ContentBox({
       })}
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}
-      <div className="rounded-lg px-4 py-2">{children}</div>
+      <div className="rounded-lg px-1 py-2">{children}</div>
     </div>
   );
 }

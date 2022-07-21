@@ -1,16 +1,20 @@
-import { Fragment, ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { useDAOData } from '../../../contexts/daoData';
 import {
   TreasuryAssetFungible,
   TreasuryAssetNonFungible,
 } from '../../../contexts/daoData/treasury/types';
+import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../ui/EtherscanLinkToken';
-import { TextButton } from '../../ui/forms/Button';
 import Input from '../../ui/forms/Input';
 import { Close } from '../../ui/svg/Close';
+import { TableRow } from '../../ui/table';
+import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
+import { FundingTableHeader } from '../../ui/table/TableHeaders';
+import { FundingOptions } from './FundingOptions';
 
 export type TokenToFund = {
   asset: TreasuryAssetFungible;
@@ -21,15 +25,6 @@ export type NFTToFund = {
   asset: TreasuryAssetNonFungible;
   token_id: string;
 };
-
-// @todo create a resuable component
-function TableRowWrapper({ children }: { children?: ReactNode }) {
-  return (
-    <div className="flex justify-between items-center bg-gray-500 px-4 py-5 border-t border-b border-gray-200">
-      {children}
-    </div>
-  );
-}
 
 export function SubsidiaryFunding() {
   const [tokensToFund, setTokensToFund] = useState<TokenToFund[]>([]);
@@ -78,90 +73,82 @@ export function SubsidiaryFunding() {
 
   return (
     <div>
-      <ContentBoxTitle>ETH / Tokens</ContentBoxTitle>
-
-      <div className="my-2">
-        <div className="flex mb-8">
-          <select className="bg-gray-700 border border-gray-200 px-2 rounded-md min-w-32">
-            {treasuryAssetsFungible.map((asset, index) => (
-              <option
-                key={asset.contractAddress}
-                value={index}
-                label={`${asset.symbol} | ${asset.name}`}
-              ></option>
-            ))}
-          </select>
-          <TextButton
-            label="Add token"
-            onClick={fundToken}
-          />
-        </div>
-        <div className="grid grid-cols-treasury py-2">
-          <div className="bg-gray-500 border-t border-b border-gray-200 py-2 px-4 text-gray-50 text-xs font-medium">
-            Symbol
-          </div>
-          <div className="bg-gray-500 border-t border-b border-gray-200 py-2 px-4 text-gray-50 text-xs font-medium">
-            Name
-          </div>
-          <div className="bg-gray-500 border-t border-b border-gray-200 py-2 px-4 text-gray-50 text-xs font-medium text-right">
-            Total
-          </div>
-          <div className="bg-gray-500 border-t border-b border-gray-200 py-2 px-4 text-gray-50 text-xs font-medium text-right">
-            Fund
-          </div>
-          <div className="bg-gray-500 border-t border-b border-gray-200 py-4 px-4 text-gray-50 text-xs font-medium text-center"></div>
-        </div>
-        {tokensToFund.map((tokenToFund, index) => (
-          <div
-            className="grid grid-cols-treasury grid-rows-treasury items-center py-2"
-            key={index}
-          >
-            <EtherscanLinkToken address={tokenToFund.asset.contractAddress}>
-              <div className="text-gold-500 w-16 sm:w-28 pl-4">{tokenToFund.asset.symbol}</div>
-            </EtherscanLinkToken>
-            <div className="pl-4 text-gray-25 font-medium">{tokenToFund.asset.name}</div>
-            <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
-              {tokenToFund.asset.formatedTotal}
-            </div>
-            <Input
-              containerClassName="-mb-4 pr-4"
-              inputClassName="text-right"
-              placeholder="0.000000000000000000"
-              onClickMax={() => {}}
-              type="number"
-              onChange={e => onTokenFundChange(e.target.value, index)}
-              max={tokenToFund.asset.formatedTotal}
-              isFloatNumbers
-            />
-            <div
-              className="text-center"
-              onClick={() => removeTokenFund(index)}
+      <FundingOptions fundToken={fundToken} />
+      <ContentBox title="<SubDAO> Treasury">
+        <div className="my-2">
+          <ContentBoxTitle>Tokens</ContentBoxTitle>
+          <FundingTableHeader />
+          {!tokensToFund.length && (
+            <TableBodyRowItem>
+              <div className="flex items-center justify-center h-full w-full">
+                Add Tokens from your parent treasury above.
+              </div>
+            </TableBodyRowItem>
+          )}
+          {tokensToFund.map((tokenToFund, index) => (
+            <TableRow
+              gridType="treasury"
+              key={tokenToFund.asset.contractAddress}
             >
-              <Close />
-            </div>
-          </div>
-        ))}
-        {/* {nftsToFund.map(asset => (
-        <TableRowWrapper key={asset.contractAddress}>
-        <div className="flex">
-        <EtherscanLinkAddress address={asset.contractAddress}>
-        <div className="text-gold-500 truncate ... w-16 sm:w-28">{asset.symbol}</div>
-        </EtherscanLinkAddress>
-        <div className="text-gray-25 font-medium">{asset.name}</div>
+              <EtherscanLinkToken address={tokenToFund.asset.contractAddress}>
+                <div className="text-gold-500 w-16 sm:w-28 pl-4">{tokenToFund.asset.symbol}</div>
+              </EtherscanLinkToken>
+              <div className="pl-4 text-gray-25 font-medium">{tokenToFund.asset.name}</div>
+              <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
+                {tokenToFund.asset.formatedTotal}
+              </div>
+              <Input
+                containerClassName="-mb-5 pr-4"
+                placeholder="0.000000000000000000"
+                onClickMax={() => {}}
+                type="number"
+                onChange={e => onTokenFundChange(e.target.value, index)}
+                max={tokenToFund.asset.formatedTotal}
+                isFloatNumbers
+              />
+              <div onClick={() => removeTokenFund(index)}>
+                <Close />
+              </div>
+            </TableRow>
+          ))}
         </div>
-        <div className="text-gray-25 font-mono font-semibold tracking-wider">
-        <EtherscanLinkNFT
-        address={asset.contractAddress}
-        tokenId={asset.tokenId.toString()}
-        >
-        <div className="text-gray-25 font-mono font-semibold tracking-wider">
-        {asset.tokenId.toString()}
+        <div className="mt-4">
+          <ContentBoxTitle>NFTs</ContentBoxTitle>
+          <FundingTableHeader />
+          {!tokensToFund.length && (
+            <TableBodyRowItem>
+              <div className="flex items-center justify-center h-full w-full">
+                Add NFTs from your parent treasury above.
+              </div>
+            </TableBodyRowItem>
+          )}
+          {nftsToFund.map(nftToFund => (
+            <TableRow
+              gridType="treasury"
+              key={nftToFund.asset.contractAddress}
+            >
+              <div className="flex">
+                <EtherscanLinkAddress address={nftToFund.asset.contractAddress}>
+                  <div className="text-gold-500 truncate ... w-16 sm:w-28">
+                    {nftToFund.asset.symbol}
+                  </div>
+                </EtherscanLinkAddress>
+                <div className="text-gray-25 font-medium">{nftToFund.asset.name}</div>
+              </div>
+              <div className="text-gray-25 font-mono font-semibold tracking-wider">
+                <EtherscanLinkNFT
+                  address={nftToFund.asset.contractAddress}
+                  tokenId={nftToFund.asset.tokenId.toString()}
+                >
+                  <div className="text-gray-25 font-mono font-semibold tracking-wider">
+                    {nftToFund.asset.tokenId.toString()}
+                  </div>
+                </EtherscanLinkNFT>
+              </div>
+            </TableRow>
+          ))}
         </div>
-        </EtherscanLinkNFT>
-        </div>
-        </TableRowWrapper>
-      ))} */}
-      </div>
+      </ContentBox>
     </div>
   );
 }
