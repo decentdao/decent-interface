@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import StepController from './DisplayStepController';
 import ConnectWalletToast from '../ConnectWalletToast';
-import ContentBox from '../ui/ContentBox';
 import H1 from '../ui/H1';
 import { TokenAllocation } from '../../types/tokenAllocation';
 import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
@@ -69,38 +68,36 @@ function DaoCreator({
             ? 'Configure New Fractal'
             : 'Configure ' + daoName}
         </H1>
-        <ContentBox>
-          <form onSubmit={e => e.preventDefault()}>
-            <StepController
-              step={step}
-              setPrevEnabled={setPrevEnabled}
-              setNextEnabled={setNextEnabled}
-              setDeployEnabled={setDeployEnabled}
-              daoName={daoName}
-              setDAOName={setDAOName}
-              tokenName={tokenName}
-              setTokenName={setTokenName}
-              tokenSymbol={tokenSymbol}
-              setTokenSymbol={setTokenSymbol}
-              tokenSupply={tokenSupply}
-              setTokenSupply={setTokenSupply}
-              tokenAllocations={tokenAllocations}
-              setTokenAllocations={setTokenAllocations}
-              proposalThreshold={proposalThreshold}
-              setProposalThreshold={setProposalThreshold}
-              quorum={quorum}
-              setQuorum={setQuorum}
-              executionDelay={executionDelay}
-              setExecutionDelay={setExecutionDelay}
-              lateQuorumExecution={lateQuorumExecution}
-              setLateQuorumExecution={setLateQuorumExecution}
-              voteStartDelay={voteStartDelay}
-              setVoteStartDelay={setVoteStartDelay}
-              votingPeriod={votingPeriod}
-              setVotingPeriod={setVotingPeriod}
-            />
-          </form>
-        </ContentBox>
+        <form onSubmit={e => e.preventDefault()}>
+          <StepController
+            step={step}
+            setPrevEnabled={setPrevEnabled}
+            setNextEnabled={setNextEnabled}
+            setDeployEnabled={setDeployEnabled}
+            daoName={daoName}
+            setDAOName={setDAOName}
+            tokenName={tokenName}
+            setTokenName={setTokenName}
+            tokenSymbol={tokenSymbol}
+            setTokenSymbol={setTokenSymbol}
+            tokenSupply={tokenSupply}
+            setTokenSupply={setTokenSupply}
+            tokenAllocations={tokenAllocations}
+            setTokenAllocations={setTokenAllocations}
+            proposalThreshold={proposalThreshold}
+            setProposalThreshold={setProposalThreshold}
+            quorum={quorum}
+            setQuorum={setQuorum}
+            executionDelay={executionDelay}
+            setExecutionDelay={setExecutionDelay}
+            lateQuorumExecution={lateQuorumExecution}
+            setLateQuorumExecution={setLateQuorumExecution}
+            voteStartDelay={voteStartDelay}
+            setVoteStartDelay={setVoteStartDelay}
+            votingPeriod={votingPeriod}
+            setVotingPeriod={setVotingPeriod}
+          />
+        </form>
 
         <div className="flex items-center justify-center py-4">
           {step > 0 && (

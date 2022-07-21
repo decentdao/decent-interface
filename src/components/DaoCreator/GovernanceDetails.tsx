@@ -1,5 +1,6 @@
 import { ChangeEvent, useEffect } from 'react';
 import ContentBanner from '../ui/ContentBanner';
+import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
@@ -94,95 +95,97 @@ function GovernanceDetails({
 
   return (
     <div>
-      <div className="flex items-center gap-2">
-        <ContentBoxTitle>Proposal Settings</ContentBoxTitle>
-      </div>
-      <InputBox>
-        <Input
-          type="number"
-          value={proposalThreshold}
-          unit="Tokens"
-          onChange={onThresholdChange}
-          label="Proposal Creation (# of Tokens Required)"
-          exampleLabel="Recommend"
-          exampleText="0 Tokens"
-          helperText="How many tokens does a member need to have in order to create a new proposal."
-          isWholeNumberOnly
-          min="0"
-        />
-      </InputBox>
-      <InputBox>
-        <Input
-          type="number"
-          value={voteStartDelay}
-          onChange={e => setVoteStartDelay(e.target.value)}
-          label="Vote Start Delay"
-          exampleLabel="Recommend"
-          exampleText="24 Hours / ~6545 Blocks"
-          unit="Blocks"
-          helperText="How many blocks after a proposal is created, before DAO members may vote on the proposal."
-          isWholeNumberOnly
-          min="0"
-        />
-      </InputBox>
-      <InputBox>
-        <Input
-          type="number"
-          value={votingPeriod}
-          onChange={onVotingPeriodChange}
-          label="Voting Period"
-          exampleLabel="Recommend"
-          exampleText="1 Week / ~45818 Blocks"
-          unit="Blocks"
-          helperText="The length of time (in blocks) between a vote's starting and ending point. Must be greater than 0."
-          isWholeNumberOnly
-          min="1"
-        />
-      </InputBox>
-      <ContentBoxTitle>Governance Setup</ContentBoxTitle>
-      <InputBox>
-        <Input
-          type="number"
-          value={quorum}
-          onChange={onQuorumChange}
-          label="Quorum"
-          exampleLabel="Recommend"
-          exampleText="4%"
-          unit="%"
-          helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Must be less than or equal to than 100%"
-          isWholeNumberOnly
-          min="0"
-        />
-      </InputBox>
-      <InputBox>
-        <Input
-          type="number"
-          value={lateQuorumExecution}
-          onChange={e => setLateQuorumExecution(e.target.value)}
-          label="Late Quorum Delay"
-          exampleLabel="Recommend"
-          exampleText="0 Blocks"
-          unit="Blocks"
-          helperText="Minimum voting period after quorum is reached. 
+      <ContentBox>
+        <div className="flex items-center gap-2">
+          <ContentBoxTitle>Proposal Settings</ContentBoxTitle>
+        </div>
+        <InputBox>
+          <Input
+            type="number"
+            value={proposalThreshold}
+            unit="Tokens"
+            onChange={onThresholdChange}
+            label="Proposal Creation (# of Tokens Required)"
+            exampleLabel="Recommend"
+            exampleText="0 Tokens"
+            helperText="How many tokens does a member need to have in order to create a new proposal."
+            isWholeNumberOnly
+            min="0"
+          />
+        </InputBox>
+        <InputBox>
+          <Input
+            type="number"
+            value={voteStartDelay}
+            onChange={e => setVoteStartDelay(e.target.value)}
+            label="Vote Start Delay"
+            exampleLabel="Recommend"
+            exampleText="24 Hours / ~6545 Blocks"
+            unit="Blocks"
+            helperText="How many blocks after a proposal is created, before DAO members may vote on the proposal."
+            isWholeNumberOnly
+            min="0"
+          />
+        </InputBox>
+        <InputBox>
+          <Input
+            type="number"
+            value={votingPeriod}
+            onChange={onVotingPeriodChange}
+            label="Voting Period"
+            exampleLabel="Recommend"
+            exampleText="1 Week / ~45818 Blocks"
+            unit="Blocks"
+            helperText="The length of time (in blocks) between a vote's starting and ending point. Must be greater than 0."
+            isWholeNumberOnly
+            min="1"
+          />
+        </InputBox>
+        <ContentBoxTitle>Governance Setup</ContentBoxTitle>
+        <InputBox>
+          <Input
+            type="number"
+            value={quorum}
+            onChange={onQuorumChange}
+            label="Quorum"
+            exampleLabel="Recommend"
+            exampleText="4%"
+            unit="%"
+            helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Must be less than or equal to than 100%"
+            isWholeNumberOnly
+            min="0"
+          />
+        </InputBox>
+        <InputBox>
+          <Input
+            type="number"
+            value={lateQuorumExecution}
+            onChange={e => setLateQuorumExecution(e.target.value)}
+            label="Late Quorum Delay"
+            exampleLabel="Recommend"
+            exampleText="0 Blocks"
+            unit="Blocks"
+            helperText="Minimum voting period after quorum is reached. 
           This prevents a large voter from swaying a vote and triggering quorum at the last minute."
-          isWholeNumberOnly
-          min="0"
-        />
-      </InputBox>
-      <InputBox>
-        <Input
-          type="number"
-          value={executionDelay}
-          onChange={e => setExecutionDelay(e.target.value)}
-          label="Proposal Execution Delay"
-          exampleLabel="Recommend"
-          exampleText="24 Hours / ~6545 Blocks"
-          unit="Blocks"
-          helperText="How many hours after a proposal PASSES / QUEUED, must it wait until it can be executed?"
-          isWholeNumberOnly
-          min="0"
-        />
-      </InputBox>
+            isWholeNumberOnly
+            min="0"
+          />
+        </InputBox>
+        <InputBox>
+          <Input
+            type="number"
+            value={executionDelay}
+            onChange={e => setExecutionDelay(e.target.value)}
+            label="Proposal Execution Delay"
+            exampleLabel="Recommend"
+            exampleText="24 Hours / ~6545 Blocks"
+            unit="Blocks"
+            helperText="How many hours after a proposal PASSES / QUEUED, must it wait until it can be executed?"
+            isWholeNumberOnly
+            min="0"
+          />
+        </InputBox>
+      </ContentBox>
       <ContentBanner description="The Governance Setup values are editable at this time. A default value has been placed in each input box. To change these values, a new proposal will need to be created and passed by your members." />
     </div>
   );

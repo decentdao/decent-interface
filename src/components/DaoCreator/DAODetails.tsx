@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
+import ContentBox from '../ui/ContentBox';
 interface DaoDetailsProps {
   name?: string;
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,7 +19,7 @@ function DAODetails({ name, setPrevEnabled, setNextEnabled, setName }: DaoDetail
   }, [name, setNextEnabled]);
 
   return (
-    <div>
+    <ContentBox>
       <ContentBoxTitle>Essentials</ContentBoxTitle>
       <InputBox>
         <Input
@@ -29,7 +30,7 @@ function DAODetails({ name, setPrevEnabled, setNextEnabled, setName }: DaoDetail
           helperText="What is your Fractal called?"
         />
       </InputBox>
-    </div>
+    </ContentBox>
   );
 }
 

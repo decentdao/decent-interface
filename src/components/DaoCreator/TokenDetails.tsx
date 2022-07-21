@@ -4,6 +4,7 @@ import { TokenAllocation } from '../../types/tokenAllocation';
 import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 import TokenAllocations from './TokenAllocations';
+import ContentBox from '../ui/ContentBox';
 
 interface TokenDetailsProps {
   setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
@@ -73,7 +74,7 @@ function TokenDetails({
     }
   };
   return (
-    <div>
+    <ContentBox>
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
       <InputBox>
         <Input
@@ -113,7 +114,7 @@ function TokenDetails({
         supply={supply}
         setTokenAllocations={setTokenAllocations}
       />
-    </div>
+    </ContentBox>
   );
 }
 
