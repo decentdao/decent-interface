@@ -83,8 +83,8 @@ module.exports = {
         },
       },
       gridTemplateColumns: {
-        'funding-token': '5rem 10rem 1fr minmax(5rem, 1fr) 2rem',
-        'treasury-token': '5rem 10rem 1fr minmax(5rem, 1fr) 2rem',
+        'funding-token': '5rem 8rem minmax(10rem, 1fr) minmax(10rem, 1fr) 2rem',
+        'treasury-token': '5rem 10rem 1fr minmax(5rem, 1fr)',
         'funding-nft': '5rem 10rem 1fr 2rem',
         'treasury-nft': '5rem 10rem 1fr',
       },
