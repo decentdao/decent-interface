@@ -22,32 +22,6 @@ function GovernanceDetails() {
     });
   };
 
-  // useEffect(() => {
-  //   setDeployEnabled(
-  //     Number(proposalThreshold) >= 0 &&
-  //       Number(quorum) >= 0 &&
-  //       Number(quorum) <= 100 &&
-  //       Number(executionDelay) >= 0 &&
-  //       Number(lateQuorumExecution) >= 0 &&
-  //       Number(voteStartDelay) >= 0 &&
-  //       Number(votingPeriod) > 0 &&
-  //       proposalThreshold.trim() !== '' &&
-  //       quorum.trim() !== '' &&
-  //       executionDelay.trim() !== '' &&
-  //       lateQuorumExecution.trim() !== '' &&
-  //       voteStartDelay.trim() !== '' &&
-  //       votingPeriod.trim() !== ''
-  //   );
-  // }, [
-  //   proposalThreshold,
-  //   quorum,
-  //   executionDelay,
-  //   lateQuorumExecution,
-  //   voteStartDelay,
-  //   votingPeriod,
-  //   setDeployEnabled,
-  // ]);
-
   const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newThreshold = event.target.value;
     if (Number(newThreshold) <= Number(govToken.tokenSupply)) {

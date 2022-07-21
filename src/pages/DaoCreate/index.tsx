@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
+import { DAODeployData } from '../../components/DaoCreator/provider/types';
 import useDeployDAO from '../../hooks/useDeployDAO';
-import { TokenAllocation } from '../../types/tokenAllocation';
 
 function DaoCreate() {
   const navigate = useNavigate();
@@ -12,31 +12,9 @@ function DaoCreate() {
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployNewDAO = (
-    daoName: string,
-    tokenName: string,
-    tokenSymbol: string,
-    tokenSupply: string,
-    tokenAllocations: TokenAllocation[],
-    proposalThreshold: string,
-    quorum: string,
-    executionDelay: string,
-    lateQuorumExecution: string,
-    voteStartDelay: string,
-    votingPeriod: string
-  ) => {
+  const deployNewDAO = (daoData: DAODeployData) => {
     deploy({
-      daoName,
-      tokenName,
-      tokenSymbol,
-      tokenSupply,
-      tokenAllocations,
-      proposalThreshold,
-      quorum,
-      executionDelay,
-      lateQuorumExecution,
-      voteStartDelay,
-      votingPeriod,
+      ...daoData,
       successCallback,
     });
   };

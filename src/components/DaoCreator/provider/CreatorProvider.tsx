@@ -6,6 +6,7 @@ import H1 from '../../ui/H1';
 import LeftArrow from '../../ui/svg/LeftArrow';
 import RightArrow from '../../ui/svg/RightArrow';
 import { CreatorContext } from './hooks/useCreator';
+import { useDeployDisabled } from './hooks/useDeployDisabled';
 import { useNextDisabled } from './hooks/useNextDisabled';
 import { useStepName } from './hooks/useStepName';
 import { useSteps } from './hooks/useSteps';
@@ -72,7 +73,7 @@ interface ICreatorProvider {
   children: ReactNode;
 }
 
-export function CreatorProvider({ pending, isSubDAO, children }: ICreatorProvider) {
+export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICreatorProvider) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const stepName = useStepName(state);
   const {
@@ -83,7 +84,7 @@ export function CreatorProvider({ pending, isSubDAO, children }: ICreatorProvide
   useSteps(state, dispatch, isSubDAO);
   const isNextDisabled = useNextDisabled(state);
   const deployLabel = useMemo(() => (isSubDAO ? 'Create subDAO Proposal' : 'Deploy'), [isSubDAO]);
-  const isCreationReady = useMemo(() => false, []);
+  const isCreationReady = useDeployDisabled(state);
 
   const value = useMemo(() => ({ state, dispatch, stepName }), [state, dispatch, stepName]);
   return (
@@ -125,14 +126,13 @@ export function CreatorProvider({ pending, isSubDAO, children }: ICreatorProvide
         )}
         {state.step === CreatorSteps.GOV_CONFIG && (
           <PrimaryButton
-            onClick={
-              () => null
-              // daoTrigger({
-              //   ...state.essentials,
-              //   ...state.funding,
-              //   ...state.govModule,
-              //   ...state.govToken,
-              // })
+            onClick={() =>
+              daoTrigger({
+                ...state.essentials,
+                ...state.funding,
+                ...state.govModule,
+                ...state.govToken,
+              })
             }
             label={deployLabel}
             isLarge

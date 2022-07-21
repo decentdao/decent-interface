@@ -1,5 +1,5 @@
+import { NFTToFund, TokenToFund } from './../../SubsidiaryFunding/types/index';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
-import { TokenToFund, NFTToFund } from '../../SubsidiaryFunding/types';
 
 export enum CreatorProviderActions {
   SET_STEP,
@@ -76,16 +76,19 @@ export type ICreatorContext = {
   dispatch: React.Dispatch<any>;
 };
 
-export type DAOTrigger = (
-  daoName: string,
-  tokenName: string,
-  tokenSymbol: string,
-  tokenSupply: string,
-  tokenAllocations: TokenAllocation[],
-  proposalThreshold: string,
-  quorum: string,
-  executionDelay: string,
-  lateQuorumExecution: string,
-  voteStartDelay: string,
-  votingPeriod: string
-) => void;
+export type DAODeployData = {
+  daoName: string;
+  tokenName: string;
+  tokenSymbol: string;
+  tokenSupply: string;
+  tokenAllocations: TokenAllocation[];
+  proposalThreshold: string;
+  quorum: string;
+  executionDelay: string;
+  lateQuorumExecution: string;
+  voteStartDelay: string;
+  votingPeriod: string;
+  nftsToFund: NFTToFund[];
+  tokensToFund: TokenToFund[];
+};
+export type DAOTrigger = (deployData: DAODeployData) => void;
