@@ -62,7 +62,8 @@ function Button({
    * Styles
    ****************************/
 
-  const BASE_BUTTON_STYLES = 'h-10 px-8 mx-2 font-mono rounded flex items-center justify-center';
+  const BASE_BUTTON_STYLES =
+    'h-10 min-w-20 px-4 mx-2 font-mono rounded flex items-center justify-center';
 
   return (
     <button
@@ -70,7 +71,7 @@ function Button({
         BASE_BUTTON_STYLES,
         className,
         {
-          'h-16': isLarge,
+          'h-16 w-': isLarge,
         },
         {
           'justify-center': !isSpaceBetween,
