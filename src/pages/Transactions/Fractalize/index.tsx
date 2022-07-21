@@ -55,7 +55,12 @@ function Fractalize() {
     erc20Funding: ERC20Funding[],
     erc721Funding: ERC721Funding[]
   ) => {
-    if (daoAddress === undefined || addresses.treasuryModule === undefined) {
+    if (
+      daoAddress === undefined ||
+      addresses === undefined ||
+      addresses.treasuryModule === undefined ||
+      addresses.treasuryModule.address === undefined
+    ) {
       return;
     }
 
@@ -94,40 +99,67 @@ function Fractalize() {
       ],
     };
 
+    const treasuryModuleAddress = addresses.treasuryModule.address;
+
     if (erc20Funding.length > 0) {
-      // Approve the new treasury to transfer tokens from the DAO
       erc20Funding.forEach(erc20Fund => {
-        data.targets.push(erc20Fund.address);
-        data.values.push(0);
-        data.calldatas.push(
-          ERC20__factory.createInterface().encodeFunctionData('approve', [
-            newDAOData.predictedTreasuryAddress,
-            ethers.utils.parseUnits(erc20Fund.amount.toString(), 18),
-          ])
-        );
+        if (erc20Fund.address !== ethers.constants.AddressZero) {
+          // ERC20 transfer
+          // Approve the new treasury to transfer tokens from the DAO
+          data.targets.push(erc20Fund.address);
+          data.values.push(0);
+          data.calldatas.push(
+            ERC20__factory.createInterface().encodeFunctionData('approve', [
+              newDAOData.predictedTreasuryAddress,
+              ethers.utils.parseUnits(erc20Fund.amount.toString(), 18),
+            ])
+          );
+
+          // Deposit tokens from the parent DAO into the child treasury
+          data.targets.push(newDAOData.predictedTreasuryAddress);
+          data.values.push(0);
+          data.calldatas.push(
+            TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
+              [erc20Fund.address],
+              [daoAddress],
+              [ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)],
+            ])
+          );
+
+          // Withdraw tokens from the parent treasury into the parent DAO
+          data.targets.push(treasuryModuleAddress);
+          data.values.push(0);
+          data.calldatas.push(
+            TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
+              [erc20Fund.address],
+              [daoAddress],
+              [ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)],
+            ])
+          );
+
+          // Deposit tokens from the parent DAO into the child treasury
+          data.targets.push(newDAOData.predictedTreasuryAddress);
+          data.values.push(0);
+          data.calldatas.push(
+            TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
+              [erc20Fund.address],
+              [daoAddress],
+              [ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)],
+            ])
+          );
+        } else {
+          // ETH Transfer
+          // Withdraw ETH from the parent treasury into the parent DAO
+          data.targets.push(treasuryModuleAddress);
+          data.values.push(0);
+          data.calldatas.push(
+            TreasuryModule__factory.createInterface().encodeFunctionData('withdrawEth', [
+              [newDAOData.predictedTreasuryAddress],
+              [ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)],
+            ])
+          );
+        }
       });
-
-      // Withdraw tokens from the parent treasury into the parent DAO
-      data.targets.push(addresses.treasuryModule.address);
-      data.values.push(0);
-      data.calldatas.push(
-        TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
-          erc20Funding.map(erc20Fund => erc20Fund.address),
-          new Array(erc20Funding.length).fill(daoAddress),
-          erc20Funding.map(erc20Fund => ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)),
-        ])
-      );
-
-      // Deposit tokens from the parent DAO into the child treasury
-      data.targets.push(newDAOData.predictedTreasuryAddress);
-      data.values.push(0);
-      data.calldatas.push(
-        TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
-          erc20Funding.map(erc20Fund => erc20Fund.address),
-          new Array(erc20Funding.length).fill(daoAddress),
-          erc20Funding.map(erc20Fund => ethers.utils.parseUnits(erc20Fund.amount.toString(), 18)),
-        ])
-      );
     }
 
     if (erc721Funding.length > 0) {
