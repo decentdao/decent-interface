@@ -26,15 +26,11 @@ export function SubsidiaryFunding() {
     },
   ] = useDAOData();
 
-  // @todo Input should be max validationat = asset amount
-  // @todo align input add padding
-
   const fundToken = () => {
     if (selectedTokenIndex === undefined) {
       return;
     }
     const asset = treasuryAssetsFungible[selectedTokenIndex];
-    // @todo check if token is already funded
     setTokensToFund(funds => [
       ...funds,
       {
@@ -83,6 +79,16 @@ export function SubsidiaryFunding() {
     setnftsToFund(nfts => nfts.filter((_, i) => index !== i));
   };
 
+  const maxFundToken = (index: number) => {
+    const assets = tokensToFund.map((asset, i) => {
+      if (i === index) {
+        return { ...asset, amount: asset.asset.formatedTotal };
+      }
+      return asset;
+    });
+    setTokensToFund(assets);
+  };
+
   return (
     <div>
       <FundingOptions
@@ -121,8 +127,9 @@ export function SubsidiaryFunding() {
               <Input
                 containerClassName="-mb-5 pr-4"
                 placeholder="0.000000000000000000"
-                onClickMax={() => {}}
+                onClickMax={() => maxFundToken(index)}
                 type="number"
+                value={tokenToFund.amount}
                 onChange={e => onTokenFundChange(e.target.value, index)}
                 max={tokenToFund.asset.formatedTotal}
                 isFloatNumbers
