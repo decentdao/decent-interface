@@ -10,12 +10,16 @@ import { Close } from '../../ui/svg/Close';
 import { TableRow } from '../../ui/table';
 import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
 import { FundingTableHeader, NFTFundingTableHeader } from '../../ui/table/TableHeaders';
+import { useCreator } from '../provider/hooks/useCreator';
+import { CreatorProviderActions } from '../provider/types';
 import { FundingOptions } from './FundingOptions';
-import { TokenToFund, NFTToFund } from './types';
 
 export function SubsidiaryFunding() {
-  const [tokensToFund, setTokensToFund] = useState<TokenToFund[]>([]);
-  const [nftsToFund, setnftsToFund] = useState<NFTToFund[]>([]);
+  const {
+    state: { funding },
+    dispatch,
+  } = useCreator();
+
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
   const [
@@ -26,32 +30,51 @@ export function SubsidiaryFunding() {
     },
   ] = useDAOData();
 
+  const fieldUpdate = (value: any, field: string) => {
+    dispatch({
+      type: CreatorProviderActions.UPDATE_FUNDING,
+      payload: {
+        [field]: value,
+      },
+    });
+  };
+
   const fundToken = () => {
     if (selectedTokenIndex === undefined) {
       return;
     }
     const asset = treasuryAssetsFungible[selectedTokenIndex];
-    setTokensToFund(funds => [
-      ...funds,
-      {
-        asset,
-        amount: '',
-      },
-    ]);
+    fieldUpdate(
+      [
+        ...funding.tokensToFund,
+        {
+          asset,
+          amount: '',
+        },
+      ],
+      'tokensToFund'
+    );
   };
 
   const removeTokenFund = (index: number) => {
-    setTokensToFund(tokens => tokens.filter((_, i) => index !== i));
+    fieldUpdate(
+      funding.tokensToFund.filter((_, i) => index !== i),
+      'tokensToFund'
+    );
   };
 
   const onTokenFundChange = (value: string, index: number) => {
-    const assets = tokensToFund.map((asset, i) => {
+    const assets = funding.tokensToFund.map((asset, i) => {
       if (i === index) {
+        const token = treasuryAssetsFungible[index];
+        if (Number(value) >= Number(token.formatedTotal)) {
+          return { ...asset, amount: token.formatedTotal };
+        }
         return { ...asset, amount: value };
       }
       return asset;
     });
-    setTokensToFund(assets);
+    fieldUpdate(assets, 'tokensToFund');
   };
 
   const selectToken = (index?: number) => {
@@ -66,27 +89,35 @@ export function SubsidiaryFunding() {
       return;
     }
     const asset = treasuryAssetsNonFungible[selectedNFTIndex];
-    // @todo check if token is already funded
-    setnftsToFund(funds => [
-      ...funds,
-      {
-        asset,
-      },
-    ]);
+    if (selectedNFTIndex === undefined) {
+      return;
+    }
+    fieldUpdate(
+      [
+        ...funding.nftsToFund,
+        {
+          asset,
+        },
+      ],
+      'nftsToFund'
+    );
   };
 
   const removeNFTFund = (index: number) => {
-    setnftsToFund(nfts => nfts.filter((_, i) => index !== i));
+    fieldUpdate(
+      funding.nftsToFund.filter((_, i) => index !== i),
+      'nftsToFund'
+    );
   };
 
   const maxFundToken = (index: number) => {
-    const assets = tokensToFund.map((asset, i) => {
+    const assets = funding.tokensToFund.map((asset, i) => {
       if (i === index) {
         return { ...asset, amount: asset.asset.formatedTotal };
       }
       return asset;
     });
-    setTokensToFund(assets);
+    fieldUpdate(assets, 'tokensToFund');
   };
 
   return (
@@ -95,24 +126,24 @@ export function SubsidiaryFunding() {
         selectedTokenIndex={selectedTokenIndex}
         selectToken={selectToken}
         fundToken={fundToken}
-        tokensToFund={tokensToFund}
+        tokensToFund={funding.tokensToFund}
         fundNFT={fundNFT}
         selectedNFTIndex={selectedNFTIndex}
         selectNFT={selectNFT}
-        nftsToFund={nftsToFund}
+        nftsToFund={funding.nftsToFund}
       />
       <ContentBox title="<SubDAO> Treasury">
         <div className="my-2">
           <ContentBoxTitle>Tokens</ContentBoxTitle>
           <FundingTableHeader />
-          {!tokensToFund.length && (
+          {!funding.tokensToFund.length && (
             <TableBodyRowItem>
               <div className="flex items-center justify-center h-full w-full">
                 Add Tokens from your parent treasury above.
               </div>
             </TableBodyRowItem>
           )}
-          {tokensToFund.map((tokenToFund, index) => (
+          {funding.tokensToFund.map((tokenToFund, index) => (
             <TableRow
               gridType="grid-cols-funding-token"
               key={tokenToFund.asset.contractAddress}
@@ -143,14 +174,14 @@ export function SubsidiaryFunding() {
         <div className="mt-4">
           <ContentBoxTitle>NFTs</ContentBoxTitle>
           <NFTFundingTableHeader />
-          {!nftsToFund.length && (
+          {!funding.nftsToFund.length && (
             <TableBodyRowItem>
               <div className="flex items-center justify-center h-full w-full">
                 Add NFTs from your parent treasury above.
               </div>
             </TableBodyRowItem>
           )}
-          {nftsToFund.map((nftToFund, index) => (
+          {funding.nftsToFund.map((nftToFund, index) => (
             <TableRow
               gridType="grid-cols-funding-nft"
               key={nftToFund.asset.contractAddress}

@@ -1,77 +1,24 @@
-import { useEffect, useCallback, ChangeEvent } from 'react';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
-import { TokenAllocation } from '../../types/tokenAllocation';
 import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 import TokenAllocations from './TokenAllocations';
 import ContentBox from '../ui/ContentBox';
+import { useCreator } from './provider/hooks/useCreator';
+import { CreatorProviderActions } from './provider/types';
 
-interface TokenDetailsProps {
-  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  setNextEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  name: string;
-  setName: React.Dispatch<React.SetStateAction<string>>;
-  symbol: string;
-  setSymbol: React.Dispatch<React.SetStateAction<string>>;
-  supply: string;
-  setSupply: React.Dispatch<React.SetStateAction<string>>;
-  tokenAllocations: TokenAllocation[];
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
-}
+function TokenDetails() {
+  const {
+    state: { govToken },
+    dispatch,
+  } = useCreator();
 
-function TokenDetails({
-  name,
-  symbol,
-  supply,
-  tokenAllocations,
-  setName,
-  setSymbol,
-  setSupply,
-  setTokenAllocations,
-  setPrevEnabled,
-  setNextEnabled,
-}: TokenDetailsProps) {
-  const allocationsValid = useCallback(() => {
-    if (tokenAllocations === undefined || supply === undefined) return true;
-    return (
-      tokenAllocations
-        .map(tokenAllocation => Number(tokenAllocation.amount))
-        .reduce((prev, curr) => prev + curr, 0) <= Number(supply)
-    );
-  }, [tokenAllocations, supply]);
-
-  useEffect(() => {
-    setPrevEnabled(true);
-  }, [setPrevEnabled]);
-
-  useEffect(() => {
-    if (tokenAllocations === undefined) return;
-
-    setNextEnabled(
-      name !== undefined &&
-        name.trim() !== '' &&
-        symbol !== undefined &&
-        symbol.trim() !== '' &&
-        supply !== undefined &&
-        Number(supply) !== 0 &&
-        !tokenAllocations.some(tokenAllocation => tokenAllocation.amount === 0) &&
-        !tokenAllocations.some(tokenAllocation => tokenAllocation.addressError) &&
-        allocationsValid()
-    );
-  }, [name, setNextEnabled, supply, symbol, tokenAllocations, allocationsValid]);
-
-  /**
-   * updates symbol state when typing
-   * @validation only allows 5 chars
-   *
-   * @param event
-   */
-  const onTokenChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const tokenSymbol = event.target.value;
-
-    if (tokenSymbol.length <= 5) {
-      setSymbol(tokenSymbol);
-    }
+  const fieldUpdate = (value: any, field: string) => {
+    dispatch({
+      type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN,
+      payload: {
+        [field]: value,
+      },
+    });
   };
   return (
     <ContentBox>
@@ -79,8 +26,8 @@ function TokenDetails({
       <InputBox>
         <Input
           type="text"
-          value={name}
-          onChange={e => setName(e.target.value)}
+          value={govToken.tokenName}
+          onChange={e => fieldUpdate(e.target.value, 'tokenName')}
           label="Token Name"
           helperText="What is your governance token called?"
         />
@@ -88,8 +35,8 @@ function TokenDetails({
       <InputBox>
         <Input
           type="text"
-          value={symbol}
-          onChange={onTokenChange}
+          value={govToken.tokenSymbol}
+          onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
           label="Token Symbol"
           helperText="Max: 5 characters"
           disabled={false}
@@ -99,8 +46,8 @@ function TokenDetails({
       <InputBox>
         <Input
           type="number"
-          value={supply}
-          onChange={e => setSupply(e.target.value)}
+          value={govToken.tokenSupply}
+          onChange={e => fieldUpdate(e.target.value, 'tokenSupply')}
           label="Token Supply"
           helperText="Whole numbers only"
           disabled={false}
@@ -110,9 +57,9 @@ function TokenDetails({
       </InputBox>
 
       <TokenAllocations
-        tokenAllocations={tokenAllocations}
-        supply={supply}
-        setTokenAllocations={setTokenAllocations}
+        tokenAllocations={govToken.tokenAllocations}
+        supply={govToken.tokenSupply}
+        fieldUpdate={fieldUpdate}
       />
     </ContentBox>
   );

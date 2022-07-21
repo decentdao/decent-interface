@@ -86,8 +86,8 @@ function Fractalize() {
   return (
     <DaoCreator
       pending={pending}
-      nextLabel="Create subDAO Proposal"
       nextTrigger={createDAOTrigger}
+      isSubDAO
     />
   );
 }

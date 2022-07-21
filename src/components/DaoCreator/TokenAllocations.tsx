@@ -7,42 +7,41 @@ import TokenAllocationInput from './TokenAllocationInput';
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
   supply: string;
-  setTokenAllocations: React.Dispatch<React.SetStateAction<TokenAllocation[]>>;
+  fieldUpdate: (value: any, field: string) => void;
 }
 
-function TokenAllocations({
-  tokenAllocations,
-  supply,
-  setTokenAllocations,
-}: TokenAllocationsProps) {
+function TokenAllocations({ tokenAllocations, supply, fieldUpdate }: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
 
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
     const newTokenAllocations = [...tokenAllocations];
     newTokenAllocations[index] = tokenAllocation;
-    setTokenAllocations(newTokenAllocations);
+    fieldUpdate(newTokenAllocations, 'tokenAllocations');
   };
 
   const addTokenAllocation = () => {
     if (tokenAllocations === undefined) {
-      setTokenAllocations([{ address: '', amount: 0 }]);
+      fieldUpdate([{ address: '', amount: 0 }], 'tokenAllocations');
       return;
     }
-    setTokenAllocations([
-      ...tokenAllocations,
-      {
-        address: '',
-        amount: 0,
-      },
-    ]);
+    fieldUpdate(
+      [
+        ...tokenAllocations,
+        {
+          address: '',
+          amount: 0,
+        },
+      ],
+      'tokenAllocations'
+    );
   };
 
   const removeTokenAllocation = (index: number) => {
     if (tokenAllocations === undefined) return;
-    setTokenAllocations([
-      ...tokenAllocations.slice(0, index),
-      ...tokenAllocations.slice(index + 1),
-    ]);
+    fieldUpdate(
+      [...tokenAllocations.slice(0, index), ...tokenAllocations.slice(index + 1)],
+      'tokenAllocations'
+    );
   };
 
   useEffect(() => {

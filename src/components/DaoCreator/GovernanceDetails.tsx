@@ -1,96 +1,77 @@
-import { ChangeEvent, useEffect } from 'react';
+import { ChangeEvent } from 'react';
 import ContentBanner from '../ui/ContentBanner';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
+import { useCreator } from './provider/hooks/useCreator';
+import { CreatorProviderActions } from './provider/types';
 
-interface GovernanceDetailsProps {
-  tokenSupply: string;
-  proposalThreshold: string;
-  quorum: string;
-  executionDelay: string;
-  lateQuorumExecution: string;
-  voteStartDelay: string;
-  votingPeriod: string;
-  setProposalThreshold: React.Dispatch<React.SetStateAction<string>>;
-  setQuorum: React.Dispatch<React.SetStateAction<string>>;
-  setExecutionDelay: React.Dispatch<React.SetStateAction<string>>;
-  setLateQuorumExecution: React.Dispatch<React.SetStateAction<string>>;
-  setVoteStartDelay: React.Dispatch<React.SetStateAction<string>>;
-  setVotingPeriod: React.Dispatch<React.SetStateAction<string>>;
-  setPrevEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-  setDeployEnabled: React.Dispatch<React.SetStateAction<boolean>>;
-}
+function GovernanceDetails() {
+  const {
+    state: { govModule, govToken },
+    dispatch,
+  } = useCreator();
 
-function GovernanceDetails({
-  tokenSupply,
-  proposalThreshold,
-  quorum,
-  executionDelay,
-  lateQuorumExecution,
-  voteStartDelay,
-  votingPeriod,
-  setProposalThreshold,
-  setQuorum,
-  setExecutionDelay,
-  setLateQuorumExecution,
-  setVoteStartDelay,
-  setVotingPeriod,
-  setPrevEnabled,
-  setDeployEnabled,
-}: GovernanceDetailsProps) {
-  useEffect(() => {
-    setPrevEnabled(true);
-  }, [setPrevEnabled]);
+  const fieldUpdate = (value: any, field: string) => {
+    dispatch({
+      type: CreatorProviderActions.UPDATE_GOV_CONFIG,
+      payload: {
+        [field]: value,
+      },
+    });
+  };
 
-  useEffect(() => {
-    setDeployEnabled(
-      Number(proposalThreshold) >= 0 &&
-        Number(quorum) >= 0 &&
-        Number(quorum) <= 100 &&
-        Number(executionDelay) >= 0 &&
-        Number(lateQuorumExecution) >= 0 &&
-        Number(voteStartDelay) >= 0 &&
-        Number(votingPeriod) > 0 &&
-        proposalThreshold.trim() !== '' &&
-        quorum.trim() !== '' &&
-        executionDelay.trim() !== '' &&
-        lateQuorumExecution.trim() !== '' &&
-        voteStartDelay.trim() !== '' &&
-        votingPeriod.trim() !== ''
-    );
-  }, [
-    proposalThreshold,
-    quorum,
-    executionDelay,
-    lateQuorumExecution,
-    voteStartDelay,
-    votingPeriod,
-    setDeployEnabled,
-  ]);
+  // useEffect(() => {
+  //   setDeployEnabled(
+  //     Number(proposalThreshold) >= 0 &&
+  //       Number(quorum) >= 0 &&
+  //       Number(quorum) <= 100 &&
+  //       Number(executionDelay) >= 0 &&
+  //       Number(lateQuorumExecution) >= 0 &&
+  //       Number(voteStartDelay) >= 0 &&
+  //       Number(votingPeriod) > 0 &&
+  //       proposalThreshold.trim() !== '' &&
+  //       quorum.trim() !== '' &&
+  //       executionDelay.trim() !== '' &&
+  //       lateQuorumExecution.trim() !== '' &&
+  //       voteStartDelay.trim() !== '' &&
+  //       votingPeriod.trim() !== ''
+  //   );
+  // }, [
+  //   proposalThreshold,
+  //   quorum,
+  //   executionDelay,
+  //   lateQuorumExecution,
+  //   voteStartDelay,
+  //   votingPeriod,
+  //   setDeployEnabled,
+  // ]);
 
   const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newThreshold = event.target.value;
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    Number(newThreshold) <= Number(tokenSupply)
-      ? setProposalThreshold(newThreshold)
-      : setProposalThreshold(tokenSupply);
+    if (Number(newThreshold) <= Number(govToken.tokenSupply)) {
+      fieldUpdate(newThreshold, 'proposalThreshold');
+    } else {
+      fieldUpdate(govToken.tokenSupply, 'proposalThreshold');
+    }
   };
 
   const onVotingPeriodChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newVotingPeriod = event.target.value;
 
     if (Number(newVotingPeriod) > 0 || newVotingPeriod == '') {
-      setVotingPeriod(newVotingPeriod);
+      fieldUpdate(newVotingPeriod, 'votingPeriod');
     }
   };
 
   const onQuorumChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newQuorumNum = event.target.value;
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    Number(newQuorumNum) <= 100 ? setQuorum(newQuorumNum) : setQuorum('100');
+    if (Number(newQuorumNum) <= 100) {
+      fieldUpdate(newQuorumNum, 'quorum');
+    } else {
+      fieldUpdate('100', 'quorum');
+    }
   };
 
   return (
@@ -102,7 +83,7 @@ function GovernanceDetails({
         <InputBox>
           <Input
             type="number"
-            value={proposalThreshold}
+            value={govModule.proposalThreshold}
             unit="Tokens"
             onChange={onThresholdChange}
             label="Proposal Creation (# of Tokens Required)"
@@ -116,8 +97,8 @@ function GovernanceDetails({
         <InputBox>
           <Input
             type="number"
-            value={voteStartDelay}
-            onChange={e => setVoteStartDelay(e.target.value)}
+            value={govModule.voteStartDelay}
+            onChange={e => fieldUpdate(e.target.value, 'voteStartDelay')}
             label="Vote Start Delay"
             exampleLabel="Recommend"
             exampleText="24 Hours / ~6545 Blocks"
@@ -130,7 +111,7 @@ function GovernanceDetails({
         <InputBox>
           <Input
             type="number"
-            value={votingPeriod}
+            value={govModule.votingPeriod}
             onChange={onVotingPeriodChange}
             label="Voting Period"
             exampleLabel="Recommend"
@@ -145,7 +126,7 @@ function GovernanceDetails({
         <InputBox>
           <Input
             type="number"
-            value={quorum}
+            value={govModule.quorum}
             onChange={onQuorumChange}
             label="Quorum"
             exampleLabel="Recommend"
@@ -159,8 +140,8 @@ function GovernanceDetails({
         <InputBox>
           <Input
             type="number"
-            value={lateQuorumExecution}
-            onChange={e => setLateQuorumExecution(e.target.value)}
+            value={govModule.lateQuorumExecution}
+            onChange={e => fieldUpdate(e.target.value, 'lateQuorumExecution')}
             label="Late Quorum Delay"
             exampleLabel="Recommend"
             exampleText="0 Blocks"
@@ -174,8 +155,8 @@ function GovernanceDetails({
         <InputBox>
           <Input
             type="number"
-            value={executionDelay}
-            onChange={e => setExecutionDelay(e.target.value)}
+            value={govModule.executionDelay}
+            onChange={e => fieldUpdate(e.target.value, 'executionDelay')}
             label="Proposal Execution Delay"
             exampleLabel="Recommend"
             exampleText="24 Hours / ~6545 Blocks"

@@ -44,7 +44,6 @@ function DaoCreate() {
   return (
     <DaoCreator
       pending={pending}
-      nextLabel="Deploy"
       nextTrigger={deployNewDAO}
     />
   );
