@@ -64,6 +64,7 @@ module.exports = {
         'xxs': '18.5rem'
       },
       minWidth: {
+        '20': '5rem',
         'xxs': '18.5rem'
       },
       backgroundImage: {
@@ -82,7 +83,7 @@ module.exports = {
         },
       },
       gridTemplateColumns: {
-        'treasury': 'minmax(32px, 1fr) minmax(24px, 1fr) minmax(48px, 1fr) 2fr minmax(16px, 24px)'
+        'treasury': '5rem 10rem 1fr minmax(5rem, 1fr) 2rem'
       },
     }
   },
