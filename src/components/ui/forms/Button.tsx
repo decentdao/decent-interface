@@ -62,7 +62,7 @@ function Button({
    * Styles
    ****************************/
 
-  const BASE_BUTTON_STYLES = 'py-1 px-4 mx-2 font-mono rounded flex items-center justify-center';
+  const BASE_BUTTON_STYLES = 'h-10 px-8 mx-2 font-mono rounded flex items-center justify-center';
 
   return (
     <button
