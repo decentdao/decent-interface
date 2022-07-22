@@ -39,7 +39,6 @@ function Fractalize() {
   };
 
   const createDAOTrigger = (daoData: DAODeployData) => {
-    console.log('🚀 ~ file: index.tsx ~ line 42 ~ daoData', daoData);
     if (
       daoAddress === undefined ||
       addresses === undefined ||
