@@ -96,13 +96,13 @@ const useDeployDAO = () => {
       contractCallDeploy({
         contractFn: () =>
           metaFactoryContract.createDAOAndExecute(
-            createDAOData.daoFactory,
-            createDAOData.createDAOParams,
-            createDAOData.moduleFactories,
-            createDAOData.moduleFactoriesBytes,
-            createDAOData.targets,
-            createDAOData.values,
-            createDAOData.calldatas
+            createDAOData.calldata.daoFactory,
+            createDAOData.calldata.createDAOParams,
+            createDAOData.calldata.moduleFactories,
+            createDAOData.calldata.moduleFactoriesBytes,
+            createDAOData.calldata.targets,
+            createDAOData.calldata.values,
+            createDAOData.calldata.calldatas
           ),
         pendingMessage: 'Deploying Fractal...',
         failedMessage: 'Deployment Failed',
