@@ -66,11 +66,15 @@ export function SubsidiaryFunding() {
   const onTokenFundChange = (value: string, index: number) => {
     const assets = funding.tokensToFund.map((asset, i) => {
       if (i === index) {
-        const token = treasuryAssetsFungible[index];
+        const tokenIndex = treasuryAssetsFungible.findIndex(
+          v => v.contractAddress === asset.asset.contractAddress
+        );
+        const token = treasuryAssetsFungible[tokenIndex];
         if (Number(value) >= Number(token.formatedTotal)) {
           return { ...asset, amount: token.formatedTotal };
+        } else {
+          return { ...asset, amount: value };
         }
-        return { ...asset, amount: value };
       }
       return asset;
     });
