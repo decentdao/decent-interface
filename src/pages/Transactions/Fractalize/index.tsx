@@ -6,8 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDAOData } from '../../../contexts/daoData';
 import { useBlockchainData } from '../../../contexts/blockchainData';
 import { DAODeployData } from '../../../components/DaoCreator/provider/types';
-import { useAddresses } from '../../../contexts/daoData/useAddresses';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import {
   TreasuryModule__factory,
   ERC721__factory,
@@ -16,12 +14,14 @@ import {
 import { ethers } from 'ethers';
 
 function Fractalize() {
-  const {
-    state: { chainId },
-  } = useWeb3Provider();
-
-  const addresses = useAddresses(chainId);
-  const [{ daoAddress }] = useDAOData();
+  const [
+    {
+      daoAddress,
+      modules: {
+        treasury: { treasuryModuleContract },
+      },
+    },
+  ] = useDAOData();
   const navigate = useNavigate();
 
   const [createProposal, pending] = useCreateProposal();
@@ -39,12 +39,7 @@ function Fractalize() {
   };
 
   const createDAOTrigger = (daoData: DAODeployData) => {
-    if (
-      daoAddress === undefined ||
-      addresses === undefined ||
-      addresses.treasuryModule === undefined ||
-      addresses.treasuryModule.address === undefined
-    ) {
+    if (daoAddress === undefined || treasuryModuleContract === undefined) {
       return;
     }
 
@@ -73,8 +68,6 @@ function Fractalize() {
       ],
     };
 
-    const treasuryModuleAddress = addresses.treasuryModule!.address;
-
     if (daoData.tokensToFund.length > 0) {
       daoData.tokensToFund.forEach(tokenToFund => {
         if (tokenToFund.asset.contractAddress !== ethers.constants.AddressZero) {
@@ -89,19 +82,8 @@ function Fractalize() {
             ])
           );
 
-          // Deposit tokens from the parent DAO into the child treasury
-          data.targets.push(newDAOData.predictedTreasuryAddress);
-          data.values.push(0);
-          data.calldatas.push(
-            TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
-              [tokenToFund.asset.contractAddress],
-              [daoAddress],
-              [ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals)],
-            ])
-          );
-
           // Withdraw tokens from the parent treasury into the parent DAO
-          data.targets.push(treasuryModuleAddress);
+          data.targets.push(treasuryModuleContract.address);
           data.values.push(0);
           data.calldatas.push(
             TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
@@ -124,7 +106,7 @@ function Fractalize() {
         } else {
           // ETH Transfer
           // Withdraw ETH from the parent treasury into the parent DAO
-          data.targets.push(treasuryModuleAddress);
+          data.targets.push(treasuryModuleContract.address);
           data.values.push(0);
           data.calldatas.push(
             TreasuryModule__factory.createInterface().encodeFunctionData('withdrawEth', [
@@ -150,7 +132,7 @@ function Fractalize() {
       });
 
       // Withdraw tokens from the parent treasury into the parent DAO
-      data.targets.push(treasuryModuleAddress);
+      data.targets.push(treasuryModuleContract.address);
       data.values.push(0);
       data.calldatas.push(
         TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC721Tokens', [
