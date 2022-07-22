@@ -39,7 +39,13 @@ function Fractalize() {
   };
 
   const createDAOTrigger = (daoData: DAODeployData) => {
-    if (daoAddress === undefined) {
+    console.log('🚀 ~ file: index.tsx ~ line 42 ~ daoData', daoData);
+    if (
+      daoAddress === undefined ||
+      addresses === undefined ||
+      addresses.treasuryModule === undefined ||
+      addresses.treasuryModule.address === undefined
+    ) {
       return;
     }
 
@@ -80,7 +86,7 @@ function Fractalize() {
           data.calldatas.push(
             ERC20__factory.createInterface().encodeFunctionData('approve', [
               newDAOData.predictedTreasuryAddress,
-              ethers.utils.parseUnits(tokenToFund.amount.toString(), 18),
+              ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals),
             ])
           );
 
@@ -91,7 +97,7 @@ function Fractalize() {
             TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
               [tokenToFund.asset.contractAddress],
               [daoAddress],
-              [ethers.utils.parseUnits(tokenToFund.amount.toString(), 18)],
+              [ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals)],
             ])
           );
 
@@ -102,7 +108,7 @@ function Fractalize() {
             TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
               [tokenToFund.asset.contractAddress],
               [daoAddress],
-              [ethers.utils.parseUnits(tokenToFund.amount.toString(), 18)],
+              [ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals)],
             ])
           );
 
@@ -113,7 +119,7 @@ function Fractalize() {
             TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
               [tokenToFund.asset.contractAddress],
               [daoAddress],
-              [ethers.utils.parseUnits(tokenToFund.amount.toString(), 18)],
+              [ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals)],
             ])
           );
         } else {
@@ -124,7 +130,7 @@ function Fractalize() {
           data.calldatas.push(
             TreasuryModule__factory.createInterface().encodeFunctionData('withdrawEth', [
               [newDAOData.predictedTreasuryAddress],
-              [ethers.utils.parseUnits(tokenToFund.amount.toString(), 18)],
+              [ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals)],
             ])
           );
         }
