@@ -40,8 +40,6 @@ function Fractalize() {
 
   const createDAOTrigger = (daoData: DAODeployData) => {
     if (daoAddress === undefined) {
-      // erc20Funding: ERC20Funding[],
-      // erc721Funding: ERC721Funding[]
       return;
     }
 
