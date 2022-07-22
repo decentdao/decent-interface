@@ -16,7 +16,7 @@ import { FundingOptions } from './FundingOptions';
 
 export function SubsidiaryFunding() {
   const {
-    state: { funding },
+    state: { funding, essentials },
     dispatch,
   } = useCreator();
 
@@ -136,7 +136,7 @@ export function SubsidiaryFunding() {
         selectNFT={selectNFT}
         nftsToFund={funding.nftsToFund}
       />
-      <ContentBox title="<SubDAO> Treasury">
+      <ContentBox title={`${essentials.daoName} Treasury`}>
         <div className="my-2">
           <ContentBoxTitle>Tokens</ContentBoxTitle>
           <FundingTableHeader />
