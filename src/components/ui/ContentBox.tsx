@@ -12,7 +12,7 @@ function ContentBox({
 }) {
   return (
     <div
-      className={cx('rounded-lg p-4 shadow-2xl my-2', {
+      className={cx('rounded-lg p-4 shadow-2xl my-5', {
         'bg-gray-500': isLightBackground,
         'bg-gray-600': !isLightBackground,
       })}

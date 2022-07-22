@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react';
 import { CREATOR_STEP_TITLES } from '../constants';
 import { CreatorState, CreatorSteps } from '../types';
 
+/**
+ * handles form page title
+ * @param state
+ * @returns
+ */
 export function useStepName(state: CreatorState) {
   const [stepName, setStepName] = useState(CREATOR_STEP_TITLES[state.step]);
 

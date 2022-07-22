@@ -1,6 +1,12 @@
 import { useEffect } from 'react';
 import { CreatorProviderActions, CreatorState, CreatorSteps } from './../types';
 
+/**
+ * handles tracking/setting of next/prev steps dependent on the current page
+ * @param state
+ * @param dispatch
+ * @param isSubDAO
+ */
 export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isSubDAO?: boolean) {
   useEffect(() => {
     switch (state.step) {

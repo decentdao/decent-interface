@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { CreatorState, CreatorSteps } from './../types';
 
+// This hook will track form progress and ensure data is validated before allowing submission
 export function useDeployDisabled(state: CreatorState) {
   const [isDeployedEnabled, setIsDisabled] = useState(false);
 

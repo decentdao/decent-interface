@@ -7,8 +7,8 @@ import { NFTToFund, TokenToFund } from './types';
 interface IFundingOptions {
   selectedTokenIndex?: number;
   selectedNFTIndex?: number;
-  fundToken: () => void;
-  fundNFT: () => void;
+  addToken: () => void;
+  moveNFT: () => void;
   selectToken: (index?: number) => void;
   selectNFT: () => void;
   tokensToFund: TokenToFund[];
@@ -16,9 +16,10 @@ interface IFundingOptions {
 }
 
 export function FundingOptions({
-  fundToken,
+  addToken,
   selectToken,
   selectNFT,
+  moveNFT,
   tokensToFund,
   nftsToFund,
   selectedTokenIndex,
@@ -79,7 +80,7 @@ export function FundingOptions({
         </select>
         <PrimaryButton
           label="Add"
-          onClick={fundToken}
+          onClick={addToken}
           disabled={isAddDisabled}
         />
       </div>
@@ -103,7 +104,7 @@ export function FundingOptions({
         </select>
         <PrimaryButton
           label="Move"
-          onClick={() => null}
+          onClick={moveNFT}
           disabled={isMoveDisabled}
         />
       </div>

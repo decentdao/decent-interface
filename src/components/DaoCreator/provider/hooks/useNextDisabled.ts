@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { CreatorState, CreatorSteps } from './../types';
 
+/**
+ * This hook updates the next page button's disable state for each form
+ * @param state
+ * @returns
+ */
 export function useNextDisabled(state: CreatorState) {
   const [isNextDisbled, setIsDisabled] = useState(true);
 

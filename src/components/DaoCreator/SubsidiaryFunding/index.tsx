@@ -39,7 +39,25 @@ export function SubsidiaryFunding() {
     });
   };
 
-  const fundToken = () => {
+  const onTokenFundChange = (value: string, index: number) => {
+    const assets = funding.tokensToFund.map((asset, i) => {
+      if (i === index) {
+        const tokenIndex = treasuryAssetsFungible.findIndex(
+          v => v.contractAddress === asset.asset.contractAddress
+        );
+        const token = treasuryAssetsFungible[tokenIndex];
+        if (Number(value) >= Number(token.formatedTotal)) {
+          return { ...asset, amount: token.formatedTotal };
+        } else {
+          return { ...asset, amount: value };
+        }
+      }
+      return asset;
+    });
+    fieldUpdate(assets, 'tokensToFund');
+  };
+
+  const addToken = () => {
     if (selectedTokenIndex === undefined) {
       return;
     }
@@ -63,32 +81,25 @@ export function SubsidiaryFunding() {
     );
   };
 
-  const onTokenFundChange = (value: string, index: number) => {
+  const selectToken = (index?: number) => {
+    setSelectedTokenIndex(index);
+  };
+
+  const maxFundToken = (index: number) => {
     const assets = funding.tokensToFund.map((asset, i) => {
       if (i === index) {
-        const tokenIndex = treasuryAssetsFungible.findIndex(
-          v => v.contractAddress === asset.asset.contractAddress
-        );
-        const token = treasuryAssetsFungible[tokenIndex];
-        if (Number(value) >= Number(token.formatedTotal)) {
-          return { ...asset, amount: token.formatedTotal };
-        } else {
-          return { ...asset, amount: value };
-        }
+        return { ...asset, amount: asset.asset.formatedTotal };
       }
       return asset;
     });
     fieldUpdate(assets, 'tokensToFund');
   };
 
-  const selectToken = (index?: number) => {
-    setSelectedTokenIndex(index);
-  };
   const selectNFT = (index?: number) => {
     setSelectedNFTIndex(index);
   };
 
-  const fundNFT = () => {
+  const moveNFT = () => {
     if (selectedNFTIndex === undefined) {
       return;
     }
@@ -114,24 +125,14 @@ export function SubsidiaryFunding() {
     );
   };
 
-  const maxFundToken = (index: number) => {
-    const assets = funding.tokensToFund.map((asset, i) => {
-      if (i === index) {
-        return { ...asset, amount: asset.asset.formatedTotal };
-      }
-      return asset;
-    });
-    fieldUpdate(assets, 'tokensToFund');
-  };
-
   return (
     <div>
       <FundingOptions
         selectedTokenIndex={selectedTokenIndex}
         selectToken={selectToken}
-        fundToken={fundToken}
+        addToken={addToken}
         tokensToFund={funding.tokensToFund}
-        fundNFT={fundNFT}
+        moveNFT={moveNFT}
         selectedNFTIndex={selectedNFTIndex}
         selectNFT={selectNFT}
         nftsToFund={funding.nftsToFund}
