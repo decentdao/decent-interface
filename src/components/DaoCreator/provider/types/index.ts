@@ -45,6 +45,7 @@ type DAOGovenorToken = {
   tokenSymbol: string;
   tokenSupply: string;
   tokenAllocations: TokenAllocation[];
+  pAllocation?: string;
 };
 
 type DAOGovenorModuleConfig = {
