@@ -13,7 +13,7 @@ import useTokenData from './useTokenData';
 import useProposals, { ProposalData } from './useProposals';
 import { GovernorModule, Timelock } from '../../assets/typechain-types/module-governor';
 import { TreasuryModule } from '../../assets/typechain-types/module-treasury';
-import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
+import { VotesToken } from '../../assets/typechain-types/votes-token';
 import { useBlockchainData } from '../blockchainData';
 import useTreasuryModuleContract from './treasury/useTreasuryModuleContract';
 import useTreasuryEvents from './treasury/useTreasuryEvents';
@@ -39,7 +39,7 @@ export interface DAOData {
       timelockModuleContract: Timelock | undefined;
       proposals: ProposalData[] | undefined;
       votingToken: {
-        votingTokenContract: VotesTokenWithSupply | undefined;
+        votingTokenContract: VotesToken | undefined;
         votingTokenData: {
           name: string | undefined;
           symbol: string | undefined;
