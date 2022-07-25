@@ -30,7 +30,7 @@ export const initialState: CreatorState = {
     tokenSupply: '',
     tokenSymbol: '',
     tokenAllocations: [{ address: '', amount: 0 }],
-    pAllocation: undefined,
+    parentAllocationAmount: undefined,
   },
   govModule: {
     proposalThreshold: '0',
@@ -78,7 +78,7 @@ export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICr
   const init = (_initialState: CreatorState) => {
     return {
       ..._initialState,
-      govToken: { ..._initialState.govToken, pAllocation: isSubDAO ? '0' : undefined },
+      govToken: { ..._initialState.govToken, parentAllocationAmount: isSubDAO ? '0' : undefined },
     };
   };
   const [state, dispatch] = useReducer(reducer, initialState, init);
