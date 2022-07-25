@@ -12,13 +12,22 @@ import {
   ERC20__factory,
 } from '../../../assets/typechain-types/module-treasury';
 import { ethers } from 'ethers';
+import { ClaimSubsidiary__factory } from '../../../assets/typechain-types/votes-token';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { useAddresses } from '../../../contexts/daoData/useAddresses';
 
 function Fractalize() {
+  const {
+    state: { chainId },
+  } = useWeb3Provider();
+
+  const { claimSubsidiary } = useAddresses(chainId);
   const [
     {
       daoAddress,
       modules: {
         treasury: { treasuryModuleContract },
+        governor: { votingToken },
       },
     },
   ] = useDAOData();
@@ -39,7 +48,11 @@ function Fractalize() {
   };
 
   const createDAOTrigger = (daoData: DAODeployData) => {
-    if (daoAddress === undefined || treasuryModuleContract === undefined) {
+    if (
+      daoAddress === undefined ||
+      treasuryModuleContract === undefined ||
+      votingToken === undefined
+    ) {
       return;
     }
 
@@ -67,6 +80,18 @@ function Fractalize() {
         ]),
       ],
     };
+
+    if (daoData.parentAllocationAmount != '0') {
+      if (!claimSubsidiary?.address) return;
+      data.targets.push(claimSubsidiary.address);
+      data.values.push(0);
+      data.calldatas.push(
+        ClaimSubsidiary__factory.createInterface().encodeFunctionData('createSubsidiary', [
+          votingToken,
+          daoData.parentAllocationAmount,
+        ])
+      );
+    }
 
     if (daoData.tokensToFund.length > 0) {
       daoData.tokensToFund.forEach(tokenToFund => {
