@@ -91,6 +91,6 @@ export type DAODeployData = {
   votingPeriod: string;
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
-  parentAmountAllocation: string;
+  parentAmountAllocation?: string;
 };
 export type DAOTrigger = (deployData: DAODeployData) => void;
