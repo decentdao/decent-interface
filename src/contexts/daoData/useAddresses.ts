@@ -12,6 +12,7 @@ export function useAddresses(chainId: number | undefined) {
     treasuryModule?: { address: string };
     governorModule?: { address: string };
     timelock?: { address: string };
+    claimSubsidiary?: { address: string };
   }>({});
 
   useEffect(() => {
@@ -31,7 +32,8 @@ export function useAddresses(chainId: number | undefined) {
         !process.env.REACT_APP_LOCAL_ACCESSCONTROL_ADDRESS ||
         !process.env.REACT_APP_LOCAL_TREASURYMODULE_ADDRESS ||
         !process.env.REACT_APP_LOCAL_GOVERNORMODULE_ADDRESS ||
-        !process.env.REACT_APP_LOCAL_TIMELOCK_ADDRESS
+        !process.env.REACT_APP_LOCAL_TIMELOCK_ADDRESS ||
+        !process.env.REACT_APP_LOCAL_CLAIM_SUBSIDIARY
       ) {
         console.error('Local addresses not set!');
         setAddresses({});
@@ -51,6 +53,7 @@ export function useAddresses(chainId: number | undefined) {
         treasuryModule: JSON.parse(process.env.REACT_APP_LOCAL_TREASURYMODULE_ADDRESS),
         governorModule: JSON.parse(process.env.REACT_APP_LOCAL_GOVERNORMODULE_ADDRESS),
         timelock: JSON.parse(process.env.REACT_APP_LOCAL_TIMELOCK_ADDRESS),
+        claimSubsidiary: JSON.parse(process.env.REACT_APP_LOCAL_CLAIM_SUBSIDIARY),
       });
     } else {
       if (
@@ -63,7 +66,8 @@ export function useAddresses(chainId: number | undefined) {
         !process.env.REACT_APP_ACCESSCONTROL_ADDRESSES ||
         !process.env.REACT_APP_TREASURYMODULE_ADDRESSES ||
         !process.env.REACT_APP_GOVERNORMODULE_ADDRESSES ||
-        !process.env.REACT_APP_TIMELOCK_ADDRESSES
+        !process.env.REACT_APP_TIMELOCK_ADDRESSES ||
+        !process.env.REACT_APP_CLAIM_SUBSIDIARY
       ) {
         console.error('Addresses not set!');
         setAddresses({});
@@ -95,6 +99,8 @@ export function useAddresses(chainId: number | undefined) {
       const timelockNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
         process.env.REACT_APP_TIMELOCK_ADDRESSES
       );
+      const claimSubsidiaryNetworksAddresses: { [chaindId: number]: { address: string } } =
+        JSON.parse(process.env.REACT_APP_CLAIM_SUBSIDIARY);
 
       const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
       const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
@@ -107,6 +113,7 @@ export function useAddresses(chainId: number | undefined) {
       const treasuryModuleAddress: { address: string } = treasuryModuleNetworksAddresses[chainId];
       const governorModuleAddress: { address: string } = governorModuleNetworksAddresses[chainId];
       const timelockAddress: { address: string } = timelockNetworksAddresses[chainId];
+      const claimSubsidiaryAddress: { address: string } = claimSubsidiaryNetworksAddresses[chainId];
 
       if (
         !metaFactoryAddress ||
@@ -118,7 +125,8 @@ export function useAddresses(chainId: number | undefined) {
         !accessControlAddress ||
         !treasuryModuleAddress ||
         !governorModuleAddress ||
-        !timelockAddress
+        !timelockAddress ||
+        !claimSubsidiaryAddress
       ) {
         console.error(`At least one address for network ${chainId} is not set!`);
         setAddresses({});
@@ -136,6 +144,7 @@ export function useAddresses(chainId: number | undefined) {
         treasuryModule: treasuryModuleAddress,
         governorModule: governorModuleAddress,
         timelock: timelockAddress,
+        claimSubsidiary: claimSubsidiaryAddress,
       });
     }
   }, [chainId]);
