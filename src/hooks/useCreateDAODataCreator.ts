@@ -9,7 +9,7 @@ import {
   DAO__factory,
   DAOAccessControl__factory,
 } from '@fractal-framework/core-contracts';
-import { VotesTokenWithSupply__factory } from '../assets/typechain-types/votes-token';
+import { VotesToken__factory } from '../assets/typechain-types/votes-token';
 import { TreasuryModule__factory } from '../assets/typechain-types/metafactory';
 
 const useCreateDAODataCreator = () => {
@@ -140,6 +140,7 @@ const useCreateDAODataCreator = () => {
         tokenAllocations.push(daoTokenAllocation);
       }
 
+      // todo - VotesToken.bytecode update w/ types
       const predictedTokenAddress = ethers.utils.getCreate2Address(
         addresses.tokenFactory.address,
         ethers.utils.solidityKeccak256(
@@ -150,7 +151,7 @@ const useCreateDAODataCreator = () => {
           ['bytes', 'bytes'],
           [
             // eslint-disable-next-line camelcase
-            VotesTokenWithSupply__factory.bytecode,
+            VotesToken__factory.bytecode,
             abiCoder.encode(
               ['string', 'string', 'address[]', 'uint256[]'],
               [
@@ -256,7 +257,6 @@ const useCreateDAODataCreator = () => {
         abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution delay
         abiCoder.encode(['bytes32'], [governorAndTimelockSalt]), // Create2 salt
       ];
-
       const addActionsRolesCalldata = DAO__factory.createInterface().encodeFunctionData('execute', [
         [predictedAccessControlAddress],
         [0],
@@ -299,7 +299,7 @@ const useCreateDAODataCreator = () => {
               ['UPGRADE_ROLE'],
               ['UPGRADE_ROLE'],
               ['UPGRADE_ROLE'],
-              ['GOVERNOR_ROLE'],
+              ['DAO_ROLE'],
               ['GOVERNOR_ROLE'],
               ['GOVERNOR_ROLE'],
               ['GOVERNOR_ROLE'],
@@ -338,7 +338,7 @@ const useCreateDAODataCreator = () => {
       if (tokenSupplyNumber > tokenAllocationSum) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
-          VotesTokenWithSupply__factory.createInterface().encodeFunctionData('approve', [
+          VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedTreasuryAddress,
             ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18),
           ]);
