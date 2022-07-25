@@ -140,7 +140,6 @@ const useCreateDAODataCreator = () => {
         tokenAllocations.push(daoTokenAllocation);
       }
 
-      // todo - VotesToken.bytecode update w/ types
       const predictedTokenAddress = ethers.utils.getCreate2Address(
         addresses.tokenFactory.address,
         ethers.utils.solidityKeccak256(
