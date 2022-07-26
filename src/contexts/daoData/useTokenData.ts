@@ -1,10 +1,10 @@
 import { useWeb3Provider } from './../web3Data/hooks/useWeb3Provider';
 import { useState, useEffect, useCallback } from 'react';
-import { VotesTokenWithSupply } from '../../assets/typechain-types/votes-token';
+import { VotesToken } from '../../assets/typechain-types/votes-token';
 import { BigNumber } from 'ethers';
 import { TransferListener, DelegateChangedListener, DelegateVotesChangedListener } from './types';
 
-const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
+const useTokenData = (tokenContract: VotesToken | undefined) => {
   const {
     state: { account },
   } = useWeb3Provider();
