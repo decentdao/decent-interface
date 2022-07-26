@@ -59,6 +59,7 @@ function TokenDetails() {
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
         supply={govToken.tokenSupply}
+        parentAllocationAmount={govToken.parentAllocationAmount}
         fieldUpdate={fieldUpdate}
       />
     </ContentBox>
