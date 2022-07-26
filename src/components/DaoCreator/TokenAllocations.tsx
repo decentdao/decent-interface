@@ -1,16 +1,23 @@
 import { useEffect, useState } from 'react';
 import { TokenAllocation } from '../../types/tokenAllocation';
 import { TextButton } from '../ui/forms/Button';
+import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 import TokenAllocationInput from './TokenAllocationInput';
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
   supply: string;
+  parentAllocationAmount?: string;
   fieldUpdate: (value: any, field: string) => void;
 }
 
-function TokenAllocations({ tokenAllocations, supply, fieldUpdate }: TokenAllocationsProps) {
+function TokenAllocations({
+  tokenAllocations,
+  supply,
+  parentAllocationAmount,
+  fieldUpdate,
+}: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
 
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
@@ -46,14 +53,33 @@ function TokenAllocations({ tokenAllocations, supply, fieldUpdate }: TokenAlloca
 
   useEffect(() => {
     const totalAllocated = tokenAllocations.reduce((prev, cur) => Number(cur.amount) + prev, 0);
-    if (Number(supply) && totalAllocated) {
+    if (Number(supply) && Number(parentAllocationAmount)) {
+      setAmountError(Number(supply) < Number(parentAllocationAmount));
+      if (Number(supply) && totalAllocated) {
+        setAmountError(Number(supply) < totalAllocated + Number(parentAllocationAmount));
+      }
+    } else if (Number(supply) && totalAllocated) {
       setAmountError(Number(supply) < totalAllocated);
     }
-  }, [tokenAllocations, supply]);
-
+  }, [tokenAllocations, supply, parentAllocationAmount, fieldUpdate]);
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
+      <InputBox>
+        {parentAllocationAmount !== undefined && (
+          <Input
+            type="number"
+            value={parentAllocationAmount}
+            onChange={e => fieldUpdate(e.target.value, 'parentAllocationAmount')}
+            label="Parent Allocation Amount"
+            helperText="Amount of tokens to allocate to parent DAO"
+            disabled={false}
+            isWholeNumberOnly
+            min="0"
+            errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
+          />
+        )}
+      </InputBox>
       <InputBox>
         <div className="grid grid-cols-8 gap-4">
           <div className="col-span-4 md:col-span-5 text-xs text-gray-25">Address</div>
