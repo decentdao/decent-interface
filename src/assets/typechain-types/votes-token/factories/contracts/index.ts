@@ -2,6 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
+export { ClaimFactory__factory } from "./ClaimFactory__factory";
+export { ClaimSubsidiary__factory } from "./ClaimSubsidiary__factory";
 export { TokenFactory__factory } from "./TokenFactory__factory";
 export { VotesToken__factory } from "./VotesToken__factory";
-export { VotesTokenWithSupply__factory } from "./VotesTokenWithSupply__factory";

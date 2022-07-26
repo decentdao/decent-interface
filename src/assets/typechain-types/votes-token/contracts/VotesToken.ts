@@ -44,6 +44,8 @@ export interface VotesTokenInterface extends utils.Interface {
     "allowance(address,address)": FunctionFragment;
     "approve(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
+    "balanceOfAt(address,uint256)": FunctionFragment;
+    "captureSnapShot()": FunctionFragment;
     "checkpoints(address,uint32)": FunctionFragment;
     "decimals()": FunctionFragment;
     "decreaseAllowance(address,uint256)": FunctionFragment;
@@ -61,6 +63,7 @@ export interface VotesTokenInterface extends utils.Interface {
     "supportsInterface(bytes4)": FunctionFragment;
     "symbol()": FunctionFragment;
     "totalSupply()": FunctionFragment;
+    "totalSupplyAt(uint256)": FunctionFragment;
     "transfer(address,uint256)": FunctionFragment;
     "transferFrom(address,address,uint256)": FunctionFragment;
   };
@@ -71,6 +74,8 @@ export interface VotesTokenInterface extends utils.Interface {
       | "allowance"
       | "approve"
       | "balanceOf"
+      | "balanceOfAt"
+      | "captureSnapShot"
       | "checkpoints"
       | "decimals"
       | "decreaseAllowance"
@@ -88,6 +93,7 @@ export interface VotesTokenInterface extends utils.Interface {
       | "supportsInterface"
       | "symbol"
       | "totalSupply"
+      | "totalSupplyAt"
       | "transfer"
       | "transferFrom"
   ): FunctionFragment;
@@ -105,6 +111,14 @@ export interface VotesTokenInterface extends utils.Interface {
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "balanceOfAt",
+    values: [string, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "captureSnapShot",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "checkpoints",
     values: [string, BigNumberish]
@@ -168,6 +182,10 @@ export interface VotesTokenInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "totalSupplyAt",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "transfer",
     values: [string, BigNumberish]
   ): string;
@@ -183,6 +201,14 @@ export interface VotesTokenInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "balanceOfAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "captureSnapShot",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "checkpoints",
     data: BytesLike
@@ -227,6 +253,10 @@ export interface VotesTokenInterface extends utils.Interface {
     functionFragment: "totalSupply",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalSupplyAt",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferFrom",
@@ -237,12 +267,14 @@ export interface VotesTokenInterface extends utils.Interface {
     "Approval(address,address,uint256)": EventFragment;
     "DelegateChanged(address,address,address)": EventFragment;
     "DelegateVotesChanged(address,uint256,uint256)": EventFragment;
+    "Snapshot(uint256)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "DelegateVotesChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Snapshot"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
 
@@ -282,6 +314,13 @@ export type DelegateVotesChangedEvent = TypedEvent<
 
 export type DelegateVotesChangedEventFilter =
   TypedEventFilter<DelegateVotesChangedEvent>;
+
+export interface SnapshotEventObject {
+  id: BigNumber;
+}
+export type SnapshotEvent = TypedEvent<[BigNumber], SnapshotEventObject>;
+
+export type SnapshotEventFilter = TypedEventFilter<SnapshotEvent>;
 
 export interface TransferEventObject {
   from: string;
@@ -337,6 +376,16 @@ export interface VotesToken extends BaseContract {
     ): Promise<ContractTransaction>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    balanceOfAt(
+      account: string,
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
+    captureSnapShot(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     checkpoints(
       account: string,
@@ -417,6 +466,11 @@ export interface VotesToken extends BaseContract {
 
     totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    totalSupplyAt(
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     transfer(
       to: string,
       amount: BigNumberish,
@@ -446,6 +500,16 @@ export interface VotesToken extends BaseContract {
   ): Promise<ContractTransaction>;
 
   balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+  balanceOfAt(
+    account: string,
+    snapshotId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  captureSnapShot(
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   checkpoints(
     account: string,
@@ -523,6 +587,11 @@ export interface VotesToken extends BaseContract {
 
   totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
+  totalSupplyAt(
+    snapshotId: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
   transfer(
     to: string,
     amount: BigNumberish,
@@ -552,6 +621,14 @@ export interface VotesToken extends BaseContract {
     ): Promise<boolean>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    balanceOfAt(
+      account: string,
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    captureSnapShot(overrides?: CallOverrides): Promise<BigNumber>;
 
     checkpoints(
       account: string,
@@ -626,6 +703,11 @@ export interface VotesToken extends BaseContract {
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
+    totalSupplyAt(
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     transfer(
       to: string,
       amount: BigNumberish,
@@ -674,6 +756,9 @@ export interface VotesToken extends BaseContract {
       newBalance?: null
     ): DelegateVotesChangedEventFilter;
 
+    "Snapshot(uint256)"(id?: null): SnapshotEventFilter;
+    Snapshot(id?: null): SnapshotEventFilter;
+
     "Transfer(address,address,uint256)"(
       from?: string | null,
       to?: string | null,
@@ -702,6 +787,16 @@ export interface VotesToken extends BaseContract {
     ): Promise<BigNumber>;
 
     balanceOf(account: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    balanceOfAt(
+      account: string,
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    captureSnapShot(
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     checkpoints(
       account: string,
@@ -782,6 +877,11 @@ export interface VotesToken extends BaseContract {
 
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
 
+    totalSupplyAt(
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     transfer(
       to: string,
       amount: BigNumberish,
@@ -814,6 +914,16 @@ export interface VotesToken extends BaseContract {
     balanceOf(
       account: string,
       overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    balanceOfAt(
+      account: string,
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    captureSnapShot(
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     checkpoints(
@@ -903,6 +1013,11 @@ export interface VotesToken extends BaseContract {
     symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    totalSupplyAt(
+      snapshotId: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     transfer(
       to: string,

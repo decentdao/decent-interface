@@ -3,5 +3,6 @@
 /* eslint-disable */
 export * as draftErc20PermitSol from "./draft-ERC20Permit.sol";
 export * as draftIerc20PermitSol from "./draft-IERC20Permit.sol";
+export { ERC20Snapshot__factory } from "./ERC20Snapshot__factory";
 export { ERC20Votes__factory } from "./ERC20Votes__factory";
 export { IERC20Metadata__factory } from "./IERC20Metadata__factory";
