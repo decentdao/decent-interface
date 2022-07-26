@@ -12,16 +12,8 @@ import {
   ERC20__factory,
 } from '../../../assets/typechain-types/module-treasury';
 import { ethers } from 'ethers';
-import { ClaimSubsidiary__factory } from '../../../assets/typechain-types/votes-token';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { useAddresses } from '../../../contexts/daoData/useAddresses';
 
 function Fractalize() {
-  const {
-    state: { chainId },
-  } = useWeb3Provider();
-
-  const { claimSubsidiary } = useAddresses(chainId);
   const [
     {
       daoAddress,
@@ -56,15 +48,18 @@ function Fractalize() {
       return;
     }
 
-    const newDAOData = createDAODataCreator({
-      creator: daoAddress,
-      ...daoData,
-    });
+    const newDAOData = createDAODataCreator(
+      {
+        creator: daoAddress,
+        ...daoData,
+      },
+      daoData.parentAllocationAmount,
+      votingToken.votingTokenData.address
+    );
 
     if (!metaFactoryContract || !newDAOData) {
       return;
     }
-
     const data: ExecuteData = {
       targets: [metaFactoryContract.address],
       values: [0],
@@ -80,18 +75,6 @@ function Fractalize() {
         ]),
       ],
     };
-
-    if (daoData.parentAllocationAmount != '0') {
-      if (!claimSubsidiary?.address) return;
-      data.targets.push(claimSubsidiary.address);
-      data.values.push(0);
-      data.calldatas.push(
-        ClaimSubsidiary__factory.createInterface().encodeFunctionData('createSubsidiary', [
-          votingToken,
-          daoData.parentAllocationAmount,
-        ])
-      );
-    }
 
     if (daoData.tokensToFund.length > 0) {
       daoData.tokensToFund.forEach(tokenToFund => {
@@ -178,11 +161,12 @@ function Fractalize() {
         ])
       );
     }
-
+    console.log('here');
     createProposal({
       proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
       successCallback,
     });
+    console.log('her2e');
   };
 
   return (
