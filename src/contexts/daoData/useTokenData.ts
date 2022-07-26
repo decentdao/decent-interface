@@ -12,6 +12,7 @@ const useTokenData = (tokenContract: VotesToken | undefined) => {
   const [tokenSymbol, setTokenSymbol] = useState<string>();
   const [tokenDecimals, setTokenDecimals] = useState<number>();
   const [tokenBalance, setTokenBalance] = useState<BigNumber>();
+  const [tokenClaimAmount, setTokenClaimAmount] = useState<BigNumber>();
   const [tokenDelegatee, setTokenDelegatee] = useState<string>();
   const [tokenVotingWeight, setTokenVotingWeight] = useState<BigNumber>();
   const [tokenAddress, setTokenAddress] = useState<string>();
@@ -178,6 +179,7 @@ const useTokenData = (tokenContract: VotesToken | undefined) => {
     symbol: tokenSymbol,
     decimals: tokenDecimals,
     userBalance: tokenBalance,
+    userClaimAmount: tokenClaimAmount,
     delegatee: tokenDelegatee,
     votingWeight: tokenVotingWeight,
     address: tokenAddress,
