@@ -9,7 +9,10 @@ import {
   DAO__factory,
   DAOAccessControl__factory,
 } from '@fractal-framework/core-contracts';
-import { VotesToken__factory } from '../assets/typechain-types/votes-token';
+import {
+  ClaimSubsidiary__factory,
+  VotesToken__factory,
+} from '../assets/typechain-types/votes-token';
 import { TreasuryModule__factory } from '../assets/typechain-types/metafactory';
 
 const useCreateDAODataCreator = () => {
@@ -20,33 +23,37 @@ const useCreateDAODataCreator = () => {
   const addresses = useAddresses(chainId);
 
   const createDAOData = useCallback(
-    ({
-      creator,
-      daoName,
-      tokenName,
-      tokenSymbol,
-      tokenSupply,
-      tokenAllocations,
-      proposalThreshold,
-      quorum,
-      executionDelay,
-      lateQuorumExecution,
-      voteStartDelay,
-      votingPeriod,
-    }: {
-      creator: string;
-      daoName: string;
-      tokenName: string;
-      tokenSymbol: string;
-      tokenSupply: string;
-      tokenAllocations: TokenAllocation[];
-      proposalThreshold: string;
-      quorum: string;
-      executionDelay: string;
-      lateQuorumExecution: string;
-      voteStartDelay: string;
-      votingPeriod: string;
-    }) => {
+    (
+      {
+        creator,
+        daoName,
+        tokenName,
+        tokenSymbol,
+        tokenSupply,
+        tokenAllocations,
+        proposalThreshold,
+        quorum,
+        executionDelay,
+        lateQuorumExecution,
+        voteStartDelay,
+        votingPeriod,
+      }: {
+        creator: string;
+        daoName: string;
+        tokenName: string;
+        tokenSymbol: string;
+        tokenSupply: string;
+        tokenAllocations: TokenAllocation[];
+        proposalThreshold: string;
+        quorum: string;
+        executionDelay: string;
+        lateQuorumExecution: string;
+        voteStartDelay: string;
+        votingPeriod: string;
+      },
+      parentAllocationAmount?: string,
+      parentToken?: string
+    ) => {
       const abiCoder = new ethers.utils.AbiCoder();
 
       if (
@@ -57,9 +64,11 @@ const useCreateDAODataCreator = () => {
         addresses.treasuryModule === undefined ||
         addresses.tokenFactory === undefined ||
         addresses.governorFactory === undefined ||
+        addresses.claimFactory === undefined ||
         addresses.governorModule === undefined ||
         addresses.timelock === undefined ||
-        addresses.metaFactory === undefined
+        addresses.metaFactory === undefined ||
+        addresses.claimModule === undefined
       ) {
         return undefined;
       }
@@ -76,6 +85,13 @@ const useCreateDAODataCreator = () => {
       const governorAndTimelockSalt = ethers.utils.formatBytes32String(
         self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
       );
+
+      let claimSubsidiarySalt;
+      if (parentAllocationAmount) {
+        claimSubsidiarySalt = ethers.utils.formatBytes32String(
+          self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
+        );
+      }
 
       const predictedDAOAddress = ethers.utils.getCreate2Address(
         addresses.daoFactory.address,
@@ -123,22 +139,6 @@ const useCreateDAODataCreator = () => {
           ]
         )
       );
-
-      // If the total token supply is greater than the sum of allocations,
-      // Then mint the token difference into the Metafactory, to be deposited
-      // into the treasury
-      const tokenSupplyNumber = Number(tokenSupply);
-      const tokenAllocationSum = tokenAllocations.reduce((accumulator, tokenAllocation) => {
-        return accumulator + tokenAllocation.amount;
-      }, 0);
-
-      if (tokenSupplyNumber > tokenAllocationSum) {
-        const daoTokenAllocation: TokenAllocation = {
-          address: addresses.metaFactory.address,
-          amount: tokenSupplyNumber - tokenAllocationSum,
-        };
-        tokenAllocations.push(daoTokenAllocation);
-      }
 
       const predictedTokenAddress = ethers.utils.getCreate2Address(
         addresses.tokenFactory.address,
@@ -198,6 +198,52 @@ const useCreateDAODataCreator = () => {
         )
       );
 
+      let predictedClaimAddress;
+      if (parentAllocationAmount) {
+        predictedClaimAddress = ethers.utils.getCreate2Address(
+          addresses.claimFactory.address,
+          ethers.utils.solidityKeccak256(
+            ['address', 'address', 'uint256', 'bytes32'],
+            [creator, addresses.metaFactory.address, chainId, claimSubsidiarySalt]
+          ),
+          ethers.utils.solidityKeccak256(
+            ['bytes', 'bytes'],
+            [
+              // eslint-disable-next-line camelcase
+              ERC1967Proxy__factory.bytecode,
+              abiCoder.encode(['address', 'bytes'], [addresses.claimModule.address, []]),
+            ]
+          )
+        );
+      }
+
+      // If parentAllocationAmount is greater than zero,
+      // Then mint the allocation to the Metafactory, to be be transferred
+      // to the claim Subsidiary
+      if (parentAllocationAmount) {
+        const parentTokenAllocation: TokenAllocation = {
+          address: addresses.metaFactory.address,
+          amount: Number(parentAllocationAmount),
+        };
+        tokenAllocations.push(parentTokenAllocation);
+      }
+
+      // If the total token supply is greater than the sum of allocations,
+      // Then mint the token difference into the Metafactory, to be deposited
+      // into the treasury
+      const tokenSupplyNumber = Number(tokenSupply);
+      const tokenAllocationSum = tokenAllocations.reduce((accumulator, tokenAllocation) => {
+        return accumulator + tokenAllocation.amount;
+      }, 0);
+
+      if (tokenSupplyNumber > tokenAllocationSum) {
+        const daoTokenAllocation: TokenAllocation = {
+          address: addresses.metaFactory.address,
+          amount: tokenSupplyNumber - tokenAllocationSum,
+        };
+        tokenAllocations.push(daoTokenAllocation);
+      }
+
       const createDAOParams = {
         daoImplementation: addresses.dao.address,
         accessControlImplementation: addresses.accessControl.address,
@@ -256,56 +302,125 @@ const useCreateDAODataCreator = () => {
         abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution delay
         abiCoder.encode(['bytes32'], [governorAndTimelockSalt]), // Create2 salt
       ];
-      const addActionsRolesCalldata = DAO__factory.createInterface().encodeFunctionData('execute', [
-        [predictedAccessControlAddress],
-        [0],
-        [
-          DAOAccessControl__factory.createInterface().encodeFunctionData('daoAddActionsRoles', [
-            [
-              predictedTreasuryAddress,
-              predictedTreasuryAddress,
-              predictedTreasuryAddress,
-              predictedTreasuryAddress,
-              predictedTreasuryAddress,
-              predictedTreasuryAddress,
-              predictedGovernorAddress,
-              predictedTimelockAddress,
-              predictedTimelockAddress,
-              predictedTimelockAddress,
-              predictedTimelockAddress,
-              predictedTimelockAddress,
-            ],
-            [
-              'withdrawEth(address[],uint256[])',
-              'withdrawERC20Tokens(address[],address[],uint256[])',
-              'withdrawERC721Tokens(address[],address[],uint256[])',
-              'depositERC20Tokens(address[],address[],uint256[])',
-              'depositERC721Tokens(address[],address[],uint256[])',
-              'upgradeTo(address)',
-              'upgradeTo(address)',
-              'upgradeTo(address)',
-              'updateDelay(uint256)',
-              'scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)',
-              'cancel(bytes32)',
-              'executeBatch(address[],uint256[],bytes[],bytes32,bytes32)',
-            ],
-            [
-              ['WITHDRAWER_ROLE'],
-              ['WITHDRAWER_ROLE'],
-              ['WITHDRAWER_ROLE'],
-              ['OPEN_ROLE'],
-              ['OPEN_ROLE'],
-              ['UPGRADE_ROLE'],
-              ['UPGRADE_ROLE'],
-              ['UPGRADE_ROLE'],
-              ['DAO_ROLE'],
-              ['GOVERNOR_ROLE'],
-              ['GOVERNOR_ROLE'],
-              ['GOVERNOR_ROLE'],
-            ],
-          ]),
-        ],
-      ]);
+
+      let claimFactoryCalldata;
+      if (parentAllocationAmount) {
+        claimFactoryCalldata = [
+          abiCoder.encode(['address'], [predictedAccessControlAddress]),
+          abiCoder.encode(['address'], [addresses.claimModule.address]),
+          abiCoder.encode(['address'], [parentToken]), // pToken - utilize govToken
+          abiCoder.encode(['address'], [predictedTokenAddress]),
+          abiCoder.encode(['uint256'], [ethers.utils.parseUnits(parentAllocationAmount, 18)]),
+          abiCoder.encode(['bytes32'], [claimSubsidiarySalt]),
+        ];
+      }
+      let addActionsRolesCalldata;
+      if (parentAllocationAmount && predictedClaimAddress) {
+        addActionsRolesCalldata = DAO__factory.createInterface().encodeFunctionData('execute', [
+          [predictedAccessControlAddress],
+          [0],
+          [
+            DAOAccessControl__factory.createInterface().encodeFunctionData('daoAddActionsRoles', [
+              [
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedGovernorAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+                predictedClaimAddress,
+              ],
+              [
+                'withdrawEth(address[],uint256[])',
+                'withdrawERC20Tokens(address[],address[],uint256[])',
+                'withdrawERC721Tokens(address[],address[],uint256[])',
+                'depositERC20Tokens(address[],address[],uint256[])',
+                'depositERC721Tokens(address[],address[],uint256[])',
+                'upgradeTo(address)',
+                'upgradeTo(address)',
+                'upgradeTo(address)',
+                'updateDelay(uint256)',
+                'scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)',
+                'cancel(bytes32)',
+                'executeBatch(address[],uint256[],bytes[],bytes32,bytes32)',
+                'upgradeTo(address)',
+              ],
+              [
+                ['WITHDRAWER_ROLE'],
+                ['WITHDRAWER_ROLE'],
+                ['WITHDRAWER_ROLE'],
+                ['OPEN_ROLE'],
+                ['OPEN_ROLE'],
+                ['UPGRADE_ROLE'],
+                ['UPGRADE_ROLE'],
+                ['UPGRADE_ROLE'],
+                ['DAO_ROLE'],
+                ['GOVERNOR_ROLE'],
+                ['GOVERNOR_ROLE'],
+                ['GOVERNOR_ROLE'],
+                ['UPGRADE_ROLE'],
+              ],
+            ]),
+          ],
+        ]);
+      } else {
+        addActionsRolesCalldata = DAO__factory.createInterface().encodeFunctionData('execute', [
+          [predictedAccessControlAddress],
+          [0],
+          [
+            DAOAccessControl__factory.createInterface().encodeFunctionData('daoAddActionsRoles', [
+              [
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedTreasuryAddress,
+                predictedGovernorAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+                predictedTimelockAddress,
+              ],
+              [
+                'withdrawEth(address[],uint256[])',
+                'withdrawERC20Tokens(address[],address[],uint256[])',
+                'withdrawERC721Tokens(address[],address[],uint256[])',
+                'depositERC20Tokens(address[],address[],uint256[])',
+                'depositERC721Tokens(address[],address[],uint256[])',
+                'upgradeTo(address)',
+                'upgradeTo(address)',
+                'upgradeTo(address)',
+                'updateDelay(uint256)',
+                'scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)',
+                'cancel(bytes32)',
+                'executeBatch(address[],uint256[],bytes[],bytes32,bytes32)',
+              ],
+              [
+                ['WITHDRAWER_ROLE'],
+                ['WITHDRAWER_ROLE'],
+                ['WITHDRAWER_ROLE'],
+                ['OPEN_ROLE'],
+                ['OPEN_ROLE'],
+                ['UPGRADE_ROLE'],
+                ['UPGRADE_ROLE'],
+                ['UPGRADE_ROLE'],
+                ['DAO_ROLE'],
+                ['GOVERNOR_ROLE'],
+                ['GOVERNOR_ROLE'],
+                ['GOVERNOR_ROLE'],
+              ],
+            ]),
+          ],
+        ]);
+      }
 
       const revokeMetafactoryRoleCalldata =
         DAOAccessControl__factory.createInterface().encodeFunctionData('userRenounceRole', [
@@ -313,17 +428,35 @@ const useCreateDAODataCreator = () => {
           addresses.metaFactory.address,
         ]);
 
-      const moduleFactories = [
-        addresses.treasuryModuleFactory.address,
-        addresses.tokenFactory.address,
-        addresses.governorFactory.address,
-      ];
+      let moduleFactories;
+      let moduleFactoriesBytes;
+      if (parentAllocationAmount) {
+        moduleFactories = [
+          addresses.treasuryModuleFactory.address,
+          addresses.tokenFactory.address,
+          addresses.governorFactory.address,
+          addresses.claimFactory.address,
+        ];
 
-      const moduleFactoriesBytes = [
-        treasuryFactoryCalldata,
-        tokenFactoryCalldata,
-        governorFactoryCalldata,
-      ];
+        moduleFactoriesBytes = [
+          treasuryFactoryCalldata,
+          tokenFactoryCalldata,
+          governorFactoryCalldata,
+          claimFactoryCalldata,
+        ];
+      } else {
+        moduleFactories = [
+          addresses.treasuryModuleFactory.address,
+          addresses.tokenFactory.address,
+          addresses.governorFactory.address,
+        ];
+
+        moduleFactoriesBytes = [
+          treasuryFactoryCalldata,
+          tokenFactoryCalldata,
+          governorFactoryCalldata,
+        ];
+      }
 
       const targets: string[] = [predictedDAOAddress, predictedAccessControlAddress];
 
@@ -334,6 +467,28 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
+      if (parentAllocationAmount && predictedClaimAddress && parentToken) {
+        // MetaFactory approves claimModule to transfer tokens
+        const approveDAOTokenTransferCalldata =
+          VotesToken__factory.createInterface().encodeFunctionData('approve', [
+            predictedClaimAddress,
+            ethers.utils.parseUnits(parentAllocationAmount, 18),
+          ]);
+
+        // Metafactory inits claimModule and sends tokens
+        const initClaimContractCalldata =
+          ClaimSubsidiary__factory.createInterface().encodeFunctionData('initialize', [
+            addresses.metaFactory.address,
+            predictedAccessControlAddress,
+            parentToken,
+            predictedTokenAddress,
+            ethers.utils.parseUnits(parentAllocationAmount, 18),
+          ]);
+
+        targets.push(predictedTokenAddress, predictedClaimAddress);
+        values.push(0, 0);
+        calldatas.push(approveDAOTokenTransferCalldata, initClaimContractCalldata);
+      }
       if (tokenSupplyNumber > tokenAllocationSum) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
@@ -370,6 +525,8 @@ const useCreateDAODataCreator = () => {
     },
     [
       addresses.accessControl,
+      addresses.claimFactory,
+      addresses.claimModule,
       addresses.dao,
       addresses.daoFactory,
       addresses.governorFactory,
