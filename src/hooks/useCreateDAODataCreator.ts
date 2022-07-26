@@ -357,14 +357,17 @@ const useCreateDAODataCreator = () => {
       }
 
       return {
-        daoFactory: addresses.daoFactory.address,
-        createDAOParams: createDAOParams,
-        moduleFactories: moduleFactories,
-        moduleFactoriesBytes: moduleFactoriesBytes,
-        targets: targets,
-        values: values,
-        calldatas: calldatas,
-      } as MetaFactoryCreateDAOData;
+        calldata: {
+          daoFactory: addresses.daoFactory.address,
+          createDAOParams: createDAOParams,
+          moduleFactories: moduleFactories,
+          moduleFactoriesBytes: moduleFactoriesBytes,
+          targets: targets,
+          values: values,
+          calldatas: calldatas,
+        } as MetaFactoryCreateDAOData,
+        predictedTreasuryAddress: predictedTreasuryAddress,
+      };
     },
     [
       addresses.accessControl,

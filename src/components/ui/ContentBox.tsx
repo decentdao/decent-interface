@@ -12,13 +12,13 @@ function ContentBox({
 }) {
   return (
     <div
-      className={cx('rounded-lg p-4 shadow-2xl my-2', {
+      className={cx('rounded-lg p-4 shadow-2xl my-5', {
         'bg-gray-500': isLightBackground,
         'bg-gray-600': !isLightBackground,
       })}
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}
-      <div className="rounded-lg px-4 py-2">{children}</div>
+      <div className="rounded-lg px-1 py-2">{children}</div>
     </div>
   );
 }

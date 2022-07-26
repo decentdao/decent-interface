@@ -64,6 +64,7 @@ module.exports = {
         'xxs': '18.5rem'
       },
       minWidth: {
+        '20': '5rem',
         'xxs': '18.5rem'
       },
       backgroundImage: {
@@ -80,6 +81,12 @@ module.exports = {
           '0%': { transform: 'translateX(0)', width: '10%', opacity: '1'},
           '100%': { transform: 'translateX(100%)', width: '100%', opacity: '.1'}
         },
+      },
+      gridTemplateColumns: {
+        'funding-token': '5rem 8rem minmax(10rem, 1fr) minmax(10rem, 1fr) 2rem',
+        'treasury-token': '5rem 10rem 1fr minmax(5rem, 1fr)',
+        'funding-nft': '5rem 10rem 1fr 2rem',
+        'treasury-nft': '5rem 10rem 1fr',
       },
     }
   },

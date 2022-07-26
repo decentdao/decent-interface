@@ -38,7 +38,7 @@ const useQueueTransaction = ({
       contractFn: () =>
         governorModuleContract.queue(
           proposalData.targets,
-          [0],
+          proposalData.values,
           proposalData.calldatas,
           ethers.utils.id(proposalData.description)
         ),
