@@ -65,8 +65,8 @@ function TokenAllocations({
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
-      <InputBox>
-        {parentAllocationAmount !== undefined && (
+      {parentAllocationAmount !== undefined && (
+        <InputBox>
           <Input
             type="number"
             value={parentAllocationAmount}
@@ -78,8 +78,8 @@ function TokenAllocations({
             min="0"
             errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
           />
-        )}
-      </InputBox>
+        </InputBox>
+      )}
       <InputBox>
         <div className="grid grid-cols-8 gap-4">
           <div className="col-span-4 md:col-span-5 text-xs text-gray-25">Address</div>

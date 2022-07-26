@@ -31,7 +31,9 @@ export function useNextDisabled(state: CreatorState) {
             state.govToken.tokenAllocations
               .map(tokenAllocation => Number(tokenAllocation.amount))
               .reduce((prev, curr) => prev + curr, 0) +
-              Number(state.govToken.parentAllocationAmount) <=
+              (!state.govToken.parentAllocationAmount
+                ? 0 :
+              Number(state.govToken.parentAllocationAmount)) <=
             Number(state.govToken.tokenSupply);
 
           setIsDisabled(!isAllocationsValid);

@@ -33,7 +33,8 @@ const useExecuteTransaction = ({
     if (!signerOrProvider || !proposalData || !governorModuleContract) {
       return;
     }
-
+    console.log(governorModuleContract);
+    console.log(proposalData);
     contractCallExecuteTransaction({
       contractFn: () =>
         governorModuleContract.execute(

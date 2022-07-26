@@ -53,13 +53,13 @@ function Fractalize() {
         creator: daoAddress,
         ...daoData,
       },
-      daoData.parentAllocationAmount,
       votingToken.votingTokenData.address
     );
 
     if (!metaFactoryContract || !newDAOData) {
       return;
     }
+
     const data: ExecuteData = {
       targets: [metaFactoryContract.address],
       values: [0],
@@ -161,12 +161,10 @@ function Fractalize() {
         ])
       );
     }
-    console.log('here');
     createProposal({
       proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
       successCallback,
     });
-    console.log('her2e');
   };
 
   return (

@@ -37,6 +37,7 @@ const useCreateDAODataCreator = () => {
         lateQuorumExecution,
         voteStartDelay,
         votingPeriod,
+        parentAllocationAmount,
       }: {
         creator: string;
         daoName: string;
@@ -50,8 +51,8 @@ const useCreateDAODataCreator = () => {
         lateQuorumExecution: string;
         voteStartDelay: string;
         votingPeriod: string;
+        parentAllocationAmount?: string;
       },
-      parentAllocationAmount?: string,
       parentToken?: string
     ) => {
       const abiCoder = new ethers.utils.AbiCoder();
@@ -87,7 +88,7 @@ const useCreateDAODataCreator = () => {
       );
 
       let claimSubsidiarySalt;
-      if (parentAllocationAmount) {
+      if (parentAllocationAmount !== '' && parentAllocationAmount !== undefined) {
         claimSubsidiarySalt = ethers.utils.formatBytes32String(
           self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
         );
@@ -199,7 +200,7 @@ const useCreateDAODataCreator = () => {
       );
 
       let predictedClaimAddress;
-      if (parentAllocationAmount) {
+      if (parentAllocationAmount !== '' && parentAllocationAmount !== undefined) {
         predictedClaimAddress = ethers.utils.getCreate2Address(
           addresses.claimFactory.address,
           ethers.utils.solidityKeccak256(
@@ -220,29 +221,29 @@ const useCreateDAODataCreator = () => {
       // If parentAllocationAmount is greater than zero,
       // Then mint the allocation to the Metafactory, to be be transferred
       // to the claim Subsidiary
-      if (parentAllocationAmount) {
-        const parentTokenAllocation: TokenAllocation = {
-          address: addresses.metaFactory.address,
-          amount: Number(parentAllocationAmount),
-        };
-        tokenAllocations.push(parentTokenAllocation);
-      }
+      // if (parentAllocationAmount !== '' && parentAllocationAmount !== undefined) {
+      //   const parentTokenAllocation: TokenAllocation = {
+      //     address: addresses.metaFactory.address,
+      //     amount: Number(parentAllocationAmount),
+      //   };
+      //   tokenAllocations.push(parentTokenAllocation);
+      // }
 
       // If the total token supply is greater than the sum of allocations,
       // Then mint the token difference into the Metafactory, to be deposited
       // into the treasury
-      const tokenSupplyNumber = Number(tokenSupply);
-      const tokenAllocationSum = tokenAllocations.reduce((accumulator, tokenAllocation) => {
-        return accumulator + tokenAllocation.amount;
-      }, 0);
+      // const tokenSupplyNumber = Number(tokenSupply);
+      // const tokenAllocationSum = tokenAllocations.reduce((accumulator, tokenAllocation) => {
+      //   return accumulator + tokenAllocation.amount;
+      // }, 0);
 
-      if (tokenSupplyNumber > tokenAllocationSum) {
-        const daoTokenAllocation: TokenAllocation = {
-          address: addresses.metaFactory.address,
-          amount: tokenSupplyNumber - tokenAllocationSum,
-        };
-        tokenAllocations.push(daoTokenAllocation);
-      }
+      // if (tokenSupplyNumber > tokenAllocationSum) {
+      //   const daoTokenAllocation: TokenAllocation = {
+      //     address: addresses.metaFactory.address,
+      //     amount: tokenSupplyNumber - tokenAllocationSum,
+      //   };
+      //   tokenAllocations.push(daoTokenAllocation);
+      // }
 
       const createDAOParams = {
         daoImplementation: addresses.dao.address,
@@ -304,18 +305,18 @@ const useCreateDAODataCreator = () => {
       ];
 
       let claimFactoryCalldata;
-      if (parentAllocationAmount) {
+      if (parentAllocationAmount !== '' && parentAllocationAmount !== undefined) {
         claimFactoryCalldata = [
-          abiCoder.encode(['address'], [predictedAccessControlAddress]),
           abiCoder.encode(['address'], [addresses.claimModule.address]),
-          abiCoder.encode(['address'], [parentToken]), // pToken - utilize govToken
-          abiCoder.encode(['address'], [predictedTokenAddress]),
-          abiCoder.encode(['uint256'], [ethers.utils.parseUnits(parentAllocationAmount, 18)]),
           abiCoder.encode(['bytes32'], [claimSubsidiarySalt]),
         ];
       }
       let addActionsRolesCalldata;
-      if (parentAllocationAmount && predictedClaimAddress) {
+      if (
+        parentAllocationAmount !== undefined &&
+        parentAllocationAmount !== '' &&
+        predictedClaimAddress !== undefined
+      ) {
         addActionsRolesCalldata = DAO__factory.createInterface().encodeFunctionData('execute', [
           [predictedAccessControlAddress],
           [0],
@@ -430,7 +431,12 @@ const useCreateDAODataCreator = () => {
 
       let moduleFactories;
       let moduleFactoriesBytes;
-      if (parentAllocationAmount) {
+      if (
+        parentAllocationAmount !== undefined &&
+        parentAllocationAmount !== '' &&
+        addresses.claimFactory.address &&
+        claimFactoryCalldata
+      ) {
         moduleFactories = [
           addresses.treasuryModuleFactory.address,
           addresses.tokenFactory.address,
@@ -467,48 +473,54 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
-      if (parentAllocationAmount && predictedClaimAddress && parentToken) {
-        // MetaFactory approves claimModule to transfer tokens
-        const approveDAOTokenTransferCalldata =
-          VotesToken__factory.createInterface().encodeFunctionData('approve', [
-            predictedClaimAddress,
-            ethers.utils.parseUnits(parentAllocationAmount, 18),
-          ]);
+      // if (
+      //   parentAllocationAmount !== '' && 
+      //   parentAllocationAmount !== undefined &&
+      //   predictedClaimAddress !== undefined &&
+      //   parentToken !== undefined
+      // ) {
+      //   // MetaFactory approves claimModule to transfer tokens\
+      //   //todo: this will fail because the tokens contract has been sent
+      //   const approveDAOTokenTransferCalldata =
+      //     VotesToken__factory.createInterface().encodeFunctionData('approve', [
+      //       predictedClaimAddress,
+      //       ethers.utils.parseUnits(parentAllocationAmount, 18),
+      //     ]);
 
-        // Metafactory inits claimModule and sends tokens
-        const initClaimContractCalldata =
-          ClaimSubsidiary__factory.createInterface().encodeFunctionData('initialize', [
-            addresses.metaFactory.address,
-            predictedAccessControlAddress,
-            parentToken,
-            predictedTokenAddress,
-            ethers.utils.parseUnits(parentAllocationAmount, 18),
-          ]);
+      //   // Metafactory inits claimModule and sends tokens
+      //   const initClaimContractCalldata =
+      //     ClaimSubsidiary__factory.createInterface().encodeFunctionData('initialize', [
+      //       addresses.metaFactory.address,
+      //       predictedAccessControlAddress,
+      //       parentToken,
+      //       predictedTokenAddress,
+      //       ethers.utils.parseUnits(parentAllocationAmount, 18),
+      //     ]);
 
-        targets.push(predictedTokenAddress, predictedClaimAddress);
-        values.push(0, 0);
-        calldatas.push(approveDAOTokenTransferCalldata, initClaimContractCalldata);
-      }
-      if (tokenSupplyNumber > tokenAllocationSum) {
-        // DAO approve Treasury to transfer tokens
-        const approveDAOTokenTransferCalldata =
-          VotesToken__factory.createInterface().encodeFunctionData('approve', [
-            predictedTreasuryAddress,
-            ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18),
-          ]);
+      //   targets.push(predictedTokenAddress, predictedClaimAddress);
+      //   values.push(0, 0);
+      //   calldatas.push(approveDAOTokenTransferCalldata, initClaimContractCalldata);
+      // }
+      // if (tokenSupplyNumber > tokenAllocationSum) {
+      //   // DAO approve Treasury to transfer tokens
+      //   const approveDAOTokenTransferCalldata =
+      //     VotesToken__factory.createInterface().encodeFunctionData('approve', [
+      //       predictedTreasuryAddress,
+      //       ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18),
+      //     ]);
 
-        // DAO calls Treasury to deposit tokens into it
-        const depositTokensToTreasuryCalldata =
-          TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
-            [predictedTokenAddress],
-            [addresses.metaFactory.address],
-            [ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18)],
-          ]);
+      //   // DAO calls Treasury to deposit tokens into it
+      //   const depositTokensToTreasuryCalldata =
+      //     TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
+      //       [predictedTokenAddress],
+      //       [addresses.metaFactory.address],
+      //       [ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18)],
+      //     ]);
 
-        targets.push(predictedTokenAddress, predictedTreasuryAddress);
-        values.push(0, 0);
-        calldatas.push(approveDAOTokenTransferCalldata, depositTokensToTreasuryCalldata);
-      }
+      //   targets.push(predictedTokenAddress, predictedTreasuryAddress);
+      //   values.push(0, 0);
+      //   calldatas.push(approveDAOTokenTransferCalldata, depositTokensToTreasuryCalldata);
+      // }
 
       return {
         calldata: {
@@ -538,8 +550,7 @@ const useCreateDAODataCreator = () => {
       addresses.metaFactory,
       chainId,
     ]
-  );
-
+    );
   return createDAOData;
 };
 
