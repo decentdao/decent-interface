@@ -13,7 +13,7 @@ import useTokenData from './useTokenData';
 import useProposals, { ProposalData } from './useProposals';
 import { GovernorModule, Timelock } from '../../assets/typechain-types/module-governor';
 import { TreasuryModule } from '../../assets/typechain-types/module-treasury';
-import { VotesToken } from '../../assets/typechain-types/votes-token';
+import { ClaimSubsidiary, VotesToken } from '../../assets/typechain-types/votes-token';
 import { useBlockchainData } from '../blockchainData';
 import useTreasuryModuleContract from './treasury/useTreasuryModuleContract';
 import useTreasuryEvents from './treasury/useTreasuryEvents';
@@ -21,6 +21,7 @@ import useTreasuryAssetsFungible from './treasury/useTreasuryAssetsFungible';
 import useTreasuryAssetsNonFungible from './treasury/useTreasuryAssetsNonFungible';
 import { TreasuryAssetFungible, TreasuryAssetNonFungible } from './treasury/types';
 import { useDAOLegacy } from './useDAOLegacy';
+import useClaimModule from './useClaimModule';
 
 export interface DAOData {
   daoAddress: string | undefined;
@@ -51,6 +52,9 @@ export interface DAOData {
         };
       };
     };
+    claim: {
+      claimModuleContract: ClaimSubsidiary | undefined;
+    }
   };
 }
 
@@ -74,6 +78,7 @@ const useDAODatas = () => {
   const governorModuleContract = useGovernorModuleContract(moduleAddresses);
   const timelockModuleContract = useTimelockModuleContract(moduleAddresses);
   const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses);
+  const claimModuleContract = useClaimModule(moduleAddresses);
   const {
     nativeDeposits,
     nativeWithdraws,
@@ -119,6 +124,9 @@ const useDAODatas = () => {
           votingTokenData,
         },
       },
+      claim: {
+        claimModuleContract: claimModuleContract,
+      }
     },
   };
 
