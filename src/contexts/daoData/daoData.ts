@@ -102,7 +102,7 @@ const useDAODatas = () => {
   // ************************* //
 
   const votingTokenContract = useTokenContract(governorModuleContract);
-  const votingTokenData = useTokenData(votingTokenContract);
+  const votingTokenData = useTokenData(votingTokenContract, claimModuleContract);
   const { currentBlockNumber } = useBlockchainData();
   const proposals = useProposals(governorModuleContract, currentBlockNumber);
   const daoData: DAOData = {
