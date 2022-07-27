@@ -46,6 +46,7 @@ export interface DAOData {
           symbol: string | undefined;
           decimals: number | undefined;
           userBalance: BigNumber | undefined;
+          userClaimAmount: BigNumber | undefined;
           delegatee: string | undefined;
           votingWeight: BigNumber | undefined;
           address: string | undefined;
@@ -101,7 +102,7 @@ const useDAODatas = () => {
   // ************************* //
 
   const votingTokenContract = useTokenContract(governorModuleContract);
-  const votingTokenData = useTokenData(votingTokenContract);
+  const votingTokenData = useTokenData(votingTokenContract, claimModuleContract);
   const { currentBlockNumber } = useBlockchainData();
   const proposals = useProposals(governorModuleContract, currentBlockNumber);
   const daoData: DAOData = {
