@@ -53,13 +53,20 @@ function TokenAllocations({
 
   useEffect(() => {
     const totalAllocated = tokenAllocations.reduce((prev, cur) => Number(cur.amount) + prev, 0);
-    if (Number(supply) && Number(parentAllocationAmount)) {
-      setAmountError(Number(supply) < Number(parentAllocationAmount));
-      if (Number(supply) && totalAllocated) {
+    if (Number(supply)) {
+      // no DAO token allocation with no parent allocations
+      if (Number(totalAllocated) && !Number(parentAllocationAmount)) {
+        setAmountError(Number(supply) < totalAllocated);
+      // parent tokens allocated but no DAO token allocation
+      } else if (!Number(totalAllocated) && Number(parentAllocationAmount)) {
+        setAmountError(Number(supply) < Number(parentAllocationAmount));
+        // parent tokens allocated with DAO token allocation
+      } else if (Number(totalAllocated) && Number(parentAllocationAmount)) {
         setAmountError(Number(supply) < totalAllocated + Number(parentAllocationAmount));
+      } else {
+        // no allocation set amount error to false
+        setAmountError(false);
       }
-    } else if (Number(supply) && totalAllocated) {
-      setAmountError(Number(supply) < totalAllocated);
     }
   }, [tokenAllocations, supply, parentAllocationAmount, fieldUpdate]);
   return (
