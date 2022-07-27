@@ -11,6 +11,16 @@ import type {
 
 const _abi = [
   {
+    inputs: [],
+    name: "AllocationClaimed",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NoAllocation",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {

@@ -31,13 +31,15 @@ export interface ClaimSubsidiaryInterface extends utils.Interface {
   functions: {
     "accessControl()": FunctionFragment;
     "cToken()": FunctionFragment;
-    "cTokenInfo(address)": FunctionFragment;
     "calculateClaimAmount(address)": FunctionFragment;
     "claimSnap(address)": FunctionFragment;
     "initialize(address,address,address,address,uint256)": FunctionFragment;
     "moduleFactory()": FunctionFragment;
     "name()": FunctionFragment;
+    "pAllocation()": FunctionFragment;
+    "pToken()": FunctionFragment;
     "proxiableUUID()": FunctionFragment;
+    "snapId()": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "upgradeTo(address)": FunctionFragment;
     "upgradeToAndCall(address,bytes)": FunctionFragment;
@@ -47,13 +49,15 @@ export interface ClaimSubsidiaryInterface extends utils.Interface {
     nameOrSignatureOrTopic:
       | "accessControl"
       | "cToken"
-      | "cTokenInfo"
       | "calculateClaimAmount"
       | "claimSnap"
       | "initialize"
       | "moduleFactory"
       | "name"
+      | "pAllocation"
+      | "pToken"
       | "proxiableUUID"
+      | "snapId"
       | "supportsInterface"
       | "upgradeTo"
       | "upgradeToAndCall"
@@ -64,7 +68,6 @@ export interface ClaimSubsidiaryInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "cToken", values?: undefined): string;
-  encodeFunctionData(functionFragment: "cTokenInfo", values: [string]): string;
   encodeFunctionData(
     functionFragment: "calculateClaimAmount",
     values: [string]
@@ -80,9 +83,15 @@ export interface ClaimSubsidiaryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "pAllocation",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "pToken", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "snapId", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
@@ -98,7 +107,6 @@ export interface ClaimSubsidiaryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "cToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "cTokenInfo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "calculateClaimAmount",
     data: BytesLike
@@ -111,9 +119,15 @@ export interface ClaimSubsidiaryInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "pAllocation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "pToken", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "proxiableUUID",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "snapId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -223,17 +237,6 @@ export interface ClaimSubsidiary extends BaseContract {
 
     cToken(overrides?: CallOverrides): Promise<[string]>;
 
-    cTokenInfo(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber] & {
-        pToken: string;
-        snapId: BigNumber;
-        pAllocation: BigNumber;
-      }
-    >;
-
     calculateClaimAmount(
       claimer: string,
       overrides?: CallOverrides
@@ -257,7 +260,13 @@ export interface ClaimSubsidiary extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
+    pAllocation(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    pToken(overrides?: CallOverrides): Promise<[string]>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
+
+    snapId(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -279,17 +288,6 @@ export interface ClaimSubsidiary extends BaseContract {
   accessControl(overrides?: CallOverrides): Promise<string>;
 
   cToken(overrides?: CallOverrides): Promise<string>;
-
-  cTokenInfo(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, BigNumber, BigNumber] & {
-      pToken: string;
-      snapId: BigNumber;
-      pAllocation: BigNumber;
-    }
-  >;
 
   calculateClaimAmount(
     claimer: string,
@@ -314,7 +312,13 @@ export interface ClaimSubsidiary extends BaseContract {
 
   name(overrides?: CallOverrides): Promise<string>;
 
+  pAllocation(overrides?: CallOverrides): Promise<BigNumber>;
+
+  pToken(overrides?: CallOverrides): Promise<string>;
+
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+  snapId(overrides?: CallOverrides): Promise<BigNumber>;
 
   supportsInterface(
     interfaceId: BytesLike,
@@ -337,17 +341,6 @@ export interface ClaimSubsidiary extends BaseContract {
 
     cToken(overrides?: CallOverrides): Promise<string>;
 
-    cTokenInfo(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, BigNumber, BigNumber] & {
-        pToken: string;
-        snapId: BigNumber;
-        pAllocation: BigNumber;
-      }
-    >;
-
     calculateClaimAmount(
       claimer: string,
       overrides?: CallOverrides
@@ -368,7 +361,13 @@ export interface ClaimSubsidiary extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<string>;
 
+    pAllocation(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pToken(overrides?: CallOverrides): Promise<string>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
+
+    snapId(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -435,8 +434,6 @@ export interface ClaimSubsidiary extends BaseContract {
 
     cToken(overrides?: CallOverrides): Promise<BigNumber>;
 
-    cTokenInfo(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     calculateClaimAmount(
       claimer: string,
       overrides?: CallOverrides
@@ -460,7 +457,13 @@ export interface ClaimSubsidiary extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
+    pAllocation(overrides?: CallOverrides): Promise<BigNumber>;
+
+    pToken(overrides?: CallOverrides): Promise<BigNumber>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
+
+    snapId(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -483,11 +486,6 @@ export interface ClaimSubsidiary extends BaseContract {
     accessControl(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     cToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    cTokenInfo(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
 
     calculateClaimAmount(
       claimer: string,
@@ -512,7 +510,13 @@ export interface ClaimSubsidiary extends BaseContract {
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    pAllocation(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    pToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    snapId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     supportsInterface(
       interfaceId: BytesLike,
