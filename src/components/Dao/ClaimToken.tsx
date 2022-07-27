@@ -24,7 +24,7 @@ function ClaimToken() {
     setPending,
   });
 
-  if (userClaimAmount === undefined || userClaimAmount.eq(0)) {
+  if (!userClaimAmount) {
     return null;
   }
   const formattedValue = ethers.utils.formatUnits(userClaimAmount.toString(), decimals);

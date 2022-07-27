@@ -80,7 +80,7 @@ const useTokenData = (
 
   // Get initial user claim amount
   useEffect(() => {
-    if (claimContract === undefined || !account) {
+    if (!claimContract || !account) {
       setTokenClaimAmount(undefined);
       return;
     }
