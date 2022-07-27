@@ -54,7 +54,7 @@ export interface DAOData {
     };
     claim: {
       claimModuleContract: ClaimSubsidiary | undefined;
-    }
+    };
   };
 }
 
@@ -126,7 +126,7 @@ const useDAODatas = () => {
       },
       claim: {
         claimModuleContract: claimModuleContract,
-      }
+      },
     },
   };
 
