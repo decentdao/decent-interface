@@ -11,7 +11,6 @@ import {
 
 const useClaimModule = (moduleAddresses: string[] | undefined) => {
   const [claimModule, setClaimModule] = useState<ClaimSubsidiary>();
-  console.log('🚀 ~ file: useClaimModule.ts ~ line 14 ~ claimModule', claimModule);
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
