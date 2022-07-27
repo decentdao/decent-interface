@@ -1,10 +1,18 @@
 import { useWeb3Provider } from './../web3Data/hooks/useWeb3Provider';
 import { useState, useEffect, useCallback } from 'react';
-import { VotesToken } from '../../assets/typechain-types/votes-token';
+import { VotesToken, ClaimSubsidiary } from '../../assets/typechain-types/votes-token';
 import { BigNumber } from 'ethers';
-import { TransferListener, DelegateChangedListener, DelegateVotesChangedListener } from './types';
+import {
+  TransferListener,
+  DelegateChangedListener,
+  DelegateVotesChangedListener,
+  ClaimListener,
+} from './types';
 
-const useTokenData = (tokenContract: VotesToken | undefined) => {
+const useTokenData = (
+  tokenContract: VotesToken | undefined,
+  claimContract: ClaimSubsidiary | undefined
+) => {
   const {
     state: { account },
   } = useWeb3Provider();
@@ -70,6 +78,16 @@ const useTokenData = (tokenContract: VotesToken | undefined) => {
     updateTokenBalance();
   }, [account, tokenContract, updateTokenBalance]);
 
+  // Get initial user claim amount
+  useEffect(() => {
+    if (claimContract === undefined || !account) {
+      setTokenClaimAmount(undefined);
+      return;
+    }
+
+    claimContract.calculateClaimAmount(account).then(setTokenClaimAmount).catch(console.error);
+  }, [claimContract, account]);
+
   // Get initial user token delegatee
   useEffect(() => {
     if (tokenContract === undefined || !account) {
@@ -105,6 +123,26 @@ const useTokenData = (tokenContract: VotesToken | undefined) => {
       tokenContract.off(filterTransferFrom, listenerCallback);
     };
   }, [account, tokenContract, updateTokenBalance]);
+
+  // Setup token claim events listener
+  useEffect(() => {
+    if (claimContract === undefined || tokenContract === undefined || !account) {
+      setTokenBalance(undefined);
+      return;
+    }
+
+    const filter = claimContract.filters.SnapClaimed(null, tokenContract.address, account, null);
+
+    const listenerCallback: ClaimListener = () => {
+      setTokenClaimAmount(BigNumber.from('0'));
+    };
+
+    claimContract.on(filter, listenerCallback);
+
+    return () => {
+      claimContract.off(filter, listenerCallback);
+    };
+  }, [account, tokenContract, claimContract]);
 
   // Setup token delegate changed events listener
   useEffect(() => {
