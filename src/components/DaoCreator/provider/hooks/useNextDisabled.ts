@@ -23,7 +23,7 @@ export function useNextDisabled(state: CreatorState) {
         break;
       case CreatorSteps.TREASURY_GOV_TOKEN:
         if (state.govToken) {
-          if (state.govToken.tokenAllocations === undefined || state.govToken.tokenSupply === '') {
+          if (!state.govToken.tokenAllocations || !state.govToken.tokenSupply) {
             setIsDisabled(true);
             break;
           }
