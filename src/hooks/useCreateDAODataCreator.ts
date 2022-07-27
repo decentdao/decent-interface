@@ -404,34 +404,6 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
-      if (
-        pAllocatedAmount > 0 &&
-        predictedClaimAddress !== undefined &&
-        parentToken !== undefined
-      ) {
-        // MetaFactory approves claimModule to transfer tokens\
-        //todo: this will fail because the tokens contract has been sent
-        const approveDAOTokenTransferCalldata =
-          VotesToken__factory.createInterface().encodeFunctionData('approve', [
-            predictedClaimAddress,
-            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
-          ]);
-
-        // Metafactory inits claimModule and sends tokens
-        const initClaimContractCalldata =
-          ClaimSubsidiary__factory.createInterface().encodeFunctionData('initialize', [
-            addresses.metaFactory.address,
-            predictedAccessControlAddress,
-            parentToken,
-            predictedTokenAddress,
-            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
-          ]);
-
-        targets.push(predictedTokenAddress, predictedClaimAddress);
-        values.push(0, 0);
-        calldatas.push(approveDAOTokenTransferCalldata, initClaimContractCalldata);
-      }
-
       if (tokenSupplyNumber > tokenAllocationSum) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
@@ -451,6 +423,33 @@ const useCreateDAODataCreator = () => {
         targets.push(predictedTokenAddress, predictedTreasuryAddress);
         values.push(0, 0);
         calldatas.push(approveDAOTokenTransferCalldata, depositTokensToTreasuryCalldata);
+      }
+
+      if (
+        pAllocatedAmount > 0 &&
+        predictedClaimAddress !== undefined &&
+        parentToken !== undefined
+      ) {
+        // MetaFactory approves claimModule to transfer tokens\
+        const approveDAOTokenTransferCalldata =
+          VotesToken__factory.createInterface().encodeFunctionData('approve', [
+            predictedClaimAddress,
+            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
+          ]);
+
+        // Metafactory inits claimModule and sends tokens
+        const initClaimContractCalldata =
+          ClaimSubsidiary__factory.createInterface().encodeFunctionData('initialize', [
+            addresses.metaFactory.address,
+            predictedAccessControlAddress,
+            parentToken,
+            predictedTokenAddress,
+            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
+          ]);
+
+        targets.push(predictedTokenAddress, predictedClaimAddress);
+        values.push(0, 0);
+        calldatas.push(approveDAOTokenTransferCalldata, initClaimContractCalldata);
       }
 
       return {
