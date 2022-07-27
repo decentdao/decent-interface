@@ -20,6 +20,7 @@ function Details() {
           votingToken: { votingTokenData },
         },
         treasury: { treasuryModuleContract },
+        claim: { claimModuleContract },
       },
     },
   ] = useDAOData();
@@ -76,6 +77,14 @@ function Details() {
             <AddressDisplay
               address={timelockModuleContract.address}
               label={timelockModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        {claimModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={claimModuleContract.address}
+              label={claimModuleContract.name()}
             />
           </InputBox>
         )}
