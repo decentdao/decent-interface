@@ -21,7 +21,6 @@ const useClaimModule = (moduleAddresses: string[] | undefined) => {
     IClaimSubsidiary__factory.createInterface(),
   ]);
 
-  console.log(contracts);
   const [potentialClaim] = useSupportsInterfaces(contracts, interfaces);
 
   useEffect(() => {
@@ -32,13 +31,11 @@ const useClaimModule = (moduleAddresses: string[] | undefined) => {
 
     const claim = potentialClaim.find(g => g.match === true);
     if (claim === undefined) {
-      console.log('test');
       setClaimModule(undefined);
       return;
     }
 
     setClaimModule(ClaimSubsidiary__factory.connect(claim.address, signerOrProvider));
-    console.log(claim);
   }, [potentialClaim, signerOrProvider]);
 
   return claimModule;
