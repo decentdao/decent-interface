@@ -57,7 +57,7 @@ function TokenAllocations({
       // no DAO token allocation with no parent allocations
       if (Number(totalAllocated) && !Number(parentAllocationAmount)) {
         setAmountError(Number(supply) < totalAllocated);
-      // parent tokens allocated but no DAO token allocation
+        // parent tokens allocated but no DAO token allocation
       } else if (!Number(totalAllocated) && Number(parentAllocationAmount)) {
         setAmountError(Number(supply) < Number(parentAllocationAmount));
         // parent tokens allocated with DAO token allocation
