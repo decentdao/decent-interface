@@ -299,7 +299,7 @@ const useCreateDAODataCreator = () => {
               ['UPGRADE_ROLE'],
               ['UPGRADE_ROLE'],
               ['UPGRADE_ROLE'],
-              ['GOVERNOR_ROLE'],
+              ['DAO_ROLE'],
               ['GOVERNOR_ROLE'],
               ['GOVERNOR_ROLE'],
               ['GOVERNOR_ROLE'],
