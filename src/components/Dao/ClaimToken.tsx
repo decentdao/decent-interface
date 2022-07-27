@@ -27,15 +27,13 @@ function ClaimToken() {
   if (userClaimAmount === undefined || userClaimAmount.eq(0)) {
     return null;
   }
+  const formattedValue = ethers.utils.formatUnits(userClaimAmount.toString(), decimals);
 
   return (
     <ContentBox isLightBackground>
       <div className="flex justify-between items-center">
         <div className="text-gray-25">
-          {`You have ${ethers.utils.formatUnits(
-            userClaimAmount.toString(),
-            decimals
-          )} ${symbol} available to claim!`}
+          {`You have ${formattedValue} ${symbol} available to claim!`}
         </div>
         <PrimaryButton
           label="Claim"
