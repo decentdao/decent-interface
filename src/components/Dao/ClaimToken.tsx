@@ -32,7 +32,7 @@ function ClaimToken() {
     [userClaimAmount, decimals]
   );
 
-  if (!userClaimAmount || !Number(userClaimAmount)) {
+  if (!formattedValue || !Number(formattedValue)) {
     return null;
   }
 
