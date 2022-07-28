@@ -45,6 +45,7 @@ type DAOGovenorToken = {
   tokenSymbol: string;
   tokenSupply: string;
   tokenAllocations: TokenAllocation[];
+  parentAllocationAmount?: string;
 };
 
 type DAOGovenorModuleConfig = {
@@ -90,5 +91,6 @@ export type DAODeployData = {
   votingPeriod: string;
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
+  parentAllocationAmount?: string;
 };
 export type DAOTrigger = (deployData: DAODeployData) => void;

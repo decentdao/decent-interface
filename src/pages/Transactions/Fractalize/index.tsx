@@ -19,6 +19,7 @@ function Fractalize() {
       daoAddress,
       modules: {
         treasury: { treasuryModuleContract },
+        governor: { votingToken },
       },
     },
   ] = useDAOData();
@@ -39,14 +40,21 @@ function Fractalize() {
   };
 
   const createDAOTrigger = (daoData: DAODeployData) => {
-    if (daoAddress === undefined || treasuryModuleContract === undefined) {
+    if (
+      daoAddress === undefined ||
+      treasuryModuleContract === undefined ||
+      votingToken === undefined
+    ) {
       return;
     }
 
-    const newDAOData = createDAODataCreator({
-      creator: daoAddress,
-      ...daoData,
-    });
+    const newDAOData = createDAODataCreator(
+      {
+        creator: daoAddress,
+        ...daoData,
+      },
+      votingToken.votingTokenData.address
+    );
 
     if (!metaFactoryContract || !newDAOData) {
       return;
@@ -153,7 +161,6 @@ function Fractalize() {
         ])
       );
     }
-
     createProposal({
       proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
       successCallback,
