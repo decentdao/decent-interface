@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import ContentBox from '../ui/ContentBox';
 import { PrimaryButton } from '../ui/forms/Button';
 import { useDAOData } from '../../contexts/daoData';
@@ -24,10 +24,17 @@ function ClaimToken() {
     setPending,
   });
 
-  if (!userClaimAmount) {
+  const formattedValue = useMemo(
+    () =>
+      userClaimAmount && decimals
+        ? ethers.utils.formatUnits(userClaimAmount.toString(), decimals)
+        : undefined,
+    [userClaimAmount, decimals]
+  );
+
+  if (!userClaimAmount || !Number(userClaimAmount)) {
     return null;
   }
-  const formattedValue = ethers.utils.formatUnits(userClaimAmount.toString(), decimals);
 
   return (
     <ContentBox isLightBackground>
