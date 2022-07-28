@@ -5,7 +5,7 @@ import {
   GovernorModule,
   IGovernorModule__factory,
   GovernorModule__factory,
-} from '../../../assets/typechain-types/metafactory';
+} from '../../../assets/typechain-types/module-governor';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import use165Contracts from './use165Contracts';
 import useSupportsInterfaces from './useSupportsInterfaces';

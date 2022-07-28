@@ -59,6 +59,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       accessControlAddress,
       signerOrProvider!
     );
+
     // retrieves action roles added events
     const actionRoles = (
       await accessControlContract.queryFilter(accessControlContract.filters.ActionRoleAdded())

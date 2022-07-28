@@ -1,10 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BigNumber } from 'ethers';
-import { VotesTokenWithSupply } from '../../../assets/typechain-types/votes-token';
+import { VotesToken } from '../../../assets/typechain-types/module-governor';
+import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
+import { ClaimListener } from '../../../contexts/daoData/types';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { TransferListener, DelegateChangedListener, DelegateVotesChangedListener } from '../types';
 
-const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
+const useTokenData = (
+  tokenContract: VotesToken | undefined,
+  claimContract: ClaimSubsidiary | undefined
+) => {
   const {
     state: { account },
   } = useWeb3Provider();
@@ -12,6 +17,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
   const [tokenSymbol, setTokenSymbol] = useState<string>();
   const [tokenDecimals, setTokenDecimals] = useState<number>();
   const [tokenBalance, setTokenBalance] = useState<BigNumber>();
+  const [tokenClaimAmount, setTokenClaimAmount] = useState<BigNumber>();
   const [tokenDelegatee, setTokenDelegatee] = useState<string>();
   const [tokenVotingWeight, setTokenVotingWeight] = useState<BigNumber>();
   const [tokenAddress, setTokenAddress] = useState<string>();
@@ -69,6 +75,16 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
     updateTokenBalance();
   }, [account, tokenContract, updateTokenBalance]);
 
+  // Get initial user claim amount
+  useEffect(() => {
+    if (!claimContract || !account) {
+      setTokenClaimAmount(undefined);
+      return;
+    }
+
+    claimContract.calculateClaimAmount(account).then(setTokenClaimAmount).catch(console.error);
+  }, [claimContract, account]);
+
   // Get initial user token delegatee
   useEffect(() => {
     if (tokenContract === undefined || !account) {
@@ -104,6 +120,26 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
       tokenContract.off(filterTransferFrom, listenerCallback);
     };
   }, [account, tokenContract, updateTokenBalance]);
+
+  // Setup token claim events listener
+  useEffect(() => {
+    if (claimContract === undefined || tokenContract === undefined || !account) {
+      setTokenBalance(undefined);
+      return;
+    }
+
+    const filter = claimContract.filters.SnapClaimed(null, tokenContract.address, account, null);
+
+    const listenerCallback: ClaimListener = () => {
+      setTokenClaimAmount(BigNumber.from('0'));
+    };
+
+    claimContract.on(filter, listenerCallback);
+
+    return () => {
+      claimContract.off(filter, listenerCallback);
+    };
+  }, [account, tokenContract, claimContract]);
 
   // Setup token delegate changed events listener
   useEffect(() => {
@@ -178,6 +214,7 @@ const useTokenData = (tokenContract: VotesTokenWithSupply | undefined) => {
     symbol: tokenSymbol,
     decimals: tokenDecimals,
     userBalance: tokenBalance,
+    userClaimAmount: tokenClaimAmount,
     delegatee: tokenDelegatee,
     votingWeight: tokenVotingWeight,
     address: tokenAddress,

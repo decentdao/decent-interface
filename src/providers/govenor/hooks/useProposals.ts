@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { BigNumber, providers } from 'ethers';
+import { GovernorModule } from '../../../assets/typechain-types/module-governor';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import {
   VoteCastListener,
   ProposalCreatedListener,
   ProposalQueuedListener,
   ProposalExecutedListener,
 } from '../types';
-import { GovernorModule } from '../../../assets/typechain-types/metafactory';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 
 export enum ProposalState {
   Pending = 0,
@@ -34,6 +34,7 @@ type ProposalDataWithoutUserData = {
   targets: string[];
   signatures: string[];
   calldatas: string[];
+  values: BigNumber[];
   description: string;
   state: ProposalState | undefined;
   forVotesCount: BigNumber | undefined;
@@ -344,6 +345,7 @@ const useProposalsWithoutUserData = (
             targets: proposalEvent.args.targets,
             signatures: proposalEvent.args.signatures,
             calldatas: proposalEvent.args.calldatas,
+            values: proposalEvent.args[3], // Using array index instead of 'values' since 'values' is a keyword in JS
             description: proposalEvent.args.description,
             state: undefined,
             forVotesCount: undefined,
@@ -404,6 +406,7 @@ const useProposalsWithoutUserData = (
         targets: targets,
         signatures: signatures,
         calldatas: calldatas,
+        values: _values,
         description: description,
         state: undefined,
         forVotesCount: undefined,
@@ -655,6 +658,7 @@ const useProposals = (
         targets: proposal.targets,
         signatures: proposal.signatures,
         calldatas: proposal.calldatas,
+        values: proposal.values,
         description: proposal.description,
         state: proposal.state,
         forVotesCount: proposal.forVotesCount,
