@@ -3,15 +3,11 @@ import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Helmet } from 'react-helmet-async';
 
-import Delegate from '../../components/Dao/Delegate';
-import Proposals from '../Proposals';
 import Summary from '../../components/Dao/Summary';
 import { useDAOData } from '../../contexts/daoData';
 import useValidateDaoRoute from '../../hooks/useValidateDaoRoute';
-import Treasury from '../Treasury';
-import Transactions from '../Transactions';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { Governance } from '../Governance';
+import { Modules } from '../../components/Modules';
 
 function DAORoutes() {
   return (
@@ -21,6 +17,10 @@ function DAORoutes() {
         element={<Summary />}
       />
       <Route
+        path="module/:moduleAddress"
+        element={<Modules />}
+      />
+      {/* <Route
         path="governance"
         element={<Governance />}
       />
@@ -39,7 +39,7 @@ function DAORoutes() {
       <Route
         path="transactions/*"
         element={<Transactions />}
-      />
+      /> */}
     </Routes>
   );
 }
