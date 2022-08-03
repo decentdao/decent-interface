@@ -1,25 +1,101 @@
-import { Link } from 'react-router-dom';
-import ProposalsList from '../Proposals/ProposalsList';
 import H1 from '../ui/H1';
-import { SecondaryButton, TextButton } from '../ui/forms/Button';
-import ClaimToken from './ClaimToken';
+import { useDAOData } from '../../contexts/daoData';
+import { DAOAddress, AddressDisplay } from '../AddressDisplay';
+import ContentBox from '../ui/ContentBox';
+import ContentBoxTitle from '../ui/ContentBoxTitle';
+import InputBox from '../ui/forms/InputBox';
 
 function Summary() {
+  const [
+    {
+      name,
+      accessControlAddress,
+      daoAddress,
+      parentDAO,
+      subsidiaryDAOs,
+      modules: {
+        governor: {
+          governorModuleContract,
+          timelockModuleContract,
+          votingToken: { votingTokenData },
+        },
+        treasury: { treasuryModuleContract },
+        claim: { claimModuleContract },
+      },
+    },
+  ] = useDAOData();
+
   return (
     <div>
-      <ClaimToken />
-      <div className="flex flex-col sm:flex-row sm:justify-between">
-        <H1>Proposals</H1>
-        <div className="flex ml-auto mb-2 sm:mb-0 items-center sm:items-start">
-          <Link to="delegate">
-            <TextButton label="Delegate" />
-          </Link>
-          <Link to="proposals/new">
-            <SecondaryButton label="Create Proposal" />
-          </Link>
-        </div>
-      </div>
-      <ProposalsList />
+      <H1>{name}</H1>
+      <ContentBox>
+        {parentDAO && (
+          <>
+            <ContentBoxTitle>Parent DAO</ContentBoxTitle>
+            <DAOAddress daoAddress={parentDAO} />
+          </>
+        )}
+        {!!subsidiaryDAOs.length && <ContentBoxTitle>DAO Subsidiaries</ContentBoxTitle>}
+        {subsidiaryDAOs.map(_daoAddress => (
+          <DAOAddress
+            key={_daoAddress}
+            daoAddress={_daoAddress}
+          />
+        ))}
+        <ContentBoxTitle>Core DAO Address</ContentBoxTitle>
+        <InputBox>
+          <AddressDisplay
+            address={daoAddress}
+            label="DAO"
+          />
+        </InputBox>
+        <InputBox>
+          <AddressDisplay
+            address={accessControlAddress}
+            label="Access Control"
+          />
+        </InputBox>
+        <ContentBoxTitle>Module Contract Addresses</ContentBoxTitle>
+        {treasuryModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={treasuryModuleContract.address}
+              label={treasuryModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        {governorModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={governorModuleContract.address}
+              label={governorModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        {timelockModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={timelockModuleContract.address}
+              label={timelockModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        {claimModuleContract && (
+          <InputBox>
+            <AddressDisplay
+              address={claimModuleContract.address}
+              label={claimModuleContract.name()}
+            />
+          </InputBox>
+        )}
+        <ContentBoxTitle>Auxiliary Contracts Addresses</ContentBoxTitle>
+        <InputBox>
+          <AddressDisplay
+            address={votingTokenData.address}
+            label="Governance Token"
+          />
+        </InputBox>
+      </ContentBox>
     </div>
   );
 }
