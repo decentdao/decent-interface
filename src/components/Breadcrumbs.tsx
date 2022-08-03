@@ -96,11 +96,11 @@ function Breadcrumbs() {
             </NavLink>
             <div className="border-r border-gray-100 mx-1" />
             <NavLink
-              to={`/daos/${daoAddress}/details`}
+              to={`/daos/${daoAddress}/Governance`}
               className="flex items-center gap-2 text-gold-500 hover:text-gold-300"
             >
               <DetailsIcon />
-              <div className="text-sm font-semibold">Details</div>
+              <div className="text-sm font-semibold">Governance</div>
             </NavLink>
             <NavLink
               to={`/daos/${daoAddress}/treasury`}

@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import { Helmet } from 'react-helmet-async';
 
 import Delegate from '../../components/Dao/Delegate';
-import Details from '../../components/Dao/Details';
 import Proposals from '../Proposals';
 import Summary from '../../components/Dao/Summary';
 import { useDAOData } from '../../contexts/daoData';
@@ -12,6 +11,7 @@ import useValidateDaoRoute from '../../hooks/useValidateDaoRoute';
 import Treasury from '../Treasury';
 import Transactions from '../Transactions';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { Governance } from '../Governance';
 
 function DAORoutes() {
   return (
@@ -21,8 +21,8 @@ function DAORoutes() {
         element={<Summary />}
       />
       <Route
-        path="details"
-        element={<Details />}
+        path="governance"
+        element={<Governance />}
       />
       <Route
         path="delegate"
