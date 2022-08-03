@@ -27,7 +27,7 @@ function Summary() {
 
   return (
     <div>
-      <H1>{name}</H1>
+      <H1>{name} | Home</H1>
       {parentDAO && (
         <ContentBox>
           <ContentBoxTitle>Parent DAO</ContentBoxTitle>
