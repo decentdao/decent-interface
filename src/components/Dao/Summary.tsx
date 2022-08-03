@@ -28,20 +28,24 @@ function Summary() {
   return (
     <div>
       <H1>{name}</H1>
+      {parentDAO && (
+        <ContentBox>
+          <ContentBoxTitle>Parent DAO</ContentBoxTitle>
+          <DAOAddress daoAddress={parentDAO} />
+        </ContentBox>
+      )}
+      {!!subsidiaryDAOs.length && (
+        <ContentBox>
+          <ContentBoxTitle>DAO Subsidiaries</ContentBoxTitle>
+          {subsidiaryDAOs.map(_daoAddress => (
+            <DAOAddress
+              key={_daoAddress}
+              daoAddress={_daoAddress}
+            />
+          ))}
+        </ContentBox>
+      )}
       <ContentBox>
-        {parentDAO && (
-          <>
-            <ContentBoxTitle>Parent DAO</ContentBoxTitle>
-            <DAOAddress daoAddress={parentDAO} />
-          </>
-        )}
-        {!!subsidiaryDAOs.length && <ContentBoxTitle>DAO Subsidiaries</ContentBoxTitle>}
-        {subsidiaryDAOs.map(_daoAddress => (
-          <DAOAddress
-            key={_daoAddress}
-            daoAddress={_daoAddress}
-          />
-        ))}
         <ContentBoxTitle>Core DAO Address</ContentBoxTitle>
         <InputBox>
           <AddressDisplay
@@ -55,6 +59,8 @@ function Summary() {
             label="Access Control"
           />
         </InputBox>
+      </ContentBox>
+      <ContentBox>
         <ContentBoxTitle>Module Contract Addresses</ContentBoxTitle>
         {treasuryModuleContract && (
           <InputBox>
@@ -88,6 +94,8 @@ function Summary() {
             />
           </InputBox>
         )}
+      </ContentBox>
+      <ContentBox>
         <ContentBoxTitle>Auxiliary Contracts Addresses</ContentBoxTitle>
         <InputBox>
           <AddressDisplay
