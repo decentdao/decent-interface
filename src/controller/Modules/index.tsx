@@ -1,6 +1,8 @@
 import { useEffect, useReducer } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import Delegate from '../../components/Dao/Delegate';
 import { Governance } from '../../pages/Governance';
+import Proposals from '../../pages/Proposals';
 import Treasury from '../../pages/Treasury';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
@@ -98,7 +100,20 @@ export function Modules() {
           timeLockModuleAddress={timelockModule?.moduleAddress}
           claimingContractAddress={claimingContractModule?.moduleAddress}
         >
-          <Governance />
+          <Routes>
+            <Route
+              index
+              element={<Governance />}
+            />
+            <Route
+              path="proposals/*"
+              element={<Proposals />}
+            />
+            <Route
+              path="delegate"
+              element={<Delegate />}
+            />
+          </Routes>
         </GovernorModuleProvider>
       );
     default: {

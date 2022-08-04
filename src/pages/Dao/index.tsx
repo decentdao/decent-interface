@@ -19,7 +19,7 @@ function DAORoutes() {
         element={<Transactions />}
       />
       <Route
-        path="modules/:moduleAddress"
+        path="modules/:moduleAddress/*"
         element={<Modules />}
       />
     </Routes>

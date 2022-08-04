@@ -1,5 +1,4 @@
 import { ProposalData } from '../../contexts/daoData/useProposals';
-import { useDAOData } from '../../contexts/daoData';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import ProposalCardDetailed from './ProposalCardDetailed';
@@ -7,17 +6,12 @@ import ProposalVotes from './ProposalVotes';
 import ProposalQueue from './ProposalQueue';
 import ProposalExecute from './ProposalExecute';
 import CastVote from './CastVote';
+import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 
 function ProposalDetails() {
   const params = useParams();
 
-  const [
-    {
-      modules: {
-        governor: { proposals },
-      },
-    },
-  ] = useDAOData();
+  const { proposals } = useGovenorModule();
   const [proposal, setProposal] = useState<ProposalData>();
 
   useEffect(() => {

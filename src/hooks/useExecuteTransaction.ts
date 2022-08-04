@@ -1,6 +1,6 @@
+import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useDAOData } from '../contexts/daoData/index';
 import { ProposalData } from '../contexts/daoData/useProposals';
 import { ethers } from 'ethers';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
@@ -15,13 +15,7 @@ const useExecuteTransaction = ({
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
-  const [
-    {
-      modules: {
-        governor: { governorModuleContract },
-      },
-    },
-  ] = useDAOData();
+  const { governorModuleContract } = useGovenorModule();
 
   const [contractCallExecuteTransaction, contractCallPending] = useTransaction();
 

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useDAOData } from '../contexts/daoData/index';
+import { useGovenorModule } from '../providers/govenor/hooks/useGovenorModule';
 
 const useDelegateVote = ({
   delegatee,
@@ -9,15 +9,9 @@ const useDelegateVote = ({
   delegatee: string | undefined;
   successCallback: () => void;
 }) => {
-  const [
-    {
-      modules: {
-        governor: {
-          votingToken: { votingTokenContract },
-        },
-      },
-    },
-  ] = useDAOData();
+  const {
+    votingToken: { votingTokenContract },
+  } = useGovenorModule();
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
 
   let delegateVote = useCallback(() => {

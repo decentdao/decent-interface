@@ -5,7 +5,6 @@ import useDisplayName from '../../hooks/useDisplayName';
 import ContentBox from '../ui/ContentBox';
 import ContentBanner from '../../components/ui/ContentBanner';
 import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
-import { useDAOData } from '../../contexts/daoData';
 import Input from '../ui/forms/Input';
 import { SecondaryButton } from '../ui/forms/Button';
 import InputBox from '../ui/forms/InputBox';
@@ -13,6 +12,7 @@ import cx from 'classnames';
 import useAddress from '../../hooks/useAddress';
 import DataLoadingWrapper from '../ui/loaders/DataLoadingWrapper';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
@@ -21,17 +21,11 @@ function Delegate() {
     state: { account },
   } = useWeb3Provider();
   const [, validAddress] = useAddress(newDelegatee);
-  const [
-    {
-      modules: {
-        governor: {
-          votingToken: {
-            votingTokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
-          },
-        },
-      },
+  const {
+    votingToken: {
+      votingTokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
     },
-  ] = useDAOData();
+  } = useGovenorModule();
   const delegateeDisplayName = useDisplayName(delegatee);
 
   const delegateSelf = () => {
