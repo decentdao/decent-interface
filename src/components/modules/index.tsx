@@ -1,7 +1,8 @@
 import { useEffect, useReducer } from 'react';
-import { useParams } from 'react-router-dom';
-import { useModuleTypes } from './hooks/useModuleTypes';
-import { ModuleSelectAction, ModuleSelectActions, ModuleSelectState } from './types';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useModuleType } from './hooks/useModuleType';
+import { ModuleSelectAction, ModuleSelectActions, ModuleSelectState, ModuleTypes } from './types';
 
 const initialState = {
   moduleType: null,
@@ -14,7 +15,9 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
     case ModuleSelectActions.SET_MODULE_ADDRESS:
       return { ...state, moduleAddress: action.payload };
     case ModuleSelectActions.SET_MODULE:
-      return { isLoading: false, ...action.payload };
+      return { ...action.payload, isLoading: false };
+    case ModuleSelectActions.INVALID:
+      return { ...initialState, isLoading: false };
     case ModuleSelectActions.RESET:
       return initialState;
     default:
@@ -23,29 +26,44 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
 };
 export function Modules() {
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { dao } = useFractal();
   const params = useParams();
-
-  const module = useModuleTypes(state.moduleAddress);
+  const navigate = useNavigate();
+  const { isLoading, module } = useModuleType(state.moduleAddress);
 
   useEffect(() => {
     if (params.moduleAddress) {
       dispatch({ type: ModuleSelectActions.SET_MODULE_ADDRESS, payload: params.moduleAddress });
     }
-  }, [params]);
+  }, [params, dispatch]);
+
   useEffect(() => {
-    if (module) {
+    if (module && !isLoading) {
       dispatch({
         type: ModuleSelectActions.SET_MODULE,
         payload: module,
       });
     }
-  }, [module]);
+    if (!isLoading && !module) {
+      dispatch({
+        type: ModuleSelectActions.INVALID,
+      });
+    }
+  }, [module, isLoading]);
+
+  useEffect(() => {
+    if (!state.isLoading && !state.moduleType) {
+      navigate(`/daos/${dao.daoAddress}`, { replace: true });
+    }
+  }, [state.isLoading, state.moduleType, dao.daoAddress, navigate]);
+
   switch (state.moduleType) {
-    case 'Treasury':
+    case ModuleTypes.TREASURY:
       return <div>Treasury</div>;
-    case 'VotingTokenGovernance':
+    case ModuleTypes.TOKEN_VOTING_GOVERNANCE:
       return <div>Governance</div>;
-    default:
+    default: {
       return null;
+    }
   }
 }

@@ -1,10 +1,12 @@
 export enum ModuleSelectActions {
   SET_MODULE_ADDRESS,
   SET_MODULE,
+  INVALID,
   RESET,
 }
 
 export enum ModuleTypes {
-  VotingTokenGovernance,
-  Treasury,
+  TIMELOCK = 'Timelock Module',
+  TOKEN_VOTING_GOVERNANCE = 'Token Voting Governance Module',
+  TREASURY = 'Treasury Module',
 }
