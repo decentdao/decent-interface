@@ -5,6 +5,7 @@ import { FractalAction } from './constants/enums';
 import { useDAOLegacy } from './hooks/useDAOLegacy';
 import { FractalContext } from './hooks/useFractal';
 import { ACRoleListener, FractalActions, FractalDAO, IDaoLegacy } from './types';
+import { useModuleTypes } from './hooks/useModuleTypes';
 
 const initializeState = (_initialState: FractalDAO) => {
   return _initialState;
@@ -28,6 +29,9 @@ export const reducer = (state: FractalDAO, action: FractalActions): FractalDAO =
 export function FractalProvider({ children }: { children: ReactNode }) {
   const [dao, dispatch] = useReducer(reducer, initialState, initializeState);
   const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
+
+  const { timelockModule, treasuryModule, tokenVotingGovernanceModule, claimingContractModule } =
+    useModuleTypes(dao.moduleAddresses);
 
   useEffect(() => {
     if (!dao.daoContract || !dao.accessControlContract) {
@@ -74,10 +78,23 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     () => ({
       dao,
+      modules: {
+        timelockModule,
+        treasuryModule,
+        tokenVotingGovernanceModule,
+        claimingContractModule,
+      },
       dispatch,
       daoLegacy,
     }),
-    [dao, daoLegacy]
+    [
+      dao,
+      daoLegacy,
+      timelockModule,
+      treasuryModule,
+      tokenVotingGovernanceModule,
+      claimingContractModule,
+    ]
   );
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
 }

@@ -1,5 +1,4 @@
 import { ReactNode, useMemo } from 'react';
-import useBlockchainDatas from '../../contexts/blockchainData/blockchainData';
 import useClaimModule from './hooks/useClaimModule';
 import { GovernorContext } from './hooks/useGovenorModule';
 import useGovernorModuleContract from './hooks/useGovernorModuleContract';
@@ -9,19 +8,22 @@ import useTokenContract from './hooks/useTokenContract';
 import useTokenData from './hooks/useTokenData';
 
 export function GovernorModuleProvider({
-  moduleAddresses,
+  claimingContractAddress,
+  timeLockModuleAddress,
+  moduleAddress,
   children,
 }: {
-  moduleAddresses: string[];
+  timeLockModuleAddress: string | undefined;
+  claimingContractAddress: string | undefined;
+  moduleAddress: string | null;
   children: ReactNode;
 }) {
-  const claimModuleContract = useClaimModule(moduleAddresses);
-  const governorModuleContract = useGovernorModuleContract(moduleAddresses);
-  const timelockModuleContract = useTimelockModuleContract(moduleAddresses);
+  const governorModuleContract = useGovernorModuleContract(moduleAddress);
+  const claimModuleContract = useClaimModule(claimingContractAddress);
+  const timelockModuleContract = useTimelockModuleContract(timeLockModuleAddress);
   const votingTokenContract = useTokenContract(governorModuleContract);
   const votingTokenData = useTokenData(votingTokenContract, claimModuleContract);
-  const { currentBlockNumber } = useBlockchainDatas();
-  const proposals = useProposals(governorModuleContract, currentBlockNumber);
+  const proposals = useProposals(governorModuleContract);
   const value = useMemo(
     () => ({
       governorModuleContract,
@@ -42,5 +44,5 @@ export function GovernorModuleProvider({
       claimModuleContract,
     ]
   );
-  <GovernorContext.Provider value={value}>{children}</GovernorContext.Provider>;
+  return <GovernorContext.Provider value={value}>{children}</GovernorContext.Provider>;
 }

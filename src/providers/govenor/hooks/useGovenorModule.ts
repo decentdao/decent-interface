@@ -1,8 +1,9 @@
 import { VotesToken } from './../../../assets/typechain-types/module-treasury/contracts/mocks/VotesToken';
 import { BigNumber } from 'ethers';
 import { Context, createContext, useContext } from 'react';
-import { ProposalData } from './useProposals';
 import { GovernorModule, Timelock } from '../../../assets/typechain-types/module-governor';
+import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
+import { ProposalData } from '../types';
 
 export interface IGovernorModule {
   governorModuleContract: GovernorModule | undefined;
@@ -21,6 +22,7 @@ export interface IGovernorModule {
       address: string | undefined;
     };
   };
+  claimModuleContract: ClaimSubsidiary | undefined;
 }
 
 export const GovernorContext = createContext<IGovernorModule | null>(null);

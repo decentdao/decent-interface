@@ -6,7 +6,6 @@ import RightArrow from './ui/svg/RightArrow';
 import TreasuryIcon from './ui/svg/Treasury';
 import Favorite from './ui/Favorite';
 import { useFractal } from '../providers/fractal/hooks/useFractal';
-import { useModuleTypes } from '../controller/Modules/hooks/useModuleTypes';
 
 function DAOName() {
   const params = useParams();
@@ -26,10 +25,9 @@ function ProposalId({ match }: { match: BreadcrumbMatch }) {
 function Breadcrumbs() {
   const location = useLocation();
   const {
-    dao: { daoAddress, moduleAddresses },
+    dao: { daoAddress },
+    modules: { treasuryModule, tokenVotingGovernanceModule },
   } = useFractal();
-
-  const { treasuryModule, tokenVotingGovernance } = useModuleTypes(moduleAddresses);
 
   const excludePaths: Array<string> = [];
   const home = '/';
@@ -53,8 +51,9 @@ function Breadcrumbs() {
   const matchModules = useMatch(modules);
 
   let moduleName =
-    tokenVotingGovernance && location.pathname.includes(tokenVotingGovernance.moduleAddress)
-      ? tokenVotingGovernance.moduleType
+    tokenVotingGovernanceModule &&
+    location.pathname.includes(tokenVotingGovernanceModule.moduleAddress)
+      ? tokenVotingGovernanceModule.moduleType
       : treasuryModule && location.pathname.includes(treasuryModule.moduleAddress)
       ? treasuryModule.moduleType
       : null;
@@ -119,9 +118,9 @@ function Breadcrumbs() {
               <div className="text-sm font-semibold">+Transaction</div>
             </NavLink>
             <div className="border-r border-gray-100 mx-1" />
-            {tokenVotingGovernance && (
+            {tokenVotingGovernanceModule && (
               <NavLink
-                to={`/daos/${daoAddress}/modules/${tokenVotingGovernance.moduleAddress}`}
+                to={`/daos/${daoAddress}/modules/${tokenVotingGovernanceModule.moduleAddress}`}
                 className="flex items-center gap-2 text-gold-500 hover:text-gold-300"
               >
                 <DetailsIcon />

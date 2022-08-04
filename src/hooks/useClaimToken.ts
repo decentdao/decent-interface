@@ -1,7 +1,7 @@
+import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
 import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useDAOData } from '../contexts/daoData/index';
 
 const useClaimToken = ({
   setPending,
@@ -11,13 +11,8 @@ const useClaimToken = ({
   const {
     state: { signerOrProvider, account },
   } = useWeb3Provider();
-  const [
-    {
-      modules: {
-        claim: { claimModuleContract },
-      },
-    },
-  ] = useDAOData();
+
+  const { claimModuleContract } = useGovenorModule();
 
   const [contractCallClaimToken, contractCallPending] = useTransaction();
 
@@ -26,7 +21,7 @@ const useClaimToken = ({
   }, [setPending, contractCallPending]);
 
   const claimToken = useCallback(() => {
-    if (!signerOrProvider || !account || claimModuleContract === undefined) {
+    if (!signerOrProvider || !account || !claimModuleContract) {
       return;
     }
 

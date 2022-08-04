@@ -1,4 +1,4 @@
-import { ModuleTypes } from '../types/enums';
+import { ModuleTypes } from '../../../controller/Modules/types/enums';
 import { IERC165, IERC165__factory, IModuleBase__factory } from '@fractal-framework/core-contracts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -7,13 +7,11 @@ import {
 } from '../../../assets/typechain-types/module-governor';
 import { ITreasuryModule__factory } from '../../../assets/typechain-types/module-treasury';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { parseInterface } from '../utils';
+import { parseInterface } from '../../../controller/Modules/utils';
+import { IClaimSubsidiary__factory } from '../../../assets/typechain-types/votes-token';
+import { IModuleData } from '../../../controller/Modules/types';
 
 // @todo move to global hooks folder
-interface IModuleData {
-  moduleAddress: string;
-  moduleType: string;
-}
 export function useModuleTypes(moduleAddresses?: string[]) {
   const {
     state: { provider },
@@ -41,6 +39,14 @@ export function useModuleTypes(moduleAddresses?: string[]) {
       parseInterface([
         IModuleBase__factory.createInterface(),
         ITimelock__factory.createInterface(),
+      ]),
+    []
+  );
+  const claimingInterfaces = useMemo(
+    () =>
+      parseInterface([
+        IModuleBase__factory.createInterface(),
+        IClaimSubsidiary__factory.createInterface(),
       ]),
     []
   );
@@ -95,11 +101,25 @@ export function useModuleTypes(moduleAddresses?: string[]) {
               moduleType: ModuleTypes.TIMELOCK,
             });
           }
+          const claimingSupportData = await interfaceSupport(contract, claimingInterfaces);
+          if (claimingSupportData.match) {
+            moduleDatas.push({
+              moduleAddress: contract.address,
+              moduleType: ModuleTypes.CLAIMING,
+            });
+          }
           return moduleDatas;
         })
       ).then(_modules => setModules(_modules[0]));
     })();
-  }, [contracts, governInterfaces, treasuryInterfaces, interfaceSupport, timeLockInterfaces]);
+  }, [
+    contracts,
+    governInterfaces,
+    treasuryInterfaces,
+    interfaceSupport,
+    timeLockInterfaces,
+    claimingInterfaces,
+  ]);
   const timelockModule = useMemo(
     () => modules.find(v => v.moduleType === ModuleTypes.TIMELOCK),
     [modules]
@@ -108,10 +128,14 @@ export function useModuleTypes(moduleAddresses?: string[]) {
     () => modules.find(v => v.moduleType === ModuleTypes.TREASURY),
     [modules]
   );
-  const tokenVotingGovernance = useMemo(
+  const tokenVotingGovernanceModule = useMemo(
     () => modules.find(v => v.moduleType === ModuleTypes.TOKEN_VOTING_GOVERNANCE),
     [modules]
   );
+  const claimingContractModule = useMemo(
+    () => modules.find(v => v.moduleType === ModuleTypes.CLAIMING),
+    [modules]
+  );
 
-  return { timelockModule, treasuryModule, tokenVotingGovernance };
+  return { timelockModule, treasuryModule, tokenVotingGovernanceModule, claimingContractModule };
 }

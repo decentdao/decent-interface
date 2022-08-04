@@ -1,10 +1,17 @@
 import { useEffect, useReducer } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Governance } from '../../pages/Governance';
 import Treasury from '../../pages/Treasury';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
-import { useModuleType } from './hooks/useModuleType';
-import { ModuleSelectAction, ModuleSelectActions, ModuleSelectState, ModuleTypes } from './types';
+import {
+  IModuleData,
+  ModuleSelectAction,
+  ModuleSelectActions,
+  ModuleSelectState,
+  ModuleTypes,
+} from './types';
 
 const initialState = {
   moduleType: null,
@@ -28,30 +35,48 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
 };
 export function Modules() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { dao } = useFractal();
+  const {
+    dao,
+    modules: {
+      treasuryModule,
+      tokenVotingGovernanceModule,
+      claimingContractModule,
+      timelockModule,
+    },
+  } = useFractal();
   const params = useParams();
   const navigate = useNavigate();
-  const { isLoading, module } = useModuleType(state.moduleAddress);
 
   useEffect(() => {
-    if (params.moduleAddress) {
-      dispatch({ type: ModuleSelectActions.SET_MODULE_ADDRESS, payload: params.moduleAddress });
+    const moduleAddress = params.moduleAddress;
+    if (moduleAddress && state.isLoading) {
+      const isTreasuryModule = treasuryModule
+        ? treasuryModule.moduleAddress === moduleAddress
+        : undefined;
+      const isTokenVotingGovernanceModule = tokenVotingGovernanceModule
+        ? tokenVotingGovernanceModule.moduleAddress === moduleAddress
+        : undefined;
+
+      let moduleData: IModuleData | undefined;
+      if (isTreasuryModule) {
+        moduleData = treasuryModule;
+      }
+      if (isTokenVotingGovernanceModule) {
+        moduleData = tokenVotingGovernanceModule;
+      }
+      if (moduleData) {
+        dispatch({ type: ModuleSelectActions.SET_MODULE, payload: moduleData });
+      } else {
+        dispatch({ type: ModuleSelectActions.INVALID });
+      }
     }
-  }, [params, dispatch]);
+  }, [params, dispatch, state.isLoading, treasuryModule, tokenVotingGovernanceModule]);
 
   useEffect(() => {
-    if (module && !isLoading) {
-      dispatch({
-        type: ModuleSelectActions.SET_MODULE,
-        payload: module,
-      });
+    if (params.moduleAddress !== state.moduleAddress && !state.isLoading) {
+      dispatch({ type: ModuleSelectActions.RESET });
     }
-    if (!isLoading && !module) {
-      dispatch({
-        type: ModuleSelectActions.INVALID,
-      });
-    }
-  }, [module, isLoading]);
+  }, [params.moduleAddress, state.moduleAddress, state.isLoading]);
 
   useEffect(() => {
     if (!state.isLoading && !state.moduleType) {
@@ -67,7 +92,15 @@ export function Modules() {
         </TreasuryModuleProvider>
       );
     case ModuleTypes.TOKEN_VOTING_GOVERNANCE:
-      return <div>Governance</div>;
+      return (
+        <GovernorModuleProvider
+          moduleAddress={state.moduleAddress}
+          timeLockModuleAddress={timelockModule?.moduleAddress}
+          claimingContractAddress={claimingContractModule?.moduleAddress}
+        >
+          <Governance />
+        </GovernorModuleProvider>
+      );
     default: {
       return null;
     }
