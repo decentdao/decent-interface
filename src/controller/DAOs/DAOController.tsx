@@ -9,7 +9,7 @@ import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { ModuleActionRoleEvents } from '../../providers/fractal/types';
 
 export function DAOController({ children }: { children: JSX.Element }) {
-  const { dao, dispatch } = useFractal();
+  const { dispatch } = useFractal();
   const params = useParams();
   const {
     state: { signerOrProvider },

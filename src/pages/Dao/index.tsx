@@ -2,7 +2,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 import Summary from '../../components/Dao/Summary';
-import { Modules } from '../../components/Modules';
+import { Modules } from '../../controller/Modules';
 import Transactions from '../Transactions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { useEffect } from 'react';

@@ -1,4 +1,4 @@
-import { ModuleTypes } from './../../Modules/types/enums';
+import { ModuleTypes } from '../types/enums';
 import { IERC165, IERC165__factory, IModuleBase__factory } from '@fractal-framework/core-contracts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {

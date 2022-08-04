@@ -3,7 +3,7 @@ import DAOSearch from '../DaoSearch';
 import DaoCreate from '../DaoCreate';
 import DAOFavorites from '../DaoFavorites';
 import DAO from '../Dao';
-import { DAOController } from '../../controller/dao/DAOController';
+import { DAOController } from '../../controller/DAOs/DAOController';
 function DAOs() {
   return (
     <Routes>

@@ -4,7 +4,7 @@ import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { useModuleTypes } from '../Modules/hooks/useModuleTypes';
+import { useModuleTypes } from '../../controller/Modules/hooks/useModuleTypes';
 
 function Summary() {
   const { dao, daoLegacy } = useFractal();

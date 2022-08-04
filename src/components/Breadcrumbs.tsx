@@ -6,7 +6,7 @@ import RightArrow from './ui/svg/RightArrow';
 import TreasuryIcon from './ui/svg/Treasury';
 import Favorite from './ui/Favorite';
 import { useFractal } from '../providers/fractal/hooks/useFractal';
-import { useModuleTypes } from './Modules/hooks/useModuleTypes';
+import { useModuleTypes } from '../controller/Modules/hooks/useModuleTypes';
 
 function DAOName() {
   const params = useParams();
