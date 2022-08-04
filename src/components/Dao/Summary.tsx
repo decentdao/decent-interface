@@ -1,43 +1,30 @@
 import H1 from '../ui/H1';
-import { useDAOData } from '../../contexts/daoData';
 import { DAOAddress, AddressDisplay } from '../AddressDisplay';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useModuleTypes } from '../Modules/hooks/useModuleTypes';
 
 function Summary() {
-  const [
-    {
-      name,
-      accessControlAddress,
-      daoAddress,
-      parentDAO,
-      subsidiaryDAOs,
-      modules: {
-        governor: {
-          governorModuleContract,
-          timelockModuleContract,
-          votingToken: { votingTokenData },
-        },
-        treasury: { treasuryModuleContract },
-        claim: { claimModuleContract },
-      },
-    },
-  ] = useDAOData();
+  const { dao, daoLegacy } = useFractal();
+  const { timelockModule, treasuryModule, tokenVotingGovernance } = useModuleTypes(
+    dao.moduleAddresses
+  );
 
   return (
     <div>
-      <H1>{name} | Home</H1>
-      {parentDAO && (
+      <H1>{dao.daoName} | Home</H1>
+      {daoLegacy.parentDAO && (
         <ContentBox>
           <ContentBoxTitle>Parent DAO</ContentBoxTitle>
-          <DAOAddress daoAddress={parentDAO} />
+          <DAOAddress daoAddress={daoLegacy.parentDAO} />
         </ContentBox>
       )}
-      {!!subsidiaryDAOs.length && (
+      {!!daoLegacy.subsidiaryDAOs.length && (
         <ContentBox>
           <ContentBoxTitle>DAO Subsidiaries</ContentBoxTitle>
-          {subsidiaryDAOs.map(_daoAddress => (
+          {daoLegacy.subsidiaryDAOs.map(_daoAddress => (
             <DAOAddress
               key={_daoAddress}
               daoAddress={_daoAddress}
@@ -49,60 +36,43 @@ function Summary() {
         <ContentBoxTitle>Core DAO Address</ContentBoxTitle>
         <InputBox>
           <AddressDisplay
-            address={daoAddress}
+            address={dao.daoAddress}
             label="DAO"
           />
         </InputBox>
         <InputBox>
           <AddressDisplay
-            address={accessControlAddress}
+            address={dao.accessControlAddress}
             label="Access Control"
           />
         </InputBox>
       </ContentBox>
       <ContentBox>
         <ContentBoxTitle>Module Contract Addresses</ContentBoxTitle>
-        {treasuryModuleContract && (
+        {treasuryModule && (
           <InputBox>
             <AddressDisplay
-              address={treasuryModuleContract.address}
-              label={treasuryModuleContract.name()}
+              address={treasuryModule.moduleAddress}
+              label={treasuryModule.moduleType}
             />
           </InputBox>
         )}
-        {governorModuleContract && (
+        {tokenVotingGovernance && (
           <InputBox>
             <AddressDisplay
-              address={governorModuleContract.address}
-              label={governorModuleContract.name()}
+              address={tokenVotingGovernance.moduleAddress}
+              label={tokenVotingGovernance.moduleType}
             />
           </InputBox>
         )}
-        {timelockModuleContract && (
+        {timelockModule && (
           <InputBox>
             <AddressDisplay
-              address={timelockModuleContract.address}
-              label={timelockModuleContract.name()}
+              address={timelockModule.moduleAddress}
+              label={timelockModule.moduleType}
             />
           </InputBox>
         )}
-        {claimModuleContract && (
-          <InputBox>
-            <AddressDisplay
-              address={claimModuleContract.address}
-              label={claimModuleContract.name()}
-            />
-          </InputBox>
-        )}
-      </ContentBox>
-      <ContentBox>
-        <ContentBoxTitle>Auxiliary Contracts Addresses</ContentBoxTitle>
-        <InputBox>
-          <AddressDisplay
-            address={votingTokenData.address}
-            label="Governance Token"
-          />
-        </InputBox>
       </ContentBox>
     </div>
   );

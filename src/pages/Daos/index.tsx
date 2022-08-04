@@ -3,7 +3,7 @@ import DAOSearch from '../DaoSearch';
 import DaoCreate from '../DaoCreate';
 import DAOFavorites from '../DaoFavorites';
 import DAO from '../Dao';
-
+import { DAOController } from '../../controller/dao/DAOController';
 function DAOs() {
   return (
     <Routes>
@@ -21,7 +21,11 @@ function DAOs() {
       />
       <Route
         path=":address/*"
-        element={<DAO />}
+        element={
+          <DAOController>
+            <DAO />
+          </DAOController>
+        }
       />
     </Routes>
   );
