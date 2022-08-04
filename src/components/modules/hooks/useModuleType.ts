@@ -85,7 +85,6 @@ export function useModuleType(moduleAddress: string | null) {
           setModule(undefined);
           setContract(undefined);
         }
-        console.log('HERE');
         setLoading(false);
       })();
     }

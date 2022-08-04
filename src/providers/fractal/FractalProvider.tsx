@@ -28,6 +28,7 @@ export const reducer = (state: FractalDAO, action: FractalActions): FractalDAO =
 export function FractalProvider({ children }: { children: ReactNode }) {
   const [dao, dispatch] = useReducer(reducer, initialState, initializeState);
   const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
+
   useEffect(() => {
     if (!dao.daoContract || !dao.accessControlContract) {
       return;

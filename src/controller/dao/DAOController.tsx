@@ -1,6 +1,7 @@
 import { DAO__factory, DAOAccessControl__factory } from '@fractal-framework/core-contracts';
 import { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useSearchDao from '../../hooks/useSearchDao';
 import { FractalAction } from '../../providers/fractal/constants/enums';
@@ -17,10 +18,8 @@ export function DAOController({ children }: { children: JSX.Element }) {
   const { errorMessage, address, addressIsDAO, updateSearchString } = useSearchDao();
 
   const loadDAO = useCallback(() => {
-    if (dao.isLoading || params.address !== dao.daoAddress) {
-      updateSearchString(params.address!);
-    }
-  }, [dao.isLoading, params.address, dao.daoAddress, updateSearchString]);
+    updateSearchString(params.address!);
+  }, [params.address, updateSearchString]);
 
   const retrieveDAO = useCallback(async () => {
     const daoAddress = address;
@@ -80,6 +79,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
     };
   }, [address, signerOrProvider]);
   useEffect(() => loadDAO(), [loadDAO]);
+
   useEffect(() => {
     if (addressIsDAO && address && signerOrProvider) {
       (async () => {
@@ -93,6 +93,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     if (errorMessage) {
+      toast(errorMessage);
       (async () => {
         dispatch({
           type: FractalAction.INVALID,
@@ -100,5 +101,11 @@ export function DAOController({ children }: { children: JSX.Element }) {
       })();
     }
   }, [errorMessage, dispatch]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({ type: FractalAction.RESET });
+    };
+  }, [dispatch]);
   return children;
 }
