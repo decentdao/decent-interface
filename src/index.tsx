@@ -7,9 +7,9 @@ import { HelmetProvider, Helmet } from 'react-helmet-async';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { BlockchainDataProvider } from './contexts/blockchainData';
-import { DAODataProvider } from './contexts/daoData';
 import App from './App';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
+import { FractalProvider } from './providers/fractal/FractalProvider';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -20,7 +20,7 @@ ReactDOM.render(
       <HashRouter>
         <Web3Provider>
           <BlockchainDataProvider>
-            <DAODataProvider>
+            <FractalProvider>
               <ToastContainer
                 position="bottom-center"
                 closeButton={false}
@@ -30,7 +30,7 @@ ReactDOM.render(
                 progressClassName="bg-none bg-gold-500"
               />
               <App />
-            </DAODataProvider>
+            </FractalProvider>
           </BlockchainDataProvider>
         </Web3Provider>
       </HashRouter>
