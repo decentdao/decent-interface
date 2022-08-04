@@ -5,11 +5,11 @@ import Transactions from '../../components/ProposalCreate/Transactions';
 import { TextButton, PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
-import { useDAOData } from '../../contexts/daoData';
 import useCreateProposal from '../../hooks/useCreateProposal';
 import { TransactionData } from '../../types/transaction';
 import { ProposalData } from '../../types/proposal';
 import { useNavigate } from 'react-router-dom';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -19,7 +19,9 @@ const defaultTransaction = {
 };
 
 function ProposalCreate() {
-  const [{ daoAddress }] = useDAOData();
+  const {
+    dao: { daoAddress },
+  } = useFractal();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
