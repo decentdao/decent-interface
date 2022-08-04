@@ -1,6 +1,6 @@
-import { useDAOData } from '../../contexts/daoData';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useFavorites from '../../hooks/useFavorites';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { StarFilled, StarEmpty } from '../ui/svg/Star';
 import TooltipWrapper from '../ui/TooltipWrapper';
 
@@ -22,7 +22,9 @@ function Buttons() {
   const {
     state: { chainId },
   } = useWeb3Provider();
-  const [{ daoAddress }] = useDAOData();
+  const {
+    dao: { daoAddress },
+  } = useFractal();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
 
   if (chainId === undefined || daoAddress === undefined) {
