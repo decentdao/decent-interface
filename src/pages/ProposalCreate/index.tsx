@@ -21,12 +21,12 @@ const defaultTransaction = {
 function ProposalCreate() {
   const {
     dao: { daoAddress },
+    modules: { tokenVotingGovernanceModule },
   } = useFractal();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalData>();
-
   const navigate = useNavigate();
 
   /**
@@ -54,7 +54,7 @@ function ProposalCreate() {
     setTransactions([]);
     setProposalData(undefined);
 
-    navigate(`/daos/${daoAddress}`);
+    navigate(`/daos/${daoAddress}/modules/${tokenVotingGovernanceModule!.moduleAddress}`);
   };
 
   useEffect(() => {
