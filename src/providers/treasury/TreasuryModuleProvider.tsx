@@ -7,13 +7,13 @@ import useTreasuryEvents from './hooks/useTreasuryEvents';
 import useTreasuryModuleContract from './hooks/useTreasuryModuleContract';
 
 export function TreasuryModuleProvider({
-  moduleAddresses,
+  moduleAddress,
   children,
 }: {
-  moduleAddresses: string[];
+  moduleAddress: string | null;
   children: ReactNode;
 }) {
-  const treasuryModuleContract = useTreasuryModuleContract(moduleAddresses);
+  const treasuryModuleContract = useTreasuryModuleContract(moduleAddress);
   const {
     nativeDeposits,
     nativeWithdraws,

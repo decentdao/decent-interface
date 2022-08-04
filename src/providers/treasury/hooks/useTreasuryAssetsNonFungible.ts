@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ERC721TokenEvent, TreasuryAssetNonFungible } from '../types';
 import { Web3NFT } from '../models/Web3NFT';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
@@ -16,8 +16,8 @@ const useTreasuryAssets = (
   erc721TokenWithdraws?: ERC721TokenEvent[]
 ) => {
   // <Map<string, TreasuryAsset>>
-  const [treasuryAssets] = useState<Map<string, TreasuryAssetNonFungible>>(new Map());
-
+  const treasuryAssets = useMemo<Map<string, TreasuryAssetNonFungible>>(() => new Map(), []);
+  const [assets, setAssets] = useState<TreasuryAssetNonFungible[]>([]);
   const {
     state: { provider },
   } = useWeb3Provider();
@@ -81,10 +81,12 @@ const useTreasuryAssets = (
           tokenURI: tokenURI,
         });
       })
-    );
+    ).finally(() => {
+      setAssets(Array.from(treasuryAssets.values()));
+    });
   }, [erc721TokenDeposits, erc721TokenWithdraws, provider, treasuryAssets]);
 
-  return Array.from(treasuryAssets.values());
+  return assets;
 };
 
 export default useTreasuryAssets;

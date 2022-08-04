@@ -1,5 +1,5 @@
 import { BigNumber, utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   ERC20TokenEvent,
   TokenDepositEvent,
@@ -27,7 +27,8 @@ const useTreasuryAssets = (
   erc20TokenWithdraws?: ERC20TokenEvent[]
 ) => {
   // <Map<string, TreasuryAsset>>
-  const [treasuryAssets] = useState<Map<string, TreasuryAssetFungible>>(new Map());
+  const treasuryAssets = useMemo<Map<string, TreasuryAssetFungible>>(() => new Map(), []);
+  const [assets, setAssets] = useState<TreasuryAssetFungible[]>([]);
 
   const {
     state: { provider },
@@ -121,10 +122,12 @@ const useTreasuryAssets = (
           formatedTotal: utils.formatUnits(token.amount, decimals),
         });
       })
-    );
+    ).finally(() => {
+      setAssets(Array.from(treasuryAssets.values()));
+    });
   }, [erc20TokenDeposits, erc20TokenWithdraws, provider, treasuryAssets]);
 
-  return Array.from(treasuryAssets.values());
+  return assets;
 };
 
 export default useTreasuryAssets;

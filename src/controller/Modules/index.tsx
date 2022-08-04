@@ -1,6 +1,8 @@
 import { useEffect, useReducer } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Treasury from '../../pages/Treasury';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
 import { useModuleType } from './hooks/useModuleType';
 import { ModuleSelectAction, ModuleSelectActions, ModuleSelectState, ModuleTypes } from './types';
 
@@ -59,7 +61,11 @@ export function Modules() {
 
   switch (state.moduleType) {
     case ModuleTypes.TREASURY:
-      return <div>Treasury</div>;
+      return (
+        <TreasuryModuleProvider moduleAddress={state.moduleAddress}>
+          <Treasury />
+        </TreasuryModuleProvider>
+      );
     case ModuleTypes.TOKEN_VOTING_GOVERNANCE:
       return <div>Governance</div>;
     default: {
