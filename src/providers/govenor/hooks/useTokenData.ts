@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useReducer } from 'react';
 import { BigNumber } from 'ethers';
 import { VotesToken } from '../../../assets/typechain-types/module-governor';
 import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
@@ -18,6 +18,59 @@ interface ITokenAccount {
   delegatee: string | undefined;
   votingWeight: BigNumber | undefined;
 }
+
+interface IGoveranceTokenData {
+  name: string | undefined;
+  symbol: string | undefined;
+  decimals: number | undefined;
+  address: string | undefined;
+  userBalance: BigNumber | undefined;
+  delegatee: string | undefined;
+  votingWeight: BigNumber | undefined;
+}
+
+const initialState = {
+  name: undefined,
+  symbol: undefined,
+  decimals: undefined,
+  address: undefined,
+  userBalance: undefined,
+  delegatee: undefined,
+  votingWeight: undefined,
+};
+
+enum TokenActions {
+  UPDATE_TOKEN,
+  UPDATE_DELEGATEE,
+  UPDATE_VOTING_WEIGHT,
+  UPDATE_ACCOUNT,
+  RESET,
+}
+type TokenAction =
+  | { type: TokenActions.UPDATE_TOKEN; payload: ITokenData }
+  | { type: TokenActions.UPDATE_ACCOUNT; payload: ITokenAccount }
+  | { type: TokenActions.UPDATE_DELEGATEE; payload: string }
+  | { type: TokenActions.UPDATE_VOTING_WEIGHT; payload: BigNumber }
+  | { type: TokenActions.RESET };
+
+const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
+  switch (action.type) {
+    case TokenActions.UPDATE_TOKEN:
+      const { name, symbol, decimals, address } = action.payload;
+      return { ...state, name, symbol, decimals, address };
+    case TokenActions.UPDATE_ACCOUNT:
+      const { userBalance, delegatee, votingWeight } = action.payload;
+      return { ...state, userBalance, delegatee, votingWeight };
+    case TokenActions.UPDATE_DELEGATEE:
+      return { ...state, delegatee: action.payload };
+    case TokenActions.UPDATE_VOTING_WEIGHT:
+      return { ...state, votingWeight: action.payload };
+    case TokenActions.UPDATE_VOTING_WEIGHT:
+      return { ...initialState };
+  }
+  return state;
+};
+
 const useTokenData = (
   tokenContract: VotesToken | undefined,
   claimContract: ClaimSubsidiary | undefined
@@ -25,14 +78,12 @@ const useTokenData = (
   const {
     state: { account },
   } = useWeb3Provider();
-  const [tokenData, setTokenData] = useState<ITokenData>({} as ITokenData);
-  const [tokenAccount, setTokenAccount] = useState<ITokenAccount>({} as ITokenAccount);
+  const [state, dispatch] = useReducer(reducer, initialState);
   const [userClaimAmount, setTokenClaimAmount] = useState<BigNumber>();
 
   // get token data
   useEffect(() => {
     if (!tokenContract) {
-      setTokenData({} as ITokenData);
       return;
     }
     (async () => {
@@ -40,27 +91,32 @@ const useTokenData = (
       const tokenSymbol = await tokenContract.symbol();
       const tokenDecimals = await tokenContract.decimals();
       const tokenAddress = tokenContract.address;
-      setTokenData({
-        name: tokenName,
-        symbol: tokenSymbol,
-        decimals: tokenDecimals,
-        address: tokenAddress,
+      dispatch({
+        type: TokenActions.UPDATE_TOKEN,
+        payload: {
+          name: tokenName,
+          symbol: tokenSymbol,
+          decimals: tokenDecimals,
+          address: tokenAddress,
+        },
       });
     })();
   }, [tokenContract]);
 
   const getTokenAccount = useCallback(async () => {
     if (!tokenContract || !account) {
-      setTokenAccount({} as ITokenAccount);
       return;
     }
     const tokenBalance = await tokenContract.balanceOf(account);
     const tokenDelegatee = await tokenContract.delegates(account);
     const tokenVotingWeight = await tokenContract.getVotes(account);
-    setTokenAccount({
-      userBalance: tokenBalance,
-      delegatee: tokenDelegatee,
-      votingWeight: tokenVotingWeight,
+    dispatch({
+      type: TokenActions.UPDATE_ACCOUNT,
+      payload: {
+        userBalance: tokenBalance,
+        delegatee: tokenDelegatee,
+        votingWeight: tokenVotingWeight,
+      },
     });
   }, [tokenContract, account]);
 
@@ -81,7 +137,6 @@ const useTokenData = (
   // Setup token transfer events listener
   useEffect(() => {
     if (tokenContract === undefined || !account) {
-      setTokenAccount({} as ITokenAccount);
       return;
     }
 
@@ -134,7 +189,7 @@ const useTokenData = (
       _fromDelegate: string,
       toDelegate: string
     ) => {
-      setTokenAccount(tokenAcc => ({ ...tokenAcc, tokenDelegatee: toDelegate }));
+      dispatch({ type: TokenActions.UPDATE_DELEGATEE, payload: toDelegate });
     };
 
     tokenContract.on(filter, listenerCallback);
@@ -157,7 +212,7 @@ const useTokenData = (
       _previousBalance: BigNumber,
       currentBalance: BigNumber
     ) => {
-      setTokenAccount(tokenAcc => ({ ...tokenAcc, tokenVotingWeight: currentBalance }));
+      dispatch({ type: TokenActions.UPDATE_VOTING_WEIGHT, payload: currentBalance });
     };
 
     tokenContract.on(filter, callback);
@@ -170,10 +225,9 @@ const useTokenData = (
   const data = useMemo(
     () => ({
       userClaimAmount,
-      ...tokenAccount,
-      ...tokenData,
+      ...state,
     }),
-    [tokenAccount, userClaimAmount, tokenData]
+    [state, userClaimAmount]
   );
   return data;
 };
