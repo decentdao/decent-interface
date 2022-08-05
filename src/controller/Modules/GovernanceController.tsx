@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
-import { GovernanceInjector } from './GovernanceInjector';
+import { GovernanceInjector } from './TokenGovernanceInjector';
 import { ModuleTypes } from './types';
 
 /**
