@@ -8,6 +8,9 @@ import useTimelockModuleContract from './hooks/useTimelockModuleContract';
 import useTokenContract from './hooks/useTokenContract';
 import useTokenData from './hooks/useTokenData';
 
+/**
+ * Uses React Context API to provider child components with the Token Voting Governor Module
+ */
 export function GovernorModuleProvider({
   claimingContractAddress,
   timeLockModuleAddress,

@@ -5,6 +5,11 @@ import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleP
 import { GovernanceInjector } from './GovernanceInjector';
 import { ModuleTypes } from './types';
 
+/**
+ * Insures that the correct governor module provider is wrapping the plugins
+ * by checking for what modules have been installed
+ * @returns children wrapped in propoer governance provider with any other modules.
+ */
 export function GovernanceController({ children }: { children: JSX.Element }) {
   const {
     modules: {

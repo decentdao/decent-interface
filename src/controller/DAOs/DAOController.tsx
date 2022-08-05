@@ -8,6 +8,9 @@ import { FractalAction } from '../../providers/fractal/constants/enums';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { ModuleActionRoleEvents } from '../../providers/fractal/types';
 
+/**
+ * Handles DAO validation, setting and unsetting of DAO and nagivating to DAOSearch when invalid
+ */
 export function DAOController({ children }: { children: JSX.Element }) {
   const { dispatch } = useFractal();
   const params = useParams();
@@ -17,10 +20,16 @@ export function DAOController({ children }: { children: JSX.Element }) {
 
   const { errorMessage, address, addressIsDAO, updateSearchString } = useSearchDao();
 
+  /**
+   * Passes param address to updateSearchString
+   */
   const loadDAO = useCallback(() => {
     updateSearchString(params.address!);
   }, [params.address, updateSearchString]);
 
+  /**
+   *
+   */
   const retrieveDAO = useCallback(async () => {
     const daoAddress = address;
     const daoContract = DAO__factory.connect(daoAddress!, signerOrProvider!);
