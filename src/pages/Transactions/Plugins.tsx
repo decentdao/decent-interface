@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Fractalize from './Fractalize';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
+import { GovernanceProposalData } from '../../controller/Modules/types';
 
 enum View {
   Cards,
@@ -35,14 +36,16 @@ function CardDetails({
   );
 }
 
-function New() {
+interface IPlugins extends GovernanceProposalData {}
+
+function Plugins(props: IPlugins) {
   const [view, setView] = useState(View.Cards);
 
   switch (view) {
     case View.CreateDAO: {
       return (
         <CardDetails setView={setView}>
-          <Fractalize />
+          <Fractalize {...props} />
         </CardDetails>
       );
     }
@@ -57,4 +60,4 @@ function New() {
   }
 }
 
-export default New;
+export default Plugins;

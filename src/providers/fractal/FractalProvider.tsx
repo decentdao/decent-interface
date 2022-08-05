@@ -44,7 +44,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         return;
       }
       const addresses = dao.moduleAddresses || [];
-      if (!addresses?.includes(target)) {
+      if (!addresses.includes(target)) {
         dispatch({
           type: FractalAction.UPDATE_MODULE,
           payload: [...addresses, target],

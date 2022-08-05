@@ -5,11 +5,11 @@ import Transactions from '../../components/ProposalCreate/Transactions';
 import { TextButton, PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
-import useCreateProposal from '../../hooks/useCreateProposal';
 import { TransactionData } from '../../types/transaction';
-import { ProposalData } from '../../types/proposal';
+import { ProposalExecuteData } from '../../types/proposal';
 import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -23,10 +23,14 @@ function ProposalCreate() {
     dao: { daoAddress },
     modules: { tokenVotingGovernanceModule },
   } = useFractal();
+
+  const {
+    createProposal: { submitProposal, pendingCreateTx },
+  } = useGovenorModule();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
-  const [proposalData, setProposalData] = useState<ProposalData>();
+  const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
 
   /**
@@ -88,8 +92,6 @@ function ProposalCreate() {
     }
   }, [transactions, proposalDescription]);
 
-  const [createProposal, pending] = useCreateProposal();
-
   const isValidProposalValid = useCallback(() => {
     // if proposalData doesn't exist
     if (!proposalData) {
@@ -130,7 +132,7 @@ function ProposalCreate() {
               transactions={transactions}
               setTransactions={setTransactions}
               removeTransaction={removeTransaction}
-              pending={pending}
+              pending={pendingCreateTx}
             />
           )}
         </form>
@@ -138,7 +140,7 @@ function ProposalCreate() {
           <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
             <TextButton
               onClick={addTransaction}
-              disabled={pending}
+              disabled={pendingCreateTx}
               label="+ Add another transaction"
             />
           </div>
@@ -148,7 +150,7 @@ function ProposalCreate() {
             <TextButton
               type="button"
               onClick={decrementStep}
-              disabled={pending}
+              disabled={pendingCreateTx}
               icon={<LeftArrow />}
               label="Prev"
             />
@@ -157,12 +159,12 @@ function ProposalCreate() {
             <PrimaryButton
               type="button"
               onClick={() =>
-                createProposal({
+                submitProposal({
                   proposalData,
                   successCallback,
                 })
               }
-              disabled={!isValidProposalValid() || pending}
+              disabled={!isValidProposalValid() || pendingCreateTx}
               label="Create Proposal"
               isLarge
             />

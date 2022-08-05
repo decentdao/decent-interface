@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useDAOData } from '../../../contexts/daoData';
+import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
 import ContentBox from '../../ui/ContentBox';
 import { PrimaryButton } from '../../ui/forms/Button';
 import { NFTToFund, TokenToFund } from './types';
@@ -24,13 +24,7 @@ export function FundingOptions({
   nftsToFund,
   selectedTokenIndex,
 }: IFundingOptions) {
-  const [
-    {
-      modules: {
-        treasury: { treasuryAssetsFungible, treasuryAssetsNonFungible },
-      },
-    },
-  ] = useDAOData();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryModule();
 
   const isAddDisabled = useMemo(() => {
     if (selectedTokenIndex === undefined) {

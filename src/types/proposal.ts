@@ -1,5 +1,5 @@
 import { ExecuteData } from './execute';
 
-export interface ProposalData extends ExecuteData {
+export interface ProposalExecuteData extends ExecuteData {
   description: string;
 }

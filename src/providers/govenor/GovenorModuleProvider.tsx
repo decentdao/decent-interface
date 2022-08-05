@@ -1,5 +1,6 @@
 import { ReactNode, useMemo } from 'react';
 import useClaimModule from './hooks/useClaimModule';
+import useCreateProposal from './hooks/useCreateProposal';
 import { GovernorContext } from './hooks/useGovenorModule';
 import useGovernorModuleContract from './hooks/useGovernorModuleContract';
 import useProposals from './hooks/useProposals';
@@ -24,11 +25,17 @@ export function GovernorModuleProvider({
   const votingTokenContract = useTokenContract(governorModuleContract);
   const votingTokenData = useTokenData(votingTokenContract, claimModuleContract);
   const proposals = useProposals(governorModuleContract);
+
+  const [createProposal, pending] = useCreateProposal(governorModuleContract);
   const value = useMemo(
     () => ({
       governorModuleContract,
       timelockModuleContract,
       proposals,
+      createProposal: {
+        submitProposal: createProposal,
+        pendingCreateTx: pending,
+      },
       votingToken: {
         votingTokenContract,
         votingTokenData,
@@ -42,6 +49,8 @@ export function GovernorModuleProvider({
       votingTokenContract,
       votingTokenData,
       claimModuleContract,
+      createProposal,
+      pending,
     ]
   );
   return <GovernorContext.Provider value={value}>{children}</GovernorContext.Provider>;

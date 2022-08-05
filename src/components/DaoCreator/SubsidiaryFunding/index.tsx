@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDAOData } from '../../../contexts/daoData';
+import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
@@ -22,13 +22,7 @@ export function SubsidiaryFunding() {
 
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
-  const [
-    {
-      modules: {
-        treasury: { treasuryAssetsFungible, treasuryAssetsNonFungible },
-      },
-    },
-  ] = useDAOData();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryModule();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({

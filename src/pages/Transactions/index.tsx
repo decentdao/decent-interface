@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import H1 from '../../components/ui/H1';
-import New from './New';
+import { GovernanceController } from '../../controller/Modules/GovernanceController';
+import Plugins from './Plugins';
 
 function Transactions() {
   return (
@@ -18,7 +19,11 @@ function Transactions() {
         />
         <Route
           path="new"
-          element={<New />}
+          element={
+            <GovernanceController>
+              <Plugins />
+            </GovernanceController>
+          }
         />
         <Route
           path="*"

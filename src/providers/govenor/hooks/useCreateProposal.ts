@@ -1,15 +1,13 @@
-import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
+import { GovernorModule } from './../../../assets/typechain-types/module-governor/contracts/Governor/GovernorModule';
 import { useCallback } from 'react';
-import { useTransaction } from '../contexts/web3Data/transactions';
-import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
-import { ProposalData } from '../types/proposal';
+import { useTransaction } from '../../../contexts/web3Data/transactions';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { ProposalExecuteData } from '../../../types/proposal';
 
-const useCreateProposal = () => {
+const useCreateProposal = (governorModuleContract: GovernorModule | undefined) => {
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
-
-  const { governorModuleContract } = useGovenorModule();
 
   const [contractCallCreateProposal, contractCallPending] = useTransaction();
 
@@ -18,7 +16,7 @@ const useCreateProposal = () => {
       proposalData,
       successCallback,
     }: {
-      proposalData: ProposalData | undefined;
+      proposalData: ProposalExecuteData | undefined;
       successCallback: () => void;
     }) => {
       if (!signerOrProvider || !proposalData || !governorModuleContract) {
