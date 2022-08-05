@@ -10,11 +10,15 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
   } = useGovenorModule();
   const { treasuryModuleContract } = useTreasuryModule();
 
+  if (!governorModuleContract) {
+    return null;
+  }
+
   return React.cloneElement(children, {
     votingToken,
     createProposal: submitProposal,
     pending: pendingCreateTx,
     treasuryModuleContract,
-    governanceAddress: governorModuleContract!.address,
+    governanceAddress: governorModuleContract.address,
   });
 }
