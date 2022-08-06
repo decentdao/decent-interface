@@ -51,7 +51,7 @@ export function Modules() {
 
   useEffect(() => {
     const moduleAddress = params.moduleAddress;
-    if (moduleAddress && state.isLoading) {
+    if (moduleAddress && state.isLoading && (treasuryModule || tokenVotingGovernanceModule)) {
       const isTreasuryModule = treasuryModule
         ? treasuryModule.moduleAddress === moduleAddress
         : undefined;
@@ -72,7 +72,14 @@ export function Modules() {
         dispatch({ type: ModuleSelectActions.INVALID });
       }
     }
-  }, [params, dispatch, state.isLoading, treasuryModule, tokenVotingGovernanceModule]);
+  }, [
+    params,
+    dispatch,
+    state.isLoading,
+    treasuryModule,
+    tokenVotingGovernanceModule,
+    dao.moduleAddresses,
+  ]);
 
   useEffect(() => {
     if (params.moduleAddress !== state.moduleAddress && !state.isLoading) {
