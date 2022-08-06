@@ -81,10 +81,10 @@ export function Modules() {
   }, [params.moduleAddress, state.moduleAddress, state.isLoading]);
 
   useEffect(() => {
-    if (!state.isLoading && !state.moduleType) {
+    if (!state.isLoading && !state.moduleType && dao.isLoading) {
       navigate(`/daos/${dao.daoAddress}`, { replace: true });
     }
-  }, [state.isLoading, state.moduleType, dao.daoAddress, navigate]);
+  }, [state.isLoading, state.moduleType, dao.daoAddress, navigate, dao.isLoading]);
 
   switch (state.moduleType) {
     case ModuleTypes.TREASURY:
