@@ -38,7 +38,7 @@ const useTreasuryAssets = (
    * calculates native coin total amounts
    */
   useEffect(() => {
-    if (!nativeDeposits || !nativeDeposits.length || !nativeWithdraws) {
+    if (!nativeDeposits || !nativeDeposits.length) {
       treasuryAssets.clear();
       return;
     }
@@ -46,10 +46,11 @@ const useTreasuryAssets = (
     nativeDeposits.forEach((event: TokenDepositEvent) => {
       amount = amount.add(event.amount);
     });
-
-    nativeWithdraws.forEach((event: TokenWithdrawEvent) => {
-      amount = amount.sub(event.amount);
-    });
+    if (nativeWithdraws) {
+      nativeWithdraws.forEach((event: TokenWithdrawEvent) => {
+        amount = amount.sub(event.amount);
+      });
+    }
 
     // native coins are set to "0x" key,
     treasuryAssets.set('0x', {
@@ -60,6 +61,7 @@ const useTreasuryAssets = (
       totalAmount: amount,
       formatedTotal: utils.formatUnits(amount, 18),
     });
+    setAssets(Array.from(treasuryAssets.values()));
   }, [nativeDeposits, nativeWithdraws, treasuryAssets]);
 
   /**
