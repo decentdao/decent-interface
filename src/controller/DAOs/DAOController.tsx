@@ -15,7 +15,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
   const { dispatch } = useFractal();
   const params = useParams();
   const {
-    state: { signerOrProvider, account },
+    state: { signerOrProvider, account, isProviderLoading },
   } = useWeb3Provider();
 
   const { errorMessage, address, addressIsDAO, updateSearchString } = useSearchDao();
@@ -101,7 +101,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
   }, [address, signerOrProvider, addressIsDAO, retrieveDAO, dispatch, account]);
 
   useEffect(() => {
-    if (errorMessage || !account) {
+    if (!isProviderLoading && (errorMessage || !account)) {
       toast(errorMessage);
       (async () => {
         dispatch({
@@ -109,7 +109,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
         });
       })();
     }
-  }, [errorMessage, dispatch, account]);
+  }, [errorMessage, dispatch, account, isProviderLoading]);
 
   useEffect(() => {
     return () => {
