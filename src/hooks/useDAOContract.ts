@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { DAO, DAO__factory } from '@fractal-framework/core-contracts';
-import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 
 const useDAOContract = (address: string | undefined) => {
   const [dao, setDAO] = useState<DAO>();

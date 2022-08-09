@@ -1,9 +1,9 @@
 import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { ProposalData } from '../contexts/daoData/useProposals';
 import { ethers } from 'ethers';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { ProposalData } from '../providers/govenor/types';
 
 const useQueueTransaction = ({
   proposalData,

@@ -1,4 +1,4 @@
-import { ProposalState } from '../contexts/daoData/useProposals';
+import { ProposalState } from '../providers/govenor/types';
 
 const useProposalStateString = (state: ProposalState | undefined) => {
   switch (state) {

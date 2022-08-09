@@ -1,4 +1,4 @@
-import { ProposalData } from '../../contexts/daoData/useProposals';
+import { ProposalData } from '../../providers/govenor/types';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import ProposalCardDetailed from './ProposalCardDetailed';

@@ -1,9 +1,9 @@
-import { ProposalData, ProposalState } from '../../contexts/daoData/useProposals';
 import { useState, useEffect } from 'react';
 import useCastVote from '../../hooks/useCastVote';
 import { PrimaryButton, SecondaryButton } from '../ui/forms/Button';
 import Check from '../ui/svg/Check';
 import ContentBanner from '../ui/ContentBanner';
+import { ProposalData, ProposalState } from '../../providers/govenor/types';
 
 function CastVote({ proposal }: { proposal: ProposalData }) {
   // Vote Enum

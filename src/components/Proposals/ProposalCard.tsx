@@ -1,4 +1,3 @@
-import { ProposalData } from '../../contexts/daoData/useProposals';
 import { Link } from 'react-router-dom';
 import ContentBox from '../ui/ContentBox';
 import StatusBox from '../ui/StatusBox';
@@ -6,6 +5,7 @@ import ProposalNumber from '../ui/proposal/ProposalNumber';
 import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalDescription from '../ui/proposal/ProposalDescription';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
+import { ProposalData } from '../../providers/govenor/types';
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
   return (

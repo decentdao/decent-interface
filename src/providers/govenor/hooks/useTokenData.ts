@@ -2,9 +2,13 @@ import { useState, useEffect, useCallback, useMemo, useReducer } from 'react';
 import { BigNumber } from 'ethers';
 import { VotesToken } from '../../../assets/typechain-types/module-governor';
 import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
-import { ClaimListener } from '../../../contexts/daoData/types';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { TransferListener, DelegateChangedListener, DelegateVotesChangedListener } from '../types';
+import {
+  TransferListener,
+  DelegateChangedListener,
+  DelegateVotesChangedListener,
+  ClaimListener,
+} from '../types';
 
 interface ITokenData {
   name: string | undefined;

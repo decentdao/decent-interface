@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ethers } from 'ethers';
 import useCreateDAODataCreator from './useCreateDAODataCreator';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useAddresses } from '../contexts/daoData/useAddresses';
+import { useAddresses } from './useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { TokenAllocation } from '../types/tokenAllocation';
 import { useBlockchainData } from '../contexts/blockchainData';

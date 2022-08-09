@@ -13,3 +13,10 @@ export type DelegateVotesChangedListener = (
   currentBalance: BigNumber,
   _: any
 ) => void;
+export type ClaimListener = (
+  parentToken: string,
+  childToken: string,
+  claimer: string,
+  amount: BigNumber,
+  _: any
+) => void;
