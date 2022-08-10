@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { ReactText, useCallback, useEffect, useRef, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
@@ -10,6 +10,7 @@ import { ProposalExecuteData } from '../../types/proposal';
 import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
+import { toast } from 'react-toastify';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -26,13 +27,16 @@ function ProposalCreate() {
 
   const {
     createProposal: { submitProposal, pendingCreateTx },
+    votingToken: {
+      votingTokenData: { votingWeight, proposalTokenThreshold },
+    },
   } = useGovenorModule();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
-
+  const thresholdToastId = useRef<ReactText>('');
   /**
    * adds new transaction form
    */
@@ -93,10 +97,44 @@ function ProposalCreate() {
   }, [transactions, proposalDescription]);
 
   const isValidProposalValid = useCallback(() => {
+    // disable while threshold and voting weight are loading
+    if (votingWeight === undefined || proposalTokenThreshold === undefined) {
+      return false;
+    }
+    // disable if the user's voting veight is 0
+    if (votingWeight.isZero()) {
+      if (!thresholdToastId.current) {
+        thresholdToastId.current = toast('Only delegatees can create proposals', {
+          autoClose: false,
+          progress: 1,
+        });
+      }
+      return false;
+    } else {
+      toast.dismiss(thresholdToastId.current);
+    }
+
+    // disable if voting weight is less than proposal threshold
+    if (!proposalTokenThreshold.isZero() && proposalTokenThreshold.lt(votingWeight)) {
+      if (!thresholdToastId.current) {
+        thresholdToastId.current = toast(
+          'Voting weight is less than the required threshold to create proposals',
+          {
+            autoClose: false,
+            progress: 1,
+          }
+        );
+      }
+      return false;
+    } else {
+      // dismiss toast
+      toast.dismiss(thresholdToastId.current);
+    }
     // if proposalData doesn't exist
     if (!proposalData) {
       return false;
     }
+
     // if error in transactions
     let hasError: boolean = false;
     transactions.forEach((transaction: TransactionData) => {
@@ -114,7 +152,7 @@ function ProposalCreate() {
     }
     // validations pass
     return true;
-  }, [proposalData, transactions]);
+  }, [proposalData, transactions, votingWeight, proposalTokenThreshold]);
 
   return (
     <div>
