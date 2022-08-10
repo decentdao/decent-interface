@@ -63,7 +63,7 @@ function Button({
    ****************************/
 
   const BASE_BUTTON_STYLES =
-    'h-10 min-w-20 px-4 mx-2 font-mono rounded flex items-center justify-center';
+    'h-10 min-w-20 px-4 mx-2 font-mono rounded flex items-center justify-center focus:outline-none';
 
   return (
     <button
