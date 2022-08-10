@@ -1,4 +1,4 @@
-import { ReactText, useCallback, useEffect, useRef, useState } from 'react';
+import { ReactText, useEffect, useMemo, useRef, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
@@ -96,7 +96,7 @@ function ProposalCreate() {
     }
   }, [transactions, proposalDescription]);
 
-  const isValidProposalValid = useCallback(() => {
+  const canUserCreateProposal = useMemo(() => {
     // disable while threshold and voting weight are loading
     if (votingWeight === undefined || proposalTokenThreshold === undefined) {
       return false;
@@ -130,18 +130,19 @@ function ProposalCreate() {
       // dismiss toast
       toast.dismiss(thresholdToastId.current);
     }
+    return true;
+  }, [proposalTokenThreshold, votingWeight]);
+
+  const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist
     if (!proposalData) {
       return false;
     }
 
     // if error in transactions
-    let hasError: boolean = false;
-    transactions.forEach((transaction: TransactionData) => {
-      if (transaction.addressError || transaction.fragmentError) {
-        hasError = true;
-      }
-    });
+    const hasError = transactions.some(
+      (transaction: TransactionData) => transaction.addressError || transaction.fragmentError
+    );
     if (hasError) {
       return false;
     }
@@ -152,7 +153,16 @@ function ProposalCreate() {
     }
     // validations pass
     return true;
-  }, [proposalData, transactions, votingWeight, proposalTokenThreshold]);
+  }, [proposalData, transactions]);
+
+  const isNextDisabled = useMemo(
+    () => !canUserCreateProposal || !proposalDescription.trim().length,
+    [canUserCreateProposal, proposalDescription]
+  );
+  const isCreateDisabled = useMemo(
+    () => !canUserCreateProposal || !isValidProposal || pendingCreateTx,
+    [pendingCreateTx, isValidProposal, canUserCreateProposal]
+  );
 
   return (
     <div>
@@ -202,7 +212,7 @@ function ProposalCreate() {
                   successCallback,
                 })
               }
-              disabled={!isValidProposalValid() || pendingCreateTx}
+              disabled={isCreateDisabled}
               label="Create Proposal"
               isLarge
             />
@@ -211,7 +221,7 @@ function ProposalCreate() {
             <SecondaryButton
               type="button"
               onClick={incrementStep}
-              disabled={!proposalDescription.trim().length}
+              disabled={isNextDisabled}
               label="Next: Add Transactions"
             />
           )}
