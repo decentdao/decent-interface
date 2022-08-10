@@ -29,13 +29,13 @@ interface LinkMenuItem extends MenuItem {
 
 const COMMUNITY: LinkMenuItem = {
   title: 'Community',
-  link: 'https://discord.gg/24HFVzYVRF',
+  link: 'https://discord.gg/decent-dao',
   Icon: Contact,
 };
 
 const OVERVIEW: LinkMenuItem = {
   title: 'Overview',
-  link: 'https://docs.fractalframework.xyz/welcome-to-fractal/overview/what-is-fractal',
+  link: 'https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview',
   Icon: Support,
 };
 
