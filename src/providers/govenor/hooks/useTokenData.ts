@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useReducer } from 'react';
 import { BigNumber } from 'ethers';
-import { VotesToken } from '../../../assets/typechain-types/module-governor';
+import { GovernorModule, VotesToken } from '../../../assets/typechain-types/module-governor';
 import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import {
@@ -31,6 +31,7 @@ interface IGoveranceTokenData {
   userBalance: BigNumber | undefined;
   delegatee: string | undefined;
   votingWeight: BigNumber | undefined;
+  proposalTokenThreshold: BigNumber | undefined;
 }
 
 const initialState = {
@@ -41,6 +42,7 @@ const initialState = {
   userBalance: undefined,
   delegatee: undefined,
   votingWeight: undefined,
+  proposalTokenThreshold: undefined,
 };
 
 enum TokenActions {
@@ -48,6 +50,7 @@ enum TokenActions {
   UPDATE_DELEGATEE,
   UPDATE_VOTING_WEIGHT,
   UPDATE_ACCOUNT,
+  UPDATE_PROPOSAL_THRESHOLD,
   RESET,
 }
 type TokenAction =
@@ -55,6 +58,7 @@ type TokenAction =
   | { type: TokenActions.UPDATE_ACCOUNT; payload: ITokenAccount }
   | { type: TokenActions.UPDATE_DELEGATEE; payload: string }
   | { type: TokenActions.UPDATE_VOTING_WEIGHT; payload: BigNumber }
+  | { type: TokenActions.UPDATE_PROPOSAL_THRESHOLD; payload: BigNumber }
   | { type: TokenActions.RESET };
 
 const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
@@ -71,11 +75,14 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
       return { ...state, votingWeight: action.payload };
     case TokenActions.UPDATE_VOTING_WEIGHT:
       return { ...initialState };
+    case TokenActions.UPDATE_PROPOSAL_THRESHOLD:
+      return { ...state, proposalTokenThreshold: action.payload };
   }
   return state;
 };
 
 const useTokenData = (
+  governorModule: GovernorModule | undefined,
   tokenContract: VotesToken | undefined,
   claimContract: ClaimSubsidiary | undefined
 ) => {
@@ -225,6 +232,18 @@ const useTokenData = (
       tokenContract.off(filter, callback);
     };
   }, [account, tokenContract]);
+
+  const getProposalTokenThreshold = useCallback(async () => {
+    if (!governorModule) {
+      return;
+    }
+    const proposalThreshold = await governorModule.proposalThreshold();
+    dispatch({ type: TokenActions.UPDATE_PROPOSAL_THRESHOLD, payload: proposalThreshold });
+  }, [governorModule]);
+
+  useEffect(() => {
+    getProposalTokenThreshold();
+  }, [getProposalTokenThreshold]);
 
   const data = useMemo(
     () => ({

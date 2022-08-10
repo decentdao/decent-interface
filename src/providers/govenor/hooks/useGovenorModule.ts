@@ -27,6 +27,7 @@ export interface IGovernorModule {
       userClaimAmount: BigNumber | undefined;
       delegatee: string | undefined;
       votingWeight: BigNumber | undefined;
+      proposalTokenThreshold: BigNumber | undefined;
       address: string | undefined;
     };
   };
