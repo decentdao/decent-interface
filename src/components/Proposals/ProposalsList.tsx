@@ -1,14 +1,8 @@
-import { useDAOData } from '../../contexts/daoData';
+import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 import ProposalCard from './ProposalCard';
 
 function ProposalsList() {
-  const [
-    {
-      modules: {
-        governor: { proposals },
-      },
-    },
-  ] = useDAOData();
+  const { proposals } = useGovenorModule();
 
   if (proposals === undefined) {
     return <div className="text-white">Proposals loading...</div>;

@@ -1,7 +1,7 @@
 import {
   TreasuryAssetFungible,
   TreasuryAssetNonFungible,
-} from '../../../../contexts/daoData/treasury/types';
+} from '../../../../providers/treasury/types';
 
 export type TokenToFund = {
   asset: TreasuryAssetFungible;

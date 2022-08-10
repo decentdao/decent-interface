@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useMatch } from 'react-router-dom';
-import { useDAOData } from '../../../contexts/daoData';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import FractalLogo from '../svg/Logo';
 import HeaderMenu from './HeaderMenu';
 
 function Header() {
-  const [{ daoAddress }] = useDAOData();
+  const {
+    dao: { daoAddress },
+  } = useFractal();
   const daoHomeMatch = useMatch('/daos/:address/*');
   const [daoHome, setDaoHome] = useState('/');
   const [validatedAddress, setValidatedAddress] = useState<string>();

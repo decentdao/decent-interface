@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { BigNumber, BigNumberish, ethers } from 'ethers';
-import { useAddresses } from '../contexts/daoData/useAddresses';
+import { useAddresses } from './useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { MetaFactoryCreateDAOData } from '../types/metaFactory';
 import { TokenAllocation } from '../types/tokenAllocation';

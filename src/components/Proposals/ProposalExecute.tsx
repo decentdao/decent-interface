@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ProposalData, ProposalState } from '../../contexts/daoData/useProposals';
+import { ProposalData, ProposalState } from '../../providers/govenor/types';
 import useExecuteTransaction from '../../hooks/useExecuteTransaction';
 import { useBlockchainData } from '../../contexts/blockchainData';
 import { ProposalAction } from './ProposalAction';

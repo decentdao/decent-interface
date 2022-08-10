@@ -1,24 +1,18 @@
 import { useMemo, useState } from 'react';
 import ContentBox from '../ui/ContentBox';
 import { PrimaryButton } from '../ui/forms/Button';
-import { useDAOData } from '../../contexts/daoData';
 import useClaimToken from '../../hooks/useClaimToken';
 import { ethers } from 'ethers';
+import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 
 function ClaimToken() {
   const [pending, setPending] = useState<boolean>(false);
 
-  const [
-    {
-      modules: {
-        governor: {
-          votingToken: {
-            votingTokenData: { decimals, symbol, userClaimAmount },
-          },
-        },
-      },
+  const {
+    votingToken: {
+      votingTokenData: { decimals, symbol, userClaimAmount },
     },
-  ] = useDAOData();
+  } = useGovenorModule();
 
   const claimToken = useClaimToken({
     setPending,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import useDAOContract from '../contexts/daoData/useDAOContract';
-import useDAOName from '../contexts/daoData/useDAOName';
+import useDAOContract from '../hooks/useDAOContract';
+import useDAOName from '../hooks/useDAOName';
 import CopyToClipboard from './ui/CopyToClipboard';
 import EtherscanLinkAddress from './ui/EtherscanLinkAddress';
 import { TextButton } from './ui/forms/Button';

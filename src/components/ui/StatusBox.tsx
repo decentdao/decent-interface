@@ -1,6 +1,6 @@
 import cx from 'classnames';
-import { ProposalState } from '../../contexts/daoData/useProposals';
 import useProposalStateString from '../../hooks/useProposalStateString';
+import { ProposalState } from '../../providers/govenor/types';
 
 interface StatusBoxProps {
   status?: ProposalState;

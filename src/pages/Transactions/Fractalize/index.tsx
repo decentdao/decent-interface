@@ -1,9 +1,7 @@
 import DaoCreator from '../../../components/DaoCreator';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
-import useCreateProposal from '../../../hooks/useCreateProposal';
 import { ExecuteData } from '../../../types/execute';
 import { useNavigate } from 'react-router-dom';
-import { useDAOData } from '../../../contexts/daoData';
 import { useBlockchainData } from '../../../contexts/blockchainData';
 import { DAODeployData } from '../../../components/DaoCreator/provider/types';
 import {
@@ -12,20 +10,23 @@ import {
   ERC20__factory,
 } from '../../../assets/typechain-types/module-treasury';
 import { ethers } from 'ethers';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { GovernanceProposalData } from '../../../controller/Modules/types';
+import { ProposalExecuteData } from '../../../types/proposal';
 
-function Fractalize() {
-  const [
-    {
-      daoAddress,
-      modules: {
-        treasury: { treasuryModuleContract },
-        governor: { votingToken },
-      },
-    },
-  ] = useDAOData();
+interface IFractalize extends GovernanceProposalData {}
+
+function Fractalize({
+  createProposal,
+  governanceAddress,
+  treasuryModuleContract,
+  votingToken,
+  pending,
+}: IFractalize) {
+  const {
+    dao: { daoAddress },
+  } = useFractal();
   const navigate = useNavigate();
-
-  const [createProposal, pending] = useCreateProposal();
 
   const createDAODataCreator = useCreateDAODataCreator();
 
@@ -36,7 +37,7 @@ function Fractalize() {
       return;
     }
 
-    navigate(`/daos/${daoAddress}`);
+    navigate(`/daos/${daoAddress}/modules/${governanceAddress}`);
   };
 
   const createDAOTrigger = (daoData: DAODeployData) => {
@@ -59,6 +60,15 @@ function Fractalize() {
     if (!metaFactoryContract || !newDAOData) {
       return;
     }
+
+    const submitProposal = (data: ProposalExecuteData) => {
+      if (createProposal) {
+        createProposal({
+          proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
+          successCallback,
+        });
+      }
+    };
 
     const data: ExecuteData = {
       targets: [metaFactoryContract.address],
@@ -161,10 +171,7 @@ function Fractalize() {
         ])
       );
     }
-    createProposal({
-      proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
-      successCallback,
-    });
+    submitProposal({ ...data, description: `New subDAO: ${daoData.daoName}` });
   };
 
   return (

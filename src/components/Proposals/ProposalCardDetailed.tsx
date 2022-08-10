@@ -1,4 +1,4 @@
-import { ProposalData } from '../../contexts/daoData/useProposals';
+import { ProposalData } from '../../providers/govenor/types';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalDescription from '../ui/proposal/ProposalDescription';

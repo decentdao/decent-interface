@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 import { MetaFactory, MetaFactory__factory } from '../../assets/typechain-types/metafactory';
-import { useAddresses } from '../daoData/useAddresses';
+import { useAddresses } from '../../hooks/useAddresses';
 
 const useMetaFactoryContract = () => {
   const [metaFactoryContract, setMetaFactoryContract] = useState<MetaFactory>();

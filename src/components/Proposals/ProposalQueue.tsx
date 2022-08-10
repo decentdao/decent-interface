@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ProposalData, ProposalState } from '../../contexts/daoData/useProposals';
+import { ProposalData, ProposalState } from '../../providers/govenor/types';
 import useQueueTransaction from '../../hooks/useQueueTransaction';
 import { ProposalAction } from './ProposalAction';
 

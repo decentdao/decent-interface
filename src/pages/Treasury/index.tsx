@@ -7,7 +7,8 @@ import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
 import H1 from '../../components/ui/H1';
 import TooltipAddressContent from '../../components/ui/TooltipAddressContent';
 import TooltipWrapper from '../../components/ui/TooltipWrapper';
-import { useDAOData } from '../../contexts/daoData';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useTreasuryModule } from '../../providers/treasury/hooks/useTreasuryModule';
 
 function TableRowWrapper({ children }: { children?: ReactNode }) {
   return (
@@ -18,17 +19,12 @@ function TableRowWrapper({ children }: { children?: ReactNode }) {
 }
 
 function Treasury() {
-  const [
-    {
-      name,
-      modules: {
-        treasury: { treasuryAssetsFungible, treasuryAssetsNonFungible, treasuryModuleContract },
-      },
-    },
-  ] = useDAOData();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible, treasuryModuleContract } =
+    useTreasuryModule();
+  const { dao } = useFractal();
   return (
     <div>
-      <H1>{name} Treasury</H1>
+      <H1>{dao.daoName} Treasury</H1>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
         <ContentBoxTitle>ETH / Tokens</ContentBoxTitle>
         <div className="my-2">

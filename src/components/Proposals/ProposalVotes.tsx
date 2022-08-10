@@ -1,4 +1,4 @@
-import { ProposalData } from '../../contexts/daoData/useProposals';
+import { ProposalData } from '../../providers/govenor/types';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage?: number }) {
   return (

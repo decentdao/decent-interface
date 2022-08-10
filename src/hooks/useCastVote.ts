@@ -1,8 +1,8 @@
+import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
 import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { BigNumber } from 'ethers';
-import { useDAOData } from '../contexts/daoData/index';
 
 const useCastVote = ({
   proposalId,
@@ -16,13 +16,7 @@ const useCastVote = ({
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
-  const [
-    {
-      modules: {
-        governor: { governorModuleContract },
-      },
-    },
-  ] = useDAOData();
+  const { governorModuleContract } = useGovenorModule();
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
