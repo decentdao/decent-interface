@@ -115,7 +115,7 @@ function ProposalCreate() {
     }
 
     // disable if voting weight is less than proposal threshold
-    if (!proposalTokenThreshold.isZero() && proposalTokenThreshold.lt(votingWeight)) {
+    if (!proposalTokenThreshold.isZero() && proposalTokenThreshold.lte(votingWeight)) {
       if (!thresholdToastId.current) {
         thresholdToastId.current = toast(
           'Voting weight is less than the required threshold to create proposals',
