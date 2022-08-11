@@ -70,8 +70,8 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
       const { name, symbol, decimals, address } = action.payload;
       return { ...state, name, symbol, decimals, address };
     case TokenActions.UPDATE_ACCOUNT:
-      const { userBalance, delegatee, votingWeight } = action.payload;
-      return { ...state, userBalance, delegatee, votingWeight };
+      const { userBalance, delegatee, votingWeight, isDelegatesSet } = action.payload;
+      return { ...state, userBalance, delegatee, votingWeight, isDelegatesSet };
     case TokenActions.UPDATE_DELEGATEE:
       return { ...state, delegatee: action.payload };
     case TokenActions.UPDATE_VOTING_WEIGHT:

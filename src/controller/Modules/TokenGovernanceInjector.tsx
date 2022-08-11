@@ -1,5 +1,6 @@
 import React from 'react';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
+import { useUserProposalValidation } from '../../providers/govenor/hooks/useUserProposalValidation';
 import { useTreasuryModule } from '../../providers/treasury/hooks/useTreasuryModule';
 
 /**
@@ -14,6 +15,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
   } = useGovenorModule();
   const { treasuryModuleContract } = useTreasuryModule();
 
+  const canUserCreateProposal = useUserProposalValidation();
   if (!governorModuleContract) {
     return null;
   }
@@ -24,5 +26,6 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
     pending: pendingCreateTx,
     treasuryModuleContract,
     governanceAddress: governorModuleContract.address,
+    isAuthorized: canUserCreateProposal,
   });
 }

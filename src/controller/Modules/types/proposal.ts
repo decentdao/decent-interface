@@ -10,6 +10,7 @@ export interface GovernanceProposalData {
   governanceAddress?: string;
   treasuryModuleContract?: Contract;
   pending?: boolean;
+  isAuthorized?: boolean;
   votingToken?: {
     votingTokenContract: VotesToken | undefined;
     votingTokenData: {

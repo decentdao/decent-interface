@@ -93,7 +93,6 @@ function ProposalCreate() {
   }, [transactions, proposalDescription]);
 
   const canUserCreateProposal = useUserProposalValidation();
-  console.log('🚀 ~ file: index.tsx ~ line 96 ~ canUserCreateProposal', canUserCreateProposal);
 
   const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist
