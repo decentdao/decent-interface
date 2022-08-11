@@ -1,4 +1,4 @@
-import { ReactText, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
@@ -10,7 +10,7 @@ import { ProposalExecuteData } from '../../types/proposal';
 import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
-import { toast } from 'react-toastify';
+import { useUserProposalValidation } from '../../providers/govenor/hooks/useUserProposalValidation';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -27,16 +27,12 @@ function ProposalCreate() {
 
   const {
     createProposal: { submitProposal, pendingCreateTx },
-    votingToken: {
-      votingTokenData: { votingWeight, proposalTokenThreshold, isDelegatesSet },
-    },
   } = useGovenorModule();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
-  const thresholdToastId = useRef<ReactText>('');
   /**
    * adds new transaction form
    */
@@ -96,44 +92,7 @@ function ProposalCreate() {
     }
   }, [transactions, proposalDescription]);
 
-  const canUserCreateProposal = useMemo(() => {
-    // disable while threshold and voting weight are loading
-    if (votingWeight === undefined || proposalTokenThreshold === undefined) {
-      return false;
-    }
-
-    // disable if no votes have been delegated, prevents voting on fresh DAO before any delegation as occured.
-    if (!isDelegatesSet) {
-      if (!thresholdToastId.current) {
-        thresholdToastId.current = toast('No Delegatees have been set', {
-          autoClose: false,
-          progress: 1,
-        });
-      }
-      return false;
-    } else {
-      // dismiss toast
-      toast.dismiss(thresholdToastId.current);
-    }
-
-    // disable if voting weight is less than proposal threshold
-    if (!proposalTokenThreshold.isZero() && proposalTokenThreshold.lte(votingWeight)) {
-      if (!thresholdToastId.current) {
-        thresholdToastId.current = toast(
-          'Voting weight is less than the required threshold to create proposals',
-          {
-            autoClose: false,
-            progress: 1,
-          }
-        );
-      }
-      return false;
-    } else {
-      // dismiss toast
-      toast.dismiss(thresholdToastId.current);
-    }
-    return true;
-  }, [proposalTokenThreshold, votingWeight, isDelegatesSet]);
+  const canUserCreateProposal = useUserProposalValidation();
 
   const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist
