@@ -28,7 +28,7 @@ function ProposalCreate() {
   const {
     createProposal: { submitProposal, pendingCreateTx },
     votingToken: {
-      votingTokenData: { votingWeight, proposalTokenThreshold },
+      votingTokenData: { votingWeight, proposalTokenThreshold, isDelegatesSet },
     },
   } = useGovenorModule();
   const [step, setStep] = useState<number>(0);
@@ -101,16 +101,18 @@ function ProposalCreate() {
     if (votingWeight === undefined || proposalTokenThreshold === undefined) {
       return false;
     }
-    // disable if the user's voting veight is 0
-    if (votingWeight.isZero()) {
+
+    // disable if no votes have been delegated, prevents voting on fresh DAO before any delegation as occured.
+    if (!isDelegatesSet) {
       if (!thresholdToastId.current) {
-        thresholdToastId.current = toast('Only delegatees can create proposals', {
+        thresholdToastId.current = toast('No Delegatees have been set', {
           autoClose: false,
           progress: 1,
         });
       }
       return false;
     } else {
+      // dismiss toast
       toast.dismiss(thresholdToastId.current);
     }
 
@@ -131,7 +133,7 @@ function ProposalCreate() {
       toast.dismiss(thresholdToastId.current);
     }
     return true;
-  }, [proposalTokenThreshold, votingWeight]);
+  }, [proposalTokenThreshold, votingWeight, isDelegatesSet]);
 
   const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist

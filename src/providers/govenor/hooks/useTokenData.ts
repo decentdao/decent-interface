@@ -21,6 +21,7 @@ interface ITokenAccount {
   userBalance: BigNumber | undefined;
   delegatee: string | undefined;
   votingWeight: BigNumber | undefined;
+  isDelegatesSet: boolean | undefined;
 }
 
 interface IGoveranceTokenData {
@@ -32,6 +33,7 @@ interface IGoveranceTokenData {
   delegatee: string | undefined;
   votingWeight: BigNumber | undefined;
   proposalTokenThreshold: BigNumber | undefined;
+  isDelegatesSet: boolean | undefined;
 }
 
 const initialState = {
@@ -43,6 +45,7 @@ const initialState = {
   delegatee: undefined,
   votingWeight: undefined,
   proposalTokenThreshold: undefined,
+  isDelegatesSet: undefined,
 };
 
 enum TokenActions {
@@ -89,6 +92,7 @@ const useTokenData = (
   const {
     state: { account },
   } = useWeb3Provider();
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const [userClaimAmount, setTokenClaimAmount] = useState<BigNumber>();
 
@@ -121,12 +125,18 @@ const useTokenData = (
     const tokenBalance = await tokenContract.balanceOf(account);
     const tokenDelegatee = await tokenContract.delegates(account);
     const tokenVotingWeight = await tokenContract.getVotes(account);
+
+    const isDelegatesSet = !!(
+      await tokenContract.queryFilter(tokenContract.filters.DelegateChanged())
+    ).length;
+
     dispatch({
       type: TokenActions.UPDATE_ACCOUNT,
       payload: {
         userBalance: tokenBalance,
         delegatee: tokenDelegatee,
         votingWeight: tokenVotingWeight,
+        isDelegatesSet,
       },
     });
   }, [tokenContract, account]);
