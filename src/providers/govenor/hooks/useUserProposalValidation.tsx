@@ -38,7 +38,7 @@ export function useUserProposalValidation() {
       if (!thresholdToastId.current) {
         thresholdToastId.current = toast(
           <ToastContent
-            title="'No Delegatees have been set'"
+            title="No Delegatees have been set"
             label="Delegate"
             action={() => {
               navigate(`/daos/${daoAddress}/modules/${governorModuleContract!.address}/delegate`);
