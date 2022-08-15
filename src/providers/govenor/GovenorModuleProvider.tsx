@@ -26,7 +26,11 @@ export function GovernorModuleProvider({
   const claimModuleContract = useClaimModule(claimingContractAddress);
   const timelockModuleContract = useTimelockModuleContract(timeLockModuleAddress);
   const votingTokenContract = useTokenContract(governorModuleContract);
-  const votingTokenData = useTokenData(votingTokenContract, claimModuleContract);
+  const votingTokenData = useTokenData(
+    governorModuleContract,
+    votingTokenContract,
+    claimModuleContract
+  );
   const proposals = useProposals(governorModuleContract);
 
   const [createProposal, pending] = useCreateProposal(governorModuleContract);

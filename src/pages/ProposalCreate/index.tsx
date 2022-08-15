@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
 import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
@@ -10,6 +10,7 @@ import { ProposalExecuteData } from '../../types/proposal';
 import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
+import { useUserProposalValidation } from '../../providers/govenor/hooks/useUserProposalValidation';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -32,7 +33,6 @@ function ProposalCreate() {
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
-
   /**
    * adds new transaction form
    */
@@ -92,18 +92,18 @@ function ProposalCreate() {
     }
   }, [transactions, proposalDescription]);
 
-  const isValidProposalValid = useCallback(() => {
+  const canUserCreateProposal = useUserProposalValidation();
+
+  const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist
     if (!proposalData) {
       return false;
     }
+
     // if error in transactions
-    let hasError: boolean = false;
-    transactions.forEach((transaction: TransactionData) => {
-      if (transaction.addressError || transaction.fragmentError) {
-        hasError = true;
-      }
-    });
+    const hasError = transactions.some(
+      (transaction: TransactionData) => transaction.addressError || transaction.fragmentError
+    );
     if (hasError) {
       return false;
     }
@@ -115,6 +115,15 @@ function ProposalCreate() {
     // validations pass
     return true;
   }, [proposalData, transactions]);
+
+  const isNextDisabled = useMemo(
+    () => !canUserCreateProposal || !proposalDescription.trim().length,
+    [canUserCreateProposal, proposalDescription]
+  );
+  const isCreateDisabled = useMemo(
+    () => !canUserCreateProposal || !isValidProposal || pendingCreateTx,
+    [pendingCreateTx, isValidProposal, canUserCreateProposal]
+  );
 
   return (
     <div>
@@ -164,7 +173,7 @@ function ProposalCreate() {
                   successCallback,
                 })
               }
-              disabled={!isValidProposalValid() || pendingCreateTx}
+              disabled={isCreateDisabled}
               label="Create Proposal"
               isLarge
             />
@@ -173,7 +182,7 @@ function ProposalCreate() {
             <SecondaryButton
               type="button"
               onClick={incrementStep}
-              disabled={!proposalDescription.trim().length}
+              disabled={isNextDisabled}
               label="Next: Add Transactions"
             />
           )}

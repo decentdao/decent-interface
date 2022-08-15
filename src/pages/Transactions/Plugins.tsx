@@ -8,11 +8,12 @@ enum View {
   CreateDAO,
 }
 
-function CreateDAOCard({ onClick }: { onClick: () => void }) {
+function CreateDAOCard({ disabled, onClick }: { onClick: () => void; disabled?: boolean }) {
   return (
     <PrimaryButton
       label="Create a subDAO"
       onClick={onClick}
+      disabled={disabled}
     />
   );
 }
@@ -53,7 +54,10 @@ function Plugins(props: IPlugins) {
     default: {
       return (
         <div className="flex flex-wrap">
-          <CreateDAOCard onClick={() => setView(View.CreateDAO)} />
+          <CreateDAOCard
+            onClick={() => setView(View.CreateDAO)}
+            disabled={!props.isAuthorized}
+          />
         </div>
       );
     }
