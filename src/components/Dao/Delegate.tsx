@@ -17,6 +17,7 @@ import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState('');
+
   const {
     state: { account },
   } = useWeb3Provider();
@@ -52,6 +53,7 @@ function Delegate() {
   }, [decimals, userBalance, symbol]);
 
   const [readableVotingWeight, setReadableVotingWeight] = useState<string>();
+
   useEffect(() => {
     if (votingWeight === undefined || decimals === undefined || symbol === undefined) {
       setReadableVotingWeight(undefined);
@@ -64,6 +66,8 @@ function Delegate() {
   useEffect(() => {
     if (validAddress === false) {
       setErrorMessage('Invalid address');
+    } else {
+      setErrorMessage('');
     }
   }, [validAddress]);
   return (
