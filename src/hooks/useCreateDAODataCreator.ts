@@ -15,6 +15,25 @@ import {
 } from '../assets/typechain-types/votes-token';
 import { TreasuryModule__factory } from '../assets/typechain-types/metafactory';
 
+type ICreateDAOData = (
+  data: {
+    creator: string;
+    daoName: string;
+    tokenName: string;
+    tokenSymbol: string;
+    tokenSupply: string;
+    tokenAllocations: TokenAllocation[];
+    proposalThreshold: string;
+    quorum: string;
+    executionDelay: string;
+    lateQuorumExecution: string;
+    voteStartDelay: string;
+    votingPeriod: string;
+    parentAllocationAmount?: string;
+  },
+  parentToken?: string
+) => undefined | { calldata: MetaFactoryCreateDAOData; predictedTreasuryAddress: string };
+
 const useCreateDAODataCreator = () => {
   const {
     state: { chainId },
@@ -22,7 +41,7 @@ const useCreateDAODataCreator = () => {
 
   const addresses = useAddresses(chainId);
 
-  const createDAOData = useCallback(
+  const createDAOData = useCallback<ICreateDAOData>(
     (
       {
         creator,
@@ -38,22 +57,8 @@ const useCreateDAODataCreator = () => {
         voteStartDelay,
         votingPeriod,
         parentAllocationAmount,
-      }: {
-        creator: string;
-        daoName: string;
-        tokenName: string;
-        tokenSymbol: string;
-        tokenSupply: string;
-        tokenAllocations: TokenAllocation[];
-        proposalThreshold: string;
-        quorum: string;
-        executionDelay: string;
-        lateQuorumExecution: string;
-        voteStartDelay: string;
-        votingPeriod: string;
-        parentAllocationAmount?: string;
       },
-      parentToken?: string
+      parentToken
     ) => {
       const abiCoder = new ethers.utils.AbiCoder();
 
@@ -93,6 +98,8 @@ const useCreateDAODataCreator = () => {
           self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
         );
       }
+
+      const tokenAllocationData = [...tokenAllocations];
 
       const predictedDAOAddress = ethers.utils.getCreate2Address(
         addresses.daoFactory.address,
@@ -149,14 +156,14 @@ const useCreateDAODataCreator = () => {
           address: addresses.metaFactory.address,
           amount: Number(parentAllocationAmount),
         };
-        tokenAllocations.push(parentTokenAllocation);
+        tokenAllocationData.push(parentTokenAllocation);
       }
 
       // If the total token supply is greater than the sum of allocations,
       // Then mint the token difference into the Metafactory, to be deposited
       // into the treasury
       const tokenSupplyNumber = Number(tokenSupply);
-      const tokenAllocationSum = tokenAllocations.reduce((accumulator, tokenAllocation) => {
+      const tokenAllocationSum = tokenAllocationData.reduce((accumulator, tokenAllocation) => {
         return accumulator + tokenAllocation.amount;
       }, 0);
 
@@ -165,7 +172,7 @@ const useCreateDAODataCreator = () => {
           address: addresses.metaFactory.address,
           amount: tokenSupplyNumber - tokenAllocationSum,
         };
-        tokenAllocations.push(daoTokenAllocation);
+        tokenAllocationData.push(daoTokenAllocation);
       }
 
       const predictedTokenAddress = ethers.utils.getCreate2Address(
@@ -184,8 +191,8 @@ const useCreateDAODataCreator = () => {
               [
                 tokenName,
                 tokenSymbol,
-                tokenAllocations.map(tokenAllocation => tokenAllocation.address),
-                tokenAllocations.map(tokenAllocation =>
+                tokenAllocationData.map(tokenAllocation => tokenAllocation.address),
+                tokenAllocationData.map(tokenAllocation =>
                   ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
                 ),
               ]
@@ -272,12 +279,12 @@ const useCreateDAODataCreator = () => {
         abiCoder.encode(['string'], [tokenSymbol]),
         abiCoder.encode(
           ['address[]'],
-          [tokenAllocations.map(tokenAllocation => tokenAllocation.address)]
+          [tokenAllocationData.map(tokenAllocation => tokenAllocation.address)]
         ),
         abiCoder.encode(
           ['uint256[]'],
           [
-            tokenAllocations.map(tokenAllocation =>
+            tokenAllocationData.map(tokenAllocation =>
               ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
             ),
           ]
