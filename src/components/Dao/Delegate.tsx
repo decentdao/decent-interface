@@ -44,10 +44,7 @@ function Delegate() {
     return `${utils.formatUnits(votingWeight, decimals)} ${symbol}`;
   }, [decimals, votingWeight, symbol]);
 
-  const errorMessage = useMemo(
-    () => (validAddress === false ? 'Invalid address' : undefined),
-    [validAddress]
-  );
+  const errorMessage = validAddress === false ? 'Invalid address' : undefined;
 
   const delegateSelf = () => {
     if (!account) {
