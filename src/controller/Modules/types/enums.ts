@@ -10,4 +10,5 @@ export enum ModuleTypes {
   TOKEN_VOTING_GOVERNANCE = 'Token Governance',
   TREASURY = 'Treasury Module',
   CLAIMING = 'Claiming Contract',
+  GNOSIS_WRAPPER = 'Gnosis Safe Wrapper',
 }
