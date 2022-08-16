@@ -15,6 +15,7 @@ export enum CreatorProviderActions {
 export enum CreatorSteps {
   CHOOSE_GOVERNANCE,
   ESSENTIALS,
+  GNOSIS_GOVERNANCE,
   FUNDING,
   TREASURY_GOV_TOKEN,
   GOV_CONFIG,

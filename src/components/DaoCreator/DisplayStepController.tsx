@@ -13,6 +13,8 @@ function StepController() {
       return <DAODetails />;
     case CreatorSteps.CHOOSE_GOVERNANCE:
       return <ChooseGovernance />;
+    case CreatorSteps.GNOSIS_GOVERNANCE:
+      return <div />;
     case CreatorSteps.FUNDING: {
       return <SubsidiaryFunding />;
     }
