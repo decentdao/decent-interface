@@ -5,6 +5,7 @@ export enum CreatorProviderActions {
   SET_STEP,
   UPDATE_ESSENTIALS,
   UPDATE_TREASURY_GOV_TOKEN,
+  UPDATE_GOVERNANCE,
   UPDATE_GOV_CONFIG,
   UPDATE_FUNDING,
   UPDATE_STEP,
@@ -12,10 +13,16 @@ export enum CreatorProviderActions {
 }
 
 export enum CreatorSteps {
+  CHOOSE_GOVERNANCE,
   ESSENTIALS,
   FUNDING,
   TREASURY_GOV_TOKEN,
   GOV_CONFIG,
+}
+
+export enum GovernanceTypes {
+  TOKEN_VOTING_GOVERNANCE,
+  GNOSIS_SAFE,
 }
 
 export type CreatorProviderActionTypes =
@@ -23,6 +30,7 @@ export type CreatorProviderActionTypes =
       type: CreatorProviderActions.UPDATE_ESSENTIALS;
       payload: DAOEssentials;
     }
+  | { type: CreatorProviderActions.UPDATE_GOVERNANCE; payload: GovernanceTypes }
   | { type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN; payload: DAOGovenorToken }
   | { type: CreatorProviderActions.UPDATE_GOV_CONFIG; payload: DAOGovenorModuleConfig }
   | { type: CreatorProviderActions.UPDATE_FUNDING; payload: DAOFunding }
@@ -66,6 +74,7 @@ export interface CreatorState {
   step: CreatorSteps;
   nextStep: CreatorSteps | null;
   prevStep: CreatorSteps | null;
+  governance: GovernanceTypes;
   essentials: DAOEssentials;
   govToken: DAOGovenorToken;
   govModule: DAOGovenorModuleConfig;

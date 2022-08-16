@@ -16,12 +16,14 @@ import {
   CreatorState,
   CreatorSteps,
   DAOTrigger,
+  GovernanceTypes,
 } from './types';
 
 export const initialState: CreatorState = {
   step: CreatorSteps.ESSENTIALS,
   prevStep: null,
   nextStep: null,
+  governance: GovernanceTypes.TOKEN_VOTING_GOVERNANCE,
   essentials: {
     daoName: '',
   },
@@ -50,6 +52,8 @@ const reducer = (state: CreatorState, action: CreatorProviderActionTypes) => {
   switch (action.type) {
     case CreatorProviderActions.UPDATE_ESSENTIALS:
       return { ...state, essentials: { ...state.essentials, ...action.payload } };
+    case CreatorProviderActions.UPDATE_GOVERNANCE:
+      return { ...state, governance: action.payload };
     case CreatorProviderActions.UPDATE_FUNDING:
       return { ...state, funding: { ...state.funding, ...action.payload } };
     case CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN:
