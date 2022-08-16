@@ -15,7 +15,7 @@ import {
 } from '../assets/typechain-types/votes-token';
 import { TreasuryModule__factory } from '../assets/typechain-types/metafactory';
 
-type ICreateDAOData = (
+type CreateDAOData = (
   data: {
     creator: string;
     daoName: string;
@@ -41,7 +41,7 @@ const useCreateDAODataCreator = () => {
 
   const addresses = useAddresses(chainId);
 
-  const createDAOData = useCallback<ICreateDAOData>(
+  const createDAOData = useCallback<CreateDAOData>(
     (
       {
         creator,
