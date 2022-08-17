@@ -5,6 +5,7 @@ import { Governance } from '../../pages/Governance';
 import Proposals from '../../pages/Proposals';
 import Treasury from '../../pages/Treasury';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { GnosisWrapperProvider } from '../../providers/gnosis/GnosisWrapperProvider';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
 import {
@@ -44,19 +45,28 @@ export function Modules() {
       tokenVotingGovernanceModule,
       claimingContractModule,
       timelockModule,
+      gnosisWrapperModule,
     },
   } = useFractal();
   const params = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Get the address of the module currently navigated to
     const moduleAddress = params.moduleAddress;
-    if (moduleAddress && state.isLoading && (treasuryModule || tokenVotingGovernanceModule)) {
+    if (
+      moduleAddress &&
+      state.isLoading &&
+      (treasuryModule || tokenVotingGovernanceModule || gnosisWrapperModule)
+    ) {
       const isTreasuryModule = treasuryModule
         ? treasuryModule.moduleAddress === moduleAddress
         : undefined;
       const isTokenVotingGovernanceModule = tokenVotingGovernanceModule
         ? tokenVotingGovernanceModule.moduleAddress === moduleAddress
+        : undefined;
+      const isGnosisWrapperModule = gnosisWrapperModule
+        ? gnosisWrapperModule.moduleAddress === moduleAddress
         : undefined;
 
       let moduleData: IModuleData | undefined;
@@ -65,6 +75,9 @@ export function Modules() {
       }
       if (isTokenVotingGovernanceModule) {
         moduleData = tokenVotingGovernanceModule;
+      }
+      if (isGnosisWrapperModule) {
+        moduleData = gnosisWrapperModule;
       }
       if (moduleData) {
         dispatch({ type: ModuleSelectActions.SET_MODULE, payload: moduleData });
@@ -78,6 +91,7 @@ export function Modules() {
     state.isLoading,
     treasuryModule,
     tokenVotingGovernanceModule,
+    gnosisWrapperModule,
     dao.moduleAddresses,
   ]);
 
@@ -122,6 +136,12 @@ export function Modules() {
             />
           </Routes>
         </GovernorModuleProvider>
+      );
+    case ModuleTypes.GNOSIS_WRAPPER:
+      return (
+        <GnosisWrapperProvider moduleAddress={state.moduleAddress}>
+          {/* Insert gnosis page here */}
+        </GnosisWrapperProvider>
       );
     default: {
       return null;
