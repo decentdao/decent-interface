@@ -1,4 +1,4 @@
-import { NFTToFund, TokenToFund } from './../../SubsidiaryFunding/types/index';
+import { NFTToFund, TokenToFund } from '../../tokenVotingGovernance/SubsidiaryFunding/types/index';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
 
 export enum CreatorProviderActions {

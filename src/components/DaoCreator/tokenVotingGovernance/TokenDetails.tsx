@@ -1,10 +1,10 @@
-import ContentBoxTitle from '../ui/ContentBoxTitle';
-import Input from '../ui/forms/Input';
-import InputBox from '../ui/forms/InputBox';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import Input from '../../ui/forms/Input';
+import InputBox from '../../ui/forms/InputBox';
 import TokenAllocations from './TokenAllocations';
-import ContentBox from '../ui/ContentBox';
-import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions } from './provider/types';
+import ContentBox from '../../ui/ContentBox';
+import { useCreator } from '../provider/hooks/useCreator';
+import { CreatorProviderActions } from '../provider/types';
 
 function TokenDetails() {
   const {

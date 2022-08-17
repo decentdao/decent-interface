@@ -1,8 +1,8 @@
-import { TokenAllocation } from '../../types/tokenAllocation';
-import { checkAddress } from '../../hooks/useAddress';
-import { TextButton } from '../ui/forms/Button';
-import Input from '../ui/forms/Input';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { TokenAllocation } from '../../../types/tokenAllocation';
+import { checkAddress } from '../../../hooks/useAddress';
+import { TextButton } from '../../ui/forms/Button';
+import Input from '../../ui/forms/Input';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 
 interface TokenAllocationProps {
   index: number;

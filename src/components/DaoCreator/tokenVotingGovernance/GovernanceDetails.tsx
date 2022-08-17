@@ -1,11 +1,11 @@
 import { ChangeEvent } from 'react';
-import ContentBanner from '../ui/ContentBanner';
-import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
-import Input from '../ui/forms/Input';
-import InputBox from '../ui/forms/InputBox';
-import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions } from './provider/types';
+import ContentBanner from '../../ui/ContentBanner';
+import ContentBox from '../../ui/ContentBox';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import Input from '../../ui/forms/Input';
+import InputBox from '../../ui/forms/InputBox';
+import { useCreator } from '../provider/hooks/useCreator';
+import { CreatorProviderActions } from '../provider/types';
 
 function GovernanceDetails() {
   const {

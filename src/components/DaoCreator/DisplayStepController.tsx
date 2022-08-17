@@ -1,9 +1,9 @@
 import DAODetails from './DAODetails';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorSteps } from './provider/types';
-import { SubsidiaryFunding } from './SubsidiaryFunding';
-import TokenDetails from './TokenDetails';
-import GovernanceDetails from './GovernanceDetails';
+import { SubsidiaryFunding } from './tokenVotingGovernance/SubsidiaryFunding';
+import TokenDetails from './tokenVotingGovernance/TokenDetails';
+import GovernanceDetails from './tokenVotingGovernance/GovernanceDetails';
 import { ChooseGovernance } from './ChooseGovernance';
 
 function StepController() {
