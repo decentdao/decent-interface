@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Fractalize from './Fractalize';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
 import { GovernanceProposalData } from '../../controller/Modules/types';
+import { DAOTrigger } from '../../components/DaoCreator/provider/types';
 
 enum View {
   Cards,
@@ -37,7 +38,9 @@ function CardDetails({
   );
 }
 
-interface IPlugins extends GovernanceProposalData {}
+interface IPlugins extends GovernanceProposalData {
+  createDAOTrigger?: DAOTrigger;
+}
 
 function Plugins(props: IPlugins) {
   const [view, setView] = useState(View.Cards);
