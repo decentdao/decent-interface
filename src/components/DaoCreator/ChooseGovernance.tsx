@@ -9,7 +9,7 @@ export function ChooseGovernance() {
     dispatch,
   } = useCreator();
 
-  const fieldUpdate = (value: any) => {
+  const fieldUpdate = (value: GovernanceTypes) => {
     dispatch({
       type: CreatorProviderActions.UPDATE_GOVERNANCE,
       payload: value,
@@ -17,33 +17,31 @@ export function ChooseGovernance() {
   };
 
   return (
-    <div>
-      <ContentBox>
-        <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
-          <RadioWithText
-            label="1:1 Token Voting"
-            description="Governance with tokens giving voting power to token holders."
-            name="governance"
-            id="token-voting"
-            isSelected={governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE}
-            onChange={() => {
-              fieldUpdate(GovernanceTypes.TOKEN_VOTING_GOVERNANCE);
-            }}
-            readOnly
-          />
-          <RadioWithText
-            label="Gnosis Safe"
-            description="Gnosis Powered, Multi-signature governance allows you define an access/control-scheme through multiple signers that need to confirm transactions"
-            id="gnosis-safe"
-            name="governance"
-            isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
-            onChange={() => {
-              fieldUpdate(GovernanceTypes.GNOSIS_SAFE);
-            }}
-            readOnly
-          />
-        </div>
-      </ContentBox>
-    </div>
+    <ContentBox>
+      <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
+        <RadioWithText
+          label="1:1 Token Voting"
+          description="Governance with tokens giving voting power to token holders."
+          name="governance"
+          id="token-voting"
+          isSelected={governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE}
+          onChange={() => {
+            fieldUpdate(GovernanceTypes.TOKEN_VOTING_GOVERNANCE);
+          }}
+          readOnly
+        />
+        <RadioWithText
+          label="Gnosis Safe"
+          description="Gnosis Powered, Multi-signature governance allows you define an access/control-scheme through multiple signers that need to confirm transactions"
+          id="gnosis-safe"
+          name="governance"
+          isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
+          onChange={() => {
+            fieldUpdate(GovernanceTypes.GNOSIS_SAFE);
+          }}
+          readOnly
+        />
+      </div>
+    </ContentBox>
   );
 }
