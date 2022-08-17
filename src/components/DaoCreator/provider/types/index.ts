@@ -1,10 +1,12 @@
-import { NFTToFund, TokenToFund } from './../../SubsidiaryFunding/types/index';
+import { NFTToFund, TokenToFund } from '../../tokenVotingGovernance/SubsidiaryFunding/types/index';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
 
 export enum CreatorProviderActions {
   SET_STEP,
   UPDATE_ESSENTIALS,
   UPDATE_TREASURY_GOV_TOKEN,
+  UPDATE_GOVERNANCE,
+  UPDATE_GNOSIS_CONFIG,
   UPDATE_GOV_CONFIG,
   UPDATE_FUNDING,
   UPDATE_STEP,
@@ -12,10 +14,17 @@ export enum CreatorProviderActions {
 }
 
 export enum CreatorSteps {
+  CHOOSE_GOVERNANCE,
   ESSENTIALS,
+  GNOSIS_GOVERNANCE,
   FUNDING,
   TREASURY_GOV_TOKEN,
   GOV_CONFIG,
+}
+
+export enum GovernanceTypes {
+  TOKEN_VOTING_GOVERNANCE,
+  GNOSIS_SAFE,
 }
 
 export type CreatorProviderActionTypes =
@@ -23,8 +32,10 @@ export type CreatorProviderActionTypes =
       type: CreatorProviderActions.UPDATE_ESSENTIALS;
       payload: DAOEssentials;
     }
+  | { type: CreatorProviderActions.UPDATE_GOVERNANCE; payload: GovernanceTypes }
   | { type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN; payload: DAOGovenorToken }
   | { type: CreatorProviderActions.UPDATE_GOV_CONFIG; payload: DAOGovenorModuleConfig }
+  | { type: CreatorProviderActions.UPDATE_GNOSIS_CONFIG; payload: GnosisDAO }
   | { type: CreatorProviderActions.UPDATE_FUNDING; payload: DAOFunding }
   | {
       type: CreatorProviderActions.UPDATE_STEP;
@@ -66,6 +77,8 @@ export interface CreatorState {
   step: CreatorSteps;
   nextStep: CreatorSteps | null;
   prevStep: CreatorSteps | null;
+  governance: GovernanceTypes;
+  gnosis: GnosisDAO;
   essentials: DAOEssentials;
   govToken: DAOGovenorToken;
   govModule: DAOGovenorModuleConfig;
@@ -77,7 +90,7 @@ export type ICreatorContext = {
   dispatch: React.Dispatch<any>;
 };
 
-export type DAODeployData = {
+export type TokenGovernanceDAO = {
   daoName: string;
   tokenName: string;
   tokenSymbol: string;
@@ -93,4 +106,15 @@ export type DAODeployData = {
   tokensToFund: TokenToFund[];
   parentAllocationAmount?: string;
 };
-export type DAOTrigger = (deployData: DAODeployData) => void;
+
+export type GnosisDAO = {
+  trustedAddresses: TrustedAddress[];
+  signatureThreshold: string;
+};
+
+export type TrustedAddress = { address: string; error: boolean };
+
+export type DAOTrigger = (
+  tokenData: TokenGovernanceDAO | GnosisDAO,
+  daoType: GovernanceTypes
+) => void;

@@ -1,5 +1,4 @@
 import cx from 'classnames';
-
 interface ButtonProps {
   onClick?: () => void;
   label?: string;
@@ -63,7 +62,7 @@ function Button({
    ****************************/
 
   const BASE_BUTTON_STYLES =
-    'h-10 min-w-20 px-4 mx-2 font-mono rounded flex items-center justify-center focus:outline-none';
+    'h-10 min-w-20 font-mono rounded flex items-center justify-center focus:outline-none';
 
   return (
     <button
@@ -93,7 +92,7 @@ export function PrimaryButton({
   className,
   ...rest
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const BASE_STYLES = 'bg-gold-500 text-gray-500 font-semibold';
+  const BASE_STYLES = 'bg-gold-500 text-gray-500 font-semibold px-4 mx-2';
   const HOVER_STATE = 'hover:bg-gold-300';
   const DISABLED_STATE = 'disabled:bg-chocolate-500 disabled:text-gray-50';
 
@@ -109,7 +108,8 @@ export function SecondaryButton({
   className,
   ...rest
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  const BASE_STYLES = 'bg-chocolate-500 border border-gold-500 text-gold-500 font-semibold';
+  const BASE_STYLES =
+    'bg-chocolate-500 border border-gold-500 text-gold-500 font-semibold px-4 mx-2';
   const HOVER_STATE = 'hover:border-gold-300 hover:text-gold-300';
   const DISABLED_STATE = 'disabled:border-gray-50 disabled:text-gray-50';
   return (

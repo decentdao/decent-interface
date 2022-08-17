@@ -1,13 +1,9 @@
 import { ReactNode, useMemo, useReducer } from 'react';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import ConnectWalletToast from '../../ConnectWalletToast';
-import { TextButton, SecondaryButton, PrimaryButton } from '../../ui/forms/Button';
 import H1 from '../../ui/H1';
-import LeftArrow from '../../ui/svg/LeftArrow';
-import RightArrow from '../../ui/svg/RightArrow';
+import { StepButtons } from '../StepButtons';
+
 import { CreatorContext } from './hooks/useCreator';
-import { useDeployDisabled } from './hooks/useDeployDisabled';
-import { useNextDisabled } from './hooks/useNextDisabled';
 import { useStepName } from './hooks/useStepName';
 import { useSteps } from './hooks/useSteps';
 import {
@@ -16,12 +12,14 @@ import {
   CreatorState,
   CreatorSteps,
   DAOTrigger,
+  GovernanceTypes,
 } from './types';
 
 export const initialState: CreatorState = {
   step: CreatorSteps.ESSENTIALS,
   prevStep: null,
   nextStep: null,
+  governance: GovernanceTypes.TOKEN_VOTING_GOVERNANCE,
   essentials: {
     daoName: '',
   },
@@ -44,18 +42,27 @@ export const initialState: CreatorState = {
     tokensToFund: [],
     nftsToFund: [],
   },
+  gnosis: {
+    trustedAddresses: [{ address: '', error: false }],
+    signatureThreshold: '',
+  },
 };
 
 const reducer = (state: CreatorState, action: CreatorProviderActionTypes) => {
   switch (action.type) {
     case CreatorProviderActions.UPDATE_ESSENTIALS:
       return { ...state, essentials: { ...state.essentials, ...action.payload } };
+    case CreatorProviderActions.UPDATE_GOVERNANCE:
+      return { ...state, governance: action.payload };
     case CreatorProviderActions.UPDATE_FUNDING:
       return { ...state, funding: { ...state.funding, ...action.payload } };
     case CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN:
       return { ...state, govToken: { ...state.govToken, ...action.payload } };
     case CreatorProviderActions.UPDATE_GOV_CONFIG:
       return { ...state, govModule: { ...state.govModule, ...action.payload } };
+    case CreatorProviderActions.UPDATE_GNOSIS_CONFIG: {
+      return { ...state, gnosis: { ...state.gnosis, ...action.payload } };
+    }
     case CreatorProviderActions.UPDATE_STEP:
       return { ...state, nextStep: action.payload.nextStep, prevStep: action.payload.prevStep };
     case CreatorProviderActions.SET_STEP:
@@ -68,13 +75,13 @@ const reducer = (state: CreatorState, action: CreatorProviderActionTypes) => {
 };
 
 interface ICreatorProvider {
-  daoTrigger: DAOTrigger;
+  deployDAO: DAOTrigger;
   isSubDAO?: boolean;
   pending?: boolean;
   children: ReactNode;
 }
 
-export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICreatorProvider) {
+export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICreatorProvider) {
   const init = (_initialState: CreatorState) => {
     return {
       ..._initialState,
@@ -83,15 +90,9 @@ export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICr
   };
   const [state, dispatch] = useReducer(reducer, initialState, init);
   const stepName = useStepName(state);
-  const {
-    state: { account },
-  } = useWeb3Provider();
 
   // sets next/prev navigation
   useSteps(state, dispatch, isSubDAO);
-  const isNextDisabled = useNextDisabled(state);
-  const deployLabel = useMemo(() => (isSubDAO ? 'Create subDAO Proposal' : 'Deploy'), [isSubDAO]);
-  const isCreationReady = useDeployDisabled(state);
 
   const value = useMemo(() => ({ state, dispatch, stepName }), [state, dispatch, stepName]);
   return (
@@ -101,52 +102,12 @@ export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICr
         <div>
           <H1>{stepName}</H1>
           {children}
+          <StepButtons
+            pending={pending}
+            deployDAO={deployDAO}
+            isSubDAO={isSubDAO}
+          />
         </div>
-      </div>
-      <div className="flex items-center justify-center py-4">
-        {state.prevStep !== null && (
-          <TextButton
-            onClick={() =>
-              dispatch({
-                type: CreatorProviderActions.SET_STEP,
-                payload: state.prevStep!,
-              })
-            }
-            disabled={pending}
-            icon={<LeftArrow />}
-            label="Prev"
-          />
-        )}
-        {state.step < 3 && (
-          <SecondaryButton
-            onClick={() =>
-              dispatch({
-                type: CreatorProviderActions.SET_STEP,
-                payload: state.nextStep!,
-              })
-            }
-            disabled={isNextDisabled}
-            isIconRight
-            icon={<RightArrow />}
-            label="Next"
-          />
-        )}
-        {state.step === CreatorSteps.GOV_CONFIG && (
-          <PrimaryButton
-            onClick={() =>
-              daoTrigger({
-                ...state.essentials,
-                ...state.funding,
-                ...state.govModule,
-                ...state.govToken,
-              })
-            }
-            label={deployLabel}
-            isLarge
-            className="w-48"
-            disabled={pending || !account || !isCreationReady}
-          />
-        )}
       </div>
     </CreatorContext.Provider>
   );
