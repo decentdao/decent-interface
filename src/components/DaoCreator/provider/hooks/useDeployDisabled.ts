@@ -32,7 +32,7 @@ export function useDeployDisabled(state: CreatorState) {
           govModule.lateQuorumExecution.trim() !== '' &&
           govModule.voteStartDelay.trim() !== '' &&
           govModule.votingPeriod.trim() !== '';
-        setDeployDisabled(isEssentialsComplete && isGovModuleComplete && isGovTokenComplete);
+        setDeployDisabled(!isEssentialsComplete && !isGovModuleComplete && !isGovTokenComplete);
         break;
       }
       case GovernanceTypes.GNOSIS_SAFE: {
@@ -41,12 +41,12 @@ export function useDeployDisabled(state: CreatorState) {
         } = state;
 
         const isTrustedAddressValid =
-          !trustedAddresses.some(trustee => trustee.error) && trustedAddresses[0].address !== '';
+          !trustedAddresses.some(trustee => trustee.error) && !!trustedAddresses[0].address.trim();
 
         const isSignatureThresholdValid =
           Number(signatureThreshold) > 0 && Number(signatureThreshold) <= trustedAddresses.length;
 
-        setDeployDisabled(!isTrustedAddressValid && !isSignatureThresholdValid);
+        setDeployDisabled(!isTrustedAddressValid || !isSignatureThresholdValid);
         break;
       }
     }
