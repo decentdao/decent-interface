@@ -9,6 +9,7 @@ import { ITreasuryModule__factory } from '../../../assets/typechain-types/module
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { parseInterface } from '../../../controller/Modules/utils';
 import { IClaimSubsidiary__factory } from '../../../assets/typechain-types/votes-token';
+import { IGnosisWrapper__factory } from '../../../assets/typechain-types/gnosis';
 import { IModuleData } from '../../../controller/Modules/types';
 
 // @todo move to global hooks folder
@@ -47,6 +48,14 @@ export function useModuleTypes(moduleAddresses?: string[]) {
       parseInterface([
         IModuleBase__factory.createInterface(),
         IClaimSubsidiary__factory.createInterface(),
+      ]),
+    []
+  );
+  const gnosisWrapperInterfaces = useMemo(
+    () =>
+      parseInterface([
+        IModuleBase__factory.createInterface(),
+        IGnosisWrapper__factory.createInterface(),
       ]),
     []
   );
@@ -108,6 +117,16 @@ export function useModuleTypes(moduleAddresses?: string[]) {
               moduleType: ModuleTypes.CLAIMING,
             });
           }
+          const gnosisWrapperSupportData = await interfaceSupport(
+            contract,
+            gnosisWrapperInterfaces
+          );
+          if (gnosisWrapperSupportData.match) {
+            moduleDatas.push({
+              moduleAddress: contract.address,
+              moduleType: ModuleTypes.GNOSIS_WRAPPER,
+            });
+          }
           return moduleDatas;
         })
       ).then(_modules => setModules(_modules[0]));
@@ -119,6 +138,7 @@ export function useModuleTypes(moduleAddresses?: string[]) {
     interfaceSupport,
     timeLockInterfaces,
     claimingInterfaces,
+    gnosisWrapperInterfaces,
   ]);
   const timelockModule = useMemo(
     () => modules.find(v => v.moduleType === ModuleTypes.TIMELOCK),
@@ -136,6 +156,16 @@ export function useModuleTypes(moduleAddresses?: string[]) {
     () => modules.find(v => v.moduleType === ModuleTypes.CLAIMING),
     [modules]
   );
+  const gnosisWrapperModule = useMemo(
+    () => modules.find(v => v.moduleType === ModuleTypes.GNOSIS_WRAPPER),
+    [modules]
+  );
 
-  return { timelockModule, treasuryModule, tokenVotingGovernanceModule, claimingContractModule };
+  return {
+    timelockModule,
+    treasuryModule,
+    tokenVotingGovernanceModule,
+    claimingContractModule,
+    gnosisWrapperModule,
+  };
 }
