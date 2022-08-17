@@ -11,6 +11,7 @@ export interface IFractalContext {
     treasuryModule?: IModuleData;
     tokenVotingGovernanceModule?: IModuleData;
     claimingContractModule?: IModuleData;
+    gnosisWrapperModule?: IModuleData;
   };
 }
 
