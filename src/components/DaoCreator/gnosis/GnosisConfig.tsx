@@ -72,9 +72,8 @@ export function GnosisConfig() {
 
       <ContentBoxTitle>Trusted Addresses</ContentBoxTitle>
       <div className="text-gray-50 text-xs font-medium my-4">
-        In eu ex dolore anim anim ullamco sit mollit id velit ut. Ipsum laborum exercitation
-        deserunt deserunt dolore laboris qui velit mollit. Tempor nostrud tempor cillum proident ex
-        exercitation in ea dolore officia enim culpa.
+        The addresses added here are the addresses that have permission to submit and approve
+        transactions
       </div>
       <InputBox>
         {trustedAddresses.map((trustee, i) => (
