@@ -69,6 +69,7 @@ function ForwardButton({
         />
       );
     case CreatorSteps.GOV_CONFIG:
+    case CreatorSteps.GNOSIS_GOVERNANCE:
       return (
         <PrimaryButton
           onClick={() =>

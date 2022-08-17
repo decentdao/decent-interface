@@ -6,6 +6,7 @@ export enum CreatorProviderActions {
   UPDATE_ESSENTIALS,
   UPDATE_TREASURY_GOV_TOKEN,
   UPDATE_GOVERNANCE,
+  UPDATE_GNOSIS_CONFIG,
   UPDATE_GOV_CONFIG,
   UPDATE_FUNDING,
   UPDATE_STEP,
@@ -34,6 +35,7 @@ export type CreatorProviderActionTypes =
   | { type: CreatorProviderActions.UPDATE_GOVERNANCE; payload: GovernanceTypes }
   | { type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN; payload: DAOGovenorToken }
   | { type: CreatorProviderActions.UPDATE_GOV_CONFIG; payload: DAOGovenorModuleConfig }
+  | { type: CreatorProviderActions.UPDATE_GNOSIS_CONFIG; payload: GnosisDAO }
   | { type: CreatorProviderActions.UPDATE_FUNDING; payload: DAOFunding }
   | {
       type: CreatorProviderActions.UPDATE_STEP;
@@ -76,6 +78,7 @@ export interface CreatorState {
   nextStep: CreatorSteps | null;
   prevStep: CreatorSteps | null;
   governance: GovernanceTypes;
+  gnosis: GnosisDAO;
   essentials: DAOEssentials;
   govToken: DAOGovenorToken;
   govModule: DAOGovenorModuleConfig;
@@ -105,8 +108,10 @@ export type TokenGovernanceDAO = {
 };
 
 export type GnosisDAO = {
-  addresses: string[];
+  trustedAddresses: TrustedAddress[];
   signatureThreshold: string;
 };
+
+export type TrustedAddress = { address: string; error: boolean };
 
 export type DAOTrigger = (deployData: TokenGovernanceDAO) => void;

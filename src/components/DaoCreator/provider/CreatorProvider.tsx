@@ -42,6 +42,10 @@ export const initialState: CreatorState = {
     tokensToFund: [],
     nftsToFund: [],
   },
+  gnosis: {
+    trustedAddresses: [{ address: '', error: false }],
+    signatureThreshold: '',
+  },
 };
 
 const reducer = (state: CreatorState, action: CreatorProviderActionTypes) => {
@@ -56,6 +60,9 @@ const reducer = (state: CreatorState, action: CreatorProviderActionTypes) => {
       return { ...state, govToken: { ...state.govToken, ...action.payload } };
     case CreatorProviderActions.UPDATE_GOV_CONFIG:
       return { ...state, govModule: { ...state.govModule, ...action.payload } };
+    case CreatorProviderActions.UPDATE_GNOSIS_CONFIG: {
+      return { ...state, gnosis: { ...state.gnosis, ...action.payload } };
+    }
     case CreatorProviderActions.UPDATE_STEP:
       return { ...state, nextStep: action.payload.nextStep, prevStep: action.payload.prevStep };
     case CreatorProviderActions.SET_STEP:

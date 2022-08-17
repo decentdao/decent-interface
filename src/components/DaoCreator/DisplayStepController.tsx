@@ -5,6 +5,7 @@ import { SubsidiaryFunding } from './tokenVotingGovernance/SubsidiaryFunding';
 import TokenDetails from './tokenVotingGovernance/TokenDetails';
 import GovernanceDetails from './tokenVotingGovernance/GovernanceDetails';
 import { ChooseGovernance } from './ChooseGovernance';
+import { GnosisConfig } from './gnosis/GnosisConfig';
 
 function StepController() {
   const { state } = useCreator();
@@ -14,7 +15,7 @@ function StepController() {
     case CreatorSteps.CHOOSE_GOVERNANCE:
       return <ChooseGovernance />;
     case CreatorSteps.GNOSIS_GOVERNANCE:
-      return <div />;
+      return <GnosisConfig />;
     case CreatorSteps.FUNDING: {
       return <SubsidiaryFunding />;
     }
