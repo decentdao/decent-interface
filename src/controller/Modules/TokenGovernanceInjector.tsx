@@ -6,7 +6,7 @@ import {
   TreasuryModule__factory,
   ERC721__factory,
 } from '../../assets/typechain-types/module-treasury';
-import { TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
+import { GovernanceTypes, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
 import { useBlockchainData } from '../../contexts/blockchainData';
 import useCreateDAODataCreator from '../../hooks/useCreateDAODataCreator';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
@@ -45,11 +45,13 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
     navigate(`/daos/${daoAddress}/modules/${governorModuleContract.address}`);
   };
 
-  const createDAOTrigger = (daoData: TokenGovernanceDAO) => {
+  const createDAOTrigger = (daoData: TokenGovernanceDAO, type: GovernanceTypes) => {
+    // @todo look at optimizing how plugin handles different governance deployments
     if (
       daoAddress === undefined ||
       treasuryModuleContract === undefined ||
-      votingToken === undefined
+      votingToken === undefined ||
+      type === GovernanceTypes.GNOSIS_SAFE
     ) {
       return;
     }

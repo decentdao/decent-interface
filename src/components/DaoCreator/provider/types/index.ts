@@ -114,4 +114,7 @@ export type GnosisDAO = {
 
 export type TrustedAddress = { address: string; error: boolean };
 
-export type DAOTrigger = (deployData: TokenGovernanceDAO) => void;
+export type DAOTrigger = (
+  tokenData: TokenGovernanceDAO | GnosisDAO,
+  daoType: GovernanceTypes
+) => void;

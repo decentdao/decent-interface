@@ -5,7 +5,12 @@ import RightArrow from '../ui/svg/RightArrow';
 import { useCreator } from './provider/hooks/useCreator';
 import { useDeployDisabled } from './provider/hooks/useDeployDisabled';
 import { useNextDisabled } from './provider/hooks/useNextDisabled';
-import { CreatorProviderActions, CreatorSteps, DAOTrigger } from './provider/types';
+import {
+  CreatorProviderActions,
+  CreatorSteps,
+  DAOTrigger,
+  GovernanceTypes,
+} from './provider/types';
 
 interface IStepButtons {
   pending?: boolean;
@@ -72,12 +77,15 @@ function ForwardButton({
       return (
         <PrimaryButton
           onClick={() =>
-            daoTrigger({
-              ...state.essentials,
-              ...state.funding,
-              ...state.govModule,
-              ...state.govToken,
-            })
+            daoTrigger(
+              {
+                ...state.essentials,
+                ...state.funding,
+                ...state.govModule,
+                ...state.govToken,
+              },
+              GovernanceTypes.TOKEN_VOTING_GOVERNANCE
+            )
           }
           label={deployLabel}
           isLarge
@@ -88,14 +96,7 @@ function ForwardButton({
     case CreatorSteps.GNOSIS_GOVERNANCE: {
       return (
         <PrimaryButton
-          onClick={() =>
-            daoTrigger({
-              ...state.essentials,
-              ...state.funding,
-              ...state.govModule,
-              ...state.govToken,
-            })
-          }
+          onClick={() => daoTrigger(state.gnosis, GovernanceTypes.GNOSIS_SAFE)}
           label={deployLabel}
           isLarge
           className="w-48"
