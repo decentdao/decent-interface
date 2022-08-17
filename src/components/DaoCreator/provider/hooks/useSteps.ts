@@ -40,7 +40,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: null,
-            prevStep: CreatorSteps.GNOSIS_GOVERNANCE,
+            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
         break;
