@@ -4,6 +4,7 @@ import Delegate from '../../components/Dao/Delegate';
 import { Governance } from '../../pages/Governance';
 import Proposals from '../../pages/Proposals';
 import Treasury from '../../pages/Treasury';
+import { GnosisWrapper } from '../../pages/GnosisWrapper';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisWrapperProvider } from '../../providers/gnosis/GnosisWrapperProvider';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
@@ -140,7 +141,7 @@ export function Modules() {
     case ModuleTypes.GNOSIS_WRAPPER:
       return (
         <GnosisWrapperProvider moduleAddress={state.moduleAddress}>
-          {/* Insert gnosis page here */}
+          <GnosisWrapper />
         </GnosisWrapperProvider>
       );
     default: {
