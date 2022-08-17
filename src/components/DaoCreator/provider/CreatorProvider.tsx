@@ -1,13 +1,9 @@
 import { ReactNode, useMemo, useReducer } from 'react';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import ConnectWalletToast from '../../ConnectWalletToast';
-import { TextButton, SecondaryButton, PrimaryButton } from '../../ui/forms/Button';
 import H1 from '../../ui/H1';
-import LeftArrow from '../../ui/svg/LeftArrow';
-import RightArrow from '../../ui/svg/RightArrow';
+import { StepButtons } from '../StepButtons';
+
 import { CreatorContext } from './hooks/useCreator';
-import { useDeployDisabled } from './hooks/useDeployDisabled';
-import { useNextDisabled } from './hooks/useNextDisabled';
 import { useStepName } from './hooks/useStepName';
 import { useSteps } from './hooks/useSteps';
 import {
@@ -87,15 +83,9 @@ export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICr
   };
   const [state, dispatch] = useReducer(reducer, initialState, init);
   const stepName = useStepName(state);
-  const {
-    state: { account },
-  } = useWeb3Provider();
 
   // sets next/prev navigation
   useSteps(state, dispatch, isSubDAO);
-  const isNextDisabled = useNextDisabled(state);
-  const deployLabel = useMemo(() => (isSubDAO ? 'Create subDAO Proposal' : 'Deploy'), [isSubDAO]);
-  const isCreationReady = useDeployDisabled(state);
 
   const value = useMemo(() => ({ state, dispatch, stepName }), [state, dispatch, stepName]);
   return (
@@ -105,52 +95,12 @@ export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICr
         <div>
           <H1>{stepName}</H1>
           {children}
+          <StepButtons
+            pending={pending}
+            daoTrigger={daoTrigger}
+            isSubDAO={isSubDAO}
+          />
         </div>
-      </div>
-      <div className="flex items-center justify-center py-4">
-        {state.prevStep !== null && (
-          <TextButton
-            onClick={() =>
-              dispatch({
-                type: CreatorProviderActions.SET_STEP,
-                payload: state.prevStep!,
-              })
-            }
-            disabled={pending}
-            icon={<LeftArrow />}
-            label="Prev"
-          />
-        )}
-        {state.step < 3 && (
-          <SecondaryButton
-            onClick={() =>
-              dispatch({
-                type: CreatorProviderActions.SET_STEP,
-                payload: state.nextStep!,
-              })
-            }
-            disabled={isNextDisabled}
-            isIconRight
-            icon={<RightArrow />}
-            label="Next"
-          />
-        )}
-        {state.step === CreatorSteps.GOV_CONFIG && (
-          <PrimaryButton
-            onClick={() =>
-              daoTrigger({
-                ...state.essentials,
-                ...state.funding,
-                ...state.govModule,
-                ...state.govToken,
-              })
-            }
-            label={deployLabel}
-            isLarge
-            className="w-48"
-            disabled={pending || !account || !isCreationReady}
-          />
-        )}
       </div>
     </CreatorContext.Provider>
   );

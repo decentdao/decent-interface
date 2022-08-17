@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
-import { DAODeployData } from '../../components/DaoCreator/provider/types';
+import { TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
 import useDeployDAO from '../../hooks/useDeployDAO';
 
 function DaoCreate() {
@@ -12,7 +12,7 @@ function DaoCreate() {
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployNewDAO = (daoData: DAODeployData) => {
+  const deployNewDAO = (daoData: TokenGovernanceDAO) => {
     deploy({
       ...daoData,
       successCallback,

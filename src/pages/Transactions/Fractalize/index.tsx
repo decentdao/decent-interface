@@ -3,7 +3,7 @@ import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { ExecuteData } from '../../../types/execute';
 import { useNavigate } from 'react-router-dom';
 import { useBlockchainData } from '../../../contexts/blockchainData';
-import { DAODeployData } from '../../../components/DaoCreator/provider/types';
+import { TokenGovernanceDAO } from '../../../components/DaoCreator/provider/types';
 import {
   TreasuryModule__factory,
   ERC721__factory,
@@ -40,7 +40,7 @@ function Fractalize({
     navigate(`/daos/${daoAddress}/modules/${governanceAddress}`);
   };
 
-  const createDAOTrigger = (daoData: DAODeployData) => {
+  const createDAOTrigger = (daoData: TokenGovernanceDAO) => {
     if (
       daoAddress === undefined ||
       treasuryModuleContract === undefined ||

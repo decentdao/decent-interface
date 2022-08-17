@@ -87,7 +87,7 @@ export type ICreatorContext = {
   dispatch: React.Dispatch<any>;
 };
 
-export type DAODeployData = {
+export type TokenGovernanceDAO = {
   daoName: string;
   tokenName: string;
   tokenSymbol: string;
@@ -103,4 +103,10 @@ export type DAODeployData = {
   tokensToFund: TokenToFund[];
   parentAllocationAmount?: string;
 };
-export type DAOTrigger = (deployData: DAODeployData) => void;
+
+export type GnosisDAO = {
+  addresses: string[];
+  signatureThreshold: string;
+};
+
+export type DAOTrigger = (deployData: TokenGovernanceDAO) => void;
