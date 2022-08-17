@@ -5,16 +5,16 @@ import { DAOTrigger } from './provider/types';
 
 function DaoCreator({
   pending,
-  nextTrigger,
+  deployDAO,
   isSubDAO,
 }: {
   pending?: boolean;
-  nextTrigger: DAOTrigger;
+  deployDAO: DAOTrigger;
   isSubDAO?: boolean;
 }) {
   return (
     <CreatorProvider
-      daoTrigger={nextTrigger}
+      deployDAO={deployDAO}
       pending={pending}
       isSubDAO={isSubDAO}
     >

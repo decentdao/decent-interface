@@ -14,7 +14,7 @@ import {
 
 interface IStepButtons {
   pending?: boolean;
-  daoTrigger: DAOTrigger;
+  deployDAO: DAOTrigger;
   isSubDAO?: boolean;
 }
 
@@ -40,11 +40,11 @@ function PrevButton({ pending }: { pending?: boolean }) {
 
 function ForwardButton({
   isSubDAO,
-  daoTrigger,
+  deployDAO,
   pending,
 }: {
   isSubDAO?: boolean;
-  daoTrigger: DAOTrigger;
+  deployDAO: DAOTrigger;
   pending?: boolean;
 }) {
   const { state, dispatch } = useCreator();
@@ -77,7 +77,7 @@ function ForwardButton({
       return (
         <PrimaryButton
           onClick={() =>
-            daoTrigger(
+            deployDAO(
               {
                 ...state.essentials,
                 ...state.funding,
@@ -96,7 +96,7 @@ function ForwardButton({
     case CreatorSteps.GNOSIS_GOVERNANCE: {
       return (
         <PrimaryButton
-          onClick={() => daoTrigger(state.gnosis, GovernanceTypes.GNOSIS_SAFE)}
+          onClick={() => deployDAO(state.gnosis, GovernanceTypes.GNOSIS_SAFE)}
           label={deployLabel}
           isLarge
           className="w-48"
@@ -109,14 +109,14 @@ function ForwardButton({
   }
 }
 
-export function StepButtons({ pending, isSubDAO, daoTrigger }: IStepButtons) {
+export function StepButtons({ pending, isSubDAO, deployDAO }: IStepButtons) {
   return (
     <div className="flex items-center justify-center py-4">
       <PrevButton pending={pending} />
       <ForwardButton
         pending={pending}
         isSubDAO={isSubDAO}
-        daoTrigger={daoTrigger}
+        deployDAO={deployDAO}
       />
     </div>
   );

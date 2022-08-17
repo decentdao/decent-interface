@@ -75,13 +75,13 @@ const reducer = (state: CreatorState, action: CreatorProviderActionTypes) => {
 };
 
 interface ICreatorProvider {
-  daoTrigger: DAOTrigger;
+  deployDAO: DAOTrigger;
   isSubDAO?: boolean;
   pending?: boolean;
   children: ReactNode;
 }
 
-export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICreatorProvider) {
+export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICreatorProvider) {
   const init = (_initialState: CreatorState) => {
     return {
       ..._initialState,
@@ -104,7 +104,7 @@ export function CreatorProvider({ daoTrigger, pending, isSubDAO, children }: ICr
           {children}
           <StepButtons
             pending={pending}
-            daoTrigger={daoTrigger}
+            deployDAO={deployDAO}
             isSubDAO={isSubDAO}
           />
         </div>

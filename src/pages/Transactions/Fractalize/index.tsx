@@ -10,7 +10,7 @@ function Fractalize({ createDAOTrigger, pending }: IFractalize) {
   return (
     <DaoCreator
       pending={pending}
-      nextTrigger={createDAOTrigger!}
+      deployDAO={createDAOTrigger!}
       isSubDAO
     />
   );

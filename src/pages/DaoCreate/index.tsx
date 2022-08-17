@@ -16,7 +16,7 @@ function DaoCreate() {
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployNewDAO = (daoData: TokenGovernanceDAO | GnosisDAO, type: GovernanceTypes) => {
+  const deployDAO = (daoData: TokenGovernanceDAO | GnosisDAO, type: GovernanceTypes) => {
     if (type === GovernanceTypes.TOKEN_VOTING_GOVERNANCE) {
       deploy({
         ...(daoData as TokenGovernanceDAO),
@@ -29,7 +29,7 @@ function DaoCreate() {
   return (
     <DaoCreator
       pending={pending}
-      nextTrigger={deployNewDAO}
+      deployDAO={deployDAO}
     />
   );
 }
