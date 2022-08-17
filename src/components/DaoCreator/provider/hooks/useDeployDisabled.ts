@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import { CreatorState, CreatorSteps } from './../types';
+import { CreatorState, GovernanceTypes } from './../types';
 
 // This hook will track form progress and ensure data is validated before allowing submission
 export function useDeployDisabled(state: CreatorState) {
-  const [isDeployedEnabled, setIsDisabled] = useState(false);
+  const [isDeployDisabled, setDeployDisabled] = useState(true);
 
   useEffect(() => {
-    switch (state.step) {
-      case CreatorSteps.ESSENTIALS:
-      case CreatorSteps.FUNDING:
-      case CreatorSteps.TREASURY_GOV_TOKEN:
-      case CreatorSteps.GOV_CONFIG:
+    switch (state.governance) {
+      case GovernanceTypes.TOKEN_VOTING_GOVERNANCE: {
         const { govModule, govToken, essentials } = state;
 
         const isEssentialsComplete = !!essentials.daoName.trim();
@@ -35,8 +32,24 @@ export function useDeployDisabled(state: CreatorState) {
           govModule.lateQuorumExecution.trim() !== '' &&
           govModule.voteStartDelay.trim() !== '' &&
           govModule.votingPeriod.trim() !== '';
-        setIsDisabled(isEssentialsComplete && isGovModuleComplete && isGovTokenComplete);
+        setDeployDisabled(isEssentialsComplete && isGovModuleComplete && isGovTokenComplete);
+        break;
+      }
+      case GovernanceTypes.GNOSIS_SAFE: {
+        const {
+          gnosis: { trustedAddresses, signatureThreshold },
+        } = state;
+
+        const isTrustedAddressValid =
+          !trustedAddresses.some(trustee => trustee.error) && trustedAddresses[0].address !== '';
+
+        const isSignatureThresholdValid =
+          Number(signatureThreshold) > 0 && Number(signatureThreshold) <= trustedAddresses.length;
+
+        setDeployDisabled(!isTrustedAddressValid && !isSignatureThresholdValid);
+        break;
+      }
     }
   }, [state]);
-  return isDeployedEnabled;
+  return isDeployDisabled;
 }

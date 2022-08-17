@@ -15,7 +15,7 @@ interface IStepButtons {
 
 function PrevButton({ pending }: { pending?: boolean }) {
   const { state, dispatch } = useCreator();
-  if (state.step !== null) {
+  if (state.prevStep !== null) {
     return (
       <TextButton
         onClick={() =>
@@ -48,7 +48,7 @@ function ForwardButton({
   } = useWeb3Provider();
   const isNextDisabled = useNextDisabled(state);
   const deployLabel = isSubDAO ? 'Create subDAO Proposal' : 'Deploy';
-  const isCreationReady = useDeployDisabled(state);
+  const isDeployDisabled = useDeployDisabled(state);
   switch (state.step) {
     case CreatorSteps.CHOOSE_GOVERNANCE:
     case CreatorSteps.ESSENTIALS:
@@ -69,7 +69,6 @@ function ForwardButton({
         />
       );
     case CreatorSteps.GOV_CONFIG:
-    case CreatorSteps.GNOSIS_GOVERNANCE:
       return (
         <PrimaryButton
           onClick={() =>
@@ -83,9 +82,27 @@ function ForwardButton({
           label={deployLabel}
           isLarge
           className="w-48"
-          disabled={pending || !account || !isCreationReady}
+          disabled={pending || !account || isDeployDisabled}
         />
       );
+    case CreatorSteps.GNOSIS_GOVERNANCE: {
+      return (
+        <PrimaryButton
+          onClick={() =>
+            daoTrigger({
+              ...state.essentials,
+              ...state.funding,
+              ...state.govModule,
+              ...state.govToken,
+            })
+          }
+          label={deployLabel}
+          isLarge
+          className="w-48"
+          disabled={pending || !account || isDeployDisabled}
+        />
+      );
+    }
     default:
       return null;
   }
