@@ -48,9 +48,9 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
   const createDAOTrigger = (daoData: TokenGovernanceDAO, type: GovernanceTypes) => {
     // @todo look at optimizing how plugin handles different governance deployments
     if (
-      daoAddress === undefined ||
-      treasuryModuleContract === undefined ||
-      votingToken === undefined ||
+      !daoAddress ||
+      !treasuryModuleContract ||
+      !votingToken ||
       type === GovernanceTypes.GNOSIS_SAFE
     ) {
       return;
