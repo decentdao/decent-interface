@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent } from 'react';
 import cx from 'classnames';
+
 interface InputProps {
   type: 'text' | 'number' | 'textarea';
   value?: string | number;
@@ -90,7 +91,7 @@ function Input({
     return !!hasError ? (
       <div className="text-red text-xs mt-1">{errorMessage}</div>
     ) : (
-      <div className={cx({ 'mt-5': !subLabel })} />
+      <div className={cx({ 'mt-5': subLabel })} />
     );
   }
 
