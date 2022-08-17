@@ -3,7 +3,6 @@ import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
 import LeftArrow from '../ui/svg/LeftArrow';
 import RightArrow from '../ui/svg/RightArrow';
 import { useCreator } from './provider/hooks/useCreator';
-import { useDeployDisabled } from './provider/hooks/useDeployDisabled';
 import { useNextDisabled } from './provider/hooks/useNextDisabled';
 import {
   CreatorProviderActions,
@@ -53,7 +52,6 @@ function ForwardButton({
   } = useWeb3Provider();
   const isNextDisabled = useNextDisabled(state);
   const deployLabel = isSubDAO ? 'Create subDAO Proposal' : 'Deploy';
-  const isDeployDisabled = useDeployDisabled(state);
   switch (state.step) {
     case CreatorSteps.CHOOSE_GOVERNANCE:
     case CreatorSteps.ESSENTIALS:
@@ -90,7 +88,7 @@ function ForwardButton({
           label={deployLabel}
           isLarge
           className="w-48"
-          disabled={pending || !account || isDeployDisabled}
+          disabled={pending || !account || isNextDisabled}
         />
       );
     case CreatorSteps.GNOSIS_GOVERNANCE: {
@@ -100,7 +98,7 @@ function ForwardButton({
           label={deployLabel}
           isLarge
           className="w-48"
-          disabled={pending || !account || isDeployDisabled}
+          disabled={pending || !account || isNextDisabled}
         />
       );
     }
