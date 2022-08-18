@@ -17,13 +17,7 @@ function DaoCreate() {
   const [deploy, pending] = useDeployDAO();
 
   const deployDAO = (daoData: TokenGovernanceDAO | GnosisDAO, type: GovernanceTypes) => {
-    if (type === GovernanceTypes.TOKEN_VOTING_GOVERNANCE) {
-      deploy({
-        ...(daoData as TokenGovernanceDAO),
-        successCallback,
-      });
-    }
-    // @todo Gnosis Deploy
+    deploy(daoData, type, successCallback);
   };
 
   return (
