@@ -3,11 +3,8 @@ import { BigNumberish, ethers } from 'ethers';
 import { useAddresses } from './useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { MetaFactoryCreateDAOData } from '../types/metaFactory';
-import {
-  ERC1967Proxy__factory,
-  DAO__factory,
-  DAOAccessControl__factory,
-} from '@fractal-framework/core-contracts';
+import { DAO__factory, DAOAccessControl__factory } from '@fractal-framework/core-contracts';
+import { ERC1967Proxy__factory } from '../assets/typechain-types/gnosis';
 import { TrustedAddress } from '../components/DaoCreator/provider/types';
 import { Interface } from 'ethers/lib/utils';
 
