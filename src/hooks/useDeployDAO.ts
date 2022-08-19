@@ -55,7 +55,6 @@ const useDeployDAO = () => {
       if (metaFactoryContract === undefined || account === null) {
         return;
       }
-
       const createDAOData = createDAODataCreator({
         creator: account,
         daoName,
@@ -194,7 +193,7 @@ const useDeployDAO = () => {
     (daoData, type, successCallback) => {
       if (type === GovernanceTypes.TOKEN_VOTING_GOVERNANCE) {
         return deployTokenVotingDAO(daoData, successCallback);
-      } else if (typeof daoData === typeof GovernanceTypes.GNOSIS_SAFE) {
+      } else if (type === GovernanceTypes.GNOSIS_SAFE) {
         return deployGnosisDAO(daoData, successCallback);
       }
     },
