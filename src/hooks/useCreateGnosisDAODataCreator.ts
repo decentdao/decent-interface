@@ -3,10 +3,16 @@ import { BigNumberish, ethers } from 'ethers';
 import { useAddresses } from './useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { MetaFactoryCreateDAOData } from '../types/metaFactory';
-import { DAO__factory, DAOAccessControl__factory } from '@fractal-framework/core-contracts';
-import { ERC1967Proxy__factory } from '../assets/typechain-types/gnosis';
+import {
+  DAO__factory,
+  DAOAccessControl__factory,
+  ERC1967Proxy__factory,
+} from '@fractal-framework/core-contracts';
+import { ERC1967Proxy__factory as GnosisERC1967Proxy__factory } from '../assets/typechain-types/gnosis';
+import { ERC1967Proxy__factory as TreasuryERC1967Proxy__factory } from '../assets/typechain-types/module-treasury';
 import { TrustedAddress } from '../components/DaoCreator/provider/types';
 import { Interface } from 'ethers/lib/utils';
+import { getPredicatedAddress, getRandomSalt } from '../helpers';
 
 const useCreateGnosisDAODataCreator = () => {
   const {
@@ -28,101 +34,53 @@ const useCreateGnosisDAODataCreator = () => {
       const abiCoder = new ethers.utils.AbiCoder();
 
       if (
-        addresses.dao === undefined ||
-        addresses.daoFactory === undefined ||
-        addresses.accessControl === undefined ||
-        addresses.treasuryModuleFactory === undefined ||
-        addresses.treasuryModule === undefined ||
-        addresses.tokenFactory === undefined ||
-        addresses.governorFactory === undefined ||
-        addresses.claimFactory === undefined ||
-        addresses.gnosisWrapperFactory === undefined ||
-        addresses.gnosisSafeFactory === undefined ||
-        addresses.governorModule === undefined ||
-        addresses.timelock === undefined ||
-        addresses.metaFactory === undefined ||
-        addresses.claimFactory === undefined ||
-        addresses.claimModule === undefined ||
-        addresses.gnosisWrapper === undefined ||
-        addresses.gnosisSafe === undefined
+        !addresses.dao ||
+        !addresses.daoFactory ||
+        !addresses.accessControl ||
+        !addresses.treasuryModuleFactory ||
+        !addresses.treasuryModule ||
+        !addresses.tokenFactory ||
+        !addresses.gnosisWrapperFactory ||
+        !addresses.gnosisSafeFactory ||
+        !addresses.timelock ||
+        !addresses.metaFactory ||
+        !addresses.gnosisWrapper ||
+        !addresses.gnosisSafe
       ) {
         return undefined;
       }
 
-      const daoAndAccessControlSalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
-      const treasurySalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
-      const gnosisWrapperSalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
-      const gnosisSafeSalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
+      const daoAndAccessControlSalt = getRandomSalt();
+      const treasurySalt = getRandomSalt();
+      const gnosisWrapperSalt = getRandomSalt();
+      const gnosisSafeSalt = getRandomSalt();
 
-      const predictedDAOAddress = ethers.utils.getCreate2Address(
+      const predictedDAOAddress = getPredicatedAddress(
         addresses.daoFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.dao.address, []]),
-          ]
-        )
+        [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt],
+        ERC1967Proxy__factory.bytecode,
+        abiCoder.encode(['address', 'bytes'], [addresses.dao.address, []])
       );
 
-      const predictedAccessControlAddress = ethers.utils.getCreate2Address(
+      const predictedAccessControlAddress = getPredicatedAddress(
         addresses.daoFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            // eslint-disable-next-line camelcase
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.accessControl.address, []]),
-          ]
-        )
+        [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt],
+        ERC1967Proxy__factory.bytecode,
+        abiCoder.encode(['address', 'bytes'], [addresses.accessControl.address, []])
       );
 
-      const predictedTreasuryAddress = ethers.utils.getCreate2Address(
+      const predictedTreasuryAddress = getPredicatedAddress(
         addresses.treasuryModuleFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, treasurySalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            // eslint-disable-next-line camelcase
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.treasuryModule.address, []]),
-          ]
-        )
+        [creator, addresses.metaFactory.address, chainId, treasurySalt],
+        TreasuryERC1967Proxy__factory.bytecode,
+        abiCoder.encode(['address', 'bytes'], [addresses.treasuryModule.address, []])
       );
 
-      const predictedGnosisWrapperAddress = ethers.utils.getCreate2Address(
+      const predictedGnosisWrapperAddress = getPredicatedAddress(
         addresses.gnosisWrapperFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, gnosisWrapperSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            // eslint-disable-next-line camelcase
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.gnosisWrapper.address, []]),
-          ]
-        )
+        [creator, addresses.metaFactory.address, chainId, gnosisWrapperSalt],
+        GnosisERC1967Proxy__factory.bytecode,
+        abiCoder.encode(['address', 'bytes'], [addresses.gnosisWrapper.address, []])
       );
 
       const gnosisSafeFactoryInterface = new Interface([
@@ -152,6 +110,7 @@ const useCreateGnosisDAODataCreator = () => {
         [addresses.gnosisSafe.address, createGnosisSetupCalldata, gnosisSafeSalt]
       );
 
+      // @todo check for correct predictions
       const predictedGnosisSafeAddress = ethers.utils.getCreate2Address(
         addresses.gnosisSafeFactory.address,
         ethers.utils.solidityKeccak256(
@@ -280,12 +239,8 @@ const useCreateGnosisDAODataCreator = () => {
       addresses.treasuryModuleFactory,
       addresses.treasuryModule,
       addresses.tokenFactory,
-      addresses.governorFactory,
-      addresses.governorModule,
       addresses.timelock,
       addresses.metaFactory,
-      addresses.claimFactory,
-      addresses.claimModule,
       addresses.gnosisSafe,
       addresses.gnosisSafeFactory,
       addresses.gnosisWrapper,
