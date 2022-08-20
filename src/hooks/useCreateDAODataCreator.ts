@@ -20,6 +20,25 @@ import {
 } from '../assets/typechain-types/module-treasury';
 import { getPredicatedAddress, getRandomSalt } from '../helpers';
 
+type CreateDAOData = (
+  data: {
+    creator: string;
+    daoName: string;
+    tokenName: string;
+    tokenSymbol: string;
+    tokenSupply: string;
+    tokenAllocations: TokenAllocation[];
+    proposalThreshold: string;
+    quorum: string;
+    executionDelay: string;
+    lateQuorumExecution: string;
+    voteStartDelay: string;
+    votingPeriod: string;
+    parentAllocationAmount?: string;
+  },
+  parentToken?: string
+) => undefined | { calldata: MetaFactoryCreateDAOData; predictedTreasuryAddress: string };
+
 const useCreateDAODataCreator = () => {
   const {
     state: { chainId },
@@ -27,7 +46,7 @@ const useCreateDAODataCreator = () => {
 
   const addresses = useAddresses(chainId);
 
-  const createDAOData = useCallback(
+  const createDAOData = useCallback<CreateDAOData>(
     (
       {
         creator,
@@ -43,22 +62,8 @@ const useCreateDAODataCreator = () => {
         voteStartDelay,
         votingPeriod,
         parentAllocationAmount,
-      }: {
-        creator: string;
-        daoName: string;
-        tokenName: string;
-        tokenSymbol: string;
-        tokenSupply: string;
-        tokenAllocations: TokenAllocation[];
-        proposalThreshold: string;
-        quorum: string;
-        executionDelay: string;
-        lateQuorumExecution: string;
-        voteStartDelay: string;
-        votingPeriod: string;
-        parentAllocationAmount?: string;
       },
-      parentToken?: string
+      parentToken
     ) => {
       const abiCoder = new ethers.utils.AbiCoder();
 
@@ -86,6 +91,7 @@ const useCreateDAODataCreator = () => {
       const claimSubsidiarySalt = getRandomSalt();
 
       const pAllocatedAmount = Number(parentAllocationAmount);
+      const tokenAllocationData = [...tokenAllocations];
 
       const predictedDAOAddress = getPredicatedAddress(
         addresses.daoFactory.address,
@@ -116,14 +122,14 @@ const useCreateDAODataCreator = () => {
           address: addresses.metaFactory.address,
           amount: Number(parentAllocationAmount),
         };
-        tokenAllocations.push(parentTokenAllocation);
+        tokenAllocationData.push(parentTokenAllocation);
       }
 
       // If the total token supply is greater than the sum of allocations,
       // Then mint the token difference into the Metafactory, to be deposited
       // into the treasury
       const tokenSupplyNumber = Number(tokenSupply);
-      const tokenAllocationSum = tokenAllocations.reduce((accumulator, tokenAllocation) => {
+      const tokenAllocationSum = tokenAllocationData.reduce((accumulator, tokenAllocation) => {
         return accumulator + tokenAllocation.amount;
       }, 0);
 
@@ -132,7 +138,7 @@ const useCreateDAODataCreator = () => {
           address: addresses.metaFactory.address,
           amount: tokenSupplyNumber - tokenAllocationSum,
         };
-        tokenAllocations.push(daoTokenAllocation);
+        tokenAllocationData.push(daoTokenAllocation);
       }
 
       const predictedTokenAddress = getPredicatedAddress(
@@ -204,12 +210,12 @@ const useCreateDAODataCreator = () => {
         abiCoder.encode(['string'], [tokenSymbol]),
         abiCoder.encode(
           ['address[]'],
-          [tokenAllocations.map(tokenAllocation => tokenAllocation.address)]
+          [tokenAllocationData.map(tokenAllocation => tokenAllocation.address)]
         ),
         abiCoder.encode(
           ['uint256[]'],
           [
-            tokenAllocations.map(tokenAllocation =>
+            tokenAllocationData.map(tokenAllocation =>
               ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
             ),
           ]

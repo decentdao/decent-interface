@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { utils } from 'ethers';
 import useDelegateVote from '../../hooks/useDelegateVote';
 import useDisplayName from '../../hooks/useDisplayName';
@@ -16,17 +16,35 @@ import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
-  const [errorMessage, setErrorMessage] = useState('');
+
   const {
     state: { account },
   } = useWeb3Provider();
+
   const [, validAddress] = useAddress(newDelegatee);
+
   const {
     votingToken: {
       votingTokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
     },
   } = useGovenorModule();
   const delegateeDisplayName = useDisplayName(delegatee);
+
+  const readableBalance = useMemo(() => {
+    if (!userBalance || !decimals || !symbol) {
+      return;
+    }
+    return `${utils.formatUnits(userBalance, decimals)} ${symbol}`;
+  }, [decimals, userBalance, symbol]);
+
+  const readableVotingWeight = useMemo(() => {
+    if (!votingWeight || !decimals || !symbol) {
+      return;
+    }
+    return `${utils.formatUnits(votingWeight, decimals)} ${symbol}`;
+  }, [decimals, votingWeight, symbol]);
+
+  const errorMessage = validAddress === false ? 'Invalid address' : undefined;
 
   const delegateSelf = () => {
     if (!account) {
@@ -41,31 +59,6 @@ function Delegate() {
     successCallback: () => setNewDelegatee(''),
   });
 
-  const [readableBalance, setReadableBalance] = useState<string>();
-  useEffect(() => {
-    if (userBalance === undefined || decimals === undefined || symbol === undefined) {
-      setReadableBalance(undefined);
-      return;
-    }
-
-    setReadableBalance(`${utils.formatUnits(userBalance, decimals)} ${symbol}`);
-  }, [decimals, userBalance, symbol]);
-
-  const [readableVotingWeight, setReadableVotingWeight] = useState<string>();
-  useEffect(() => {
-    if (votingWeight === undefined || decimals === undefined || symbol === undefined) {
-      setReadableVotingWeight(undefined);
-      return;
-    }
-
-    setReadableVotingWeight(`${utils.formatUnits(votingWeight, decimals)} ${symbol}`);
-  }, [decimals, votingWeight, symbol]);
-
-  useEffect(() => {
-    if (validAddress === false) {
-      setErrorMessage('Invalid address');
-    }
-  }, [validAddress]);
   return (
     <>
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
