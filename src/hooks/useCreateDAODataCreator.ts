@@ -4,11 +4,8 @@ import { useAddresses } from './useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { MetaFactoryCreateDAOData } from '../types/metaFactory';
 import { TokenAllocation } from '../types/tokenAllocation';
-import {
-  ERC1967Proxy__factory,
-  DAO__factory,
-  DAOAccessControl__factory,
-} from '@fractal-framework/core-contracts';
+import { ERC1967Proxy__factory } from '../assets/typechain-types/gnosis';
+import { DAO__factory, DAOAccessControl__factory } from '@fractal-framework/core-contracts';
 import {
   ClaimSubsidiary__factory,
   VotesToken__factory,
