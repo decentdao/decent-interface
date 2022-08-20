@@ -7,7 +7,10 @@ export function GnosisWrapper() {
   return (
     <div>
       <H1>Gnosis Safe</H1>
-      <GnosisSafeLink address={gnosisSafeAddress}>Gnosis Safe</GnosisSafeLink>
+      <GnosisSafeLink
+        address={gnosisSafeAddress}
+        label="Gnosis Safe"
+      />
     </div>
   );
 }

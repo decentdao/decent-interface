@@ -1,19 +1,19 @@
 import useGnosisSafeLink from '../../hooks/useGnosisSafeLink';
+import { PrimaryButton } from './forms/Button';
 
-function GnosisSafeLink({
-  address,
-  children,
-}: {
-  address: string | undefined;
-  children: React.ReactNode;
-}) {
+function GnosisSafeLink({ address, label }: { address: string | undefined; label: string }) {
+  const gnosisLink = useGnosisSafeLink(address);
+  console.log('🚀 ~ file: GnosisSafeLink.tsx ~ line 6 ~ gnosisLink', gnosisLink);
+  if (!gnosisLink) {
+    return null;
+  }
   return (
     <a
-      href={useGnosisSafeLink(address)}
+      href={gnosisLink}
       target="_blank"
       rel="noreferrer"
     >
-      {children}
+      <PrimaryButton label={label} />
     </a>
   );
 }
