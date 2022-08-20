@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { TokenAllocation } from '../../types/tokenAllocation';
-import { TextButton } from '../ui/forms/Button';
-import Input from '../ui/forms/Input';
-import InputBox from '../ui/forms/InputBox';
+import { TokenAllocation } from '../../../types/tokenAllocation';
+import { TextButton } from '../../ui/forms/Button';
+import Input from '../../ui/forms/Input';
+import InputBox from '../../ui/forms/InputBox';
 import TokenAllocationInput from './TokenAllocationInput';
 
 interface TokenAllocationsProps {

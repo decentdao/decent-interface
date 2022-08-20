@@ -45,7 +45,8 @@ export function GovernanceController({ children }: { children: JSX.Element }) {
           </TreasuryModuleProvider>
         </GovernorModuleProvider>
       );
-    default:
+    default: {
       return children;
+    }
   }
 }

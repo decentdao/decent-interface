@@ -44,6 +44,48 @@ export function useNextDisabled(state: CreatorState) {
       case CreatorSteps.GOV_CONFIG:
         setIsDisabled(false);
         break;
+      case CreatorSteps.GOV_CONFIG: {
+        const { govModule, govToken, essentials } = state;
+
+        const isEssentialsComplete = !!essentials.daoName.trim();
+        const isGovTokenComplete =
+          !!govToken.tokenName.trim() &&
+          !!govToken.tokenSymbol.trim() &&
+          Number(govToken.tokenSupply) > 0 &&
+          govToken.tokenAllocations
+            .map(tokenAllocation => Number(tokenAllocation.amount))
+            .reduce((prev, curr) => prev + curr, 0) <= Number(govToken.tokenSupply);
+        const isGovModuleComplete =
+          Number(govModule.proposalThreshold) >= 0 &&
+          Number(govModule.quorum) >= 0 &&
+          Number(govModule.quorum) <= 100 &&
+          Number(govModule.executionDelay) >= 0 &&
+          Number(govModule.lateQuorumExecution) >= 0 &&
+          Number(govModule.voteStartDelay) >= 0 &&
+          Number(govModule.votingPeriod) > 0 &&
+          govModule.proposalThreshold.trim() !== '' &&
+          govModule.quorum.trim() !== '' &&
+          govModule.executionDelay.trim() !== '' &&
+          govModule.lateQuorumExecution.trim() !== '' &&
+          govModule.voteStartDelay.trim() !== '' &&
+          govModule.votingPeriod.trim() !== '';
+        setIsDisabled(!isEssentialsComplete && !isGovModuleComplete && !isGovTokenComplete);
+        break;
+      }
+      case CreatorSteps.GNOSIS_GOVERNANCE: {
+        const {
+          gnosis: { trustedAddresses, signatureThreshold },
+        } = state;
+
+        const isTrustedAddressValid =
+          !trustedAddresses.some(trustee => trustee.error) && !!trustedAddresses[0].address.trim();
+
+        const isSignatureThresholdValid =
+          Number(signatureThreshold) > 0 && Number(signatureThreshold) <= trustedAddresses.length;
+
+        setIsDisabled(!isTrustedAddressValid || !isSignatureThresholdValid);
+        break;
+      }
     }
   }, [state]);
 

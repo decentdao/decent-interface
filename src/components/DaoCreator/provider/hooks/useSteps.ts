@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { CreatorProviderActions, CreatorState, CreatorSteps } from './../types';
+import { CreatorProviderActions, CreatorState, CreatorSteps, GovernanceTypes } from './../types';
 
 /**
  * handles tracking/setting of next/prev steps dependent on the current page
@@ -9,13 +9,38 @@ import { CreatorProviderActions, CreatorState, CreatorSteps } from './../types';
  */
 export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isSubDAO?: boolean) {
   useEffect(() => {
+    const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;
+    const isGnosisGovernance = state.governance === GovernanceTypes.GNOSIS_SAFE;
+
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            nextStep: isSubDAO ? CreatorSteps.FUNDING : CreatorSteps.TREASURY_GOV_TOKEN,
+            nextStep: CreatorSteps.CHOOSE_GOVERNANCE,
             prevStep: null,
+          },
+        });
+        break;
+      case CreatorSteps.CHOOSE_GOVERNANCE:
+        dispatch({
+          type: CreatorProviderActions.UPDATE_STEP,
+          payload: {
+            nextStep: isGnosisGovernance
+              ? CreatorSteps.GNOSIS_GOVERNANCE
+              : isSubDAO && isTokenGovernance
+              ? CreatorSteps.FUNDING
+              : CreatorSteps.TREASURY_GOV_TOKEN,
+            prevStep: CreatorSteps.ESSENTIALS,
+          },
+        });
+        break;
+      case CreatorSteps.GNOSIS_GOVERNANCE:
+        dispatch({
+          type: CreatorProviderActions.UPDATE_STEP,
+          payload: {
+            nextStep: null,
+            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
         break;
@@ -24,7 +49,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: CreatorSteps.TREASURY_GOV_TOKEN,
-            prevStep: CreatorSteps.ESSENTIALS,
+            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
         break;
@@ -33,7 +58,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: CreatorSteps.GOV_CONFIG,
-            prevStep: isSubDAO ? CreatorSteps.FUNDING : CreatorSteps.ESSENTIALS,
+            prevStep: isSubDAO ? CreatorSteps.FUNDING : CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
         break;
@@ -46,5 +71,5 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         });
         break;
     }
-  }, [isSubDAO, state.step, dispatch]);
+  }, [isSubDAO, state.step, dispatch, state.governance]);
 }
