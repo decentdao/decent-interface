@@ -14,7 +14,10 @@ import {
   ClaimSubsidiary__factory,
   VotesToken__factory,
 } from '../assets/typechain-types/votes-token';
-import { TreasuryModule__factory } from '../assets/typechain-types/metafactory';
+import {
+  TreasuryModule__factory,
+  ERC1967Proxy__factory as TreasuryERC1967Proxy__factory,
+} from '../assets/typechain-types/module-treasury';
 
 const useCreateDAODataCreator = () => {
   const {
