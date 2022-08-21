@@ -44,7 +44,7 @@ export const initialState: CreatorState = {
   },
   gnosis: {
     trustedAddresses: [{ address: '', error: false }],
-    signatureThreshold: '',
+    signatureThreshold: 1,
   },
 };
 

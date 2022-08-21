@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import Input from '../../ui/forms/Input';
@@ -55,17 +55,20 @@ export function GnosisConfig() {
   };
 
   const updateThreshold = (threshold: string) => {
+    fieldUpdate(threshold, 'signatureThreshold');
+  };
+
+  useEffect(() => {
     let error: string = '';
-    if (Number(threshold) === 0) {
+    if (Number(signatureThreshold) === 0) {
       error = 'Threshold must be greater than 0';
     }
-    if (Number(threshold) > trustedAddresses.length) {
+    if (Number(signatureThreshold) > numberOfSigners) {
       error = 'Threshold is to high';
     }
 
     setThresholdError(error);
-    fieldUpdate(threshold, 'signatureThreshold');
-  };
+  }, [signatureThreshold, numberOfSigners]);
 
   return (
     <ContentBox>

@@ -109,7 +109,7 @@ export type TokenGovernanceDAO = {
 
 export type GnosisDAO = {
   trustedAddresses: TrustedAddress[];
-  signatureThreshold: string;
+  signatureThreshold: number;
 };
 
 export type TrustedAddress = { address: string; error: boolean };
