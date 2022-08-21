@@ -9,6 +9,7 @@ import {
   DAO__factory,
   DAOAccessControl__factory,
 } from '@fractal-framework/core-contracts';
+import { ERC1967Proxy__factory as GovernorERC1967Proxy__factory } from '../assets/typechain-types/module-governor';
 import {
   ERC1967Proxy__factory as VotesTokenERC1967Proxy__factory,
   ClaimSubsidiary__factory,
@@ -18,6 +19,7 @@ import {
   TreasuryModule__factory,
   ERC1967Proxy__factory as TreasuryERC1967Proxy__factory,
 } from '../assets/typechain-types/module-treasury';
+
 import { getPredicatedAddress, getRandomSalt } from '../helpers';
 
 type CreateDAOData = (
@@ -161,14 +163,14 @@ const useCreateDAODataCreator = () => {
       const predictedGovernorAddress = getPredicatedAddress(
         addresses.governorFactory.address,
         [creator, addresses.metaFactory.address, chainId, governorAndTimelockSalt],
-        ERC1967Proxy__factory.bytecode,
+        GovernorERC1967Proxy__factory.bytecode,
         abiCoder.encode(['address', 'bytes'], [addresses.governorModule.address, []])
       );
 
       const predictedTimelockAddress = getPredicatedAddress(
         addresses.governorFactory.address,
         [creator, addresses.metaFactory.address, chainId, governorAndTimelockSalt],
-        ERC1967Proxy__factory.bytecode,
+        GovernorERC1967Proxy__factory.bytecode,
         abiCoder.encode(['address', 'bytes'], [addresses.timelock.address, []])
       );
 
