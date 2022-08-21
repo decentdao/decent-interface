@@ -78,7 +78,8 @@ export function useNextDisabled(state: CreatorState) {
         } = state;
 
         const isTrustedAddressValid =
-          !trustedAddresses.some(trustee => trustee.error) && !!trustedAddresses[0].address.trim();
+          !trustedAddresses.some(trustee => trustee.error || !trustee.address.trim()) &&
+          !!trustedAddresses.length;
 
         const isSignatureThresholdValid =
           Number(signatureThreshold) > 0 && Number(signatureThreshold) <= trustedAddresses.length;
