@@ -97,16 +97,15 @@ export function GnosisConfig() {
         The addresses added here have permission to submit and approve transactions
       </div>
       <InputBox>
-        {trustedAddresses &&
-          trustedAddresses.map((trustee, i) => (
-            <GnosisSignatures
-              key={i}
-              trustee={trustee}
-              index={i}
-              updateAddresses={updateAddresses}
-              removeAddress={removeAddress}
-            />
-          ))}
+        {trustedAddresses.map((trustee, i) => (
+          <GnosisSignatures
+            key={i}
+            trustee={trustee}
+            index={i}
+            updateAddresses={updateAddresses}
+            removeAddress={removeAddress}
+          />
+        ))}
       </InputBox>
     </ContentBox>
   );
