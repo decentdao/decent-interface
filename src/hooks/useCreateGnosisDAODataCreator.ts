@@ -12,7 +12,7 @@ import { ERC1967Proxy__factory as GnosisERC1967Proxy__factory } from '../assets/
 import { ERC1967Proxy__factory as TreasuryERC1967Proxy__factory } from '../assets/typechain-types/module-treasury';
 import { TrustedAddress } from '../components/DaoCreator/provider/types';
 import { Interface } from 'ethers/lib/utils';
-import { getPredicatedAddress, getRandomSalt } from '../helpers';
+import { getRandomSalt } from '../helpers';
 
 const useCreateGnosisDAODataCreator = () => {
   const {
@@ -57,32 +57,67 @@ const useCreateGnosisDAODataCreator = () => {
       const gnosisWrapperSalt = getRandomSalt();
       const gnosisSafeSalt = getRandomSalt();
 
-      const predictedDAOAddress = getPredicatedAddress(
+      const predictedDAOAddress = ethers.utils.getCreate2Address(
         addresses.daoFactory.address,
-        [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt],
-        ERC1967Proxy__factory.bytecode,
-        abiCoder.encode(['address', 'bytes'], [addresses.dao.address, []])
+        ethers.utils.solidityKeccak256(
+          ['address', 'address', 'uint256', 'bytes32'],
+          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
+        ),
+        ethers.utils.solidityKeccak256(
+          ['bytes', 'bytes'],
+          [
+            ERC1967Proxy__factory.bytecode,
+            abiCoder.encode(['address', 'bytes'], [addresses.dao.address, []]),
+          ]
+        )
       );
 
-      const predictedAccessControlAddress = getPredicatedAddress(
+      const predictedAccessControlAddress = ethers.utils.getCreate2Address(
         addresses.daoFactory.address,
-        [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt],
-        ERC1967Proxy__factory.bytecode,
-        abiCoder.encode(['address', 'bytes'], [addresses.accessControl.address, []])
+        ethers.utils.solidityKeccak256(
+          ['address', 'address', 'uint256', 'bytes32'],
+          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
+        ),
+        ethers.utils.solidityKeccak256(
+          ['bytes', 'bytes'],
+          [
+            // eslint-disable-next-line camelcase
+            ERC1967Proxy__factory.bytecode,
+            abiCoder.encode(['address', 'bytes'], [addresses.accessControl.address, []]),
+          ]
+        )
       );
 
-      const predictedTreasuryAddress = getPredicatedAddress(
+      const predictedTreasuryAddress = ethers.utils.getCreate2Address(
         addresses.treasuryModuleFactory.address,
-        [creator, addresses.metaFactory.address, chainId, treasurySalt],
-        TreasuryERC1967Proxy__factory.bytecode,
-        abiCoder.encode(['address', 'bytes'], [addresses.treasuryModule.address, []])
+        ethers.utils.solidityKeccak256(
+          ['address', 'address', 'uint256', 'bytes32'],
+          [creator, addresses.metaFactory.address, chainId, treasurySalt]
+        ),
+        ethers.utils.solidityKeccak256(
+          ['bytes', 'bytes'],
+          [
+            // eslint-disable-next-line camelcase
+            TreasuryERC1967Proxy__factory.bytecode,
+            abiCoder.encode(['address', 'bytes'], [addresses.treasuryModule.address, []]),
+          ]
+        )
       );
 
-      const predictedGnosisWrapperAddress = getPredicatedAddress(
+      const predictedGnosisWrapperAddress = ethers.utils.getCreate2Address(
         addresses.gnosisWrapperFactory.address,
-        [creator, addresses.metaFactory.address, chainId, gnosisWrapperSalt],
-        GnosisERC1967Proxy__factory.bytecode,
-        abiCoder.encode(['address', 'bytes'], [addresses.gnosisWrapper.address, []])
+        ethers.utils.solidityKeccak256(
+          ['address', 'address', 'uint256', 'bytes32'],
+          [creator, addresses.metaFactory.address, chainId, gnosisWrapperSalt]
+        ),
+        ethers.utils.solidityKeccak256(
+          ['bytes', 'bytes'],
+          [
+            // eslint-disable-next-line camelcase
+            GnosisERC1967Proxy__factory.bytecode,
+            abiCoder.encode(['address', 'bytes'], [addresses.gnosisWrapper.address, []]),
+          ]
+        )
       );
 
       const gnosisSafeFactoryInterface = new Interface([
