@@ -24,10 +24,12 @@ const useCreateGnosisDAODataCreator = () => {
   const createDAOData = useCallback(
     ({
       creator,
+      daoName,
       trustedAddresses,
       signatureThreshold,
     }: {
       creator: string;
+      daoName: string;
       trustedAddresses: TrustedAddress[];
       signatureThreshold: string;
     }) => {
@@ -126,7 +128,7 @@ const useCreateGnosisDAODataCreator = () => {
       const createDAOParams = {
         daoImplementation: addresses.dao.address,
         accessControlImplementation: addresses.accessControl.address,
-        daoName: 'Gnosis DAO', //todo: add daoName to Gnosis DAO params
+        daoName: daoName,
         salt: daoAndAccessControlSalt,
         roles: ['EXECUTE_ROLE', 'UPGRADE_ROLE', 'WITHDRAWER_ROLE'],
         rolesAdmins: ['DAO_ROLE', 'DAO_ROLE', 'DAO_ROLE'],

@@ -94,7 +94,9 @@ function ForwardButton({
     case CreatorSteps.GNOSIS_GOVERNANCE: {
       return (
         <PrimaryButton
-          onClick={() => deployDAO(state.gnosis, GovernanceTypes.GNOSIS_SAFE)}
+          onClick={() =>
+            deployDAO({ ...state.essentials, ...state.gnosis }, GovernanceTypes.GNOSIS_SAFE)
+          }
           label={deployLabel}
           isLarge
           className="w-48"

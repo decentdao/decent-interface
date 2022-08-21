@@ -7,7 +7,7 @@ import { useAddresses } from './useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { TokenAllocation } from '../types/tokenAllocation';
 import { useBlockchainData } from '../contexts/blockchainData';
-import { GovernanceTypes, TrustedAddress } from '../components/DaoCreator/provider/types';
+import { GovernanceTypes } from '../components/DaoCreator/provider/types';
 
 const useDeployDAO = () => {
   const {
@@ -117,24 +117,14 @@ const useDeployDAO = () => {
   );
 
   const deployGnosisDAO = useCallback(
-    (
-      {
-        trustedAddresses,
-        signatureThreshold,
-      }: {
-        trustedAddresses: TrustedAddress[];
-        signatureThreshold: string;
-      },
-      successCallback
-    ) => {
+    (daoData, successCallback) => {
       if (metaFactoryContract === undefined || account === null) {
         return;
       }
 
       const createDAOData = createGnosisDAODataCreator({
         creator: account,
-        trustedAddresses,
-        signatureThreshold,
+        ...daoData,
       });
 
       if (createDAOData === undefined) {
