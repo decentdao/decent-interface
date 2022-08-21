@@ -64,7 +64,7 @@ export function GnosisConfig() {
       error = 'Threshold must be greater than 0';
     }
     if (Number(signatureThreshold) > numberOfSigners) {
-      error = 'Threshold is to high';
+      error = 'Threshold is too high';
     }
 
     setThresholdError(error);
