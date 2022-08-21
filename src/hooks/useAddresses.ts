@@ -77,17 +77,17 @@ export function useAddresses(chainId: number | undefined) {
         !process.env.REACT_APP_TREASURYMODULEFACTORY_ADDRESSES ||
         !process.env.REACT_APP_TOKENFACTORY_ADDRESSES ||
         !process.env.REACT_APP_GOVERNORFACTORY_ADDRESSES ||
-        !process.env.REACT_APP_CLAIMFACTORY_ADDRESS ||
-        !process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESS ||
-        !process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESS ||
+        !process.env.REACT_APP_CLAIMFACTORY_ADDRESSES ||
+        !process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESSES ||
+        !process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESSES ||
         !process.env.REACT_APP_DAO_ADDRESSES ||
         !process.env.REACT_APP_ACCESSCONTROL_ADDRESSES ||
         !process.env.REACT_APP_TREASURYMODULE_ADDRESSES ||
         !process.env.REACT_APP_GOVERNORMODULE_ADDRESSES ||
         !process.env.REACT_APP_TIMELOCK_ADDRESSES ||
-        !process.env.REACT_APP_CLAIM_ADDRESS ||
-        !process.env.REACT_APP_GNOSISWRAPPER_ADDRESS ||
-        !process.env.REACT_APP_GNOSISSAFE_ADDRESS
+        !process.env.REACT_APP_CLAIM_ADDRESSES ||
+        !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES ||
+        !process.env.REACT_APP_GNOSISSAFE_ADDRESSES
       ) {
         console.error('Addresses not set!');
         setAddresses({});
@@ -108,12 +108,12 @@ export function useAddresses(chainId: number | undefined) {
       const governorFactoryNetworksAddresses: { [chaindId: number]: { address: string } } =
         JSON.parse(process.env.REACT_APP_GOVERNORFACTORY_ADDRESSES);
       const claimFactoryNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
-        process.env.REACT_APP_CLAIMFACTORY_ADDRESS
+        process.env.REACT_APP_CLAIMFACTORY_ADDRESSES
       );
       const gnosisWrapperFactoryNetworksAddresses: { [chaindId: number]: { address: string } } =
-        JSON.parse(process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESS);
+        JSON.parse(process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESSES);
       const gnosisSafeFactoryNetworksAddresses: { [chaindId: number]: { address: string } } =
-        JSON.parse(process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESS);
+        JSON.parse(process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESSES);
       const daoNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
         process.env.REACT_APP_DAO_ADDRESSES
       );
@@ -127,12 +127,12 @@ export function useAddresses(chainId: number | undefined) {
         process.env.REACT_APP_TIMELOCK_ADDRESSES
       );
       const claimModuleNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
-        process.env.REACT_APP_CLAIM_ADDRESS
+        process.env.REACT_APP_CLAIM_ADDRESSES
       );
       const gnosisWrapperNetworksAddresses: { [chaindId: number]: { address: string } } =
-        JSON.parse(process.env.REACT_APP_GNOSISWRAPPER_ADDRESS);
+        JSON.parse(process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES);
       const gnosisSafeNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
-        process.env.REACT_APP_GNOSISSAFE_ADDRESS
+        process.env.REACT_APP_GNOSISSAFE_ADDRESSES
       );
       const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
       const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
