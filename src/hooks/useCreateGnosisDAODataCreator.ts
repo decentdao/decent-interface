@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { BigNumberish, ethers } from 'ethers';
+import { BigNumber, BigNumberish, ethers } from 'ethers';
 import { useAddresses } from './useAddresses';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { MetaFactoryCreateDAOData } from '../types/metaFactory';
@@ -121,7 +121,7 @@ const useCreateGnosisDAODataCreator = () => {
       );
 
       const gnosisSafeFactoryInterface = new Interface([
-        'function createProxyWithNonce(address _singleton, bytes memory initializer, uint256 saltNonce) returns (GnosisSafeProxy proxy)',
+        'function createProxyWithNonce(address _mastercopy, bytes memory initializer, uint256 saltNonce) returns (GnosisSafeProxy proxy)',
       ]);
 
       const gnosisSafeInterface = new Interface([
@@ -132,14 +132,14 @@ const useCreateGnosisDAODataCreator = () => {
         '0x608060405234801561001057600080fd5b506040516101e63803806101e68339818101604052602081101561003357600080fd5b8101908080519060200190929190505050600073ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614156100ca576040517f08c379a00000000000000000000000000000000000000000000000000000000081526004018080602001828103825260228152602001806101c46022913960400191505060405180910390fd5b806000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505060ab806101196000396000f3fe608060405273ffffffffffffffffffffffffffffffffffffffff600054167fa619486e0000000000000000000000000000000000000000000000000000000060003514156050578060005260206000f35b3660008037600080366000845af43d6000803e60008114156070573d6000fd5b3d6000f3fea2646970667358221220d1429297349653a4918076d650332de1a1068c5f3e07c5c82360c277770b955264736f6c63430007060033496e76616c69642073696e676c65746f6e20616464726573732070726f7669646564';
 
       const createGnosisSetupCalldata = gnosisSafeInterface.encodeFunctionData('setup', [
-        trustedAddresses.map(trustedAddress => trustedAddress.address),
-        signatureThreshold,
-        ethers.constants.AddressZero,
-        ethers.constants.HashZero,
-        ethers.constants.AddressZero,
-        ethers.constants.AddressZero,
-        0,
-        ethers.constants.AddressZero,
+        trustedAddresses.map(trustedAddress => trustedAddress.address), // _owners
+        signatureThreshold, // signing threshold
+        ethers.constants.AddressZero, // to - Contract address for optional delegate call.
+        ethers.constants.HashZero, // data - Data payload for optional delegate call.
+        ethers.constants.AddressZero, // fallbackHandler
+        ethers.constants.AddressZero, // paymentToken
+        BigNumber.from(0), // payment
+        ethers.constants.AddressZero, // paymentReceiver
       ]);
 
       const gnosisSafeFactoryCalldata = gnosisSafeFactoryInterface.encodeFunctionData(
@@ -147,17 +147,20 @@ const useCreateGnosisDAODataCreator = () => {
         [addresses.gnosisSafe.address, createGnosisSetupCalldata, gnosisSafeSalt]
       );
 
-      // @todo check for correct predictions
+      const gnosisSalt = ethers.utils.solidityKeccak256(
+        ['bytes32', 'uint256'],
+        [ethers.utils.solidityKeccak256(['bytes'], [createGnosisSetupCalldata]), gnosisSafeSalt]
+      );
+
+      const gnosisInitCode = ethers.utils.solidityKeccak256(
+        ['bytes', 'uint256'],
+        [proxyCreationCode, addresses.gnosisSafe.address]
+      );
+
       const predictedGnosisSafeAddress = ethers.utils.getCreate2Address(
         addresses.gnosisSafeFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'uint256'],
-          [ethers.utils.solidityKeccak256(['bytes'], [gnosisSafeFactoryCalldata]), gnosisSafeSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'uint256'],
-          [proxyCreationCode, addresses.gnosisSafe.address]
-        )
+        gnosisSalt,
+        gnosisInitCode
       );
 
       const createDAOParams = {
@@ -184,7 +187,7 @@ const useCreateGnosisDAODataCreator = () => {
 
       const gnosisWrapperFactoryCalldata = [
         abiCoder.encode(['address'], [predictedAccessControlAddress]),
-        abiCoder.encode(['address'], [addresses.gnosisSafe.address]),
+        abiCoder.encode(['address'], [predictedGnosisSafeAddress]),
         abiCoder.encode(['address'], [addresses.gnosisWrapper.address]),
         abiCoder.encode(['bytes32'], [gnosisWrapperSalt]),
       ];
