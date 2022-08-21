@@ -19,7 +19,7 @@ function useGnosisSafeLink(address: string | undefined) {
     }
 
     setGnosisSafeLink(
-      `https://gnosis-safe.io/app/${GNOSIS_CHAINS[chainId.toString()]}/${address}/home`
+      `https://gnosis-safe.io/app/${GNOSIS_CHAINS[chainId.toString()]}:${address}/home`
     );
   }, [address, chainId]);
 
