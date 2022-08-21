@@ -78,7 +78,7 @@ export interface CreatorState {
   nextStep: CreatorSteps | null;
   prevStep: CreatorSteps | null;
   governance: GovernanceTypes;
-  gnosis: GnosisDAO;
+  gnosis: GnosisConfig;
   essentials: DAOEssentials;
   govToken: DAOGovenorToken;
   govModule: DAOGovenorModuleConfig;
@@ -90,8 +90,7 @@ export type ICreatorContext = {
   dispatch: React.Dispatch<any>;
 };
 
-export type TokenGovernanceDAO = {
-  daoName: string;
+export interface TokenGovernanceDAO extends DAODetails {
   tokenName: string;
   tokenSymbol: string;
   tokenSupply: string;
@@ -105,16 +104,20 @@ export type TokenGovernanceDAO = {
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
   parentAllocationAmount?: string;
-};
+}
 
-export type GnosisDAO = {
+export interface GnosisConfig {
   trustedAddresses: TrustedAddress[];
   signatureThreshold: string;
+}
+
+export interface GnosisDAO extends DAODetails, GnosisConfig {}
+
+export type DAODetails = {
+  daoName: string;
+  governance: GovernanceTypes;
 };
 
 export type TrustedAddress = { address: string; error: boolean };
 
-export type DAOTrigger = (
-  tokenData: TokenGovernanceDAO | GnosisDAO,
-  daoType: GovernanceTypes
-) => void;
+export type DAOTrigger = (tokenData: TokenGovernanceDAO | GnosisDAO) => void;

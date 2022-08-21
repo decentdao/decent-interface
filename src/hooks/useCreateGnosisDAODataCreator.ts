@@ -267,6 +267,7 @@ const useCreateGnosisDAODataCreator = () => {
           calldatas: calldatas,
         } as MetaFactoryCreateDAOData,
         predictedTreasuryAddress: predictedTreasuryAddress,
+        predictedDAOAddress,
       };
     },
     [

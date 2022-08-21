@@ -21,25 +21,7 @@ import {
 } from '../assets/typechain-types/module-treasury';
 
 import { getRandomSalt } from '../helpers';
-
-type CreateDAOData = (
-  data: {
-    creator: string;
-    daoName: string;
-    tokenName: string;
-    tokenSymbol: string;
-    tokenSupply: string;
-    tokenAllocations: TokenAllocation[];
-    proposalThreshold: string;
-    quorum: string;
-    executionDelay: string;
-    lateQuorumExecution: string;
-    voteStartDelay: string;
-    votingPeriod: string;
-    parentAllocationAmount?: string;
-  },
-  parentToken?: string
-) => undefined | { calldata: MetaFactoryCreateDAOData; predictedTreasuryAddress: string };
+import { CreateDAOData } from '../types/create';
 
 const useCreateDAODataCreator = () => {
   const {
@@ -465,6 +447,7 @@ const useCreateDAODataCreator = () => {
           calldatas: calldatas,
         } as MetaFactoryCreateDAOData,
         predictedTreasuryAddress: predictedTreasuryAddress,
+        predictedDAOAddress,
       };
     },
     [
