@@ -179,7 +179,7 @@ const useCreateDAODataCreator = () => {
           ['bytes', 'bytes'],
           [
             // eslint-disable-next-line camelcase
-            VotesTokenERC1967Proxy__factory.bytecode,
+            VotesToken__factory.bytecode,
             abiCoder.encode(
               ['string', 'string', 'address[]', 'uint256[]'],
               [
