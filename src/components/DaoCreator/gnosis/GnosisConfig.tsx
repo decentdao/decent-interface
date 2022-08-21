@@ -39,9 +39,7 @@ export function GnosisConfig() {
         const difference = trustedAddressLength - numOfSigners;
         gnosisAddresses.splice(trustedAddressLength - difference, difference + 1);
       }
-      if (gnosisAddresses.length) {
-        fieldUpdate(gnosisAddresses, 'trustedAddresses');
-      }
+      fieldUpdate(gnosisAddresses, 'trustedAddresses');
     }
     setNumberOfSigners(numOfSigners);
   };
