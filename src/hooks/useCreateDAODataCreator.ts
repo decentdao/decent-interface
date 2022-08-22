@@ -74,7 +74,7 @@ const useCreateDAODataCreator = () => {
       const governorAndTimelockNonce = getRandomBytes();
       const claimSubsidiaryNonce = getRandomBytes();
 
-      const pAllocatedAmount = BigNumber.from(parentAllocationAmount);
+      const pAllocatedAmount = BigNumber.from(parentAllocationAmount || 0);
       const tokenAllocationData = [...tokenAllocations];
 
       // DAO AND ACCESS CONTROL
