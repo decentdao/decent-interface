@@ -138,7 +138,7 @@ const useCreateDAODataCreator = () => {
       if (pAllocatedAmount.gt(0)) {
         const parentTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: pAllocatedAmount.toNumber(),
+          amount: pAllocatedAmount,
         };
         tokenAllocationData.push(parentTokenAllocation);
       }
@@ -147,14 +147,17 @@ const useCreateDAODataCreator = () => {
       // Then mint the token difference into the Metafactory, to be deposited
       // into the treasury
       const tokenSupplyBigNumber = BigNumber.from(tokenSupply);
-      const tokenAllocationSum = tokenAllocationData.reduce((accumulator, tokenAllocation) => {
-        return accumulator + tokenAllocation.amount;
-      }, 0);
+      const tokenAllocationSum: BigNumber = tokenAllocationData.reduce(
+        (accumulator, tokenAllocation) => {
+          return tokenAllocation.amount.add(accumulator);
+        },
+        BigNumber.from(0)
+      );
 
       if (tokenSupplyBigNumber.gt(tokenAllocationSum)) {
         const daoTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: tokenSupplyBigNumber.sub(tokenAllocationSum).toNumber(),
+          amount: tokenSupplyBigNumber.sub(tokenAllocationSum),
         };
         tokenAllocationData.push(daoTokenAllocation);
       }

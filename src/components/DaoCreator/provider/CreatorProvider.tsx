@@ -1,4 +1,5 @@
 import { ReactNode, useMemo, useReducer } from 'react';
+import { BigNumber } from 'ethers';
 import ConnectWalletToast from '../../ConnectWalletToast';
 import H1 from '../../ui/H1';
 import { StepButtons } from '../StepButtons';
@@ -27,7 +28,7 @@ export const initialState: CreatorState = {
     tokenName: '',
     tokenSupply: '',
     tokenSymbol: '',
-    tokenAllocations: [{ address: '', amount: 0 }],
+    tokenAllocations: [{ address: '', amount: BigNumber.from(0) }],
     parentAllocationAmount: undefined,
   },
   govModule: {
