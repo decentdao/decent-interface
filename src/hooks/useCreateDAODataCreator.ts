@@ -74,7 +74,7 @@ const useCreateDAODataCreator = () => {
       const governorAndTimelockNonce = getRandomBytes();
       const claimSubsidiaryNonce = getRandomBytes();
 
-      const pAllocatedAmount = Number(parentAllocationAmount);
+      const pAllocatedAmount = BigNumber.from(parentAllocationAmount);
       const tokenAllocationData = [...tokenAllocations];
 
       // DAO AND ACCESS CONTROL
@@ -135,10 +135,10 @@ const useCreateDAODataCreator = () => {
       // If parentAllocationAmount is greater than zero,
       // Then mint the allocation to the Metafactory, to be be transferred
       // to the claim Subsidiary
-      if (pAllocatedAmount > 0) {
+      if (pAllocatedAmount.gt(0)) {
         const parentTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: Number(parentAllocationAmount),
+          amount: pAllocatedAmount.toNumber(),
         };
         tokenAllocationData.push(parentTokenAllocation);
       }
@@ -146,15 +146,15 @@ const useCreateDAODataCreator = () => {
       // If the total token supply is greater than the sum of allocations,
       // Then mint the token difference into the Metafactory, to be deposited
       // into the treasury
-      const tokenSupplyNumber = Number(tokenSupply);
+      const tokenSupplyBigNumber = BigNumber.from(tokenSupply);
       const tokenAllocationSum = tokenAllocationData.reduce((accumulator, tokenAllocation) => {
         return accumulator + tokenAllocation.amount;
       }, 0);
 
-      if (tokenSupplyNumber > tokenAllocationSum) {
+      if (tokenSupplyBigNumber.gt(tokenAllocationSum)) {
         const daoTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: tokenSupplyNumber - tokenAllocationSum,
+          amount: tokenSupplyBigNumber.sub(tokenAllocationSum).toNumber(),
         };
         tokenAllocationData.push(daoTokenAllocation);
       }
@@ -223,7 +223,7 @@ const useCreateDAODataCreator = () => {
       );
 
       let predictedClaimAddress;
-      if (pAllocatedAmount > 0) {
+      if (pAllocatedAmount.gt(0)) {
         const claimSalt = ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
           [creator, addresses.metaFactory.address, chainId, claimSubsidiaryNonce]
@@ -303,7 +303,7 @@ const useCreateDAODataCreator = () => {
       ];
 
       let claimFactoryCalldata;
-      if (pAllocatedAmount > 0) {
+      if (pAllocatedAmount.gt(0)) {
         claimFactoryCalldata = [
           abiCoder.encode(['address'], [addresses.claimModule.address]),
           abiCoder.encode(['bytes32'], [claimSubsidiaryNonce]),
@@ -353,7 +353,7 @@ const useCreateDAODataCreator = () => {
         ['GOVERNOR_ROLE'],
       ];
 
-      if (pAllocatedAmount > 0 && predictedClaimAddress) {
+      if (pAllocatedAmount.gt(0) && predictedClaimAddress) {
         targetsData.push(predictedClaimAddress);
         sigData.push('upgradeTo(address)');
         roleData.push(['UPGRADE_ROLE']);
@@ -389,7 +389,7 @@ const useCreateDAODataCreator = () => {
         governorFactoryCalldata,
       ];
 
-      if (pAllocatedAmount > 0 && claimFactoryCalldata) {
+      if (pAllocatedAmount.gt(0) && claimFactoryCalldata) {
         moduleFactories.push(addresses.claimFactory.address);
         moduleFactoriesBytes.push(claimFactoryCalldata);
       }
@@ -403,12 +403,12 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
-      if (tokenSupplyNumber > tokenAllocationSum) {
+      if (tokenSupplyBigNumber.gt(tokenAllocationSum)) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedTreasuryAddress,
-            ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18),
+            ethers.utils.parseUnits(tokenSupplyBigNumber.sub(tokenAllocationSum).toString(), 18),
           ]);
 
         // DAO calls Treasury to deposit tokens into it
@@ -416,7 +416,7 @@ const useCreateDAODataCreator = () => {
           TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
             [predictedVotingTokenAddress],
             [addresses.metaFactory.address],
-            [ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18)],
+            [ethers.utils.parseUnits(tokenSupplyBigNumber.sub(tokenAllocationSum).toString(), 18)],
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedTreasuryAddress);
@@ -425,7 +425,7 @@ const useCreateDAODataCreator = () => {
       }
 
       if (
-        pAllocatedAmount > 0 &&
+        pAllocatedAmount.gt(0) &&
         predictedClaimAddress !== undefined &&
         parentToken !== undefined
       ) {
