@@ -40,7 +40,6 @@ const useCreateGnosisDAODataCreator = () => {
         !addresses.accessControl ||
         !addresses.gnosisWrapperFactory ||
         !addresses.gnosisSafeFactory ||
-        !addresses.timelock ||
         !addresses.metaFactory ||
         !addresses.gnosisWrapper ||
         !addresses.gnosisSafe
@@ -230,7 +229,6 @@ const useCreateGnosisDAODataCreator = () => {
       addresses.dao,
       addresses.daoFactory,
       addresses.accessControl,
-      addresses.timelock,
       addresses.metaFactory,
       addresses.gnosisSafe,
       addresses.gnosisSafeFactory,
