@@ -9,30 +9,19 @@ import {
   DAO__factory,
   DAOAccessControl__factory,
 } from '@fractal-framework/core-contracts';
+import { ERC1967Proxy__factory as GovernorERC1967Proxy__factory } from '../assets/typechain-types/module-governor';
 import {
+  ERC1967Proxy__factory as VotesTokenERC1967Proxy__factory,
   ClaimSubsidiary__factory,
   VotesToken__factory,
 } from '../assets/typechain-types/votes-token';
-import { TreasuryModule__factory } from '../assets/typechain-types/metafactory';
+import {
+  TreasuryModule__factory,
+  ERC1967Proxy__factory as TreasuryERC1967Proxy__factory,
+} from '../assets/typechain-types/module-treasury';
 
-type CreateDAOData = (
-  data: {
-    creator: string;
-    daoName: string;
-    tokenName: string;
-    tokenSymbol: string;
-    tokenSupply: string;
-    tokenAllocations: TokenAllocation[];
-    proposalThreshold: string;
-    quorum: string;
-    executionDelay: string;
-    lateQuorumExecution: string;
-    voteStartDelay: string;
-    votingPeriod: string;
-    parentAllocationAmount?: string;
-  },
-  parentToken?: string
-) => undefined | { calldata: MetaFactoryCreateDAOData; predictedTreasuryAddress: string };
+import { getRandomBytes } from '../helpers';
+import { CreateDAOData } from '../types/create';
 
 const useCreateDAODataCreator = () => {
   const {
@@ -79,73 +68,68 @@ const useCreateDAODataCreator = () => {
         return undefined;
       }
 
-      const daoAndAccessControlSalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
-      const treasurySalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
-      const tokenSalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
-      const governorAndTimelockSalt = ethers.utils.formatBytes32String(
-        self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-      );
-      const pAllocatedAmount = Number(parentAllocationAmount);
-      let claimSubsidiarySalt;
-      if (pAllocatedAmount > 0) {
-        claimSubsidiarySalt = ethers.utils.formatBytes32String(
-          self.crypto.getRandomValues(new BigUint64Array(1))[0].toString()
-        );
-      }
+      const daoAndAccessControlNonce = getRandomBytes();
+      const treasuryNonce = getRandomBytes();
+      const votingTokenNonce = getRandomBytes();
+      const governorAndTimelockNonce = getRandomBytes();
+      const claimSubsidiaryNonce = getRandomBytes();
 
+      const pAllocatedAmount = Number(parentAllocationAmount);
       const tokenAllocationData = [...tokenAllocations];
+
+      // DAO AND ACCESS CONTROL
+
+      const daoAndAccessControlSalt = ethers.utils.solidityKeccak256(
+        ['address', 'address', 'uint256', 'bytes32'],
+        [creator, addresses.metaFactory.address, chainId, daoAndAccessControlNonce]
+      );
+
+      const daoInitCode = ethers.utils.solidityKeccak256(
+        ['bytes', 'bytes'],
+        [
+          ERC1967Proxy__factory.bytecode,
+          abiCoder.encode(['address', 'bytes'], [addresses.dao.address, []]),
+        ]
+      );
 
       const predictedDAOAddress = ethers.utils.getCreate2Address(
         addresses.daoFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.dao.address, []]),
-          ]
-        )
+        daoAndAccessControlSalt,
+        daoInitCode
       );
 
+      const accessControlInitCode = ethers.utils.solidityKeccak256(
+        ['bytes', 'bytes'],
+        [
+          // eslint-disable-next-line camelcase
+          ERC1967Proxy__factory.bytecode,
+          abiCoder.encode(['address', 'bytes'], [addresses.accessControl.address, []]),
+        ]
+      );
       const predictedAccessControlAddress = ethers.utils.getCreate2Address(
         addresses.daoFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, daoAndAccessControlSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            // eslint-disable-next-line camelcase
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.accessControl.address, []]),
-          ]
-        )
+        daoAndAccessControlSalt,
+        accessControlInitCode
       );
 
+      // TREASURY
+
+      const treasurySalt = ethers.utils.solidityKeccak256(
+        ['address', 'address', 'uint256', 'bytes32'],
+        [creator, addresses.metaFactory.address, chainId, treasuryNonce]
+      );
+      const treasuryInitCode = ethers.utils.solidityKeccak256(
+        ['bytes', 'bytes'],
+        [
+          // eslint-disable-next-line camelcase
+          TreasuryERC1967Proxy__factory.bytecode,
+          abiCoder.encode(['address', 'bytes'], [addresses.treasuryModule.address, []]),
+        ]
+      );
       const predictedTreasuryAddress = ethers.utils.getCreate2Address(
         addresses.treasuryModuleFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, treasurySalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            // eslint-disable-next-line camelcase
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.treasuryModule.address, []]),
-          ]
-        )
+        treasurySalt,
+        treasuryInitCode
       );
 
       // If parentAllocationAmount is greater than zero,
@@ -175,79 +159,87 @@ const useCreateDAODataCreator = () => {
         tokenAllocationData.push(daoTokenAllocation);
       }
 
-      const predictedTokenAddress = ethers.utils.getCreate2Address(
+      const votingTokenSalt = ethers.utils.solidityKeccak256(
+        ['address', 'address', 'uint256', 'bytes32'],
+        [creator, addresses.metaFactory.address, chainId, votingTokenNonce]
+      );
+      const votingTokenInitCode = ethers.utils.solidityKeccak256(
+        ['bytes', 'bytes'],
+        [
+          // eslint-disable-next-line camelcase
+          VotesToken__factory.bytecode,
+          abiCoder.encode(
+            ['string', 'string', 'address[]', 'uint256[]'],
+            [
+              tokenName,
+              tokenSymbol,
+              tokenAllocations.map(tokenAllocation => tokenAllocation.address),
+              tokenAllocations.map(tokenAllocation =>
+                ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
+              ),
+            ]
+          ),
+        ]
+      );
+
+      const predictedVotingTokenAddress = ethers.utils.getCreate2Address(
         addresses.tokenFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, tokenSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            // eslint-disable-next-line camelcase
-            VotesToken__factory.bytecode,
-            abiCoder.encode(
-              ['string', 'string', 'address[]', 'uint256[]'],
-              [
-                tokenName,
-                tokenSymbol,
-                tokenAllocationData.map(tokenAllocation => tokenAllocation.address),
-                tokenAllocationData.map(tokenAllocation =>
-                  ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
-                ),
-              ]
-            ),
-          ]
-        )
+        votingTokenSalt,
+        votingTokenInitCode
+      );
+
+      const governorAndTimeLockSalt = ethers.utils.solidityKeccak256(
+        ['address', 'address', 'uint256', 'bytes32'],
+        [creator, addresses.metaFactory.address, chainId, governorAndTimelockNonce]
+      );
+      const governorInitCode = ethers.utils.solidityKeccak256(
+        ['bytes', 'bytes'],
+        [
+          // eslint-disable-next-line camelcase
+          GovernorERC1967Proxy__factory.bytecode,
+          abiCoder.encode(['address', 'bytes'], [addresses.governorModule.address, []]),
+        ]
       );
 
       const predictedGovernorAddress = ethers.utils.getCreate2Address(
         addresses.governorFactory.address,
-        ethers.utils.solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, governorAndTimelockSalt]
-        ),
-        ethers.utils.solidityKeccak256(
-          ['bytes', 'bytes'],
-          [
-            // eslint-disable-next-line camelcase
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.governorModule.address, []]),
-          ]
-        )
+        governorAndTimeLockSalt,
+        governorInitCode
+      );
+
+      const predictedTimelockInitCode = ethers.utils.solidityKeccak256(
+        ['bytes', 'bytes'],
+        [
+          // eslint-disable-next-line camelcase
+          GovernorERC1967Proxy__factory.bytecode,
+          abiCoder.encode(['address', 'bytes'], [addresses.timelock.address, []]),
+        ]
       );
 
       const predictedTimelockAddress = ethers.utils.getCreate2Address(
         addresses.governorFactory.address,
-        ethers.utils.solidityKeccak256(
+        governorAndTimeLockSalt,
+        predictedTimelockInitCode
+      );
+
+      let predictedClaimAddress;
+      if (pAllocatedAmount > 0) {
+        const claimSalt = ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
-          [creator, addresses.metaFactory.address, chainId, governorAndTimelockSalt]
-        ),
-        ethers.utils.solidityKeccak256(
+          [creator, addresses.metaFactory.address, chainId, claimSubsidiaryNonce]
+        );
+        const claimInitCode = ethers.utils.solidityKeccak256(
           ['bytes', 'bytes'],
           [
             // eslint-disable-next-line camelcase
-            ERC1967Proxy__factory.bytecode,
-            abiCoder.encode(['address', 'bytes'], [addresses.timelock.address, []]),
+            VotesTokenERC1967Proxy__factory.bytecode,
+            abiCoder.encode(['address', 'bytes'], [addresses.claimModule.address, []]),
           ]
-        )
-      );
-      let predictedClaimAddress;
-      if (pAllocatedAmount > 0) {
+        );
         predictedClaimAddress = ethers.utils.getCreate2Address(
           addresses.claimFactory.address,
-          ethers.utils.solidityKeccak256(
-            ['address', 'address', 'uint256', 'bytes32'],
-            [creator, addresses.metaFactory.address, chainId, claimSubsidiarySalt]
-          ),
-          ethers.utils.solidityKeccak256(
-            ['bytes', 'bytes'],
-            [
-              // eslint-disable-next-line camelcase
-              ERC1967Proxy__factory.bytecode,
-              abiCoder.encode(['address', 'bytes'], [addresses.claimModule.address, []]),
-            ]
-          )
+          claimSalt,
+          claimInitCode
         );
       }
 
@@ -255,7 +247,7 @@ const useCreateDAODataCreator = () => {
         daoImplementation: addresses.dao.address,
         accessControlImplementation: addresses.accessControl.address,
         daoName: daoName,
-        salt: daoAndAccessControlSalt,
+        salt: daoAndAccessControlNonce,
         roles: ['EXECUTE_ROLE', 'UPGRADE_ROLE', 'WITHDRAWER_ROLE', 'GOVERNOR_ROLE'],
         rolesAdmins: ['DAO_ROLE', 'DAO_ROLE', 'DAO_ROLE', 'DAO_ROLE'],
         members: [
@@ -271,7 +263,7 @@ const useCreateDAODataCreator = () => {
       const treasuryFactoryCalldata = [
         abiCoder.encode(['address'], [predictedAccessControlAddress]),
         abiCoder.encode(['address'], [addresses.treasuryModule.address]),
-        abiCoder.encode(['bytes32'], [treasurySalt]),
+        abiCoder.encode(['bytes32'], [treasuryNonce]),
       ];
 
       const tokenFactoryCalldata = [
@@ -289,13 +281,13 @@ const useCreateDAODataCreator = () => {
             ),
           ]
         ),
-        abiCoder.encode(['bytes32'], [tokenSalt]),
+        abiCoder.encode(['bytes32'], [votingTokenNonce]),
       ];
 
       const governorFactoryCalldata = [
         abiCoder.encode(['address'], [predictedDAOAddress]), // Address of DAO to be deployed
         abiCoder.encode(['address'], [predictedAccessControlAddress]), // Address of Access Control to be deployed
-        abiCoder.encode(['address'], [predictedTokenAddress]), // Address of token to be deployed
+        abiCoder.encode(['address'], [predictedVotingTokenAddress]), // Address of token to be deployed
         abiCoder.encode(['address'], [addresses.governorModule.address]), // Address of Governance module implementation contract
         abiCoder.encode(['address'], [addresses.timelock.address]), // Address of Timelock module implementation contract
         abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // Vote extension
@@ -307,14 +299,14 @@ const useCreateDAODataCreator = () => {
         ), // Threshold
         abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
         abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution delay
-        abiCoder.encode(['bytes32'], [governorAndTimelockSalt]), // Create2 salt
+        abiCoder.encode(['bytes32'], [governorAndTimelockNonce]), // Create2 salt
       ];
 
       let claimFactoryCalldata;
       if (pAllocatedAmount > 0) {
         claimFactoryCalldata = [
           abiCoder.encode(['address'], [addresses.claimModule.address]),
-          abiCoder.encode(['bytes32'], [claimSubsidiarySalt]),
+          abiCoder.encode(['bytes32'], [claimSubsidiaryNonce]),
         ];
       }
 
@@ -422,12 +414,12 @@ const useCreateDAODataCreator = () => {
         // DAO calls Treasury to deposit tokens into it
         const depositTokensToTreasuryCalldata =
           TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
-            [predictedTokenAddress],
+            [predictedVotingTokenAddress],
             [addresses.metaFactory.address],
             [ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18)],
           ]);
 
-        targets.push(predictedTokenAddress, predictedTreasuryAddress);
+        targets.push(predictedVotingTokenAddress, predictedTreasuryAddress);
         values.push(0, 0);
         calldatas.push(approveDAOTokenTransferCalldata, depositTokensToTreasuryCalldata);
       }
@@ -450,11 +442,11 @@ const useCreateDAODataCreator = () => {
             addresses.metaFactory.address,
             predictedAccessControlAddress,
             parentToken,
-            predictedTokenAddress,
+            predictedVotingTokenAddress,
             ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
           ]);
 
-        targets.push(predictedTokenAddress, predictedClaimAddress);
+        targets.push(predictedVotingTokenAddress, predictedClaimAddress);
         values.push(0, 0);
         calldatas.push(approveDAOTokenTransferCalldata, initClaimContractCalldata);
       }
@@ -470,6 +462,7 @@ const useCreateDAODataCreator = () => {
           calldatas: calldatas,
         } as MetaFactoryCreateDAOData,
         predictedTreasuryAddress: predictedTreasuryAddress,
+        predictedDAOAddress,
       };
     },
     [

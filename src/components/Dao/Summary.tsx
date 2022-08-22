@@ -14,6 +14,7 @@ function Summary() {
       treasuryModule,
       tokenVotingGovernanceModule,
       claimingContractModule,
+      gnosisWrapperModule,
     },
   } = useFractal();
 
@@ -83,6 +84,14 @@ function Summary() {
             <AddressDisplay
               address={timelockModule.moduleAddress}
               label={timelockModule.moduleType}
+            />
+          </InputBox>
+        )}
+        {gnosisWrapperModule && (
+          <InputBox>
+            <AddressDisplay
+              address={gnosisWrapperModule.moduleAddress}
+              label={gnosisWrapperModule.moduleType}
             />
           </InputBox>
         )}

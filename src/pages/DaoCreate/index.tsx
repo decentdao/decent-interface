@@ -1,10 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
-import {
-  GnosisDAO,
-  GovernanceTypes,
-  TokenGovernanceDAO,
-} from '../../components/DaoCreator/provider/types';
+import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
 import useDeployDAO from '../../hooks/useDeployDAO';
 
 function DaoCreate() {
@@ -16,14 +12,8 @@ function DaoCreate() {
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployDAO = (daoData: TokenGovernanceDAO | GnosisDAO, type: GovernanceTypes) => {
-    if (type === GovernanceTypes.TOKEN_VOTING_GOVERNANCE) {
-      deploy({
-        ...(daoData as TokenGovernanceDAO),
-        successCallback,
-      });
-    }
-    // @todo Gnosis Deploy
+  const deployDAO = (daoData: TokenGovernanceDAO | GnosisDAO) => {
+    deploy(daoData, successCallback);
   };
 
   return (

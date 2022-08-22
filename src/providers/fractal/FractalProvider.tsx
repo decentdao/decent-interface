@@ -34,8 +34,13 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   const [dao, dispatch] = useReducer(reducer, initialState, initializeState);
   const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
 
-  const { timelockModule, treasuryModule, tokenVotingGovernanceModule, claimingContractModule } =
-    useModuleTypes(dao.moduleAddresses);
+  const {
+    timelockModule,
+    treasuryModule,
+    tokenVotingGovernanceModule,
+    claimingContractModule,
+    gnosisWrapperModule,
+  } = useModuleTypes(dao.moduleAddresses);
 
   useModuleListeners(dao, dispatch);
 
@@ -47,6 +52,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         treasuryModule,
         tokenVotingGovernanceModule,
         claimingContractModule,
+        gnosisWrapperModule,
       },
       dispatch,
       daoLegacy,
@@ -58,6 +64,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       treasuryModule,
       tokenVotingGovernanceModule,
       claimingContractModule,
+      gnosisWrapperModule,
     ]
   );
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
