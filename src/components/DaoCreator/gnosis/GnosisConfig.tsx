@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import { TextButton } from '../../ui/forms/Button';
 import Input from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
@@ -16,6 +15,7 @@ export function GnosisConfig() {
     dispatch,
   } = useCreator();
   const [thresholdError, setThresholdError] = useState('');
+  const [numberOfSigners, setNumberOfSigners] = useState<number>(trustedAddresses.length);
 
   const fieldUpdate = (value: TrustedAddress[] | string, field: string) => {
     dispatch({
@@ -26,14 +26,27 @@ export function GnosisConfig() {
     });
   };
 
-  const addAddress = () => {
-    const gnosisAddresses = [...trustedAddresses];
-    gnosisAddresses.push({ address: '', error: false });
-    fieldUpdate(gnosisAddresses, 'trustedAddresses');
+  const handleSignersChanges = (event: ChangeEvent<HTMLInputElement>) => {
+    let numOfSigners = Number(event.target.value);
+    if (trustedAddresses.length !== numOfSigners) {
+      const gnosisAddresses = [...trustedAddresses];
+      const trustedAddressLength = trustedAddresses.length;
+      if (numOfSigners > trustedAddressLength) {
+        const difference = numOfSigners - trustedAddressLength;
+        gnosisAddresses.push(...new Array(difference).fill({ address: '', error: false }));
+      }
+      if (numOfSigners < trustedAddressLength) {
+        const difference = trustedAddressLength - numOfSigners;
+        gnosisAddresses.splice(trustedAddressLength - difference, difference + 1);
+      }
+      fieldUpdate(gnosisAddresses, 'trustedAddresses');
+    }
+    setNumberOfSigners(numOfSigners);
   };
 
   const removeAddress = (index: number) => {
     const gnosisAddresses = trustedAddresses.filter((_, i) => i !== index);
+    setNumberOfSigners(gnosisAddresses.length);
     fieldUpdate(gnosisAddresses, 'trustedAddresses');
   };
 
@@ -42,21 +55,34 @@ export function GnosisConfig() {
   };
 
   const updateThreshold = (threshold: string) => {
+    fieldUpdate(threshold, 'signatureThreshold');
+  };
+
+  useEffect(() => {
     let error: string = '';
-    if (Number(threshold) === 0) {
+    if (Number(signatureThreshold) === 0) {
       error = 'Threshold must be greater than 0';
     }
-    if (Number(threshold) > trustedAddresses.length) {
-      error = 'Threshold is to high';
+    if (Number(signatureThreshold) > numberOfSigners) {
+      error = 'Threshold is too high';
     }
 
     setThresholdError(error);
-    fieldUpdate(threshold, 'signatureThreshold');
-  };
+  }, [signatureThreshold, numberOfSigners]);
 
   return (
     <ContentBox>
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
+      <InputBox>
+        <Input
+          type="text"
+          value={numberOfSigners}
+          onChange={handleSignersChanges}
+          label="Signers"
+          helperText="How many trusted users for Gnosis Safe"
+          isWholeNumberOnly
+        />
+      </InputBox>
       <InputBox>
         <Input
           type="number"
@@ -66,7 +92,6 @@ export function GnosisConfig() {
           label="Signature Threshold"
           helperText="How many signatures are needed to pass a proposal."
           isWholeNumberOnly
-          min="1"
         />
       </InputBox>
 
@@ -84,11 +109,6 @@ export function GnosisConfig() {
             removeAddress={removeAddress}
           />
         ))}
-        <TextButton
-          onClick={addAddress}
-          className="pl-1 my-1 mx-0"
-          label="Add Address +"
-        />
       </InputBox>
     </ContentBox>
   );
