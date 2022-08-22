@@ -49,14 +49,14 @@ function TokenAllocationInput({
       <Input
         containerClassName="col-start-1 col-span-4 md:col-span-5 w-full"
         type="text"
-        value={tokenAllocation.address || ''}
+        value={tokenAllocation.address}
         onChange={event => updateAddress(event.target.value)}
         errorMessage={tokenAllocation.addressError}
       />
       <Input
         containerClassName="col-span-2 md:pt-0"
         type="number"
-        value={tokenAllocation.amount.toString() || ''}
+        value={tokenAllocation.amount.toString()}
         onChange={event => updateAmount(event.target.value)}
         errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
         isWholeNumberOnly
