@@ -26,7 +26,7 @@ function Breadcrumbs() {
   const location = useLocation();
   const {
     dao: { daoAddress },
-    modules: { treasuryModule, tokenVotingGovernanceModule },
+    modules: { treasuryModule, tokenVotingGovernanceModule, gnosisWrapperModule },
   } = useFractal();
 
   const excludePaths: Array<string> = [];
@@ -134,6 +134,15 @@ function Breadcrumbs() {
               >
                 <TreasuryIcon />
                 <div className="text-sm font-semibold">Treasury</div>
+              </NavLink>
+            )}
+            {gnosisWrapperModule && (
+              <NavLink
+                to={`/daos/${daoAddress}/modules/${gnosisWrapperModule.moduleAddress}`}
+                className="flex items-center gap-2 text-gold-500 hover:text-gold-300"
+              >
+                <DetailsIcon />
+                <div className="text-sm font-semibold">Gnosis</div>
               </NavLink>
             )}
           </div>
