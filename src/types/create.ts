@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { MetaFactoryCreateDAOData } from './metaFactory';
 import { TokenAllocation } from './tokenAllocation';
 
@@ -7,7 +8,7 @@ export type CreateDAOData = (
     daoName: string;
     tokenName: string;
     tokenSymbol: string;
-    tokenSupply: string;
+    tokenSupply: BigNumber;
     tokenAllocations: TokenAllocation[];
     proposalThreshold: string;
     quorum: string;

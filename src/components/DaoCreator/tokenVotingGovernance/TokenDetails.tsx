@@ -46,7 +46,7 @@ function TokenDetails() {
       <InputBox>
         <Input
           type="number"
-          value={govToken.tokenSupply}
+          value={govToken.tokenSupply.toString()}
           onChange={e => fieldUpdate(e.target.value, 'tokenSupply')}
           label="Token Supply"
           helperText="Whole numbers only"
@@ -58,7 +58,7 @@ function TokenDetails() {
 
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
-        supply={govToken.tokenSupply}
+        supply={govToken.tokenSupply.toString()}
         parentAllocationAmount={govToken.parentAllocationAmount}
         fieldUpdate={fieldUpdate}
       />

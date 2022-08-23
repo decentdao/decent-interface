@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BigNumber } from 'ethers';
 import { CreatorState, CreatorSteps } from './../types';
 
 /**
@@ -51,10 +52,11 @@ export function useNextDisabled(state: CreatorState) {
         const isGovTokenComplete =
           !!govToken.tokenName.trim() &&
           !!govToken.tokenSymbol.trim() &&
-          Number(govToken.tokenSupply) > 0 &&
+          govToken.tokenSupply.gt(0) &&
           govToken.tokenAllocations
-            .map(tokenAllocation => Number(tokenAllocation.amount))
-            .reduce((prev, curr) => prev + curr, 0) <= Number(govToken.tokenSupply);
+            .map(tokenAllocation => tokenAllocation.amount)
+            .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
+            .lte(govToken.tokenSupply);
         const isGovModuleComplete =
           Number(govModule.proposalThreshold) >= 0 &&
           Number(govModule.quorum) >= 0 &&

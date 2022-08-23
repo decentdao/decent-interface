@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { NFTToFund, TokenToFund } from '../../tokenVotingGovernance/SubsidiaryFunding/types/index';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
 
@@ -54,7 +55,7 @@ type DAOEssentials = {
 type DAOGovenorToken = {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: string;
+  tokenSupply: BigNumber;
   tokenAllocations: TokenAllocation[];
   parentAllocationAmount?: string;
 };
@@ -93,7 +94,7 @@ export type ICreatorContext = {
 export interface TokenGovernanceDAO extends DAODetails {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: string;
+  tokenSupply: BigNumber;
   tokenAllocations: TokenAllocation[];
   proposalThreshold: string;
   quorum: string;
