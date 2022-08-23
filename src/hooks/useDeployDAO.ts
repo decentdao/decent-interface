@@ -58,14 +58,14 @@ const useDeployDAO = () => {
   );
 
   const deployGnosisDAO = useCallback(
-    (daoData, successCallback) => {
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: (daoAddress: string) => void) => {
       if (metaFactoryContract === undefined || account === null) {
         return;
       }
 
       const createDAOData = createGnosisDAODataCreator({
         creator: account,
-        ...daoData,
+        ...(daoData as GnosisDAO),
       });
 
       if (createDAOData === undefined) {
@@ -93,7 +93,7 @@ const useDeployDAO = () => {
   );
 
   const deployDao = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback) => {
+    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
       switch (daoData.governance) {
         case GovernanceTypes.TOKEN_VOTING_GOVERNANCE:
           return deployTokenVotingDAO(daoData, successCallback);
