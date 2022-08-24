@@ -55,15 +55,13 @@ export function useNextDisabled(state: CreatorState) {
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
             .lte(govToken.tokenSupply);
         const isGovModuleComplete =
-          Number(govModule.proposalThreshold) >= 0 &&
-          Number(govModule.quorum) >= 0 &&
-          Number(govModule.quorum) <= 100 &&
+          govModule.proposalThreshold.gte(0) &&
+          govModule.quorum.gte(0) &&
+          govModule.quorum.lte(100) &&
           Number(govModule.executionDelay) >= 0 &&
           Number(govModule.lateQuorumExecution) >= 0 &&
           Number(govModule.voteStartDelay) >= 0 &&
           Number(govModule.votingPeriod) > 0 &&
-          govModule.proposalThreshold.trim() !== '' &&
-          govModule.quorum.trim() !== '' &&
           govModule.executionDelay.trim() !== '' &&
           govModule.lateQuorumExecution.trim() !== '' &&
           govModule.voteStartDelay.trim() !== '' &&

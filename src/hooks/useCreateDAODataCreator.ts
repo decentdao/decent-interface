@@ -277,11 +277,7 @@ const useCreateDAODataCreator = () => {
         ),
         abiCoder.encode(
           ['uint256[]'],
-          [
-            tokenAllocationData.map(tokenAllocation =>
-              ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
-            ),
-          ]
+          [tokenAllocationData.map(tokenAllocation => tokenAllocation.amount)]
         ),
         abiCoder.encode(['bytes32'], [votingTokenNonce]),
       ];
@@ -295,11 +291,8 @@ const useCreateDAODataCreator = () => {
         abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // Vote extension
         abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // Vote delay
         abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // Vote period
-        abiCoder.encode(
-          ['uint256'],
-          [BigNumber.from(ethers.utils.parseUnits(proposalThreshold, 18))]
-        ), // Threshold
-        abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
+        abiCoder.encode(['uint256'], [proposalThreshold]), // Threshold
+        abiCoder.encode(['uint256'], [quorum]), // Quorum
         abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution delay
         abiCoder.encode(['bytes32'], [governorAndTimelockNonce]), // Create2 salt
       ];

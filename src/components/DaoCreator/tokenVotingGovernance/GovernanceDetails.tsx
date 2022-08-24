@@ -1,4 +1,5 @@
 import { ChangeEvent } from 'react';
+import { BigNumber } from 'ethers';
 import ContentBanner from '../../ui/ContentBanner';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
@@ -23,8 +24,8 @@ function GovernanceDetails() {
   };
 
   const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newThreshold = event.target.value;
-    if (Number(newThreshold) <= Number(govToken.tokenSupply)) {
+    const newThreshold = BigNumber.from(event.target.value);
+    if (newThreshold.lte(govToken.tokenSupply)) {
       fieldUpdate(newThreshold, 'proposalThreshold');
     } else {
       fieldUpdate(govToken.tokenSupply, 'proposalThreshold');
@@ -40,11 +41,11 @@ function GovernanceDetails() {
   };
 
   const onQuorumChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newQuorumNum = event.target.value;
-    if (Number(newQuorumNum) <= 100) {
+    const newQuorumNum = BigNumber.from(event.target.value);
+    if (newQuorumNum.lte(100)) {
       fieldUpdate(newQuorumNum, 'quorum');
     } else {
-      fieldUpdate('100', 'quorum');
+      fieldUpdate(BigNumber.from(100), 'quorum');
     }
   };
 
@@ -57,7 +58,7 @@ function GovernanceDetails() {
         <InputBox>
           <Input
             type="number"
-            value={govModule.proposalThreshold}
+            value={govModule.proposalThreshold.toString()}
             unit="Tokens"
             onChange={onThresholdChange}
             label="Proposal Creation (# of Tokens Required)"
@@ -100,7 +101,7 @@ function GovernanceDetails() {
         <InputBox>
           <Input
             type="number"
-            value={govModule.quorum}
+            value={govModule.quorum.toString()}
             onChange={onQuorumChange}
             label="Quorum"
             exampleLabel="Recommend"

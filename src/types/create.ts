@@ -10,8 +10,8 @@ export type CreateDAOData = (
     tokenSymbol: string;
     tokenSupply: BigNumber;
     tokenAllocations: TokenAllocation[];
-    proposalThreshold: string;
-    quorum: string;
+    proposalThreshold: BigNumber;
+    quorum: BigNumber;
     executionDelay: string;
     lateQuorumExecution: string;
     voteStartDelay: string;
