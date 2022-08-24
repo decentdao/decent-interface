@@ -22,7 +22,7 @@ function TokenDetails() {
     });
   };
 
-  const onSupplyChange = (value: any) => {
+  const onSupplyChange = (value: string) => {
     fieldUpdate(BigNumber.from(value || 0), 'tokenSupply');
   };
 

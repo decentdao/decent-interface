@@ -58,14 +58,10 @@ export function useNextDisabled(state: CreatorState) {
           govModule.proposalThreshold.gte(0) &&
           govModule.quorum.gte(0) &&
           govModule.quorum.lte(100) &&
-          Number(govModule.executionDelay) >= 0 &&
-          Number(govModule.lateQuorumExecution) >= 0 &&
-          Number(govModule.voteStartDelay) >= 0 &&
-          Number(govModule.votingPeriod) > 0 &&
-          govModule.executionDelay.trim() !== '' &&
-          govModule.lateQuorumExecution.trim() !== '' &&
-          govModule.voteStartDelay.trim() !== '' &&
-          govModule.votingPeriod.trim() !== '';
+          govModule.executionDelay.gte(0) &&
+          govModule.lateQuorumExecution.gte(0) &&
+          govModule.voteStartDelay.gte(0) &&
+          govModule.votingPeriod.gt(0);
         setIsDisabled(!isEssentialsComplete && !isGovModuleComplete && !isGovTokenComplete);
         break;
       }

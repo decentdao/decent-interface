@@ -33,9 +33,9 @@ function GovernanceDetails() {
   };
 
   const onVotingPeriodChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newVotingPeriod = event.target.value;
+    const newVotingPeriod = BigNumber.from(event.target.value || 0);
 
-    if (Number(newVotingPeriod) > 0 || newVotingPeriod == '') {
+    if (newVotingPeriod.gt(0)) {
       fieldUpdate(newVotingPeriod, 'votingPeriod');
     }
   };
@@ -72,8 +72,8 @@ function GovernanceDetails() {
         <InputBox>
           <Input
             type="number"
-            value={govModule.voteStartDelay}
-            onChange={e => fieldUpdate(e.target.value, 'voteStartDelay')}
+            value={govModule.voteStartDelay.toString()}
+            onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'voteStartDelay')}
             label="Vote Start Delay"
             exampleLabel="Recommend"
             exampleText="24 Hours / ~6545 Blocks"
@@ -86,7 +86,7 @@ function GovernanceDetails() {
         <InputBox>
           <Input
             type="number"
-            value={govModule.votingPeriod}
+            value={govModule.votingPeriod.toString()}
             onChange={onVotingPeriodChange}
             label="Voting Period"
             exampleLabel="Recommend"
@@ -115,8 +115,8 @@ function GovernanceDetails() {
         <InputBox>
           <Input
             type="number"
-            value={govModule.lateQuorumExecution}
-            onChange={e => fieldUpdate(e.target.value, 'lateQuorumExecution')}
+            value={govModule.lateQuorumExecution.toString()}
+            onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'lateQuorumExecution')}
             label="Late Quorum Delay"
             exampleLabel="Recommend"
             exampleText="0 Blocks"
@@ -130,8 +130,8 @@ function GovernanceDetails() {
         <InputBox>
           <Input
             type="number"
-            value={govModule.executionDelay}
-            onChange={e => fieldUpdate(e.target.value, 'executionDelay')}
+            value={govModule.executionDelay.toString()}
+            onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'executionDelay')}
             label="Proposal Execution Delay"
             exampleLabel="Recommend"
             exampleText="24 Hours / ~6545 Blocks"

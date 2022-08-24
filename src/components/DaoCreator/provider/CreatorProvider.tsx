@@ -34,10 +34,10 @@ export const initialState: CreatorState = {
   govModule: {
     proposalThreshold: BigNumber.from(0),
     quorum: BigNumber.from(4),
-    executionDelay: '6545',
-    lateQuorumExecution: '0',
-    voteStartDelay: '6545',
-    votingPeriod: '45818',
+    executionDelay: BigNumber.from(6545),
+    lateQuorumExecution: BigNumber.from(0),
+    voteStartDelay: BigNumber.from(6545),
+    votingPeriod: BigNumber.from(45818),
   },
   funding: {
     tokensToFund: [],

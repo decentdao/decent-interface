@@ -12,10 +12,10 @@ export type CreateDAOData = (
     tokenAllocations: TokenAllocation[];
     proposalThreshold: BigNumber;
     quorum: BigNumber;
-    executionDelay: string;
-    lateQuorumExecution: string;
-    voteStartDelay: string;
-    votingPeriod: string;
+    executionDelay: BigNumber;
+    lateQuorumExecution: BigNumber;
+    voteStartDelay: BigNumber;
+    votingPeriod: BigNumber;
     parentAllocationAmount?: BigNumber;
   },
   parentToken?: string

@@ -145,7 +145,6 @@ const useCreateDAODataCreator = () => {
       // If the total token supply is greater than the sum of allocations,
       // Then mint the token difference into the Metafactory, to be deposited
       // into the treasury
-      const tokenSupplyBigNumber = BigNumber.from(tokenSupply);
       const tokenAllocationSum: BigNumber = tokenAllocationData.reduce(
         (accumulator, tokenAllocation) => {
           return tokenAllocation.amount.add(accumulator);
@@ -153,10 +152,10 @@ const useCreateDAODataCreator = () => {
         BigNumber.from(0)
       );
 
-      if (tokenSupplyBigNumber.gt(tokenAllocationSum)) {
+      if (tokenSupply.gt(tokenAllocationSum)) {
         const daoTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: tokenSupplyBigNumber.sub(tokenAllocationSum),
+          amount: tokenSupply.sub(tokenAllocationSum),
         };
         tokenAllocationData.push(daoTokenAllocation);
       }
@@ -176,9 +175,7 @@ const useCreateDAODataCreator = () => {
               tokenName,
               tokenSymbol,
               tokenAllocations.map(tokenAllocation => tokenAllocation.address),
-              tokenAllocations.map(tokenAllocation =>
-                ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
-              ),
+              tokenAllocations.map(tokenAllocation => tokenAllocation.amount),
             ]
           ),
         ]
@@ -288,12 +285,12 @@ const useCreateDAODataCreator = () => {
         abiCoder.encode(['address'], [predictedVotingTokenAddress]), // Address of token to be deployed
         abiCoder.encode(['address'], [addresses.governorModule.address]), // Address of Governance module implementation contract
         abiCoder.encode(['address'], [addresses.timelock.address]), // Address of Timelock module implementation contract
-        abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // Vote extension
-        abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // Vote delay
-        abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // Vote period
+        abiCoder.encode(['uint64'], [lateQuorumExecution]), // Vote extension
+        abiCoder.encode(['uint256'], [voteStartDelay]), // Vote delay
+        abiCoder.encode(['uint256'], [votingPeriod]), // Vote period
         abiCoder.encode(['uint256'], [proposalThreshold]), // Threshold
         abiCoder.encode(['uint256'], [quorum]), // Quorum
-        abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution delay
+        abiCoder.encode(['uint256'], [executionDelay]), // Execution delay
         abiCoder.encode(['bytes32'], [governorAndTimelockNonce]), // Create2 salt
       ];
 
@@ -398,12 +395,12 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
-      if (tokenSupplyBigNumber.gt(tokenAllocationSum)) {
+      if (tokenSupply.gt(tokenAllocationSum)) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedTreasuryAddress,
-            ethers.utils.parseUnits(tokenSupplyBigNumber.sub(tokenAllocationSum).toString(), 18),
+            tokenSupply.sub(tokenAllocationSum),
           ]);
 
         // DAO calls Treasury to deposit tokens into it
@@ -411,7 +408,7 @@ const useCreateDAODataCreator = () => {
           TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
             [predictedVotingTokenAddress],
             [addresses.metaFactory.address],
-            [ethers.utils.parseUnits(tokenSupplyBigNumber.sub(tokenAllocationSum).toString(), 18)],
+            [tokenSupply.sub(tokenAllocationSum)],
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedTreasuryAddress);
@@ -428,7 +425,7 @@ const useCreateDAODataCreator = () => {
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedClaimAddress,
-            ethers.utils.parseUnits(parentAllocationAmount.toString(), 18),
+            parentAllocationAmount,
           ]);
 
         // Metafactory inits claimModule and sends tokens
@@ -438,7 +435,7 @@ const useCreateDAODataCreator = () => {
             predictedAccessControlAddress,
             parentToken,
             predictedVotingTokenAddress,
-            ethers.utils.parseUnits(parentAllocationAmount.toString(), 18),
+            parentAllocationAmount,
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedClaimAddress);
