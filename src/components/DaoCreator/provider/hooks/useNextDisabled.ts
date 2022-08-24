@@ -28,14 +28,11 @@ export function useNextDisabled(state: CreatorState) {
             setIsDisabled(true);
             break;
           }
-          const isAllocationsValid =
-            state.govToken.tokenAllocations
-              .map(tokenAllocation => Number(tokenAllocation.amount))
-              .reduce((prev, curr) => prev + curr, 0) +
-              (!state.govToken.parentAllocationAmount
-                ? 0
-                : Number(state.govToken.parentAllocationAmount)) <=
-            Number(state.govToken.tokenSupply);
+          const isAllocationsValid = state.govToken.tokenAllocations
+            .map(tokenAllocation => tokenAllocation.amount)
+            .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
+            .add(state.govToken.parentAllocationAmount || 0)
+            .lte(state.govToken.tokenSupply);
 
           setIsDisabled(!isAllocationsValid);
           break;

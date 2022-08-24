@@ -16,7 +16,7 @@ export type CreateDAOData = (
     lateQuorumExecution: string;
     voteStartDelay: string;
     votingPeriod: string;
-    parentAllocationAmount?: string;
+    parentAllocationAmount?: BigNumber;
   },
   parentToken?: string
 ) =>

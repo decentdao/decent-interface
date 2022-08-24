@@ -45,7 +45,7 @@ const useCreateDAODataCreator = () => {
         lateQuorumExecution,
         voteStartDelay,
         votingPeriod,
-        parentAllocationAmount,
+        parentAllocationAmount = BigNumber.from(0),
       },
       parentToken
     ) => {
@@ -74,7 +74,6 @@ const useCreateDAODataCreator = () => {
       const governorAndTimelockNonce = getRandomBytes();
       const claimSubsidiaryNonce = getRandomBytes();
 
-      const pAllocatedAmount = BigNumber.from(parentAllocationAmount || 0);
       const tokenAllocationData = [...tokenAllocations];
 
       // DAO AND ACCESS CONTROL
@@ -135,10 +134,10 @@ const useCreateDAODataCreator = () => {
       // If parentAllocationAmount is greater than zero,
       // Then mint the allocation to the Metafactory, to be be transferred
       // to the claim Subsidiary
-      if (pAllocatedAmount.gt(0)) {
+      if (parentAllocationAmount.gt(0)) {
         const parentTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: pAllocatedAmount,
+          amount: parentAllocationAmount,
         };
         tokenAllocationData.push(parentTokenAllocation);
       }
@@ -226,7 +225,7 @@ const useCreateDAODataCreator = () => {
       );
 
       let predictedClaimAddress;
-      if (pAllocatedAmount.gt(0)) {
+      if (parentAllocationAmount.gt(0)) {
         const claimSalt = ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
           [creator, addresses.metaFactory.address, chainId, claimSubsidiaryNonce]
@@ -306,7 +305,7 @@ const useCreateDAODataCreator = () => {
       ];
 
       let claimFactoryCalldata;
-      if (pAllocatedAmount.gt(0)) {
+      if (parentAllocationAmount.gt(0)) {
         claimFactoryCalldata = [
           abiCoder.encode(['address'], [addresses.claimModule.address]),
           abiCoder.encode(['bytes32'], [claimSubsidiaryNonce]),
@@ -356,7 +355,7 @@ const useCreateDAODataCreator = () => {
         ['GOVERNOR_ROLE'],
       ];
 
-      if (pAllocatedAmount.gt(0) && predictedClaimAddress) {
+      if (parentAllocationAmount.gt(0) && predictedClaimAddress) {
         targetsData.push(predictedClaimAddress);
         sigData.push('upgradeTo(address)');
         roleData.push(['UPGRADE_ROLE']);
@@ -392,7 +391,7 @@ const useCreateDAODataCreator = () => {
         governorFactoryCalldata,
       ];
 
-      if (pAllocatedAmount.gt(0) && claimFactoryCalldata) {
+      if (parentAllocationAmount.gt(0) && claimFactoryCalldata) {
         moduleFactories.push(addresses.claimFactory.address);
         moduleFactoriesBytes.push(claimFactoryCalldata);
       }
@@ -428,7 +427,7 @@ const useCreateDAODataCreator = () => {
       }
 
       if (
-        pAllocatedAmount.gt(0) &&
+        parentAllocationAmount.gt(0) &&
         predictedClaimAddress !== undefined &&
         parentToken !== undefined
       ) {
@@ -436,7 +435,7 @@ const useCreateDAODataCreator = () => {
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedClaimAddress,
-            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
+            ethers.utils.parseUnits(parentAllocationAmount.toString(), 18),
           ]);
 
         // Metafactory inits claimModule and sends tokens
@@ -446,7 +445,7 @@ const useCreateDAODataCreator = () => {
             predictedAccessControlAddress,
             parentToken,
             predictedVotingTokenAddress,
-            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
+            ethers.utils.parseUnits(parentAllocationAmount.toString(), 18),
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedClaimAddress);

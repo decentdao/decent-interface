@@ -58,7 +58,7 @@ function TokenDetails() {
 
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
-        supply={govToken.tokenSupply.toString()}
+        supply={govToken.tokenSupply}
         parentAllocationAmount={govToken.parentAllocationAmount}
         fieldUpdate={fieldUpdate}
       />
