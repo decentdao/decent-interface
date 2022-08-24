@@ -174,8 +174,8 @@ const useCreateDAODataCreator = () => {
             [
               tokenName,
               tokenSymbol,
-              tokenAllocations.map(tokenAllocation => tokenAllocation.address),
-              tokenAllocations.map(tokenAllocation => tokenAllocation.amount),
+              tokenAllocationData.map(tokenAllocation => tokenAllocation.address),
+              tokenAllocationData.map(tokenAllocation => tokenAllocation.amount),
             ]
           ),
         ]
