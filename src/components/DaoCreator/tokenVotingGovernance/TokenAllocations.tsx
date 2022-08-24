@@ -59,7 +59,7 @@ function TokenAllocations({
     );
     if (supply.gt(0)) {
       // no DAO token allocation with no parent allocations
-      if (totalAllocated.gt(0) && parentAllocationAmount?.lte(0)) {
+      if (totalAllocated.gt(0) && (!parentAllocationAmount || parentAllocationAmount?.lte(0))) {
         setAmountError(supply.lt(totalAllocated));
         // parent tokens allocated but no DAO token allocation
       } else if (totalAllocated.lte(0) && parentAllocationAmount?.gt(0)) {
@@ -72,7 +72,8 @@ function TokenAllocations({
         setAmountError(false);
       }
     }
-  }, [tokenAllocations, supply, parentAllocationAmount, fieldUpdate]);
+  }, [tokenAllocations, supply, parentAllocationAmount]);
+
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
