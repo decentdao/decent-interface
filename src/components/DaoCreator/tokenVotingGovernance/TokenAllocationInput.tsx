@@ -39,7 +39,7 @@ function TokenAllocationInput({
   const updateAmount = (amount: string) => {
     updateTokenAllocation(index, {
       address: tokenAllocation.address,
-      amount: BigNumber.from(amount),
+      amount: BigNumber.from(amount || 0),
       addressError: tokenAllocation.addressError,
     });
   };

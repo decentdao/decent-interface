@@ -24,7 +24,7 @@ function GovernanceDetails() {
   };
 
   const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newThreshold = BigNumber.from(event.target.value);
+    const newThreshold = BigNumber.from(event.target.value || 0);
     if (newThreshold.lte(govToken.tokenSupply)) {
       fieldUpdate(newThreshold, 'proposalThreshold');
     } else {
@@ -41,7 +41,7 @@ function GovernanceDetails() {
   };
 
   const onQuorumChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newQuorumNum = BigNumber.from(event.target.value);
+    const newQuorumNum = BigNumber.from(event.target.value || 0);
     if (newQuorumNum.lte(100)) {
       fieldUpdate(newQuorumNum, 'quorum');
     } else {
