@@ -173,8 +173,8 @@ const useCreateDAODataCreator = () => {
             [
               tokenName,
               tokenSymbol,
-              tokenAllocations.map(tokenAllocation => tokenAllocation.address),
-              tokenAllocations.map(tokenAllocation =>
+              tokenAllocationData.map(tokenAllocation => tokenAllocation.address),
+              tokenAllocationData.map(tokenAllocation =>
                 ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
               ),
             ]
