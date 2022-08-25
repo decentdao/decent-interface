@@ -1,4 +1,5 @@
 import { ReactNode, useMemo, useReducer } from 'react';
+import { BigNumber } from 'ethers';
 import ConnectWalletToast from '../../ConnectWalletToast';
 import H1 from '../../ui/H1';
 import { StepButtons } from '../StepButtons';
@@ -25,18 +26,18 @@ export const initialState: CreatorState = {
   },
   govToken: {
     tokenName: '',
-    tokenSupply: '',
+    tokenSupply: BigNumber.from(0),
     tokenSymbol: '',
-    tokenAllocations: [{ address: '', amount: 0 }],
+    tokenAllocations: [{ address: '', amount: BigNumber.from(0) }],
     parentAllocationAmount: undefined,
   },
   govModule: {
-    proposalThreshold: '0',
-    quorum: '4',
-    executionDelay: '6545',
-    lateQuorumExecution: '0',
-    voteStartDelay: '6545',
-    votingPeriod: '45818',
+    proposalThreshold: BigNumber.from(0),
+    quorum: BigNumber.from(4),
+    executionDelay: BigNumber.from(6545),
+    lateQuorumExecution: BigNumber.from(0),
+    voteStartDelay: BigNumber.from(6545),
+    votingPeriod: BigNumber.from(45818),
   },
   funding: {
     tokensToFund: [],
@@ -85,7 +86,10 @@ export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICre
   const init = (_initialState: CreatorState) => {
     return {
       ..._initialState,
-      govToken: { ..._initialState.govToken, parentAllocationAmount: isSubDAO ? '' : undefined },
+      govToken: {
+        ..._initialState.govToken,
+        parentAllocationAmount: isSubDAO ? BigNumber.from(0) : undefined,
+      },
     };
   };
   const [state, dispatch] = useReducer(reducer, initialState, init);

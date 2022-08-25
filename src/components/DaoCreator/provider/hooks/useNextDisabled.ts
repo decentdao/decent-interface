@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BigNumber } from 'ethers';
 import { CreatorState, CreatorSteps } from './../types';
 
 /**
@@ -27,14 +28,11 @@ export function useNextDisabled(state: CreatorState) {
             setIsDisabled(true);
             break;
           }
-          const isAllocationsValid =
-            state.govToken.tokenAllocations
-              .map(tokenAllocation => Number(tokenAllocation.amount))
-              .reduce((prev, curr) => prev + curr, 0) +
-              (!state.govToken.parentAllocationAmount
-                ? 0
-                : Number(state.govToken.parentAllocationAmount)) <=
-            Number(state.govToken.tokenSupply);
+          const isAllocationsValid = state.govToken.tokenAllocations
+            .map(tokenAllocation => tokenAllocation.amount)
+            .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
+            .add(state.govToken.parentAllocationAmount || 0)
+            .lte(state.govToken.tokenSupply);
 
           setIsDisabled(!isAllocationsValid);
           break;
@@ -51,24 +49,19 @@ export function useNextDisabled(state: CreatorState) {
         const isGovTokenComplete =
           !!govToken.tokenName.trim() &&
           !!govToken.tokenSymbol.trim() &&
-          Number(govToken.tokenSupply) > 0 &&
+          govToken.tokenSupply.gt(0) &&
           govToken.tokenAllocations
-            .map(tokenAllocation => Number(tokenAllocation.amount))
-            .reduce((prev, curr) => prev + curr, 0) <= Number(govToken.tokenSupply);
+            .map(tokenAllocation => tokenAllocation.amount)
+            .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
+            .lte(govToken.tokenSupply);
         const isGovModuleComplete =
-          Number(govModule.proposalThreshold) >= 0 &&
-          Number(govModule.quorum) >= 0 &&
-          Number(govModule.quorum) <= 100 &&
-          Number(govModule.executionDelay) >= 0 &&
-          Number(govModule.lateQuorumExecution) >= 0 &&
-          Number(govModule.voteStartDelay) >= 0 &&
-          Number(govModule.votingPeriod) > 0 &&
-          govModule.proposalThreshold.trim() !== '' &&
-          govModule.quorum.trim() !== '' &&
-          govModule.executionDelay.trim() !== '' &&
-          govModule.lateQuorumExecution.trim() !== '' &&
-          govModule.voteStartDelay.trim() !== '' &&
-          govModule.votingPeriod.trim() !== '';
+          govModule.proposalThreshold.gte(0) &&
+          govModule.quorum.gte(0) &&
+          govModule.quorum.lte(100) &&
+          govModule.executionDelay.gte(0) &&
+          govModule.lateQuorumExecution.gte(0) &&
+          govModule.voteStartDelay.gte(0) &&
+          govModule.votingPeriod.gt(0);
         setIsDisabled(!isEssentialsComplete && !isGovModuleComplete && !isGovTokenComplete);
         break;
       }

@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { NFTToFund, TokenToFund } from '../../tokenVotingGovernance/SubsidiaryFunding/types/index';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
 
@@ -54,18 +55,18 @@ type DAOEssentials = {
 type DAOGovenorToken = {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: string;
+  tokenSupply: BigNumber;
   tokenAllocations: TokenAllocation[];
-  parentAllocationAmount?: string;
+  parentAllocationAmount?: BigNumber;
 };
 
 type DAOGovenorModuleConfig = {
-  proposalThreshold: string;
-  quorum: string;
-  executionDelay: string;
-  lateQuorumExecution: string;
-  voteStartDelay: string;
-  votingPeriod: string;
+  proposalThreshold: BigNumber;
+  quorum: BigNumber;
+  executionDelay: BigNumber;
+  lateQuorumExecution: BigNumber;
+  voteStartDelay: BigNumber;
+  votingPeriod: BigNumber;
 };
 
 type DAOFunding = {
@@ -93,17 +94,17 @@ export type ICreatorContext = {
 export interface TokenGovernanceDAO extends DAODetails {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: string;
+  tokenSupply: BigNumber;
   tokenAllocations: TokenAllocation[];
-  proposalThreshold: string;
-  quorum: string;
-  executionDelay: string;
-  lateQuorumExecution: string;
-  voteStartDelay: string;
-  votingPeriod: string;
+  proposalThreshold: BigNumber;
+  quorum: BigNumber;
+  executionDelay: BigNumber;
+  lateQuorumExecution: BigNumber;
+  voteStartDelay: BigNumber;
+  votingPeriod: BigNumber;
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
-  parentAllocationAmount?: string;
+  parentAllocationAmount?: BigNumber;
 }
 
 export interface GnosisConfig {

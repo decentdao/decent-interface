@@ -45,7 +45,7 @@ const useCreateDAODataCreator = () => {
         lateQuorumExecution,
         voteStartDelay,
         votingPeriod,
-        parentAllocationAmount,
+        parentAllocationAmount = BigNumber.from(0),
       },
       parentToken
     ) => {
@@ -74,7 +74,6 @@ const useCreateDAODataCreator = () => {
       const governorAndTimelockNonce = getRandomBytes();
       const claimSubsidiaryNonce = getRandomBytes();
 
-      const pAllocatedAmount = Number(parentAllocationAmount);
       const tokenAllocationData = [...tokenAllocations];
 
       // DAO AND ACCESS CONTROL
@@ -135,10 +134,10 @@ const useCreateDAODataCreator = () => {
       // If parentAllocationAmount is greater than zero,
       // Then mint the allocation to the Metafactory, to be be transferred
       // to the claim Subsidiary
-      if (pAllocatedAmount > 0) {
+      if (parentAllocationAmount.gt(0)) {
         const parentTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: Number(parentAllocationAmount),
+          amount: parentAllocationAmount,
         };
         tokenAllocationData.push(parentTokenAllocation);
       }
@@ -146,15 +145,17 @@ const useCreateDAODataCreator = () => {
       // If the total token supply is greater than the sum of allocations,
       // Then mint the token difference into the Metafactory, to be deposited
       // into the treasury
-      const tokenSupplyNumber = Number(tokenSupply);
-      const tokenAllocationSum = tokenAllocationData.reduce((accumulator, tokenAllocation) => {
-        return accumulator + tokenAllocation.amount;
-      }, 0);
+      const tokenAllocationSum: BigNumber = tokenAllocationData.reduce(
+        (accumulator, tokenAllocation) => {
+          return tokenAllocation.amount.add(accumulator);
+        },
+        BigNumber.from(0)
+      );
 
-      if (tokenSupplyNumber > tokenAllocationSum) {
+      if (tokenSupply.gt(tokenAllocationSum)) {
         const daoTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: tokenSupplyNumber - tokenAllocationSum,
+          amount: tokenSupply.sub(tokenAllocationSum),
         };
         tokenAllocationData.push(daoTokenAllocation);
       }
@@ -173,10 +174,8 @@ const useCreateDAODataCreator = () => {
             [
               tokenName,
               tokenSymbol,
-              tokenAllocations.map(tokenAllocation => tokenAllocation.address),
-              tokenAllocations.map(tokenAllocation =>
-                ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
-              ),
+              tokenAllocationData.map(tokenAllocation => tokenAllocation.address),
+              tokenAllocationData.map(tokenAllocation => tokenAllocation.amount),
             ]
           ),
         ]
@@ -223,7 +222,7 @@ const useCreateDAODataCreator = () => {
       );
 
       let predictedClaimAddress;
-      if (pAllocatedAmount > 0) {
+      if (parentAllocationAmount.gt(0)) {
         const claimSalt = ethers.utils.solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
           [creator, addresses.metaFactory.address, chainId, claimSubsidiaryNonce]
@@ -275,11 +274,7 @@ const useCreateDAODataCreator = () => {
         ),
         abiCoder.encode(
           ['uint256[]'],
-          [
-            tokenAllocationData.map(tokenAllocation =>
-              ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
-            ),
-          ]
+          [tokenAllocationData.map(tokenAllocation => tokenAllocation.amount)]
         ),
         abiCoder.encode(['bytes32'], [votingTokenNonce]),
       ];
@@ -290,20 +285,17 @@ const useCreateDAODataCreator = () => {
         abiCoder.encode(['address'], [predictedVotingTokenAddress]), // Address of token to be deployed
         abiCoder.encode(['address'], [addresses.governorModule.address]), // Address of Governance module implementation contract
         abiCoder.encode(['address'], [addresses.timelock.address]), // Address of Timelock module implementation contract
-        abiCoder.encode(['uint64'], [BigNumber.from(lateQuorumExecution)]), // Vote extension
-        abiCoder.encode(['uint256'], [BigNumber.from(voteStartDelay)]), // Vote delay
-        abiCoder.encode(['uint256'], [BigNumber.from(votingPeriod)]), // Vote period
-        abiCoder.encode(
-          ['uint256'],
-          [BigNumber.from(ethers.utils.parseUnits(proposalThreshold, 18))]
-        ), // Threshold
-        abiCoder.encode(['uint256'], [BigNumber.from(quorum)]), // Quorum
-        abiCoder.encode(['uint256'], [BigNumber.from(executionDelay)]), // Execution delay
+        abiCoder.encode(['uint64'], [lateQuorumExecution]), // Vote extension
+        abiCoder.encode(['uint256'], [voteStartDelay]), // Vote delay
+        abiCoder.encode(['uint256'], [votingPeriod]), // Vote period
+        abiCoder.encode(['uint256'], [proposalThreshold]), // Threshold
+        abiCoder.encode(['uint256'], [quorum]), // Quorum
+        abiCoder.encode(['uint256'], [executionDelay]), // Execution delay
         abiCoder.encode(['bytes32'], [governorAndTimelockNonce]), // Create2 salt
       ];
 
       let claimFactoryCalldata;
-      if (pAllocatedAmount > 0) {
+      if (parentAllocationAmount.gt(0)) {
         claimFactoryCalldata = [
           abiCoder.encode(['address'], [addresses.claimModule.address]),
           abiCoder.encode(['bytes32'], [claimSubsidiaryNonce]),
@@ -353,7 +345,7 @@ const useCreateDAODataCreator = () => {
         ['GOVERNOR_ROLE'],
       ];
 
-      if (pAllocatedAmount > 0 && predictedClaimAddress) {
+      if (parentAllocationAmount.gt(0) && predictedClaimAddress) {
         targetsData.push(predictedClaimAddress);
         sigData.push('upgradeTo(address)');
         roleData.push(['UPGRADE_ROLE']);
@@ -389,7 +381,7 @@ const useCreateDAODataCreator = () => {
         governorFactoryCalldata,
       ];
 
-      if (pAllocatedAmount > 0 && claimFactoryCalldata) {
+      if (parentAllocationAmount.gt(0) && claimFactoryCalldata) {
         moduleFactories.push(addresses.claimFactory.address);
         moduleFactoriesBytes.push(claimFactoryCalldata);
       }
@@ -403,12 +395,12 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
-      if (tokenSupplyNumber > tokenAllocationSum) {
+      if (tokenSupply.gt(tokenAllocationSum)) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedTreasuryAddress,
-            ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18),
+            tokenSupply.sub(tokenAllocationSum),
           ]);
 
         // DAO calls Treasury to deposit tokens into it
@@ -416,7 +408,7 @@ const useCreateDAODataCreator = () => {
           TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
             [predictedVotingTokenAddress],
             [addresses.metaFactory.address],
-            [ethers.utils.parseUnits((tokenSupplyNumber - tokenAllocationSum).toString(), 18)],
+            [tokenSupply.sub(tokenAllocationSum)],
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedTreasuryAddress);
@@ -425,7 +417,7 @@ const useCreateDAODataCreator = () => {
       }
 
       if (
-        pAllocatedAmount > 0 &&
+        parentAllocationAmount.gt(0) &&
         predictedClaimAddress !== undefined &&
         parentToken !== undefined
       ) {
@@ -433,7 +425,7 @@ const useCreateDAODataCreator = () => {
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedClaimAddress,
-            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
+            parentAllocationAmount,
           ]);
 
         // Metafactory inits claimModule and sends tokens
@@ -443,7 +435,7 @@ const useCreateDAODataCreator = () => {
             predictedAccessControlAddress,
             parentToken,
             predictedVotingTokenAddress,
-            ethers.utils.parseUnits(pAllocatedAmount.toString(), 18),
+            parentAllocationAmount,
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedClaimAddress);
