@@ -7,10 +7,8 @@ import H1 from '../../components/ui/H1';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { TransactionData } from '../../types/transaction';
 import { ProposalExecuteData } from '../../types/proposal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
-import { useUserProposalValidation } from '../../providers/govenor/hooks/useUserProposalValidation';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -19,20 +17,26 @@ const defaultTransaction = {
   parameters: '',
 };
 
-function ProposalCreate() {
+interface IProposalCreate {
+  submitProposal: (proposal: {
+    proposalData: ProposalExecuteData | undefined;
+    successCallback: () => void;
+  }) => void;
+  pendingCreateTx: boolean;
+  isUserAuthorized: boolean;
+}
+
+function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: IProposalCreate) {
   const {
     dao: { daoAddress },
-    modules: { tokenVotingGovernanceModule },
   } = useFractal();
 
-  const {
-    createProposal: { submitProposal, pendingCreateTx },
-  } = useGovenorModule();
   const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
+  const params = useParams();
   /**
    * adds new transaction form
    */
@@ -58,7 +62,7 @@ function ProposalCreate() {
     setTransactions([]);
     setProposalData(undefined);
 
-    navigate(`/daos/${daoAddress}/modules/${tokenVotingGovernanceModule!.moduleAddress}`);
+    navigate(`/daos/${daoAddress}/modules/${params.moduleAddress}`);
   };
 
   useEffect(() => {
@@ -92,8 +96,6 @@ function ProposalCreate() {
     }
   }, [transactions, proposalDescription]);
 
-  const canUserCreateProposal = useUserProposalValidation();
-
   const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist
     if (!proposalData) {
@@ -117,12 +119,12 @@ function ProposalCreate() {
   }, [proposalData, transactions]);
 
   const isNextDisabled = useMemo(
-    () => !canUserCreateProposal || !proposalDescription.trim().length,
-    [canUserCreateProposal, proposalDescription]
+    () => !isUserAuthorized || !proposalDescription.trim().length,
+    [isUserAuthorized, proposalDescription]
   );
   const isCreateDisabled = useMemo(
-    () => !canUserCreateProposal || !isValidProposal || pendingCreateTx,
-    [pendingCreateTx, isValidProposal, canUserCreateProposal]
+    () => !isUserAuthorized || !isValidProposal || pendingCreateTx,
+    [pendingCreateTx, isValidProposal, isUserAuthorized]
   );
 
   return (

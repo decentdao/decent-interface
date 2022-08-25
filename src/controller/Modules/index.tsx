@@ -4,12 +4,12 @@ import Delegate from '../../components/Dao/Delegate';
 import { Governance } from '../../pages/Governance';
 import Proposals from '../../pages/Proposals';
 import Treasury from '../../pages/Treasury';
-import { GnosisWrapper } from '../../pages/GnosisWrapper';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisWrapperProvider } from '../../providers/gnosis/GnosisWrapperProvider';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
 import { ModuleSelectAction, ModuleSelectActions, ModuleSelectState, ModuleTypes } from './types';
+import { GnosisRoutes } from '../../pages/GnosisWrapper/routes';
 
 const initialState = {
   moduleType: null,
@@ -114,16 +114,7 @@ export function Modules() {
     case ModuleTypes.GNOSIS_WRAPPER:
       return (
         <GnosisWrapperProvider moduleAddress={state.moduleAddress}>
-          <Routes>
-            <Route
-              index
-              element={<GnosisWrapper />}
-            />
-            <Route
-              path="proposals/new"
-              element={<div />}
-            />
-          </Routes>
+          <GnosisRoutes />
         </GnosisWrapperProvider>
       );
     default: {
