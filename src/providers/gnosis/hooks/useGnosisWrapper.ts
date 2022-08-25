@@ -4,6 +4,8 @@ import { GnosisWrapper } from '../../../assets/typechain-types/gnosis';
 export interface IGnosisWrapperContext {
   gnosisWrapperContract: GnosisWrapper | undefined;
   gnosisSafeAddress: string | undefined;
+  createProposal: () => void;
+  createPendingTx: boolean;
 }
 
 export const GnosisWrapperContext = createContext<IGnosisWrapperContext | null>(null);

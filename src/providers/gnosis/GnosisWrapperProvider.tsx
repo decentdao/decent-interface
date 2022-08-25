@@ -18,6 +18,8 @@ export function GnosisWrapperProvider({
     () => ({
       gnosisWrapperContract,
       gnosisSafeAddress,
+      createProposal: () => {},
+      createPendingTx: false,
     }),
     [gnosisWrapperContract, gnosisSafeAddress]
   );
