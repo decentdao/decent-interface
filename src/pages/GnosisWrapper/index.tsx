@@ -9,13 +9,15 @@ export function GnosisWrapper() {
   return (
     <div>
       <H1>Gnosis Safe</H1>
-      <GnosisSafeLink
-        address={gnosisSafeAddress}
-        label="Gnosis Safe"
-      />
-      <NavLink to="proposals/new">
-        <PrimaryButton label="Create Proposal" />
-      </NavLink>
+      <div className="flex">
+        <GnosisSafeLink
+          address={gnosisSafeAddress}
+          label="Gnosis Safe"
+        />
+        <NavLink to="proposals/new">
+          <PrimaryButton label="Create Proposal" />
+        </NavLink>
+      </div>
     </div>
   );
 }
