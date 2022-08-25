@@ -82,7 +82,9 @@ function TokenAllocations({
           <Input
             type="number"
             value={parentAllocationAmount.toString()}
-            onChange={e => fieldUpdate(e.target.value, 'parentAllocationAmount')}
+            onChange={e =>
+              fieldUpdate(BigNumber.from(e.target.value || 0), 'parentAllocationAmount')
+            }
             label="Parent Allocation Amount"
             helperText="Amount of tokens to allocate to parent DAO"
             disabled={false}
