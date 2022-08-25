@@ -3,6 +3,7 @@ import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 
 const GNOSIS_CHAINS: { [key: string]: string } = {
   '1': 'eth',
+  '4': 'rin',
   '5': 'gor',
 };
 
