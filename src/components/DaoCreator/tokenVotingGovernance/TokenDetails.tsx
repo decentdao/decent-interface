@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import Input from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
@@ -20,6 +21,11 @@ function TokenDetails() {
       },
     });
   };
+
+  const onSupplyChange = (value: string) => {
+    fieldUpdate(BigNumber.from(value || 0), 'tokenSupply');
+  };
+
   return (
     <ContentBox>
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
@@ -46,8 +52,8 @@ function TokenDetails() {
       <InputBox>
         <Input
           type="number"
-          value={govToken.tokenSupply}
-          onChange={e => fieldUpdate(e.target.value, 'tokenSupply')}
+          value={govToken.tokenSupply.toString()}
+          onChange={e => onSupplyChange(e.target.value)}
           label="Token Supply"
           helperText="Whole numbers only"
           disabled={false}
