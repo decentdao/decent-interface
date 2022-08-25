@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -86,7 +86,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
         ],
       };
 
-      if (daoData.tokensToFund.length > 0) {
+      if (!!daoData.tokensToFund.length) {
         daoData.tokensToFund.forEach(tokenToFund => {
           if (tokenToFund.asset.contractAddress !== ethers.constants.AddressZero) {
             // ERC20 transfer
@@ -118,7 +118,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
             // Deposit tokens from the parent DAO into the child treasury
             data.targets.push(newDAOData.predictedTreasuryAddress);
-            data.values.push(0);
+            data.values.push(BigNumber.from(0));
             data.calldatas.push(
               TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
                 [tokenToFund.asset.contractAddress],
@@ -151,7 +151,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
         });
       }
 
-      if (daoData.nftsToFund.length > 0) {
+      if (!!daoData.nftsToFund.length) {
         // Approve the new treasury to transfer tokens from the DAO
         daoData.nftsToFund.forEach(erc721Fund => {
           data.targets.push(erc721Fund.asset.contractAddress);
