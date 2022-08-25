@@ -29,7 +29,7 @@ interface LinkMenuItem extends MenuItem {
 
 const COMMUNITY: LinkMenuItem = {
   title: 'Community',
-  link: 'https://discord.gg/decent-dao',
+  link: 'https://discord.gg/Zh2emKspVF',
   Icon: Contact,
 };
 
