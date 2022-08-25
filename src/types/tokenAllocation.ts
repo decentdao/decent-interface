@@ -1,5 +1,7 @@
+import { BigNumber } from 'ethers';
+
 export type TokenAllocation = {
   address: string;
-  amount: number;
+  amount: BigNumber;
   addressError?: string;
 };
