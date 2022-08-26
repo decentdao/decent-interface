@@ -11,6 +11,7 @@ const initialState: Gnosis = {
   contractAddress: undefined,
   owners: [],
   isSigner: false,
+  nonce: undefined,
   threshold: 0,
   isLoading: true,
 };

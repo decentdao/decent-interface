@@ -5,6 +5,7 @@ export interface Gnosis extends GnosisInformation {
 }
 
 export interface GnosisInformation {
+  nonce?: number;
   threshold: number;
   owners: string[];
   isSigner: boolean;

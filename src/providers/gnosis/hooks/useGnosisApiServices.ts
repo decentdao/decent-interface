@@ -24,6 +24,7 @@ export function useGnosisApiServices(
       dispatch({
         type: GnosisActions.UPDATE_GNOSIS_SAFE_INFORMATION,
         payload: {
+          nonce: safeStatusResponse.data.nonce,
           owners: safeStatusResponse.data.owners,
           threshold: safeStatusResponse.data.threshold,
           isSigner: safeStatusResponse.data.owners.includes(account),
