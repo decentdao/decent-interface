@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { GnosisWrapperProvider } from '../../providers/gnosis/GnosisWrapperProvider';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
-import { GovernanceInjector } from './TokenGovernanceInjector';
+import { GovernanceInjector } from './injectors/TokenGovernanceInjector';
 import { ModuleTypes } from './types';
 
 /**
@@ -17,6 +18,7 @@ export function GovernanceController({ children }: { children: JSX.Element }) {
       treasuryModule,
       timelockModule,
       claimingContractModule,
+      gnosisWrapperModule,
     },
   } = useFractal();
 
@@ -44,6 +46,12 @@ export function GovernanceController({ children }: { children: JSX.Element }) {
             <GovernanceInjector>{children}</GovernanceInjector>
           </TreasuryModuleProvider>
         </GovernorModuleProvider>
+      );
+    case ModuleTypes.GNOSIS_WRAPPER:
+      return (
+        <GnosisWrapperProvider moduleAddress={gnosisWrapperModule!.moduleAddress}>
+          {children}
+        </GnosisWrapperProvider>
       );
     default: {
       return children;

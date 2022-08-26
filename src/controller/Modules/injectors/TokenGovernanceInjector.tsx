@@ -5,20 +5,20 @@ import {
   ERC20__factory,
   TreasuryModule__factory,
   ERC721__factory,
-} from '../../assets/typechain-types/module-treasury';
+} from '../../../assets/typechain-types/module-treasury';
 import {
   GnosisDAO,
   GovernanceTypes,
   TokenGovernanceDAO,
-} from '../../components/DaoCreator/provider/types';
-import { useBlockchainData } from '../../contexts/blockchainData';
-import useCreateDAODataCreator from '../../hooks/useCreateDAODataCreator';
-import useCreateGnosisDAODataCreator from '../../hooks/useCreateGnosisDAODataCreator';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
-import { useUserProposalValidation } from '../../providers/govenor/hooks/useUserProposalValidation';
-import { useTreasuryModule } from '../../providers/treasury/hooks/useTreasuryModule';
-import { ExecuteData } from '../../types/execute';
+} from '../../../components/DaoCreator/provider/types';
+import { useBlockchainData } from '../../../contexts/blockchainData';
+import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
+import useCreateGnosisDAODataCreator from '../../../hooks/useCreateGnosisDAODataCreator';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { useGovenorModule } from '../../../providers/govenor/hooks/useGovenorModule';
+import { useUserProposalValidation } from '../../../providers/govenor/hooks/useUserProposalValidation';
+import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
+import { ExecuteData } from '../../../types/execute';
 
 /**
  * Handles passing 'createProposal' to plugins for this module
