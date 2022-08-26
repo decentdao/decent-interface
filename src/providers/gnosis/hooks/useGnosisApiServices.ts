@@ -19,12 +19,11 @@ export function useGnosisApiServices(
     }
     try {
       const safeStatusResponse = await axios.get<GnosisSafeStatusResponse>(
-        buildGnosisApiUrl(chainId, `/safes/${safeAddress}/`, {})
+        buildGnosisApiUrl(chainId, `/safes/${safeAddress}/`)
       );
       dispatch({
         type: GnosisActions.UPDATE_GNOSIS_SAFE_INFORMATION,
         payload: {
-          name: ' ',
           owners: safeStatusResponse.data.owners,
           threshold: safeStatusResponse.data.threshold,
           isSigner: safeStatusResponse.data.owners.includes(account),

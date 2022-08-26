@@ -5,13 +5,15 @@ import { PrimaryButton } from '../../components/ui/forms/Button';
 import { NavLink } from 'react-router-dom';
 
 export function GnosisWrapper() {
-  const { gnosisSafeAddress } = useGnosisWrapper();
+  const {
+    state: { contractAddress },
+  } = useGnosisWrapper();
   return (
     <div>
       <H1>Gnosis Safe</H1>
       <div className="flex">
         <GnosisSafeLink
-          address={gnosisSafeAddress}
+          address={contractAddress}
           label="Gnosis Safe"
         />
         <NavLink to="proposals/new">
