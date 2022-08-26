@@ -72,7 +72,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
       const data: ExecuteData = {
         targets: [metaFactoryContract.address],
-        values: [0],
+        values: [BigNumber.from('0')],
         calldatas: [
           metaFactoryContract.interface.encodeFunctionData('createDAOAndExecute', [
             newDAOData.calldata.daoFactory,
@@ -92,7 +92,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
             // ERC20 transfer
             // Approve the new treasury to transfer tokens from the DAO
             data.targets.push(tokenToFund.asset.contractAddress);
-            data.values.push(0);
+            data.values.push(BigNumber.from('0'));
             data.calldatas.push(
               ERC20__factory.createInterface().encodeFunctionData('approve', [
                 newDAOData.predictedTreasuryAddress,
@@ -102,7 +102,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
             // Withdraw tokens from the parent treasury into the parent DAO
             data.targets.push(treasuryModuleContract.address);
-            data.values.push(0);
+            data.values.push(BigNumber.from('0'));
             data.calldatas.push(
               TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
                 [tokenToFund.asset.contractAddress],
@@ -135,7 +135,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
             // ETH Transfer
             // Withdraw ETH from the parent treasury into the parent DAO
             data.targets.push(treasuryModuleContract.address);
-            data.values.push(0);
+            data.values.push(BigNumber.from('0'));
             data.calldatas.push(
               TreasuryModule__factory.createInterface().encodeFunctionData('withdrawEth', [
                 [newDAOData.predictedTreasuryAddress],
@@ -155,7 +155,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
         // Approve the new treasury to transfer tokens from the DAO
         daoData.nftsToFund.forEach(erc721Fund => {
           data.targets.push(erc721Fund.asset.contractAddress);
-          data.values.push(0);
+          data.values.push(BigNumber.from('0'));
           data.calldatas.push(
             ERC721__factory.createInterface().encodeFunctionData('approve', [
               newDAOData.predictedTreasuryAddress,
@@ -166,7 +166,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
         // Withdraw tokens from the parent treasury into the parent DAO
         data.targets.push(treasuryModuleContract.address);
-        data.values.push(0);
+        data.values.push(BigNumber.from('0'));
         data.calldatas.push(
           TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC721Tokens', [
             daoData.nftsToFund.map(erc721Fund => erc721Fund.asset.contractAddress),
@@ -177,7 +177,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
         // Deposit tokens from the parent DAO into the child treasury
         data.targets.push(newDAOData.predictedTreasuryAddress);
-        data.values.push(0);
+        data.values.push(BigNumber.from('0'));
         data.calldatas.push(
           TreasuryModule__factory.createInterface().encodeFunctionData('depositERC721Tokens', [
             daoData.nftsToFund.map(erc721Fund => erc721Fund.asset.contractAddress),
@@ -220,7 +220,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
       const data: ExecuteData = {
         targets: [metaFactoryContract.address],
-        values: [0],
+        values: [BigNumber.from('0')],
         calldatas: [
           metaFactoryContract.interface.encodeFunctionData('createDAOAndExecute', [
             newDAOData.calldata.daoFactory,
