@@ -1,3 +1,5 @@
+export const GNOSIS_UNSUPPORTED_CHAIN_IDS = [11155111];
+
 type ChainMetadata = {
   name: string;
   id: number;
@@ -37,12 +39,8 @@ export const getChainMetadataById = (id: number): ChainMetadata | undefined => {
   return CHAINS.find(chain => chain.id === id);
 };
 
-export const getSupportedGnosisChains = (): number[] => {
-  return formatChainsList(process.env.REACT_APP_GNOSIS_SUPPORTED_CHAIN_IDS || '');
-};
-
 export const isChainSupportedOnGnosis = (id: number) => {
-  return !!getSupportedGnosisChains()?.find(chainId => Number(chainId) === id);
+  return !GNOSIS_UNSUPPORTED_CHAIN_IDS.find(chainId => Number(chainId) === id);
 };
 
 export const getChainsWithMetadata = (chainIds: number[]): ChainMetadata[] => {

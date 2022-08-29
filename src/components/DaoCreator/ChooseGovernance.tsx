@@ -2,8 +2,9 @@ import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import {
   getChainsWithMetadata,
   getChainMetadataById,
-  getSupportedGnosisChains,
   isChainSupportedOnGnosis,
+  getSupportedChains,
+  GNOSIS_UNSUPPORTED_CHAIN_IDS,
 } from '../../contexts/web3Data/chains';
 import ContentBox from '../ui/ContentBox';
 import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
@@ -51,7 +52,9 @@ export function ChooseGovernance() {
               : `Unfortunately, Gnosis does not support network ${
                   currentChainMetadata ? currentChainMetadata.name : ''
                 } you are using right now. Consider switching to one of the following networks: ${getChainsWithMetadata(
-                  getSupportedGnosisChains()
+                  getSupportedChains().filter(
+                    chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain)
+                  )
                 ).map(chain => ` ${chain.name}`)}`
           }
           id="gnosis-safe"
