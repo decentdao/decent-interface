@@ -86,7 +86,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
     if (daoData.tokensToFund.length > 0) {
       daoData.tokensToFund.forEach(tokenToFund => {
-        if (tokenToFund.asset.contractAddress !== ethers.constants.AddressZero) {
+        if (tokenToFund.asset.contractAddress !== '') {
           // ERC20 transfer
           // Approve the new treasury to transfer tokens from the DAO
           data.targets.push(tokenToFund.asset.contractAddress);
@@ -97,7 +97,6 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
               ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals),
             ])
           );
-
           // Withdraw tokens from the parent treasury into the parent DAO
           data.targets.push(treasuryModuleContract.address);
           data.values.push(0);
@@ -108,7 +107,6 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
               [ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals)],
             ])
           );
-
           // Deposit tokens from the parent DAO into the child treasury
           data.targets.push(newDAOData.predictedTreasuryAddress);
           data.values.push(0);
