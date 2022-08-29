@@ -29,7 +29,7 @@ function CardDetails({
   return (
     <div>
       <SecondaryButton
-        label="back"
+        label="Back"
         className="mb-4"
         onClick={() => setView(View.Cards)}
       />

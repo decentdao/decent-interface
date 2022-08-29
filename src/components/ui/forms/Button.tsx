@@ -1,6 +1,11 @@
 import cx from 'classnames';
 
-function Label({ isLoading, label }: { isLoading?: boolean; label?: string }) {
+interface LabelProps {
+  isLoading?: boolean;
+  label?: string;
+}
+
+function Label({ isLoading, label }: LabelProps) {
   return (
     <div className="flex justify-center relative">
       <div
