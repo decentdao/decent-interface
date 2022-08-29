@@ -1,4 +1,4 @@
-import { Signer } from 'ethers';
+// import { Signer } from 'ethers';
 import React, { useCallback } from 'react';
 import {
   GnosisDAO,
@@ -10,21 +10,21 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import useCreateGnosisDAODataCreator from '../../../hooks/useCreateGnosisDAODataCreator';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
-import { ExecuteData } from '../../../types/execute';
-import { SIGNATURE_MESSAGE } from '../constants';
+// import { ExecuteData } from '../../../types/execute';
+// import { SIGNATURE_MESSAGE } from '../constants';
 // import { buildGnosisGasRelayApiUrl } from '../../../providers/gnosis/helpers';
 // import { TransactionData } from '../../../types/transaction';
 // import axios from 'axios';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
-    state: { chainId, account, signerOrProvider },
+    state: { signerOrProvider },
   } = useWeb3Provider();
   const {
     dao: { daoAddress },
   } = useFractal();
   const {
-    state: { isSigner, nonce },
+    state: { isSigner },
   } = useGnosisWrapper();
 
   // const createDAODataCreator = useCreateDAODataCreator();
@@ -72,7 +72,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       //   ],
       // };
 
-      const signature = await (signerOrProvider as Signer).signMessage(SIGNATURE_MESSAGE);
+      // const signature = await (signerOrProvider as Signer).signMessage(SIGNATURE_MESSAGE);
 
       // const exeData: TransactionData = {
       //   to: data.targets[0],
@@ -98,7 +98,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       //   successCallback,
       // });
     },
-    [createGnosisDAODataCreator, metaFactoryContract, daoAddress, nonce, account, signerOrProvider]
+    [createGnosisDAODataCreator, metaFactoryContract, daoAddress, signerOrProvider]
   );
 
   const createDAOTrigger = (daoData: TokenGovernanceDAO | GnosisDAO) => {
