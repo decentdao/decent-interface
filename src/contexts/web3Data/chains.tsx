@@ -6,7 +6,7 @@ type ChainMetadata = {
 };
 
 /* We might use something https://github.com/ethereum-lists/chains
- * if number of supported chains would grew up
+ * if number of supported chains would grew up, this should remain sync with SUPPORTED_CHAIN_IDS of both dev site and prod
  */
 const CHAINS: ChainMetadata[] = [
   {
