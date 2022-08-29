@@ -8,7 +8,7 @@ import {
   DAOAccessControl__factory,
   ERC1967Proxy__factory,
 } from '@fractal-framework/core-contracts';
-import { ERC1967Proxy__factory as GnosisERC1967Proxy__factory } from '../assets/typechain-types/gnosis';
+import { ERC1967Proxy__factory as GnosisERC1967Proxy__factory } from '../assets/typechain-types/gnosis-wrapper';
 import { TrustedAddress } from '../components/DaoCreator/provider/types';
 import { Interface } from 'ethers/lib/utils';
 import { getRandomBytes } from '../helpers';

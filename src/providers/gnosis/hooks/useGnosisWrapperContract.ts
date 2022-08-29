@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { GnosisWrapper, GnosisWrapper__factory } from '../../../assets/typechain-types/gnosis';
+import {
+  GnosisWrapper,
+  GnosisWrapper__factory,
+} from '../../../assets/typechain-types/gnosis-wrapper';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 
 const useGnosisWrapperContract = (moduleAddress: string | null) => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-import { GnosisWrapper } from '../../../assets/typechain-types/gnosis';
+import { GnosisWrapper } from '../../../assets/typechain-types/gnosis-wrapper';
 
 const useGnosisSafeAddress = (gnosisWrapper: GnosisWrapper | undefined) => {
   const [gnosisSafeAddress, setGnosisSafeAddress] = useState<string>();
