@@ -3,6 +3,7 @@ import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisWrapperProvider } from '../../providers/gnosis/GnosisWrapperProvider';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
+import { GnosisGovernanceInjector } from './injectors/GnosisGovernanceInjector';
 import { GovernanceInjector } from './injectors/TokenGovernanceInjector';
 import { ModuleTypes } from './types';
 
@@ -25,14 +26,12 @@ export function GovernanceController({ children }: { children: JSX.Element }) {
   const [moduleType, setModuleType] = useState<ModuleTypes>();
 
   useEffect(() => {
-    if (
-      !!tokenVotingGovernanceModule?.moduleAddress &&
-      !!treasuryModule?.moduleAddress &&
-      !!timelockModule?.moduleAddress
-    ) {
+    if (!!tokenVotingGovernanceModule && timelockModule && treasuryModule) {
       setModuleType(tokenVotingGovernanceModule.moduleType);
+    } else if (gnosisWrapperModule) {
+      setModuleType(gnosisWrapperModule.moduleType);
     }
-  }, [tokenVotingGovernanceModule, treasuryModule, timelockModule]);
+  }, [tokenVotingGovernanceModule, gnosisWrapperModule, timelockModule, treasuryModule]);
 
   switch (moduleType) {
     case ModuleTypes.TOKEN_VOTING_GOVERNANCE:
@@ -50,7 +49,7 @@ export function GovernanceController({ children }: { children: JSX.Element }) {
     case ModuleTypes.GNOSIS_WRAPPER:
       return (
         <GnosisWrapperProvider moduleAddress={gnosisWrapperModule!.moduleAddress}>
-          {children}
+          <GnosisGovernanceInjector>{children}</GnosisGovernanceInjector>
         </GnosisWrapperProvider>
       );
     default: {
