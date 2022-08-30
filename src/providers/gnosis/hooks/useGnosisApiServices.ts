@@ -5,6 +5,12 @@ import { GnosisActions, GnosisActionTypes } from '../types';
 import axios from 'axios';
 import { GnosisSafeStatusResponse } from '../types/gnosis';
 
+/**
+ * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information
+ * @param safeAddress
+ * @param dispatch
+ * @returns
+ */
 export function useGnosisApiServices(
   safeAddress: string | undefined,
   dispatch: React.Dispatch<GnosisActionTypes>
