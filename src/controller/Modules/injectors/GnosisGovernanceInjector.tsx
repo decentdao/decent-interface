@@ -93,7 +93,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         baseGas: BigNumber.from(0), // Gast costs not related to the transaction execution (signature check, refund payment...)
         gasPrice: BigNumber.from(0), // Gas price used for the refund calculation
         refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
-        nonce: 1, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
+        nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
         // contractTransactionHash: 'string', // Contract transaction hash calculated from all the field
         // sender: account, // Owner of the Safe proposing the transaction. Must match one of the signatures
         // signature: signature, // One or more ethereum ECDSA signatures of the `contractTransactionHash` as an hex string
@@ -114,7 +114,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         chainId
       );
 
-      const apiTransactionData = JSON.stringify({
+      const apiTransactionData = {
         to: daoAddress,
         value: '0', // Value in wei
         data: daoCalldata,
@@ -124,12 +124,12 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         baseGas: 0, // Gast costs not related to the transaction execution (signature check, refund payment...)
         gasPrice: 0, // Gas price used for the refund calculation
         refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
-        nonce: 1, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
+        nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
         contractTransactionHash: contractTransactionHash, // Contract transaction hash calculated from all the field
         sender: account, // Owner of the Safe proposing the transaction. Must match one of the signatures
         signature: signature.data, // One or more ethereum ECDSA signatures of the `contractTransactionHash` as an hex string
         origin: 'Fractal', // Give more information about the transaction, e.g. "My Custom Safe app"
-      });
+      };
 
       // @todo get signature of connected user using the contract transaction hash as the message
       // const signature = await (signerOrProvider as Signer).signMessage(<contractTransactionHash>);
@@ -142,11 +142,13 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       // @todo if request is successfull call success callback
       //  successCallback()
 
+      console.log(buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions`));
+
       try {
         console.log(apiTransactionData);
         console.log(
           await axios.post(
-            buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions`),
+            buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
             apiTransactionData
           )
         );
