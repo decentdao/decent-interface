@@ -16,11 +16,11 @@ export function useGnosisApiServices(
   dispatch: React.Dispatch<GnosisActionTypes>
 ) {
   const {
-    state: { chainId, account },
+    state: { chainId },
   } = useWeb3Provider();
 
   const getGnosisSafeStatus = useCallback(async () => {
-    if (!safeAddress || !account) {
+    if (!safeAddress) {
       return;
     }
     try {
@@ -33,13 +33,12 @@ export function useGnosisApiServices(
           nonce: safeStatusResponse.data.nonce,
           owners: safeStatusResponse.data.owners,
           threshold: safeStatusResponse.data.threshold,
-          isSigner: safeStatusResponse.data.owners.includes(account),
         },
       });
     } catch (e) {
       console.log(e);
     }
-  }, [chainId, safeAddress, dispatch, account]);
+  }, [chainId, safeAddress, dispatch]);
 
   useEffect(() => {
     getGnosisSafeStatus();
