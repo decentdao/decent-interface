@@ -1,4 +1,5 @@
 import { ProposalExecuteData } from '../../../types/proposal';
+import { BigNumber } from 'ethers';
 
 export interface GovernanceProposalData {
   createProposal?: (data: {
@@ -7,4 +8,10 @@ export interface GovernanceProposalData {
   }) => void;
   pending?: boolean;
   isAuthorized?: boolean;
+}
+
+export interface ExecuteData {
+  targets: string[];
+  values: BigNumber[];
+  calldatas: string[];
 }
