@@ -6,7 +6,7 @@ import { WEB3_MODAL_CONFIG } from './web3Modal.config';
 import { getLocalProvider, getFallbackProvider, getInjectedProvider } from './helpers';
 import { toast } from 'react-toastify';
 import { useListeners } from './hooks/useLIsteners';
-import { supportedChains } from './chains';
+import { getSupportedChains } from './chains';
 import { Web3ProviderContext } from './hooks/useWeb3Provider';
 
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
@@ -85,7 +85,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
   const connect: ConnectFn = useCallback(async () => {
     const userInjectedProvider = await getInjectedProvider(web3Modal);
-    if (supportedChains().includes(userInjectedProvider.chainId)) {
+    if (getSupportedChains().includes(userInjectedProvider.chainId)) {
       dispatch({
         type: Web3ProviderActions.SET_INJECTED_PROVIDER,
         payload: userInjectedProvider,
