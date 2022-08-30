@@ -1,5 +1,5 @@
 import { createContext, useContext, Context } from 'react';
-import { GnosisWrapper } from '../../../assets/typechain-types/gnosis';
+import { GnosisWrapper } from '../../../assets/typechain-types/gnosis-wrapper';
 
 export interface IGnosisWrapperContext {
   gnosisWrapperContract: GnosisWrapper | undefined;

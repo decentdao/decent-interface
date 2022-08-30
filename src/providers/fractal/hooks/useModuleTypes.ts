@@ -9,7 +9,7 @@ import { ITreasuryModule__factory } from '../../../assets/typechain-types/module
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { parseInterface } from '../../../controller/Modules/utils';
 import { IClaimSubsidiary__factory } from '../../../assets/typechain-types/votes-token';
-import { IGnosisWrapper__factory } from '../../../assets/typechain-types/gnosis';
+import { IGnosisWrapper__factory } from '../../../assets/typechain-types/gnosis-wrapper';
 import { IModuleData } from '../../../controller/Modules/types';
 
 // @todo move to global hooks folder
