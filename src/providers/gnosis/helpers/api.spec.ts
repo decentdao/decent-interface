@@ -17,7 +17,7 @@ describe('Gnosis URL builder tests', () => {
       { target: constants.AddressZero },
       'v1'
     );
-    const EXPECTED_URL = `https://safe-transaction.goerli.gnosis.io/api/v1/safes/${constants.AddressZero}/multisig-transactions?target=0x0000000000000000000000000000000000000000`;
+    const EXPECTED_URL = `https://safe-transaction.goerli.gnosis.io/api/v1/safes/${constants.AddressZero}/multisig-transactions?target=${constants.AddressZero}`;
     expect(gnosisTransactionURL).toEqual(EXPECTED_URL);
   });
 
@@ -34,7 +34,7 @@ describe('Gnosis URL builder tests', () => {
       { target: constants.AddressZero },
       'v1'
     );
-    const EXPECTED_URL = `https://safe-relay.goerli.gnosis.io/api/v1/safes/${constants.AddressZero}/multisig-transactions?target=0x0000000000000000000000000000000000000000`;
+    const EXPECTED_URL = `https://safe-relay.goerli.gnosis.io/api/v1/safes/${constants.AddressZero}/multisig-transactions?target=${constants.AddressZero}`;
     expect(gnosisTransactionURL).toEqual(EXPECTED_URL);
   });
 });
