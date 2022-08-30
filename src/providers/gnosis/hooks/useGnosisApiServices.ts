@@ -3,7 +3,7 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import { useCallback, useEffect } from 'react';
 import { GnosisActions, GnosisActionTypes } from '../types';
 import axios from 'axios';
-import { GnosisSafeStatusResponse, GnosisTransaction } from '../types/gnosis';
+import { GnosisSafeStatusResponse } from '../types/gnosis';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information
@@ -40,31 +40,9 @@ export function useGnosisApiServices(
     }
   }, [chainId, safeAddress, dispatch]);
 
-  const getGnosisSafeTransactions = useCallback(async () => {
-    if (!safeAddress) {
-      return;
-    }
-    try {
-      const safeTransactionsResponse = await axios.get<GnosisTransaction>(
-        buildGnosisApiUrl(chainId, `/safes/${safeAddress}/multisig-transactions/`)
-      );
-      // dispatch({
-      //   type: GnosisActions.UPDATE_GNOSIS_SAFE_INFORMATION,
-      //   payload: {
-      //     nonce: safeStatusResponse.data.nonce,
-      //     owners: safeStatusResponse.data.owners,
-      //     threshold: safeStatusResponse.data.threshold,
-      //   },
-      // });
-    } catch (e) {
-      console.log(e);
-    }
-  }, [chainId, safeAddress, dispatch]);
-
   useEffect(() => {
     getGnosisSafeStatus();
-    getGnosisSafeTransactions();
-  }, [getGnosisSafeStatus, getGnosisSafeTransactions]);
+  }, [getGnosisSafeStatus]);
 
   return;
 }
