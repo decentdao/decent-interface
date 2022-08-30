@@ -18,8 +18,4 @@ export interface GnosisTransactionData {
   gasPrice: BigNumber;
   refundReceiver: string;
   nonce: number;
-  // contractTransactionHash: string;
-  // sender: string;
-  // signature: string;
-  // origin: string;
 }
