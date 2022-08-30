@@ -1,4 +1,3 @@
-// import { Signer } from 'ethers';
 import React, { useCallback } from 'react';
 import {
   GnosisDAO,
@@ -10,11 +9,6 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import useCreateGnosisDAODataCreator from '../../../hooks/useCreateGnosisDAODataCreator';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
-// import { ExecuteData } from '../../../types/execute';
-// import { SIGNATURE_MESSAGE } from '../constants';
-// import { buildGnosisGasRelayApiUrl } from '../../../providers/gnosis/helpers';
-// import { TransactionData } from '../../../types/transaction';
-// import axios from 'axios';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -72,8 +66,10 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       //   ],
       // };
 
-      // const signature = await (signerOrProvider as Signer).signMessage(SIGNATURE_MESSAGE);
+      // @todo get signature of connected user using the contract transaction hash as the message
+      // const signature = await (signerOrProvider as Signer).signMessage(<contractTransactionHash>);
 
+      // @todo object to build data to send request to abi
       // const exeData: TransactionData = {
       //   to: data.targets[0],
       //   value: BigNumber.from(0), // Value in wei
@@ -91,12 +87,11 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       //   origin: 'Fractal', // Give more information about the transaction, e.g. "My Custom Safe app"
       // };
 
+      // @todo example request using the buildGnosisGasRelayApiUrl
       // const gasRelayRes = axios.get(buildGnosisGasRelayApiUrl(chainId, '/gas-station/'));
 
-      // submitProposal({
-      //   proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
-      //   successCallback,
-      // });
+      // @todo if request is successfull call success callback
+      //  successCallback()
     },
     [createGnosisDAODataCreator, metaFactoryContract, daoAddress, signerOrProvider]
   );
