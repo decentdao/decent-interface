@@ -9,6 +9,7 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import useCreateGnosisDAODataCreator from '../../../hooks/useCreateGnosisDAODataCreator';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
+import { ExecuteData } from '../../../types/execute';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -50,21 +51,21 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         return;
       }
 
-      // const data: ExecuteData = {
-      //   targets: [metaFactoryContract.address],
-      //   values: [0],
-      //   calldatas: [
-      //     metaFactoryContract.interface.encodeFunctionData('createDAOAndExecute', [
-      //       newDAOData.calldata.daoFactory,
-      //       newDAOData.calldata.createDAOParams,
-      //       newDAOData.calldata.moduleFactories,
-      //       newDAOData.calldata.moduleFactoriesBytes,
-      //       newDAOData.calldata.targets,
-      //       newDAOData.calldata.values,
-      //       newDAOData.calldata.calldatas,
-      //     ]),
-      //   ],
-      // };
+      const data: ExecuteData = {
+        targets: [metaFactoryContract.address],
+        values: [0],
+        calldatas: [
+          metaFactoryContract.interface.encodeFunctionData('createDAOAndExecute', [
+            newDAOData.calldata.daoFactory,
+            newDAOData.calldata.createDAOParams,
+            newDAOData.calldata.moduleFactories,
+            newDAOData.calldata.moduleFactoriesBytes,
+            newDAOData.calldata.targets,
+            newDAOData.calldata.values,
+            newDAOData.calldata.calldatas,
+          ]),
+        ],
+      };
 
       // @todo get signature of connected user using the contract transaction hash as the message
       // const signature = await (signerOrProvider as Signer).signMessage(<contractTransactionHash>);
