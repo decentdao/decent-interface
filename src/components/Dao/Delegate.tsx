@@ -76,7 +76,7 @@ function Delegate() {
               <SecondaryButton
                 onClick={() => delegateSelf()}
                 label="Self"
-                className={cx('h-fit -mt-2 sm:mt-0')}
+                className={cx('h-fit -mt-2 sm:mt-auto')}
               />
             </div>
           </InputBox>
