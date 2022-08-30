@@ -1,10 +1,9 @@
-import { GnosisWrapperContext } from './hooks/useGnosisWrapper';
-
 import { ReactNode, useMemo, useReducer } from 'react';
 import useGnosisWrapperContract from './hooks/useGnosisWrapperContract';
 import useGnosisSafeAddress from './hooks/useGnosisSafeAddress';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { Gnosis, GnosisActions, GnosisActionTypes } from './types';
+import { GnosisWrapperContext } from './hooks/useGnosisWrapper';
 
 const initialState: Gnosis = {
   name: '',
