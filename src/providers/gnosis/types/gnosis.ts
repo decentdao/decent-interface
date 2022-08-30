@@ -1,3 +1,5 @@
+import { BigNumber } from 'ethers';
+
 export type GnosisSafeStatusResponse = {
   address: string;
   nonce: number;
@@ -12,14 +14,14 @@ export type GnosisSafeStatusResponse = {
 
 export interface GnosisTransaction {
   to: string; //'<checksummed address>'
-  value: number; // Value in wei
+  value: BigNumber; // Value in wei
   data: string; // '<0x prefixed hex string>'
   operation: number; // 0 CALL, 1 DELEGATE_CALL
-  gasToken: string | null; // '<checksummed address>' Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
-  safeTxGas: number; // Max gas to use in the transaction
-  baseGas: number; // Gast costs not related to the transaction execution (signature check, refund payment...)
-  gasPrice: number; // Gas price used for the refund calculation
-  refundReceiver: string | null; // '<checksummed address>' Address of receiver of gas payment (or `null` if tx.origin)
+  gasToken: string; // '<checksummed address>' Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
+  safeTxGas: BigNumber; // Max gas to use in the transaction
+  baseGas: BigNumber; // Gast costs not related to the transaction execution (signature check, refund payment...)
+  gasPrice: BigNumber; // Gas price used for the refund calculation
+  refundReceiver: string; // '<checksummed address>' Address of receiver of gas payment (or `null` if tx.origin)
   nonce: number; // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
   contractTransactionHash: string; // Contract transaction hash calculated from all the field
   sender: string; // '<checksummed address>' Owner of the Safe proposing the transaction. Must match one of the signatures

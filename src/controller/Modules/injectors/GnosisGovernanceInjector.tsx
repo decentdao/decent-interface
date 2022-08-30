@@ -14,6 +14,8 @@ import { GnosisTransactionData } from '../../../types/transaction';
 import { BigNumber, ethers, Signer } from 'ethers';
 import { DAO__factory } from '@fractal-framework/core-contracts';
 import { safeSignMessage } from '../utils';
+import { useGnosisApiServicesPost } from '../../../providers/gnosis/hooks/useGnosisApiServicesPost';
+import { GnosisTransaction } from '../../../providers/gnosis/types/gnosis';
 
 export interface SafeSignature {
   signer: string;
@@ -22,7 +24,7 @@ export interface SafeSignature {
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
-    state: { signerOrProvider },
+    state: { signerOrProvider, account },
   } = useWeb3Provider();
   const {
     dao: { daoAddress },
@@ -47,7 +49,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
   const createGnosisDAO = useCallback(
     async (_daoData: TokenGovernanceDAO | GnosisDAO) => {
       const daoData = _daoData as GnosisDAO;
-      if (!daoAddress || !signerOrProvider || nonce === undefined || !contractAddress) {
+      if (!daoAddress || !signerOrProvider || nonce === undefined || !contractAddress || !account) {
         return;
       }
 
@@ -105,6 +107,23 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         transactionData
       );
 
+      const apiTransactionData: GnosisTransaction = {
+        to: daoAddress,
+        value: BigNumber.from(0), // Value in wei
+        data: daoCalldata,
+        operation: 0, // 0 CALL, 1 DELEGATE_CALL
+        gasToken: ethers.constants.AddressZero, // Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
+        safeTxGas: BigNumber.from(0), // Max gas to use in the transaction
+        baseGas: BigNumber.from(0), // Gast costs not related to the transaction execution (signature check, refund payment...)
+        gasPrice: BigNumber.from(0), // Gas price used for the refund calculation
+        refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
+        nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
+        contractTransactionHash: 'string', // Contract transaction hash calculated from all the field
+        sender: account, // Owner of the Safe proposing the transaction. Must match one of the signatures
+        signature: signature.data, // One or more ethereum ECDSA signatures of the `contractTransactionHash` as an hex string
+        origin: 'Fractal', // Give more information about the transaction, e.g. "My Custom Safe app"
+      };
+
       // @todo get signature of connected user using the contract transaction hash as the message
       // const signature = await (signerOrProvider as Signer).signMessage(<contractTransactionHash>);
 
@@ -115,6 +134,8 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
 
       // @todo if request is successfull call success callback
       //  successCallback()
+
+      await useGnosisApiServicesPost();
     },
     [
       createGnosisDAODataCreator,
@@ -123,6 +144,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       signerOrProvider,
       contractAddress,
       nonce,
+      account
     ]
   );
 
