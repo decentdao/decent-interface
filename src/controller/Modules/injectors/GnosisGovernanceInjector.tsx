@@ -84,7 +84,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         to: daoAddress,
         value: BigNumber.from(0), // Value in wei
         data: daoCalldata,
-        operation: 1, // 0 CALL, 1 DELEGATE_CALL
+        operation: 0, // 0 CALL, 1 DELEGATE_CALL
         gasToken: ethers.constants.AddressZero, // Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
         safeTxGas: BigNumber.from(0), // Max gas to use in the transaction
         baseGas: BigNumber.from(0), // Gast costs not related to the transaction execution (signature check, refund payment...)
