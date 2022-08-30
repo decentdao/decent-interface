@@ -12,7 +12,7 @@ export function GnosisRoutes() {
         element={<GnosisWrapper />}
       />
       <Route
-        index
+        path="proposals/*"
         element={
           <Navigate
             to="./.."
