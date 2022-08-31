@@ -1,4 +1,4 @@
-import { GNOSIS_SAFE_SUPPORTED_CHAINS } from './constants';
+import { getChainMetadataById } from './../../../contexts/web3Data/chains';
 
 /**
  * builds url for gnosis api requests
@@ -15,7 +15,8 @@ export const buildGnosisApiUrl = (
   queryParams: { [key: string]: string } = {},
   version: 'v1' | 'v2' = 'v1'
 ) => {
-  const GNOSIS_URL = `https://safe-transaction.${GNOSIS_SAFE_SUPPORTED_CHAINS[chainId]}.gnosis.io/api/${version}`;
+  const chainIdName = getChainMetadataById(chainId)!.name;
+  const GNOSIS_URL = `https://safe-transaction.${chainIdName}.gnosis.io/api/${version}`;
   if (!Object.keys(queryParams).length) {
     return `${GNOSIS_URL}${pathname}`;
   }
