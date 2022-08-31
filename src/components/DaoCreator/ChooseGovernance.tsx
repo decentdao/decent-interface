@@ -1,3 +1,11 @@
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import {
+  getChainsWithMetadata,
+  getChainMetadataById,
+  isChainSupportedOnGnosis,
+  getSupportedChains,
+  GNOSIS_UNSUPPORTED_CHAIN_IDS,
+} from '../../contexts/web3Data/chains';
 import ContentBox from '../ui/ContentBox';
 import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
 import { useCreator } from './provider/hooks/useCreator';
@@ -8,6 +16,9 @@ export function ChooseGovernance() {
     state: { governance },
     dispatch,
   } = useCreator();
+  const {
+    state: { chainId },
+  } = useWeb3Provider();
 
   const fieldUpdate = (value: GovernanceTypes) => {
     dispatch({
@@ -15,6 +26,9 @@ export function ChooseGovernance() {
       payload: value,
     });
   };
+
+  const isCurrentChainSupported = isChainSupportedOnGnosis(chainId);
+  const currentChainMetadata = getChainMetadataById(chainId);
 
   return (
     <ContentBox>
@@ -32,13 +46,24 @@ export function ChooseGovernance() {
         />
         <RadioWithText
           label="Gnosis Safe"
-          description="Gnosis Powered, Multi-signature governance allows you define an access/control-scheme through multiple signers that need to confirm transactions"
+          description={
+            isCurrentChainSupported
+              ? 'Gnosis Powered, Multi-signature governance allows you define an access/control-scheme through multiple signers that need to confirm transactions'
+              : `Unfortunately, Gnosis does not support network ${
+                  currentChainMetadata ? currentChainMetadata.name : ''
+                } you are using right now. Consider switching to one of the following networks: ${getChainsWithMetadata(
+                  getSupportedChains().filter(
+                    chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain)
+                  )
+                ).map(chain => ` ${chain.name}`)}`
+          }
           id="gnosis-safe"
           name="governance"
           isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
           onChange={() => {
             fieldUpdate(GovernanceTypes.GNOSIS_SAFE);
           }}
+          disabled={!isCurrentChainSupported}
           readOnly
         />
       </div>

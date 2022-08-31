@@ -10,6 +10,7 @@ interface IRadioWithText {
   onChange: (e: ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>) => void;
   value?: any;
   readOnly?: boolean;
+  disabled?: boolean;
 }
 
 export function RadioWithText({
@@ -18,13 +19,16 @@ export function RadioWithText({
   isSelected,
   label,
   onChange,
+  disabled,
   ...rest
 }: IRadioWithText) {
   return (
     <div
-      className={cx('p-4 bg-gray-500 flex border h-full', {
+      className={cx('p-4 flex border h-full', {
         'border-gray-50': isSelected,
         'border-gray-400': !isSelected,
+        'bg-gray-500': !disabled,
+        'bg-gray-700 cursor-not-allowed': disabled,
       })}
       onClick={onChange}
     >
@@ -33,17 +37,25 @@ export function RadioWithText({
           id={id}
           type="radio"
           checked={isSelected}
+          disabled={disabled}
           {...rest}
         />
       </div>
       <div className="pl-4">
         <label
-          className="font-mono font-bold"
+          className={cx('font-mono font-bold', { 'text-gray-50': disabled })}
           htmlFor={id}
         >
           {label}
         </label>
-        <div className="mt-2 text-gray-50">{description}</div>
+        <div
+          className={cx('mt-2 text-gray-50', {
+            'text-gray-200': disabled,
+            'text-gray-50': !disabled,
+          })}
+        >
+          {description}
+        </div>
       </div>
     </div>
   );

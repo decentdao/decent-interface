@@ -1,4 +1,41 @@
 import cx from 'classnames';
+
+interface LabelProps {
+  isLoading?: boolean;
+  label?: string;
+}
+
+function Label({ isLoading, label }: LabelProps) {
+  return (
+    <div className="flex justify-center relative">
+      <div
+        className={cx({
+          'animate-pulse absolute': isLoading,
+          hidden: !isLoading,
+        })}
+      >
+        * * *
+      </div>
+      <div
+        className={cx({
+          invisible: isLoading,
+          visible: !isLoading,
+        })}
+      >
+        {label}
+      </div>
+    </div>
+  );
+}
+
+interface IconProps {
+  icon: JSX.Element;
+  isLoading?: boolean;
+}
+function Icon({ icon, isLoading }: IconProps) {
+  return !isLoading ? icon : null;
+}
+
 interface ButtonProps {
   onClick?: () => void;
   label?: string;
@@ -18,45 +55,6 @@ function Button({
   isLoading,
   ...rest
 }: ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  /****************************
-   * Text and Loading Component
-   ****************************/
-  function Label() {
-    return (
-      <div className="flex justify-center relative">
-        <div
-          className={cx({
-            'animate-pulse absolute': isLoading,
-            hidden: !isLoading,
-          })}
-        >
-          * * *
-        </div>
-        <div
-          className={cx({
-            invisible: isLoading,
-            visible: !isLoading,
-          })}
-        >
-          {label}
-        </div>
-      </div>
-    );
-  }
-
-  /****************************
-   * Icon Components
-   ****************************/
-  function Icon() {
-    return !!icon && !isLoading ? icon : null;
-  }
-  function IconLeft() {
-    return !isIconRight ? <Icon /> : null;
-  }
-  function IconRight() {
-    return isIconRight ? <Icon /> : null;
-  }
-
   /****************************
    * Styles
    ****************************/
@@ -79,9 +77,22 @@ function Button({
       )}
       {...rest}
     >
-      <IconLeft />
-      <Label />
-      <IconRight />
+      {!isIconRight && icon && (
+        <Icon
+          icon={icon}
+          isLoading={isLoading}
+        />
+      )}
+      <Label
+        isLoading={isLoading}
+        label={label}
+      />
+      {isIconRight && icon && (
+        <Icon
+          icon={icon}
+          isLoading={isLoading}
+        />
+      )}
     </button>
   );
 }

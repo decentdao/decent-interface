@@ -19,6 +19,10 @@ export function useNextDisabled(state: CreatorState) {
         }
         setIsDisabled(true);
         break;
+      case CreatorSteps.CHOOSE_GOVERNANCE: {
+        setIsDisabled(false);
+        break;
+      }
       case CreatorSteps.FUNDING:
         setIsDisabled(false);
         break;

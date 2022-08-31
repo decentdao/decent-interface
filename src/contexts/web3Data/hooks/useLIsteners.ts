@@ -5,7 +5,7 @@ import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
-import { supportedChains } from '../chains';
+import { getSupportedChains, getChainsWithMetadata } from '../chains';
 
 const useListeners = (
   web3Modal: Web3Modal,
@@ -14,12 +14,17 @@ const useListeners = (
 ) => {
   const [modalProvider, setModalProvider] = useState<ModalProvider | null>(null);
 
+  const supportedChains = getSupportedChains();
+  const chainsNames = getChainsWithMetadata(supportedChains)
+    .map(chain => chain.name)
+    .join(', ');
+
   useEffect(() => {
     // subscribe to connect events
     web3Modal.on('connect', _modalProvider => {
       // check that connected chain is supported
-      if (!supportedChains().includes(parseInt(_modalProvider.chainId))) {
-        toast(`Switch to a supported chain: ${supportedChains().join(', ')}`, {
+      if (!supportedChains.includes(parseInt(_modalProvider.chainId))) {
+        toast(`Switch to a supported chain: ${chainsNames}`, {
           toastId: 'switchChain',
         });
         // switch to a default provider
@@ -32,13 +37,13 @@ const useListeners = (
     return () => {
       web3Modal.off('connect');
     };
-  }, [web3Modal, connectDefaultProvider]);
+  }, [web3Modal, connectDefaultProvider, supportedChains, chainsNames]);
 
   useEffect(() => {
     const chainChangedCallback = (chainId: string) => {
-      if (!supportedChains().includes(parseInt(chainId))) {
+      if (!getSupportedChains().includes(parseInt(chainId))) {
         // check that connected chain is supported
-        toast(`Chain changed: Switch to a supported chain: ${supportedChains().join(', ')}`, {
+        toast(`Chain changed: Switch to a supported chain: ${chainsNames}`, {
           toastId: 'switchChain',
         });
         // switch to a default provider
@@ -91,7 +96,7 @@ const useListeners = (
         (modalProvider as ethers.providers.Web3Provider).removeAllListeners();
       }
     };
-  }, [modalProvider, web3Modal, connectDefaultProvider, connect]);
+  }, [modalProvider, web3Modal, connectDefaultProvider, connect, supportedChains, chainsNames]);
 };
 
 export { useListeners };
