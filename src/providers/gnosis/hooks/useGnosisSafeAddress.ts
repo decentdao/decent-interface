@@ -15,8 +15,8 @@ const useGnosisSafeAddress = (
 
     gnosisWrapper
       .gnosisSafe()
-      .then(contractAddress => {
-        dispatch({ type: GnosisActions.UPDATE_GNOSIS_CONTRACT, payload: { contractAddress } });
+      .then(safeAddress => {
+        dispatch({ type: GnosisActions.UPDATE_GNOSIS_CONTRACT, payload: { safeAddress } });
       })
       .catch(console.error);
   }, [gnosisWrapper, dispatch]);
