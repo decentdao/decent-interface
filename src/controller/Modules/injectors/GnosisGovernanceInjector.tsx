@@ -48,7 +48,14 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
   const createGnosisDAO = useCallback(
     async (_daoData: TokenGovernanceDAO | GnosisDAO) => {
       const daoData = _daoData as GnosisDAO;
-      if (!daoAddress || !signerOrProvider || nonce === undefined || !contractAddress || !account) {
+      if (
+        !daoAddress ||
+        !signerOrProvider ||
+        nonce === undefined ||
+        !contractAddress ||
+        !account ||
+        !metaFactoryContract
+      ) {
         return;
       }
 
@@ -57,7 +64,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         ...daoData,
       });
 
-      if (!metaFactoryContract || !newDAOData) {
+      if (!newDAOData) {
         return;
       }
 
@@ -88,7 +95,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         operation: 0, // 0 CALL, 1 DELEGATE_CALL
         gasToken: ethers.constants.AddressZero, // Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
         safeTxGas: BigNumber.from(0), // Max gas to use in the transaction
-        baseGas: BigNumber.from(0), // Gast costs not related to the transaction execution (signature check, refund payment...)
+        baseGas: BigNumber.from(0), // Gas costs not related to the transaction execution (signature check, refund payment...)
         gasPrice: BigNumber.from(0), // Gas price used for the refund calculation
         refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
@@ -113,7 +120,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         operation: 0, // 0 CALL, 1 DELEGATE_CALL
         gasToken: ethers.constants.AddressZero, // Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
         safeTxGas: 0, // Max gas to use in the transaction
-        baseGas: 0, // Gast costs not related to the transaction execution (signature check, refund payment...)
+        baseGas: 0, // Gas costs not related to the transaction execution (signature check, refund payment...)
         gasPrice: 0, // Gas price used for the refund calculation
         refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
@@ -130,10 +137,16 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       //  successCallback()
 
       try {
-        await axios.post(
+        // todo: Add in check for 200 (failed) vs 201 (success)
+        const res = await axios.post(
           buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
           apiTransactionData
         );
+        if (res.status === 201) {
+          console.log('transaction succeeded');
+        } else {
+          console.log('transaction failed');
+        }
       } catch (e) {
         console.log(e);
       }
