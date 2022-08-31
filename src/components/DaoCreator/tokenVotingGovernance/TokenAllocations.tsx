@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { TextButton } from '../../ui/forms/Button';
 import Input from '../../ui/forms/Input';
@@ -19,6 +20,9 @@ function TokenAllocations({
   parentAllocationAmount,
   fieldUpdate,
 }: TokenAllocationsProps) {
+  const {
+    modules: { gnosisWrapperModule },
+  } = useFractal();
   const [hasAmountError, setAmountError] = useState(false);
 
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
@@ -77,7 +81,7 @@ function TokenAllocations({
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
-      {parentAllocationAmount !== undefined && (
+      {!gnosisWrapperModule && !!parentAllocationAmount && (
         <InputBox>
           <Input
             type="number"
