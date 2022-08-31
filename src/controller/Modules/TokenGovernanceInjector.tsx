@@ -86,7 +86,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
     if (daoData.tokensToFund.length > 0) {
       daoData.tokensToFund.forEach(tokenToFund => {
-        if (tokenToFund.asset.contractAddress !== '') {
+        if (tokenToFund.asset.contractAddress !== ethers.constants.AddressZero) {
           // ERC20 transfer
           // Approve the new treasury to transfer tokens from the DAO
           data.targets.push(tokenToFund.asset.contractAddress);
