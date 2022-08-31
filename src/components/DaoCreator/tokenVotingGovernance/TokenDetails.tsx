@@ -6,12 +6,8 @@ import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 
 function TokenDetails() {
-  const {
-    modules: { gnosisWrapperModule },
-  } = useFractal();
   const {
     state: { govToken },
     dispatch,
@@ -52,7 +48,6 @@ function TokenDetails() {
           disabled={false}
         />
       </InputBox>
-
       <InputBox>
         <Input
           type="number"
@@ -65,15 +60,12 @@ function TokenDetails() {
           min="0"
         />
       </InputBox>
-
-      {!gnosisWrapperModule && (
-        <TokenAllocations
-          tokenAllocations={govToken.tokenAllocations}
-          supply={govToken.tokenSupply}
-          parentAllocationAmount={govToken.parentAllocationAmount}
-          fieldUpdate={fieldUpdate}
-        />
-      )}
+      <TokenAllocations
+        tokenAllocations={govToken.tokenAllocations}
+        supply={govToken.tokenSupply}
+        parentAllocationAmount={govToken.parentAllocationAmount}
+        fieldUpdate={fieldUpdate}
+      />
     </ContentBox>
   );
 }
