@@ -4,14 +4,14 @@ import GnosisSafeLink from '../../components/ui/GnosisSafeLink';
 
 export function GnosisWrapper() {
   const {
-    state: { contractAddress },
+    state: { safeAddress },
   } = useGnosisWrapper();
   return (
     <div>
       <H1>Gnosis Safe</H1>
       <div className="flex">
         <GnosisSafeLink
-          address={contractAddress}
+          address={safeAddress}
           label="Gnosis Safe"
         />
       </div>

@@ -1,6 +1,6 @@
 export interface Gnosis extends GnosisInformation {
   isLoading: boolean;
-  contractAddress?: string;
+  safeAddress?: string;
   name?: string;
   isSigner: boolean;
 }

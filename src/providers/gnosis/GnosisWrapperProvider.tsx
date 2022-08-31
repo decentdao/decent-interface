@@ -8,7 +8,7 @@ import { useGnosisSigner } from './hooks/useGnosisSigner';
 
 const initialState: Gnosis = {
   name: '',
-  contractAddress: undefined,
+  safeAddress: undefined,
   owners: [],
   isSigner: false,
   nonce: undefined,
@@ -40,7 +40,7 @@ export function GnosisWrapperProvider({
   const gnosisWrapperContract = useGnosisWrapperContract(moduleAddress);
 
   useGnosisSafeAddress(gnosisWrapperContract, dispatch);
-  useGnosisApiServices(state.contractAddress, dispatch);
+  useGnosisApiServices(state.safeAddress, dispatch);
   useGnosisSigner(state.owners, dispatch);
   const value = useMemo(
     () => ({
