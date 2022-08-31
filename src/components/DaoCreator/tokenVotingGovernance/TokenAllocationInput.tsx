@@ -47,14 +47,14 @@ function TokenAllocationInput({
   return (
     <>
       <Input
-        containerClassName="col-start-1 col-span-4 md:col-span-5 w-full"
+        containerClassName="col-start-1 col-span-4 md:col-span-5 w-full my-auto"
         type="text"
         value={tokenAllocation.address}
         onChange={event => updateAddress(event.target.value)}
         errorMessage={tokenAllocation.addressError}
       />
       <Input
-        containerClassName="col-span-2 md:pt-0"
+        containerClassName="col-span-2 md:pt-0 my-auto"
         type="number"
         value={tokenAllocation.amount.toString()}
         onChange={event => updateAmount(event.target.value)}
