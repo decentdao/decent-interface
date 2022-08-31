@@ -9,6 +9,7 @@ const useGnosisSafeAddress = (
 ) => {
   useEffect(() => {
     if (!gnosisWrapper) {
+      dispatch({ type: GnosisActions.RESET });
       return;
     }
 
