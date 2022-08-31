@@ -26,9 +26,9 @@ export function GovernanceController({ children }: { children: JSX.Element }) {
   const [moduleType, setModuleType] = useState<ModuleTypes>();
 
   useEffect(() => {
-    if (!!tokenVotingGovernanceModule && timelockModule && treasuryModule) {
+    if (!!tokenVotingGovernanceModule && !!timelockModule && !!treasuryModule) {
       setModuleType(tokenVotingGovernanceModule.moduleType);
-    } else if (gnosisWrapperModule) {
+    } else if (!!gnosisWrapperModule) {
       setModuleType(gnosisWrapperModule.moduleType);
     }
   }, [tokenVotingGovernanceModule, gnosisWrapperModule, timelockModule, treasuryModule]);
