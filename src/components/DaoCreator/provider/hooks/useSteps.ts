@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { CreatorProviderActions, CreatorState, CreatorSteps, GovernanceTypes } from './../types';
+import { useFractal } from '../../../../providers/fractal/hooks/useFractal';
 
 /**
  * handles tracking/setting of next/prev steps dependent on the current page
@@ -8,6 +9,9 @@ import { CreatorProviderActions, CreatorState, CreatorSteps, GovernanceTypes } f
  * @param isSubDAO
  */
 export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isSubDAO?: boolean) {
+  const {
+    modules: { gnosisWrapperModule },
+  } = useFractal();
   useEffect(() => {
     const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;
     const isGnosisGovernance = state.governance === GovernanceTypes.GNOSIS_SAFE;
@@ -28,7 +32,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           payload: {
             nextStep: isGnosisGovernance
               ? CreatorSteps.GNOSIS_GOVERNANCE
-              : isSubDAO && isTokenGovernance
+              : isSubDAO && isTokenGovernance && !gnosisWrapperModule
               ? CreatorSteps.FUNDING
               : CreatorSteps.TREASURY_GOV_TOKEN,
             prevStep: CreatorSteps.ESSENTIALS,
@@ -71,5 +75,5 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         });
         break;
     }
-  }, [isSubDAO, state.step, dispatch, state.governance]);
+  }, [isSubDAO, state.step, dispatch, state.governance, gnosisWrapperModule]);
 }
