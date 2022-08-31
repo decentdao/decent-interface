@@ -9,14 +9,12 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import useCreateGnosisDAODataCreator from '../../../hooks/useCreateGnosisDAODataCreator';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
-import { ExecuteData } from '../../../types/execute';
-import { GnosisTransactionData } from '../../../types/transaction';
 import { BigNumber, ethers, Signer } from 'ethers';
 import { DAO__factory } from '@fractal-framework/core-contracts';
 import { calculateSafeTransactionHash, safeSignMessage } from '../utils';
-import { GnosisTransaction } from '../../../providers/gnosis/types/gnosis';
 import axios from 'axios';
 import { buildGnosisApiUrl } from '../../../providers/gnosis/helpers';
+import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 
 export interface SafeSignature {
   signer: string;
@@ -83,7 +81,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       ]);
 
       // Build Gnosis transaction
-      const transactionData = {
+      const transactionData: GnosisTransaction = {
         to: daoAddress,
         value: BigNumber.from(0), // Value in wei
         data: daoCalldata,
@@ -94,13 +92,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         gasPrice: BigNumber.from(0), // Gas price used for the refund calculation
         refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
-        // contractTransactionHash: 'string', // Contract transaction hash calculated from all the field
-        // sender: account, // Owner of the Safe proposing the transaction. Must match one of the signatures
-        // signature: signature, // One or more ethereum ECDSA signatures of the `contractTransactionHash` as an hex string
-        // origin: 'Fractal', // Give more information about the transaction, e.g. "My Custom Safe app"
       };
-
-      // (signerOrProvider as Signer).signMessage()
 
       const signature = await safeSignMessage(
         signerOrProvider as Signer,
@@ -114,7 +106,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         chainId
       );
 
-      const apiTransactionData = {
+      const apiTransactionData: GnosisTransactionAPI = {
         to: daoAddress,
         value: '0', // Value in wei
         data: daoCalldata,
@@ -131,26 +123,16 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         origin: 'Fractal', // Give more information about the transaction, e.g. "My Custom Safe app"
       };
 
-      // @todo get signature of connected user using the contract transaction hash as the message
-      // const signature = await (signerOrProvider as Signer).signMessage(<contractTransactionHash>);
-
-      // @todo object to build data to send request to abi
-
       // @todo example request using the buildGnosisGasRelayApiUrl
       // const gasRelayRes = axios.get(buildGnosisGasRelayApiUrl(chainId, '/gas-station/'));
 
       // @todo if request is successfull call success callback
       //  successCallback()
 
-      console.log(buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions`));
-
       try {
-        console.log(apiTransactionData);
-        console.log(
-          await axios.post(
-            buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
-            apiTransactionData
-          )
+        await axios.post(
+          buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
+          apiTransactionData
         );
       } catch (e) {
         console.log(e);
