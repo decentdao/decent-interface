@@ -6,10 +6,9 @@
 
 <!-- Is there any additional information a reviewer should know?  -->
 
-
 ## Issue (if applicable)
 
-<!-- If applicable, please link to the github issue and put `closes #XXXX` in your comment to auto-close the issue that your PR fixes. -->
+<!-- If applicable, link to the relevant issue(s) with `closes #XXX` to auto-close it when this PR is merged -->
 
 ## Testing
 
