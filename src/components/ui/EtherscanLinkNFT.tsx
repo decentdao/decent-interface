@@ -1,4 +1,4 @@
-import useEtherscanLink from '../../hooks/useSubDomain';
+import useSubDomain from '../../hooks/useSubDomain';
 
 function EtherscanLinkNFT({
   address,
@@ -9,7 +9,7 @@ function EtherscanLinkNFT({
   tokenId: string;
   children: React.ReactNode;
 }) {
-  const subdomain = useEtherscanLink(address);
+  const subdomain = useSubDomain();
   return (
     <a
       href={`https://${subdomain}etherscan.io/nft/${address}/${tokenId}`}
