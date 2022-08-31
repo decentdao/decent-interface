@@ -1,14 +1,5 @@
-import {
-  BigNumber,
-  utils,
-  Contract,
-  Wallet,
-  BigNumberish,
-  Signer,
-  PopulatedTransaction,
-} from 'ethers';
+import { utils, BigNumber, BigNumberish, Signer } from 'ethers';
 
-import { Interface } from 'ethers/lib/utils';
 import { GnosisTransactionData } from '../../../types/transaction';
 
 export const EIP_DOMAIN = {
@@ -56,25 +47,6 @@ export function parseInterface(interfaces: utils.Interface[]): string[] {
   });
 }
 
-export const calculateSafeDomainSeparator = (safe: Contract, chainId: BigNumberish): string => {
-  return utils._TypedDataEncoder.hashDomain({
-    verifyingContract: safe.address,
-    chainId,
-  });
-};
-
-export const preimageSafeTransactionHash = (
-  safe: Contract,
-  safeTx: GnosisTransactionData,
-  chainId: BigNumberish
-): string => {
-  return utils._TypedDataEncoder.encode(
-    { verifyingContract: safe.address, chainId },
-    EIP712_SAFE_TX_TYPE,
-    safeTx
-  );
-};
-
 export const calculateSafeTransactionHash = (
   safeAddress: string,
   safeTx: GnosisTransactionData,
@@ -84,18 +56,6 @@ export const calculateSafeTransactionHash = (
     { verifyingContract: safeAddress, chainId },
     EIP712_SAFE_TX_TYPE,
     safeTx
-  );
-};
-
-export const calculateSafeMessageHash = (
-  safeAddress: string,
-  message: string,
-  chainId: BigNumberish
-): string => {
-  return utils._TypedDataEncoder.hash(
-    { verifyingContract: safeAddress, chainId },
-    EIP712_SAFE_MESSAGE_TYPE,
-    { message }
   );
 };
 
@@ -116,67 +76,4 @@ export const safeSignMessage = async (
 ): Promise<SafeSignature> => {
   const cid = chainId || (await signer.provider!.getNetwork()).chainId;
   return signHash(signer, calculateSafeTransactionHash(safeAddress, safeTx, cid));
-};
-
-export const buildSignatureBytes = (signatures: SafeSignature[]): string => {
-  signatures.sort((left, right) =>
-    left.signer.toLowerCase().localeCompare(right.signer.toLowerCase())
-  );
-  let signatureBytes = '0x';
-  for (const sig of signatures) {
-    signatureBytes += sig.data.slice(2);
-  }
-  return signatureBytes;
-};
-
-export const logGas = async (message: string, tx: Promise<any>, skip?: boolean): Promise<any> => {
-  return tx.then(async result => {
-    const receipt = await result.wait();
-    if (!skip) console.log('           Used', receipt.gasUsed.toNumber(), `gas for >${message}<`);
-    return result;
-  });
-};
-
-export const executeTx = async (
-  safe: Contract,
-  safeTx: GnosisTransactionData,
-  signatures: SafeSignature[],
-  overrides?: any
-): Promise<any> => {
-  const signatureBytes = buildSignatureBytes(signatures);
-  return safe.execTransaction(
-    safeTx.to,
-    safeTx.value,
-    safeTx.data,
-    safeTx.operation,
-    safeTx.safeTxGas,
-    safeTx.baseGas,
-    safeTx.gasPrice,
-    safeTx.gasToken,
-    safeTx.refundReceiver,
-    signatureBytes,
-    overrides || {}
-  );
-};
-
-export const populateExecuteTx = async (
-  safe: Contract,
-  safeTx: GnosisTransactionData,
-  signatures: SafeSignature[],
-  overrides?: any
-): Promise<PopulatedTransaction> => {
-  const signatureBytes = buildSignatureBytes(signatures);
-  return safe.populateTransaction.execTransaction(
-    safeTx.to,
-    safeTx.value,
-    safeTx.data,
-    safeTx.operation,
-    safeTx.safeTxGas,
-    safeTx.baseGas,
-    safeTx.gasPrice,
-    safeTx.gasToken,
-    safeTx.refundReceiver,
-    signatureBytes,
-    overrides || {}
-  );
 };
