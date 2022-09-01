@@ -29,7 +29,7 @@ function TokenAllocations({
 
   const addTokenAllocation = () => {
     if (tokenAllocations === undefined) {
-      fieldUpdate([{ address: '', amount: BigNumber.from(0) }], 'tokenAllocations');
+      fieldUpdate([{ address: '', amount: { value: '', valueBN: null } }], 'tokenAllocations');
       return;
     }
     fieldUpdate(
@@ -53,10 +53,9 @@ function TokenAllocations({
   };
 
   useEffect(() => {
-    const totalAllocated = tokenAllocations.reduce(
-      (prev, cur) => cur.amount.add(prev),
-      BigNumber.from(0)
-    );
+    const totalAllocated = tokenAllocations
+      .map(tokenAllocation => tokenAllocation.amount.valueBN || BigNumber.from(0))
+      .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
     if (supply && supply.gt(0)) {
       // no DAO token allocation with no parent allocations
       if (totalAllocated.gt(0) && (!parentAllocationAmount || parentAllocationAmount?.lte(0))) {
