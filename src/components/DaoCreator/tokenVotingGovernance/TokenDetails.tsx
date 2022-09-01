@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import Input from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
@@ -6,6 +5,7 @@ import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
+import { formatStrToBigNumber, getNumberalString } from '../../../helpers';
 
 function TokenDetails() {
   const {
@@ -23,7 +23,7 @@ function TokenDetails() {
   };
 
   const onSupplyChange = (value: string) => {
-    fieldUpdate(BigNumber.from(value || 0), 'tokenSupply');
+    fieldUpdate(formatStrToBigNumber(value || '0'), 'tokenSupply');
   };
 
   return (
@@ -51,17 +51,14 @@ function TokenDetails() {
 
       <InputBox>
         <Input
-          type="number"
-          value={govToken.tokenSupply.toString()}
+          type="text"
+          value={getNumberalString(govToken.tokenSupply, 18, true)}
           onChange={e => onSupplyChange(e.target.value)}
           label="Token Supply"
           helperText="Whole numbers only"
           disabled={false}
-          isWholeNumberOnly
-          min="0"
         />
       </InputBox>
-
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
         supply={govToken.tokenSupply}
