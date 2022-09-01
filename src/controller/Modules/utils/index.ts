@@ -32,7 +32,7 @@ export const EIP712_SAFE_MESSAGE_TYPE = {
 
 export interface SafeSignature {
   signer: string;
-  data: string;
+  data: string | undefined;
 }
 
 export function parseInterface(interfaces: utils.Interface[]): string[] {
@@ -62,10 +62,18 @@ export const calculateSafeTransactionHash = (
 export const signHash = async (signer: Signer, hash: string): Promise<SafeSignature> => {
   const typedDataHash = utils.arrayify(hash);
   const signerAddress = await signer.getAddress();
-  return {
-    signer: signerAddress,
-    data: (await signer.signMessage(typedDataHash)).replace(/1b$/, '1f').replace(/1c$/, '20'),
-  };
+  try {
+    const sig = await signer.signMessage(typedDataHash);
+    return {
+      signer: signerAddress,
+      data: sig.replace(/1b$/, '1f').replace(/1c$/, '20'),
+    };
+  } catch (error) {
+    return {
+      signer: signerAddress,
+      data: undefined,
+    };
+  }
 };
 
 export const safeSignMessage = async (
