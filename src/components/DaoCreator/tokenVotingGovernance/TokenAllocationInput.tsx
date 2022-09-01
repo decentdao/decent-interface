@@ -3,7 +3,7 @@ import { checkAddress } from '../../../hooks/useAddress';
 import { TextButton } from '../../ui/forms/Button';
 import Input from '../../ui/forms/Input';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { formatStrToBigNumber } from '../../../helpers';
+import { BigNumber } from 'ethers';
 
 interface TokenAllocationProps {
   index: number;
@@ -39,7 +39,7 @@ function TokenAllocationInput({
   const updateAmount = (amount: string) => {
     updateTokenAllocation(index, {
       address: tokenAllocation.address,
-      amount: formatStrToBigNumber(amount || '0'),
+      amount: BigNumber.from(amount || 0),
       addressError: tokenAllocation.addressError,
     });
   };
