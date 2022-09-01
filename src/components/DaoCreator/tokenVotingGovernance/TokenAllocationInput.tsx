@@ -1,9 +1,9 @@
-import { BigNumber } from 'ethers';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { checkAddress } from '../../../hooks/useAddress';
 import { TextButton } from '../../ui/forms/Button';
 import Input from '../../ui/forms/Input';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { formatStrToBigNumber, getNumberalString } from '../../../helpers';
 
 interface TokenAllocationProps {
   index: number;
@@ -39,7 +39,7 @@ function TokenAllocationInput({
   const updateAmount = (amount: string) => {
     updateTokenAllocation(index, {
       address: tokenAllocation.address,
-      amount: BigNumber.from(amount || 0),
+      amount: formatStrToBigNumber(amount || '0'),
       addressError: tokenAllocation.addressError,
     });
   };
@@ -55,11 +55,10 @@ function TokenAllocationInput({
       />
       <Input
         containerClassName="col-span-2 md:pt-0 my-auto"
-        type="number"
-        value={tokenAllocation.amount.toString()}
+        type="text"
+        value={getNumberalString(tokenAllocation.amount, 18, true)}
         onChange={event => updateAmount(event.target.value)}
         errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
-        isWholeNumberOnly
       />
       <div className="md:col-span-1">
         <TextButton
