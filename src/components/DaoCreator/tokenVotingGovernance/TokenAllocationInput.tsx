@@ -3,7 +3,7 @@ import { checkAddress } from '../../../hooks/useAddress';
 import { TextButton } from '../../ui/forms/Button';
 import Input from '../../ui/forms/Input';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { formatStrToBigNumber, getNumberalString } from '../../../helpers';
+import { formatStrToBigNumber } from '../../../helpers';
 
 interface TokenAllocationProps {
   index: number;
@@ -56,7 +56,7 @@ function TokenAllocationInput({
       <Input
         containerClassName="col-span-2 md:pt-0 my-auto"
         type="text"
-        value={getNumberalString(tokenAllocation.amount, 18, true)}
+        value={tokenAllocation.amount.toString()}
         onChange={event => updateAmount(event.target.value)}
         errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
       />

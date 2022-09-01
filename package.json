@@ -17,7 +17,6 @@
     "@walletconnect/ethereum-provider": "^1.8.0",
     "classnames": "^2.3.1",
     "ethers": "^5.7.0",
-    "numeral": "^2.0.6",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
