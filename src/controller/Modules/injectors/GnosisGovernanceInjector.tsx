@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   GnosisDAO,
   GovernanceTypes,
@@ -17,10 +17,17 @@ import { buildGnosisApiUrl } from '../../../providers/gnosis/helpers';
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { useSignatures } from '../../../contexts/web3Data/signatures';
+import { toast } from 'react-toastify';
 
 export interface SafeSignature {
   signer: string;
   data: string;
+}
+
+interface ProviderRpcError extends Error {
+  message: string;
+  code: number;
+  data?: any;
 }
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
@@ -33,6 +40,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
   const {
     state: { isSigner, nonce, contractAddress },
   } = useGnosisWrapper();
+  const [pending, setPending] = useState(false);
 
   const [signatureCall, signatureCallPending] = useSignatures();
 
@@ -223,27 +231,54 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
       };
 
-      //  const signature = signatureCall({
+      // let signature;
+      // const sigtest = await signatureCall({
       //   signer: signerOrProvider as Signer,
       //   contractAddress: contractAddress,
       //   data: transactionData,
       //   pendingMessage: 'Signing Tx',
       //   failedMessage: 'Signing Failed',
       //   successMessage: 'Tx Signed',
+      //   // successCallback: sig => (signature = sig),
       // });
+      // console.log(sigtest);
+
+      const sigToastId = toast('Signing Tx', {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        progress: 1,
+      });
 
       const signature = await safeSignMessage(
         signerOrProvider as Signer,
         contractAddress,
         transactionData
       );
+      console.log(signature);
+
+      if (!signature) {
+        console.log('here');
+        toast.dismiss(sigToastId);
+        toast.error("There was an error! Check your browser's console logs for more details.");
+        return;
+      } else {
+        toast.dismiss(sigToastId);
+        toast('TX Signed');
+      }
+
+      const postToastId = toast('Posting to Gnosis Safe', {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        progress: 1,
+      });
 
       const contractTransactionHash = calculateSafeTransactionHash(
         contractAddress,
         transactionData,
         chainId
       );
-
       const apiTransactionData: GnosisTransactionAPI = {
         to: daoAddress,
         value: '0', // Value in wei
@@ -267,20 +302,21 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       // @todo if request is successfull call success callback
       //  successCallback()
 
-      try {
-        // todo: Add in check for 200 (failed) vs 201 (success)
-        const res = await axios.post(
-          buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
-          apiTransactionData
-        );
-        if (res.status === 201) {
-          console.log('transaction succeeded');
-        } else {
-          console.log('transaction failed');
-        }
-      } catch (e) {
-        console.log(e);
-      }
+      // try {
+      //   // todo: Add in check for 200 (failed) vs 201 (success)
+      //   const res = await axios.post(
+      //     buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
+      //     apiTransactionData
+      //   );
+      //   toast.dismiss(postToastId);
+      //   if (res.status === 201) {
+      //     toast('Tx Posted to Gnosis');
+      //   } else {
+      //     toast("There was an error! Check your browser's console logs for more details.");
+      //   }
+      // } catch (e) {
+      //   console.log(e);
+      // }
     },
     [
       daoAddress,
