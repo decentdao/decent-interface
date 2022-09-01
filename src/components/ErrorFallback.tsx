@@ -1,7 +1,6 @@
 import ContentBox from './ui/ContentBox';
 import { PrimaryButton } from './ui/forms/Button';
 import InputBox from './ui/forms/InputBox';
-import H1 from './ui/H1';
 import Alert from './ui/svg/Alert';
 
 interface ISentryErrorFallback {
@@ -11,7 +10,7 @@ interface ISentryErrorFallback {
   resetError(): void;
 }
 
-export function ErrorFallback({ error, componentStack, resetError }: ISentryErrorFallback) {
+export function ErrorFallback({ error }: ISentryErrorFallback) {
   return (
     <div className="flex flex-col bg-fixed bg-image-pattern bg-cover h-screen justify-center">
       <div className="container">
