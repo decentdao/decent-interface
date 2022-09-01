@@ -17,9 +17,9 @@ export function ErrorFallback({ error }: ISentryErrorFallback) {
         <ContentBox>
           <div className="flex gap-2 items-center">
             <Alert />
-            <div className="text-gray-25">Opps!</div>
+            <div className="text-gray-25">Oops!</div>
           </div>
-          <div className="text-sm text-gray-50 text-mono">There was an unexpected Error</div>
+          <div className="text-sm text-gray-50 text-mono">There was an unexpected error</div>
           <InputBox>
             <div className="text-md text-gray-25 text-mono">{error.message}</div>
           </InputBox>
