@@ -24,6 +24,7 @@ interface SigParams {
 
 const useSignatures = () => {
   const [pending, setPending] = useState(false);
+  // const [sig, setSig] = useState<SafeSignature>();
   const signatureCall = useCallback((params: SigParams) => {
     let toastId: React.ReactText;
     toastId = toast(params.pendingMessage, {
@@ -34,7 +35,6 @@ const useSignatures = () => {
       progress: 1,
     });
     setPending(true);
-
     safeSignMessage(params.signer, params.contractAddress, params.data)
       .then((sigResponse: SafeSignature) => {
         const wait =
@@ -57,6 +57,7 @@ const useSignatures = () => {
         } else if (signature) {
           toast(params.successMessage);
           if (params.successCallback) params.successCallback(signature);
+          return signature;
         } else {
           toast.error('Not sure what happened with that signature');
           if (params.failedCallback) params.failedCallback();
@@ -69,7 +70,7 @@ const useSignatures = () => {
         setPending(false);
 
         if (error.code === 4001) {
-          toast.error('User denied transaction');
+          toast.error('User denied signature');
           return;
         }
 
