@@ -57,6 +57,8 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         return;
       }
 
+      setPending(true);
+
       const newDAOData = createGnosisDAODataCreator({
         creator: daoAddress,
         ...daoData,
@@ -99,19 +101,25 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
       };
 
+      const sigToastId = toast('Please sign tx', {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        progress: 1,
+      });
+
       const signature = await safeSignMessage(
         signerOrProvider as Signer,
         contractAddress,
         transactionData
       );
 
-      if (!signature || !signature.data) {
-        // toast.dismiss(sigToastId);
+      toast.dismiss(sigToastId);
+
+      if (!signature.data) {
+        setPending(false);
         toast.error("There was an error! Check your browser's console logs for more details.");
         return;
-      } else {
-        // toast.dismiss(sigToastId);
-        toast('TX Signed');
       }
 
       const contractTransactionHash = calculateSafeTransactionHash(
@@ -149,13 +157,16 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
           buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
           apiTransactionData
         );
+        setPending(false);
         if (res.status === 201) {
-          console.log('transaction succeeded');
+          toast('Tx Signed and Posted to Gnosis');
         } else {
-          console.log('transaction failed');
+          console.error(res);
+          toast("There was an error! Check your browser's console logs for more details.");
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
+        toast("There was an error! Check your browser's console logs for more details.");
       }
     },
     [
