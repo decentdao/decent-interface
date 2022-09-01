@@ -51,7 +51,7 @@ function TokenDetails() {
 
       <InputBox>
         <Input
-          type="text"
+          type="number"
           value={govToken.tokenSupply.value}
           onChange={e => onSupplyChange(e.target.value)}
           label="Token Supply"
