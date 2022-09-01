@@ -16,6 +16,7 @@ import axios from 'axios';
 import { buildGnosisApiUrl } from '../../../providers/gnosis/helpers';
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
+import { useSignatures } from '../../../contexts/web3Data/signatures';
 
 export interface SafeSignature {
   signer: string;
@@ -32,6 +33,8 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
   const {
     state: { isSigner, nonce, contractAddress },
   } = useGnosisWrapper();
+
+  const [signatureCall, signatureCallPending] = useSignatures();
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
@@ -219,6 +222,15 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
       };
+
+      //  const signature = signatureCall({
+      //   signer: signerOrProvider as Signer,
+      //   contractAddress: contractAddress,
+      //   data: transactionData,
+      //   pendingMessage: 'Signing Tx',
+      //   failedMessage: 'Signing Failed',
+      //   successMessage: 'Tx Signed',
+      // });
 
       const signature = await safeSignMessage(
         signerOrProvider as Signer,
