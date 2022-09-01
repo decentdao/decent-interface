@@ -55,7 +55,7 @@ function TokenDetails() {
           value={govToken.tokenSupply.value}
           onChange={e => onSupplyChange(e.target.value)}
           label="Token Supply"
-          helperText=" "
+          helperText="Max: 18 decimals"
           disabled={false}
         />
       </InputBox>
