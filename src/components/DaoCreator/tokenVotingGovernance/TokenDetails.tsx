@@ -5,7 +5,7 @@ import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
-import { formatStrToBigNumber, getNumberalString } from '../../../helpers';
+import { formatStrToBigNumber } from '../../../helpers';
 
 function TokenDetails() {
   const {
@@ -23,7 +23,7 @@ function TokenDetails() {
   };
 
   const onSupplyChange = (value: string) => {
-    fieldUpdate(formatStrToBigNumber(value || '0'), 'tokenSupply');
+    fieldUpdate({ value, valueBN: formatStrToBigNumber(value || '0') }, 'tokenSupply');
   };
 
   return (
@@ -52,16 +52,16 @@ function TokenDetails() {
       <InputBox>
         <Input
           type="text"
-          value={getNumberalString(govToken.tokenSupply, 18, true)}
+          value={govToken.tokenSupply.value}
           onChange={e => onSupplyChange(e.target.value)}
           label="Token Supply"
-          helperText="Whole numbers only"
+          helperText=" "
           disabled={false}
         />
       </InputBox>
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
-        supply={govToken.tokenSupply}
+        supply={govToken.tokenSupply.valueBN}
         parentAllocationAmount={govToken.parentAllocationAmount}
         fieldUpdate={fieldUpdate}
       />

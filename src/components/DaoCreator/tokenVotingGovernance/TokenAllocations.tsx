@@ -8,7 +8,7 @@ import TokenAllocationInput from './TokenAllocationInput';
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
-  supply: BigNumber;
+  supply: BigNumber | null;
   parentAllocationAmount?: BigNumber;
   fieldUpdate: (value: any, field: string) => void;
 }
@@ -57,7 +57,7 @@ function TokenAllocations({
       (prev, cur) => cur.amount.add(prev),
       BigNumber.from(0)
     );
-    if (supply.gt(0)) {
+    if (supply && supply.gt(0)) {
       // no DAO token allocation with no parent allocations
       if (totalAllocated.gt(0) && (!parentAllocationAmount || parentAllocationAmount?.lte(0))) {
         setAmountError(supply.lt(totalAllocated));

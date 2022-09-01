@@ -152,10 +152,10 @@ const useCreateDAODataCreator = () => {
         BigNumber.from(0)
       );
 
-      if (tokenSupply.gt(tokenAllocationSum)) {
+      if (tokenSupply.valueBN!.gt(tokenAllocationSum)) {
         const daoTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: tokenSupply.sub(tokenAllocationSum),
+          amount: tokenSupply.valueBN!.sub(tokenAllocationSum),
         };
         tokenAllocationData.push(daoTokenAllocation);
       }
@@ -395,12 +395,12 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
-      if (tokenSupply.gt(tokenAllocationSum)) {
+      if (tokenSupply.valueBN!.gt(tokenAllocationSum)) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedTreasuryAddress,
-            tokenSupply.sub(tokenAllocationSum),
+            tokenSupply.valueBN!.sub(tokenAllocationSum),
           ]);
 
         // DAO calls Treasury to deposit tokens into it
@@ -408,7 +408,7 @@ const useCreateDAODataCreator = () => {
           TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
             [predictedVotingTokenAddress],
             [addresses.metaFactory.address],
-            [tokenSupply.sub(tokenAllocationSum)],
+            [tokenSupply.valueBN!.sub(tokenAllocationSum)],
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedTreasuryAddress);

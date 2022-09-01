@@ -55,7 +55,7 @@ type DAOEssentials = {
 type DAOGovenorToken = {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: BigNumber;
+  tokenSupply: InputBN;
   tokenAllocations: TokenAllocation[];
   parentAllocationAmount?: BigNumber;
 };
@@ -91,10 +91,15 @@ export type ICreatorContext = {
   dispatch: React.Dispatch<any>;
 };
 
+export type InputBN = {
+  value: string;
+  valueBN: BigNumber | null;
+};
+
 export interface TokenGovernanceDAO extends DAODetails {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: BigNumber;
+  tokenSupply: InputBN;
   tokenAllocations: TokenAllocation[];
   proposalThreshold: BigNumber;
   quorum: BigNumber;
