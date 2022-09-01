@@ -16,19 +16,7 @@ import axios from 'axios';
 import { buildGnosisApiUrl } from '../../../providers/gnosis/helpers';
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
-import { useSignatures } from '../../../contexts/web3Data/signatures';
 import { toast } from 'react-toastify';
-
-export interface SafeSignature {
-  signer: string;
-  data: string;
-}
-
-interface ProviderRpcError extends Error {
-  message: string;
-  code: number;
-  data?: any;
-}
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -41,8 +29,6 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
     state: { isSigner, nonce, contractAddress },
   } = useGnosisWrapper();
   const [pending, setPending] = useState(false);
-
-  const [signatureCall, signatureCallPending] = useSignatures();
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
@@ -119,6 +105,15 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         transactionData
       );
 
+      if (!signature || !signature.data) {
+        // toast.dismiss(sigToastId);
+        toast.error("There was an error! Check your browser's console logs for more details.");
+        return;
+      } else {
+        // toast.dismiss(sigToastId);
+        toast('TX Signed');
+      }
+
       const contractTransactionHash = calculateSafeTransactionHash(
         contractAddress,
         transactionData,
@@ -189,6 +184,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         return;
       }
 
+      setPending(true);
       const newDAOData = createDAODataCreator({
         creator: daoAddress,
         ...daoData,
@@ -231,19 +227,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
       };
 
-      // let signature;
-      // const sigtest = await signatureCall({
-      //   signer: signerOrProvider as Signer,
-      //   contractAddress: contractAddress,
-      //   data: transactionData,
-      //   pendingMessage: 'Signing Tx',
-      //   failedMessage: 'Signing Failed',
-      //   successMessage: 'Tx Signed',
-      //   // successCallback: sig => (signature = sig),
-      // });
-      // console.log(sigtest);
-
-      const sigToastId = toast('Signing Tx', {
+      const sigToastId = toast('Please sign tx', {
         autoClose: false,
         closeOnClick: false,
         draggable: false,
@@ -255,24 +239,14 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         contractAddress,
         transactionData
       );
-      console.log(signature);
 
-      if (!signature) {
-        console.log('here');
-        toast.dismiss(sigToastId);
+      toast.dismiss(sigToastId);
+
+      if (!signature.data) {
+        setPending(false);
         toast.error("There was an error! Check your browser's console logs for more details.");
         return;
-      } else {
-        toast.dismiss(sigToastId);
-        toast('TX Signed');
       }
-
-      const postToastId = toast('Posting to Gnosis Safe', {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        progress: 1,
-      });
 
       const contractTransactionHash = calculateSafeTransactionHash(
         contractAddress,
@@ -302,21 +276,23 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       // @todo if request is successfull call success callback
       //  successCallback()
 
-      // try {
-      //   // todo: Add in check for 200 (failed) vs 201 (success)
-      //   const res = await axios.post(
-      //     buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
-      //     apiTransactionData
-      //   );
-      //   toast.dismiss(postToastId);
-      //   if (res.status === 201) {
-      //     toast('Tx Posted to Gnosis');
-      //   } else {
-      //     toast("There was an error! Check your browser's console logs for more details.");
-      //   }
-      // } catch (e) {
-      //   console.log(e);
-      // }
+      try {
+        // todo: Add in check for 200 (failed) vs 201 (success)
+        const res = await axios.post(
+          buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
+          apiTransactionData
+        );
+        setPending(false);
+        if (res.status === 201) {
+          toast('Tx Signed and Posted to Gnosis');
+        } else {
+          console.error(res);
+          toast("There was an error! Check your browser's console logs for more details.");
+        }
+      } catch (e) {
+        console.error(e);
+        toast("There was an error! Check your browser's console logs for more details.");
+      }
     },
     [
       daoAddress,
@@ -342,7 +318,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
   return React.cloneElement(children, {
     createDAOTrigger,
     createProposal: () => {},
-    pending: false,
+    pending: pending,
     isAuthorized: isSigner,
   });
 }
