@@ -17,6 +17,7 @@ import { buildGnosisApiUrl } from '../../../providers/gnosis/helpers';
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -24,6 +25,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
   } = useWeb3Provider();
   const {
     dao: { daoAddress },
+    modules: { gnosisWrapperModule },
   } = useFractal();
   const {
     state: { isSigner, nonce, contractAddress },
@@ -42,6 +44,15 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
   //   }
   //   // toast to open tab to gnosis safe
   // }, [daoAddress]);
+
+  const navigate = useNavigate();
+  const successCallback = useCallback(() => {
+    if (!daoAddress || !gnosisWrapperModule) {
+      return;
+    }
+
+    navigate(`/daos/${daoAddress}/modules/${gnosisWrapperModule.moduleAddress}`);
+  }, [daoAddress, gnosisWrapperModule, navigate]);
 
   const createGnosisDAO = useCallback(
     async (_daoData: TokenGovernanceDAO | GnosisDAO) => {
@@ -160,6 +171,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         setPending(false);
         if (res.status === 201) {
           toast('Tx Signed and Posted to Gnosis');
+          successCallback();
         } else {
           console.error(res);
           toast("There was an error! Check your browser's console logs for more details.");
@@ -170,14 +182,15 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       }
     },
     [
-      createGnosisDAODataCreator,
-      metaFactoryContract,
       daoAddress,
       signerOrProvider,
-      contractAddress,
       nonce,
+      contractAddress,
       account,
+      metaFactoryContract,
+      createGnosisDAODataCreator,
       chainId,
+      successCallback,
     ]
   );
 
@@ -296,6 +309,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         setPending(false);
         if (res.status === 201) {
           toast('Tx Signed and Posted to Gnosis');
+          successCallback();
         } else {
           console.error(res);
           toast("There was an error! Check your browser's console logs for more details.");
@@ -314,6 +328,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       metaFactoryContract,
       createDAODataCreator,
       chainId,
+      successCallback,
     ]
   );
 
