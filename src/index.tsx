@@ -12,6 +12,7 @@ import { BlockchainDataProvider } from './contexts/blockchainData';
 import App from './App';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalProvider } from './providers/fractal/FractalProvider';
+import { ErrorFallback } from './components/ErrorFallback';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -35,8 +36,7 @@ root.render(
         <title>Fractal</title>
       </Helmet>
       <HashRouter>
-        {/* @todo add fallback? */}
-        <Sentry.ErrorBoundary fallback={<div />}>
+        <Sentry.ErrorBoundary fallback={ErrorFallback}>
           <Web3Provider>
             <BlockchainDataProvider>
               <FractalProvider>
