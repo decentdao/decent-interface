@@ -11,6 +11,12 @@ export function useNextDisabled(state: CreatorState) {
   const [isNextDisbled, setIsDisabled] = useState(true);
 
   useEffect(() => {
+    const {
+      govModule,
+      govToken,
+      essentials,
+      gnosis: { trustedAddresses, signatureThreshold },
+    } = state;
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
         if (!!state.essentials.daoName.trim()) {
@@ -27,16 +33,16 @@ export function useNextDisabled(state: CreatorState) {
         setIsDisabled(false);
         break;
       case CreatorSteps.TREASURY_GOV_TOKEN:
-        if (state.govToken) {
-          if (!state.govToken.tokenAllocations || !state.govToken.tokenSupply.valueBN) {
+        if (govToken) {
+          if (!govToken.tokenAllocations || !govToken.tokenSupply.valueBN) {
             setIsDisabled(true);
             break;
           }
-          const isAllocationsValid = state.govToken.tokenAllocations
+          const isAllocationsValid = govToken.tokenAllocations
             .map(tokenAllocation => tokenAllocation.amount)
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
-            .add(state.govToken.parentAllocationAmount || 0)
-            .lte(state.govToken.tokenSupply.valueBN!);
+            .add(govToken.parentAllocationAmount || 0)
+            .lte(govToken.tokenSupply.valueBN!);
 
           setIsDisabled(!isAllocationsValid);
           break;
@@ -47,8 +53,6 @@ export function useNextDisabled(state: CreatorState) {
         setIsDisabled(false);
         break;
       case CreatorSteps.GOV_CONFIG: {
-        const { govModule, govToken, essentials } = state;
-
         const isEssentialsComplete = !!essentials.daoName.trim();
         const isGovTokenComplete =
           !!govToken.tokenName.trim() &&
@@ -70,10 +74,6 @@ export function useNextDisabled(state: CreatorState) {
         break;
       }
       case CreatorSteps.GNOSIS_GOVERNANCE: {
-        const {
-          gnosis: { trustedAddresses, signatureThreshold },
-        } = state;
-
         const isTrustedAddressValid =
           !trustedAddresses.some(trustee => trustee.error || !trustee.address.trim()) &&
           !!trustedAddresses.length;
