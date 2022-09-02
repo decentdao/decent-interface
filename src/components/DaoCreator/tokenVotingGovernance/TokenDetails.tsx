@@ -25,7 +25,7 @@ function TokenDetails() {
 
   const onSupplyChange = (value: string) => {
     fieldUpdate(
-      { value, valueBN: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
+      { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
       'tokenSupply'
     );
   };
