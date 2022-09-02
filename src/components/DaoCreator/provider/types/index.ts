@@ -57,7 +57,7 @@ type DAOGovenorToken = {
   tokenSymbol: string;
   tokenSupply: BigNumberInput;
   tokenAllocations: TokenAllocation[];
-  parentAllocationAmount?: InputBN;
+  parentAllocationAmount?: BigNumberInput;
 };
 
 type DAOGovenorModuleConfig = {
@@ -109,7 +109,7 @@ export interface TokenGovernanceDAO extends DAODetails {
   votingPeriod: BigNumber;
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
-  parentAllocationAmount?: InputBN;
+  parentAllocationAmount?: BigNumberInput;
 }
 
 export interface GnosisConfig {

@@ -17,7 +17,7 @@ export type CreateDAOData = (
     lateQuorumExecution: BigNumber;
     voteStartDelay: BigNumber;
     votingPeriod: BigNumber;
-    parentAllocationAmount?: InputBN;
+    parentAllocationAmount?: BigNumberInput;
   },
   parentToken?: string
 ) =>
