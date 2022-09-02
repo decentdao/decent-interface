@@ -5,7 +5,7 @@ import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
-import { formatStrToBigNumber } from '../../../helpers';
+import { utils } from 'ethers';
 
 function TokenDetails() {
   const {
@@ -23,7 +23,7 @@ function TokenDetails() {
   };
 
   const onSupplyChange = (value: string) => {
-    fieldUpdate({ value, valueBN: formatStrToBigNumber(value || '0') }, 'tokenSupply');
+    fieldUpdate({ value, valueBN: utils.parseUnits(value || '0', 18) }, 'tokenSupply');
   };
 
   return (
