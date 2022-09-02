@@ -10,26 +10,25 @@ interface ISentryErrorFallback {
   resetError(): void;
 }
 
-export function ErrorFallback({ error }: ISentryErrorFallback) {
+export function ErrorFallback({}: ISentryErrorFallback) {
   return (
-    <div className="flex flex-col bg-fixed bg-image-pattern bg-cover h-screen justify-center">
-      <div className="container">
+    <div className="flex flex-col bg-fixed bg-image-pattern bg-cover h-screen items-center justify-center">
+      <div className="w-fit">
         <ContentBox>
-          <div className="flex gap-2 items-center">
-            <Alert />
-            <div className="text-gray-25">Oops!</div>
-          </div>
-          <div className="text-sm text-gray-50 text-mono">There was an unexpected error</div>
           <InputBox>
-            <div className="text-md text-gray-25 text-mono">{error.message}</div>
+            <div className="flex flex-col items-center gap-4">
+              <div className="flex gap-2 items-center text-lg ">
+                <Alert />
+                <div className="text-gray-25 text-mono">Oops!</div>
+              </div>
+              <div className="text-gray-50 text-mono">There was an unexpected error</div>
+              <PrimaryButton
+                label="Reload"
+                className="my-2 w-full"
+                onClick={() => window.location.reload()}
+              />
+            </div>
           </InputBox>
-          <div>
-            <PrimaryButton
-              label="Reload"
-              className="my-2"
-              onClick={() => window.location.reload()}
-            />
-          </div>
         </ContentBox>
       </div>
     </div>
