@@ -81,7 +81,7 @@ function Delegate() {
             </div>
           </InputBox>
           <div className="flex mr-2 my-1 text-gray-50">
-            Balance:{' '}
+            Balance:
             <span className="text-gray-25 ml-2">
               <DataLoadingWrapper isLoading={readableBalance === undefined}>
                 {readableBalance}
@@ -89,7 +89,7 @@ function Delegate() {
             </span>
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
-            Current Delegatee:{' '}
+            Current Delegatee:
             <EtherscanLinkAddress address={delegatee}>
               <DataLoadingWrapper isLoading={!delegateeDisplayName}>
                 <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
@@ -97,7 +97,7 @@ function Delegate() {
             </EtherscanLinkAddress>
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
-            Current Voting Weight:{' '}
+            Current Voting Weight:
             <span className="text-gray-25 ml-2">
               <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>
                 {readableVotingWeight}

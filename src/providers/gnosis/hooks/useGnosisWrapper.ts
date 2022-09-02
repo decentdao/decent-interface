@@ -1,9 +1,10 @@
+import { Gnosis } from './../types/state';
 import { createContext, useContext, Context } from 'react';
-import { GnosisWrapper } from '../../../assets/typechain-types/gnosis-wrapper';
 
 export interface IGnosisWrapperContext {
-  gnosisWrapperContract: GnosisWrapper | undefined;
-  gnosisSafeAddress: string | undefined;
+  state: Gnosis;
+  createProposal: () => void;
+  createPendingTx: boolean;
 }
 
 export const GnosisWrapperContext = createContext<IGnosisWrapperContext | null>(null);

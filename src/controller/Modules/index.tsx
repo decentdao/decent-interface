@@ -4,18 +4,12 @@ import Delegate from '../../components/Dao/Delegate';
 import { Governance } from '../../pages/Governance';
 import Proposals from '../../pages/Proposals';
 import Treasury from '../../pages/Treasury';
-import { GnosisWrapper } from '../../pages/GnosisWrapper';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisWrapperProvider } from '../../providers/gnosis/GnosisWrapperProvider';
 import { GovernorModuleProvider } from '../../providers/govenor/GovenorModuleProvider';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
-import {
-  IModuleData,
-  ModuleSelectAction,
-  ModuleSelectActions,
-  ModuleSelectState,
-  ModuleTypes,
-} from './types';
+import { ModuleSelectAction, ModuleSelectActions, ModuleSelectState, ModuleTypes } from './types';
+import { GnosisRoutes } from '../../pages/GnosisWrapper/routes';
 
 const initialState = {
   moduleType: null,
@@ -39,62 +33,41 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
 };
 export function Modules() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const {
-    dao,
-    modules: {
-      treasuryModule,
-      tokenVotingGovernanceModule,
-      claimingContractModule,
-      timelockModule,
-      gnosisWrapperModule,
-    },
-  } = useFractal();
+  const { dao, modules } = useFractal();
   const params = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     // Get the address of the module currently navigated to
     const moduleAddress = params.moduleAddress;
-    if (
-      moduleAddress &&
-      state.isLoading &&
-      (treasuryModule || tokenVotingGovernanceModule || gnosisWrapperModule)
-    ) {
-      const isTreasuryModule = treasuryModule
-        ? treasuryModule.moduleAddress === moduleAddress
-        : undefined;
-      const isTokenVotingGovernanceModule = tokenVotingGovernanceModule
-        ? tokenVotingGovernanceModule.moduleAddress === moduleAddress
-        : undefined;
-      const isGnosisWrapperModule = gnosisWrapperModule
-        ? gnosisWrapperModule.moduleAddress === moduleAddress
-        : undefined;
+    if (!moduleAddress || !state.isLoading) {
+      return;
+    }
+    // on reload waits for modules to load
+    if (Object.values(modules).every(v => !v)) {
+      return;
+    }
 
-      let moduleData: IModuleData | undefined;
-      if (isTreasuryModule) {
-        moduleData = treasuryModule;
+    const { treasuryModule, tokenVotingGovernanceModule, gnosisWrapperModule } = modules;
+    switch (moduleAddress) {
+      case treasuryModule?.moduleAddress: {
+        dispatch({ type: ModuleSelectActions.SET_MODULE, payload: treasuryModule! });
+        break;
       }
-      if (isTokenVotingGovernanceModule) {
-        moduleData = tokenVotingGovernanceModule;
+      case tokenVotingGovernanceModule?.moduleAddress: {
+        dispatch({ type: ModuleSelectActions.SET_MODULE, payload: tokenVotingGovernanceModule! });
+        break;
       }
-      if (isGnosisWrapperModule) {
-        moduleData = gnosisWrapperModule;
+      case gnosisWrapperModule?.moduleAddress: {
+        dispatch({ type: ModuleSelectActions.SET_MODULE, payload: gnosisWrapperModule! });
+        break;
       }
-      if (moduleData) {
-        dispatch({ type: ModuleSelectActions.SET_MODULE, payload: moduleData });
-      } else {
+      default: {
         dispatch({ type: ModuleSelectActions.INVALID });
+        break;
       }
     }
-  }, [
-    params,
-    dispatch,
-    state.isLoading,
-    treasuryModule,
-    tokenVotingGovernanceModule,
-    gnosisWrapperModule,
-    dao.moduleAddresses,
-  ]);
+  }, [dao, params, dispatch, state.isLoading, modules]);
 
   useEffect(() => {
     if (params.moduleAddress !== state.moduleAddress && !state.isLoading) {
@@ -103,10 +76,10 @@ export function Modules() {
   }, [params.moduleAddress, state.moduleAddress, state.isLoading]);
 
   useEffect(() => {
-    if (!state.isLoading && !state.moduleType && dao.isLoading) {
+    if (!state.isLoading && !state.moduleType) {
       navigate(`/daos/${dao.daoAddress}`, { replace: true });
     }
-  }, [state.isLoading, state.moduleType, dao.daoAddress, navigate, dao.isLoading]);
+  }, [state.isLoading, state.moduleType, dao.daoAddress, navigate]);
 
   switch (state.moduleType) {
     case ModuleTypes.TREASURY:
@@ -119,8 +92,8 @@ export function Modules() {
       return (
         <GovernorModuleProvider
           moduleAddress={state.moduleAddress}
-          timeLockModuleAddress={timelockModule?.moduleAddress}
-          claimingContractAddress={claimingContractModule?.moduleAddress}
+          timeLockModuleAddress={modules.timelockModule?.moduleAddress}
+          claimingContractAddress={modules.claimingContractModule?.moduleAddress}
         >
           <Routes>
             <Route
@@ -141,7 +114,7 @@ export function Modules() {
     case ModuleTypes.GNOSIS_WRAPPER:
       return (
         <GnosisWrapperProvider moduleAddress={state.moduleAddress}>
-          <GnosisWrapper />
+          <GnosisRoutes />
         </GnosisWrapperProvider>
       );
     default: {

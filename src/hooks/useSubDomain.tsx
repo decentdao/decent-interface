@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 
-function useSubDomain(address: string | undefined) {
+function useSubDomain() {
   let {
     state: { network },
   } = useWeb3Provider();
@@ -16,9 +16,6 @@ function useSubDomain(address: string | undefined) {
     setSubdomain(`${network}.`);
   }, [network]);
 
-  if (!network || !address) {
-    return <div></div>;
-  }
   return subdomain;
 }
 

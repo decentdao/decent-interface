@@ -3,14 +3,18 @@ import { useGnosisWrapper } from '../../providers/gnosis/hooks/useGnosisWrapper'
 import GnosisSafeLink from '../../components/ui/GnosisSafeLink';
 
 export function GnosisWrapper() {
-  const { gnosisSafeAddress } = useGnosisWrapper();
+  const {
+    state: { safeAddress },
+  } = useGnosisWrapper();
   return (
     <div>
       <H1>Gnosis Safe</H1>
-      <GnosisSafeLink
-        address={gnosisSafeAddress}
-        label="Gnosis Safe"
-      />
+      <div className="flex">
+        <GnosisSafeLink
+          address={safeAddress}
+          label="Gnosis Safe"
+        />
+      </div>
     </div>
   );
 }

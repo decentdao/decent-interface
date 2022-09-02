@@ -1,8 +1,33 @@
-import { GnosisWrapperContext } from './hooks/useGnosisWrapper';
-
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo, useReducer } from 'react';
 import useGnosisWrapperContract from './hooks/useGnosisWrapperContract';
 import useGnosisSafeAddress from './hooks/useGnosisSafeAddress';
+import { useGnosisApiServices } from './hooks/useGnosisApiServices';
+import { Gnosis, GnosisActions, GnosisActionTypes } from './types';
+import { GnosisWrapperContext } from './hooks/useGnosisWrapper';
+import { useGnosisSigner } from './hooks/useGnosisSigner';
+
+const initialState: Gnosis = {
+  name: '',
+  safeAddress: undefined,
+  owners: [],
+  isSigner: false,
+  nonce: undefined,
+  threshold: 0,
+  isLoading: true,
+};
+
+const reducer = (state: Gnosis, action: GnosisActionTypes) => {
+  switch (action.type) {
+    case GnosisActions.UPDATE_GNOSIS_CONTRACT:
+      return { ...state, ...action.payload };
+    case GnosisActions.UPDATE_GNOSIS_SAFE_INFORMATION:
+      return { ...state, ...action.payload, isLoading: false };
+    case GnosisActions.UPDATE_SIGNER_AUTH:
+      return { ...state, isSigner: action.payload };
+    case GnosisActions.RESET:
+      return initialState;
+  }
+};
 
 export function GnosisWrapperProvider({
   moduleAddress,
@@ -11,15 +36,19 @@ export function GnosisWrapperProvider({
   moduleAddress: string | null;
   children: ReactNode;
 }) {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const gnosisWrapperContract = useGnosisWrapperContract(moduleAddress);
-  const gnosisSafeAddress = useGnosisSafeAddress(gnosisWrapperContract);
 
+  useGnosisSafeAddress(gnosisWrapperContract, dispatch);
+  useGnosisApiServices(state.safeAddress, dispatch);
+  useGnosisSigner(state.owners, dispatch);
   const value = useMemo(
     () => ({
-      gnosisWrapperContract,
-      gnosisSafeAddress,
+      state,
+      createProposal: () => {},
+      createPendingTx: false,
     }),
-    [gnosisWrapperContract, gnosisSafeAddress]
+    [state]
   );
   return <GnosisWrapperContext.Provider value={value}>{children}</GnosisWrapperContext.Provider>;
 }
