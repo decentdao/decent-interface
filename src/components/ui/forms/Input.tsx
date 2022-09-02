@@ -126,13 +126,15 @@ function Input({
 
   const limitDecimals = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (!value) {
-        return event;
+      if (!value || ['Backspace', 'Delete'].includes(event.key)) {
+        return;
       }
       const [, dec] = value.toString().split('.');
-      return !!dec && !!decimals && dec.length >= decimals && event.preventDefault();
+      if (!!dec && !!decimals && dec.length >= decimals) {
+        event.preventDefault();
+      }
     },
-    [value, decimals]
+    [decimals, value]
   );
 
   const handleKeyDown = useCallback(
