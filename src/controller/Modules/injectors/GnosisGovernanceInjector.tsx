@@ -11,9 +11,13 @@ import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
 import { BigNumber, ethers, Signer } from 'ethers';
 import { DAO__factory } from '@fractal-framework/core-contracts';
-import { calculateSafeTransactionHash, safeSignMessage } from '../utils';
+import {
+  calculateSafeTransactionHash,
+  safeSignMessage,
+  buildGnosisApiUrl,
+} from '../../../providers/gnosis/helpers';
 import axios from 'axios';
-import { buildGnosisApiUrl } from '../../../providers/gnosis/helpers';
+
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { toast } from 'react-toastify';
