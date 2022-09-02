@@ -41,14 +41,6 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
 
   const { metaFactoryContract } = useBlockchainData();
 
-  // @todo update this success callback to redirect to Gnosis?
-  // const successCallback = useCallback(() => {
-  //   if (!daoAddress) {
-  //     return;
-  //   }
-  //   // toast to open tab to gnosis safe
-  // }, [daoAddress]);
-
   const navigate = useNavigate();
   const successCallback = useCallback(() => {
     if (!daoAddress || !gnosisWrapperModule) {
@@ -160,14 +152,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         origin: 'Fractal', // Give more information about the transaction, e.g. "My Custom Safe app"
       };
 
-      // @todo example request using the buildGnosisGasRelayApiUrl
-      // const gasRelayRes = axios.get(buildGnosisGasRelayApiUrl(chainId, '/gas-station/'));
-
-      // @todo if request is successfull call success callback
-      //  successCallback()
-
       try {
-        // todo: Add in check for 200 (failed) vs 201 (success)
         const res = await axios.post(
           buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
           apiTransactionData
@@ -298,14 +283,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         origin: 'Fractal', // Give more information about the transaction, e.g. "My Custom Safe app"
       };
 
-      // @todo example request using the buildGnosisGasRelayApiUrl
-      // const gasRelayRes = axios.get(buildGnosisGasRelayApiUrl(chainId, '/gas-station/'));
-
-      // @todo if request is successfull call success callback
-      //  successCallback()
-
       try {
-        // todo: Add in check for 200 (failed) vs 201 (success)
         const res = await axios.post(
           buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
           apiTransactionData
