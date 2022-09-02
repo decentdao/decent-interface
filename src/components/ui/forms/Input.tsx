@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useCallback } from 'react';
 import cx from 'classnames';
 
 interface InputProps {
@@ -21,6 +21,7 @@ interface InputProps {
   isWholeNumberOnly?: boolean;
   isFloatNumbers?: boolean;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
+  decimals?: number;
 }
 
 /**
@@ -48,6 +49,7 @@ function Input({
   inputClassName,
   onChange,
   onClickMax,
+  decimals,
 }: InputProps) {
   const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
@@ -122,6 +124,32 @@ function Input({
     return ['e', '+', '-'].includes(event.key) && event.preventDefault();
   };
 
+  const limitDecimals = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (!value) {
+        return event;
+      }
+      const [, dec] = value.toString().split('.');
+      return !!dec && !!decimals && dec.length >= decimals && event.preventDefault();
+    },
+    [value, decimals]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (isWholeNumberOnly) {
+        wholeNumbersOnly(event);
+      } else if (isFloatNumbers) {
+        floatNumbers(event);
+      }
+      if (decimals) {
+        limitDecimals(event);
+      }
+      return event;
+    },
+    [isWholeNumberOnly, isFloatNumbers, decimals, limitDecimals]
+  );
+
   return (
     <div
       className={cx(
@@ -149,9 +177,7 @@ function Input({
           value={value}
           min={min}
           max={max}
-          onKeyDown={
-            isWholeNumberOnly ? wholeNumbersOnly : isFloatNumbers ? floatNumbers : undefined
-          }
+          onKeyDown={handleKeyDown}
           onChange={onChange}
           onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             (e.target as HTMLInputElement).blur()

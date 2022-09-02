@@ -6,6 +6,7 @@ import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
 import { utils } from 'ethers';
+import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 
 function TokenDetails() {
   const {
@@ -23,7 +24,10 @@ function TokenDetails() {
   };
 
   const onSupplyChange = (value: string) => {
-    fieldUpdate({ value, valueBN: utils.parseUnits(value || '0', 18) }, 'tokenSupply');
+    fieldUpdate(
+      { value, valueBN: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
+      'tokenSupply'
+    );
   };
 
   return (
@@ -57,6 +61,7 @@ function TokenDetails() {
           label="Token Supply"
           helperText="Max: 18 decimals"
           disabled={false}
+          decimals={DEFAULT_TOKEN_DECIMALS}
         />
       </InputBox>
       <TokenAllocations
