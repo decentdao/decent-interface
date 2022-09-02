@@ -36,7 +36,7 @@ export const initialState: CreatorState = {
         address: '',
         amount: {
           value: '',
-          valueBN: null,
+          bigNumberValue: null,
         },
       },
     ],

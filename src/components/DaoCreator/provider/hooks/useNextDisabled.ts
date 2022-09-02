@@ -39,7 +39,7 @@ export function useNextDisabled(state: CreatorState) {
             break;
           }
           const isAllocationsValid = govToken.tokenAllocations
-            .map(tokenAllocation => tokenAllocation.amount.valueBN || BigNumber.from(0))
+            .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
             .add(govToken.parentAllocationAmount || 0)
             .lte(govToken.tokenSupply.bigNumberValue!);
@@ -59,7 +59,7 @@ export function useNextDisabled(state: CreatorState) {
           !!govToken.tokenSymbol.trim() &&
           state.govToken.tokenSupply.bigNumberValue!.gt(0) &&
           govToken.tokenAllocations
-            .map(tokenAllocation => tokenAllocation.amount.valueBN || BigNumber.from(0))
+            .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
             .lte(state.govToken.tokenSupply.bigNumberValue!);
         const isGovModuleComplete =

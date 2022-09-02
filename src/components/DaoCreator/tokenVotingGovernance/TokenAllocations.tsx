@@ -54,7 +54,7 @@ function TokenAllocations({
 
   useEffect(() => {
     const totalAllocated = tokenAllocations
-      .map(tokenAllocation => tokenAllocation.amount.valueBN || BigNumber.from(0))
+      .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
       .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
     if (supply && supply.gt(0)) {
       // no DAO token allocation with no parent allocations

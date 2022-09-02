@@ -1,7 +1,7 @@
-import { InputBN } from './../components/DaoCreator/provider/types/index';
+import { BigNumberInput } from './../components/DaoCreator/provider/types/index';
 
 export type TokenAllocation = {
   address: string;
-  amount: InputBN;
+  amount: BigNumberInput;
   addressError?: string;
 };
