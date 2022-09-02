@@ -62,6 +62,7 @@ function TokenDetails() {
           helperText="Max: 18 decimals"
           disabled={false}
           decimals={DEFAULT_TOKEN_DECIMALS}
+          isFloatNumbers
         />
       </InputBox>
       <TokenAllocations
