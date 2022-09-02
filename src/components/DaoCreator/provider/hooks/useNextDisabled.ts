@@ -34,7 +34,7 @@ export function useNextDisabled(state: CreatorState) {
         break;
       case CreatorSteps.TREASURY_GOV_TOKEN:
         if (govToken) {
-          if (!govToken.tokenAllocations || !govToken.tokenSupply.valueBN) {
+          if (!govToken.tokenAllocations || !govToken.tokenSupply.bigNumberValue) {
             setIsDisabled(true);
             break;
           }
@@ -42,7 +42,7 @@ export function useNextDisabled(state: CreatorState) {
             .map(tokenAllocation => tokenAllocation.amount)
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
             .add(govToken.parentAllocationAmount || 0)
-            .lte(govToken.tokenSupply.valueBN!);
+            .lte(govToken.tokenSupply.bigNumberValue!);
 
           setIsDisabled(!isAllocationsValid);
           break;
@@ -57,11 +57,11 @@ export function useNextDisabled(state: CreatorState) {
         const isGovTokenComplete =
           !!govToken.tokenName.trim() &&
           !!govToken.tokenSymbol.trim() &&
-          state.govToken.tokenSupply.valueBN!.gt(0) &&
+          state.govToken.tokenSupply.bigNumberValue!.gt(0) &&
           govToken.tokenAllocations
             .map(tokenAllocation => tokenAllocation.amount)
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
-            .lte(state.govToken.tokenSupply.valueBN!);
+            .lte(state.govToken.tokenSupply.bigNumberValue!);
         const isGovModuleComplete =
           govModule.proposalThreshold.gte(0) &&
           govModule.quorum.gte(0) &&

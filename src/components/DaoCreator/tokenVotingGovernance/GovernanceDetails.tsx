@@ -25,7 +25,7 @@ function GovernanceDetails() {
 
   const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
     const newThreshold = BigNumber.from(event.target.value || 0);
-    if (newThreshold.lte(govToken.tokenSupply.valueBN!)) {
+    if (newThreshold.lte(govToken.tokenSupply.bigNumberValue!)) {
       fieldUpdate(newThreshold, 'proposalThreshold');
     } else {
       fieldUpdate(govToken.tokenSupply, 'proposalThreshold');

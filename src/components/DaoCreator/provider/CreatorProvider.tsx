@@ -28,7 +28,7 @@ export const initialState: CreatorState = {
     tokenName: '',
     tokenSupply: {
       value: '',
-      valueBN: null,
+      bigNumberValue: null,
     },
     tokenSymbol: '',
     tokenAllocations: [{ address: '', amount: BigNumber.from(0) }],

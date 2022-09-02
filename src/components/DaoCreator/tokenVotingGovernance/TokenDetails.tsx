@@ -61,7 +61,7 @@ function TokenDetails() {
       </InputBox>
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
-        supply={govToken.tokenSupply.valueBN}
+        supply={govToken.tokenSupply.bigNumberValue}
         parentAllocationAmount={govToken.parentAllocationAmount}
         fieldUpdate={fieldUpdate}
       />
