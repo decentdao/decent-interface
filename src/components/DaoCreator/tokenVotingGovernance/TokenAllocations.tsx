@@ -107,6 +107,7 @@ function TokenAllocations({
             disabled={false}
             min="0"
             errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
+            isFloatNumbers
           />
         </InputBox>
       )}
