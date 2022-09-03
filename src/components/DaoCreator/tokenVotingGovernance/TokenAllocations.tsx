@@ -108,6 +108,7 @@ function TokenAllocations({
             min="0"
             errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
             isFloatNumbers
+            decimals={DEFAULT_TOKEN_DECIMALS}
           />
         </InputBox>
       )}
