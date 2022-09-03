@@ -61,6 +61,7 @@ function TokenAllocationInput({
         onChange={event => updateAmount(event.target.value)}
         errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
         isFloatNumbers
+        decimals={DEFAULT_TOKEN_DECIMALS}
       />
       <div className="md:col-span-1">
         <TextButton
