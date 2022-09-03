@@ -120,7 +120,7 @@ function Input({
   const wholeNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     return ['e', '+', '-', '.'].includes(event.key) && event.preventDefault();
   };
-  const floatNumbers = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const floatNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     return ['e', '+', '-'].includes(event.key) && event.preventDefault();
   };
 
@@ -142,7 +142,7 @@ function Input({
       if (isWholeNumberOnly) {
         wholeNumbersOnly(event);
       } else if (isFloatNumbers) {
-        floatNumbers(event);
+        floatNumbersOnly(event);
       }
       if (decimals) {
         limitDecimals(event);
