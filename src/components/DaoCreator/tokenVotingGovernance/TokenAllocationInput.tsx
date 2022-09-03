@@ -56,10 +56,11 @@ function TokenAllocationInput({
       />
       <Input
         containerClassName="col-span-2 md:pt-0 my-auto"
-        type="text"
+        type="number"
         value={tokenAllocation.amount.value}
         onChange={event => updateAmount(event.target.value)}
         errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
+        isFloatNumbers
       />
       <div className="md:col-span-1">
         <TextButton
