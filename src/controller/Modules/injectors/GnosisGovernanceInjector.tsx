@@ -115,7 +115,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
       };
 
-      const sigToastId = toast('Please sign tx', {
+      const sigToastId = toast('Please sign Gnosis transaction', {
         autoClose: false,
         closeOnClick: false,
         draggable: false,
