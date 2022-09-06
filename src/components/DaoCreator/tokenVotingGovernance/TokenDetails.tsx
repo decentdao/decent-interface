@@ -1,5 +1,5 @@
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
@@ -62,7 +62,7 @@ function TokenDetails() {
           helperText="Max: 18 decimals"
           disabled={false}
           decimals={DEFAULT_TOKEN_DECIMALS}
-          isFloatNumbers
+          restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
         />
       </InputBox>
       <TokenAllocations

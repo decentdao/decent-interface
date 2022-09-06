@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { TextButton } from '../../ui/forms/Button';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import TokenAllocationInput from './TokenAllocationInput';
 
@@ -88,7 +88,7 @@ function TokenAllocations({
             label="Parent Allocation Amount"
             helperText="Amount of tokens to allocate to parent DAO"
             disabled={false}
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
             errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
           />

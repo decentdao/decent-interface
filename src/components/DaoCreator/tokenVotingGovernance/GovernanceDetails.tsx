@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import ContentBanner from '../../ui/ContentBanner';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
@@ -65,7 +65,7 @@ function GovernanceDetails() {
             exampleLabel="Recommend"
             exampleText="0 Tokens"
             helperText="How many tokens does a member need to have in order to create a new proposal."
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
         </InputBox>
@@ -79,7 +79,7 @@ function GovernanceDetails() {
             exampleText="24 Hours / ~6545 Blocks"
             unit="Blocks"
             helperText="How many blocks after a proposal is created, before DAO members may vote on the proposal."
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
         </InputBox>
@@ -93,7 +93,7 @@ function GovernanceDetails() {
             exampleText="1 Week / ~45818 Blocks"
             unit="Blocks"
             helperText="The length of time (in blocks) between a vote's starting and ending point. Must be greater than 0."
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="1"
           />
         </InputBox>
@@ -108,7 +108,7 @@ function GovernanceDetails() {
             exampleText="4%"
             unit="%"
             helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Must be less than or equal to than 100%"
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
         </InputBox>
@@ -123,7 +123,7 @@ function GovernanceDetails() {
             unit="Blocks"
             helperText="Minimum voting period after quorum is reached. 
           This prevents a large voter from swaying a vote and triggering quorum at the last minute."
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
         </InputBox>
@@ -137,7 +137,7 @@ function GovernanceDetails() {
             exampleText="24 Hours / ~6545 Blocks"
             unit="Blocks"
             helperText="How many hours after a proposal PASSES / QUEUED, must it wait until it can be executed?"
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
         </InputBox>
