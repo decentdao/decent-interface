@@ -32,7 +32,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
     modules: { gnosisWrapperModule },
   } = useFractal();
   const {
-    state: { isSigner, nonce, contractAddress },
+    state: { isSigner, nonce, safeAddress },
   } = useGnosisWrapper();
   const [pending, setPending] = useState(false);
 
@@ -56,7 +56,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         !daoAddress ||
         !signerOrProvider ||
         nonce === undefined ||
-        !contractAddress ||
+        !safeAddress ||
         !account ||
         !metaFactoryContract
       ) {
@@ -124,7 +124,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
 
       const signature = await safeSignMessage(
         signerOrProvider as Signer,
-        contractAddress,
+        safeAddress,
         transactionData
       );
 
@@ -137,7 +137,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       }
 
       const contractTransactionHash = calculateSafeTransactionHash(
-        contractAddress,
+        safeAddress,
         transactionData,
         chainId
       );
@@ -160,7 +160,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
 
       try {
         const res = await axios.post(
-          buildGnosisApiUrl(chainId, `/safes/${contractAddress}/multisig-transactions/`),
+          buildGnosisApiUrl(chainId, `/safes/${safeAddress}/multisig-transactions/`),
           apiTransactionData
         );
         setPending(false);
@@ -180,7 +180,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       daoAddress,
       signerOrProvider,
       nonce,
-      contractAddress,
+      safeAddress,
       account,
       metaFactoryContract,
       chainId,
