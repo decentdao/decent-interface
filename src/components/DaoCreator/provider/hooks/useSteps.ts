@@ -16,6 +16,12 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
     const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;
     const isGnosisGovernance = state.governance === GovernanceTypes.GNOSIS_SAFE;
 
+    // True when:
+    // 1) The DAO being created is a subDAO,
+    // 2) The DAO being created is a token voting DAO
+    // 3) The parent DAO is not a Gnosis Safe DAO
+    const showFunding = isSubDAO && isTokenGovernance && !gnosisWrapperModule;
+
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
         dispatch({
@@ -32,7 +38,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           payload: {
             nextStep: isGnosisGovernance
               ? CreatorSteps.GNOSIS_GOVERNANCE
-              : isSubDAO && isTokenGovernance && !gnosisWrapperModule
+              : showFunding
               ? CreatorSteps.FUNDING
               : CreatorSteps.TREASURY_GOV_TOKEN,
             prevStep: CreatorSteps.ESSENTIALS,
