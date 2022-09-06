@@ -165,7 +165,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         );
         setPending(false);
         if (res.status === 201) {
-          toast('Tx Signed and Posted to Gnosis');
+          toast('Transaction signed and posted to Gnosis');
           successCallback();
         } else {
           console.error(res);
