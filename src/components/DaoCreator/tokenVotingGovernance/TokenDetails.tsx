@@ -6,12 +6,17 @@ import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 
 function TokenDetails() {
   const {
     state: { govToken },
     dispatch,
   } = useCreator();
+
+  const {
+    modules: { gnosisWrapperModule },
+  } = useFractal();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -64,6 +69,7 @@ function TokenDetails() {
         tokenAllocations={govToken.tokenAllocations}
         supply={govToken.tokenSupply}
         parentAllocationAmount={govToken.parentAllocationAmount}
+        parentIsGnosis={!!gnosisWrapperModule}
         fieldUpdate={fieldUpdate}
       />
     </ContentBox>
