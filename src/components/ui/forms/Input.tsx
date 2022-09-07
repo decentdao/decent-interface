@@ -145,12 +145,18 @@ function Input({
       if (decimals) {
         limitDecimals(event);
       }
-      if (restrictChar === RestrictCharTypes.WHOLE_NUMBERS_ONLY) {
-        wholeNumbersOnly(event);
+
+      switch (restrictChar) {
+        case RestrictCharTypes.WHOLE_NUMBERS_ONLY: {
+          wholeNumbersOnly(event);
+          break;
+        }
+        case RestrictCharTypes.FLOAT_NUMBERS: {
+          floatNumbersOnly(event);
+          break;
+        }
       }
-      if (restrictChar === RestrictCharTypes.FLOAT_NUMBERS) {
-        floatNumbersOnly(event);
-      }
+
       return event;
     },
     [decimals, limitDecimals, restrictChar]
