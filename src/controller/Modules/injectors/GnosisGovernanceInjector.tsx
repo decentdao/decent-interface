@@ -146,11 +146,11 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         value: '0', // Value in wei
         data: daoCalldata,
         operation: 0, // 0 CALL, 1 DELEGATE_CALL
-        gasToken: ethers.constants.AddressZero, // Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
+        gasToken: null, // Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
         safeTxGas: 0, // Max gas to use in the transaction
         baseGas: 0, // Gas costs not related to the transaction execution (signature check, refund payment...)
         gasPrice: 0, // Gas price used for the refund calculation
-        refundReceiver: ethers.constants.AddressZero, //Address of receiver of gas payment (or `null` if tx.origin)
+        refundReceiver: null, //Address of receiver of gas payment (or `null` if tx.origin)
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
         contractTransactionHash: contractTransactionHash, // Contract transaction hash calculated from all the field
         sender: account, // Owner of the Safe proposing the transaction. Must match one of the signatures
