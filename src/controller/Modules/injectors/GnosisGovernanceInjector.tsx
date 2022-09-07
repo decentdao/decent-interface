@@ -155,7 +155,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         contractTransactionHash: contractTransactionHash, // Contract transaction hash calculated from all the field
         sender: account, // Owner of the Safe proposing the transaction. Must match one of the signatures
         signature: signature.data, // One or more ethereum ECDSA signatures of the `contractTransactionHash` as an hex string
-        origin: 'Gnosis Safe created via Fractal Framework - https://www.fractalframework.xyz/', // Give more information about the transaction, e.g. "My Custom Safe app"
+        origin: 'Gnosis Safe created via Fractal Framework', // Give more information about the transaction, e.g. "My Custom Safe app"
       };
 
       try {
