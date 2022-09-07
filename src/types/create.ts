@@ -1,3 +1,4 @@
+import { BigNumberInput } from './../components/DaoCreator/provider/types/index';
 import { BigNumber } from 'ethers';
 import { MetaFactoryCreateDAOData } from './metaFactory';
 import { TokenAllocation } from './tokenAllocation';
@@ -8,7 +9,7 @@ export type CreateDAOData = (
     daoName: string;
     tokenName: string;
     tokenSymbol: string;
-    tokenSupply: BigNumber;
+    tokenSupply: BigNumberInput;
     tokenAllocations: TokenAllocation[];
     proposalThreshold: BigNumber;
     quorum: BigNumber;
