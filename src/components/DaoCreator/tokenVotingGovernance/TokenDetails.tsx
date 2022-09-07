@@ -69,7 +69,7 @@ function TokenDetails() {
         tokenAllocations={govToken.tokenAllocations}
         supply={govToken.tokenSupply}
         parentAllocationAmount={govToken.parentAllocationAmount}
-        parentIsGnosis={!!gnosisWrapperModule}
+        canReceiveParentAllocations={!gnosisWrapperModule}
         fieldUpdate={fieldUpdate}
       />
     </ContentBox>

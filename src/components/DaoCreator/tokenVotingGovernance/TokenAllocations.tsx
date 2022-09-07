@@ -10,7 +10,7 @@ interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
   supply: BigNumber;
   parentAllocationAmount?: BigNumber;
-  parentIsGnosis: boolean;
+  canReceiveParentAllocations: boolean;
   fieldUpdate: (value: any, field: string) => void;
 }
 
@@ -18,7 +18,7 @@ function TokenAllocations({
   tokenAllocations,
   supply,
   parentAllocationAmount,
-  parentIsGnosis,
+  canReceiveParentAllocations,
   fieldUpdate,
 }: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
@@ -79,7 +79,7 @@ function TokenAllocations({
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
-      {!parentIsGnosis && !!parentAllocationAmount && (
+      {canReceiveParentAllocations && !!parentAllocationAmount && (
         <InputBox>
           <Input
             type="number"
