@@ -5,7 +5,7 @@ import ContentBoxTitle from '../../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../../ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../../ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../../ui/EtherscanLinkToken';
-import Input from '../../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../../ui/forms/Input';
 import { Close } from '../../../ui/svg/Close';
 import { TableRow } from '../../../ui/table';
 import { TableBodyRowItem } from '../../../ui/table/TableBodyRow';
@@ -162,7 +162,7 @@ export function SubsidiaryFunding() {
                 value={tokenToFund.amount}
                 onChange={e => onTokenFundChange(e.target.value, index)}
                 max={tokenToFund.asset.formatedTotal}
-                isFloatNumbers
+                restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
               />
               <div onClick={() => removeTokenFund(index)}>
                 <Close />
