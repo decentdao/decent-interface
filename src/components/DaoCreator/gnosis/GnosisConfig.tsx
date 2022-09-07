@@ -1,7 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions, TrustedAddress } from '../provider/types';
@@ -80,7 +80,7 @@ export function GnosisConfig() {
           onChange={handleSignersChanges}
           label="Signers"
           helperText="How many trusted users for Gnosis Safe"
-          isWholeNumberOnly
+          restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
         />
       </InputBox>
       <InputBox>
@@ -91,7 +91,7 @@ export function GnosisConfig() {
           errorMessage={thresholdError}
           label="Signature Threshold"
           helperText="How many signatures are needed to pass a proposal."
-          isWholeNumberOnly
+          restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
         />
       </InputBox>
 

@@ -26,7 +26,10 @@ export const initialState: CreatorState = {
   },
   govToken: {
     tokenName: '',
-    tokenSupply: BigNumber.from(0),
+    tokenSupply: {
+      value: '',
+      bigNumberValue: null,
+    },
     tokenSymbol: '',
     tokenAllocations: [{ address: '', amount: BigNumber.from(0) }],
     parentAllocationAmount: undefined,

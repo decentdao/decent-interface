@@ -8,3 +8,5 @@ export const CREATOR_STEP_TITLES = {
   [CreatorSteps.GOV_CONFIG]: 'Governance Configuration',
   [CreatorSteps.FUNDING]: 'Funding',
 };
+
+export const DEFAULT_TOKEN_DECIMALS = 18;

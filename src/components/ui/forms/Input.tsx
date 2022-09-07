@@ -1,5 +1,10 @@
-import { ChangeEvent, FormEvent } from 'react';
+import { ChangeEvent, FormEvent, useCallback } from 'react';
 import cx from 'classnames';
+
+export enum RestrictCharTypes {
+  WHOLE_NUMBERS_ONLY,
+  FLOAT_NUMBERS,
+}
 
 interface InputProps {
   type: 'text' | 'number' | 'textarea';
@@ -18,9 +23,9 @@ interface InputProps {
   min?: string | number;
   max?: string | number;
   onClickMax?: () => void;
-  isWholeNumberOnly?: boolean;
-  isFloatNumbers?: boolean;
+  restrictChar?: RestrictCharTypes;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
+  decimals?: number;
 }
 
 /**
@@ -42,12 +47,12 @@ function Input({
   helperText,
   exampleText,
   exampleLabel,
-  isFloatNumbers,
-  isWholeNumberOnly,
+  restrictChar,
   containerClassName,
   inputClassName,
   onChange,
   onClickMax,
+  decimals,
 }: InputProps) {
   const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
@@ -118,9 +123,44 @@ function Input({
   const wholeNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     return ['e', '+', '-', '.'].includes(event.key) && event.preventDefault();
   };
-  const floatNumbers = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const floatNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     return ['e', '+', '-'].includes(event.key) && event.preventDefault();
   };
+
+  const limitDecimals = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (!value || ['Backspace', 'Delete'].includes(event.key)) {
+        return;
+      }
+      const [, dec] = value.toString().split('.');
+      if (!!dec && !!decimals && dec.length >= decimals) {
+        event.preventDefault();
+      }
+    },
+    [decimals, value]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (decimals) {
+        limitDecimals(event);
+      }
+
+      switch (restrictChar) {
+        case RestrictCharTypes.WHOLE_NUMBERS_ONLY: {
+          wholeNumbersOnly(event);
+          break;
+        }
+        case RestrictCharTypes.FLOAT_NUMBERS: {
+          floatNumbersOnly(event);
+          break;
+        }
+      }
+
+      return event;
+    },
+    [decimals, limitDecimals, restrictChar]
+  );
 
   return (
     <div
@@ -149,9 +189,7 @@ function Input({
           value={value}
           min={min}
           max={max}
-          onKeyDown={
-            isWholeNumberOnly ? wholeNumbersOnly : isFloatNumbers ? floatNumbers : undefined
-          }
+          onKeyDown={handleKeyDown}
           onChange={onChange}
           onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             (e.target as HTMLInputElement).blur()
