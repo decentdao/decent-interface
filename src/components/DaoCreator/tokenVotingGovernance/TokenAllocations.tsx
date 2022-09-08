@@ -10,6 +10,7 @@ interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
   supply: BigNumber | null;
   parentAllocationAmount?: BigNumber;
+  canReceiveParentAllocations: boolean;
   fieldUpdate: (value: any, field: string) => void;
 }
 
@@ -17,6 +18,7 @@ function TokenAllocations({
   tokenAllocations,
   supply,
   parentAllocationAmount,
+  canReceiveParentAllocations,
   fieldUpdate,
 }: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
@@ -77,7 +79,7 @@ function TokenAllocations({
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
-      {parentAllocationAmount !== undefined && (
+      {canReceiveParentAllocations && !!parentAllocationAmount && (
         <InputBox>
           <Input
             type="number"
