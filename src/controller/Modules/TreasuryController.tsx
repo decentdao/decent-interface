@@ -8,18 +8,18 @@ import { ModuleTypes } from './types';
 
 export function TreasuryController({ children }: PropsWithChildren) {
   const {
-    modules: { tokenVotingGovernanceModule, treasuryModule, timelockModule, gnosisWrapperModule },
+    modules: { treasuryModule, gnosisWrapperModule },
   } = useFractal();
 
   const [moduleType, setModuleType] = useState<ModuleTypes>();
 
   useEffect(() => {
-    if (!!treasuryModule && !tokenVotingGovernanceModule) {
+    if (!!treasuryModule) {
       setModuleType(treasuryModule.moduleType);
     } else if (!!gnosisWrapperModule) {
       setModuleType(gnosisWrapperModule.moduleType);
     }
-  }, [tokenVotingGovernanceModule, gnosisWrapperModule, timelockModule, treasuryModule]);
+  }, [gnosisWrapperModule, treasuryModule]);
 
   switch (moduleType) {
     case ModuleTypes.TREASURY: {
