@@ -1,10 +1,11 @@
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { utils } from 'ethers';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 
@@ -13,6 +14,10 @@ function TokenDetails() {
     state: { govToken },
     dispatch,
   } = useCreator();
+
+  const {
+    modules: { gnosisWrapperModule },
+  } = useFractal();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -52,7 +57,6 @@ function TokenDetails() {
           disabled={false}
         />
       </InputBox>
-
       <InputBox>
         <Input
           type="number"
@@ -62,13 +66,14 @@ function TokenDetails() {
           helperText="Max: 18 decimals"
           disabled={false}
           decimals={DEFAULT_TOKEN_DECIMALS}
-          isFloatNumbers
+          restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
         />
       </InputBox>
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
         supply={govToken.tokenSupply.bigNumberValue}
         parentAllocationAmount={govToken.parentAllocationAmount}
+        canReceiveParentAllocations={!gnosisWrapperModule}
         fieldUpdate={fieldUpdate}
       />
     </ContentBox>

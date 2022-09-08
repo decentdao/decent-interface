@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { TextButton } from '../../ui/forms/Button';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import TokenAllocationInput from './TokenAllocationInput';
 
@@ -10,6 +10,7 @@ interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
   supply: BigNumber | null;
   parentAllocationAmount?: BigNumber;
+  canReceiveParentAllocations: boolean;
   fieldUpdate: (value: any, field: string) => void;
 }
 
@@ -17,6 +18,7 @@ function TokenAllocations({
   tokenAllocations,
   supply,
   parentAllocationAmount,
+  canReceiveParentAllocations,
   fieldUpdate,
 }: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
@@ -76,7 +78,7 @@ function TokenAllocations({
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
-      {parentAllocationAmount !== undefined && (
+      {canReceiveParentAllocations && !!parentAllocationAmount && (
         <InputBox>
           <Input
             type="number"
@@ -87,7 +89,7 @@ function TokenAllocations({
             label="Parent Allocation Amount"
             helperText="Amount of tokens to allocate to parent DAO"
             disabled={false}
-            isWholeNumberOnly
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
             errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
           />
