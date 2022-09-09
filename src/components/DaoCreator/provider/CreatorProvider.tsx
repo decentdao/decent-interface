@@ -31,7 +31,15 @@ export const initialState: CreatorState = {
       bigNumberValue: null,
     },
     tokenSymbol: '',
-    tokenAllocations: [{ address: '', amount: BigNumber.from(0) }],
+    tokenAllocations: [
+      {
+        address: '',
+        amount: {
+          value: '',
+          bigNumberValue: null,
+        },
+      },
+    ],
     parentAllocationAmount: undefined,
   },
   govModule: {
