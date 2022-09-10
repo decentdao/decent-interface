@@ -107,7 +107,7 @@ function TokenAllocations({
             label="Parent Allocation Amount"
             helperText="Amount of tokens to allocate to parent DAO"
             disabled={false}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+            restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
             min="0"
             errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
             decimals={DEFAULT_TOKEN_DECIMALS}
