@@ -1,6 +1,11 @@
 import { ChangeEvent, FormEvent, useCallback } from 'react';
 import cx from 'classnames';
 
+export enum RestrictCharTypes {
+  WHOLE_NUMBERS_ONLY,
+  FLOAT_NUMBERS,
+}
+
 interface InputProps {
   type: 'text' | 'number' | 'textarea';
   value?: string | number;
@@ -18,8 +23,7 @@ interface InputProps {
   min?: string | number;
   max?: string | number;
   onClickMax?: () => void;
-  isWholeNumberOnly?: boolean;
-  isFloatNumbers?: boolean;
+  restrictChar?: RestrictCharTypes;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
   decimals?: number;
 }
@@ -43,8 +47,7 @@ function Input({
   helperText,
   exampleText,
   exampleLabel,
-  isFloatNumbers,
-  isWholeNumberOnly,
+  restrictChar,
   containerClassName,
   inputClassName,
   onChange,
@@ -120,7 +123,7 @@ function Input({
   const wholeNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     return ['e', '+', '-', '.'].includes(event.key) && event.preventDefault();
   };
-  const floatNumbers = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const floatNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     return ['e', '+', '-'].includes(event.key) && event.preventDefault();
   };
 
@@ -139,17 +142,24 @@ function Input({
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (isWholeNumberOnly) {
-        wholeNumbersOnly(event);
-      } else if (isFloatNumbers) {
-        floatNumbers(event);
-      }
       if (decimals) {
         limitDecimals(event);
       }
+
+      switch (restrictChar) {
+        case RestrictCharTypes.WHOLE_NUMBERS_ONLY: {
+          wholeNumbersOnly(event);
+          break;
+        }
+        case RestrictCharTypes.FLOAT_NUMBERS: {
+          floatNumbersOnly(event);
+          break;
+        }
+      }
+
       return event;
     },
-    [isWholeNumberOnly, isFloatNumbers, decimals, limitDecimals]
+    [decimals, limitDecimals, restrictChar]
   );
 
   return (

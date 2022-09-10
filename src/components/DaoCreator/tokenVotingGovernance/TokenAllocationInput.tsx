@@ -1,7 +1,7 @@
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { checkAddress } from '../../../hooks/useAddress';
 import { TextButton } from '../../ui/forms/Button';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { utils } from 'ethers';
@@ -56,10 +56,12 @@ function TokenAllocationInput({
       />
       <Input
         containerClassName="col-span-2 md:pt-0 my-auto"
-        type="text"
+        type="number"
         value={tokenAllocation.amount.value}
         onChange={event => updateAmount(event.target.value)}
         errorMessage={hasAmountError ? 'Allocated more than supply' : undefined}
+        restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
+        decimals={DEFAULT_TOKEN_DECIMALS}
       />
       <div className="md:col-span-1">
         <TextButton
