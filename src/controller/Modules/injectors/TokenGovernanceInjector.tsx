@@ -41,7 +41,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
-
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryModule();
   const { metaFactoryContract } = useBlockchainData();
   const navigate = useNavigate();
   const successCallback = useCallback(() => {
@@ -261,8 +261,17 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
       createProposal: submitProposal,
       pending: pendingCreateTx,
       isAuthorized: canUserCreateProposal,
+      treasuryAssetsFungible,
+      treasuryAssetsNonFungible,
     }),
-    [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal]
+    [
+      createDAOTrigger,
+      submitProposal,
+      pendingCreateTx,
+      canUserCreateProposal,
+      treasuryAssetsFungible,
+      treasuryAssetsNonFungible,
+    ]
   );
 
   return (
