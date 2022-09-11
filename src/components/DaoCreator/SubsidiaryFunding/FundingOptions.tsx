@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useTreasuryModule } from '../../../../providers/treasury/hooks/useTreasuryModule';
-import ContentBox from '../../../ui/ContentBox';
-import { PrimaryButton } from '../../../ui/forms/Button';
+import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
+import ContentBox from '../../ui/ContentBox';
+import { PrimaryButton } from '../../ui/forms/Button';
 import { NFTToFund, TokenToFund } from './types';
 
 interface IFundingOptions {

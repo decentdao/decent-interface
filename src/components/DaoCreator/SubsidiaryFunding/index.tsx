@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { useTreasuryModule } from '../../../../providers/treasury/hooks/useTreasuryModule';
-import ContentBox from '../../../ui/ContentBox';
-import ContentBoxTitle from '../../../ui/ContentBoxTitle';
-import EtherscanLinkAddress from '../../../ui/EtherscanLinkAddress';
-import EtherscanLinkNFT from '../../../ui/EtherscanLinkNFT';
-import EtherscanLinkToken from '../../../ui/EtherscanLinkToken';
-import Input, { RestrictCharTypes } from '../../../ui/forms/Input';
-import { Close } from '../../../ui/svg/Close';
-import { TableRow } from '../../../ui/table';
-import { TableBodyRowItem } from '../../../ui/table/TableBodyRow';
-import { FundingTableHeader, NFTFundingTableHeader } from '../../../ui/table/TableHeaders';
-import { useCreator } from '../../provider/hooks/useCreator';
-import { CreatorProviderActions } from '../../provider/types';
+import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
+import ContentBox from '../../ui/ContentBox';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
+import EtherscanLinkNFT from '../../ui/EtherscanLinkNFT';
+import EtherscanLinkToken from '../../ui/EtherscanLinkToken';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
+import { Close } from '../../ui/svg/Close';
+import { TableRow } from '../../ui/table';
+import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
+import { FundingTableHeader, NFTFundingTableHeader } from '../../ui/table/TableHeaders';
+import { useCreator } from '../provider/hooks/useCreator';
+import { CreatorProviderActions } from '../provider/types';
 import { FundingOptions } from './FundingOptions';
 
 export function SubsidiaryFunding() {
