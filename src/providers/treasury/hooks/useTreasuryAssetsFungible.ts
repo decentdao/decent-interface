@@ -73,7 +73,8 @@ const useTreasuryAssets = (
    * calculates erc20 token total amounts
    */
   useEffect(() => {
-    if (!erc20TokenDeposits?.length || !erc20TokenWithdraws || !provider) return;
+    if (!erc20TokenDeposits || erc20TokenDeposits.length === 0 || !erc20TokenWithdraws || !provider)
+      return;
 
     const tokens = new Map<string, { tokenData: Web3Token; amount: BigNumber }>();
 
