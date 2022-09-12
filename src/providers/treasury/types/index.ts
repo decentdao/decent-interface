@@ -34,7 +34,7 @@ export interface TreasuryAssetFungible {
 }
 
 export interface TreasuryAssetFungibleFiatAmount {
-  [key: string]: {
+  [currency: string]: {
     amount: number;
     currency: string;
     formattedAmount: string;
@@ -42,7 +42,7 @@ export interface TreasuryAssetFungibleFiatAmount {
 }
 
 export interface TreasuryAssetFungibleFiatAmounts {
-  [key: string]: TreasuryAssetFungibleFiatAmount;
+  [address: string]: TreasuryAssetFungibleFiatAmount;
 };
 
 export interface TreasuryAssetFungiblePrice extends TreasuryAssetFungibleFiatAmount {};

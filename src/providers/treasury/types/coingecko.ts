@@ -1,5 +1,5 @@
 export type CoingeckoApiResponse = {
-  [key: string]: {
-    [key: string]: number;
+  [address: string]: {
+    [currency: string]: number;
   };
 };
