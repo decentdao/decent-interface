@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { CoingeckoApiResponse } from './coingecko';
 
 export interface TokenEvent {
   transactionHash: string;
@@ -29,8 +30,23 @@ export interface TreasuryAssetFungible {
   decimals: number;
   contractAddress: string;
   totalAmount: BigNumber;
-  formatedTotal: string;
+  formattedTotal: string;
 }
+
+export interface TreasuryAssetFungibleFiatAmount {
+  [key: string]: {
+    amount: number;
+    currency: string;
+    formattedAmount: string;
+  };
+}
+
+export interface TreasuryAssetFungibleFiatAmounts {
+  [key: string]: TreasuryAssetFungibleFiatAmount;
+};
+
+export interface TreasuryAssetFungiblePrice extends TreasuryAssetFungibleFiatAmount {};
+export interface TreasuryAssetFungiblePrices extends TreasuryAssetFungibleFiatAmounts {};
 
 export interface TreasuryAssetNonFungible {
   name: string;
