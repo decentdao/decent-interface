@@ -1,11 +1,13 @@
+import { useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 import Summary from '../../components/Dao/Summary';
+import Dashboard from '../../components/Dao/Dashboard';
 import { Modules } from '../../controller/Modules';
 import Transactions from '../Transactions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { useEffect } from 'react';
+import { TreasuryController } from '../../controller/Modules/TreasuryController';
 
 function DAORoutes() {
   return (
@@ -13,6 +15,14 @@ function DAORoutes() {
       <Route
         index
         element={<Summary />}
+      />
+      <Route
+        path="dashboard/*"
+        element={
+          <TreasuryController>
+            <Dashboard />
+          </TreasuryController>
+        }
       />
       <Route
         path="transactions/*"
