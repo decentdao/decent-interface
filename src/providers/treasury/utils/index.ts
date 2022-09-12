@@ -1,21 +1,25 @@
-import { utils } from 'ethers';
 import countDecimals from '../../../utils/countDecimals';
 
-export const formatAmount = (key: string, amount: number) => {
-  // e.g. 1_234.567 -> 1,234.56
-  const currency = utils.commify(amount.toFixed(2));
+const numberWithCommas = (number: number, decimals: number) => {
+  const n = number.toFixed(decimals);
+  return n.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+};
+
+export const formatAmount = (currencyKey: string, amount: number) => {
+  // 1234.567 -> 1,234.56
+  const currency = numberWithCommas(amount, 2);
 
   // on occasion, we'll need to display the `amount` with
   // at least 2 decimal places, unless the amount is a
-  // whole number. doing will prevent oddly formatted
+  // whole number. doing so will prevent oddly formatted
   // values (e.g. "$0.5", "$1234.00").
-  // e.g. 1_234.567 -> 1,234.567; 1_234 -> 1,234
   const decimals = countDecimals(amount);
   const maxDecimals = decimals ? Math.max(2, decimals) : 0;
-  const formattedAmount = utils.commify(amount.toFixed(maxDecimals));
+  // 1234.567 -> 1,234.567, 1234 -> 1,234
+  const formattedAmount = numberWithCommas(amount, maxDecimals);
 
   return {
-    [key]: {
+    [currencyKey]: {
       amount,
       currency,
       formattedAmount,
