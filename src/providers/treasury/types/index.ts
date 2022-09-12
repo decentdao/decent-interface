@@ -11,6 +11,11 @@ export interface TokenEvent {
   eventType: TokenEventType;
 }
 
+export enum TokenEventType {
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAW = 'WITHDRAW',
+}
+
 export interface TokenDepositEvent extends TokenEvent {
   address: string;
   amount: BigNumber;
