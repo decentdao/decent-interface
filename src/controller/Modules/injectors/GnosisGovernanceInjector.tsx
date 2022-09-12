@@ -1,4 +1,9 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BigNumber, ethers, Signer } from 'ethers';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { DAO__factory } from '@fractal-framework/core-contracts';
 import {
   GnosisDAO,
   GovernanceTypes,
@@ -9,19 +14,13 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import useCreateGnosisDAODataCreator from '../../../hooks/useCreateGnosisDAODataCreator';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
-import { BigNumber, ethers, Signer } from 'ethers';
-import { DAO__factory } from '@fractal-framework/core-contracts';
 import {
   calculateSafeTransactionHash,
   safeSignMessage,
   buildGnosisApiUrl,
 } from '../../../providers/gnosis/helpers';
-import axios from 'axios';
-
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
 import { InjectorContext } from './GovernanceInjectorConext';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
