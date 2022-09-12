@@ -137,7 +137,7 @@ const useCreateDAODataCreator = () => {
       if (parentAllocationAmount.gt(0)) {
         const parentTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: parentAllocationAmount,
+          amount: { value: '', bigNumberValue: parentAllocationAmount },
         };
         tokenAllocationData.push(parentTokenAllocation);
       }
@@ -147,15 +147,18 @@ const useCreateDAODataCreator = () => {
       // into the treasury
       const tokenAllocationSum: BigNumber = tokenAllocationData.reduce(
         (accumulator, tokenAllocation) => {
-          return tokenAllocation.amount.add(accumulator);
+          return tokenAllocation.amount.bigNumberValue!.add(accumulator);
         },
         BigNumber.from(0)
       );
 
-      if (tokenSupply.gt(tokenAllocationSum)) {
+      if (tokenSupply.bigNumberValue!.gt(tokenAllocationSum)) {
         const daoTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
-          amount: tokenSupply.sub(tokenAllocationSum),
+          amount: {
+            value: '',
+            bigNumberValue: tokenSupply.bigNumberValue!.sub(tokenAllocationSum),
+          },
         };
         tokenAllocationData.push(daoTokenAllocation);
       }
@@ -175,7 +178,7 @@ const useCreateDAODataCreator = () => {
               tokenName,
               tokenSymbol,
               tokenAllocationData.map(tokenAllocation => tokenAllocation.address),
-              tokenAllocationData.map(tokenAllocation => tokenAllocation.amount),
+              tokenAllocationData.map(tokenAllocation => tokenAllocation.amount.bigNumberValue),
             ]
           ),
         ]
@@ -274,7 +277,7 @@ const useCreateDAODataCreator = () => {
         ),
         abiCoder.encode(
           ['uint256[]'],
-          [tokenAllocationData.map(tokenAllocation => tokenAllocation.amount)]
+          [tokenAllocationData.map(tokenAllocation => tokenAllocation.amount.bigNumberValue)]
         ),
         abiCoder.encode(['bytes32'], [votingTokenNonce]),
       ];
@@ -395,12 +398,12 @@ const useCreateDAODataCreator = () => {
         revokeMetafactoryRoleCalldata, // Revoke the Metafactory's execute role
       ];
 
-      if (tokenSupply.gt(tokenAllocationSum)) {
+      if (tokenSupply.bigNumberValue!.gt(tokenAllocationSum)) {
         // DAO approve Treasury to transfer tokens
         const approveDAOTokenTransferCalldata =
           VotesToken__factory.createInterface().encodeFunctionData('approve', [
             predictedTreasuryAddress,
-            tokenSupply.sub(tokenAllocationSum),
+            tokenSupply.bigNumberValue!.sub(tokenAllocationSum),
           ]);
 
         // DAO calls Treasury to deposit tokens into it
@@ -408,7 +411,7 @@ const useCreateDAODataCreator = () => {
           TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
             [predictedVotingTokenAddress],
             [addresses.metaFactory.address],
-            [tokenSupply.sub(tokenAllocationSum)],
+            [tokenSupply.bigNumberValue!.sub(tokenAllocationSum)],
           ]);
 
         targets.push(predictedVotingTokenAddress, predictedTreasuryAddress);

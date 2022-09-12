@@ -11,6 +11,12 @@ export function useNextDisabled(state: CreatorState) {
   const [isNextDisbled, setIsDisabled] = useState(true);
 
   useEffect(() => {
+    const {
+      govModule,
+      govToken,
+      essentials,
+      gnosis: { trustedAddresses, signatureThreshold },
+    } = state;
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
         if (!!state.essentials.daoName.trim()) {
@@ -27,16 +33,16 @@ export function useNextDisabled(state: CreatorState) {
         setIsDisabled(false);
         break;
       case CreatorSteps.TREASURY_GOV_TOKEN:
-        if (state.govToken) {
-          if (!state.govToken.tokenAllocations || !state.govToken.tokenSupply) {
+        if (govToken) {
+          if (!govToken.tokenAllocations || !govToken.tokenSupply.bigNumberValue) {
             setIsDisabled(true);
             break;
           }
-          const isAllocationsValid = state.govToken.tokenAllocations
-            .map(tokenAllocation => tokenAllocation.amount)
+          const isAllocationsValid = govToken.tokenAllocations
+            .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
-            .add(state.govToken.parentAllocationAmount || 0)
-            .lte(state.govToken.tokenSupply);
+            .add(govToken.parentAllocationAmount || 0)
+            .lte(govToken.tokenSupply.bigNumberValue!);
 
           setIsDisabled(!isAllocationsValid);
           break;
@@ -47,17 +53,15 @@ export function useNextDisabled(state: CreatorState) {
         setIsDisabled(false);
         break;
       case CreatorSteps.GOV_CONFIG: {
-        const { govModule, govToken, essentials } = state;
-
         const isEssentialsComplete = !!essentials.daoName.trim();
         const isGovTokenComplete =
           !!govToken.tokenName.trim() &&
           !!govToken.tokenSymbol.trim() &&
-          govToken.tokenSupply.gt(0) &&
+          state.govToken.tokenSupply.bigNumberValue!.gt(0) &&
           govToken.tokenAllocations
-            .map(tokenAllocation => tokenAllocation.amount)
+            .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
-            .lte(govToken.tokenSupply);
+            .lte(state.govToken.tokenSupply.bigNumberValue!);
         const isGovModuleComplete =
           govModule.proposalThreshold.gte(0) &&
           govModule.quorum.gte(0) &&
@@ -70,10 +74,6 @@ export function useNextDisabled(state: CreatorState) {
         break;
       }
       case CreatorSteps.GNOSIS_GOVERNANCE: {
-        const {
-          gnosis: { trustedAddresses, signatureThreshold },
-        } = state;
-
         const isTrustedAddressValid =
           !trustedAddresses.some(trustee => trustee.error || !trustee.address.trim()) &&
           !!trustedAddresses.length;

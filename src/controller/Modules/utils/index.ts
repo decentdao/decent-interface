@@ -1,4 +1,4 @@
-import { BigNumber, utils } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 
 export function parseInterface(interfaces: utils.Interface[]): string[] {
   return interfaces.map(iface => {

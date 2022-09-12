@@ -1,17 +1,23 @@
-import { BigNumber } from 'ethers';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input from '../../ui/forms/Input';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { utils } from 'ethers';
+import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 
 function TokenDetails() {
   const {
     state: { govToken },
     dispatch,
   } = useCreator();
+
+  const {
+    modules: { gnosisWrapperModule },
+  } = useFractal();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -23,7 +29,10 @@ function TokenDetails() {
   };
 
   const onSupplyChange = (value: string) => {
-    fieldUpdate(BigNumber.from(value || 0), 'tokenSupply');
+    fieldUpdate(
+      { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
+      'tokenSupply'
+    );
   };
 
   return (
@@ -48,24 +57,23 @@ function TokenDetails() {
           disabled={false}
         />
       </InputBox>
-
       <InputBox>
         <Input
           type="number"
-          value={govToken.tokenSupply.toString()}
+          value={govToken.tokenSupply.value}
           onChange={e => onSupplyChange(e.target.value)}
           label="Token Supply"
-          helperText="Whole numbers only"
+          helperText="Max: 18 decimals"
           disabled={false}
-          isWholeNumberOnly
-          min="0"
+          decimals={DEFAULT_TOKEN_DECIMALS}
+          restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
         />
       </InputBox>
-
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
-        supply={govToken.tokenSupply}
+        supply={govToken.tokenSupply.bigNumberValue}
         parentAllocationAmount={govToken.parentAllocationAmount}
+        canReceiveParentAllocations={!gnosisWrapperModule}
         fieldUpdate={fieldUpdate}
       />
     </ContentBox>

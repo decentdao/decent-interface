@@ -1,7 +1,7 @@
-import { BigNumber } from 'ethers';
+import { BigNumberInput } from './../components/DaoCreator/provider/types/index';
 
 export type TokenAllocation = {
   address: string;
-  amount: BigNumber;
+  amount: BigNumberInput;
   addressError?: string;
 };
