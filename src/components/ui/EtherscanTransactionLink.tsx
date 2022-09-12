@@ -10,7 +10,7 @@ function EtherscanTransactionLink({
   const subdomain = useSubDomain();
   return (
     <a
-      href={`https://${subdomain}etherscan.io/transaction/${address}`}
+      href={`https://${subdomain}etherscan.io/tx/${address}`}
       target="_blank"
       rel="noreferrer"
     >
