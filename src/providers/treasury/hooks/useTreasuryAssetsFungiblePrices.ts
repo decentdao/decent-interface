@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TokenDepositEvent, TreasuryAssetFungible, TreasuryAssetFungiblePrices } from '../types';
 import { buildCoingeckoApiUrlForErc20Tokens, buildCoingeckoApiUrlForNativeToken } from '../helpers';
 import { CoingeckoApiResponse } from '../types/coingecko';
-import { formatAmount } from '../utils';
+import { formatFiatAmount } from '../utils';
 
 /**
  * generates an object of prices per fungible asset
@@ -20,16 +20,14 @@ const useTreasuryAssetsFungiblePrices = (
 ) => {
   const [prices, setPrices] = useState<TreasuryAssetFungiblePrices | {}>({});
 
-  // used to get cached prices in `useEffects` (below)
+  // used to get cached prices in `useEffect`s (below)
   const queryClient = useQueryClient();
 
-  // for display purposes, a `formattedAmount` is
-  // computed for each price.
   const formatPricesData = useCallback(
     (data: CoingeckoApiResponse | {}) => {
       const formattedPrices = Object.entries(data).reduce((result, [address, price]) => {
         const amount = price[selectedCurrency];
-        const formattedPrice = formatAmount(selectedCurrency, amount);
+        const formattedPrice = formatFiatAmount(selectedCurrency, amount);
 
         return { ...result, [address]: formattedPrice };
       }, {});

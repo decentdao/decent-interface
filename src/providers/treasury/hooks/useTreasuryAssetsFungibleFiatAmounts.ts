@@ -7,7 +7,7 @@ import {
   TreasuryAssetFungibleFiatAmounts,
   TreasuryAssetFungiblePrices,
 } from '../types';
-import { formatAmount } from '../utils';
+import { formatFiatAmount } from '../utils';
 
 /**
  * generates an object of fiat amounts per fungible asset
@@ -55,7 +55,7 @@ const useTreasuryAssetsFungibleFiatAmounts = (
       if (!asset) return result;
 
       const amount = calculateFiatAmount(price, asset);
-      const formattedFiatAmount = formatAmount(selectedCurrency, amount);
+      const formattedFiatAmount = formatFiatAmount(selectedCurrency, amount);
 
       return { ...result, [address]: formattedFiatAmount };
     }, {});
