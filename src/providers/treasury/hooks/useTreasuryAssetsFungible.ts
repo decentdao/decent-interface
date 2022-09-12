@@ -1,5 +1,5 @@
 import { BigNumber, ethers, utils } from 'ethers';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ERC20TokenEvent,
   TokenDepositEvent,
@@ -38,14 +38,18 @@ const useTreasuryAssets = (
    * calculates native coin total amounts
    */
   useEffect(() => {
-    if (!nativeDeposits || !nativeDeposits.length) {
-      treasuryAssets.clear();
+    if (!nativeDeposits?.length) {
+      // TODO: is this `clear()` necessary?
+      // treasuryAssets.clear();
       return;
     }
+
     let amount = BigNumber.from(0);
+
     nativeDeposits.forEach((event: TokenDepositEvent) => {
       amount = amount.add(event.amount);
     });
+
     if (nativeWithdraws) {
       nativeWithdraws.forEach((event: TokenWithdrawEvent) => {
         amount = amount.sub(event.amount);
@@ -59,8 +63,9 @@ const useTreasuryAssets = (
       decimals: 18,
       contractAddress: ethers.constants.AddressZero,
       totalAmount: amount,
-      formatedTotal: utils.formatUnits(amount, 18),
+      formattedTotal: utils.formatUnits(amount, 18),
     });
+
     setAssets(Array.from(treasuryAssets.values()));
   }, [nativeDeposits, nativeWithdraws, treasuryAssets]);
 
@@ -68,9 +73,7 @@ const useTreasuryAssets = (
    * calculates erc20 token total amounts
    */
   useEffect(() => {
-    if (!erc20TokenDeposits || !erc20TokenDeposits.length || !erc20TokenWithdraws || !provider) {
-      return;
-    }
+    if (!erc20TokenDeposits?.length || !erc20TokenWithdraws || !provider) return;
 
     const tokens = new Map<string, { tokenData: Web3Token; amount: BigNumber }>();
 
@@ -80,18 +83,11 @@ const useTreasuryAssets = (
     erc20TokenDeposits.forEach((event: ERC20TokenEvent) => {
       event.contractAddresses.forEach((contractAddress, i) => {
         const token = tokens.get(contractAddress);
-        if (!token) {
-          tokens.set(contractAddress, {
-            tokenData: new Web3Token(contractAddress, provider),
-            amount: event.amounts[i],
-          });
-        }
-        if (token) {
-          tokens.set(contractAddress, {
-            tokenData: token.tokenData,
-            amount: token.amount.add(event.amounts[i]),
-          });
-        }
+        const [tokenData, amount] = !token
+          ? [new Web3Token(contractAddress, provider), event.amounts[i]]
+          : [token.tokenData, token.amount.add(event.amounts[i])];
+
+        tokens.set(contractAddress, { tokenData, amount });
       });
     });
 
@@ -99,6 +95,7 @@ const useTreasuryAssets = (
     erc20TokenWithdraws.forEach((event: ERC20TokenEvent) => {
       event.contractAddresses.forEach((contractAddress, i) => {
         const token = tokens.get(contractAddress);
+
         if (token) {
           tokens.set(contractAddress, {
             tokenData: token.tokenData,
@@ -114,14 +111,30 @@ const useTreasuryAssets = (
         const name = await token.tokenData.name();
         const symbol = await token.tokenData.symbol();
         const decimals = await token.tokenData.decimals();
-        const tokenAddress = token.tokenData.tokenAddress;
+        // const tokenAddress = token.tokenData.tokenAddress;
+
+        // TODO: remove this bit of logic before pushing to production
+        const mainnetAddresses = [
+          {
+            key: 'USDC',
+            value: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+          },
+          {
+            key: 'WETH',
+            value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+          },
+        ];
+
+        const mainnetAddress = mainnetAddresses.find(({ key }) => key === symbol);
+        const tokenAddress = mainnetAddress?.value || token.tokenData.tokenAddress;
+
         treasuryAssets.set(tokenAddress, {
           name: name,
           symbol: symbol,
           decimals: decimals,
           contractAddress: tokenAddress,
           totalAmount: token.amount,
-          formatedTotal: utils.formatUnits(token.amount, decimals),
+          formattedTotal: utils.formatUnits(token.amount, decimals),
         });
       })
     ).finally(() => {
