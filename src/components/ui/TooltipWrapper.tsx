@@ -16,6 +16,8 @@ type AutoPlacement = 'auto' | 'auto-start' | 'auto-end';
 type Placement = AutoPlacement | BasePlacement | VariationPlacement;
 
 interface TooltipWrapperProps {
+  as?: keyof HTMLElementTagNameMap;
+  className?: string;
   content: ReactNode;
   children: ReactNode;
   placement?: Placement;
@@ -23,11 +25,14 @@ interface TooltipWrapperProps {
 }
 
 function TooltipWrapper({
+  as = 'div',
   content,
+  className,
   placement = 'bottom-start',
   children,
   isVisible,
 }: TooltipWrapperProps) {
+  const Tag = as;
   return (
     <Tippy
       // allows for interactive content
@@ -51,7 +56,7 @@ function TooltipWrapper({
         </div>
       )}
     >
-      <div>{children}</div>
+      <Tag className={className}>{children}</Tag>
     </Tippy>
   );
 }
