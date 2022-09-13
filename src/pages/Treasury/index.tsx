@@ -85,9 +85,7 @@ function Treasury() {
                           className="text-gray-100 mr-2 text-sm"
                           content={
                             <>
-                              ${formattedPricePerToken}
-                              <br />
-                              per token
+                              1&nbsp;{asset.symbol}&nbsp;(${formattedPricePerToken})
                             </>
                           }
                           isVisible
