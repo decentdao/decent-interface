@@ -8,6 +8,7 @@ import {
 } from '../types';
 import { Web3Token } from '../models/Web3Token';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { getMainnetAddress } from '../utils';
 
 /**
  * handles events to generate a list of assets count and amounts.
@@ -31,7 +32,7 @@ const useTreasuryAssets = (
   const [assets, setAssets] = useState<TreasuryAssetFungible[]>([]);
 
   const {
-    state: { provider },
+    state: { chainId, provider },
   } = useWeb3Provider();
 
   /**
@@ -110,19 +111,10 @@ const useTreasuryAssets = (
         // const tokenAddress = token.tokenData.tokenAddress;
 
         // TODO: remove this bit of logic before pushing to production
-        const mainnetAddresses = [
-          {
-            key: 'USDC',
-            value: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-          },
-          {
-            key: 'WETH',
-            value: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-          },
-        ];
-
-        const mainnetAddress = mainnetAddresses.find(({ key }) => key === symbol);
-        const tokenAddress = mainnetAddress?.value || token.tokenData.tokenAddress;
+        const tokenAddress =
+          chainId === 1
+            ? token.tokenData.tokenAddress
+            : getMainnetAddress(symbol, { fallback: token.tokenData.tokenAddress });
 
         treasuryAssets.set(tokenAddress, {
           name: name,
@@ -136,7 +128,7 @@ const useTreasuryAssets = (
     ).finally(() => {
       setAssets(Array.from(treasuryAssets.values()));
     });
-  }, [erc20TokenDeposits, erc20TokenWithdraws, provider, treasuryAssets]);
+  }, [chainId, erc20TokenDeposits, erc20TokenWithdraws, provider, treasuryAssets]);
 
   return assets;
 };
