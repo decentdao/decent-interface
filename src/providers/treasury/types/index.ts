@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { CoingeckoApiResponse } from './coingecko';
+import { CoinGeckoApiResponse } from './coingecko';
 
 export interface TokenEvent {
   transactionHash: string;

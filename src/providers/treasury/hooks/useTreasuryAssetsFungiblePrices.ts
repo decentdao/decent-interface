@@ -3,8 +3,8 @@ import { ethers } from 'ethers';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TokenDepositEvent, TreasuryAssetFungible, TreasuryAssetFungiblePrices } from '../types';
-import { buildCoingeckoApiUrlForErc20Tokens, buildCoingeckoApiUrlForNativeToken } from '../helpers';
-import { CoingeckoApiResponse } from '../types/coingecko';
+import { buildCoinGeckoApiUrlForErc20Tokens, buildCoinGeckoApiUrlForNativeToken } from '../helpers';
+import { CoinGeckoApiResponse } from '../types/coingecko';
 import { formatFiatAmount } from '../utils';
 
 /**
@@ -24,7 +24,7 @@ const useTreasuryAssetsFungiblePrices = (
   const queryClient = useQueryClient();
 
   const formatPricesData = useCallback(
-    (data: CoingeckoApiResponse | {}) => {
+    (data: CoinGeckoApiResponse | {}) => {
       const formattedPrices = Object.entries(data).reduce((result, [address, price]) => {
         const amount = price[selectedCurrency];
         const formattedPrice = formatFiatAmount(selectedCurrency, amount);
@@ -56,8 +56,8 @@ const useTreasuryAssetsFungiblePrices = (
   const fetchPriceNativeToken = useCallback(async () => {
     if (!hasNativeDeposits) return {};
 
-    const url = buildCoingeckoApiUrlForNativeToken(selectedCurrency);
-    const { data } = await axios.get<CoingeckoApiResponse>(url);
+    const url = buildCoinGeckoApiUrlForNativeToken(selectedCurrency);
+    const { data } = await axios.get<CoinGeckoApiResponse>(url);
 
     // this coingecko endpoint returns an object with a
     // key named "ethereum" like so: `{ ethereum: 1000 }`.
@@ -98,8 +98,8 @@ const useTreasuryAssetsFungiblePrices = (
   const fetchPricesErc20Tokens = useCallback(async () => {
     if (erc20TokensAddresses.length === 0) return {};
 
-    const url = buildCoingeckoApiUrlForErc20Tokens(erc20TokensAddresses, selectedCurrency);
-    const { data } = await axios.get<CoingeckoApiResponse>(url);
+    const url = buildCoinGeckoApiUrlForErc20Tokens(erc20TokensAddresses, selectedCurrency);
+    const { data } = await axios.get<CoinGeckoApiResponse>(url);
 
     return data;
   }, [erc20TokensAddresses, selectedCurrency]);
