@@ -5,7 +5,7 @@ const numberWithCommas = (number: number, decimals: number) => {
   return n.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
 };
 
-const formatFiatAmount = (currencyKey: string, amount: number) => {
+const formatFiatAmount = (currencyId: string, amount: number) => {
   // 1234.567 -> 1,234.56
   const currency = numberWithCommas(amount, 2);
 
@@ -19,7 +19,7 @@ const formatFiatAmount = (currencyKey: string, amount: number) => {
   const formattedAmount = numberWithCommas(amount, maxDecimals);
 
   return {
-    [currencyKey]: {
+    [currencyId]: {
       amount,
       currency,
       formattedAmount,

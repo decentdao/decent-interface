@@ -3,7 +3,7 @@ const countDecimals = (value: number) => {
   if (isWholeNumber) return 0;
 
   const count = value.toString().split('.').pop();
-  return count.length || 0;
+  return count?.length || 0;
 };
 
 export default countDecimals;

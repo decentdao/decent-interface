@@ -1,4 +1,4 @@
-import { BigNumber, ethers, utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import {
   ERC20TokenEvent,
@@ -58,7 +58,7 @@ const useTreasuryAssets = (
       name: 'Ethereum',
       symbol: 'ETH',
       decimals: 18,
-      contractAddress: ethers.constants.AddressZero,
+      contractAddress: constants.AddressZero,
       totalAmount: amount,
       formattedTotal: utils.formatUnits(amount, 18),
     });

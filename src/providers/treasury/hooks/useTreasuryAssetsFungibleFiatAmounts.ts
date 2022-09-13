@@ -14,7 +14,7 @@ import { formatFiatAmount } from '../utils';
  *
  * @param assets
  * @param prices
- * @returns TreasuryAssetFungibleFiatAmounts[]
+ * @returns TreasuryAssetFungibleFiatAmounts | {}
  */
 const useTreasuryAssetsFungibleFiatAmounts = (
   assets: TreasuryAssetFungible[],
@@ -54,8 +54,8 @@ const useTreasuryAssetsFungibleFiatAmounts = (
       const asset = assets.find(({ contractAddress }) => address === contractAddress);
       if (!asset) return result;
 
-      const amount = calculateFiatAmount(price, asset);
-      const formattedFiatAmount = formatFiatAmount(selectedCurrency, amount);
+      const fiatAmount = calculateFiatAmount(price, asset);
+      const formattedFiatAmount = formatFiatAmount(selectedCurrency, fiatAmount);
 
       return { ...result, [address]: formattedFiatAmount };
     }, {});

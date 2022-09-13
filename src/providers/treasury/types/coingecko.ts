@@ -1,5 +1,5 @@
 export type CoinGeckoApiResponse = {
-  [address: string]: {
-    [currency: string]: number;
+  [addressOrId: string]: {
+    [currencyId: string]: number;
   };
 };

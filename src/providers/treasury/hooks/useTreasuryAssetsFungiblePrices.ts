@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ethers } from 'ethers';
+import { constants } from 'ethers';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TokenDepositEvent, TreasuryAssetFungible, TreasuryAssetFungiblePrices } from '../types';
@@ -20,9 +20,6 @@ const useTreasuryAssetsFungiblePrices = (
 ) => {
   const [prices, setPrices] = useState<TreasuryAssetFungiblePrices | {}>({});
 
-  // used to get cached prices in `useEffect`s (below)
-  const queryClient = useQueryClient();
-
   const formatPricesData = useCallback(
     (data: CoinGeckoApiResponse | {}) => {
       const formattedPrices = Object.entries(data).reduce((result, [address, price]) => {
@@ -37,11 +34,19 @@ const useTreasuryAssetsFungiblePrices = (
     [selectedCurrency, setPrices]
   );
 
-  const queryConfig = {
-    onSuccess: formatPricesData,
-    refetchInterval: 60 * 1000,
-    staleTime: 60 * 1000,
-  };
+  // used to get cached prices in `useEffect`s (below)
+  const queryClient = useQueryClient();
+
+  // both `useQuery`s below need the same config
+  const queryConfig = useMemo(() => {
+    const oneMinute = 60 * 1000;
+
+    return {
+      onSuccess: formatPricesData,
+      refetchInterval: oneMinute,
+      staleTime: oneMinute,
+    };
+  }, [formatPricesData]);
 
   /**
    * fetch price for native token
@@ -66,7 +71,7 @@ const useTreasuryAssetsFungiblePrices = (
     // here, the value is deconstructed, and then
     // reconstructed with the appropriate address.
     const [value] = Object.values(data);
-    return { [ethers.constants.AddressZero]: value };
+    return { [constants.AddressZero]: value };
   }, [hasNativeDeposits, selectedCurrency]);
 
   useQuery(queryKeyNativeToken, fetchPriceNativeToken, queryConfig);
@@ -86,7 +91,7 @@ const useTreasuryAssetsFungiblePrices = (
     () =>
       assets
         .map(({ contractAddress }) => contractAddress)
-        .filter(address => address !== ethers.constants.AddressZero),
+        .filter(address => address !== constants.AddressZero),
     [assets]
   );
 
