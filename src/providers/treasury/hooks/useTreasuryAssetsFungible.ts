@@ -38,11 +38,7 @@ const useTreasuryAssets = (
    * calculates native coin total amounts
    */
   useEffect(() => {
-    if (!nativeDeposits?.length) {
-      // TODO: is this `clear()` necessary?
-      // treasuryAssets.clear();
-      return;
-    }
+    if (!nativeDeposits?.length) return;
 
     let amount = BigNumber.from(0);
 
@@ -73,7 +69,7 @@ const useTreasuryAssets = (
    * calculates erc20 token total amounts
    */
   useEffect(() => {
-    if (!erc20TokenDeposits?.length || !erc20TokenWithdraws?.length || !provider) return;
+    if (!erc20TokenDeposits?.length || !erc20TokenWithdraws || !provider) return;
 
     const tokens = new Map<string, { tokenData: Web3Token; amount: BigNumber }>();
 
