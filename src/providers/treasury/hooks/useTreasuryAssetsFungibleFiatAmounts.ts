@@ -25,6 +25,7 @@ const useTreasuryAssetsFungibleFiatAmounts = (
 
   const calculateFiatAmount = useCallback(
     (price: TreasuryAssetFungiblePrice, asset: TreasuryAssetFungible) => {
+      // this Number will usually come in as a float
       const { amount: priceAmount } = price[selectedCurrency];
 
       // BigNumber does not support floats, so a
@@ -34,11 +35,11 @@ const useTreasuryAssetsFungibleFiatAmounts = (
 
       // to get around undesireable precision issues with
       // JS math, priceAmount is stripped of its decimal to
-      // produce the equivalent of (priceAmount * multiplier).
+      // generate the equivalent of (priceAmount * multiplier).
       const priceAmountTimesMultiplier = priceAmount.toString().split('.').join('');
 
-      // perform the calculation, convert to the proper
-      // units, and coerce it into a Number.
+      // perform the calculation, convert to the proper units,
+      // and coerce it into a Number.
       const calculatedAmount = asset.totalAmount.mul(priceAmountTimesMultiplier).div(multiplier);
       const convertedFiatAmount = utils.formatUnits(calculatedAmount, asset.decimals);
       const fiatAmount = Number(convertedFiatAmount.toString());
