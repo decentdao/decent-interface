@@ -2,8 +2,8 @@ import { createContext, useContext, Context } from 'react';
 import { TreasuryModule } from '../../../assets/typechain-types/module-treasury';
 import {
   TreasuryAssetFungible,
-  TreasuryAssetFungibleFiatAmounts,
-  TreasuryAssetFungiblePrices,
+  TreasuryAssetsFungibleFiatAmounts,
+  TreasuryAssetsFungiblePrices,
   TreasuryAssetNonFungible,
 } from '../types';
 
@@ -11,8 +11,8 @@ export interface ITreasuryContext {
   selectedCurrency: string;
   treasuryModuleContract: TreasuryModule | undefined;
   treasuryAssetsFungible: TreasuryAssetFungible[];
-  treasuryAssetsFungibleFiatAmounts: TreasuryAssetFungibleFiatAmounts;
-  treasuryAssetsFungiblePrices: TreasuryAssetFungiblePrices;
+  treasuryAssetsFungibleFiatAmounts: TreasuryAssetsFungibleFiatAmounts;
+  treasuryAssetsFungiblePrices: TreasuryAssetsFungiblePrices;
   treasuryAssetsNonFungible: TreasuryAssetNonFungible[];
 }
 

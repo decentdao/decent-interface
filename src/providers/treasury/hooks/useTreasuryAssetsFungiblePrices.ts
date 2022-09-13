@@ -2,7 +2,7 @@ import axios from 'axios';
 import { constants } from 'ethers';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { TokenDepositEvent, TreasuryAssetFungible, TreasuryAssetFungiblePrices } from '../types';
+import { TokenDepositEvent, TreasuryAssetFungible, TreasuryAssetsFungiblePrices } from '../types';
 import { buildCoinGeckoApiUrlForErc20Tokens, buildCoinGeckoApiUrlForNativeToken } from '../helpers';
 import { CoinGeckoApiResponse } from '../types/coingecko';
 import { formatFiatAmount } from '../utils';
@@ -11,14 +11,14 @@ import { formatFiatAmount } from '../utils';
  * generates an object of prices per fungible asset
  *
  * @param assets
- * @returns TreasuryAssetFungiblePrices | {}
+ * @returns TreasuryAssetsFungiblePrices | {}
  */
 const useTreasuryAssetsFungiblePrices = (
   assets: TreasuryAssetFungible[],
   selectedCurrency: string,
   nativeDeposits?: TokenDepositEvent[]
 ) => {
-  const [prices, setPrices] = useState<TreasuryAssetFungiblePrices | {}>({});
+  const [prices, setPrices] = useState<TreasuryAssetsFungiblePrices | {}>({});
 
   const formatPricesData = useCallback(
     (data: CoinGeckoApiResponse | {}) => {

@@ -41,12 +41,12 @@ export interface TreasuryAssetFungibleFiatAmount {
   };
 }
 
-export interface TreasuryAssetFungibleFiatAmounts {
+export interface TreasuryAssetsFungibleFiatAmounts {
   [address: string]: TreasuryAssetFungibleFiatAmount;
 };
 
 export interface TreasuryAssetFungiblePrice extends TreasuryAssetFungibleFiatAmount {};
-export interface TreasuryAssetFungiblePrices extends TreasuryAssetFungibleFiatAmounts {};
+export interface TreasuryAssetsFungiblePrices extends TreasuryAssetsFungibleFiatAmounts {};
 
 export interface TreasuryAssetNonFungible {
   name: string;

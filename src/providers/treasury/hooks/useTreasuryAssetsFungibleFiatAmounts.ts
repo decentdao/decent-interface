@@ -4,8 +4,8 @@ import countDecimals from '../../../utils/countDecimals';
 import {
   TreasuryAssetFungible,
   TreasuryAssetFungiblePrice,
-  TreasuryAssetFungibleFiatAmounts,
-  TreasuryAssetFungiblePrices,
+  TreasuryAssetsFungibleFiatAmounts,
+  TreasuryAssetsFungiblePrices,
 } from '../types';
 import { formatFiatAmount } from '../utils';
 
@@ -14,14 +14,14 @@ import { formatFiatAmount } from '../utils';
  *
  * @param assets
  * @param prices
- * @returns TreasuryAssetFungibleFiatAmounts | {}
+ * @returns TreasuryAssetsFungibleFiatAmounts | {}
  */
 const useTreasuryAssetsFungibleFiatAmounts = (
   assets: TreasuryAssetFungible[],
-  prices: TreasuryAssetFungiblePrices,
+  prices: TreasuryAssetsFungiblePrices,
   selectedCurrency: string
 ) => {
-  const [amounts, setAmounts] = useState<TreasuryAssetFungibleFiatAmounts | {}>({});
+  const [amounts, setAmounts] = useState<TreasuryAssetsFungibleFiatAmounts | {}>({});
 
   const calculateFiatAmount = useCallback(
     (price: TreasuryAssetFungiblePrice, asset: TreasuryAssetFungible) => {
