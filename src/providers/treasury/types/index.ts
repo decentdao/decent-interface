@@ -1,8 +1,14 @@
 import { BigNumber } from 'ethers';
 
+export enum TokenEventType {
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAW = 'WITHDRAW',
+}
+
 export interface TokenEvent {
   transactionHash: string;
   blockNumber: number;
+  eventType: TokenEventType;
 }
 
 export interface TokenDepositEvent extends TokenEvent {

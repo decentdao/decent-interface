@@ -2,7 +2,13 @@ import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { TreasuryModule } from '../../../assets/typechain-types/module-treasury';
 import { TypedEvent } from '../../../assets/typechain-types/module-treasury/common';
-import { ERC20TokenEvent, ERC721TokenEvent, TokenDepositEvent, TokenWithdrawEvent } from '../types';
+import {
+  ERC20TokenEvent,
+  ERC721TokenEvent,
+  TokenDepositEvent,
+  TokenEventType,
+  TokenWithdrawEvent,
+} from '../types';
 
 const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
   const [nativeDeposits, setNativeDeposits] = useState<TokenDepositEvent[]>();
@@ -41,6 +47,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amount,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        eventType: TokenEventType.DEPOSIT,
       },
     ]);
   };
@@ -63,6 +70,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amount: amounts.reduce((cur, prev) => cur.add(prev), BigNumber.from(0)),
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        eventType: TokenEventType.WITHDRAW,
       },
     ]);
   };
@@ -87,6 +95,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amounts,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        eventType: TokenEventType.DEPOSIT,
       },
     ]);
   };
@@ -111,6 +120,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amounts,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        eventType: TokenEventType.WITHDRAW,
       },
     ]);
   };
@@ -135,6 +145,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         tokenIds,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        eventType: TokenEventType.DEPOSIT,
       },
     ]);
   };
@@ -159,6 +170,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         tokenIds,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        eventType: TokenEventType.WITHDRAW,
       },
     ]);
   };
@@ -195,6 +207,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
             amount: event.args[1],
             transactionHash: event.transactionHash,
             blockNumber: event.blockNumber,
+            eventType: TokenEventType.DEPOSIT,
           };
         });
         setNativeDeposits(depositEvents);
@@ -239,6 +252,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
             ),
             transactionHash: event.transactionHash,
             blockNumber: event.blockNumber,
+            eventType: TokenEventType.WITHDRAW,
           };
         });
         setNativeWithdraws(withdrawEvents);
@@ -285,6 +299,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
           amounts: event.args[2],
           transactionHash: event.transactionHash,
           blockNumber: event.blockNumber,
+          eventType: TokenEventType.DEPOSIT,
         };
       });
       setErc20TokenDeposits(erc20Deposits);
@@ -329,6 +344,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
           amounts: event.args[2],
           transactionHash: event.transactionHash,
           blockNumber: event.blockNumber,
+          eventType: TokenEventType.WITHDRAW,
         };
       });
       setErc20TokenWithdraws(erc20TokenWithdrawEvents);
@@ -374,6 +390,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
           tokenIds: event.args[2],
           transactionHash: event.transactionHash,
           blockNumber: event.blockNumber,
+          eventType: TokenEventType.DEPOSIT,
         };
       });
       setErc721TokenDeposits(erc721Deposits);
@@ -418,6 +435,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
           tokenIds: event.args[2],
           transactionHash: event.transactionHash,
           blockNumber: event.blockNumber,
+          eventType: TokenEventType.WITHDRAW,
         };
       });
       setErc721TokenWithdraws(erc721TokenWithdrawEvents);
