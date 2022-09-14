@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import Fractalize from './Fractalize';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
-import { GovernanceProposalData } from '../../controller/Modules/types';
-import { DAOTrigger } from '../../components/DaoCreator/provider/types';
+import { useInjector } from '../../controller/Modules/injectors/GovernanceInjectorConext';
 
 enum View {
   Cards,
@@ -38,18 +37,15 @@ function CardDetails({
   );
 }
 
-interface IPlugins extends GovernanceProposalData {
-  createDAOTrigger?: DAOTrigger;
-}
-
-function Plugins(props: IPlugins) {
+function Plugins() {
   const [view, setView] = useState(View.Cards);
+  const { isAuthorized } = useInjector();
 
   switch (view) {
     case View.CreateDAO: {
       return (
         <CardDetails setView={setView}>
-          <Fractalize {...props} />
+          <Fractalize />
         </CardDetails>
       );
     }
@@ -59,7 +55,7 @@ function Plugins(props: IPlugins) {
         <div className="flex flex-wrap">
           <CreateDAOCard
             onClick={() => setView(View.CreateDAO)}
-            disabled={!props.isAuthorized}
+            disabled={!isAuthorized}
           />
         </div>
       );

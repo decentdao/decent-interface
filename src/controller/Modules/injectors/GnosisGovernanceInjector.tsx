@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BigNumber, ethers, Signer } from 'ethers';
 import axios from 'axios';
@@ -21,6 +21,7 @@ import {
 } from '../../../providers/gnosis/helpers';
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
+import { InjectorContext } from './GovernanceInjectorConext';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -189,14 +190,15 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
     ]
   );
 
-  const createDAOTrigger = (daoData: TokenGovernanceDAO | GnosisDAO) => {
-    createDAO(daoData);
-  };
+  const value = useMemo(
+    () => ({
+      createDAOTrigger: createDAO,
+      createProposal: () => {},
+      pending: pending,
+      isAuthorized: isSigner,
+    }),
+    [createDAO, pending, isSigner]
+  );
 
-  return React.cloneElement(children, {
-    createDAOTrigger,
-    createProposal: () => {},
-    pending: pending,
-    isAuthorized: isSigner,
-  });
+  return <InjectorContext.Provider value={value}>{children}</InjectorContext.Provider>;
 }
