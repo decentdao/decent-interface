@@ -1,5 +1,6 @@
 import { ChangeEvent, FormEvent, useCallback } from 'react';
 import cx from 'classnames';
+import { useId } from 'react';
 
 export enum RestrictCharTypes {
   WHOLE_NUMBERS_ONLY,
@@ -26,6 +27,7 @@ interface InputProps {
   restrictChar?: RestrictCharTypes;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
   decimals?: number;
+  maxLength?: number;
 }
 
 /**
@@ -53,14 +55,17 @@ function Input({
   onChange,
   onClickMax,
   decimals,
+  maxLength,
 }: InputProps) {
+
+  const id = useId();
   const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
 
   function Label() {
     return !!label ? (
       <label
-        htmlFor="form-field"
+        htmlFor={id}
         className={cx('text-xs font-medium mb-1', {
           'text-gray-50': disabled,
           'text-gray-25': !disabled,
@@ -162,6 +167,21 @@ function Input({
     [decimals, limitDecimals, restrictChar]
   );
 
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+
+    // handle any externally set change listener
+    if (onChange) onChange(event);
+
+    // handle max length (typing or pasting)
+    const newValue = event.currentTarget.value;
+    if (maxLength && newValue.length > maxLength) {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+      const input = document.getElementById(id);
+      setter?.call(input, newValue.substring(0, maxLength));
+      input?.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  };
+
   return (
     <div
       className={cx(
@@ -175,7 +195,7 @@ function Input({
       <div className={cx('flex flex-col w-full relative', { 'pr-4': !!helperText })}>
         <Label />
         <FieldType
-          id="form-field"
+          id={id}
           type={inputType}
           placeholder={placeholder}
           className={cx(
@@ -190,7 +210,7 @@ function Input({
           min={min}
           max={max}
           onKeyDown={handleKeyDown}
-          onChange={onChange}
+          onChange={handleChange}
           onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             (e.target as HTMLInputElement).blur()
           }

@@ -54,6 +54,7 @@ function TokenDetails() {
           onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
           label="Token Symbol"
           helperText="Max: 5 characters"
+          maxLength={5}
           disabled={false}
         />
       </InputBox>
