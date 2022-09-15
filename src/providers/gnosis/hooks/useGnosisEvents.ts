@@ -1,32 +1,98 @@
 import { useState, useEffect, useCallback } from 'react';
-import { GnosisWrapper } from '../../../assets/typechain-types/gnosis-wrapper';
+import { BigNumber } from 'ethers';
+import { TypedEvent } from '../../../assets/typechain-types/gnosis-safe/common';
+import { TokenDepositEvent, TokenEventType, TokenWithdrawEvent } from '../../treasury/types';
+import useGnosisSafe from './useGnosisSafe';
 
-const useGnosisEvents = (gnosisWrapperContract?: GnosisWrapper) => {
-  // TODO: Get Transaction & Proposal events, make this hook more modular - just as useTreasuryEvents
-  const [allEvents, setAllEvents] = useState<any>([]);
+const useGnosisEvents = (safeAddress?: string) => {
+  const [depositEvents, setDepositEvents] = useState<TokenDepositEvent[]>([]);
+  const [withdrawEvents, setWithdrawEvents] = useState<TokenWithdrawEvent[]>([]);
+  const gnosisSafe = useGnosisSafe(safeAddress);
 
   const getPastEvents = useCallback(
     async (filter: any) => {
-      if (gnosisWrapperContract) {
-        const events = await gnosisWrapperContract.queryFilter(filter);
+      if (gnosisSafe) {
+        const events = await gnosisSafe.queryFilter(filter);
         return events;
       }
       return [];
     },
-    [gnosisWrapperContract]
+    [gnosisSafe]
   );
 
+  const depositListener = (address: string, amount: BigNumber, event: TypedEvent<any, any>) => {
+    setDepositEvents(prevEvents => [
+      ...prevEvents,
+      {
+        address,
+        amount,
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+        eventType: TokenEventType.DEPOSIT,
+      },
+    ]);
+  };
+
+  const withdrawListener = (address: string, amount: BigNumber, event: TypedEvent<any, any>) => {
+    console.log(address, amount, event);
+    setWithdrawEvents(prevEvents => [
+      ...prevEvents,
+      {
+        addresses: [address],
+        amount,
+        transactionHash: event.transactionHash,
+        blockNumber: event.blockNumber,
+        eventType: TokenEventType.WITHDRAW,
+      },
+    ]);
+  };
+
   useEffect(() => {
-    const getData = async () => {
-      if (gnosisWrapperContract) {
-        const events = await getPastEvents(gnosisWrapperContract.filters);
-        setAllEvents(events);
-      }
-    };
-    getData();
-  }, [gnosisWrapperContract, getPastEvents]);
+    if (gnosisSafe) {
+      getPastEvents(gnosisSafe.filters.SafeReceived()).then((events: TypedEvent<any, any>[]) => {
+        const mappedDepositEvents = events.map(event => {
+          return {
+            address: event.args[0],
+            amount: event.args[1],
+            transactionHash: event.transactionHash,
+            blockNumber: event.blockNumber,
+            eventType: TokenEventType.DEPOSIT,
+          };
+        });
+        setDepositEvents(mappedDepositEvents);
+      });
+      gnosisSafe.on(gnosisSafe.filters.SafeReceived(), depositListener);
+      return () => {
+        gnosisSafe.off(gnosisSafe.filters.SafeReceived(), depositListener);
+      };
+    }
+  }, [gnosisSafe, getPastEvents]);
+
+  useEffect(() => {
+    if (gnosisSafe) {
+      getPastEvents(gnosisSafe.filters.ExecutionSuccess()).then(
+        (events: TypedEvent<any, any>[]) => {
+          const mappedWithdrawEvents = events.map(event => {
+            return {
+              addresses: [event.args[0]],
+              amount: event.args[1],
+              transactionHash: event.transactionHash,
+              blockNumber: event.blockNumber,
+              eventType: TokenEventType.WITHDRAW,
+            };
+          });
+          setWithdrawEvents(mappedWithdrawEvents);
+        }
+      );
+      gnosisSafe.on(gnosisSafe.filters.SafeReceived(), withdrawListener);
+      return () => {
+        gnosisSafe.off(gnosisSafe.filters.SafeReceived(), withdrawListener);
+      };
+    }
+  }, [gnosisSafe, getPastEvents]);
+
   return {
-    events: allEvents,
+    transactions: [...depositEvents, ...withdrawEvents],
   };
 };
 
