@@ -32,7 +32,7 @@ function Dashboard({ transactions }: DashboardProps) {
             {transaction.amount ||
               transaction.amounts?.map((amount: BigNumber) => amount.toString())}
           </ContentBoxTitle>
-          <EtherscanTransactionLink address={transaction.transactionhas}>
+          <EtherscanTransactionLink txHash={transaction.transactionHash}>
             View on Etherscan
           </EtherscanTransactionLink>
         </ContentBox>
