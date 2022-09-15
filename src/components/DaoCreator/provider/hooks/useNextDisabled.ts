@@ -48,12 +48,14 @@ export function useNextDisabled(state: CreatorState) {
           }
 
           let isAddressesValid = true;
-          govToken.tokenAllocations.map(tokenAllocation => tokenAllocation.isValidAddress).every(isValidAddress => {
-            if (!isValidAddress) {
-              isAddressesValid = false;
-              return false;
-            }
-          });
+          govToken.tokenAllocations
+            .map(tokenAllocation => tokenAllocation.isValidAddress)
+            .every(isValidAddress => {
+              if (!isValidAddress) {
+                isAddressesValid = false;
+                return false;
+              }
+            });
           if (!isAddressesValid) {
             setIsDisabled(true);
             break;

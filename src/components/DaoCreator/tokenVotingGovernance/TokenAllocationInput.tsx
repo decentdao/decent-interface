@@ -32,7 +32,8 @@ function TokenAllocationInput({
     }
     let errorMsg = undefined;
     if (!isValidAddress) {
-      if (!provider && address.includes('.')) { // simple check if this might be an ENS address
+      if (!provider && address.includes('.')) {
+        // simple check if this might be an ENS address
         errorMsg = 'Connect wallet to validate';
       } else if (address.trim()) {
         errorMsg = 'Invalid address';
@@ -62,14 +63,26 @@ function TokenAllocationInput({
         type="text"
         value={tokenAllocation.address}
         onChange={event => updateAddress(event.target.value)}
-        errorMessage={tokenAllocation.addressError ? tokenAllocation.addressError : hasAmountError ? '‎' : undefined}
+        errorMessage={
+          tokenAllocation.addressError
+            ? tokenAllocation.addressError
+            : hasAmountError
+            ? '‎'
+            : undefined
+        }
       />
       <Input
         containerClassName="col-span-2 md:pt-0 my-auto"
         type="number"
         value={tokenAllocation.amount.value}
         onChange={event => updateAmount(event.target.value)}
-        errorMessage={hasAmountError ? 'Allocated more than supply' : tokenAllocation.addressError ? '‎' : undefined}
+        errorMessage={
+          hasAmountError
+            ? 'Allocated more than supply'
+            : tokenAllocation.addressError
+            ? '‎'
+            : undefined
+        }
         restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
         decimals={DEFAULT_TOKEN_DECIMALS}
       />

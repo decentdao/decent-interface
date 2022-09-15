@@ -1,6 +1,5 @@
-import { ChangeEvent, FormEvent, useCallback } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useId } from 'react';
 import cx from 'classnames';
-import { useId } from 'react';
 
 export enum RestrictCharTypes {
   WHOLE_NUMBERS_ONLY,
@@ -57,7 +56,6 @@ function Input({
   decimals,
   maxLength,
 }: InputProps) {
-
   const id = useId();
   const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
@@ -168,14 +166,16 @@ function Input({
   );
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-
     // handle any externally set change listener
     if (onChange) onChange(event);
 
     // handle max length (typing or pasting)
     const newValue = event.currentTarget.value;
     if (maxLength && newValue.length > maxLength) {
-      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+      const setter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+      )?.set;
       const input = document.getElementById(id);
       setter?.call(input, newValue.substring(0, maxLength));
       input?.dispatchEvent(new Event('input', { bubbles: true }));
