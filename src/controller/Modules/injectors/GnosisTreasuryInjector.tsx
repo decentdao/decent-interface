@@ -4,9 +4,9 @@ import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapp
 
 export function GnosisTreasuryInjector({ children }: { children: JSX.Element }) {
   const { state } = useGnosisWrapper();
-  const { transactions } = useGnosisEvents(state.safeAddress);
+  const { depositEvents, withdrawEvents } = useGnosisEvents(state.safeAddress);
 
   return cloneElement(children, {
-    transactions,
+    transactions: [...depositEvents, withdrawEvents],
   });
 }

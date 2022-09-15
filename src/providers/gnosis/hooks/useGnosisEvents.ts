@@ -34,7 +34,6 @@ const useGnosisEvents = (safeAddress?: string) => {
   };
 
   const withdrawListener = (address: string, amount: BigNumber, event: TypedEvent<any, any>) => {
-    console.log(address, amount, event);
     setWithdrawEvents(prevEvents => [
       ...prevEvents,
       {
@@ -92,7 +91,8 @@ const useGnosisEvents = (safeAddress?: string) => {
   }, [gnosisSafe, getPastEvents]);
 
   return {
-    transactions: [...depositEvents, ...withdrawEvents],
+    depositEvents,
+    withdrawEvents,
   };
 };
 
