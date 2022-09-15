@@ -137,6 +137,7 @@ const useCreateDAODataCreator = () => {
       if (parentAllocationAmount.gt(0)) {
         const parentTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
+          isValidAddress: true,
           amount: { value: '', bigNumberValue: parentAllocationAmount },
         };
         tokenAllocationData.push(parentTokenAllocation);
@@ -155,6 +156,7 @@ const useCreateDAODataCreator = () => {
       if (tokenSupply.bigNumberValue!.gt(tokenAllocationSum)) {
         const daoTokenAllocation: TokenAllocation = {
           address: addresses.metaFactory.address,
+          isValidAddress: true,
           amount: {
             value: '',
             bigNumberValue: tokenSupply.bigNumberValue!.sub(tokenAllocationSum),

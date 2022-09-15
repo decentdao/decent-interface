@@ -40,6 +40,7 @@ function TokenAllocationInput({
     }
     updateTokenAllocation(index, {
       address: address,
+      isValidAddress: isValidAddress,
       amount: tokenAllocation.amount,
       addressError: errorMsg,
     });
@@ -48,6 +49,7 @@ function TokenAllocationInput({
   const updateAmount = (value: string) => {
     updateTokenAllocation(index, {
       address: tokenAllocation.address,
+      isValidAddress: tokenAllocation.isValidAddress,
       amount: { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
       addressError: tokenAllocation.addressError,
     });

@@ -46,6 +46,19 @@ export function useNextDisabled(state: CreatorState) {
             setIsDisabled(true);
             break;
           }
+
+          let isAddressesValid = true;
+          govToken.tokenAllocations.map(tokenAllocation => tokenAllocation.isValidAddress).every(isValidAddress => {
+            if (!isValidAddress) {
+              isAddressesValid = false;
+              return false;
+            }
+          });
+          if (!isAddressesValid) {
+            setIsDisabled(true);
+            break;
+          }
+
           const isAllocationsValid = govToken.tokenAllocations
             .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
