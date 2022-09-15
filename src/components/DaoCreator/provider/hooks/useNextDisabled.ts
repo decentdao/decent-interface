@@ -41,7 +41,7 @@ export function useNextDisabled(state: CreatorState) {
           const isAllocationsValid = govToken.tokenAllocations
             .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
-            .add(govToken.parentAllocationAmount || 0)
+            .add(govToken.parentAllocationAmount?.bigNumberValue || 0)
             .lte(govToken.tokenSupply.bigNumberValue!);
 
           setIsDisabled(!isAllocationsValid);
