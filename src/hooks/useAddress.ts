@@ -77,7 +77,7 @@ export const checkAddress = async (provider: any, addressInput?: string): Promis
   }
 
   // check if it's a registered ENS name (e.g. blah.eth)
-  // note that if provider is undefined here, we don't actually know, but will return false  
+  // note that if provider is undefined here, we don't actually know, but will return false
   try {
     const resolvedAddress = await provider.resolveName(addressInput);
     if (!resolvedAddress) {
