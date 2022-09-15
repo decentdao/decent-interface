@@ -30,10 +30,18 @@ function TokenAllocationInput({
     if (address.trim()) {
       isValidAddress = await checkAddress(provider, address);
     }
+    let errorMsg = undefined;
+    if (!isValidAddress) {
+      if (!provider && address.includes('.')) { // simple check if this might be an ENS address
+        errorMsg = 'Connect wallet to validate';
+      } else if (address.trim()) {
+        errorMsg = 'Invalid address';
+      }
+    }
     updateTokenAllocation(index, {
       address: address,
       amount: tokenAllocation.amount,
-      addressError: !isValidAddress && address.trim() ? 'Invalid address' : undefined,
+      addressError: errorMsg,
     });
   };
 

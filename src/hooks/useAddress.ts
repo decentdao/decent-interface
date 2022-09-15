@@ -63,11 +63,7 @@ const useAddress = (addressInput: string | undefined) => {
 };
 
 export const checkAddress = async (provider: any, addressInput?: string): Promise<boolean> => {
-  if (addressInput === undefined) {
-    return false;
-  }
-
-  if (!provider || addressInput.trim() === '') {
+  if (addressInput === undefined || addressInput.trim() === '') {
     return false;
   }
 
@@ -75,9 +71,13 @@ export const checkAddress = async (provider: any, addressInput?: string): Promis
     return false;
   }
 
+  // check if it's a standard wallet address (e.g. 0xasdf)
   if (ethers.utils.isAddress(addressInput)) {
     return true;
   }
+
+  // check if it's a registered ENS name (e.g. blah.eth)
+  // note that if provider is undefined here, we don't actually know, but will return false  
   try {
     const resolvedAddress = await provider.resolveName(addressInput);
     if (!resolvedAddress) {
