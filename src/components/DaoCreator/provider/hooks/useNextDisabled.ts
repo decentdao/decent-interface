@@ -34,7 +34,15 @@ export function useNextDisabled(state: CreatorState) {
         break;
       case CreatorSteps.TREASURY_GOV_TOKEN:
         if (govToken) {
+          if (!govToken.tokenName || !govToken.tokenSymbol) {
+            setIsDisabled(true);
+            break;
+          }
           if (!govToken.tokenAllocations || !govToken.tokenSupply.bigNumberValue) {
+            setIsDisabled(true);
+            break;
+          }
+          if (govToken.tokenSupply.bigNumberValue && govToken.tokenSupply.bigNumberValue.isZero()) {
             setIsDisabled(true);
             break;
           }
