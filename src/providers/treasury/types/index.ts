@@ -33,7 +33,7 @@ export interface TreasuryAssetFungible {
 }
 
 export interface TreasuryAssetFungibleFiatAmount {
-  [currency: string]: {
+  [currencyId: string]: {
     amount: number;
     currency: string;
     formattedAmount: string;

@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { TokenDepositEvent, TreasuryAssetFungible, TreasuryAssetsFungiblePrices } from '../types';
 import { buildCoinGeckoApiUrlForErc20Tokens, buildCoinGeckoApiUrlForNativeToken } from '../helpers';
-import { CoinGeckoApiResponse } from '../types/coingecko';
+import { CoinGeckoApiResponse, CoinGeckoPrice } from '../types/coingecko';
 import { formatFiatAmount } from '../utils';
 
 /**
@@ -34,6 +34,19 @@ const useTreasuryAssetsFungiblePrices = (
     [selectedCurrency, setPrices]
   );
 
+  const isValidCoinGeckoApiResponse = useCallback(
+    (data: unknown) =>
+      !!data &&
+      typeof data === 'object' &&
+      Object.values(data).every(
+        (value: unknown): value is CoinGeckoPrice =>
+          !!value &&
+          (value as CoinGeckoPrice).hasOwnProperty(selectedCurrency) &&
+          typeof (value as CoinGeckoPrice)[selectedCurrency] === 'number'
+      ),
+    [selectedCurrency]
+  );
+
   // used to get cached prices in `useEffect`s (below)
   const queryClient = useQueryClient();
 
@@ -61,23 +74,25 @@ const useTreasuryAssetsFungiblePrices = (
   const fetchPriceNativeToken = useCallback(async () => {
     if (!hasNativeDeposits) return {};
 
+    // this coingecko endpoint returns an object with a
+    // key named "ethereum" like so: `{ ethereum: 1000 }`.
     const url = buildCoinGeckoApiUrlForNativeToken(selectedCurrency);
     const { data } = await axios.get<CoinGeckoApiResponse>(url);
 
-    // this coingecko endpoint returns an object with a
-    // key named "ethereum" like so: `{ ethereum: 1000 }`.
+    if (!isValidCoinGeckoApiResponse(data)) return {};
+
     // however, the value of this object is displayed in
     // the UI based on the key matching `contractAddress`.
-    // here, the value is deconstructed, and then
+    // therefore, the value is deconstructed, and then
     // reconstructed with the appropriate address.
     const [value] = Object.values(data);
     return { [constants.AddressZero]: value };
-  }, [hasNativeDeposits, selectedCurrency]);
+  }, [hasNativeDeposits, isValidCoinGeckoApiResponse, selectedCurrency]);
 
   useQuery(queryKeyNativeToken, fetchPriceNativeToken, queryConfig);
 
   useEffect(() => {
-    const data = queryClient.getQueryData(queryKeyNativeToken);
+    const data = queryClient.getQueryData<TreasuryAssetsFungiblePrices>(queryKeyNativeToken);
 
     if (data) {
       formatPricesData(data);
@@ -106,13 +121,15 @@ const useTreasuryAssetsFungiblePrices = (
     const url = buildCoinGeckoApiUrlForErc20Tokens(erc20TokensAddresses, selectedCurrency);
     const { data } = await axios.get<CoinGeckoApiResponse>(url);
 
+    if (!isValidCoinGeckoApiResponse(data)) return {};
+
     return data;
-  }, [erc20TokensAddresses, selectedCurrency]);
+  }, [erc20TokensAddresses, isValidCoinGeckoApiResponse, selectedCurrency]);
 
   useQuery(queryKeyErc20Tokens, fetchPricesErc20Tokens, queryConfig);
 
   useEffect(() => {
-    const data = queryClient.getQueryData(queryKeyErc20Tokens);
+    const data = queryClient.getQueryData<TreasuryAssetsFungiblePrices>(queryKeyErc20Tokens);
 
     if (data) {
       formatPricesData(data);
