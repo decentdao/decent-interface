@@ -1,6 +1,11 @@
 import Web3Modal from 'web3modal';
-import { ethers, getDefaultProvider } from 'ethers';
-import { InjectedProviderInfo, BaseProviderInfo, ProviderApiKeys } from './types';
+import { ethers, getDefaultProvider, providers } from 'ethers';
+import {
+  InjectedProviderInfo,
+  BaseProviderInfo,
+  ProviderApiKeys,
+  LocalInjectedProviderInfo,
+} from './types';
 
 export const makeInjectedProvider = async (
   web3Provider: ethers.providers.Web3Provider
@@ -35,24 +40,33 @@ export const getInjectedProvider = (
   });
 };
 
-export const getLocalProvider = (): Promise<BaseProviderInfo> => {
+export const getLocalProvider = async (): Promise<LocalInjectedProviderInfo | undefined> => {
+  const isTestEnvironment = process.env.NODE_ENV === 'test';
+
   const localProvider = new ethers.providers.JsonRpcProvider(
     process.env.REACT_APP_LOCAL_PROVIDER_URL
   );
-  return new Promise<BaseProviderInfo>((resolve, reject) => {
-    localProvider
-      .detectNetwork()
-      .then(network => {
-        resolve({
-          provider: localProvider,
-          signerOrProvider: localProvider,
-          connectionType: 'local provider',
-          network: 'localhost',
-          chainId: network.chainId,
-        });
-      })
-      .catch(reject);
-  });
+
+  try {
+    const network = await localProvider.detectNetwork();
+
+    // sets the account and signer automatically in a test environment.
+    const signerOrProvider = isTestEnvironment ? localProvider.getSigner() : localProvider;
+    const account = isTestEnvironment
+      ? await (signerOrProvider as providers.JsonRpcSigner).getAddress()
+      : null;
+
+    return {
+      account: account,
+      provider: localProvider,
+      signerOrProvider: signerOrProvider,
+      connectionType: 'local provider',
+      network: 'localhost',
+      chainId: network.chainId,
+    };
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export const getFallbackProvider = (): BaseProviderInfo => {

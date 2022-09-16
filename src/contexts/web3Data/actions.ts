@@ -1,4 +1,4 @@
-import { InjectedProviderInfo, BaseProviderInfo } from './types';
+import { InjectedProviderInfo, BaseProviderInfo, LocalInjectedProviderInfo } from './types';
 
 export enum Web3ProviderActions {
   DISCONNECT_WALLET = 'DISCONNECT_WALLET',
@@ -17,7 +17,7 @@ export type ActionTypes =
     }
   | {
       type: Web3ProviderActions.SET_LOCAL_PROVIDER;
-      payload: BaseProviderInfo;
+      payload: LocalInjectedProviderInfo;
     }
   | {
       type: Web3ProviderActions.SET_FALLBACK_PROVIDER;

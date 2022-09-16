@@ -43,7 +43,9 @@ const reducer = (state: InitialState, action: ActionTypes) => {
         isProviderLoading: false,
       };
     }
-    case Web3ProviderActions.SET_LOCAL_PROVIDER:
+    case Web3ProviderActions.SET_LOCAL_PROVIDER: {
+      return { ...state, ...action.payload, isProviderLoading: false };
+    }
     case Web3ProviderActions.SET_FALLBACK_PROVIDER: {
       const { provider, connectionType, network, chainId, signerOrProvider } = action.payload;
       return {
@@ -70,17 +72,20 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
   const connectDefaultProvider = useCallback(async () => {
     web3Modal.clearCachedProvider();
-    if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV === 'development') {
-      dispatch({
-        type: Web3ProviderActions.SET_LOCAL_PROVIDER,
-        payload: await getLocalProvider(),
-      });
-    } else {
-      dispatch({
-        type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
-        payload: getFallbackProvider(),
-      });
+    if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV !== 'production') {
+      const localProviderInfo = await getLocalProvider();
+      if (!!localProviderInfo) {
+        dispatch({
+          type: Web3ProviderActions.SET_LOCAL_PROVIDER,
+          payload: localProviderInfo,
+        });
+        return;
+      }
     }
+    dispatch({
+      type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
+      payload: getFallbackProvider(),
+    });
   }, []);
 
   const connect: ConnectFn = useCallback(async () => {

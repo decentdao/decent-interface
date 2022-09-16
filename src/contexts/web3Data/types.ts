@@ -29,6 +29,15 @@ export type InjectedProviderInfo = {
   chainId: number;
 };
 
+export type LocalInjectedProviderInfo = {
+  account: string | null;
+  signerOrProvider: ethers.providers.JsonRpcSigner | ethers.providers.JsonRpcProvider;
+  provider: ethers.providers.JsonRpcProvider;
+  connectionType: string;
+  network: string;
+  chainId: number;
+};
+
 export type BaseProviderInfo = {
   provider: Providers;
   signerOrProvider: ethers.Signer | Providers;
