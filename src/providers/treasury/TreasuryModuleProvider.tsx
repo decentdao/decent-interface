@@ -33,9 +33,6 @@ export function TreasuryModuleProvider({
     erc20TokenWithdraws
   );
 
-  // TODO: where should this live?
-  // it might be useful to present a "currencies"
-  // option to select a currency in a future iteration.
   const selectedCurrency = 'usd';
 
   const treasuryAssetsFungiblePrices = useTreasuryAssetsFungiblePrices(
