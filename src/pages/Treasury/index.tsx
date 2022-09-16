@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import ContentBanner from '../../components/ui/ContentBanner';
 import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
@@ -28,6 +28,11 @@ function Treasury() {
     treasuryModuleContract,
   } = useTreasuryModule();
   const { dao } = useFractal();
+
+  const isCoinGeckoAttributionVisible = useMemo(
+    () => Object.keys(treasuryAssetsFungibleFiatAmounts).length > 0,
+    [treasuryAssetsFungibleFiatAmounts]
+  );
 
   return (
     <div>
@@ -97,6 +102,18 @@ function Treasury() {
             );
           })}
         </div>
+        {isCoinGeckoAttributionVisible && (
+          <div className="pt-2 px-4 text-xs text-right">
+            <a
+              className="text-gray-100"
+              href="https://coingecko.com/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Data from CoinGecko
+            </a>
+          </div>
+        )}
       </div>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
         <ContentBoxTitle>NFTs</ContentBoxTitle>
