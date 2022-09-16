@@ -57,15 +57,15 @@ export const getLocalProvider = async (): Promise<LocalInjectedProviderInfo | un
       : null;
 
     return {
-      account: account,
+      account,
       provider: localProvider,
-      signerOrProvider: signerOrProvider,
+      signerOrProvider,
       connectionType: 'local provider',
       network: 'localhost',
       chainId: network.chainId,
     };
   } catch (e) {
-    console.error(e);
+    console.error('Local Provider: ', e);
   }
 };
 
