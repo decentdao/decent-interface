@@ -53,7 +53,7 @@ export function GovernanceController({ children }: { children: JSX.Element }) {
         </GnosisWrapperProvider>
       );
     default: {
-      return children;
+      return null;
     }
   }
 }

@@ -1,15 +1,17 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { TextButton } from '../../ui/forms/Button';
 import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
+import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
+import { BigNumberInput } from '../provider/types';
 import TokenAllocationInput from './TokenAllocationInput';
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
   supply: BigNumber | null;
-  parentAllocationAmount?: BigNumber;
+  parentAllocationAmount?: BigNumberInput;
   canReceiveParentAllocations: boolean;
   fieldUpdate: (value: any, field: string) => void;
 }
@@ -54,20 +56,38 @@ function TokenAllocations({
     );
   };
 
+  const onParentAllocationChange = (value: string) => {
+    fieldUpdate(
+      { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
+      'parentAllocationAmount'
+    );
+  };
+
   useEffect(() => {
     const totalAllocated = tokenAllocations
       .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
       .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
     if (supply && supply.gt(0)) {
       // no DAO token allocation with no parent allocations
-      if (totalAllocated.gt(0) && (!parentAllocationAmount || parentAllocationAmount?.lte(0))) {
+      if (
+        totalAllocated.gt(0) &&
+        (!parentAllocationAmount?.bigNumberValue || parentAllocationAmount.bigNumberValue.lte(0))
+      ) {
         setAmountError(supply.lt(totalAllocated));
         // parent tokens allocated but no DAO token allocation
-      } else if (totalAllocated.lte(0) && parentAllocationAmount?.gt(0)) {
-        setAmountError(supply.lt(parentAllocationAmount));
+      } else if (
+        parentAllocationAmount?.bigNumberValue &&
+        totalAllocated.lte(0) &&
+        parentAllocationAmount.bigNumberValue?.gt(0)
+      ) {
+        setAmountError(supply.lt(parentAllocationAmount.bigNumberValue));
         // parent tokens allocated with DAO token allocation
-      } else if (totalAllocated.gt(0) && parentAllocationAmount?.gt(0)) {
-        setAmountError(supply.lt(totalAllocated.add(parentAllocationAmount)));
+      } else if (
+        parentAllocationAmount?.bigNumberValue &&
+        totalAllocated.gt(0) &&
+        parentAllocationAmount.bigNumberValue?.gt(0)
+      ) {
+        setAmountError(supply.lt(totalAllocated.add(parentAllocationAmount.bigNumberValue)));
       } else {
         // no allocation set amount error to false
         setAmountError(false);
@@ -82,16 +102,15 @@ function TokenAllocations({
         <InputBox>
           <Input
             type="number"
-            value={parentAllocationAmount.toString()}
-            onChange={e =>
-              fieldUpdate(BigNumber.from(e.target.value || 0), 'parentAllocationAmount')
-            }
+            value={parentAllocationAmount.value}
+            onChange={e => onParentAllocationChange(e.target.value)}
             label="Parent Allocation Amount"
             helperText="Amount of tokens to allocate to parent DAO"
             disabled={false}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+            restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
             min="0"
             errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
+            decimals={DEFAULT_TOKEN_DECIMALS}
           />
         </InputBox>
       )}

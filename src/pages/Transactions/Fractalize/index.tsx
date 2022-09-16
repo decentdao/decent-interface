@@ -1,12 +1,8 @@
 import DaoCreator from '../../../components/DaoCreator';
-import { DAOTrigger } from '../../../components/DaoCreator/provider/types';
+import { useInjector } from '../../../controller/Modules/injectors/GovernanceInjectorConext';
 
-import { GovernanceProposalData } from '../../../controller/Modules/types';
-interface IFractalize extends GovernanceProposalData {
-  createDAOTrigger?: DAOTrigger;
-}
-
-function Fractalize({ createDAOTrigger, pending }: IFractalize) {
+function Fractalize() {
+  const { pending, createDAOTrigger } = useInjector();
   return (
     <DaoCreator
       pending={pending}

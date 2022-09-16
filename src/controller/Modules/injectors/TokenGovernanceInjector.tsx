@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from 'ethers';
-import React, { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ERC20__factory,
@@ -19,6 +19,7 @@ import { useGovenorModule } from '../../../providers/govenor/hooks/useGovenorMod
 import { useUserProposalValidation } from '../../../providers/govenor/hooks/useUserProposalValidation';
 import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
 import { ExecuteData } from '../../../types/execute';
+import { InjectorContext } from './GovernanceInjectorConext';
 
 /**
  * Handles passing 'createProposal' to plugins for this module
@@ -242,23 +243,27 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
     [submitProposal, createGnosisDAODataCreator, metaFactoryContract, daoAddress, successCallback]
   );
 
-  const createDAOTrigger = (daoData: TokenGovernanceDAO | GnosisDAO) => {
-    switch (daoData.governance) {
-      case GovernanceTypes.TOKEN_VOTING_GOVERNANCE:
-        return createTokenVotingDAO(daoData);
-      case GovernanceTypes.GNOSIS_SAFE:
-        return createGnosisDAO(daoData);
-    }
-  };
+  const createDAOTrigger = useCallback(
+    (daoData: TokenGovernanceDAO | GnosisDAO) => {
+      switch (daoData.governance) {
+        case GovernanceTypes.TOKEN_VOTING_GOVERNANCE:
+          return createTokenVotingDAO(daoData);
+        case GovernanceTypes.GNOSIS_SAFE:
+          return createGnosisDAO(daoData);
+      }
+    },
+    [createTokenVotingDAO, createGnosisDAO]
+  );
 
-  if (!governorModuleContract) {
-    return null;
-  }
+  const value = useMemo(
+    () => ({
+      createDAOTrigger,
+      createProposal: submitProposal,
+      pending: pendingCreateTx,
+      isAuthorized: canUserCreateProposal,
+    }),
+    [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal]
+  );
 
-  return React.cloneElement(children, {
-    createDAOTrigger,
-    createProposal: submitProposal,
-    pending: pendingCreateTx,
-    isAuthorized: canUserCreateProposal,
-  });
+  return <InjectorContext.Provider value={value}>{children}</InjectorContext.Provider>;
 }
