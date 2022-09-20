@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useCallback, useId } from 'react';
+import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import cx from 'classnames';
 
 export enum RestrictCharTypes {
@@ -56,14 +56,14 @@ function Input({
   decimals,
   maxLength,
 }: InputProps) {
-  const id = useId();
+  const [valInternal, setValInternal] = useState(value);
   const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
 
   function Label() {
     return !!label ? (
       <label
-        htmlFor={id}
+        htmlFor="form-field"
         className={cx('text-xs font-medium mb-1', {
           'text-gray-50': disabled,
           'text-gray-25': !disabled,
@@ -132,15 +132,15 @@ function Input({
 
   const limitDecimals = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (!value || ['Backspace', 'Delete'].includes(event.key)) {
+      if (!valInternal || ['Backspace', 'Delete'].includes(event.key)) {
         return;
       }
-      const [, dec] = value.toString().split('.');
+      const [, dec] = valInternal.toString().split('.');
       if (!!dec && !!decimals && dec.length >= decimals) {
         event.preventDefault();
       }
     },
-    [decimals, value]
+    [decimals, valInternal]
   );
 
   const handleKeyDown = useCallback(
@@ -169,16 +169,11 @@ function Input({
     // handle any externally set change listener
     if (onChange) onChange(event);
 
-    // handle max length (typing or pasting)
-    const newValue = event.currentTarget.value;
-    if (maxLength && newValue.length > maxLength) {
-      const setter = Object.getOwnPropertyDescriptor(
-        window.HTMLInputElement.prototype,
-        'value'
-      )?.set;
-      const input = document.getElementById(id);
-      setter?.call(input, newValue.substring(0, maxLength));
-      input?.dispatchEvent(new Event('input', { bubbles: true }));
+    // handle max length
+    if (maxLength && event.target.value.length >= maxLength) {
+      setValInternal(event.target.value.substring(0, maxLength));
+    } else {
+      setValInternal(event.target.value);
     }
   };
 
@@ -195,7 +190,7 @@ function Input({
       <div className={cx('flex flex-col w-full relative', { 'pr-4': !!helperText })}>
         <Label />
         <FieldType
-          id={id}
+          id="form-field"
           type={inputType}
           placeholder={placeholder}
           className={cx(
@@ -206,7 +201,7 @@ function Input({
             inputClassName
           )}
           disabled={disabled}
-          value={value}
+          value={valInternal}
           min={min}
           max={max}
           onKeyDown={handleKeyDown}
