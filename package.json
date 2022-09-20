@@ -36,6 +36,9 @@
   "scripts": {
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "docker:build": "docker compose build",
+    "docker:launch": "docker-compose up",
+    "docker:launch-detached": "docker-compose up -d",
     "start": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired start",
     "start:windows": "set \"GENERATE_SOURCEMAP=false\" && for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired start",
     "build": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired build",
