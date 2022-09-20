@@ -1,5 +1,6 @@
 import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
 import { useState, useEffect } from 'react';
+import { logError } from '../helpers/errorlogging';
 
 const useENSName = (account?: string | null) => {
   const {
@@ -21,7 +22,7 @@ const useENSName = (account?: string | null) => {
           setEnsName(value);
         }
       })
-      .catch(console.error);
+      .catch(logError);
     return () => {
       isMounted = false;
     };

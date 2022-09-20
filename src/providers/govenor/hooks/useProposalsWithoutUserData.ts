@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
 import useBlockchainDatas from '../../../contexts/blockchainData/blockchainData';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../../../helpers/errorlogging';
 import {
   ProposalDataWithoutUserData,
   ProposalCreatedListener,
@@ -74,7 +75,7 @@ export const useProposalsWithoutUserData = (governorModule: GovernorModule | und
       .then(newProposals => {
         setProposalsWithoutUserData(newProposals);
       })
-      .catch(console.error);
+      .catch(logError);
   }, [governorModule, provider]);
 
   // Setup proposal created events listener
@@ -134,7 +135,7 @@ export const useProposalsWithoutUserData = (governorModule: GovernorModule | und
             return [...existingProposalsWithoutUserData, proposalData];
           });
         })
-        .catch(console.error);
+        .catch(logError);
     };
 
     governorModule.on(filter, listenerCallback);
@@ -171,7 +172,7 @@ export const useProposalsWithoutUserData = (governorModule: GovernorModule | und
             return newProposals;
           });
         })
-        .catch(console.error);
+        .catch(logError);
     };
     governorModule.on(filter, listenerCallback);
 

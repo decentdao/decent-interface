@@ -1,6 +1,7 @@
 import { ContractReceipt, ethers } from 'ethers';
 import React, { useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
+import { logError } from '../../helpers/errorlogging';
 
 interface ProviderRpcError extends Error {
   message: string;
@@ -70,7 +71,7 @@ const useTransaction = () => {
         }, 2000);
       })
       .catch((error: ProviderRpcError) => {
-        console.error(error);
+        logError(error);
         toast.dismiss(toastId);
         setPending(false);
 

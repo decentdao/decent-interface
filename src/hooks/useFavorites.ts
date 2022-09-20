@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { logError } from '../helpers/errorlogging';
 import { useLocalStorage } from './useLocalStorage';
 
 type Favorites = {
@@ -17,8 +18,8 @@ const useFavorites = () => {
       // This might throw
       const normalizedAddress = ethers.utils.getAddress(address);
       return favorites[chainId].includes(normalizedAddress);
-    } catch (e: unknown) {
-      console.error(e);
+    } catch (e) {
+      logError(e);
       return false;
     }
   };
@@ -39,8 +40,8 @@ const useFavorites = () => {
         newFavorites[chainId] = [...newFavorites[chainId], normalizedAddress];
         setFavorites(newFavorites);
       }
-    } catch (e: unknown) {
-      console.error(e);
+    } catch (e) {
+      logError(e);
       return;
     }
   };
@@ -60,8 +61,8 @@ const useFavorites = () => {
       );
 
       setFavorites(newFavorites);
-    } catch (e: unknown) {
-      console.error(e);
+    } catch (e) {
+      logError(e);
       return;
     }
   };

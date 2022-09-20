@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { logError } from '../helpers/errorlogging';
 
 function useSafeRace<T>(
   earlyExitCondition: boolean,
@@ -20,7 +21,7 @@ function useSafeRace<T>(
           setStateCallback(resolved);
         }
       })
-      .catch(console.error);
+      .catch(logError);
 
     return () => {
       pending = false;

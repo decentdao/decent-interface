@@ -22,6 +22,7 @@ import {
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { InjectorContext } from './GovernanceInjectorConext';
+import { logError } from '../../../helpers/errorlogging';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -172,7 +173,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
           toast("There was an error! Check your browser's console logs for more details.");
         }
       } catch (e) {
-        console.error(e);
+        logError(e);
         toast("There was an error! Check your browser's console logs for more details.");
       }
     },

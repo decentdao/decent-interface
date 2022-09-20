@@ -1,4 +1,5 @@
 import { utils, BigNumberish, Signer } from 'ethers';
+import { logError } from '../../../helpers/errorlogging';
 import { GnosisTransaction } from '../types/gnosis';
 
 export const EIP_DOMAIN = {
@@ -56,6 +57,7 @@ export const signHash = async (signer: Signer, hash: string): Promise<SafeSignat
       data: sig.replace(/1b$/, '1f').replace(/1c$/, '20'),
     };
   } catch (error) {
+    logError(error);
     return {
       signer: signerAddress,
       data: undefined,

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
 import { getSupportedChains, getChainsWithMetadata } from '../chains';
+import { clearErrorContext, setLoggedWallet, setErrorContext } from '../../../helpers/errorlogging';
 
 const useListeners = (
   web3Modal: Web3Modal,
@@ -22,6 +23,8 @@ const useListeners = (
   useEffect(() => {
     // subscribe to connect events
     web3Modal.on('connect', _modalProvider => {
+      setLoggedWallet(_modalProvider.walletAddress);
+      setErrorContext('chainId', _modalProvider.chainId);
       // check that connected chain is supported
       if (!supportedChains.includes(parseInt(_modalProvider.chainId))) {
         toast(`Switch to a supported chain: ${chainsNames}`, {
@@ -41,6 +44,7 @@ const useListeners = (
 
   useEffect(() => {
     const chainChangedCallback = (chainId: string) => {
+      setErrorContext('chainId', chainId);
       if (!getSupportedChains().includes(parseInt(chainId))) {
         // check that connected chain is supported
         toast(`Chain changed: Switch to a supported chain: ${chainsNames}`, {
@@ -58,17 +62,20 @@ const useListeners = (
 
     const accountsChangedCallback = (accounts: string[]) => {
       if (!accounts.length) {
+        setLoggedWallet(undefined);
         toast('Account access revoked', { toastId: 'accessChanged' });
         // switch to a default provider
         connectDefaultProvider();
         // remove listeners
         setModalProvider(null);
       } else {
+        setLoggedWallet(accounts[0]);
         toast('Account changed', { toastId: 'connected' });
         connect();
       }
     };
     const disconnectCallback = () => {
+      clearErrorContext();
       toast('Account disconnected', { toastId: 'disconnected' });
       // switch to a default provider
       connectDefaultProvider();

@@ -2,6 +2,7 @@ import { BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../../../helpers/errorlogging';
 import { UserVote, VoteCastListener } from '../types';
 
 export const useUserVotes = (governorModule: GovernorModule | undefined) => {
@@ -32,7 +33,7 @@ export const useUserVotes = (governorModule: GovernorModule | undefined) => {
           })
         );
       })
-      .catch(console.error);
+      .catch(logError);
   }, [governorModule, account]);
 
   // Setup user vote events listener

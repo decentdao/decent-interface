@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 import { GnosisWrapper } from '../../../assets/typechain-types/gnosis-wrapper';
+import { logError } from '../../../helpers/errorlogging';
 import { GnosisActions, GnosisActionTypes } from '../types';
 
 const useGnosisSafeAddress = (
@@ -18,7 +19,7 @@ const useGnosisSafeAddress = (
       .then(safeAddress => {
         dispatch({ type: GnosisActions.UPDATE_GNOSIS_CONTRACT, payload: { safeAddress } });
       })
-      .catch(console.error);
+      .catch(logError);
   }, [gnosisWrapper, dispatch]);
 };
 

@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
-import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -13,21 +11,12 @@ import App from './App';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalProvider } from './providers/fractal/FractalProvider';
 import { ErrorFallback } from './components/ErrorFallback';
+import { DecentErrorBoundary, initErrorLogging } from './helpers/errorlogging';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
 
-// Used for remote error reporting
-// https://sentry.io/organizations/decent-mg/issues/
-Sentry.init({
-  dsn: process.env.REACT_APP_SENTRY_DSN || '',
-  integrations: [new BrowserTracing()],
-
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 1.0,
-});
+initErrorLogging();
 
 root.render(
   <React.StrictMode>
@@ -36,7 +25,7 @@ root.render(
         <title>Fractal</title>
       </Helmet>
       <HashRouter>
-        <Sentry.ErrorBoundary fallback={ErrorFallback}>
+        <DecentErrorBoundary fallback={ErrorFallback}>
           <Web3Provider>
             <BlockchainDataProvider>
               <FractalProvider>
@@ -52,7 +41,7 @@ root.render(
               </FractalProvider>
             </BlockchainDataProvider>
           </Web3Provider>
-        </Sentry.ErrorBoundary>
+        </DecentErrorBoundary>
       </HashRouter>
     </HelmetProvider>
   </React.StrictMode>

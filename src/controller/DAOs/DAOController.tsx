@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../../helpers/errorlogging';
 import useSearchDao from '../../hooks/useSearchDao';
 import { FractalAction } from '../../providers/fractal/constants/enums';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
@@ -68,7 +69,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
     actionRolesRemoved.forEach(target => {
       const module = moduleEventsMapping.get(target);
       if (!module) {
-        console.error("shouldn't see this, trying to remove event that wasn't added");
+        logError("shouldn't see this, trying to remove event that wasn't added");
       } else {
         moduleEventsMapping.set(target, { ...module, moduleEnabled: module.moduleEnabled-- });
       }
