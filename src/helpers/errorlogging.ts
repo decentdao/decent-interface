@@ -14,6 +14,8 @@ export function initErrorLogging() {
     // Setting tracesSampleRate to 1.0 captures 100%
     // of sentry transactions for performance monitoring.
     tracesSampleRate: 1.0,
+
+    debug: process.env.NODE_ENV === 'production' ? false : true,
   });
 }
 
@@ -70,7 +72,7 @@ export function clearErrorContext() {
  * Extension of Sentry's ErrorBoundary class which simply logs the error to
  * console as well.
  */
-export class DecentErrorBoundary extends Sentry.ErrorBoundary {
+export class FractalErrorBoundary extends Sentry.ErrorBoundary {
   componentDidCatch(error: any, errorInfo: any) {
     super.componentDidCatch(error, errorInfo);
     console.error(error + ': ' + errorInfo);
