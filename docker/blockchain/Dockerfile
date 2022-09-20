@@ -11,7 +11,7 @@ COPY ./entrypoint.sh /usr/local/bin
 WORKDIR /usr/src/fractal-test
 
 # install git
-RUN apk --no-cache --virtual build-dependencies add python3 make g++ git
+RUN apk --no-cache --virtual build-dependencies add python3 make g++
 
 RUN npm install
 
