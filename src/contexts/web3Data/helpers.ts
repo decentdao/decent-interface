@@ -40,9 +40,9 @@ export const getInjectedProvider = (
   });
 };
 
-export const getLocalProvider = async (): Promise<LocalInjectedProviderInfo | undefined> => {
-  const isTestEnvironment = process.env.NODE_ENV === 'test';
-
+export const getLocalProvider = async (
+  isTestEnvironment: boolean = false
+): Promise<LocalInjectedProviderInfo | undefined> => {
   const localProvider = new ethers.providers.JsonRpcProvider(
     process.env.REACT_APP_LOCAL_PROVIDER_URL
   );
