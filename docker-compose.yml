@@ -1,0 +1,6 @@
+version: '3'
+services:
+  blockchain:
+    build: docker/blockchain
+    ports:
+     - "8545:8545"

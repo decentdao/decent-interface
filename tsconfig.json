@@ -18,9 +18,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
   },
+  "exclude": [
+    "docker"
+  ],
   "include": [
-    "src"
+    "src",
   ]
 }
