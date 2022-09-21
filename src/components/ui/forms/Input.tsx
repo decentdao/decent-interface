@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
+import { ChangeEvent, FormEvent, useCallback } from 'react';
 import cx from 'classnames';
 
 export enum RestrictCharTypes {
@@ -26,7 +26,6 @@ interface InputProps {
   restrictChar?: RestrictCharTypes;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
   decimals?: number;
-  maxLength?: number;
 }
 
 /**
@@ -54,9 +53,7 @@ function Input({
   onChange,
   onClickMax,
   decimals,
-  maxLength,
 }: InputProps) {
-  const [valInternal, setValInternal] = useState(value);
   const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
 
@@ -132,15 +129,15 @@ function Input({
 
   const limitDecimals = useCallback(
     (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      if (!valInternal || ['Backspace', 'Delete'].includes(event.key)) {
+      if (!value || ['Backspace', 'Delete'].includes(event.key)) {
         return;
       }
-      const [, dec] = valInternal.toString().split('.');
+      const [, dec] = value.toString().split('.');
       if (!!dec && !!decimals && dec.length >= decimals) {
         event.preventDefault();
       }
     },
-    [decimals, valInternal]
+    [decimals, value]
   );
 
   const handleKeyDown = useCallback(
@@ -164,18 +161,6 @@ function Input({
     },
     [decimals, limitDecimals, restrictChar]
   );
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    // handle any externally set change listener
-    if (onChange) onChange(event);
-
-    // handle max length
-    if (maxLength && event.target.value.length >= maxLength) {
-      setValInternal(event.target.value.substring(0, maxLength));
-    } else {
-      setValInternal(event.target.value);
-    }
-  };
 
   return (
     <div
@@ -201,11 +186,11 @@ function Input({
             inputClassName
           )}
           disabled={disabled}
-          value={valInternal}
+          value={value}
           min={min}
           max={max}
           onKeyDown={handleKeyDown}
-          onChange={handleChange}
+          onChange={onChange}
           onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) =>
             (e.target as HTMLInputElement).blur()
           }

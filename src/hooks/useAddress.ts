@@ -63,7 +63,7 @@ const useAddress = (addressInput: string | undefined) => {
 };
 
 export const checkAddress = async (provider: any, addressInput?: string): Promise<boolean> => {
-  if (addressInput === undefined || addressInput.trim() === '') {
+  if (!addressInput || !addressInput.trim()) {
     return false;
   }
 
@@ -71,7 +71,6 @@ export const checkAddress = async (provider: any, addressInput?: string): Promis
     return false;
   }
 
-  // check if it's a standard wallet address (e.g. 0xasdf)
   if (ethers.utils.isAddress(addressInput)) {
     return true;
   }
