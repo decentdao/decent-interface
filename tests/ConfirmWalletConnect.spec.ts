@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.only('Confirm Wallet is Connected to Fractal', async ({ page }) => {
+test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   // For CI use when modded local wallet is present
   await page.goto('http://localhost:3000');
 
