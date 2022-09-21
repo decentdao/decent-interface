@@ -20,5 +20,8 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
     hardhat: {
       chainId: 31337
     },
+    forking: {
+      url: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`
+    }
   },
 };

@@ -6,6 +6,8 @@ COPY ./hardhat.package.json /fractal-blockchain-node/package.json
 # Copy a hardhat.config.js -> docker | root:hardhat.config.local.js
 COPY ./hardhat.config.js /fractal-blockchain-node/hardhat.config.js
 
+COPY ./.env.local /fractal-blockchain-node/.env
+
 COPY ./entrypoint.sh /usr/local/bin
 
 WORKDIR /fractal-blockchain-node/
