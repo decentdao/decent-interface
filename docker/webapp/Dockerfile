@@ -5,6 +5,7 @@ FROM node:16
 
 COPY package.json /fractal-webapp/package.json
 COPY package-lock.json ./fractal-webapp/package.json
+COPY docker/webapp/.webapp.env.test ./fractal-webapp/.env.local
 
 COPY . ./fractal-webapp
 
