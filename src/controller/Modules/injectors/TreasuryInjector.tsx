@@ -1,11 +1,9 @@
-import { cloneElement } from 'react';
+import { PropsWithChildren } from 'react';
 import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
 import useTreasuryEvents from '../../../providers/treasury/hooks/useTreasuryEvents';
+import { TreasuryInjectorContext } from './TreasuryInjectorContext';
 
-// TODO: At least it makes sense to refactor TreasuryInjector and GovernanceInjector to HOCs
-// That will look way more "React.js-way", as current Injector pattern looks more like from Angular :D
-// However, need discussion for this during PR review
-export function TreasuryInjector({ children }: { children: JSX.Element }) {
+export function TreasuryInjector({ children }: PropsWithChildren) {
   const { treasuryModuleContract, treasuryAssetsFungible, treasuryAssetsNonFungible } =
     useTreasuryModule();
   const {
@@ -17,7 +15,7 @@ export function TreasuryInjector({ children }: { children: JSX.Element }) {
     erc721TokenWithdraws,
   } = useTreasuryEvents(treasuryModuleContract);
 
-  return cloneElement(children, {
+  const value = {
     transactions: [
       ...(nativeDeposits || []),
       ...nativeWithdraws,
@@ -28,5 +26,9 @@ export function TreasuryInjector({ children }: { children: JSX.Element }) {
     ],
     treasuryAssetsFungible,
     treasuryAssetsNonFungible,
-  });
+  };
+
+  return (
+    <TreasuryInjectorContext.Provider value={value}>{children}</TreasuryInjectorContext.Provider>
+  );
 }
