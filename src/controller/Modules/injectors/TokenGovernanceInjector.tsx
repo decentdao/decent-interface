@@ -19,7 +19,7 @@ import { useGovenorModule } from '../../../providers/govenor/hooks/useGovenorMod
 import { useUserProposalValidation } from '../../../providers/govenor/hooks/useUserProposalValidation';
 import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
 import { ExecuteData } from '../../../types/execute';
-import { InjectorContext } from './GovernanceInjectorConext';
+import { GovernanceInjectorContext } from './GovernanceInjectorConext';
 
 /**
  * Handles passing 'createProposal' to plugins for this module
@@ -265,5 +265,9 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
     [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal]
   );
 
-  return <InjectorContext.Provider value={value}>{children}</InjectorContext.Provider>;
+  return (
+    <GovernanceInjectorContext.Provider value={value}>
+      {children}
+    </GovernanceInjectorContext.Provider>
+  );
 }
