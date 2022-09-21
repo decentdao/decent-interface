@@ -1,4 +1,4 @@
-import { useState, useEffect, PropsWithChildren } from 'react';
+import { useState, useEffect } from 'react';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { TreasuryModuleProvider } from '../../providers/treasury/TreasuryModuleProvider';
 import { GnosisWrapperProvider } from '../../providers/gnosis/GnosisWrapperProvider';
@@ -6,7 +6,7 @@ import { TreasuryInjector } from './injectors/TreasuryInjector';
 import { GnosisTreasuryInjector } from './injectors/GnosisTreasuryInjector';
 import { ModuleTypes } from './types';
 
-export function TreasuryController({ children }: PropsWithChildren) {
+export function TreasuryController({ children }: { children: JSX.Element }) {
   const {
     modules: { treasuryModule, gnosisWrapperModule },
   } = useFractal();
@@ -37,7 +37,7 @@ export function TreasuryController({ children }: PropsWithChildren) {
       );
     }
     default: {
-      return <>{children}</>;
+      return children;
     }
   }
 }
