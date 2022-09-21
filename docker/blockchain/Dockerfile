@@ -1,16 +1,16 @@
 FROM node:16-alpine
 
 # Copy a hardhat.package.json -> docker | root:package.json
-COPY ./hardhat.package.json package.json 
+COPY ./hardhat.package.json /fractal-blockchain-node/package.json 
 
 # Copy a hardhat.config.js -> docker | root:hardhat.config.local.js
-COPY ./hardhat.config.js hardhat.config.js
+COPY ./hardhat.config.js /fractal-blockchain-node/hardhat.config.js
 
 COPY ./entrypoint.sh /usr/local/bin
 
-WORKDIR /usr/src/fractal-test
+WORKDIR /fractal-blockchain-node/
 
-# install git
+# install needed dependencies
 RUN apk --no-cache --virtual build-dependencies add python3 make g++
 
 RUN npm install
