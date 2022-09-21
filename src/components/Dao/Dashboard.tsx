@@ -29,8 +29,10 @@ function Dashboard({ transactions }: DashboardProps) {
         <ContentBox key={transaction.transactionHash}>
           <ContentBoxTitle>
             {transaction.eventType === TokenEventType.DEPOSIT ? 'Received' : 'Sent'}{' '}
-            {transaction.amount ||
-              transaction.amounts?.map((amount: BigNumber) => amount.toString())}
+            {transaction.amount?.toString
+              ? transaction.amount.toString()
+              : transaction.amount ||
+                transaction.amounts?.map((amount: BigNumber) => amount.toString())}
           </ContentBoxTitle>
           <EtherscanTransactionLink txHash={transaction.transactionHash}>
             View on Etherscan
