@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 
 export function useAddresses(chainId: number | undefined) {
-  console.log('🚀 ~ file: useAddresses.ts ~ line 4 ~ chainId', chainId);
   const [addresses, setAddresses] = useState<{
     metaFactory?: { address: string };
     daoFactory?: { address: string };
