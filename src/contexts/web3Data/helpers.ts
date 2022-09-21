@@ -26,20 +26,6 @@ export const makeInjectedProvider = async (
   };
 };
 
-export const getInjectedProvider = (
-  web3ModalProvider: Web3Modal
-): Promise<InjectedProviderInfo> => {
-  return new Promise<InjectedProviderInfo>((resolve, reject) => {
-    web3ModalProvider
-      .connect()
-      .then(userSuppliedProvider =>
-        makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider))
-      )
-      .then(resolve)
-      .catch(reject);
-  });
-};
-
 export const getLocalProvider = async (
   isTestEnvironment: boolean = false
 ): Promise<LocalInjectedProviderInfo | undefined> => {
@@ -65,8 +51,22 @@ export const getLocalProvider = async (
       chainId: network.chainId,
     };
   } catch (e) {
-    console.error('Local Provider: ', e);
+    console.error('Local Provider: ', (e as Error).message);
   }
+};
+
+export const getInjectedProvider = async (
+  web3ModalProvider: Web3Modal
+): Promise<InjectedProviderInfo | LocalInjectedProviderInfo | undefined> => {
+  const userSuppliedProvider = await web3ModalProvider.connect();
+  if (userSuppliedProvider.chainId.toString() === process.env.REACT_APP_LOCAL_CHAIN_ID) {
+    const localProvider = await getLocalProvider(true);
+    if (localProvider) {
+      return localProvider;
+    }
+    return undefined;
+  }
+  return makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider));
 };
 
 export const getFallbackProvider = (): BaseProviderInfo => {

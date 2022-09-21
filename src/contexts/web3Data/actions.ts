@@ -13,7 +13,7 @@ export type ActionTypes =
     }
   | {
       type: Web3ProviderActions.SET_INJECTED_PROVIDER;
-      payload: InjectedProviderInfo;
+      payload: InjectedProviderInfo | LocalInjectedProviderInfo;
     }
   | {
       type: Web3ProviderActions.SET_LOCAL_PROVIDER;
