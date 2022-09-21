@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useInjector } from '../../../controller/Modules/injectors/GovernanceInjectorConext';
+import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
@@ -22,7 +22,7 @@ export function SubsidiaryFunding() {
 
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useInjector();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryInjector();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({

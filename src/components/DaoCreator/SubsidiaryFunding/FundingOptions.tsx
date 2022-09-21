@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useInjector } from '../../../controller/Modules/injectors/GovernanceInjectorConext';
+import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
 import ContentBox from '../../ui/ContentBox';
 import { PrimaryButton } from '../../ui/forms/Button';
 import { NFTToFund, TokenToFund } from './types';
@@ -24,7 +24,7 @@ export function FundingOptions({
   nftsToFund,
   selectedTokenIndex,
 }: IFundingOptions) {
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useInjector();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryInjector();
 
   const isAddDisabled = useMemo(() => {
     if (selectedTokenIndex === undefined) {
