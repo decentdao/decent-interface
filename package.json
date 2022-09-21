@@ -41,7 +41,8 @@
     "build": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired build",
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
     "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
-    "eject": "react-app-rewired eject"
+    "eject": "react-app-rewired eject",
+    "tests:chrome": "playwright test --config=playwright.config.ts --project=Chromium"
   },
   "browserslist": {
     "production": [
@@ -56,6 +57,7 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.25.2",
     "@typescript-eslint/eslint-plugin": "^5.34.0",
     "@typescript-eslint/parser": "^5.34.0",
     "autoprefixer": "^10.4.8",

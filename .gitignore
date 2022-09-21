@@ -25,3 +25,8 @@ yarn-error.log*
 .idea/*
 
 .gitconfig
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/tests-examples/*
+/.github/workflows/playwright.yml
