@@ -2,8 +2,8 @@ FROM node:16
 
 
 # Copies package.json and lock file to docker container
-# These are not included in the app COPY command
-COPY package.json /fractal-webapp/package.json
+# These are not included in the app's components COPY command below
+COPY package.json ./fractal-webapp/package.json
 COPY package-lock.json ./fractal-webapp/package.json
 
 # Copies app components to docker container directory
