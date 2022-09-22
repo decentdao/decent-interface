@@ -108,9 +108,7 @@ const useTreasuryAssets = (
         const name = await token.tokenData.name();
         const symbol = await token.tokenData.symbol();
         const decimals = await token.tokenData.decimals();
-        // const tokenAddress = token.tokenData.tokenAddress;
 
-        // TODO: remove this bit of logic before pushing to production
         const tokenAddress =
           chainId === 1
             ? token.tokenData.tokenAddress
