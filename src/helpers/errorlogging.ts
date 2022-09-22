@@ -38,13 +38,13 @@ export function setLoggedWallet(walletAddress?: string) {
  * @param error the error to log. Strings are logged on Sentry as "messages", anything
  * else is logged as an exception.
  */
-export function logError(error: any) {
+export function logError(error: any, ...optionalParams: any[]) {
   if (typeof error === 'string' || error instanceof String) {
-    Sentry.captureMessage(error.toString());
+    Sentry.captureMessage(error.toString() + ': ' + optionalParams);
   } else {
     Sentry.captureException(error);
   }
-  console.error(error);
+  console.error(error, optionalParams);
 }
 
 /**
@@ -73,8 +73,13 @@ export function clearErrorContext() {
  * console as well.
  */
 export class FractalErrorBoundary extends Sentry.ErrorBoundary {
-  componentDidCatch(error: any, errorInfo: any) {
+  componentDidCatch(
+    error: Error & {
+      cause?: Error;
+    },
+    errorInfo: React.ErrorInfo
+  ) {
     super.componentDidCatch(error, errorInfo);
-    console.error(error + ': ' + errorInfo);
+    console.error(error, errorInfo);
   }
 }

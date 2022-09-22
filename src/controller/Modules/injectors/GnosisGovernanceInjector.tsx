@@ -169,7 +169,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
           toast('Transaction signed and posted to Gnosis');
           successCallback();
         } else {
-          console.error(res);
+          logError(res);
           toast("There was an error! Check your browser's console logs for more details.");
         }
       } catch (e) {
