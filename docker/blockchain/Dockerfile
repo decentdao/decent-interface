@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:16.13.2-alpine
 
 # Copies the .env.local and renames
 # The renaming happens because `.env.local` is git ignored
@@ -7,7 +7,7 @@ COPY ./.env.local /fractal-blockchain-node/.env
 # Copies a hardhat.package.json and renames
 COPY ./hardhat.package.json /fractal-blockchain-node/package.json 
 
-# Copies a hardhat.config.js and renames
+# Copies a hardhat.config.js
 COPY ./hardhat.config.js /fractal-blockchain-node/hardhat.config.js
 
 # Copies the exec file to bin

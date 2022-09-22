@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:16.13.2
 
 
 # Copies package.json and lock file to docker container
