@@ -1,3 +1,4 @@
+import { BigNumber, utils } from 'ethers';
 import { useState } from 'react';
 import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
 import ContentBox from '../../ui/ContentBox';
@@ -33,20 +34,27 @@ export function SubsidiaryFunding() {
     });
   };
 
-  const onTokenFundChange = (value: string, index: number) => {
-    const assets = funding.tokensToFund.map((asset, i) => {
-      if (i === index) {
+  const onTokenFundChange = (value: string, changedTokenIndex: number) => {
+    const assets = funding.tokensToFund.map((tokenToFund, i) => {
+      if (i === changedTokenIndex) {
         const tokenIndex = treasuryAssetsFungible.findIndex(
-          v => v.contractAddress === asset.asset.contractAddress
+          v => v.contractAddress === tokenToFund.asset.contractAddress
         );
         const token = treasuryAssetsFungible[tokenIndex];
-        if (Number(value) >= Number(token.formattedTotal)) {
-          return { ...asset, amount: token.formattedTotal };
+        const valueBigNumber = utils.parseUnits(value, token.decimals);
+        if (valueBigNumber.gte(token.totalAmount)) {
+          return {
+            ...tokenToFund,
+            amount: { value: token.formattedTotal, bigNumberValue: token.totalAmount },
+          };
         } else {
-          return { ...asset, amount: value };
+          return {
+            ...tokenToFund,
+            amount: { value: value, bigNumberValue: valueBigNumber },
+          };
         }
       }
-      return asset;
+      return tokenToFund;
     });
     fieldUpdate(assets, 'tokensToFund');
   };
@@ -61,7 +69,10 @@ export function SubsidiaryFunding() {
         ...funding.tokensToFund,
         {
           asset,
-          amount: '',
+          amount: {
+            value: '',
+            bigNumberValue: BigNumber.from(0),
+          },
         },
       ],
       'tokensToFund'
@@ -80,11 +91,17 @@ export function SubsidiaryFunding() {
   };
 
   const maxFundToken = (index: number) => {
-    const assets = funding.tokensToFund.map((asset, i) => {
+    const assets = funding.tokensToFund.map((tokenToFund, i) => {
       if (i === index) {
-        return { ...asset, amount: asset.asset.formattedTotal };
+        return {
+          ...tokenToFund,
+          amount: {
+            value: tokenToFund.asset.formattedTotal,
+            bigNumberValue: tokenToFund.asset.totalAmount,
+          },
+        };
       }
-      return asset;
+      return tokenToFund;
     });
     fieldUpdate(assets, 'tokensToFund');
   };
@@ -159,10 +176,11 @@ export function SubsidiaryFunding() {
                 placeholder="0.000000000000000000"
                 onClickMax={() => maxFundToken(index)}
                 type="number"
-                value={tokenToFund.amount}
+                value={tokenToFund.amount.value}
                 onChange={e => onTokenFundChange(e.target.value, index)}
                 max={tokenToFund.asset.formattedTotal}
                 restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
+                decimals={tokenToFund.asset.decimals}
               />
               <div onClick={() => removeTokenFund(index)}>
                 <Close />

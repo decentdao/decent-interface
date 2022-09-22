@@ -96,7 +96,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
             data.calldatas.push(
               ERC20__factory.createInterface().encodeFunctionData('approve', [
                 newDAOData.predictedTreasuryAddress,
-                ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals),
+                tokenToFund.amount.bigNumberValue!,
               ])
             );
 
@@ -107,12 +107,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
               TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
                 [tokenToFund.asset.contractAddress],
                 [daoAddress],
-                [
-                  ethers.utils.parseUnits(
-                    tokenToFund.amount.toString(),
-                    tokenToFund.asset.decimals
-                  ),
-                ],
+                [tokenToFund.amount.bigNumberValue!],
               ])
             );
 
@@ -123,12 +118,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
               TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
                 [tokenToFund.asset.contractAddress],
                 [daoAddress],
-                [
-                  ethers.utils.parseUnits(
-                    tokenToFund.amount.toString(),
-                    tokenToFund.asset.decimals
-                  ),
-                ],
+                [tokenToFund.amount.bigNumberValue!],
               ])
             );
           } else {
@@ -139,12 +129,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
             data.calldatas.push(
               TreasuryModule__factory.createInterface().encodeFunctionData('withdrawEth', [
                 [newDAOData.predictedTreasuryAddress],
-                [
-                  ethers.utils.parseUnits(
-                    tokenToFund.amount.toString(),
-                    tokenToFund.asset.decimals
-                  ),
-                ],
+                [tokenToFund.amount.bigNumberValue!],
               ])
             );
           }
