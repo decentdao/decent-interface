@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { logError } from '../helpers/errorlogging';
+import { logError } from '../helpers/errorLogging';
 import { useLocalStorage } from './useLocalStorage';
 
 type Favorites = {

@@ -1,7 +1,7 @@
 import { ContractReceipt, ethers } from 'ethers';
 import React, { useState, useCallback } from 'react';
 import { toast } from 'react-toastify';
-import { logError } from '../../helpers/errorlogging';
+import { logError } from '../../helpers/errorLogging';
 
 interface ProviderRpcError extends Error {
   message: string;

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
 import { getSupportedChains, getChainsWithMetadata } from '../chains';
-import { clearErrorContext, setLoggedWallet, setErrorContext } from '../../../helpers/errorlogging';
+import { clearErrorContext, setLoggedWallet, setErrorContext } from '../../../helpers/errorLogging';
 
 const useListeners = (
   web3Modal: Web3Modal,

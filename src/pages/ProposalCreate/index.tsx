@@ -9,7 +9,7 @@ import { TransactionData } from '../../types/transaction';
 import { ProposalExecuteData } from '../../types/proposal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { logError } from '../../helpers/errorlogging';
+import { logError } from '../../helpers/errorLogging';
 
 const defaultTransaction = {
   targetAddress: '',

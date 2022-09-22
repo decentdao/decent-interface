@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { logError } from '../helpers/errorlogging';
+import { logError } from '../helpers/errorLogging';
 
 function useSafeRace<T>(
   earlyExitCondition: boolean,

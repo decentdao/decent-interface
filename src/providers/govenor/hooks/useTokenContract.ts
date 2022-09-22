@@ -5,7 +5,7 @@ import {
   VotesToken__factory,
 } from '../../../assets/typechain-types/module-governor';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { logError } from '../../../helpers/errorlogging';
+import { logError } from '../../../helpers/errorLogging';
 
 const useTokenContract = (governorModule: GovernorModule | undefined) => {
   const [tokenContract, setTokenContract] = useState<VotesToken>();

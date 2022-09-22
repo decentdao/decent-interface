@@ -1,6 +1,6 @@
 import { useWeb3Provider } from './../web3Data/hooks/useWeb3Provider';
 import { useEffect, useState } from 'react';
-import { logError } from '../../helpers/errorlogging';
+import { logError } from '../../helpers/errorLogging';
 
 const useCurrentTimestamp = (blockNumber: number | undefined) => {
   const [timestamp, setTimestamp] = useState<number>(Math.floor(Date.now() / 1000));

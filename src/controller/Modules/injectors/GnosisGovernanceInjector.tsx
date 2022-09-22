@@ -22,7 +22,7 @@ import {
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { GovernanceInjectorContext } from './GovernanceInjectorConext';
-import { logError } from '../../../helpers/errorlogging';
+import { logError } from '../../../helpers/errorLogging';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {

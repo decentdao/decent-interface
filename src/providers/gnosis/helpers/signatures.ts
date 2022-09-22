@@ -1,5 +1,5 @@
 import { utils, BigNumberish, Signer } from 'ethers';
-import { logError } from '../../../helpers/errorlogging';
+import { logError } from '../../../helpers/errorLogging';
 import { GnosisTransaction } from '../types/gnosis';
 
 export const EIP_DOMAIN = {

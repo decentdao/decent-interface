@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { GnosisWrapper } from '../../../assets/typechain-types/gnosis-wrapper';
-import { logError } from '../../../helpers/errorlogging';
+import { logError } from '../../../helpers/errorLogging';
 import { GnosisActions, GnosisActionTypes } from '../types';
 
 const useGnosisSafeAddress = (

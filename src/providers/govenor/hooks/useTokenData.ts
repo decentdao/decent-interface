@@ -9,7 +9,7 @@ import {
   DelegateVotesChangedListener,
   ClaimListener,
 } from '../types';
-import { logError } from '../../../helpers/errorlogging';
+import { logError } from '../../../helpers/errorLogging';
 
 interface ITokenData {
   name: string | undefined;

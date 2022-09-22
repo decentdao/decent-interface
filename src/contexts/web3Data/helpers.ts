@@ -6,7 +6,7 @@ import {
   ProviderApiKeys,
   LocalInjectedProviderInfo,
 } from './types';
-import { logError } from '../../helpers/errorlogging';
+import { logError } from '../../helpers/errorLogging';
 
 export const makeInjectedProvider = async (
   web3Provider: ethers.providers.Web3Provider

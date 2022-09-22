@@ -4,7 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { GnosisActions, GnosisActionTypes } from '../types';
 import axios from 'axios';
 import { GnosisSafeStatusResponse } from '../types/gnosis';
-import { logError } from '../../../helpers/errorlogging';
+import { logError } from '../../../helpers/errorLogging';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information

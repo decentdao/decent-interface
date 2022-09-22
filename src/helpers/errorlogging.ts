@@ -22,7 +22,6 @@ export function initErrorLogging() {
 /**
  * Sets the wallet address of the currently connected wallet,
  * in order to add more context to Sentry events.
- * 
  * Pass `null` to unset the current wallet.
  * @param walletAddress the wallet address of the currently connected wallet
  */

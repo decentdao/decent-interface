@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { logError } from '../../helpers/errorlogging';
+import { logError } from '../../helpers/errorLogging';
 import useSearchDao from '../../hooks/useSearchDao';
 import { FractalAction } from '../../providers/fractal/constants/enums';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';

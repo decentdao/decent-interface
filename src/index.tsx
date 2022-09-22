@@ -12,7 +12,7 @@ import App from './App';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalProvider } from './providers/fractal/FractalProvider';
 import { ErrorFallback } from './components/ErrorFallback';
-import { FractalErrorBoundary, initErrorLogging } from './helpers/errorlogging';
+import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
