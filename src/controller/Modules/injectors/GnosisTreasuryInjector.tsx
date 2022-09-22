@@ -9,6 +9,8 @@ export function GnosisTreasuryInjector({ children }: PropsWithChildren) {
 
   const value = {
     transactions: [...depositEvents, ...withdrawEvents],
+    treasuryAssetsFungible: [],
+    treasuryAssetsNonFungible: [],
   };
 
   return (

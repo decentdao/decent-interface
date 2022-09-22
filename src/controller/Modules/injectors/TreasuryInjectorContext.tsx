@@ -10,12 +10,14 @@ import {
 
 export interface ITreasuryInjectorContext {
   transactions: (TokenDepositEvent | TokenWithdrawEvent | ERC20TokenEvent | ERC721TokenEvent)[];
-  treasuryAssetsFungible?: TreasuryAssetFungible[];
-  treasuryAssetsNonFungible?: TreasuryAssetNonFungible[];
+  treasuryAssetsFungible: TreasuryAssetFungible[];
+  treasuryAssetsNonFungible: TreasuryAssetNonFungible[];
 }
 
 export const TreasuryInjectorContext = createContext<ITreasuryInjectorContext>({
   transactions: [],
+  treasuryAssetsFungible: [],
+  treasuryAssetsNonFungible: [],
 });
 
 export const useTreasuryInjector = (): ITreasuryInjectorContext =>
