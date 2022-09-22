@@ -111,7 +111,7 @@
 }
 
 #tooltip[data-placement^='top'] > #arrow {
-  top: -12px;
+  bottom: -4px;
 }
 
 #tooltip[data-placement^='bottom'] > #arrow {
@@ -128,9 +128,10 @@
 
 input:not(.step-counter)::-webkit-outer-spin-button,
 input:not(.step-counter)::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
+
 input:not(.step-counter)[type=number]{
   -moz-appearance: textfield;
 }

@@ -40,8 +40,8 @@ export function SubsidiaryFunding() {
           v => v.contractAddress === asset.asset.contractAddress
         );
         const token = treasuryAssetsFungible[tokenIndex];
-        if (Number(value) >= Number(token.formatedTotal)) {
-          return { ...asset, amount: token.formatedTotal };
+        if (Number(value) >= Number(token.formattedTotal)) {
+          return { ...asset, amount: token.formattedTotal };
         } else {
           return { ...asset, amount: value };
         }
@@ -82,7 +82,7 @@ export function SubsidiaryFunding() {
   const maxFundToken = (index: number) => {
     const assets = funding.tokensToFund.map((asset, i) => {
       if (i === index) {
-        return { ...asset, amount: asset.asset.formatedTotal };
+        return { ...asset, amount: asset.asset.formattedTotal };
       }
       return asset;
     });
@@ -152,7 +152,7 @@ export function SubsidiaryFunding() {
               </EtherscanLinkToken>
               <div className="pl-4 text-gray-25 font-medium">{tokenToFund.asset.name}</div>
               <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
-                {tokenToFund.asset.formatedTotal}
+                {tokenToFund.asset.formattedTotal}
               </div>
               <Input
                 containerClassName="-mb-5 pr-4"
@@ -161,7 +161,7 @@ export function SubsidiaryFunding() {
                 type="number"
                 value={tokenToFund.amount}
                 onChange={e => onTokenFundChange(e.target.value, index)}
-                max={tokenToFund.asset.formatedTotal}
+                max={tokenToFund.asset.formattedTotal}
                 restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
               />
               <div onClick={() => removeTokenFund(index)}>

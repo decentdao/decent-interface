@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import ContentBanner from '../../components/ui/ContentBanner';
 import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
@@ -19,9 +19,21 @@ function TableRowWrapper({ children }: { children?: ReactNode }) {
 }
 
 function Treasury() {
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible, treasuryModuleContract } =
-    useTreasuryModule();
+  const {
+    selectedCurrency,
+    treasuryAssetsFungible,
+    treasuryAssetsFungiblePrices,
+    treasuryAssetsFungibleFiatAmounts,
+    treasuryAssetsNonFungible,
+    treasuryModuleContract,
+  } = useTreasuryModule();
   const { dao } = useFractal();
+
+  const isCoinGeckoAttributionVisible = useMemo(
+    () => Object.keys(treasuryAssetsFungibleFiatAmounts).length > 0,
+    [treasuryAssetsFungibleFiatAmounts]
+  );
+
   return (
     <div>
       <H1>{dao.daoName} Treasury</H1>
@@ -35,7 +47,7 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">Amount</div>
           </div>
-          {!treasuryAssetsFungible.length && (
+          {treasuryAssetsFungible.length === 0 && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <span>There are no tokens in this</span>
@@ -54,20 +66,54 @@ function Treasury() {
               </div>
             </TableRowWrapper>
           )}
-          {treasuryAssetsFungible.map(asset => (
-            <TableRowWrapper key={asset.contractAddress}>
-              <div className="flex">
-                <EtherscanLinkToken address={asset.contractAddress}>
-                  <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
-                </EtherscanLinkToken>
-                <div className="text-gray-25 font-medium">{asset.name}</div>
-              </div>
-              <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                {asset.formatedTotal}
-              </div>
-            </TableRowWrapper>
-          ))}
+          {treasuryAssetsFungible.map(asset => {
+            const fiatAmount = treasuryAssetsFungibleFiatAmounts[asset.contractAddress];
+
+            return (
+              <TableRowWrapper key={asset.contractAddress}>
+                <div className="flex">
+                  <EtherscanLinkToken address={asset.contractAddress}>
+                    <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
+                  </EtherscanLinkToken>
+                  <div className="text-gray-25 font-medium">{asset.name}</div>
+                </div>
+                <div className="text-gray-25 font-mono font-semibold tracking-wider">
+                  {fiatAmount &&
+                    (() => {
+                      const price = treasuryAssetsFungiblePrices[asset.contractAddress];
+                      const { formattedAmount: formattedPricePerToken } = price[selectedCurrency];
+                      const { currency } = fiatAmount[selectedCurrency];
+
+                      return (
+                        <TooltipWrapper
+                          as="span"
+                          className="text-gray-100 mr-2 text-sm"
+                          content={`1 ${asset.symbol} = $${formattedPricePerToken}`}
+                          isVisible
+                          placement="top-start"
+                        >
+                          (${currency})
+                        </TooltipWrapper>
+                      );
+                    })()}
+                  {asset.formattedTotal}
+                </div>
+              </TableRowWrapper>
+            );
+          })}
         </div>
+        {isCoinGeckoAttributionVisible && (
+          <div className="pt-2 px-4 text-xs text-right">
+            <a
+              className="text-gray-100"
+              href="https://coingecko.com/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Data from CoinGecko
+            </a>
+          </div>
+        )}
       </div>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
         <ContentBoxTitle>NFTs</ContentBoxTitle>
