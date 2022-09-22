@@ -1,6 +1,6 @@
 ## Dockerized Workflow
 
-The Ultimate Goal with these docker container is to create an environment that end to end testing can take place. We needed to solve a way for tests to be ran against a set of deployed contracts without worry about any wallet integration. A local hardhat node can be connected to via `ethers.providers.JsonRpcProvider` as a signer without having to confirm transactions through a wallet UI. Adding dockerized containers allows for these tests to run in a controlled environment and be ran using github actions during pull request creation and merging on Github.
+The Ultimate Goal with this docker container is to create an environment that end to end testing can take place in. We needed a way for tests to be run against a set of deployed contracts without worrying about any wallet integration. A local hardhat node can be connected to via `ethers.providers.JsonRpcProvider` as a signer without having to confirm transactions through a wallet UI. Adding dockerized containers allows for these tests to run in a controlled environment and be ran using github actions during pull request creation and merging on Github.
 
 ### blockchain
 A pretty simply configured hardhat node. Included in the dictory `docker/blockchain`:
