@@ -1,3 +1,3 @@
 #!/bin/sh
-# Run hardhat
+# Run react webapp
 npm run start;

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-# Run hardhat
+# Run hardhat blockchain node
 npm run start;
