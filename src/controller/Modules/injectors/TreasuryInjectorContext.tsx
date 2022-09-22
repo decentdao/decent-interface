@@ -14,11 +14,7 @@ export interface ITreasuryInjectorContext {
   treasuryAssetsNonFungible: TreasuryAssetNonFungible[];
 }
 
-export const TreasuryInjectorContext = createContext<ITreasuryInjectorContext>({
-  transactions: [],
-  treasuryAssetsFungible: [],
-  treasuryAssetsNonFungible: [],
-});
+export const TreasuryInjectorContext = createContext<ITreasuryInjectorContext | null>(null);
 
 export const useTreasuryInjector = (): ITreasuryInjectorContext =>
   useContext(TreasuryInjectorContext as Context<ITreasuryInjectorContext>);

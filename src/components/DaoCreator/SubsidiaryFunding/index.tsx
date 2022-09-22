@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { useTreasuryModule } from '../../../../providers/treasury/hooks/useTreasuryModule';
-import ContentBox from '../../../ui/ContentBox';
-import ContentBoxTitle from '../../../ui/ContentBoxTitle';
-import EtherscanLinkAddress from '../../../ui/EtherscanLinkAddress';
-import EtherscanLinkNFT from '../../../ui/EtherscanLinkNFT';
-import EtherscanLinkToken from '../../../ui/EtherscanLinkToken';
-import Input, { RestrictCharTypes } from '../../../ui/forms/Input';
-import { Close } from '../../../ui/svg/Close';
-import { TableRow } from '../../../ui/table';
-import { TableBodyRowItem } from '../../../ui/table/TableBodyRow';
-import { FundingTableHeader, NFTFundingTableHeader } from '../../../ui/table/TableHeaders';
-import { useCreator } from '../../provider/hooks/useCreator';
-import { CreatorProviderActions } from '../../provider/types';
+import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
+import ContentBox from '../../ui/ContentBox';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
+import EtherscanLinkNFT from '../../ui/EtherscanLinkNFT';
+import EtherscanLinkToken from '../../ui/EtherscanLinkToken';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
+import { Close } from '../../ui/svg/Close';
+import { TableRow } from '../../ui/table';
+import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
+import { FundingTableHeader, NFTFundingTableHeader } from '../../ui/table/TableHeaders';
+import { useCreator } from '../provider/hooks/useCreator';
+import { CreatorProviderActions } from '../provider/types';
 import { FundingOptions } from './FundingOptions';
 
 export function SubsidiaryFunding() {
@@ -22,7 +22,7 @@ export function SubsidiaryFunding() {
 
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryModule();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryInjector();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({

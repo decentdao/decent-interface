@@ -196,6 +196,8 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       createProposal: () => {},
       pending: pending,
       isAuthorized: isSigner,
+      treasuryAssetsFungible: [],
+      treasuryAssetsNonFungible: [],
     }),
     [createDAO, pending, isSigner]
   );

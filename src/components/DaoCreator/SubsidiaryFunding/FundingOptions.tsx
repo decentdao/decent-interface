@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { useTreasuryModule } from '../../../../providers/treasury/hooks/useTreasuryModule';
-import ContentBox from '../../../ui/ContentBox';
-import { PrimaryButton } from '../../../ui/forms/Button';
+import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
+import ContentBox from '../../ui/ContentBox';
+import { PrimaryButton } from '../../ui/forms/Button';
 import { NFTToFund, TokenToFund } from './types';
 
 interface IFundingOptions {
@@ -24,7 +24,7 @@ export function FundingOptions({
   nftsToFund,
   selectedTokenIndex,
 }: IFundingOptions) {
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryModule();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryInjector();
 
   const isAddDisabled = useMemo(() => {
     if (selectedTokenIndex === undefined) {

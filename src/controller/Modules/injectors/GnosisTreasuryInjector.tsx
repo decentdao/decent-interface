@@ -9,6 +9,7 @@ export function GnosisTreasuryInjector({ children }: PropsWithChildren) {
 
   const value = {
     transactions: [...depositEvents, ...withdrawEvents],
+    // @todo replace with Gnosis Treasury assets
     treasuryAssetsFungible: [],
     treasuryAssetsNonFungible: [],
   };

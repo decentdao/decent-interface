@@ -41,7 +41,6 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
-
   const { metaFactoryContract } = useBlockchainData();
   const navigate = useNavigate();
   const successCallback = useCallback(() => {
