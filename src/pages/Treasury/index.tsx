@@ -88,7 +88,7 @@ function Treasury() {
                         <TooltipWrapper
                           as="span"
                           className="text-gray-100 mr-2 text-sm"
-                          content={`1 ${asset.symbol} ($${formattedPricePerToken})`}
+                          content={`1 ${asset.symbol} = $${formattedPricePerToken}`}
                           isVisible
                           placement="top-start"
                         >
