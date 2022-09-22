@@ -3,10 +3,10 @@ services:
   blockchain:
     build: docker/blockchain
     ports:
-     - "8545:8545"
+      - "8545:8545"
   webapp:
     build: 
       context: ./
       dockerfile: ./docker/webapp/Dockerfile
     ports:
-     - "3000:3000"
+      - "3000:3000"
