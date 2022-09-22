@@ -5,7 +5,7 @@ import { ActionTypes, Web3ProviderActions } from './actions';
 import { WEB3_MODAL_CONFIG } from './web3Modal.config';
 import { getLocalProvider, getFallbackProvider, getInjectedProvider } from './helpers';
 import { toast } from 'react-toastify';
-import { useListeners } from './hooks/useLIisteners';
+import { useListeners } from './hooks/useListeners';
 import { getSupportedChains } from './chains';
 import { Web3ProviderContext } from './hooks/useWeb3Provider';
 
