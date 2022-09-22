@@ -28,7 +28,7 @@ coming soon
 
 ### Setup
 
-You are gonna need to retreive a free Alchemy api key from https://www.alchemy.com/. 
+You'll need to a free Alchemy API key for a Goerli project from https://www.alchemy.com/. 
 
 Once obtained, create a `.env.local` file in `docker/blockchain/` directory. Add your Alchemy api key to the env variable `ALCHEMY_API_KEY`. see https://hardhat.org/hardhat-network/docs/guides/forking-other-networks.
 
