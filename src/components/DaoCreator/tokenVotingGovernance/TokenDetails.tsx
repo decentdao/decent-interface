@@ -54,7 +54,6 @@ function TokenDetails() {
           onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
           label="Token Symbol"
           helperText="Max: 5 characters"
-          disabled={false}
         />
       </InputBox>
       <InputBox>
@@ -64,7 +63,6 @@ function TokenDetails() {
           onChange={e => onSupplyChange(e.target.value)}
           label="Token Supply"
           helperText="Max: 18 decimals"
-          disabled={false}
           decimals={DEFAULT_TOKEN_DECIMALS}
           restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
         />
