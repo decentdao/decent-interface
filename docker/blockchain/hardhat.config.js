@@ -9,7 +9,7 @@ require('dotenv').config()
     hardhat: {
       chainId: 31337,
       forking: {
-        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`
+        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.TESTING_ALCHEMY_API_KEY}`
       }
     },
   },
