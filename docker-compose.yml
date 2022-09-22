@@ -4,6 +4,9 @@ services:
     build: docker/blockchain
     ports:
       - "8545:8545"
+    environment:
+      - ALCHEMY_API_KEY
+
   webapp:
     build: 
       context: ./
