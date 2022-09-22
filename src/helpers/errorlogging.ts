@@ -15,7 +15,7 @@ export function initErrorLogging() {
     // of sentry transactions for performance monitoring.
     tracesSampleRate: 1.0,
 
-    debug: process.env.NODE_ENV === 'production' ? false : true,
+    debug: process.env.NODE_ENV !== 'production',
   });
 }
 
@@ -40,7 +40,7 @@ export function setLoggedWallet(walletAddress?: string) {
  */
 export function logError(error: any, ...optionalParams: any[]) {
   if (typeof error === 'string' || error instanceof String) {
-    Sentry.captureMessage(error.toString() + ': ' + optionalParams);
+    Sentry.captureMessage(error + ': ' + optionalParams);
   } else {
     Sentry.captureException(error);
   }
