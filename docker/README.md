@@ -5,7 +5,10 @@ The Ultimate Goal with this docker container is to create an environment that en
 ### blockchain
 A pretty simply configured hardhat node. Included in the dictory `docker/blockchain`:
 
-- `.env.example` that should be copied and renamed to a `.env.local` (keeps secrets, secret)
+- `.env.local` to keeps secrets, secret. This file will need to be manually created with the following variable
+  ```
+  ALCHEMY_API_KEY="Your Alchemy Key"
+  ```
 - `Dockerfile` see comments in file. Creation Script for blockchain docker container
 - `entrypoint.sh` executes the package json script to start.
 - `hardhat.config.js` sets the hardhat node to specific chain id and runs node forked from goerli and lastest block
@@ -25,7 +28,7 @@ coming soon
 
 You are gonna need to do is retreive a free alchemy api key from https://www.alchemy.com/. 
 
-Once obtained, make a copy of the `docker/blockchain/.env.example` and name it `.env.local` and leave it in `docker/blockchain/` directory. Add your alchemy api key to the env variable `ALCHEMY_API_KEY`. see https://hardhat.org/hardhat-network/docs/guides/forking-other-networks.
+Once obtained, create a `.env.local` in `docker/blockchain/` directory. Add your alchemy api key to the env variable `ALCHEMY_API_KEY`. see https://hardhat.org/hardhat-network/docs/guides/forking-other-networks.
 
 ### Build
 
