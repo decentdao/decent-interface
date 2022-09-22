@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
 
@@ -16,6 +17,7 @@ import { ErrorFallback } from './components/ErrorFallback';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
+const queryClient = new QueryClient();
 
 // Used for remote error reporting
 // https://sentry.io/organizations/decent-mg/issues/
@@ -31,30 +33,32 @@ Sentry.init({
 
 root.render(
   <React.StrictMode>
-    <HelmetProvider>
-      <Helmet>
-        <title>Fractal</title>
-      </Helmet>
-      <HashRouter>
-        <Sentry.ErrorBoundary fallback={ErrorFallback}>
-          <Web3Provider>
-            <BlockchainDataProvider>
-              <FractalProvider>
-                <ToastContainer
-                  position="bottom-center"
-                  closeButton={false}
-                  newestOnTop={false}
-                  pauseOnFocusLoss={false}
-                  toastClassName="mt-2 bottom-0 mb-0 font-sans font-medium shadow bg-gray-400 text-gray-25 text-center cursor-pointer"
-                  progressClassName="bg-none bg-gold-500"
-                />
-                <App />
-              </FractalProvider>
-            </BlockchainDataProvider>
-          </Web3Provider>
-        </Sentry.ErrorBoundary>
-      </HashRouter>
-    </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <Helmet>
+          <title>Fractal</title>
+        </Helmet>
+        <HashRouter>
+          <Sentry.ErrorBoundary fallback={ErrorFallback}>
+            <Web3Provider>
+              <BlockchainDataProvider>
+                <FractalProvider>
+                  <ToastContainer
+                    position="bottom-center"
+                    closeButton={false}
+                    newestOnTop={false}
+                    pauseOnFocusLoss={false}
+                    toastClassName="mt-2 bottom-0 mb-0 font-sans font-medium shadow bg-gray-400 text-gray-25 text-center cursor-pointer"
+                    progressClassName="bg-none bg-gold-500"
+                  />
+                  <App />
+                </FractalProvider>
+              </BlockchainDataProvider>
+            </Web3Provider>
+          </Sentry.ErrorBoundary>
+        </HashRouter>
+      </HelmetProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

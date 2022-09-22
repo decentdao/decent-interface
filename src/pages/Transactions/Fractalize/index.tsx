@@ -1,8 +1,8 @@
 import DaoCreator from '../../../components/DaoCreator';
-import { useInjector } from '../../../controller/Modules/injectors/GovernanceInjectorConext';
+import { useGovernanceInjector } from '../../../controller/Modules/injectors/GovernanceInjectorConext';
 
 function Fractalize() {
-  const { pending, createDAOTrigger } = useInjector();
+  const { pending, createDAOTrigger } = useGovernanceInjector();
   return (
     <DaoCreator
       pending={pending}

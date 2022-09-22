@@ -4,3 +4,5 @@ tailwind.config.js
 postcss.config.js
 config-overrides.js
 /docker
+playwright.config.ts
+/tests-examples/* 

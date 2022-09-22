@@ -1,11 +1,12 @@
+import { BigNumberInput } from './../../provider/types/index';
 import {
   TreasuryAssetFungible,
   TreasuryAssetNonFungible,
-} from '../../../../../providers/treasury/types';
+} from '../../../../providers/treasury/types';
 
 export type TokenToFund = {
   asset: TreasuryAssetFungible;
-  amount: string;
+  amount: BigNumberInput;
 };
 
 export type NFTToFund = {

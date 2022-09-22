@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Fractalize from './Fractalize';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
-import { useInjector } from '../../controller/Modules/injectors/GovernanceInjectorConext';
+import { useGovernanceInjector } from '../../controller/Modules/injectors/GovernanceInjectorConext';
 
 enum View {
   Cards,
@@ -39,7 +39,7 @@ function CardDetails({
 
 function Plugins() {
   const [view, setView] = useState(View.Cards);
-  const { isAuthorized } = useInjector();
+  const { isAuthorized } = useGovernanceInjector();
 
   switch (view) {
     case View.CreateDAO: {

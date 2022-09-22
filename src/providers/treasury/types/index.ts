@@ -35,8 +35,23 @@ export interface TreasuryAssetFungible {
   decimals: number;
   contractAddress: string;
   totalAmount: BigNumber;
-  formatedTotal: string;
+  formattedTotal: string;
 }
+
+export interface TreasuryAssetFungibleFiatAmount {
+  [currencyId: string]: {
+    amount: number;
+    currency: string;
+    formattedAmount: string;
+  };
+}
+
+export interface TreasuryAssetsFungibleFiatAmounts {
+  [address: string]: TreasuryAssetFungibleFiatAmount;
+}
+
+export interface TreasuryAssetFungiblePrice extends TreasuryAssetFungibleFiatAmount {}
+export interface TreasuryAssetsFungiblePrices extends TreasuryAssetsFungibleFiatAmounts {}
 
 export interface TreasuryAssetNonFungible {
   name: string;

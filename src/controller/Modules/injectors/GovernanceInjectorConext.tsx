@@ -1,8 +1,8 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext, Context } from 'react';
 import { DAOTrigger } from '../../../components/DaoCreator/provider/types';
 import { ProposalExecuteData } from '../../../types/proposal';
 
-export interface IInjectorContext {
+export interface IGovernanceInjectorContext {
   createProposal?: (proposal: {
     proposalData: ProposalExecuteData;
     successCallback: () => void;
@@ -12,7 +12,7 @@ export interface IInjectorContext {
   createDAOTrigger: DAOTrigger;
 }
 
-export const InjectorContext = createContext<IInjectorContext | null>(null);
+export const GovernanceInjectorContext = createContext<IGovernanceInjectorContext | null>(null);
 
-export const useInjector = (): IInjectorContext =>
-  useContext(InjectorContext as React.Context<IInjectorContext>);
+export const useGovernanceInjector = (): IGovernanceInjectorContext =>
+  useContext(GovernanceInjectorContext as Context<IGovernanceInjectorContext>);

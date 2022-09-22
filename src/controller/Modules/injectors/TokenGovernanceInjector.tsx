@@ -19,7 +19,7 @@ import { useGovenorModule } from '../../../providers/govenor/hooks/useGovenorMod
 import { useUserProposalValidation } from '../../../providers/govenor/hooks/useUserProposalValidation';
 import { useTreasuryModule } from '../../../providers/treasury/hooks/useTreasuryModule';
 import { ExecuteData } from '../../../types/execute';
-import { InjectorContext } from './GovernanceInjectorConext';
+import { GovernanceInjectorContext } from './GovernanceInjectorConext';
 
 /**
  * Handles passing 'createProposal' to plugins for this module
@@ -41,7 +41,6 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
-
   const { metaFactoryContract } = useBlockchainData();
   const navigate = useNavigate();
   const successCallback = useCallback(() => {
@@ -97,7 +96,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
             data.calldatas.push(
               ERC20__factory.createInterface().encodeFunctionData('approve', [
                 newDAOData.predictedTreasuryAddress,
-                ethers.utils.parseUnits(tokenToFund.amount.toString(), tokenToFund.asset.decimals),
+                tokenToFund.amount.bigNumberValue!,
               ])
             );
 
@@ -108,12 +107,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
               TreasuryModule__factory.createInterface().encodeFunctionData('withdrawERC20Tokens', [
                 [tokenToFund.asset.contractAddress],
                 [daoAddress],
-                [
-                  ethers.utils.parseUnits(
-                    tokenToFund.amount.toString(),
-                    tokenToFund.asset.decimals
-                  ),
-                ],
+                [tokenToFund.amount.bigNumberValue!],
               ])
             );
 
@@ -124,12 +118,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
               TreasuryModule__factory.createInterface().encodeFunctionData('depositERC20Tokens', [
                 [tokenToFund.asset.contractAddress],
                 [daoAddress],
-                [
-                  ethers.utils.parseUnits(
-                    tokenToFund.amount.toString(),
-                    tokenToFund.asset.decimals
-                  ),
-                ],
+                [tokenToFund.amount.bigNumberValue!],
               ])
             );
           } else {
@@ -140,12 +129,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
             data.calldatas.push(
               TreasuryModule__factory.createInterface().encodeFunctionData('withdrawEth', [
                 [newDAOData.predictedTreasuryAddress],
-                [
-                  ethers.utils.parseUnits(
-                    tokenToFund.amount.toString(),
-                    tokenToFund.asset.decimals
-                  ),
-                ],
+                [tokenToFund.amount.bigNumberValue!],
               ])
             );
           }
@@ -265,5 +249,9 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
     [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal]
   );
 
-  return <InjectorContext.Provider value={value}>{children}</InjectorContext.Provider>;
+  return (
+    <GovernanceInjectorContext.Provider value={value}>
+      {children}
+    </GovernanceInjectorContext.Provider>
+  );
 }

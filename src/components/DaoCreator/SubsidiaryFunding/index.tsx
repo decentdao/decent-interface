@@ -1,17 +1,18 @@
+import { BigNumber, utils } from 'ethers';
 import { useState } from 'react';
-import { useTreasuryModule } from '../../../../providers/treasury/hooks/useTreasuryModule';
-import ContentBox from '../../../ui/ContentBox';
-import ContentBoxTitle from '../../../ui/ContentBoxTitle';
-import EtherscanLinkAddress from '../../../ui/EtherscanLinkAddress';
-import EtherscanLinkNFT from '../../../ui/EtherscanLinkNFT';
-import EtherscanLinkToken from '../../../ui/EtherscanLinkToken';
-import Input, { RestrictCharTypes } from '../../../ui/forms/Input';
-import { Close } from '../../../ui/svg/Close';
-import { TableRow } from '../../../ui/table';
-import { TableBodyRowItem } from '../../../ui/table/TableBodyRow';
-import { FundingTableHeader, NFTFundingTableHeader } from '../../../ui/table/TableHeaders';
-import { useCreator } from '../../provider/hooks/useCreator';
-import { CreatorProviderActions } from '../../provider/types';
+import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
+import ContentBox from '../../ui/ContentBox';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
+import EtherscanLinkNFT from '../../ui/EtherscanLinkNFT';
+import EtherscanLinkToken from '../../ui/EtherscanLinkToken';
+import Input, { RestrictCharTypes } from '../../ui/forms/Input';
+import { Close } from '../../ui/svg/Close';
+import { TableRow } from '../../ui/table';
+import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
+import { FundingTableHeader, NFTFundingTableHeader } from '../../ui/table/TableHeaders';
+import { useCreator } from '../provider/hooks/useCreator';
+import { CreatorProviderActions } from '../provider/types';
 import { FundingOptions } from './FundingOptions';
 
 export function SubsidiaryFunding() {
@@ -22,7 +23,7 @@ export function SubsidiaryFunding() {
 
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryModule();
+  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryInjector();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -33,20 +34,27 @@ export function SubsidiaryFunding() {
     });
   };
 
-  const onTokenFundChange = (value: string, index: number) => {
-    const assets = funding.tokensToFund.map((asset, i) => {
-      if (i === index) {
+  const onTokenFundChange = (value: string, changedTokenIndex: number) => {
+    const assets = funding.tokensToFund.map((tokenToFund, i) => {
+      if (i === changedTokenIndex) {
         const tokenIndex = treasuryAssetsFungible.findIndex(
-          v => v.contractAddress === asset.asset.contractAddress
+          v => v.contractAddress === tokenToFund.asset.contractAddress
         );
         const token = treasuryAssetsFungible[tokenIndex];
-        if (Number(value) >= Number(token.formatedTotal)) {
-          return { ...asset, amount: token.formatedTotal };
+        const valueBigNumber = utils.parseUnits(value, token.decimals);
+        if (valueBigNumber.gte(token.totalAmount)) {
+          return {
+            ...tokenToFund,
+            amount: { value: token.formattedTotal, bigNumberValue: token.totalAmount },
+          };
         } else {
-          return { ...asset, amount: value };
+          return {
+            ...tokenToFund,
+            amount: { value: value, bigNumberValue: valueBigNumber },
+          };
         }
       }
-      return asset;
+      return tokenToFund;
     });
     fieldUpdate(assets, 'tokensToFund');
   };
@@ -61,7 +69,10 @@ export function SubsidiaryFunding() {
         ...funding.tokensToFund,
         {
           asset,
-          amount: '',
+          amount: {
+            value: '',
+            bigNumberValue: BigNumber.from(0),
+          },
         },
       ],
       'tokensToFund'
@@ -80,11 +91,17 @@ export function SubsidiaryFunding() {
   };
 
   const maxFundToken = (index: number) => {
-    const assets = funding.tokensToFund.map((asset, i) => {
+    const assets = funding.tokensToFund.map((tokenToFund, i) => {
       if (i === index) {
-        return { ...asset, amount: asset.asset.formatedTotal };
+        return {
+          ...tokenToFund,
+          amount: {
+            value: tokenToFund.asset.formattedTotal,
+            bigNumberValue: tokenToFund.asset.totalAmount,
+          },
+        };
       }
-      return asset;
+      return tokenToFund;
     });
     fieldUpdate(assets, 'tokensToFund');
   };
@@ -152,17 +169,18 @@ export function SubsidiaryFunding() {
               </EtherscanLinkToken>
               <div className="pl-4 text-gray-25 font-medium">{tokenToFund.asset.name}</div>
               <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
-                {tokenToFund.asset.formatedTotal}
+                {tokenToFund.asset.formattedTotal}
               </div>
               <Input
                 containerClassName="-mb-5 pr-4"
                 placeholder="0.000000000000000000"
                 onClickMax={() => maxFundToken(index)}
                 type="number"
-                value={tokenToFund.amount}
+                value={tokenToFund.amount.value}
                 onChange={e => onTokenFundChange(e.target.value, index)}
-                max={tokenToFund.asset.formatedTotal}
+                max={tokenToFund.asset.formattedTotal}
                 restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
+                decimals={tokenToFund.asset.decimals}
               />
               <div onClick={() => removeTokenFund(index)}>
                 <Close />
