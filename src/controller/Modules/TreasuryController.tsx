@@ -37,7 +37,7 @@ export function TreasuryController({ children }: { children: JSX.Element }) {
       );
     }
     default: {
-      return children;
+      return null;
     }
   }
 }
