@@ -3,3 +3,5 @@
 tailwind.config.js
 postcss.config.js
 config-overrides.js
+playwright.config.ts
+/tests-examples/* 
