@@ -1,6 +1,11 @@
 import Web3Modal from 'web3modal';
-import { ethers, getDefaultProvider } from 'ethers';
-import { InjectedProviderInfo, BaseProviderInfo, ProviderApiKeys } from './types';
+import { ethers, getDefaultProvider, providers } from 'ethers';
+import {
+  InjectedProviderInfo,
+  BaseProviderInfo,
+  ProviderApiKeys,
+  LocalInjectedProviderInfo,
+} from './types';
 
 export const makeInjectedProvider = async (
   web3Provider: ethers.providers.Web3Provider
@@ -21,38 +26,47 @@ export const makeInjectedProvider = async (
   };
 };
 
-export const getInjectedProvider = (
-  web3ModalProvider: Web3Modal
-): Promise<InjectedProviderInfo> => {
-  return new Promise<InjectedProviderInfo>((resolve, reject) => {
-    web3ModalProvider
-      .connect()
-      .then(userSuppliedProvider =>
-        makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider))
-      )
-      .then(resolve)
-      .catch(reject);
-  });
-};
-
-export const getLocalProvider = (): Promise<BaseProviderInfo> => {
+export const getLocalProvider = async (
+  isTestEnvironment: boolean = false
+): Promise<LocalInjectedProviderInfo | undefined> => {
   const localProvider = new ethers.providers.JsonRpcProvider(
     process.env.REACT_APP_LOCAL_PROVIDER_URL
   );
-  return new Promise<BaseProviderInfo>((resolve, reject) => {
-    localProvider
-      .detectNetwork()
-      .then(network => {
-        resolve({
-          provider: localProvider,
-          signerOrProvider: localProvider,
-          connectionType: 'local provider',
-          network: 'localhost',
-          chainId: network.chainId,
-        });
-      })
-      .catch(reject);
-  });
+
+  try {
+    const network = await localProvider.detectNetwork();
+
+    // sets the account and signer automatically in a test environment.
+    const signerOrProvider = isTestEnvironment ? localProvider.getSigner() : localProvider;
+    const account = isTestEnvironment
+      ? await (signerOrProvider as providers.JsonRpcSigner).getAddress()
+      : null;
+
+    return {
+      account,
+      provider: localProvider,
+      signerOrProvider,
+      connectionType: 'local provider',
+      network: 'localhost',
+      chainId: network.chainId,
+    };
+  } catch (e) {
+    console.error('Local Provider: ', (e as Error).message);
+  }
+};
+
+export const getInjectedProvider = async (
+  web3ModalProvider: Web3Modal
+): Promise<InjectedProviderInfo | LocalInjectedProviderInfo | undefined> => {
+  const userSuppliedProvider = await web3ModalProvider.connect();
+  if (userSuppliedProvider.chainId.toString() === process.env.REACT_APP_LOCAL_CHAIN_ID) {
+    const localProvider = await getLocalProvider(true);
+    if (localProvider) {
+      return localProvider;
+    }
+    return undefined;
+  }
+  return makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider));
 };
 
 export const getFallbackProvider = (): BaseProviderInfo => {
