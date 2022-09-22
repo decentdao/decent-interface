@@ -1,5 +1,5 @@
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
-import { ConnectFn, ModalProvider } from './../types';
+import { ConnectFn, ModalProvider } from '../types';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
