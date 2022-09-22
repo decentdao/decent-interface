@@ -68,7 +68,7 @@ const useListeners = (
 
     const accountsChangedCallback = (accounts: string[]) => {
       if (!accounts.length) {
-        setLoggedWallet(undefined);
+        setLoggedWallet(null);
         toast('Account access revoked', { toastId: 'accessChanged' });
         // switch to a default provider
         connectDefaultProvider();

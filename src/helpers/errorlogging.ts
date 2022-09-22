@@ -22,29 +22,20 @@ export function initErrorLogging() {
 /**
  * Sets the wallet address of the currently connected wallet,
  * in order to add more context to Sentry events.
+ * 
+ * Pass `null` to unset the current wallet.
  * @param walletAddress the wallet address of the currently connected wallet
  */
-export function setLoggedWallet(walletAddress?: string) {
+export function setLoggedWallet(walletAddress: string | null) {
   // don't track wallet addresses in production
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'production') return;
+  if (!walletAddress) {
+    Sentry.setUser(null);
+  } else {
     Sentry.setUser({
       id: walletAddress,
     });
   }
-}
-
-/**
- * Logs an error to Sentry and the console.
- * @param error the error to log. Strings are logged on Sentry as "messages", anything
- * else is logged as an exception.
- */
-export function logError(error: any, ...optionalParams: any[]) {
-  if (typeof error === 'string' || error instanceof String) {
-    Sentry.captureMessage(error + ': ' + optionalParams);
-  } else {
-    Sentry.captureException(error);
-  }
-  console.error(error, optionalParams);
 }
 
 /**
@@ -63,9 +54,21 @@ export function setErrorContext(key: string, value: string) {
  */
 export function clearErrorContext() {
   Sentry.setTags({});
-  Sentry.setUser({
-    id: undefined,
-  });
+  setLoggedWallet(null);
+}
+
+/**
+ * Logs an error to Sentry and the console.
+ * @param error the error to log. Strings are logged on Sentry as "messages", anything
+ * else is logged as an exception.
+ */
+export function logError(error: any, ...optionalParams: any[]) {
+  if (typeof error === 'string' || error instanceof String) {
+    Sentry.captureMessage(error + ': ' + optionalParams);
+  } else {
+    Sentry.captureException(error);
+  }
+  console.error(error, optionalParams);
 }
 
 /**
