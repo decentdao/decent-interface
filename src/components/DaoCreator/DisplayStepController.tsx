@@ -1,7 +1,7 @@
 import DAODetails from './DAODetails';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorSteps } from './provider/types';
-import { SubsidiaryFunding } from './tokenVotingGovernance/SubsidiaryFunding';
+import { SubsidiaryFunding } from './SubsidiaryFunding';
 import TokenDetails from './tokenVotingGovernance/TokenDetails';
 import GovernanceDetails from './tokenVotingGovernance/GovernanceDetails';
 import { ChooseGovernance } from './ChooseGovernance';

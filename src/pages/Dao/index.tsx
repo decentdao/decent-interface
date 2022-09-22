@@ -8,6 +8,7 @@ import { Modules } from '../../controller/Modules';
 import Transactions from '../Transactions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { TreasuryController } from '../../controller/Modules/TreasuryController';
+import { GovernanceController } from '../../controller/Modules/GovernanceController';
 
 function DAORoutes() {
   return (
@@ -19,9 +20,11 @@ function DAORoutes() {
       <Route
         path="dashboard/*"
         element={
-          <TreasuryController>
-            <Dashboard />
-          </TreasuryController>
+          <GovernanceController>
+            <TreasuryController>
+              <Dashboard />
+            </TreasuryController>
+          </GovernanceController>
         }
       />
       <Route

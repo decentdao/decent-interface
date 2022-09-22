@@ -21,7 +21,7 @@ import {
 } from '../../../providers/gnosis/helpers';
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
-import { InjectorContext } from './GovernanceInjectorConext';
+import { GovernanceInjectorContext } from './GovernanceInjectorConext';
 import { logError } from '../../../helpers/errorlogging';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
@@ -197,9 +197,15 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       createProposal: () => {},
       pending: pending,
       isAuthorized: isSigner,
+      treasuryAssetsFungible: [],
+      treasuryAssetsNonFungible: [],
     }),
     [createDAO, pending, isSigner]
   );
 
-  return <InjectorContext.Provider value={value}>{children}</InjectorContext.Provider>;
+  return (
+    <GovernanceInjectorContext.Provider value={value}>
+      {children}
+    </GovernanceInjectorContext.Provider>
+  );
 }

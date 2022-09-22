@@ -33,7 +33,13 @@ const useListeners = (
         // switch to a default provider
         connectDefaultProvider();
       } else {
-        setModalProvider(_modalProvider);
+        // if connected to Local provider don't enable listeners
+        if (
+          _modalProvider.chainId &&
+          !(_modalProvider.chainId.toString() === process.env.REACT_APP_LOCAL_CHAIN_ID)
+        ) {
+          setModalProvider(_modalProvider);
+        }
         toast('Connected', { toastId: 'connected' });
       }
     });
