@@ -34,6 +34,7 @@ export const initialState: CreatorState = {
     tokenAllocations: [
       {
         address: '',
+        isValidAddress: false,
         amount: {
           value: '',
           bigNumberValue: null,
