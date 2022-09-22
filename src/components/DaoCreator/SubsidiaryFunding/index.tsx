@@ -45,7 +45,7 @@ export function SubsidiaryFunding() {
         if (valueBigNumber.gte(token.totalAmount)) {
           return {
             ...tokenToFund,
-            amount: { value: token.formatedTotal, bigNumberValue: token.totalAmount },
+            amount: { value: token.formattedTotal, bigNumberValue: token.totalAmount },
           };
         } else {
           return {
@@ -96,7 +96,7 @@ export function SubsidiaryFunding() {
         return {
           ...tokenToFund,
           amount: {
-            value: tokenToFund.asset.formatedTotal,
+            value: tokenToFund.asset.formattedTotal,
             bigNumberValue: tokenToFund.asset.totalAmount,
           },
         };
@@ -169,7 +169,7 @@ export function SubsidiaryFunding() {
               </EtherscanLinkToken>
               <div className="pl-4 text-gray-25 font-medium">{tokenToFund.asset.name}</div>
               <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
-                {tokenToFund.asset.formatedTotal}
+                {tokenToFund.asset.formattedTotal}
               </div>
               <Input
                 containerClassName="-mb-5 pr-4"
@@ -178,6 +178,7 @@ export function SubsidiaryFunding() {
                 type="number"
                 value={tokenToFund.amount.value}
                 onChange={e => onTokenFundChange(e.target.value, index)}
+                max={tokenToFund.asset.formattedTotal}
                 restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
                 decimals={tokenToFund.asset.decimals}
               />
