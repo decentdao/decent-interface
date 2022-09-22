@@ -4,8 +4,8 @@ services:
     build: docker/blockchain
     ports:
       - "8545:8545"
-    environment:
-      - ALCHEMY_API_KEY
+    env_file:
+      - ./docker/.env.tests.local
 
   webapp:
     build: 
@@ -13,3 +13,6 @@ services:
       dockerfile: ./docker/webapp/Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      - REACT_APP_LOCAL_CHAIN_ID=31337
+      - REACT_APP_LOCAL_PROVIDER_URL=http://127.0.0.1:8545
