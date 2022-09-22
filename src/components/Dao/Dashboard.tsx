@@ -1,23 +1,15 @@
-import {
-  TokenDepositEvent,
-  TokenWithdrawEvent,
-  ERC20TokenEvent,
-  ERC721TokenEvent,
-  TokenEventType,
-} from '../../providers/treasury/types';
+import { TokenEventType } from '../../providers/treasury/types';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import H1 from '../ui/H1';
 import EtherscanTransactionLink from '../ui/EtherscanTransactionLink';
 import { BigNumber } from 'ethers';
+import { useTreasuryInjector } from '../../controller/Modules/injectors/TreasuryInjectorContext';
 
-// This component should replace Summary, but for development purpose - it is kept alongside
-type DashboardProps = {
-  transactions?: (TokenDepositEvent | TokenWithdrawEvent | ERC20TokenEvent | ERC721TokenEvent)[];
-};
-function Dashboard({ transactions }: DashboardProps) {
+function Dashboard() {
   const { dao } = useFractal();
+  const { transactions } = useTreasuryInjector();
 
   return (
     <div>

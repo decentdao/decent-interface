@@ -1,15 +1,19 @@
-import { cloneElement } from 'react';
+import { PropsWithChildren } from 'react';
 import useGnosisEvents from '../../../providers/gnosis/hooks/useGnosisEvents';
 import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
-import useGnosisWrapperContract from '../../../providers/gnosis/hooks/useGnosisWrapperContract';
+import { TreasuryInjectorContext } from './TreasuryInjectorContext';
 
-export function GnosisTreasuryInjector({ children }: { children: JSX.Element }) {
+export function GnosisTreasuryInjector({ children }: PropsWithChildren) {
   const { state } = useGnosisWrapper();
-  const gnosisWrapperContract = useGnosisWrapperContract(state.safeAddress!);
-  const { events } = useGnosisEvents(gnosisWrapperContract);
+  const { depositEvents, withdrawEvents } = useGnosisEvents(state.safeAddress);
 
-  // TODO: Pass events in more modular way
-  return cloneElement(children, {
-    transactions: events,
-  });
+  const value = {
+    transactions: [...depositEvents, ...withdrawEvents],
+    treasuryAssetsFungible: [],
+    treasuryAssetsNonFungible: [],
+  };
+
+  return (
+    <TreasuryInjectorContext.Provider value={value}>{children}</TreasuryInjectorContext.Provider>
+  );
 }
