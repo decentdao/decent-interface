@@ -6,6 +6,7 @@ import {
   ProviderApiKeys,
   LocalInjectedProviderInfo,
 } from './types';
+import { logError } from '../../helpers/errorLogging';
 
 export const makeInjectedProvider = async (
   web3Provider: ethers.providers.Web3Provider
@@ -51,7 +52,7 @@ export const getLocalProvider = async (
       chainId: network.chainId,
     };
   } catch (e) {
-    console.error('Local Provider: ', (e as Error).message);
+    logError('Local Provider: ', (e as Error).message);
   }
 };
 

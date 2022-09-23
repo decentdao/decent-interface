@@ -9,6 +9,7 @@ import { TransactionData } from '../../types/transaction';
 import { ProposalExecuteData } from '../../types/proposal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { logError } from '../../helpers/errorLogging';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -90,7 +91,8 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
         description: proposalDescription,
       };
       setProposalData(proposal);
-    } catch {
+    } catch (e) {
+      logError(e);
       // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData`
       // these errors are handled in the onChange of the inputs in transactions
     }

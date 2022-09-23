@@ -48,7 +48,7 @@ jobs:
           REACT_APP_GNOSISWRAPPER_ADDRESSES: ${{ secrets.REACT_APP_GNOSISWRAPPER_ADDRESSES }}
           REACT_APP_GNOSISSAFEFACTORY_ADDRESSES: ${{ secrets.REACT_APP_GNOSISSAFEFACTORY_ADDRESSES }}
           REACT_APP_GNOSISSAFE_ADDRESSES: ${{ secrets.REACT_APP_GNOSISSAFE_ADDRESSES }}
-          REACT_APP_REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_GNOSISSAFE_ADDRESSES }}
+          REACT_APP_REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_REACT_APP_SENTRY_DSN }}
 
       - name: IPFS Pinata deploy GitHub action
         uses: anantaramdas/ipfs-pinata-deploy-action@v1.6.3

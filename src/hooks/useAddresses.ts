@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { logError } from '../helpers/errorLogging';
 
 export function useAddresses(chainId: number | undefined) {
   const [addresses, setAddresses] = useState<{
@@ -40,7 +41,7 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES ||
       !process.env.REACT_APP_GNOSISSAFE_ADDRESSES
     ) {
-      console.error('Addresses not set!');
+      logError('Addresses not set!');
       setAddresses({});
       return;
     }
@@ -127,7 +128,7 @@ export function useAddresses(chainId: number | undefined) {
       !gnosisWrapperAddress ||
       !gnosisSafeAddress
     ) {
-      console.error(`At least one address for network ${chainId} is not set!`);
+      logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
       return;
     }

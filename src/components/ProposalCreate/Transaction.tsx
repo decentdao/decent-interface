@@ -7,6 +7,7 @@ import { checkAddress } from '../../hooks/useAddress';
 import { ethers } from 'ethers';
 import { TransactionData } from '../../types/transaction';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../../helpers/errorLogging';
 
 interface TransactionProps {
   transaction: TransactionData;
@@ -42,7 +43,8 @@ function Transaction({
         JSON.parse(parametersArr)
       );
       return true;
-    } catch {
+    } catch (e) {
+      logError(e);
       return false;
     }
   };

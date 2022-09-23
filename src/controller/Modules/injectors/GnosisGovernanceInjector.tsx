@@ -22,6 +22,7 @@ import {
 import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnosis/types/gnosis';
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { GovernanceInjectorContext } from './GovernanceInjectorConext';
+import { logError } from '../../../helpers/errorLogging';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -168,11 +169,11 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
           toast('Transaction signed and posted to Gnosis');
           successCallback();
         } else {
-          console.error(res);
+          logError(res);
           toast("There was an error! Check your browser's console logs for more details.");
         }
       } catch (e) {
-        console.error(e);
+        logError(e);
         toast("There was an error! Check your browser's console logs for more details.");
       }
     },

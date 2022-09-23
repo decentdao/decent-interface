@@ -4,8 +4,8 @@
   "dependencies": {
     "@fractal-framework/core-contracts": "^0.1.9",
     "@headlessui/react": "^1.6.6",
-    "@sentry/react": "^7.11.1",
-    "@sentry/tracing": "^7.11.1",
+    "@sentry/react": "^7.13.0",
+    "@sentry/tracing": "^7.13.0",
     "@tanstack/react-query": "^4.2.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",

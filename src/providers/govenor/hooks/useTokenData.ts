@@ -9,6 +9,7 @@ import {
   DelegateVotesChangedListener,
   ClaimListener,
 } from '../types';
+import { logError } from '../../../helpers/errorLogging';
 
 interface ITokenData {
   name: string | undefined;
@@ -152,7 +153,7 @@ const useTokenData = (
       setTokenClaimAmount(undefined);
       return;
     }
-    claimContract.calculateClaimAmount(account).then(setTokenClaimAmount).catch(console.error);
+    claimContract.calculateClaimAmount(account).then(setTokenClaimAmount).catch(logError);
   }, [claimContract, account]);
 
   // Setup token transfer events listener

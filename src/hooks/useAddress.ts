@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ethers, constants } from 'ethers';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../helpers/errorLogging';
 
 const useAddress = (addressInput: string | undefined) => {
   const {
@@ -83,7 +84,8 @@ export const checkAddress = async (provider: any, addressInput?: string): Promis
       return false;
     }
     return true;
-  } catch {
+  } catch (e) {
+    logError(e);
     return false;
   }
 };
