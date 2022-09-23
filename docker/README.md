@@ -19,7 +19,6 @@ Runs a dockerized version of `fractal-interface`. Setup files are in the directo
 
 - `Dockerfile` see comments in file. Creation script for webapp Docker container
 - `entrypoint.sh` executes the package.json script to start.
-- `webapp.env`  this sets the local provider URL and chain id in the Docker container
 
 ### Playwright
 coming soon
@@ -30,7 +29,9 @@ coming soon
 
 You'll need to a free Alchemy API key for a Goerli project from https://www.alchemy.com/. 
 
-Once obtained, create a `.env.local` file in `docker/blockchain/` directory. Add your Alchemy api key to the env variable `ALCHEMY_API_KEY`. see https://hardhat.org/hardhat-network/docs/guides/forking-other-networks.
+Once obtained, create a `.env.tests.local` file in `docker/` directory. Add your Alchemy api key to an env variable `ALCHEMY_API_KEY` as shown in /docker/.env.tests.local. see https://hardhat.org/hardhat-network/docs/guides/forking-other-networks for more information on forking.
+
+
 
 ### Build
 
@@ -60,6 +61,11 @@ $ docker compose up -d
 To target a specific container to run
 ```shell
 $ docker compose up <container-name>
+```
+
+You can also add the `--build` flag to the up command to build before running
+```shell
+$ docker compose up --build
 ```
 
 ### Stop
