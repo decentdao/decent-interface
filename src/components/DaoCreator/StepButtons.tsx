@@ -52,6 +52,9 @@ function ForwardButton({
     case CreatorSteps.ESSENTIALS:
     case CreatorSteps.FUNDING:
     case CreatorSteps.TREASURY_GOV_TOKEN:
+      const canSkip =
+        state.step === CreatorSteps.FUNDING &&
+        state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
       return (
         <SecondaryButton
           onClick={() =>
@@ -63,7 +66,7 @@ function ForwardButton({
           disabled={isNextDisabled}
           isIconRight
           icon={<RightArrow />}
-          label="Next"
+          label={canSkip ? 'Skip' : 'Next'}
         />
       );
     case CreatorSteps.GOV_CONFIG:
