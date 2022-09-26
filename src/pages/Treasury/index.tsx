@@ -81,7 +81,7 @@ function Treasury() {
                   {fiatAmount &&
                     (() => {
                       const price = treasuryAssetsFungiblePrices[asset.contractAddress];
-                      const { formattedAmount: formattedPricePerToken } = price[selectedCurrency];
+                      const { currency: formattedPricePerToken } = price[selectedCurrency];
                       const { currency } = fiatAmount[selectedCurrency];
 
                       return (
