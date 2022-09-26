@@ -1,8 +1,11 @@
 import countDecimals from '../../../utils/countDecimals';
 
 const numberWithCommas = (number: number, decimals: number) => {
-  const n = number.toFixed(decimals);
-  return n.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',');
+  const nInt = new Intl.NumberFormat(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: decimals,
+  }).format(number);
+  return nInt;
 };
 
 const formatFiatAmount = (currencyId: string, amount: number) => {
