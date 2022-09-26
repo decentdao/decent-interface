@@ -1,16 +1,18 @@
 import countDecimals from '../../../utils/countDecimals';
 
-const numberWithCommas = (number: number, decimals: number) => {
+const numberFormatted = (number: number, decimals: number, currencyId?: string) => {
   return new Intl.NumberFormat(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: decimals,
+    style: currencyId ? 'currency' : undefined,
+    currency: currencyId,
   }).format(number);
 };
 
 const formatFiatAmount = (currencyId: string, amount: number) => {
   // 1234.567 -> 1,234.57
   const roundedAmount = Math.round((amount + Number.EPSILON) * 100) / 100;
-  const currency = numberWithCommas(roundedAmount, 2);
+  const currency = numberFormatted(roundedAmount, 2, currencyId);
 
   // on occasion, we'll need to display the `amount` with
   // at least 2 decimal places, unless the amount is a
@@ -20,7 +22,7 @@ const formatFiatAmount = (currencyId: string, amount: number) => {
   const maxDecimals = decimals ? Math.max(2, decimals) : 0;
 
   // 1234.567 -> 1,234.567, 1234 -> 1,234
-  const formattedAmount = numberWithCommas(amount, maxDecimals);
+  const formattedAmount = numberFormatted(amount, maxDecimals);
 
   return {
     [currencyId]: {
