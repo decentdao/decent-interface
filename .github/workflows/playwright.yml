@@ -5,8 +5,7 @@ on:
   pull_request:
     branches: [test-actions]
 jobs:
-  create_release:
-    name: Create IPFS Release
+
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
