@@ -1,12 +1,14 @@
-import { TokenEventType } from '../../providers/treasury/types';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
-import H1 from '../ui/H1';
-import EtherscanTransactionLink from '../ui/EtherscanTransactionLink';
 import { BigNumber } from 'ethers';
-import { useTreasuryInjector } from '../../controller/Modules/injectors/TreasuryInjectorContext';
-import { useGovernanceInjector } from '../../controller/Modules/injectors/GovernanceInjectorConext';
+import { TokenEventType } from '../../../providers/treasury/types';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import ContentBox from '../../ui/ContentBox';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import H1 from '../../ui/H1';
+import EtherscanTransactionLink from '../../ui/EtherscanTransactionLink';
+import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
+import { useGovernanceInjector } from '../../../controller/Modules/injectors/GovernanceInjectorConext';
+import TransactionCard from './components/TransactionCard';
+import ProposalCard from '../../Proposals/ProposalCard';
 
 function Dashboard() {
   const { dao } = useFractal();
