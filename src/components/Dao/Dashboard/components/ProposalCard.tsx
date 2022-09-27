@@ -18,30 +18,38 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
     proposal.state !== ProposalState.Canceled &&
     proposal.state !== ProposalState.Executed &&
     proposal.state !== ProposalState.Expired;
-
   const now = new Date();
+
   return (
     <ContentBox>
       <div className="flex justify-between items-center">
-        <div className="w-[80%]">
-          <div className="flex">
+        <div className="flex flex-wrap flex-1">
+          <div className="flex items-center">
             <StatusBox status={proposal.state} />
             {proposal.startTime && (
-              <span className="text-base text-gray-50">
+              <span className="text-base text-gray-50 ml-4">
                 {dateTimeFormatter(proposal.startTime, now)} ago
               </span>
             )}
           </div>
-          <p className="mt-4 text-white text-lg font-mono">{proposal.description}</p>
+          <p className="mt-4 text-white text-lg font-mono w-full">{proposal.description}</p>
         </div>
-        {proposal.endTime && now.getTime() > proposal.endTime.getTime() && (
-          <span className="text-base text-gray-50">
+        {isProposalActive && proposal.endTime && now.getTime() > proposal.endTime.getTime() && (
+          <span className="text-base text-gray-50 mx-14">
             {dateTimeFormatter(proposal.endTime, now)} left
           </span>
         )}
         <Link to={`/#/daos/${daoAddress}/modules/${moduleAddress}/proposals/${proposal.number}`}>
           {isProposalActive ? (
-            <PrimaryButton label={proposal.state === ProposalState.Pending ? 'Vote' : 'Execute'} />
+            <PrimaryButton
+              label={
+                proposal.state === ProposalState.Pending
+                  ? 'Vote'
+                  : proposal.state === ProposalState.Queued && proposal.eta !== 0
+                  ? 'Execute'
+                  : 'View'
+              }
+            />
           ) : (
             <SecondaryButton label="View" />
           )}
