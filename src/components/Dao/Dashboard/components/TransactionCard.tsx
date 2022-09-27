@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
+import { Transaction } from '../../../../controller/Modules/injectors/TreasuryInjectorContext';
 import {
   ERC20TokenEvent,
-  ERC721TokenEvent,
   TokenDepositEvent,
   TokenWithdrawEvent,
   TokenEventType,
@@ -11,7 +11,7 @@ import ContentBoxTitle from '../../../ui/ContentBoxTitle';
 import EtherscanTransactionLink from '../../../ui/EtherscanTransactionLink';
 
 type TransactionCardProps = {
-  transaction: TokenDepositEvent | TokenWithdrawEvent | ERC20TokenEvent | ERC721TokenEvent;
+  transaction: Transaction;
 };
 
 function TransactionCard({ transaction }: TransactionCardProps) {
@@ -29,16 +29,18 @@ function TransactionCard({ transaction }: TransactionCardProps) {
     }
   };
 
-  <ContentBox key={transaction.transactionHash}>
-    <ContentBoxTitle>
-      <>
-        {transaction.eventType === TokenEventType.DEPOSIT ? 'Received' : 'Sent'} {showAmount()}
-      </>
-    </ContentBoxTitle>
-    <EtherscanTransactionLink txHash={transaction.transactionHash}>
-      View on Etherscan
-    </EtherscanTransactionLink>
-  </ContentBox>;
+  return (
+    <ContentBox key={transaction.transactionHash}>
+      <ContentBoxTitle>
+        <>
+          {transaction.eventType === TokenEventType.DEPOSIT ? 'Received' : 'Sent'} {showAmount()}
+        </>
+      </ContentBoxTitle>
+      <EtherscanTransactionLink txHash={transaction.transactionHash}>
+        View on Etherscan
+      </EtherscanTransactionLink>
+    </ContentBox>
+  );
 }
 
 export default TransactionCard;

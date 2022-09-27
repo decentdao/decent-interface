@@ -8,8 +8,13 @@ import {
   TreasuryAssetNonFungible,
 } from '../../../providers/treasury/types';
 
+export type Transaction =
+  | TokenDepositEvent
+  | TokenWithdrawEvent
+  | ERC20TokenEvent
+  | ERC721TokenEvent;
 export interface ITreasuryInjectorContext {
-  transactions: (TokenDepositEvent | TokenWithdrawEvent | ERC20TokenEvent | ERC721TokenEvent)[];
+  transactions: Transaction[];
   treasuryAssetsFungible: TreasuryAssetFungible[];
   treasuryAssetsNonFungible: TreasuryAssetNonFungible[];
 }
