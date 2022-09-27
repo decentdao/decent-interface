@@ -39,7 +39,7 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
             {dateTimeFormatter(proposal.endTime, now)} left
           </span>
         )}
-        <Link to={`/#/daos/${daoAddress}/modules/${moduleAddress}/proposals/${proposal.number}`}>
+        <Link to={`/daos/${daoAddress}/modules/${moduleAddress}/proposals/${proposal.number}`}>
           {isProposalActive ? (
             <PrimaryButton
               label={
