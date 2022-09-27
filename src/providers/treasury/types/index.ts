@@ -27,6 +27,7 @@ export interface ERC721TokenEvent extends TokenEvent {
 }
 export interface ERC20TokenEvent extends TokenEvent {
   contractAddresses: string[];
+  addresses: string[];
   amounts: BigNumber[];
 }
 

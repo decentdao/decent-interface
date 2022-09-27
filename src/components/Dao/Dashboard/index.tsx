@@ -55,13 +55,13 @@ function Dashboard() {
         if (proposalEvent.id) {
           return (
             <ProposalCard
+              key={proposalEvent.id.toString()}
               proposal={proposalEvent}
               daoAddress={dao.daoAddress}
               moduleAddress={
                 modules.tokenVotingGovernanceModule?.moduleAddress ||
                 modules.gnosisWrapperModule?.moduleAddress
               }
-              key={proposalEvent.id.toString()}
             />
           );
         }

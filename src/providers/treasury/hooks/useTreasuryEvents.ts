@@ -88,7 +88,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    */
   const erc20DepositListener = async (
     contractAddresses: string[],
-    _: string[],
+    addresses: string[],
     amounts: BigNumber[],
     event: TypedEvent<any, any>
   ) => {
@@ -98,6 +98,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       {
         contractAddresses,
         amounts,
+        addresses,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
         blockTimestamp: block.timestamp,
@@ -115,7 +116,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    */
   const erc20WithdrawListener = async (
     contractAddresses: string[],
-    _: string[],
+    addresses: string[],
     amounts: BigNumber[],
     event: TypedEvent<any, any>
   ) => {
@@ -125,6 +126,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       {
         contractAddresses,
         amounts,
+        addresses,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
         blockTimestamp: block.timestamp,
@@ -330,6 +332,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
           const block = await event.getBlock();
           return {
             contractAddresses: event.args[0],
+            addresses: event.args[1],
             amounts: event.args[2],
             transactionHash: event.transactionHash,
             blockNumber: event.blockNumber,
@@ -383,6 +386,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
           const block = await event.getBlock();
           return {
             contractAddresses: event.args[0],
+            addresses: event.args[1],
             amounts: event.args[2],
             transactionHash: event.transactionHash,
             blockNumber: event.blockNumber,
