@@ -8,6 +8,7 @@ export enum TokenEventType {
 export interface TokenEvent {
   transactionHash: string;
   blockNumber: number;
+  blockTimestamp: number;
   eventType: TokenEventType;
 }
 

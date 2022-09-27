@@ -35,11 +35,12 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    * @param amount
    * @param event
    */
-  const nativeDepositListener = (
+  const nativeDepositListener = async (
     address: string,
     amount: BigNumber,
     event: TypedEvent<any, any>
   ) => {
+    const block = await event.getBlock();
     setNativeDeposits(prevEvents => [
       ...(prevEvents || []),
       {
@@ -47,6 +48,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amount,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.DEPOSIT,
       },
     ]);
@@ -58,11 +60,12 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    * @param amounts
    * @param event
    */
-  const nativeWithdrawListener = (
+  const nativeWithdrawListener = async (
     addresses: string[],
     amounts: BigNumber[],
     event: TypedEvent<any, any>
   ) => {
+    const block = await event.getBlock();
     setNativeWithdraws(prevWithDraws => [
       ...(prevWithDraws || []),
       {
@@ -70,6 +73,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amount: amounts.reduce((cur, prev) => cur.add(prev), BigNumber.from(0)),
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.WITHDRAW,
       },
     ]);
@@ -82,12 +86,13 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    * @param amounts
    * @param event
    */
-  const erc20DepositListener = (
+  const erc20DepositListener = async (
     contractAddresses: string[],
     _: string[],
     amounts: BigNumber[],
     event: TypedEvent<any, any>
   ) => {
+    const block = await event.getBlock();
     setErc20TokenDeposits(prevDeposits => [
       ...(prevDeposits || []),
       {
@@ -95,6 +100,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amounts,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.DEPOSIT,
       },
     ]);
@@ -107,12 +113,13 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    * @param amounts
    * @param event
    */
-  const erc20WithdrawListener = (
+  const erc20WithdrawListener = async (
     contractAddresses: string[],
     _: string[],
     amounts: BigNumber[],
     event: TypedEvent<any, any>
   ) => {
+    const block = await event.getBlock();
     setErc20TokenWithdraws(prevTokenWithdraws => [
       ...(prevTokenWithdraws || []),
       {
@@ -120,6 +127,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         amounts,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.WITHDRAW,
       },
     ]);
@@ -132,12 +140,13 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    * @param tokenIds
    * @param event
    */
-  const erc721DepositListener = (
+  const erc721DepositListener = async (
     contractAddresses: string[],
     _: string[],
     tokenIds: BigNumber[],
     event: TypedEvent<any, any>
   ) => {
+    const block = await event.getBlock();
     setErc721TokenDeposits(prevDeposits => [
       ...(prevDeposits || []),
       {
@@ -145,6 +154,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         tokenIds,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.DEPOSIT,
       },
     ]);
@@ -157,12 +167,13 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
    * @param tokenIds
    * @param event
    */
-  const erc721WithdrawListener = (
+  const erc721WithdrawListener = async (
     contractAddresses: string[],
     _: string[],
     tokenIds: BigNumber[],
     event: TypedEvent<any, any>
   ) => {
+    const block = await event.getBlock();
     setErc721TokenWithdraws(prevTokenWithdraws => [
       ...(prevTokenWithdraws || []),
       {
@@ -170,6 +181,7 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
         tokenIds,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.WITHDRAW,
       },
     ]);
@@ -192,27 +204,36 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       resetState();
       return;
     }
-    // capture past native deposit events
-    getPastEvents(treasuryModuleContract, treasuryModuleContract.filters.EthDeposited()).then(
-      (events: TypedEvent<any, any>[]) => {
-        // if no events do nothing
-        if (!events.length) {
-          setNativeDeposits(undefined);
-          return;
-        }
-        // normalize native deposit events
-        const depositEvents = events.map(event => {
+
+    const getData = async () => {
+      // capture past native deposit events
+      const events: TypedEvent<any, any>[] = await getPastEvents(
+        treasuryModuleContract,
+        treasuryModuleContract.filters.EthDeposited()
+      );
+
+      if (!events.length) {
+        setNativeDeposits(undefined);
+        return;
+      }
+      // normalize native deposit events
+      const depositEvents = await Promise.all(
+        events.map(async event => {
+          const block = await event.getBlock();
           return {
             address: event.args[0],
             amount: event.args[1],
             transactionHash: event.transactionHash,
             blockNumber: event.blockNumber,
+            blockTimestamp: block.timestamp,
             eventType: TokenEventType.DEPOSIT,
           };
-        });
-        setNativeDeposits(depositEvents);
-      }
-    );
+        })
+      );
+      setNativeDeposits(depositEvents);
+    };
+
+    getData();
 
     // adds listener for real-time events
     treasuryModuleContract.on(treasuryModuleContract.filters.EthDeposited(), nativeDepositListener);
@@ -234,16 +255,22 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       resetState();
       return;
     }
-    // capture past native withdraw events
-    getPastEvents(treasuryModuleContract, treasuryModuleContract.filters.EthWithdrawn()).then(
-      (events: TypedEvent<any, any>[]) => {
-        // if no events do nothing
-        if (!events.length) {
-          setNativeWithdraws([]);
-          return;
-        }
-        // normalize native deposit events
-        const withdrawEvents = events.map(event => {
+
+    const getData = async () => {
+      // capture past native withdraw events
+      const events: TypedEvent<any, any>[] = await getPastEvents(
+        treasuryModuleContract,
+        treasuryModuleContract.filters.EthWithdrawn()
+      );
+      // if no events do nothing
+      if (!events.length) {
+        setNativeWithdraws([]);
+        return;
+      }
+      // normalize native deposit events
+      const withdrawEvents = await Promise.all(
+        events.map(async event => {
+          const block = await event.getBlock();
           return {
             addresses: event.args[0],
             amount: event.args[1].reduce(
@@ -252,12 +279,15 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
             ),
             transactionHash: event.transactionHash,
             blockNumber: event.blockNumber,
+            blockTimestamp: block.timestamp,
             eventType: TokenEventType.WITHDRAW,
           };
-        });
-        setNativeWithdraws(withdrawEvents);
-      }
-    );
+        })
+      );
+      setNativeWithdraws(withdrawEvents);
+    };
+
+    getData();
 
     // adds listener for real-time events
     treasuryModuleContract.on(
@@ -282,28 +312,36 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       resetState();
       return;
     }
-    // retreive past erc20 token deposit events
-    getPastEvents(
-      treasuryModuleContract,
-      treasuryModuleContract.filters.ERC20TokensDeposited()
-    ).then((events: TypedEvent<any, any>[]) => {
+
+    const getData = async () => {
+      // retreive past erc20 token deposit events
+      const events: TypedEvent<any, any>[] = await getPastEvents(
+        treasuryModuleContract,
+        treasuryModuleContract.filters.ERC20TokensDeposited()
+      );
       // if no events do nothing
       if (!events.length) {
         setErc20TokenDeposits([]);
         return;
       }
       // normalize erc20 token deposit events
-      const erc20Deposits = events.map(event => {
-        return {
-          contractAddresses: event.args[0],
-          amounts: event.args[2],
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-          eventType: TokenEventType.DEPOSIT,
-        };
-      });
+      const erc20Deposits = await Promise.all(
+        events.map(async event => {
+          const block = await event.getBlock();
+          return {
+            contractAddresses: event.args[0],
+            amounts: event.args[2],
+            transactionHash: event.transactionHash,
+            blockNumber: event.blockNumber,
+            blockTimestamp: block.timestamp,
+            eventType: TokenEventType.DEPOSIT,
+          };
+        })
+      );
       setErc20TokenDeposits(erc20Deposits);
-    });
+    };
+
+    getData();
 
     // adds listener for real-time events
     treasuryModuleContract.on(
@@ -328,27 +366,35 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       resetState();
       return;
     }
-    getPastEvents(
-      treasuryModuleContract,
-      treasuryModuleContract.filters.ERC20TokensWithdrawn()
-    ).then((events: TypedEvent<any, any>[]) => {
+
+    const getData = async () => {
+      const events: TypedEvent<any, any>[] = await getPastEvents(
+        treasuryModuleContract,
+        treasuryModuleContract.filters.ERC20TokensWithdrawn()
+      );
       // if no events do nothing
       if (!events.length) {
         setErc20TokenWithdraws([]);
         return;
       }
       // normalize native deposit events
-      const erc20TokenWithdrawEvents = events.map(event => {
-        return {
-          contractAddresses: event.args[0],
-          amounts: event.args[2],
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-          eventType: TokenEventType.WITHDRAW,
-        };
-      });
+      const erc20TokenWithdrawEvents = await Promise.all(
+        events.map(async event => {
+          const block = await event.getBlock();
+          return {
+            contractAddresses: event.args[0],
+            amounts: event.args[2],
+            transactionHash: event.transactionHash,
+            blockNumber: event.blockNumber,
+            blockTimestamp: block.timestamp,
+            eventType: TokenEventType.WITHDRAW,
+          };
+        })
+      );
       setErc20TokenWithdraws(erc20TokenWithdrawEvents);
-    });
+    };
+
+    getData();
 
     // adds listener for real-time events
     treasuryModuleContract.on(
@@ -373,28 +419,37 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       resetState();
       return;
     }
-    // retreive past erc721 token deposit events
-    getPastEvents(
-      treasuryModuleContract,
-      treasuryModuleContract.filters.ERC721TokensDeposited()
-    ).then((events: TypedEvent<any, any>[]) => {
+
+    const getData = async () => {
+      // retreive past erc721 token deposit events
+      const events: TypedEvent<any, any>[] = await getPastEvents(
+        treasuryModuleContract,
+        treasuryModuleContract.filters.ERC721TokensDeposited()
+      );
+
       // if no events do nothing
       if (!events.length) {
         setErc721TokenDeposits([]);
         return;
       }
       // normalize erc721 token deposit events
-      const erc721Deposits = events.map(event => {
-        return {
-          contractAddresses: event.args[0],
-          tokenIds: event.args[2],
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-          eventType: TokenEventType.DEPOSIT,
-        };
-      });
+      const erc721Deposits = await Promise.all(
+        events.map(async event => {
+          const block = await event.getBlock();
+          return {
+            contractAddresses: event.args[0],
+            tokenIds: event.args[2],
+            transactionHash: event.transactionHash,
+            blockNumber: event.blockNumber,
+            blockTimestamp: block.timestamp,
+            eventType: TokenEventType.DEPOSIT,
+          };
+        })
+      );
       setErc721TokenDeposits(erc721Deposits);
-    });
+    };
+
+    getData();
 
     // adds listener for real-time events
     treasuryModuleContract.on(
@@ -419,27 +474,36 @@ const useTreasuryEvents = (treasuryModuleContract?: TreasuryModule) => {
       resetState();
       return;
     }
-    getPastEvents(
-      treasuryModuleContract,
-      treasuryModuleContract.filters.ERC721TokensWithdrawn()
-    ).then((events: TypedEvent<any, any>[]) => {
+
+    const getData = async () => {
+      const events: TypedEvent<any, any>[] = await getPastEvents(
+        treasuryModuleContract,
+        treasuryModuleContract.filters.ERC721TokensWithdrawn()
+      );
+
       // if no events do nothing
       if (!events.length) {
         setErc721TokenWithdraws([]);
         return;
       }
       // normalize native deposit events
-      const erc721TokenWithdrawEvents = events.map(event => {
-        return {
-          contractAddresses: event.args[0],
-          tokenIds: event.args[2],
-          transactionHash: event.transactionHash,
-          blockNumber: event.blockNumber,
-          eventType: TokenEventType.WITHDRAW,
-        };
-      });
+      const erc721TokenWithdrawEvents = await Promise.all(
+        events.map(async event => {
+          const block = await event.getBlock();
+          return {
+            contractAddresses: event.args[0],
+            tokenIds: event.args[2],
+            transactionHash: event.transactionHash,
+            blockNumber: event.blockNumber,
+            blockTimestamp: block.timestamp,
+            eventType: TokenEventType.WITHDRAW,
+          };
+        })
+      );
       setErc721TokenWithdraws(erc721TokenWithdrawEvents);
-    });
+    };
+
+    getData();
 
     // adds listener for real-time events
     treasuryModuleContract.on(

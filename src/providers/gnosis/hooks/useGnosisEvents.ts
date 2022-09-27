@@ -20,7 +20,12 @@ const useGnosisEvents = (safeAddress?: string) => {
     [gnosisSafe]
   );
 
-  const depositListener = (address: string, amount: BigNumber, event: TypedEvent<any, any>) => {
+  const depositListener = async (
+    address: string,
+    amount: BigNumber,
+    event: TypedEvent<any, any>
+  ) => {
+    const block = await event.getBlock();
     setDepositEvents(prevEvents => [
       ...prevEvents,
       {
@@ -28,12 +33,18 @@ const useGnosisEvents = (safeAddress?: string) => {
         amount,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.DEPOSIT,
       },
     ]);
   };
 
-  const withdrawListener = (address: string, amount: BigNumber, event: TypedEvent<any, any>) => {
+  const withdrawListener = async (
+    address: string,
+    amount: BigNumber,
+    event: TypedEvent<any, any>
+  ) => {
+    const block = await event.getBlock();
     setWithdrawEvents(prevEvents => [
       ...prevEvents,
       {
@@ -41,25 +52,37 @@ const useGnosisEvents = (safeAddress?: string) => {
         amount,
         transactionHash: event.transactionHash,
         blockNumber: event.blockNumber,
+        blockTimestamp: block.timestamp,
         eventType: TokenEventType.WITHDRAW,
       },
     ]);
   };
 
   useEffect(() => {
-    if (gnosisSafe) {
-      getPastEvents(gnosisSafe.filters.SafeReceived()).then((events: TypedEvent<any, any>[]) => {
-        const mappedDepositEvents = events.map(event => {
-          return {
-            address: event.args[0],
-            amount: event.args[1],
-            transactionHash: event.transactionHash,
-            blockNumber: event.blockNumber,
-            eventType: TokenEventType.DEPOSIT,
-          };
-        });
+    const getData = async () => {
+      if (gnosisSafe) {
+        const events: TypedEvent<any, any>[] = await getPastEvents(
+          gnosisSafe.filters.SafeReceived()
+        );
+
+        const mappedDepositEvents = await Promise.all(
+          events.map(async event => {
+            const block = await event.getBlock();
+            return {
+              address: event.args[0],
+              amount: event.args[1],
+              transactionHash: event.transactionHash,
+              blockNumber: event.blockNumber,
+              blockTimestamp: block.timestamp,
+              eventType: TokenEventType.DEPOSIT,
+            };
+          })
+        );
         setDepositEvents(mappedDepositEvents);
-      });
+      }
+    };
+    if (gnosisSafe) {
+      getData();
       gnosisSafe.on(gnosisSafe.filters.SafeReceived(), depositListener);
       return () => {
         gnosisSafe.off(gnosisSafe.filters.SafeReceived(), depositListener);
@@ -68,21 +91,29 @@ const useGnosisEvents = (safeAddress?: string) => {
   }, [gnosisSafe, getPastEvents]);
 
   useEffect(() => {
-    if (gnosisSafe) {
-      getPastEvents(gnosisSafe.filters.ExecutionSuccess()).then(
-        (events: TypedEvent<any, any>[]) => {
-          const mappedWithdrawEvents = events.map(event => {
+    const getData = async () => {
+      if (gnosisSafe) {
+        const events: TypedEvent<any, any>[] = await getPastEvents(
+          gnosisSafe.filters.ExecutionSuccess()
+        );
+        const mappedWithdrawEvents = await Promise.all(
+          events.map(async event => {
+            const block = await event.getBlock();
             return {
               addresses: [event.args[0]],
               amount: event.args[1],
               transactionHash: event.transactionHash,
               blockNumber: event.blockNumber,
+              blockTimestamp: block.timestamp,
               eventType: TokenEventType.WITHDRAW,
             };
-          });
-          setWithdrawEvents(mappedWithdrawEvents);
-        }
-      );
+          })
+        );
+        setWithdrawEvents(mappedWithdrawEvents);
+      }
+    };
+    if (gnosisSafe) {
+      getData();
       gnosisSafe.on(gnosisSafe.filters.SafeReceived(), withdrawListener);
       return () => {
         gnosisSafe.off(gnosisSafe.filters.SafeReceived(), withdrawListener);

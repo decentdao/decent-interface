@@ -6,10 +6,13 @@ import H1 from '../ui/H1';
 import EtherscanTransactionLink from '../ui/EtherscanTransactionLink';
 import { BigNumber } from 'ethers';
 import { useTreasuryInjector } from '../../controller/Modules/injectors/TreasuryInjectorContext';
+import { useGovernanceInjector } from '../../controller/Modules/injectors/GovernanceInjectorConext';
 
 function Dashboard() {
   const { dao } = useFractal();
   const { transactions } = useTreasuryInjector();
+  const { proposals } = useGovernanceInjector();
+  const allEvents = [...transactions, ...(proposals || [])];
 
   return (
     <div>
