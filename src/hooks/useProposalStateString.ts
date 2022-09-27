@@ -9,7 +9,7 @@ const useProposalStateString = (state: ProposalState | undefined) => {
     case ProposalState.Canceled:
       return 'Canceled';
     case ProposalState.Defeated:
-      return 'Defeated';
+      return 'Rejected';
     case ProposalState.Succeeded:
       return 'Succeeded';
     case ProposalState.Queued:
