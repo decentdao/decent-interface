@@ -30,7 +30,7 @@ function TransactionCard({ transaction }: TransactionCardProps) {
   };
 
   return (
-    <ContentBox key={transaction.transactionHash}>
+    <ContentBox>
       <ContentBoxTitle>
         <>
           {transaction.eventType === TokenEventType.DEPOSIT ? 'Received' : 'Sent'} {showAmount()}

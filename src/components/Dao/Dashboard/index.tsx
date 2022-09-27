@@ -7,11 +7,11 @@ import {
 } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
 import { useGovernanceInjector } from '../../../controller/Modules/injectors/GovernanceInjectorConext';
 import TransactionCard from './components/TransactionCard';
-import ProposalCard from '../../Proposals/ProposalCard';
+import ProposalCard from './components/ProposalCard';
 import { ProposalData } from '../../../providers/govenor/types';
 
 function Dashboard() {
-  const { dao } = useFractal();
+  const { dao, modules } = useFractal();
   const { transactions } = useTreasuryInjector();
   const { proposals } = useGovernanceInjector();
 
@@ -56,6 +56,11 @@ function Dashboard() {
           return (
             <ProposalCard
               proposal={proposalEvent}
+              daoAddress={dao.daoAddress}
+              moduleAddress={
+                modules.tokenVotingGovernanceModule?.moduleAddress ||
+                modules.gnosisWrapperModule?.moduleAddress
+              }
               key={proposalEvent.id.toString()}
             />
           );
