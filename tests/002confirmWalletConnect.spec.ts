@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   // For CI use when modded local wallet is present
-  await page.goto('http://localhost:3000');
+  await page.goto('http://localhost:3000', { timeout: 10000 });
 
   // Click("Connect Wallet")
   await page.locator('button:has-text("Connect Wallet")').click();
