@@ -22,9 +22,9 @@ jobs:
       working-directory: ./docker
       run: |
           touch .env.tests.local
-          echo TESTING_ALCHEMY_API_KEY: $TESTING_ALCHEMY_API_KEY >> .env.tests.local
+          echo TESTING_ALCHEMY_API_KEY=$TESTING_ALCHEMY_API_KEY >> .env.tests.local
     - name: Start containers
-      run: docker-compose up --build
+      run: docker-compose -d up --build
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
