@@ -23,6 +23,13 @@ jobs:
           echo TESTING_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env.tests.local
     - name: Start containers
       run: docker-compose up -d --build
+    - name: Wait for Development Server
+      uses: nev7n/wait_for_response@v1
+      with:
+        url: 'http://localhost:3000/'
+        responseCode: 200
+        timeout: 10000
+        interval: 500
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
