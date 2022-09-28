@@ -20,9 +20,8 @@ jobs:
 
     - name: create env file
       run: |
-          touch .env.tests.local
-          echo TESTING_ALCHEMY_API_KEY: $TESTING_ALCHEMY_API_KEY >> .env.tests.local
-      working-directory: ./docker
+          touch ./docker/.env.tests.local
+          echo TESTING_ALCHEMY_API_KEY: $TESTING_ALCHEMY_API_KEY >> ./docker.env.tests.local
     - name: Start containers
       run: docker-compose up -d --build
     - name: Install dependencies
