@@ -7,6 +7,8 @@ on:
 jobs:
 
   test:
+    env: 
+      TESTING_ALCHEMY_API_KEY: ${{ secrets.TESTING_ALCHEMY_API_KEY }}
     timeout-minutes: 60
     runs-on: ubuntu-latest
     environment: dev
@@ -15,13 +17,14 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '16.x'
+
     - name: create env file
       run: |
           touch .env.tests.local
           echo TESTING_ALCHEMY_API_KEY: $TESTING_ALCHEMY_API_KEY >> .env.tests.local
       working-directory: ./docker
     - name: Start containers
-      run: docker-compose -f "docker-compose.yml" up -d --build
+      run: docker-compose up -d --build
     - name: Install dependencies
       run: npm ci
     - name: Install Playwright Browsers
