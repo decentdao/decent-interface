@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { delay } from '../page-objects/Helpers/custom';
 
-test('Go to the Fractal App', async ({ page, browserName }) => {
+test('Go to the Fractal App', async ({ page }) => {
   // For CI use when modded wallet is present
-  await page.goto('http://localhost:3000', { timeout: 10000 });
+  await delay(10000);
+  await page.goto('http://localhost:3000');
 
   // Go to dev.app
   //await page.goto('https://app.dev.fractalframework.xyz/');
