@@ -1,5 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { delay } from '../page-objects/Helpers/custom';
 
 test('Go to the Fractal App', async ({ page }) => {
   // For CI use when modded wallet is present
