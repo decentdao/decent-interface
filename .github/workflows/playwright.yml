@@ -19,6 +19,7 @@ jobs:
         node-version: '16.x'
 
     - name: create env file
+      working-directory: ./docker
       run: |
           touch ./docker/.env.tests.local
           echo TESTING_ALCHEMY_API_KEY: $TESTING_ALCHEMY_API_KEY >> ./docker/.env.tests.local
