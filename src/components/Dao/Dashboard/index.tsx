@@ -19,7 +19,7 @@ function Dashboard() {
   // Since we're showing whole Activity Feed as single "stream of data"
   // We need to combine those 2 arrays together and sort it
   const allEvents: ContractEvent[] = [...transactions, ...(proposals || [])].sort(
-    (a, b) => a.blockTimestamp - b.blockTimestamp
+    (a, b) => b.blockTimestamp - a.blockTimestamp
   );
 
   return (

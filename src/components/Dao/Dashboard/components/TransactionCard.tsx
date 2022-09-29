@@ -8,7 +8,7 @@ import {
 } from '../../../../providers/treasury/types';
 import ContentBox from '../../../ui/ContentBox';
 import EtherscanTransactionLink from '../../../ui/EtherscanTransactionLink';
-import EtherscanLinkAddress from '../../../ui/EtherscanLinkAddress';
+import EtherscanENSLinkAddress from '../../../ui/EtherscanENSLinkAddress';
 
 type TransactionCardProps = {
   transaction: Transaction;
@@ -30,20 +30,14 @@ function TransactionCard({ transaction }: TransactionCardProps) {
   const displayRecipient = () => {
     const nativeDeposit = transaction as TokenDepositEvent;
     if (nativeDeposit.address) {
-      return (
-        <EtherscanLinkAddress
-          address={nativeDeposit.address}
-          showDisplayName
-        />
-      );
+      return <EtherscanENSLinkAddress address={nativeDeposit.address} />;
     }
     const nativeWithdraw = transaction as TokenWithdrawEvent;
     if (nativeWithdraw.addresses) {
       return nativeWithdraw.addresses.map(address => (
-        <EtherscanLinkAddress
+        <EtherscanENSLinkAddress
           key={address}
           address={address}
-          showDisplayName
         />
       ));
     }

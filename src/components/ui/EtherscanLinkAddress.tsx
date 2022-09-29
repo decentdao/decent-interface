@@ -1,17 +1,13 @@
-import useDisplayName from '../../hooks/useDisplayName';
 import useSubDomain from '../../hooks/useSubDomain';
 
 function EtherscanLinkAddress({
   address,
   children,
-  showDisplayName,
 }: {
-  address: string | undefined;
+  address?: string;
   children?: React.ReactNode;
-  showDisplayName?: boolean;
 }) {
   const subdomain = useSubDomain();
-  const displayName = useDisplayName();
 
   if (!address) {
     return null;
@@ -23,7 +19,7 @@ function EtherscanLinkAddress({
       target="_blank"
       rel="noreferrer"
     >
-      {showDisplayName ? displayName : children}
+      {children}
     </a>
   );
 }
