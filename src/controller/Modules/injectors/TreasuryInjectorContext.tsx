@@ -13,6 +13,7 @@ export type Transaction =
   | TokenWithdrawEvent
   | ERC20TokenEvent
   | ERC721TokenEvent;
+
 export interface ITreasuryInjectorContext {
   transactions: Transaction[];
   treasuryAssetsFungible: TreasuryAssetFungible[];

@@ -9,6 +9,7 @@ import { useGovernanceInjector } from '../../../controller/Modules/injectors/Gov
 import TransactionCard from './components/TransactionCard';
 import ProposalCard from './components/ProposalCard';
 import { ProposalData } from '../../../providers/govenor/types';
+import { ContractEvent } from '../../../types/contract';
 
 function Dashboard() {
   const { dao, modules } = useFractal();
@@ -17,21 +18,8 @@ function Dashboard() {
 
   // Since we're showing whole Activity Feed as single "stream of data"
   // We need to combine those 2 arrays together and sort it
-  const allEvents: (Transaction | ProposalData)[] = [...transactions, ...(proposals || [])].sort(
-    (a, b) => {
-      let aDateTime = (a as ProposalData).startTime;
-      let bDateTime = (b as ProposalData).startTime;
-
-      if (!aDateTime) {
-        aDateTime = new Date((a as Transaction).blockTimestamp * 1000);
-      }
-
-      if (!bDateTime) {
-        bDateTime = new Date((b as Transaction).blockTimestamp * 1000);
-      }
-
-      return bDateTime.getTime() - aDateTime.getTime();
-    }
+  const allEvents: ContractEvent[] = [...transactions, ...(proposals || [])].sort(
+    (a, b) => a.blockTimestamp - b.blockTimestamp
   );
 
   return (

@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { ContractEvent } from '../../../types/contract';
 
 export enum ProposalState {
   Pending = 0,
@@ -11,7 +12,7 @@ export enum ProposalState {
   Executed = 7,
 }
 
-export type ProposalDataWithoutUserData = {
+export interface ProposalDataWithoutUserData extends ContractEvent {
   number: number;
   id: BigNumber;
   idSubstring: string | undefined;
@@ -35,7 +36,7 @@ export type ProposalDataWithoutUserData = {
   againstVotesPercent: number | undefined;
   abstainVotesPercent: number | undefined;
   eta: number | undefined;
-};
+}
 export interface ProposalData extends ProposalDataWithoutUserData {
   userVote: number | undefined;
   userVoteString: 'For' | 'Against' | 'Abstain' | undefined;
