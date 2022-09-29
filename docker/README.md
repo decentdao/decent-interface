@@ -30,11 +30,17 @@ Coming soon(Playwright docker)
 
 ### Setup
 
+#### Installing Docker locally
+
+You'll also need to have the Docker software installed on your computer and running. See [Docker](https://docker.com)
+
+#### Alchemy API key
+
+The blockchain container forks goerli, to be able to do this an Alchemy API key is needed.  
+
 1.) You'll need to a free Alchemy API key for a Goerli project from https://www.alchemy.com/.
 
 Once obtained, create a `.env.tests.local` file in `./docker/` directory. Add your Alchemy API key to an env variable `ALCHEMY_API_KEY` as shown in `./docker/.env.tests`. see https://hardhat.org/hardhat-network/docs/guides/forking-other-networks for more information on forking.
-
-2.) You'll also need to have the Docker software installed on your computer and running. See https://www.docker.com/
 
 ### Build
 
