@@ -8,7 +8,7 @@ function createDateWithMinutesDiff(minutes: number) {
 describe('Date Time formatter', () => {
   test('Returns correct formatting for time diff less than 5 minutes', () => {
     const toDate = createDateWithMinutesDiff(4);
-    expect(formatDatesDiffReadable(fromDate, toDate)).toBe('<5 minutes');
+    expect(formatDatesDiffReadable(fromDate, toDate)).toBe('< 5 minutes');
   });
   test('Returns correct formatting for time diff more than 5 minutes and less than 60 minutes', () => {
     const toDate = createDateWithMinutesDiff(59);
@@ -26,6 +26,11 @@ describe('Date Time formatter', () => {
     const toDate = createDateWithMinutesDiff(60 * 24 * 5.5);
     expect(formatDatesDiffReadable(fromDate, toDate)).toBe('5 days');
   });
+  test('Returns correct formatting for time diff of 30 days when month contains exactly 31 days', () => {
+    const newFromDate = new Date('October 1, 2022');
+    const toDate = new Date('October 31, 2022');
+    expect(formatDatesDiffReadable(newFromDate, toDate)).toBe('30 days');
+  });
   test('Returns correct formatting for time diff more or equal than 1 month but less than 1 year', () => {
     const toDateOneMonth = createDateWithMinutesDiff(60 * 24 * 30);
     expect(formatDatesDiffReadable(fromDate, toDateOneMonth)).toBe('1 month');
@@ -40,6 +45,6 @@ describe('Date Time formatter', () => {
   });
   test('Returns correct formatting when dateStart is bigger than dateEnd', () => {
     const toDate = createDateWithMinutesDiff(4);
-    expect(formatDatesDiffReadable(toDate, fromDate)).toBe('<5 minutes');
+    expect(formatDatesDiffReadable(toDate, fromDate)).toBe('< 5 minutes');
   });
 });
