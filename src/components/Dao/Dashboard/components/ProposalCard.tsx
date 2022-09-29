@@ -3,7 +3,7 @@ import { ProposalData, ProposalState } from '../../../../providers/govenor/types
 import { PrimaryButton, SecondaryButton } from '../../../ui/forms/Button';
 import ContentBox from '../../../ui/ContentBox';
 import StatusBox from '../../../ui/StatusBox';
-import dateTimeFormatter from '../../../../helpers/dateTimeFormatter';
+import { formatDatesDiffReadable } from '../../../../helpers/dateTime';
 
 type ProposalCardProps = {
   proposal: ProposalData;
@@ -28,7 +28,7 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
             <StatusBox status={proposal.state} />
             {proposal.startTime && (
               <span className="text-base text-gray-50 ml-4">
-                {dateTimeFormatter(proposal.startTime, now)} ago
+                {formatDatesDiffReadable(proposal.startTime, now)} ago
               </span>
             )}
           </div>
@@ -36,7 +36,7 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
         </div>
         {isProposalActive && proposal.endTime && now.getTime() > proposal.endTime.getTime() && (
           <span className="text-base text-gray-50 mx-14">
-            {dateTimeFormatter(proposal.endTime, now)} left
+            {formatDatesDiffReadable(proposal.endTime, now)} left
           </span>
         )}
         <Link to={`/daos/${daoAddress}/modules/${moduleAddress}/proposals/${proposal.number}`}>
