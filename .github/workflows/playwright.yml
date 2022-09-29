@@ -34,8 +34,6 @@ jobs:
       with:
         url: 'http://localhost:3000/'
         responseCode: 200
-        timeout: 10000
-        interval: 500
     - name: Run Playwright tests
       run: npm run tests
     - uses: actions/upload-artifact@v2
