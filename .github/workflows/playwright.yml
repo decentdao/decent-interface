@@ -1,9 +1,10 @@
 name: Github Actions - Playwright
 on:
   push:
-    branches: [test-actions]
+    branches:
+    - master
+    - develop
   pull_request:
-    branches: [test-actions]
 jobs:
 
   test:
