@@ -3,11 +3,13 @@
 ## Local Development
 
 Clone the repository
+
 ```shell
 $ git clone ...
 ```
 
 Change to correct node version
+
 ```shell
 $ nvm use
 ```
@@ -19,6 +21,21 @@ $ npm install
 ```
 
 ## Testing - Playwright
+
+### Setup - Docker
+
+- For more information about docker installation and setup for local development:
+  ![Docker README](./docker/README.md)
+
+### Running Docker
+
+Once Docker has been installed and setup, you can run the containers by running
+
+```shell
+$ docker compose up --build
+```
+
+### Running Tests
 
 To run all tests in all 3 browser types(Chromium, Firefox, Webkit) use the following command in a new terminal within the fractal-interface project:
 
@@ -41,27 +58,6 @@ $ npx playwright test --project=chromium
 ```
 
 Test results for each test on each browser type will be output into the ![playwright-report](./playwright-report/) (HTML) and ![test-results](./test-results/)(screenshots and videos) folders.
-
-### Running Tests
-
-### Setup - Docker
-
-- For more information about docker installation and setup for local development:
-  ![Docker README](./docker/README.md)
-
-
-### Running Docker
-
-Once Docker has been installed and setup, you can run the containers by running
-```shell
-$ docker compose up --build
-```
-
-In a seperate terminal you can then run the tests after the docker containers have been built
-
-```shell
-$ npx playwright test
-```
 
 ## Deployment Notes
 
