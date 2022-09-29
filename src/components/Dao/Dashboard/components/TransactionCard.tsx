@@ -33,7 +33,7 @@ function TransactionCard({ transaction }: TransactionCardProps) {
       return (
         <EtherscanLinkAddress
           address={nativeDeposit.address}
-          showENSName
+          showDisplayName
         />
       );
     }
@@ -43,7 +43,7 @@ function TransactionCard({ transaction }: TransactionCardProps) {
         <EtherscanLinkAddress
           key={address}
           address={address}
-          showENSName
+          showDisplayName
         />
       ));
     }

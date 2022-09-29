@@ -1,20 +1,17 @@
-import useAddress from '../../hooks/useAddress';
-import useENSName from '../../hooks/useENSName';
+import useDisplayName from '../../hooks/useDisplayName';
 import useSubDomain from '../../hooks/useSubDomain';
-import { createAccountSubstring } from '../../hooks/useDisplayName';
 
 function EtherscanLinkAddress({
   address,
   children,
-  showENSName,
+  showDisplayName,
 }: {
   address: string | undefined;
   children?: React.ReactNode;
-  showENSName?: boolean;
+  showDisplayName?: boolean;
 }) {
   const subdomain = useSubDomain();
-  const [validatedAddress] = useAddress(address);
-  const ensName = useENSName(validatedAddress);
+  const displayName = useDisplayName();
 
   if (!address) {
     return null;
@@ -26,7 +23,7 @@ function EtherscanLinkAddress({
       target="_blank"
       rel="noreferrer"
     >
-      {showENSName ? ensName || createAccountSubstring(validatedAddress || address) : children}
+      {showDisplayName ? displayName : children}
     </a>
   );
 }
