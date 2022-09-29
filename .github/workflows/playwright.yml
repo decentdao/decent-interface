@@ -34,7 +34,7 @@ jobs:
         timeout: 10000
         interval: 500
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npm run tests
     - uses: actions/upload-artifact@v2
       if: always()
       with:
