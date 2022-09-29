@@ -44,7 +44,7 @@
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
     "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "tests": "playwright test --project=chromium --project=firefox"
+    "tests": "playwright test"
   },
   "browserslist": {
     "production": [
