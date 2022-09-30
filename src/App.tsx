@@ -6,7 +6,7 @@ import Breadcrumbs from './components/Breadcrumbs';
 import Header from './components/ui/Header';
 import { TextButton } from './components/ui/forms/Button';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import './localization';
+import './i18n';
 import { useTranslation } from 'react-i18next';
 
 function NotAuditedToast() {
