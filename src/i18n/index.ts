@@ -12,8 +12,8 @@ import MENU_ES from './locales/es/menu.json';
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
  * language setting. This library is based on the popular i18next JavaScript library, tailored specificaly to React.
  *
- * Each supported language requires a set of corresponding .json files in the `.locale/{country code}/`
- * directory, e.g. `.locale/es/common.json`.
+ * Each supported language requires a set of corresponding .json files in the `.locales/{country code}/`
+ * directory, e.g. `.locales/es/common.json`.
  *
  * Splitting strings into separate files creates distinct "namespaces" in i18next, which allows the loading of only
  * the strings needed for a given user path, rather that all strings at once, which as the project grows larger can
