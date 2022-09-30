@@ -34,6 +34,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
     createProposal: { pendingCreateTx, submitProposal },
     votingToken,
     governorModuleContract,
+    proposals,
   } = useGovenorModule();
   const { treasuryModuleContract } = useTreasuryModule();
 
@@ -245,8 +246,9 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
       createProposal: submitProposal,
       pending: pendingCreateTx,
       isAuthorized: canUserCreateProposal,
+      proposals,
     }),
-    [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal]
+    [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal, proposals]
   );
 
   return (

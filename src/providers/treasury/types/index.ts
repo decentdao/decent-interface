@@ -1,11 +1,12 @@
 import { BigNumber } from 'ethers';
+import { ContractEvent } from '../../../types/contract';
 
 export enum TokenEventType {
   DEPOSIT = 'DEPOSIT',
   WITHDRAW = 'WITHDRAW',
 }
 
-export interface TokenEvent {
+export interface TokenEvent extends ContractEvent {
   transactionHash: string;
   blockNumber: number;
   eventType: TokenEventType;
@@ -26,6 +27,7 @@ export interface ERC721TokenEvent extends TokenEvent {
 }
 export interface ERC20TokenEvent extends TokenEvent {
   contractAddresses: string[];
+  addresses: string[];
   amounts: BigNumber[];
 }
 
