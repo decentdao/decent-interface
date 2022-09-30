@@ -12,7 +12,9 @@ import { ProposalData } from '../../../providers/govenor/types';
 import { ContractEvent } from '../../../types/contract';
 
 function Dashboard() {
-  const { dao, modules } = useFractal();
+  const {
+    mvd: { dao, modules },
+  } = useFractal();
   const { transactions } = useTreasuryInjector();
   const { proposals } = useGovernanceInjector();
 

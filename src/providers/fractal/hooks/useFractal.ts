@@ -3,15 +3,17 @@ import { IModuleData } from '../../../controller/Modules/types';
 import { FractalActions, FractalDAO, IDaoLegacy } from '../types';
 
 export interface IFractalContext {
-  dao: FractalDAO;
-  daoLegacy: IDaoLegacy;
-  dispatch: React.Dispatch<FractalActions>;
-  modules: {
-    timelockModule?: IModuleData;
-    treasuryModule?: IModuleData;
-    tokenVotingGovernanceModule?: IModuleData;
-    claimingContractModule?: IModuleData;
-    gnosisWrapperModule?: IModuleData;
+  mvd: {
+    dao: FractalDAO;
+    daoLegacy: IDaoLegacy;
+    dispatch: React.Dispatch<FractalActions>;
+    modules: {
+      timelockModule?: IModuleData;
+      treasuryModule?: IModuleData;
+      tokenVotingGovernanceModule?: IModuleData;
+      claimingContractModule?: IModuleData;
+      gnosisWrapperModule?: IModuleData;
+    };
   };
 }
 

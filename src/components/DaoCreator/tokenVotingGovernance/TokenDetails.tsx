@@ -16,7 +16,9 @@ function TokenDetails() {
   } = useCreator();
 
   const {
-    modules: { gnosisWrapperModule },
+    mvd: {
+      modules: { gnosisWrapperModule },
+    },
   } = useFractal();
 
   const fieldUpdate = (value: any, field: string) => {

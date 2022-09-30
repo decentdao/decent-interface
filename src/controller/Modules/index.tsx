@@ -33,7 +33,9 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
 };
 export function Modules() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { dao, modules } = useFractal();
+  const {
+    mvd: { dao, modules },
+  } = useFractal();
   const params = useParams();
   const navigate = useNavigate();
 

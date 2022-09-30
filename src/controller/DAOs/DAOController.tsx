@@ -13,7 +13,9 @@ import { ModuleActionRoleEvents } from '../../providers/fractal/types';
  * Handles DAO validation, setting and unsetting of DAO and nagivating to DAOSearch when invalid
  */
 export function DAOController({ children }: { children: JSX.Element }) {
-  const { dispatch } = useFractal();
+  const {
+    mvd: { dispatch },
+  } = useFractal();
   const params = useParams();
   const {
     state: { signerOrProvider, account, isProviderLoading },

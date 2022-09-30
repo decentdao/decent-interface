@@ -46,16 +46,18 @@ export function FractalProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
-      dao,
-      modules: {
-        timelockModule,
-        treasuryModule,
-        tokenVotingGovernanceModule,
-        claimingContractModule,
-        gnosisWrapperModule,
+      mvd: {
+        dao,
+        modules: {
+          timelockModule,
+          treasuryModule,
+          tokenVotingGovernanceModule,
+          claimingContractModule,
+          gnosisWrapperModule,
+        },
+        dispatch,
+        daoLegacy,
       },
-      dispatch,
-      daoLegacy,
     }),
     [
       dao,

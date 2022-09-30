@@ -10,7 +10,9 @@ import { useFractal } from '../providers/fractal/hooks/useFractal';
 function DAOName() {
   const params = useParams();
   const {
-    dao: { daoAddress, daoName },
+    mvd: {
+      dao: { daoAddress, daoName },
+    },
   } = useFractal();
 
   return <span>{daoName || daoAddress || params.address || '...'}</span>;
@@ -25,8 +27,10 @@ function ProposalId({ match }: { match: BreadcrumbMatch }) {
 function Breadcrumbs() {
   const location = useLocation();
   const {
-    dao: { daoAddress },
-    modules: { treasuryModule, tokenVotingGovernanceModule, gnosisWrapperModule },
+    mvd: {
+      dao: { daoAddress },
+      modules: { treasuryModule, tokenVotingGovernanceModule, gnosisWrapperModule },
+    },
   } = useFractal();
 
   const excludePaths: Array<string> = [];
