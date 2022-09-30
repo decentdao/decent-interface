@@ -24,7 +24,7 @@ function NotAuditedToast() {
 
     const toastId = toast(
       <div className="flex flex-col items-center">
-        <div>{t('notifDisclaimer')}</div>
+        <div>{t('auditDisclaimer')}</div>
         <TextButton
           label={t('accept')}
           onClick={() => setNotAuditedAcceptance(true)}

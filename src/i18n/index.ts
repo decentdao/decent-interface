@@ -5,6 +5,8 @@ import COMMON_EN from './locales/en/common.json';
 import COMMON_ES from './locales/es/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
 import DAOCREATE_ES from './locales/es/daoCreate.json';
+import MENU_EN from './locales/en/menu.json';
+import MENU_ES from './locales/es/menu.json';
 
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
@@ -32,10 +34,12 @@ const resources = {
   en: {
     common: COMMON_EN,
     daoCreate: DAOCREATE_EN,
+    menu: MENU_EN,
   },
   es: {
     common: COMMON_ES,
     daoCreate: DAOCREATE_ES,
+    menu: MENU_ES,
   },
 };
 

@@ -12,7 +12,7 @@ import cx from 'classnames';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { Link } from 'react-router-dom';
 import { useBlockchainData } from '../../../contexts/blockchainData';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 
 interface MenuItem {
   titleKey: string;
@@ -108,6 +108,7 @@ function ItemContent({
 }
 
 function ActionItem({ titleKey: title, className, action, Icon, isVisible }: ActionMenuItem) {
+  const { t } = useTranslation('menu');
   if (!isVisible) {
     return null;
   }
@@ -128,6 +129,7 @@ function ActionItem({ titleKey: title, className, action, Icon, isVisible }: Act
 }
 
 function LinkItem({ titleKey: title, link, Icon }: LinkMenuItem) {
+  const { t } = useTranslation('menu');
   return (
     <Menu.Item>
       <a
@@ -145,6 +147,7 @@ function LinkItem({ titleKey: title, link, Icon }: LinkMenuItem) {
 }
 
 function LinkItemInternal({ titleKey: title, link, Icon }: LinkMenuItem) {
+  const { t } = useTranslation('menu');
   return (
     <Menu.Item>
       <Link to={link}>

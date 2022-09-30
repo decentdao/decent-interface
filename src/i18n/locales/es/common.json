@@ -1,11 +1,4 @@
 {   
-    "notifDisclaimer": "ADVERTENCIA: este proyecto no está auditado, utilícelo bajo su propio riesgo.",
-    "accept": "Acepto",
-    "menuConnect": "Conectar",
-    "menuDisconnect": "Desconectar",
-    "menuFavorites": "Favoritos",
-    "menuCommunity": "Community",
-    "menuOverview": "Visión general",
-    "menuFaq": "FAQ",
-    "menuDocs": "Documentos"
+    "auditDisclaimer": "ADVERTENCIA: este proyecto no está auditado, utilícelo bajo su propio riesgo.",
+    "accept": "Acepto"
 }
