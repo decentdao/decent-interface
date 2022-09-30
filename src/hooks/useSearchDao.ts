@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import useAddress from './useAddress';
 import useIsDAO from './useIsDAO';
+import useIsGnosisSafe from './useIsGnosisSafe';
 
 const useSearchDao = () => {
   const [searchString, setSearchString] = useState<string>();
@@ -9,6 +10,7 @@ const useSearchDao = () => {
 
   const [address, validAddress, addressLoading] = useAddress(searchString);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
+  const [addressIsGnosisSafe, isGnosisSafeLoading] = useIsGnosisSafe(address);
 
   /**
    * refresh error state if one exists
@@ -34,9 +36,9 @@ const useSearchDao = () => {
    */
   useEffect(() => {
     if (addressLoading !== undefined) {
-      setLoading(addressLoading || isDAOLoading);
+      setLoading(addressLoading || isDAOLoading || isGnosisSafeLoading);
     }
-  }, [addressLoading, isDAOLoading]);
+  }, [addressLoading, isDAOLoading, isGnosisSafeLoading]);
 
   /**
    * handles errors
@@ -55,17 +57,18 @@ const useSearchDao = () => {
       setErrorMessage('Please use a valid Fractal ETH address or ENS domain');
       return;
     }
-    if (addressIsDAO === false) {
+    if (addressIsDAO === false && addressIsGnosisSafe === false) {
       setErrorMessage('Sorry a Fractal does not exist on this address');
       return;
     }
-  }, [address, validAddress, searchString, addressIsDAO, loading]);
+  }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading]);
 
   return {
     errorMessage,
     loading,
     address,
     addressIsDAO,
+    addressIsGnosisSafe,
     validAddress,
     updateSearchString,
     resetErrorState,
