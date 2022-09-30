@@ -22,7 +22,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
     state: { signerOrProvider, account, isProviderLoading },
   } = useWeb3Provider();
 
-  const { errorMessage, address, addressIsDAO, updateSearchString } = useSearchDao();
+  const { errorMessage, address, addressNodeType, updateSearchString } = useSearchDao();
 
   /**
    * Passes param address to updateSearchString
@@ -94,7 +94,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
   useEffect(() => loadDAO(), [loadDAO]);
 
   useEffect(() => {
-    if (addressIsDAO && address && signerOrProvider && account) {
+    if (addressNodeType !== undefined && address && signerOrProvider && account) {
       (async () => {
         nodeDispatch({
           type: NodeAction.SET_NODE_TYPE,
@@ -106,7 +106,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
         });
       })();
     }
-  }, [address, signerOrProvider, addressIsDAO, retrieveDAO, mvdDispatch, account, nodeDispatch]);
+  }, [address, signerOrProvider, addressNodeType, retrieveDAO, mvdDispatch, account, nodeDispatch]);
 
   useEffect(() => {
     if (!isProviderLoading && (errorMessage || !account)) {

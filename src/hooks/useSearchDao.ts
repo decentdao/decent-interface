@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { NodeType } from '../providers/fractal/constants/enums';
 import useAddress from './useAddress';
 import useIsDAO from './useIsDAO';
 import useIsGnosisSafe from './useIsGnosisSafe';
@@ -11,6 +12,7 @@ const useSearchDao = () => {
   const [address, validAddress, addressLoading] = useAddress(searchString);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
   const [addressIsGnosisSafe, isGnosisSafeLoading] = useIsGnosisSafe(address);
+  const [addressNodeType, setAddressNodeType] = useState<NodeType>();
 
   /**
    * refresh error state if one exists
@@ -63,12 +65,25 @@ const useSearchDao = () => {
     }
   }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading]);
 
+  useEffect(() => {
+    if (addressIsDAO === true) {
+      setAddressNodeType(NodeType.MVD);
+      return;
+    }
+
+    if (addressIsGnosisSafe === true) {
+      setAddressNodeType(NodeType.GNOSIS);
+      return;
+    }
+
+    setAddressNodeType(undefined);
+  }, [addressIsDAO, addressIsGnosisSafe]);
+
   return {
     errorMessage,
     loading,
     address,
-    addressIsDAO,
-    addressIsGnosisSafe,
+    addressNodeType,
     validAddress,
     updateSearchString,
     resetErrorState,

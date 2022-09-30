@@ -22,8 +22,7 @@ function DAOSearch() {
     errorMessage,
     loading,
     address,
-    addressIsDAO,
-    addressIsGnosisSafe,
+    addressNodeType,
     validAddress,
     resetErrorState,
     updateSearchString,
@@ -53,10 +52,10 @@ function DAOSearch() {
    *
    */
   useEffect(() => {
-    if (address && validAddress && (addressIsDAO || addressIsGnosisSafe)) {
+    if (address && validAddress && addressNodeType !== undefined) {
       navigate(address!, { state: { validatedAddress: address } });
     }
-  }, [navigate, address, validAddress, addressIsDAO, addressIsGnosisSafe]);
+  }, [navigate, address, validAddress, addressNodeType]);
 
   useEffect(() => {
     if (searchAddr === undefined) {
