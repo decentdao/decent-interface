@@ -9,6 +9,7 @@ import useCreateGnosisDAODataCreator from './useCreateGnosisDAODataCreator';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useBlockchainData } from '../contexts/blockchainData';
+import { useTranslation } from 'react-i18next';
 
 const useDeployDAO = () => {
   const {
@@ -21,6 +22,8 @@ const useDeployDAO = () => {
   const [contractCallDeploy, contractCallPending] = useTransaction();
 
   const { metaFactoryContract } = useBlockchainData();
+
+  const { t } = useTranslation('transaction');
 
   const deployTokenVotingDAO = useCallback(
     (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
@@ -48,13 +51,13 @@ const useDeployDAO = () => {
             createDAOData.calldata.values,
             createDAOData.calldata.calldatas
           ),
-        pendingMessage: 'Deploying Fractal...',
-        failedMessage: 'Deployment Failed',
-        successMessage: 'DAO Created',
+        pendingMessage: t('pendingDeployDAO'),
+        failedMessage: t('failedDeployDAO'),
+        successMessage: t('successDeployDAO'),
         successCallback: () => successCallback(createDAOData.predictedDAOAddress),
       });
     },
-    [contractCallDeploy, createDAODataCreator, metaFactoryContract, account]
+    [contractCallDeploy, createDAODataCreator, metaFactoryContract, account, t]
   );
 
   const deployGnosisDAO = useCallback(
@@ -83,13 +86,13 @@ const useDeployDAO = () => {
             createDAOData.calldata.values,
             createDAOData.calldata.calldatas
           ),
-        pendingMessage: 'Deploying Fractal...',
-        failedMessage: 'Deployment Failed',
-        successMessage: 'DAO Created',
+        pendingMessage: t('pendingDeployDAO'),
+        failedMessage: t('failedDeployDAO'),
+        successMessage: t('successDeployDAO'),
         successCallback: () => successCallback(createDAOData.predictedDAOAddress),
       });
     },
-    [contractCallDeploy, createGnosisDAODataCreator, metaFactoryContract, account]
+    [contractCallDeploy, createGnosisDAODataCreator, metaFactoryContract, account, t]
   );
 
   const deployDao = useCallback(

@@ -1,4 +1,5 @@
 import { ReactNode, useMemo } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 import ContentBanner from '../../components/ui/ContentBanner';
 import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
@@ -34,35 +35,45 @@ function Treasury() {
     [treasuryAssetsFungibleFiatAmounts]
   );
 
+  const { t } = useTranslation('treasury');
+
   return (
     <div>
-      <H1>{dao.daoName} Treasury</H1>
+      <H1>{t('titleTreasury', { daoName: dao.daoName })}</H1>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
-        <ContentBoxTitle>ETH / Tokens</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleEthTokens')}</ContentBoxTitle>
         <div className="my-2">
           <div className="flex justify-between items-end bg-gray-400 px-4 pb-2 h-10">
             <div className="flex">
-              <div className="text-gray-50 text-xs font-medium w-16 sm:w-28">Symbol</div>
-              <div className="text-gray-50 text-xs font-medium">Name</div>
+              <div className="text-gray-50 text-xs font-medium w-16 sm:w-28">
+                {t('tokenSymbol')}
+              </div>
+              <div className="text-gray-50 text-xs font-medium">{t('tokenName')}</div>
             </div>
-            <div className="text-gray-50 text-xs font-medium">Amount</div>
+            <div className="text-gray-50 text-xs font-medium">{t('tokenAmount')}</div>
           </div>
           {treasuryAssetsFungible.length === 0 && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
-                <span>There are no tokens in this</span>
-                <TooltipWrapper
-                  content={
-                    <TooltipAddressContent
-                      address={treasuryModuleContract ? treasuryModuleContract.address : ''}
-                      title="Treasury address:"
-                    />
-                  }
-                  isVisible
+                <Trans
+                  i18nKey="emptyTokens"
+                  ns="treasury"
                 >
-                  <span className="text-gold-500 hover:text-gold-300 mx-2">treasury</span>
-                </TooltipWrapper>{' '}
-                <span>at this time.</span>
+                  There are no tokens in this
+                  <TooltipWrapper
+                    className="text-gold-500 hover:text-gold-300 mx-2"
+                    content={
+                      <TooltipAddressContent
+                        address={treasuryModuleContract ? treasuryModuleContract.address : ''}
+                        title={t('titleTreasuryAddress')}
+                      />
+                    }
+                    isVisible
+                  >
+                    treasury
+                  </TooltipWrapper>
+                  at this time.
+                </Trans>
               </div>
             </TableRowWrapper>
           )}
@@ -120,27 +131,35 @@ function Treasury() {
         <div className="my-2">
           <div className="flex justify-between items-end bg-gray-400 px-4 pb-2 h-10">
             <div className="flex">
-              <div className="text-gray-50 text-xs font-medium w-16 sm:w-28">Symbol</div>
-              <div className="text-gray-50 text-xs font-medium">Name</div>
+              <div className="text-gray-50 text-xs font-medium w-16 sm:w-28">
+                {t('tokenSymbol')}
+              </div>
+              <div className="text-gray-50 text-xs font-medium">{t('tokenName')}</div>
             </div>
-            <div className="text-gray-50 text-xs font-medium">Token Id</div>
+            <div className="text-gray-50 text-xs font-medium">{t('tokenId')}</div>
           </div>
           {!treasuryAssetsNonFungible.length && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
-                <span>There are no NFTs in this</span>
-                <TooltipWrapper
-                  content={
-                    <TooltipAddressContent
-                      address={treasuryModuleContract ? treasuryModuleContract.address : ''}
-                      title="Treasury address:"
-                    />
-                  }
-                  isVisible
+                <Trans
+                  i18nKey="emptyNFTs"
+                  ns="treasury"
                 >
-                  <span className="text-gold-500 hover:text-gold-300 mx-2">treasury</span>
-                </TooltipWrapper>{' '}
-                <span>at this time.</span>
+                  There are no NFTs in this
+                  <TooltipWrapper
+                    className="text-gold-500 hover:text-gold-300 mx-2"
+                    content={
+                      <TooltipAddressContent
+                        address={treasuryModuleContract ? treasuryModuleContract.address : ''}
+                        title="Treasury address:"
+                      />
+                    }
+                    isVisible
+                  >
+                    treasury
+                  </TooltipWrapper>
+                  at this time.
+                </Trans>
               </div>
             </TableRowWrapper>
           )}
@@ -168,9 +187,7 @@ function Treasury() {
       </div>
       {!treasuryAssetsFungible.length && !treasuryAssetsNonFungible.length && (
         <div className="px-1">
-          <ContentBanner
-            description={`Here you will see the tokens that have been sent to the ${name} Treasury address.`}
-          />
+          <ContentBanner description={t('descTreasury', { daoName: dao.daoName })} />
         </div>
       )}
     </div>

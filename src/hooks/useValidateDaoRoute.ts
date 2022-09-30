@@ -1,4 +1,5 @@
 import { ReactText, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useSearchDao from './useSearchDao';
@@ -34,9 +35,11 @@ const useValidateDaoRoute = () => {
     }
   }, [addressIsDAO, loading, address, pathname, navigate]);
 
+  const { t } = useTranslation();
+
   // while dao is loading
   useEffect(() => {
-    toastId.current = toast('Loading...', {
+    toastId.current = toast(t('loading'), {
       toastId: '0',
       autoClose: false,
       closeOnClick: false,
@@ -46,7 +49,7 @@ const useValidateDaoRoute = () => {
     return () => {
       toast.dismiss(toastId.current);
     };
-  }, []);
+  }, [t]);
 };
 
 export default useValidateDaoRoute;

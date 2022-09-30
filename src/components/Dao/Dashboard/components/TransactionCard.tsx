@@ -9,16 +9,19 @@ import {
 import ContentBox from '../../../ui/ContentBox';
 import EtherscanTransactionLink from '../../../ui/EtherscanTransactionLink';
 import EtherscanDisplayNameLink from '../../../ui/EtherscanDisplayNameLink';
+import { useTranslation } from 'react-i18next';
 
 type TransactionCardProps = {
   transaction: Transaction;
 };
 
 function TransactionCard({ transaction }: TransactionCardProps) {
+  const { t } = useTranslation();
+
   const displayAmount = () => {
     const nativeTransaction = transaction as TokenDepositEvent | TokenWithdrawEvent;
     if (nativeTransaction.amount) {
-      return `${utils.formatUnits(nativeTransaction.amount)} ETH`;
+      return t('ethAmount', { amount: utils.formatUnits(nativeTransaction.amount) });
     }
 
     const tokenTransaction = transaction as ERC20TokenEvent;
@@ -47,8 +50,9 @@ function TransactionCard({ transaction }: TransactionCardProps) {
     <ContentBox>
       <div className="flex justify-between">
         <p className="text-left text-md text-gray-50">
-          {transaction.eventType === TokenEventType.DEPOSIT ? 'Received' : 'Sent'} {displayAmount()}{' '}
-          {transaction.eventType === TokenEventType.DEPOSIT ? 'From' : 'To'} {displayRecipient()}
+          {transaction.eventType === TokenEventType.DEPOSIT ? t('received') : t('sent')}{' '}
+          {displayAmount()} {transaction.eventType === TokenEventType.DEPOSIT ? t('from') : t('to')}{' '}
+          {displayRecipient()}
         </p>
         <EtherscanTransactionLink txHash={transaction.transactionHash}>
           View on Etherscan

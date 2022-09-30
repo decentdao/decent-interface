@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useTransaction } from '../../../contexts/web3Data/transactions';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { ProposalExecuteData } from '../../../types/proposal';
+import { useTranslation } from 'react-i18next';
 
 const useCreateProposal = (governorModuleContract: GovernorModule | undefined) => {
   const {
@@ -10,6 +11,8 @@ const useCreateProposal = (governorModuleContract: GovernorModule | undefined) =
   } = useWeb3Provider();
 
   const [contractCallCreateProposal, contractCallPending] = useTransaction();
+
+  const { t } = useTranslation('transaction');
 
   const createProposal = useCallback(
     ({
@@ -31,13 +34,13 @@ const useCreateProposal = (governorModuleContract: GovernorModule | undefined) =
             proposalData.calldatas,
             proposalData.description
           ),
-        pendingMessage: 'Creating Proposal...',
-        failedMessage: 'Proposal Creation Failed',
-        successMessage: 'Proposal Created',
+        pendingMessage: t('pendingCreateProposal'),
+        failedMessage: t('failedCreateProposal'),
+        successMessage: t('successCreateProposal'),
         successCallback,
       });
     },
-    [contractCallCreateProposal, governorModuleContract, signerOrProvider]
+    [contractCallCreateProposal, governorModuleContract, signerOrProvider, t]
   );
 
   return [createProposal, contractCallPending] as const;

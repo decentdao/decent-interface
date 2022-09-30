@@ -1,5 +1,6 @@
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { TextButton } from '../../ui/forms/Button';
 import Input, { RestrictCharTypes } from '../../ui/forms/Input';
@@ -95,6 +96,8 @@ function TokenAllocations({
     }
   }, [tokenAllocations, supply, parentAllocationAmount]);
 
+  const { t } = useTranslation('daoCreate');
+
   return (
     <div>
       <div className=" text-gray-50 pb-2">Token Allocations</div>
@@ -104,12 +107,12 @@ function TokenAllocations({
             type="number"
             value={parentAllocationAmount.value}
             onChange={e => onParentAllocationChange(e.target.value)}
-            label="Parent Allocation Amount"
-            helperText="Amount of tokens to allocate to parent DAO"
+            label={t('labelParentAllocation')}
+            helperText={t('helperParentAllocation')}
             disabled={false}
             restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
             min="0"
-            errorMessage={hasAmountError ? 'Allocated more than supply' : ''}
+            errorMessage={hasAmountError ? t('errorOverallocated') : ''}
             decimals={DEFAULT_TOKEN_DECIMALS}
           />
         </InputBox>
@@ -133,7 +136,7 @@ function TokenAllocations({
         <TextButton
           onClick={() => addTokenAllocation()}
           className="px-0 my-1 mx-0"
-          label="Add Allocation +"
+          label={t('labelAddAllocation')}
         />
       </InputBox>
     </div>

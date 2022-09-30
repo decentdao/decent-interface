@@ -10,6 +10,7 @@ import ContentBox from '../ui/ContentBox';
 import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorProviderActions, GovernanceTypes } from './provider/types';
+import { useTranslation } from 'react-i18next';
 
 export function ChooseGovernance() {
   const {
@@ -29,13 +30,14 @@ export function ChooseGovernance() {
 
   const isCurrentChainSupported = isChainSupportedOnGnosis(chainId);
   const currentChainMetadata = getChainMetadataById(chainId);
+  const { t } = useTranslation(['daoCreate', 'common']);
 
   return (
     <ContentBox>
       <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
         <RadioWithText
-          label="1:1 Token Voting"
-          description="Governance with tokens giving voting power to token holders."
+          label={t('label1To1Voting')}
+          description={t('desc1To1Voting')}
           name="governance"
           id="token-voting"
           isSelected={governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE}
@@ -45,17 +47,18 @@ export function ChooseGovernance() {
           readOnly
         />
         <RadioWithText
-          label="Gnosis Safe"
+          label={t('labelGnosis', { ns: 'common' })}
           description={
             isCurrentChainSupported
-              ? 'Gnosis Powered, Multi-signature governance allows you define an access/control-scheme through multiple signers that need to confirm transactions'
-              : `Unfortunately, Gnosis does not support network ${
-                  currentChainMetadata ? currentChainMetadata.name : ''
-                } you are using right now. Consider switching to one of the following networks: ${getChainsWithMetadata(
-                  getSupportedChains().filter(
-                    chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain)
-                  )
-                ).map(chain => ` ${chain.name}`)}`
+              ? t('descGnosis')
+              : t('errorGnosisUnsupported', {
+                  networkName: currentChainMetadata ? currentChainMetadata.name : '',
+                  supportedNetworks: getChainsWithMetadata(
+                    getSupportedChains().filter(
+                      chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain)
+                    )
+                  ).map(chain => ` ${chain.name}`),
+                })
           }
           id="gnosis-safe"
           name="governance"

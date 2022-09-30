@@ -1,12 +1,12 @@
 import { CreatorSteps } from '../types';
 
-export const CREATOR_STEP_TITLES = {
-  [CreatorSteps.ESSENTIALS]: 'Configure Essentials',
-  [CreatorSteps.CHOOSE_GOVERNANCE]: 'Choose Governance',
-  [CreatorSteps.GNOSIS_GOVERNANCE]: 'Gnosis Configuration',
-  [CreatorSteps.TREASURY_GOV_TOKEN]: 'Treasury and Governance Token',
-  [CreatorSteps.GOV_CONFIG]: 'Governance Configuration',
-  [CreatorSteps.FUNDING]: 'Funding',
+export const CREATOR_STEP_TITLE_KEYS = {
+  [CreatorSteps.ESSENTIALS]: 'titleEssentials',
+  [CreatorSteps.CHOOSE_GOVERNANCE]: 'titleChooseGovernance',
+  [CreatorSteps.GNOSIS_GOVERNANCE]: 'titleGnosis',
+  [CreatorSteps.TREASURY_GOV_TOKEN]: 'titleGovToken',
+  [CreatorSteps.GOV_CONFIG]: 'titleGovConfig',
+  [CreatorSteps.FUNDING]: 'titleFunding',
 };
 
 export const DEFAULT_TOKEN_DECIMALS = 18;

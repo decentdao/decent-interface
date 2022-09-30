@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
 import ContentBox from '../../ui/ContentBox';
 import { PrimaryButton } from '../../ui/forms/Button';
@@ -52,8 +53,10 @@ export function FundingOptions({
     return isEmpty || isAlreadyIncluded || isSameLength;
   }, [nftsToFund, selectedTokenIndex, treasuryAssetsNonFungible]);
 
+  const { t } = useTranslation(['common', 'daoCreate']);
+
   return (
-    <ContentBox title="Parent Treasury">
+    <ContentBox title={t('titleFundingOptions', { ns: 'daoCreate' })}>
       <div className="flex my-4">
         <select
           className="bg-gray-400 border border-gray-200 px-2 rounded-md w-full focus:outline-none"
@@ -61,7 +64,7 @@ export function FundingOptions({
         >
           <option
             value={undefined}
-            label="Select Token"
+            label={t('labelSelectToken', { ns: 'daoCreate' })}
             defaultChecked
           />
           {treasuryAssetsFungible.map((asset, index) => (
@@ -73,7 +76,7 @@ export function FundingOptions({
           ))}
         </select>
         <PrimaryButton
-          label="Add"
+          label={t('add')}
           onClick={addToken}
           disabled={isAddDisabled}
         />
@@ -85,7 +88,7 @@ export function FundingOptions({
         >
           <option
             value={undefined}
-            label="Select NFT"
+            label={t('labelSelectNFT', { ns: 'daoCreate' })}
             defaultChecked
           />
           {treasuryAssetsNonFungible.map((asset, index) => (
@@ -97,7 +100,7 @@ export function FundingOptions({
           ))}
         </select>
         <PrimaryButton
-          label="Move"
+          label={t('move')}
           onClick={moveNFT}
           disabled={isMoveDisabled}
         />

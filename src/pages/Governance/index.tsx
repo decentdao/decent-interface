@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ClaimToken from '../../components/Dao/ClaimToken';
 import ProposalsList from '../../components/Proposals/ProposalsList';
@@ -5,6 +6,7 @@ import { TextButton, SecondaryButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
 
 export function Governance() {
+  const { t } = useTranslation(['common', 'proposal']);
   return (
     <div>
       <ClaimToken />
@@ -12,10 +14,10 @@ export function Governance() {
         <H1>Proposals</H1>
         <div className="flex ml-auto mb-2 sm:mb-0 items-center sm:items-start">
           <Link to="delegate">
-            <TextButton label="Delegate" />
+            <TextButton label={t('delegate')} />
           </Link>
           <Link to="proposals/new">
-            <SecondaryButton label="Create Proposal" />
+            <SecondaryButton label={t('createProposal', { ns: 'proposal' })} />
           </Link>
         </div>
       </div>

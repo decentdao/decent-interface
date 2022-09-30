@@ -5,6 +5,7 @@ export enum ModuleSelectActions {
   RESET,
 }
 
+// TODO left untranslated because this is likely going away
 export enum ModuleTypes {
   TIMELOCK = 'Timelock Module',
   TOKEN_VOTING_GOVERNANCE = 'Token Governance',

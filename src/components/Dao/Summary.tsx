@@ -4,6 +4,7 @@ import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useTranslation } from 'react-i18next';
 
 function Summary() {
   const {
@@ -17,6 +18,7 @@ function Summary() {
       gnosisWrapperModule,
     },
   } = useFractal();
+  const { t } = useTranslation(['common', 'dashboard']);
 
   return (
     <div>
@@ -43,13 +45,13 @@ function Summary() {
         <InputBox>
           <AddressDisplay
             address={dao.daoAddress}
-            label="DAO"
+            label={t('dao')}
           />
         </InputBox>
         <InputBox>
           <AddressDisplay
             address={dao.accessControlAddress}
-            label="Access Control"
+            label={t('labelAccessControl', { ns: 'dashboard' })}
           />
         </InputBox>
       </ContentBox>

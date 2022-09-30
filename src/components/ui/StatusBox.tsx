@@ -1,5 +1,6 @@
 import cx from 'classnames';
-import useProposalStateString from '../../hooks/useProposalStateString';
+import { useTranslation } from 'react-i18next';
+import useProposalStateStringKey from '../../hooks/useProposalStateStringKey';
 import { ProposalState } from '../../providers/govenor/types';
 
 interface StatusBoxProps {
@@ -7,7 +8,7 @@ interface StatusBoxProps {
 }
 
 function StatusBox({ status }: StatusBoxProps) {
-  const proposalState = useProposalStateString(status);
+  const proposalState = useProposalStateStringKey(status);
 
   const getStatusColors = () => {
     switch (status) {
@@ -17,9 +18,10 @@ function StatusBox({ status }: StatusBoxProps) {
         return 'border border-gray-50 text-gray-50 bg-gray-400';
     }
   };
+  const { t } = useTranslation('transaction');
   return (
     <div className={cx('px-4 py-2 rounded-lg font-medium text-xs h-fit', getStatusColors())}>
-      <div>{proposalState}</div>
+      <div>{t(proposalState)}</div>
     </div>
   );
 }

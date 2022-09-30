@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { useListeners } from './hooks/useListeners';
 import { getSupportedChains } from './chains';
 import { Web3ProviderContext } from './hooks/useWeb3Provider';
+import { useTranslation } from 'react-i18next';
 
 const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
@@ -101,11 +102,12 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
     }
   }, [connectDefaultProvider]);
 
+  const { t } = useTranslation();
   const disconnect: DisconnectFn = useCallback(() => {
-    toast('Account disconnected', { toastId: 'disconnected' });
+    toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
     // switch to a default provider
     connectDefaultProvider();
-  }, [connectDefaultProvider]);
+  }, [connectDefaultProvider, t]);
 
   useListeners(web3Modal, connectDefaultProvider, connect);
 
