@@ -1,0 +1,11 @@
+{   
+    "notifDisclaimer": "WARNING: this project is not audited, use at your own risk.",
+    "accept": "Accept",
+    "menuConnect": "Connect",
+    "menuDisconnect": "Disconnect",
+    "menuFavorites": "Favorites",
+    "menuCommunity": "Community",
+    "menuOverview": "Overview",
+    "menuFaq": "FAQ",
+    "menuDocs": "Docs"
+}

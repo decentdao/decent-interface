@@ -6,12 +6,16 @@ import Breadcrumbs from './components/Breadcrumbs';
 import Header from './components/ui/Header';
 import { TextButton } from './components/ui/forms/Button';
 import { useLocalStorage } from './hooks/useLocalStorage';
+import './localization';
+import { useTranslation } from 'react-i18next';
 
 function NotAuditedToast() {
   const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
     'not_audited_acceptance',
     false
   );
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (notAuditedAcceptance) {
@@ -20,9 +24,9 @@ function NotAuditedToast() {
 
     const toastId = toast(
       <div className="flex flex-col items-center">
-        <div>WARNING: this project is not audited, use at your own risk.</div>
+        <div>{t('notifDisclaimer')}</div>
         <TextButton
-          label="Accept"
+          label={t('accept')}
           onClick={() => setNotAuditedAcceptance(true)}
         />
       </div>,
@@ -35,7 +39,7 @@ function NotAuditedToast() {
     );
 
     return () => toast.dismiss(toastId);
-  }, [notAuditedAcceptance, setNotAuditedAcceptance]);
+  }, [notAuditedAcceptance, setNotAuditedAcceptance, t]);
 
   return null;
 }
