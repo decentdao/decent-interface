@@ -5,17 +5,14 @@ function EtherscanLinkAddress({
   children,
 }: {
   address?: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }) {
   const subdomain = useSubDomain();
-
-  if (!address) {
-    return null;
-  }
+  const href = address ? `https://${subdomain}etherscan.io/address/${address}` : undefined;
 
   return (
     <a
-      href={`https://${subdomain}etherscan.io/address/${address}`}
+      href={href}
       target="_blank"
       rel="noreferrer"
     >
