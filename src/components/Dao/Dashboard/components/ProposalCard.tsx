@@ -34,7 +34,7 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
           </div>
           <p className="mt-4 text-white text-lg font-mono w-full">{proposal.description}</p>
         </div>
-        {isProposalActive && proposal.endTime && now.getTime() > proposal.endTime.getTime() && (
+        {isProposalActive && proposal.endTime && proposal.endTime.getTime() > now.getTime() && (
           <span className="text-base text-gray-50 mx-14">
             {formatDatesDiffReadable(proposal.endTime, now)} left
           </span>
