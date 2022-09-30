@@ -54,11 +54,11 @@ const useSearchDao = () => {
       return;
     }
     if (!validAddress && address !== undefined) {
-      setErrorMessage('Please use a valid Fractal ETH address or ENS domain');
+      setErrorMessage('Please use a valid Fractal MVD address, Gnosis Safe address, or ENS domain');
       return;
     }
     if (addressIsDAO === false && addressIsGnosisSafe === false) {
-      setErrorMessage('Sorry a Fractal does not exist on this address');
+      setErrorMessage('Sorry neither a Fractal MVD nor a Gnosis Safe exists on this address');
       return;
     }
   }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading]);

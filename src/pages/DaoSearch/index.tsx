@@ -79,7 +79,7 @@ function DAOSearch() {
                   value={searchAddressInput}
                   onChange={searchOnChange}
                   label="Address"
-                  subLabel="Use a valid Fractal ETH address or ENS domain"
+                  subLabel="Please use a valid Fractal MVD address, Gnosis Safe address, or ENS domain"
                   type="text"
                   errorMessage={errorMessage}
                 />
