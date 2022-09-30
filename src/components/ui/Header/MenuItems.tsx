@@ -29,43 +29,43 @@ interface LinkMenuItem extends MenuItem {
 }
 
 const COMMUNITY: LinkMenuItem = {
-  titleKey: 'menuCommunity',
+  titleKey: 'community',
   link: 'https://discord.gg/decent-dao',
   Icon: Contact,
 };
 
 const OVERVIEW: LinkMenuItem = {
-  titleKey: 'menuOverview',
+  titleKey: 'overview',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview',
   Icon: Support,
 };
 
 const FAQ: LinkMenuItem = {
-  titleKey: 'menuFaq',
+  titleKey: 'faq',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq',
   Icon: Faq,
 };
 
 const DOCS: LinkMenuItem = {
-  titleKey: 'menuDocs',
+  titleKey: 'docs',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal',
   Icon: Docs,
 };
 
 const FAVORITES: LinkMenuItem = {
-  titleKey: 'menuFavorites',
+  titleKey: 'favorites',
   link: '/daos/favorites',
   Icon: StarEmpty,
 };
 
 const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
-  titleKey: 'menuConnect',
+  titleKey: 'connect',
   action: connect,
   Icon: Connect,
 });
 
 const DISCONNECT = (disconnect: () => void): ActionMenuItem => ({
-  titleKey: 'menuDisconnect',
+  titleKey: 'disconnect',
   action: disconnect,
   Icon: Disconnect,
 });

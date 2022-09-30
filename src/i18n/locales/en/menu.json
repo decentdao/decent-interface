@@ -1,9 +1,9 @@
 {
-    "menuConnect": "Connect",
-    "menuDisconnect": "Disconnect",
-    "menuFavorites": "Favorites",
-    "menuCommunity": "Community",
-    "menuOverview": "Overview",
-    "menuFaq": "FAQ",
-    "menuDocs": "Docs"
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "favorites": "Favorites",
+    "community": "Community",
+    "overview": "Overview",
+    "faq": "FAQ",
+    "docs": "Docs"
 }
