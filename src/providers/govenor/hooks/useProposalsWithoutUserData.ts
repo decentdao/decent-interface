@@ -32,50 +32,56 @@ export const useProposalsWithoutUserData = (governorModule: GovernorModule | und
 
     const filter = governorModule.filters.ProposalCreated();
 
-    // Get an array of all the ProposalCreated events
-    governorModule
-      .queryFilter(filter)
-      .then(proposalEvents => {
-        const newProposals = proposalEvents.map((proposalEvent, index) => {
-          const newProposal: ProposalDataWithoutUserData = {
-            number: index,
-            id: proposalEvent.args.proposalId,
-            idSubstring: undefined,
-            startBlock: proposalEvent.args.startBlock,
-            endBlock: proposalEvent.args.endBlock,
-            startTime: undefined,
-            endTime: undefined,
-            startTimeString: undefined,
-            endTimeString: undefined,
-            proposer: proposalEvent.args.proposer,
-            targets: proposalEvent.args.targets,
-            signatures: proposalEvent.args.signatures,
-            calldatas: proposalEvent.args.calldatas,
-            values: proposalEvent.args[3], // Using array index instead of 'values' since 'values' is a keyword in JS
-            description: proposalEvent.args.description,
-            state: undefined,
-            forVotesCount: undefined,
-            againstVotesCount: undefined,
-            abstainVotesCount: undefined,
-            forVotesPercent: undefined,
-            againstVotesPercent: undefined,
-            abstainVotesPercent: undefined,
-            eta: undefined,
-          };
-          return newProposal;
-        });
+    const getData = async () => {
+      try {
+        // Get an array of all the ProposalCreated events
+        if (governorModule !== undefined) {
+          const proposalEvents = await governorModule.queryFilter(filter);
+          const newProposalsWithoutData = await Promise.all(
+            proposalEvents.map(async (proposalEvent, index) => {
+              const block = await proposalEvent.getBlock();
+              const newProposal: ProposalDataWithoutUserData = {
+                number: index,
+                id: proposalEvent.args.proposalId,
+                idSubstring: undefined,
+                startBlock: proposalEvent.args.startBlock,
+                endBlock: proposalEvent.args.endBlock,
+                blockTimestamp: block.timestamp,
+                startTime: undefined,
+                endTime: undefined,
+                startTimeString: undefined,
+                endTimeString: undefined,
+                proposer: proposalEvent.args.proposer,
+                targets: proposalEvent.args.targets,
+                signatures: proposalEvent.args.signatures,
+                calldatas: proposalEvent.args.calldatas,
+                values: proposalEvent.args[3], // Using array index instead of 'values' since 'values' is a keyword in JS
+                description: proposalEvent.args.description,
+                state: undefined,
+                forVotesCount: undefined,
+                againstVotesCount: undefined,
+                abstainVotesCount: undefined,
+                forVotesPercent: undefined,
+                againstVotesPercent: undefined,
+                abstainVotesPercent: undefined,
+                eta: undefined,
+              };
+              return newProposal;
+            })
+          );
 
-        return newProposals;
-      })
-      .then(newProposals => {
-        return Promise.all(
-          newProposals.map(newProposal => getProposalData(provider, governorModule, newProposal))
-        );
-      })
-      .then(newProposals => {
-        setProposalsWithoutUserData(newProposals);
-      })
-      .catch(logError);
+          const newProposals = await Promise.all(
+            newProposalsWithoutData.map(newProposal =>
+              getProposalData(provider, governorModule, newProposal)
+            )
+          );
+          setProposalsWithoutUserData(newProposals);
+        }
+      } catch (e) {
+        logError(e);
+      }
+    };
+    getData();
   }, [governorModule, provider]);
 
   // Setup proposal created events listener
@@ -104,6 +110,7 @@ export const useProposalsWithoutUserData = (governorModule: GovernorModule | und
         idSubstring: undefined,
         startBlock: startBlock,
         endBlock: endBlock,
+        blockTimestamp: 0,
         startTime: undefined,
         endTime: undefined,
         startTimeString: undefined,

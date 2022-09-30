@@ -18,7 +18,7 @@ function StatusBox({ status }: StatusBoxProps) {
     }
   };
   return (
-    <div className={cx('px-2 py-0.5 rounded-full font-medium text-xs h-fit', getStatusColors())}>
+    <div className={cx('px-4 py-2 rounded-lg font-medium text-xs h-fit', getStatusColors())}>
       <div>{proposalState}</div>
     </div>
   );
