@@ -1,7 +1,7 @@
 import { DAO, DAOAccessControl } from '@fractal-framework/core-contracts';
-import { FractalAction } from '../constants/enums';
+import { MVDAction } from '../constants/enums';
 
-export interface FractalDAO {
+export interface MVDDAO {
   daoAddress?: string;
   daoContract?: DAO;
   daoName?: string;
@@ -11,11 +11,11 @@ export interface FractalDAO {
   isLoading?: boolean;
 }
 
-export type FractalActions =
-  | { type: FractalAction.SET_DAO; payload: FractalDAO }
+export type MVDActions =
+  | { type: MVDAction.SET_DAO; payload: MVDDAO }
   | {
-      type: FractalAction.UPDATE_MODULE;
+      type: MVDAction.UPDATE_MODULE;
       payload: string[];
     }
-  | { type: FractalAction.RESET }
-  | { type: FractalAction.INVALID };
+  | { type: MVDAction.RESET }
+  | { type: MVDAction.INVALID };

@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../helpers/errorLogging';
 import useSearchDao from '../../hooks/useSearchDao';
-import { FractalAction } from '../../providers/fractal/constants/enums';
+import { MVDAction } from '../../providers/fractal/constants/enums';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { ModuleActionRoleEvents } from '../../providers/fractal/types';
 
@@ -96,7 +96,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
     if (addressIsDAO && address && signerOrProvider && account) {
       (async () => {
         dispatch({
-          type: FractalAction.SET_DAO,
+          type: MVDAction.SET_DAO,
           payload: await retrieveDAO(),
         });
       })();
@@ -108,7 +108,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
       toast(errorMessage);
       (async () => {
         dispatch({
-          type: FractalAction.INVALID,
+          type: MVDAction.INVALID,
         });
       })();
     }
@@ -116,7 +116,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     return () => {
-      dispatch({ type: FractalAction.RESET });
+      dispatch({ type: MVDAction.RESET });
     };
   }, [dispatch]);
   return children;

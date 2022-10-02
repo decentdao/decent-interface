@@ -1,6 +1,6 @@
-import { FractalDAO } from '../types';
+import { MVDDAO } from '../types';
 
-export const initialState: FractalDAO = {
+export const mvdInitialState: MVDDAO = {
   daoAddress: undefined,
   daoContract: undefined,
   daoName: undefined,
