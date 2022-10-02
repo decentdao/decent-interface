@@ -1,8 +1,12 @@
-import { createContext, useContext, Context } from 'react';
+import React, { createContext, useContext, Context } from 'react';
 import { IModuleData } from '../../../controller/Modules/types';
-import { MVDActions, MVDDAO, IDaoLegacy } from '../types';
+import { FractalNode, MVDActions, MVDDAO, IDaoLegacy, NodeActions } from '../types';
 
 export interface IFractalContext {
+  node: {
+    node: FractalNode;
+    dispatch: React.Dispatch<NodeActions>;
+  };
   mvd: {
     dao: MVDDAO;
     daoLegacy: IDaoLegacy;

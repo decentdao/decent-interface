@@ -1,18 +1,18 @@
 import { ReactNode, useMemo, useReducer } from 'react';
 
-import { mvdInitialState } from './constants';
-import { MVDAction } from './constants/enums';
+import { mvdInitialState, nodeInitialState } from './constants';
+import { MVDAction, NodeAction } from './constants/enums';
 import { useDAOLegacy } from './hooks/useDAOLegacy';
 import { FractalContext } from './hooks/useFractal';
-import { MVDActions, MVDDAO, IDaoLegacy } from './types';
+import { FractalNode, NodeActions, MVDActions, MVDDAO, IDaoLegacy } from './types';
 import { useModuleTypes } from './hooks/useModuleTypes';
 import { useModuleListeners } from './hooks/useModuleListeners';
 
-const initializeState = (_initialState: MVDDAO) => {
+const initializeState = (_initialState: FractalNode | MVDDAO) => {
   return _initialState;
 };
 
-export const reducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
+const mvdReducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
   switch (action.type) {
     case MVDAction.SET_DAO:
       return { ...action.payload, isLoading: false };
@@ -27,12 +27,26 @@ export const reducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
   }
 };
 
+const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
+  switch (action.type) {
+    case NodeAction.SET_NODE_TYPE:
+      return { ...state, nodeType: action.payload, isLoading: false };
+    case NodeAction.RESET:
+      return initializeState(nodeInitialState);
+    case NodeAction.INVALID:
+      return { ...nodeInitialState };
+    default:
+      return state;
+  }
+};
+
 /**
  * Uses Context API to provider DAO information to app
  */
 export function FractalProvider({ children }: { children: ReactNode }) {
-  const [dao, dispatch] = useReducer(reducer, mvdInitialState, initializeState);
+  const [dao, dispatch] = useReducer(mvdReducer, mvdInitialState, initializeState);
   const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
+  const [node, nodeDispatch] = useReducer(nodeReducer, nodeInitialState, initializeState);
 
   const {
     timelockModule,
@@ -46,6 +60,10 @@ export function FractalProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
+      node: {
+        node,
+        dispatch: nodeDispatch,
+      },
       mvd: {
         dao,
         modules: {
@@ -60,6 +78,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       },
     }),
     [
+      node,
       dao,
       daoLegacy,
       timelockModule,
