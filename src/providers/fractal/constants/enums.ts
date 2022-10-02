@@ -1,5 +1,6 @@
 export enum NodeType {
   MVD,
+  GNOSIS,
 }
 
 export enum NodeAction {
