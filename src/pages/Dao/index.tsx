@@ -9,8 +9,9 @@ import Transactions from '../Transactions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { TreasuryController } from '../../controller/Modules/TreasuryController';
 import { GovernanceController } from '../../controller/Modules/GovernanceController';
+import { NodeType } from '../../providers/fractal/constants/enums';
 
-function DAORoutes() {
+function MVDDAO() {
   return (
     <Routes>
       <Route
@@ -39,30 +40,65 @@ function DAORoutes() {
   );
 }
 
+function GnosisDAO() {
+  const {
+    gnosis: { safe },
+  } = useFractal();
+
+  return (
+    <div className="text-white">
+      <div>address: {safe.address}</div>
+      <div>nonce: {safe.nonce}</div>
+      <div>threshold: {safe.threshold}</div>
+      <div>owners: {safe.owners?.join(', ')}</div>
+      <div>masterCopy: {safe.masterCopy}</div>
+      <div>modules: {safe.modules?.join(', ')}</div>
+      <div>fallbackHandler: {safe.fallbackHandler}</div>
+      <div>guard: {safe.guard}</div>
+      <div>version: {safe.version}</div>
+    </div>
+  );
+}
+
+function DAORoutes() {
+  const {
+    node: { node },
+  } = useFractal();
+
+  if (node.nodeType === NodeType.MVD) {
+    return <MVDDAO />;
+  } else if (node.nodeType === NodeType.GNOSIS) {
+    return <GnosisDAO />;
+  } else {
+    return null;
+  }
+}
+
 function DAO() {
   const {
+    node: { node },
     mvd: { dao },
   } = useFractal();
   const navigate = useNavigate();
   useEffect(() => {
-    if (!dao.isLoading && !dao.daoAddress) {
+    if (!node.isLoading && node.nodeType === undefined) {
       navigate('/daos');
     }
   });
-  if (dao.isLoading) {
+  if (node.isLoading) {
     // @todo add full page loader
     <div>LOADING DAO</div>;
   }
 
-  if (!dao.daoAddress) {
-    return null;
-  }
-
   return (
     <div>
-      {dao.daoName !== undefined && (
+      {node.nodeType === NodeType.MVD && dao.daoName !== undefined ? (
         <Helmet>
           <title>Fractal | {dao.daoName}</title>
+        </Helmet>
+      ) : (
+        <Helmet>
+          <title>Fractal</title>
         </Helmet>
       )}
       <DAORoutes />
