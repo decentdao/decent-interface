@@ -8,7 +8,11 @@ import { FractalNode, NodeActions, MVDActions, MVDDAO, IDaoLegacy } from './type
 import { useModuleTypes } from './hooks/useModuleTypes';
 import { useModuleListeners } from './hooks/useModuleListeners';
 
-const initializeState = (_initialState: FractalNode | MVDDAO) => {
+const initializeState = (_initialState: MVDDAO) => {
+  return _initialState;
+};
+
+const initializeNodeState = (_initialState: FractalNode) => {
   return _initialState;
 };
 
@@ -30,9 +34,9 @@ const mvdReducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
 const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
   switch (action.type) {
     case NodeAction.SET_NODE_TYPE:
-      return { ...state, nodeType: action.payload, isLoading: false };
+      return { ...state, nodeType: action.payload, isLoaded: true };
     case NodeAction.RESET:
-      return initializeState(nodeInitialState);
+      return initializeNodeState(nodeInitialState);
     case NodeAction.INVALIDATE:
       return { ...nodeInitialState };
     default:
@@ -46,7 +50,7 @@ const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
 export function FractalProvider({ children }: { children: ReactNode }) {
   const [dao, dispatch] = useReducer(mvdReducer, mvdInitialState, initializeState);
   const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
-  const [node, nodeDispatch] = useReducer(nodeReducer, nodeInitialState, initializeState);
+  const [node, nodeDispatch] = useReducer(nodeReducer, nodeInitialState, initializeNodeState);
 
   const {
     timelockModule,

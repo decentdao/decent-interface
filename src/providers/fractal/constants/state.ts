@@ -2,7 +2,7 @@ import { MVDDAO, FractalNode } from '../types';
 
 export const nodeInitialState: FractalNode = {
   nodeType: undefined,
-  isLoading: true,
+  isLoaded: false,
 };
 
 export const mvdInitialState: MVDDAO = {
