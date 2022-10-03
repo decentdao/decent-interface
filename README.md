@@ -70,9 +70,11 @@ On both hosting platforms, both the "dev" and "prod" environments are where cust
 So at any given time, there are effectively four builds out there, and they are publicly accessible and privately configurable as follows:
 
 1. dev site via Netlify
-   - url: https://app.dev.fractalframework.xyz
-   - env vars
-     - netlify: https://app.netlify.com/sites/fractal-framework-interface-dev/settings/deploys#environment
+
+- url: https://app.dev.fractalframework.xyz
+- env vars
+  - netlify: https://app.netlify.com/sites/fractal-framework-interface-dev/settings/deploys#environment
+
 1. dev site via IPFS
    - url: http://app.dev.fractalframework.xyz.ipns.localhost:8080/
    - env vars
