@@ -92,9 +92,9 @@ So at any given time, there are effectively four builds out there, and they are 
   - netlify: https://app.netlify.com/sites/fractal-framework-interface/settings/deploys#environment
 
 - prod site via IPFS
-  - url: http://app.fractalframework.xyz.ipns.localhost:8080/
-  - env vars
-    - github: https://github.com/decent-dao/fractal-interface/settings/environments/503834178/edit
-    - workflow: [./.github/workflows/release-ipfs-prod.yaml](./.github/workflows/release-ipfs-prod).
+- url: http://app.fractalframework.xyz.ipns.localhost:8080/
+- env vars
+  - github: https://github.com/decent-dao/fractal-interface/settings/environments/503834178/edit
+  - workflow: [./.github/workflows/release-ipfs-prod.yaml](./.github/workflows/release-ipfs-prod).
 
 _TL;DR: When making changes to either "dev" or "prod" configurations, perform updates both on Netlify and in Github Secrets / Workflow_
