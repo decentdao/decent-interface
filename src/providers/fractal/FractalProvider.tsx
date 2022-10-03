@@ -34,7 +34,7 @@ const mvdReducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
 const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
   switch (action.type) {
     case NodeAction.SET_NODE_TYPE:
-      return { ...state, nodeType: action.payload, isLoaded: true };
+      return { ...state, nodeType: action.payload };
     case NodeAction.RESET:
       return initializeNodeState(nodeInitialState);
     case NodeAction.INVALIDATE:
