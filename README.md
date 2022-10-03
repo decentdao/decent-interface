@@ -5,7 +5,7 @@
 Clone the repository
 
 ```shell
-$ git clone ...
+$ git clone {repository url}
 ```
 
 Change to correct node version
