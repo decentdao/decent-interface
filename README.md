@@ -50,6 +50,7 @@ $ npx playwright test tests/000nameOfTest.spec.ts
 ```
 
 To run tests in a particular browser type use the following append/flag:
+
 --project=browserType
 Example:
 
@@ -57,7 +58,7 @@ Example:
 $ npx playwright test --project=chromium
 ```
 
-Test results for each test on each browser type will be output into the ![playwright-report](./playwright-report/) (HTML) and ![test-results](./test-results/)(screenshots and videos) folders.
+Test results for each test on each browser type will be output into the [playwright-report](./playwright-report/) (HTML) and [test-results](./test-results/)(screenshots and videos) folders.
 
 ## Deployment Notes
 
