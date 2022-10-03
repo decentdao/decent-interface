@@ -29,7 +29,7 @@ $ npm install
 
 ### Running Docker
 
-Once Docker has been installed and setup, you can run the containers by running
+Once Docker has been installed and set up, you can run the containers with the following command:
 
 ```shell
 $ docker compose up --build
