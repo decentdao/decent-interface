@@ -76,10 +76,12 @@ So at any given time, there are effectively four builds out there, and they are 
   - netlify: https://app.netlify.com/sites/fractal-framework-interface-dev/settings/deploys#environment
 
 1. dev site via IPFS
-   - url: http://app.dev.fractalframework.xyz.ipns.localhost:8080/
-   - env vars
-     - github: https://github.com/decent-dao/fractal-interface/settings/environments/486034480/edit
-     - workflow: [./.github/workflows/release-ipfs-dev.yaml](./.github/workflows/release-ipfs-dev.yaml)
+
+- url: http://app.dev.fractalframework.xyz.ipns.localhost:8080/
+- env vars
+  - github: https://github.com/decent-dao/fractal-interface/settings/environments/486034480/edit
+  - workflow: [./.github/workflows/release-ipfs-dev.yaml](./.github/workflows/release-ipfs-dev.yaml)
+
 1. prod site via Netlify
    - url: https://app.fractalframework.xyz
    - env vars
