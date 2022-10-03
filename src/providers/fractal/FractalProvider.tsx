@@ -20,7 +20,7 @@ const mvdReducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
       return { ...state, moduleAddresses: action.payload };
     case MVDAction.RESET:
       return initializeState(mvdInitialState);
-    case MVDAction.INVALID:
+    case MVDAction.INVALIDATE:
       return { ...mvdInitialState, isLoading: false };
     default:
       return state;
@@ -33,7 +33,7 @@ const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
       return { ...state, nodeType: action.payload, isLoading: false };
     case NodeAction.RESET:
       return initializeState(nodeInitialState);
-    case NodeAction.INVALID:
+    case NodeAction.INVALIDATE:
       return { ...nodeInitialState };
     default:
       return state;

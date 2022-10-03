@@ -111,8 +111,8 @@ export function DAOController({ children }: { children: JSX.Element }) {
   useEffect(() => {
     if (!isProviderLoading && (errorMessage || !account)) {
       toast(errorMessage);
-      nodeDispatch({ type: NodeAction.INVALID });
-      mvdDispatch({ type: MVDAction.INVALID });
+      nodeDispatch({ type: NodeAction.INVALIDATE });
+      mvdDispatch({ type: MVDAction.INVALIDATE });
     }
   }, [errorMessage, mvdDispatch, account, isProviderLoading, nodeDispatch]);
 

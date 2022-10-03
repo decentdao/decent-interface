@@ -23,7 +23,7 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
       return { ...state, moduleAddress: action.payload };
     case ModuleSelectActions.SET_MODULE:
       return { ...action.payload, isLoading: false };
-    case ModuleSelectActions.INVALID:
+    case ModuleSelectActions.INVALIDATE:
       return { ...initialState, isLoading: false };
     case ModuleSelectActions.RESET:
       return initialState;
@@ -65,7 +65,7 @@ export function Modules() {
         break;
       }
       default: {
-        dispatch({ type: ModuleSelectActions.INVALID });
+        dispatch({ type: ModuleSelectActions.INVALIDATE });
         break;
       }
     }

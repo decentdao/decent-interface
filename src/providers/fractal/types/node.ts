@@ -7,5 +7,5 @@ export interface FractalNode {
 
 export type NodeActions =
   | { type: NodeAction.SET_NODE_TYPE; payload: NodeType }
-  | { type: NodeAction.INVALID }
+  | { type: NodeAction.INVALIDATE }
   | { type: NodeAction.RESET };
