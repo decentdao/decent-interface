@@ -34,7 +34,7 @@ export interface IWeb3ProviderContext {
 
 ```tsx
 function Component() {
-  const { state: { account, chaindId, network, connectionType } } = useWeb3Provider();
+  const { state: { account, chainId, network, connectionType } } = useWeb3Provider();
 
   console.log(account)
   // if connected 0x.... 

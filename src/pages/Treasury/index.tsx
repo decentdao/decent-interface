@@ -27,7 +27,9 @@ function Treasury() {
     treasuryAssetsNonFungible,
     treasuryModuleContract,
   } = useTreasuryModule();
-  const { dao } = useFractal();
+  const {
+    mvd: { dao },
+  } = useFractal();
 
   const isCoinGeckoAttributionVisible = useMemo(
     () => Object.keys(treasuryAssetsFungibleFiatAmounts).length > 0,

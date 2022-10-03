@@ -27,7 +27,9 @@ import { GovernanceInjectorContext } from './GovernanceInjectorConext';
  */
 export function GovernanceInjector({ children }: { children: JSX.Element }) {
   const {
-    dao: { daoAddress },
+    mvd: {
+      dao: { daoAddress },
+    },
   } = useFractal();
 
   const {

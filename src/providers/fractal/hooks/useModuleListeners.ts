@@ -1,10 +1,10 @@
-import { FractalDAO } from './../types/fractal';
+import { MVDDAO } from './../types/fractal';
 import { useEffect } from 'react';
-import { FractalAction } from '../constants/enums';
-import { ACRoleListener, FractalActions } from '../types';
+import { MVDAction } from '../constants/enums';
+import { ACRoleListener, MVDActions } from '../types';
 
 // setups listeners for acesss control
-export function useModuleListeners(dao: FractalDAO, dispatch: React.Dispatch<FractalActions>) {
+export function useModuleListeners(dao: MVDDAO, dispatch: React.Dispatch<MVDActions>) {
   useEffect(() => {
     if (!dao.daoContract || !dao.accessControlContract) {
       return;
@@ -18,7 +18,7 @@ export function useModuleListeners(dao: FractalDAO, dispatch: React.Dispatch<Fra
       const addresses = dao.moduleAddresses || [];
       if (!addresses.includes(target)) {
         dispatch({
-          type: FractalAction.UPDATE_MODULE,
+          type: MVDAction.UPDATE_MODULE,
           payload: [...addresses, target],
         });
       }
@@ -32,7 +32,7 @@ export function useModuleListeners(dao: FractalDAO, dispatch: React.Dispatch<Fra
       const addresses = dao.moduleAddresses || [];
       if (!addresses?.includes(target)) {
         dispatch({
-          type: FractalAction.UPDATE_MODULE,
+          type: MVDAction.UPDATE_MODULE,
           payload: [...addresses, target],
         });
       }

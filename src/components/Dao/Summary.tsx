@@ -7,14 +7,16 @@ import { useFractal } from '../../providers/fractal/hooks/useFractal';
 
 function Summary() {
   const {
-    dao,
-    daoLegacy,
-    modules: {
-      timelockModule,
-      treasuryModule,
-      tokenVotingGovernanceModule,
-      claimingContractModule,
-      gnosisWrapperModule,
+    mvd: {
+      dao,
+      daoLegacy,
+      modules: {
+        timelockModule,
+        treasuryModule,
+        tokenVotingGovernanceModule,
+        claimingContractModule,
+        gnosisWrapperModule,
+      },
     },
   } = useFractal();
 
