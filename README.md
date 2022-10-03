@@ -46,12 +46,13 @@ $ npx playwright test
 To define particular tests to run use the following command:
 
 ```shell
-$ npx playwright test tests/000nameOfTest.spec.ts
+$ npx playwright test tests/nameOfTest.spec.ts
 ```
 
 To run tests in a particular browser type use the following append/flag:
 
 --project=browserType
+
 Example:
 
 ```shell
