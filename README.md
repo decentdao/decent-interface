@@ -24,7 +24,7 @@ $ npm install
 
 ### Setup - Docker
 
-- For more information about docker installation and setup for local development:
+- For more information about Docker installation and setup for local development:
   [Docker README](./docker/README.md)
 
 ### Running Docker
