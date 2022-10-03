@@ -49,7 +49,7 @@ If files are changed, you should kill the instances and re-build and start again
 To build all containers:
 
 ```shell
-$ docker compose build`
+$ docker compose build
 ```
 
 To build a single container
