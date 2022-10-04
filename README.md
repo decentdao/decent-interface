@@ -8,7 +8,7 @@ Clone the repository
 $ git clone {repository url}
 ```
 
-Change to correct node version
+Change to correct Node.js version
 
 ```shell
 $ nvm use
