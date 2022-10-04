@@ -12,7 +12,7 @@ A pretty simply configured Hardhat node. Setup files are in the directory, `./do
   ```
 - `Dockerfile` see comments in file. Creation script for blockchain Docker container
 - `entrypoint.sh` executes the package.json script to start.
-- `hardhat.config.js` sets the hardhat node to specific chain id and runs node forked from goerli and latest block
+- `hardhat.config.js` sets the hardhat node to specific chain id and runs node forked from Goerli and latest block
 - `hardhat.package.json` with `hardhat` and `dotenv` libraries
 
 ### Webapp
@@ -36,7 +36,7 @@ You'll also need to have the Docker software installed on your computer and runn
 
 #### Alchemy API key
 
-The blockchain container forks goerli, to be able to do this an Alchemy API key is needed.
+The blockchain container forks Goerli, to be able to do this an Alchemy API key is needed.
 
 You'll need to get a free Alchemy API key for a Goerli project from https://www.alchemy.com/.
 
