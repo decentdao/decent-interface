@@ -1,14 +1,22 @@
 import { ReactNode, useMemo, useReducer } from 'react';
 
-import { mvdInitialState, nodeInitialState } from './constants';
-import { MVDAction, NodeAction } from './constants/enums';
+import { mvdInitialState, nodeInitialState, gnosisInitialState } from './constants';
+import { GnosisAction, MVDAction, NodeAction } from './constants/enums';
 import { useDAOLegacy } from './hooks/useDAOLegacy';
 import { FractalContext } from './hooks/useFractal';
-import { FractalNode, NodeActions, MVDActions, MVDDAO, IDaoLegacy } from './types';
+import {
+  FractalNode,
+  NodeActions,
+  MVDActions,
+  MVDDAO,
+  IDaoLegacy,
+  GnosisSafe,
+  GnosisActions,
+} from './types';
 import { useModuleTypes } from './hooks/useModuleTypes';
 import { useModuleListeners } from './hooks/useModuleListeners';
 
-const initializeState = (_initialState: FractalNode | MVDDAO) => {
+const initializeState = (_initialState: FractalNode | MVDDAO | GnosisSafe) => {
   return _initialState;
 };
 
@@ -40,6 +48,19 @@ const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
   }
 };
 
+const gnosisReducer = (state: GnosisSafe, action: GnosisActions): GnosisSafe => {
+  switch (action.type) {
+    case GnosisAction.SET_SAFE:
+      return { ...action.payload, isLoading: false };
+    case GnosisAction.RESET:
+      return initializeState(gnosisInitialState);
+    case GnosisAction.INVALIDATE:
+      return { ...gnosisInitialState };
+    default:
+      return state;
+  }
+};
+
 /**
  * Uses Context API to provider DAO information to app
  */
@@ -47,6 +68,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   const [dao, dispatch] = useReducer(mvdReducer, mvdInitialState, initializeState);
   const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
   const [node, nodeDispatch] = useReducer(nodeReducer, nodeInitialState, initializeState);
+  const [gnosis, gnosisDispatch] = useReducer(gnosisReducer, gnosisInitialState, initializeState);
 
   const {
     timelockModule,
@@ -76,17 +98,23 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         dispatch,
         daoLegacy,
       },
+      gnosis: {
+        safe: gnosis,
+        dispatch: gnosisDispatch,
+      },
     }),
     [
       node,
       dao,
-      daoLegacy,
       timelockModule,
       treasuryModule,
       tokenVotingGovernanceModule,
       claimingContractModule,
       gnosisWrapperModule,
+      daoLegacy,
+      gnosis,
     ]
   );
+
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
 }

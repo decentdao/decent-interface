@@ -15,3 +15,9 @@ export enum MVDAction {
   INVALID,
   RESET,
 }
+
+export enum GnosisAction {
+  SET_SAFE,
+  INVALIDATE,
+  RESET,
+}
