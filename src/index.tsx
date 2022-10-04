@@ -14,6 +14,7 @@ import { FractalProvider } from './providers/fractal/FractalProvider';
 import { ErrorFallback } from './components/ErrorFallback';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
 import { ChakraProvider } from '@chakra-ui/react';
+import { theme } from '@decent-org/fractal-ui';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -30,7 +31,7 @@ root.render(
         </Helmet>
         <HashRouter>
           <FractalErrorBoundary fallback={ErrorFallback}>
-            <ChakraProvider>
+            <ChakraProvider theme={theme}>
               <Web3Provider>
                 <BlockchainDataProvider>
                   <FractalProvider>
