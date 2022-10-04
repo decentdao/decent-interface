@@ -8,7 +8,7 @@ test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   await page.locator('button:has-text("Connect Wallet")').click();
 
   /* Dropdown menu of "Connect Wallet" */
-  await page.locator('button[role="menuitem"]:has-text("Connect Wallet")').click();
+  await page.locator('button[role="menuitem"]:has-text("Connect")').click();
 
   /* Select wallet of "Local NodeConnects as Signer to local provider" */
   await page.locator('text=Local NodeConnects as Signer to local provider').click();
