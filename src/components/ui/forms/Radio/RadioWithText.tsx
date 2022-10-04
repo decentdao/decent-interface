@@ -27,7 +27,7 @@ export function RadioWithText({
       className={cx('p-4 flex border h-full', {
         'border-gray-50': isSelected,
         'border-gray-400': !isSelected,
-        'bg-gray-500': !disabled,
+        'bg-gray-500 cursor-pointer': !disabled,
         'bg-gray-700 cursor-not-allowed': disabled,
       })}
       onClick={onChange}
