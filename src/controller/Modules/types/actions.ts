@@ -10,4 +10,4 @@ export type ModuleSelectAction =
     }
   | { type: ModuleSelectActions.SET_MODULE_ADDRESS; payload: string }
   | { type: ModuleSelectActions.RESET }
-  | { type: ModuleSelectActions.INVALID };
+  | { type: ModuleSelectActions.INVALIDATE };

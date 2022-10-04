@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../helpers/errorLogging';
 import useSearchDao from '../../hooks/useSearchDao';
-import { MVDAction } from '../../providers/fractal/constants/enums';
+import { MVDAction, NodeAction, NodeType } from '../../providers/fractal/constants/enums';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { ModuleActionRoleEvents } from '../../providers/fractal/types';
 
@@ -14,7 +14,8 @@ import { ModuleActionRoleEvents } from '../../providers/fractal/types';
  */
 export function DAOController({ children }: { children: JSX.Element }) {
   const {
-    mvd: { dispatch },
+    node: { dispatch: nodeDispatch },
+    mvd: { dispatch: mvdDispatch },
   } = useFractal();
   const params = useParams();
   const {
@@ -95,29 +96,31 @@ export function DAOController({ children }: { children: JSX.Element }) {
   useEffect(() => {
     if (addressIsDAO && address && signerOrProvider && account) {
       (async () => {
-        dispatch({
+        nodeDispatch({
+          type: NodeAction.SET_NODE_TYPE,
+          payload: NodeType.MVD,
+        });
+        mvdDispatch({
           type: MVDAction.SET_DAO,
           payload: await retrieveDAO(),
         });
       })();
     }
-  }, [address, signerOrProvider, addressIsDAO, retrieveDAO, dispatch, account]);
+  }, [address, signerOrProvider, addressIsDAO, retrieveDAO, mvdDispatch, account, nodeDispatch]);
 
   useEffect(() => {
     if (!isProviderLoading && (errorMessage || !account)) {
       toast(errorMessage);
-      (async () => {
-        dispatch({
-          type: MVDAction.INVALID,
-        });
-      })();
+      nodeDispatch({ type: NodeAction.INVALIDATE });
+      mvdDispatch({ type: MVDAction.INVALIDATE });
     }
-  }, [errorMessage, dispatch, account, isProviderLoading]);
+  }, [errorMessage, mvdDispatch, account, isProviderLoading, nodeDispatch]);
 
   useEffect(() => {
     return () => {
-      dispatch({ type: MVDAction.RESET });
+      nodeDispatch({ type: NodeAction.RESET });
+      mvdDispatch({ type: MVDAction.RESET });
     };
-  }, [dispatch]);
+  }, [nodeDispatch, mvdDispatch]);
   return children;
 }
