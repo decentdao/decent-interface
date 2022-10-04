@@ -16,7 +16,15 @@ import {
 import { useModuleTypes } from './hooks/useModuleTypes';
 import { useModuleListeners } from './hooks/useModuleListeners';
 
-const initializeState = (_initialState: FractalNode | MVDDAO | GnosisSafe) => {
+const initializeState = (_initialState: MVDDAO) => {
+  return _initialState;
+};
+
+const initializeNodeState = (_initialState: FractalNode) => {
+  return _initialState;
+};
+
+const initializeGnosisState = (_initialState: GnosisSafe) => {
   return _initialState;
 };
 
@@ -38,9 +46,9 @@ const mvdReducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
 const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
   switch (action.type) {
     case NodeAction.SET_NODE_TYPE:
-      return { ...state, nodeType: action.payload, isLoading: false };
+      return { ...state, nodeType: action.payload, isLoaded: true };
     case NodeAction.RESET:
-      return initializeState(nodeInitialState);
+      return initializeNodeState(nodeInitialState);
     case NodeAction.INVALID:
       return { ...nodeInitialState };
     default:
@@ -53,7 +61,7 @@ const gnosisReducer = (state: GnosisSafe, action: GnosisActions): GnosisSafe => 
     case GnosisAction.SET_SAFE:
       return { ...action.payload, isLoading: false };
     case GnosisAction.RESET:
-      return initializeState(gnosisInitialState);
+      return initializeGnosisState(gnosisInitialState);
     case GnosisAction.INVALIDATE:
       return { ...gnosisInitialState };
     default:
@@ -67,8 +75,12 @@ const gnosisReducer = (state: GnosisSafe, action: GnosisActions): GnosisSafe => 
 export function FractalProvider({ children }: { children: ReactNode }) {
   const [dao, dispatch] = useReducer(mvdReducer, mvdInitialState, initializeState);
   const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
-  const [node, nodeDispatch] = useReducer(nodeReducer, nodeInitialState, initializeState);
-  const [gnosis, gnosisDispatch] = useReducer(gnosisReducer, gnosisInitialState, initializeState);
+  const [node, nodeDispatch] = useReducer(nodeReducer, nodeInitialState, initializeNodeState);
+  const [gnosis, gnosisDispatch] = useReducer(
+    gnosisReducer,
+    gnosisInitialState,
+    initializeGnosisState
+  );
 
   const {
     timelockModule,

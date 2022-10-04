@@ -81,11 +81,11 @@ function DAO() {
   } = useFractal();
   const navigate = useNavigate();
   useEffect(() => {
-    if (!node.isLoading && node.nodeType === undefined) {
+    if (node.isLoaded && node.nodeType === undefined) {
       navigate('/daos');
     }
   });
-  if (node.isLoading) {
+  if (!node.isLoaded) {
     // @todo add full page loader
     <div>LOADING DAO</div>;
   }
