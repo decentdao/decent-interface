@@ -41,6 +41,8 @@ To run all tests in all 3 browser types (Chromium, Firefox, Webkit) use the foll
 
 ```shell
 $ npx playwright test
+# or, use the predefined npm run script which does the same thing
+$ npm run tests
 ```
 
 To define particular tests to run use the following command:
