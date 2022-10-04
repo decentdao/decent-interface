@@ -12,9 +12,10 @@ import cx from 'classnames';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { Link } from 'react-router-dom';
 import { useBlockchainData } from '../../../contexts/blockchainData';
+import { useTranslation } from 'react-i18next';
 
 interface MenuItem {
-  title: string;
+  titleKey: string;
   className?: string;
   Icon: () => JSX.Element;
 }
@@ -28,43 +29,43 @@ interface LinkMenuItem extends MenuItem {
 }
 
 const COMMUNITY: LinkMenuItem = {
-  title: 'Community',
+  titleKey: 'community',
   link: 'https://discord.gg/decent-dao',
   Icon: Contact,
 };
 
 const OVERVIEW: LinkMenuItem = {
-  title: 'Overview',
+  titleKey: 'overview',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview',
   Icon: Support,
 };
 
 const FAQ: LinkMenuItem = {
-  title: 'FAQ',
+  titleKey: 'faq',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq',
   Icon: Faq,
 };
 
 const DOCS: LinkMenuItem = {
-  title: 'Docs',
+  titleKey: 'docs',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal',
   Icon: Docs,
 };
 
 const FAVORITES: LinkMenuItem = {
-  title: 'Favorites',
+  titleKey: 'favorites',
   link: '/daos/favorites',
   Icon: StarEmpty,
 };
 
 const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
-  title: 'Connect Wallet',
+  titleKey: 'connect',
   action: connect,
   Icon: Connect,
 });
 
 const DISCONNECT = (disconnect: () => void): ActionMenuItem => ({
-  title: 'Disconnect',
+  titleKey: 'disconnect',
   action: disconnect,
   Icon: Disconnect,
 });
@@ -106,7 +107,8 @@ function ItemContent({
   );
 }
 
-function ActionItem({ title, className, action, Icon, isVisible }: ActionMenuItem) {
+function ActionItem({ titleKey: title, className, action, Icon, isVisible }: ActionMenuItem) {
+  const { t } = useTranslation('menu');
   if (!isVisible) {
     return null;
   }
@@ -117,7 +119,7 @@ function ActionItem({ title, className, action, Icon, isVisible }: ActionMenuIte
         className={cx('w-full', className)}
       >
         <ItemContent
-          title={title}
+          title={t(title)}
           className={className}
           Icon={Icon}
         />
@@ -126,7 +128,8 @@ function ActionItem({ title, className, action, Icon, isVisible }: ActionMenuIte
   );
 }
 
-function LinkItem({ title, link, Icon }: LinkMenuItem) {
+function LinkItem({ titleKey: title, link, Icon }: LinkMenuItem) {
+  const { t } = useTranslation('menu');
   return (
     <Menu.Item>
       <a
@@ -135,7 +138,7 @@ function LinkItem({ title, link, Icon }: LinkMenuItem) {
         rel="noopener noreferrer"
       >
         <ItemContent
-          title={title}
+          title={t(title)}
           Icon={Icon}
         />
       </a>
@@ -143,12 +146,13 @@ function LinkItem({ title, link, Icon }: LinkMenuItem) {
   );
 }
 
-function LinkItemInternal({ title, link, Icon }: LinkMenuItem) {
+function LinkItemInternal({ titleKey: title, link, Icon }: LinkMenuItem) {
+  const { t } = useTranslation('menu');
   return (
     <Menu.Item>
       <Link to={link}>
         <ItemContent
-          title={title}
+          title={t(title)}
           Icon={Icon}
         />
       </Link>

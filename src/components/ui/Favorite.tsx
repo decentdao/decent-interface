@@ -23,7 +23,9 @@ function Buttons() {
     state: { chainId },
   } = useWeb3Provider();
   const {
-    dao: { daoAddress },
+    mvd: {
+      dao: { daoAddress },
+    },
   } = useFractal();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
 

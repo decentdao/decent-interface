@@ -27,13 +27,16 @@ import { GovernanceInjectorContext } from './GovernanceInjectorConext';
  */
 export function GovernanceInjector({ children }: { children: JSX.Element }) {
   const {
-    dao: { daoAddress },
+    mvd: {
+      dao: { daoAddress },
+    },
   } = useFractal();
 
   const {
     createProposal: { pendingCreateTx, submitProposal },
     votingToken,
     governorModuleContract,
+    proposals,
   } = useGovenorModule();
   const { treasuryModuleContract } = useTreasuryModule();
 
@@ -245,8 +248,9 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
       createProposal: submitProposal,
       pending: pendingCreateTx,
       isAuthorized: canUserCreateProposal,
+      proposals,
     }),
-    [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal]
+    [createDAOTrigger, submitProposal, pendingCreateTx, canUserCreateProposal, proposals]
   );
 
   return (

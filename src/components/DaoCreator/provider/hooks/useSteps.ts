@@ -10,7 +10,9 @@ import { useFractal } from '../../../../providers/fractal/hooks/useFractal';
  */
 export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isSubDAO?: boolean) {
   const {
-    modules: { gnosisWrapperModule },
+    mvd: {
+      modules: { gnosisWrapperModule },
+    },
   } = useFractal();
   useEffect(() => {
     const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;

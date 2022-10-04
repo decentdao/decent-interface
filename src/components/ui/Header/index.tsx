@@ -6,7 +6,9 @@ import HeaderMenu from './HeaderMenu';
 
 function Header() {
   const {
-    dao: { daoAddress },
+    mvd: {
+      dao: { daoAddress },
+    },
   } = useFractal();
   const daoHomeMatch = useMatch('/daos/:address/*');
   const [daoHome, setDaoHome] = useState('/');

@@ -29,7 +29,9 @@ interface IProposalCreate {
 
 function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: IProposalCreate) {
   const {
-    dao: { daoAddress },
+    mvd: {
+      dao: { daoAddress },
+    },
   } = useFractal();
 
   const [step, setStep] = useState<number>(0);
