@@ -18,4 +18,4 @@ export type MVDActions =
       payload: string[];
     }
   | { type: MVDAction.RESET }
-  | { type: MVDAction.INVALID };
+  | { type: MVDAction.INVALIDATE };
