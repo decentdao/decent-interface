@@ -24,7 +24,7 @@ Runs a dockerized version of `fractal-interface`. Setup files are in the directo
 
 ### Playwright
 
-Coming soon(Playwright docker)
+Coming soon (Playwright docker)
 
 ## Usage
 
