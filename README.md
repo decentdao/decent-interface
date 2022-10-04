@@ -37,7 +37,7 @@ $ docker compose up --build
 
 ### Running Tests
 
-To run all tests in all 3 browser types(Chromium, Firefox, Webkit) use the following command in a new terminal within the fractal-interface project:
+To run all tests in all 3 browser types (Chromium, Firefox, Webkit) use the following command in a new terminal within the `fractal-interface` project:
 
 ```shell
 $ npx playwright test
@@ -49,9 +49,7 @@ To define particular tests to run use the following command:
 $ npx playwright test tests/nameOfTest.spec.ts
 ```
 
-To run tests in a particular browser type use the following append/flag:
-
---project=browserType
+To run tests in a particular browser type use the following append/flag: `--project=browserType`
 
 Example:
 
