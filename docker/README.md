@@ -6,13 +6,13 @@ The ultimate goal is to use Docker to create an environment that end to end test
 
 A pretty simply configured Hardhat node. Setup files are in the directory, `./docker/blockchain`:
 
-- `.env.tests` example to keeps secrets, secret. This file will need to be manually created with the following variable
+- `.env.tests` holds environment variables for running Docker blockchain node.
   ```shell
   ALCHEMY_API_KEY="Your Alchemy Key"
   ```
 - `Dockerfile` see comments in file. Creation script for blockchain Docker container
 - `entrypoint.sh` executes the package.json script to start.
-- `hardhat.config.js` sets the hardhat node to specific chain id and runs node forked from goerli and lastest block
+- `hardhat.config.js` sets the hardhat node to specific chain id and runs node forked from goerli and latest block
 - `hardhat.package.json` with `hardhat` and `dotenv` libraries
 
 ### Webapp
