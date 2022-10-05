@@ -80,7 +80,10 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisWrapperFactoryNetworksAddresses: { [chaindId: number]: { address: string } } =
       JSON.parse(process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESSES);
     const gnosisSafeFactoryNetworksAddresses: { [chaindId: number]: { address: string } } =
-      JSON.parse(process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESSES);
+      Object.keys(gnosisProxyFactoryDeployment.networkAddresses).reduce(
+        (p, c) => ({ ...p, [c]: { address: gnosisProxyFactoryDeployment.networkAddresses[c] } }),
+        {}
+      );
     const daoNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_DAO_ADDRESSES
     );
@@ -102,8 +105,11 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisWrapperNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES
     );
-    const gnosisSafeNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
-      process.env.REACT_APP_GNOSISSAFE_ADDRESSES
+    const gnosisSafeNetworksAddresses: { [chaindId: number]: { address: string } } = Object.keys(
+      gnosisSafeSingletonDeployment.networkAddresses
+    ).reduce(
+      (p, c) => ({ ...p, [c]: { address: gnosisSafeSingletonDeployment.networkAddresses[c] } }),
+      {}
     );
     const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
     const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
