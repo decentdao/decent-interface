@@ -32,15 +32,13 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_GOVERNORFACTORY_ADDRESSES ||
       !process.env.REACT_APP_CLAIMFACTORY_ADDRESSES ||
       !process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESSES ||
-      !process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESSES ||
       !process.env.REACT_APP_DAO_ADDRESSES ||
       !process.env.REACT_APP_ACCESSCONTROL_ADDRESSES ||
       !process.env.REACT_APP_TREASURYMODULE_ADDRESSES ||
       !process.env.REACT_APP_GOVERNORMODULE_ADDRESSES ||
       !process.env.REACT_APP_TIMELOCK_ADDRESSES ||
       !process.env.REACT_APP_CLAIM_ADDRESSES ||
-      !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES ||
-      !process.env.REACT_APP_GNOSISSAFE_ADDRESSES
+      !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
