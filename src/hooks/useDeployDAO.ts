@@ -1,21 +1,27 @@
+import { useCallback } from 'react';
+import { ethers } from 'ethers';
+import { GnosisSafeL2__factory } from '../assets/typechain-types/gnosis-safe';
 import {
   TokenGovernanceDAO,
   GnosisDAO,
   GovernanceTypes,
 } from './../components/DaoCreator/provider/types/index';
-import { useCallback } from 'react';
+import { useAddresses } from './useAddresses';
 import useCreateDAODataCreator from './useCreateDAODataCreator';
 import useCreateGnosisDAODataCreator from './useCreateGnosisDAODataCreator';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useBlockchainData } from '../contexts/blockchainData';
+import useSafeContracts from './useSafeContracts';
 
 type DeployDAOSuccessCallback = (daoAddress: string) => void;
 
 const useDeployDAO = () => {
   const {
-    state: { account },
+    state: { account, chainId, signerOrProvider },
   } = useWeb3Provider();
+  const { gnosisSafe } = useAddresses(chainId);
+  const { gnosisSafeFactoryContract } = useSafeContracts();
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
@@ -96,11 +102,45 @@ const useDeployDAO = () => {
 
   const deployGnosisSafe = useCallback(
     (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
-      if (!account) {
-        return;
-      }
+      const deploy = async () => {
+        if (!account || !gnosisSafeFactoryContract || !gnosisSafe?.address || !signerOrProvider) {
+          return;
+        }
+        const { AddressZero, HashZero } = ethers.constants;
+        const gnosisDaoData = daoData as GnosisDAO;
+
+        const createdSafeProxyAddress = await gnosisSafeFactoryContract.callStatic.createProxy(
+          gnosisSafe.address,
+          '0x'
+        );
+        const safeContract = GnosisSafeL2__factory.connect(
+          createdSafeProxyAddress,
+          signerOrProvider
+        );
+        const encodedSetupSafeData = safeContract.interface.encodeFunctionData('setup', [
+          gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address),
+          gnosisDaoData.signatureThreshold,
+          AddressZero,
+          HashZero,
+          AddressZero,
+          AddressZero,
+          0,
+          AddressZero,
+        ]);
+
+        contractCallDeploy({
+          contractFn: () =>
+            gnosisSafeFactoryContract.createProxy(gnosisSafe.address, encodedSetupSafeData),
+          pendingMessage: 'Deploying Gnosis Safe...',
+          failedMessage: 'Deployment Failed',
+          successMessage: 'Gnosis Safe Created',
+          successCallback: () => successCallback(createdSafeProxyAddress),
+        });
+      };
+
+      deploy();
     },
-    [account]
+    [contractCallDeploy, gnosisSafeFactoryContract, gnosisSafe, account, signerOrProvider]
   );
 
   const deployDao = useCallback(
