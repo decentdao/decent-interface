@@ -8,7 +8,9 @@ import { ModuleTypes } from './types';
 
 export function TreasuryController({ children }: { children: JSX.Element }) {
   const {
-    modules: { treasuryModule, gnosisWrapperModule },
+    mvd: {
+      modules: { treasuryModule, gnosisWrapperModule },
+    },
   } = useFractal();
 
   const [moduleType, setModuleType] = useState<ModuleTypes>();

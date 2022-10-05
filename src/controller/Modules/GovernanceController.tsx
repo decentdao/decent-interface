@@ -14,12 +14,14 @@ import { ModuleTypes } from './types';
  */
 export function GovernanceController({ children }: { children: JSX.Element }) {
   const {
-    modules: {
-      tokenVotingGovernanceModule,
-      treasuryModule,
-      timelockModule,
-      claimingContractModule,
-      gnosisWrapperModule,
+    mvd: {
+      modules: {
+        tokenVotingGovernanceModule,
+        treasuryModule,
+        timelockModule,
+        claimingContractModule,
+        gnosisWrapperModule,
+      },
     },
   } = useFractal();
 

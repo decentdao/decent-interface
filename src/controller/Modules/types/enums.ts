@@ -1,7 +1,7 @@
 export enum ModuleSelectActions {
   SET_MODULE_ADDRESS,
   SET_MODULE,
-  INVALID,
+  INVALIDATE,
   RESET,
 }
 

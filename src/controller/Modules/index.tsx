@@ -23,7 +23,7 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
       return { ...state, moduleAddress: action.payload };
     case ModuleSelectActions.SET_MODULE:
       return { ...action.payload, isLoading: false };
-    case ModuleSelectActions.INVALID:
+    case ModuleSelectActions.INVALIDATE:
       return { ...initialState, isLoading: false };
     case ModuleSelectActions.RESET:
       return initialState;
@@ -33,7 +33,9 @@ const reducer = (state: ModuleSelectState, action: ModuleSelectAction) => {
 };
 export function Modules() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { dao, modules } = useFractal();
+  const {
+    mvd: { dao, modules },
+  } = useFractal();
   const params = useParams();
   const navigate = useNavigate();
 
@@ -63,7 +65,7 @@ export function Modules() {
         break;
       }
       default: {
-        dispatch({ type: ModuleSelectActions.INVALID });
+        dispatch({ type: ModuleSelectActions.INVALIDATE });
         break;
       }
     }

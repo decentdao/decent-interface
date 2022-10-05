@@ -41,7 +41,9 @@ function DAORoutes() {
 }
 
 function DAO() {
-  const { dao } = useFractal();
+  const {
+    mvd: { dao },
+  } = useFractal();
   const navigate = useNavigate();
   const { t } = useTranslation();
   useEffect(() => {

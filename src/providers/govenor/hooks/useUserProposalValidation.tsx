@@ -17,7 +17,9 @@ export function useUserProposalValidation() {
     governorModuleContract,
   } = useGovenorModule();
   const {
-    dao: { daoAddress },
+    mvd: {
+      dao: { daoAddress },
+    },
   } = useFractal();
   const navigate = useNavigate();
   const thresholdToastId = useRef<ReactText>('');

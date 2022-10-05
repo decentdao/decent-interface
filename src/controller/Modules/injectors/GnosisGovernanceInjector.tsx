@@ -30,8 +30,10 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
     state: { signerOrProvider, account, chainId },
   } = useWeb3Provider();
   const {
-    dao: { daoAddress },
-    modules: { gnosisWrapperModule },
+    mvd: {
+      dao: { daoAddress },
+      modules: { gnosisWrapperModule },
+    },
   } = useFractal();
   const {
     state: { isSigner, nonce, safeAddress },
