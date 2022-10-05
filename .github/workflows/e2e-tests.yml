@@ -1,24 +1,21 @@
-name: Github Actions - Playwright
+name: E2E Tests
 on:
   push:
     branches:
     - develop
   pull_request:
 jobs:
-
-  test:
+  playwright:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     environment: dev
     steps:
     - name: Checkout
       uses: actions/checkout@v2
-
     - name: Set up node
       uses: actions/setup-node@v2
       with:
         node-version-file: '.nvmrc'
-
     - name: Create env file
       working-directory: ./docker
       run: echo TESTING_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env.tests.local
