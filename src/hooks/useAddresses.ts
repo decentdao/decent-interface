@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { logError } from '../helpers/errorLogging';
+import { getProxyFactoryDeployment, getSafeSingletonDeployment } from '@gnosis.pm/safe-deployments';
 
 export function useAddresses(chainId: number | undefined) {
   const [addresses, setAddresses] = useState<{
@@ -42,6 +43,20 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_GNOSISSAFE_ADDRESSES
     ) {
       logError('Addresses not set!');
+      setAddresses({});
+      return;
+    }
+
+    const gnosisProxyFactoryDeployment = getProxyFactoryDeployment({ version: '1.3.0' });
+    if (!gnosisProxyFactoryDeployment) {
+      logError('Gnosis Proxy Factory Deployment data not available');
+      setAddresses({});
+      return;
+    }
+
+    const gnosisSafeSingletonDeployment = getSafeSingletonDeployment({ version: '1.3.0' });
+    if (!gnosisSafeSingletonDeployment) {
+      logError('Gnosis Safe Singleton Deployment data not available');
       setAddresses({});
       return;
     }
