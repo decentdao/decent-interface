@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getProxyFactoryDeployment, getSafeSingletonDeployment } from '@gnosis.pm/safe-deployments';
 import { logError } from '../helpers/errorLogging';
+import { getProxyFactoryDeployment, getSafeSingletonDeployment } from '@gnosis.pm/safe-deployments';
 
 export function useAddresses(chainId: number | undefined) {
   const [addresses, setAddresses] = useState<{
