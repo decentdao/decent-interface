@@ -1,20 +1,28 @@
+import { useCallback } from 'react';
+import { ethers } from 'ethers';
+import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import {
   TokenGovernanceDAO,
   GnosisDAO,
   GovernanceTypes,
 } from './../components/DaoCreator/provider/types/index';
-import { useCallback } from 'react';
+import { useAddresses } from './useAddresses';
 import useCreateDAODataCreator from './useCreateDAODataCreator';
 import useCreateGnosisDAODataCreator from './useCreateGnosisDAODataCreator';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useBlockchainData } from '../contexts/blockchainData';
+import useSafeContracts from './useSafeContracts';
 import { useTranslation } from 'react-i18next';
+
+type DeployDAOSuccessCallback = (daoAddress: string) => void;
 
 const useDeployDAO = () => {
   const {
-    state: { account },
+    state: { account, chainId, signerOrProvider },
   } = useWeb3Provider();
+  const { gnosisSafe } = useAddresses(chainId);
+  const { gnosisSafeFactoryContract } = useSafeContracts();
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
@@ -26,7 +34,7 @@ const useDeployDAO = () => {
   const { t } = useTranslation('transaction');
 
   const deployTokenVotingDAO = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
+    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: DeployDAOSuccessCallback) => {
       if (metaFactoryContract === undefined || account === null) {
         return;
       }
@@ -61,7 +69,7 @@ const useDeployDAO = () => {
   );
 
   const deployGnosisDAO = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: (daoAddress: string) => void) => {
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
       if (metaFactoryContract === undefined || account === null) {
         return;
       }
@@ -95,16 +103,58 @@ const useDeployDAO = () => {
     [contractCallDeploy, createGnosisDAODataCreator, metaFactoryContract, account, t]
   );
 
+  const deployGnosisSafe = useCallback(
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
+      const deploy = async () => {
+        if (!account || !gnosisSafeFactoryContract || !gnosisSafe?.address || !signerOrProvider) {
+          return;
+        }
+        const { AddressZero, HashZero } = ethers.constants;
+        const gnosisDaoData = daoData as GnosisDAO;
+
+        const createdSafeProxyAddress = await gnosisSafeFactoryContract.callStatic.createProxy(
+          gnosisSafe.address,
+          '0x'
+        );
+        const safeContract = GnosisSafe__factory.connect(createdSafeProxyAddress, signerOrProvider);
+        const encodedSetupSafeData = safeContract.interface.encodeFunctionData('setup', [
+          gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address),
+          gnosisDaoData.signatureThreshold,
+          AddressZero,
+          HashZero,
+          AddressZero,
+          AddressZero,
+          0,
+          AddressZero,
+        ]);
+
+        contractCallDeploy({
+          contractFn: () =>
+            gnosisSafeFactoryContract.createProxy(gnosisSafe.address, encodedSetupSafeData),
+          pendingMessage: 'Deploying Gnosis Safe...',
+          failedMessage: 'Deployment Failed',
+          successMessage: 'Gnosis Safe Created',
+          successCallback: () => successCallback(createdSafeProxyAddress),
+        });
+      };
+
+      deploy();
+    },
+    [contractCallDeploy, gnosisSafeFactoryContract, gnosisSafe, account, signerOrProvider]
+  );
+
   const deployDao = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
+    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: DeployDAOSuccessCallback) => {
       switch (daoData.governance) {
         case GovernanceTypes.TOKEN_VOTING_GOVERNANCE:
           return deployTokenVotingDAO(daoData, successCallback);
-        case GovernanceTypes.GNOSIS_SAFE:
+        case GovernanceTypes.MVD_GNOSIS:
           return deployGnosisDAO(daoData, successCallback);
+        case GovernanceTypes.GNOSIS_SAFE:
+          return deployGnosisSafe(daoData, successCallback);
       }
     },
-    [deployGnosisDAO, deployTokenVotingDAO]
+    [deployGnosisDAO, deployGnosisSafe, deployTokenVotingDAO]
   );
 
   return [deployDao, contractCallPending] as const;

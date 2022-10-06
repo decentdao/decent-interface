@@ -32,6 +32,13 @@ export function ChooseGovernance() {
   const currentChainMetadata = getChainMetadataById(chainId);
   const { t } = useTranslation(['daoCreate', 'common']);
 
+  const GNOSIS_UNSUPPORTED_MESSAGE = t('errorGnosisUnsupported', {
+    networkName: currentChainMetadata ? currentChainMetadata.name : '',
+    supportedNetworks: getChainsWithMetadata(
+      getSupportedChains().filter(chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain))
+    ).map(chain => ` ${chain.name}`),
+  });
+
   return (
     <ContentBox>
       <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
@@ -48,24 +55,27 @@ export function ChooseGovernance() {
         />
         <RadioWithText
           label={t('labelGnosis', { ns: 'common' })}
-          description={
-            isCurrentChainSupported
-              ? t('descGnosis')
-              : t('errorGnosisUnsupported', {
-                  networkName: currentChainMetadata ? currentChainMetadata.name : '',
-                  supportedNetworks: getChainsWithMetadata(
-                    getSupportedChains().filter(
-                      chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain)
-                    )
-                  ).map(chain => ` ${chain.name}`),
-                })
-          }
+          description={isCurrentChainSupported ? t('descGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
           id="gnosis-safe"
           name="governance"
-          isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
+          isSelected={governance === GovernanceTypes.MVD_GNOSIS}
           onChange={() => {
-            fieldUpdate(GovernanceTypes.GNOSIS_SAFE);
+            fieldUpdate(GovernanceTypes.MVD_GNOSIS);
           }}
+          disabled={!isCurrentChainSupported}
+          readOnly
+        />
+        <RadioWithText
+          label="Pure Gnosis Safe"
+          description={
+            isCurrentChainSupported
+              ? "Create pure Gnosis Safe with no Governance attached (yet). Just a Gnosis Safe. That's it :)"
+              : GNOSIS_UNSUPPORTED_MESSAGE
+          }
+          id="gnosis-safe-pure"
+          name="governance"
+          isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
+          onChange={() => fieldUpdate(GovernanceTypes.GNOSIS_SAFE)}
           disabled={!isCurrentChainSupported}
           readOnly
         />
