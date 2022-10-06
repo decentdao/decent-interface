@@ -23,7 +23,8 @@ interface ContractCallParams {
 const useTransaction = () => {
   const [pending, setPending] = useState(false);
   const { t } = useTranslation(['transaction', 'common']);
-  const contractCall = useCallback((params: ContractCallParams) => {
+  const contractCall = useCallback(
+    (params: ContractCallParams) => {
       let toastId: React.ReactText;
       toastId = toast(params.pendingMessage, {
         autoClose: false,

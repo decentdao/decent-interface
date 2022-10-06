@@ -31,10 +31,12 @@
     "address": "Address",
     "search": "Search",
     "delegate": "Delegate",
+    "home": "Home",
 
     "crumbNewProposal": "New Proposal",
 
     "labelViewDAO": "View DAO",
+    "labelEtherscan": "View on Etherscan",
     "labelGnosis": "Gnosis Safe",
 
     "errorInvalidAddress": "Invalid address",
