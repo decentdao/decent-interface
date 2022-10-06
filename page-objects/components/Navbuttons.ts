@@ -36,7 +36,7 @@ export class Navbuttons {
   constructor(page: Page) {
     this.page = page;
     this.appName = page.locator('a[href="#/"]');
-    this.connectWallet = page.locator('button:has-text("Connect Wallet")');
+    this.connectWallet = page.locator('//div[@id="menu:down-arrow"]//*[name()="svg"]');
     this.createDao = page.locator('(//button[@id="home:link-create"])[1]');
     this.findDao = page.locator('(//button[@id="home:link-find"])[1]');
     this.connectMenu = page.locator('button[role="menuitem"]:has-text("Connect")');
@@ -52,7 +52,7 @@ export class Navbuttons {
     this.faqMenu = page.locator('[id="headlessui-menu-item-:r31:"] div:has-text("FAQ")');
     this.docsMenu = page.locator('[id="headlessui-menu-item-:r33:"] div:has-text("Docs")');
     this.localWallet = page.locator(
-      '#WEB3_CONNECT_MODAL_ID div:has-text("Local NodeConnects as Signer to local provider")'
+      '#WEB3_CONNECT_MODAL_ID div.web3modal-provider-name:has-text("Local Node")'
     );
     this.next = page.locator('button:has-text("* * *Next")');
     this.deploy = page.locator('button:has-text("* * *Deploy")');
@@ -97,7 +97,7 @@ export class Navbuttons {
         await this.docsMenu.click();
         break;
       case 'Select Local Wallet - Web3':
-        await this.localWallet.nth(3).click();
+        await this.localWallet.click();
         break;
       case 'Next Button':
         await this.next.click();
