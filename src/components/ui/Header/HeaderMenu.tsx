@@ -46,7 +46,10 @@ function HeaderMenu() {
             <Menu.Button className="transition duration-150 ease-in-out hover:text-stone-300 focus:outline-none flex items-center">
               <ConnectWallet account={account} />
               <WalletConnected account={account} />
-              <div className="text-sm font-medium text-white hover:text-stone-300 focus:shadow-outline-blue">
+              <div
+                id="menu:down-arrow"
+                className="text-sm font-medium text-white hover:text-stone-300 focus:shadow-outline-blue"
+              >
                 <DownArrow />
               </div>
             </Menu.Button>
