@@ -14,6 +14,8 @@ function StepController() {
       return <DAODetails />;
     case CreatorSteps.CHOOSE_GOVERNANCE:
       return <ChooseGovernance />;
+    case CreatorSteps.PURE_GNOSIS:
+      return <GnosisConfig />;
     case CreatorSteps.GNOSIS_GOVERNANCE:
       return <GnosisConfig />;
     case CreatorSteps.FUNDING: {

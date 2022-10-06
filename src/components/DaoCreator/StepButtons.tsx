@@ -87,7 +87,8 @@ function ForwardButton({
           disabled={pending || !account || isNextDisabled}
         />
       );
-    case CreatorSteps.GNOSIS_GOVERNANCE: {
+    case CreatorSteps.GNOSIS_GOVERNANCE:
+    case CreatorSteps.PURE_GNOSIS: {
       return (
         <PrimaryButton
           onClick={() =>
