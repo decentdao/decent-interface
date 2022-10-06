@@ -12,6 +12,8 @@ export function useAddresses(chainId: number | undefined) {
     claimFactory?: { address: string };
     gnosisWrapperFactory?: { address: string };
     gnosisSafeFactory?: { address: string };
+    usulMastercopy?: { address: string };
+    zodiacProxyFactory?: { address: string };
     dao?: { address: string };
     accessControl?: { address: string };
     treasuryModule?: { address: string };
@@ -38,7 +40,9 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_GOVERNORMODULE_ADDRESSES ||
       !process.env.REACT_APP_TIMELOCK_ADDRESSES ||
       !process.env.REACT_APP_CLAIM_ADDRESSES ||
-      !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES
+      !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES ||
+      !process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES ||
+      !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
@@ -109,6 +113,13 @@ export function useAddresses(chainId: number | undefined) {
       (p, c) => ({ ...p, [c]: { address: gnosisSafeSingletonDeployment.networkAddresses[c] } }),
       {}
     );
+    const usulMastercopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES
+    );
+    const zodiacProxyFactoryAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
+    );
+
     const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
     const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
     const treasuryModuleFactoryAddress: { address: string } =
@@ -128,6 +139,8 @@ export function useAddresses(chainId: number | undefined) {
     const claimModuleAddress: { address: string } = claimModuleNetworksAddresses[chainId];
     const gnosisWrapperAddress: { address: string } = gnosisWrapperNetworksAddresses[chainId];
     const gnosisSafeAddress: { address: string } = gnosisSafeNetworksAddresses[chainId];
+    const usulMastercopy: { address: string } = usulMastercopyAddresses[chainId];
+    const zodiacProxyFactory: { address: string } = zodiacProxyFactoryAddresses[chainId];
 
     if (
       !metaFactoryAddress ||
@@ -145,7 +158,9 @@ export function useAddresses(chainId: number | undefined) {
       !timelockAddress ||
       !claimModuleAddress ||
       !gnosisWrapperAddress ||
-      !gnosisSafeAddress
+      !gnosisSafeAddress ||
+      !usulMastercopy ||
+      !zodiacProxyFactory
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -169,6 +184,8 @@ export function useAddresses(chainId: number | undefined) {
       claimModule: claimModuleAddress,
       gnosisWrapper: gnosisWrapperAddress,
       gnosisSafe: gnosisSafeAddress,
+      usulMastercopy,
+      zodiacProxyFactory,
     });
   }, [chainId]);
 
