@@ -11,30 +11,46 @@ test.describe('DAO Creation', () => {
   let notifications: Notifications;
   let inputFields: InputFields;
 
-  test.beforeEach(async ({ page }) => {
+  // test.beforeEach(async ({ page }) => {
+  //   homePage = new HomePage(page);
+  //   navButtons = new Navbuttons(page);
+  //   notifications = new Notifications(page);
+  //   inputFields = new InputFields(page);
+  //   homePage.visit();
+  //   await page.waitForTimeout(500);
+  //   notifications.closeButton('Close Audit Message');
+  //   await page.waitForTimeout(500);
+  //   //await page.waitForLoadState();
+  //   navButtons.clickOnButton('Connect to Wallet on Header');
+  //   await page.waitForLoadState();
+  //   await page.locator('button[role="menuitem"]:has-text("Connect")').click();
+  //   await page.waitForTimeout(1000);
+  //   navButtons.clickOnButton('Select Local Wallet - Web3');
+  //   await page.waitForTimeout(4000);
+  //   page.waitForSelector('#connected');
+  //   notifications.assertConnected();
+  //   await page.waitForLoadState('networkidle');
+  // });
+
+  test('Create 1:1 Gnosis Parent DAO', async ({ page }) => {
     homePage = new HomePage(page);
     navButtons = new Navbuttons(page);
     notifications = new Notifications(page);
     inputFields = new InputFields(page);
     homePage.visit();
     await page.waitForTimeout(500);
-    //await page.waitForLoadState('networkidle');
-    //await page.pause();
     notifications.closeButton('Close Audit Message');
+    //await page.waitForTimeout(500);
     await page.waitForLoadState();
     navButtons.clickOnButton('Connect to Wallet on Header');
     await page.waitForLoadState();
-    //await page.waitForSelector('button[role="menuitem"]:has-text("Connect")');
     await page.locator('button[role="menuitem"]:has-text("Connect")').click();
-    await page.waitForLoadState();
+    await page.waitForTimeout(1000);
     navButtons.clickOnButton('Select Local Wallet - Web3');
     await page.waitForTimeout(4000);
     page.waitForSelector('#connected');
     notifications.assertConnected();
     await page.waitForLoadState('networkidle');
-  });
-
-  test('Create 1:1 Gnosis Parent DAO', async ({ page }) => {
     navButtons.clickOnButton('Create a Fractal - Button');
 
     /* Check URL to make sure navigation is correct. */
@@ -49,16 +65,10 @@ test.describe('DAO Creation', () => {
     navButtons.clickOnButton('Next Button');
     inputFields.fillField('Insert Local Node Wallet');
     navButtons.clickOnButton('Deploy Button');
-    // page.waitForSelector('#root div:has-text("Deploying Fractal...") >> nth=2');
-    // notifications.assertDeployed();
-
-    // page.waitForSelector('#root div:has-text("DAO Created") >> nth=2');
-    // notifications.assertCreated();
+    await page.waitForLoadState();
     await expect(page).not.toHaveURL('http://localhost:3000/#/daos/new');
 
     const parentDAO = page.locator('text=Playwright Parent | Home');
     await expect(parentDAO).toContainText('Playwright Parent | Home');
-
-    //await page.locator('text=Playwright Parent | Home').click();
   });
 });
