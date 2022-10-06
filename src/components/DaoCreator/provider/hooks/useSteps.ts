@@ -16,8 +16,8 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
   } = useFractal();
   useEffect(() => {
     const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;
-    const isGnosisGovernance = state.governance === GovernanceTypes.GNOSIS_SAFE;
-    const isPureGnosis = state.governance === GovernanceTypes.PURE_GNOSIS_SAFE;
+    const isGnosisGovernance = state.governance === GovernanceTypes.MVD_GNOSIS;
+    const isPureGnosis = state.governance === GovernanceTypes.GNOSIS_SAFE;
 
     // True when:
     // 1) The DAO being created is a subDAO,

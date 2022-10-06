@@ -59,9 +59,9 @@ export function ChooseGovernance() {
           }
           id="gnosis-safe"
           name="governance"
-          isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
+          isSelected={governance === GovernanceTypes.MVD_GNOSIS}
           onChange={() => {
-            fieldUpdate(GovernanceTypes.GNOSIS_SAFE);
+            fieldUpdate(GovernanceTypes.MVD_GNOSIS);
           }}
           disabled={!isCurrentChainSupported}
           readOnly
@@ -75,8 +75,8 @@ export function ChooseGovernance() {
           }
           id="gnosis-safe-pure"
           name="governance"
-          isSelected={governance === GovernanceTypes.PURE_GNOSIS_SAFE}
-          onChange={() => fieldUpdate(GovernanceTypes.PURE_GNOSIS_SAFE)}
+          isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
+          onChange={() => fieldUpdate(GovernanceTypes.GNOSIS_SAFE)}
           disabled={!isCurrentChainSupported}
           readOnly
         />

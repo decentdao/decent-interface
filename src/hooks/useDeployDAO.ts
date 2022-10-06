@@ -148,9 +148,9 @@ const useDeployDAO = () => {
       switch (daoData.governance) {
         case GovernanceTypes.TOKEN_VOTING_GOVERNANCE:
           return deployTokenVotingDAO(daoData, successCallback);
-        case GovernanceTypes.GNOSIS_SAFE:
+        case GovernanceTypes.MVD_GNOSIS:
           return deployGnosisDAO(daoData, successCallback);
-        case GovernanceTypes.PURE_GNOSIS_SAFE:
+        case GovernanceTypes.GNOSIS_SAFE:
           return deployGnosisSafe(daoData, successCallback);
       }
     },
