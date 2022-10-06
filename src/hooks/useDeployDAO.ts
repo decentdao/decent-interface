@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { ethers } from 'ethers';
-import { GnosisSafeL2__factory } from '../assets/typechain-types/gnosis-safe';
+import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import {
   TokenGovernanceDAO,
   GnosisDAO,
@@ -113,10 +113,7 @@ const useDeployDAO = () => {
           gnosisSafe.address,
           '0x'
         );
-        const safeContract = GnosisSafeL2__factory.connect(
-          createdSafeProxyAddress,
-          signerOrProvider
-        );
+        const safeContract = GnosisSafe__factory.connect(createdSafeProxyAddress, signerOrProvider);
         const encodedSetupSafeData = safeContract.interface.encodeFunctionData('setup', [
           gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address),
           gnosisDaoData.signatureThreshold,
