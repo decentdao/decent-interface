@@ -66,12 +66,8 @@ export function ChooseGovernance() {
           readOnly
         />
         <RadioWithText
-          label="Pure Gnosis Safe"
-          description={
-            isCurrentChainSupported
-              ? "Create pure Gnosis Safe with no Governance attached (yet). Just a Gnosis Safe. That's it :)"
-              : GNOSIS_UNSUPPORTED_MESSAGE
-          }
+          label={t('labelPureGnosis', { ns: 'common' })}
+          description={isCurrentChainSupported ? t('descPureGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
           id="gnosis-safe-pure"
           name="governance"
           isSelected={governance === GovernanceTypes.GNOSIS_SAFE}

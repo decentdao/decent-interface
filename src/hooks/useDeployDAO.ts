@@ -131,16 +131,16 @@ const useDeployDAO = () => {
         contractCallDeploy({
           contractFn: () =>
             gnosisSafeFactoryContract.createProxy(gnosisSafe.address, encodedSetupSafeData),
-          pendingMessage: 'Deploying Gnosis Safe...',
-          failedMessage: 'Deployment Failed',
-          successMessage: 'Gnosis Safe Created',
+          pendingMessage: t('pendingDeployGnosis'),
+          failedMessage: t('failedDeployGnosis'),
+          successMessage: t('successDeployGnosis'),
           successCallback: () => successCallback(createdSafeProxyAddress),
         });
       };
 
       deploy();
     },
-    [contractCallDeploy, gnosisSafeFactoryContract, gnosisSafe, account, signerOrProvider]
+    [contractCallDeploy, gnosisSafeFactoryContract, gnosisSafe, account, signerOrProvider, t]
   );
 
   const deployDao = useCallback(
