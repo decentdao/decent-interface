@@ -65,7 +65,7 @@ const useSearchDao = () => {
       setErrorMessage(t('errorFailedSearch'));
       return;
     }
-  }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading]);
+  }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading, t]);
 
   useEffect(() => {
     if (addressIsDAO === true) {
