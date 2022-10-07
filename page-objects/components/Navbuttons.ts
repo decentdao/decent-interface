@@ -40,7 +40,7 @@ export class Navbuttons {
     this.createDao = page.locator('(//button[@id="home:link-create"])[1]');
     this.findDao = page.locator('(//button[@id="home:link-find"])[1]');
     this.connectMenu = page.locator('button[role="menuitem"]:has-text("Connect")');
-    this.disconnectMenu = page.locator('(//button[@id="headlessui-menu-item-:r29:"])[1]');
+    this.disconnectMenu = page.locator('[data-testid="menu:disconnect"]');
     this.copyMenu = page.locator('//*[name()="path" and contains(@d,"M7 6V3C7 2")]');
     this.favoritesMenu = page.locator(
       '[id="headlessui-menu-item-:r2r:"] div:has-text("Favorites")'
