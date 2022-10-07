@@ -70,7 +70,7 @@ function DAOSearch() {
 
   return (
     <div>
-      <ConnectWalletToast label="To search for a Fractal" />
+      <ConnectWalletToast label={t('labelConnectSearch', { ns: 'dashboard' })} />
       <H1>{t('titleSearch', { ns: 'dashboard' })}</H1>
       <ContentBox>
         <form onSubmit={handleSearchSubmit}>
