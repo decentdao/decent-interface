@@ -10,6 +10,7 @@ import ContentBox from '../ui/ContentBox';
 import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorProviderActions, GovernanceTypes } from './provider/types';
+import { useTranslation } from 'react-i18next';
 
 export function ChooseGovernance() {
   const {
@@ -29,19 +30,21 @@ export function ChooseGovernance() {
 
   const isCurrentChainSupported = isChainSupportedOnGnosis(chainId);
   const currentChainMetadata = getChainMetadataById(chainId);
+  const { t } = useTranslation(['daoCreate', 'common']);
 
-  const GNOSIS_UNSUPPORTED_MESSAGE = `Unfortunately, Gnosis does not support network ${
-    currentChainMetadata ? currentChainMetadata.name : ''
-  } you are using right now. Consider switching to one of the following networks: ${getChainsWithMetadata(
-    getSupportedChains().filter(chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain))
-  ).map(chain => ` ${chain.name}`)}`;
+  const GNOSIS_UNSUPPORTED_MESSAGE = t('errorGnosisUnsupported', {
+    networkName: currentChainMetadata ? currentChainMetadata.name : '',
+    supportedNetworks: getChainsWithMetadata(
+      getSupportedChains().filter(chain => !GNOSIS_UNSUPPORTED_CHAIN_IDS.includes(chain))
+    ).map(chain => ` ${chain.name}`),
+  });
 
   return (
     <ContentBox>
       <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
         <RadioWithText
-          label="1:1 Token Voting"
-          description="Governance with tokens giving voting power to token holders."
+          label={t('label1To1Voting')}
+          description={t('desc1To1Voting')}
           name="governance"
           id="token-voting"
           isSelected={governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE}
@@ -51,12 +54,8 @@ export function ChooseGovernance() {
           readOnly
         />
         <RadioWithText
-          label="Gnosis Safe"
-          description={
-            isCurrentChainSupported
-              ? 'Gnosis Powered, Multi-signature governance allows you define an access/control-scheme through multiple signers that need to confirm transactions'
-              : GNOSIS_UNSUPPORTED_MESSAGE
-          }
+          label={t('labelGnosis', { ns: 'common' })}
+          description={isCurrentChainSupported ? t('descGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
           id="gnosis-safe"
           name="governance"
           isSelected={governance === GovernanceTypes.MVD_GNOSIS}
@@ -67,12 +66,8 @@ export function ChooseGovernance() {
           readOnly
         />
         <RadioWithText
-          label="Pure Gnosis Safe"
-          description={
-            isCurrentChainSupported
-              ? "Create pure Gnosis Safe with no Governance attached (yet). Just a Gnosis Safe. That's it :)"
-              : GNOSIS_UNSUPPORTED_MESSAGE
-          }
+          label={t('labelPureGnosis', { ns: 'common' })}
+          description={isCurrentChainSupported ? t('descPureGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
           id="gnosis-safe-pure"
           name="governance"
           isSelected={governance === GovernanceTypes.GNOSIS_SAFE}

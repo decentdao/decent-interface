@@ -223,7 +223,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
       };
 
       submitProposal({
-        proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
+        proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` }, // TODO do we want to translate on-chain data?
         successCallback,
       });
     },

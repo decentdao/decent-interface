@@ -5,6 +5,7 @@ import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { utils } from 'ethers';
+import { useTranslation } from 'react-i18next';
 
 interface TokenAllocationProps {
   index: number;
@@ -25,6 +26,8 @@ function TokenAllocationInput({
     state: { provider },
   } = useWeb3Provider();
 
+  const { t } = useTranslation(['common', 'daoCreate']);
+
   const updateAddress = async (address: string) => {
     let isValidAddress = false;
     if (address.trim()) {
@@ -34,9 +37,9 @@ function TokenAllocationInput({
     if (!isValidAddress) {
       if (!provider && address.includes('.')) {
         // simple check if this might be an ENS address
-        errorMsg = 'Connect wallet to validate';
+        errorMsg = t('errorConnectWallet', { ns: 'daoCreate' });
       } else if (address.trim()) {
-        errorMsg = 'Invalid address';
+        errorMsg = t('errorInvalidAddress');
       }
     }
     updateTokenAllocation(index, {
@@ -78,7 +81,7 @@ function TokenAllocationInput({
         onChange={event => updateAmount(event.target.value)}
         errorMessage={
           hasAmountError
-            ? 'Allocated more than supply'
+            ? t('errorOverallocated', { ns: 'daoCreate' })
             : tokenAllocation.addressError
             ? '‎'
             : undefined
@@ -90,7 +93,7 @@ function TokenAllocationInput({
         <TextButton
           type="button"
           onClick={() => removeTokenAllocation(index)}
-          label="Remove"
+          label={t('remove')}
           className="px-0 mx-0"
         />
       </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import Input from '../ui/forms/Input';
@@ -10,6 +11,7 @@ function Essentials({
   proposalDescription: string;
   setProposalDescription: React.Dispatch<React.SetStateAction<string>>;
 }) {
+  const { t } = useTranslation('proposal');
   return (
     <ContentBox>
       <ContentBoxTitle>Essentials</ContentBoxTitle>
@@ -18,8 +20,8 @@ function Essentials({
           type="text"
           value={proposalDescription}
           onChange={e => setProposalDescription(e.target.value)}
-          label="Proposal Description"
-          helperText="What's the goal of this proposal? Explain the desired outcome and why it matters"
+          label={t('labelProposalDesc')}
+          helperText={t('helperProposalDesc')}
           disabled={false}
         />
       </InputBox>

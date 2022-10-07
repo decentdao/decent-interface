@@ -10,6 +10,7 @@ import { ProposalExecuteData } from '../../types/proposal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { logError } from '../../helpers/errorLogging';
+import { useTranslation } from 'react-i18next';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -131,10 +132,12 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
     [pendingCreateTx, isValidProposal, isUserAuthorized]
   );
 
+  const { t } = useTranslation(['proposal', 'common']);
+
   return (
     <div>
       <div>
-        <H1>Create Proposal</H1>
+        <H1>{t('createProposal')}</H1>
         <form onSubmit={e => e.preventDefault()}>
           {step === 0 && (
             <Essentials
@@ -156,7 +159,7 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
             <TextButton
               onClick={addTransaction}
               disabled={pendingCreateTx}
-              label="+ Add another transaction"
+              label={t('labelAddTransaction')}
             />
           </div>
         )}
@@ -167,7 +170,7 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
               onClick={decrementStep}
               disabled={pendingCreateTx}
               icon={<LeftArrow />}
-              label="Prev"
+              label={t('prev', { ns: 'common' })}
             />
           )}
           {step === 1 && (
@@ -180,7 +183,7 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
                 })
               }
               disabled={isCreateDisabled}
-              label="Create Proposal"
+              label={t('createProposal')}
               isLarge
             />
           )}
@@ -189,7 +192,7 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
               type="button"
               onClick={incrementStep}
               disabled={isNextDisabled}
-              label="Next: Add Transactions"
+              label={t('labelAddTransactions')}
             />
           )}
         </div>

@@ -15,6 +15,7 @@ import {
   DAOTrigger,
   GovernanceTypes,
 } from './types';
+import { useTranslation } from 'react-i18next';
 
 export const initialState: CreatorState = {
   step: CreatorSteps.ESSENTIALS,
@@ -111,10 +112,11 @@ export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICre
   useSteps(state, dispatch, isSubDAO);
 
   const value = useMemo(() => ({ state, dispatch, stepName }), [state, dispatch, stepName]);
+  const { t } = useTranslation('daoCreate');
   return (
     <CreatorContext.Provider value={value}>
       <div className="pb-16">
-        <ConnectWalletToast label="To deploy a new Fractal" />
+        <ConnectWalletToast label={t('labelConnectWallet')} />
         <div>
           <H1>{stepName}</H1>
           {children}

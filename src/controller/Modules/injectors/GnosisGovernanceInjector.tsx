@@ -23,6 +23,7 @@ import { GnosisTransaction, GnosisTransactionAPI } from '../../../providers/gnos
 import useCreateDAODataCreator from '../../../hooks/useCreateDAODataCreator';
 import { GovernanceInjectorContext } from './GovernanceInjectorConext';
 import { logError } from '../../../helpers/errorLogging';
+import { useTranslation } from 'react-i18next';
 
 export function GnosisGovernanceInjector({ children }: { children: JSX.Element }) {
   const {
@@ -52,6 +53,8 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
 
     navigate(`/daos/${daoAddress}/modules/${gnosisWrapperModule.moduleAddress}`);
   }, [daoAddress, gnosisWrapperModule, navigate]);
+
+  const { t } = useTranslation(['common', 'proposal']);
 
   const createDAO = useCallback(
     async (_daoData: TokenGovernanceDAO | GnosisDAO) => {
@@ -118,7 +121,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         nonce: nonce, // Nonce of the Safe, transaction cannot be executed until Safe's nonce is not equal to this nonce
       };
 
-      const sigToastId = toast('Please sign Gnosis transaction', {
+      const sigToastId = toast(t('toastSignGnosis', { ns: 'proposal' }), {
         autoClose: false,
         closeOnClick: false,
         draggable: false,
@@ -135,7 +138,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
 
       if (!signature.data) {
         setPending(false);
-        toast.error("There was an error! Check your browser's console logs for more details.");
+        toast.error(t('errorGeneral'));
         return;
       }
 
@@ -168,15 +171,15 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
         );
         setPending(false);
         if (res.status === 201) {
-          toast('Transaction signed and posted to Gnosis');
+          toast(t('toastGnosisSigned'));
           successCallback();
         } else {
           logError(res);
-          toast("There was an error! Check your browser's console logs for more details.");
+          toast(t('errorGeneral'));
         }
       } catch (e) {
         logError(e);
-        toast("There was an error! Check your browser's console logs for more details.");
+        toast(t('errorGeneral'));
       }
     },
     [
@@ -190,6 +193,7 @@ export function GnosisGovernanceInjector({ children }: { children: JSX.Element }
       createDAODataCreator,
       createGnosisDAODataCreator,
       successCallback,
+      t,
     ]
   );
 

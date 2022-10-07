@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import ContentBox from './ui/ContentBox';
 import { PrimaryButton } from './ui/forms/Button';
 import InputBox from './ui/forms/InputBox';
@@ -11,6 +12,7 @@ interface ISentryErrorFallback {
 }
 
 export function ErrorFallback({}: ISentryErrorFallback) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col bg-fixed bg-image-pattern bg-cover h-screen items-center justify-center">
       <div className="w-fit">
@@ -21,9 +23,9 @@ export function ErrorFallback({}: ISentryErrorFallback) {
                 <Alert />
                 <div className="text-gray-25 text-mono">Oops!</div>
               </div>
-              <div className="text-gray-50 text-mono">There was an unexpected error</div>
+              <div className="text-gray-50 text-mono">{t('errorSentryFallback')}</div>
               <PrimaryButton
-                label="Reload"
+                label={t('reload')}
                 className="my-2 w-full"
                 onClick={() => window.location.reload()}
               />

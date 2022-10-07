@@ -13,9 +13,11 @@ import useAddress from '../../hooks/useAddress';
 import DataLoadingWrapper from '../ui/loaders/DataLoadingWrapper';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
+import { useTranslation } from 'react-i18next';
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
+  const { t } = useTranslation(['common', 'dashboard']);
 
   const {
     state: { account },
@@ -44,7 +46,7 @@ function Delegate() {
     return `${utils.formatUnits(votingWeight, decimals)} ${symbol}`;
   }, [decimals, votingWeight, symbol]);
 
-  const errorMessage = validAddress === false ? 'Invalid address' : undefined;
+  const errorMessage = validAddress === false ? t('errorInvalidAddress') : undefined;
 
   const delegateSelf = () => {
     if (!account) {
@@ -62,20 +64,20 @@ function Delegate() {
   return (
     <>
       <div className="flex flex-col bg-gray-600 my-4 p-2 py-2 rounded-md">
-        <ContentBox title="Delegate Vote">
+        <ContentBox title={t('titleDelegation', { ns: 'dashboard' })}>
           <InputBox>
             <div className="flex m-2 w-full items-center">
               <Input
                 type="text"
                 value={newDelegatee}
                 disabled={false}
-                label="New Delegate Address"
+                label={t('newAddress', { ns: 'dashboard' })}
                 errorMessage={errorMessage}
                 onChange={e => setNewDelegatee(e.target.value)}
               />
               <SecondaryButton
                 onClick={() => delegateSelf()}
-                label="Self"
+                label={t('self', { ns: 'dashboard' })}
                 className={cx('h-fit -mt-2 sm:mt-auto')}
               />
             </div>
@@ -107,17 +109,13 @@ function Delegate() {
           <SecondaryButton
             disabled={!validAddress || newDelegatee.trim() === '' || pending}
             onClick={() => delegateVote()}
-            label="Delegate"
+            label={t('delegate')}
             className="-ml-0 mt-4"
           />
         </ContentBox>
       </div>
       <div className="">
-        <ContentBanner
-          description={
-            'Enter the address to delegate your vote to. Click "Self" to assign yourself.'
-          }
-        />
+        <ContentBanner description={t('descriptionDelegation', { ns: 'dashboard' })} />
       </div>
     </>
   );

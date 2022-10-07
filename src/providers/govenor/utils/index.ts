@@ -2,6 +2,7 @@ import { providers, BigNumber } from 'ethers';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
 import { ProposalDataWithoutUserData } from '../types/proposal';
 
+// TODO should we translate on chain data?
 export const getVoteString = (voteNumber: number) => {
   if (voteNumber === 0) {
     return 'Against';
