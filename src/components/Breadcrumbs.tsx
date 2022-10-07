@@ -6,6 +6,7 @@ import RightArrow from './ui/svg/RightArrow';
 import TreasuryIcon from './ui/svg/Treasury';
 import Favorite from './ui/Favorite';
 import { useFractal } from '../providers/fractal/hooks/useFractal';
+import { useTranslation } from 'react-i18next';
 
 function DAOName() {
   const params = useParams();
@@ -63,11 +64,12 @@ function Breadcrumbs() {
       : null;
 
   const breadcrumbOptions = { excludePaths };
+  const { t } = useTranslation();
   const routes = [
     { path: '/daos/:address', breadcrumb: DAOName },
     { path: 'daos/:address/modules/:moduleAddress', breadcrumb: moduleName },
     { path: '/daos/:address/proposals', breadcrumb: null },
-    { path: '/daos/:address/proposals/new', breadcrumb: 'New Proposal' },
+    { path: '/daos/:address/proposals/new', breadcrumb: t('crumbNewProposal') },
     { path: '/daos/:address/proposals/:id', breadcrumb: ProposalId },
   ];
   const breadcrumbs = useBreadcrumbs(routes, breadcrumbOptions);

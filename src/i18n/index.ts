@@ -7,6 +7,11 @@ import DAOCREATE_EN from './locales/en/daoCreate.json';
 import DAOCREATE_ES from './locales/es/daoCreate.json';
 import MENU_EN from './locales/en/menu.json';
 import MENU_ES from './locales/es/menu.json';
+import DASHBOARD_EN from './locales/en/dashboard.json';
+import PROPOSAL_EN from './locales/en/proposal.json';
+import TRANSACTION_EN from './locales/en/transaction.json';
+import TREASURY_EN from './locales/en/treasury.json';
+import TREASURY_ES from './locales/es/treasury.json';
 
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
@@ -35,11 +40,16 @@ const resources = {
     common: COMMON_EN,
     daoCreate: DAOCREATE_EN,
     menu: MENU_EN,
+    dashboard: DASHBOARD_EN,
+    proposal: PROPOSAL_EN,
+    transaction: TRANSACTION_EN,
+    treasury: TREASURY_EN,
   },
   es: {
     common: COMMON_ES,
     daoCreate: DAOCREATE_ES,
     menu: MENU_ES,
+    treasury: TREASURY_ES,
   },
 };
 

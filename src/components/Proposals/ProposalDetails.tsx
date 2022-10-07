@@ -7,12 +7,14 @@ import ProposalQueue from './ProposalQueue';
 import ProposalExecute from './ProposalExecute';
 import CastVote from './CastVote';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
+import { useTranslation } from 'react-i18next';
 
 function ProposalDetails() {
   const params = useParams();
 
   const { proposals } = useGovenorModule();
   const [proposal, setProposal] = useState<ProposalData>();
+  const { t } = useTranslation('proposal');
 
   useEffect(() => {
     if (proposals === undefined || params.proposalNumber === undefined) {
@@ -30,7 +32,7 @@ function ProposalDetails() {
   }, [proposals, params.proposalNumber]);
 
   if (proposal === undefined) {
-    return <div className="text-white">Proposals loading...</div>;
+    return <div className="text-white">{t('loadingProposals')}</div>;
   }
 
   return (

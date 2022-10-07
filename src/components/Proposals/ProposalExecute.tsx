@@ -3,6 +3,7 @@ import { ProposalData, ProposalState } from '../../providers/govenor/types';
 import useExecuteTransaction from '../../hooks/useExecuteTransaction';
 import { useBlockchainData } from '../../contexts/blockchainData';
 import { ProposalAction } from './ProposalAction';
+import { useTranslation } from 'react-i18next';
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);
@@ -28,12 +29,14 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
     setPending,
   });
 
+  const { t } = useTranslation(['common', 'proposal']);
+
   if (!show) return null;
 
   return (
     <ProposalAction
-      btnLabel="Execute"
-      label="Proposal ready for execution"
+      btnLabel={t('execute')}
+      label={t('labelExecute', { ns: 'proposal' })}
       actionFunc={executeTransaction}
       pending={pending}
     />

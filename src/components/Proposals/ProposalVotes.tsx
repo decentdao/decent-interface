@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { ProposalData } from '../../providers/govenor/types';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage?: number }) {
@@ -10,21 +11,22 @@ function VotesPercentage({ label, percentage }: { label: string; percentage?: nu
 }
 
 function ProposalVotes({ proposal }: { proposal: ProposalData }) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-grow flex-col h-full bg-gray-600 my-2 ml-4 p-2 pb-4 rounded-md">
       <div className="flex mx-2 my-2 text-gray-25 mb-3 text-lg font-semibold">Results</div>
       <VotesPercentage
-        label="Yes"
+        label={t('yes')}
         percentage={proposal.forVotesPercent}
       />
 
       <VotesPercentage
-        label="No"
+        label={t('no')}
         percentage={proposal.againstVotesPercent}
       />
 
       <VotesPercentage
-        label="Abstain"
+        label={t('abstain')}
         percentage={proposal.abstainVotesPercent}
       />
     </div>

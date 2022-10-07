@@ -8,6 +8,7 @@ import { ethers } from 'ethers';
 import { TransactionData } from '../../types/transaction';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../helpers/errorLogging';
+import { useTranslation } from 'react-i18next';
 
 interface TransactionProps {
   transaction: TransactionData;
@@ -29,6 +30,7 @@ function Transaction({
   const {
     state: { provider },
   } = useWeb3Provider();
+  const { t } = useTranslation(['proposal', 'common']);
 
   const validateFunctionData = (
     functionName: string,
@@ -57,7 +59,9 @@ function Transaction({
       isValidAddress = await checkAddress(provider, targetAddress);
     }
     newTransactionData.addressError =
-      !isValidAddress && targetAddress.trim() ? 'Invalid address' : undefined;
+      !isValidAddress && targetAddress.trim()
+        ? t('errorInvalidAddress', { ns: 'common' })
+        : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
 
@@ -69,7 +73,7 @@ function Transaction({
       transaction.functionSignature,
       transaction.parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? 'Invalid fragments' : undefined;
+    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
 
@@ -81,7 +85,7 @@ function Transaction({
       functionSignature,
       transaction.parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? 'Invalid fragments' : undefined;
+    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
 
@@ -93,7 +97,7 @@ function Transaction({
       transaction.functionSignature,
       parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? 'Invalid fragments' : undefined;
+    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
   return (
@@ -114,7 +118,7 @@ function Transaction({
                   transaction.parameters
                 )
               }
-              label="Remove Transaction"
+              label={t('labelRemoveTransaction')}
             />
           </div>
         )}
@@ -124,8 +128,8 @@ function Transaction({
           type="text"
           value={transaction.targetAddress}
           onChange={e => updateTargetAddress(e.target.value)}
-          label="Target Address"
-          helperText="The smart contract address this proposal will modify"
+          label={t('labelTargetAddress')}
+          helperText={t('helperTargetAddress')}
           disabled={pending}
           errorMessage={transaction.addressError}
         />
@@ -135,10 +139,10 @@ function Transaction({
           type="text"
           value={transaction.functionName}
           onChange={e => updateFunctionName(e.target.value)}
-          label="Function Name"
-          exampleText="transfer"
+          label={t('labelFunctionName')}
+          exampleText={t('exampleFunctionName')}
           disabled={pending}
-          helperText="The name of the function to be called if this proposal passes"
+          helperText={t('helperFunctionName')}
           errorMessage={transaction.fragmentError}
         />
       </InputBox>
@@ -147,10 +151,10 @@ function Transaction({
           type="textarea"
           value={transaction.functionSignature}
           onChange={e => updateFunctionSignature(e.target.value)}
-          label="Function Signature"
-          helperText="The function of the smart contract (above) to be called if this proposal passes"
+          label={t('labelFunctionSignature')}
+          helperText={t('helperFunctionSignature')}
           disabled={pending}
-          exampleText="address to, uint amount"
+          exampleText={t('exampleFunctionSignature')}
           errorMessage={transaction.fragmentError}
         />
       </InputBox>
@@ -159,10 +163,10 @@ function Transaction({
           type="textarea"
           value={transaction.parameters}
           onChange={e => updateParameters(e.target.value)}
-          label="Parameters"
-          helperText="Values used to call the function (comma separated)"
+          label={t('labelParameters')}
+          helperText={t('helperParameters')}
           disabled={pending}
-          exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'
+          exampleText={t('exampleParameters')}
           errorMessage={transaction.fragmentError}
         />
       </InputBox>

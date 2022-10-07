@@ -39,7 +39,7 @@ export interface ProposalDataWithoutUserData extends ContractEvent {
 }
 export interface ProposalData extends ProposalDataWithoutUserData {
   userVote: number | undefined;
-  userVoteString: 'For' | 'Against' | 'Abstain' | undefined;
+  userVoteString: 'For' | 'Against' | 'Abstain' | undefined; // TODO should we translate on chain data?
   userVotePower: BigNumber | undefined;
 }
 

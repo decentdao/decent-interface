@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useNavigate } from 'react-router-dom';
 import ConnectWalletToast from '../../components/ConnectWalletToast';
@@ -65,10 +66,12 @@ function DAOSearch() {
     setSearchAddressInput(searchAddr);
   }, [searchAddr]);
 
+  const { t } = useTranslation(['common', 'dashboard']);
+
   return (
     <div>
       <ConnectWalletToast label="To search for a Fractal" />
-      <H1>Find a Fractal</H1>
+      <H1>{t('titleSearch', { ns: 'dashboard' })}</H1>
       <ContentBox>
         <form onSubmit={handleSearchSubmit}>
           <InputBox>
@@ -77,8 +80,8 @@ function DAOSearch() {
                 <Input
                   value={searchAddressInput}
                   onChange={searchOnChange}
-                  label="Address"
-                  subLabel="Please use a valid Fractal MVD address, Gnosis Safe address, or ENS domain"
+                  label={t('address')}
+                  subLabel={t('sublabelSearch', { ns: 'dashboard' })}
                   type="text"
                   errorMessage={errorMessage}
                 />
@@ -87,7 +90,7 @@ function DAOSearch() {
               <PrimaryButton
                 type="submit"
                 className="self-start mt-5 "
-                label="Search"
+                label={t('search')}
                 isLoading={loading}
                 disabled={!!errorMessage || loading || !searchAddressInput || !account}
               />

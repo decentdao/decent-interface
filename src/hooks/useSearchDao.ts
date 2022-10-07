@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NodeType } from '../providers/fractal/constants/enums';
 import useAddress from './useAddress';
 import useIsDAO from './useIsDAO';
@@ -13,6 +14,7 @@ const useSearchDao = () => {
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
   const [addressIsGnosisSafe, isGnosisSafeLoading] = useIsGnosisSafe(address);
   const [addressNodeType, setAddressNodeType] = useState<NodeType>();
+  const { t } = useTranslation('dashboard');
 
   /**
    * refresh error state if one exists
@@ -56,11 +58,11 @@ const useSearchDao = () => {
       return;
     }
     if (!validAddress && address !== undefined) {
-      setErrorMessage('Please use a valid Fractal MVD address, Gnosis Safe address, or ENS domain');
+      setErrorMessage(t('errorInvalidSearch'));
       return;
     }
     if (addressIsDAO === false && addressIsGnosisSafe === false) {
-      setErrorMessage('Sorry neither a Fractal MVD nor a Gnosis Safe exists on this address');
+      setErrorMessage(t('errorFailedSearch'));
       return;
     }
   }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading]);

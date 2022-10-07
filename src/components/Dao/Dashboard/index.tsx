@@ -10,6 +10,7 @@ import TransactionCard from './components/TransactionCard';
 import ProposalCard from './components/ProposalCard';
 import { ProposalData } from '../../../providers/govenor/types';
 import { ContractEvent } from '../../../types/contract';
+import { useTranslation } from 'react-i18next';
 
 function Dashboard() {
   const {
@@ -24,12 +25,14 @@ function Dashboard() {
     (a, b) => b.blockTimestamp - a.blockTimestamp
   );
 
+  const { t } = useTranslation('dashboard');
+
   return (
     <div>
       <ContentBox>
         <H1>{dao.daoName}</H1>
       </ContentBox>
-      <H1>Latest Activity</H1>
+      <H1>{t('titleLatestActivity')}</H1>
       {allEvents.map(event => {
         // This arrays combination also brings such weird checks
         const transactionEvent = event as Transaction;

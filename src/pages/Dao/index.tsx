@@ -10,6 +10,7 @@ import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { TreasuryController } from '../../controller/Modules/TreasuryController';
 import { GovernanceController } from '../../controller/Modules/GovernanceController';
 import { NodeType } from '../../providers/fractal/constants/enums';
+import { useTranslation } from 'react-i18next';
 
 function MVDDAO() {
   return (
@@ -80,6 +81,7 @@ function DAO() {
     mvd: { dao },
   } = useFractal();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   useEffect(() => {
     if (node.isLoaded && node.nodeType === undefined) {
       navigate('/daos');
@@ -87,7 +89,7 @@ function DAO() {
   });
   if (!node.isLoaded) {
     // @todo add full page loader
-    <div>LOADING DAO</div>;
+    <div>{t('loading')}</div>;
   }
 
   return (

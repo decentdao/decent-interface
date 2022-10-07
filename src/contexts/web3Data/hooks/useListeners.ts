@@ -7,6 +7,7 @@ import Web3Modal from 'web3modal';
 
 import { getSupportedChains, getChainsWithMetadata } from '../chains';
 import { clearErrorContext, setLoggedWallet, setErrorContext } from '../../../helpers/errorLogging';
+import { useTranslation } from 'react-i18next';
 
 const useListeners = (
   web3Modal: Web3Modal,
@@ -19,6 +20,7 @@ const useListeners = (
   const chainsNames = getChainsWithMetadata(supportedChains)
     .map(chain => chain.name)
     .join(', ');
+  const { t } = useTranslation('menu');
 
   useEffect(() => {
     // subscribe to connect events
@@ -27,7 +29,7 @@ const useListeners = (
       setErrorContext('chainId', _modalProvider.chainId);
       // check that connected chain is supported
       if (!supportedChains.includes(parseInt(_modalProvider.chainId))) {
-        toast(`Switch to a supported chain: ${chainsNames}`, {
+        toast(t('toastSwitchChain', { chainsNames: chainsNames }), {
           toastId: 'switchChain',
         });
         // switch to a default provider
@@ -40,26 +42,26 @@ const useListeners = (
         ) {
           setModalProvider(_modalProvider);
         }
-        toast('Connected', { toastId: 'connected' });
+        toast(t('toastConnected'), { toastId: 'connected' });
       }
     });
     return () => {
       web3Modal.off('connect');
     };
-  }, [web3Modal, connectDefaultProvider, supportedChains, chainsNames]);
+  }, [web3Modal, connectDefaultProvider, supportedChains, chainsNames, t]);
 
   useEffect(() => {
     const chainChangedCallback = (chainId: string) => {
       setErrorContext('chainId', chainId);
       if (!getSupportedChains().includes(parseInt(chainId))) {
         // check that connected chain is supported
-        toast(`Chain changed: Switch to a supported chain: ${chainsNames}`, {
+        toast(t('toastChainChangedUnsupported', { chainsNames: chainsNames }), {
           toastId: 'switchChain',
         });
         // switch to a default provider
         connectDefaultProvider();
       } else {
-        toast(`Chain changed: ${chainId}`, {
+        toast(t('toastChainChanged', { chainId: chainId }), {
           toastId: 'connected',
         });
         connect();
@@ -69,20 +71,20 @@ const useListeners = (
     const accountsChangedCallback = (accounts: string[]) => {
       if (!accounts.length) {
         setLoggedWallet(null);
-        toast('Account access revoked', { toastId: 'accessChanged' });
+        toast(t('toastAccountRevoked'), { toastId: 'accessChanged' });
         // switch to a default provider
         connectDefaultProvider();
         // remove listeners
         setModalProvider(null);
       } else {
         setLoggedWallet(accounts[0]);
-        toast('Account changed', { toastId: 'connected' });
+        toast(t('toastAccountChanged'), { toastId: 'connected' });
         connect();
       }
     };
     const disconnectCallback = () => {
       clearErrorContext();
-      toast('Account disconnected', { toastId: 'disconnected' });
+      toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
       // switch to a default provider
       connectDefaultProvider();
       // remove listeners
@@ -109,7 +111,7 @@ const useListeners = (
         (modalProvider as ethers.providers.Web3Provider).removeAllListeners();
       }
     };
-  }, [modalProvider, web3Modal, connectDefaultProvider, connect, supportedChains, chainsNames]);
+  }, [modalProvider, web3Modal, connectDefaultProvider, connect, supportedChains, chainsNames, t]);
 };
 
 export { useListeners };

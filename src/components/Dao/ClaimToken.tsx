@@ -4,9 +4,11 @@ import { PrimaryButton } from '../ui/forms/Button';
 import useClaimToken from '../../hooks/useClaimToken';
 import { ethers } from 'ethers';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
+import { useTranslation } from 'react-i18next';
 
 function ClaimToken() {
   const [pending, setPending] = useState<boolean>(false);
+  const { t } = useTranslation('dashboard');
 
   const {
     votingToken: {
@@ -34,10 +36,10 @@ function ClaimToken() {
     <ContentBox isLightBackground>
       <div className="flex justify-between items-center">
         <div className="text-gray-25">
-          {`You have ${formattedValue} ${symbol} available to claim!`}
+          {t('labelClaimTokens', { value: formattedValue, symbol: symbol })}
         </div>
         <PrimaryButton
-          label="Claim"
+          label={t('claim')}
           className="mr-0"
           onClick={claimToken}
           disabled={pending}
