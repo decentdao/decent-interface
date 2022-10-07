@@ -38,14 +38,18 @@ test.describe('DAO Creation', () => {
     notifications = new Notifications(page);
     inputFields = new InputFields(page);
     homePage.visit();
-    await page.waitForTimeout(500);
-    notifications.closeButton('Close Audit Message');
-    //await page.waitForTimeout(500);
-    await page.waitForLoadState();
-    navButtons.clickOnButton('Connect to Wallet on Header');
-    await page.waitForLoadState();
-    await page.locator('button[role="menuitem"]:has-text("Connect")').click();
+    //await page.waitForLoadState('load');
     await page.waitForTimeout(1000);
+    // notifications.closeButton('Close Audit Message');
+    // //await page.waitForLoadState('domcontentloaded');
+    // await page.waitForTimeout(1000);
+    
+    navButtons.clickOnButton('Connect to Wallet on Header');
+    //await page.waitForTimeout(1000);
+    await page.waitForLoadState('load');
+    await page.click('[data-testid="menu:connect"]');
+    //await page.waitForTimeout(1500);
+    await page.waitForLoadState('domcontentloaded');
     navButtons.clickOnButton('Select Local Wallet - Web3');
     await page.waitForTimeout(4000);
     page.waitForSelector('#connected');

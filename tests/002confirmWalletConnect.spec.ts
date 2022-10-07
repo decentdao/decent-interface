@@ -21,7 +21,9 @@ test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   await expect(connected).toBeVisible();
 
   /* Assert defined wallet address is present ("0xf39F...2266") */
-  await page.locator('button:has-text("0xf39F...2266")').click();
+  await page.locator('//div[@id="menu:down-arrow"]//*[name()="svg"]').click();
+  const walletAddress = page.locator('//a[normalize-space()="0xf39F...2266"]');
+  await expect(walletAddress).toContainText('0xf39F...2266');
 
   /* Assert disconnect is present */
   const disconnect = page.locator('button[role="menuitem"]:has-text("Disconnect")');
