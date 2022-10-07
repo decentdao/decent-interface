@@ -20,8 +20,9 @@ const useDeployDAO = () => {
   const {
     state: { account, chainId, signerOrProvider },
   } = useWeb3Provider();
-  const { gnosisSafe } = useAddresses(chainId);
-  const { gnosisSafeFactoryContract } = useSafeContracts();
+  const { gnosisSafe, usulMastercopy } = useAddresses(chainId);
+  const { gnosisSafeFactoryContract, usulContract, zodiacModuleProxyFactoryContract } =
+    useSafeContracts({ usulAddress: usulMastercopy?.address });
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
@@ -103,7 +104,14 @@ const useDeployDAO = () => {
   const deployGnosisSafe = useCallback(
     (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
       const deploy = async () => {
-        if (!account || !gnosisSafeFactoryContract || !gnosisSafe?.address || !signerOrProvider) {
+        if (
+          !account ||
+          !gnosisSafeFactoryContract ||
+          !gnosisSafe?.address ||
+          !usulContract ||
+          !zodiacModuleProxyFactoryContract ||
+          !signerOrProvider
+        ) {
           return;
         }
         const { AddressZero, HashZero } = ethers.constants;
@@ -124,10 +132,31 @@ const useDeployDAO = () => {
           0,
           AddressZero,
         ]);
+        const VOTING_STRATEGIES_TO_DEPLOY: string[] = []; // @todo pass expected addresses for voting strategies
+        const encodedInitUsulData = ethers.utils.defaultAbiCoder.encode(
+          ['address', 'address', 'address', 'address[]'],
+          [
+            createdSafeProxyAddress,
+            createdSafeProxyAddress,
+            createdSafeProxyAddress,
+            VOTING_STRATEGIES_TO_DEPLOY,
+          ]
+        );
+        const encodedSetupUsulData = usulContract.interface.encodeFunctionData('setUp', [
+          encodedInitUsulData,
+        ]);
 
         contractCallDeploy({
           contractFn: () =>
-            gnosisSafeFactoryContract.createProxy(gnosisSafe.address, encodedSetupSafeData),
+            gnosisSafeFactoryContract
+              .createProxy(gnosisSafe.address, encodedSetupSafeData)
+              .then(() =>
+                zodiacModuleProxyFactoryContract.deployModule(
+                  usulContract.address,
+                  encodedSetupUsulData,
+                  '0x01'
+                )
+              ),
           pendingMessage: 'Deploying Gnosis Safe...',
           failedMessage: 'Deployment Failed',
           successMessage: 'Gnosis Safe Created',
@@ -137,7 +166,15 @@ const useDeployDAO = () => {
 
       deploy();
     },
-    [contractCallDeploy, gnosisSafeFactoryContract, gnosisSafe, account, signerOrProvider]
+    [
+      contractCallDeploy,
+      usulContract,
+      zodiacModuleProxyFactoryContract,
+      gnosisSafeFactoryContract,
+      gnosisSafe,
+      account,
+      signerOrProvider,
+    ]
   );
 
   const deployDao = useCallback(

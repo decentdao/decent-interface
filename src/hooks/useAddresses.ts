@@ -13,7 +13,7 @@ export function useAddresses(chainId: number | undefined) {
     gnosisWrapperFactory?: { address: string };
     gnosisSafeFactory?: { address: string };
     usulMastercopy?: { address: string };
-    zodiacProxyFactory?: { address: string };
+    zodiacModuleProxyFactory?: { address: string };
     dao?: { address: string };
     accessControl?: { address: string };
     treasuryModule?: { address: string };
@@ -140,7 +140,7 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisWrapperAddress: { address: string } = gnosisWrapperNetworksAddresses[chainId];
     const gnosisSafeAddress: { address: string } = gnosisSafeNetworksAddresses[chainId];
     const usulMastercopy: { address: string } = usulMastercopyAddresses[chainId];
-    const zodiacProxyFactory: { address: string } = zodiacProxyFactoryAddresses[chainId];
+    const zodiacModuleProxyFactory: { address: string } = zodiacProxyFactoryAddresses[chainId];
 
     if (
       !metaFactoryAddress ||
@@ -160,7 +160,7 @@ export function useAddresses(chainId: number | undefined) {
       !gnosisWrapperAddress ||
       !gnosisSafeAddress ||
       !usulMastercopy ||
-      !zodiacProxyFactory
+      !zodiacModuleProxyFactory
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -185,7 +185,7 @@ export function useAddresses(chainId: number | undefined) {
       gnosisWrapper: gnosisWrapperAddress,
       gnosisSafe: gnosisSafeAddress,
       usulMastercopy,
-      zodiacProxyFactory,
+      zodiacModuleProxyFactory,
     });
   }, [chainId]);
 
