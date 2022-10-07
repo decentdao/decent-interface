@@ -39,18 +39,14 @@ export class Navbuttons {
     this.connectWallet = page.locator('//div[@id="menu:down-arrow"]//*[name()="svg"]');
     this.createDao = page.locator('(//button[@id="home:link-create"])[1]');
     this.findDao = page.locator('(//button[@id="home:link-find"])[1]');
-    this.connectMenu = page.locator('button[role="menuitem"]:has-text("Connect")');
+    this.connectMenu = page.locator('[data-testid="menu:connect"]');
     this.disconnectMenu = page.locator('[data-testid="menu:disconnect"]');
     this.copyMenu = page.locator('//*[name()="path" and contains(@d,"M7 6V3C7 2")]');
-    this.favoritesMenu = page.locator(
-      '[id="headlessui-menu-item-:r2r:"] div:has-text("Favorites")'
-    );
-    this.communityMenu = page.locator(
-      '[id="headlessui-menu-item-:r2t:"] div:has-text("Community")'
-    );
-    this.overviewMenu = page.locator('[id="headlessui-menu-item-:r2v:"] div:has-text("Overview")');
-    this.faqMenu = page.locator('[id="headlessui-menu-item-:r31:"] div:has-text("FAQ")');
-    this.docsMenu = page.locator('[id="headlessui-menu-item-:r33:"] div:has-text("Docs")');
+    this.favoritesMenu = page.locator('[data-testid="menu:favorites"] div:has-text("Favorites")');
+    this.communityMenu = page.locator('[data-testid="menu:community"]');
+    this.overviewMenu = page.locator('[data-testid="menu:overview"] div:has-text("Overview")');
+    this.faqMenu = page.locator('[data-testid="menu:faq"] div:has-text("FAQ")');
+    this.docsMenu = page.locator('[data-testid="menu:docs"] div:has-text("Docs")');
     this.localWallet = page.locator(
       '#WEB3_CONNECT_MODAL_ID div.web3modal-provider-name:has-text("Local Node")'
     );
