@@ -5,6 +5,7 @@ import ContentBox from '../ui/ContentBox';
 import { useCreator } from './provider/hooks/useCreator';
 import { ChangeEvent } from 'react';
 import { CreatorProviderActions } from './provider/types';
+import { useTranslation } from 'react-i18next';
 
 function DAODetails() {
   const { state, dispatch } = useCreator();
@@ -17,6 +18,8 @@ function DAODetails() {
       },
     });
   };
+  const { t } = useTranslation('daoCreate');
+
   return (
     <ContentBox>
       <ContentBoxTitle>Essentials</ContentBoxTitle>
@@ -25,8 +28,8 @@ function DAODetails() {
           type="text"
           value={state.essentials.daoName}
           onChange={daoNameChange}
-          label="Fractal Name"
-          helperText="What is your Fractal called?"
+          label={t('labelFractalName')}
+          helperText={t('helperFractalName')}
         />
       </InputBox>
     </ContentBox>

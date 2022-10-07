@@ -4,6 +4,7 @@ import { useTransaction } from '../contexts/web3Data/transactions';
 import { ethers } from 'ethers';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { ProposalData } from '../providers/govenor/types';
+import { useTranslation } from 'react-i18next';
 
 const useQueueTransaction = ({
   proposalData,
@@ -23,6 +24,8 @@ const useQueueTransaction = ({
     setPending(contractCallPending);
   }, [setPending, contractCallPending]);
 
+  const { t } = useTranslation('transaction');
+
   let queueTransaction = useCallback(() => {
     if (!signerOrProvider || !proposalData || !governorModuleContract) {
       return;
@@ -36,11 +39,11 @@ const useQueueTransaction = ({
           proposalData.calldatas,
           ethers.utils.id(proposalData.description)
         ),
-      pendingMessage: 'Queuing Transaction...',
-      failedMessage: 'Queuing Failed',
-      successMessage: 'Queuing Completed',
+      pendingMessage: t('pendingQueue'),
+      failedMessage: t('failedQueue'),
+      successMessage: t('successQueue'),
     });
-  }, [contractCallQueueTransaction, governorModuleContract, proposalData, signerOrProvider]);
+  }, [contractCallQueueTransaction, governorModuleContract, proposalData, signerOrProvider, t]);
   return queueTransaction;
 };
 

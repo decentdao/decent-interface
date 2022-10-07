@@ -2,6 +2,7 @@ import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule'
 import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
+import { useTranslation } from 'react-i18next';
 
 const useClaimToken = ({
   setPending,
@@ -20,6 +21,8 @@ const useClaimToken = ({
     setPending(contractCallPending);
   }, [setPending, contractCallPending]);
 
+  const { t } = useTranslation('transaction');
+
   const claimToken = useCallback(() => {
     if (!signerOrProvider || !account || !claimModuleContract) {
       return;
@@ -27,11 +30,11 @@ const useClaimToken = ({
 
     contractCallClaimToken({
       contractFn: () => claimModuleContract.claimSnap(account),
-      pendingMessage: 'Claiming Token',
-      failedMessage: 'Claim Tokens Failed',
-      successMessage: 'Tokens Claimed',
+      pendingMessage: t('pendingClaimTokens'),
+      failedMessage: t('failedClaimTokens'),
+      successMessage: t('successClaimTokens'),
     });
-  }, [contractCallClaimToken, claimModuleContract, signerOrProvider, account]);
+  }, [contractCallClaimToken, claimModuleContract, signerOrProvider, account, t]);
   return claimToken;
 };
 

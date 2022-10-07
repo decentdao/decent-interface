@@ -7,6 +7,7 @@ import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
+import { useTranslation } from 'react-i18next';
 
 function GovernanceDetails() {
   const {
@@ -49,6 +50,10 @@ function GovernanceDetails() {
     }
   };
 
+  const { t } = useTranslation(['common', 'daoCreate']);
+  const recommend = t('recommend');
+  const blocks = t('blocks');
+
   return (
     <div>
       <ContentBox>
@@ -59,12 +64,12 @@ function GovernanceDetails() {
           <Input
             type="number"
             value={govModule.proposalThreshold.toString()}
-            unit="Tokens"
+            unit={t('tokens')}
             onChange={onThresholdChange}
-            label="Proposal Creation (# of Tokens Required)"
-            exampleLabel="Recommend"
-            exampleText="0 Tokens"
-            helperText="How many tokens does a member need to have in order to create a new proposal."
+            label={t('labelProposalRequirement', { ns: 'daoCreate' })}
+            exampleLabel={recommend}
+            exampleText={t('exampleProposalRequirement', { ns: 'daoCreate' })}
+            helperText={t('helperProposalRequirement', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
@@ -74,11 +79,11 @@ function GovernanceDetails() {
             type="number"
             value={govModule.voteStartDelay.toString()}
             onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'voteStartDelay')}
-            label="Vote Start Delay"
-            exampleLabel="Recommend"
-            exampleText="24 Hours / ~6545 Blocks"
-            unit="Blocks"
-            helperText="How many blocks after a proposal is created, before DAO members may vote on the proposal."
+            label={t('labelVoteStartDelay', { ns: 'daoCreate' })}
+            exampleLabel={recommend}
+            exampleText={t('exampleVoteStartDelay', { ns: 'daoCreate' })}
+            unit={blocks}
+            helperText={t('helperVoteStartDelay', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
@@ -88,11 +93,11 @@ function GovernanceDetails() {
             type="number"
             value={govModule.votingPeriod.toString()}
             onChange={onVotingPeriodChange}
-            label="Voting Period"
-            exampleLabel="Recommend"
-            exampleText="1 Week / ~45818 Blocks"
-            unit="Blocks"
-            helperText="The length of time (in blocks) between a vote's starting and ending point. Must be greater than 0."
+            label={t('labelVotingPeriod', { ns: 'daoCreate' })}
+            exampleLabel={recommend}
+            exampleText={t('exampleVotingPeriod', { ns: 'daoCreate' })}
+            unit={blocks}
+            helperText={t('helperVotingPeriod', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="1"
           />
@@ -103,11 +108,11 @@ function GovernanceDetails() {
             type="number"
             value={govModule.quorum.toString()}
             onChange={onQuorumChange}
-            label="Quorum"
-            exampleLabel="Recommend"
-            exampleText="4%"
+            label={t('quorum')}
+            exampleLabel={recommend}
+            exampleText={t('exampleQuorum', { ns: 'daoCreate' })}
             unit="%"
-            helperText="The percentage of total votes to total tokens required in order for a proposal to PASS. Must be less than or equal to than 100%"
+            helperText={t('helperQuorum', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
@@ -117,12 +122,11 @@ function GovernanceDetails() {
             type="number"
             value={govModule.lateQuorumExecution.toString()}
             onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'lateQuorumExecution')}
-            label="Late Quorum Delay"
-            exampleLabel="Recommend"
-            exampleText="0 Blocks"
-            unit="Blocks"
-            helperText="Minimum voting period after quorum is reached. 
-          This prevents a large voter from swaying a vote and triggering quorum at the last minute."
+            label={t('labelLateQuorumDelay', { ns: 'daoCreate' })}
+            exampleLabel={recommend}
+            exampleText={t('exampleLateQuorumDelay', { ns: 'daoCreate' })}
+            unit={blocks}
+            helperText={t('helperLateQuorumDelay', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
@@ -132,17 +136,17 @@ function GovernanceDetails() {
             type="number"
             value={govModule.executionDelay.toString()}
             onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'executionDelay')}
-            label="Proposal Execution Delay"
-            exampleLabel="Recommend"
-            exampleText="24 Hours / ~6545 Blocks"
-            unit="Blocks"
-            helperText="How many hours after a proposal PASSES / QUEUED, must it wait until it can be executed?"
+            label={t('labelProposalExecutionDelay', { ns: 'daoCreate' })}
+            exampleLabel={recommend}
+            exampleText={t('exampleProposalExecutionDelay', { ns: 'daoCreate' })}
+            unit={blocks}
+            helperText={t('helperProposalExecutionDelay', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             min="0"
           />
         </InputBox>
       </ContentBox>
-      <ContentBanner description="The Governance Setup values are editable at this time. A default value has been placed in each input box. To change these values, a new proposal will need to be created and passed by your members." />
+      <ContentBanner description={t('governanceDescription', { ns: 'daoCreate' })} />
     </div>
   );
 }

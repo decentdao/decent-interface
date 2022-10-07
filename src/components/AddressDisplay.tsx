@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import useDAOContract from '../hooks/useDAOContract';
 import useDAOName from '../hooks/useDAOName';
@@ -36,6 +37,7 @@ export function AddressDisplay({ address, label }: AddressDisplayProps) {
 export function DAOAddress({ daoAddress }: { daoAddress: string }) {
   const daoContract = useDAOContract(daoAddress);
   const name = useDAOName(daoContract);
+  const { t } = useTranslation();
   return (
     <InputBox>
       <div className="flex justify-between items-center">
@@ -44,7 +46,7 @@ export function DAOAddress({ daoAddress }: { daoAddress: string }) {
           label={name!}
         />
         <Link to={`/daos/${daoAddress}`}>
-          <TextButton label="View DAO" />
+          <TextButton label={t('labelViewDAO')} />
         </Link>
       </div>
     </InputBox>

@@ -1,4 +1,5 @@
 import { useRef, ReactText, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ToastContent } from '../../../components/ui/ToastContent';
@@ -23,6 +24,7 @@ export function useUserProposalValidation() {
   const navigate = useNavigate();
   const thresholdToastId = useRef<ReactText>('');
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
+  const { t } = useTranslation('proposal');
 
   useEffect(() => {
     // disable while threshold and voting weight are loading
@@ -40,8 +42,8 @@ export function useUserProposalValidation() {
       if (!thresholdToastId.current) {
         thresholdToastId.current = toast(
           <ToastContent
-            title="No Delegatees have been set"
-            label="Delegate"
+            title={t('errorNoDelegates')}
+            label={t('buttonDelegate')}
             action={() => {
               navigate(`/daos/${daoAddress}/modules/${governorModuleContract!.address}/delegate`);
             }}
@@ -64,8 +66,8 @@ export function useUserProposalValidation() {
       if (!thresholdToastId.current) {
         thresholdToastId.current = toast(
           <ToastContent
-            title="Voting weight is less than the required threshold to create proposals"
-            label="Delegate"
+            title={t('errorCantCreateProposal')}
+            label={t('buttonDelegate')}
             action={() => {
               navigate(`/daos/${daoAddress}/modules/${governorModuleContract!.address}/delegate`);
             }}
@@ -90,6 +92,7 @@ export function useUserProposalValidation() {
     daoAddress,
     governorModuleContract,
     navigate,
+    t,
   ]);
 
   useEffect(() => {

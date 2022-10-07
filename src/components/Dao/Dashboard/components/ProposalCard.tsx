@@ -4,6 +4,7 @@ import { PrimaryButton, SecondaryButton } from '../../../ui/forms/Button';
 import ContentBox from '../../../ui/ContentBox';
 import StatusBox from '../../../ui/StatusBox';
 import { formatDatesDiffReadable } from '../../../../helpers/dateTime';
+import { useTranslation } from 'react-i18next';
 
 type ProposalCardProps = {
   proposal: ProposalData;
@@ -19,6 +20,7 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
     proposal.state !== ProposalState.Executed &&
     proposal.state !== ProposalState.Expired;
   const now = new Date();
+  const { t } = useTranslation();
 
   return (
     <ContentBox>
@@ -28,7 +30,7 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
             <StatusBox status={proposal.state} />
             {proposal.startTime && (
               <span className="text-base text-gray-50 ml-4">
-                {formatDatesDiffReadable(proposal.startTime, now)} ago
+                {formatDatesDiffReadable(proposal.startTime, now, t)} ago
               </span>
             )}
           </div>
@@ -36,7 +38,7 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
         </div>
         {isProposalActive && proposal.endTime && proposal.endTime.getTime() > now.getTime() && (
           <span className="text-base text-gray-50 mx-14">
-            {formatDatesDiffReadable(proposal.endTime, now)} left
+            {formatDatesDiffReadable(proposal.endTime, now, t)} left
           </span>
         )}
         <Link to={`/daos/${daoAddress}/modules/${moduleAddress}/proposals/${proposal.number}`}>
@@ -44,14 +46,14 @@ function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps
             <PrimaryButton
               label={
                 proposal.state === ProposalState.Pending
-                  ? 'Vote'
+                  ? t('vote')
                   : proposal.state === ProposalState.Queued && proposal.eta !== 0
-                  ? 'Execute'
-                  : 'View'
+                  ? t('execute')
+                  : t('view')
               }
             />
           ) : (
-            <SecondaryButton label="View" />
+            <SecondaryButton label={t('view')} />
           )}
         </Link>
       </div>

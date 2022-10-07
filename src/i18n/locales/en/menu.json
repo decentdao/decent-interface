@@ -1,9 +1,17 @@
 {
     "connect": "Connect",
+    "connectWallet": "Connect Wallet",
     "disconnect": "Disconnect",
     "favorites": "Favorites",
     "community": "Community",
     "overview": "Overview",
     "faq": "FAQ",
-    "docs": "Docs"
+    "docs": "Docs",
+    "toastSwitchChain": "Switch to a supported chain: {{chainsNames}}",
+    "toastConnected": "Connected",
+    "toastChainChangedUnsupported": "Chain changed: Switch to a supported chain: {{chainsNames}}",
+    "toastChainChanged": "Chain changed: {{chainId}}",
+    "toastAccountRevoked": "Account access revoked",
+    "toastAccountChanged": "Account changed",
+    "toastAccountDisconnected": "Account disconnected"
 }

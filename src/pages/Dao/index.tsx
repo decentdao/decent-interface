@@ -9,6 +9,7 @@ import Transactions from '../Transactions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { TreasuryController } from '../../controller/Modules/TreasuryController';
 import { GovernanceController } from '../../controller/Modules/GovernanceController';
+import { useTranslation } from 'react-i18next';
 
 function DAORoutes() {
   return (
@@ -44,6 +45,7 @@ function DAO() {
     mvd: { dao },
   } = useFractal();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   useEffect(() => {
     if (!dao.isLoading && !dao.daoAddress) {
       navigate('/daos');
@@ -51,7 +53,7 @@ function DAO() {
   });
   if (dao.isLoading) {
     // @todo add full page loader
-    <div>LOADING DAO</div>;
+    <div>{t('loading')}</div>;
   }
 
   if (!dao.daoAddress) {

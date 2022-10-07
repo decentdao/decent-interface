@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { CREATOR_STEP_TITLES } from '../constants';
+import { useTranslation } from 'react-i18next';
+import { CREATOR_STEP_TITLE_KEYS } from '../constants';
 import { CreatorState, CreatorSteps } from '../types';
 
 /**
@@ -8,25 +9,30 @@ import { CreatorState, CreatorSteps } from '../types';
  * @returns
  */
 export function useStepName(state: CreatorState) {
-  const [stepName, setStepName] = useState(CREATOR_STEP_TITLES[state.step]);
+  const { t } = useTranslation('daoCreate');
+  const [stepName, setStepName] = useState<string[]>(t(CREATOR_STEP_TITLE_KEYS[state.step]));
 
   useEffect(() => {
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
-        setStepName(CREATOR_STEP_TITLES[state.step]);
+        setStepName(t(CREATOR_STEP_TITLE_KEYS[state.step]));
         break;
       case CreatorSteps.GOV_CONFIG:
       case CreatorSteps.TREASURY_GOV_TOKEN:
       case CreatorSteps.FUNDING: {
-        const title = `${state.essentials!.daoName} ${CREATOR_STEP_TITLES[state.step]} `;
-        setStepName(title);
+        setStepName(
+          t('stepName', {
+            daoName: state.essentials!.daoName,
+            stepName: t(CREATOR_STEP_TITLE_KEYS[state.step]),
+          })
+        );
         break;
       }
       default:
-        setStepName(CREATOR_STEP_TITLES[state.step]);
+        setStepName(t(CREATOR_STEP_TITLE_KEYS[state.step]));
         break;
     }
-  }, [state.step, state.essentials]);
+  }, [state.step, state.essentials, t]);
 
   return stepName;
 }

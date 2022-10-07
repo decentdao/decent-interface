@@ -13,6 +13,7 @@ import { useTransaction } from '../contexts/web3Data/transactions';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useBlockchainData } from '../contexts/blockchainData';
 import useSafeContracts from './useSafeContracts';
+import { useTranslation } from 'react-i18next';
 
 type DeployDAOSuccessCallback = (daoAddress: string) => void;
 
@@ -30,6 +31,8 @@ const useDeployDAO = () => {
   const [contractCallDeploy, contractCallPending] = useTransaction();
 
   const { metaFactoryContract } = useBlockchainData();
+
+  const { t } = useTranslation('transaction');
 
   const deployTokenVotingDAO = useCallback(
     (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: DeployDAOSuccessCallback) => {
@@ -57,13 +60,13 @@ const useDeployDAO = () => {
             createDAOData.calldata.values,
             createDAOData.calldata.calldatas
           ),
-        pendingMessage: 'Deploying Fractal...',
-        failedMessage: 'Deployment Failed',
-        successMessage: 'DAO Created',
+        pendingMessage: t('pendingDeployDAO'),
+        failedMessage: t('failedDeployDAO'),
+        successMessage: t('successDeployDAO'),
         successCallback: () => successCallback(createDAOData.predictedDAOAddress),
       });
     },
-    [contractCallDeploy, createDAODataCreator, metaFactoryContract, account]
+    [contractCallDeploy, createDAODataCreator, metaFactoryContract, account, t]
   );
 
   const deployGnosisDAO = useCallback(
@@ -92,13 +95,13 @@ const useDeployDAO = () => {
             createDAOData.calldata.values,
             createDAOData.calldata.calldatas
           ),
-        pendingMessage: 'Deploying Fractal...',
-        failedMessage: 'Deployment Failed',
-        successMessage: 'DAO Created',
+        pendingMessage: t('pendingDeployDAO'),
+        failedMessage: t('failedDeployDAO'),
+        successMessage: t('successDeployDAO'),
         successCallback: () => successCallback(createDAOData.predictedDAOAddress),
       });
     },
-    [contractCallDeploy, createGnosisDAODataCreator, metaFactoryContract, account]
+    [contractCallDeploy, createGnosisDAODataCreator, metaFactoryContract, account, t]
   );
 
   const deployGnosisSafe = useCallback(
@@ -157,9 +160,9 @@ const useDeployDAO = () => {
                   '0x01'
                 )
               ),
-          pendingMessage: 'Deploying Gnosis Safe...',
-          failedMessage: 'Deployment Failed',
-          successMessage: 'Gnosis Safe Created',
+          pendingMessage: t('pendingDeployGnosis'),
+          failedMessage: t('failedDeployGnosis'),
+          successMessage: t('successDeployGnosis'),
           successCallback: () => successCallback(createdSafeProxyAddress),
         });
       };
@@ -174,6 +177,7 @@ const useDeployDAO = () => {
       gnosisSafe,
       account,
       signerOrProvider,
+      t
     ]
   );
 

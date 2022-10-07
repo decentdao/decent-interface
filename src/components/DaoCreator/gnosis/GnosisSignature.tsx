@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { checkAddress } from '../../../hooks/useAddress';
 import { TextButton } from '../../ui/forms/Button';
@@ -38,6 +39,8 @@ export function GnosisSignatures({
     gnosisAddresses[index] = { address: address, error: !isValidAddress };
     updateAddresses(gnosisAddresses, index, isValidAddress);
   };
+  const { t } = useTranslation();
+
   return (
     <div className="flex items-center my-2">
       <Input
@@ -45,13 +48,13 @@ export function GnosisSignatures({
         value={trustee.address}
         placeholder={ethers.constants.AddressZero}
         onChange={event => updateAndValidateAddress(event.target.value)}
-        errorMessage={trustee.error ? 'Invalid Address' : undefined}
+        errorMessage={trustee.error ? t('errorInvalidAddress') : undefined}
       />
       {trustedAddresses.length > 1 && (
         <TextButton
           type="button"
           onClick={() => removeAddress(index)}
-          label="Remove"
+          label={t('remove')}
           className="px-2"
         />
       )}

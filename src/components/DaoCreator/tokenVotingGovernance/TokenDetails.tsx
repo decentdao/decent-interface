@@ -8,6 +8,7 @@ import { CreatorProviderActions } from '../provider/types';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { utils } from 'ethers';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
+import { useTranslation } from 'react-i18next';
 
 function TokenDetails() {
   const {
@@ -37,6 +38,8 @@ function TokenDetails() {
     );
   };
 
+  const { t } = useTranslation('daoCreate');
+
   return (
     <ContentBox>
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
@@ -45,8 +48,8 @@ function TokenDetails() {
           type="text"
           value={govToken.tokenName}
           onChange={e => fieldUpdate(e.target.value, 'tokenName')}
-          label="Token Name"
-          helperText="What is your governance token called?"
+          label={t('labelTokenName')}
+          helperText={t('helperTokenName')}
         />
       </InputBox>
       <InputBox>
@@ -54,8 +57,8 @@ function TokenDetails() {
           type="text"
           value={govToken.tokenSymbol}
           onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
-          label="Token Symbol"
-          helperText="Max: 5 characters"
+          label={t('labelTokenSymbol')}
+          helperText={t('helperTokenSymbol')}
         />
       </InputBox>
       <InputBox>
@@ -63,8 +66,8 @@ function TokenDetails() {
           type="number"
           value={govToken.tokenSupply.value}
           onChange={e => onSupplyChange(e.target.value)}
-          label="Token Supply"
-          helperText="Max: 18 decimals"
+          label={t('labelTokenSupply')}
+          helperText={t('helperTokenSupply')}
           decimals={DEFAULT_TOKEN_DECIMALS}
           restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
         />
