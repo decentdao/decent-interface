@@ -6,7 +6,7 @@
     "titleNFTs": "NFTs",
     "tokenSymbol": "Symbol",
     "tokenName": "Name",
-    "tokeId": "Token Id",
+    "tokenId": "Token Id",
     "tokenAmount": "Amount",
     "descTreasury": "Here you will see the tokens that have been sent to the {{daoName}} treasury address.",
     "emptyTokens": "There are no tokens in this <1>treasury</1> at this time.",

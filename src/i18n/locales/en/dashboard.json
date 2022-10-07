@@ -1,4 +1,5 @@
 {
+    "titleLatestActivity": "Latest Activity",
     "labelClaimTokens": "You have {{value}} {{symbol}} available to claim!",
     "claim": "Claim",
     "titleDelegation": "Delegate Vote",
@@ -8,10 +9,13 @@
     "labelAccessControl": "Access control",
     "titleFavorites": "Favorite Fractals",
     "emptyFavorites": "No favorites!",
-
     "labelConnectSearch": "To search for a Fractal",
     "titleSearch": "Find a Fractal",
     "sublabelSearch": "Use a valid Fractal ETH address or ENS domain",
     "errorInvalidSearch": "Please use a valid Fractal ETH address or ENS domain",
-    "errorFailedSearch": "Sorry a Fractal does not exist on this address"
+    "errorFailedSearch": "Sorry a Fractal does not exist on this address",
+    "titleParentDAO": "Parent DAO",
+    "titleDAOSubsidiaries": "DAO Subsidiaries",
+    "titleCoreDAO": "Core DAO Address",
+    "titleModuleContract": "Module Contract Addresses"
 }

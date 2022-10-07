@@ -1,6 +1,5 @@
 {   
     "auditDisclaimer": "WARNING: this project is not audited, use at your own risk.",
-
     "no": "No",
     "yes": "Yes",
     "skip": "Skip",
@@ -31,16 +30,15 @@
     "address": "Address",
     "search": "Search",
     "delegate": "Delegate",
-
+    "home": "Home",
     "crumbNewProposal": "New Proposal",
-
     "labelViewDAO": "View DAO",
+    "labelEtherscan": "View on Etherscan",
     "labelGnosis": "Gnosis Safe",
-
+    "labelPureGnosis": "Pure Gnosis Safe",
     "errorInvalidAddress": "Invalid address",
     "errorSentryFallback": "There was an unexpected error",
     "errorGeneral": "There was an error! Check your browser's console logs for more details.",
-
     "labelDateJustNow": "< 5 minutes",
     "labelDateMinutes": "{{count}} minutes",
     "labelDateHour_one": "{{count}} hour",

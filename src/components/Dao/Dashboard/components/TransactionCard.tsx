@@ -55,7 +55,7 @@ function TransactionCard({ transaction }: TransactionCardProps) {
           {displayRecipient()}
         </p>
         <EtherscanTransactionLink txHash={transaction.transactionHash}>
-          View on Etherscan
+          {t('labelEtherscan')}
         </EtherscanTransactionLink>
       </div>
     </ContentBox>

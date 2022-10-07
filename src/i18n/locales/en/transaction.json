@@ -21,6 +21,8 @@
     "failedCreateProposal": "Proposal Creation Failed",
     "successCreateProposal": "Proposal Created",
     "errorTransactionUnknown": "Not sure what happened with that transaction",
-
+    "pendingDeployGnosis": "Deploying Gnosis Safe...",
+    "failedDeployGnosis": "Deployment Failed",
+    "successDeployGnosis": "Gnosis Safe Created",
     "errorUserDeniedTransaction": "User denied transaction"
 }
