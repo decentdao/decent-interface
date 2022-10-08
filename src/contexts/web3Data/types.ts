@@ -51,3 +51,41 @@ export type ProviderApiKeys = {
   alchemy?: string;
   etherscan?: string;
 };
+
+export interface Web3ModalProvider {
+  _isProvider: boolean;
+  _events: [];
+  _emitted: {
+    block: number;
+  };
+  disableCcipRead: false;
+  formatter: {
+    formats: {
+      transaction: {};
+      transactionRequest: {};
+      receiptLog: {};
+      receipt: {};
+      block: {};
+      blockWithTransactions: {};
+      filter: {};
+      filterLog: {};
+    };
+  };
+  anyNetwork: false;
+  _networkPromise: {};
+  _maxInternalBlockNumber: number;
+  _lastBlockNumber: number;
+  _maxFilterBlockRange: number;
+  _pollingInterval: number;
+  _fastQueryDate: number;
+  connection: {
+    url: string;
+  };
+  _nextId: 43;
+  _eventLoopCache: {
+    detectNetwork: null;
+    eth_chainId: null;
+  };
+  chainId: 31337;
+  name: unknown;
+}

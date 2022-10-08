@@ -5,6 +5,7 @@ import {
   BaseProviderInfo,
   ProviderApiKeys,
   LocalInjectedProviderInfo,
+  Web3ModalProvider,
 } from './types';
 import { logError } from '../../helpers/errorLogging';
 
@@ -59,7 +60,8 @@ export const getLocalProvider = async (
 export const getInjectedProvider = async (
   web3ModalProvider: Web3Modal
 ): Promise<InjectedProviderInfo | LocalInjectedProviderInfo | undefined> => {
-  const userSuppliedProvider = await web3ModalProvider.connect();
+  const userSuppliedProvider: Web3ModalProvider = await web3ModalProvider.connect();
+
   if (userSuppliedProvider.chainId.toString() === process.env.REACT_APP_LOCAL_CHAIN_ID) {
     const localProvider = await getLocalProvider(true);
     if (localProvider) {
@@ -67,7 +69,9 @@ export const getInjectedProvider = async (
     }
     return undefined;
   }
-  return makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider));
+  return makeInjectedProvider(
+    new ethers.providers.Web3Provider(userSuppliedProvider as ethers.providers.ExternalProvider)
+  );
 };
 
 export const getFallbackProvider = (): BaseProviderInfo => {
