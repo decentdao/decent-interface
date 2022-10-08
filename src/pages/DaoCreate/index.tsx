@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
 import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
+import TokenGate from '../../components/TokenGate';
 import useDeployDAO from '../../hooks/useDeployDAO';
 
 function DaoCreate() {
@@ -17,10 +18,17 @@ function DaoCreate() {
   };
 
   return (
-    <DaoCreator
-      pending={pending}
-      deployDAO={deployDAO}
-    />
+    <>
+      {/* TODO just gating this for testing, we don't necessarily want to gate DAO creation */}
+      <TokenGate
+        featureName="DAO creation"
+        alwaysRequireConnected={false}
+      />
+      <DaoCreator
+        pending={pending}
+        deployDAO={deployDAO}
+      />
+    </>
   );
 }
 
