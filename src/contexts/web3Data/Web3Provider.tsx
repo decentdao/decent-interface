@@ -70,6 +70,7 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, getInitialState());
+  const { t } = useTranslation();
 
   const connectDefaultProvider = useCallback(async () => {
     web3Modal.clearCachedProvider();
@@ -93,6 +94,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   const connect: ConnectFn = useCallback(async () => {
     const userInjectedProvider = await getInjectedProvider(web3Modal);
     if (!!userInjectedProvider && getSupportedChains().includes(userInjectedProvider.chainId)) {
+      toast(t('toastConnected'), { toastId: 'connected' });
       dispatch({
         type: Web3ProviderActions.SET_INJECTED_PROVIDER,
         payload: userInjectedProvider,
@@ -100,9 +102,8 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
     } else {
       connectDefaultProvider();
     }
-  }, [connectDefaultProvider]);
+  }, [connectDefaultProvider, t]);
 
-  const { t } = useTranslation('menu');
   const disconnect: DisconnectFn = useCallback(() => {
     toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
     // switch to a default provider

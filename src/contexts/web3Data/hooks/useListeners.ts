@@ -42,7 +42,6 @@ const useListeners = (
         ) {
           setModalProvider(_modalProvider);
         }
-        toast(t('toastConnected'), { toastId: 'connected' });
       }
     });
     return () => {
