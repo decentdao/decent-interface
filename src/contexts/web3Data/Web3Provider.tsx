@@ -70,7 +70,7 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(reducer, getInitialState());
-  const { t } = useTranslation();
+  const { t } = useTranslation('menu');
 
   const connectDefaultProvider = useCallback(async () => {
     web3Modal.clearCachedProvider();
