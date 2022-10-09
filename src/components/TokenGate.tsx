@@ -7,13 +7,13 @@ import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { TextButton } from './ui/forms/Button';
 
-type POAPEvent = {
-  [id: string]: number;
-};
+interface POAPEvent {
+  id: number;
+}
 
-type POAPApiResponse = {
-  [event: string]: POAPEvent;
-};
+interface POAPApiResponse {
+  event: POAPEvent;
+}
 
 function ToastContent({
   message,
@@ -101,7 +101,8 @@ function TokenGate({
         action={action}
       />,
       {
-        autoClose: 5000,
+        autoClose: 4000,
+        toastId: 'tokenGate:' + featureName,
       }
     );
   }, [account, navigate, data, poapId, featureName, t, connect, alwaysRequireConnected]);

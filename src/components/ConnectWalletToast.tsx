@@ -32,6 +32,7 @@ function ConnectWalletToast({ label }: { label: string }) {
       closeOnClick: false,
       draggable: false,
       progress: 1,
+      toastId: 'connectWalletToast:' + label,
     });
 
     return () => toast.dismiss(toastId);
