@@ -45,9 +45,11 @@ export default function useSafeContracts({ usulAddress }: IUseSafeContracts) {
   }, [gnosisSafeFactory, zodiacModuleProxyFactory, signerOrProvider]);
 
   useEffect(() => {
-    if (usulAddress && signerOrProvider) {
-      setUsulContract(Usul__factory.connect(usulAddress, signerOrProvider));
+    if (!usulAddress || !signerOrProvider) {
+      setUsulContract(undefined);
+      return;
     }
+    setUsulContract(Usul__factory.connect(usulAddress, signerOrProvider));
   }, [usulAddress, signerOrProvider]);
 
   return { gnosisSafeFactoryContract, usulContract, zodiacModuleProxyFactoryContract };
