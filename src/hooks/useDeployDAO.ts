@@ -177,7 +177,7 @@ const useDeployDAO = () => {
       gnosisSafe,
       account,
       signerOrProvider,
-      t
+      t,
     ]
   );
 
