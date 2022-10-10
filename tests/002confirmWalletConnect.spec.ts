@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
+import { delay } from '../page-objects/Helpers/helpers';
 
 test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   /* Go to local host http link */
   await page.goto('http://localhost:3000');
+  await delay(5000);
 
   /* Click("Connect Wallet") */
   await page.locator("//div[@id='menu:down-arrow']//*[name()='svg']").click();

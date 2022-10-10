@@ -3,6 +3,7 @@ import { HomePage } from '../page-objects/HomePage';
 import { Navbuttons } from '../page-objects/components/Navbuttons';
 import { Notifications } from '../page-objects/Notifications';
 import { InputFields } from '../page-objects/InputFields';
+import { delay } from '../page-objects/Helpers/helpers';
 
 test.describe('DAO Creation', () => {
   let homePage: HomePage;
@@ -16,15 +17,19 @@ test.describe('DAO Creation', () => {
     notifications = new Notifications(page);
     inputFields = new InputFields(page);
     homePage.visit();
+    await delay(5000);
     //await page.waitForLoadState('load');
     //await page.waitForTimeout(1000);
     notifications.closeButton('Close Audit Message');
     await page.waitForLoadState();
+    await delay(2000);
+    //await delay(3000);
     // await page.waitForTimeout(1000);
 
     navButtons.clickOnButton('Connect to Wallet on Header');
     //await page.waitForTimeout(1000);
     await page.waitForLoadState('load');
+    await delay(2000);
     await page.click('[data-testid="menu:connect"]');
     //await page.waitForTimeout(1500);
     await page.waitForLoadState('domcontentloaded');
