@@ -116,7 +116,6 @@ export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICre
   return (
     <CreatorContext.Provider value={value}>
       <div className="pb-16">
-        <ConnectWalletToast label={t('labelConnectWallet')} />
         <div>
           <H1>{stepName}</H1>
           {children}
