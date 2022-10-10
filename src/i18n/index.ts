@@ -58,9 +58,6 @@ i18n
   .use(initReactI18next)
   .init({
     resources: resources,
-    detection: {
-      caches: [], // don't cache detected browser language
-    },
     fallbackLng: 'en',
     defaultNS: 'common',
     interpolation: {
