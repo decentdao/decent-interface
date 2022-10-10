@@ -223,7 +223,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
       };
 
       submitProposal({
-        proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` },
+        proposalData: { ...data, description: `New subDAO: ${daoData.daoName}` }, // TODO do we want to translate on-chain data?
         successCallback,
       });
     },
@@ -235,7 +235,7 @@ export function GovernanceInjector({ children }: { children: JSX.Element }) {
       switch (daoData.governance) {
         case GovernanceTypes.TOKEN_VOTING_GOVERNANCE:
           return createTokenVotingDAO(daoData);
-        case GovernanceTypes.GNOSIS_SAFE:
+        case GovernanceTypes.MVD_GNOSIS:
           return createGnosisDAO(daoData);
       }
     },

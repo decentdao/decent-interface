@@ -3,8 +3,13 @@ import differenceInHours from 'date-fns/differenceInHours';
 import differenceInDays from 'date-fns/differenceInDays';
 import differenceInMonths from 'date-fns/differenceInMonths';
 import differenceInYears from 'date-fns/differenceInYears';
+import { TFunction } from 'react-i18next';
 
-export function formatDatesDiffReadable(dateStart: Date, dateEnd: Date) {
+export function formatDatesDiffReadable(
+  dateStart: Date,
+  dateEnd: Date,
+  t: TFunction<'translation', undefined>
+) {
   // Just for readability purpose - transform to minutes instead of miliseconds
   const diffInMinutes = Math.abs(differenceInMinutes(dateStart, dateEnd));
   const diffInDays = Math.abs(differenceInDays(dateStart, dateEnd));
@@ -12,19 +17,19 @@ export function formatDatesDiffReadable(dateStart: Date, dateEnd: Date) {
 
   let formattedString = '';
   if (diffInMinutes < 5) {
-    formattedString = '< 5 minutes';
+    formattedString = t('labelDateJustNow');
   } else if (diffInMinutes < 60) {
-    formattedString = `${Math.floor(diffInMinutes)} minutes`;
+    formattedString = t('labelDateMinutes', { count: Math.floor(diffInMinutes) });
   } else if (diffInMinutes < 60 * 24) {
     const diffInHours = Math.abs(differenceInHours(dateStart, dateEnd));
-    formattedString = `${diffInHours} hour${diffInHours > 1 ? 's' : ''}`;
+    formattedString = t('labelDateHour', { count: diffInHours });
   } else if (diffInMonths < 1) {
-    formattedString = `${diffInDays} day${diffInDays > 1 ? 's' : ''}`;
+    formattedString = t('labelDateDay', { count: diffInDays });
   } else if (diffInMonths < 12) {
-    formattedString = `${diffInMonths} month${diffInMonths > 1 ? 's' : ''}`;
+    formattedString = t('labelDateMonth', { count: diffInMonths });
   } else {
     const diffInYears = Math.abs(differenceInYears(dateStart, dateEnd));
-    formattedString = `${diffInYears} year${diffInYears > 1 ? 's' : ''}`;
+    formattedString = t('labelDateYear', { count: diffInYears });
   }
 
   return formattedString;

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Fractalize from './Fractalize';
 import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
 import { useGovernanceInjector } from '../../controller/Modules/injectors/GovernanceInjectorConext';
+import { useTranslation } from 'react-i18next';
 
 enum View {
   Cards,
@@ -9,9 +10,10 @@ enum View {
 }
 
 function CreateDAOCard({ disabled, onClick }: { onClick: () => void; disabled?: boolean }) {
+  const { t } = useTranslation('daoCreate');
   return (
     <PrimaryButton
-      label="Create a subDAO"
+      label={t('labelCreateSubDAO')}
       onClick={onClick}
       disabled={disabled}
     />
@@ -25,10 +27,11 @@ function CardDetails({
   setView: (value: React.SetStateAction<View>) => void;
   children: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <div>
       <SecondaryButton
-        label="Back"
+        label={t('back')}
         className="mb-4"
         onClick={() => setView(View.Cards)}
       />

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
 import LeftArrow from '../ui/svg/LeftArrow';
@@ -14,6 +15,7 @@ interface IStepButtons {
 
 function PrevButton({ pending }: { pending?: boolean }) {
   const { state, dispatch } = useCreator();
+  const { t } = useTranslation();
   if (state.prevStep !== null) {
     return (
       <TextButton
@@ -25,7 +27,7 @@ function PrevButton({ pending }: { pending?: boolean }) {
         }
         disabled={pending}
         icon={<LeftArrow />}
-        label="Prev"
+        label={t('prev')}
       />
     );
   }
@@ -45,8 +47,9 @@ function ForwardButton({
   const {
     state: { account },
   } = useWeb3Provider();
+  const { t } = useTranslation(['common', 'daoCreate']);
   const isNextDisabled = useNextDisabled(state);
-  const deployLabel = isSubDAO ? 'Create subDAO Proposal' : 'Deploy';
+  const deployLabel = isSubDAO ? t('labelDeploySubDAO', { ns: 'daoCreate' }) : t('deploy');
   switch (state.step) {
     case CreatorSteps.CHOOSE_GOVERNANCE:
     case CreatorSteps.ESSENTIALS:
@@ -66,7 +69,7 @@ function ForwardButton({
           disabled={isNextDisabled}
           isIconRight
           icon={<RightArrow />}
-          label={canSkip ? 'Skip' : 'Next'}
+          label={canSkip ? t('skip') : t('next')}
         />
       );
     case CreatorSteps.GOV_CONFIG:
@@ -87,7 +90,8 @@ function ForwardButton({
           disabled={pending || !account || isNextDisabled}
         />
       );
-    case CreatorSteps.GNOSIS_GOVERNANCE: {
+    case CreatorSteps.GNOSIS_GOVERNANCE:
+    case CreatorSteps.PURE_GNOSIS: {
       return (
         <PrimaryButton
           onClick={() =>

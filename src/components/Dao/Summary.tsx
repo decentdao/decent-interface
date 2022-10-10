@@ -4,6 +4,7 @@ import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useTranslation } from 'react-i18next';
 
 function Summary() {
   const {
@@ -19,19 +20,22 @@ function Summary() {
       },
     },
   } = useFractal();
+  const { t } = useTranslation(['common', 'dashboard']);
 
   return (
     <div>
-      <H1>{dao.daoName} | Home</H1>
+      <H1>
+        {dao.daoName} | {t('home')}
+      </H1>
       {daoLegacy.parentDAO && (
         <ContentBox>
-          <ContentBoxTitle>Parent DAO</ContentBoxTitle>
+          <ContentBoxTitle>{t('titleParentDAO')}</ContentBoxTitle>
           <DAOAddress daoAddress={daoLegacy.parentDAO} />
         </ContentBox>
       )}
       {!!daoLegacy.subsidiaryDAOs.length && (
         <ContentBox>
-          <ContentBoxTitle>DAO Subsidiaries</ContentBoxTitle>
+          <ContentBoxTitle>{t('titleDAOSubsidiaries')}</ContentBoxTitle>
           {daoLegacy.subsidiaryDAOs.map(_daoAddress => (
             <DAOAddress
               key={_daoAddress}
@@ -41,22 +45,22 @@ function Summary() {
         </ContentBox>
       )}
       <ContentBox>
-        <ContentBoxTitle>Core DAO Address</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleCoreDAO')}</ContentBoxTitle>
         <InputBox>
           <AddressDisplay
             address={dao.daoAddress}
-            label="DAO"
+            label={t('dao')}
           />
         </InputBox>
         <InputBox>
           <AddressDisplay
             address={dao.accessControlAddress}
-            label="Access Control"
+            label={t('labelAccessControl', { ns: 'dashboard' })}
           />
         </InputBox>
       </ContentBox>
       <ContentBox>
-        <ContentBoxTitle>Module Contract Addresses</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleModuleContract')}</ContentBoxTitle>
         {treasuryModule && (
           <InputBox>
             <AddressDisplay

@@ -3,6 +3,7 @@ import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
 import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { BigNumber } from 'ethers';
+import { useTranslation } from 'react-i18next';
 
 const useCastVote = ({
   proposalId,
@@ -24,6 +25,8 @@ const useCastVote = ({
     setPending(contractCallPending);
   }, [setPending, contractCallPending]);
 
+  const { t } = useTranslation('transaction');
+
   const castVote = useCallback(() => {
     if (
       !signerOrProvider ||
@@ -36,11 +39,11 @@ const useCastVote = ({
 
     contractCallCastVote({
       contractFn: () => governorModuleContract.castVote(proposalId, vote),
-      pendingMessage: 'Casting Vote',
-      failedMessage: 'Vote Cast Failed',
-      successMessage: 'Vote Casted',
+      pendingMessage: t('pendingCastVote'),
+      failedMessage: t('failedCastVote'),
+      successMessage: t('successCastVote'),
     });
-  }, [contractCallCastVote, governorModuleContract, proposalId, signerOrProvider, vote]);
+  }, [contractCallCastVote, governorModuleContract, proposalId, signerOrProvider, vote, t]);
   return castVote;
 };
 

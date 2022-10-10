@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useAddress from './useAddress';
 import useIsDAO from './useIsDAO';
 
@@ -9,6 +10,7 @@ const useSearchDao = () => {
 
   const [address, validAddress, addressLoading] = useAddress(searchString);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
+  const { t } = useTranslation('dashboard');
 
   /**
    * refresh error state if one exists
@@ -52,14 +54,14 @@ const useSearchDao = () => {
       return;
     }
     if (!validAddress && address !== undefined) {
-      setErrorMessage('Please use a valid Fractal ETH address or ENS domain');
+      setErrorMessage(t('errorInvalidSearch'));
       return;
     }
     if (addressIsDAO === false) {
-      setErrorMessage('Sorry a Fractal does not exist on this address');
+      setErrorMessage(t('errorFailedSearch'));
       return;
     }
-  }, [address, validAddress, searchString, addressIsDAO, loading]);
+  }, [address, validAddress, searchString, addressIsDAO, loading, t]);
 
   return {
     errorMessage,

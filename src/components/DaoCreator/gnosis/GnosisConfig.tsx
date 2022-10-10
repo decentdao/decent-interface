@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import Input, { RestrictCharTypes } from '../../ui/forms/Input';
@@ -58,28 +59,30 @@ export function GnosisConfig() {
     fieldUpdate(threshold, 'signatureThreshold');
   };
 
+  const { t } = useTranslation('daoCreate');
+
   useEffect(() => {
     let error: string = '';
     if (Number(signatureThreshold) === 0) {
-      error = 'Threshold must be greater than 0';
+      error = t('errorLowSignerThreshold');
     }
     if (Number(signatureThreshold) > numberOfSigners) {
-      error = 'Threshold is too high';
+      error = t('errorHighSignerThreshold');
     }
 
     setThresholdError(error);
-  }, [signatureThreshold, numberOfSigners]);
+  }, [signatureThreshold, numberOfSigners, t]);
 
   return (
     <ContentBox>
-      <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleCreateGnosis')}</ContentBoxTitle>
       <InputBox>
         <Input
           type="text"
           value={numberOfSigners}
           onChange={handleSignersChanges}
-          label="Signers"
-          helperText="How many trusted users for Gnosis Safe"
+          label={t('labelSigThreshold')}
+          helperText={t('labelSigners')}
           restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
         />
       </InputBox>
@@ -89,8 +92,8 @@ export function GnosisConfig() {
           value={signatureThreshold}
           onChange={event => updateThreshold(event.target.value)}
           errorMessage={thresholdError}
-          label="Signature Threshold"
-          helperText="How many signatures are needed to pass a proposal."
+          label={t('helperSigners')}
+          helperText={t('helperSigThreshold')}
           restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
         />
       </InputBox>
