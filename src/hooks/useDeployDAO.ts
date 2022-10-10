@@ -21,9 +21,12 @@ const useDeployDAO = () => {
   const {
     state: { account, chainId, signerOrProvider },
   } = useWeb3Provider();
-  const { gnosisSafe, usulMastercopy } = useAddresses(chainId);
+  const { gnosisSafe, usulMastercopy, linearVotingMastercopy } = useAddresses(chainId);
   const { gnosisSafeFactoryContract, usulContract, zodiacModuleProxyFactoryContract } =
-    useSafeContracts({ usulAddress: usulMastercopy?.address });
+    useSafeContracts({
+      usulAddress: usulMastercopy?.address,
+      linearVotingAddress: linearVotingMastercopy?.address,
+    });
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
@@ -199,3 +202,4 @@ const useDeployDAO = () => {
 };
 
 export default useDeployDAO;
+ 

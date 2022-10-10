@@ -13,6 +13,7 @@ export function useAddresses(chainId: number | undefined) {
     gnosisWrapperFactory?: { address: string };
     gnosisSafeFactory?: { address: string };
     usulMastercopy?: { address: string };
+    linearVotingMastercopy?: { address: string };
     zodiacModuleProxyFactory?: { address: string };
     dao?: { address: string };
     accessControl?: { address: string };
@@ -42,7 +43,8 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_CLAIM_ADDRESSES ||
       !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES ||
       !process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES ||
-      !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
+      !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES ||
+      !process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
@@ -113,11 +115,14 @@ export function useAddresses(chainId: number | undefined) {
       (p, c) => ({ ...p, [c]: { address: gnosisSafeSingletonDeployment.networkAddresses[c] } }),
       {}
     );
+    const zodiacProxyFactoryAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
+    );
     const usulMastercopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES
     );
-    const zodiacProxyFactoryAddresses: { [chainId: number]: { address: string } } = JSON.parse(
-      process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
+    const linearVotingMastercopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES
     );
 
     const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
@@ -141,6 +146,7 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisSafeAddress: { address: string } = gnosisSafeNetworksAddresses[chainId];
     const usulMastercopy: { address: string } = usulMastercopyAddresses[chainId];
     const zodiacModuleProxyFactory: { address: string } = zodiacProxyFactoryAddresses[chainId];
+    const linearVotingMastercopy: { address: string } = linearVotingMastercopyAddresses[chainId];
 
     if (
       !metaFactoryAddress ||
@@ -160,7 +166,8 @@ export function useAddresses(chainId: number | undefined) {
       !gnosisWrapperAddress ||
       !gnosisSafeAddress ||
       !usulMastercopy ||
-      !zodiacModuleProxyFactory
+      !zodiacModuleProxyFactory ||
+      !linearVotingMastercopy
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -186,6 +193,7 @@ export function useAddresses(chainId: number | undefined) {
       gnosisSafe: gnosisSafeAddress,
       usulMastercopy,
       zodiacModuleProxyFactory,
+      linearVotingMastercopy,
     });
   }, [chainId]);
 
