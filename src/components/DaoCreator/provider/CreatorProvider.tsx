@@ -1,6 +1,5 @@
 import { ReactNode, useMemo, useReducer } from 'react';
 import { BigNumber } from 'ethers';
-import ConnectWalletToast from '../../ConnectWalletToast';
 import H1 from '../../ui/H1';
 import { StepButtons } from '../StepButtons';
 
@@ -15,7 +14,6 @@ import {
   DAOTrigger,
   GovernanceTypes,
 } from './types';
-import { useTranslation } from 'react-i18next';
 
 export const initialState: CreatorState = {
   step: CreatorSteps.ESSENTIALS,
@@ -112,7 +110,6 @@ export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICre
   useSteps(state, dispatch, isSubDAO);
 
   const value = useMemo(() => ({ state, dispatch, stepName }), [state, dispatch, stepName]);
-  const { t } = useTranslation('daoCreate');
   return (
     <CreatorContext.Provider value={value}>
       <div className="pb-16">
