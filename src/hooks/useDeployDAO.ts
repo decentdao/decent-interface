@@ -246,19 +246,18 @@ const useDeployDAO = () => {
                   signerOrProvider
                 );
                 const createTokenEncodedData = defaultAbiCoder.encode(
-                  ['bytes'],
+                  ['string', 'string', 'address[]', 'uint256[]', 'bytes32'],
+
                   [
-                    [
-                      tokenGovernanceDaoData.tokenName,
-                      tokenGovernanceDaoData.tokenSymbol,
-                      tokenGovernanceDaoData.tokenAllocations.map(
-                        tokenAllocation => tokenAllocation.address
-                      ),
-                      tokenGovernanceDaoData.tokenAllocations.map(
-                        tokenAllocation => tokenAllocation.amount.bigNumberValue
-                      ),
-                      votingTokenSalt,
-                    ],
+                    tokenGovernanceDaoData.tokenName,
+                    tokenGovernanceDaoData.tokenSymbol,
+                    tokenGovernanceDaoData.tokenAllocations.map(
+                      tokenAllocation => tokenAllocation.address
+                    ),
+                    tokenGovernanceDaoData.tokenAllocations.map(
+                      tokenAllocation => tokenAllocation.amount.bigNumberValue
+                    ),
+                    votingTokenSalt,
                   ]
                 );
                 return tokenFactoryContract.create(account, [createTokenEncodedData]);
