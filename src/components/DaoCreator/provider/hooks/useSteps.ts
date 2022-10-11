@@ -54,7 +54,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            nextStep: null,
+            nextStep: CreatorSteps.TREASURY_GOV_TOKEN,
             prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
@@ -82,7 +82,11 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: CreatorSteps.GOV_CONFIG,
-            prevStep: isSubDAO ? CreatorSteps.FUNDING : CreatorSteps.CHOOSE_GOVERNANCE,
+            prevStep: isPureGnosis
+              ? CreatorSteps.PURE_GNOSIS
+              : isSubDAO
+              ? CreatorSteps.FUNDING
+              : CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
         break;

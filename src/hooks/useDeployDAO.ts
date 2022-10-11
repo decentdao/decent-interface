@@ -21,12 +21,13 @@ const useDeployDAO = () => {
   const {
     state: { account, chainId, signerOrProvider },
   } = useWeb3Provider();
-  const { gnosisSafe, usulMastercopy, linearVotingMastercopy } = useAddresses(chainId);
-  const { gnosisSafeFactoryContract, usulContract, zodiacModuleProxyFactoryContract } =
-    useSafeContracts({
-      usulAddress: usulMastercopy?.address,
-      linearVotingAddress: linearVotingMastercopy?.address,
-    });
+  const { gnosisSafe } = useAddresses(chainId);
+  const {
+    gnosisSafeFactoryContract,
+    linearVotingMastercopyContract,
+    usulMastercopyContract,
+    zodiacModuleProxyFactoryContract,
+  } = useSafeContracts();
 
   const createDAODataCreator = useCreateDAODataCreator();
   const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
@@ -114,8 +115,9 @@ const useDeployDAO = () => {
           !account ||
           !gnosisSafeFactoryContract ||
           !gnosisSafe?.address ||
-          !usulContract ||
+          !usulMastercopyContract ||
           !zodiacModuleProxyFactoryContract ||
+          !linearVotingMastercopyContract ||
           !signerOrProvider
         ) {
           return;
@@ -148,7 +150,7 @@ const useDeployDAO = () => {
             VOTING_STRATEGIES_TO_DEPLOY,
           ]
         );
-        const encodedSetupUsulData = usulContract.interface.encodeFunctionData('setUp', [
+        const encodedSetupUsulData = usulMastercopyContract.interface.encodeFunctionData('setUp', [
           encodedInitUsulData,
         ]);
 
@@ -158,7 +160,7 @@ const useDeployDAO = () => {
               .createProxy(gnosisSafe.address, encodedSetupSafeData)
               .then(() =>
                 zodiacModuleProxyFactoryContract.deployModule(
-                  usulContract.address,
+                  usulMastercopyContract.address,
                   encodedSetupUsulData,
                   '0x01'
                 )
@@ -174,9 +176,10 @@ const useDeployDAO = () => {
     },
     [
       contractCallDeploy,
-      usulContract,
+      usulMastercopyContract,
       zodiacModuleProxyFactoryContract,
       gnosisSafeFactoryContract,
+      linearVotingMastercopyContract,
       gnosisSafe,
       account,
       signerOrProvider,
@@ -202,4 +205,3 @@ const useDeployDAO = () => {
 };
 
 export default useDeployDAO;
- 
