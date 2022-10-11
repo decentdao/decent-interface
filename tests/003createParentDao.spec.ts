@@ -47,7 +47,7 @@ test.describe('DAO Creation', () => {
 
     /* Select Gnosis Safe */
     daoSafe.selectSafe('Select Gnosis 1:1 Safe');
-    await delay(1000);
+    await delay(1200);
     navButtons.clickOnButton('Next Button');
 
     /* Add Wallet address */
