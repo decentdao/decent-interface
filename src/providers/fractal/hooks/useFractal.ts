@@ -1,6 +1,14 @@
 import React, { createContext, useContext, Context } from 'react';
 import { IModuleData } from '../../../controller/Modules/types';
-import { FractalNode, MVDActions, MVDDAO, IDaoLegacy, NodeActions } from '../types';
+import {
+  FractalNode,
+  MVDActions,
+  MVDDAO,
+  IDaoLegacy,
+  NodeActions,
+  GnosisSafe,
+  GnosisActions,
+} from '../types';
 
 export interface IFractalContext {
   node: {
@@ -18,6 +26,10 @@ export interface IFractalContext {
       claimingContractModule?: IModuleData;
       gnosisWrapperModule?: IModuleData;
     };
+  };
+  gnosis: {
+    safe: GnosisSafe;
+    dispatch: React.Dispatch<GnosisActions>;
   };
 }
 

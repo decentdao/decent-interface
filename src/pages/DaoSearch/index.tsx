@@ -23,7 +23,7 @@ function DAOSearch() {
     errorMessage,
     loading,
     address,
-    addressIsDAO,
+    addressNodeType,
     validAddress,
     resetErrorState,
     updateSearchString,
@@ -53,10 +53,10 @@ function DAOSearch() {
    *
    */
   useEffect(() => {
-    if (address && validAddress && addressIsDAO) {
+    if (address && validAddress && addressNodeType !== undefined) {
       navigate(address!, { state: { validatedAddress: address } });
     }
-  }, [navigate, address, validAddress, addressIsDAO]);
+  }, [navigate, address, validAddress, addressNodeType]);
 
   useEffect(() => {
     if (searchAddr === undefined) {
@@ -70,7 +70,7 @@ function DAOSearch() {
 
   return (
     <div>
-      <ConnectWalletToast label="To search for a Fractal" />
+      <ConnectWalletToast label={t('labelConnectSearch', { ns: 'dashboard' })} />
       <H1>{t('titleSearch', { ns: 'dashboard' })}</H1>
       <ContentBox>
         <form onSubmit={handleSearchSubmit}>

@@ -13,6 +13,7 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import { Link } from 'react-router-dom';
 import { useBlockchainData } from '../../../contexts/blockchainData';
 import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../../i18n/LanguageSwitcher';
 
 interface MenuItem {
   testId: string;
@@ -225,6 +226,7 @@ function MenuItems() {
           <LinkItem {...OVERVIEW} />
           <LinkItem {...FAQ} />
           <LinkItem {...DOCS} />
+          <LanguageSwitcher />
         </section>
       </div>
     </Menu.Items>

@@ -1,7 +1,8 @@
-import { MVDDAO, FractalNode } from '../types';
+import { MVDDAO, FractalNode, GnosisSafe } from '../types';
 
 export const nodeInitialState: FractalNode = {
   nodeType: undefined,
+  isLoaded: false,
 };
 
 export const mvdInitialState: MVDDAO = {
@@ -11,5 +12,18 @@ export const mvdInitialState: MVDDAO = {
   accessControlAddress: undefined,
   accessControlContract: undefined,
   moduleAddresses: undefined,
+  isLoading: true,
+};
+
+export const gnosisInitialState: GnosisSafe = {
+  address: undefined,
+  nonce: undefined,
+  threshold: undefined,
+  owners: undefined,
+  masterCopy: undefined,
+  modules: undefined,
+  fallbackHandler: undefined,
+  guard: undefined,
+  version: undefined,
   isLoading: true,
 };

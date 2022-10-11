@@ -102,7 +102,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
     }
   }, [connectDefaultProvider]);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation('menu');
   const disconnect: DisconnectFn = useCallback(() => {
     toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
     // switch to a default provider
