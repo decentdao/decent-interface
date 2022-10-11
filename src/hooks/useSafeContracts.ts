@@ -12,26 +12,23 @@ import {
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useAddresses } from './useAddresses';
 
-interface IUseSafeContracts {
-  usulAddress?: string;
-}
-
-export default function useSafeContracts({ usulAddress }: IUseSafeContracts) {
+export default function useSafeContracts() {
   const [gnosisSafeFactoryContract, setGnosisSafeFactoryContract] =
     useState<GnosisSafeProxyFactory>();
-  const [usulContract, setUsulContract] = useState<Usul>();
+  const [usulMastercopyContract, setUsulMastercopyContract] = useState<Usul>();
   const [zodiacModuleProxyFactoryContract, setZodiacModuleProxyFactoryContract] =
     useState<ModuleProxyFactory>();
   const {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
 
-  const { gnosisSafeFactory, zodiacModuleProxyFactory } = useAddresses(chainId);
+  const { gnosisSafeFactory, usulMastercopy, zodiacModuleProxyFactory } = useAddresses(chainId);
 
   useEffect(() => {
-    if (!gnosisSafeFactory || !zodiacModuleProxyFactory || !signerOrProvider) {
+    if (!gnosisSafeFactory || !zodiacModuleProxyFactory || !usulMastercopy || !signerOrProvider) {
       setGnosisSafeFactoryContract(undefined);
       setZodiacModuleProxyFactoryContract(undefined);
+      setUsulMastercopyContract(undefined);
       return;
     }
 
@@ -42,15 +39,9 @@ export default function useSafeContracts({ usulAddress }: IUseSafeContracts) {
     setZodiacModuleProxyFactoryContract(
       ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory.address, signerOrProvider)
     );
-  }, [gnosisSafeFactory, zodiacModuleProxyFactory, signerOrProvider]);
 
-  useEffect(() => {
-    if (!usulAddress || !signerOrProvider) {
-      setUsulContract(undefined);
-      return;
-    }
-    setUsulContract(Usul__factory.connect(usulAddress, signerOrProvider));
-  }, [usulAddress, signerOrProvider]);
+    setUsulMastercopyContract(Usul__factory.connect(usulMastercopy.address, signerOrProvider));
+  }, [gnosisSafeFactory, zodiacModuleProxyFactory, usulMastercopy, signerOrProvider]);
 
-  return { gnosisSafeFactoryContract, usulContract, zodiacModuleProxyFactoryContract };
+  return { gnosisSafeFactoryContract, usulMastercopyContract, zodiacModuleProxyFactoryContract };
 }
