@@ -35,7 +35,7 @@
     "labelViewDAO": "View DAO",
     "labelEtherscan": "View on Etherscan",
     "labelGnosis": "Gnosis Safe",
-    "labelPureGnosis": "Pure Gnosis Safe",
+    "labelPureGnosis": "Gnosis Safe with Usul 1:1 Token Voting",
     "errorInvalidAddress": "Invalid address",
     "errorSentryFallback": "There was an unexpected error",
     "errorGeneral": "There was an error! Check your browser's console logs for more details.",
