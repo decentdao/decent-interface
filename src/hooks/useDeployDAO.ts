@@ -246,22 +246,28 @@ const useDeployDAO = () => {
                   tokenFactory.address,
                   signerOrProvider
                 );
-                const createTokenEncodedData = defaultAbiCoder.encode(
-                  ['string', 'string', 'address[]', 'uint256[]', 'bytes32'],
-
-                  [
-                    tokenGovernanceDaoData.tokenName,
-                    tokenGovernanceDaoData.tokenSymbol,
-                    tokenGovernanceDaoData.tokenAllocations.map(
-                      tokenAllocation => tokenAllocation.address
-                    ),
-                    tokenGovernanceDaoData.tokenAllocations.map(
-                      tokenAllocation => tokenAllocation.amount.bigNumberValue
-                    ),
-                    votingTokenSalt,
-                  ]
-                );
-                return tokenFactoryContract.create(account, [createTokenEncodedData]);
+                const createTokenEncodedData = [
+                  defaultAbiCoder.encode(['string'], [tokenGovernanceDaoData.tokenName]),
+                  defaultAbiCoder.encode(['string'], [tokenGovernanceDaoData.tokenSymbol]),
+                  defaultAbiCoder.encode(
+                    ['address[]'],
+                    [
+                      tokenGovernanceDaoData.tokenAllocations.map(
+                        tokenAllocation => tokenAllocation.address
+                      ),
+                    ]
+                  ),
+                  defaultAbiCoder.encode(
+                    ['uint256[]'],
+                    [
+                      tokenGovernanceDaoData.tokenAllocations.map(
+                        tokenAllocation => tokenAllocation.amount.bigNumberValue
+                      ),
+                    ]
+                  ),
+                  defaultAbiCoder.encode(['bytes32'], [votingTokenNonce]),
+                ];
+                return tokenFactoryContract.create(account, createTokenEncodedData);
               })
               .then(deployVotingTokenTransaction => {
                 // As we're referencing this token in voting strategy later on - we need to make sure that transaction passed
