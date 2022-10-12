@@ -1,6 +1,6 @@
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './i18n';
-import { Flex } from '@chakra-ui/react';
+import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { ActionToast } from './components/ui/toasts/ActionToast';
 
 function App() {
@@ -9,9 +9,12 @@ function App() {
     false
   );
   return (
-    <Flex
-      flexDirection="column"
-      minHeight="h-screen"
+    <Grid
+      templateAreas={`"nav header"
+      "nav main"
+      "nav main"`}
+      gridTemplateColumns={'4.25rem 1fr'}
+      gridTemplateRows={'1fr'}
     >
       <ActionToast
         testId="audit:accept"
@@ -20,7 +23,34 @@ function App() {
         buttonTranslationKey="accept"
         buttonOnClick={() => setNotAuditedAcceptance(true)}
       />
-    </Flex>
+      <GridItem
+        area={'nav'}
+        minH="100vh"
+      >
+        <Box
+          bg="chocolate.900"
+          minH="100vh"
+        >
+          {/* Sidabar navigation */}
+        </Box>
+      </GridItem>
+      <GridItem area={'header'}>
+        <Box
+          bg="chocolate.900"
+          h="4rem"
+        >
+          {/* Header */}
+        </Box>
+      </GridItem>
+      <GridItem area={'main'}>
+        <Box
+          w="full"
+          minH={'calc(100vh - 4rem)'}
+        >
+          {/* Main */}
+        </Box>
+      </GridItem>
+    </Grid>
   );
 }
 
