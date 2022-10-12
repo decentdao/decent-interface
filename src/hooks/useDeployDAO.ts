@@ -22,11 +22,12 @@ type DeployDAOSuccessCallback = (daoAddress: string) => void;
 
 const useDeployDAO = () => {
   const {
-    state: { account, chainId, signerOrProvider },
+    state: { account, signerOrProvider, chainId },
   } = useWeb3Provider();
-  const { metaFactory, tokenFactory, gnosisSafe } = useAddresses(chainId);
+  const { metaFactory, tokenFactory } = useAddresses(chainId);
   const {
     gnosisSafeFactoryContract,
+    gnosisSafeSingletonContract,
     linearVotingMastercopyContract,
     usulMastercopyContract,
     zodiacModuleProxyFactoryContract,
@@ -117,7 +118,7 @@ const useDeployDAO = () => {
         if (
           !account ||
           !gnosisSafeFactoryContract ||
-          !gnosisSafe?.address ||
+          !gnosisSafeSingletonContract?.address ||
           !usulMastercopyContract ||
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMastercopyContract ||
@@ -134,7 +135,7 @@ const useDeployDAO = () => {
         const votingTokenNonce = getRandomBytes();
 
         const createdSafeProxyAddress = await gnosisSafeFactoryContract.callStatic.createProxy(
-          gnosisSafe.address,
+          gnosisSafeSingletonContract.address,
           '0x'
         );
         const safeContract = GnosisSafe__factory.connect(createdSafeProxyAddress, signerOrProvider);
@@ -239,7 +240,7 @@ const useDeployDAO = () => {
         contractCallDeploy({
           contractFn: () =>
             gnosisSafeFactoryContract
-              .createProxy(gnosisSafe.address, encodedSetupSafeData)
+              .createProxy(gnosisSafeSingletonContract.address, encodedSetupSafeData)
               .then(() => {
                 const tokenFactoryContract = TokenFactory__factory.connect(
                   tokenFactory.address,
@@ -306,7 +307,7 @@ const useDeployDAO = () => {
       zodiacModuleProxyFactoryContract,
       gnosisSafeFactoryContract,
       linearVotingMastercopyContract,
-      gnosisSafe,
+      gnosisSafeSingletonContract,
       metaFactory,
       tokenFactory,
       account,

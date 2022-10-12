@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import {
   GnosisSafeProxyFactory__factory,
   GnosisSafeProxyFactory,
+  GnosisSafe__factory,
+  GnosisSafe,
 } from '../assets/typechain-types/gnosis-safe';
 import {
   Usul__factory,
@@ -17,6 +19,7 @@ import { useAddresses } from './useAddresses';
 export default function useSafeContracts() {
   const [gnosisSafeFactoryContract, setGnosisSafeFactoryContract] =
     useState<GnosisSafeProxyFactory>();
+  const [gnosisSafeSingletonContract, setGnosisSafeSingletonContract] = useState<GnosisSafe>();
   const [zodiacModuleProxyFactoryContract, setZodiacModuleProxyFactoryContract] =
     useState<ModuleProxyFactory>();
   const [usulMastercopyContract, setUsulMastercopyContract] = useState<Usul>();
@@ -26,8 +29,13 @@ export default function useSafeContracts() {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
 
-  const { gnosisSafeFactory, zodiacModuleProxyFactory, linearVotingMastercopy, usulMastercopy } =
-    useAddresses(chainId);
+  const {
+    gnosisSafe,
+    gnosisSafeFactory,
+    zodiacModuleProxyFactory,
+    linearVotingMastercopy,
+    usulMastercopy,
+  } = useAddresses(chainId);
 
   useEffect(() => {
     if (
@@ -35,12 +43,14 @@ export default function useSafeContracts() {
       !zodiacModuleProxyFactory ||
       !linearVotingMastercopy ||
       !usulMastercopy ||
+      !gnosisSafe ||
       !signerOrProvider
     ) {
       setGnosisSafeFactoryContract(undefined);
       setZodiacModuleProxyFactoryContract(undefined);
       setUsulMastercopyContract(undefined);
       setLinearVotingMastercopyContract(undefined);
+      setGnosisSafeSingletonContract(undefined);
       return;
     }
 
@@ -52,11 +62,16 @@ export default function useSafeContracts() {
     setLinearVotingMastercopyContract(
       OZLinearVoting__factory.connect(linearVotingMastercopy.address, signerOrProvider)
     );
+    setGnosisSafeSingletonContract(
+      GnosisSafe__factory.connect(gnosisSafe.address, signerOrProvider)
+    );
+
     setZodiacModuleProxyFactoryContract(
       ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory.address, signerOrProvider)
     );
   }, [
     gnosisSafeFactory,
+    gnosisSafe,
     zodiacModuleProxyFactory,
     linearVotingMastercopy,
     usulMastercopy,
@@ -65,6 +80,7 @@ export default function useSafeContracts() {
 
   return {
     gnosisSafeFactoryContract,
+    gnosisSafeSingletonContract,
     zodiacModuleProxyFactoryContract,
     usulMastercopyContract,
     linearVotingMastercopyContract,

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getProxyFactoryDeployment, getSafeSingletonDeployment } from '@gnosis.pm/safe-deployments';
 import { logError } from '../helpers/errorLogging';
 
 export function useAddresses(chainId: number | undefined) {
@@ -35,6 +34,7 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_GOVERNORFACTORY_ADDRESSES ||
       !process.env.REACT_APP_CLAIMFACTORY_ADDRESSES ||
       !process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESSES ||
+      !process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESSES ||
       !process.env.REACT_APP_DAO_ADDRESSES ||
       !process.env.REACT_APP_ACCESSCONTROL_ADDRESSES ||
       !process.env.REACT_APP_TREASURYMODULE_ADDRESSES ||
@@ -42,25 +42,12 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_TIMELOCK_ADDRESSES ||
       !process.env.REACT_APP_CLAIM_ADDRESSES ||
       !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES ||
+      !process.env.REACT_APP_GNOSISSAFE_ADDRESSES ||
       !process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES ||
       !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES ||
       !process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES
     ) {
       logError('Addresses not set!');
-      setAddresses({});
-      return;
-    }
-
-    const gnosisProxyFactoryDeployment = getProxyFactoryDeployment({ version: '1.3.0' });
-    if (!gnosisProxyFactoryDeployment) {
-      logError('Gnosis Proxy Factory Deployment data not available');
-      setAddresses({});
-      return;
-    }
-
-    const gnosisSafeSingletonDeployment = getSafeSingletonDeployment({ version: '1.3.0' });
-    if (!gnosisSafeSingletonDeployment) {
-      logError('Gnosis Safe Singleton Deployment data not available');
       setAddresses({});
       return;
     }
@@ -84,10 +71,7 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisWrapperFactoryNetworksAddresses: { [chaindId: number]: { address: string } } =
       JSON.parse(process.env.REACT_APP_GNOSISWRAPPERFACTORY_ADDRESSES);
     const gnosisSafeFactoryNetworksAddresses: { [chaindId: number]: { address: string } } =
-      Object.keys(gnosisProxyFactoryDeployment.networkAddresses).reduce(
-        (p, c) => ({ ...p, [c]: { address: gnosisProxyFactoryDeployment.networkAddresses[c] } }),
-        {}
-      );
+      JSON.parse(process.env.REACT_APP_GNOSISSAFEFACTORY_ADDRESSES);
     const daoNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_DAO_ADDRESSES
     );
@@ -109,11 +93,8 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisWrapperNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES
     );
-    const gnosisSafeNetworksAddresses: { [chaindId: number]: { address: string } } = Object.keys(
-      gnosisSafeSingletonDeployment.networkAddresses
-    ).reduce(
-      (p, c) => ({ ...p, [c]: { address: gnosisSafeSingletonDeployment.networkAddresses[c] } }),
-      {}
+    const gnosisSafeNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_GNOSISSAFE_ADDRESSES
     );
     const zodiacProxyFactoryAddresses: { [chainId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
