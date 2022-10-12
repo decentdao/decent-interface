@@ -24,35 +24,36 @@ test.describe('DAO Creation', () => {
     notifications.closeButton('Close Audit Message');
     await page.waitForLoadState();
     await delay(1500);
-    navButtons.clickOnButton('Connect to Wallet on Header');
+    navButtons.clickHeaderConnectWallet();
     await page.waitForLoadState('load');
-    await delay(2000);
+    await delay(2500);
+    //navButtons.clickConnectWalletMenu();
     await page.click('[data-testid="menu:connect"]');
     await page.waitForLoadState('domcontentloaded');
-    navButtons.clickOnButton('Select Local Wallet - Web3');
+    navButtons.clickLocalWallet();
     page.waitForSelector('#connected');
     notifications.assertConnected();
     await page.waitForLoadState('networkidle');
   });
 
   test('Create 1:1 Gnosis Parent DAO', async ({ page }) => {
-    navButtons.clickOnButton('Create a Fractal - Button');
+    navButtons.clickCreateAFractal();
 
     /* Check URL to make sure navigation is correct. */
     await expect(page).toHaveURL('http://localhost:3000/#/daos/new');
 
     /* Input a Fractal name */
     inputFields.fillField('Insert Fractal Name');
-    navButtons.clickOnButton('Next Button');
+    navButtons.clickNextButton();
 
     /* Select Gnosis Safe */
     daoSafe.selectSafe('Select Gnosis 1:1 Safe');
     await delay(1200);
-    navButtons.clickOnButton('Next Button');
+    navButtons.clickNextButton();
 
     /* Add Wallet address */
     inputFields.fillField('Insert Local Node Wallet');
-    navButtons.clickOnButton('Deploy Button');
+    navButtons.clickDeployButton();
 
     /* Check toaster message for 'Deploying' text */
     notifications.assertDeployed();
