@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 
 // @todo this component should be made and exported from design systems
 interface IActionToast {
+  testId: string;
   isVisible?: boolean;
   titleTranslationKey: string;
   buttonTranslationKey: string;
@@ -12,6 +13,7 @@ interface IActionToast {
 }
 
 export function ActionToast({
+  testId,
   isVisible,
   titleTranslationKey,
   buttonTranslationKey,
@@ -28,10 +30,17 @@ export function ActionToast({
         direction="column"
         alignItems="center"
       >
-        <Text>{t(titleTranslationKey)}</Text>
+        <Text
+          textStyle="textStyles.text-sm-mono-regular"
+          color="alert-red.light"
+        >
+          {t(titleTranslationKey)}
+        </Text>
         <Button
+          data-testId={testId}
           color="gold.500"
-          textStyle="textStyles.text-md-mono-"
+          my="1"
+          textStyle="textStyles.text-md-mono-bold"
           variant="unstyled"
           onClick={buttonOnClick}
         >
@@ -49,7 +58,7 @@ export function ActionToast({
     return () => {
       toast.dismiss(toastId);
     };
-  }, [buttonOnClick, buttonTranslationKey, isVisible, t, titleTranslationKey]);
+  }, [buttonOnClick, buttonTranslationKey, isVisible, t, testId, titleTranslationKey]);
 
   return null;
 }

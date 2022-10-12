@@ -14,6 +14,7 @@ function App() {
       minHeight="h-screen"
     >
       <ActionToast
+        testId="audit:accept"
         isVisible={!notAuditedAcceptance}
         titleTranslationKey="auditDisclaimer"
         buttonTranslationKey="accept"
