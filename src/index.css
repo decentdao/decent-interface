@@ -1,9 +1,4 @@
-@tailwind base;
-
 @import "react-toastify/dist/ReactToastify.css";
-@import "tippy.js/dist/tippy.css";
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   /* ibm-plex-sans-500 - latin */
@@ -41,56 +36,59 @@
   }
 }
 
+/* move these to chakra global theme */
 .web3modal-modal-card {
-  @apply bg-gray-600 px-6 py-4 gap-4 !important;
+  /* @apply bg-gray-600 px-6 py-4 gap-4 !important; */
 }
 
 .web3modal-provider-wrapper {
-  @apply bg-gray-300 p-4 rounded-lg !important;
+  /* @apply bg-gray-300 p-4 rounded-lg !important; */
 }
 
 .web3modal-provider-container {
-  @apply bg-chocolate-500  border border-gold-500 !important;
+  /* @apply bg-chocolate-500  border border-gold-500 !important; */
 }
 
 .web3modal-provider-name {
-  @apply text-gold-500 font-mono !important;
+  /* @apply text-gold-500 font-mono !important; */
 }
 
 .web3modal-provider-description {
-  @apply text-gray-25 !important;
+  /* @apply text-gray-25 !important; */
 }
 
 .walletconnect-modal__base {
-  @apply bg-gray-600 !important;
+  /* @apply bg-gray-600 !important; */
 }
 .walletconnect-modal__mobile__toggle {
-  @apply bg-gray-500 !important;
+  /* @apply bg-gray-500 !important; */
 }
 .walletconnect-modal__mobile__toggle_selector {
-  @apply bg-chocolate-500 border border-gold-500 !important;
+  /* @apply bg-chocolate-500 border border-gold-500 !important; */
 }
 
 .walletconnect-modal__base > div:nth-child(3) {
-  @apply bg-gray-500 p-2 rounded-lg !important;
+  /* @apply bg-gray-500 p-2 rounded-lg !important; */
 }
 .walletconnect-modal__mobile__toggle a {
-  @apply text-gold-500 font-mono text-base font-semibold !important;
+  /* @apply text-gold-500 font-mono text-base font-semibold !important; */
 }
 
 .walletconnect-qrcode__text {
-  @apply text-gray-25 !important;
+  /* @apply text-gray-25 !important; */
 }
 .walletconnect-modal__footer a {
-  @apply text-gray-25 !important;
+  /* @apply text-gray-25 !important; */
 }
 .walletconnect-connect__button__icon {
-  @apply bg-white !important;
+  /* @apply bg-white !important; */
 }
 .walletconnect-connect__button__text {
-  @apply text-gray-25 !important;
+  /* @apply text-gray-25 !important; */
 }
 
+
+/* @todo remove when tooltips are replaced by chakra's */
 /* Tippy tooltip arrow */
 #arrow,
 #arrow::before {
