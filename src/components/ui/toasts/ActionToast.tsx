@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 // @todo this component should be made and exported from design systems
 interface IActionToast {
   testId: string;
+  toastId: string;
   isVisible?: boolean;
   titleTranslationKey: string;
   buttonTranslationKey: string;
@@ -14,6 +15,7 @@ interface IActionToast {
 
 export function ActionToast({
   testId,
+  toastId,
   isVisible,
   titleTranslationKey,
   buttonTranslationKey,
@@ -25,7 +27,7 @@ export function ActionToast({
       return;
     }
 
-    const toastId = toast(
+    toast(
       <Flex
         direction="column"
         alignItems="center"
@@ -52,13 +54,14 @@ export function ActionToast({
         closeOnClick: false,
         draggable: false,
         progress: 1,
+        toastId,
       }
     );
 
     return () => {
       toast.dismiss(toastId);
     };
-  }, [buttonOnClick, buttonTranslationKey, isVisible, t, testId, titleTranslationKey]);
+  }, [buttonOnClick, buttonTranslationKey, isVisible, t, testId, titleTranslationKey, toastId]);
 
   return null;
 }

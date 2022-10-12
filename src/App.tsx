@@ -17,6 +17,7 @@ function App() {
       gridTemplateRows={'1fr'}
     >
       <ActionToast
+        toastId="audit"
         testId="audit:accept"
         isVisible={!notAuditedAcceptance}
         titleTranslationKey="auditDisclaimer"
