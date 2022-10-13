@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '../../../i18n/LanguageSwitcher';
 
 interface MenuItem {
+  testId: string;
   titleKey: string;
   className?: string;
   Icon: () => JSX.Element;
@@ -30,42 +31,49 @@ interface LinkMenuItem extends MenuItem {
 }
 
 const COMMUNITY: LinkMenuItem = {
+  testId: 'menu:community',
   titleKey: 'community',
   link: 'https://discord.gg/decent-dao',
   Icon: Contact,
 };
 
 const OVERVIEW: LinkMenuItem = {
+  testId: 'menu:overview',
   titleKey: 'overview',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview',
   Icon: Support,
 };
 
 const FAQ: LinkMenuItem = {
+  testId: 'menu:faq',
   titleKey: 'faq',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq',
   Icon: Faq,
 };
 
 const DOCS: LinkMenuItem = {
+  testId: 'menu:docs',
   titleKey: 'docs',
   link: 'https://docs.fractalframework.xyz/welcome-to-fractal',
   Icon: Docs,
 };
 
 const FAVORITES: LinkMenuItem = {
+  testId: 'menu:favorites',
   titleKey: 'favorites',
   link: '/daos/favorites',
   Icon: StarEmpty,
 };
 
 const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
+  testId: 'menu:connect',
   titleKey: 'connect',
   action: connect,
   Icon: Connect,
 });
 
 const DISCONNECT = (disconnect: () => void): ActionMenuItem => ({
+  testId: 'menu:disconnect',
   titleKey: 'disconnect',
   action: disconnect,
   Icon: Disconnect,
@@ -108,7 +116,14 @@ function ItemContent({
   );
 }
 
-function ActionItem({ titleKey: title, className, action, Icon, isVisible }: ActionMenuItem) {
+function ActionItem({
+  titleKey: title,
+  className,
+  action,
+  Icon,
+  isVisible,
+  testId,
+}: ActionMenuItem) {
   const { t } = useTranslation('menu');
   if (!isVisible) {
     return null;
@@ -116,6 +131,7 @@ function ActionItem({ titleKey: title, className, action, Icon, isVisible }: Act
   return (
     <Menu.Item>
       <button
+        data-testid={testId}
         onClick={action}
         className={cx('w-full', className)}
       >
@@ -129,11 +145,12 @@ function ActionItem({ titleKey: title, className, action, Icon, isVisible }: Act
   );
 }
 
-function LinkItem({ titleKey: title, link, Icon }: LinkMenuItem) {
+function LinkItem({ titleKey: title, link, Icon, testId }: LinkMenuItem) {
   const { t } = useTranslation('menu');
   return (
     <Menu.Item>
       <a
+        data-testid={testId}
         href={link}
         target="_blank"
         rel="noopener noreferrer"
@@ -147,11 +164,14 @@ function LinkItem({ titleKey: title, link, Icon }: LinkMenuItem) {
   );
 }
 
-function LinkItemInternal({ titleKey: title, link, Icon }: LinkMenuItem) {
+function LinkItemInternal({ titleKey: title, link, Icon, testId }: LinkMenuItem) {
   const { t } = useTranslation('menu');
   return (
     <Menu.Item>
-      <Link to={link}>
+      <Link
+        to={link}
+        data-testid={testId}
+      >
         <ItemContent
           title={t(title)}
           Icon={Icon}

@@ -1,24 +1,31 @@
 import { expect, test } from '@playwright/test';
+import { delay } from '../page-objects/Helpers/helpers';
 
 test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   /* Go to local host http link */
   await page.goto('http://localhost:3000');
+  await delay(5000);
 
   /* Click("Connect Wallet") */
-  await page.locator('button:has-text("Connect Wallet")').click();
+  await page.locator("//div[@id='menu:down-arrow']//*[name()='svg']").click();
 
   /* Dropdown menu of "Connect Wallet" */
-  await page.locator('button[role="menuitem"]:has-text("Connect")').click();
+  await page.locator('//span[normalize-space()="Connect"]').click();
+  await page.waitForLoadState();
 
   /* Select wallet of "Local NodeConnects as Signer to local provider" */
-  await page.locator('text=Local NodeConnects as Signer to local provider').click();
+  await page
+    .locator('#WEB3_CONNECT_MODAL_ID div.web3modal-provider-name:has-text("Local Node")')
+    .click();
 
   /* Assert connected pop-up is present */
   const connected = page.locator('#connected');
   await expect(connected).toBeVisible();
 
   /* Assert defined wallet address is present ("0xf39F...2266") */
-  await page.locator('button:has-text("0xf39F...2266")').click();
+  await page.locator('//div[@id="menu:down-arrow"]//*[name()="svg"]').click();
+  const walletAddress = page.locator('//a[normalize-space()="0xf39F...2266"]');
+  await expect(walletAddress).toContainText('0xf39F...2266');
 
   /* Assert disconnect is present */
   const disconnect = page.locator('button[role="menuitem"]:has-text("Disconnect")');
