@@ -27,7 +27,6 @@ test.describe('DAO Creation', () => {
     navButtons.clickHeaderConnectWallet();
     await page.waitForLoadState('load');
     await delay(2500);
-    //navButtons.clickConnectWalletMenu();
     await page.click('[data-testid="menu:connect"]');
     await page.waitForLoadState('domcontentloaded');
     navButtons.clickLocalWallet();
@@ -55,11 +54,11 @@ test.describe('DAO Creation', () => {
     inputFields.fillField('Insert Local Node Wallet');
     navButtons.clickDeployButton();
 
-    /* Check toaster message for 'Deploying' text */
+    /* Check toaster message for 'Deploying' text, if this fails deploy did not occur. */
     notifications.assertDeployed();
     await page.waitForLoadState('domcontentloaded');
 
-    /* Check URL to make sure wallet is connected. */
+    /* Check URL to make sure wallet is connected. If this fails wallet is not connected correctly. */
     await expect(page).not.toHaveURL('http://localhost:3000/#/daos/new');
 
     /* Check header for created DAO title */
