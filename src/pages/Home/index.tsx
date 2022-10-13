@@ -16,6 +16,7 @@ function Home() {
             className="w-full"
           >
             <PrimaryButton
+              id="home:link-create"
               label={t('buttonCreate')}
               isLarge
               className="w-full"
@@ -26,6 +27,7 @@ function Home() {
             className="w-full"
           >
             <SecondaryButton
+              id="home:link-find"
               label={t('buttonFind')}
               isLarge
               className="w-full"
