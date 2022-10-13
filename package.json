@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^2.3.4",
-    "@decent-org/fractal-ui": "^0.0.3",
+    "@decent-org/fractal-ui": "^0.0.4",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@fractal-framework/core-contracts": "^0.1.9",
