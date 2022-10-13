@@ -1,13 +1,23 @@
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './i18n';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
-import { ActionToast } from './components/ui/toasts/ActionToast';
+import { useActionToast } from './components/ui/toasts/useActionToast';
+import Header from './components/ui/Header';
 
 function App() {
   const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
     'not_audited_acceptance',
     false
   );
+
+  useActionToast({
+    toastId: 'audit:toast',
+    testId: 'audit:accept',
+    isVisible: !notAuditedAcceptance,
+    titleTranslationKey: 'auditDisclaimer',
+    buttonTranslationKey: 'accept',
+    buttonOnClick: () => setNotAuditedAcceptance(true),
+  });
   return (
     <Grid
       templateAreas={`"nav header"
@@ -16,14 +26,6 @@ function App() {
       gridTemplateColumns={'4.25rem 1fr'}
       gridTemplateRows={'1fr'}
     >
-      <ActionToast
-        toastId="audit"
-        testId="audit:accept"
-        isVisible={!notAuditedAcceptance}
-        titleTranslationKey="auditDisclaimer"
-        buttonTranslationKey="accept"
-        buttonOnClick={() => setNotAuditedAcceptance(true)}
-      />
       <GridItem
         area={'nav'}
         minH="100vh"
@@ -37,10 +39,11 @@ function App() {
       </GridItem>
       <GridItem area={'header'}>
         <Box
+          as="header"
           bg="chocolate.900"
           h="4rem"
         >
-          {/* Header */}
+          <Header />
         </Box>
       </GridItem>
       <GridItem area={'main'}>
