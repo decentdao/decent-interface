@@ -38,7 +38,7 @@ const config: PlaywrightTestConfig = {
     actionTimeout: 25000,
     ignoreHTTPSErrors: false,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on', /* Tracks exactly what is going on in the test. Saved as a zip file in test-results folder. Can be viewed at 'trace.playwright.dev' in a browser */
+    trace: 'on-first-retry', /* Tracks exactly what is going on in the test. Saved as a zip file in test-results folder. Can be viewed at 'trace.playwright.dev' in a browser. To use 'npx playwright test --trace on' */
     screenshot: 'on',
 		launchOptions: {
 			slowMo: 100, /* Adjusts tests' run speed to aid in video report visualization reports as well as mimic user input/action speed */
