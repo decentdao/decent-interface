@@ -18,7 +18,7 @@ function StatusBox({ status }: StatusBoxProps) {
         return 'border border-gray-50 text-gray-50 bg-gray-400';
     }
   };
-  const { t } = useTranslation('transaction');
+  const { t } = useTranslation('proposal');
   return (
     <div className={cx('px-4 py-2 rounded-lg font-medium text-xs h-fit', getStatusColors())}>
       <div>{t(proposalState)}</div>
