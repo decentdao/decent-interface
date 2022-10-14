@@ -3,14 +3,13 @@ import Web3Modal from 'web3modal';
 import type { ConnectFn, DisconnectFn, InitialState } from './types';
 import { ActionTypes, Web3ProviderActions } from './actions';
 import { WEB3_MODAL_CONFIG } from './web3Modal.config';
-import { getLocalProvider, getFallbackProvider, getInjectedProvider } from './helpers';
 import { toast } from 'react-toastify';
 import { useListeners } from './hooks/useListeners';
 import { getSupportedChains } from './chains';
 import { Web3ProviderContext } from './hooks/useWeb3Provider';
 import { useTranslation } from 'react-i18next';
+import { localFallbackProvider, getFallbackProvider, getInjectedProvider } from './utilities';
 
-const web3Modal = new Web3Modal(WEB3_MODAL_CONFIG);
 const initialState: InitialState = {
   account: null,
   signerOrProvider: null,
@@ -18,29 +17,15 @@ const initialState: InitialState = {
   network: '',
   chainId: 0,
   provider: null,
-  isProviderLoading: false,
-};
-
-const getInitialState = () => {
-  return {
-    ...initialState,
-    isProviderLoading: true,
-  };
+  isProviderLoading: true,
 };
 
 const reducer = (state: InitialState, action: ActionTypes) => {
   switch (action.type) {
     case Web3ProviderActions.SET_INJECTED_PROVIDER: {
-      const { account, signerOrProvider, provider, connectionType, network, chainId } =
-        action.payload;
       return {
         ...state,
-        account,
-        signerOrProvider,
-        provider,
-        connectionType,
-        network,
-        chainId,
+        ...action.payload,
         isProviderLoading: false,
       };
     }
@@ -48,19 +33,13 @@ const reducer = (state: InitialState, action: ActionTypes) => {
       return { ...state, ...action.payload, isProviderLoading: false };
     }
     case Web3ProviderActions.SET_FALLBACK_PROVIDER: {
-      const { provider, connectionType, network, chainId, signerOrProvider } = action.payload;
       return {
         ...initialState,
-        provider,
-        connectionType,
-        network,
-        chainId,
-        signerOrProvider,
+        ...action.payload,
         isProviderLoading: false,
       };
     }
     case Web3ProviderActions.DISCONNECT_WALLET: {
-      web3Modal.clearCachedProvider();
       return { ...initialState };
     }
     default:
@@ -68,14 +47,31 @@ const reducer = (state: InitialState, action: ActionTypes) => {
   }
 };
 
+const getInitialState = () => {
+  if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV !== 'production') {
+    const localProviderInfo = localFallbackProvider();
+    if (!!localProviderInfo) {
+      return { ...initialState, isProviderLoading: false, ...localProviderInfo };
+    }
+  }
+  return { ...initialState, isProviderLoading: false, ...getFallbackProvider() };
+};
+
 export function Web3Provider({ children }: { children: React.ReactNode }) {
-  const [state, dispatch] = useReducer(reducer, getInitialState());
+  const [state, dispatch] = useReducer(reducer, initialState, getInitialState);
+  const web3Modal = useMemo(() => new Web3Modal(WEB3_MODAL_CONFIG), []);
+
   const { t } = useTranslation('menu');
 
-  const connectDefaultProvider = useCallback(async () => {
+  /**
+   * Connects to a fallback provider
+   * if the REACT_APP_LOCAL_PROVIDER_URL is set as an env, the local node (if running) will be connected
+   * Otherwise, the fallback chaind defined in the env REACT_APP_FALLBACK_CHAIN_ID will be used.
+   */
+  const connectDefaultProvider = useCallback(() => {
     web3Modal.clearCachedProvider();
     if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV !== 'production') {
-      const localProviderInfo = await getLocalProvider();
+      const localProviderInfo = localFallbackProvider();
       if (!!localProviderInfo) {
         dispatch({
           type: Web3ProviderActions.SET_LOCAL_PROVIDER,
@@ -83,14 +79,17 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
         });
         return;
       }
-      web3Modal.clearCachedProvider();
     }
     dispatch({
       type: Web3ProviderActions.SET_FALLBACK_PROVIDER,
       payload: getFallbackProvider(),
     });
-  }, []);
+  }, [web3Modal]);
 
+  /**
+   * Connects using web3Modal
+   * If the connect network is not supported the fallback provider is set
+   */
   const connect: ConnectFn = useCallback(async () => {
     const userInjectedProvider = await getInjectedProvider(web3Modal);
     if (!!userInjectedProvider && getSupportedChains().includes(userInjectedProvider.chainId)) {
@@ -102,8 +101,11 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
     } else {
       connectDefaultProvider();
     }
-  }, [connectDefaultProvider, t]);
+  }, [connectDefaultProvider, t, web3Modal]);
 
+  /**
+   * Disconnects wallet, sets provider to fallback
+   */
   const disconnect: DisconnectFn = useCallback(() => {
     toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
     // switch to a default provider
@@ -112,15 +114,13 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
   useListeners(web3Modal, connectDefaultProvider, connect);
 
-  const load = useCallback(() => {
-    if (web3Modal.cachedProvider) {
-      connect();
-      return;
+  useEffect(() => {
+    if (web3Modal.cachedProvider && !state.isProviderLoading) {
+      (async () => {
+        await connect();
+      })();
     }
-    connectDefaultProvider();
-  }, [connect, connectDefaultProvider]);
-
-  useEffect(() => load(), [load]);
+  }, [connect, state.isProviderLoading, web3Modal]);
 
   const contextValue = useMemo(
     () => ({
