@@ -54,3 +54,29 @@ body:
         - All
     validations:
       required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating System
+      multiple: true
+      description: What OS did this appear on?
+      options:
+        - Mac
+        - Windows
+        - Linux
+        - iOS
+        - Android
+    validations:
+      required: true
+  - type: dropdown
+    id: wallet
+    attributes:
+      label: web3 wallet
+      multiple: true
+      description: What wallet did you use?
+      options:
+        - MetaMask
+        - WalletConnect
+        - Other (include in description)
+    validations:
+      required: true
