@@ -40,5 +40,7 @@ export const getInjectedProvider = async (
     }
     return undefined;
   }
-  return makeInjectedProvider(new ethers.providers.Web3Provider(userSuppliedProvider as ethers.providers.ExternalProvider));
+  return makeInjectedProvider(
+    new ethers.providers.Web3Provider(userSuppliedProvider as ethers.providers.ExternalProvider)
+  );
 };
