@@ -1,4 +1,4 @@
-import { Flex, Box, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useAvatar from '../../../hooks/useAvatar';
@@ -11,7 +11,7 @@ export function NotConnected() {
       alignItems="center"
       gap="1"
     >
-      <Text>Connect Wallet</Text>
+      <Text textStyle="text-base-sans-bold">Connect Wallet</Text>
       <ArrowDown />
     </Flex>
   );
@@ -29,12 +29,16 @@ export function Connected() {
   }
 
   return (
-    <Flex>
+    <Flex
+      alignItems="center"
+      gap="2"
+    >
       <Avatar
         address={account}
         url={avatarURL}
       />
-      <Box>{accountDisplayName}</Box>
+      <Text textStyle="text-sm-mono-semibold">{accountDisplayName}</Text>
+      <ArrowDown />
     </Flex>
   );
 }

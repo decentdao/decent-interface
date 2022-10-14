@@ -32,7 +32,7 @@ function Header() {
       <Flex
         alignItems="center"
         h="full"
-        gap="4"
+        gap="8"
       >
         <FavoriteLink />
         <AccountDisplay />
