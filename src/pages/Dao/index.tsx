@@ -1,84 +1,111 @@
-import { useState, useEffect } from "react";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import { Helmet } from "react-helmet-async";
+import { useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
-import Delegate from "../../components/Dao/Delegate";
-import Details from "../../components/Dao/Details";
-import Proposals from "../Proposals";
-import Summary from "../../components/Dao/Summary";
-import { useDAOData } from "../../contexts/daoData";
-import { useWeb3 } from "../../contexts/web3Data";
-import useValidateDaoRoute from "../../hooks/useValidateDaoRoute";
-import Treasury from "../Treasury";
+import Summary from '../../components/Dao/Summary';
+import Dashboard from '../../components/Dao/Dashboard';
+import { Modules } from '../../controller/Modules';
+import Transactions from '../Transactions';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { TreasuryController } from '../../controller/Modules/TreasuryController';
+import { GovernanceController } from '../../controller/Modules/GovernanceController';
+import { NodeType } from '../../providers/fractal/constants/enums';
+import { useTranslation } from 'react-i18next';
 
-
-
-function DAORoutes() {
+function MVDDAO() {
   return (
     <Routes>
-      <Route index element={<Summary />} />
-      <Route path="details" element={<Details />} />
-      <Route path="delegate" element={<Delegate />} />
-      <Route path="treasury" element={<Treasury />} />
-      <Route path="proposals/*" element={<Proposals />} />
+      <Route
+        index
+        element={<Summary />}
+      />
+      <Route
+        path="dashboard/*"
+        element={
+          <GovernanceController>
+            <TreasuryController>
+              <Dashboard />
+            </TreasuryController>
+          </GovernanceController>
+        }
+      />
+      <Route
+        path="transactions/*"
+        element={<Transactions />}
+      />
+      <Route
+        path="modules/:moduleAddress/*"
+        element={<Modules />}
+      />
     </Routes>
   );
 }
 
-function ValidDAO({ address }: { address: string }) {
-  const [{ name }, setDAOAddress] = useDAOData();
-
-  useEffect(() => {
-    setDAOAddress(address);
-  }, [address, setDAOAddress]);
+function GnosisDAO() {
+  const {
+    gnosis: { safe },
+  } = useFractal();
 
   return (
-    <div>
-      {name !== undefined && (<Helmet>
-        <title>Fractal | {name}</title>
-      </Helmet>)}
-      <DAORoutes />
+    <div className="text-white">
+      <div>address: {safe.address}</div>
+      <div>nonce: {safe.nonce}</div>
+      <div>threshold: {safe.threshold}</div>
+      <div>owners: {safe.owners?.join(', ')}</div>
+      <div>masterCopy: {safe.masterCopy}</div>
+      <div>modules: {safe.modules?.join(', ')}</div>
+      <div>fallbackHandler: {safe.fallbackHandler}</div>
+      <div>guard: {safe.guard}</div>
+      <div>version: {safe.version}</div>
     </div>
   );
 }
 
+function DAORoutes() {
+  const {
+    node: { node },
+  } = useFractal();
+
+  if (node.nodeType === NodeType.MVD) {
+    return <MVDDAO />;
+  } else if (node.nodeType === NodeType.GNOSIS) {
+    return <GnosisDAO />;
+  } else {
+    return null;
+  }
+}
+
 function DAO() {
-  const location = useLocation();
+  const {
+    node: { node },
+    mvd: { dao },
+  } = useFractal();
   const navigate = useNavigate();
-  const [{ account, accountLoading, chainId }] = useWeb3();
-  const [, setAddress] = useDAOData();
-  useValidateDaoRoute()
-  const [validatedAddress, setValidatedAddress] = useState((location.state as { validatedAddress: string } | null)?.validatedAddress);
+  const { t } = useTranslation();
   useEffect(() => {
-    if (!location || !location.state) {
-      setValidatedAddress(undefined);
-      return;
+    if (node.isLoaded && node.nodeType === undefined) {
+      navigate('/daos');
     }
-
-    const locationState = location.state as { validatedAddress: string };
-    setValidatedAddress(locationState.validatedAddress);
-  }, [location]);
-
-  useEffect(() => {
-    if (account || accountLoading) {
-      return;
-    }
-
-    navigate("/", { replace: true });
-    toast("Connect a wallet to load a DAO");
-  }, [account, accountLoading, navigate]);
-
-  // when this component unloads, setAddress back to undefined to clear app state
-  useEffect(() => () => setAddress(undefined), [setAddress]);
-  // if network changes remove address validation.
-  useEffect(() => () => setValidatedAddress(undefined), [chainId]);
-
-  if (validatedAddress) {
-    return <ValidDAO address={validatedAddress} />;
+  });
+  if (!node.isLoaded) {
+    // @todo add full page loader
+    <div>{t('loading')}</div>;
   }
 
-  return <></>;
+  return (
+    <div>
+      {node.nodeType === NodeType.MVD && dao.daoName !== undefined ? (
+        <Helmet>
+          <title>Fractal | {dao.daoName}</title>
+        </Helmet>
+      ) : (
+        <Helmet>
+          <title>Fractal</title>
+        </Helmet>
+      )}
+      <DAORoutes />
+    </div>
+  );
 }
 
 export default DAO;

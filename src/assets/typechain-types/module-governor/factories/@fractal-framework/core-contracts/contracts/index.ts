@@ -2,8 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as interfaces from "./interfaces";
-export { AccessControlDAO__factory } from "./AccessControlDAO__factory";
 export { DAO__factory } from "./DAO__factory";
+export { DAOAccessControl__factory } from "./DAOAccessControl__factory";
 export { DAOFactory__factory } from "./DAOFactory__factory";
 export { ModuleBase__factory } from "./ModuleBase__factory";
 export { ModuleFactoryBase__factory } from "./ModuleFactoryBase__factory";

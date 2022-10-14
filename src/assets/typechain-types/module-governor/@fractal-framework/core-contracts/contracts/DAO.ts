@@ -200,7 +200,7 @@ export interface DAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -239,7 +239,7 @@ export interface DAO extends BaseContract {
 
   initialize(
     _accessControl: string,
-    _moduleFactoryBase: string,
+    _moduleFactory: string,
     _name: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -278,7 +278,7 @@ export interface DAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -348,7 +348,7 @@ export interface DAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -388,7 +388,7 @@ export interface DAO extends BaseContract {
 
     initialize(
       _accessControl: string,
-      _moduleFactoryBase: string,
+      _moduleFactory: string,
       _name: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

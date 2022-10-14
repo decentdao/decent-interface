@@ -1,7 +1,13 @@
-import { ChangeEvent, FormEvent } from "react";
-import cx from "classnames";
+import { ChangeEvent, FormEvent, useCallback } from 'react';
+import cx from 'classnames';
+
+export enum RestrictCharTypes {
+  WHOLE_NUMBERS_ONLY,
+  FLOAT_NUMBERS,
+}
+
 interface InputProps {
-  type: "text" | "number" | "textarea";
+  type: 'text' | 'number' | 'textarea';
   value?: string | number;
   containerClassName?: string;
   inputClassName?: string;
@@ -10,12 +16,16 @@ interface InputProps {
   unit?: string;
   helperText?: string;
   exampleText?: string;
+  exampleLabel?: string;
   disabled?: boolean;
   errorMessage?: string;
   placeholder?: string;
   min?: string | number;
-  isWholeNumberOnly?: boolean;
+  max?: string | number;
+  onClickMax?: () => void;
+  restrictChar?: RestrictCharTypes;
   onChange(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
+  decimals?: number;
 }
 
 /**
@@ -23,71 +33,172 @@ interface InputProps {
  * includes: surrounding wrapper, label, input and error handling
  *
  */
-const Input = ({ value, min, placeholder, type, label, subLabel, unit, errorMessage, disabled, helperText, exampleText, isWholeNumberOnly, containerClassName, inputClassName, onChange }: InputProps) => {
-  const FieldType = type === "textarea" ? "textarea" : "input";
+function Input({
+  value,
+  min,
+  max,
+  placeholder,
+  type,
+  label,
+  subLabel,
+  unit,
+  errorMessage,
+  disabled,
+  helperText,
+  exampleText,
+  exampleLabel,
+  restrictChar,
+  containerClassName,
+  inputClassName,
+  onChange,
+  onClickMax,
+  decimals,
+}: InputProps) {
+  const FieldType = type === 'textarea' ? 'textarea' : 'input';
   const hasError = !!errorMessage;
 
-  const Label = () =>
-    !!label ? (
+  function Label() {
+    return !!label ? (
       <label
         htmlFor="form-field"
-        className={cx("text-xs font-medium mb-1", {
-          "text-gray-50": disabled,
-          "text-gray-25": !disabled,
+        className={cx('text-xs font-medium mb-1', {
+          'text-gray-50': disabled,
+          'text-gray-25': !disabled,
         })}
       >
         {label}
       </label>
     ) : null;
+  }
 
-  const HelperText = () => (!!helperText ? <div className="text-gray-50 font-sans text-xs">{helperText}</div> : null);
-  const HelperExampleText = () =>
-    !!helperText && exampleText ? (
+  function HelperText() {
+    return !!helperText ? <div className="text-gray-50 font-sans text-xs">{helperText}</div> : null;
+  }
+  function HelperExampleText() {
+    return !!helperText && exampleText ? (
       <div className="text-gold-300 font-mono font-medium text-xxs mb-4">
-        <div>Example:</div>
+        <div>{exampleLabel ? exampleLabel : 'Example'}:</div>
         <div>{exampleText}</div>
       </div>
     ) : null;
-
-  const UnitsDisplay = () => (unit ? <div className="absolute text-gray-50 text-sm top-7 right-6">{unit}</div> : null);
-
-  const SubLabel = () => (!!subLabel && !hasError ? <div className="text-gray-50 text-xs font-medium mt-1">{subLabel}</div> : null);
-  const ErrorMessage = () => (!!hasError ? <div className="text-red text-xs mt-1">{errorMessage}</div> : <div className={cx({ "mt-5": !subLabel })} />);
-
-  const INPUT_BASE_STYLES = "w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-25 focus:outline-none";
-  const INPUT_DISABLED_STYLED = "disabled:bg-gray-300 disabled:border-gray-200 disabled:text-gray-50";
-  const borderColor = hasError ? "border border-red" : "";
-  const inputTextColor = hasError ? "text-red" : "text-gray-25";
-
-  const _type = type !== "textarea" ? type : undefined;
-
-  const stripChars = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    return ['e', '+', '-', '.'].includes(event.key) && event.preventDefault()
   }
+
+  function UnitsDisplay() {
+    return unit ? <div className="absolute text-gray-50 text-sm top-7 right-6">{unit}</div> : null;
+  }
+
+  function SubLabel() {
+    return !!subLabel && !hasError ? (
+      <div className="text-gray-50 text-xs font-medium mt-1">{subLabel}</div>
+    ) : null;
+  }
+  function ErrorMessage() {
+    return !!hasError ? (
+      <div className="text-red text-xs mt-1">{errorMessage}</div>
+    ) : (
+      <div className={cx({ 'mt-5': subLabel })} />
+    );
+  }
+
+  function SetMax() {
+    return !max ? null : (
+      <div
+        className="absolute text-sm text-gold-500 top-1.5 right-2 cursor-pointer hover:text-gold-300"
+        onClick={onClickMax}
+      >
+        max
+      </div>
+    );
+  }
+
+  const INPUT_BASE_STYLES =
+    'w-full border border-gray-20 bg-gray-400 rounded py-1 px-2 shadow-inner text-gray-25 focus:outline-none placeholder:text-gray-100';
+  const INPUT_DISABLED_STYLED =
+    'disabled:bg-gray-300 disabled:border-gray-200 disabled:text-gray-50';
+  const borderColor = hasError ? 'border border-red' : '';
+  const inputTextColor = hasError ? 'text-red' : 'text-gray-25';
+
+  const inputType = type !== 'textarea' ? type : undefined;
+
+  const wholeNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    return ['e', '+', '-', '.'].includes(event.key) && event.preventDefault();
+  };
+  const floatNumbersOnly = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    return ['e', '+', '-'].includes(event.key) && event.preventDefault();
+  };
+
+  const limitDecimals = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (!value || ['Backspace', 'Delete'].includes(event.key)) {
+        return;
+      }
+      const [, dec] = value.toString().split('.');
+      if (!!dec && !!decimals && dec.length >= decimals) {
+        event.preventDefault();
+      }
+    },
+    [decimals, value]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (decimals) {
+        limitDecimals(event);
+      }
+
+      switch (restrictChar) {
+        case RestrictCharTypes.WHOLE_NUMBERS_ONLY: {
+          wholeNumbersOnly(event);
+          break;
+        }
+        case RestrictCharTypes.FLOAT_NUMBERS: {
+          floatNumbersOnly(event);
+          break;
+        }
+      }
+
+      return event;
+    },
+    [decimals, limitDecimals, restrictChar]
+  );
 
   return (
     <div
-      className={cx("w-full", {
-        "flex flex-wrap sm:flex-nowrap": !!helperText,
-      }, containerClassName)}
+      className={cx(
+        'w-full',
+        {
+          'flex flex-wrap sm:flex-nowrap': !!helperText,
+        },
+        containerClassName
+      )}
     >
-      <div className={cx("flex flex-col w-full relative", { "pr-4": !!helperText })}>
+      <div className={cx('flex flex-col w-full relative', { 'pr-4': !!helperText })}>
         <Label />
         <FieldType
           id="form-field"
-          type={_type}
+          type={inputType}
           placeholder={placeholder}
-          className={cx(INPUT_BASE_STYLES, INPUT_DISABLED_STYLED, borderColor, inputTextColor, inputClassName)}
+          className={cx(
+            INPUT_BASE_STYLES,
+            INPUT_DISABLED_STYLED,
+            borderColor,
+            inputTextColor,
+            inputClassName
+          )}
           disabled={disabled}
           value={value}
           min={min}
-          onKeyDown={isWholeNumberOnly ? stripChars : undefined}
+          max={max}
+          onKeyDown={handleKeyDown}
           onChange={onChange}
-          onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) => (e.target as HTMLInputElement).blur()}
+          onWheel={(e: FormEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+            (e.target as HTMLInputElement).blur()
+          }
           autoCorrect="off"
           autoCapitalize="none"
           spellCheck="false"
         />
+        <SetMax />
         <UnitsDisplay />
         <SubLabel />
         <ErrorMessage />
@@ -98,6 +209,6 @@ const Input = ({ value, min, placeholder, type, label, subLabel, unit, errorMess
       </div>
     </div>
   );
-};
+}
 
 export default Input;

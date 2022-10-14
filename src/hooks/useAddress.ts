@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
-import { ethers, constants } from "ethers";
-
-import { useWeb3 } from "../contexts/web3Data";
+import { useState, useEffect } from 'react';
+import { ethers, constants } from 'ethers';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../helpers/errorLogging';
 
 const useAddress = (addressInput: string | undefined) => {
-  const [{ provider }] = useWeb3();
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   const [address, setAddress] = useState<string>();
   const [validAddress, setValidAddress] = useState<boolean>();
@@ -20,12 +22,12 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
-    if (!provider || addressInput.trim() === "") {
+    if (!provider || addressInput.trim() === '') {
       return;
     }
 
     if (addressInput === constants.AddressZero) {
-      setAddress("");
+      setAddress('');
       setValidAddress(false);
       setLoading(false);
       return;
@@ -40,9 +42,9 @@ const useAddress = (addressInput: string | undefined) => {
 
     provider
       .resolveName(addressInput)
-      .then((resolvedAddress) => {
+      .then(resolvedAddress => {
         if (!resolvedAddress) {
-          setAddress("");
+          setAddress('');
           setValidAddress(false);
           setLoading(false);
           return;
@@ -52,7 +54,7 @@ const useAddress = (addressInput: string | undefined) => {
         setLoading(false);
       })
       .catch(() => {
-        setAddress("");
+        setAddress('');
         setValidAddress(false);
         setLoading(false);
       });
@@ -62,11 +64,7 @@ const useAddress = (addressInput: string | undefined) => {
 };
 
 export const checkAddress = async (provider: any, addressInput?: string): Promise<boolean> => {
-  if (addressInput === undefined) {
-    return false;
-  }
-
-  if (!provider || addressInput.trim() === "") {
+  if (!addressInput || !addressInput.trim()) {
     return false;
   }
 
@@ -77,13 +75,17 @@ export const checkAddress = async (provider: any, addressInput?: string): Promis
   if (ethers.utils.isAddress(addressInput)) {
     return true;
   }
+
+  // check if it's a registered ENS name (e.g. blah.eth)
+  // note that if provider is undefined here, we don't actually know, but will return false
   try {
     const resolvedAddress = await provider.resolveName(addressInput);
     if (!resolvedAddress) {
       return false;
     }
     return true;
-  } catch {
+  } catch (e) {
+    logError(e);
     return false;
   }
 };

@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
-import useAddress from "./useAddress";
-import useIsDAO from "./useIsDAO";
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { NodeType } from '../providers/fractal/constants/enums';
+import useAddress from './useAddress';
+import useIsDAO from './useIsDAO';
+import useIsGnosisSafe from './useIsGnosisSafe';
 
 const useSearchDao = () => {
   const [searchString, setSearchString] = useState<string>();
@@ -9,6 +12,9 @@ const useSearchDao = () => {
 
   const [address, validAddress, addressLoading] = useAddress(searchString);
   const [addressIsDAO, isDAOLoading] = useIsDAO(address);
+  const [addressIsGnosisSafe, isGnosisSafeLoading] = useIsGnosisSafe(address);
+  const [addressNodeType, setAddressNodeType] = useState<NodeType>();
+  const { t } = useTranslation('dashboard');
 
   /**
    * refresh error state if one exists
@@ -25,8 +31,8 @@ const useSearchDao = () => {
    * updates search string when 'form' is submited
    *
    */
-  const updateSearchString = (searchString: string) => {
-    setSearchString(searchString);
+  const updateSearchString = (searchStr: string) => {
+    setSearchString(searchStr);
   };
 
   /**
@@ -34,9 +40,9 @@ const useSearchDao = () => {
    */
   useEffect(() => {
     if (addressLoading !== undefined) {
-      setLoading(addressLoading || isDAOLoading);
+      setLoading(addressLoading || isDAOLoading || isGnosisSafeLoading);
     }
-  }, [addressLoading, isDAOLoading]);
+  }, [addressLoading, isDAOLoading, isGnosisSafeLoading]);
 
   /**
    * handles errors
@@ -52,20 +58,34 @@ const useSearchDao = () => {
       return;
     }
     if (!validAddress && address !== undefined) {
-      setErrorMessage("Please use a valid Fractal ETH address or ENS domain");
+      setErrorMessage(t('errorInvalidSearch'));
       return;
     }
-    if (addressIsDAO === false) {
-      setErrorMessage("Sorry a Fractal does not exist on this address");
+    if (addressIsDAO === false && addressIsGnosisSafe === false) {
+      setErrorMessage(t('errorFailedSearch'));
       return;
     }
-  }, [address, validAddress, searchString, addressIsDAO, loading]);
+  }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading, t]);
+
+  useEffect(() => {
+    if (addressIsDAO === true) {
+      setAddressNodeType(NodeType.MVD);
+      return;
+    }
+
+    if (addressIsGnosisSafe === true) {
+      setAddressNodeType(NodeType.GNOSIS);
+      return;
+    }
+
+    setAddressNodeType(undefined);
+  }, [addressIsDAO, addressIsGnosisSafe]);
 
   return {
     errorMessage,
     loading,
     address,
-    addressIsDAO,
+    addressNodeType,
     validAddress,
     updateSearchString,
     resetErrorState,

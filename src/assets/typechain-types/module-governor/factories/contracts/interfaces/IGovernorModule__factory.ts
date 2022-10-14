@@ -42,7 +42,7 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "contract ITimelockUpgradeable",
+        internalType: "contract ITimelock",
         name: "_timelock",
         type: "address",
       },
@@ -178,7 +178,7 @@ const _abi = [
     name: "state",
     outputs: [
       {
-        internalType: "enum IGovernorModule.ProposalState",
+        internalType: "enum IGovernorUpgradeable.ProposalState",
         name: "",
         type: "uint8",
       },

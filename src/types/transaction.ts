@@ -5,4 +5,4 @@ export interface TransactionData {
   parameters: string;
   addressError?: string;
   fragmentError?: string;
-};
+}

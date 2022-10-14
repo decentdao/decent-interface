@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type * as interfaces from "./interfaces";
 export type { interfaces };
+export type { ClaimFactory } from "./ClaimFactory";
+export type { ClaimSubsidiary } from "./ClaimSubsidiary";
 export type { TokenFactory } from "./TokenFactory";
 export type { VotesToken } from "./VotesToken";
-export type { VotesTokenWithSupply } from "./VotesTokenWithSupply";

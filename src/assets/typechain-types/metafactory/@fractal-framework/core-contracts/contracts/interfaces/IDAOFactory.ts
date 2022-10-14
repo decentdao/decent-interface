@@ -28,8 +28,8 @@ import type {
 export declare namespace IDAOFactory {
   export type CreateDAOParamsStruct = {
     daoImplementation: string;
-    daoFactory: string;
     accessControlImplementation: string;
+    salt: BytesLike;
     daoName: string;
     roles: string[];
     rolesAdmins: string[];
@@ -50,8 +50,8 @@ export declare namespace IDAOFactory {
     string[][]
   ] & {
     daoImplementation: string;
-    daoFactory: string;
     accessControlImplementation: string;
+    salt: string;
     daoName: string;
     roles: string[];
     rolesAdmins: string[];
@@ -63,7 +63,7 @@ export declare namespace IDAOFactory {
 
 export interface IDAOFactoryInterface extends utils.Interface {
   functions: {
-    "createDAO(address,(address,address,address,string,string[],string[],address[][],string[],string[][]))": FunctionFragment;
+    "createDAO(address,(address,address,bytes32,string,string[],string[],address[][],string[],string[][]))": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "createDAO"): FunctionFragment;

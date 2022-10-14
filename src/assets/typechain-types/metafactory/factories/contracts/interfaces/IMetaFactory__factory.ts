@@ -12,16 +12,6 @@ import type {
 const _abi = [
   {
     inputs: [],
-    name: "FactoryCallFailed",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidModuleAddressToPass",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "UnequalArrayLengths",
     type: "error",
   },
@@ -29,25 +19,50 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
-        name: "dao",
+        name: "daoAddress",
         type: "address",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
         name: "accessControl",
         type: "address",
       },
       {
-        indexed: false,
-        internalType: "address[]",
-        name: "modules",
-        type: "address[]",
+        indexed: true,
+        internalType: "address",
+        name: "creator",
+        type: "address",
       },
     ],
-    name: "DAOAndModulesCreated",
+    name: "DAOCreated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address[]",
+        name: "targets",
+        type: "address[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "values",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "bytes[]",
+        name: "calldatas",
+        type: "bytes[]",
+      },
+    ],
+    name: "Executed",
     type: "event",
   },
   {
@@ -58,11 +73,6 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint256",
-        name: "metaFactoryTempRoleIndex",
-        type: "uint256",
-      },
-      {
         components: [
           {
             internalType: "address",
@@ -71,13 +81,13 @@ const _abi = [
           },
           {
             internalType: "address",
-            name: "daoFactory",
+            name: "accessControlImplementation",
             type: "address",
           },
           {
-            internalType: "address",
-            name: "accessControlImplementation",
-            type: "address",
+            internalType: "bytes32",
+            name: "salt",
+            type: "bytes32",
           },
           {
             internalType: "string",
@@ -115,73 +125,33 @@ const _abi = [
         type: "tuple",
       },
       {
-        components: [
-          {
-            internalType: "address",
-            name: "factory",
-            type: "address",
-          },
-          {
-            internalType: "bytes[]",
-            name: "data",
-            type: "bytes[]",
-          },
-          {
-            internalType: "uint256",
-            name: "value",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256[]",
-            name: "newContractAddressesToPass",
-            type: "uint256[]",
-          },
-          {
-            internalType: "uint256",
-            name: "addressesReturned",
-            type: "uint256",
-          },
-        ],
-        internalType: "struct IMetaFactory.ModuleFactoryCallData[]",
-        name: "moduleFactoriesCallData",
-        type: "tuple[]",
-      },
-      {
-        components: [
-          {
-            internalType: "uint256[]",
-            name: "contractIndexes",
-            type: "uint256[]",
-          },
-          {
-            internalType: "string[]",
-            name: "functionDescs",
-            type: "string[]",
-          },
-          {
-            internalType: "string[][]",
-            name: "roles",
-            type: "string[][]",
-          },
-        ],
-        internalType: "struct IMetaFactory.ModuleActionData",
-        name: "moduleActionData",
-        type: "tuple",
-      },
-      {
-        internalType: "uint256[][]",
-        name: "roleModuleMembers",
-        type: "uint256[][]",
-      },
-    ],
-    name: "createDAOAndModules",
-    outputs: [
-      {
         internalType: "address[]",
-        name: "",
+        name: "moduleFactories",
         type: "address[]",
       },
+      {
+        internalType: "bytes[][]",
+        name: "moduleFactoriesBytes",
+        type: "bytes[][]",
+      },
+      {
+        internalType: "address[]",
+        name: "targets",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "values",
+        type: "uint256[]",
+      },
+      {
+        internalType: "bytes[]",
+        name: "calldatas",
+        type: "bytes[]",
+      },
     ],
+    name: "createDAOAndExecute",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

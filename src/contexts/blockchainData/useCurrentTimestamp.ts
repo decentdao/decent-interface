@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { useWeb3 } from "../web3Data";
+import { useWeb3Provider } from './../web3Data/hooks/useWeb3Provider';
+import { useEffect, useState } from 'react';
+import { logError } from '../../helpers/errorLogging';
 
 const useCurrentTimestamp = (blockNumber: number | undefined) => {
-  const [timestamp, setTimestamp] = useState<number>(
-    Math.floor(Date.now() / 1000)
-  );
-  const [{ provider }] = useWeb3();
-
+  const [timestamp, setTimestamp] = useState<number>(Math.floor(Date.now() / 1000));
+  const {
+    state: { provider },
+  } = useWeb3Provider();
   useEffect(() => {
-    const timer = setInterval(() => setTimestamp((oldTimestamp) => oldTimestamp + 1), 1000);
+    const timer = setInterval(() => setTimestamp(oldTimestamp => oldTimestamp + 1), 1000);
 
     return () => {
       clearInterval(timer);
@@ -16,14 +16,14 @@ const useCurrentTimestamp = (blockNumber: number | undefined) => {
   }, []);
 
   useEffect(() => {
-    if (provider === undefined || blockNumber === undefined) {
+    if (!provider || blockNumber === undefined) {
       setTimestamp(Math.floor(Date.now() / 1000));
       return;
     }
 
     provider
       .getBlock(blockNumber)
-      .then((block) => {
+      .then(block => {
         // sometimes block is null idk why
         if (!block) {
           return;
@@ -31,7 +31,7 @@ const useCurrentTimestamp = (blockNumber: number | undefined) => {
 
         setTimestamp(block.timestamp);
       })
-      .catch(console.error);
+      .catch(logError);
   }, [provider, blockNumber]);
 
   return timestamp;

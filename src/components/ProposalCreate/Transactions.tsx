@@ -1,5 +1,5 @@
-import { TransactionData } from "../../types/transaction";
-import Transaction from "./Transaction";
+import { TransactionData } from '../../types/transaction';
+import Transaction from './Transaction';
 
 interface TransactionsProps {
   transactions: TransactionData[];
@@ -8,11 +8,16 @@ interface TransactionsProps {
   removeTransaction: (transactionNumber: number) => void;
 }
 
-const Transactions = ({ transactions, pending, setTransactions, removeTransaction }: TransactionsProps) => {
+function Transactions({
+  transactions,
+  pending,
+  setTransactions,
+  removeTransaction,
+}: TransactionsProps) {
   const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
-    const _transactions = [...transactions]
-      _transactions[transactionNumber] = {...transactionData} 
-    setTransactions(_transactions);
+    const transactionsArr = [...transactions];
+    transactionsArr[transactionNumber] = { ...transactionData };
+    setTransactions(transactionsArr);
   };
 
   return (
@@ -30,6 +35,6 @@ const Transactions = ({ transactions, pending, setTransactions, removeTransactio
       ))}
     </div>
   );
-};
+}
 
 export default Transactions;

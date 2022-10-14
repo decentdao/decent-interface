@@ -1,0 +1,43 @@
+name: E2E Tests
+on:
+  push:
+    branches:
+    - develop
+  pull_request:
+jobs:
+  playwright:
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up node
+      uses: actions/setup-node@v2
+      with:
+        node-version-file: '.nvmrc'
+    - name: Create env file
+      working-directory: ./docker
+      run: echo TESTING_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env.tests.local
+    - name: Start containers
+      run: docker-compose up -d --build
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+    - name: Wait for Development Server
+      uses: nev7n/wait_for_response@v1
+      with:
+        url: 'http://localhost:3000/'
+        responseCode: 200
+    - name: Run Playwright tests
+      run: npm run tests
+    - uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
+    - name: Stop containers
+      if: always()
+      run: docker-compose down

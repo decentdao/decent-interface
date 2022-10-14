@@ -16,6 +16,7 @@
 .env.local
 .env.development.local
 .env.test.local
+.env.tests.local
 .env.production.local
 
 npm-debug.log*
@@ -25,3 +26,7 @@ yarn-error.log*
 .idea/*
 
 .gitconfig
+/test-results/
+/playwright-report/
+/playwright/.cache/
+

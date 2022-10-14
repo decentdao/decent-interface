@@ -1,22 +1,22 @@
-import { useCallback, useEffect } from 'react'
+import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
+import { useCallback, useEffect } from 'react';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useWeb3 } from '../contexts/web3Data';
-import { GovernorModule, GovernorModule__factory } from '../assets/typechain-types/module-governor';
-import { useDAOData } from '../contexts/daoData/index';
-import { ProposalData } from "../contexts/daoData/useProposals";
 import { ethers } from 'ethers';
-
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { ProposalData } from '../providers/govenor/types';
+import { useTranslation } from 'react-i18next';
 
 const useExecuteTransaction = ({
   proposalData,
-  setPending
+  setPending,
 }: {
-  proposalData: ProposalData,
+  proposalData: ProposalData;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
-}
-) => {
-  const [{ signerOrProvider }] = useWeb3();
-  const [daoData,] = useDAOData();
+}) => {
+  const {
+    state: { signerOrProvider },
+  } = useWeb3Provider();
+  const { governorModuleContract } = useGovenorModule();
 
   const [contractCallExecuteTransaction, contractCallPending] = useTransaction();
 
@@ -24,25 +24,27 @@ const useExecuteTransaction = ({
     setPending(contractCallPending);
   }, [setPending, contractCallPending]);
 
+  const { t } = useTranslation('transaction');
+
   let executeTransaction = useCallback(() => {
-    if (
-      !signerOrProvider ||
-      !proposalData ||
-      !daoData ||
-      !daoData.moduleAddresses
-    ) {
+    if (!signerOrProvider || !proposalData || !governorModuleContract) {
       return;
     }
 
-    const governor: GovernorModule = GovernorModule__factory.connect(daoData.moduleAddresses[1], signerOrProvider);
     contractCallExecuteTransaction({
-      contractFn: () => governor.execute(proposalData.targets, [0], proposalData.calldatas, ethers.utils.id(proposalData.description)),
-      pendingMessage: "Executing Transaction",
-      failedMessage: "Executing Failed",
-      successMessage: "Executing Completed",
+      contractFn: () =>
+        governorModuleContract.execute(
+          proposalData.targets,
+          proposalData.values,
+          proposalData.calldatas,
+          ethers.utils.id(proposalData.description)
+        ),
+      pendingMessage: t('pendingTransaction'),
+      failedMessage: t('failedTransaction'),
+      successMessage: t('successTransaction'),
     });
-  }, [contractCallExecuteTransaction, daoData, proposalData, signerOrProvider])
+  }, [contractCallExecuteTransaction, governorModuleContract, proposalData, signerOrProvider, t]);
   return executeTransaction;
-}
+};
 
 export default useExecuteTransaction;

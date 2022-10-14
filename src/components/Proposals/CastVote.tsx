@@ -1,9 +1,10 @@
-import { ProposalData, ProposalState } from "../../contexts/daoData/useProposals";
-import { useState, useEffect } from "react";
-import useCastVote from "../../hooks/useCastVote";
-import { PrimaryButton, SecondaryButton } from "../ui/forms/Button";
-import Check from "../ui/svg/Check";
-import ContentBanner from "../ui/ContentBanner";
+import { useState, useEffect } from 'react';
+import useCastVote from '../../hooks/useCastVote';
+import { PrimaryButton, SecondaryButton } from '../ui/forms/Button';
+import Check from '../ui/svg/Check';
+import ContentBanner from '../ui/ContentBanner';
+import { ProposalData, ProposalState } from '../../providers/govenor/types';
+import { useTranslation } from 'react-i18next';
 
 function CastVote({ proposal }: { proposal: ProposalData }) {
   // Vote Enum
@@ -13,28 +14,35 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
   const [newVote, setNewVote] = useState<number>();
   const [voteButtonString, setVoteButtonString] = useState<string>();
   const [pending, setPending] = useState<boolean>(false);
+  const { t } = useTranslation('proposal');
 
   useEffect(() => {
     if (proposal.state !== ProposalState.Active) {
-      setVoteButtonString("Voting Closed");
+      setVoteButtonString(t('labelVotingClosed'));
     } else if (proposal.userVote !== undefined) {
-      setVoteButtonString("Already Voted");
+      setVoteButtonString(t('labelAlreadyVoted'));
     } else if (proposal.userVotePower === undefined || proposal.userVotePower.eq(0)) {
-      setVoteButtonString("No Vote Power");
+      setVoteButtonString(t('labelNoVotes'));
     } else {
-      setVoteButtonString("Cast Vote");
+      setVoteButtonString(t('labelCastVote'));
     }
-  }, [proposal]);
+  }, [proposal, t]);
 
   const castVote = useCastVote({
     proposalId: proposal.id,
     vote: newVote,
-    setPending: setPending
+    setPending: setPending,
   });
 
-  const NoSelected = () => (newVote === 0 || proposal.userVote === 0 ? <Check /> : null);
-  const YesSelected = () => (newVote === 1 || proposal.userVote === 1 ? <Check /> : null);
-  const AbstainedSelected = () => (newVote === 2 || proposal.userVote === 2 ? <Check /> : null);
+  function NoSelected() {
+    return newVote === 0 || proposal.userVote === 0 ? <Check /> : null;
+  }
+  function YesSelected() {
+    return newVote === 1 || proposal.userVote === 1 ? <Check /> : null;
+  }
+  function AbstainedSelected() {
+    return newVote === 2 || proposal.userVote === 2 ? <Check /> : null;
+  }
   return (
     <>
       <div className="flex flex-col bg-gray-600 my-2 p-2 pb-4 w-3/5 rounded-md">
@@ -45,13 +53,13 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(1)}
             icon={<YesSelected />}
             disabled={
-              proposal.state !== ProposalState.Active || 
-              proposal.userVote !== undefined || 
-              proposal.userVotePower === undefined || 
+              proposal.state !== ProposalState.Active ||
+              proposal.userVote !== undefined ||
+              proposal.userVotePower === undefined ||
               proposal.userVotePower.eq(0) ||
               pending
             }
-            label="Vote Yes"
+            label={t('labelVoteYes')}
             isIconRight
             isSpaceBetween
             isLarge
@@ -60,13 +68,13 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(0)}
             icon={<NoSelected />}
             disabled={
-              proposal.state !== ProposalState.Active || 
-              proposal.userVote !== undefined || 
-              proposal.userVotePower === undefined || 
+              proposal.state !== ProposalState.Active ||
+              proposal.userVote !== undefined ||
+              proposal.userVotePower === undefined ||
               proposal.userVotePower.eq(0) ||
               pending
             }
-            label="Vote Not"
+            label={t('labelVoteNo')}
             isIconRight
             isSpaceBetween
             isLarge
@@ -75,13 +83,13 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
             onClick={() => setNewVote(2)}
             icon={<AbstainedSelected />}
             disabled={
-              proposal.state !== ProposalState.Active || 
-              proposal.userVote !== undefined || 
-              proposal.userVotePower === undefined || 
+              proposal.state !== ProposalState.Active ||
+              proposal.userVote !== undefined ||
+              proposal.userVotePower === undefined ||
               proposal.userVotePower.eq(0) ||
               pending
             }
-            label="Abstain"
+            label={t('labelAbstain')}
             isIconRight
             isSpaceBetween
             isLarge
@@ -102,7 +110,7 @@ function CastVote({ proposal }: { proposal: ProposalData }) {
           />
         </div>
         <div className="mt-6 py-2 mx-2 border-t border-gray-300">
-          <ContentBanner description="You only get one vote, make it count." />
+          <ContentBanner description={t('descriptionCastVote')} />
         </div>
       </div>
     </>

@@ -1,18 +1,23 @@
-import { Menu } from "@headlessui/react";
-import { useWeb3 } from "../../../contexts/web3Data";
-import Contact from "../svg/Contact";
-import Support from "../svg/Support";
-import Connect from "../svg/Connect";
-import Disconnect from "../svg/Disconnect";
-import Faq from "../svg/Faq";
-import Docs from "../svg/Docs";
-import CopyToClipboard from "../CopyToClipboard";
-import EtherscanLink from "../EtherscanLink";
-import useDisplayName from "../../../hooks/useDisplayName";
-import cx from "classnames";
+import { Menu } from '@headlessui/react';
+import Contact from '../svg/Contact';
+import Support from '../svg/Support';
+import Connect from '../svg/Connect';
+import Disconnect from '../svg/Disconnect';
+import { StarEmpty } from '../svg/Star';
+import Faq from '../svg/Faq';
+import Docs from '../svg/Docs';
+import CopyToClipboard from '../CopyToClipboard';
+import EtherscanLinkAddress from '../EtherscanLinkAddress';
+import cx from 'classnames';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { Link } from 'react-router-dom';
+import { useBlockchainData } from '../../../contexts/blockchainData';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../../i18n/LanguageSwitcher';
 
 interface MenuItem {
-  title: string;
+  testId: string;
+  titleKey: string;
   className?: string;
   Icon: () => JSX.Element;
 }
@@ -26,97 +31,177 @@ interface LinkMenuItem extends MenuItem {
 }
 
 const COMMUNITY: LinkMenuItem = {
-  title: "Community",
-  link: "https://discord.gg/24HFVzYVRF",
+  testId: 'menu:community',
+  titleKey: 'community',
+  link: 'https://discord.gg/decent-dao',
   Icon: Contact,
 };
 
 const OVERVIEW: LinkMenuItem = {
-  title: "Overview",
-  link: "https://docs.fractalframework.xyz/welcome-to-fractal/overview/what-is-fractal",
+  testId: 'menu:overview',
+  titleKey: 'overview',
+  link: 'https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview',
   Icon: Support,
 };
 
 const FAQ: LinkMenuItem = {
-  title: "FAQ",
-  link: "https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq",
+  testId: 'menu:faq',
+  titleKey: 'faq',
+  link: 'https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq',
   Icon: Faq,
 };
 
 const DOCS: LinkMenuItem = {
-  title: "Docs",
-  link: "https://docs.fractalframework.xyz/welcome-to-fractal",
+  testId: 'menu:docs',
+  titleKey: 'docs',
+  link: 'https://docs.fractalframework.xyz/welcome-to-fractal',
   Icon: Docs,
 };
 
+const FAVORITES: LinkMenuItem = {
+  testId: 'menu:favorites',
+  titleKey: 'favorites',
+  link: '/daos/favorites',
+  Icon: StarEmpty,
+};
+
 const CONNECT_WALLET = (connect: () => void): ActionMenuItem => ({
-  title: "Connect Wallet",
+  testId: 'menu:connect',
+  titleKey: 'connect',
   action: connect,
   Icon: Connect,
 });
 
 const DISCONNECT = (disconnect: () => void): ActionMenuItem => ({
-  title: "Disconnect",
+  testId: 'menu:disconnect',
+  titleKey: 'disconnect',
   action: disconnect,
   Icon: Disconnect,
 });
 
-const ItemWrapper = (props: { children: JSX.Element | JSX.Element[]; noHoverEffect?: boolean; className?: string }) => (
-  <div
-    className={cx("flex items-center justify-start gap-4 text-white p-4", {
-      "hover:bg-slate-200 hover:text-black": !props.noHoverEffect,
-    }, props.className)}
-  >
-    {props.children}
-  </div>
-);
+function ItemWrapper(props: {
+  children: JSX.Element | JSX.Element[];
+  noHoverEffect?: boolean;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cx(
+        'flex items-center justify-start gap-4 text-white p-4',
+        {
+          'hover:bg-slate-200 hover:text-black': !props.noHoverEffect,
+        },
+        props.className
+      )}
+    >
+      {props.children}
+    </div>
+  );
+}
 
-const ActionItem = ({ title, className, action, Icon, isVisible }: ActionMenuItem) => {
+function ItemContent({
+  title,
+  className,
+  Icon,
+}: {
+  title: string;
+  className?: string;
+  Icon: () => JSX.Element;
+}) {
+  return (
+    <ItemWrapper className={className}>
+      <Icon />
+      <span>{title}</span>
+    </ItemWrapper>
+  );
+}
+
+function ActionItem({
+  titleKey: title,
+  className,
+  action,
+  Icon,
+  isVisible,
+  testId,
+}: ActionMenuItem) {
+  const { t } = useTranslation('menu');
   if (!isVisible) {
     return null;
   }
   return (
     <Menu.Item>
-      <button onClick={action} className={cx("w-full", className)}>
-        <ItemWrapper className={className}>
-          <Icon />
-          <span>{title}</span>
-        </ItemWrapper>
+      <button
+        data-testid={testId}
+        onClick={action}
+        className={cx('w-full', className)}
+      >
+        <ItemContent
+          title={t(title)}
+          className={className}
+          Icon={Icon}
+        />
       </button>
     </Menu.Item>
   );
-};
+}
 
-const LinkItem = ({ title, link, Icon }: LinkMenuItem) => {
+function LinkItem({ titleKey: title, link, Icon, testId }: LinkMenuItem) {
+  const { t } = useTranslation('menu');
   return (
     <Menu.Item>
-      <a href={link} target="_blank" rel="noopener noreferrer">
-        <ItemWrapper>
-          <Icon />
-          <span>{title}</span>
-        </ItemWrapper>
+      <a
+        data-testid={testId}
+        href={link}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <ItemContent
+          title={t(title)}
+          Icon={Icon}
+        />
       </a>
     </Menu.Item>
   );
-};
+}
 
-const AddressCopyItem = ({ account }: { account?: string }) => {
-  const accountDisplayName = useDisplayName(account);
+function LinkItemInternal({ titleKey: title, link, Icon, testId }: LinkMenuItem) {
+  const { t } = useTranslation('menu');
+  return (
+    <Menu.Item>
+      <Link
+        to={link}
+        data-testid={testId}
+      >
+        <ItemContent
+          title={t(title)}
+          Icon={Icon}
+        />
+      </Link>
+    </Menu.Item>
+  );
+}
+
+function AddressCopyItem({ account }: { account: string | null }) {
+  const { accountDisplayName } = useBlockchainData();
   if (!account) {
     return null;
   }
   return (
     <ItemWrapper noHoverEffect>
       <span className="text-gold-300">
-        <EtherscanLink address={account}>{accountDisplayName}</EtherscanLink>
+        <EtherscanLinkAddress address={account}>{accountDisplayName}</EtherscanLinkAddress>
       </span>
       <CopyToClipboard textToCopy={account} />
     </ItemWrapper>
   );
-};
+}
 
-const MenuItems = () => {
-  const [{ account }, connect, disconnect] = useWeb3();
+function MenuItems() {
+  const {
+    state: { account },
+    connect,
+    disconnect,
+  } = useWeb3Provider();
   return (
     <Menu.Items
       static
@@ -125,18 +210,27 @@ const MenuItems = () => {
       <div className="font-mono">
         <section>
           <AddressCopyItem account={account} />
-          <ActionItem {...DISCONNECT(disconnect)} isVisible={!!account} className="text-red" />
-          <ActionItem {...CONNECT_WALLET(connect)} isVisible={!account} />
+          <ActionItem
+            {...DISCONNECT(disconnect)}
+            isVisible={!!account}
+            className="text-red"
+          />
+          <ActionItem
+            {...CONNECT_WALLET(connect)}
+            isVisible={!account}
+          />
         </section>
         <section className="border-t border-gray-300">
+          <LinkItemInternal {...FAVORITES} />
           <LinkItem {...COMMUNITY} />
           <LinkItem {...OVERVIEW} />
           <LinkItem {...FAQ} />
           <LinkItem {...DOCS} />
+          <LanguageSwitcher />
         </section>
       </div>
     </Menu.Items>
   );
-};
+}
 
 export default MenuItems;

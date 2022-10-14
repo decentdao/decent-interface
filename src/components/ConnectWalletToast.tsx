@@ -1,20 +1,27 @@
-import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { TextButton } from "./ui/forms/Button";
-import { useWeb3 } from "../contexts/web3Data";
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { TextButton } from './ui/forms/Button';
 
-const ToastContent = ({ label }: { label: string }) => {
-  const [, connect] = useWeb3();
+function ToastContent({ label }: { label: string }) {
+  const { connect } = useWeb3Provider();
+  const { t } = useTranslation('menu');
   return (
     <div className="flex flex-col items-center">
       <div>{label}</div>
-      <TextButton label="Connect Wallet" onClick={connect} />
+      <TextButton
+        label={t('connectWallet')}
+        onClick={connect}
+      />
     </div>
   );
 }
 
-const ConnectWalletToast = ({ label }: { label: string }) => {
-  const [{ account }] = useWeb3();
+function ConnectWalletToast({ label }: { label: string }) {
+  const {
+    state: { account },
+  } = useWeb3Provider();
   useEffect(() => {
     if (account) {
       return;
@@ -31,7 +38,6 @@ const ConnectWalletToast = ({ label }: { label: string }) => {
   }, [account, label]);
 
   return null;
-};
+}
 
 export default ConnectWalletToast;
-

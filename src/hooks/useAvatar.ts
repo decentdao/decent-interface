@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 
-import { useWeb3 } from '../contexts/web3Data';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../helpers/errorLogging';
 import useENSName from './useENSName';
 
-const useAvatar = (account: string | undefined) => {
-  const [{ provider }] = useWeb3();
-  const ensName = useENSName(account)
+const useAvatar = (account: string | null) => {
+  const {
+    state: { provider },
+  } = useWeb3Provider();
+  const ensName = useENSName(account);
 
   const [avatarURL, setAvatarURL] = useState<string | null>(null);
   useEffect(() => {
@@ -14,12 +17,10 @@ const useAvatar = (account: string | undefined) => {
       return;
     }
 
-    provider.getAvatar(ensName)
-      .then(setAvatarURL)
-      .catch(console.error);
+    provider.getAvatar(ensName).then(setAvatarURL).catch(logError);
   }, [ensName, provider]);
 
   return avatarURL;
-}
+};
 
 export default useAvatar;

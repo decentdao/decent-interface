@@ -11,7 +11,25 @@ import type {
 
 const _abi = [
   {
+    anonymous: false,
     inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "tokenAddress",
+        type: "address",
+      },
+    ],
+    name: "TokenCreated",
+    type: "event",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "creator",
+        type: "address",
+      },
       {
         internalType: "bytes[]",
         name: "data",

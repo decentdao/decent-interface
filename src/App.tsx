@@ -1,26 +1,34 @@
-import { useState, useEffect } from "react";
-import { useCookies } from "react-cookie";
-import { toast } from "react-toastify";
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
-import Body from './components/Body'
+import Body from './components/Body';
 import Breadcrumbs from './components/Breadcrumbs';
 import Header from './components/ui/Header';
-import { TextButton } from "./components/ui/forms/Button";
+import { TextButton } from './components/ui/forms/Button';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import './i18n';
+import { useTranslation } from 'react-i18next';
 
-const NotAuditedToast = () => {
-  const [cookieName] = useState('not-audited-acceptance');
-  const [cookieValue] = useState('true');
-  const [cookies, setCookie] = useCookies([cookieName]);
+function NotAuditedToast() {
+  const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
+    'not_audited_acceptance',
+    false
+  );
+
+  const { t } = useTranslation();
 
   useEffect(() => {
-    if (cookies[cookieName] === cookieValue) {
+    if (notAuditedAcceptance) {
       return;
     }
 
     const toastId = toast(
       <div className="flex flex-col items-center">
-        <div>WARNING: this project is not audited, use at your own risk.</div>
-        <TextButton label="Accept" onClick={() => setCookie(cookieName, cookieValue, { path: '/' })} />
+        <div>{t('auditDisclaimer')}</div>
+        <TextButton
+          label={t('accept')}
+          onClick={() => setNotAuditedAcceptance(true)}
+        />
       </div>,
       {
         autoClose: false,
@@ -31,16 +39,16 @@ const NotAuditedToast = () => {
     );
 
     return () => toast.dismiss(toastId);
-  }, [cookieName, cookieValue, cookies, setCookie]);
+  }, [notAuditedAcceptance, setNotAuditedAcceptance, t]);
 
   return null;
-};
+}
 
 function App() {
   return (
     <>
       <NotAuditedToast />
-      <div className="flex flex-col min-h-screen font-medium">
+      <div className="flex flex-col min-h-screen font-medium text-gray-25">
         <Header />
         <main className="flex-grow bg-fixed bg-image-pattern bg-cover">
           <Breadcrumbs />

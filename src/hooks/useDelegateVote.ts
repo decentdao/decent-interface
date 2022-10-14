@@ -1,32 +1,37 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useDAOData } from '../contexts/daoData/index';
+import { useGovenorModule } from '../providers/govenor/hooks/useGovenorModule';
 
 const useDelegateVote = ({
   delegatee,
   successCallback,
 }: {
-  delegatee: string | undefined,
-  successCallback: () => void,
+  delegatee: string | undefined;
+  successCallback: () => void;
 }) => {
-  const [{ tokenContract }] = useDAOData();
+  const {
+    votingToken: { votingTokenContract },
+  } = useGovenorModule();
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
 
+  const { t } = useTranslation('transaction');
+
   let delegateVote = useCallback(() => {
-    if (tokenContract === undefined || delegatee === undefined) {
+    if (votingTokenContract === undefined || delegatee === undefined) {
       return;
     }
 
     contractCallDelegateVote({
-      contractFn: () => tokenContract.delegate(delegatee),
-      pendingMessage: "Delegating Vote",
-      failedMessage: "Vote Delegation Failed",
-      successMessage: "Vote Delegated",
+      contractFn: () => votingTokenContract.delegate(delegatee),
+      pendingMessage: t('pendingDelegateVote'),
+      failedMessage: t('failedDelegateVote'),
+      successMessage: t('successDelegateVote'),
       successCallback: () => successCallback(),
     });
-  }, [contractCallDelegateVote, tokenContract, delegatee, successCallback]);
+  }, [contractCallDelegateVote, votingTokenContract, delegatee, successCallback, t]);
 
   return [delegateVote, contractCallPending] as const;
-}
+};
 
 export default useDelegateVote;

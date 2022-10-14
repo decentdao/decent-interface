@@ -3,28 +3,39 @@ import { utils } from 'ethers';
 
 import { ERC165 } from '@fractal-framework/core-contracts';
 import useInterfaceSelectors from './useInterfaceSelectors';
+import { ContractMatch } from '../types/contractMatch';
 
-const useSupportsInterfaces = (contract: ERC165 | undefined, interfaces: utils.Interface[]) => {
-  const [supportsInterfaces, setSupportsInterfaces] = useState<boolean>();
+const useSupportsInterfaces = (contracts: ERC165[] | undefined, interfaces: utils.Interface[]) => {
+  const [supportsInterfaces, setSupportsInterfaces] = useState<ContractMatch[]>();
   const interfaceSelectors = useInterfaceSelectors(interfaces);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
 
-    if (!contract || !interfaceSelectors) {
+    if (!contracts || !interfaceSelectors) {
       setSupportsInterfaces(undefined);
       setLoading(false);
       return;
     }
 
-    Promise.all(interfaceSelectors.map(selector => contract.supportsInterface(selector)))
-      .then(supports => setSupportsInterfaces(supports.reduce((p, c) => p && c)))
-      .catch(() => setSupportsInterfaces(false))
+    Promise.all(
+      contracts.map(contract =>
+        Promise.all(
+          interfaceSelectors.map(selector =>
+            contract.supportsInterface(selector).catch(() => false)
+          )
+        ).then(contractSupports => ({
+          address: contract.address,
+          match: contractSupports.reduce((p, c) => p && c),
+        }))
+      )
+    )
+      .then(allContractsSupports => setSupportsInterfaces(allContractsSupports))
       .finally(() => setLoading(false));
-  }, [contract, interfaceSelectors]);
+  }, [contracts, interfaceSelectors]);
 
   return [supportsInterfaces, loading] as const;
-}
+};
 
 export default useSupportsInterfaces;

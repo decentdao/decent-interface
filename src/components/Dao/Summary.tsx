@@ -1,24 +1,108 @@
-import { Link } from "react-router-dom";
-import ProposalsList from "../Proposals/ProposalsList";
-import H1 from "../ui/H1";
-import { SecondaryButton, TextButton } from '../ui/forms/Button';
+import H1 from '../ui/H1';
+import { DAOAddress, AddressDisplay } from '../AddressDisplay';
+import ContentBox from '../ui/ContentBox';
+import ContentBoxTitle from '../ui/ContentBoxTitle';
+import InputBox from '../ui/forms/InputBox';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useTranslation } from 'react-i18next';
 
 function Summary() {
+  const {
+    mvd: {
+      dao,
+      daoLegacy,
+      modules: {
+        timelockModule,
+        treasuryModule,
+        tokenVotingGovernanceModule,
+        claimingContractModule,
+        gnosisWrapperModule,
+      },
+    },
+  } = useFractal();
+  const { t } = useTranslation(['common', 'dashboard']);
+
   return (
-    <>
-      <div className="flex flex-col sm:flex-row sm:justify-between">
-        <H1>Proposals</H1>
-        <div className="flex ml-auto mb-2 sm:mb-0 items-center sm:items-start">
-          <Link to="delegate">
-            <TextButton label="Delegate" />
-          </Link>
-          <Link to="proposals/new">
-            <SecondaryButton label="Create Proposal" />
-          </Link>
-        </div>
-      </div>
-      <ProposalsList />
-    </>
+    <div>
+      <H1>
+        {dao.daoName} | {t('home')}
+      </H1>
+      {daoLegacy.parentDAO && (
+        <ContentBox>
+          <ContentBoxTitle>{t('titleParentDAO')}</ContentBoxTitle>
+          <DAOAddress daoAddress={daoLegacy.parentDAO} />
+        </ContentBox>
+      )}
+      {!!daoLegacy.subsidiaryDAOs.length && (
+        <ContentBox>
+          <ContentBoxTitle>{t('titleDAOSubsidiaries')}</ContentBoxTitle>
+          {daoLegacy.subsidiaryDAOs.map(_daoAddress => (
+            <DAOAddress
+              key={_daoAddress}
+              daoAddress={_daoAddress}
+            />
+          ))}
+        </ContentBox>
+      )}
+      <ContentBox>
+        <ContentBoxTitle>{t('titleCoreDAO')}</ContentBoxTitle>
+        <InputBox>
+          <AddressDisplay
+            address={dao.daoAddress}
+            label={t('dao')}
+          />
+        </InputBox>
+        <InputBox>
+          <AddressDisplay
+            address={dao.accessControlAddress}
+            label={t('labelAccessControl', { ns: 'dashboard' })}
+          />
+        </InputBox>
+      </ContentBox>
+      <ContentBox>
+        <ContentBoxTitle>{t('titleModuleContract')}</ContentBoxTitle>
+        {treasuryModule && (
+          <InputBox>
+            <AddressDisplay
+              address={treasuryModule.moduleAddress}
+              label={treasuryModule.moduleType}
+            />
+          </InputBox>
+        )}
+        {tokenVotingGovernanceModule && (
+          <InputBox>
+            <AddressDisplay
+              address={tokenVotingGovernanceModule.moduleAddress}
+              label={tokenVotingGovernanceModule.moduleType}
+            />
+          </InputBox>
+        )}
+        {claimingContractModule && (
+          <InputBox>
+            <AddressDisplay
+              address={claimingContractModule.moduleAddress}
+              label={claimingContractModule.moduleType}
+            />
+          </InputBox>
+        )}
+        {timelockModule && (
+          <InputBox>
+            <AddressDisplay
+              address={timelockModule.moduleAddress}
+              label={timelockModule.moduleType}
+            />
+          </InputBox>
+        )}
+        {gnosisWrapperModule && (
+          <InputBox>
+            <AddressDisplay
+              address={gnosisWrapperModule.moduleAddress}
+              label={gnosisWrapperModule.moduleType}
+            />
+          </InputBox>
+        )}
+      </ContentBox>
+    </div>
   );
 }
 

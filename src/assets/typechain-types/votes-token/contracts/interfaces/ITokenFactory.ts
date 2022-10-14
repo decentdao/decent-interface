@@ -12,7 +12,11 @@ import type {
   Signer,
   utils,
 } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type {
+  FunctionFragment,
+  Result,
+  EventFragment,
+} from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
@@ -23,17 +27,31 @@ import type {
 
 export interface ITokenFactoryInterface extends utils.Interface {
   functions: {
-    "create(bytes[])": FunctionFragment;
+    "create(address,bytes[])": FunctionFragment;
   };
 
   getFunction(nameOrSignatureOrTopic: "create"): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "create", values: [BytesLike[]]): string;
+  encodeFunctionData(
+    functionFragment: "create",
+    values: [string, BytesLike[]]
+  ): string;
 
   decodeFunctionResult(functionFragment: "create", data: BytesLike): Result;
 
-  events: {};
+  events: {
+    "TokenCreated(address)": EventFragment;
+  };
+
+  getEvent(nameOrSignatureOrTopic: "TokenCreated"): EventFragment;
 }
+
+export interface TokenCreatedEventObject {
+  tokenAddress: string;
+}
+export type TokenCreatedEvent = TypedEvent<[string], TokenCreatedEventObject>;
+
+export type TokenCreatedEventFilter = TypedEventFilter<TokenCreatedEvent>;
 
 export interface ITokenFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -63,24 +81,36 @@ export interface ITokenFactory extends BaseContract {
 
   functions: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   create(
+    creator: string,
     data: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
-    create(data: BytesLike[], overrides?: CallOverrides): Promise<string[]>;
+    create(
+      creator: string,
+      data: BytesLike[],
+      overrides?: CallOverrides
+    ): Promise<string[]>;
   };
 
-  filters: {};
+  filters: {
+    "TokenCreated(address)"(
+      tokenAddress?: string | null
+    ): TokenCreatedEventFilter;
+    TokenCreated(tokenAddress?: string | null): TokenCreatedEventFilter;
+  };
 
   estimateGas: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -88,6 +118,7 @@ export interface ITokenFactory extends BaseContract {
 
   populateTransaction: {
     create(
+      creator: string,
       data: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

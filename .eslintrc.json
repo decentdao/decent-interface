@@ -1,0 +1,81 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "plugin:import/recommended",
+        "react-app/jest",
+        "airbnb-typescript/base"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        // required for "type-aware linting"
+        "project": [
+            "./tsconfig.json"
+        ],
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react",
+        "import",
+        "@typescript-eslint",
+        "prettier",
+        "react-hooks"
+    ],
+    "settings": {
+        // resolves imports without file extensions for listed extensions
+        "import/resolver": {
+            "node": {
+                "extensions": [
+                    ".ts",
+                    ".tsx"
+                ]
+            }
+        },
+        "react": {
+            "version": "detect"
+        }
+    },
+    "rules": {
+        // ignores need for "react" import
+        "react/react-in-jsx-scope": "off",
+        // rule for function component to be framed as function
+        "react/function-component-definition": [
+            2,
+            {
+                "namedComponents": "function-declaration"
+            }
+        ],
+        "comma-dangle": "off",
+        "@typescript-eslint/comma-dangle": "off",
+        "indent": "off",
+        "@typescript-eslint/indent": "off",
+        // prettier config
+        "prettier/prettier": [
+            1,
+            {
+                "printWidth": 100,
+                "endOfLine": "auto",
+                "tabWidth": 2,
+                "useTabs": false,
+                "singleQuote": true,
+                "semi": true,
+                "arrowParens": "avoid",
+                "singleAttributePerLine": true
+            }
+        ],
+        // react hook rules
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        // var rules
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "error",
+        "@typescript-eslint/no-unused-vars": "warn"
+    }
+}

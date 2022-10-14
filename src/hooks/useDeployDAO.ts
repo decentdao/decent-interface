@@ -1,245 +1,203 @@
-import { useCallback, useEffect } from "react";
-import { useTransaction } from "../contexts/web3Data/transactions";
-import { useNavigate } from "react-router";
-import { useWeb3 } from "../contexts/web3Data";
-import { BigNumber, ethers } from "ethers";
-import { useAddresses } from "../contexts/web3Data/chains";
-import { MetaFactory, MetaFactory__factory } from "../assets/typechain-types/metafactory";
+import { useCallback } from 'react';
+import { ethers } from 'ethers';
+import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
+import {
+  TokenGovernanceDAO,
+  GnosisDAO,
+  GovernanceTypes,
+} from './../components/DaoCreator/provider/types/index';
+import useCreateDAODataCreator from './useCreateDAODataCreator';
+import useCreateGnosisDAODataCreator from './useCreateGnosisDAODataCreator';
+import { useTransaction } from '../contexts/web3Data/transactions';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { useBlockchainData } from '../contexts/blockchainData';
+import useSafeContracts from './useSafeContracts';
+import { useTranslation } from 'react-i18next';
 
-export type TokenAllocation = {
-  address: string;
-  amount: number;
-  addressError?: string;
-};
+type DeployDAOSuccessCallback = (daoAddress: string) => void;
 
-const useDeployDAO = ({
-  daoName,
-  tokenName,
-  tokenSymbol,
-  tokenSupply,
-  tokenAllocations,
-  proposalThreshold,
-  quorum,
-  executionDelay,
-  setPending,
-  clearState,
-}: {
-  daoName: string | undefined;
-  tokenName: string | undefined;
-  tokenSymbol: string | undefined;
-  tokenSupply: number | undefined;
-  tokenAllocations: TokenAllocation[] | undefined;
-  proposalThreshold: number | undefined;
-  quorum: number | undefined;
-  executionDelay: number | undefined;
-  setPending: React.Dispatch<React.SetStateAction<boolean>>;
-  clearState: () => void;
-}) => {
-  const [{ signerOrProvider, chainId }] = useWeb3();
-  const addresses = useAddresses(chainId);
+const useDeployDAO = () => {
+  const {
+    state: { account, signerOrProvider },
+  } = useWeb3Provider();
+  const {
+    gnosisSafeFactoryContract,
+    gnosisSafeSingletonContract,
+    usulMastercopyContract,
+    zodiacModuleProxyFactoryContract,
+  } = useSafeContracts();
+
+  const createDAODataCreator = useCreateDAODataCreator();
+  const createGnosisDAODataCreator = useCreateGnosisDAODataCreator();
 
   const [contractCallDeploy, contractCallPending] = useTransaction();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    setPending(contractCallPending);
-  }, [setPending, contractCallPending]);
+  const { metaFactoryContract } = useBlockchainData();
 
-  let deployDao = useCallback(() => {
-    if (
-      !signerOrProvider ||
-      !daoName ||
-      !tokenName ||
-      !tokenSymbol ||
-      !tokenSupply ||
-      !tokenAllocations ||
-      (!proposalThreshold && proposalThreshold !== 0) ||
-      !quorum ||
-      !executionDelay ||
-      !setPending ||
-      !addresses.metaFactory?.address ||
-      !addresses.daoFactory?.address ||
-      !addresses.dao?.address ||
-      !addresses.accessControl?.address ||
-      !addresses.treasuryModuleFactory?.address ||
-      !addresses.treasuryModule?.address ||
-      !addresses.tokenFactory?.address ||
-      !addresses.governorFactory?.address ||
-      !addresses.governorModule?.address ||
-      !addresses.timelockUpgradeable?.address
-    ) {
-      return;
-    }
+  const { t } = useTranslation('transaction');
 
-    const factory: MetaFactory = MetaFactory__factory.connect(
-      addresses.metaFactory?.address,
-      signerOrProvider
-    );
-    const abiCoder = new ethers.utils.AbiCoder();
+  const deployTokenVotingDAO = useCallback(
+    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: DeployDAOSuccessCallback) => {
+      if (metaFactoryContract === undefined || account === null) {
+        return;
+      }
 
-    const createDAOParams = {
-      daoImplementation: addresses.dao?.address,
-      daoFactory: addresses.daoFactory?.address,
-      accessControlImplementation: addresses.accessControl?.address,
-      daoName: daoName,
-      roles: [
-        "EXECUTE_ROLE",
-        "UPGRADE_ROLE",
-        "WITHDRAWER_ROLE",
-        "GOVERNOR_ROLE",
-      ],
-      rolesAdmins: ["DAO_ROLE", "DAO_ROLE", "DAO_ROLE", "DAO_ROLE"],
-      members: [[], [], [], []],
-      daoFunctionDescs: [
-        "execute(address[],uint256[],bytes[])",
-        "upgradeTo(address)",
-      ],
-      daoActionRoles: [["EXECUTE_ROLE"], ["UPGRADE_ROLE"]],
-    };
+      const createDAOData = createDAODataCreator({
+        creator: account,
+        ...(daoData as TokenGovernanceDAO),
+      });
 
-    const moduleFactoriesCalldata = [
-      {
-        factory: addresses.treasuryModuleFactory?.address, // Treasury Factory
-        data: [
-          abiCoder.encode(["address"], [addresses.treasuryModule?.address]),
-        ],
-        value: 0,
-        newContractAddressesToPass: [1],
-        addressesReturned: 1,
-      },
-      {
-        factory: addresses.tokenFactory?.address, // Token Factory
-        data: [
-          abiCoder.encode(["string"], [tokenName]),
-          abiCoder.encode(["string"], [tokenSymbol]),
-          abiCoder.encode(
-            ["address[]"],
-            [tokenAllocations.map((tokenAllocation) => tokenAllocation.address)]
+      if (createDAOData === undefined) {
+        return;
+      }
+
+      contractCallDeploy({
+        contractFn: () =>
+          metaFactoryContract.createDAOAndExecute(
+            createDAOData.calldata.daoFactory,
+            createDAOData.calldata.createDAOParams,
+            createDAOData.calldata.moduleFactories,
+            createDAOData.calldata.moduleFactoriesBytes,
+            createDAOData.calldata.targets,
+            createDAOData.calldata.values,
+            createDAOData.calldata.calldatas
           ),
-          abiCoder.encode(
-            ["uint256[]"],
-            [
-              tokenAllocations.map((tokenAllocation) =>
-                ethers.utils.parseUnits(tokenAllocation.amount.toString(), 18)
-              ),
-            ]
-          ),
-          abiCoder.encode(
-            ["uint256"],
-            [ethers.utils.parseUnits(tokenSupply.toString(), 18)]
-          ),
-        ],
-        value: 0,
-        newContractAddressesToPass: [2],
-        addressesReturned: 1,
-      },
-      {
-        factory: addresses.governorFactory?.address, // Governor Factory
-        data: [
-          abiCoder.encode(["address"], [addresses.governorModule?.address]), // Governor Impl
-          abiCoder.encode(
-            ["address"],
-            [addresses.timelockUpgradeable?.address]
-          ), // Timelock Impl
-          abiCoder.encode(["uint64"], [BigNumber.from("0")]), // vote extension
-          abiCoder.encode(["uint256"], [BigNumber.from("0")]), // Todo: change voteDelay back to 6545 blocks for prod
-          abiCoder.encode(["uint256"], [BigNumber.from("10")]), // Todo: change votingPeriod back to 45818 blocks (1 week)
-          abiCoder.encode(
-            ["uint256"],
-            [BigNumber.from(proposalThreshold.toString())]
-          ), // Threshold
-          abiCoder.encode(["uint256"], [BigNumber.from(quorum.toString())]), // Quorum
-          abiCoder.encode(["uint256"], [BigNumber.from("1")]), // Access Control Index
-        ],
-        value: 0,
-        newContractAddressesToPass: [0, 1, 3],
-        addressesReturned: 2,
-      },
-    ];
+        pendingMessage: t('pendingDeployDAO'),
+        failedMessage: t('failedDeployDAO'),
+        successMessage: t('successDeployDAO'),
+        successCallback: () => successCallback(createDAOData.predictedDAOAddress),
+      });
+    },
+    [contractCallDeploy, createDAODataCreator, metaFactoryContract, account, t]
+  );
 
-    const moduleActionCalldata = {
-      contractIndexes: [2, 2, 2, 2, 2, 2, 4, 5, 5, 5, 5, 5],
-      functionDescs: [
-        "withdrawEth(address[],uint256[])",
-        "depositERC20Tokens(address[],address[],uint256[])",
-        "withdrawERC20Tokens(address[],address[],uint256[])",
-        "depositERC721Tokens(address[],address[],uint256[])",
-        "withdrawERC721Tokens(address[],address[],uint256[])",
-        "upgradeTo(address)",
-        "upgradeTo(address)",
-        "upgradeTo(address)",
-        "updateDelay(uint256)",
-        "scheduleBatch(address[],uint256[],bytes[],bytes32,bytes32,uint256)",
-        "cancel(bytes32)",
-        "executeBatch(address[],uint256[],bytes[],bytes32,bytes32)",
-      ],
-      roles: [
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["WITHDRAWER_ROLE"],
-        ["UPGRADE_ROLE"],
-        ["UPGRADE_ROLE"],
-        ["UPGRADE_ROLE"],
-        ["GOVERNOR_ROLE"],
-        ["GOVERNOR_ROLE"],
-        ["GOVERNOR_ROLE"],
-        ["GOVERNOR_ROLE"],
-      ],
-    };
-    contractCallDeploy({
-      contractFn: () =>
-        factory.createDAOAndModules(
-          addresses.daoFactory?.address!,
-          0,
-          createDAOParams,
-          moduleFactoriesCalldata,
-          moduleActionCalldata,
-          [[5], [0], [0], [4]]
-        ),
-      pendingMessage: "Deploying Fractal...",
-      failedMessage: "Deployment Failed",
-      successMessage: "DAO Created",
-      successCallback: (receipt) => {
-        const event = receipt.events?.filter((x) => {
-          return x.address === addresses.daoFactory?.address;
-        });
-        if (event === undefined || event[0].topics[1] === undefined) {
-          return "";
-        } else {
-          const daoAddress = abiCoder.decode(["address"], event[0].topics[1]);
-          clearState();
-          navigate(`/daos/${daoAddress}`);
+  const deployGnosisDAO = useCallback(
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
+      if (metaFactoryContract === undefined || account === null) {
+        return;
+      }
+
+      const createDAOData = createGnosisDAODataCreator({
+        creator: account,
+        ...(daoData as GnosisDAO),
+      });
+
+      if (createDAOData === undefined) {
+        return;
+      }
+
+      contractCallDeploy({
+        contractFn: () =>
+          metaFactoryContract.createDAOAndExecute(
+            createDAOData.calldata.daoFactory,
+            createDAOData.calldata.createDAOParams,
+            createDAOData.calldata.moduleFactories,
+            createDAOData.calldata.moduleFactoriesBytes,
+            createDAOData.calldata.targets,
+            createDAOData.calldata.values,
+            createDAOData.calldata.calldatas
+          ),
+        pendingMessage: t('pendingDeployDAO'),
+        failedMessage: t('failedDeployDAO'),
+        successMessage: t('successDeployDAO'),
+        successCallback: () => successCallback(createDAOData.predictedDAOAddress),
+      });
+    },
+    [contractCallDeploy, createGnosisDAODataCreator, metaFactoryContract, account, t]
+  );
+
+  const deployGnosisSafe = useCallback(
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
+      const deploy = async () => {
+        if (
+          !account ||
+          !gnosisSafeFactoryContract ||
+          !gnosisSafeSingletonContract?.address ||
+          !usulMastercopyContract ||
+          !zodiacModuleProxyFactoryContract ||
+          !signerOrProvider
+        ) {
+          return;
         }
-      },
-    });
-  }, [
-    signerOrProvider,
-    daoName,
-    tokenName,
-    tokenSymbol,
-    tokenSupply,
-    tokenAllocations,
-    proposalThreshold,
-    quorum,
-    executionDelay,
-    setPending,
-    clearState,
-    addresses.metaFactory?.address,
-    addresses.daoFactory?.address,
-    addresses.dao?.address,
-    addresses.accessControl?.address,
-    addresses.treasuryModuleFactory?.address,
-    addresses.treasuryModule?.address,
-    addresses.tokenFactory?.address,
-    addresses.governorFactory?.address,
-    addresses.governorModule?.address,
-    addresses.timelockUpgradeable?.address,
-    contractCallDeploy,
-    navigate,
-  ]);
-  return deployDao;
+        const { AddressZero, HashZero } = ethers.constants;
+        const gnosisDaoData = daoData as GnosisDAO;
+
+        const createdSafeProxyAddress = await gnosisSafeFactoryContract.callStatic.createProxy(
+          gnosisSafeSingletonContract.address,
+          '0x'
+        );
+        const safeContract = GnosisSafe__factory.connect(createdSafeProxyAddress, signerOrProvider);
+        const encodedSetupSafeData = safeContract.interface.encodeFunctionData('setup', [
+          gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address),
+          gnosisDaoData.signatureThreshold,
+          AddressZero,
+          HashZero,
+          AddressZero,
+          AddressZero,
+          0,
+          AddressZero,
+        ]);
+        const VOTING_STRATEGIES_TO_DEPLOY: string[] = []; // @todo pass expected addresses for voting strategies
+        const encodedInitUsulData = ethers.utils.defaultAbiCoder.encode(
+          ['address', 'address', 'address', 'address[]'],
+          [
+            createdSafeProxyAddress,
+            createdSafeProxyAddress,
+            createdSafeProxyAddress,
+            VOTING_STRATEGIES_TO_DEPLOY,
+          ]
+        );
+        const encodedSetupUsulData = usulMastercopyContract.interface.encodeFunctionData('setUp', [
+          encodedInitUsulData,
+        ]);
+
+        contractCallDeploy({
+          contractFn: () =>
+            gnosisSafeFactoryContract
+              .createProxy(gnosisSafeSingletonContract.address, encodedSetupSafeData)
+              .then(() =>
+                zodiacModuleProxyFactoryContract.deployModule(
+                  usulMastercopyContract.address,
+                  encodedSetupUsulData,
+                  '0x01'
+                )
+              ),
+          pendingMessage: t('pendingDeployGnosis'),
+          failedMessage: t('failedDeployGnosis'),
+          successMessage: t('successDeployGnosis'),
+          successCallback: () => successCallback(createdSafeProxyAddress),
+        });
+      };
+
+      deploy();
+    },
+    [
+      contractCallDeploy,
+      usulMastercopyContract,
+      zodiacModuleProxyFactoryContract,
+      gnosisSafeFactoryContract,
+      gnosisSafeSingletonContract,
+      account,
+      signerOrProvider,
+      t,
+    ]
+  );
+
+  const deployDao = useCallback(
+    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: DeployDAOSuccessCallback) => {
+      switch (daoData.governance) {
+        case GovernanceTypes.TOKEN_VOTING_GOVERNANCE:
+          return deployTokenVotingDAO(daoData, successCallback);
+        case GovernanceTypes.MVD_GNOSIS:
+          return deployGnosisDAO(daoData, successCallback);
+        case GovernanceTypes.GNOSIS_SAFE:
+          return deployGnosisSafe(daoData, successCallback);
+      }
+    },
+    [deployGnosisDAO, deployGnosisSafe, deployTokenVotingDAO]
+  );
+
+  return [deployDao, contractCallPending] as const;
 };
 
 export default useDeployDAO;

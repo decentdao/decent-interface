@@ -1,17 +1,16 @@
 import { createContext, useContext } from 'react';
 
-import useBlockchainDatas, { BlockchainDataContext, defaultBlockchainDataResponse } from './blockchainData';
+import useBlockchainDatas, {
+  BlockchainDataContext,
+  defaultBlockchainDataResponse,
+} from './blockchainData';
 
 const createBlockchainDataRoot = (context: React.Context<BlockchainDataContext>) => {
-  const BlockchainDataRoot = ({ children }: { children: React.ReactNode }) => {
+  function BlockchainDataRoot({ children }: { children: React.ReactNode }) {
     const blockchainData = useBlockchainDatas();
 
-    return (
-      <context.Provider value={blockchainData}>
-        {children}
-      </context.Provider>
-    );
-  };
+    return <context.Provider value={blockchainData}>{children}</context.Provider>;
+  }
 
   return BlockchainDataRoot;
 };
