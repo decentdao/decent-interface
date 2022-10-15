@@ -1,6 +1,11 @@
 import { MenuList, MenuItem as ChakraMenuItem, Text, Flex, Box } from '@chakra-ui/react';
-import { Connect, Disconnect } from '@decent-org/fractal-ui';
+import { Connect, Copy, Disconnect } from '@decent-org/fractal-ui';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import useAvatar from '../../../hooks/useAvatar';
+import useDisplayName from '../../../hooks/useDisplayName';
+import { useChainData } from '../../../hooks/utlities/useChainData';
+import { useCopyText } from '../../../hooks/utlities/useCopyText';
+import Avatar from '../../ui/Header/Avatar';
 
 function MenuItem({ onClick, children }: { onClick?: () => void; children: JSX.Element }) {
   return (
@@ -44,12 +49,16 @@ function MenuItemButton({
 
 function MenuItemNetwork({}: {}) {
   const {
-    state: { network },
+    state: { chainId },
   } = useWeb3Provider();
 
+  const { name, color } = useChainData(chainId);
   return (
     <MenuItem>
-      <Flex direction="column">
+      <Flex
+        direction="column"
+        gap="2"
+      >
         <Text
           textStyle="text-sm-sans-regular"
           color="chocolate.100"
@@ -63,10 +72,10 @@ function MenuItemNetwork({}: {}) {
           <Box
             w="4"
             h="4"
-            bg="gold.300"
+            bg={color}
             rounded="full"
           ></Box>
-          <Text>{network}</Text>
+          <Text>{name}</Text>
         </Flex>
       </Flex>
     </MenuItem>
@@ -74,9 +83,56 @@ function MenuItemNetwork({}: {}) {
 }
 
 function MenuItemWallet({}: {}) {
+  const {
+    state: { account },
+  } = useWeb3Provider();
+  const accountDisplayName = useDisplayName(account);
+  const avatarURL = useAvatar(account);
+  const copyTextToClipboard = useCopyText();
+
+  if (!account) {
+    return null;
+  }
   return (
     <MenuItem>
-      <Box></Box>
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+        w="full"
+      >
+        <Flex
+          direction="column"
+          gap="2"
+        >
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="chocolate.100"
+          >
+            Wallet
+          </Text>
+          <Flex
+            alignItems="center"
+            gap="2"
+            aria-label="copy address"
+            data-testid="walletmenu:copy-address"
+            onClick={() => copyTextToClipboard(account)}
+            cursor="pointer"
+          >
+            <Text
+              textStyle="text-base-mono-medium"
+              color="grayscale.100"
+            >
+              {accountDisplayName}
+            </Text>
+            <Copy />
+          </Flex>
+        </Flex>
+        <Avatar
+          size="lg"
+          address={account}
+          url={avatarURL}
+        />
+      </Flex>
     </MenuItem>
   );
 }
