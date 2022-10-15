@@ -30,3 +30,5 @@ yarn-error.log*
 /playwright-report/
 /playwright/.cache/
 
+# translation script outputs
+*.csv
