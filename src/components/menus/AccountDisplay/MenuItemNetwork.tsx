@@ -3,6 +3,9 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import { useChainData } from '../../../hooks/utlities/useChainData';
 import { MenuItem } from './MenuItem';
 
+/**
+ * Network display for menu
+ */
 export function MenuItemNetwork({}: {}) {
   const {
     state: { chainId },

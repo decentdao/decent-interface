@@ -7,6 +7,10 @@ import { useCopyText } from '../../../hooks/utlities/useCopyText';
 import Avatar from '../../ui/Header/Avatar';
 import { MenuItem } from './MenuItem';
 
+/**
+ * Display to show a users connected wallet information
+ * Allows for copying of address
+ */
 export function MenuItemWallet({}: {}) {
   const {
     state: { account },

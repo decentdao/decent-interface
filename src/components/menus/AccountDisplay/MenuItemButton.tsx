@@ -1,6 +1,10 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { MenuItem } from './MenuItem';
 
+/**
+ * Used to display a simple clickable item to the menu.
+ * This will contain a label to the left and the given icon on the right
+ */
 export function MenuItemButton({
   label,
   Icon,
