@@ -6,17 +6,15 @@ import { MenuItems } from './MenuItems';
 export function AccountDisplay() {
   return (
     <Menu isLazy>
-      {({ isOpen }) => (
-        <Fragment>
-          <MenuButton
-            w="9.9375rem"
-            data-testid="header:account-menu"
-          >
-            <MeenuButtonDisplay />
-          </MenuButton>
-          <MenuItems />
-        </Fragment>
-      )}
+      <Fragment>
+        <MenuButton
+          w="9.9375rem"
+          data-testid="header:account-menu"
+        >
+          <MeenuButtonDisplay />
+        </MenuButton>
+        <MenuItems />
+      </Fragment>
     </Menu>
   );
 }
