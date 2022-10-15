@@ -2,26 +2,33 @@ import { Jazzicon } from '@ukstv/jazzicon-react';
 import { Suspense } from 'react';
 import { useImage } from 'react-image';
 import { Box, Image } from '@chakra-ui/react';
-function JazziconAvatar({ address }: { address: string }) {
+
+type AvatarSize = 'icon' | 'lg';
+const avatarSizes: { [size: string]: string } = {
+  icon: '1.5rem',
+  lg: '2rem',
+};
+
+function JazziconAvatar({ address, size }: { size: AvatarSize; address: string }) {
   return (
     <Box
-      w="1.5rem"
-      h="1.5rem"
+      h={avatarSizes[size]}
+      w={avatarSizes[size]}
     >
       <Jazzicon address={address} />
     </Box>
   );
 }
 
-function URLAvatar({ url }: { url: string }) {
+function URLAvatar({ url, size }: { size: AvatarSize; url: string }) {
   const { src } = useImage({
     srcList: url,
   });
 
   return (
     <Box
-      w="1.5rem"
-      h="1.5rem"
+      h={avatarSizes[size]}
+      w={avatarSizes[size]}
     >
       <Image
         className="rounded-full"
@@ -32,14 +39,37 @@ function URLAvatar({ url }: { url: string }) {
   );
 }
 
-function Avatar({ address, url }: { address: string; url: string | null }) {
+function Avatar({
+  size = 'icon',
+  address,
+  url,
+}: {
+  size?: AvatarSize;
+  address: string;
+  url: string | null;
+}) {
   if (!url) {
-    return <JazziconAvatar address={address} />;
+    return (
+      <JazziconAvatar
+        size={size}
+        address={address}
+      />
+    );
   }
 
   return (
-    <Suspense fallback={<JazziconAvatar address={address} />}>
-      <URLAvatar url={url} />
+    <Suspense
+      fallback={
+        <JazziconAvatar
+          size={size}
+          address={address}
+        />
+      }
+    >
+      <URLAvatar
+        size={size}
+        url={url}
+      />
     </Suspense>
   );
 }
