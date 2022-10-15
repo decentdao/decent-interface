@@ -1,7 +1,7 @@
 import { useLocalStorage } from './hooks/useLocalStorage';
 import './i18n';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
-import { useActionToast } from './components/ui/toasts/useActionToast';
+import { useActionToast } from './hooks/toasts/useActionToast';
 import Header from './components/ui/Header';
 
 function App() {
