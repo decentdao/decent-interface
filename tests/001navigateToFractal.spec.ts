@@ -5,6 +5,6 @@ test('Go to the Fractal App', async ({ page }) => {
   await page.goto('http://localhost:3000');
 
   /* Assert Fractal landing page is present */
-  const welcome = page.locator('h1');
-  await expect(welcome).toContainText('Welcome');
+  const headerWalletMenu = page.locator('[data-testid=header-accountMenu]');
+  await expect(headerWalletMenu).toBeVisible();
 });
