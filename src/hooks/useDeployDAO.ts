@@ -317,6 +317,7 @@ const useDeployDAO = () => {
               ],
               [
                 expectedStrategyAddress, // set Usul on Voting Strategy
+                AddressZero, // Enable Usul module on safe
                 AddressZero, // remove owner + threshold
               ],
             ],
@@ -327,7 +328,7 @@ const useDeployDAO = () => {
                 encodedStrategyDeployData,
                 encodedDeployUsulData,
               ],
-              [setUsulCalldata, removeCalldata, enableUsulCalldata],
+              [setUsulCalldata, enableUsulCalldata, removeCalldata],
             ],
             [false, true],
           ]
