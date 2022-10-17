@@ -1,6 +1,6 @@
 name: Bug
 description: Report a bug
-title: "[Bug]: "
+title: "Bug: "
 labels: ["bug"]
 body:
   - type: markdown
@@ -20,7 +20,9 @@ body:
     attributes:
       label: Steps to reproduce
       description: How can we replicate the issue?
-      placeholder: 1. Navigate to the homepage \n 2. Click Create DAO \n 3. My keyboard bursts into flames
+      placeholder: 1. Navigate to the homepage
+      2. Click Create DAO
+      3. My keyboard bursts into flames
     validations:
       required: true
   - type: textarea
@@ -45,7 +47,7 @@ body:
     id: browser
     attributes:
       label: Browser
-      multiple: true
+      multiple: false
       description: What browser does this bug appear on?
       options:
         - Chrome (or Chromium based)
@@ -58,7 +60,7 @@ body:
     id: os
     attributes:
       label: Operating System
-      multiple: true
+      multiple: false
       description: What OS did this appear on?
       options:
         - Mac
@@ -67,16 +69,16 @@ body:
         - iOS
         - Android
     validations:
-      required: true
+      required: false
   - type: dropdown
     id: wallet
     attributes:
       label: web3 wallet
-      multiple: true
+      multiple: false
       description: What wallet did you use?
       options:
         - MetaMask
         - WalletConnect
         - Other (include in description)
     validations:
-      required: true
+      required: false
