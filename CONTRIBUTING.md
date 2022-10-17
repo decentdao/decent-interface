@@ -31,7 +31,7 @@
 - Languages we are actively seeking translations for will appear as a Github Issue, though we always appreciate other
   submissions.  If we don't currently support your language, please help us out!
 
-- Run the `1_json_to_csv.py` script with your [2 character ISO language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) to get a helpful CSV file of missing strings in your language:
+- Run the `1_json_to_csv.py` [Python 3](https://www.python.org/downloads/) script with your [2 character ISO language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) to get a helpful CSV file of missing strings in your language:
   ```console
   python3 1_json_to_csv.py
   ```
