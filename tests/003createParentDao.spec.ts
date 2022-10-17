@@ -6,7 +6,8 @@ import { InputFields } from '../page-objects/InputFields';
 import { Navbuttons } from '../page-objects/components/Navbuttons';
 import { Notifications } from '../page-objects/Notifications';
 
-test.describe('DAO Creation', () => {
+// @todo update when components are added
+test.describe.skip('DAO Creation', () => {
   let daoSafe: DaoSafe;
   let homePage: HomePage;
   let inputFields: InputFields;
