@@ -1,0 +1,24 @@
+name: Feature
+description: Feature work
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please give your new feature a short and descriptive title.
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: General description of the feature.
+      placeholder: AI based DAOs like in the Matrix.
+    validations:
+      required: true
+  - type: input
+    id: documentation
+    attributes:
+      label: Link to documentation
+      description: A link to product documentation for the feature (e.g. Notio)
+      placeholder: ex. https://www.notion.so/hulking-cosmos-3e8/8675309
+    validations:
+      required: false
