@@ -18,7 +18,7 @@ body:
     id: documentation
     attributes:
       label: Link to documentation
-      description: A link to product documentation for the feature (e.g. Notio)
+      description: A link to product documentation for the feature (e.g. Notion)
       placeholder: ex. https://www.notion.so/hulking-cosmos-3e8/8675309
     validations:
       required: false
