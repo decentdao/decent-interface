@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
 import { VotesToken__factory, TokenFactory__factory } from '../assets/typechain-types/votes-token';
 import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import {
@@ -15,7 +15,6 @@ import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useBlockchainData } from '../contexts/blockchainData';
 import useSafeContracts from './useSafeContracts';
 import { useTranslation } from 'react-i18next';
-import { OZLinearVoting__factory } from '../assets/typechain-types/usul';
 import { getRandomBytes } from '../helpers';
 
 type DeployDAOSuccessCallback = (daoAddress: string) => void;
@@ -26,6 +25,7 @@ const useDeployDAO = () => {
   } = useWeb3Provider();
   const { metaFactory, tokenFactory } = useAddresses(chainId);
   const {
+    callbackGnosisSafeFactoryContract,
     gnosisSafeFactoryContract,
     gnosisSafeSingletonContract,
     linearVotingMastercopyContract,
@@ -124,30 +124,67 @@ const useDeployDAO = () => {
           !linearVotingMastercopyContract ||
           !metaFactory ||
           !tokenFactory ||
+          !callbackGnosisSafeFactoryContract ||
           !signerOrProvider
         ) {
           return;
         }
         const { AddressZero, HashZero } = ethers.constants;
         const { solidityKeccak256, defaultAbiCoder, getCreate2Address } = ethers.utils;
+        const tokenFactoryInterface = TokenFactory__factory.createInterface();
+        const gnosisSafeInterface = GnosisSafe__factory.createInterface();
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
         const votingTokenNonce = getRandomBytes();
+        const saltNum = BigNumber.from(
+          '0x856d90216588f9ffc124d1480a440e1c012c7a816952bc968d737bae5d4e139c'
+        );
+
+        const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
+          'setup',
+          [
+            [
+              ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
+              callbackGnosisSafeFactoryContract.address,
+            ],
+            1,
+            AddressZero,
+            HashZero,
+            AddressZero,
+            AddressZero,
+            0,
+            AddressZero,
+          ]
+        );
 
         const createdSafeProxyAddress = await gnosisSafeFactoryContract.callStatic.createProxy(
           gnosisSafeSingletonContract.address,
           '0x'
         );
-        const safeContract = GnosisSafe__factory.connect(createdSafeProxyAddress, signerOrProvider);
-        const encodedSetupSafeData = safeContract.interface.encodeFunctionData('setup', [
-          gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address),
-          gnosisDaoData.signatureThreshold,
-          AddressZero,
-          HashZero,
-          AddressZero,
-          AddressZero,
-          0,
-          AddressZero,
+
+        const createTokenEncodedData = tokenFactoryInterface.encodeFunctionData('create', [
+          account,
+          [
+            defaultAbiCoder.encode(['string'], [tokenGovernanceDaoData.tokenName]),
+            defaultAbiCoder.encode(['string'], [tokenGovernanceDaoData.tokenSymbol]),
+            defaultAbiCoder.encode(
+              ['address[]'],
+              [
+                tokenGovernanceDaoData.tokenAllocations.map(
+                  tokenAllocation => tokenAllocation.address
+                ),
+              ]
+            ),
+            defaultAbiCoder.encode(
+              ['uint256[]'],
+              [
+                tokenGovernanceDaoData.tokenAllocations.map(
+                  tokenAllocation => tokenAllocation.amount.bigNumberValue
+                ),
+              ]
+            ),
+            defaultAbiCoder.encode(['bytes32'], [votingTokenNonce]),
+          ],
         ]);
 
         const votingTokenSalt = solidityKeccak256(
@@ -210,6 +247,12 @@ const useDeployDAO = () => {
           strategySalt,
           solidityKeccak256(['bytes'], [strategyByteCodeLinear])
         );
+        const encodedStrategyDeployData =
+          zodiacModuleProxyFactoryContract.interface.encodeFunctionData('deployModule', [
+            linearVotingMastercopyContract.address,
+            encodedStrategySetUpData,
+            '0x01',
+          ]);
 
         const encodedInitUsulData = defaultAbiCoder.encode(
           ['address', 'address', 'address', 'address[]'],
@@ -223,81 +266,63 @@ const useDeployDAO = () => {
         const encodedSetupUsulData = usulMastercopyContract.interface.encodeFunctionData('setUp', [
           encodedInitUsulData,
         ]);
-        const usulByteCodeLinear =
-          '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          usulMastercopyContract.address.slice(2) +
-          '5af43d82803e903d91602b57fd5bf3';
-        const usulSalt = solidityKeccak256(
-          ['bytes32', 'uint256'],
-          [solidityKeccak256(['bytes'], [encodedSetupUsulData]), '0x01']
-        );
-        const expectedUsulAddress = getCreate2Address(
-          zodiacModuleProxyFactoryContract.address,
-          usulSalt,
-          solidityKeccak256(['bytes'], [usulByteCodeLinear])
+        const encodedDeployUsulData = zodiacModuleProxyFactoryContract.interface.encodeFunctionData(
+          'deployModule',
+          [usulMastercopyContract.address, encodedSetupUsulData, '0x01']
         );
 
+        const removeCalldata = gnosisSafeInterface.encodeFunctionData('removeOwner', [
+          gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address)[
+            gnosisDaoData.trustedAddresses.length - 1
+          ],
+          callbackGnosisSafeFactoryContract.address,
+          gnosisDaoData.signatureThreshold,
+        ]);
+
+        const signatures =
+          '0x000000000000000000000000' +
+          callbackGnosisSafeFactoryContract.address.slice(2) +
+          '0000000000000000000000000000000000000000000000000000000000000000' +
+          '01';
+
+        const txdata = defaultAbiCoder.encode(
+          ['address[][]', 'bytes[][]', 'bool[]'],
+          [
+            [
+              [
+                AddressZero, // Setup Gnosis
+                tokenFactory.address, // Deploy voting token
+                zodiacModuleProxyFactoryContract.address, // Deploy Linear Voting contract
+                zodiacModuleProxyFactoryContract.address, // Deploy Usul contract
+              ],
+              [
+                expectedStrategyAddress, // set Usul on Voting Strategy
+                AddressZero, // remove owner + threshold
+              ],
+            ],
+            [
+              [
+                createGnosisCalldata,
+                createTokenEncodedData,
+                encodedStrategyDeployData,
+                encodedDeployUsulData,
+              ],
+              [removeCalldata],
+            ],
+            [false, true],
+          ]
+        );
+        const bytecode = defaultAbiCoder.encode(['bytes', 'bytes'], [txdata, signatures]);
+
         contractCallDeploy({
-          contractFn: () =>
-            gnosisSafeFactoryContract
-              .createProxy(gnosisSafeSingletonContract.address, encodedSetupSafeData)
-              .then(() => {
-                const tokenFactoryContract = TokenFactory__factory.connect(
-                  tokenFactory.address,
-                  signerOrProvider
-                );
-                const createTokenEncodedData = [
-                  defaultAbiCoder.encode(['string'], [tokenGovernanceDaoData.tokenName]),
-                  defaultAbiCoder.encode(['string'], [tokenGovernanceDaoData.tokenSymbol]),
-                  defaultAbiCoder.encode(
-                    ['address[]'],
-                    [
-                      tokenGovernanceDaoData.tokenAllocations.map(
-                        tokenAllocation => tokenAllocation.address
-                      ),
-                    ]
-                  ),
-                  defaultAbiCoder.encode(
-                    ['uint256[]'],
-                    [
-                      tokenGovernanceDaoData.tokenAllocations.map(
-                        tokenAllocation => tokenAllocation.amount.bigNumberValue
-                      ),
-                    ]
-                  ),
-                  defaultAbiCoder.encode(['bytes32'], [votingTokenNonce]),
-                ];
-                return tokenFactoryContract.create(account, createTokenEncodedData);
-              })
-              .then(deployVotingTokenTransaction => {
-                // As we're referencing this token in voting strategy later on - we need to make sure that transaction passed
-                deployVotingTokenTransaction.wait();
-                return zodiacModuleProxyFactoryContract.deployModule(
-                  linearVotingMastercopyContract.address,
-                  encodedStrategySetUpData,
-                  '0x01'
-                );
-              })
-              .then(deployStrategyTransaction => {
-                // We have to be sure that strategy is deployed before setting Usul on it
-                // This wait() call matters at this specific stage of implementation, but then CallbackGnosis will guarantee correct sequence of executed transactions
-                deployStrategyTransaction.wait();
-                return zodiacModuleProxyFactoryContract.deployModule(
-                  usulMastercopyContract.address,
-                  encodedSetupUsulData,
-                  '0x01'
-                );
-              })
-              .then(deployUsulTransaction => {
-                // Before setting Usul - we need to be sure that it is actually deployed
-                deployUsulTransaction.wait();
-                const linearVotingContract = OZLinearVoting__factory.connect(
-                  expectedStrategyAddress,
-                  signerOrProvider
-                );
-                return linearVotingContract.setUsul(expectedUsulAddress);
-              })
-              .then(() => safeContract.enableModule(expectedUsulAddress)),
+          contractFn: () => {
+            return gnosisSafeFactoryContract.createProxyWithCallback(
+              gnosisSafeSingletonContract.address,
+              bytecode,
+              saltNum,
+              callbackGnosisSafeFactoryContract.address
+            );
+          },
           pendingMessage: t('pendingDeployGnosis'),
           failedMessage: t('failedDeployGnosis'),
           successMessage: t('successDeployGnosis'),
@@ -314,6 +339,7 @@ const useDeployDAO = () => {
       gnosisSafeFactoryContract,
       linearVotingMastercopyContract,
       gnosisSafeSingletonContract,
+      callbackGnosisSafeFactoryContract,
       metaFactory,
       tokenFactory,
       account,

@@ -13,10 +13,16 @@ import {
   OZLinearVoting__factory,
   OZLinearVoting,
 } from '../assets/typechain-types/usul';
+import {
+  CallbackGnosis,
+  CallbackGnosis__factory,
+} from '../assets/typechain-types/fractal-contracts';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useAddresses } from './useAddresses';
 
 export default function useSafeContracts() {
+  const [callbackGnosisSafeFactoryContract, setCallbackGnosisSafeFactoryContract] =
+    useState<CallbackGnosis>();
   const [gnosisSafeFactoryContract, setGnosisSafeFactoryContract] =
     useState<GnosisSafeProxyFactory>();
   const [gnosisSafeSingletonContract, setGnosisSafeSingletonContract] = useState<GnosisSafe>();
@@ -35,6 +41,7 @@ export default function useSafeContracts() {
     zodiacModuleProxyFactory,
     linearVotingMastercopy,
     usulMastercopy,
+    callbackGnosisSafe,
   } = useAddresses(chainId);
 
   useEffect(() => {
@@ -44,6 +51,7 @@ export default function useSafeContracts() {
       !linearVotingMastercopy ||
       !usulMastercopy ||
       !gnosisSafe ||
+      !callbackGnosisSafe ||
       !signerOrProvider
     ) {
       setGnosisSafeFactoryContract(undefined);
@@ -54,6 +62,9 @@ export default function useSafeContracts() {
       return;
     }
 
+    setCallbackGnosisSafeFactoryContract(
+      CallbackGnosis__factory.connect(callbackGnosisSafe.address, signerOrProvider)
+    );
     setGnosisSafeFactoryContract(
       GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory.address, signerOrProvider)
     );
@@ -76,6 +87,7 @@ export default function useSafeContracts() {
     linearVotingMastercopy,
     usulMastercopy,
     signerOrProvider,
+    callbackGnosisSafe,
   ]);
 
   return {
@@ -84,5 +96,6 @@ export default function useSafeContracts() {
     zodiacModuleProxyFactoryContract,
     usulMastercopyContract,
     linearVotingMastercopyContract,
+    callbackGnosisSafeFactoryContract,
   };
 }
