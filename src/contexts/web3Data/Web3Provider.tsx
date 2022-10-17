@@ -8,7 +8,7 @@ import { useListeners } from './hooks/useListeners';
 import { getSupportedChains } from './chains';
 import { Web3ProviderContext } from './hooks/useWeb3Provider';
 import { useTranslation } from 'react-i18next';
-import { localFallbackProvider, getFallbackProvider, getInjectedProvider } from './utilities';
+import { getLocalFallbackProvider, getFallbackProvider, getInjectedProvider } from './utils';
 
 const initialState: InitialState = {
   account: null,
@@ -49,7 +49,7 @@ const reducer = (state: InitialState, action: ActionTypes) => {
 
 const getInitialState = () => {
   if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV !== 'production') {
-    const localProviderInfo = localFallbackProvider();
+    const localProviderInfo = getLocalFallbackProvider();
     if (!!localProviderInfo) {
       return { ...initialState, isProviderLoading: false, ...localProviderInfo };
     }
@@ -71,7 +71,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   const connectDefaultProvider = useCallback(() => {
     web3Modal.clearCachedProvider();
     if (process.env.REACT_APP_LOCAL_PROVIDER_URL && process.env.NODE_ENV !== 'production') {
-      const localProviderInfo = localFallbackProvider();
+      const localProviderInfo = getLocalFallbackProvider();
       if (!!localProviderInfo) {
         dispatch({
           type: Web3ProviderActions.SET_LOCAL_PROVIDER,

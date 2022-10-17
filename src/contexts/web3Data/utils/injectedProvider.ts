@@ -1,7 +1,7 @@
 import Web3Modal from 'web3modal';
 import { ethers } from 'ethers';
 import { InjectedProviderInfo, LocalInjectedProviderInfo, Web3ModalProvider } from '../types';
-import { localProviderAsSigner } from './localProvider';
+import { getLocalProviderAsSigner } from './localProvider';
 
 /**
  * Creates a injected provider connected to a wallet provider
@@ -34,7 +34,7 @@ export const getInjectedProvider = async (
 ): Promise<InjectedProviderInfo | LocalInjectedProviderInfo | undefined> => {
   const userSuppliedProvider: Web3ModalProvider = await web3ModalProvider.connect();
   if (userSuppliedProvider.chainId.toString() === process.env.REACT_APP_LOCAL_CHAIN_ID) {
-    const localProvider = await localProviderAsSigner();
+    const localProvider = await getLocalProviderAsSigner();
     if (localProvider) {
       return localProvider;
     }
