@@ -270,6 +270,19 @@ const useDeployDAO = () => {
           'deployModule',
           [usulMastercopyContract.address, encodedSetupUsulData, '0x01']
         );
+        const usulByteCodeLinear =
+          '0x602d8060093d393df3363d3d373d3d3d363d73' +
+          usulMastercopyContract.address.slice(2) +
+          '5af43d82803e903d91602b57fd5bf3';
+        const usulSalt = solidityKeccak256(
+          ['bytes32', 'uint256'],
+          [solidityKeccak256(['bytes'], [encodedSetupUsulData]), '0x01']
+        );
+        const expectedUsulAddress = getCreate2Address(
+          zodiacModuleProxyFactoryContract.address,
+          usulSalt,
+          solidityKeccak256(['bytes'], [usulByteCodeLinear])
+        );
 
         const removeCalldata = gnosisSafeInterface.encodeFunctionData('removeOwner', [
           gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address)[
@@ -278,6 +291,10 @@ const useDeployDAO = () => {
           callbackGnosisSafeFactoryContract.address,
           gnosisDaoData.signatureThreshold,
         ]);
+        const setUsulCalldata = linearVotingMastercopyContract.interface.encodeFunctionData(
+          'setUsul',
+          [expectedUsulAddress]
+        );
 
         const signatures =
           '0x000000000000000000000000' +
@@ -307,7 +324,7 @@ const useDeployDAO = () => {
                 encodedStrategyDeployData,
                 encodedDeployUsulData,
               ],
-              [removeCalldata],
+              [setUsulCalldata, removeCalldata],
             ],
             [false, true],
           ]
