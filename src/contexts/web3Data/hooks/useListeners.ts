@@ -38,7 +38,7 @@ const useListeners = (
         // if connected to Local provider don't enable listeners
         if (
           _modalProvider.chainId &&
-          !(_modalProvider.chainId.toString() === process.env.REACT_APP_LOCAL_CHAIN_ID)
+          _modalProvider.chainId.toString() !== process.env.REACT_APP_LOCAL_CHAIN_ID
         ) {
           setModalProvider(_modalProvider);
         }

@@ -46,7 +46,7 @@
     "helperParentAllocation": "Amount of tokens to allocate to parent DAO",
     "labelAddAllocation": "Add Allocation +",
     "labelTokenName": "Token Name",
-    "helperTokenName": "What is your governance token called?What is your governance token called?",
+    "helperTokenName": "What is your governance token called?",
     "labelTokenSymbol": "Token Symbol",
     "helperTokenSymbol": "Max: 5 characters",    
     "labelTokenSupply": "Token Supply",
