@@ -10,14 +10,14 @@
 
 ### Submitting a Pull Request
 
-- Follow our [README](https://github.com/decent-dao/fractal-interface/blob/develop/README.md) for instructions on setting up your local environment.
+- Follow our [README](https://github.com/decent-dao/fractal-interface/blob/HEAD/README.md) for instructions on setting up your local environment.
 
 - Open a [pull request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) with your proposed changes.
 
 - Include a link to the relevant GitHub Issue in your description.
 
 - If possible, please provide unit or integration tests for your changes. You can see example
-  automation tests in the [test directory](https://github.com/decent-dao/fractal-interface/tree/develop/tests).
+  automation tests in the [test directory](https://github.com/decent-dao/fractal-interface/tree/HEAD/tests).
   
 - All of your components should be composed of [Chakra UI](https://chakra-ui.com/) base components, using our custom theme.
 
@@ -31,11 +31,17 @@
 - Languages we are actively seeking translations for will appear as a Github Issue, though we always appreciate other
   submissions.  If we don't currently support your language, please help us out!
 
-- Run the `1_json_to_csv.py` script with your [2 character ISO language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) to get a helpful CSV file of missing strings in your language.
+- Run the `1_json_to_csv.py` script with your [2 character ISO language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) to get a helpful CSV file of missing strings in your language:
+  ```console
+  python3 1_json_to_csv.py
+  ```
 
 - Add your translations in the last column of the output CSV file.  Feel free to improve existing translations!
 
-- When finished translating, run `2_csv_to_json.py` to generate the required `.json` files for the Fractal app.
+- When finished translating, run `2_csv_to_json.py` to generate the required `.json` files for the Fractal app:
+  ```console
+  python3 2_csv_to_json.py
+  ```
 
 - Submit a pull request with these changes, as detailed above in _Submitting a Pull Request_.
 
