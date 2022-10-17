@@ -6,7 +6,7 @@ import { MenuItem } from './MenuItem';
 /**
  * Network display for menu
  */
-export function MenuItemNetwork({}: {}) {
+export function MenuItemNetwork() {
   const {
     state: { chainId },
   } = useWeb3Provider();
