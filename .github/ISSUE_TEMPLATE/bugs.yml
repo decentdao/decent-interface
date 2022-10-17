@@ -20,8 +20,11 @@ body:
     attributes:
       label: Steps to reproduce
       description: How can we replicate the issue?
-      placeholder: 1. Navigate to the homepage
+      placeholder: >
+      1. Navigate to the homepage
+
       2. Click Create DAO
+
       3. My keyboard bursts into flames
     validations:
       required: true
