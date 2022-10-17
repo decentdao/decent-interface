@@ -13,6 +13,7 @@ export class Navbuttons {
 
   async clickHeaderConnectWallet() {
     await this.page.click('//div[@id="menu:down-arrow"]//*[name()="svg"]');
+    await this.page.waitForLoadState('load');
   }
 
   async clickCreateAFractal() {
@@ -25,6 +26,7 @@ export class Navbuttons {
 
   async clickConnectWalletMenu() {
     await this.page.click('[data-testid="menu:connect"]');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async clickDisconnectMenu() {
@@ -37,6 +39,7 @@ export class Navbuttons {
 
   async clickFavoritesMenu() {
     await this.page.click('[data-testid="menu:favorites"] div:has-text("Favorites")');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async clickCommunityMenu() {
@@ -59,6 +62,7 @@ export class Navbuttons {
     await this.page.click(
       '#WEB3_CONNECT_MODAL_ID div.web3modal-provider-name:has-text("Local Node")'
     );
+    this.page.waitForSelector('#connected');
   }
 
   async clickNextButton() {
@@ -67,5 +71,9 @@ export class Navbuttons {
 
   async clickDeployButton() {
     await this.page.click('button:has-text("* * *Deploy")');
+  }
+
+  async clickFavoriteStar() {
+    await this.page.click('//div[@class="flex items-center"]//button//*[name()="svg"]');
   }
 }

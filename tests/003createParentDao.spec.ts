@@ -22,17 +22,12 @@ test.describe('DAO Creation', () => {
     homePage.visit();
     await delay(3000);
     notifications.closeButton('Close Audit Message');
-    await page.waitForLoadState();
     await delay(1500);
     navButtons.clickHeaderConnectWallet();
-    await page.waitForLoadState('load');
     await delay(2500);
-    await page.click('[data-testid="menu:connect"]');
-    await page.waitForLoadState('domcontentloaded');
+    await navButtons.clickConnectWalletMenu();
     navButtons.clickLocalWallet();
-    page.waitForSelector('#connected');
     notifications.assertConnected();
-    await page.waitForLoadState('networkidle');
   });
 
   test('Create 1:1 Gnosis Parent DAO', async ({ page }) => {
@@ -56,7 +51,6 @@ test.describe('DAO Creation', () => {
 
     /* Check toaster message for 'Deploying' text, if this fails deploy did not occur. */
     notifications.assertDeployed();
-    await page.waitForLoadState('domcontentloaded');
 
     /* Check URL to make sure wallet is connected. If this fails wallet is not connected correctly. */
     await expect(page).not.toHaveURL('http://localhost:3000/#/daos/new');

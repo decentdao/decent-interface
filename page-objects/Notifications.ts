@@ -22,11 +22,13 @@ export class Notifications {
   async assertConnected() {
     await expect(this.toasterMessage).toBeVisible();
     await expect(this.toasterMessage).toContainText('Connected');
+    await this.page.waitForLoadState('networkidle');
   }
 
   async assertDeployed() {
     await expect(this.deployMessage).toBeVisible();
     await expect(this.deployMessage).toContainText('Deploying Fractal...');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async assertCreated() {
@@ -38,6 +40,7 @@ export class Notifications {
     switch (buttonName) {
       case 'Close Audit Message':
         await this.auditMessage.click();
+        await this.page.waitForLoadState();
         break;
       default:
         throw new Error('This message button can not be found...');

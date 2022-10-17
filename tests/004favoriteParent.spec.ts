@@ -22,17 +22,12 @@ test.describe('DAO Creation', () => {
     homePage.visit();
     await delay(3000);
     notifications.closeButton('Close Audit Message');
-    await page.waitForLoadState();
     await delay(1500);
     navButtons.clickHeaderConnectWallet();
-    await page.waitForLoadState('load');
     await delay(2500);
-    await page.click('[data-testid="menu:connect"]');
-    await page.waitForLoadState('domcontentloaded');
+    await navButtons.clickConnectWalletMenu();
     navButtons.clickLocalWallet();
-    page.waitForSelector('#connected');
     notifications.assertConnected();
-    await page.waitForLoadState('networkidle');
   });
 
   test('Create 1:1 Gnosis Parent DAO and Favorite', async ({ page }) => {
@@ -56,7 +51,6 @@ test.describe('DAO Creation', () => {
 
     /* Check toaster message for 'Deploying' text, if this fails deploy did not occur. */
     notifications.assertDeployed();
-    await page.waitForLoadState('domcontentloaded');
 
     /* Check URL to make sure wallet is connected. If this fails wallet is not connected correctly. */
     await expect(page).not.toHaveURL('http://localhost:3000/#/daos/new');
@@ -65,23 +59,20 @@ test.describe('DAO Creation', () => {
     const parentDAO = page.locator('text=Playwright Parent | Home');
     await expect(parentDAO).toContainText('Playwright Parent | Home');
 
-    await page.click('//div[@class="flex items-center"]//button//*[name()="svg"]');
-    // await page.hover('//div[@class="flex items-center"]//button//*[name()="svg"]', {
-    //   timeout: 500,
-    // });
-    //await delay(500);
-    //await page.waitForLoadState('networkidle');
-    // const favTooltip = page.locator('.bg-gray-800.text-white.rounded-lg.py-2.px-4');
-    // await expect(favTooltip).toContainText('Remove from favorites');
+    /* Click favorite star button */
+    await navButtons.clickFavoriteStar();
+
+    /* Open menu to and select favorites */
     navButtons.clickHeaderConnectWallet();
-    await page.waitForLoadState('load');
     await delay(2500);
-    await page.click('[data-testid="menu:favorites"] div:has-text("Favorites")');
-    await page.waitForLoadState('domcontentloaded');
+    navButtons.clickFavoritesMenu();
+
+    /* Assert favorite Parent DAO is visible by title */
     const favPageHeader = page.locator('h1');
     await expect(favPageHeader).toContainText('Favorite Fractals');
     await page.waitForLoadState('networkidle');
 
+    /* Assert Favorite Page DAO title is present and visible. */
     const favPageDaoTitle = page.locator('.text-sm.font-medium.text-gray-50.pb-1');
     await expect(favPageDaoTitle).toContainText('Playwright Parent');
     await page.click('.visible');
