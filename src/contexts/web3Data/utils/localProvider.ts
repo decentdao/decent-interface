@@ -5,7 +5,7 @@ import { LocalInjectedProviderInfo } from '../types';
 /**
  * Creates a readonly provider connected to a running local node
  */
-export const localFallbackProvider = () => {
+export const getLocalFallbackProvider = () => {
   const localProvider = new ethers.providers.JsonRpcProvider(
     process.env.REACT_APP_LOCAL_PROVIDER_URL
   );
@@ -24,7 +24,9 @@ export const localFallbackProvider = () => {
  * Creates a local provider connected as a Signer
  * This connection automatically signs transactions
  */
-export const localProviderAsSigner = async (): Promise<LocalInjectedProviderInfo | undefined> => {
+export const getLocalProviderAsSigner = async (): Promise<
+  LocalInjectedProviderInfo | undefined
+> => {
   const localProvider = new ethers.providers.JsonRpcProvider(
     process.env.REACT_APP_LOCAL_PROVIDER_URL
   );
