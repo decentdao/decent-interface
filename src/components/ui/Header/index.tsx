@@ -8,7 +8,7 @@ function FavoriteLink() {
   return (
     <Link
       to="/favorites"
-      data-testid="header:favorites-link"
+      data-testid="header-favoritesLink"
     >
       <Flex
         gap="2"

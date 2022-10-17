@@ -25,7 +25,7 @@ export function MenuItemWallet({}: {}) {
     return null;
   }
   return (
-    <MenuItem>
+    <MenuItem testId="accountMenu-wallet">
       <Flex
         alignItems="center"
         justifyContent="space-between"
@@ -45,11 +45,12 @@ export function MenuItemWallet({}: {}) {
             alignItems="center"
             gap="2"
             aria-label="copy address"
-            data-testid="walletmenu:copy-address"
+            data-testid="walletmenu-copyAddress"
             onClick={() => copyTextToClipboard(account)}
             cursor="pointer"
           >
             <Text
+              data-testid="walletMenu-accountDisplay"
               textStyle="text-base-mono-medium"
               color="grayscale.100"
             >

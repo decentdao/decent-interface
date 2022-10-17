@@ -15,7 +15,7 @@ export function MenuItemNetwork({}: {}) {
   const { name, color } = useChainData(chainId);
   const { t } = useTranslation('walletMenu');
   return (
-    <MenuItem>
+    <MenuItem testId="accountMenu-network">
       <Flex
         direction="column"
         gap="2"

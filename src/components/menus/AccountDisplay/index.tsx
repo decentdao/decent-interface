@@ -9,7 +9,7 @@ export function AccountDisplay() {
       <Fragment>
         <MenuButton
           w="9.9375rem"
-          data-testid="header:account-menu"
+          data-testid="header-accountMenu"
         >
           <MeenuButtonDisplay />
         </MenuButton>

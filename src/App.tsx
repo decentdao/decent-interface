@@ -12,7 +12,7 @@ function App() {
 
   useActionToast({
     toastId: 'audit:toast',
-    testId: 'audit:accept',
+    testId: 'toast-audit',
     isVisible: !notAuditedAcceptance,
     titleTranslationKey: 'auditDisclaimer',
     buttonTranslationKey: 'accept',

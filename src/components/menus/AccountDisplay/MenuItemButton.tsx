@@ -18,7 +18,7 @@ export function MenuItemButton({
 }) {
   return (
     <MenuItem
-      data-testid={testId}
+      testId={testId}
       onClick={onClick}
     >
       <Flex
