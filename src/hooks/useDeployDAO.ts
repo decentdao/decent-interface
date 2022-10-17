@@ -295,6 +295,9 @@ const useDeployDAO = () => {
           'setUsul',
           [expectedUsulAddress]
         );
+        const enableUsulCalldata = gnosisSafeInterface.encodeFunctionData('enableModule', [
+          expectedUsulAddress,
+        ]);
 
         const signatures =
           '0x000000000000000000000000' +
@@ -324,7 +327,7 @@ const useDeployDAO = () => {
                 encodedStrategyDeployData,
                 encodedDeployUsulData,
               ],
-              [setUsulCalldata, removeCalldata],
+              [setUsulCalldata, removeCalldata, enableUsulCalldata],
             ],
             [false, true],
           ]
