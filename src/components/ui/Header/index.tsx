@@ -1,43 +1,43 @@
-import { useState, useEffect } from 'react';
-import { Link, useMatch } from 'react-router-dom';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
-import FractalLogo from '../svg/Logo';
-import HeaderMenu from './HeaderMenu';
+import { Flex, Text } from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
+import { DAONavigation } from '../../menus/DAONavigation';
+import { AccountDisplay } from '../../menus/AccountDisplay';
+import { StarOutline } from '@decent-org/fractal-ui';
+
+function FavoriteLink() {
+  return (
+    <Link
+      to="/favorites"
+      data-testid="header:favorites-link"
+    >
+      <Flex
+        gap="2"
+        alignItems="center"
+      >
+        <StarOutline color="gold.500" />
+        <Text color="gold.500">Favorites</Text>
+      </Flex>
+    </Link>
+  );
+}
 
 function Header() {
-  const {
-    mvd: {
-      dao: { daoAddress },
-    },
-  } = useFractal();
-  const daoHomeMatch = useMatch('/daos/:address/*');
-  const [daoHome, setDaoHome] = useState('/');
-  const [validatedAddress, setValidatedAddress] = useState<string>();
-
-  useEffect(() => {
-    if (daoHomeMatch && daoAddress) {
-      setDaoHome(daoHomeMatch.pathnameBase);
-      setValidatedAddress(daoHomeMatch.params.address);
-    } else {
-      setDaoHome('/');
-      setValidatedAddress(undefined);
-    }
-  }, [daoHomeMatch, daoAddress]);
-
   return (
-    <header className="py-4 bg-gray-600">
-      <div className="container flex justify-between items-center">
-        <div className="mr-4">
-          <Link
-            to={daoHome}
-            state={{ validatedAddress }}
-          >
-            <FractalLogo />
-          </Link>
-        </div>
-        <HeaderMenu />
-      </div>
-    </header>
+    <Flex
+      h="full"
+      w="full"
+      justifyContent="space-between"
+    >
+      <DAONavigation />
+      <Flex
+        alignItems="center"
+        h="full"
+        gap="8"
+      >
+        <FavoriteLink />
+        <AccountDisplay />
+      </Flex>
+    </Flex>
   );
 }
 

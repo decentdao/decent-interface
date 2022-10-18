@@ -1,12 +1,15 @@
 import { Jazzicon } from '@ukstv/jazzicon-react';
 import { Suspense } from 'react';
 import { useImage } from 'react-image';
-
+import { Box, Image } from '@chakra-ui/react';
 function JazziconAvatar({ address }: { address: string }) {
   return (
-    <div className="h-7 w-7">
+    <Box
+      w="1.5rem"
+      h="1.5rem"
+    >
       <Jazzicon address={address} />
-    </div>
+    </Box>
   );
 }
 
@@ -16,13 +19,16 @@ function URLAvatar({ url }: { url: string }) {
   });
 
   return (
-    <div className="h-7 w-7">
-      <img
+    <Box
+      w="1.5rem"
+      h="1.5rem"
+    >
+      <Image
         className="rounded-full"
         src={src}
         alt="avatar"
       />
-    </div>
+    </Box>
   );
 }
 

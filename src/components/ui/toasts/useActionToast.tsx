@@ -1,5 +1,5 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { Fragment, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
@@ -13,7 +13,7 @@ interface IActionToast {
   buttonOnClick: () => void;
 }
 
-export function ActionToast({
+export function useActionToast({
   testId,
   toastId,
   isVisible,
@@ -24,31 +24,34 @@ export function ActionToast({
   const { t } = useTranslation();
   useEffect(() => {
     if (!isVisible) {
+      toast.dismiss(toastId);
       return;
     }
 
     toast(
-      <Flex
-        direction="column"
-        alignItems="center"
-      >
-        <Text
-          textStyle="textStyles.text-sm-mono-regular"
-          color="alert-red.light"
+      <Fragment>
+        <Flex
+          direction="column"
+          alignItems="center"
         >
-          {t(titleTranslationKey)}
-        </Text>
-        <Button
-          data-testId={testId}
-          color="gold.500"
-          my="1"
-          textStyle="textStyles.text-md-mono-bold"
-          variant="unstyled"
-          onClick={buttonOnClick}
-        >
-          {t(buttonTranslationKey)}
-        </Button>
-      </Flex>,
+          <Text
+            textStyle="textStyles.text-sm-mono-regular"
+            color="alert-red.light"
+          >
+            {t(titleTranslationKey)}
+          </Text>
+          <Button
+            data-testid={testId}
+            color="gold.500"
+            my="1"
+            textStyle="textStyles.text-md-mono-bold"
+            variant="unstyled"
+            onClick={buttonOnClick}
+          >
+            {t(buttonTranslationKey)}
+          </Button>
+        </Flex>
+      </Fragment>,
       {
         autoClose: false,
         closeOnClick: false,
@@ -57,11 +60,5 @@ export function ActionToast({
         toastId,
       }
     );
-
-    return () => {
-      toast.dismiss(toastId);
-    };
   }, [buttonOnClick, buttonTranslationKey, isVisible, t, testId, titleTranslationKey, toastId]);
-
-  return null;
 }
