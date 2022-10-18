@@ -62,7 +62,7 @@ test.describe('DAO Creation', () => {
     /* Click favorite star button */
     await navButtons.clickFavoriteStar();
 
-    /* Open menu to and select favorites */
+    /* Open menu to and select Favorites option */
     navButtons.clickHeaderConnectWallet();
     await delay(2500);
     navButtons.clickFavoritesMenu();
@@ -79,5 +79,16 @@ test.describe('DAO Creation', () => {
 
     /* Check header for created DAO title */
     await expect(parentDAO).toContainText('Playwright Parent | Home');
+
+    /* Select star icon again to Unfavorite */
+    await navButtons.clickFavoriteStar();
+
+    /* Select Favorites from menu */
+    await navButtons.clickHeaderConnectWallet();
+    await navButtons.clickFavoritesMenu();
+
+    /* Make sure no DOA are displayed under favorites page */
+    const noFavorites = page.locator('text=Favorite FractalsNo favorites! >> div >> nth=0');
+    await expect(noFavorites).toBeVisible();
   });
 });
