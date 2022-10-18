@@ -49,7 +49,7 @@
     "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
     "eject": "react-app-rewired eject",
     "tests": "playwright test --workers=6",
-    "testCI": "playwright test --workers=2"
+    "testCI": "playwright test"
   },
   "browserslist": {
     "production": [
