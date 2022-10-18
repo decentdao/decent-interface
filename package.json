@@ -24,6 +24,7 @@
     "ethers": "^5.7.0",
     "i18next": "^21.9.2",
     "i18next-browser-languagedetector": "^6.1.5",
+    "playwright": "^1.26.0",
     "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
