@@ -12,8 +12,6 @@ import PROPOSAL_EN from './locales/en/proposal.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
 import TREASURY_ES from './locales/es/treasury.json';
-import WALLET_MENU_EN from './locales/en/walletMenu.json';
-import WALLET_MENU_ES from './locales/es/walletMenu.json';
 
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
@@ -46,14 +44,12 @@ const resources = {
     proposal: PROPOSAL_EN,
     transaction: TRANSACTION_EN,
     treasury: TREASURY_EN,
-    walletMenu: WALLET_MENU_EN,
   },
   es: {
     common: COMMON_ES,
     daoCreate: DAOCREATE_ES,
     menu: MENU_ES,
     treasury: TREASURY_ES,
-    walletMenu: WALLET_MENU_ES,
   },
 };
 
