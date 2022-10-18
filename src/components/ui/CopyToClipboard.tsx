@@ -1,7 +1,14 @@
-import Clipboard from './svg/Clipboard';
+import { IconButton } from '@chakra-ui/react';
+import { Copy } from '@decent-org/fractal-ui';
 import { toast } from 'react-toastify';
 
-function CopyToClipboard({ textToCopy }: { textToCopy: string | undefined | null }) {
+function CopyToClipboard({
+  textToCopy,
+  ariaLabel = 'copy text',
+}: {
+  ariaLabel?: string;
+  textToCopy: string | undefined | null;
+}) {
   const copyTextToClipboard = () => {
     if (!textToCopy) return;
     toast('Copied to clipboard', {
@@ -10,12 +17,13 @@ function CopyToClipboard({ textToCopy }: { textToCopy: string | undefined | null
     });
   };
   return (
-    <div
-      className="cursor-pointer mx-2 text-gray-25 hover:text-stone-300"
+    <IconButton
+      aria-label={ariaLabel}
+      icon={<Copy />}
+      variant="unstyled"
+      minWidth="auto"
       onClick={copyTextToClipboard}
-    >
-      <Clipboard />
-    </div>
+    />
   );
 }
 

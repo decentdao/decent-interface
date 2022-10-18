@@ -48,5 +48,6 @@
     "labelDateMonth_one": "{{count}} month",
     "labelDateMonth_other": "{{count}} months",
     "labelDateYear_one": "{{count}} year",
-    "labelDateYear_other": "{{count}} years"
+    "labelDateYear_other": "{{count}} years",
+    "toastClipboardCopy": "Copied to clipboard"
 }

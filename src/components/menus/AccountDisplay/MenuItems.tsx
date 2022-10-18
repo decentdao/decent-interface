@@ -1,85 +1,9 @@
-import { MenuList, MenuItem as ChakraMenuItem, Text, Flex, Box } from '@chakra-ui/react';
+import { MenuList } from '@chakra-ui/react';
 import { Connect, Disconnect } from '@decent-org/fractal-ui';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-
-function MenuItem({ onClick, children }: { onClick?: () => void; children: JSX.Element }) {
-  return (
-    <ChakraMenuItem
-      cursor={!!onClick ? 'pointer' : 'default'}
-      p="4"
-      onClick={onClick}
-    >
-      {children}
-    </ChakraMenuItem>
-  );
-}
-
-function MenuItemButton({
-  label,
-  Icon,
-  testId,
-  onClick,
-}: {
-  testId: string;
-  label: string;
-  Icon: any;
-  onClick: () => void;
-}) {
-  return (
-    <MenuItem
-      data-testid={testId}
-      onClick={onClick}
-    >
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        w="full"
-      >
-        <Text textStyle="text-base-mono-medium">{label}</Text>
-        <Icon />
-      </Flex>
-    </MenuItem>
-  );
-}
-
-function MenuItemNetwork({}: {}) {
-  const {
-    state: { network },
-  } = useWeb3Provider();
-
-  return (
-    <MenuItem>
-      <Flex direction="column">
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="chocolate.100"
-        >
-          Network
-        </Text>
-        <Flex
-          alignItems="center"
-          gap="2"
-        >
-          <Box
-            w="4"
-            h="4"
-            bg="gold.300"
-            rounded="full"
-          ></Box>
-          <Text>{network}</Text>
-        </Flex>
-      </Flex>
-    </MenuItem>
-  );
-}
-
-function MenuItemWallet({}: {}) {
-  return (
-    <MenuItem>
-      <Box></Box>
-    </MenuItem>
-  );
-}
+import { MenuItemButton } from './MenuItemButton';
+import { MenuItemNetwork } from './MenuItemNetwork';
+import { MenuItemWallet } from './MenuItemWallet';
 
 export function MenuItems() {
   const {
