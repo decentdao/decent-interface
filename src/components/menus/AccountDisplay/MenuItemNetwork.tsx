@@ -12,7 +12,7 @@ export function MenuItemNetwork({}: {}) {
     state: { chainId },
   } = useWeb3Provider();
 
-  const { name, color } = useChainData(chainId);
+  const { nameKey, color } = useChainData(chainId);
   const { t } = useTranslation('walletMenu');
   return (
     <MenuItem testId="accountMenu-network">
@@ -36,7 +36,7 @@ export function MenuItemNetwork({}: {}) {
             bg={color}
             rounded="full"
           ></Box>
-          <Text>{name}</Text>
+          <Text>{t(nameKey)}</Text>
         </Flex>
       </Flex>
     </MenuItem>
