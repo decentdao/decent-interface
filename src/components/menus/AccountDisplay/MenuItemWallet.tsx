@@ -19,7 +19,7 @@ export function MenuItemWallet({}: {}) {
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
   const copyTextToClipboard = useCopyText();
-  const { t } = useTranslation('walletMenu');
+  const { t } = useTranslation('menu');
 
   if (!account) {
     return null;

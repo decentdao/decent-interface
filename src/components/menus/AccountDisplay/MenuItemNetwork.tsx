@@ -13,7 +13,7 @@ export function MenuItemNetwork({}: {}) {
   } = useWeb3Provider();
 
   const { nameKey, color } = useChainData(chainId);
-  const { t } = useTranslation('walletMenu');
+  const { t } = useTranslation('menu');
   return (
     <MenuItem testId="accountMenu-network">
       <Flex
