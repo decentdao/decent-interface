@@ -13,7 +13,24 @@ test.describe('DAO Creation', () => {
   let navButtons: Navbuttons;
   let notifications: Notifications;
 
-  test.beforeEach(async ({ page }) => {
+  // test.beforeEach(async ({ page }) => {
+  //   daoSafe = new DaoSafe(page);
+  //   homePage = new HomePage(page);
+  //   navButtons = new Navbuttons(page);
+  //   notifications = new Notifications(page);
+  //   inputFields = new InputFields(page);
+  //   homePage.visit();
+  //   await delay(3000);
+  //   notifications.closeButton('Close Audit Message');
+  //   await delay(1500);
+  //   navButtons.clickHeaderConnectWallet();
+  //   await delay(2500);
+  //   await navButtons.clickConnectWalletMenu();
+  //   navButtons.clickLocalWallet();
+  //   notifications.assertConnected();
+  // });
+
+  test('Create 1:1 Gnosis Parent DAO', async ({ page }) => {
     daoSafe = new DaoSafe(page);
     homePage = new HomePage(page);
     navButtons = new Navbuttons(page);
@@ -28,9 +45,7 @@ test.describe('DAO Creation', () => {
     await navButtons.clickConnectWalletMenu();
     navButtons.clickLocalWallet();
     notifications.assertConnected();
-  });
 
-  test('Create 1:1 Gnosis Parent DAO', async ({ page }) => {
     navButtons.clickCreateAFractal();
 
     /* Check URL to make sure navigation is correct. */
