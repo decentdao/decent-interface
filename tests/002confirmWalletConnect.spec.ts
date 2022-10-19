@@ -1,16 +1,14 @@
 import { expect, test } from '@playwright/test';
-import { delay } from '../page-objects/Helpers/helpers';
 
 test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   /* Go to local host http link */
   await page.goto('http://localhost:3000');
-  await delay(5000);
 
   /* Click("Connect Wallet") */
-  await page.locator("//div[@id='menu:down-arrow']//*[name()='svg']").click();
+  await page.locator('[data-testid=header-accountMenu]').click();
 
   /* Dropdown menu of "Connect Wallet" */
-  await page.locator('//span[normalize-space()="Connect"]').click();
+  await page.locator('button[data-testid=accountMenu-connect]').click();
   await page.waitForLoadState();
 
   /* Select wallet of "Local NodeConnects as Signer to local provider" */
@@ -23,11 +21,13 @@ test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   await expect(connected).toBeVisible();
 
   /* Assert defined wallet address is present ("0xf39F...2266") */
-  await page.locator('//div[@id="menu:down-arrow"]//*[name()="svg"]').click();
-  const walletAddress = page.locator('//a[normalize-space()="0xf39F...2266"]');
-  await expect(walletAddress).toContainText('0xf39F...2266');
+  await page.locator('[data-testid=header-accountMenu]').click();
+  const accountDisplay = page.locator(
+    '[data-testid=accountMenu-wallet] [data-testid=walletMenu-accountDisplay]'
+  );
+  await expect(accountDisplay).toContainText('0xf39F...2266');
 
   /* Assert disconnect is present */
-  const disconnect = page.locator('button[role="menuitem"]:has-text("Disconnect")');
+  const disconnect = page.locator('button[data-testid=accountMenu-disconnect]');
   await expect(disconnect).toBeVisible();
 });

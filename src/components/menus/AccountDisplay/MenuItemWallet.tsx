@@ -1,5 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { Copy } from '@decent-org/fractal-ui';
+import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useAvatar from '../../../hooks/useAvatar';
 import useDisplayName from '../../../hooks/useDisplayName';
@@ -18,12 +19,13 @@ export function MenuItemWallet() {
   const accountDisplayName = useDisplayName(account);
   const avatarURL = useAvatar(account);
   const copyTextToClipboard = useCopyText();
+  const { t } = useTranslation('menu');
 
   if (!account) {
     return null;
   }
   return (
-    <MenuItem>
+    <MenuItem testId="accountMenu-wallet">
       <Flex
         alignItems="center"
         justifyContent="space-between"
@@ -37,17 +39,18 @@ export function MenuItemWallet() {
             textStyle="text-sm-sans-regular"
             color="chocolate.100"
           >
-            Wallet
+            {t('wallet')}
           </Text>
           <Flex
             alignItems="center"
             gap="2"
             aria-label="copy address"
-            data-testid="walletmenu:copy-address"
+            data-testid="walletmenu-copyAddress"
             onClick={() => copyTextToClipboard(account)}
             cursor="pointer"
           >
             <Text
+              data-testid="walletMenu-accountDisplay"
               textStyle="text-base-mono-medium"
               color="grayscale.100"
             >

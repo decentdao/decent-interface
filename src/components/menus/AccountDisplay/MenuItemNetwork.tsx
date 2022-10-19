@@ -1,4 +1,5 @@
 import { Flex, Box, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useChainData } from '../../../hooks/utlities/useChainData';
 import { MenuItem } from './MenuItem';
@@ -11,9 +12,10 @@ export function MenuItemNetwork() {
     state: { chainId },
   } = useWeb3Provider();
 
-  const { name, color } = useChainData(chainId);
+  const { nameKey, color } = useChainData(chainId);
+  const { t } = useTranslation('menu');
   return (
-    <MenuItem>
+    <MenuItem testId="accountMenu-network">
       <Flex
         direction="column"
         gap="2"
@@ -22,7 +24,7 @@ export function MenuItemNetwork() {
           textStyle="text-sm-sans-regular"
           color="chocolate.100"
         >
-          Network
+          {t('network')}
         </Text>
         <Flex
           alignItems="center"
@@ -34,7 +36,7 @@ export function MenuItemNetwork() {
             bg={color}
             rounded="full"
           ></Box>
-          <Text>{name}</Text>
+          <Text>{t(nameKey)}</Text>
         </Flex>
       </Flex>
     </MenuItem>

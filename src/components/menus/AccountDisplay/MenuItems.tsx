@@ -37,7 +37,7 @@ export function MenuItems() {
       <MenuItemNetwork />
       {!account && (
         <MenuItemButton
-          testId="menu:connect-button"
+          testId="accountMenu-connect"
           label="Connect"
           Icon={Connect}
           onClick={connect}
@@ -45,7 +45,7 @@ export function MenuItems() {
       )}
       {account && (
         <MenuItemButton
-          testId="menu:disconnect-button"
+          testId="accountMenu-disconnect"
           label="Disconnect"
           Icon={Disconnect}
           onClick={disconnect}

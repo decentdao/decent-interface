@@ -33,6 +33,7 @@ export function useActionToast({
         <Flex
           direction="column"
           alignItems="center"
+          data-testid={testId}
         >
           <Text
             textStyle="textStyles.text-sm-mono-regular"
@@ -41,7 +42,6 @@ export function useActionToast({
             {t(titleTranslationKey)}
           </Text>
           <Button
-            data-testid={testId}
             color="gold.500"
             my="1"
             textStyle="textStyles.text-md-mono-bold"
