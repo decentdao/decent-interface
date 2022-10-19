@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ethers, BigNumber } from 'ethers';
+import { ethers } from 'ethers';
 import { VotesToken__factory, TokenFactory__factory } from '../assets/typechain-types/votes-token';
 import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import {
@@ -136,9 +136,7 @@ const useDeployDAO = () => {
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
         const votingTokenNonce = getRandomBytes();
-        const saltNum = BigNumber.from(
-          '0x856d90216588f9ffc124d1480a440e1c012c7a816952bc968d737bae5d4e139c'
-        );
+        const saltNum = getRandomBytes();
 
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
           'setup',
