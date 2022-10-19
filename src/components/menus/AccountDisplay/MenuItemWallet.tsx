@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, MenuItem } from '@chakra-ui/react';
 import { Copy } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
@@ -6,7 +6,6 @@ import useAvatar from '../../../hooks/useAvatar';
 import useDisplayName from '../../../hooks/useDisplayName';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
 import Avatar from '../../ui/Header/Avatar';
-import { MenuItem } from './MenuItem';
 
 /**
  * Display to show a users connected wallet information
@@ -25,7 +24,13 @@ export function MenuItemWallet({}: {}) {
     return null;
   }
   return (
-    <MenuItem testId="accountMenu-wallet">
+    <MenuItem
+      data-testid="accountMenu-wallet"
+      bg="black.900"
+      cursor="default"
+      p="4"
+      borderBottomRadius="lg"
+    >
       <Flex
         alignItems="center"
         justifyContent="space-between"

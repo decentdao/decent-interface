@@ -1,5 +1,5 @@
-import { Flex, Text } from '@chakra-ui/react';
-import { MenuItem } from './MenuItem';
+import { Flex, Text, MenuItem } from '@chakra-ui/react';
+import { Fragment } from 'react';
 
 /**
  * Used to display a simple clickable item to the menu.
@@ -17,18 +17,27 @@ export function MenuItemButton({
   onClick: () => void;
 }) {
   return (
-    <MenuItem
-      testId={testId}
-      onClick={onClick}
-    >
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        w="full"
+    <Fragment>
+      <MenuItem
+        cursor="pointer"
+        p="4"
+        data-testid={testId}
+        onClick={onClick}
+        border="1px solid"
+        borderColor="chocolate.700"
+        _hover={{
+          bg: 'chocolate.900',
+        }}
       >
-        <Text textStyle="text-base-mono-medium">{label}</Text>
-        <Icon />
-      </Flex>
-    </MenuItem>
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          w="full"
+        >
+          <Text textStyle="text-base-mono-medium">{label}</Text>
+          <Icon />
+        </Flex>
+      </MenuItem>
+    </Fragment>
   );
 }

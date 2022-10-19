@@ -18,18 +18,13 @@ export function MenuItems() {
       shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
       mr={['auto', '2rem']}
       className="menu-list"
+      bg="grayscale.black"
       sx={{
         '& > :nth-child(1)': {
           borderTopRadius: 'lg',
         },
         '& > :last-child': {
           borderBottomRadius: 'lg',
-        },
-        '& > :nth-of-type(even)': {
-          backgroundColor: 'grayscale.black',
-        },
-        '& > :nth-of-type(odd)': {
-          backgroundColor: 'black.900',
         },
       }}
     >
