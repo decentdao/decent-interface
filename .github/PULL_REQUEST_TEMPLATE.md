@@ -6,9 +6,13 @@
 
 <!-- Is there any additional information a reviewer should know?  -->
 
-## Issue (if applicable)
+## Issue / Notion doc (if applicable)
 
-<!-- If applicable, link to the relevant issue(s) with `closes #XXX` to auto-close it when this PR is merged -->
+<!-----------------------------------------------------------------------------
+If applicable, link to the relevant Github issue(s) with `closes #XXX` to auto-close it when this PR is merged.
+
+If there is an accompanying Notion document, please link that here as well.
+------------------------------------------------------------------------------>
 
 ## Testing
 
