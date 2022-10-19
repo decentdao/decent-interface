@@ -14,7 +14,7 @@ import { FractalProvider } from './providers/fractal/FractalProvider';
 import { ErrorFallback } from './components/ErrorFallback';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
 import { ChakraProvider } from '@chakra-ui/react';
-import { theme } from '@decent-org/fractal-ui';
+import { theme } from './assets/theme';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
