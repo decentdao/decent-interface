@@ -3,6 +3,7 @@ import './i18n';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { useActionToast } from './hooks/toasts/useActionToast';
 import Header from './components/ui/Header';
+import Sidebar from './components/ui/Sidebar';
 
 function App() {
   const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
@@ -24,18 +25,16 @@ function App() {
       "nav main"
       "nav main"`}
       gridTemplateColumns={'4.25rem 1fr'}
-      gridTemplateRows={'1fr'}
+      gridTemplateRows={['minmax(4rem, 100%) repeat(2, calc(100% - 100% +))', '100vh']}
     >
       <GridItem
         area={'nav'}
-        minH="100vh"
+        display="flex"
+        flexDirection="column"
+        flexGrow="1"
+        bg="chocolate.900"
       >
-        <Box
-          bg="chocolate.900"
-          minH="100vh"
-        >
-          {/* Sidabar navigation */}
-        </Box>
+        <Sidebar />
       </GridItem>
       <GridItem area={'header'}>
         <Box
@@ -47,12 +46,7 @@ function App() {
         </Box>
       </GridItem>
       <GridItem area={'main'}>
-        <Box
-          w="full"
-          minH={'calc(100vh - 4rem)'}
-        >
-          {/* Main */}
-        </Box>
+        <Box>{/* Main */}</Box>
       </GridItem>
     </Grid>
   );
