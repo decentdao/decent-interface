@@ -25,7 +25,7 @@ function App() {
       "nav main"
       "nav main"`}
       gridTemplateColumns={'4.25rem 1fr'}
-      gridTemplateRows={['minmax(4rem, 100%) repeat(2, calc(100% - 100% +))', '100vh']}
+      gridTemplateRows="4rem minmax(calc(100vh - 4rem), 100%) 1fr"
     >
       <GridItem
         area={'nav'}
