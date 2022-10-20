@@ -140,7 +140,7 @@ function Transaction({
           value={transaction.functionName}
           onChange={e => updateFunctionName(e.target.value)}
           label={t('labelFunctionName')}
-          exampleText={t('exampleFunctionName')}
+          exampleText={'transfer'}
           disabled={pending}
           helperText={t('helperFunctionName')}
           errorMessage={transaction.fragmentError}
@@ -154,7 +154,7 @@ function Transaction({
           label={t('labelFunctionSignature')}
           helperText={t('helperFunctionSignature')}
           disabled={pending}
-          exampleText={t('exampleFunctionSignature')}
+          exampleText={'address to, uint amount'}
           errorMessage={transaction.fragmentError}
         />
       </InputBox>
@@ -166,7 +166,7 @@ function Transaction({
           label={t('labelParameters')}
           helperText={t('helperParameters')}
           disabled={pending}
-          exampleText={t('exampleParameters')}
+          exampleText={'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'}
           errorMessage={transaction.fragmentError}
         />
       </InputBox>
