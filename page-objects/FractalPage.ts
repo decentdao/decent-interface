@@ -20,11 +20,11 @@ export class FractalPage {
     await this.page.goto(this.baseUrl + path, { waitUntil: 'networkidle' });
   }
 
-  async clickBrowerBackButton() {
+  async clickBrowserBackButton() {
     await this.page.goBack();
   }
 
-  async clickBrowerReload() {
+  async clickBrowserReload() {
     await this.page.reload();
   }
 

@@ -44,6 +44,7 @@ export class DAOCreate extends NavPage {
       .then(() => this.clickNextButton())
       .then(() => this.fillWalletAddress('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'))
       .then(() => this.clickDeployButton());
+    await this.page.waitForURL(this.baseUrl + '/daos/0x*');
     const url = this.page.url();
     const address = url.substring(url.lastIndexOf('/') + 1);
     return new DAOHome(this.page, address);
