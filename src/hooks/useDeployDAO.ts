@@ -168,18 +168,6 @@ const useDeployDAO = () => {
           )
         );
 
-        const createTokenData = [
-          account,
-          tokenGovernanceDaoData.tokenName,
-          tokenGovernanceDaoData.tokenSymbol,
-          tokenGovernanceDaoData.tokenAllocations.map(tokenAllocation => tokenAllocation.address),
-
-          tokenGovernanceDaoData.tokenAllocations.map(
-            tokenAllocation => tokenAllocation.amount.bigNumberValue
-          ),
-          votingTokenNonce,
-        ];
-
         const votingTokenSalt = solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
           [account, account, chainId, votingTokenNonce]
