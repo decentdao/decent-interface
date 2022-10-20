@@ -39,9 +39,10 @@ function Sidebar() {
       <Link
         data-testid="sidebarLogo-homeLink"
         to={BASE_ROUTES.landing}
+        aria-label={t('ariaLabelFractalBrand')}
       >
         <FractalBrand
-          aria-label="Fractal brand logo"
+          aria-hidden
           boxSize="2.25rem"
           m="1rem auto"
           minWidth="auto"
@@ -56,9 +57,9 @@ function Sidebar() {
           <Link
             data-testid="sidebar-daoHomeLink"
             to={DAO_ROUTES.daoHome('0x')}
+            aria-label={t('ariaLabelHome')}
           >
             <Home
-              aria-label="Home link"
               boxSize="1.5rem"
               minWidth="auto"
               my="1.5rem"
@@ -69,9 +70,9 @@ function Sidebar() {
           <Link
             data-testid="sidebar-proposalsLink"
             to={DAO_ROUTES.proposals('0x')}
+            aria-label={t('ariaLabelProposals')}
           >
             <Proposals
-              aria-label="Proposals Link"
               boxSize="1.5rem"
               minWidth="auto"
               my="1.5rem"
@@ -82,9 +83,9 @@ function Sidebar() {
           <Link
             data-testid="sidebar-activityLink"
             to={DAO_ROUTES.activties('0x')}
+            aria-label={t('ariaLabelActivities')}
           >
             <Notifications
-              aria-label="Activity Feed Link"
               boxSize="1.5rem"
               minWidth="auto"
               my="1.5rem"
@@ -95,6 +96,7 @@ function Sidebar() {
           <Link
             data-testid="sidebar-treasuryLink"
             to={DAO_ROUTES.treasury('0x')}
+            aria-label={t('ariaLabelTreasury')}
           >
             <Treasury
               aria-label="Treasury Link"
@@ -112,9 +114,9 @@ function Sidebar() {
             href="https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq"
             rel="noreferrer noopener"
             target="_blank"
+            aria-label={t('ariaLabelSupport')}
           >
             <SupportQuestion
-              aria-label="Support External Link"
               boxSize="1.5rem"
               minWidth="auto"
               my="1.5rem"
@@ -127,9 +129,9 @@ function Sidebar() {
             href="https://discord.gg/decent-dao"
             rel="noreferrer noopener"
             target="_blank"
+            aria-label={t('ariaLabelDiscord')}
           >
             <Discord
-              aria-label="Discord Link"
               boxSize="1.5rem"
               minWidth="auto"
               my="1.5rem"
@@ -142,9 +144,9 @@ function Sidebar() {
             href="https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview"
             rel="noreferrer noopener"
             target="_blank"
+            aria-label={t('ariaLabelDocumentation')}
           >
             <Documents
-              aria-label="Documentation Link"
               boxSize="1.5rem"
               minWidth="auto"
               my="1.5rem"
