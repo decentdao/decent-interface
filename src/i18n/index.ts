@@ -12,6 +12,7 @@ import PROPOSAL_EN from './locales/en/proposal.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
 import TREASURY_ES from './locales/es/treasury.json';
+import SIDEBAR_EN from './locales/en/sidebar.json';
 
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
@@ -44,6 +45,7 @@ const resources = {
     proposal: PROPOSAL_EN,
     transaction: TRANSACTION_EN,
     treasury: TREASURY_EN,
+    sidebar: SIDEBAR_EN,
   },
   es: {
     common: COMMON_ES,

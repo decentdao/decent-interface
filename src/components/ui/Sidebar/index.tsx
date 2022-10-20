@@ -9,6 +9,7 @@ import {
   SupportQuestion,
   Treasury,
 } from '@decent-org/fractal-ui';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
 
@@ -27,6 +28,7 @@ function SidebarTooltipWrapper({ label, children }: { label: string; children: J
 }
 
 function Sidebar() {
+  const { t } = useTranslation('sidebar');
   return (
     <Flex
       alignItems="center"
@@ -39,7 +41,7 @@ function Sidebar() {
         to={BASE_ROUTES.landing}
       >
         <FractalBrand
-          aria-label="fractal brand  logo"
+          aria-label="Fractal brand logo"
           boxSize="2.25rem"
           m="1rem auto"
           minWidth="auto"
@@ -50,7 +52,7 @@ function Sidebar() {
         alignItems="center"
         direction="column"
       >
-        <SidebarTooltipWrapper label="Home">
+        <SidebarTooltipWrapper label={t('home')}>
           <Link
             data-testid="sidebar-daoHomeLink"
             to={DAO_ROUTES.daoHome('0x')}
@@ -63,7 +65,7 @@ function Sidebar() {
             />
           </Link>
         </SidebarTooltipWrapper>
-        <SidebarTooltipWrapper label="Proposals">
+        <SidebarTooltipWrapper label={t('proposals')}>
           <Link
             data-testid="sidebar-proposalsLink"
             to={DAO_ROUTES.proposals('0x')}
@@ -76,7 +78,7 @@ function Sidebar() {
             />
           </Link>
         </SidebarTooltipWrapper>
-        <SidebarTooltipWrapper label="Activity Feed">
+        <SidebarTooltipWrapper label={t('activityFeed')}>
           <Link
             data-testid="sidebar-activityLink"
             to={DAO_ROUTES.activties('0x')}
@@ -89,7 +91,7 @@ function Sidebar() {
             />
           </Link>
         </SidebarTooltipWrapper>
-        <SidebarTooltipWrapper label="Treasury">
+        <SidebarTooltipWrapper label={t('treasury')}>
           <Link
             data-testid="sidebar-treasuryLink"
             to={DAO_ROUTES.treasury('0x')}
@@ -104,7 +106,7 @@ function Sidebar() {
         </SidebarTooltipWrapper>
       </Flex>
       <Flex direction="column">
-        <SidebarTooltipWrapper label="Support">
+        <SidebarTooltipWrapper label={t('support')}>
           <a
             data-testid="sidebarExternal-support"
             href="https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq"
@@ -134,7 +136,7 @@ function Sidebar() {
             />
           </a>
         </SidebarTooltipWrapper>
-        <SidebarTooltipWrapper label="Documentation">
+        <SidebarTooltipWrapper label={t('documentation')}>
           <a
             data-testid="sidebarExternal-documentation"
             href="https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview"
