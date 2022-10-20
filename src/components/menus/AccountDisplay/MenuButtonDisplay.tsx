@@ -11,7 +11,7 @@ export function NotConnected() {
       alignItems="center"
       gap="1"
     >
-      <Text textStyle="text-base-sans-bold">Connect Wallet</Text>
+      <Text textStyle="text-base-mono-bold">Connect Wallet</Text>
       <ArrowDown />
     </Flex>
   );
