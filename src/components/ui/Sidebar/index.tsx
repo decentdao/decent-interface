@@ -1,4 +1,4 @@
-import { Flex, IconButton, Tooltip } from '@chakra-ui/react';
+import { Flex, Tooltip } from '@chakra-ui/react';
 import {
   Discord,
   Documents,
@@ -16,10 +16,10 @@ function SidebarTooltipWrapper({ label, children }: { label: string; children: J
   return (
     <Tooltip
       closeDelay={250}
-      hasArrow
       gutter={4}
-      placement="right"
+      hasArrow
       label={label}
+      placement="right"
     >
       {children}
     </Tooltip>
@@ -29,77 +29,76 @@ function SidebarTooltipWrapper({ label, children }: { label: string; children: J
 function Sidebar() {
   return (
     <Flex
+      alignItems="center"
       direction="column"
-      justifyContent="space-between"
       flexGrow="1"
+      justifyContent="space-between"
     >
       <Link
-        to={BASE_ROUTES.landing}
         data-testid="sidebarLogo-homeLink"
+        to={BASE_ROUTES.landing}
       >
-        <IconButton
+        <FractalBrand
           aria-label="fractal brand  logo"
-          icon={<FractalBrand boxSize="2.25rem" />}
-          variant="unstyled"
-          minWidth="auto"
+          boxSize="2.25rem"
           m="1rem auto"
+          minWidth="auto"
         />
       </Link>
 
-      <Flex direction="column">
+      <Flex
+        alignItems="center"
+        direction="column"
+      >
         <SidebarTooltipWrapper label="Home">
           <Link
-            to={DAO_ROUTES.daoHome('0x')}
             data-testid="sidebar-daoHomeLink"
+            to={DAO_ROUTES.daoHome('0x')}
           >
-            <IconButton
+            <Home
               aria-label="Home link"
-              icon={<Home boxSize="1.5rem" />}
-              variant="unstyled"
+              boxSize="1.5rem"
               minWidth="auto"
-              m="1rem auto"
+              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
         <SidebarTooltipWrapper label="Proposals">
           <Link
-            to={DAO_ROUTES.proposals('0x')}
             data-testid="sidebar-proposalsLink"
+            to={DAO_ROUTES.proposals('0x')}
           >
-            <IconButton
+            <Proposals
               aria-label="Proposals Link"
-              icon={<Proposals boxSize="1.5rem" />}
-              variant="unstyled"
+              boxSize="1.5rem"
               minWidth="auto"
-              m="1rem auto"
+              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
         <SidebarTooltipWrapper label="Activity Feed">
           <Link
-            to={DAO_ROUTES.activties('0x')}
             data-testid="sidebar-activityLink"
+            to={DAO_ROUTES.activties('0x')}
           >
-            <IconButton
+            <Notifications
               aria-label="Activity Feed Link"
-              icon={<Notifications boxSize="1.5rem" />}
-              variant="unstyled"
+              boxSize="1.5rem"
               minWidth="auto"
-              m="1rem auto"
+              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
         <SidebarTooltipWrapper label="Treasury">
           <Link
-            to={DAO_ROUTES.treasury('0x')}
             data-testid="sidebar-treasuryLink"
+            to={DAO_ROUTES.treasury('0x')}
           >
-            <IconButton
+            <Treasury
               aria-label="Treasury Link"
-              icon={<Treasury boxSize="1.5rem" />}
-              variant="unstyled"
+              boxSize="1.5rem"
               minWidth="auto"
-              m="1rem auto"
+              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
@@ -108,48 +107,45 @@ function Sidebar() {
         <SidebarTooltipWrapper label="Support">
           <a
             data-testid="sidebarExternal-support"
+            href="https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq"
             rel="noreferrer noopener"
             target="_blank"
-            href="https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq"
           >
-            <IconButton
+            <SupportQuestion
               aria-label="Support External Link"
-              icon={<SupportQuestion boxSize="1.5rem" />}
-              variant="unstyled"
+              boxSize="1.5rem"
               minWidth="auto"
-              m="1rem auto"
+              my="1.5rem"
             />
           </a>
         </SidebarTooltipWrapper>
         <SidebarTooltipWrapper label="Discord">
           <a
             data-testid="sidebarExternal-discord"
+            href="https://discord.gg/decent-dao"
             rel="noreferrer noopener"
             target="_blank"
-            href="https://discord.gg/decent-dao"
           >
-            <IconButton
+            <Discord
               aria-label="Discord Link"
-              icon={<Discord boxSize="1.5rem" />}
-              variant="unstyled"
+              boxSize="1.5rem"
               minWidth="auto"
-              m="1rem auto"
+              my="1.5rem"
             />
           </a>
         </SidebarTooltipWrapper>
         <SidebarTooltipWrapper label="Documentation">
           <a
             data-testid="sidebarExternal-documentation"
+            href="https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview"
             rel="noreferrer noopener"
             target="_blank"
-            href="https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview"
           >
-            <IconButton
+            <Documents
               aria-label="Documentation Link"
-              icon={<Documents boxSize="1.5rem" />}
-              variant="unstyled"
+              boxSize="1.5rem"
               minWidth="auto"
-              m="1rem auto"
+              my="1.5rem"
             />
           </a>
         </SidebarTooltipWrapper>
