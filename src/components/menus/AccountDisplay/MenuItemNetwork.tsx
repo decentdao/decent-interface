@@ -39,7 +39,7 @@ export function MenuItemNetwork() {
             bg={color}
             rounded="full"
           ></Box>
-          <Text>{t(nameKey)}</Text>
+          <Text textStyle="text-base-mono-medium">{t(nameKey)}</Text>
         </Flex>
       </Flex>
     </MenuItem>
