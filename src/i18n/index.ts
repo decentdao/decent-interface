@@ -2,16 +2,12 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import COMMON_EN from './locales/en/common.json';
-import COMMON_ES from './locales/es/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
-import DAOCREATE_ES from './locales/es/daoCreate.json';
 import MENU_EN from './locales/en/menu.json';
-import MENU_ES from './locales/es/menu.json';
 import DASHBOARD_EN from './locales/en/dashboard.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
-import TREASURY_ES from './locales/es/treasury.json';
 
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
@@ -44,12 +40,6 @@ const resources = {
     proposal: PROPOSAL_EN,
     transaction: TRANSACTION_EN,
     treasury: TREASURY_EN,
-  },
-  es: {
-    common: COMMON_ES,
-    daoCreate: DAOCREATE_ES,
-    menu: MENU_ES,
-    treasury: TREASURY_ES,
   },
 };
 
