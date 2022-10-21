@@ -26,10 +26,13 @@ function Buttons() {
     mvd: {
       dao: { daoAddress },
     },
+    gnosis: {
+      safe: { address },
+    },
   } = useFractal();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
-
-  if (chainId === undefined || daoAddress === undefined) {
+  const mvdOrSafeAddress = daoAddress === undefined ? address : daoAddress;
+  if (chainId === undefined || mvdOrSafeAddress === undefined) {
     return (
       <FavoriteButton
         icon={<StarEmpty />}
@@ -37,8 +40,7 @@ function Buttons() {
       />
     );
   }
-
-  const fav = isFavorite(chainId, daoAddress);
+  const fav = isFavorite(chainId, mvdOrSafeAddress);
 
   if (fav) {
     return (
@@ -48,7 +50,7 @@ function Buttons() {
       >
         <FavoriteButton
           icon={<StarFilled />}
-          onClick={() => removeFavorite(chainId, daoAddress)}
+          onClick={() => removeFavorite(chainId, mvdOrSafeAddress)}
         />
       </TooltipWrapper>
     );
@@ -60,7 +62,7 @@ function Buttons() {
       >
         <FavoriteButton
           icon={<StarEmpty />}
-          onClick={() => addFavorite(chainId, daoAddress)}
+          onClick={() => addFavorite(chainId, mvdOrSafeAddress)}
         />
       </TooltipWrapper>
     );
