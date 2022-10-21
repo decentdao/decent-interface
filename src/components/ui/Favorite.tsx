@@ -31,7 +31,7 @@ function Buttons() {
     },
   } = useFractal();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
-  const mvdOrSafeAddress =  daoAddress === undefined ? address : daoAddress;
+  const mvdOrSafeAddress = daoAddress === undefined ? address : daoAddress;
   if (chainId === undefined || mvdOrSafeAddress === undefined) {
     return (
       <FavoriteButton
