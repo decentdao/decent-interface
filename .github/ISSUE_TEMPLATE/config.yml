@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Check out the docs
+    url: https://decent-dao.gitbook.io/decent-dao-documentation/
+    about: Your question might already be answered here!
+  - name: Join our Discord
+    url: https://discord.gg/Zh2emKspVF
+    about: You can ask product related questions here.
+  - name: Learn More
+    url: https://www.fractalframework.xyz/
+    about: Check out what we're building!
