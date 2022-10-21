@@ -23,13 +23,13 @@ export function RadioWithText({ testId, description, label, disabled, value }: I
         p="0.5rem 1rem"
       >
         <Text
-          textStyle="text-base-mono-semibold"
+          textStyle="text-xl-mono-semibold"
           color={disabled ? 'grayscale.300' : 'grayscale.white'}
         >
           {label}
         </Text>
         <Text
-          textStyle="text-sm-sans-regular"
+          textStyle="text-base-sans-regular"
           color={disabled ? 'grayscale.300' : 'grayscale.400'}
         >
           {description}
