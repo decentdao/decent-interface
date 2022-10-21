@@ -55,7 +55,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('home')}>
           <Link
             data-testid="sidebar-daoHomeLink"
-            to={DAO_ROUTES.daoHome('0x')}
+            to={DAO_ROUTES.dao.relative('0x')}
           >
             <Home
               aria-label="Home link"
@@ -68,7 +68,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('proposals')}>
           <Link
             data-testid="sidebar-proposalsLink"
-            to={DAO_ROUTES.proposals('0x')}
+            to={DAO_ROUTES.dao.relative('0x')}
           >
             <Proposals
               aria-label="Proposals Link"
@@ -81,7 +81,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('activityFeed')}>
           <Link
             data-testid="sidebar-activityLink"
-            to={DAO_ROUTES.activties('0x')}
+            to={DAO_ROUTES.dao.relative('0x')}
           >
             <Notifications
               aria-label="Activity Feed Link"
@@ -94,7 +94,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('treasury')}>
           <Link
             data-testid="sidebar-treasuryLink"
-            to={DAO_ROUTES.treasury('0x')}
+            to={DAO_ROUTES.dao.relative('0x')}
           >
             <Treasury
               aria-label="Treasury Link"
