@@ -4,5 +4,13 @@
   "activityFeed": "Activity Feed",
   "treasury": "Treasury",
   "support": "Support",
-  "documentation": "Documentation"
+  "documentation": "Documentation",
+  "ariaLabelFractalBrand": "Navigate Fractal Home",
+  "ariaLabelHome": "Navigate DAO Home",
+  "ariaLabelProposals": "Navigate DAO Proposals",
+  "ariaLabelActivities": "Navigate DAO Activities",
+  "ariaLabelTreasury": "Navigate DAO Treasury",
+  "ariaLabelSupport": "Link to support site",
+  "ariaLabelDiscord": "Link to Discord",
+  "ariaLabelDocumentation": "Link to documentation site"
 }
