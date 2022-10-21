@@ -141,8 +141,11 @@ const useDeployDAO = () => {
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
           'setup',
           [
-            gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
-            1,
+            [
+              ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
+              multiSendContract.address,
+            ],
+            1, // threshold
             AddressZero,
             HashZero,
             AddressZero,
@@ -351,7 +354,6 @@ const useDeployDAO = () => {
 
         const txs: MetaTransaction[] = [
           createSafeTx,
-          createTokenTx,
           deployStrategyTx,
           deployUsulTx,
           execInternalSafeTx,
