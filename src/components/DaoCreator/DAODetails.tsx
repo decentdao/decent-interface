@@ -29,6 +29,7 @@ function DAODetails() {
           subLabel={t('helperFractalName')}
         >
           <Input
+            data-testid="essentials-daoName"
             type="text"
             size="base"
             w="100%"

@@ -18,6 +18,7 @@ function PrevButton({ pending }: { pending?: boolean }) {
   if (state.prevStep !== null) {
     return (
       <Button
+        data-testid="create-prevButton"
         variant="text"
         size="lg"
         onClick={() =>
@@ -62,6 +63,7 @@ function ForwardButton({
         state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
       return (
         <Button
+          data-testid="create-nextButton"
           size="lg"
           onClick={() =>
             dispatch({
@@ -78,6 +80,7 @@ function ForwardButton({
     case CreatorSteps.GOV_CONFIG:
       return (
         <Button
+          data-testid="create-deployDAO"
           onClick={() =>
             deployDAO({
               governance: state.governance,
@@ -97,6 +100,7 @@ function ForwardButton({
     case CreatorSteps.PURE_GNOSIS: {
       return (
         <Button
+          data-testid="create-deployDAO"
           onClick={() =>
             deployDAO({ ...state.essentials, ...state.gnosis, governance: state.governance })
           }
