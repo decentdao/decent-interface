@@ -6,6 +6,8 @@ import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import 'react-toastify/dist/ReactToastify.css';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
 import reportWebVitals from './reportWebVitals';
 import { BlockchainDataProvider } from './contexts/blockchainData';
 import App from './App';
