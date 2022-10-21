@@ -27,7 +27,7 @@ function Home() {
         >
           <Link to="/daos/new">
             <Button
-              id="home:link-create"
+              data-testid="home-linkCreate"
               size="lg"
               width="100%"
             >
@@ -37,7 +37,7 @@ function Home() {
           <Link to="/daos">
             <Button
               variant="secondary"
-              id="home:link-find"
+              data-testid="home-linkFind"
               size="lg"
               width="full"
             >
