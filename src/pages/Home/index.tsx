@@ -1,41 +1,52 @@
+import { Flex, Text } from '@chakra-ui/react';
+import { Button } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ContentBox from '../../components/ui/ContentBox';
-import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
-import H1 from '../../components/ui/H1';
 
 function Home() {
   const { t } = useTranslation('daoCreate');
   return (
-    <div>
-      <H1>{t('createHead')}</H1>
+    <Flex
+      flexDirection="column"
+      h="full"
+      p="8"
+    >
+      <Text textStyle="text-2xl-mono-bold">{t('createHead')}</Text>
       <ContentBox title={t('createSubhead')}>
-        <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
-          <Link
-            to="/daos/new"
-            className="w-full"
-          >
-            <PrimaryButton
+        <Flex
+          gap="4"
+          alignItems="center"
+          py="2"
+          width="full"
+          sx={{
+            '& > a': {
+              width: 'full',
+            },
+          }}
+        >
+          <Link to="/daos/new">
+            <Button
               id="home:link-create"
-              label={t('buttonCreate')}
-              isLarge
-              className="w-full"
-            />
+              size="lg"
+              width="100%"
+            >
+              {t('buttonCreate')}
+            </Button>
           </Link>
-          <Link
-            to="/daos"
-            className="w-full"
-          >
-            <SecondaryButton
+          <Link to="/daos">
+            <Button
+              variant="secondary"
               id="home:link-find"
-              label={t('buttonFind')}
-              isLarge
-              className="w-full"
-            />
+              size="lg"
+              width="full"
+            >
+              {t('buttonFind')}
+            </Button>
           </Link>
-        </div>
+        </Flex>
       </ContentBox>
-    </div>
+    </Flex>
   );
 }
 

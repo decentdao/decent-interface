@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 
-import DAOs from '../pages/Daos/index';
+// import DAOs from '../pages/Daos/index';
 
 function Body() {
   return (
@@ -10,10 +10,10 @@ function Body() {
         index
         element={<Home />}
       />
-      <Route
+      {/* <Route
         path="daos/*"
         element={<DAOs />}
-      />
+      /> */}
     </Routes>
   );
 }

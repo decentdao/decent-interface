@@ -52,7 +52,10 @@ function App() {
           <Header />
         </Box>
       </GridItem>
-      <GridItem area={'main'}>
+      <GridItem
+        area={'main'}
+        minH="calc(100vh - 4rem)"
+      >
         <Body />
       </GridItem>
     </Grid>
