@@ -4,6 +4,7 @@ import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { useActionToast } from './hooks/toasts/useActionToast';
 import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
+import FractalRoutes from './routes/FractalRoutes';
 
 function App() {
   const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
@@ -26,6 +27,7 @@ function App() {
       "nav main"`}
       gridTemplateColumns={'4.25rem 1fr'}
       gridTemplateRows="4rem minmax(calc(100vh - 4rem), 100%) 1fr"
+      position="relative"
     >
       <GridItem
         area={'nav'}
@@ -33,6 +35,9 @@ function App() {
         flexDirection="column"
         flexGrow="1"
         bg="chocolate.900"
+        position="fixed"
+        w="4.25rem"
+        minHeight="100vh"
       >
         <Sidebar />
       </GridItem>
@@ -41,12 +46,17 @@ function App() {
           as="header"
           bg="chocolate.900"
           h="4rem"
+          position="fixed"
+          w="calc(100% - 4.25rem)"
         >
           <Header />
         </Box>
       </GridItem>
-      <GridItem area={'main'}>
-        <Box>{/* Main */}</Box>
+      <GridItem
+        area={'main'}
+        minH="calc(100vh - 4rem)"
+      >
+        <FractalRoutes />
       </GridItem>
     </Grid>
   );

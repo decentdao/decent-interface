@@ -1,21 +1,19 @@
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
 
-import DAOs from '../pages/Daos/index';
-
-function Body() {
+function FractalRoutes() {
   return (
     <Routes>
       <Route
         index
         element={<Home />}
       />
-      <Route
+      {/* <Route
         path="daos/*"
         element={<DAOs />}
-      />
+      /> */}
     </Routes>
   );
 }
 
-export default Body;
+export default FractalRoutes;
