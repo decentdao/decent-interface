@@ -1,9 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
 
-// import DAOs from '../pages/Daos/index';
-
-function Body() {
+function FractalRoutes() {
   return (
     <Routes>
       <Route
@@ -18,4 +16,4 @@ function Body() {
   );
 }
 
-export default Body;
+export default FractalRoutes;

@@ -4,7 +4,7 @@ import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { useActionToast } from './hooks/toasts/useActionToast';
 import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
-import Body from './components/Body';
+import FractalRoutes from './routes/FractalRoutes';
 
 function App() {
   const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
@@ -56,7 +56,7 @@ function App() {
         area={'main'}
         minH="calc(100vh - 4rem)"
       >
-        <Body />
+        <FractalRoutes />
       </GridItem>
     </Grid>
   );
