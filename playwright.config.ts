@@ -42,7 +42,7 @@ const config: PlaywrightTestConfig = {
     screenshot: 'on',
 		launchOptions: {
 			slowMo: 100, /* Adjusts tests' run speed to aid in video report visualization reports as well as mimic user input/action speed */
-      devtools: true, /* When tests are ran locally with the '--headed' flag devtools will appear for debugging purposes. */
+      devtools: false, /* When tests are ran locally with the '--headed' flag devtools will appear for debugging purposes. */
     },
     video: 'on',
     contextOptions: {
