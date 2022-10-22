@@ -1,9 +1,31 @@
 export const DAO_ROUTES = {
-  daoHome: (daoAddress: string) => `/daos/${daoAddress}`,
-  activties: (daoAddress: string) => `/daos/${daoAddress}/activities`,
-  treasury: (daoAddress: string) => `/daos/${daoAddress}/treasury`,
-  proposals: (daoAddress: string) => `/daos/${daoAddress}/proposals`,
-  proposal: (daoAddress: string, proposalId: string) =>
-    `/daos/${daoAddress}/proposals/${proposalId}`,
-  proposalNew: (daoAddress: string) => `/daos/${daoAddress}/proposals/new`,
+  dao: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}`,
+    path: 'daos/*',
+  },
+  new: {
+    relative: 'daos/new',
+    path: 'new',
+  },
+  activties: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/activities`,
+    path: 'activities',
+  },
+  treasury: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/treasury`,
+    path: 'treasury',
+  },
+  proposals: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/proposals`,
+    path: 'proposals',
+  },
+  proposal: {
+    relative: (daoAddress: string, proposalId: string) =>
+      `/daos/${daoAddress}/proposals/${proposalId}`,
+    path: '*',
+  },
+  proposalNew: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/proposals/new`,
+    path: 'new',
+  },
 };

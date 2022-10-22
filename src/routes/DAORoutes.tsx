@@ -1,21 +1,19 @@
 import { Routes, Route } from 'react-router-dom';
-import DAOSearch from '../DaoSearch';
-import DaoCreate from '../DaoCreate';
-import DAOFavorites from '../DaoFavorites';
-import DAO from '../Dao';
-import { DAOController } from '../../controller/DAOs/DAOController';
-function DAOs() {
+import DaoCreate from '../pages/DaoCreate';
+import { DAO_ROUTES } from './constants';
+
+function DAORoutes() {
   return (
     <Routes>
-      <Route
+      {/* <Route
         index
         element={<DAOSearch />}
-      />
+      /> */}
       <Route
-        path="new"
+        path={DAO_ROUTES.new.path}
         element={<DaoCreate />}
       />
-      <Route
+      {/* <Route
         path="favorites"
         element={<DAOFavorites />}
       />
@@ -26,9 +24,9 @@ function DAOs() {
             <DAO />
           </DAOController>
         }
-      />
+      /> */}
     </Routes>
   );
 }
 
-export default DAOs;
+export default DAORoutes;

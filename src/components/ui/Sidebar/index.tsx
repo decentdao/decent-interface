@@ -56,8 +56,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('home')}>
           <Link
             data-testid="sidebar-daoHomeLink"
-            to={DAO_ROUTES.daoHome('0x')}
-            aria-label={t('ariaLabelHome')}
+            to={DAO_ROUTES.dao.relative('0x')}
           >
             <Home
               boxSize="1.5rem"
@@ -69,8 +68,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('proposals')}>
           <Link
             data-testid="sidebar-proposalsLink"
-            to={DAO_ROUTES.proposals('0x')}
-            aria-label={t('ariaLabelProposals')}
+            to={DAO_ROUTES.proposals.relative('0x')}
           >
             <Proposals
               boxSize="1.5rem"
@@ -82,8 +80,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('activityFeed')}>
           <Link
             data-testid="sidebar-activityLink"
-            to={DAO_ROUTES.activties('0x')}
-            aria-label={t('ariaLabelActivities')}
+            to={DAO_ROUTES.activties.relative('0x')}
           >
             <Notifications
               boxSize="1.5rem"
@@ -95,8 +92,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('treasury')}>
           <Link
             data-testid="sidebar-treasuryLink"
-            to={DAO_ROUTES.treasury('0x')}
-            aria-label={t('ariaLabelTreasury')}
+            to={DAO_ROUTES.treasury.relative('0x')}
           >
             <Treasury
               aria-label="Treasury Link"
