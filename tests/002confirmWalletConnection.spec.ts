@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { Notification } from '../page-objects/FractalPage';
 import { HomePage } from '../page-objects/HomePage';
 
-test('Confirm Wallet is Connected to Fractal', async ({ page }) => {
+test.skip('Confirm Wallet is Connected to Fractal', async ({ page }) => {
   const home = await new HomePage(page).visit();
   await home.connectToWallet();
 

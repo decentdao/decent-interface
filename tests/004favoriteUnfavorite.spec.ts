@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { HomePage } from '../page-objects/HomePage';
 import { DAOHome } from '../page-objects/DAOHome';
 
-test.describe('DAO Creation', () => {
+test.describe.skip('DAO Creation', () => {
   let dao: DAOHome;
 
   test.beforeEach(async ({ page }) => {
