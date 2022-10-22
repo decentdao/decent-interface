@@ -6,6 +6,8 @@
     "@decent-org/fractal-ui": "^0.0.12",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@fontsource/ibm-plex-mono": "^4.5.12",
+    "@fontsource/ibm-plex-sans": "^4.5.13",
     "@fractal-framework/core-contracts": "^0.1.9",
     "@playwright/test": "^1.26.0",
     "@sentry/react": "^7.13.0",
