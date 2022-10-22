@@ -17,7 +17,7 @@ function SidebarTooltipWrapper({ label, children }: { label: string; children: J
   return (
     <Tooltip
       closeDelay={250}
-      gutter={4}
+      gutter={10}
       hasArrow
       label={label}
       placement="right"
@@ -52,6 +52,7 @@ function Sidebar() {
       <Flex
         alignItems="center"
         direction="column"
+        gap="2rem"
       >
         <SidebarTooltipWrapper label={t('home')}>
           <Link
@@ -61,7 +62,6 @@ function Sidebar() {
             <Home
               boxSize="1.5rem"
               minWidth="auto"
-              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
@@ -73,7 +73,6 @@ function Sidebar() {
             <Proposals
               boxSize="1.5rem"
               minWidth="auto"
-              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
@@ -85,7 +84,6 @@ function Sidebar() {
             <Notifications
               boxSize="1.5rem"
               minWidth="auto"
-              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
@@ -98,12 +96,15 @@ function Sidebar() {
               aria-label="Treasury Link"
               boxSize="1.5rem"
               minWidth="auto"
-              my="1.5rem"
             />
           </Link>
         </SidebarTooltipWrapper>
       </Flex>
-      <Flex direction="column">
+      <Flex
+        direction="column"
+        gap="2rem"
+        mb="8"
+      >
         <SidebarTooltipWrapper label={t('support')}>
           <a
             data-testid="sidebarExternal-support"
@@ -115,7 +116,6 @@ function Sidebar() {
             <SupportQuestion
               boxSize="1.5rem"
               minWidth="auto"
-              my="1.5rem"
             />
           </a>
         </SidebarTooltipWrapper>
@@ -130,7 +130,6 @@ function Sidebar() {
             <Discord
               boxSize="1.5rem"
               minWidth="auto"
-              my="1.5rem"
             />
           </a>
         </SidebarTooltipWrapper>
@@ -145,7 +144,6 @@ function Sidebar() {
             <Documents
               boxSize="1.5rem"
               minWidth="auto"
-              my="1.5rem"
             />
           </a>
         </SidebarTooltipWrapper>
