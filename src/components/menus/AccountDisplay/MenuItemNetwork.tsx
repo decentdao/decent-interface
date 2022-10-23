@@ -17,7 +17,7 @@ export function MenuItemNetwork() {
     <MenuItem
       data-testid="accountMenu-network"
       cursor="default"
-      p="4"
+      p="1rem 1.5rem"
     >
       <Flex
         direction="column"
@@ -34,8 +34,8 @@ export function MenuItemNetwork() {
           gap="2"
         >
           <Box
-            w="4"
-            h="4"
+            w="1rem"
+            h="1rem"
             bg={color}
             rounded="full"
           ></Box>
