@@ -18,7 +18,7 @@ test.describe.skip('DAO Creation', () => {
   test('Click favorite and confirm in favorites list', async ({}) => {
     await dao
       .clickFavoriteStar()
-      .then(() => dao.clickHeaderMenuDropdown().then(() => dao.clickMenuFavorites()));
+      .then(() => dao.clickHeaderMenuDropdown().then(() => dao.clickHeaderFavorites()));
 
     // TODO this star doesn't do anything yet for pure gnosis...
   });

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { DAOCreate } from '../page-objects/DAOCreate';
 import { HomePage } from '../page-objects/HomePage';
 
-test.describe.skip('DAO Creation', () => {
+test.describe('DAO Creation', () => {
   let create: DAOCreate;
 
   test.beforeEach(async ({ page }) => {
@@ -24,9 +24,6 @@ test.describe.skip('DAO Creation', () => {
       .then(() => create.clickDeployButton());
 
     await page.waitForURL(create.baseUrl + '/daos/0x*');
-
-    const daoName = page.locator('text=Test Fractal | Home');
-    await expect(daoName).toContainText('Test Fractal | Home');
   });
 
   test('Create Pure Gnosis DAO', async ({ page }) => {
@@ -39,10 +36,6 @@ test.describe.skip('DAO Creation', () => {
       .then(() => create.clickDeployButton());
 
     await page.waitForURL(create.baseUrl + '/daos/0x*');
-
-    // TODO DAO name isn't yet implemented
-    // const daoName = page.locator('text=Test Fractal | Home');
-    // await expect(daoName).toContainText('Test Fractal | Home');
   });
 
   // TODO both DAO pure gnosis creation paths (token and multisig)
