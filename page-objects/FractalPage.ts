@@ -31,7 +31,7 @@ export class FractalPage {
   notificationLocator(notif: Notification) {
     switch (notif) {
       case Notification.Audit:
-        return this.page.locator('div[role="alert"] button:has-text("* * *Accept")');
+        return this.page.locator('button:has-text("Accept")');
       case Notification.Connected:
         return this.page.locator('#connected');
       case Notification.Deploying:

@@ -9,12 +9,12 @@ export class HomePage extends NavPage {
   }
 
   async clickCreateAFractal() {
-    await this.page.click('(//button[@id="home:link-create"])[1]');
+    await this.page.click('[data-testid=home-linkCreate]');
     return new DAOCreate(this.page);
   }
 
   async clickFindAFractal() {
-    await this.page.click('(//button[@id="home:link-find"])[1]');
+    await this.page.click('[data-testid=home-linkFind]');
     return new DAOSearch(this.page);
   }
 }

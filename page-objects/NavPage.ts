@@ -6,7 +6,7 @@ export class NavPage extends FractalPage {
    */
   async connectToWallet() {
     await this.clickHeaderMenuDropdown()
-      .then(() => this.clickMenuConnectWallet())
+      .then(() => this.clickMenuConnect())
       .then(() => this.clickWalletLocalNode());
   }
 
@@ -15,39 +15,52 @@ export class NavPage extends FractalPage {
   }
 
   async clickHeaderMenuDropdown() {
-    await this.page.click('//div[@id="menu:down-arrow"]//*[name()="svg"]');
+    await this.page.click('data-testid=header-accountMenu');
   }
 
-  async clickMenuConnectWallet() {
-    await this.page.click('[data-testid="menu:connect"]');
+  async clickMenuConnect() {
+    await this.page.click('[data-testid=accountMenu-connect]');
   }
 
   async clickMenuDisconnect() {
-    await this.page.click('[data-testid="menu:connect"]');
+    await this.page.click('[data-testid=accountMenu-disconnect]');
   }
 
   async clickMenuCopyWalletAddress() {
-    await this.page.click('//*[name()="path" and contains(@d,"M7 6V3C7 2")]');
+    await this.page.click('[data-testid=walletMenu-accountDisplay]');
   }
 
-  async clickMenuFavorites() {
-    await this.page.click('[data-testid="menu:favorites"] div:has-text("Favorites")');
+  async clickHeaderFavorites() {
+    await this.page.click('[data-testid=header-favoritesLink]');
   }
 
-  async clickMenuCommunity() {
-    await this.page.click('[data-testid="menu:community"]');
+  // home proposals feed treasury support discord docs
+  async clickLeftMenuHome() {
+    await this.page.click('[data-testid=sidebar-daoHomeLink"]');
   }
 
-  async clickMenuOverview() {
-    await this.page.click('[data-testid="menu:overview"] div:has-text("Overview")');
+  async clickLeftMenuProposals() {
+    await this.page.click('[data-testid=sidebar-proposalsLink"]');
   }
 
-  async clickMenuFaq() {
-    await this.page.click('[data-testid="menu:faq"] div:has-text("FAQ")');
+  async clickLeftMenuActivity() {
+    await this.page.click('[data-testid=sidebar-activityLink"]');
   }
 
-  async clickMenuDocs() {
-    await this.page.click('[data-testid="menu:docs"] div:has-text("Docs")');
+  async clickLeftMenuTreasury() {
+    await this.page.click('[data-testid=sidebar-treasuryLink"]');
+  }
+
+  async clickLeftMenuSupport() {
+    await this.page.click('[data-testid=sidebarExternal-support"]');
+  }
+
+  async clickLeftMenuDiscord() {
+    await this.page.click('[data-testid=sidebarExternal-discord"]');
+  }
+
+  async clickLeftMenuDocs() {
+    await this.page.click('[data-testid=sidebarExternal-documentation"]');
   }
 
   async clickWalletLocalNode() {
