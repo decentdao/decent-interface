@@ -1,38 +1,38 @@
 import { expect, test } from '@playwright/test';
-import { connectWallet } from '../helpers/wallet';
+import { Notification } from '../models/FractalPage';
+import { HomePage } from '../models/HomePage';
+import { MenuItems, NavPage } from '../models/NavPage';
 
 test.describe.serial('Confirm Wallet is Connected to Fractal', async () => {
-  test.beforeEach(async ({ page }, config) => {
-    const { baseURL } = config.project.use;
-    await page.goto(baseURL!);
-  });
-
   test('network connected to local node', async ({ page }) => {
-    await page.locator('[data-testid=header-accountMenu]').click();
-    const networkMenuItem = page.locator('[data-testid=accountMenu-network] div div p');
-    await expect(networkMenuItem).toContainText('Local Test Network');
+    const home = await new HomePage(page).visit();
+    const navPage = new NavPage(page);
+
+    home.clickHeaderMenuDropdown();
+
+    const networkItem = await navPage.menuLocator(MenuItems.Network);
+    await expect(networkItem!).toContainText('Local Test Network');
   });
 
   test('connect wallet', async ({ page }) => {
-    await connectWallet(page);
+    const home = await new HomePage(page).visit();
+    await home.connectToWallet();
 
-    const connected = page.locator('#connected');
-    await expect(connected).toBeVisible();
+    await expect(home.notificationLocator(Notification.Connected)).toBeVisible();
 
-    await page.locator('[data-testid=header-accountMenu]').click();
-    const accountDisplay = page.locator(
-      '[data-testid=accountMenu-wallet] [data-testid=walletMenu-accountDisplay]'
+    /* Assert defined wallet address is present ("0xf39F...2266") */
+    await home.clickHeaderMenuDropdown();
+    await expect(page.locator('[data-testid=walletMenu-accountDisplay]')).toContainText(
+      '0xf39F...2266'
     );
-    await expect(accountDisplay).toContainText('0xf39F...2266');
   });
 
   test('disconnect wallet', async ({ page }) => {
-    await connectWallet(page);
+    const home = await new HomePage(page).visit();
+    await home.connectToWallet();
 
-    await page.locator('[data-testid=header-accountMenu]').click();
-
-    /* Locate and click disconnect */
-    page.locator('button[data-testid=accountMenu-disconnect]').click();
+    home.clickHeaderMenuDropdown();
+    home.clickMenuDisconnect();
 
     await expect(page.locator('[data-testid=header-accountMenu]')).toContainText('Connect Wallet');
   });

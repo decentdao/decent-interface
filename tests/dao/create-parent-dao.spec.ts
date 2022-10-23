@@ -1,8 +1,8 @@
-import { expect, test } from '@playwright/test';
-import { DAOCreate } from '../page-objects/DAOCreate';
-import { HomePage } from '../page-objects/HomePage';
+import { test } from '@playwright/test';
+import { DAOCreate } from '../models/DAOCreate';
+import { HomePage } from '../models/HomePage';
 
-test.describe('DAO Creation', () => {
+test.describe.skip('DAO Creation', () => {
   let create: DAOCreate;
 
   test.beforeEach(async ({ page }) => {

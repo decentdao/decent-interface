@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
-import { HomePage } from '../page-objects/HomePage';
-import { DAOHome } from '../page-objects/DAOHome';
+import { HomePage } from '../models/HomePage';
+import { DAOHome } from '../models/DAOHome';
 
 test.describe.skip('DAO Creation', () => {
   let dao: DAOHome;
