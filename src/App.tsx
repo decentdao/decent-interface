@@ -47,6 +47,7 @@ function App() {
           bg="chocolate.900"
           h="4rem"
           position="fixed"
+          zIndex="sticky"
           w="calc(100% - 4.25rem)"
         >
           <Header />
