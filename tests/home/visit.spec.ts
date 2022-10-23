@@ -1,16 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { HomePage } from '../models/HomePage';
 
-test.describe.serial('Vist dApp', async () => {
-  test.beforeEach(async ({ page }, config) => {
-    const { baseURL } = config.project.use;
-    await page.goto(baseURL!);
-  });
-
-  test('Header renders correctly', async ({ page }) => {
-    await expect(page.locator('[data-testid=header-accountMenu]')).toBeVisible();
-  });
-
-  test('Fractal dApp welcome title renders', async ({ page }) => {
+test.describe('Visit site', async () => {
+  test('app renders correctly', async ({ page }) => {
+    await new HomePage(page).visit();
     await expect(page.locator('[data-testid=home-pageTitle]')).toContainText('Welcome to Fractal');
+    await expect(page.locator('[data-testid=home-linkCreate]')).toContainText('Create a Fractal');
+    await expect(page.locator('[data-testid=home-linkFind]')).toContainText('Find a Fractal');
   });
 });
