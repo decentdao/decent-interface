@@ -1,5 +1,10 @@
 import { FractalPage } from './FractalPage';
 
+export enum MenuItems {
+  Network,
+  Wallet,
+}
+
 export class NavPage extends FractalPage {
   /*
    * Utility method for connecting to the default wallet.
@@ -16,6 +21,15 @@ export class NavPage extends FractalPage {
 
   async clickHeaderMenuDropdown() {
     await this.page.click('data-testid=header-accountMenu');
+  }
+
+  async menuLocator(selector: MenuItems) {
+    switch (selector) {
+      case MenuItems.Network:
+        return this.page.locator('[data-testid=accountMenu-network] div div p');
+      default:
+        return undefined;
+    }
   }
 
   async clickMenuConnect() {
