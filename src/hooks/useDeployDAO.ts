@@ -114,28 +114,22 @@ const useDeployDAO = () => {
     [contractCallDeploy, createGnosisDAODataCreator, metaFactoryContract, account, t]
   );
 
-  const deployGnosisSafe = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
-      const deploy = async () => {
+  const buildDeploySafeTx = useCallback(
+    (daoData: GnosisDAO) => {
+      const buildTx = async () => {
         if (
           !account ||
           !gnosisSafeFactoryContract ||
           !gnosisSafeSingletonContract?.address ||
-          !usulMastercopyContract ||
-          !zodiacModuleProxyFactoryContract ||
-          !linearVotingMastercopyContract ||
-          !metaFactory ||
-          !tokenFactory ||
           !multiSendContract ||
           !signerOrProvider
         ) {
           return;
         }
+
         const { AddressZero, HashZero } = ethers.constants;
-        const { solidityKeccak256, defaultAbiCoder, getCreate2Address } = ethers.utils;
+        const { solidityKeccak256, getCreate2Address } = ethers.utils;
         const gnosisDaoData = daoData as GnosisDAO;
-        const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
-        const votingTokenNonce = getRandomBytes();
         const saltNum = getRandomBytes();
 
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
@@ -170,6 +164,93 @@ const useDeployDAO = () => {
             ]
           )
         );
+
+        const createSafeTx = buildContractCall(
+          gnosisSafeFactoryContract,
+          'createProxyWithNonce',
+          [gnosisSafeSingletonContract.address, createGnosisCalldata, saltNum],
+          0,
+          false
+        );
+
+        return {
+          predictedGnosisSafeAddress,
+          createSafeTx,
+        };
+      };
+
+      return buildTx();
+    },
+    [
+      account,
+      gnosisSafeFactoryContract,
+      gnosisSafeSingletonContract,
+      multiSendContract,
+      signerOrProvider,
+    ]
+  );
+
+  const deployGnosisSafe = useCallback(
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
+      const deploy = async () => {
+        if (!multiSendContract) {
+          return;
+        }
+        const gnosisDaoData = daoData as GnosisDAO;
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData);
+
+        if (!deploySafeTx) {
+          return;
+        }
+
+        const { predictedGnosisSafeAddress, createSafeTx } = deploySafeTx;
+
+        const txs: MetaTransaction[] = [createSafeTx];
+        const safeTx = encodeMultiSend(txs);
+
+        contractCallDeploy({
+          contractFn: () => multiSendContract.multiSend(safeTx),
+          pendingMessage: t('pendingDeployGnosis'),
+          failedMessage: t('failedDeployGnosis'),
+          successMessage: t('successDeployGnosis'),
+          successCallback: () => successCallback(predictedGnosisSafeAddress),
+        });
+      };
+
+      deploy();
+    },
+    [buildDeploySafeTx, multiSendContract, contractCallDeploy, t]
+  );
+  const deployGnosisSafeWithUsul = useCallback(
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
+      const deploy = async () => {
+        if (
+          !account ||
+          !gnosisSafeFactoryContract ||
+          !gnosisSafeSingletonContract?.address ||
+          !usulMastercopyContract ||
+          !zodiacModuleProxyFactoryContract ||
+          !linearVotingMastercopyContract ||
+          !metaFactory ||
+          !tokenFactory ||
+          !multiSendContract ||
+          !signerOrProvider
+        ) {
+          return;
+        }
+        const { AddressZero } = ethers.constants;
+        const { solidityKeccak256, defaultAbiCoder, getCreate2Address } = ethers.utils;
+        const gnosisDaoData = daoData as GnosisDAO;
+        const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
+        const votingTokenNonce = getRandomBytes();
+
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData);
+
+        if (!deploySafeTx) {
+          return;
+        }
+
+        const { predictedGnosisSafeAddress, createSafeTx } = deploySafeTx;
 
         const votingTokenSalt = solidityKeccak256(
           ['address', 'address', 'uint256', 'bytes32'],
@@ -284,14 +365,6 @@ const useDeployDAO = () => {
         ];
         const safeInternalTx = encodeMultiSend(internaltTxs);
 
-        const createSafeTx = buildContractCall(
-          gnosisSafeFactoryContract,
-          'createProxyWithNonce',
-          [gnosisSafeSingletonContract.address, createGnosisCalldata, saltNum],
-          0,
-          false
-        );
-
         const createTokenTx = buildContractCall(
           tokenFactoryContract,
           'create',
@@ -374,6 +447,7 @@ const useDeployDAO = () => {
     },
     [
       contractCallDeploy,
+      buildDeploySafeTx,
       usulMastercopyContract,
       zodiacModuleProxyFactoryContract,
       gnosisSafeFactoryContract,
@@ -396,11 +470,13 @@ const useDeployDAO = () => {
           return deployTokenVotingDAO(daoData, successCallback);
         case GovernanceTypes.MVD_GNOSIS:
           return deployGnosisDAO(daoData, successCallback);
+        case GovernanceTypes.GNOSIS_SAFE_USUL:
+          return deployGnosisSafeWithUsul(daoData, successCallback);
         case GovernanceTypes.GNOSIS_SAFE:
           return deployGnosisSafe(daoData, successCallback);
       }
     },
-    [deployGnosisDAO, deployGnosisSafe, deployTokenVotingDAO]
+    [deployGnosisDAO, deployGnosisSafeWithUsul, deployGnosisSafe, deployTokenVotingDAO]
   );
 
   return [deployDao, contractCallPending] as const;

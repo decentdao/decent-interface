@@ -17,6 +17,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
   useEffect(() => {
     const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;
     const isGnosisGovernance = state.governance === GovernanceTypes.MVD_GNOSIS;
+    const isGnosisWithUsul = state.governance === GovernanceTypes.GNOSIS_SAFE_USUL;
     const isPureGnosis = state.governance === GovernanceTypes.GNOSIS_SAFE;
 
     // True when:
@@ -41,6 +42,8 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           payload: {
             nextStep: isPureGnosis
               ? CreatorSteps.PURE_GNOSIS
+              : isGnosisWithUsul
+              ? CreatorSteps.GNOSIS_WITH_USUL
               : isGnosisGovernance
               ? CreatorSteps.GNOSIS_GOVERNANCE
               : showFunding
@@ -50,11 +53,20 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           },
         });
         break;
-      case CreatorSteps.PURE_GNOSIS:
+      case CreatorSteps.GNOSIS_WITH_USUL:
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: CreatorSteps.TREASURY_GOV_TOKEN,
+            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
+          },
+        });
+        break;
+      case CreatorSteps.PURE_GNOSIS:
+        dispatch({
+          type: CreatorProviderActions.UPDATE_STEP,
+          payload: {
+            nextStep: null,
             prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
@@ -82,8 +94,8 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: CreatorSteps.GOV_CONFIG,
-            prevStep: isPureGnosis
-              ? CreatorSteps.PURE_GNOSIS
+            prevStep: isGnosisWithUsul
+              ? CreatorSteps.GNOSIS_WITH_USUL
               : isSubDAO
               ? CreatorSteps.FUNDING
               : CreatorSteps.CHOOSE_GOVERNANCE,

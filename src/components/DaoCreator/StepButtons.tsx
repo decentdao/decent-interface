@@ -60,7 +60,7 @@ function ForwardButton({
     case CreatorSteps.ESSENTIALS:
     case CreatorSteps.FUNDING:
     case CreatorSteps.TREASURY_GOV_TOKEN:
-    case CreatorSteps.PURE_GNOSIS:
+    case CreatorSteps.GNOSIS_WITH_USUL:
       const canSkip =
         state.step === CreatorSteps.FUNDING &&
         state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
@@ -88,7 +88,10 @@ function ForwardButton({
               ...state.funding,
               ...state.govModule,
               ...state.govToken,
-              ...(state.governance === GovernanceTypes.GNOSIS_SAFE ? state.gnosis : {}),
+              ...(state.governance === GovernanceTypes.GNOSIS_SAFE ||
+              state.governance === GovernanceTypes.GNOSIS_SAFE_USUL
+                ? state.gnosis
+                : {}),
             })
           }
           label={deployLabel}
@@ -97,7 +100,8 @@ function ForwardButton({
           disabled={pending || !account || isNextDisabled}
         />
       );
-    case CreatorSteps.GNOSIS_GOVERNANCE: {
+    case CreatorSteps.GNOSIS_GOVERNANCE:
+    case CreatorSteps.PURE_GNOSIS: {
       return (
         <PrimaryButton
           onClick={() =>

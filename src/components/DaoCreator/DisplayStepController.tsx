@@ -15,7 +15,7 @@ function StepController() {
     case CreatorSteps.CHOOSE_GOVERNANCE:
       return <ChooseGovernance />;
     case CreatorSteps.PURE_GNOSIS:
-      return <GnosisConfig />;
+    case CreatorSteps.GNOSIS_WITH_USUL:
     case CreatorSteps.GNOSIS_GOVERNANCE:
       return <GnosisConfig />;
     case CreatorSteps.FUNDING: {
