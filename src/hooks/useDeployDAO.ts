@@ -25,7 +25,7 @@ const useDeployDAO = () => {
   const {
     state: { account, signerOrProvider, chainId },
   } = useWeb3Provider();
-  const { metaFactory, votesMasterCopy } = useAddresses(chainId);
+  const { votesMasterCopy } = useAddresses(chainId);
   const {
     multiSendContract,
     gnosisSafeFactoryContract,
@@ -233,7 +233,6 @@ const useDeployDAO = () => {
           !usulMastercopyContract ||
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMastercopyContract ||
-          !metaFactory ||
           !multiSendContract ||
           !votesMasterCopy ||
           !signerOrProvider
@@ -462,7 +461,6 @@ const useDeployDAO = () => {
       linearVotingMastercopyContract,
       gnosisSafeSingletonContract,
       multiSendContract,
-      metaFactory,
       account,
       votesMasterCopy,
       signerOrProvider,
