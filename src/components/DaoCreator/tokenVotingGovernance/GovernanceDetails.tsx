@@ -99,7 +99,7 @@ function GovernanceDetails() {
             unit={blocks}
             helperText={t('helperVotingPeriod', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min="1"
+            min="2"
           />
         </InputBox>
         <ContentBoxTitle>Governance Setup</ContentBoxTitle>

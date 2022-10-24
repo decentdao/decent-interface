@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BigNumber } from 'ethers';
-import { CreatorState, CreatorSteps } from './../types';
+import { CreatorState, CreatorSteps, GovernanceTypes } from './../types';
 
 /**
  * This hook updates the next page button's disable state for each form
@@ -17,6 +17,7 @@ export function useNextDisabled(state: CreatorState) {
       essentials,
       gnosis: { trustedAddresses, signatureThreshold },
     } = state;
+    const isGnosisWithUsul = state.governance === GovernanceTypes.GNOSIS_SAFE_USUL;
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
         if (!!state.essentials.daoName.trim()) {
@@ -92,7 +93,7 @@ export function useNextDisabled(state: CreatorState) {
           govModule.executionDelay.gte(0) &&
           govModule.lateQuorumExecution.gte(0) &&
           govModule.voteStartDelay.gte(0) &&
-          govModule.votingPeriod.gt(0);
+          govModule.votingPeriod.gt(isGnosisWithUsul ? 1 : 0);
         setIsDisabled(!isEssentialsComplete && !isGovModuleComplete && !isGovTokenComplete);
         break;
       }
