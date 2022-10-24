@@ -115,7 +115,7 @@ const useDeployDAO = () => {
   );
 
   const buildDeploySafeTx = useCallback(
-    (daoData: GnosisDAO) => {
+    (daoData: GnosisDAO, hasUsul?: boolean) => {
       const buildTx = async () => {
         if (
           !account ||
@@ -135,11 +135,13 @@ const useDeployDAO = () => {
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
           'setup',
           [
-            [
-              ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
-              multiSendContract.address,
-            ],
-            1, // threshold
+            hasUsul
+              ? [multiSendContract.address]
+              : [
+                  ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
+                  multiSendContract.address,
+                ],
+            hasUsul ? 1 : gnosisDaoData.trustedAddresses.length, // threshold
             AddressZero,
             HashZero,
             AddressZero,
@@ -244,7 +246,7 @@ const useDeployDAO = () => {
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
         const votingTokenNonce = getRandomBytes();
 
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
 
         if (!deploySafeTx) {
           return;
@@ -362,6 +364,13 @@ const useDeployDAO = () => {
         const internaltTxs: MetaTransaction[] = [
           buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
           buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
+          buildContractCall(
+            safeContract,
+            'removeOwner',
+            [multiSendContract.address, usulContract.address],
+            0,
+            false
+          ),
         ];
         const safeInternalTx = encodeMultiSend(internaltTxs);
 

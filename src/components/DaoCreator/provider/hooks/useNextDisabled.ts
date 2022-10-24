@@ -98,7 +98,6 @@ export function useNextDisabled(state: CreatorState) {
         break;
       }
       case CreatorSteps.GNOSIS_GOVERNANCE:
-      case CreatorSteps.GNOSIS_WITH_USUL:
       case CreatorSteps.PURE_GNOSIS: {
         const isTrustedAddressValid =
           !trustedAddresses.some(trustee => trustee.error || !trustee.address.trim()) &&
