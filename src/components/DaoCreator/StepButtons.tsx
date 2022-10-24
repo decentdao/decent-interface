@@ -4,7 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { useCreator } from './provider/hooks/useCreator';
 import { useNextDisabled } from './provider/hooks/useNextDisabled';
-import { CreatorProviderActions, CreatorSteps, DAOTrigger } from './provider/types';
+import {
+  CreatorProviderActions,
+  CreatorSteps,
+  DAOTrigger,
+  GovernanceTypes,
+} from './provider/types';
 
 interface IStepButtons {
   pending?: boolean;
@@ -58,6 +63,7 @@ function ForwardButton({
     case CreatorSteps.ESSENTIALS:
     case CreatorSteps.FUNDING:
     case CreatorSteps.TREASURY_GOV_TOKEN:
+    case CreatorSteps.GNOSIS_WITH_USUL:
       const canSkip =
         state.step === CreatorSteps.FUNDING &&
         state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
@@ -88,6 +94,10 @@ function ForwardButton({
               ...state.funding,
               ...state.govModule,
               ...state.govToken,
+              ...(state.governance === GovernanceTypes.GNOSIS_SAFE ||
+              state.governance === GovernanceTypes.GNOSIS_SAFE_USUL
+                ? state.gnosis
+                : {}),
             })
           }
           size="lg"
