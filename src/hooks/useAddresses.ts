@@ -7,6 +7,7 @@ export function useAddresses(chainId: number | undefined) {
     daoFactory?: { address: string };
     treasuryModuleFactory?: { address: string };
     tokenFactory?: { address: string };
+    votesMasterCopy?: { address: string };
     governorFactory?: { address: string };
     claimFactory?: { address: string };
     gnosisWrapperFactory?: { address: string };
@@ -47,7 +48,8 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES ||
       !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES ||
       !process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES ||
-      !process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES
+      !process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES ||
+      !process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
@@ -110,6 +112,9 @@ export function useAddresses(chainId: number | undefined) {
     const multiSendAddresses: { [chainId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES
     );
+    const votesMasterCopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
+    );
 
     const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
     const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
@@ -134,6 +139,7 @@ export function useAddresses(chainId: number | undefined) {
     const zodiacModuleProxyFactory: { address: string } = zodiacProxyFactoryAddresses[chainId];
     const linearVotingMastercopy: { address: string } = linearVotingMastercopyAddresses[chainId];
     const multiSend: { address: string } = multiSendAddresses[chainId];
+    const votesMasterCopy: { address: string } = votesMasterCopyAddresses[chainId];
 
     if (
       !metaFactoryAddress ||
@@ -155,7 +161,8 @@ export function useAddresses(chainId: number | undefined) {
       !usulMastercopy ||
       !zodiacModuleProxyFactory ||
       !linearVotingMastercopy ||
-      !multiSend
+      !multiSend ||
+      !votesMasterCopy
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -183,6 +190,7 @@ export function useAddresses(chainId: number | undefined) {
       zodiacModuleProxyFactory,
       linearVotingMastercopy,
       multiSend,
+      votesMasterCopy,
     });
   }, [chainId]);
 

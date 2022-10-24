@@ -25,7 +25,7 @@ const useDeployDAO = () => {
   const {
     state: { account, signerOrProvider, chainId },
   } = useWeb3Provider();
-  const { metaFactory, tokenFactory } = useAddresses(chainId);
+  const { metaFactory, votesMasterCopy } = useAddresses(chainId);
   const {
     multiSendContract,
     gnosisSafeFactoryContract,
@@ -234,8 +234,8 @@ const useDeployDAO = () => {
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMastercopyContract ||
           !metaFactory ||
-          !tokenFactory ||
           !multiSendContract ||
+          !votesMasterCopy ||
           !signerOrProvider
         ) {
           return;
@@ -246,9 +246,9 @@ const useDeployDAO = () => {
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
         const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
-        const votesMasterCopyContract = new ethers.Contract(
-          '0x0697DCa73151da93D18CDdF5DB52f9A8363c9Ba9',
-          VotesToken__factory.createInterface()
+        const votesMasterCopyContract = VotesToken__factory.connect(
+          votesMasterCopy.address,
+          signerOrProvider
         );
 
         if (!deploySafeTx) {
@@ -444,8 +444,8 @@ const useDeployDAO = () => {
       gnosisSafeSingletonContract,
       multiSendContract,
       metaFactory,
-      tokenFactory,
       account,
+      votesMasterCopy,
       signerOrProvider,
       t,
     ]
