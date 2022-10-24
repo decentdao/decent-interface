@@ -1,8 +1,8 @@
 import { test } from '@playwright/test';
-import { HomePage } from '../page-objects/HomePage';
-import { DAOHome } from '../page-objects/DAOHome';
+import { HomePage } from '../models/HomePage';
+import { DAOHome } from '../models/DAOHome';
 
-test.describe('DAO Creation', () => {
+test.describe.skip('DAO Creation', () => {
   let dao: DAOHome;
 
   test.beforeEach(async ({ page }) => {
@@ -18,7 +18,7 @@ test.describe('DAO Creation', () => {
   test('Click favorite and confirm in favorites list', async ({}) => {
     await dao
       .clickFavoriteStar()
-      .then(() => dao.clickHeaderMenuDropdown().then(() => dao.clickMenuFavorites()));
+      .then(() => dao.clickHeaderMenuDropdown().then(() => dao.clickHeaderFavorites()));
 
     // TODO this star doesn't do anything yet for pure gnosis...
   });

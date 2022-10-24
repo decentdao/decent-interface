@@ -8,19 +8,19 @@ export class DAOCreate extends NavPage {
   }
 
   async fillFractalName(text: string) {
-    await this.page.locator('input[type="text"]').fill(text);
+    await this.page.locator('data-testid=essentials-daoName').fill(text);
   }
 
   async clickNextButton() {
-    await this.page.click('button:has-text("* * *Next")');
+    await this.page.click('data-testid=create-nextButton');
   }
 
   async clickMVDGnosisSafe() {
-    await this.page.locator('(//div[@class="flex items-center"])[2]').click();
+    await this.page.locator('data-testid=choose-gnosisSafeMVD').click();
   }
 
   async clickPureGnosisSafe() {
-    await this.page.locator('(//div[@class="flex items-center"])[3]').click();
+    await this.page.locator('data-testid=choose-gnosisSafePure').click();
   }
 
   // TODO there can be multiple addresses here, so support adding / removing / filling multiples
@@ -31,7 +31,7 @@ export class DAOCreate extends NavPage {
   }
 
   async clickDeployButton() {
-    await this.page.click('button:has-text("* * *Deploy")');
+    await this.page.click('data-testid=create-deployDAO');
   }
 
   /*

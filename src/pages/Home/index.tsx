@@ -13,7 +13,12 @@ function Home() {
       h="full"
       p="8"
     >
-      <Text textStyle="text-2xl-mono-bold">{t('createHead')}</Text>
+      <Text
+        data-testid="home-pageTitle"
+        textStyle="text-2xl-mono-bold"
+      >
+        {t('createHead')}
+      </Text>
       <ContentBox title={t('createSubhead')}>
         <Flex
           gap="4"
