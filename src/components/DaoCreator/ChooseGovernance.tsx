@@ -75,6 +75,16 @@ export function ChooseGovernance() {
           disabled={!isCurrentChainSupported}
           readOnly
         />
+        <RadioWithText
+          label={t('labelGnosisWithUsul', { ns: 'common' })}
+          description={isCurrentChainSupported ? t('descGnosisUsul') : GNOSIS_UNSUPPORTED_MESSAGE}
+          id="gnosis-safe-usul"
+          name="governance"
+          isSelected={governance === GovernanceTypes.GNOSIS_SAFE_USUL}
+          onChange={() => fieldUpdate(GovernanceTypes.GNOSIS_SAFE_USUL)}
+          disabled={!isCurrentChainSupported}
+          readOnly
+        />
       </div>
     </ContentBox>
   );

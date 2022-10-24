@@ -79,21 +79,21 @@ export function GnosisConfig() {
       <InputBox>
         <Input
           type="text"
-          value={numberOfSigners}
-          onChange={handleSignersChanges}
+          value={signatureThreshold}
+          onChange={event => updateThreshold(event.target.value)}
           label={t('labelSigThreshold')}
-          helperText={t('labelSigners')}
+          helperText={t('helperSigThreshold')}
+          errorMessage={thresholdError}
           restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
         />
       </InputBox>
       <InputBox>
         <Input
           type="number"
-          value={signatureThreshold}
-          onChange={event => updateThreshold(event.target.value)}
-          errorMessage={thresholdError}
-          label={t('helperSigners')}
-          helperText={t('helperSigThreshold')}
+          value={numberOfSigners}
+          onChange={handleSignersChanges}
+          label={t('labelSigners')}
+          helperText={t('helperSigners')}
           restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
         />
       </InputBox>
