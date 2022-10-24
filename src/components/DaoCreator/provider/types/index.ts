@@ -121,9 +121,7 @@ export interface GnosisConfig {
   signatureThreshold: string;
 }
 
-export interface GnosisDAO extends DAODetails, GnosisConfig {
-  hasUsul?: boolean;
-}
+export interface GnosisDAO extends DAODetails, GnosisConfig {}
 
 export type DAODetails = {
   daoName: string;
