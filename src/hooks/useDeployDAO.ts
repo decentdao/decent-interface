@@ -354,6 +354,7 @@ const useDeployDAO = () => {
 
         const txs: MetaTransaction[] = [
           createSafeTx,
+          createTokenTx,
           deployStrategyTx,
           deployUsulTx,
           execInternalSafeTx,
