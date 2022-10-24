@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { ethers } from 'ethers';
-import { VotesToken__factory, TokenFactory__factory } from '../assets/typechain-types/votes-token';
+import { VotesToken__factory } from '../assets/typechain-types/fractal-contracts';
 import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import {
   TokenGovernanceDAO,
@@ -244,9 +244,12 @@ const useDeployDAO = () => {
         const { solidityKeccak256, defaultAbiCoder, getCreate2Address } = ethers.utils;
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
-        const votingTokenNonce = getRandomBytes();
 
         const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
+        const votesMasterCopyContract = new ethers.Contract(
+          '0x0697DCa73151da93D18CDdF5DB52f9A8363c9Ba9',
+          VotesToken__factory.createInterface()
+        );
 
         if (!deploySafeTx) {
           return;
@@ -254,42 +257,33 @@ const useDeployDAO = () => {
 
         const { predictedGnosisSafeAddress, createSafeTx } = deploySafeTx;
 
-        const votingTokenSalt = solidityKeccak256(
-          ['address', 'address', 'uint256', 'bytes32'],
-          [account, account, chainId, votingTokenNonce]
-        );
-        const votingTokenInitCode = solidityKeccak256(
-          ['bytes', 'bytes'],
+        const encodedInitTokenData = defaultAbiCoder.encode(
+          ['string', 'string', 'address[]', 'uint256[]'],
           [
-            // eslint-disable-next-line camelcase
-            VotesToken__factory.bytecode,
-            defaultAbiCoder.encode(
-              ['string', 'string', 'address[]', 'uint256[]'],
-              [
-                tokenGovernanceDaoData.tokenName,
-                tokenGovernanceDaoData.tokenSymbol,
-                tokenGovernanceDaoData.tokenAllocations.map(
-                  tokenAllocation => tokenAllocation.address
-                ),
-                tokenGovernanceDaoData.tokenAllocations.map(
-                  tokenAllocation => tokenAllocation.amount.bigNumberValue
-                ),
-              ]
+            tokenGovernanceDaoData.tokenName,
+            tokenGovernanceDaoData.tokenSymbol,
+            tokenGovernanceDaoData.tokenAllocations.map(tokenAllocation => tokenAllocation.address),
+            tokenGovernanceDaoData.tokenAllocations.map(
+              tokenAllocation => tokenAllocation.amount.bigNumberValue
             ),
           ]
         );
-
-        const predictedVotingTokenAddress = getCreate2Address(
-          tokenFactory.address,
-          votingTokenSalt,
-          votingTokenInitCode
+        const encodedSetUpTokenData = votesMasterCopyContract.interface.encodeFunctionData(
+          'setUp',
+          [encodedInitTokenData]
+        );
+        const tokenSalt = getRandomBytes();
+        const predictedTokenAddress = getCreate2Address(
+          zodiacModuleProxyFactoryContract.address,
+          tokenSalt,
+          solidityKeccak256(['bytes'], [VotesToken__factory.bytecode])
         );
 
         const encodedStrategyInitParams = defaultAbiCoder.encode(
           ['address', 'address', 'address', 'uint256', 'uint256', 'uint256', 'string'],
           [
             predictedGnosisSafeAddress, // owner
-            predictedVotingTokenAddress,
+            predictedTokenAddress,
             '0x0000000000000000000000000000000000000001',
             tokenGovernanceDaoData.votingPeriod,
             tokenGovernanceDaoData.proposalThreshold,
@@ -305,9 +299,10 @@ const useDeployDAO = () => {
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
           linearVotingMastercopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
+        const strategyNonce = getRandomBytes();
         const strategySalt = solidityKeccak256(
           ['bytes32', 'uint256'],
-          [solidityKeccak256(['bytes'], [encodedStrategySetUpData]), '0x01']
+          [solidityKeccak256(['bytes'], [encodedStrategySetUpData]), strategyNonce]
         );
         const predictedStrategyAddress = getCreate2Address(
           zodiacModuleProxyFactoryContract.address,
@@ -331,9 +326,10 @@ const useDeployDAO = () => {
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
           usulMastercopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
+        const usulNonce = getRandomBytes();
         const usulSalt = solidityKeccak256(
           ['bytes32', 'uint256'],
-          [solidityKeccak256(['bytes'], [encodedSetupUsulData]), '0x01']
+          [solidityKeccak256(['bytes'], [encodedSetupUsulData]), usulNonce]
         );
         const predictedUsulAddress = getCreate2Address(
           zodiacModuleProxyFactoryContract.address,
@@ -356,18 +352,21 @@ const useDeployDAO = () => {
           predictedStrategyAddress,
           signerOrProvider
         );
-        const tokenFactoryContract = await TokenFactory__factory.connect(
-          tokenFactory.address,
-          signerOrProvider
-        );
 
         const internaltTxs: MetaTransaction[] = [
           buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
           buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
           buildContractCall(
             safeContract,
+            'addOwnerWithThreshold',
+            [usulContract.address, 1],
+            0,
+            false
+          ),
+          buildContractCall(
+            safeContract,
             'removeOwner',
-            [multiSendContract.address, usulContract.address],
+            [usulContract.address, multiSendContract.address, 1],
             0,
             false
           ),
@@ -375,28 +374,9 @@ const useDeployDAO = () => {
         const safeInternalTx = encodeMultiSend(internaltTxs);
 
         const createTokenTx = buildContractCall(
-          tokenFactoryContract,
-          'create',
-          [
-            account,
-            [
-              // eslint-disable-next-line camelcase
-              VotesToken__factory.bytecode,
-              defaultAbiCoder.encode(
-                ['string', 'string', 'address[]', 'uint256[]'],
-                [
-                  tokenGovernanceDaoData.tokenName,
-                  tokenGovernanceDaoData.tokenSymbol,
-                  tokenGovernanceDaoData.tokenAllocations.map(
-                    tokenAllocation => tokenAllocation.address
-                  ),
-                  tokenGovernanceDaoData.tokenAllocations.map(
-                    tokenAllocation => tokenAllocation.amount.bigNumberValue
-                  ),
-                ]
-              ),
-            ],
-          ],
+          zodiacModuleProxyFactoryContract,
+          'deployModule',
+          [votesMasterCopyContract.address, encodedSetUpTokenData, tokenSalt],
           0,
           false
         );
@@ -404,14 +384,14 @@ const useDeployDAO = () => {
         const deployStrategyTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [linearVotingMastercopyContract.address, encodedStrategySetUpData, '0x01'],
+          [linearVotingMastercopyContract.address, encodedStrategySetUpData, strategyNonce],
           0,
           false
         );
         const deployUsulTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [usulMastercopyContract.address, encodedSetupUsulData, 0],
+          [usulMastercopyContract.address, encodedSetupUsulData, usulNonce],
           0,
           false
         );
@@ -467,7 +447,6 @@ const useDeployDAO = () => {
       tokenFactory,
       account,
       signerOrProvider,
-      chainId,
       t,
     ]
   );
