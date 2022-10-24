@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { VotesToken__factory } from '../assets/typechain-types/fractal-contracts';
 import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import {
@@ -257,15 +257,34 @@ const useDeployDAO = () => {
 
         const { predictedGnosisSafeAddress, createSafeTx } = deploySafeTx;
 
+        const tokenAllocationsOwners = tokenGovernanceDaoData.tokenAllocations.map(
+          tokenAllocation => tokenAllocation.address
+        );
+        const tokenAllocationsValues = tokenGovernanceDaoData.tokenAllocations.map(
+          tokenAllocation => tokenAllocation.amount.bigNumberValue!
+        );
+
+        const tokenAllocationSum: BigNumber = tokenAllocationsValues.reduce(
+          (accumulator, tokenAllocation) => {
+            return tokenAllocation!.add(accumulator);
+          },
+          BigNumber.from(0)
+        );
+
+        if (tokenGovernanceDaoData.tokenSupply.bigNumberValue!.gt(tokenAllocationSum)) {
+          tokenAllocationsOwners.push(predictedGnosisSafeAddress);
+          tokenAllocationsValues.push(
+            tokenGovernanceDaoData.tokenSupply.bigNumberValue!.sub(tokenAllocationSum)
+          );
+        }
+
         const encodedInitTokenData = defaultAbiCoder.encode(
           ['string', 'string', 'address[]', 'uint256[]'],
           [
             tokenGovernanceDaoData.tokenName,
             tokenGovernanceDaoData.tokenSymbol,
-            tokenGovernanceDaoData.tokenAllocations.map(tokenAllocation => tokenAllocation.address),
-            tokenGovernanceDaoData.tokenAllocations.map(
-              tokenAllocation => tokenAllocation.amount.bigNumberValue
-            ),
+            tokenAllocationsOwners,
+            tokenAllocationsValues,
           ]
         );
         const encodedSetUpTokenData = votesMasterCopyContract.interface.encodeFunctionData(
