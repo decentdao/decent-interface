@@ -20,7 +20,7 @@ export function MenuItemButton({
     <Fragment>
       <MenuItem
         cursor="pointer"
-        p="4"
+        p="1rem 1.5rem"
         data-testid={testId}
         onClick={onClick}
         border="1px solid"
@@ -35,7 +35,7 @@ export function MenuItemButton({
           w="full"
         >
           <Text textStyle="text-base-mono-medium">{label}</Text>
-          <Icon />
+          <Icon boxSize="1.5rem" />
         </Flex>
       </MenuItem>
     </Fragment>

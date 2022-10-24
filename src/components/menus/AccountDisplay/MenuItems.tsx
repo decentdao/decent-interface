@@ -13,10 +13,10 @@ export function MenuItems() {
   } = useWeb3Provider();
   return (
     <MenuList
-      w="14rem"
+      w="16.25rem"
       rounded="lg"
       shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
-      mr={['auto', '2rem']}
+      mr={['auto', '1rem']}
       className="menu-list"
       bg="grayscale.black"
       sx={{

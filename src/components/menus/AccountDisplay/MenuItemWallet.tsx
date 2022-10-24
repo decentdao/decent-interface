@@ -28,7 +28,7 @@ export function MenuItemWallet() {
       data-testid="accountMenu-wallet"
       bg="black.900"
       cursor="default"
-      p="4"
+      p="1rem 1.5rem"
       borderBottomRadius="lg"
     >
       <Flex
