@@ -73,9 +73,6 @@ export function useNextDisabled(state: CreatorState) {
         }
         setIsDisabled(true);
         break;
-      case CreatorSteps.GOV_CONFIG:
-        setIsDisabled(false);
-        break;
       case CreatorSteps.GOV_CONFIG: {
         const isEssentialsComplete = !!essentials.daoName.trim();
         const isGovTokenComplete =
@@ -94,7 +91,7 @@ export function useNextDisabled(state: CreatorState) {
           govModule.lateQuorumExecution.gte(0) &&
           govModule.voteStartDelay.gte(0) &&
           govModule.votingPeriod.gt(isGnosisWithUsul ? 1 : 0);
-        setIsDisabled(!isEssentialsComplete && !isGovModuleComplete && !isGovTokenComplete);
+        setIsDisabled(!isEssentialsComplete || !isGovModuleComplete || !isGovTokenComplete);
         break;
       }
       case CreatorSteps.GNOSIS_GOVERNANCE:
