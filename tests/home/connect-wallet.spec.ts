@@ -8,7 +8,7 @@ test.describe.serial('Confirm Wallet is Connected to Fractal', async () => {
     const home = await new HomePage(page).visit();
     const navPage = new NavPage(page);
 
-    home.clickHeaderMenuDropdown();
+    await home.clickHeaderMenuDropdown();
 
     const networkItem = await navPage.menuLocator(MenuItems.Network);
     await expect(networkItem!).toContainText('Local Test Network');
@@ -31,8 +31,8 @@ test.describe.serial('Confirm Wallet is Connected to Fractal', async () => {
     const home = await new HomePage(page).visit();
     await home.connectToWallet();
 
-    home.clickHeaderMenuDropdown();
-    home.clickMenuDisconnect();
+    await home.clickHeaderMenuDropdown();
+    await home.clickMenuDisconnect();
 
     await expect(page.locator('[data-testid=header-accountMenu]')).toContainText('Connect Wallet');
   });
