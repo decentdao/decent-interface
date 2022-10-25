@@ -115,6 +115,7 @@ function TokenAllocations({
             <Input
               size="base"
               type="number"
+              data-testid="tokenVoting-parentTokenAllocationInput"
               value={parentAllocationAmount.value}
               onChange={e => onParentAllocationChange(e.target.value)}
               min="0"
@@ -126,6 +127,7 @@ function TokenAllocations({
         <Grid
           gridTemplateColumns="1fr max-content 5rem"
           gap="4"
+          data-testid="tokenVoting-tokenAllocations"
         >
           <Text
             textStyle="text-base-sans-bold"
@@ -139,10 +141,7 @@ function TokenAllocations({
           >
             Amount
           </Text>
-          <Text
-            textStyle="text-base-sans-bold"
-            color="grayscale.500"
-          ></Text>
+          <Box>{/* EMPTY */}</Box>
           {tokenAllocations &&
             tokenAllocations.map((tokenAllocation, index) => (
               <TokenAllocationInput
@@ -162,6 +161,7 @@ function TokenAllocations({
           mx="0px"
           variant="text"
           onClick={() => addTokenAllocation()}
+          data-testid="tokenVoting-addAllocation"
         >
           {t('labelAddAllocation')}
         </Button>

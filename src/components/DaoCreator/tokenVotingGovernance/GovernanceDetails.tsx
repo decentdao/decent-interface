@@ -73,6 +73,7 @@ function GovernanceDetails() {
               onChange={onThresholdChange}
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min="0"
+              data-testid="govConfig-proposalThreshold"
             />
           </LabelWrapper>
         </InputBox>
@@ -89,6 +90,7 @@ function GovernanceDetails() {
               rightElement={blocks}
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min="0"
+              data-testid="govConfig-voteStartDelay"
             />
           </LabelWrapper>
           <Text
@@ -111,6 +113,7 @@ function GovernanceDetails() {
               rightElement={blocks}
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min={isSafeWithUsul ? '2' : '1'}
+              data-testid="govConfig-votingPeriod"
             />
           </LabelWrapper>
           <Text
@@ -134,6 +137,7 @@ function GovernanceDetails() {
               rightElement="%"
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min="0"
+              data-testid="govConfig-quorum"
             />
           </LabelWrapper>
         </InputBox>
@@ -152,6 +156,7 @@ function GovernanceDetails() {
               label={t('labelLateQuorumDelay', { ns: 'daoCreate' })}
               rightElement={blocks}
               min="0"
+              data-testid="govConfig-lateQuorumExecution"
             />
           </LabelWrapper>
         </InputBox>
@@ -168,6 +173,7 @@ function GovernanceDetails() {
               rightElement={blocks}
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min="0"
+              data-testid="govConfig-executionDelay"
             />
           </LabelWrapper>
           <Text

@@ -52,6 +52,7 @@ function TokenDetails() {
           <Input
             size="base"
             type="text"
+            data-testid="tokenVoting-tokenNameInput"
             value={govToken.tokenName}
             onChange={e => fieldUpdate(e.target.value, 'tokenName')}
             minWidth="50%"
@@ -66,6 +67,7 @@ function TokenDetails() {
           <Input
             size="base"
             type="text"
+            data-testid="tokenVoting-tokenSymbolInput"
             value={govToken.tokenSymbol}
             onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
           />
@@ -75,14 +77,15 @@ function TokenDetails() {
         <LabelWrapper
           label={t('labelTokenSupply')}
           subLabel={t('helperTokenSupply')}
-          decimals={DEFAULT_TOKEN_DECIMALS}
-          restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
         >
           <Input
             size="base"
             type="number"
+            data-testid="tokenVoting-tokenSupplyInput"
             value={govToken.tokenSupply.value}
             onChange={e => onSupplyChange(e.target.value)}
+            decimals={DEFAULT_TOKEN_DECIMALS}
+            restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
           />
         </LabelWrapper>
       </InputBox>

@@ -75,6 +75,7 @@ function TokenAllocationInput({
           value={tokenAllocation.address}
           onChange={event => updateAddress(event.target.value)}
           width="full"
+          data-testid="tokenVoting-tokenAllocationAddressInput"
         />
       </LabelWrapper>
       <LabelWrapper
@@ -93,6 +94,7 @@ function TokenAllocationInput({
           onChange={event => updateAmount(event.target.value)}
           restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
           decimals={DEFAULT_TOKEN_DECIMALS}
+          data-testid="tokenVoting-tokenAllocationAmountInput"
         />
       </LabelWrapper>
       <Button
@@ -100,6 +102,7 @@ function TokenAllocationInput({
         type="button"
         onClick={() => removeTokenAllocation(index)}
         px="0px"
+        data-testid="tokenVoting-tokenAllocationRemoveButton"
       >
         {t('remove')}
       </Button>
