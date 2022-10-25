@@ -1,9 +1,10 @@
+import { Box, Grid, Text } from '@chakra-ui/react';
+import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TokenAllocation } from '../../../types/tokenAllocation';
-import { TextButton } from '../../ui/forms/Button';
-import Input, { RestrictCharTypes } from '../../ui/forms/Input';
+import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { BigNumberInput } from '../provider/types';
@@ -99,28 +100,49 @@ function TokenAllocations({
   const { t } = useTranslation('daoCreate');
 
   return (
-    <div>
-      <div className=" text-gray-50 pb-2">Token Allocations</div>
+    <Box>
+      {/* @todo add translations */}
+      <ContentBoxTitle>Token Allocations</ContentBoxTitle>
       {canReceiveParentAllocations && !!parentAllocationAmount && (
         <InputBox>
-          <Input
-            type="number"
-            value={parentAllocationAmount.value}
-            onChange={e => onParentAllocationChange(e.target.value)}
+          <LabelWrapper
             label={t('labelParentAllocation')}
-            helperText={t('helperParentAllocation')}
-            disabled={false}
+            subLabel={t('helperParentAllocation')}
             restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
-            min="0"
             errorMessage={hasAmountError ? t('errorOverallocated') : ''}
             decimals={DEFAULT_TOKEN_DECIMALS}
-          />
+          >
+            <Input
+              size="base"
+              type="number"
+              value={parentAllocationAmount.value}
+              onChange={e => onParentAllocationChange(e.target.value)}
+              min="0"
+            />
+          </LabelWrapper>
         </InputBox>
       )}
       <InputBox>
-        <div className="grid grid-cols-8 gap-4">
-          <div className="col-span-4 md:col-span-5 text-xs text-gray-25">Address</div>
-          <div className="col-span-2 text-xs text-gray-25">Amount</div>
+        <Grid
+          gridTemplateColumns="1fr max-content 5rem"
+          gap="4"
+        >
+          <Text
+            textStyle="text-base-sans-bold"
+            color="grayscale.500"
+          >
+            Address
+          </Text>
+          <Text
+            textStyle="text-base-sans-bold"
+            color="grayscale.500"
+          >
+            Amount
+          </Text>
+          <Text
+            textStyle="text-base-sans-bold"
+            color="grayscale.500"
+          ></Text>
           {tokenAllocations &&
             tokenAllocations.map((tokenAllocation, index) => (
               <TokenAllocationInput
@@ -132,14 +154,19 @@ function TokenAllocations({
                 removeTokenAllocation={removeTokenAllocation}
               />
             ))}
-        </div>
-        <TextButton
+        </Grid>
+        <Button
+          size="base"
+          maxWidth="fit-content"
+          px="0px"
+          mx="0px"
+          variant="text"
           onClick={() => addTokenAllocation()}
-          className="px-0 my-1 mx-0"
-          label={t('labelAddAllocation')}
-        />
+        >
+          {t('labelAddAllocation')}
+        </Button>
       </InputBox>
-    </div>
+    </Box>
   );
 }
 

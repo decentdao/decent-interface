@@ -1,11 +1,11 @@
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { checkAddress } from '../../../hooks/useAddress';
 import { TextButton } from '../../ui/forms/Button';
-import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 
 interface TokenAllocationProps {
   index: number;
@@ -61,11 +61,7 @@ function TokenAllocationInput({
 
   return (
     <>
-      <Input
-        containerClassName="col-start-1 col-span-4 md:col-span-5 w-full my-auto"
-        type="text"
-        value={tokenAllocation.address}
-        onChange={event => updateAddress(event.target.value)}
+      <LabelWrapper
         errorMessage={
           tokenAllocation.addressError
             ? tokenAllocation.addressError
@@ -73,12 +69,17 @@ function TokenAllocationInput({
             ? '‎'
             : undefined
         }
-      />
-      <Input
-        containerClassName="col-span-2 md:pt-0 my-auto"
-        type="number"
-        value={tokenAllocation.amount.value}
-        onChange={event => updateAmount(event.target.value)}
+      >
+        <Input
+          size="base"
+          containerClassName="col-start-1 col-span-4 md:col-span-5 w-full my-auto"
+          type="text"
+          value={tokenAllocation.address}
+          onChange={event => updateAddress(event.target.value)}
+          width="full"
+        />
+      </LabelWrapper>
+      <LabelWrapper
         errorMessage={
           hasAmountError
             ? t('errorOverallocated', { ns: 'daoCreate' })
@@ -86,17 +87,25 @@ function TokenAllocationInput({
             ? '‎'
             : undefined
         }
-        restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
-        decimals={DEFAULT_TOKEN_DECIMALS}
-      />
-      <div className="md:col-span-1">
-        <TextButton
-          type="button"
-          onClick={() => removeTokenAllocation(index)}
-          label={t('remove')}
-          className="px-0 mx-0"
+      >
+        <Input
+          size="base"
+          containerClassName="col-span-2 md:pt-0 my-auto"
+          type="number"
+          value={tokenAllocation.amount.value}
+          onChange={event => updateAmount(event.target.value)}
+          restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
+          decimals={DEFAULT_TOKEN_DECIMALS}
         />
-      </div>
+      </LabelWrapper>
+      <Button
+        variant="text"
+        type="button"
+        onClick={() => removeTokenAllocation(index)}
+        px="0px"
+      >
+        {t('remove')}
+      </Button>
     </>
   );
 }
