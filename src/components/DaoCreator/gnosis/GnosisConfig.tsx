@@ -84,6 +84,7 @@ export function GnosisConfig() {
           errorMessage={thresholdError}
         >
           <Input
+            data-testid="gnosisConfig-thresholdInput"
             size="base"
             type="text"
             value={signatureThreshold}
@@ -99,6 +100,7 @@ export function GnosisConfig() {
           subLabel={t('helperSigners')}
         >
           <Input
+            data-testid="gnosisConfig-numberOfSignerInput"
             size="base"
             type="number"
             value={numberOfSigners}
@@ -118,7 +120,7 @@ export function GnosisConfig() {
       >
         The addresses added here have permission to submit and approve transactions
       </Text>
-      <InputBox>
+      <InputBox data-testid="gnosisConfig-signatureList">
         {trustedAddresses.map((trustee, i) => (
           <GnosisSignatures
             key={i}
