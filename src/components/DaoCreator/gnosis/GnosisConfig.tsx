@@ -1,8 +1,9 @@
+import { Text } from '@chakra-ui/react';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions, TrustedAddress } from '../provider/types';
@@ -77,32 +78,49 @@ export function GnosisConfig() {
     <ContentBox>
       <ContentBoxTitle>{t('titleCreateGnosis')}</ContentBoxTitle>
       <InputBox>
-        <Input
-          type="text"
-          value={signatureThreshold}
-          onChange={event => updateThreshold(event.target.value)}
+        <LabelWrapper
           label={t('labelSigThreshold')}
-          helperText={t('helperSigThreshold')}
+          subLabel={t('helperSigThreshold')}
           errorMessage={thresholdError}
-          restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-        />
+        >
+          <Input
+            data-testid="gnosisConfig-thresholdInput"
+            size="base"
+            type="text"
+            value={signatureThreshold}
+            onChange={event => updateThreshold(event.target.value)}
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+            w="full"
+          />
+        </LabelWrapper>
       </InputBox>
       <InputBox>
-        <Input
-          type="number"
-          value={numberOfSigners}
-          onChange={handleSignersChanges}
-          label={t('labelSigners')}
-          helperText={t('helperSigners')}
-          restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-        />
+        <LabelWrapper
+          label={t('helperSigners')}
+          subLabel={t('helperSigners')}
+        >
+          <Input
+            data-testid="gnosisConfig-numberOfSignerInput"
+            size="base"
+            type="number"
+            value={numberOfSigners}
+            onChange={handleSignersChanges}
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+            w="full"
+          />
+        </LabelWrapper>
       </InputBox>
 
       <ContentBoxTitle>Trusted Addresses</ContentBoxTitle>
-      <div className="text-gray-50 text-xs font-medium my-4">
+      <Text
+        textStyle="text-sm-sans-medium"
+        my="0.25rem"
+        color="chocolate.100"
+        className="text-gray-50 text-xs font-medium my-4"
+      >
         The addresses added here have permission to submit and approve transactions
-      </div>
-      <InputBox>
+      </Text>
+      <InputBox data-testid="gnosisConfig-signatureList">
         {trustedAddresses.map((trustee, i) => (
           <GnosisSignatures
             key={i}
