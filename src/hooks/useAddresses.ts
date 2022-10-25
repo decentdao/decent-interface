@@ -7,11 +7,13 @@ export function useAddresses(chainId: number | undefined) {
     daoFactory?: { address: string };
     treasuryModuleFactory?: { address: string };
     tokenFactory?: { address: string };
+    votesMasterCopy?: { address: string };
     governorFactory?: { address: string };
     claimFactory?: { address: string };
     gnosisWrapperFactory?: { address: string };
     gnosisSafeFactory?: { address: string };
     usulMastercopy?: { address: string };
+    linearVotingMastercopy?: { address: string };
     zodiacModuleProxyFactory?: { address: string };
     dao?: { address: string };
     accessControl?: { address: string };
@@ -21,6 +23,7 @@ export function useAddresses(chainId: number | undefined) {
     claimModule?: { address: string };
     gnosisWrapper?: { address: string };
     gnosisSafe?: { address: string };
+    multiSend?: { address: string };
   }>({});
 
   useEffect(() => {
@@ -43,7 +46,10 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_GNOSISWRAPPER_ADDRESSES ||
       !process.env.REACT_APP_GNOSISSAFE_ADDRESSES ||
       !process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES ||
-      !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
+      !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES ||
+      !process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES ||
+      !process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES ||
+      !process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
@@ -94,11 +100,20 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisSafeNetworksAddresses: { [chaindId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_GNOSISSAFE_ADDRESSES
     );
+    const zodiacProxyFactoryAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
+    );
     const usulMastercopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES
     );
-    const zodiacProxyFactoryAddresses: { [chainId: number]: { address: string } } = JSON.parse(
-      process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
+    const linearVotingMastercopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES
+    );
+    const multiSendAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES
+    );
+    const votesMasterCopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
     );
 
     const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
@@ -122,6 +137,9 @@ export function useAddresses(chainId: number | undefined) {
     const gnosisSafeAddress: { address: string } = gnosisSafeNetworksAddresses[chainId];
     const usulMastercopy: { address: string } = usulMastercopyAddresses[chainId];
     const zodiacModuleProxyFactory: { address: string } = zodiacProxyFactoryAddresses[chainId];
+    const linearVotingMastercopy: { address: string } = linearVotingMastercopyAddresses[chainId];
+    const multiSend: { address: string } = multiSendAddresses[chainId];
+    const votesMasterCopy: { address: string } = votesMasterCopyAddresses[chainId];
 
     if (
       !metaFactoryAddress ||
@@ -141,7 +159,10 @@ export function useAddresses(chainId: number | undefined) {
       !gnosisWrapperAddress ||
       !gnosisSafeAddress ||
       !usulMastercopy ||
-      !zodiacModuleProxyFactory
+      !zodiacModuleProxyFactory ||
+      !linearVotingMastercopy ||
+      !multiSend ||
+      !votesMasterCopy
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -167,6 +188,9 @@ export function useAddresses(chainId: number | undefined) {
       gnosisSafe: gnosisSafeAddress,
       usulMastercopy,
       zodiacModuleProxyFactory,
+      linearVotingMastercopy,
+      multiSend,
+      votesMasterCopy,
     });
   }, [chainId]);
 
