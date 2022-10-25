@@ -1,6 +1,5 @@
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { checkAddress } from '../../../hooks/useAddress';
-import { TextButton } from '../../ui/forms/Button';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { utils } from 'ethers';
@@ -72,7 +71,6 @@ function TokenAllocationInput({
       >
         <Input
           size="base"
-          containerClassName="col-start-1 col-span-4 md:col-span-5 w-full my-auto"
           type="text"
           value={tokenAllocation.address}
           onChange={event => updateAddress(event.target.value)}
@@ -90,7 +88,6 @@ function TokenAllocationInput({
       >
         <Input
           size="base"
-          containerClassName="col-span-2 md:pt-0 my-auto"
           type="number"
           value={tokenAllocation.amount.value}
           onChange={event => updateAmount(event.target.value)}
