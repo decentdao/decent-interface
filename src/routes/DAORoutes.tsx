@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
+import { DAOController } from '../controller/DAOs/DAOController';
+import DAO from '../pages/Dao';
 import DaoCreate from '../pages/DaoCreate';
 import { DAO_ROUTES } from './constants';
 
@@ -16,15 +18,15 @@ function DAORoutes() {
       {/* <Route
         path="favorites"
         element={<DAOFavorites />}
-      />
+      /> */}
       <Route
-        path=":address/*"
+        path={DAO_ROUTES.dao.path}
         element={
           <DAOController>
             <DAO />
           </DAOController>
         }
-      /> */}
+      />
     </Routes>
   );
 }
