@@ -90,6 +90,7 @@ function TokenAllocationInput({
         <Input
           size="base"
           type="number"
+          isInvalid={hasAmountError || !!tokenAllocation.addressError}
           value={tokenAllocation.amount.value}
           onChange={event => updateAmount(event.target.value)}
           restrictChar={RestrictCharTypes.FLOAT_NUMBERS}

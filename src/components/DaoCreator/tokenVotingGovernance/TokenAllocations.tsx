@@ -115,6 +115,7 @@ function TokenAllocations({
             <Input
               size="base"
               type="number"
+              isInvalid={hasAmountError}
               data-testid="tokenVoting-parentTokenAllocationInput"
               value={parentAllocationAmount.value}
               onChange={e => onParentAllocationChange(e.target.value)}
@@ -126,7 +127,7 @@ function TokenAllocations({
       <InputBox>
         <Grid
           gridTemplateColumns="1fr max-content 5rem"
-          gap="4"
+          gap="2"
           data-testid="tokenVoting-tokenAllocations"
         >
           <Text
