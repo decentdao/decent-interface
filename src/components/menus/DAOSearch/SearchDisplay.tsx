@@ -18,7 +18,11 @@ export function SearchDisplay({ loading, errorMessage, validAddress, address }: 
 
   const displayName = useDisplayName(address);
   if (loading && address) {
-    return <Box>Loading...</Box>;
+    return (
+      <Box>
+        <Text textStyle="text-base-mono-regular">{t('loading')}</Text>
+      </Box>
+    );
   }
   if (errorMessage && !loading) {
     return (
