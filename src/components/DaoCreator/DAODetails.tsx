@@ -32,7 +32,7 @@ function DAODetails() {
             data-testid="essentials-daoName"
             type="text"
             size="base"
-            w="100%"
+            width="full"
             value={state.essentials.daoName}
             onChange={daoNameChange}
           />
