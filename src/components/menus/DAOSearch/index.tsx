@@ -8,15 +8,25 @@ import { useTranslation } from 'react-i18next';
 export function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState('');
   const inputRef = useRef<HTMLInputElement>();
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { t } = useTranslation(['dashboard']);
 
   const { errorMessage, loading, address, addressNodeType, resetErrorState, updateSearchString } =
     useSearchDao();
 
-  const focusInput = () => {
+  const selectInput = () => {
     if (inputRef.current) {
       inputRef.current.select();
+    }
+  };
+  const focusInput = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  const unFocusInput = () => {
+    if (inputRef.current) {
+      inputRef.current.blur();
     }
   };
 
@@ -39,13 +49,16 @@ export function DAOSearch() {
       <Menu
         matchWidth
         isLazy
-        closeOnSelect={false}
+        defaultIsOpen={true}
+        onOpen={selectInput}
+        onClose={() => {
+          setSearchAddressInput('');
+          unFocusInput();
+        }}
       >
         <MenuButton
           h="full"
           w="full"
-          ref={menuButtonRef}
-          onClick={focusInput}
           data-testid="header-searchMenuButton"
         >
           <Input
@@ -63,6 +76,7 @@ export function DAOSearch() {
           />
         </MenuButton>
         <MenuList
+          onFocus={focusInput}
           border="none"
           rounded="lg"
           shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}

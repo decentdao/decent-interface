@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { Button } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -33,9 +33,13 @@ export function SearchDisplay({ loading, errorMessage, validAddress, address }: 
   }
   if (validAddress && address && !loading) {
     return (
-      <Flex
+      <MenuItem
+        p="0px"
+        display="flex"
         flexDirection="column"
         alignItems="flex-start"
+        onClick={() => navigate(DAO_ROUTES.dao.relative(address))}
+        cursor="default"
       >
         <Text
           textStyle="text-sm-sans-regular"
@@ -49,11 +53,9 @@ export function SearchDisplay({ loading, errorMessage, validAddress, address }: 
           width="full"
         >
           <Text textStyle="text-base-sans-medium">{displayName}</Text>
-          <Button onClick={() => navigate(DAO_ROUTES.dao.relative(address))}>
-            {t('labelViewDAO')}
-          </Button>
+          <Button as="div">{t('labelViewDAO')}</Button>
         </Flex>
-      </Flex>
+      </MenuItem>
     );
   }
   return null;
