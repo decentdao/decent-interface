@@ -4,9 +4,8 @@ import { Input, Search } from '@decent-org/fractal-ui';
 import useSearchDao from '../../../hooks/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 import { useTranslation } from 'react-i18next';
-interface IDAONavigation {}
 
-export function DAOSearch({}: IDAONavigation) {
+export function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState('');
   const inputRef = useRef<HTMLInputElement>();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
