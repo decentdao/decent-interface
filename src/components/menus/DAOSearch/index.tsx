@@ -9,7 +9,6 @@ interface IDAONavigation {}
 export function DAOSearch({}: IDAONavigation) {
   const [searchAddressInput, setSearchAddressInput] = useState('');
   const inputRef = useRef<HTMLInputElement>();
-  const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { t } = useTranslation(['dashboard']);
 
@@ -70,10 +69,7 @@ export function DAOSearch({}: IDAONavigation) {
           shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
           bg="grayscale.black"
         >
-          <Box
-            p="0.5rem 1rem"
-            ref={menuRef}
-          >
+          <Box p="0.5rem 1rem">
             <SearchDisplay
               loading={loading}
               errorMessage={errorMessage}
