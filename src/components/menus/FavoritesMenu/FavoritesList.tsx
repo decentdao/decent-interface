@@ -49,7 +49,27 @@ export function FavoritesList() {
           {chainFavorites.length === 0 ? (
             <Box>{t('emptyFavorites')}</Box>
           ) : (
-            <Box>
+            <Box
+              maxHeight="15rem"
+              overflowY="scroll"
+              sx={{
+                '&::-webkit-scrollbar': {
+                  background: 'transparent',
+                  width: '0.5rem',
+                  height: '0.5rem',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  border: 'none',
+                  boxShadow: 'none',
+                  background: 'grayscale.500',
+                  borderRadius: '0.5rem',
+                  minHeight: '2.5rem',
+                },
+                '&::-webkit-scrollbar-thumb:hover': {
+                  backgroundColor: 'grayscale.300',
+                },
+              }}
+            >
               {chainFavorites.map(favorite => (
                 <Favorite
                   key={favorite}
