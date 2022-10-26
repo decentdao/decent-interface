@@ -45,7 +45,7 @@ export function FavoritesList() {
         >
           {t('titleFavorites')}
         </Text>
-        <Box>
+        <Box mt="0.5rem">
           {chainFavorites.length === 0 ? (
             <Box>{t('emptyFavorites')}</Box>
           ) : (

@@ -13,7 +13,12 @@ export function FavoritesMenu() {
             alignItems="center"
           >
             <StarOutline color="gold.500" />
-            <Text color="gold.500">Favorites</Text>
+            <Text
+              textStyle="text-sm-mono-medium"
+              color="gold.500"
+            >
+              Favorites
+            </Text>
           </Flex>
         </MenuButton>
         <FavoritesList />
