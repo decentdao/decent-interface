@@ -23,7 +23,9 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     if (!provider || addressInput.trim() === '') {
-      setLoading(false);
+      setAddress('');
+      setValidAddress(undefined);
+      setLoading(undefined);
       return;
     }
 

@@ -67,6 +67,7 @@ export function DAOSearch() {
           rounded="lg"
           shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
           bg="grayscale.black"
+          hidden={!errorMessage && !address}
         >
           <Box p="0.5rem 1rem">
             <SearchDisplay

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NodeType } from '../providers/fractal/constants/enums';
 import useAddress from './useAddress';
@@ -20,12 +20,12 @@ const useSearchDao = () => {
    * refresh error state if one exists
    *
    */
-  const resetErrorState = () => {
+  const resetErrorState = useCallback(() => {
     if (errorMessage) {
       setErrorMessage(undefined);
       setSearchString(undefined);
     }
-  };
+  }, [errorMessage]);
 
   /**
    * updates search string when 'form' is submited
@@ -51,10 +51,11 @@ const useSearchDao = () => {
    * have not been ran yet.
    */
   useEffect(() => {
-    if (!searchString) {
+    if (loading !== false) {
       return;
     }
-    if (loading !== false) {
+    if (!address) {
+      resetErrorState();
       return;
     }
     if (!validAddress && address !== undefined) {
@@ -65,7 +66,16 @@ const useSearchDao = () => {
       setErrorMessage(t('errorFailedSearch'));
       return;
     }
-  }, [address, validAddress, searchString, addressIsDAO, addressIsGnosisSafe, loading, t]);
+  }, [
+    address,
+    validAddress,
+    searchString,
+    addressIsDAO,
+    addressIsGnosisSafe,
+    loading,
+    t,
+    resetErrorState,
+  ]);
 
   useEffect(() => {
     if (addressIsDAO === true) {

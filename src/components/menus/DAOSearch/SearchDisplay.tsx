@@ -56,9 +56,5 @@ export function SearchDisplay({ loading, errorMessage, validAddress, address }: 
       </Flex>
     );
   }
-  return (
-    <Box>
-      <Text textStyle="text-base-sans-medium">{t('sublabelSearch', { ns: 'dashboard' })}</Text>
-    </Box>
-  );
+  return null;
 }
