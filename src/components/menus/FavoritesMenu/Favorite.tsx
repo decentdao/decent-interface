@@ -19,6 +19,8 @@ export function Favorite({ address }: IFavorite) {
       >
         <StarGoldSolid />
         <Text
+          maxWidth="9rem"
+          noOfLines={1}
           color="grayscale.100"
           textStyle="text-base-sans-medium"
           _hover={{
