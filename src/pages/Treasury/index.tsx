@@ -1,4 +1,5 @@
-import { ReactNode, useMemo } from 'react';
+import { ethers } from 'ethers';
+import { ReactNode } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import ContentBanner from '../../components/ui/ContentBanner';
 import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
@@ -8,8 +9,8 @@ import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
 import H1 from '../../components/ui/H1';
 import TooltipAddressContent from '../../components/ui/TooltipAddressContent';
 import TooltipWrapper from '../../components/ui/TooltipWrapper';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { useTreasuryModule } from '../../providers/treasury/hooks/useTreasuryModule';
+import { useGnosisTreasuryInjector } from '../../controller/Modules/injectors/GnosisTreasuryInjectorContext';
+import { useGnosis } from '../../providers/gnosis/hooks/useGnosis';
 
 function TableRowWrapper({ children }: { children?: ReactNode }) {
   return (
@@ -20,28 +21,13 @@ function TableRowWrapper({ children }: { children?: ReactNode }) {
 }
 
 function Treasury() {
-  const {
-    selectedCurrency,
-    treasuryAssetsFungible,
-    treasuryAssetsFungiblePrices,
-    treasuryAssetsFungibleFiatAmounts,
-    treasuryAssetsNonFungible,
-    treasuryModuleContract,
-  } = useTreasuryModule();
-  const {
-    mvd: { dao },
-  } = useFractal();
-
-  const isCoinGeckoAttributionVisible = useMemo(
-    () => Object.keys(treasuryAssetsFungibleFiatAmounts).length > 0,
-    [treasuryAssetsFungibleFiatAmounts]
-  );
+  const { gnosisAssetsFungible, gnosisAssetsNonFungible } = useGnosisTreasuryInjector();
+  const { state } = useGnosis();
 
   const { t } = useTranslation('treasury');
-
   return (
     <div>
-      <H1>{t('titleTreasury', { daoName: dao.daoName })}</H1>
+      <H1>{t('titleTreasury', { daoName: state.name })}</H1>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
         <ContentBoxTitle>{t('titleEthTokens')}</ContentBoxTitle>
         <div className="my-2">
@@ -54,7 +40,7 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">{t('tokenAmount')}</div>
           </div>
-          {treasuryAssetsFungible.length === 0 && (
+          {gnosisAssetsFungible!.length === 0 && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <Trans
@@ -66,7 +52,7 @@ function Treasury() {
                     className="text-gold-500 hover:text-gold-300 mx-2"
                     content={
                       <TooltipAddressContent
-                        address={treasuryModuleContract ? treasuryModuleContract.address : ''}
+                        address={state.safeAddress ? state.safeAddress : ''}
                         title={t('titleTreasuryAddress')}
                       />
                     }
@@ -79,54 +65,61 @@ function Treasury() {
               </div>
             </TableRowWrapper>
           )}
-          {treasuryAssetsFungible.map(asset => {
-            const fiatAmount = treasuryAssetsFungibleFiatAmounts[asset.contractAddress];
-
+          {gnosisAssetsFungible!.map(asset => {
+            const address =
+              asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress;
+            const symbol = asset.token === null ? 'ETH' : asset.token.symbol;
+            const name = asset.token === null ? 'ETHEREUM' : asset.token.symbol;
+            const formattedTotal =
+              asset.token === null
+                ? ethers.utils.formatEther(asset.balance)
+                : ethers.utils.formatUnits(asset.balance, asset.token.decimals);
+            const fiatBalance = asset.fiatBalance;
             return (
-              <TableRowWrapper key={asset.contractAddress}>
+              <TableRowWrapper key={address}>
                 <div className="flex">
-                  <EtherscanLinkToken address={asset.contractAddress}>
-                    <div className="text-gold-500 w-16 sm:w-28">{asset.symbol}</div>
-                  </EtherscanLinkToken>
-                  <div className="text-gray-25 font-medium">{asset.name}</div>
+                  {address === ethers.constants.AddressZero ? (
+                    <EtherscanLinkAddress address={state.safeAddress}>
+                      <div className="text-gold-500 w-16 sm:w-28">{symbol}</div>
+                    </EtherscanLinkAddress>
+                  ) : (
+                    <EtherscanLinkToken address={address}>
+                      <div className="text-gold-500 w-16 sm:w-28">{symbol}</div>
+                    </EtherscanLinkToken>
+                  )}
+                  <div className="text-gray-25 font-medium">{name}</div>
                 </div>
                 <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                  {fiatAmount &&
+                  {fiatBalance &&
                     (() => {
-                      const price = treasuryAssetsFungiblePrices[asset.contractAddress];
-                      const { currency: formattedPricePerToken } = price[selectedCurrency];
-                      const { currency } = fiatAmount[selectedCurrency];
-
                       return (
                         <TooltipWrapper
                           as="span"
                           className="text-gray-100 mr-2 text-sm"
-                          content={`1 ${asset.symbol} = ${formattedPricePerToken}`}
+                          content={`1 ${symbol} = ${asset.fiatConversion}`}
                           isVisible
                           placement="top-start"
                         >
-                          ({currency})
+                          {fiatBalance}
                         </TooltipWrapper>
                       );
                     })()}
-                  {asset.formattedTotal}
+                  {formattedTotal}
                 </div>
               </TableRowWrapper>
             );
           })}
         </div>
-        {isCoinGeckoAttributionVisible && (
-          <div className="pt-2 px-4 text-xs text-right">
-            <a
-              className="text-gray-100"
-              href="https://coingecko.com/"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Data from CoinGecko
-            </a>
-          </div>
-        )}
+        <div className="pt-2 px-4 text-xs text-right">
+          <a
+            className="text-gray-100"
+            href="https://coingecko.com/"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Data from Gnosis API
+          </a>
+        </div>
       </div>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
         <ContentBoxTitle>NFTs</ContentBoxTitle>
@@ -140,7 +133,7 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">{t('tokenId')}</div>
           </div>
-          {!treasuryAssetsNonFungible.length && (
+          {!gnosisAssetsNonFungible.length && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <Trans
@@ -152,7 +145,7 @@ function Treasury() {
                     className="text-gold-500 hover:text-gold-300 mx-2"
                     content={
                       <TooltipAddressContent
-                        address={treasuryModuleContract ? treasuryModuleContract.address : ''}
+                        address={state.safeAddress ? state.safeAddress : ''}
                         title="Treasury address:"
                       />
                     }
@@ -165,21 +158,21 @@ function Treasury() {
               </div>
             </TableRowWrapper>
           )}
-          {treasuryAssetsNonFungible.map(asset => (
-            <TableRowWrapper key={asset.contractAddress}>
+          {gnosisAssetsNonFungible.map(asset => (
+            <TableRowWrapper key={asset.address}>
               <div className="flex">
-                <EtherscanLinkAddress address={asset.contractAddress}>
-                  <div className="text-gold-500 truncate ... w-16 sm:w-28">{asset.symbol}</div>
+                <EtherscanLinkAddress address={asset.address}>
+                  <div className="text-gold-500 truncate ... w-16 sm:w-28">{asset.tokenSymbol}</div>
                 </EtherscanLinkAddress>
-                <div className="text-gray-25 font-medium">{asset.name}</div>
+                <div className="text-gray-25 font-medium">{asset.tokenName}</div>
               </div>
               <div className="text-gray-25 font-mono font-semibold tracking-wider">
                 <EtherscanLinkNFT
-                  address={asset.contractAddress}
-                  tokenId={asset.tokenId.toString()}
+                  address={asset.address}
+                  tokenId={asset.id.toString()}
                 >
                   <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                    {asset.tokenId.toString()}
+                    {asset.id.toString()}
                   </div>
                 </EtherscanLinkNFT>
               </div>
@@ -187,9 +180,9 @@ function Treasury() {
           ))}
         </div>
       </div>
-      {!treasuryAssetsFungible.length && !treasuryAssetsNonFungible.length && (
+      {!gnosisAssetsFungible!.length && !gnosisAssetsNonFungible.length && (
         <div className="px-1">
-          <ContentBanner description={t('descTreasury', { daoName: dao.daoName })} />
+          <ContentBanner description={t('descTreasury', { daoName: state.name })} />
         </div>
       )}
     </div>
