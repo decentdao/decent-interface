@@ -17,5 +17,6 @@
     "titleParentDAO": "Parent DAO",
     "titleDAOSubsidiaries": "DAO Subsidiaries",
     "titleCoreDAO": "Core DAO Address",
-    "titleModuleContract": "Module Contract Addresses"
+    "titleModuleContract": "Module Contract Addresses",
+    "searchDAOPlaceholder": "Find a DAO by address or ENS"
 }

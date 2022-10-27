@@ -7,10 +7,6 @@ import { DAO_ROUTES } from './constants';
 function DAORoutes() {
   return (
     <Routes>
-      {/* <Route
-        index
-        element={<DAOSearch />}
-      /> */}
       <Route
         path={DAO_ROUTES.new.path}
         element={<DaoCreate />}

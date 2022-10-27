@@ -17,8 +17,8 @@ export function MenuItems() {
       rounded="lg"
       shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
       mr={['auto', '1rem']}
-      className="menu-list"
       bg="grayscale.black"
+      border="none"
       sx={{
         '& > :nth-child(1)': {
           borderTopRadius: 'lg',

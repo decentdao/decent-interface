@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import { DAONavigation } from '../../menus/DAONavigation';
+import { DAOSearch } from '../../menus/DAOSearch';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { StarOutline } from '@decent-org/fractal-ui';
 
@@ -27,8 +27,9 @@ function Header() {
       h="full"
       w="full"
       justifyContent="space-between"
+      px="0.5rem"
     >
-      <DAONavigation />
+      <DAOSearch />
       <Flex
         alignItems="center"
         h="full"
