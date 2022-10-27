@@ -4,6 +4,8 @@ import DaoCreate from '../DaoCreate';
 import DAOFavorites from '../DaoFavorites';
 import DAO from '../Dao';
 import { DAOController } from '../../controller/DAOs/DAOController';
+import { TreasuryController } from '../../controller/Modules/TreasuryController';
+import Treasury from '../Treasury';
 function DAOs() {
   return (
     <Routes>
@@ -25,6 +27,14 @@ function DAOs() {
           <DAOController>
             <DAO />
           </DAOController>
+        }
+      />
+      <Route
+        path=":address/treasury"
+        element={
+          <TreasuryController>
+            <Treasury />
+          </TreasuryController>
         }
       />
     </Routes>
