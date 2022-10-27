@@ -3,7 +3,11 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import { useCallback, useEffect } from 'react';
 import { GnosisActions, GnosisActionTypes } from '../types';
 import axios from 'axios';
-import { GnosisSafeStatusResponse } from '../types/gnosis';
+import {
+  GnosisSafeFAssetResponse,
+  GnosisSafeNFAssetResponse,
+  GnosisSafeStatusResponse,
+} from '../types/gnosis';
 import { logError } from '../../../helpers/errorLogging';
 
 /**
@@ -41,9 +45,33 @@ export function useGnosisApiServices(
     }
   }, [chainId, safeAddress, dispatch]);
 
+  const getGnosisSafeAssets = useCallback(async () => {
+    if (!safeAddress) {
+      return;
+    }
+    try {
+      const fAssetsStatusResponse = await axios.get<GnosisSafeFAssetResponse>(
+        buildGnosisApiUrl(chainId, `/safes/${safeAddress}/balances/usd/`)
+      );
+      const nfAssetsStatusResponse = await axios.get<GnosisSafeNFAssetResponse>(
+        buildGnosisApiUrl(chainId, `/safes/${safeAddress}/collectibles/`)
+      );
+      dispatch({
+        type: GnosisActions.UPDATE_GNOSIS_SAFE_ASSETS,
+        payload: {
+          treasuryAssetsFungible: fAssetsStatusResponse.data,
+          treasuryAssetsNonFungible: nfAssetsStatusResponse.data,
+        },
+      });
+    } catch (e) {
+      logError(e);
+    }
+  }, [chainId, safeAddress, dispatch]);
+
   useEffect(() => {
     getGnosisSafeStatus();
-  }, [getGnosisSafeStatus]);
+    getGnosisSafeAssets();
+  }, [getGnosisSafeStatus, getGnosisSafeAssets]);
 
   return;
 }
