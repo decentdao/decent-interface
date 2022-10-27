@@ -20,7 +20,9 @@ export interface IGnosisTreasuryInjectorContext {
   gnosisAssetsNonFungible: GnosisAssetNonFungible[];
 }
 
-export const GnosisTreasuryInjectorContext = createContext<IGnosisTreasuryInjectorContext | null>(null);
+export const GnosisTreasuryInjectorContext = createContext<IGnosisTreasuryInjectorContext | null>(
+  null
+);
 
 export const useGnosisTreasuryInjector = (): IGnosisTreasuryInjectorContext =>
   useContext(GnosisTreasuryInjectorContext as Context<IGnosisTreasuryInjectorContext>);
