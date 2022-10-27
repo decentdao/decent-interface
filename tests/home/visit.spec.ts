@@ -6,6 +6,5 @@ test.describe('Visit site', async () => {
     await new HomePage(page).visit();
     await expect(page.locator('[data-testid=home-pageTitle]')).toContainText('Welcome to Fractal');
     await expect(page.locator('[data-testid=home-linkCreate]')).toContainText('Create a Fractal');
-    await expect(page.locator('[data-testid=home-linkFind]')).toContainText('Find a Fractal');
   });
 });

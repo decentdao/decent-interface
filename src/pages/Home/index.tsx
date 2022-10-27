@@ -3,7 +3,7 @@ import { Button } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ContentBox from '../../components/ui/ContentBox';
-import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
+import { DAO_ROUTES } from '../../routes/constants';
 
 function Home() {
   const { t } = useTranslation('daoCreate');
@@ -38,16 +38,6 @@ function Home() {
               width="100%"
             >
               {t('buttonCreate')}
-            </Button>
-          </Link>
-          <Link to={BASE_ROUTES.daos}>
-            <Button
-              variant="secondary"
-              data-testid="home-linkFind"
-              size="lg"
-              width="full"
-            >
-              {t('buttonFind')}
             </Button>
           </Link>
         </Flex>
