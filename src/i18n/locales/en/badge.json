@@ -1,0 +1,9 @@
+{
+  "pending": "Pending",
+  "active": "Active",
+  "passed": "Passed",
+  "executed": "Executed",
+  "rejected": "rejected",
+  "parent": "Parent",
+  "child": "Child"
+}
