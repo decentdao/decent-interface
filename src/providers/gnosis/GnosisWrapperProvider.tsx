@@ -14,6 +14,8 @@ const initialState: Gnosis = {
   nonce: undefined,
   threshold: 0,
   isLoading: true,
+  treasuryAssetsFungible: [],
+  treasuryAssetsNonFungible: [],
 };
 
 const reducer = (state: Gnosis, action: GnosisActionTypes) => {
@@ -21,6 +23,8 @@ const reducer = (state: Gnosis, action: GnosisActionTypes) => {
     case GnosisActions.UPDATE_GNOSIS_CONTRACT:
       return { ...state, ...action.payload };
     case GnosisActions.UPDATE_GNOSIS_SAFE_INFORMATION:
+      return { ...state, ...action.payload, isLoading: false };
+    case GnosisActions.UPDATE_GNOSIS_SAFE_ASSETS:
       return { ...state, ...action.payload, isLoading: false };
     case GnosisActions.UPDATE_SIGNER_AUTH:
       return { ...state, isSigner: action.payload };
