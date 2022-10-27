@@ -1,7 +1,8 @@
-import { GnosisInformation } from './state';
+import { GnosisAssets, GnosisInformation } from './state';
 export enum GnosisActions {
   UPDATE_GNOSIS_CONTRACT,
   UPDATE_GNOSIS_SAFE_INFORMATION,
+  UPDATE_GNOSIS_SAFE_ASSETS,
   UPDATE_SIGNER_AUTH,
   RESET,
 }
@@ -11,6 +12,10 @@ export type GnosisActionTypes =
   | {
       type: GnosisActions.UPDATE_GNOSIS_SAFE_INFORMATION;
       payload: GnosisInformation;
+    }
+  | {
+      type: GnosisActions.UPDATE_GNOSIS_SAFE_ASSETS;
+      payload: GnosisAssets;
     }
   | { type: GnosisActions.UPDATE_SIGNER_AUTH; payload: boolean }
   | { type: GnosisActions.RESET };
