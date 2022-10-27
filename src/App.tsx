@@ -54,7 +54,10 @@ function App() {
         </Box>
       </GridItem>
       <GridItem area={'main'}>
-        <Container maxWidth="container.xl">
+        <Container
+          maxWidth="container.xl"
+          px="0"
+        >
           <FractalRoutes />
         </Container>
       </GridItem>
