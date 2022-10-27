@@ -6,14 +6,16 @@ import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
-import { CreatorProviderActions } from '../provider/types';
+import { CreatorProviderActions, GovernanceTypes } from '../provider/types';
 import { useTranslation } from 'react-i18next';
 
 function GovernanceDetails() {
   const {
-    state: { govModule, govToken },
+    state: { govModule, govToken, governance },
     dispatch,
   } = useCreator();
+
+  const isSafeWithUsul = governance === GovernanceTypes.GNOSIS_SAFE_USUL;
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -99,7 +101,7 @@ function GovernanceDetails() {
             unit={blocks}
             helperText={t('helperVotingPeriod', { ns: 'daoCreate' })}
             restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min="1"
+            min={isSafeWithUsul ? '2' : '1'}
           />
         </InputBox>
         <ContentBoxTitle>Governance Setup</ContentBoxTitle>

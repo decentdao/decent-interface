@@ -17,6 +17,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
   useEffect(() => {
     const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;
     const isGnosisGovernance = state.governance === GovernanceTypes.MVD_GNOSIS;
+    const isGnosisWithUsul = state.governance === GovernanceTypes.GNOSIS_SAFE_USUL;
     const isPureGnosis = state.governance === GovernanceTypes.GNOSIS_SAFE;
 
     // True when:
@@ -41,12 +42,23 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           payload: {
             nextStep: isPureGnosis
               ? CreatorSteps.PURE_GNOSIS
+              : isGnosisWithUsul
+              ? CreatorSteps.GNOSIS_WITH_USUL
               : isGnosisGovernance
               ? CreatorSteps.GNOSIS_GOVERNANCE
               : showFunding
               ? CreatorSteps.FUNDING
               : CreatorSteps.TREASURY_GOV_TOKEN,
             prevStep: CreatorSteps.ESSENTIALS,
+          },
+        });
+        break;
+      case CreatorSteps.GNOSIS_WITH_USUL:
+        dispatch({
+          type: CreatorProviderActions.UPDATE_STEP,
+          payload: {
+            nextStep: CreatorSteps.GOV_CONFIG,
+            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
         break;
@@ -90,7 +102,9 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            prevStep: CreatorSteps.TREASURY_GOV_TOKEN,
+            prevStep: isGnosisWithUsul
+              ? CreatorSteps.GNOSIS_WITH_USUL
+              : CreatorSteps.TREASURY_GOV_TOKEN,
           },
         });
         break;

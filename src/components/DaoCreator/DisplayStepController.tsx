@@ -15,13 +15,13 @@ function StepController() {
     case CreatorSteps.CHOOSE_GOVERNANCE:
       return <ChooseGovernance />;
     case CreatorSteps.PURE_GNOSIS:
-      return <GnosisConfig />;
     case CreatorSteps.GNOSIS_GOVERNANCE:
       return <GnosisConfig />;
     case CreatorSteps.FUNDING: {
       return <SubsidiaryFunding />;
     }
     case CreatorSteps.TREASURY_GOV_TOKEN:
+    case CreatorSteps.GNOSIS_WITH_USUL:
       return <TokenDetails />;
     case CreatorSteps.GOV_CONFIG:
       return <GovernanceDetails />;
