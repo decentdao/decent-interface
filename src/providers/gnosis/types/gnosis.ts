@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../treasury/types';
 
 export type GnosisSafeStatusResponse = {
   address: string;
@@ -10,7 +11,11 @@ export type GnosisSafeStatusResponse = {
   fallbackHandler: string;
   guard: string;
   version: string;
+  token: string[];
 };
+
+export type GnosisSafeFAssetResponse = GnosisAssetFungible[];
+export type GnosisSafeNFAssetResponse = GnosisAssetNonFungible[];
 
 export interface GnosisTransaction {
   to: string; //'<checksummed address>'
