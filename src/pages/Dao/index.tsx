@@ -43,7 +43,7 @@ function MVDDAO() {
 
 function GnosisDAO() {
   const {
-    gnosis: { safe },
+    gnosis: { safe, modules },
   } = useFractal();
 
   return (
@@ -54,6 +54,7 @@ function GnosisDAO() {
       <div>owners: {safe.owners?.join(', ')}</div>
       <div>masterCopy: {safe.masterCopy}</div>
       <div>modules: {safe.modules?.join(', ')}</div>
+      <div>module types: {JSON.stringify(modules)}</div>
       <div>fallbackHandler: {safe.fallbackHandler}</div>
       <div>guard: {safe.guard}</div>
       <div>version: {safe.version}</div>
