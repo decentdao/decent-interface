@@ -11,7 +11,7 @@ import { TreasuryController } from '../../controller/Modules/TreasuryController'
 import { GovernanceController } from '../../controller/Modules/GovernanceController';
 import { NodeType } from '../../providers/fractal/constants/enums';
 import { useTranslation } from 'react-i18next';
-import Proposals from '../Proposals';
+import Proposals, { GnosisDAOProposals } from '../Proposals';
 import { Governance } from '../Governance';
 
 function MVDDAO() {
@@ -59,8 +59,8 @@ function GnosisDAO() {
         element={<Governance isGnosisDAO={true} />}
       />
       <Route
-        path="proposals/*"
-        element={<Proposals />}
+        path="governance/proposals/*"
+        element={<GnosisDAOProposals />}
       />
     </Routes>
   );
