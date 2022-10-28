@@ -1,5 +1,4 @@
 import { BigNumber } from 'ethers';
-import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../treasury/types';
 
 export type GnosisSafeStatusResponse = {
   address: string;

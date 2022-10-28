@@ -3,12 +3,9 @@ import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provide
 import { useCallback, useEffect } from 'react';
 import { GnosisActions, GnosisActionTypes } from '../types';
 import axios from 'axios';
-import {
-  GnosisSafeFAssetResponse,
-  GnosisSafeNFAssetResponse,
-  GnosisSafeStatusResponse,
-} from '../types/gnosis';
+import { GnosisSafeStatusResponse } from '../types/gnosis';
 import { logError } from '../../../helpers/errorLogging';
+import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../treasury/types';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information
@@ -50,10 +47,10 @@ export function useGnosisApiServices(
       return;
     }
     try {
-      const fAssetsStatusResponse = await axios.get<GnosisSafeFAssetResponse>(
+      const fAssetsStatusResponse = await axios.get<GnosisAssetFungible[]>(
         buildGnosisApiUrl(chainId, `/safes/${safeAddress}/balances/usd/`)
       );
-      const nfAssetsStatusResponse = await axios.get<GnosisSafeNFAssetResponse>(
+      const nfAssetsStatusResponse = await axios.get<GnosisAssetNonFungible[]>(
         buildGnosisApiUrl(chainId, `/safes/${safeAddress}/collectibles/`)
       );
       dispatch({
