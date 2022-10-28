@@ -1,5 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import { Activities } from './Activities';
 import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
 import { InfoProposals } from './InfoProposals';
@@ -34,6 +35,7 @@ export function DaoDashboard() {
         gap="1.5rem"
         h="10.5rem"
         justifyContent="center"
+        mb="2.5rem"
       >
         <InfoCard minWidth={{ sm: '90%', xl: '41.5rem' }}>
           <InfoDAO />
@@ -48,8 +50,7 @@ export function DaoDashboard() {
           <InfoTreasury />
         </InfoCard>
       </Flex>
-      {/* FILTERS */}
-      {/* ACTIVITY FEED */}
+      <Activities />
     </Box>
   );
 }
