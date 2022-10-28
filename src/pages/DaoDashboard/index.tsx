@@ -35,7 +35,7 @@ export function DaoDashboard() {
         gap="1.5rem"
         h="10.5rem"
         justifyContent="center"
-        mb="2.5rem"
+        mb="1rem"
       >
         <InfoCard minWidth={{ sm: '90%', xl: '41.5rem' }}>
           <InfoDAO />
