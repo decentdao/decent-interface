@@ -14,9 +14,6 @@ export type GnosisSafeStatusResponse = {
   token: string[];
 };
 
-export type GnosisSafeFAssetResponse = GnosisAssetFungible[];
-export type GnosisSafeNFAssetResponse = GnosisAssetNonFungible[];
-
 export interface GnosisTransaction {
   to: string; //'<checksummed address>'
   value: BigNumber; // Value in wei
