@@ -10,6 +10,7 @@ export type GnosisSafeStatusResponse = {
   fallbackHandler: string;
   guard: string;
   version: string;
+  token: string[];
 };
 
 export interface GnosisTransaction {

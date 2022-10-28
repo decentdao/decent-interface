@@ -1,10 +1,8 @@
 import { ReactNode, useMemo, useReducer } from 'react';
-import useGnosisWrapperContract from './hooks/useGnosisWrapperContract';
-import useGnosisSafeAddress from './hooks/useGnosisSafeAddress';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { Gnosis, GnosisActions, GnosisActionTypes } from './types';
-import { GnosisWrapperContext } from './hooks/useGnosisWrapper';
 import { useGnosisSigner } from './hooks/useGnosisSigner';
+import { GnosisContext } from './hooks/useGnosis';
 
 const initialState: Gnosis = {
   name: '',
@@ -35,17 +33,16 @@ const reducer = (state: Gnosis, action: GnosisActionTypes) => {
   }
 };
 
-export function GnosisWrapperProvider({
-  moduleAddress,
+export function GnosisProvider({
+  safeAddress,
   children,
 }: {
-  moduleAddress: string | null;
+  safeAddress: string | undefined;
   children: ReactNode;
 }) {
+  initialState.safeAddress = safeAddress;
   const [state, dispatch] = useReducer(reducer, initialState);
-  const gnosisWrapperContract = useGnosisWrapperContract(moduleAddress);
 
-  useGnosisSafeAddress(gnosisWrapperContract, dispatch);
   useGnosisApiServices(state.safeAddress, dispatch);
   useGnosisSigner(state.owners, dispatch);
   const value = useMemo(
@@ -56,5 +53,5 @@ export function GnosisWrapperProvider({
     }),
     [state]
   );
-  return <GnosisWrapperContext.Provider value={value}>{children}</GnosisWrapperContext.Provider>;
+  return <GnosisContext.Provider value={value}>{children}</GnosisContext.Provider>;
 }
