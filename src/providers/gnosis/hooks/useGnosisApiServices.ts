@@ -42,7 +42,7 @@ export function useGnosisApiServices(
     }
   }, [chainId, safeAddress, dispatch]);
 
-  const getGnosisSafeAssets = useCallback(async () => {
+  const getGnosisSafeFungibleAssets = useCallback(async () => {
     if (!safeAddress) {
       return;
     }
@@ -50,13 +50,28 @@ export function useGnosisApiServices(
       const fAssetsStatusResponse = await axios.get<GnosisAssetFungible[]>(
         buildGnosisApiUrl(chainId, `/safes/${safeAddress}/balances/usd/`)
       );
+      dispatch({
+        type: GnosisActions.UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS,
+        payload: {
+          treasuryAssetsFungible: fAssetsStatusResponse.data,
+        },
+      });
+    } catch (e) {
+      logError(e);
+    }
+  }, [chainId, safeAddress, dispatch]);
+
+  const getGnosisSafeNonFungibleAssets = useCallback(async () => {
+    if (!safeAddress) {
+      return;
+    }
+    try {
       const nfAssetsStatusResponse = await axios.get<GnosisAssetNonFungible[]>(
         buildGnosisApiUrl(chainId, `/safes/${safeAddress}/collectibles/`)
       );
       dispatch({
-        type: GnosisActions.UPDATE_GNOSIS_SAFE_ASSETS,
+        type: GnosisActions.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,
         payload: {
-          treasuryAssetsFungible: fAssetsStatusResponse.data,
           treasuryAssetsNonFungible: nfAssetsStatusResponse.data,
         },
       });
@@ -67,8 +82,9 @@ export function useGnosisApiServices(
 
   useEffect(() => {
     getGnosisSafeStatus();
-    getGnosisSafeAssets();
-  }, [getGnosisSafeStatus, getGnosisSafeAssets]);
+    getGnosisSafeFungibleAssets();
+    getGnosisSafeNonFungibleAssets();
+  }, [getGnosisSafeStatus, getGnosisSafeFungibleAssets, getGnosisSafeNonFungibleAssets]);
 
   return;
 }
