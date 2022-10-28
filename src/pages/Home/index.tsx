@@ -1,14 +1,15 @@
 import { Box, Center, Flex, HStack, Text } from '@chakra-ui/react';
 import { Button, Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
-import { ReactI18NextChild, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../routes/constants';
 import { ReactComponent as Logo } from '../../assets/images/fractal-text-logo.svg';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../components/constants';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { ReactNode } from 'react';
 
 interface IconWithTextProps {
-  icon: ReactI18NextChild;
+  icon: ReactNode;
   label: string;
   url: string;
   testid: string;
@@ -44,7 +45,6 @@ function InfoLinks() {
           <SupportQuestion
             color="gold.500"
             boxSize="1.5rem"
-            minWidth="auto"
           />
         }
         label={t('faq')}
@@ -60,7 +60,6 @@ function InfoLinks() {
             <Discord
               color="gold.500"
               boxSize="1.5rem"
-              minWidth="auto"
             />
           }
           label={t('discord')}
@@ -73,7 +72,6 @@ function InfoLinks() {
           <Documents
             color="gold.500"
             boxSize="1.5rem"
-            minWidth="auto"
           />
         }
         label={t('docs')}
