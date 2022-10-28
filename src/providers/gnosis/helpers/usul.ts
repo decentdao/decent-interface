@@ -49,8 +49,7 @@ export const getProposalVotesSummary = async (
 ): Promise<ProposalVotesSummary> => {
   const { strategy: strategyAddress } = await usulContract.proposals(proposalNumber);
   const strategy = await OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
-  const { yesVotes, noVotes, abstainVotes, startBlock } = await strategy.proposals(proposalNumber);
-  console.log('startBlock', startBlock);
+  const { yesVotes, noVotes, abstainVotes } = await strategy.proposals(proposalNumber);
   return {
     yes: yesVotes,
     no: noVotes,

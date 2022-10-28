@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import useUsulProposals from '../../providers/gnosis/hooks/useUsulProposals';
-import ProposalCard from './ProposalCard';
+import { UsulProposalCard } from './ProposalCard';
 
 function UsulProposalsList() {
   const { proposals } = useUsulProposals();
@@ -16,9 +16,9 @@ function UsulProposalsList() {
 
   return (
     <div className="flex flex-col -my-2">
-      {[...proposals].reverse().map((proposal, index) => (
-        <ProposalCard
-          key={proposal.state + index}
+      {[...proposals].reverse().map(proposal => (
+        <UsulProposalCard
+          key={proposal.proposalNumber.toNumber()}
           proposal={proposal}
         />
       ))}
