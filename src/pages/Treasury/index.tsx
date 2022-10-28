@@ -69,7 +69,7 @@ function Treasury() {
             const address =
               asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress;
             const symbol = asset.token === null ? 'ETH' : asset.token.symbol;
-            const name = asset.token === null ? 'ETHEREUM' : asset.token.symbol;
+            const name = asset.token === null ? 'ETHER' : asset.token.symbol;
             const formattedTotal =
               asset.token === null
                 ? ethers.utils.formatEther(asset.balance)
