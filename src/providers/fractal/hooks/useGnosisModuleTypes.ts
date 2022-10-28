@@ -5,12 +5,21 @@ import useSafeContracts from '../../../hooks/useSafeContracts';
 
 // @todo move to global hooks folder
 export function useGnosisModuleTypes(moduleAddresses?: string[]) {
-  const { zodiacModuleProxyFactoryContract, usulMastercopyContract } = useSafeContracts();
+  const {
+    zodiacModuleProxyFactoryContract,
+    usulMastercopyContract,
+    fractalModuleMastercopyContract,
+  } = useSafeContracts();
 
   const [modules, setModules] = useState<IGnosisModuleData[]>([]);
 
   useEffect(() => {
-    if (!zodiacModuleProxyFactoryContract || !usulMastercopyContract || !moduleAddresses) {
+    if (
+      !zodiacModuleProxyFactoryContract ||
+      !usulMastercopyContract ||
+      !fractalModuleMastercopyContract ||
+      !moduleAddresses
+    ) {
       return;
     }
 
@@ -35,6 +44,11 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
               moduleAddress: moduleAddress,
               moduleType: GnosisModuleTypes.USUL,
             } as IGnosisModuleData;
+          } else if (masterCopyAddress === fractalModuleMastercopyContract.address) {
+            return {
+              moduleAddress: moduleAddress,
+              moduleType: GnosisModuleTypes.FRACTAL,
+            } as IGnosisModuleData;
           } else {
             return {
               moduleAddress: moduleAddress,
@@ -44,10 +58,19 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
         })
       ).then(setModules);
     })();
-  }, [zodiacModuleProxyFactoryContract, usulMastercopyContract, moduleAddresses]);
+  }, [
+    zodiacModuleProxyFactoryContract,
+    usulMastercopyContract,
+    moduleAddresses,
+    fractalModuleMastercopyContract,
+  ]);
 
   const usulModule = useMemo(
     () => modules.find(v => v.moduleType === GnosisModuleTypes.USUL),
+    [modules]
+  );
+  const fractalModule = useMemo(
+    () => modules.find(v => v.moduleType === GnosisModuleTypes.FRACTAL),
     [modules]
   );
   const unknownModule = useMemo(
@@ -57,6 +80,7 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
 
   return {
     usulModule,
+    fractalModule,
     unknownModule,
   };
 }
