@@ -12,7 +12,7 @@ function EtherscanLinkNFT({
   const subdomain = useSubDomain();
   return (
     <a
-      href={`https://${subdomain}etherscan.io/nft/${address}?a=${tokenId}`}
+      href={`https://${subdomain}etherscan.io/token/${address}?a=${tokenId}`}
       target="_blank"
       rel="noreferrer"
     >
