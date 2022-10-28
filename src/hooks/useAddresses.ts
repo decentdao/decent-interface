@@ -24,6 +24,7 @@ export function useAddresses(chainId: number | undefined) {
     gnosisWrapper?: { address: string };
     gnosisSafe?: { address: string };
     multiSend?: { address: string };
+    fractalModuleMastercopy?: { address: string };
   }>({});
 
   useEffect(() => {
@@ -49,7 +50,8 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES ||
       !process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES ||
       !process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES ||
-      !process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
+      !process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES ||
+      !process.env.REACT_APP_FRACTAL_MODULE_MASTERCOPY_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
@@ -115,6 +117,9 @@ export function useAddresses(chainId: number | undefined) {
     const votesMasterCopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
       process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
     );
+    const fractalModuleMastercopyAddresses: { [chainId: number]: { address: string } } = JSON.parse(
+      process.env.REACT_APP_FRACTAL_MODULE_MASTERCOPY_ADDRESSES
+    );
 
     const metaFactoryAddress: { address: string } = metaFactoryNetworksAddresses[chainId];
     const daoFactoryAddress: { address: string } = daoFactoryNetworksAddresses[chainId];
@@ -140,6 +145,7 @@ export function useAddresses(chainId: number | undefined) {
     const linearVotingMastercopy: { address: string } = linearVotingMastercopyAddresses[chainId];
     const multiSend: { address: string } = multiSendAddresses[chainId];
     const votesMasterCopy: { address: string } = votesMasterCopyAddresses[chainId];
+    const fractalModuleMastercopy: { address: string } = fractalModuleMastercopyAddresses[chainId];
 
     if (
       !metaFactoryAddress ||
@@ -162,7 +168,8 @@ export function useAddresses(chainId: number | undefined) {
       !zodiacModuleProxyFactory ||
       !linearVotingMastercopy ||
       !multiSend ||
-      !votesMasterCopy
+      !votesMasterCopy ||
+      !fractalModuleMastercopy
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -191,6 +198,7 @@ export function useAddresses(chainId: number | undefined) {
       linearVotingMastercopy,
       multiSend,
       votesMasterCopy,
+      fractalModuleMastercopy
     });
   }, [chainId]);
 

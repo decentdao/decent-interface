@@ -15,6 +15,7 @@ import {
   OZLinearVoting__factory,
   OZLinearVoting,
 } from '../assets/typechain-types/usul';
+import { FractalModule, FractalModule__factory } from '../assets/typechain-types/fractal-contracts';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useAddresses } from './useAddresses';
 
@@ -28,6 +29,8 @@ export default function useSafeContracts() {
   const [usulMastercopyContract, setUsulMastercopyContract] = useState<Usul>();
   const [linearVotingMastercopyContract, setLinearVotingMastercopyContract] =
     useState<OZLinearVoting>(); // 1:1 Token Voting contract
+  const [fractalModuleMastercopyContract, setFractalModuleMastercopyContract] =
+    useState<FractalModule>();
   const {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
@@ -39,6 +42,7 @@ export default function useSafeContracts() {
     linearVotingMastercopy,
     usulMastercopy,
     multiSend,
+    fractalModuleMastercopy,
   } = useAddresses(chainId);
 
   useEffect(() => {
@@ -49,6 +53,7 @@ export default function useSafeContracts() {
       !usulMastercopy ||
       !gnosisSafe ||
       !multiSend ||
+      !fractalModuleMastercopy ||
       !signerOrProvider
     ) {
       setGnosisSafeFactoryContract(undefined);
@@ -56,6 +61,7 @@ export default function useSafeContracts() {
       setUsulMastercopyContract(undefined);
       setLinearVotingMastercopyContract(undefined);
       setGnosisSafeSingletonContract(undefined);
+      setFractalModuleMastercopyContract(undefined);
       return;
     }
 
@@ -75,6 +81,10 @@ export default function useSafeContracts() {
     setZodiacModuleProxyFactoryContract(
       ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory.address, signerOrProvider)
     );
+
+    setFractalModuleMastercopyContract(
+      FractalModule__factory.connect(fractalModuleMastercopy.address, signerOrProvider)
+    );
   }, [
     gnosisSafeFactory,
     gnosisSafe,
@@ -83,6 +93,7 @@ export default function useSafeContracts() {
     usulMastercopy,
     signerOrProvider,
     multiSend,
+    fractalModuleMastercopy,
   ]);
 
   return {
@@ -92,5 +103,6 @@ export default function useSafeContracts() {
     usulMastercopyContract,
     linearVotingMastercopyContract,
     multiSendContract,
+    fractalModuleMastercopyContract,
   };
 }
