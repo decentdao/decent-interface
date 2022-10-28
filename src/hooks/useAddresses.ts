@@ -198,7 +198,7 @@ export function useAddresses(chainId: number | undefined) {
       linearVotingMastercopy,
       multiSend,
       votesMasterCopy,
-      fractalModuleMastercopy
+      fractalModuleMastercopy,
     });
   }, [chainId]);
 
