@@ -24,7 +24,9 @@ const reducer = (state: Gnosis, action: GnosisActionTypes) => {
       return { ...state, ...action.payload };
     case GnosisActions.UPDATE_GNOSIS_SAFE_INFORMATION:
       return { ...state, ...action.payload, isLoading: false };
-    case GnosisActions.UPDATE_GNOSIS_SAFE_ASSETS:
+    case GnosisActions.UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS:
+      return { ...state, ...action.payload, isLoading: false };
+    case GnosisActions.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS:
       return { ...state, ...action.payload, isLoading: false };
     case GnosisActions.UPDATE_SIGNER_AUTH:
       return { ...state, isSigner: action.payload };
