@@ -12,11 +12,21 @@ export type ProposalState =
   | 'pending'
   | 'failed';
 
+export const strategyProposalStates: ProposalState[] = [
+  'active',
+  'canceled',
+  'timeLocked',
+  'executed',
+  'executing',
+  'uninitialized',
+  'pending',
+  'failed',
+];
+
 export type ProposalVotesSummary = {
   yes: BigNumber;
   no: BigNumber;
   abstain: BigNumber;
-  quorum: BigNumber;
 };
 
 export type ProposalVote = {
@@ -31,4 +41,5 @@ export type Proposal = {
   votes: ProposalVotesSummary;
   deadline?: number;
   proposer: string;
+  proposalNumber: BigNumber;
 };

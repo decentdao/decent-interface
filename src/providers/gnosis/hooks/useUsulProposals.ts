@@ -1,12 +1,13 @@
-import { TypedListener } from '@fractal-framework/core-contracts/dist/common';
 import { useState, useEffect, useCallback } from 'react';
 import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
+import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
 import { ProposalExecuteData } from '../../../types/proposal';
 import { useFractal } from '../../fractal/hooks/useFractal';
 import { Proposal } from '../types/usul';
+import { mapProposalCreatedEventToProposal } from '../helpers/usul';
 
 export default function useUsulProposals() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
@@ -46,7 +47,11 @@ export default function useUsulProposals() {
             );
           })
         );
-        await usulContract.submitProposal(txHashes, votingStrategiesAddresses[0], '0x'); // Third parameter is optional on Usul
+        // @todo: Implement voting strategy proposal selection when we will support multiple strategies on single Usul instance
+        await (
+          await usulContract.submitProposal(txHashes, votingStrategiesAddresses[0], '0x')
+        ).wait(); // Third parameter is optional on Usul
+        setPendingCreateTx(false);
         successCallback();
       } catch (e) {
         logError(e, 'Error during Usul proposal creation');
@@ -55,14 +60,37 @@ export default function useUsulProposals() {
     [usulContract, votingStrategiesAddresses]
   );
 
+  const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
+    async (strategyAddress, proposalNumber, proposer) => {
+      if (!usulContract || !signerOrProvider) {
+        return;
+      }
+      const proposal = await mapProposalCreatedEventToProposal(
+        strategyAddress,
+        proposalNumber,
+        proposer,
+        usulContract,
+        signerOrProvider
+      );
+
+      setProposals(prevState => {
+        if (prevState) {
+          return [...prevState, proposal];
+        }
+        return [proposal];
+      });
+    },
+    [usulContract, signerOrProvider]
+  );
+
   useEffect(() => {
     const init = async () => {
       if (!safe || !signerOrProvider) {
         return;
       }
       safe.modules?.forEach(async moduleAddress => {
-        const moduleContract = Usul__factory.connect(moduleAddress, signerOrProvider);
         try {
+          const moduleContract = Usul__factory.connect(moduleAddress, signerOrProvider);
           // Little trick to figure out is the Zodiac Module is actually Usul module
           // Method fails if module don't have getStrategiesPaginated - which is quite specific to Usul
           // Known issue - if other contract will have same method - we will have contracts messed up :(
@@ -70,8 +98,23 @@ export default function useUsulProposals() {
             '0x0000000000000000000000000000000000000001',
             10
           );
+          const proposalCreatedFilter = moduleContract.filters.ProposalCreated();
+          const proposalCreatedEvents = await moduleContract.queryFilter(proposalCreatedFilter);
+          const mappedProposals = await Promise.all(
+            proposalCreatedEvents.map(({ args }) => {
+              return mapProposalCreatedEventToProposal(
+                args[0],
+                args[1],
+                args[2],
+                moduleContract,
+                signerOrProvider
+              );
+            })
+          );
+
           setUsulContract(moduleContract);
           setVotingStrategiesAddresses(strategies);
+          setProposals(mappedProposals);
         } catch (e) {
           console.error(e);
         }
@@ -81,23 +124,18 @@ export default function useUsulProposals() {
   }, [safe, signerOrProvider]);
 
   useEffect(() => {
-    if (!usulContract) {
+    if (!usulContract || !signerOrProvider) {
       return;
     }
 
     const filter = usulContract.filters.ProposalCreated();
-    const listenerCallback: TypedListener<ProposalCreatedEvent> = (...args) => {
-      // TODO: Map proposals to the state
-      console.log('Usul Proposal Created Event args:', args);
-      setProposals([]);
-    };
 
-    usulContract.on(filter, listenerCallback);
+    usulContract.on(filter, proposalCreatedListener);
 
     return () => {
-      usulContract.off(filter, listenerCallback);
+      usulContract.off(filter, proposalCreatedListener);
     };
-  }, [usulContract]);
+  }, [usulContract, signerOrProvider, proposalCreatedListener]);
 
   return {
     proposals,
