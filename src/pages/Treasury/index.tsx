@@ -113,7 +113,7 @@ function Treasury() {
         <div className="pt-2 px-4 text-xs text-right">
           <a
             className="text-gray-100"
-            href="https://coingecko.com/"
+            href="https://safe-transaction-mainnet.safe.global/"
             rel="noreferrer"
             target="_blank"
           >
