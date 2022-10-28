@@ -1,5 +1,5 @@
 import React, { createContext, useContext, Context } from 'react';
-import { IModuleData } from '../../../controller/Modules/types';
+import { IGnosisModuleData, IModuleData } from '../../../controller/Modules/types';
 import {
   FractalNode,
   MVDActions,
@@ -29,6 +29,11 @@ export interface IFractalContext {
   };
   gnosis: {
     safe: GnosisSafe;
+    modules: {
+      usulModule?: IGnosisModuleData;
+      fractalModule?: IGnosisModuleData;
+      unkownModule?: IGnosisModuleData;
+    };
     dispatch: React.Dispatch<GnosisActions>;
   };
 }
