@@ -6,26 +6,28 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalDescription from '../ui/proposal/ProposalDescription';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import { ProposalData } from '../../providers/govenor/types';
+import { Proposal } from '../../providers/gnosis/types/usul';
 
-function ProposalCard({ proposal }: { proposal: ProposalData }) {
+function ProposalCard({ proposal }: { proposal: ProposalData | Proposal }) {
+  const legacyProposal = proposal as ProposalData;
   return (
-    <Link to={`proposals/${proposal.number}`}>
+    <Link to={`proposals/${legacyProposal.number}`}>
       <ContentBox isLightBackground>
         <div className="flex items-center">
-          <StatusBox status={proposal.state} />
+          <StatusBox status={legacyProposal.state} />
           <ProposalNumber
-            proposalNumber={proposal.number}
+            proposalNumber={legacyProposal.number}
             textSize="text-sm"
           />
           <ProposalTime
-            proposalStartString={proposal.startTimeString}
-            proposalEndString={proposal.endTimeString}
+            proposalStartString={legacyProposal.startTimeString}
+            proposalEndString={legacyProposal.endTimeString}
             textSize="text-sm"
           />
         </div>
-        <ProposalDescription proposalDesc={proposal.description} />
+        <ProposalDescription proposalDesc={legacyProposal.description} />
         <ProposalCreatedBy
-          proposalProposer={proposal.proposer}
+          proposalProposer={legacyProposal.proposer}
           textSize="text-sm"
         />
       </ContentBox>
