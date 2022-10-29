@@ -1,11 +1,15 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Treasury } from '@decent-org/fractal-ui';
+import { useTranslation } from 'react-i18next';
 
 interface IDAOGovernance {}
 
 export function InfoTreasury({}: IDAOGovernance) {
+  const { t } = useTranslation('dashboard');
+
+  const MOCK_TREASURY_TITLE = '$34,500';
   return (
-    <Box>
+    <Box data-testid="dashboard-daoProposals">
       <Flex
         alignItems="center"
         gap="0.5rem"
@@ -16,7 +20,7 @@ export function InfoTreasury({}: IDAOGovernance) {
           textStyle="text-sm-sans-regular"
           color="grayscale.100"
         >
-          Treasury
+          {t('titleTreasury')}
         </Text>
       </Flex>
 
@@ -24,7 +28,7 @@ export function InfoTreasury({}: IDAOGovernance) {
         textStyle="text-lg-mono-semibold"
         color="grayscale.100"
       >
-        {'$34,500'}
+        {MOCK_TREASURY_TITLE}
       </Text>
     </Box>
   );

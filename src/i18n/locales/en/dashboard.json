@@ -18,5 +18,13 @@
     "titleDAOSubsidiaries": "DAO Subsidiaries",
     "titleCoreDAO": "Core DAO Address",
     "titleModuleContract": "Module Contract Addresses",
-    "searchDAOPlaceholder": "Find a DAO by address or ENS"
+    "searchDAOPlaceholder": "Find a DAO by address or ENS",
+    "titleGovernance": "Governance",
+    "titleType": "Type",
+    "titleVotingPeriod": "Voting Period",
+    "titleQuorum": "Quorum",
+    "titleProposals": "Proposals",
+    "titlePending": "Pending",
+    "titlePassed": "Passed",
+    "titleTreasury": "Treasury"
 }

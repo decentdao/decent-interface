@@ -4,12 +4,16 @@ import { Badge } from '../../components/ui/badges/Badge';
 import { useCopyText } from '../../hooks/utlities/useCopyText';
 
 export function InfoDAO() {
-  const isFavorite = false;
-  const isSubDAO = false;
-  const daoAddress = '0x2416...2560';
   const copyToClipboard = useCopyText();
+
+  // @todo replace mocked values
+  const MOCK_IS_FAVORITE = false;
+  const MOCK_IS_SUB_DAO = false;
+  const MOCK_DAO_ADDRESS = '0x2416...2560';
+  const MOCK_DAO_NAME = 'DAO Name';
+
   return (
-    <Box>
+    <Box data-testid="dashboard-daoInfo">
       <Flex
         alignItems="center"
         gap="0.5rem"
@@ -20,11 +24,11 @@ export function InfoDAO() {
           textStyle="text-2xl-mono-regular"
           color="grayscale.100"
         >
-          ParentDAO Name
+          {MOCK_DAO_NAME}
         </Text>
-        {isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />}
+        {MOCK_IS_FAVORITE ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />}
         <Badge
-          labelKey={isSubDAO ? 'child' : 'parent'}
+          labelKey={MOCK_IS_SUB_DAO ? 'child' : 'parent'}
           size="sm"
         />
       </Flex>
@@ -37,7 +41,7 @@ export function InfoDAO() {
           textStyle="text-base-mono-regular"
           color="grayscale.100"
         >
-          {daoAddress}
+          {MOCK_DAO_ADDRESS}
         </Text>
         <Copy />
       </Flex>
