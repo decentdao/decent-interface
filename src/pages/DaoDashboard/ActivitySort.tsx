@@ -45,6 +45,7 @@ export function ActivitySort({ sortBy, setSortBy }: IActivitySort) {
   return (
     <Menu direction="ltr">
       <MenuButton
+        data-testid="sort-openMenu"
         color="gold.500"
         sx={{
           '&:hover': {
