@@ -4,12 +4,20 @@ import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export enum SortBy {
-  Newest = 'Newest',
-  Oldest = 'Oldest',
+  Newest = 'newest',
+  Oldest = 'oldest',
 }
 
-function SortMenuItem({ labelKey }: { labelKey: string }) {
-  const { t } = useTranslation();
+function SortMenuItem({
+  labelKey,
+  testId,
+  onClick,
+}: {
+  labelKey: string;
+  testId: string;
+  onClick: () => void;
+}) {
+  const { t } = useTranslation('sort');
   return (
     <MenuItem
       py="0.5rem"
@@ -19,6 +27,8 @@ function SortMenuItem({ labelKey }: { labelKey: string }) {
           color: 'gold.500',
         },
       }}
+      data-testid={testId}
+      onClick={onClick}
     >
       <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
     </MenuItem>
@@ -31,6 +41,7 @@ interface IActivitySort {
 }
 
 export function ActivitySort({ sortBy, setSortBy }: IActivitySort) {
+  const { t } = useTranslation('sort');
   return (
     <Menu direction="ltr">
       <MenuButton
@@ -45,7 +56,7 @@ export function ActivitySort({ sortBy, setSortBy }: IActivitySort) {
           alignItems="center"
           color="gold.500"
         >
-          <Text textStyle="text-sm-mono-medium">Newest</Text>
+          <Text textStyle="text-sm-mono-medium">{t(sortBy)}</Text>
           <ArrowDownSm boxSize="1.5rem" />
         </Flex>
       </MenuButton>
@@ -57,8 +68,16 @@ export function ActivitySort({ sortBy, setSortBy }: IActivitySort) {
         p="0.5rem 1rem"
         minWidth="min-content"
       >
-        <SortMenuItem labelKey="sort:newest" />
-        <SortMenuItem labelKey="sort:oldest" />
+        <SortMenuItem
+          labelKey={SortBy.Newest}
+          testId="sort-newest"
+          onClick={() => setSortBy(SortBy.Newest)}
+        />
+        <SortMenuItem
+          labelKey={SortBy.Oldest}
+          testId="sort-oldest"
+          onClick={() => setSortBy(SortBy.Oldest)}
+        />
       </MenuList>
     </Menu>
   );

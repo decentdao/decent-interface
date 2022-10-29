@@ -10,6 +10,7 @@ import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
 import SIDEBAR_EN from './locales/en/sidebar.json';
 import BADGE_EN from './locales/en/badge.json';
+import SORT_EN from './locales/en/sort.json';
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
  * language setting. This library is based on the popular i18next JavaScript library, tailored specificaly to React.
@@ -43,6 +44,7 @@ const resources = {
     treasury: TREASURY_EN,
     sidebar: SIDEBAR_EN,
     badge: BADGE_EN,
+    sort: SORT_EN,
   },
 };
 
