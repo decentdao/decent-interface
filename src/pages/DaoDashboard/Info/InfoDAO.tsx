@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Copy, StarGoldSolid, StarOutline } from '@decent-org/fractal-ui';
-import { Badge } from '../../components/ui/badges/Badge';
-import { useCopyText } from '../../hooks/utlities/useCopyText';
+import { Badge } from '../../../components/ui/badges/Badge';
+import { useCopyText } from '../../../hooks/utlities/useCopyText';
 
 export function InfoDAO() {
   const copyToClipboard = useCopyText();
