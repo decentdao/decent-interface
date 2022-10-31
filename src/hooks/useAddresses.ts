@@ -143,9 +143,9 @@ export function useAddresses(chainId: number | undefined) {
     const claimModuleAddress = claimModuleNetworksAddresses[chainId];
     const gnosisWrapperAddress = gnosisWrapperNetworksAddresses[chainId];
     const gnosisSafeAddress = gnosisSafeNetworksAddresses[chainId];
-    const usulMasterCopy = usulMastercopyAddresses[chainId];
+    const usulMasterCopy = usulMasterCopyAddresses[chainId];
     const zodiacModuleProxyFactory = zodiacProxyFactoryAddresses[chainId];
-    const linearVotingMasterCopy = linearVotingMastercopyAddresses[chainId];
+    const linearVotingMasterCopy = linearVotingMasterCopyAddresses[chainId];
     const multiSend = multiSendAddresses[chainId];
     const votesMasterCopy = votesMasterCopyAddresses[chainId];
     const fractalModuleMasterCopy = fractalModuleMasterCopyAddresses[chainId];
