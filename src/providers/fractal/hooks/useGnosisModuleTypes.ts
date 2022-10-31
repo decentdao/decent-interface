@@ -23,7 +23,7 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
       return;
     }
 
-    const getMasterCopyAddress = (proxyAddress: string) => {
+    const getMasterCopyAddress = (proxyAddress: string): Promise<string> => {
       const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
         proxyAddress,
         null
