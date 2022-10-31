@@ -30,8 +30,8 @@ const useDeployDAO = () => {
     multiSendContract,
     gnosisSafeFactoryContract,
     gnosisSafeSingletonContract,
-    linearVotingMastercopyContract,
-    usulMastercopyContract,
+    linearVotingMasterCopyContract,
+    usulMasterCopyContract,
     zodiacModuleProxyFactoryContract,
   } = useSafeContracts();
 
@@ -230,9 +230,9 @@ const useDeployDAO = () => {
           !account ||
           !gnosisSafeFactoryContract ||
           !gnosisSafeSingletonContract?.address ||
-          !usulMastercopyContract ||
+          !usulMasterCopyContract ||
           !zodiacModuleProxyFactoryContract ||
-          !linearVotingMastercopyContract ||
+          !linearVotingMasterCopyContract ||
           !multiSendContract ||
           !votesMasterCopy ||
           !signerOrProvider
@@ -310,12 +310,12 @@ const useDeployDAO = () => {
           ]
         );
         const encodedStrategySetUpData =
-          linearVotingMastercopyContract.interface.encodeFunctionData('setUp', [
+          linearVotingMasterCopyContract.interface.encodeFunctionData('setUp', [
             encodedStrategyInitParams,
           ]);
         const strategyByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          linearVotingMastercopyContract.address.slice(2) +
+          linearVotingMasterCopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
         const strategyNonce = getRandomBytes();
         const strategySalt = solidityKeccak256(
@@ -337,12 +337,12 @@ const useDeployDAO = () => {
             [predictedStrategyAddress],
           ]
         );
-        const encodedSetupUsulData = usulMastercopyContract.interface.encodeFunctionData('setUp', [
+        const encodedSetupUsulData = usulMasterCopyContract.interface.encodeFunctionData('setUp', [
           encodedInitUsulData,
         ]);
         const usulByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          usulMastercopyContract.address.slice(2) +
+          usulMasterCopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
         const usulNonce = getRandomBytes();
         const usulSalt = solidityKeccak256(
@@ -402,14 +402,14 @@ const useDeployDAO = () => {
         const deployStrategyTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [linearVotingMastercopyContract.address, encodedStrategySetUpData, strategyNonce],
+          [linearVotingMasterCopyContract.address, encodedStrategySetUpData, strategyNonce],
           0,
           false
         );
         const deployUsulTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [usulMastercopyContract.address, encodedSetupUsulData, usulNonce],
+          [usulMasterCopyContract.address, encodedSetupUsulData, usulNonce],
           0,
           false
         );
@@ -455,10 +455,10 @@ const useDeployDAO = () => {
     [
       contractCallDeploy,
       buildDeploySafeTx,
-      usulMastercopyContract,
+      usulMasterCopyContract,
       zodiacModuleProxyFactoryContract,
       gnosisSafeFactoryContract,
-      linearVotingMastercopyContract,
+      linearVotingMasterCopyContract,
       gnosisSafeSingletonContract,
       multiSendContract,
       account,
