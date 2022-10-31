@@ -31,10 +31,9 @@ interface UsulStatusBoxProps {
   state: UsulProposalState;
 }
 export function UsulStatusBox({ state }: UsulStatusBoxProps) {
-  const stateKey = 'state' + state.charAt(0).toUpperCase() + state.slice(1);
   const getStatusColors = () => {
     switch (state) {
-      case 'active':
+      case UsulProposalState.Active:
         return 'bg-drab-500 text-gold-500';
       default:
         return 'border border-gray-50 text-gray-50 bg-gray-400';
@@ -43,7 +42,7 @@ export function UsulStatusBox({ state }: UsulStatusBoxProps) {
   const { t } = useTranslation('proposal');
   return (
     <div className={cx('px-4 py-2 rounded-lg font-medium text-xs h-fit', getStatusColors())}>
-      <div>{t(stateKey)}</div>
+      <div>{t(state)}</div>
     </div>
   );
 }

@@ -2,26 +2,18 @@ import { BigNumber } from 'ethers';
 
 export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
 
-export type ProposalState =
-  | 'active'
-  | 'canceled'
-  | 'timeLocked'
-  | 'executed'
-  | 'executing'
-  | 'uninitialized'
-  | 'pending'
-  | 'failed';
+export enum ProposalState {
+  Active = 'stateActive',
+  Canceled = 'stateCanceled',
+  TimeLocked = 'stateTimeLocked',
+  Executed = 'stateExecuted',
+  Executing = 'stateExecuting',
+  Uninitialized = 'stateUninitialized',
+  Pending = 'statePending',
+  Failed = 'stateFailed',
+}
 
-export const strategyProposalStates: ProposalState[] = [
-  'active',
-  'canceled',
-  'timeLocked',
-  'executed',
-  'executing',
-  'uninitialized',
-  'pending',
-  'failed',
-];
+export const strategyProposalStates = Object.values(ProposalState);
 
 export type ProposalVotesSummary = {
   yes: BigNumber;

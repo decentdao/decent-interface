@@ -18,7 +18,7 @@ export const getProposalState = async (
   if (state === 0) {
     // Usul says proposal is active, but we need to get more info in this case
     const { strategy: strategyAddress } = await usulContract.proposals(proposalId);
-    const strategy = await OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
+    const strategy = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
     const { deadline } = await strategy.proposals(proposalId);
     if (Number(deadline.toString()) * 1000 < new Date().getTime()) {
       // Deadline has passed: we have to determine if proposal is passed or failed
@@ -26,19 +26,19 @@ export const getProposalState = async (
       try {
         // This function never returns false, it either returns true or throws an error
         await strategy.isPassed(proposalId);
-        return 'pending';
+        return 'statePending' as ProposalState;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_NOT_REACHED)) {
-          return 'failed';
+          return 'stateFailed' as ProposalState;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
-          return 'failed';
+          return 'stateFailed' as ProposalState;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
-          return 'active';
+          return 'stateActive' as ProposalState;
         }
-        return 'failed';
+        return 'stateFailed' as ProposalState;
       }
     }
-    return 'active';
+    return 'stateActive' as ProposalState;
   }
   return strategyProposalStates[state];
 };
