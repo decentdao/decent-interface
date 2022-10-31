@@ -14,8 +14,8 @@ export function useAddresses(chainId: number | undefined) {
     claimFactory?: ContractAddress;
     gnosisWrapperFactory?: ContractAddress;
     gnosisSafeFactory?: ContractAddress;
-    usulMastercopy?: ContractAddress;
-    linearVotingMastercopy?: ContractAddress;
+    usulMasterCopy?: ContractAddress;
+    linearVotingMasterCopy?: ContractAddress;
     zodiacModuleProxyFactory?: ContractAddress;
     dao?: ContractAddress;
     accessControl?: ContractAddress;
@@ -26,6 +26,7 @@ export function useAddresses(chainId: number | undefined) {
     gnosisWrapper?: ContractAddress;
     gnosisSafe?: ContractAddress;
     multiSend?: ContractAddress;
+    fractalModuleMasterCopy?: ContractAddress;
   }>({});
 
   useEffect(() => {
@@ -51,7 +52,8 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES ||
       !process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES ||
       !process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES ||
-      !process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
+      !process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES ||
+      !process.env.REACT_APP_FRACTAL_MODULE_MASTERCOPY_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
@@ -109,10 +111,10 @@ export function useAddresses(chainId: number | undefined) {
     const zodiacProxyFactoryAddresses: ContractAddressesChainMap = JSON.parse(
       process.env.REACT_APP_ZODIAC_PROXY_FACTORY_ADDRESSES
     );
-    const usulMastercopyAddresses: ContractAddressesChainMap = JSON.parse(
+    const usulMasterCopyAddresses: ContractAddressesChainMap = JSON.parse(
       process.env.REACT_APP_USUL_MASTERCOPY_ADDRESSES
     );
-    const linearVotingMastercopyAddresses: ContractAddressesChainMap = JSON.parse(
+    const linearVotingMasterCopyAddresses: ContractAddressesChainMap = JSON.parse(
       process.env.REACT_APP_ONE_TO_ONE_TOKEN_VOTING_MASTERCOPY_ADDRESSES
     );
     const multiSendAddresses: ContractAddressesChainMap = JSON.parse(
@@ -120,6 +122,9 @@ export function useAddresses(chainId: number | undefined) {
     );
     const votesMasterCopyAddresses: ContractAddressesChainMap = JSON.parse(
       process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES
+    );
+    const fractalModuleMasterCopyAddresses: ContractAddressesChainMap = JSON.parse(
+      process.env.REACT_APP_FRACTAL_MODULE_MASTERCOPY_ADDRESSES
     );
 
     const metaFactoryAddress = metaFactoryNetworksAddresses[chainId];
@@ -138,11 +143,12 @@ export function useAddresses(chainId: number | undefined) {
     const claimModuleAddress = claimModuleNetworksAddresses[chainId];
     const gnosisWrapperAddress = gnosisWrapperNetworksAddresses[chainId];
     const gnosisSafeAddress = gnosisSafeNetworksAddresses[chainId];
-    const usulMastercopy = usulMastercopyAddresses[chainId];
+    const usulMasterCopy = usulMastercopyAddresses[chainId];
     const zodiacModuleProxyFactory = zodiacProxyFactoryAddresses[chainId];
-    const linearVotingMastercopy = linearVotingMastercopyAddresses[chainId];
+    const linearVotingMasterCopy = linearVotingMastercopyAddresses[chainId];
     const multiSend = multiSendAddresses[chainId];
     const votesMasterCopy = votesMasterCopyAddresses[chainId];
+    const fractalModuleMasterCopy = fractalModuleMasterCopyAddresses[chainId];
 
     if (
       !metaFactoryAddress ||
@@ -161,11 +167,12 @@ export function useAddresses(chainId: number | undefined) {
       !claimModuleAddress ||
       !gnosisWrapperAddress ||
       !gnosisSafeAddress ||
-      !usulMastercopy ||
+      !usulMasterCopy ||
       !zodiacModuleProxyFactory ||
-      !linearVotingMastercopy ||
+      !linearVotingMasterCopy ||
       !multiSend ||
-      !votesMasterCopy
+      !votesMasterCopy ||
+      !fractalModuleMasterCopy
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -189,11 +196,12 @@ export function useAddresses(chainId: number | undefined) {
       claimModule: claimModuleAddress,
       gnosisWrapper: gnosisWrapperAddress,
       gnosisSafe: gnosisSafeAddress,
-      usulMastercopy,
+      usulMasterCopy,
       zodiacModuleProxyFactory,
-      linearVotingMastercopy,
+      linearVotingMasterCopy,
       multiSend,
       votesMasterCopy,
+      fractalModuleMasterCopy,
     });
   }, [chainId]);
 
