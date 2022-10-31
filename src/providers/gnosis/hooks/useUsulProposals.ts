@@ -99,9 +99,6 @@ export default function useUsulProposals() {
 
       try {
         const moduleContract = Usul__factory.connect(usulModule.moduleAddress, signerOrProvider);
-        // Little trick to figure out is the Zodiac Module is actually Usul module
-        // Method fails if module don't have getStrategiesPaginated - which is quite specific to Usul
-        // Known issue - if other contract will have same method - we will have contracts messed up :(
         const [strategies] = await moduleContract.getStrategiesPaginated(
           '0x0000000000000000000000000000000000000001',
           10
