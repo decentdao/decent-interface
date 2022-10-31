@@ -15,7 +15,7 @@ export enum ModuleTypes {
 }
 
 export enum GnosisModuleType {
-  USUL = 'Usul Module',
-  FRACTAL = 'Fractal Module',
-  UNKNOWN = 'Unknown Module Type',
+  USUL,
+  FRACTAL,
+  UNKNOWN,
 }
