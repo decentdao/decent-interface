@@ -11,7 +11,7 @@ export function InfoBox({
   return (
     <Box
       minWidth={minWidth}
-      h="full"
+      h="100%"
       bg="black.900-semi-transparent"
       p="1rem"
       borderRadius="0.5rem"

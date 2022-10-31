@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react';
-import { InfoBox } from '../../../components/ui/InfoBox';
+import { InfoBox } from '../../../components/ui/containers/InfoBox';
 import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
 import { InfoProposals } from './InfoProposals';
