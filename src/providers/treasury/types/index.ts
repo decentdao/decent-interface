@@ -39,6 +39,27 @@ export interface TreasuryAssetFungible {
   totalAmount: BigNumber;
   formattedTotal: string;
 }
+export interface GnosisAssetFungible {
+  balance: string;
+  ethValue: string;
+  fiatBalance: string;
+  fiatCode: string;
+  fiatConversion: string;
+  timestamp: string;
+  token: { decimals: number; logoUri: string; name: string; symbol: string };
+  tokenAddress: string;
+}
+export interface GnosisAssetNonFungible {
+  address: string;
+  tokenName: string;
+  tokenSymbol: string;
+  logoUri: string;
+  id: string;
+  uri: string;
+  name: string;
+  description: string;
+  imageUri: string;
+}
 
 export interface TreasuryAssetFungibleFiatAmount {
   [currencyId: string]: {
