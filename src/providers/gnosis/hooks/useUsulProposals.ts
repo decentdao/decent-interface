@@ -8,6 +8,7 @@ import { ProposalExecuteData } from '../../../types/proposal';
 import { useFractal } from '../../fractal/hooks/useFractal';
 import { Proposal } from '../types/usul';
 import { mapProposalCreatedEventToProposal } from '../helpers/usul';
+import { GnosisModuleType } from '../../../controller/Modules/types';
 
 export default function useUsulProposals() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
@@ -19,7 +20,7 @@ export default function useUsulProposals() {
     state: { signerOrProvider },
   } = useWeb3Provider();
   const {
-    gnosis: { safe },
+    gnosis: { modules },
   } = useFractal();
 
   const submitProposal = useCallback(
@@ -86,43 +87,48 @@ export default function useUsulProposals() {
 
   useEffect(() => {
     const init = async () => {
-      if (!safe || !signerOrProvider) {
+      if (!signerOrProvider || !modules) {
         return;
       }
-      safe.modules?.forEach(async moduleAddress => {
-        try {
-          const moduleContract = Usul__factory.connect(moduleAddress, signerOrProvider);
-          // Little trick to figure out is the Zodiac Module is actually Usul module
-          // Method fails if module don't have getStrategiesPaginated - which is quite specific to Usul
-          // Known issue - if other contract will have same method - we will have contracts messed up :(
-          const [strategies] = await moduleContract.getStrategiesPaginated(
-            '0x0000000000000000000000000000000000000001',
-            10
-          );
-          const proposalCreatedFilter = moduleContract.filters.ProposalCreated();
-          const proposalCreatedEvents = await moduleContract.queryFilter(proposalCreatedFilter);
-          const mappedProposals = await Promise.all(
-            proposalCreatedEvents.map(({ args }) => {
-              return mapProposalCreatedEventToProposal(
-                args[0],
-                args[1],
-                args[2],
-                moduleContract,
-                signerOrProvider
-              );
-            })
-          );
 
-          setUsulContract(moduleContract);
-          setVotingStrategiesAddresses(strategies);
-          setProposals(mappedProposals);
-        } catch (e) {
-          console.error(e);
-        }
-      });
+      const usulModule = modules.find(module => module.moduleType === GnosisModuleType.USUL);
+
+      if (!usulModule) {
+        return;
+      }
+
+      try {
+        const moduleContract = Usul__factory.connect(usulModule.moduleAddress, signerOrProvider);
+        // Little trick to figure out is the Zodiac Module is actually Usul module
+        // Method fails if module don't have getStrategiesPaginated - which is quite specific to Usul
+        // Known issue - if other contract will have same method - we will have contracts messed up :(
+        const [strategies] = await moduleContract.getStrategiesPaginated(
+          '0x0000000000000000000000000000000000000001',
+          10
+        );
+        const proposalCreatedFilter = moduleContract.filters.ProposalCreated();
+        const proposalCreatedEvents = await moduleContract.queryFilter(proposalCreatedFilter);
+        const mappedProposals = await Promise.all(
+          proposalCreatedEvents.map(({ args }) => {
+            return mapProposalCreatedEventToProposal(
+              args[0],
+              args[1],
+              args[2],
+              moduleContract,
+              signerOrProvider
+            );
+          })
+        );
+
+        setUsulContract(moduleContract);
+        setVotingStrategiesAddresses(strategies);
+        setProposals(mappedProposals);
+      } catch (e) {
+        console.error(e);
+      }
     };
     init();
-  }, [safe, signerOrProvider]);
+  }, [modules, signerOrProvider]);
 
   useEffect(() => {
     if (!usulContract || !signerOrProvider) {

@@ -109,7 +109,7 @@ function Summary() {
 
 export function GnosisDAOSummary() {
   const {
-    gnosis: { safe },
+    gnosis: { safe, modules },
   } = useFractal();
   return (
     <div className="text-white">
@@ -118,7 +118,7 @@ export function GnosisDAOSummary() {
       <div>threshold: {safe.threshold}</div>
       <div>owners: {safe.owners?.join(', ')}</div>
       <div>masterCopy: {safe.masterCopy}</div>
-      <div>modules: {safe.modules?.join(', ')}</div>
+      <div>modules: {modules.join(', ')}</div>
       <div>fallbackHandler: {safe.fallbackHandler}</div>
       <div>guard: {safe.guard}</div>
       <div>version: {safe.version}</div>
