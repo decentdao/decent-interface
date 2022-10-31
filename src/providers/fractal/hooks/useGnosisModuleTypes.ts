@@ -1,5 +1,5 @@
 import { GnosisModuleType } from '../../../controller/Modules/types/enums';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IGnosisModuleData } from '../../../controller/Modules/types';
 import useSafeContracts from '../../../hooks/useSafeContracts';
 
@@ -56,26 +56,9 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
   }, [
     zodiacModuleProxyFactoryContract,
     usulMasterCopyContract,
-    moduleAddresses,
     fractalModuleMasterCopyContract,
+    moduleAddresses,
   ]);
 
-  const usulModule = useMemo(
-    () => modules.find(v => v.moduleType === GnosisModuleType.USUL),
-    [modules]
-  );
-  const fractalModule = useMemo(
-    () => modules.find(v => v.moduleType === GnosisModuleType.FRACTAL),
-    [modules]
-  );
-  const unknownModule = useMemo(
-    () => modules.find(v => v.moduleType === GnosisModuleType.UNKNOWN),
-    [modules]
-  );
-
-  return {
-    usulModule,
-    fractalModule,
-    unknownModule,
-  };
+  return modules;
 }

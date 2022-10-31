@@ -29,11 +29,7 @@ export interface IFractalContext {
   };
   gnosis: {
     safe: GnosisSafe;
-    modules: {
-      usulModule?: IGnosisModuleData;
-      fractalModule?: IGnosisModuleData;
-      unkownModule?: IGnosisModuleData;
-    };
+    modules: IGnosisModuleData[];
     dispatch: React.Dispatch<GnosisActions>;
   };
 }

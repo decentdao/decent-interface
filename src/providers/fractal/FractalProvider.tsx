@@ -91,7 +91,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     gnosisWrapperModule,
   } = useModuleTypes(dao.moduleAddresses);
 
-  const { usulModule, unknownModule } = useGnosisModuleTypes(gnosis.modules);
+  const modules = useGnosisModuleTypes(gnosis.modules);
 
   useModuleListeners(dao, dispatch);
 
@@ -115,10 +115,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       },
       gnosis: {
         safe: gnosis,
-        modules: {
-          usulModule,
-          unknownModule,
-        },
+        modules,
         dispatch: gnosisDispatch,
       },
     }),
@@ -132,8 +129,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       gnosisWrapperModule,
       daoLegacy,
       gnosis,
-      usulModule,
-      unknownModule,
+      modules,
     ]
   );
 
