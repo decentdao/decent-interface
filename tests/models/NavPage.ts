@@ -48,7 +48,6 @@ export abstract class NavPage extends FractalPage {
     await this.page.click('[data-testid=header-favoritesLink]');
   }
 
-  // home proposals feed treasury support discord docs
   async clickLeftMenuHome() {
     await this.page.click('[data-testid=sidebar-daoHomeLink"]');
   }

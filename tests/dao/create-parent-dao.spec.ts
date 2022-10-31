@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import { DAOCreate } from '../models/DAOCreate';
 import { HomePage } from '../models/HomePage';
 
-test.describe.skip('DAO Creation', () => {
+test.describe('DAO Creation', () => {
   let create: DAOCreate;
 
   test.beforeEach(async ({ page }) => {
