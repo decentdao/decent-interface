@@ -12,9 +12,9 @@ import {
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../constants/url';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
-import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants';
 
 function SidebarTooltipWrapper({ label, children }: { label: string; children: JSX.Element }) {
   return (
