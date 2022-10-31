@@ -1,9 +1,9 @@
-import { Box, Center, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { Button, Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../routes/constants';
-import { ReactComponent as Logo } from '../../assets/images/fractal-text-logo.svg';
+import logo from '../../assets/images/fractal-text-logo.svg';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { ReactNode } from 'react';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../constants/url';
@@ -98,7 +98,10 @@ function Home() {
         flexDirection="column"
         alignItems="center"
       >
-        <Logo style={{ marginBottom: '3.5rem' }} />
+        <Image
+          src={logo}
+          marginBottom="3.5rem"
+        />
         {!account && (
           <Text
             data-testid="home-pageTitleDisconnected"
