@@ -14,7 +14,7 @@ export enum ModuleTypes {
   GNOSIS_WRAPPER = 'Gnosis Safe Governance',
 }
 
-export enum GnosisModuleTypes {
+export enum GnosisModuleType {
   USUL = 'Usul Module',
   FRACTAL = 'Fractal Module',
   UNKNOWN = 'Unknown Module Type',

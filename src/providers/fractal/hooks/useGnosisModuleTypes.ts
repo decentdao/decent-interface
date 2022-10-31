@@ -1,4 +1,4 @@
-import { GnosisModuleTypes } from '../../../controller/Modules/types/enums';
+import { GnosisModuleType } from '../../../controller/Modules/types/enums';
 import { useEffect, useMemo, useState } from 'react';
 import { IGnosisModuleData } from '../../../controller/Modules/types';
 import useSafeContracts from '../../../hooks/useSafeContracts';
@@ -41,10 +41,10 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
 
           const moduleType =
             masterCopyAddress === usulMasterCopyContract.address
-              ? GnosisModuleTypes.USUL
+              ? GnosisModuleType.USUL
               : masterCopyAddress === fractalModuleMasterCopyContract.address
-              ? GnosisModuleTypes.FRACTAL
-              : GnosisModuleTypes.UNKNOWN;
+              ? GnosisModuleType.FRACTAL
+              : GnosisModuleType.UNKNOWN;
 
           return {
             moduleAddress,
@@ -61,15 +61,15 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
   ]);
 
   const usulModule = useMemo(
-    () => modules.find(v => v.moduleType === GnosisModuleTypes.USUL),
+    () => modules.find(v => v.moduleType === GnosisModuleType.USUL),
     [modules]
   );
   const fractalModule = useMemo(
-    () => modules.find(v => v.moduleType === GnosisModuleTypes.FRACTAL),
+    () => modules.find(v => v.moduleType === GnosisModuleType.FRACTAL),
     [modules]
   );
   const unknownModule = useMemo(
-    () => modules.find(v => v.moduleType === GnosisModuleTypes.UNKNOWN),
+    () => modules.find(v => v.moduleType === GnosisModuleType.UNKNOWN),
     [modules]
   );
 

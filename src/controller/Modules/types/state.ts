@@ -1,4 +1,4 @@
-import { ModuleTypes, GnosisModuleTypes } from './enums';
+import { ModuleTypes, GnosisModuleType } from './enums';
 
 export interface ModuleSelectState {
   isLoading: boolean;
@@ -13,5 +13,5 @@ export interface IModuleData {
 
 export interface IGnosisModuleData {
   moduleAddress: string;
-  moduleType: GnosisModuleTypes;
+  moduleType: GnosisModuleType;
 }
