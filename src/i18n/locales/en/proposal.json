@@ -30,6 +30,7 @@
     "stateQueued": "Queued",
     "stateExpired": "Expired",
     "stateExecuted": "Executed",
+    "stateFailed": "Failed",
     "stateUnknown": "Unknown",
     "loadingProposals": "Proposals loading...",
     "emptyProposals": "No proposals",

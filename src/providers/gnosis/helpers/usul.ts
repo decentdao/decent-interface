@@ -29,7 +29,7 @@ export const getProposalState = async (
         return 'statePending' as ProposalState;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_NOT_REACHED)) {
-          return 'stateFailed' as ProposalState;
+          return 'stateRejected' as ProposalState;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
           return 'stateFailed' as ProposalState;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
