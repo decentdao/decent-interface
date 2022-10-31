@@ -7,8 +7,8 @@ import useSafeContracts from '../../../hooks/useSafeContracts';
 export function useGnosisModuleTypes(moduleAddresses?: string[]) {
   const {
     zodiacModuleProxyFactoryContract,
-    usulMastercopyContract,
-    fractalModuleMastercopyContract,
+    usulMasterCopyContract,
+    fractalModuleMasterCopyContract,
   } = useSafeContracts();
 
   const [modules, setModules] = useState<IGnosisModuleData[]>([]);
@@ -16,8 +16,8 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
   useEffect(() => {
     if (
       !zodiacModuleProxyFactoryContract ||
-      !usulMastercopyContract ||
-      !fractalModuleMastercopyContract ||
+      !usulMasterCopyContract ||
+      !fractalModuleMasterCopyContract ||
       !moduleAddresses
     ) {
       return;
@@ -40,9 +40,9 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
           const masterCopyAddress = await getMasterCopyAddress(moduleAddress);
 
           const moduleType =
-            masterCopyAddress === usulMastercopyContract.address
+            masterCopyAddress === usulMasterCopyContract.address
               ? GnosisModuleTypes.USUL
-              : masterCopyAddress === fractalModuleMastercopyContract.address
+              : masterCopyAddress === fractalModuleMasterCopyContract.address
               ? GnosisModuleTypes.FRACTAL
               : GnosisModuleTypes.UNKNOWN;
 
@@ -55,9 +55,9 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
     })();
   }, [
     zodiacModuleProxyFactoryContract,
-    usulMastercopyContract,
+    usulMasterCopyContract,
     moduleAddresses,
-    fractalModuleMastercopyContract,
+    fractalModuleMasterCopyContract,
   ]);
 
   const usulModule = useMemo(

@@ -26,10 +26,10 @@ export default function useSafeContracts() {
   const [gnosisSafeSingletonContract, setGnosisSafeSingletonContract] = useState<GnosisSafe>();
   const [zodiacModuleProxyFactoryContract, setZodiacModuleProxyFactoryContract] =
     useState<ModuleProxyFactory>();
-  const [usulMastercopyContract, setUsulMastercopyContract] = useState<Usul>();
-  const [linearVotingMastercopyContract, setLinearVotingMastercopyContract] =
+  const [usulMasterCopyContract, setUsulMasterCopyContract] = useState<Usul>();
+  const [linearVotingMasterCopyContract, setLinearVotingMasterCopyContract] =
     useState<OZLinearVoting>(); // 1:1 Token Voting contract
-  const [fractalModuleMastercopyContract, setFractalModuleMastercopyContract] =
+  const [fractalModuleMasterCopyContract, setFractalModuleMasterCopyContract] =
     useState<FractalModule>();
   const {
     state: { signerOrProvider, chainId },
@@ -39,29 +39,29 @@ export default function useSafeContracts() {
     gnosisSafe,
     gnosisSafeFactory,
     zodiacModuleProxyFactory,
-    linearVotingMastercopy,
-    usulMastercopy,
+    linearVotingMasterCopy,
+    usulMasterCopy,
     multiSend,
-    fractalModuleMastercopy,
+    fractalModuleMasterCopy,
   } = useAddresses(chainId);
 
   useEffect(() => {
     if (
       !gnosisSafeFactory ||
       !zodiacModuleProxyFactory ||
-      !linearVotingMastercopy ||
-      !usulMastercopy ||
+      !linearVotingMasterCopy ||
+      !usulMasterCopy ||
       !gnosisSafe ||
       !multiSend ||
-      !fractalModuleMastercopy ||
+      !fractalModuleMasterCopy ||
       !signerOrProvider
     ) {
       setGnosisSafeFactoryContract(undefined);
       setZodiacModuleProxyFactoryContract(undefined);
-      setUsulMastercopyContract(undefined);
-      setLinearVotingMastercopyContract(undefined);
+      setUsulMasterCopyContract(undefined);
+      setLinearVotingMasterCopyContract(undefined);
       setGnosisSafeSingletonContract(undefined);
-      setFractalModuleMastercopyContract(undefined);
+      setFractalModuleMasterCopyContract(undefined);
       return;
     }
 
@@ -70,9 +70,9 @@ export default function useSafeContracts() {
       GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory.address, signerOrProvider)
     );
 
-    setUsulMastercopyContract(Usul__factory.connect(usulMastercopy.address, signerOrProvider));
-    setLinearVotingMastercopyContract(
-      OZLinearVoting__factory.connect(linearVotingMastercopy.address, signerOrProvider)
+    setUsulMasterCopyContract(Usul__factory.connect(usulMasterCopy.address, signerOrProvider));
+    setLinearVotingMasterCopyContract(
+      OZLinearVoting__factory.connect(linearVotingMasterCopy.address, signerOrProvider)
     );
     setGnosisSafeSingletonContract(
       GnosisSafe__factory.connect(gnosisSafe.address, signerOrProvider)
@@ -82,27 +82,27 @@ export default function useSafeContracts() {
       ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory.address, signerOrProvider)
     );
 
-    setFractalModuleMastercopyContract(
-      FractalModule__factory.connect(fractalModuleMastercopy.address, signerOrProvider)
+    setFractalModuleMasterCopyContract(
+      FractalModule__factory.connect(fractalModuleMasterCopy.address, signerOrProvider)
     );
   }, [
     gnosisSafeFactory,
     gnosisSafe,
     zodiacModuleProxyFactory,
-    linearVotingMastercopy,
-    usulMastercopy,
+    linearVotingMasterCopy,
+    usulMasterCopy,
     signerOrProvider,
     multiSend,
-    fractalModuleMastercopy,
+    fractalModuleMasterCopy,
   ]);
 
   return {
     gnosisSafeFactoryContract,
     gnosisSafeSingletonContract,
     zodiacModuleProxyFactoryContract,
-    usulMastercopyContract,
-    linearVotingMastercopyContract,
+    usulMasterCopyContract,
+    linearVotingMasterCopyContract,
     multiSendContract,
-    fractalModuleMastercopyContract,
+    fractalModuleMasterCopyContract,
   };
 }
