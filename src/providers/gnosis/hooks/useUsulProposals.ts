@@ -51,10 +51,11 @@ export default function useUsulProposals() {
         await (
           await usulContract.submitProposal(txHashes, votingStrategiesAddresses[0], '0x')
         ).wait(); // Third parameter is optional on Usul
-        setPendingCreateTx(false);
         successCallback();
       } catch (e) {
         logError(e, 'Error during Usul proposal creation');
+      } finally {
+        setPendingCreateTx(false);
       }
     },
     [usulContract, votingStrategiesAddresses]

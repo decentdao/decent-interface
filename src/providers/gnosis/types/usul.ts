@@ -43,3 +43,9 @@ export type Proposal = {
   proposer: string;
   proposalNumber: BigNumber;
 };
+
+export enum ProposalIsPassedError {
+  MAJORITY_YES_NOT_REACHED = 'majority yesVotes not reached',
+  QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
+  PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
+}

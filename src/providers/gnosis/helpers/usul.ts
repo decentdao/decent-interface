@@ -6,6 +6,7 @@ import {
   ProposalState,
   ProposalVotesSummary,
   strategyProposalStates,
+  ProposalIsPassedError,
 } from '../types/usul';
 
 export const getProposalState = async (
@@ -27,11 +28,11 @@ export const getProposalState = async (
         await strategy.isPassed(proposalId);
         return 'pending';
       } catch (e: any) {
-        if (e.message.match('majority yesVotes not reached')) {
+        if (e.message.match(ProposalIsPassedError.MAJORITY_YES_NOT_REACHED)) {
           return 'failed';
-        } else if (e.message.match('a quorum has not been reached for the proposal')) {
+        } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
           return 'failed';
-        } else if (e.message.match('voting period has not passed yet')) {
+        } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
           return 'active';
         }
         return 'failed';
