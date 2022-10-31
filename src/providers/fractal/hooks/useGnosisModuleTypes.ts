@@ -39,22 +39,17 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
         moduleAddresses.map(async moduleAddress => {
           const masterCopyAddress = await getMasterCopyAddress(moduleAddress);
 
-          if (masterCopyAddress === usulMastercopyContract.address) {
-            return {
-              moduleAddress: moduleAddress,
-              moduleType: GnosisModuleTypes.USUL,
-            } as IGnosisModuleData;
-          } else if (masterCopyAddress === fractalModuleMastercopyContract.address) {
-            return {
-              moduleAddress: moduleAddress,
-              moduleType: GnosisModuleTypes.FRACTAL,
-            } as IGnosisModuleData;
-          } else {
-            return {
-              moduleAddress: moduleAddress,
-              moduleType: GnosisModuleTypes.UNKNOWN,
-            } as IGnosisModuleData;
-          }
+          const moduleType =
+            masterCopyAddress === usulMastercopyContract.address
+              ? GnosisModuleTypes.USUL
+              : masterCopyAddress === fractalModuleMastercopyContract.address
+              ? GnosisModuleTypes.FRACTAL
+              : GnosisModuleTypes.UNKNOWN;
+
+          return {
+            moduleAddress,
+            moduleType,
+          } as IGnosisModuleData;
         })
       ).then(setModules);
     })();
