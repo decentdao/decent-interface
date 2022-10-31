@@ -13,3 +13,9 @@ export enum ModuleTypes {
   CLAIMING = 'Claiming Contract',
   GNOSIS_WRAPPER = 'Gnosis Safe Governance',
 }
+
+export enum GnosisModuleType {
+  USUL,
+  FRACTAL,
+  UNKNOWN,
+}

@@ -14,6 +14,7 @@ import {
   GnosisActions,
 } from './types';
 import { useModuleTypes } from './hooks/useModuleTypes';
+import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
 import { useModuleListeners } from './hooks/useModuleListeners';
 
 const initializeState = (_initialState: MVDDAO) => {
@@ -90,6 +91,8 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     gnosisWrapperModule,
   } = useModuleTypes(dao.moduleAddresses);
 
+  const modules = useGnosisModuleTypes(gnosis.modules);
+
   useModuleListeners(dao, dispatch);
 
   const value = useMemo(
@@ -112,6 +115,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       },
       gnosis: {
         safe: gnosis,
+        modules,
         dispatch: gnosisDispatch,
       },
     }),
@@ -125,6 +129,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       gnosisWrapperModule,
       daoLegacy,
       gnosis,
+      modules,
     ]
   );
 
