@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../src/components/constants';
 import { HomePage } from '../models/HomePage';
 
 test.describe('Visit App Homepage', async () => {
@@ -51,23 +50,27 @@ test.describe('Visit App Homepage', async () => {
   });
 
   test('home create button works', async ({ page }) => {
-    home.connectToWallet(); // connect via the dropdown menu
+    await home.connectToWallet(); // connect via the dropdown menu
     await home.clickCreateAFractal();
     await expect(page).toHaveURL(home.baseUrl + '/daos/new');
   });
 
-  test('FAQ button works', async ({ context }) => {
-    home.clickFAQ();
-    await expect(context.pages()[1]).toHaveURL(URL_FAQ);
+  test('FAQ button works', async () => {
+    const tab = await home.clickFAQNewTab();
+    await expect(tab).toHaveURL(
+      'https://docs.fractalframework.xyz/welcome-to-fractal/user-guides/faq'
+    );
   });
 
-  test('Discord button works', async ({ context }) => {
-    home.clickDiscord();
-    await expect(context.pages()[1]).toHaveURL(URL_DISCORD);
+  test('Discord button works', async () => {
+    const tab = await home.clickDiscordNewTab();
+    await expect(tab).toHaveURL('https://discord.com/invite/decent-dao');
   });
 
-  test('Docs button works', async ({ context }) => {
-    home.clickDocs();
-    await expect(context.pages()[1]).toHaveURL(URL_DOCS);
+  test('Docs button works', async () => {
+    const tab = await home.clickDocsNewTab();
+    await expect(tab).toHaveURL(
+      'https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview'
+    );
   });
 });

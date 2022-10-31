@@ -5,7 +5,7 @@ export enum MenuItems {
   Wallet,
 }
 
-export class NavPage extends FractalPage {
+export abstract class NavPage extends FractalPage {
   /*
    * Utility method for connecting to the default wallet.
    */

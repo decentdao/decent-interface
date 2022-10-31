@@ -7,7 +7,7 @@ export enum Notification {
   DAOCreated,
 }
 
-export class FractalPage {
+export abstract class FractalPage {
   readonly baseUrl = 'http://localhost:3000/#';
 
   readonly page: Page;
@@ -49,5 +49,17 @@ export class FractalPage {
 
   async dismissAuditMessage() {
     await this.notificationLocator(Notification.Audit).click();
+  }
+
+  /**
+   * Handles clicking a link / button which navigates to a new browser tab.
+   * @param click the Promise created by clicking the link to open the tab.
+   * @returns the Page object representing the new tab.
+   */
+  protected async newTab(click: Promise<void>) {
+    await click;
+    const newTab = await this.page.context().waitForEvent('page');
+    await newTab.bringToFront();
+    return newTab;
   }
 }
