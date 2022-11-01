@@ -11,6 +11,7 @@ export enum ProposalState {
   Uninitialized = 'stateUninitialized',
   Pending = 'statePending',
   Failed = 'stateFailed',
+  Rejected = 'stateRejected',
 }
 
 export const strategyProposalStates = Object.values(ProposalState);

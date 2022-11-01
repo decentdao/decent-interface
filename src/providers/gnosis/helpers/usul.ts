@@ -26,19 +26,19 @@ export const getProposalState = async (
       try {
         // This function never returns false, it either returns true or throws an error
         await strategy.isPassed(proposalId);
-        return 'statePending' as ProposalState;
+        return ProposalState.Pending;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_NOT_REACHED)) {
-          return 'stateRejected' as ProposalState;
+          return ProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
-          return 'stateFailed' as ProposalState;
+          return ProposalState.Failed;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
-          return 'stateActive' as ProposalState;
+          return ProposalState.Active;
         }
-        return 'stateFailed' as ProposalState;
+        return ProposalState.Failed;
       }
     }
-    return 'stateActive' as ProposalState;
+    return ProposalState.Active;
   }
   return strategyProposalStates[state];
 };
@@ -49,7 +49,7 @@ export const getProposalVotesSummary = async (
   signerOrProvider: Signer | Providers
 ): Promise<ProposalVotesSummary> => {
   const { strategy: strategyAddress } = await usulContract.proposals(proposalNumber);
-  const strategy = await OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
+  const strategy = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { yesVotes, noVotes, abstainVotes } = await strategy.proposals(proposalNumber);
   return {
     yes: yesVotes,
