@@ -1,32 +1,32 @@
 import { useState, useEffect } from 'react';
 import { logError } from '../helpers/errorLogging';
+import { EthAddress } from '../types';
 
-export type ContractAddress = { address: string };
-export type ContractAddressesChainMap = { [chaindId: number]: ContractAddress };
+export type ContractAddressesChainMap = { [chaindId: number]: EthAddress };
 export function useAddresses(chainId: number | undefined) {
   const [addresses, setAddresses] = useState<{
-    metaFactory?: ContractAddress;
-    daoFactory?: ContractAddress;
-    treasuryModuleFactory?: ContractAddress;
-    tokenFactory?: ContractAddress;
-    votesMasterCopy?: ContractAddress;
-    governorFactory?: ContractAddress;
-    claimFactory?: ContractAddress;
-    gnosisWrapperFactory?: ContractAddress;
-    gnosisSafeFactory?: ContractAddress;
-    usulMasterCopy?: ContractAddress;
-    linearVotingMasterCopy?: ContractAddress;
-    zodiacModuleProxyFactory?: ContractAddress;
-    dao?: ContractAddress;
-    accessControl?: ContractAddress;
-    treasuryModule?: ContractAddress;
-    governorModule?: ContractAddress;
-    timelock?: ContractAddress;
-    claimModule?: ContractAddress;
-    gnosisWrapper?: ContractAddress;
-    gnosisSafe?: ContractAddress;
-    multiSend?: ContractAddress;
-    fractalModuleMasterCopy?: ContractAddress;
+    metaFactory?: EthAddress;
+    daoFactory?: EthAddress;
+    treasuryModuleFactory?: EthAddress;
+    tokenFactory?: EthAddress;
+    votesMasterCopy?: EthAddress;
+    governorFactory?: EthAddress;
+    claimFactory?: EthAddress;
+    gnosisWrapperFactory?: EthAddress;
+    gnosisSafeFactory?: EthAddress;
+    usulMasterCopy?: EthAddress;
+    linearVotingMasterCopy?: EthAddress;
+    zodiacModuleProxyFactory?: EthAddress;
+    dao?: EthAddress;
+    accessControl?: EthAddress;
+    treasuryModule?: EthAddress;
+    governorModule?: EthAddress;
+    timelock?: EthAddress;
+    claimModule?: EthAddress;
+    gnosisWrapper?: EthAddress;
+    gnosisSafe?: EthAddress;
+    multiSend?: EthAddress;
+    fractalModuleMasterCopy?: EthAddress;
   }>({});
 
   useEffect(() => {
