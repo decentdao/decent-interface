@@ -6,6 +6,7 @@
     "community": "Community",
     "overview": "Overview",
     "faq": "FAQ",
+    "discord": "Discord",
     "docs": "Docs",
     "toastSwitchChain": "Switch to a supported chain: {{chainsNames}}",
     "toastConnected": "Connected",

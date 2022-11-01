@@ -1,16 +1,15 @@
 import { expect, test } from '@playwright/test';
 import { Notification } from '../models/FractalPage';
 import { HomePage } from '../models/HomePage';
-import { MenuItems, NavPage } from '../models/NavPage';
+import { MenuItems } from '../models/NavPage';
 
 test.describe.serial('Confirm Wallet is Connected to Fractal', async () => {
   test('network connected to local node', async ({ page }) => {
     const home = await new HomePage(page).visit();
-    const navPage = new NavPage(page);
 
     await home.clickHeaderMenuDropdown();
 
-    const networkItem = await navPage.menuLocator(MenuItems.Network);
+    const networkItem = await home.menuLocator(MenuItems.Network);
     await expect(networkItem!).toContainText('Local Test Network');
   });
 

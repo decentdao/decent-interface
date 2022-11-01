@@ -12,6 +12,7 @@ import {
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../constants/url';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
 
@@ -119,7 +120,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('support')}>
           <a
             data-testid="sidebarExternal-support"
-            href="https://docs.fractalframework.xyz/welcome-to-fractal/overview/faq"
+            href={URL_FAQ}
             rel="noreferrer noopener"
             target="_blank"
             aria-label={t('ariaLabelSupport')}
@@ -133,7 +134,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label="Discord">
           <a
             data-testid="sidebarExternal-discord"
-            href="https://discord.gg/decent-dao"
+            href={URL_DISCORD}
             rel="noreferrer noopener"
             target="_blank"
             aria-label={t('ariaLabelDiscord')}
@@ -147,7 +148,7 @@ function Sidebar() {
         <SidebarTooltipWrapper label={t('documentation')}>
           <a
             data-testid="sidebarExternal-documentation"
-            href="https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview"
+            href={URL_DOCS}
             rel="noreferrer noopener"
             target="_blank"
             aria-label={t('ariaLabelDocumentation')}

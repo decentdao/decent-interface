@@ -1,8 +1,9 @@
 {
-    "createHead": "Welcome to Fractal",
-    "createSubhead": "What path will you take?",
-    "buttonCreate": "Create a Fractal",
-    "buttonFind": "Find a Fractal",
+    "homeTitleDisconnected": "Welcome to Fractal",
+    "homeSubTitleDisconnected": "Connect your wallet to get started",
+    "homeSubTitleConnected": "Find a Fractal above or create a new one",
+    "homeButtonConnect": "Connect your wallet",
+    "homeButtonCreate": "Create a Fractal",
     "errorLowSignerThreshold": "Threshold must be greater than 0",
     "errorHighSignerThreshold": "Threshold is too high",
     "titleCreateGnosis": "Create a new Gnosis Safe",
