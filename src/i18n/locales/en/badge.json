@@ -4,7 +4,7 @@
   "active": "Active",
   "passed": "Passed",
   "executed": "Executed",
-  "rejected": "rejected",
+  "rejected": "Rejected",
   "parent": "Parent",
   "child": "Child"
 }
