@@ -30,9 +30,8 @@ interface IProposalCreate {
 
 function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: IProposalCreate) {
   const {
-    mvd: {
-      dao: { daoAddress },
-    },
+    mvd: { dao },
+    gnosis: { safe },
   } = useFractal();
 
   const [step, setStep] = useState<number>(0);
@@ -66,7 +65,13 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
     setTransactions([]);
     setProposalData(undefined);
 
-    navigate(`/daos/${daoAddress}/modules/${params.moduleAddress}`);
+    if (dao) {
+      navigate(`/daos/${dao.daoAddress}/modules/${params.moduleAddress}`);
+    }
+
+    if (safe) {
+      navigate(`/daos/${safe.address}/governance`);
+    }
   };
 
   useEffect(() => {
@@ -84,12 +89,15 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
         targets: transactions.map(transaction => transaction.targetAddress),
         values: transactions.map(() => BigNumber.from('0')),
         calldatas: transactions.map(transaction => {
-          const funcSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
-          const parametersArr = `[${transaction.parameters}]`;
-          return new ethers.utils.Interface([funcSignature]).encodeFunctionData(
-            transaction.functionName,
-            JSON.parse(parametersArr)
-          );
+          if (transaction.functionName) {
+            const funcSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
+            const parametersArr = `[${transaction.parameters}]`;
+            return new ethers.utils.Interface([funcSignature]).encodeFunctionData(
+              transaction.functionName,
+              JSON.parse(parametersArr)
+            );
+          }
+          return '';
         }),
         description: proposalDescription,
       };

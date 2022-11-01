@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
-import Summary from '../../components/Dao/Summary';
+import Summary, { GnosisDAOSummary } from '../../components/Dao/Summary';
 import Dashboard from '../../components/Dao/Dashboard';
 import { Modules } from '../../controller/Modules';
 import Transactions from '../Transactions';
@@ -11,6 +11,8 @@ import { TreasuryController } from '../../controller/Modules/TreasuryController'
 import { GovernanceController } from '../../controller/Modules/GovernanceController';
 import { NodeType } from '../../providers/fractal/constants/enums';
 import { useTranslation } from 'react-i18next';
+import Proposals, { GnosisDAOProposals } from '../Proposals';
+import { Governance } from '../Governance';
 
 function MVDDAO() {
   return (
@@ -30,6 +32,10 @@ function MVDDAO() {
         }
       />
       <Route
+        path="proposals/*"
+        element={<Proposals />}
+      />
+      <Route
         path="transactions/*"
         element={<Transactions />}
       />
@@ -42,22 +48,21 @@ function MVDDAO() {
 }
 
 function GnosisDAO() {
-  const {
-    gnosis: { safe },
-  } = useFractal();
-
   return (
-    <div className="text-white">
-      <div>address: {safe.address}</div>
-      <div>nonce: {safe.nonce}</div>
-      <div>threshold: {safe.threshold}</div>
-      <div>owners: {safe.owners?.join(', ')}</div>
-      <div>masterCopy: {safe.masterCopy}</div>
-      <div>modules: {safe.modules?.join(', ')}</div>
-      <div>fallbackHandler: {safe.fallbackHandler}</div>
-      <div>guard: {safe.guard}</div>
-      <div>version: {safe.version}</div>
-    </div>
+    <Routes>
+      <Route
+        index
+        element={<GnosisDAOSummary />}
+      />
+      <Route
+        path="governance/*"
+        element={<Governance isGnosisDAO={true} />}
+      />
+      <Route
+        path="governance/proposals/*"
+        element={<GnosisDAOProposals />}
+      />
+    </Routes>
   );
 }
 
