@@ -23,10 +23,9 @@ function App() {
   return (
     <Grid
       templateAreas={`"nav header"
-      "nav main"
       "nav main"`}
       gridTemplateColumns={'4.25rem 1fr'}
-      gridTemplateRows="4rem minmax(calc(100vh - 4rem), 100%) 1fr"
+      gridTemplateRows="4rem minmax(calc(100vh - 4rem), 100%)"
       position="relative"
     >
       <GridItem
