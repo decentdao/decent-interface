@@ -1,19 +1,4 @@
-import { MVDDAO, FractalNode, GnosisSafe } from '../types';
-
-export const nodeInitialState: FractalNode = {
-  nodeType: undefined,
-  isLoaded: false,
-};
-
-export const mvdInitialState: MVDDAO = {
-  daoAddress: undefined,
-  daoContract: undefined,
-  daoName: undefined,
-  accessControlAddress: undefined,
-  accessControlContract: undefined,
-  moduleAddresses: undefined,
-  isLoading: true,
-};
+import { GnosisSafe } from '../types';
 
 export const gnosisInitialState: GnosisSafe = {
   address: undefined,
