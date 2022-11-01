@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import H1 from '../ui/H1';
 import { DAOAddress, AddressDisplay } from '../AddressDisplay';
 import ContentBox from '../ui/ContentBox';
@@ -106,4 +107,24 @@ function Summary() {
   );
 }
 
+export function GnosisDAOSummary() {
+  const {
+    gnosis: { safe, modules },
+  } = useFractal();
+  return (
+    <div className="text-white">
+      <div>address: {safe.address}</div>
+      <div>nonce: {safe.nonce}</div>
+      <div>threshold: {safe.threshold}</div>
+      <div>owners: {safe.owners?.join(', ')}</div>
+      <div>masterCopy: {safe.masterCopy}</div>
+      <div>modules: {modules.map(({ moduleAddress }) => moduleAddress).join(', ')}</div>
+      <div>fallbackHandler: {safe.fallbackHandler}</div>
+      <div>guard: {safe.guard}</div>
+      <div>version: {safe.version}</div>
+
+      <Link to="governance">Governance</Link>
+    </div>
+  );
+}
 export default Summary;
