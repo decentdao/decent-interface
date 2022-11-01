@@ -118,7 +118,7 @@ function Home() {
           color="grayscale.100"
           marginBottom="1.5rem"
         >
-          {account ? t('homeSubTitleConnected') : t('homeSubTitleDisconnected')}
+          {t(account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
         </Text>
         <Button
           onClick={account ? createDAO : connect}
