@@ -26,6 +26,5 @@
   "include": [
     "src",
     "tests",
-    "page-objects"
   ]
 }

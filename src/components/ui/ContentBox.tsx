@@ -1,9 +1,8 @@
 import ContentBoxTitle from './ContentBoxTitle';
-import cx from 'classnames';
+import { Box } from '@chakra-ui/react';
 
 function ContentBox({
   title,
-  isLightBackground,
   children,
 }: {
   title?: string;
@@ -11,15 +10,21 @@ function ContentBox({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={cx('rounded-lg p-4 shadow-2xl my-5', {
-        'bg-gray-500': isLightBackground,
-        'bg-gray-600': !isLightBackground,
-      })}
+    <Box
+      rounded="lg"
+      p="1rem 1.5rem"
+      my="4"
+      shadow="dark-lg"
+      bg="black.900"
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}
-      <div className="rounded-lg px-1 py-2">{children}</div>
-    </div>
+      <Box
+        px="2"
+        py="4"
+      >
+        {children}
+      </Box>
+    </Box>
   );
 }
 

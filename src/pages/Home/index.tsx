@@ -1,41 +1,136 @@
+import { Box, Center, Flex, HStack, Image, Text } from '@chakra-ui/react';
+import { Button, Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import ContentBox from '../../components/ui/ContentBox';
-import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
-import H1 from '../../components/ui/H1';
+import { useNavigate } from 'react-router-dom';
+import { DAO_ROUTES } from '../../routes/constants';
+import logo from '../../assets/images/fractal-text-logo.svg';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { ReactNode } from 'react';
+import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../constants/url';
+
+interface IconWithTextProps {
+  icon: ReactNode;
+  label: string;
+  url: string;
+  testid: string;
+}
+
+function IconWithText({ icon, label, url, testid }: IconWithTextProps) {
+  return (
+    <a
+      data-testid={testid}
+      href={url}
+      rel="noreferrer noopener"
+      target="_blank"
+    >
+      <HStack>
+        {icon}
+        <Text
+          textStyle="text-button-md-semibold"
+          color="gold.500"
+        >
+          {label}
+        </Text>
+      </HStack>
+    </a>
+  );
+}
+
+function InfoLinks() {
+  const { t } = useTranslation('menu');
+  return (
+    <HStack>
+      <IconWithText
+        icon={
+          <SupportQuestion
+            color="gold.500"
+            boxSize="1.5rem"
+          />
+        }
+        label={t('faq')}
+        url={URL_FAQ}
+        testid="home-linkFAQ"
+      />
+      <Box
+        paddingLeft="1.25rem"
+        paddingRight="1.25rem"
+      >
+        <IconWithText
+          icon={
+            <Discord
+              color="gold.500"
+              boxSize="1.5rem"
+            />
+          }
+          label={t('discord')}
+          url={URL_DISCORD}
+          testid="home-linkDiscord"
+        />
+      </Box>
+      <IconWithText
+        icon={
+          <Documents
+            color="gold.500"
+            boxSize="1.5rem"
+          />
+        }
+        label={t('docs')}
+        url={URL_DOCS}
+        testid="home-linkDocs"
+      />
+    </HStack>
+  );
+}
 
 function Home() {
   const { t } = useTranslation('daoCreate');
+  const {
+    state: { account },
+    connect,
+  } = useWeb3Provider();
+  const navigate = useNavigate();
+  const createDAO = () => {
+    navigate(DAO_ROUTES.new.relative);
+  };
   return (
-    <div>
-      <H1>{t('createHead')}</H1>
-      <ContentBox title={t('createSubhead')}>
-        <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
-          <Link
-            to="/daos/new"
-            className="w-full"
+    <Center h="100vh">
+      <Flex
+        flexDirection="column"
+        alignItems="center"
+      >
+        <Image
+          src={logo}
+          marginBottom="3.5rem"
+        />
+        {!account && (
+          <Text
+            data-testid="home-pageTitleDisconnected"
+            textStyle="text-2xl-mono-regular"
+            color="grayscale.100"
+            marginBottom="1.5rem"
           >
-            <PrimaryButton
-              id="home:link-create"
-              label={t('buttonCreate')}
-              isLarge
-              className="w-full"
-            />
-          </Link>
-          <Link
-            to="/daos"
-            className="w-full"
-          >
-            <SecondaryButton
-              id="home:link-find"
-              label={t('buttonFind')}
-              isLarge
-              className="w-full"
-            />
-          </Link>
-        </div>
-      </ContentBox>
-    </div>
+            {t('homeTitleDisconnected')}
+          </Text>
+        )}
+        <Text
+          data-testid={account ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'}
+          textStyle="text-base-mono-regular"
+          color="grayscale.100"
+          marginBottom="1.5rem"
+        >
+          {t(account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
+        </Text>
+        <Button
+          onClick={account ? createDAO : connect}
+          data-testid={account ? 'home-linkCreate' : 'home-linkConnect'}
+          size="lg"
+          marginBottom="3.25rem"
+        >
+          {account ? t('homeButtonCreate') : t('homeButtonConnect')}
+        </Button>
+        <InfoLinks />
+      </Flex>
+    </Center>
   );
 }
 

@@ -1,62 +1,40 @@
-import React, { ChangeEvent } from 'react';
-import cx from 'classnames';
+import { Box, Radio, Text } from '@chakra-ui/react';
 
 interface IRadioWithText {
   description: string;
-  id: string;
-  name: string;
-  isSelected: boolean;
+  testId: string;
   label: string;
-  onChange: (e: ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLDivElement>) => void;
   value?: any;
-  readOnly?: boolean;
   disabled?: boolean;
 }
 
-export function RadioWithText({
-  description,
-  id,
-  isSelected,
-  label,
-  onChange,
-  disabled,
-  ...rest
-}: IRadioWithText) {
+export function RadioWithText({ testId, description, label, disabled, value }: IRadioWithText) {
   return (
-    <div
-      className={cx('p-4 flex border h-full', {
-        'border-gray-50': isSelected,
-        'border-gray-400': !isSelected,
-        'bg-gray-500 cursor-pointer': !disabled,
-        'bg-gray-700 cursor-not-allowed': disabled,
-      })}
-      onClick={onChange}
+    <Radio
+      display="flex"
+      data-testid={testId}
+      type="radio"
+      disabled={disabled}
+      colorScheme="gold"
+      value={value}
     >
-      <div className="flex items-center">
-        <input
-          id={id}
-          type="radio"
-          checked={isSelected}
-          disabled={disabled}
-          {...rest}
-        />
-      </div>
-      <div className="pl-4">
-        <label
-          className={cx('font-mono font-bold', { 'text-gray-50': disabled })}
-          htmlFor={id}
+      <Box
+        ml="4"
+        p="0.5rem 1rem"
+      >
+        <Text
+          textStyle="text-xl-mono-semibold"
+          color={disabled ? 'grayscale.300' : 'grayscale.white'}
         >
           {label}
-        </label>
-        <div
-          className={cx('mt-2 text-gray-50', {
-            'text-gray-200': disabled,
-            'text-gray-50': !disabled,
-          })}
+        </Text>
+        <Text
+          textStyle="text-base-sans-regular"
+          color={disabled ? 'grayscale.300' : 'grayscale.400'}
         >
           {description}
-        </div>
-      </div>
-    </div>
+        </Text>
+      </Box>
+    </Radio>
   );
 }

@@ -6,6 +6,7 @@
     "community": "Community",
     "overview": "Overview",
     "faq": "FAQ",
+    "discord": "Discord",
     "docs": "Docs",
     "toastSwitchChain": "Switch to a supported chain: {{chainsNames}}",
     "toastConnected": "Connected",
@@ -13,5 +14,11 @@
     "toastChainChanged": "Chain changed: {{chainId}}",
     "toastAccountRevoked": "Account access revoked",
     "toastAccountChanged": "Account changed",
-    "toastAccountDisconnected": "Account disconnected"
+    "toastAccountDisconnected": "Account disconnected",
+    "network": "Network",
+    "wallet": "Wallet",
+    "mainnet": "Mainnet",
+    "goerli": "Goerli Test Network",
+    "sepolia": "Sepolia Test Network",
+    "local": "Local Test Network"
 }

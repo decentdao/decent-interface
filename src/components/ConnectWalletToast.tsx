@@ -1,20 +1,27 @@
+import { Flex, Text } from '@chakra-ui/react';
+import { Button } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
-import { TextButton } from './ui/forms/Button';
 
 function ToastContent({ label }: { label: string }) {
   const { connect } = useWeb3Provider();
   const { t } = useTranslation('menu');
   return (
-    <div className="flex flex-col items-center">
-      <div>{label}</div>
-      <TextButton
-        label={t('connectWallet')}
+    <Flex
+      flexDirection="column"
+      alignItems="center"
+    >
+      <Text>{label}</Text>
+      <Button
+        size="lg"
+        variant="text"
         onClick={connect}
-      />
-    </div>
+      >
+        {t('connectWallet')}
+      </Button>
+    </Flex>
   );
 }
 

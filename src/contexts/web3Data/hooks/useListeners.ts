@@ -9,6 +9,13 @@ import { getSupportedChains, getChainsWithMetadata } from '../chains';
 import { clearErrorContext, setLoggedWallet, setErrorContext } from '../../../helpers/errorLogging';
 import { useTranslation } from 'react-i18next';
 
+/**
+ * Sets event listeners on wallet connection
+ * if the wallet is connected to a local node or a fallback provider these listeners are not set
+ * @param web3Modal
+ * @param connectDefaultProvider
+ * @param connect
+ */
 const useListeners = (
   web3Modal: Web3Modal,
   connectDefaultProvider: () => void,
@@ -42,7 +49,6 @@ const useListeners = (
         ) {
           setModalProvider(_modalProvider);
         }
-        toast(t('toastConnected'), { toastId: 'connected' });
       }
     });
     return () => {

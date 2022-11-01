@@ -5,7 +5,9 @@ import { ToastContainer } from 'react-toastify';
 import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
 import reportWebVitals from './reportWebVitals';
 import { BlockchainDataProvider } from './contexts/blockchainData';
 import App from './App';
@@ -13,6 +15,8 @@ import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalProvider } from './providers/fractal/FractalProvider';
 import { ErrorFallback } from './components/ErrorFallback';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
+import { ChakraProvider } from '@chakra-ui/react';
+import { theme } from './assets/theme';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -29,21 +33,21 @@ root.render(
         </Helmet>
         <HashRouter>
           <FractalErrorBoundary fallback={ErrorFallback}>
-            <Web3Provider>
-              <BlockchainDataProvider>
-                <FractalProvider>
-                  <ToastContainer
-                    position="bottom-center"
-                    closeButton={false}
-                    newestOnTop={false}
-                    pauseOnFocusLoss={false}
-                    toastClassName="mt-2 bottom-0 mb-0 font-sans font-medium shadow bg-gray-400 text-gray-25 text-center cursor-pointer"
-                    progressClassName="bg-none bg-gold-500"
-                  />
-                  <App />
-                </FractalProvider>
-              </BlockchainDataProvider>
-            </Web3Provider>
+            <ChakraProvider theme={theme}>
+              <Web3Provider>
+                <BlockchainDataProvider>
+                  <FractalProvider>
+                    <ToastContainer
+                      position="bottom-center"
+                      closeButton={false}
+                      newestOnTop={false}
+                      pauseOnFocusLoss={false}
+                    />
+                    <App />
+                  </FractalProvider>
+                </BlockchainDataProvider>
+              </Web3Provider>
+            </ChakraProvider>
           </FractalErrorBoundary>
         </HashRouter>
       </HelmetProvider>

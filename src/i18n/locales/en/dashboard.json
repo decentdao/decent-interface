@@ -7,7 +7,7 @@
     "self": "Self",
     "descriptionDelegation": "Enter the address to delegate your vote to. Click \"Self\" to assign yourself.",
     "labelAccessControl": "Access control",
-    "titleFavorites": "Favorite Fractals",
+    "titleFavorites": "Favorites",
     "emptyFavorites": "No favorites!",
     "labelConnectSearch": "To search for a Fractal",
     "titleSearch": "Find a Fractal",
@@ -17,5 +17,14 @@
     "titleParentDAO": "Parent DAO",
     "titleDAOSubsidiaries": "DAO Subsidiaries",
     "titleCoreDAO": "Core DAO Address",
-    "titleModuleContract": "Module Contract Addresses"
+    "titleModuleContract": "Module Contract Addresses",
+    "searchDAOPlaceholder": "Find a DAO by address or ENS",
+    "titleGovernance": "Governance",
+    "titleType": "Type",
+    "titleVotingPeriod": "Voting Period",
+    "titleQuorum": "Quorum",
+    "titleProposals": "Proposals",
+    "titlePending": "Pending",
+    "titlePassed": "Passed",
+    "titleTreasury": "Treasury"
 }

@@ -8,7 +8,8 @@ import DASHBOARD_EN from './locales/en/dashboard.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
-
+import SIDEBAR_EN from './locales/en/sidebar.json';
+import BADGE_EN from './locales/en/badge.json';
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
  * language setting. This library is based on the popular i18next JavaScript library, tailored specificaly to React.
@@ -40,6 +41,8 @@ const resources = {
     proposal: PROPOSAL_EN,
     transaction: TRANSACTION_EN,
     treasury: TREASURY_EN,
+    sidebar: SIDEBAR_EN,
+    badge: BADGE_EN,
   },
 };
 

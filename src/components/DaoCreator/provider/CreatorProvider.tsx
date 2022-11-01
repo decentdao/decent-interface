@@ -1,7 +1,6 @@
 import { ReactNode, useMemo, useReducer } from 'react';
 import { BigNumber } from 'ethers';
 import ConnectWalletToast from '../../ConnectWalletToast';
-import H1 from '../../ui/H1';
 import { StepButtons } from '../StepButtons';
 
 import { CreatorContext } from './hooks/useCreator';
@@ -16,6 +15,7 @@ import {
   GovernanceTypes,
 } from './types';
 import { useTranslation } from 'react-i18next';
+import { Box, Text } from '@chakra-ui/react';
 
 export const initialState: CreatorState = {
   step: CreatorSteps.ESSENTIALS,
@@ -113,20 +113,21 @@ export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICre
 
   const value = useMemo(() => ({ state, dispatch, stepName }), [state, dispatch, stepName]);
   const { t } = useTranslation('daoCreate');
+
   return (
     <CreatorContext.Provider value={value}>
-      <div className="pb-16">
+      <Box p="8">
         <ConnectWalletToast label={t('labelConnectWallet')} />
-        <div>
-          <H1>{stepName}</H1>
+        <Box>
+          <Text textStyle="text-2xl-mono-bold">{stepName}</Text>
           {children}
           <StepButtons
             pending={pending}
             deployDAO={deployDAO}
             isSubDAO={isSubDAO}
           />
-        </div>
-      </div>
+        </Box>
+      </Box>
     </CreatorContext.Provider>
   );
 }

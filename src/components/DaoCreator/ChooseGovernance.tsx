@@ -11,6 +11,7 @@ import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorProviderActions, GovernanceTypes } from './provider/types';
 import { useTranslation } from 'react-i18next';
+import { Divider, RadioGroup } from '@chakra-ui/react';
 
 export function ChooseGovernance() {
   const {
@@ -41,51 +42,48 @@ export function ChooseGovernance() {
 
   return (
     <ContentBox>
-      <div className="md:grid md:grid-cols-2 gap-6 flex flex-col items-center py-4">
+      <RadioGroup
+        display="flex"
+        flexDirection="column"
+        name="governance"
+        gap="4"
+        py="0.5rem"
+        value={governance}
+        onChange={selectedGovernance => {
+          fieldUpdate(selectedGovernance as GovernanceTypes);
+        }}
+      >
         <RadioWithText
           label={t('label1To1Voting')}
           description={t('desc1To1Voting')}
-          name="governance"
-          id="token-voting"
-          isSelected={governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE}
-          onChange={() => {
-            fieldUpdate(GovernanceTypes.TOKEN_VOTING_GOVERNANCE);
-          }}
-          readOnly
+          testId="choose-tokenVotingMVD"
+          value={GovernanceTypes.TOKEN_VOTING_GOVERNANCE}
         />
+        <Divider />
         <RadioWithText
           label={t('labelGnosis', { ns: 'common' })}
           description={isCurrentChainSupported ? t('descGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
-          id="gnosis-safe"
-          name="governance"
-          isSelected={governance === GovernanceTypes.MVD_GNOSIS}
-          onChange={() => {
-            fieldUpdate(GovernanceTypes.MVD_GNOSIS);
-          }}
+          testId="choose-gnosisSafeMVD"
+          value={GovernanceTypes.MVD_GNOSIS}
           disabled={!isCurrentChainSupported}
-          readOnly
         />
+        <Divider />
         <RadioWithText
           label={t('labelPureGnosis', { ns: 'common' })}
           description={isCurrentChainSupported ? t('descPureGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
-          id="gnosis-safe-pure"
-          name="governance"
-          isSelected={governance === GovernanceTypes.GNOSIS_SAFE}
-          onChange={() => fieldUpdate(GovernanceTypes.GNOSIS_SAFE)}
+          testId="choose-gnosisSafePure"
+          value={GovernanceTypes.GNOSIS_SAFE}
           disabled={!isCurrentChainSupported}
-          readOnly
         />
+        <Divider />
         <RadioWithText
           label={t('labelGnosisWithUsul', { ns: 'common' })}
           description={isCurrentChainSupported ? t('descGnosisUsul') : GNOSIS_UNSUPPORTED_MESSAGE}
-          id="gnosis-safe-usul"
-          name="governance"
-          isSelected={governance === GovernanceTypes.GNOSIS_SAFE_USUL}
-          onChange={() => fieldUpdate(GovernanceTypes.GNOSIS_SAFE_USUL)}
+          testId="choose-gnosis-safe-usul"
+          value={GovernanceTypes.GNOSIS_SAFE_USUL}
           disabled={!isCurrentChainSupported}
-          readOnly
         />
-      </div>
+      </RadioGroup>
     </ContentBox>
   );
 }

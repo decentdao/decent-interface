@@ -33,6 +33,7 @@
     "home": "Home",
     "crumbNewProposal": "New Proposal",
     "labelViewDAO": "View DAO",
+    "labelDAOFound": "DAO Found!",
     "labelEtherscan": "View on Etherscan",
     "labelGnosis": "MVD Gnosis Safe",
     "labelPureGnosis": "Gnosis Safe",
@@ -49,5 +50,8 @@
     "labelDateMonth_one": "{{count}} month",
     "labelDateMonth_other": "{{count}} months",
     "labelDateYear_one": "{{count}} year",
-    "labelDateYear_other": "{{count}} years"
+    "labelDateYear_other": "{{count}} years",
+    "toastClipboardCopy": "Copied to clipboard",
+    "newest": "Newest",
+    "oldest": "Oldest"
 }

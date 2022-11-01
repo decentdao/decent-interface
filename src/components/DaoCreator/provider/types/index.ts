@@ -26,10 +26,10 @@ export enum CreatorSteps {
 }
 
 export enum GovernanceTypes {
-  TOKEN_VOTING_GOVERNANCE,
-  MVD_GNOSIS,
-  GNOSIS_SAFE,
-  GNOSIS_SAFE_USUL,
+  TOKEN_VOTING_GOVERNANCE = 'token governance',
+  MVD_GNOSIS = 'mvd gnosis',
+  GNOSIS_SAFE = 'safe',
+  GNOSIS_SAFE_USUL = 'usul safe',
 }
 
 export type CreatorProviderActionTypes =

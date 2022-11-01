@@ -1,8 +1,7 @@
+import { Flex } from '@chakra-ui/react';
+import { ArrowLeft, ArrowRight, Button } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { TextButton, SecondaryButton, PrimaryButton } from '../ui/forms/Button';
-import LeftArrow from '../ui/svg/LeftArrow';
-import RightArrow from '../ui/svg/RightArrow';
 import { useCreator } from './provider/hooks/useCreator';
 import { useNextDisabled } from './provider/hooks/useNextDisabled';
 import {
@@ -23,7 +22,10 @@ function PrevButton({ pending }: { pending?: boolean }) {
   const { t } = useTranslation();
   if (state.prevStep !== null) {
     return (
-      <TextButton
+      <Button
+        data-testid="create-prevButton"
+        variant="text"
+        size="lg"
         onClick={() =>
           dispatch({
             type: CreatorProviderActions.SET_STEP,
@@ -31,9 +33,10 @@ function PrevButton({ pending }: { pending?: boolean }) {
           })
         }
         disabled={pending}
-        icon={<LeftArrow />}
-        label={t('prev')}
-      />
+        leftIcon={<ArrowLeft />}
+      >
+        {t('prev')}
+      </Button>
     );
   }
   return null;
@@ -65,22 +68,25 @@ function ForwardButton({
         state.step === CreatorSteps.FUNDING &&
         state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
       return (
-        <SecondaryButton
+        <Button
+          data-testid="create-nextButton"
+          size="lg"
           onClick={() =>
             dispatch({
               type: CreatorProviderActions.SET_STEP,
               payload: state.nextStep!,
             })
           }
-          disabled={isNextDisabled}
-          isIconRight
-          icon={<RightArrow />}
-          label={canSkip ? t('skip') : t('next')}
-        />
+          isDisabled={isNextDisabled}
+          rightIcon={<ArrowRight />}
+        >
+          {canSkip ? t('skip') : t('next')}
+        </Button>
       );
     case CreatorSteps.GOV_CONFIG:
       return (
-        <PrimaryButton
+        <Button
+          data-testid="create-deployDAO"
           onClick={() =>
             deployDAO({
               governance: state.governance,
@@ -94,24 +100,25 @@ function ForwardButton({
                 : {}),
             })
           }
-          label={deployLabel}
-          isLarge
-          className="w-48"
-          disabled={pending || !account || isNextDisabled}
-        />
+          size="lg"
+          isDisabled={pending || !account || isNextDisabled}
+        >
+          {deployLabel}
+        </Button>
       );
     case CreatorSteps.GNOSIS_GOVERNANCE:
     case CreatorSteps.PURE_GNOSIS: {
       return (
-        <PrimaryButton
+        <Button
+          data-testid="create-deployDAO"
           onClick={() =>
             deployDAO({ ...state.essentials, ...state.gnosis, governance: state.governance })
           }
-          label={deployLabel}
-          isLarge
-          className="w-48"
-          disabled={pending || !account || isNextDisabled}
-        />
+          size="lg"
+          isDisabled={pending || !account || isNextDisabled}
+        >
+          {deployLabel}
+        </Button>
       );
     }
     default:
@@ -121,13 +128,17 @@ function ForwardButton({
 
 export function StepButtons({ pending, isSubDAO, deployDAO }: IStepButtons) {
   return (
-    <div className="flex items-center justify-center py-4">
+    <Flex
+      justifyContent="center"
+      alignItems="center"
+      py="4"
+    >
       <PrevButton pending={pending} />
       <ForwardButton
         pending={pending}
         isSubDAO={isSubDAO}
         deployDAO={deployDAO}
       />
-    </div>
+    </Flex>
   );
 }

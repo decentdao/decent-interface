@@ -3,11 +3,12 @@ import { BigNumber } from 'ethers';
 import ContentBanner from '../../ui/ContentBanner';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions, GovernanceTypes } from '../provider/types';
 import { useTranslation } from 'react-i18next';
+import { Box, Text } from '@chakra-ui/react';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 
 function GovernanceDetails() {
   const {
@@ -53,103 +54,138 @@ function GovernanceDetails() {
   };
 
   const { t } = useTranslation(['common', 'daoCreate']);
-  const recommend = t('recommend');
   const blocks = t('blocks');
 
   return (
-    <div>
+    <Box>
       <ContentBox>
-        <div className="flex items-center gap-2">
-          <ContentBoxTitle>Proposal Settings</ContentBoxTitle>
-        </div>
+        <ContentBoxTitle>Proposal Settings</ContentBoxTitle>
         <InputBox>
-          <Input
-            type="number"
-            value={govModule.proposalThreshold.toString()}
-            unit={t('tokens')}
-            onChange={onThresholdChange}
+          <LabelWrapper
             label={t('labelProposalRequirement', { ns: 'daoCreate' })}
-            exampleLabel={recommend}
-            exampleText={t('exampleProposalRequirement', { ns: 'daoCreate' })}
-            helperText={t('helperProposalRequirement', { ns: 'daoCreate' })}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min="0"
-          />
+            subLabel={t('helperProposalRequirement', { ns: 'daoCreate' })}
+          >
+            <Input
+              size="base"
+              type="number"
+              value={govModule.proposalThreshold.toString()}
+              rightElement={t('tokens')}
+              onChange={onThresholdChange}
+              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+              min="0"
+              data-testid="govConfig-proposalThreshold"
+            />
+          </LabelWrapper>
         </InputBox>
         <InputBox>
-          <Input
-            type="number"
-            value={govModule.voteStartDelay.toString()}
-            onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'voteStartDelay')}
+          <LabelWrapper
             label={t('labelVoteStartDelay', { ns: 'daoCreate' })}
-            exampleLabel={recommend}
-            exampleText={t('exampleVoteStartDelay', { ns: 'daoCreate' })}
-            unit={blocks}
-            helperText={t('helperVoteStartDelay', { ns: 'daoCreate' })}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min="0"
-          />
+            subLabel={t('helperVoteStartDelay', { ns: 'daoCreate' })}
+          >
+            <Input
+              size="base"
+              type="number"
+              value={govModule.voteStartDelay.toString()}
+              onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'voteStartDelay')}
+              rightElement={blocks}
+              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+              min="0"
+              data-testid="govConfig-voteStartDelay"
+            />
+          </LabelWrapper>
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="gold.400"
+          >
+            {t('exampleVoteStartDelay', { ns: 'daoCreate' })}
+          </Text>
         </InputBox>
         <InputBox>
-          <Input
-            type="number"
-            value={govModule.votingPeriod.toString()}
-            onChange={onVotingPeriodChange}
+          <LabelWrapper
             label={t('labelVotingPeriod', { ns: 'daoCreate' })}
-            exampleLabel={recommend}
-            exampleText={t('exampleVotingPeriod', { ns: 'daoCreate' })}
-            unit={blocks}
-            helperText={t('helperVotingPeriod', { ns: 'daoCreate' })}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min={isSafeWithUsul ? '2' : '1'}
-          />
+            subLabel={t('helperVotingPeriod', { ns: 'daoCreate' })}
+          >
+            <Input
+              size="base"
+              type="number"
+              value={govModule.votingPeriod.toString()}
+              onChange={onVotingPeriodChange}
+              rightElement={blocks}
+              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+              min={isSafeWithUsul ? '2' : '1'}
+              data-testid="govConfig-votingPeriod"
+            />
+          </LabelWrapper>
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="gold.400"
+          >
+            {t('exampleVotingPeriod', { ns: 'daoCreate' })}
+          </Text>
         </InputBox>
         <ContentBoxTitle>Governance Setup</ContentBoxTitle>
         <InputBox>
-          <Input
-            type="number"
-            value={govModule.quorum.toString()}
-            onChange={onQuorumChange}
+          <LabelWrapper
             label={t('quorum')}
-            exampleLabel={recommend}
-            exampleText={t('exampleQuorum', { ns: 'daoCreate' })}
-            unit="%"
-            helperText={t('helperQuorum', { ns: 'daoCreate' })}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min="0"
-          />
+            subLabel={t('helperQuorum', { ns: 'daoCreate' })}
+          >
+            <Input
+              size="base"
+              type="number"
+              value={govModule.quorum.toString()}
+              onChange={onQuorumChange}
+              rightElement="%"
+              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+              min="0"
+              data-testid="govConfig-quorum"
+            />
+          </LabelWrapper>
         </InputBox>
         <InputBox>
-          <Input
-            type="number"
-            value={govModule.lateQuorumExecution.toString()}
-            onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'lateQuorumExecution')}
+          <LabelWrapper
             label={t('labelLateQuorumDelay', { ns: 'daoCreate' })}
-            exampleLabel={recommend}
-            exampleText={t('exampleLateQuorumDelay', { ns: 'daoCreate' })}
-            unit={blocks}
-            helperText={t('helperLateQuorumDelay', { ns: 'daoCreate' })}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min="0"
-          />
+            subLabel={t('helperLateQuorumDelay', { ns: 'daoCreate' })}
+          >
+            <Input
+              size="base"
+              type="number"
+              value={govModule.lateQuorumExecution.toString()}
+              onChange={e =>
+                fieldUpdate(BigNumber.from(e.target.value || 0), 'lateQuorumExecution')
+              }
+              label={t('labelLateQuorumDelay', { ns: 'daoCreate' })}
+              rightElement={blocks}
+              min="0"
+              data-testid="govConfig-lateQuorumExecution"
+            />
+          </LabelWrapper>
         </InputBox>
         <InputBox>
-          <Input
-            type="number"
-            value={govModule.executionDelay.toString()}
-            onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'executionDelay')}
+          <LabelWrapper
             label={t('labelProposalExecutionDelay', { ns: 'daoCreate' })}
-            exampleLabel={recommend}
-            exampleText={t('exampleProposalExecutionDelay', { ns: 'daoCreate' })}
-            unit={blocks}
-            helperText={t('helperProposalExecutionDelay', { ns: 'daoCreate' })}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            min="0"
-          />
+            subLabel={t('helperProposalExecutionDelay', { ns: 'daoCreate' })}
+          >
+            <Input
+              size="base"
+              type="number"
+              value={govModule.executionDelay.toString()}
+              onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'executionDelay')}
+              rightElement={blocks}
+              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+              min="0"
+              data-testid="govConfig-executionDelay"
+            />
+          </LabelWrapper>
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="gold.400"
+          >
+            {t('exampleProposalExecutionDelay', { ns: 'daoCreate' })}
+          </Text>
         </InputBox>
       </ContentBox>
       <ContentBanner description={t('governanceDescription', { ns: 'daoCreate' })} />
-    </div>
+    </Box>
   );
 }
 

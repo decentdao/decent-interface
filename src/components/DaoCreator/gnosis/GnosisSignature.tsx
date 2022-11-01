@@ -1,9 +1,9 @@
+import { Grid } from '@chakra-ui/react';
+import { Button, Input, LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { checkAddress } from '../../../hooks/useAddress';
-import { TextButton } from '../../ui/forms/Button';
-import Input from '../../ui/forms/Input';
 import { useCreator } from '../provider/hooks/useCreator';
 import { TrustedAddress } from '../provider/types';
 
@@ -42,22 +42,30 @@ export function GnosisSignatures({
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center my-2">
-      <Input
-        type="text"
-        value={trustee.address}
-        placeholder={ethers.constants.AddressZero}
-        onChange={event => updateAndValidateAddress(event.target.value)}
-        errorMessage={trustee.error ? t('errorInvalidAddress') : undefined}
-      />
-      {trustedAddresses.length > 1 && (
-        <TextButton
-          type="button"
-          onClick={() => removeAddress(index)}
-          label={t('remove')}
-          className="px-2"
+    <Grid
+      templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
+      alignItems="center"
+      my="1rem"
+      data-testid={`gnosisConfig-signer-${index}`}
+    >
+      <LabelWrapper errorMessage={trustee.error ? t('errorInvalidAddress') : undefined}>
+        <Input
+          size="base"
+          type="text"
+          value={trustee.address}
+          placeholder={ethers.constants.AddressZero}
+          onChange={event => updateAndValidateAddress(event.target.value)}
+          width="full"
         />
+      </LabelWrapper>
+      {trustedAddresses.length > 1 && (
+        <Button
+          variant="text"
+          onClick={() => removeAddress(index)}
+        >
+          {t('remove')}
+        </Button>
       )}
-    </div>
+    </Grid>
   );
 }

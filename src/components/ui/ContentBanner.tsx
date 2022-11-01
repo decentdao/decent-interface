@@ -1,4 +1,5 @@
-import Info from './svg/Info';
+import { Flex, Text } from '@chakra-ui/react';
+import { Info } from '@decent-org/fractal-ui';
 
 interface ContentBannerProps {
   description: string;
@@ -6,10 +7,20 @@ interface ContentBannerProps {
 
 function ContentBanner({ description }: ContentBannerProps) {
   return (
-    <div className="flex items-center bg-gray-500 border-t border-sand-500 my-4 p-4 text-gray-25">
-      <Info />
-      <div className="font-medium text-xs text-gray-25 ml-4">{description}</div>
-    </div>
+    <Flex
+      alignItems="center"
+      bg="black.500"
+      borderTop="1px solid"
+      borderColor="sand.500"
+      my="2rem"
+      p="1rem"
+      color="grayscale.100"
+      textStyle="text-sm-sans-regular"
+      gap="2"
+    >
+      <Info boxSize="1.5rem" />
+      <Text>{description}</Text>
+    </Flex>
   );
 }
 

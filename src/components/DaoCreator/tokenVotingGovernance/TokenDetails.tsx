@@ -1,5 +1,4 @@
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
-import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import InputBox from '../../ui/forms/InputBox';
 import TokenAllocations from './TokenAllocations';
 import ContentBox from '../../ui/ContentBox';
@@ -9,6 +8,7 @@ import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { utils } from 'ethers';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { useTranslation } from 'react-i18next';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 
 function TokenDetails() {
   const {
@@ -42,35 +42,52 @@ function TokenDetails() {
 
   return (
     <ContentBox>
+      {/* @todo add translations */}
       <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
       <InputBox>
-        <Input
-          type="text"
-          value={govToken.tokenName}
-          onChange={e => fieldUpdate(e.target.value, 'tokenName')}
+        <LabelWrapper
           label={t('labelTokenName')}
-          helperText={t('helperTokenName')}
-        />
+          subLabel={t('helperTokenName')}
+        >
+          <Input
+            size="base"
+            type="text"
+            data-testid="tokenVoting-tokenNameInput"
+            value={govToken.tokenName}
+            onChange={e => fieldUpdate(e.target.value, 'tokenName')}
+            minWidth="50%"
+          />
+        </LabelWrapper>
       </InputBox>
       <InputBox>
-        <Input
-          type="text"
-          value={govToken.tokenSymbol}
-          onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
+        <LabelWrapper
           label={t('labelTokenSymbol')}
-          helperText={t('helperTokenSymbol')}
-        />
+          subLabel={t('helperTokenSymbol')}
+        >
+          <Input
+            size="base"
+            type="text"
+            data-testid="tokenVoting-tokenSymbolInput"
+            value={govToken.tokenSymbol}
+            onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
+          />
+        </LabelWrapper>
       </InputBox>
       <InputBox>
-        <Input
-          type="number"
-          value={govToken.tokenSupply.value}
-          onChange={e => onSupplyChange(e.target.value)}
+        <LabelWrapper
           label={t('labelTokenSupply')}
-          helperText={t('helperTokenSupply')}
-          decimals={DEFAULT_TOKEN_DECIMALS}
-          restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
-        />
+          subLabel={t('helperTokenSupply')}
+        >
+          <Input
+            size="base"
+            type="number"
+            data-testid="tokenVoting-tokenSupplyInput"
+            value={govToken.tokenSupply.value}
+            onChange={e => onSupplyChange(e.target.value)}
+            decimals={DEFAULT_TOKEN_DECIMALS}
+            restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
+          />
+        </LabelWrapper>
       </InputBox>
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}

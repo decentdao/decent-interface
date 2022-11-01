@@ -6,6 +6,16 @@ module.exports = function override(config) {
     assert: require.resolve('assert'),
     buffer: require.resolve('buffer'),
   };
+  config.module.rules.push(
+    {
+      test: /\.mjs$/,
+      include: /node_modules/,
+      type: 'javascript/auto',
+      resolve: {
+        fullySpecified: false
+      }
+    }
+  )
   config.plugins.push(
     new webpack.ProvidePlugin({
       process: 'process/browser',
