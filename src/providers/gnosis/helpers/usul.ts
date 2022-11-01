@@ -28,7 +28,7 @@ export const getProposalState = async (
         await strategy.isPassed(proposalId);
         return ProposalState.Pending;
       } catch (e: any) {
-        if (e.message.match(ProposalIsPassedError.MAJORITY_YES_NOT_REACHED)) {
+        if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
           return ProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
           return ProposalState.Failed;
