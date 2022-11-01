@@ -41,7 +41,7 @@ interface IActivitySort {
 }
 
 export function ActivitySort({ sortBy, setSortBy }: IActivitySort) {
-  const { t } = useTranslation('sort');
+  const { t } = useTranslation();
   return (
     <Menu direction="ltr">
       <MenuButton

@@ -51,5 +51,7 @@
     "labelDateMonth_other": "{{count}} months",
     "labelDateYear_one": "{{count}} year",
     "labelDateYear_other": "{{count}} years",
-    "toastClipboardCopy": "Copied to clipboard"
+    "toastClipboardCopy": "Copied to clipboard",
+    "newest": "Newest",
+    "oldest": "Oldest"
 }
