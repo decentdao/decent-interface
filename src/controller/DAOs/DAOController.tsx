@@ -23,7 +23,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
     state: { signerOrProvider, account, isProviderLoading, chainId },
   } = useWeb3Provider();
 
-  const { errorMessage, address, addressNodeType, updateSearchString } = useSearchDao();
+  const { errorMessage, address, updateSearchString } = useSearchDao();
 
   /**
    * Passes param address to updateSearchString
@@ -51,7 +51,6 @@ export function DAOController({ children }: { children: JSX.Element }) {
   }, [
     address,
     signerOrProvider,
-    addressNodeType,
     account,
     gnosisDispatch,
     retrieveGnosis,

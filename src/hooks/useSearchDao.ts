@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NodeType } from '../providers/fractal/constants/enums';
 import useAddress from './useAddress';
-import useIsDAO from './useIsDAO';
 import useIsGnosisSafe from './useIsGnosisSafe';
 
 const useSearchDao = () => {
@@ -11,9 +9,7 @@ const useSearchDao = () => {
   const [loading, setLoading] = useState<boolean>();
 
   const [address, validAddress, addressLoading] = useAddress(searchString);
-  const [addressIsDAO, isDAOLoading] = useIsDAO(address);
   const [addressIsGnosisSafe, isGnosisSafeLoading] = useIsGnosisSafe(address);
-  const [addressNodeType, setAddressNodeType] = useState<NodeType>();
   const { t } = useTranslation('dashboard');
 
   /**
@@ -40,9 +36,9 @@ const useSearchDao = () => {
    */
   useEffect(() => {
     if (addressLoading !== undefined) {
-      setLoading(addressLoading || isDAOLoading || isGnosisSafeLoading);
+      setLoading(addressLoading || isGnosisSafeLoading);
     }
-  }, [addressLoading, isDAOLoading, isGnosisSafeLoading]);
+  }, [addressLoading, isGnosisSafeLoading]);
 
   /**
    * handles errors
@@ -62,7 +58,7 @@ const useSearchDao = () => {
       setErrorMessage(t('errorInvalidSearch'));
       return;
     }
-    if (addressIsDAO === false && addressIsGnosisSafe === false) {
+    if (addressIsGnosisSafe === false) {
       setErrorMessage(t('errorFailedSearch'));
       return;
     }
@@ -70,32 +66,16 @@ const useSearchDao = () => {
     address,
     validAddress,
     searchString,
-    addressIsDAO,
     addressIsGnosisSafe,
     loading,
     t,
     resetErrorState,
   ]);
 
-  useEffect(() => {
-    if (addressIsDAO === true) {
-      setAddressNodeType(NodeType.MVD);
-      return;
-    }
-
-    if (addressIsGnosisSafe === true) {
-      setAddressNodeType(NodeType.GNOSIS);
-      return;
-    }
-
-    setAddressNodeType(undefined);
-  }, [addressIsDAO, addressIsGnosisSafe]);
-
   return {
     errorMessage,
     loading,
     address,
-    addressNodeType,
     validAddress,
     updateSearchString,
     resetErrorState,
