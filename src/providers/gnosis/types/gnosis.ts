@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
+import { EthAddress } from '../../../types';
 
 export type GnosisSafeStatusResponse = {
-  address: string;
   nonce: number;
   threshold: number;
   owners: string[];
@@ -10,7 +10,8 @@ export type GnosisSafeStatusResponse = {
   fallbackHandler: string;
   guard: string;
   version: string;
-};
+  token: string[];
+} & EthAddress;
 
 export interface GnosisTransaction {
   to: string; //'<checksummed address>'

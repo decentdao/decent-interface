@@ -1,4 +1,5 @@
+import { EthAddress } from './';
+
 export type ContractMatch = {
-  address: string;
   match: boolean;
-};
+} & EthAddress;

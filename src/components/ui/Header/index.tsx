@@ -1,25 +1,7 @@
-import { Flex, Text } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
+import { Flex } from '@chakra-ui/react';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { AccountDisplay } from '../../menus/AccountDisplay';
-import { StarOutline } from '@decent-org/fractal-ui';
-
-function FavoriteLink() {
-  return (
-    <Link
-      to="/favorites"
-      data-testid="header-favoritesLink"
-    >
-      <Flex
-        gap="2"
-        alignItems="center"
-      >
-        <StarOutline color="gold.500" />
-        <Text color="gold.500">Favorites</Text>
-      </Flex>
-    </Link>
-  );
-}
+import { FavoritesMenu } from '../../menus/FavoritesMenu';
 
 function Header() {
   return (
@@ -35,7 +17,7 @@ function Header() {
         h="full"
         gap="8"
       >
-        <FavoriteLink />
+        <FavoritesMenu />
         <AccountDisplay />
       </Flex>
     </Flex>

@@ -1,20 +1,21 @@
 import { PropsWithChildren } from 'react';
+import { useGnosis } from '../../../providers/gnosis/hooks/useGnosis';
 import useGnosisEvents from '../../../providers/gnosis/hooks/useGnosisEvents';
-import { useGnosisWrapper } from '../../../providers/gnosis/hooks/useGnosisWrapper';
-import { TreasuryInjectorContext } from './TreasuryInjectorContext';
+import { GnosisTreasuryInjectorContext } from './GnosisTreasuryInjectorContext';
 
 export function GnosisTreasuryInjector({ children }: PropsWithChildren) {
-  const { state } = useGnosisWrapper();
+  const { state } = useGnosis();
   const { depositEvents, withdrawEvents } = useGnosisEvents(state.safeAddress);
 
   const value = {
     transactions: [...depositEvents, ...withdrawEvents],
-    // @todo replace with Gnosis Treasury assets
-    treasuryAssetsFungible: [],
-    treasuryAssetsNonFungible: [],
+    gnosisAssetsFungible: [...state.treasuryAssetsFungible],
+    gnosisAssetsNonFungible: [...state.treasuryAssetsNonFungible],
   };
 
   return (
-    <TreasuryInjectorContext.Provider value={value}>{children}</TreasuryInjectorContext.Provider>
+    <GnosisTreasuryInjectorContext.Provider value={value}>
+      {children}
+    </GnosisTreasuryInjectorContext.Provider>
   );
 }

@@ -11,10 +11,6 @@ function DAORoutes() {
         path={DAO_ROUTES.new.path}
         element={<DaoCreate />}
       />
-      {/* <Route
-        path="favorites"
-        element={<DAOFavorites />}
-      /> */}
       <Route
         path={DAO_ROUTES.dao.path}
         element={
