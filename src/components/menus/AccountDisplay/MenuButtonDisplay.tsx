@@ -43,7 +43,7 @@ export function Connected() {
   );
 }
 
-export function MeenuButtonDisplay() {
+export function MenuButtonDisplay() {
   const {
     state: { account },
   } = useWeb3Provider();
