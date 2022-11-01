@@ -14,8 +14,8 @@ function InfoCard({
 }) {
   return (
     <Box
+      flexGrow={1}
       minWidth={minWidth}
-      h="full"
       bg="black.900-semi-transparent"
       p="1rem"
       borderRadius="0.5rem"
@@ -30,20 +30,20 @@ export function Info() {
     <Flex
       flexWrap="wrap"
       gap="1.5rem"
-      h="10.5rem"
+      minH="10.5rem"
       justifyContent="center"
       mb="1rem"
     >
-      <InfoCard minWidth={{ sm: '90%', xl: '41.5rem' }}>
+      <InfoCard minWidth={{ sm: '100%', xl: '41.5rem' }}>
         <InfoDAO />
       </InfoCard>
-      <InfoCard minWidth={{ sm: '90%', lg: '44%', xl: '14.4375rem' }}>
+      <InfoCard minWidth={{ sm: '100%', xl: '14.4375rem' }}>
         <InfoGovernance />
       </InfoCard>
-      <InfoCard minWidth={{ sm: '43%', lg: '44%', xl: '10.3125rem' }}>
+      <InfoCard minWidth={{ sm: '100%', md: '45%', xl: '10.3125rem' }}>
         <InfoProposals />
       </InfoCard>
-      <InfoCard minWidth={{ sm: '43%', xl: '9.25rem' }}>
+      <InfoCard minWidth={{ sm: '100%', md: '45%', xl: '9.25rem' }}>
         <InfoTreasury />
       </InfoCard>
     </Flex>
