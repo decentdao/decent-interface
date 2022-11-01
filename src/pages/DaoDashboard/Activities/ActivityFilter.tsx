@@ -12,16 +12,10 @@ export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
   const handleClick = (filter: string) => {
     setFilters(prevFilterArr => {
       if (prevFilterArr.length === 3) {
-        if (filter === 'all') {
-          return ['pending', 'active', 'rejected'];
-        }
         return [filter];
       }
-      if (!prevFilterArr.includes(filter) && filter !== 'all') {
+      if (!prevFilterArr.includes(filter)) {
         return [...prevFilterArr, filter];
-      }
-      if (filter === 'all') {
-        return ['pending', 'active', 'rejected'];
       }
       return prevFilterArr.filter(
         (_, index) => index === prevFilterArr.findIndex(f => f === filter)
@@ -31,9 +25,7 @@ export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
 
   const filterColors = useCallback(
     (filter: string) => {
-      if (filter === 'all' && filters.length === 3) {
-        return;
-      } else if (filters.includes(filter) && filters.length < 3) {
+      if (filters.includes(filter) && filters.length < 3) {
         return;
       }
       return {
@@ -50,14 +42,6 @@ export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
       gap="1rem"
       my="1rem"
     >
-      <Button
-        variant="tertiary"
-        data-testid="filter-all"
-        onClick={() => handleClick('all')}
-        {...filterColors('all')}
-      >
-        {t('all')}
-      </Button>
       <Button
         variant="tertiary"
         data-testid="filter-pending"
