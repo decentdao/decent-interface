@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import useUsulProposals from '../../providers/gnosis/hooks/useUsulProposals';
+import useUsulProposals from '../../providers/fractal/hooks/useUsulProposals';
 import { UsulProposalCard } from './ProposalCard';
 
 function UsulProposalsList() {

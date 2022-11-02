@@ -8,7 +8,6 @@ import { CreatorProviderActions, CreatorState, CreatorSteps, GovernanceTypes } f
  * @param isSubDAO
  */
 export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isSubDAO?: boolean) {
-
   useEffect(() => {
     const isPureGnosis = state.governance === GovernanceTypes.GNOSIS_SAFE;
 
@@ -32,7 +31,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: showFunding
-              ? CreatorSteps.FUNDING 
+              ? CreatorSteps.FUNDING
               : isPureGnosis
               ? CreatorSteps.PURE_GNOSIS
               : CreatorSteps.GNOSIS_WITH_USUL,
@@ -62,10 +61,16 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            nextStep: isPureGnosis
-              ? CreatorSteps.PURE_GNOSIS
-              : CreatorSteps.GNOSIS_WITH_USUL,
+            nextStep: isPureGnosis ? CreatorSteps.PURE_GNOSIS : CreatorSteps.GNOSIS_WITH_USUL,
             prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
+          },
+        });
+        break;
+      case CreatorSteps.GOV_CONFIG:
+        dispatch({
+          type: CreatorProviderActions.UPDATE_STEP,
+          payload: {
+            prevStep: CreatorSteps.GNOSIS_WITH_USUL,
           },
         });
         break;

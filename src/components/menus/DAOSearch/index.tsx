@@ -10,8 +10,14 @@ export function DAOSearch() {
   const inputRef = useRef<HTMLInputElement>();
   const { t } = useTranslation(['dashboard']);
 
-  const { errorMessage, loading, address, addressNodeType, resetErrorState, updateSearchString } =
-    useSearchDao();
+  const {
+    errorMessage,
+    loading,
+    address,
+    resetErrorState,
+    addressIsGnosisSafe,
+    updateSearchString,
+  } = useSearchDao();
 
   const selectInput = () => {
     if (inputRef.current) {
@@ -87,7 +93,7 @@ export function DAOSearch() {
             <SearchDisplay
               loading={loading}
               errorMessage={errorMessage}
-              validAddress={!!addressNodeType}
+              validAddress={addressIsGnosisSafe}
               address={address}
             />
           </Box>

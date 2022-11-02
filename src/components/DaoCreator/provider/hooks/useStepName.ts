@@ -18,7 +18,6 @@ export function useStepName(state: CreatorState) {
         setStepName(t(CREATOR_STEP_TITLE_KEYS[state.step]));
         break;
       case CreatorSteps.GOV_CONFIG:
-      case CreatorSteps.TREASURY_GOV_TOKEN:
       case CreatorSteps.FUNDING: {
         setStepName(
           t('stepName', {

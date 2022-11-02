@@ -54,21 +54,6 @@ export function ChooseGovernance() {
         }}
       >
         <RadioWithText
-          label={t('label1To1Voting')}
-          description={t('desc1To1Voting')}
-          testId="choose-tokenVotingMVD"
-          value={GovernanceTypes.TOKEN_VOTING_GOVERNANCE}
-        />
-        <Divider />
-        <RadioWithText
-          label={t('labelGnosis', { ns: 'common' })}
-          description={isCurrentChainSupported ? t('descGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
-          testId="choose-gnosisSafeMVD"
-          value={GovernanceTypes.MVD_GNOSIS}
-          disabled={!isCurrentChainSupported}
-        />
-        <Divider />
-        <RadioWithText
           label={t('labelPureGnosis', { ns: 'common' })}
           description={isCurrentChainSupported ? t('descPureGnosis') : GNOSIS_UNSUPPORTED_MESSAGE}
           testId="choose-gnosisSafePure"

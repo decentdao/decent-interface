@@ -2,7 +2,7 @@ import cx from 'classnames';
 import { useTranslation } from 'react-i18next';
 import useProposalStateStringKey from '../../hooks/useProposalStateStringKey';
 import { ProposalState } from '../../providers/govenor/types';
-import { ProposalState as UsulProposalState } from '../../providers/gnosis/types/usul';
+import { ProposalState as UsulProposalState } from '../../providers/fractal/types/usul';
 
 interface StatusBoxProps {
   status?: ProposalState;
