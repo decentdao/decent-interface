@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useCallback, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useSearchDao from '../../hooks/useSearchDao';
@@ -8,12 +8,14 @@ import { GnosisAction } from '../../providers/fractal/constants/actions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisSafe } from '../../providers/fractal/types';
 import { buildGnosisApiUrl } from '../../providers/fractal/utils';
+import { BASE_ROUTES } from '../../routes/constants';
 
 /**
  * Handles DAO validation, setting and unsetting of DAO and nagivating to DAOSearch when invalid
  */
 export function DAOController({ children }: { children: JSX.Element }) {
   const {
+    gnosis: { safe },
     dispatches: { gnosisDispatch },
   } = useFractal();
   const params = useParams();
@@ -21,14 +23,17 @@ export function DAOController({ children }: { children: JSX.Element }) {
     state: { signerOrProvider, account, isProviderLoading, chainId },
   } = useWeb3Provider();
 
-  const { errorMessage, address, updateSearchString } = useSearchDao();
+  const { errorMessage, address, updateSearchString, loading } = useSearchDao();
+  const navigate = useNavigate();
 
   /**
    * Passes param address to updateSearchString
    */
   const loadDAO = useCallback(() => {
-    updateSearchString(params.address!);
-  }, [params.address, updateSearchString]);
+    if (safe.address !== params.address && !isProviderLoading) {
+      updateSearchString(params.address!);
+    }
+  }, [safe.address, params.address, updateSearchString, isProviderLoading]);
 
   useEffect(() => loadDAO(), [loadDAO]);
 
@@ -49,11 +54,14 @@ export function DAOController({ children }: { children: JSX.Element }) {
   }, [address, signerOrProvider, account, gnosisDispatch, retrieveGnosis]);
 
   useEffect(() => {
-    if (!isProviderLoading && (errorMessage || !account)) {
-      toast(errorMessage);
-      gnosisDispatch({ type: GnosisAction.INVALIDATE });
+    if (!loading) {
+      if (!!errorMessage) {
+        toast(errorMessage, { toastId: 'invalid-dao' });
+        gnosisDispatch({ type: GnosisAction.INVALIDATE });
+        navigate(BASE_ROUTES.landing);
+      }
     }
-  }, [errorMessage, account, isProviderLoading, gnosisDispatch]);
+  }, [errorMessage, account, loading, isProviderLoading, gnosisDispatch, address, navigate]);
 
   useEffect(() => {
     return () => {

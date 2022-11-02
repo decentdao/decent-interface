@@ -54,15 +54,29 @@ const useSearchDao = () => {
       resetErrorState();
       return;
     }
-    if (!validAddress && address !== undefined) {
+
+    if (validAddress) {
+      return;
+    }
+
+    if (!validAddress) {
       setErrorMessage(t('errorInvalidSearch'));
       return;
     }
-    if (addressIsGnosisSafe === false) {
+    if (!isGnosisSafeLoading && addressIsGnosisSafe === false) {
       setErrorMessage(t('errorFailedSearch'));
       return;
     }
-  }, [address, validAddress, searchString, addressIsGnosisSafe, loading, t, resetErrorState]);
+  }, [
+    address,
+    validAddress,
+    searchString,
+    isGnosisSafeLoading,
+    addressIsGnosisSafe,
+    loading,
+    t,
+    resetErrorState,
+  ]);
 
   return {
     errorMessage,

@@ -1,17 +1,17 @@
-import { GnosisModuleType } from '../../../controller/Modules/types/enums';
-import { useEffect, useState } from 'react';
-import { IGnosisModuleData } from '../../../controller/Modules/types';
+import { Dispatch, useEffect } from 'react';
 import useSafeContracts from '../../../hooks/useSafeContracts';
+import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
+import { GnosisAction } from '../constants';
 
-// @todo move to global hooks folder
-export function useGnosisModuleTypes(moduleAddresses?: string[]) {
+export function useGnosisModuleTypes(
+  gnosisDispatch: Dispatch<GnosisActions>,
+  moduleAddresses?: string[]
+) {
   const {
     zodiacModuleProxyFactoryContract,
     usulMasterCopyContract,
     fractalModuleMasterCopyContract,
   } = useSafeContracts();
-
-  const [modules, setModules] = useState<IGnosisModuleData[]>([]);
 
   useEffect(() => {
     if (
@@ -51,14 +51,18 @@ export function useGnosisModuleTypes(moduleAddresses?: string[]) {
             moduleType,
           } as IGnosisModuleData;
         })
-      ).then(setModules);
+      ).then(modules => {
+        gnosisDispatch({
+          type: GnosisAction.SET_MODULES,
+          payload: modules,
+        });
+      });
     })();
   }, [
     zodiacModuleProxyFactoryContract,
     usulMasterCopyContract,
     fractalModuleMasterCopyContract,
     moduleAddresses,
+    gnosisDispatch,
   ]);
-
-  return modules;
 }

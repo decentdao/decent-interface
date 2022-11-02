@@ -208,6 +208,7 @@ const useDeployDAO = () => {
             tokenAllocationsValues,
           ]
         );
+
         const encodedSetUpTokenData = votesMasterCopyContract.interface.encodeFunctionData(
           'setUp',
           [encodedInitTokenData]
@@ -231,6 +232,7 @@ const useDeployDAO = () => {
             'linearVoting',
           ]
         );
+
         const encodedStrategySetUpData =
           linearVotingMasterCopyContract.interface.encodeFunctionData('setUp', [
             encodedStrategyInitParams,
@@ -262,6 +264,7 @@ const useDeployDAO = () => {
         const encodedSetupUsulData = usulMasterCopyContract.interface.encodeFunctionData('setUp', [
           encodedInitUsulData,
         ]);
+
         const usulByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
           usulMasterCopyContract.address.slice(2) +

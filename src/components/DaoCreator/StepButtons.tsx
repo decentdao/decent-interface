@@ -53,6 +53,7 @@ function ForwardButton({
   const { t } = useTranslation(['common', 'daoCreate']);
   const isNextDisabled = useNextDisabled(state);
   const deployLabel = isSubDAO ? t('labelDeploySubDAO', { ns: 'daoCreate' }) : t('deploy');
+
   switch (state.step) {
     case CreatorSteps.CHOOSE_GOVERNANCE:
     case CreatorSteps.ESSENTIALS:
@@ -83,7 +84,13 @@ function ForwardButton({
         <Button
           data-testid="create-deployDAO"
           onClick={() =>
-            deployDAO({ ...state.essentials, ...state.gnosis, governance: state.governance })
+            deployDAO({
+              ...state.essentials,
+              ...state.govToken,
+              ...state.gnosis,
+              ...state.govModule,
+              governance: state.governance,
+            })
           }
           size="lg"
           isDisabled={pending || !account || isNextDisabled}
