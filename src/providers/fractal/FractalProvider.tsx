@@ -1,6 +1,12 @@
-import { ReactNode, useMemo, useReducer } from 'react';
+import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 
-import { gnosisInitialState, governanceInitialState, treasuryInitialState } from './constants';
+import {
+  gnosisInitialState,
+  GovernanceAction,
+  governanceInitialState,
+  TreasuryAction,
+  treasuryInitialState,
+} from './constants';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisGovernance } from './hooks/useGnosisGovernance';
@@ -37,6 +43,14 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useGnosisApiServices(gnosis.safe.address, treasuryDispatch);
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
   useGnosisGovernance(gnosis.safe, governanceDispatch);
+
+  useEffect(() => {
+    if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
+      governanceDispatch({ type: GovernanceAction.RESET });
+      treasuryDispatch({ type: TreasuryAction.RESET });
+    }
+  }, [governanceDispatch, treasuryDispatch, gnosis.safe.address, gnosis.isGnosisLoading]);
+
   const value = useMemo(
     () => ({
       gnosis: gnosis,
