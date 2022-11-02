@@ -1,8 +1,6 @@
 import { Dispatch, useEffect } from 'react';
-import { GnosisModuleType } from '../../../controller/Modules/types/enums';
-import { IGnosisModuleData } from '../../../controller/Modules/types';
 import useSafeContracts from '../../../hooks/useSafeContracts';
-import { GnosisActions } from '../types';
+import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 import { GnosisAction } from '../constants';
 
 export function useGnosisModuleTypes(
