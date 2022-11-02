@@ -4,19 +4,17 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useSearchDao from '../../hooks/useSearchDao';
-import {
-  GnosisAction,
-} from '../../providers/fractal/constants/enums';
+import { GnosisAction } from '../../providers/fractal/constants/actions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisSafe } from '../../providers/fractal/types';
-import { buildGnosisApiUrl } from '../../providers/gnosis/helpers';
+import { buildGnosisApiUrl } from '../../providers/fractal/utils';
 
 /**
  * Handles DAO validation, setting and unsetting of DAO and nagivating to DAOSearch when invalid
  */
 export function DAOController({ children }: { children: JSX.Element }) {
   const {
-    gnosis: { dispatch: gnosisDispatch },
+    dispatches: { gnosisDispatch },
   } = useFractal();
   const params = useParams();
   const {
@@ -41,20 +39,14 @@ export function DAOController({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     if (address && signerOrProvider && account) {
-        (async () => {
-          gnosisDispatch({
-            type: GnosisAction.SET_SAFE,
-            payload: await retrieveGnosis(),
-          });
-        })();
+      (async () => {
+        gnosisDispatch({
+          type: GnosisAction.SET_SAFE,
+          payload: await retrieveGnosis(),
+        });
+      })();
     }
-  }, [
-    address,
-    signerOrProvider,
-    account,
-    gnosisDispatch,
-    retrieveGnosis,
-  ]);
+  }, [address, signerOrProvider, account, gnosisDispatch, retrieveGnosis]);
 
   useEffect(() => {
     if (!isProviderLoading && (errorMessage || !account)) {

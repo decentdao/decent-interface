@@ -62,15 +62,7 @@ const useSearchDao = () => {
       setErrorMessage(t('errorFailedSearch'));
       return;
     }
-  }, [
-    address,
-    validAddress,
-    searchString,
-    addressIsGnosisSafe,
-    loading,
-    t,
-    resetErrorState,
-  ]);
+  }, [address, validAddress, searchString, addressIsGnosisSafe, loading, t, resetErrorState]);
 
   return {
     errorMessage,
@@ -79,6 +71,7 @@ const useSearchDao = () => {
     validAddress,
     updateSearchString,
     resetErrorState,
+    addressIsGnosisSafe,
   };
 };
 

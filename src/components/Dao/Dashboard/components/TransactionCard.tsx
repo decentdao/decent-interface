@@ -1,15 +1,16 @@
 import { BigNumber, utils } from 'ethers';
-import { Transaction } from '../../../../controller/Modules/injectors/TreasuryInjectorContext';
-import {
-  ERC20TokenEvent,
-  TokenDepositEvent,
-  TokenWithdrawEvent,
-  TokenEventType,
-} from '../../../../providers/treasury/types';
+
 import ContentBox from '../../../ui/ContentBox';
 import EtherscanTransactionLink from '../../../ui/EtherscanTransactionLink';
 import EtherscanDisplayNameLink from '../../../ui/EtherscanDisplayNameLink';
 import { useTranslation } from 'react-i18next';
+import {
+  TokenDepositEvent,
+  TokenWithdrawEvent,
+  ERC20TokenEvent,
+  TokenEventType,
+  Transaction,
+} from '../../../../providers/fractal/types';
 
 type TransactionCardProps = {
   transaction: Transaction;
