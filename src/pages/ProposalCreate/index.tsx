@@ -7,7 +7,7 @@ import H1 from '../../components/ui/H1';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { TransactionData } from '../../types/transaction';
 import { ProposalExecuteData } from '../../types/proposal';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { logError } from '../../helpers/errorLogging';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +30,6 @@ interface IProposalCreate {
 
 function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: IProposalCreate) {
   const {
-    mvd: { dao },
     gnosis: { safe },
   } = useFractal();
 
@@ -39,7 +38,6 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
-  const params = useParams();
   /**
    * adds new transaction form
    */
@@ -64,10 +62,6 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
     setProposalDescription('');
     setTransactions([]);
     setProposalData(undefined);
-
-    if (dao) {
-      navigate(`/daos/${dao.daoAddress}/modules/${params.moduleAddress}`);
-    }
 
     if (safe) {
       navigate(`/daos/${safe.address}/governance`);

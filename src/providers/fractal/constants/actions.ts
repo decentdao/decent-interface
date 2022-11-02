@@ -1,0 +1,17 @@
+export enum GnosisAction {
+  SET_SAFE,
+  SET_MODULES,
+  INVALIDATE,
+  RESET,
+}
+
+export enum GovernanceAction {
+  ADD_GOVERNANCE_DATA,
+  RESET,
+}
+
+export enum TreasuryAction {
+  UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS,
+  UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,
+  RESET,
+}

@@ -1,136 +1,68 @@
-import { ReactNode, useMemo, useReducer } from 'react';
+import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 
-import { mvdInitialState, nodeInitialState, gnosisInitialState } from './constants';
-import { GnosisAction, MVDAction, NodeAction } from './constants/enums';
-import { useDAOLegacy } from './hooks/useDAOLegacy';
-import { FractalContext } from './hooks/useFractal';
 import {
-  FractalNode,
-  NodeActions,
-  MVDActions,
-  MVDDAO,
-  IDaoLegacy,
-  GnosisSafe,
-  GnosisActions,
-} from './types';
-import { useModuleTypes } from './hooks/useModuleTypes';
+  gnosisInitialState,
+  GovernanceAction,
+  governanceInitialState,
+  TreasuryAction,
+  treasuryInitialState,
+} from './constants';
+import { FractalContext } from './hooks/useFractal';
+import { useGnosisApiServices } from './hooks/useGnosisApiServices';
+import { useGnosisGovernance } from './hooks/useGnosisGovernance';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
-import { useModuleListeners } from './hooks/useModuleListeners';
-
-const initializeState = (_initialState: MVDDAO) => {
-  return _initialState;
-};
-
-const initializeNodeState = (_initialState: FractalNode) => {
-  return _initialState;
-};
-
-const initializeGnosisState = (_initialState: GnosisSafe) => {
-  return _initialState;
-};
-
-const mvdReducer = (state: MVDDAO, action: MVDActions): MVDDAO => {
-  switch (action.type) {
-    case MVDAction.SET_DAO:
-      return { ...action.payload, isLoading: false };
-    case MVDAction.UPDATE_MODULE:
-      return { ...state, moduleAddresses: action.payload };
-    case MVDAction.RESET:
-      return initializeState(mvdInitialState);
-    case MVDAction.INVALIDATE:
-      return { ...mvdInitialState, isLoading: false };
-    default:
-      return state;
-  }
-};
-
-const nodeReducer = (state: FractalNode, action: NodeActions): FractalNode => {
-  switch (action.type) {
-    case NodeAction.SET_NODE_TYPE:
-      return { ...state, nodeType: action.payload, isLoaded: true };
-    case NodeAction.RESET:
-      return initializeNodeState(nodeInitialState);
-    case NodeAction.INVALIDATE:
-      return { ...nodeInitialState };
-    default:
-      return state;
-  }
-};
-
-const gnosisReducer = (state: GnosisSafe, action: GnosisActions): GnosisSafe => {
-  switch (action.type) {
-    case GnosisAction.SET_SAFE:
-      return { ...action.payload, isLoading: false };
-    case GnosisAction.RESET:
-      return initializeGnosisState(gnosisInitialState);
-    case GnosisAction.INVALIDATE:
-      return { ...gnosisInitialState };
-    default:
-      return state;
-  }
-};
+import { gnosisReducer, initializeGnosisState } from './reducers';
+import { governanceReducer, initializeGovernanceState } from './reducers/governance';
+import { initializeTreasuryState, TreasuryReducer } from './reducers/treasury';
 
 /**
  * Uses Context API to provider DAO information to app
  */
 export function FractalProvider({ children }: { children: ReactNode }) {
-  const [dao, dispatch] = useReducer(mvdReducer, mvdInitialState, initializeState);
-  const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
-  const [node, nodeDispatch] = useReducer(nodeReducer, nodeInitialState, initializeNodeState);
   const [gnosis, gnosisDispatch] = useReducer(
     gnosisReducer,
     gnosisInitialState,
     initializeGnosisState
   );
 
-  const {
-    timelockModule,
-    treasuryModule,
-    tokenVotingGovernanceModule,
-    claimingContractModule,
-    gnosisWrapperModule,
-  } = useModuleTypes(dao.moduleAddresses);
+  const [treasury, treasuryDispatch] = useReducer(
+    TreasuryReducer,
+    treasuryInitialState,
+    initializeTreasuryState
+  );
 
-  const modules = useGnosisModuleTypes(gnosis.modules);
+  const [governance, governanceDispatch] = useReducer(
+    governanceReducer,
+    governanceInitialState,
+    initializeGovernanceState
+  );
 
-  useModuleListeners(dao, dispatch);
+  // @todo update to handle new contracts
+  // const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
+
+  useGnosisApiServices(gnosis.safe.address, treasuryDispatch);
+  useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
+  useGnosisGovernance(gnosis.safe, governanceDispatch);
+
+  useEffect(() => {
+    if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
+      governanceDispatch({ type: GovernanceAction.RESET });
+      treasuryDispatch({ type: TreasuryAction.RESET });
+    }
+  }, [governanceDispatch, treasuryDispatch, gnosis.safe.address, gnosis.isGnosisLoading]);
 
   const value = useMemo(
     () => ({
-      node: {
-        node,
-        dispatch: nodeDispatch,
-      },
-      mvd: {
-        dao,
-        modules: {
-          timelockModule,
-          treasuryModule,
-          tokenVotingGovernanceModule,
-          claimingContractModule,
-          gnosisWrapperModule,
-        },
-        dispatch,
-        daoLegacy,
-      },
-      gnosis: {
-        safe: gnosis,
-        modules,
-        dispatch: gnosisDispatch,
+      gnosis: gnosis,
+      treasury: treasury,
+      governance: governance,
+      dispatches: {
+        governanceDispatch,
+        treasuryDispatch,
+        gnosisDispatch,
       },
     }),
-    [
-      node,
-      dao,
-      timelockModule,
-      treasuryModule,
-      tokenVotingGovernanceModule,
-      claimingContractModule,
-      gnosisWrapperModule,
-      daoLegacy,
-      gnosis,
-      modules,
-    ]
+    [gnosis, governance, treasury]
   );
 
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;

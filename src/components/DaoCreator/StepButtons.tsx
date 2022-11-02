@@ -4,12 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { useCreator } from './provider/hooks/useCreator';
 import { useNextDisabled } from './provider/hooks/useNextDisabled';
-import {
-  CreatorProviderActions,
-  CreatorSteps,
-  DAOTrigger,
-  GovernanceTypes,
-} from './provider/types';
+import { CreatorProviderActions, CreatorSteps, DAOTrigger } from './provider/types';
 
 interface IStepButtons {
   pending?: boolean;
@@ -58,11 +53,11 @@ function ForwardButton({
   const { t } = useTranslation(['common', 'daoCreate']);
   const isNextDisabled = useNextDisabled(state);
   const deployLabel = isSubDAO ? t('labelDeploySubDAO', { ns: 'daoCreate' }) : t('deploy');
+
   switch (state.step) {
     case CreatorSteps.CHOOSE_GOVERNANCE:
     case CreatorSteps.ESSENTIALS:
     case CreatorSteps.FUNDING:
-    case CreatorSteps.TREASURY_GOV_TOKEN:
     case CreatorSteps.GNOSIS_WITH_USUL:
       const canSkip =
         state.step === CreatorSteps.FUNDING &&
@@ -84,35 +79,18 @@ function ForwardButton({
         </Button>
       );
     case CreatorSteps.GOV_CONFIG:
-      return (
-        <Button
-          data-testid="create-deployDAO"
-          onClick={() =>
-            deployDAO({
-              governance: state.governance,
-              ...state.essentials,
-              ...state.funding,
-              ...state.govModule,
-              ...state.govToken,
-              ...(state.governance === GovernanceTypes.GNOSIS_SAFE ||
-              state.governance === GovernanceTypes.GNOSIS_SAFE_USUL
-                ? state.gnosis
-                : {}),
-            })
-          }
-          size="lg"
-          isDisabled={pending || !account || isNextDisabled}
-        >
-          {deployLabel}
-        </Button>
-      );
-    case CreatorSteps.GNOSIS_GOVERNANCE:
     case CreatorSteps.PURE_GNOSIS: {
       return (
         <Button
           data-testid="create-deployDAO"
           onClick={() =>
-            deployDAO({ ...state.essentials, ...state.gnosis, governance: state.governance })
+            deployDAO({
+              ...state.essentials,
+              ...state.govToken,
+              ...state.gnosis,
+              ...state.govModule,
+              governance: state.governance,
+            })
           }
           size="lg"
           isDisabled={pending || !account || isNextDisabled}

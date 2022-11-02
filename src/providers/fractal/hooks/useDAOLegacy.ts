@@ -4,6 +4,7 @@ import { DAOFactory, DAOFactory__factory } from '@fractal-framework/core-contrac
 import { DAOCreationListener } from '../types';
 import { useAddresses } from '../../../hooks/useAddresses';
 
+// @todo Update to use for Gnosis v1
 /**
  *
  * @param daoAddress address of current DAO

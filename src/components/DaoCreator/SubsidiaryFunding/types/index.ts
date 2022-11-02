@@ -1,14 +1,11 @@
+import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../../../providers/fractal/types';
 import { BigNumberInput } from './../../provider/types/index';
-import {
-  TreasuryAssetFungible,
-  TreasuryAssetNonFungible,
-} from '../../../../providers/treasury/types';
 
 export type TokenToFund = {
-  asset: TreasuryAssetFungible;
+  asset: GnosisAssetFungible;
   amount: BigNumberInput;
 };
 
 export type NFTToFund = {
-  asset: TreasuryAssetNonFungible;
+  asset: GnosisAssetNonFungible;
 };

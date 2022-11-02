@@ -21,7 +21,7 @@ export const initialState: CreatorState = {
   step: CreatorSteps.ESSENTIALS,
   prevStep: null,
   nextStep: null,
-  governance: GovernanceTypes.TOKEN_VOTING_GOVERNANCE,
+  governance: GovernanceTypes.GNOSIS_SAFE,
   essentials: {
     daoName: '',
   },

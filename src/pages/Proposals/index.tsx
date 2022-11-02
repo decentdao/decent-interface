@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import ProposalDetails from '../../components/Proposals/ProposalDetails';
-import useUsulProposals from '../../providers/gnosis/hooks/useUsulProposals';
+import useUsulProposals from '../../providers/fractal/hooks/useUsulProposals';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 import { useUserProposalValidation } from '../../providers/govenor/hooks/useUserProposalValidation';
 import ProposalCreate from '../ProposalCreate';

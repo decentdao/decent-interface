@@ -14,23 +14,22 @@ const useAddress = (addressInput: string | undefined) => {
 
   useEffect(() => {
     setLoading(true);
-
     if (addressInput === undefined) {
-      setAddress(undefined);
+      setAddress(addressInput);
       setValidAddress(false);
       setLoading(false);
       return;
     }
 
     if (!provider || addressInput.trim() === '') {
-      setAddress('');
+      setAddress(addressInput);
       setValidAddress(undefined);
       setLoading(undefined);
       return;
     }
 
     if (addressInput === constants.AddressZero) {
-      setAddress('');
+      setAddress(addressInput);
       setValidAddress(false);
       setLoading(false);
       return;
@@ -47,7 +46,8 @@ const useAddress = (addressInput: string | undefined) => {
       .resolveName(addressInput)
       .then(resolvedAddress => {
         if (!resolvedAddress) {
-          setAddress('');
+          setAddress(addressInput);
+
           setValidAddress(false);
           setLoading(false);
           return;
@@ -57,7 +57,8 @@ const useAddress = (addressInput: string | undefined) => {
         setLoading(false);
       })
       .catch(() => {
-        setAddress('');
+        setAddress(addressInput);
+
         setValidAddress(false);
         setLoading(false);
       });

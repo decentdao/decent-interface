@@ -6,7 +6,7 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalDescription from '../ui/proposal/ProposalDescription';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import { ProposalData } from '../../providers/govenor/types';
-import { Proposal } from '../../providers/gnosis/types/usul';
+import { Proposal } from '../../providers/fractal/types/usul';
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
   return (

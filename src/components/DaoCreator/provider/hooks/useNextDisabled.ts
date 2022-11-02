@@ -33,7 +33,6 @@ export function useNextDisabled(state: CreatorState) {
       case CreatorSteps.FUNDING:
         setIsDisabled(false);
         break;
-      case CreatorSteps.TREASURY_GOV_TOKEN:
       case CreatorSteps.GNOSIS_WITH_USUL:
         if (govToken) {
           if (!govToken.tokenName || !govToken.tokenSymbol) {

@@ -20,14 +20,11 @@ export enum CreatorSteps {
   PURE_GNOSIS,
   GNOSIS_GOVERNANCE,
   GNOSIS_WITH_USUL,
-  FUNDING,
-  TREASURY_GOV_TOKEN,
   GOV_CONFIG,
+  FUNDING,
 }
 
 export enum GovernanceTypes {
-  TOKEN_VOTING_GOVERNANCE = 'token governance',
-  MVD_GNOSIS = 'mvd gnosis',
   GNOSIS_SAFE = 'safe',
   GNOSIS_SAFE_USUL = 'usul safe',
 }
@@ -130,4 +127,4 @@ export type DAODetails = {
 
 export type TrustedAddress = { address: string; error: boolean };
 
-export type DAOTrigger = (daoData: TokenGovernanceDAO | GnosisDAO) => void;
+export type DAOTrigger = (daoData: GnosisDAO) => void;

@@ -1,29 +1,26 @@
-import { MVDDAO, FractalNode, GnosisSafe } from '../types';
+import { IGnosis } from './../types/state';
+import { ITreasury } from './../types/treasury';
+import { IGovernance } from './../types/governance';
 
-export const nodeInitialState: FractalNode = {
-  nodeType: undefined,
-  isLoaded: false,
+export const gnosisInitialState: IGnosis = {
+  modules: [],
+  safe: {},
+  isGnosisLoading: true,
 };
 
-export const mvdInitialState: MVDDAO = {
-  daoAddress: undefined,
-  daoContract: undefined,
-  daoName: undefined,
-  accessControlAddress: undefined,
-  accessControlContract: undefined,
-  moduleAddresses: undefined,
-  isLoading: true,
+export const governanceInitialState: IGovernance = {
+  createSubDAOFunc: undefined,
+  isCreateSubDAOPending: undefined,
+  createProposalFunc: undefined,
+  isCreateProposalPending: undefined,
+  proposalList: undefined,
+  isConnectedUserAuth: undefined,
+  governanceIsLoading: true,
 };
 
-export const gnosisInitialState: GnosisSafe = {
-  address: undefined,
-  nonce: undefined,
-  threshold: undefined,
-  owners: undefined,
-  masterCopy: undefined,
-  modules: undefined,
-  fallbackHandler: undefined,
-  guard: undefined,
-  version: undefined,
-  isLoading: true,
+export const treasuryInitialState: ITreasury = {
+  transactions: [],
+  assetsFungible: [],
+  assetsNonFungible: [],
+  treasuryIsLoading: true,
 };

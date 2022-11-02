@@ -9,8 +9,7 @@ import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
 import H1 from '../../components/ui/H1';
 import TooltipAddressContent from '../../components/ui/TooltipAddressContent';
 import TooltipWrapper from '../../components/ui/TooltipWrapper';
-import { useGnosisTreasuryInjector } from '../../controller/Modules/injectors/GnosisTreasuryInjectorContext';
-import { useGnosis } from '../../providers/gnosis/hooks/useGnosis';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
 
 function TableRowWrapper({ children }: { children?: ReactNode }) {
   return (
@@ -21,13 +20,15 @@ function TableRowWrapper({ children }: { children?: ReactNode }) {
 }
 
 function Treasury() {
-  const { gnosisAssetsFungible, gnosisAssetsNonFungible } = useGnosisTreasuryInjector();
-  const { state } = useGnosis();
+  const {
+    gnosis: { safe },
+    treasury: { assetsFungible, assetsNonFungible },
+  } = useFractal();
 
   const { t } = useTranslation('treasury');
   return (
     <div>
-      <H1>{t('titleTreasury', { daoName: state.name })}</H1>
+      <H1>{t('titleTreasury', { daoName: '' })}</H1>
       <div className="rounded-lg p-4 shadow-2xl my-4 bg-gray-600">
         <ContentBoxTitle>{t('titleEthTokens')}</ContentBoxTitle>
         <div className="my-2">
@@ -40,7 +41,7 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">{t('tokenAmount')}</div>
           </div>
-          {gnosisAssetsFungible!.length === 0 && (
+          {assetsFungible!.length === 0 && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <Trans
@@ -52,7 +53,7 @@ function Treasury() {
                     className="text-gold-500 hover:text-gold-300 mx-2"
                     content={
                       <TooltipAddressContent
-                        address={state.safeAddress ? state.safeAddress : ''}
+                        address={safe.address ? safe.address : ''}
                         title={t('titleTreasuryAddress')}
                       />
                     }
@@ -65,7 +66,7 @@ function Treasury() {
               </div>
             </TableRowWrapper>
           )}
-          {gnosisAssetsFungible!.map(asset => {
+          {assetsFungible!.map(asset => {
             const address =
               asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress;
             const symbol = asset.token === null ? 'ETH' : asset.token.symbol;
@@ -79,7 +80,7 @@ function Treasury() {
               <TableRowWrapper key={address}>
                 <div className="flex">
                   {address === ethers.constants.AddressZero ? (
-                    <EtherscanLinkAddress address={state.safeAddress}>
+                    <EtherscanLinkAddress address={safe.address}>
                       <div className="text-gold-500 w-16 sm:w-28">{symbol}</div>
                     </EtherscanLinkAddress>
                   ) : (
@@ -133,7 +134,7 @@ function Treasury() {
             </div>
             <div className="text-gray-50 text-xs font-medium">{t('tokenId')}</div>
           </div>
-          {!gnosisAssetsNonFungible.length && (
+          {!assetsNonFungible.length && (
             <TableRowWrapper>
               <div className="text-gray-25 w-full flex justify-center">
                 <Trans
@@ -145,7 +146,7 @@ function Treasury() {
                     className="text-gold-500 hover:text-gold-300 mx-2"
                     content={
                       <TooltipAddressContent
-                        address={state.safeAddress ? state.safeAddress : ''}
+                        address={safe.address ? safe.address : ''}
                         title="Treasury address:"
                       />
                     }
@@ -158,7 +159,7 @@ function Treasury() {
               </div>
             </TableRowWrapper>
           )}
-          {gnosisAssetsNonFungible.map(asset => (
+          {assetsNonFungible.map(asset => (
             <TableRowWrapper key={asset.address}>
               <div className="flex">
                 <EtherscanLinkAddress address={asset.address}>
@@ -180,9 +181,9 @@ function Treasury() {
           ))}
         </div>
       </div>
-      {!gnosisAssetsFungible!.length && !gnosisAssetsNonFungible.length && (
+      {!assetsFungible!.length && !assetsNonFungible.length && (
         <div className="px-1">
-          <ContentBanner description={t('descTreasury', { daoName: state.name })} />
+          <ContentBanner description={t('descTreasury', { daoName: '' })} />
         </div>
       )}
     </div>
