@@ -8,7 +8,7 @@ import { ProposalExecuteData } from '../../../types/proposal';
 import { useFractal } from './useFractal';
 import { Proposal } from '../types/usul';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';
-import { GnosisModuleType } from '../../../controller/Modules/types';
+import { GnosisModuleType } from '../types';
 
 export default function useUsulProposals() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);

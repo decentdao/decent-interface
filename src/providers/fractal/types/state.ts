@@ -1,6 +1,5 @@
-import { IGnosisModuleData } from '../../../controller/Modules/types';
 import { GnosisActions, GovernanceActions, TreasuryActions } from './actions';
-import { IGovernance } from './governance';
+import { IGnosisModuleData, IGovernance } from './governance';
 import { ITreasury } from './treasury';
 
 export interface IFractalContext {

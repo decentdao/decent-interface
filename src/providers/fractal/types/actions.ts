@@ -1,8 +1,7 @@
-import { IGovernance } from './governance';
+import { IGnosisModuleData, IGovernance } from './governance';
 import { GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
 import { GnosisSafe } from './state';
 import { GnosisAssetNonFungible, GnosisAssetFungible } from './treasury';
-import { IGnosisModuleData } from '../../../controller/Modules/types';
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE; payload: GnosisSafe }
