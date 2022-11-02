@@ -40,7 +40,8 @@ export const getInjectedProvider = async (
     }
     return undefined;
   }
-  return makeInjectedProvider(
+  const injectedProvider = await makeInjectedProvider(
     new ethers.providers.Web3Provider(userSuppliedProvider as ethers.providers.ExternalProvider)
   );
+  return injectedProvider;
 };
