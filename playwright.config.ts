@@ -6,15 +6,6 @@ import { devices } from '@playwright/test';
  */
 const config: PlaywrightTestConfig = {
   testDir: './tests',
-  /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
-  // expect: {
-  //   /**
-  //    * Maximum time expect() should wait for the condition to be met.
-  //    * For example in `await expect(locator).toHaveText();`
-  //    */
-  //   timeout: 15000
-  // },
   retries: 1,
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -36,8 +27,6 @@ const config: PlaywrightTestConfig = {
     baseURL: 'http://localhost:3000',
     headless: true,
 		viewport: { width: 1280, height: 1020 },
-    /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
-    actionTimeout: 25000,
     ignoreHTTPSErrors: false,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry', /* Tracks exactly what is going on in the test. Saved as a zip file in test-results folder. Can be viewed at 'trace.playwright.dev' in a browser. To use 'npx playwright test --trace on' */
