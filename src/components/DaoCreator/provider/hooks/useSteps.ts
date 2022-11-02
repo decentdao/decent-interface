@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { CreatorProviderActions, CreatorState, CreatorSteps, GovernanceTypes } from './../types';
-import { useFractal } from '../../../../providers/fractal/hooks/useFractal';
 
 /**
  * handles tracking/setting of next/prev steps dependent on the current page
@@ -9,22 +8,14 @@ import { useFractal } from '../../../../providers/fractal/hooks/useFractal';
  * @param isSubDAO
  */
 export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isSubDAO?: boolean) {
-  const {
-    mvd: {
-      modules: { gnosisWrapperModule },
-    },
-  } = useFractal();
+
   useEffect(() => {
-    const isTokenGovernance = state.governance === GovernanceTypes.TOKEN_VOTING_GOVERNANCE;
-    const isGnosisGovernance = state.governance === GovernanceTypes.MVD_GNOSIS;
-    const isGnosisWithUsul = state.governance === GovernanceTypes.GNOSIS_SAFE_USUL;
     const isPureGnosis = state.governance === GovernanceTypes.GNOSIS_SAFE;
 
     // True when:
     // 1) The DAO being created is a subDAO,
-    // 2) The DAO being created is a token voting DAO
-    // 3) The parent DAO is not a Gnosis Safe DAO
-    const showFunding = isSubDAO && isTokenGovernance && !gnosisWrapperModule;
+    // @note setting this to false for now, this should be set to the isSubDAO prop
+    const showFunding = false;
 
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
@@ -40,15 +31,11 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            nextStep: isPureGnosis
+            nextStep: showFunding
+              ? CreatorSteps.FUNDING 
+              : isPureGnosis
               ? CreatorSteps.PURE_GNOSIS
-              : isGnosisWithUsul
-              ? CreatorSteps.GNOSIS_WITH_USUL
-              : isGnosisGovernance
-              ? CreatorSteps.GNOSIS_GOVERNANCE
-              : showFunding
-              ? CreatorSteps.FUNDING
-              : CreatorSteps.TREASURY_GOV_TOKEN,
+              : CreatorSteps.GNOSIS_WITH_USUL,
             prevStep: CreatorSteps.ESSENTIALS,
           },
         });
@@ -71,43 +58,17 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           },
         });
         break;
-      case CreatorSteps.GNOSIS_GOVERNANCE:
-        dispatch({
-          type: CreatorProviderActions.UPDATE_STEP,
-          payload: {
-            nextStep: null,
-            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
-          },
-        });
-        break;
       case CreatorSteps.FUNDING:
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            nextStep: CreatorSteps.TREASURY_GOV_TOKEN,
+            nextStep: isPureGnosis
+              ? CreatorSteps.PURE_GNOSIS
+              : CreatorSteps.GNOSIS_WITH_USUL,
             prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
         break;
-      case CreatorSteps.TREASURY_GOV_TOKEN:
-        dispatch({
-          type: CreatorProviderActions.UPDATE_STEP,
-          payload: {
-            nextStep: CreatorSteps.GOV_CONFIG,
-            prevStep: isSubDAO ? CreatorSteps.FUNDING : CreatorSteps.CHOOSE_GOVERNANCE,
-          },
-        });
-        break;
-      case CreatorSteps.GOV_CONFIG:
-        dispatch({
-          type: CreatorProviderActions.UPDATE_STEP,
-          payload: {
-            prevStep: isGnosisWithUsul
-              ? CreatorSteps.GNOSIS_WITH_USUL
-              : CreatorSteps.TREASURY_GOV_TOKEN,
-          },
-        });
-        break;
     }
-  }, [isSubDAO, state.step, dispatch, state.governance, gnosisWrapperModule]);
+  }, [isSubDAO, state.step, dispatch, state.governance]);
 }

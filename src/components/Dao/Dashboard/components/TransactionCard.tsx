@@ -15,6 +15,7 @@ type TransactionCardProps = {
   transaction: Transaction;
 };
 
+// @todo - this component is being refactored in another branch
 function TransactionCard({ transaction }: TransactionCardProps) {
   const { t } = useTranslation();
 

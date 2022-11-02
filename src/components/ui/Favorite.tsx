@@ -23,16 +23,12 @@ function Buttons() {
     state: { chainId },
   } = useWeb3Provider();
   const {
-    mvd: {
-      dao: { daoAddress },
-    },
     gnosis: {
       safe: { address },
     },
   } = useFractal();
   const { isFavorite, addFavorite, removeFavorite } = useFavorites();
-  const mvdOrSafeAddress = daoAddress === undefined ? address : daoAddress;
-  if (chainId === undefined || mvdOrSafeAddress === undefined) {
+  if (chainId === undefined || address === undefined) {
     return (
       <FavoriteButton
         icon={<StarEmpty />}
@@ -40,7 +36,7 @@ function Buttons() {
       />
     );
   }
-  const fav = isFavorite(chainId, mvdOrSafeAddress);
+  const fav = isFavorite(chainId, address);
 
   if (fav) {
     return (
@@ -50,7 +46,7 @@ function Buttons() {
       >
         <FavoriteButton
           icon={<StarFilled />}
-          onClick={() => removeFavorite(chainId, mvdOrSafeAddress)}
+          onClick={() => removeFavorite(chainId, address)}
         />
       </TooltipWrapper>
     );
@@ -62,7 +58,7 @@ function Buttons() {
       >
         <FavoriteButton
           icon={<StarEmpty />}
-          onClick={() => addFavorite(chainId, mvdOrSafeAddress)}
+          onClick={() => addFavorite(chainId, address)}
         />
       </TooltipWrapper>
     );

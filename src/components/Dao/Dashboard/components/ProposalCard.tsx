@@ -13,6 +13,7 @@ type ProposalCardProps = {
 };
 
 // @todo - cleanup components in src/components/ui/proposal
+// @todo - this component is being refactored in another branch
 function ProposalCard({ proposal, daoAddress, moduleAddress }: ProposalCardProps) {
   const isProposalActive =
     proposal.state !== ProposalState.Defeated &&

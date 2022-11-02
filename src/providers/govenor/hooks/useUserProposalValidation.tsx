@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { ToastContent } from '../../../components/ui/ToastContent';
-import { useFractal } from '../../fractal/hooks/useFractal';
 import { useGovenorModule } from './useGovenorModule';
 
 /**
@@ -16,11 +15,6 @@ export function useUserProposalValidation() {
     },
     governorModuleContract,
   } = useGovenorModule();
-  const {
-    mvd: {
-      dao: { daoAddress },
-    },
-  } = useFractal();
   const navigate = useNavigate();
   const thresholdToastId = useRef<ReactText>('');
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
@@ -45,7 +39,8 @@ export function useUserProposalValidation() {
             title={t('errorNoDelegates')}
             label={t('buttonDelegate')}
             action={() => {
-              navigate(`/daos/${daoAddress}/modules/${governorModuleContract!.address}/delegate`);
+              // @todo update route
+              // navigate(`/daos/${daoAddress}/modules/${governorModuleContract!.address}/delegate`);
             }}
           />,
           {
@@ -69,7 +64,8 @@ export function useUserProposalValidation() {
             title={t('errorCantCreateProposal')}
             label={t('buttonDelegate')}
             action={() => {
-              navigate(`/daos/${daoAddress}/modules/${governorModuleContract!.address}/delegate`);
+              // @todo update route
+              // navigate(`/daos/${daoAddress}/modules/${governorModuleContract!.address}/delegate`);
             }}
           />,
           {
@@ -89,7 +85,6 @@ export function useUserProposalValidation() {
     proposalTokenThreshold,
     votingWeight,
     isDelegatesSet,
-    daoAddress,
     governorModuleContract,
     navigate,
     t,
