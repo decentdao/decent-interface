@@ -34,7 +34,7 @@ const config: PlaywrightTestConfig = {
 			slowMo: 100, /* Adjusts tests' run speed to aid in video report visualization reports as well as mimic user input/action speed */
       devtools: false, /* When tests are ran locally with the '--headed' flag devtools will appear for debugging purposes. */
     },
-    video: !!process.env.CI ? 'on' : 'off',
+    video: !process.env.CI ? 'on' : 'off',
     contextOptions: {
       recordVideo: {
         dir: './playwright-report' } /* Or wherever you want the videos to be saved. */
