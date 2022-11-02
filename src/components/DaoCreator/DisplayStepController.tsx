@@ -3,9 +3,9 @@ import { useCreator } from './provider/hooks/useCreator';
 import { CreatorSteps } from './provider/types';
 import { SubsidiaryFunding } from './SubsidiaryFunding';
 import TokenDetails from './tokenVotingGovernance/TokenDetails';
-import GovernanceDetails from './tokenVotingGovernance/GovernanceDetails';
 import { ChooseGovernance } from './ChooseGovernance';
 import { GnosisConfig } from './gnosis/GnosisConfig';
+import GovernanceDetails from './tokenVotingGovernance/GovernanceDetails';
 
 function StepController() {
   const { state } = useCreator();
@@ -20,7 +20,6 @@ function StepController() {
     case CreatorSteps.FUNDING: {
       return <SubsidiaryFunding />;
     }
-    case CreatorSteps.TREASURY_GOV_TOKEN:
     case CreatorSteps.GNOSIS_WITH_USUL:
       return <TokenDetails />;
     case CreatorSteps.GOV_CONFIG:

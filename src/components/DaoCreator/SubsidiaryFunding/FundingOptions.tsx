@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import ContentBox from '../../ui/ContentBox';
 import { PrimaryButton } from '../../ui/forms/Button';
 import { NFTToFund, TokenToFund } from './types';
@@ -25,33 +25,34 @@ export function FundingOptions({
   nftsToFund,
   selectedTokenIndex,
 }: IFundingOptions) {
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryInjector();
+  const {
+    treasury: { assetsFungible, assetsNonFungible },
+  } = useFractal();
 
   const isAddDisabled = useMemo(() => {
     if (selectedTokenIndex === undefined) {
       return true;
     }
-    const isEmpty = !treasuryAssetsFungible.length;
-    const isSameLength = treasuryAssetsFungible.length === tokensToFund.length;
-    const asset = treasuryAssetsFungible[selectedTokenIndex];
+    const isEmpty = !assetsFungible.length;
+    const isSameLength = assetsFungible.length === tokensToFund.length;
+    const asset = assetsFungible[selectedTokenIndex];
     const isAlreadyIncluded = !!tokensToFund.filter(
-      token => asset.contractAddress === token.asset.contractAddress
+      token => asset.tokenAddress === token.asset.tokenAddress
     ).length;
     return isEmpty || isAlreadyIncluded || isSameLength;
-  }, [tokensToFund, selectedTokenIndex, treasuryAssetsFungible]);
+  }, [tokensToFund, selectedTokenIndex, assetsFungible]);
 
   const isMoveDisabled = useMemo(() => {
     if (selectedTokenIndex === undefined) {
       return true;
     }
-    const isEmpty = !treasuryAssetsNonFungible.length;
-    const isSameLength = treasuryAssetsNonFungible.length === nftsToFund.length;
-    const asset = treasuryAssetsNonFungible[selectedTokenIndex];
-    const isAlreadyIncluded = !!nftsToFund.filter(
-      token => asset.contractAddress === token.asset.contractAddress
-    ).length;
+    const isEmpty = !assetsNonFungible.length;
+    const isSameLength = assetsNonFungible.length === nftsToFund.length;
+    const asset = assetsNonFungible[selectedTokenIndex];
+    const isAlreadyIncluded = !!nftsToFund.filter(token => asset.address === token.asset.address)
+      .length;
     return isEmpty || isAlreadyIncluded || isSameLength;
-  }, [nftsToFund, selectedTokenIndex, treasuryAssetsNonFungible]);
+  }, [nftsToFund, selectedTokenIndex, assetsNonFungible]);
 
   const { t } = useTranslation(['common', 'daoCreate']);
 
@@ -67,11 +68,11 @@ export function FundingOptions({
             label={t('labelSelectToken', { ns: 'daoCreate' })}
             defaultChecked
           />
-          {treasuryAssetsFungible.map((asset, index) => (
+          {assetsFungible.map((asset, index) => (
             <option
-              key={asset.contractAddress}
+              key={asset.tokenAddress}
               value={index}
-              label={`${asset.symbol} | ${asset.name}`}
+              label={`${asset.token.symbol} | ${asset.token.name}`}
             />
           ))}
         </select>
@@ -91,11 +92,11 @@ export function FundingOptions({
             label={t('labelSelectNFT', { ns: 'daoCreate' })}
             defaultChecked
           />
-          {treasuryAssetsNonFungible.map((asset, index) => (
+          {assetsNonFungible.map((asset, index) => (
             <option
-              key={asset.contractAddress}
+              key={asset.address}
               value={index}
-              label={`${asset.symbol} | ${asset.name}`}
+              label={`${asset.tokenSymbol} | ${asset.tokenName}`}
             />
           ))}
         </select>

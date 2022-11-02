@@ -1,6 +1,6 @@
 import { BigNumber, utils } from 'ethers';
 import { useState } from 'react';
-import { useTreasuryInjector } from '../../../controller/Modules/injectors/TreasuryInjectorContext';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
@@ -23,7 +23,9 @@ export function SubsidiaryFunding() {
 
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
-  const { treasuryAssetsFungible, treasuryAssetsNonFungible } = useTreasuryInjector();
+  const {
+    treasury: { assetsFungible, assetsNonFungible },
+  } = useFractal();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -37,15 +39,15 @@ export function SubsidiaryFunding() {
   const onTokenFundChange = (value: string, changedTokenIndex: number) => {
     const assets = funding.tokensToFund.map((tokenToFund, i) => {
       if (i === changedTokenIndex) {
-        const tokenIndex = treasuryAssetsFungible.findIndex(
-          v => v.contractAddress === tokenToFund.asset.contractAddress
+        const tokenIndex = assetsFungible.findIndex(
+          v => v.tokenAddress === tokenToFund.asset.tokenAddress
         );
-        const token = treasuryAssetsFungible[tokenIndex];
-        const valueBigNumber = utils.parseUnits(value, token.decimals);
-        if (valueBigNumber.gte(token.totalAmount)) {
+        const token = assetsFungible[tokenIndex];
+        const valueBigNumber = utils.parseUnits(value, token.token.decimals);
+        if (valueBigNumber.gte(token.balance)) {
           return {
             ...tokenToFund,
-            amount: { value: token.formattedTotal, bigNumberValue: token.totalAmount },
+            amount: { value: token.fiatBalance, bigNumberValue: token.balance },
           };
         } else {
           return {
@@ -63,7 +65,7 @@ export function SubsidiaryFunding() {
     if (selectedTokenIndex === undefined) {
       return;
     }
-    const asset = treasuryAssetsFungible[selectedTokenIndex];
+    const asset = assetsFungible[selectedTokenIndex];
     fieldUpdate(
       [
         ...funding.tokensToFund,
@@ -96,8 +98,8 @@ export function SubsidiaryFunding() {
         return {
           ...tokenToFund,
           amount: {
-            value: tokenToFund.asset.formattedTotal,
-            bigNumberValue: tokenToFund.asset.totalAmount,
+            value: tokenToFund.asset.fiatBalance,
+            bigNumberValue: tokenToFund.asset.balance,
           },
         };
       }
@@ -114,7 +116,7 @@ export function SubsidiaryFunding() {
     if (selectedNFTIndex === undefined) {
       return;
     }
-    const asset = treasuryAssetsNonFungible[selectedNFTIndex];
+    const asset = assetsNonFungible[selectedNFTIndex];
     if (selectedNFTIndex === undefined) {
       return;
     }
@@ -162,14 +164,16 @@ export function SubsidiaryFunding() {
           {funding.tokensToFund.map((tokenToFund, index) => (
             <TableRow
               gridType="grid-cols-funding-token"
-              key={tokenToFund.asset.contractAddress}
+              key={tokenToFund.asset.tokenAddress}
             >
-              <EtherscanLinkToken address={tokenToFund.asset.contractAddress}>
-                <div className="text-gold-500 w-16 sm:w-28 pl-4">{tokenToFund.asset.symbol}</div>
+              <EtherscanLinkToken address={tokenToFund.asset.tokenAddress}>
+                <div className="text-gold-500 w-16 sm:w-28 pl-4">
+                  {tokenToFund.asset.token.symbol}
+                </div>
               </EtherscanLinkToken>
-              <div className="pl-4 text-gray-25 font-medium">{tokenToFund.asset.name}</div>
+              <div className="pl-4 text-gray-25 font-medium">{tokenToFund.asset.token.name}</div>
               <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
-                {tokenToFund.asset.formattedTotal}
+                {tokenToFund.asset.fiatBalance}
               </div>
               <Input
                 containerClassName="-mb-5 pr-4"
@@ -178,9 +182,9 @@ export function SubsidiaryFunding() {
                 type="number"
                 value={tokenToFund.amount.value}
                 onChange={e => onTokenFundChange(e.target.value, index)}
-                max={tokenToFund.asset.formattedTotal}
+                max={tokenToFund.asset.fiatBalance}
                 restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
-                decimals={tokenToFund.asset.decimals}
+                decimals={tokenToFund.asset.token.decimals}
               />
               <div onClick={() => removeTokenFund(index)}>
                 <Close />
@@ -201,23 +205,23 @@ export function SubsidiaryFunding() {
           {funding.nftsToFund.map((nftToFund, index) => (
             <TableRow
               gridType="grid-cols-funding-nft"
-              key={nftToFund.asset.contractAddress}
+              key={nftToFund.asset.address}
             >
               <div className="flex">
-                <EtherscanLinkAddress address={nftToFund.asset.contractAddress}>
+                <EtherscanLinkAddress address={nftToFund.asset.address}>
                   <div className="text-gold-500 truncate ... w-16 sm:w-28">
-                    {nftToFund.asset.symbol}
+                    {nftToFund.asset.tokenSymbol}
                   </div>
                 </EtherscanLinkAddress>
                 <div className="text-gray-25 font-medium">{nftToFund.asset.name}</div>
               </div>
               <div className="text-gray-25 font-mono font-semibold tracking-wider">
                 <EtherscanLinkNFT
-                  address={nftToFund.asset.contractAddress}
-                  tokenId={nftToFund.asset.tokenId.toString()}
+                  address={nftToFund.asset.address}
+                  tokenId={nftToFund.asset.id.toString()}
                 >
                   <div className="text-gray-25 font-mono font-semibold tracking-wider">
-                    {nftToFund.asset.tokenId.toString()}
+                    {nftToFund.asset.id.toString()}
                   </div>
                 </EtherscanLinkNFT>
               </div>
