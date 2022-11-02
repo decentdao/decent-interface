@@ -220,10 +220,6 @@ const useDeployDAO = () => {
           solidityKeccak256(['bytes'], [VotesToken__factory.bytecode])
         );
 
-        console.log(
-          '🚀 ~ file: useDeployDAO.ts ~ line 230 ~ tokenGovernanceDaoData',
-          tokenGovernanceDaoData
-        );
         const encodedStrategyInitParams = defaultAbiCoder.encode(
           ['address', 'address', 'address', 'uint256', 'uint256', 'uint256', 'string'],
           [
