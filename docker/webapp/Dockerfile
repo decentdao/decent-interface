@@ -12,6 +12,6 @@ COPY ./docker/webapp/entrypoint.sh /usr/local/bin
 
 WORKDIR /fractal-webapp/
 
-RUN npm install --omit=dev
+RUN npm ci
 
 ENTRYPOINT ["/bin/sh", "/usr/local/bin/entrypoint.sh"]
