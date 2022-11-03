@@ -10,7 +10,7 @@ export default function useDAOName() {
     dispatches: { gnosisDispatch },
   } = useFractal();
   const { fractalNameRegistryContract } = useSafeContracts();
-  const safeDisplayName = useDisplayName(safe?.address);
+  const { displayName } = useDisplayName(safe?.address);
 
   const getDaoName = useCallback(async () => {
     if (!fractalNameRegistryContract || !safe?.address) {
@@ -22,13 +22,13 @@ export default function useDAOName() {
 
     const latestEvent = events[0];
     if (!latestEvent) {
-      return safeDisplayName;
+      return displayName;
     }
 
     const { daoName } = latestEvent.args;
 
     return daoName;
-  }, [fractalNameRegistryContract, safe?.address, safeDisplayName]);
+  }, [fractalNameRegistryContract, safe?.address, displayName]);
 
   useEffect(() => {
     const loadDaoName = async () => {
