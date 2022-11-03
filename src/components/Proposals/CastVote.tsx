@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import useCastVote from '../../hooks/useCastVote';
+import useCastVote from '../../providers/fractal/hooks/useCastVote';
 import { PrimaryButton, SecondaryButton } from '../ui/forms/Button';
 import Check from '../ui/svg/Check';
 import ContentBanner from '../ui/ContentBanner';
@@ -97,7 +97,7 @@ function CastVote({ proposal }: { proposal: Proposal }) {
         />
         <PrimaryButton
           className="mt-4"
-          onClick={() => castVote()}
+          onClick={castVote}
           disabled={newVote === undefined || buttonsDisabled}
           label={voteButtonString}
           isLarge

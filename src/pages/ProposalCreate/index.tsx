@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { logError } from '../../helpers/errorLogging';
 import { useTranslation } from 'react-i18next';
-import useProposals from '../../providers/fractal/hooks/useProposals';
+import useUsul from '../../providers/fractal/hooks/useUsul';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -30,7 +30,7 @@ function ProposalCreate() {
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
-  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useProposals();
+  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useUsul();
 
   /**
    * adds new transaction form

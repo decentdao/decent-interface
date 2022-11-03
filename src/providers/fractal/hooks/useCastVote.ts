@@ -1,9 +1,10 @@
-import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
-import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useCallback, useEffect } from 'react';
-import { useTransaction } from '../contexts/web3Data/transactions';
+import { useTransaction } from '../../../contexts/web3Data/transactions';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import useUsul from './useUsul';
+import { OZLinearVoting__factory } from '../../../assets/typechain-types/usul';
 
 const useCastVote = ({
   proposalNumber,
@@ -14,10 +15,10 @@ const useCastVote = ({
   vote: number | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+  const { votingStrategiesAddresses } = useUsul();
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
-  const { governorModuleContract } = useGovenorModule();
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
@@ -30,20 +31,25 @@ const useCastVote = ({
   const castVote = useCallback(() => {
     if (
       !signerOrProvider ||
-      governorModuleContract === undefined ||
       proposalNumber === undefined ||
-      vote === undefined
+      vote === undefined ||
+      !votingStrategiesAddresses[0]
     ) {
       return;
     }
 
+    const votingStrategyContract = OZLinearVoting__factory.connect(
+      votingStrategiesAddresses[0],
+      signerOrProvider
+    );
+
     contractCallCastVote({
-      contractFn: () => governorModuleContract.castVote(proposalNumber, vote),
+      contractFn: () => votingStrategyContract.vote(proposalNumber, vote, '0x'),
       pendingMessage: t('pendingCastVote'),
       failedMessage: t('failedCastVote'),
       successMessage: t('successCastVote'),
     });
-  }, [contractCallCastVote, governorModuleContract, proposalNumber, signerOrProvider, vote, t]);
+  }, [contractCallCastVote, proposalNumber, signerOrProvider, vote, t, votingStrategiesAddresses]);
   return castVote;
 };
 
