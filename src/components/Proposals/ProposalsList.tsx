@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../providers/fractal/hooks/useProposals';
-import { UsulProposalCard } from './ProposalCard';
+import ProposalCard from './ProposalCard';
 
 export default function ProposalsList() {
   const { proposals } = useProposals();
@@ -17,7 +17,7 @@ export default function ProposalsList() {
   return (
     <div className="flex flex-col -my-2">
       {[...proposals].reverse().map(proposal => (
-        <UsulProposalCard
+        <ProposalCard
           key={proposal.proposalNumber.toNumber()}
           proposal={proposal}
         />
