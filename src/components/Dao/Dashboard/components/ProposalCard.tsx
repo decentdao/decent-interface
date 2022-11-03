@@ -1,10 +1,10 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { formatDatesDiffReadable } from '../../../../helpers/dateTime';
 import { ProposalData, ProposalState } from '../../../../providers/govenor/types';
-import { PrimaryButton, SecondaryButton } from '../../../ui/forms/Button';
 import ContentBox from '../../../ui/ContentBox';
 import StatusBox from '../../../ui/StatusBox';
-import { formatDatesDiffReadable } from '../../../../helpers/dateTime';
-import { useTranslation } from 'react-i18next';
+import { PrimaryButton, SecondaryButton } from '../../../ui/forms/Button';
 
 type ProposalCardProps = {
   proposal: ProposalData;

@@ -1,13 +1,13 @@
-import { ProposalData } from '../../providers/govenor/types';
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import ProposalCardDetailed from './ProposalCardDetailed';
-import ProposalVotes from './ProposalVotes';
-import ProposalQueue from './ProposalQueue';
-import ProposalExecute from './ProposalExecute';
-import CastVote from './CastVote';
-import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
+import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
+import { ProposalData } from '../../providers/govenor/types';
+import CastVote from './CastVote';
+import ProposalCardDetailed from './ProposalCardDetailed';
+import ProposalExecute from './ProposalExecute';
+import ProposalQueue from './ProposalQueue';
+import ProposalVotes from './ProposalVotes';
 
 function ProposalDetails() {
   const params = useParams();

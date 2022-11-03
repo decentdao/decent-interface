@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
 import { DAOFactory, DAOFactory__factory } from '@fractal-framework/core-contracts';
+import { useCallback, useEffect, useState } from 'react';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
-import { useAddresses } from './useAddresses';
 import { DAOCreationListener } from '../providers/fractal/types';
+import { useAddresses } from './useAddresses';
 
 /**
  *

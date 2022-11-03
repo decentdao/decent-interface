@@ -1,15 +1,15 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { initReactI18next } from 'react-i18next';
+import BADGE_EN from './locales/en/badge.json';
 import COMMON_EN from './locales/en/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
-import MENU_EN from './locales/en/menu.json';
 import DASHBOARD_EN from './locales/en/dashboard.json';
+import MENU_EN from './locales/en/menu.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
+import SIDEBAR_EN from './locales/en/sidebar.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
-import SIDEBAR_EN from './locales/en/sidebar.json';
-import BADGE_EN from './locales/en/badge.json';
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
  * language setting. This library is based on the popular i18next JavaScript library, tailored specificaly to React.

@@ -1,5 +1,5 @@
-import useSubDomain from '../../hooks/useSubDomain';
 import { ethers } from 'ethers';
+import useSubDomain from '../../hooks/useSubDomain';
 
 function EtherscanLinkToken({ address, children }: { address: string; children: React.ReactNode }) {
   const subdomain = useSubDomain();

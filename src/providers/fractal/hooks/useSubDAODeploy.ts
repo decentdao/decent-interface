@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTransaction } from '../../../contexts/web3Data/transactions';
 
-import { GnosisDAO, DeployDAOSuccessCallback, GovernanceTypes } from '../types';
+import { DeployDAOSuccessCallback, GnosisDAO, GovernanceTypes } from '../types';
 
 export const useSubDAODeploy = () => {
   const [contractCallDeploy, deploySubDAOPending] = useTransaction();

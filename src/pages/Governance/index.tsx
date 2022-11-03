@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import ClaimToken from '../../components/Dao/ClaimToken';
 import ProposalsList from '../../components/Proposals/ProposalsList';
 import UsulProposalsList from '../../components/Proposals/UsulProposalsList';
-import { TextButton, SecondaryButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
+import { SecondaryButton, TextButton } from '../../components/ui/forms/Button';
 
 export function Governance({ isGnosisDAO }: { isGnosisDAO?: boolean }) {
   const { t } = useTranslation(['common', 'proposal']);

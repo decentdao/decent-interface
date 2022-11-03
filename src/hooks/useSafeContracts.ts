@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  GnosisSafeProxyFactory__factory,
-  GnosisSafeProxyFactory,
-  GnosisSafe__factory,
+  FractalModule,
+  FractalModule__factory,
+  FractalNameRegistry,
+  FractalNameRegistry__factory,
+} from '../assets/typechain-types/fractal-contracts';
+import {
   GnosisSafe,
+  GnosisSafeProxyFactory,
+  GnosisSafeProxyFactory__factory,
+  GnosisSafe__factory,
   MultiSend,
   MultiSend__factory,
 } from '../assets/typechain-types/gnosis-safe';
 import {
-  Usul__factory,
-  Usul,
-  ModuleProxyFactory__factory,
   ModuleProxyFactory,
-  OZLinearVoting__factory,
+  ModuleProxyFactory__factory,
   OZLinearVoting,
+  OZLinearVoting__factory,
+  Usul,
+  Usul__factory,
 } from '../assets/typechain-types/usul';
-import {
-  FractalModule,
-  FractalModule__factory,
-  FractalNameRegistry__factory,
-  FractalNameRegistry,
-} from '../assets/typechain-types/fractal-contracts';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useAddresses } from './useAddresses';
 

@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
+import { Proposal } from '../../providers/fractal/types/usul';
+import { ProposalData } from '../../providers/govenor/types';
 import ContentBox from '../ui/ContentBox';
 import StatusBox, { UsulStatusBox } from '../ui/StatusBox';
+import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
+import ProposalDescription from '../ui/proposal/ProposalDescription';
 import ProposalNumber from '../ui/proposal/ProposalNumber';
 import ProposalTime from '../ui/proposal/ProposalTime';
-import ProposalDescription from '../ui/proposal/ProposalDescription';
-import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
-import { ProposalData } from '../../providers/govenor/types';
-import { Proposal } from '../../providers/fractal/types/usul';
 
 function ProposalCard({ proposal }: { proposal: ProposalData }) {
   return (

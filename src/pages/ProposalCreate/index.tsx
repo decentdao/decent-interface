@@ -1,16 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import { TextButton, PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
+import { PrimaryButton, SecondaryButton, TextButton } from '../../components/ui/forms/Button';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
-import { TransactionData } from '../../types/transaction';
-import { ProposalExecuteData } from '../../types/proposal';
-import { useNavigate } from 'react-router-dom';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { logError } from '../../helpers/errorLogging';
-import { useTranslation } from 'react-i18next';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { ProposalExecuteData } from '../../types/proposal';
+import { TransactionData } from '../../types/transaction';
 
 const defaultTransaction = {
   targetAddress: '',

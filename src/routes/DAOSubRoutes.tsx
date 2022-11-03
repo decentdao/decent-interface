@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
 import { DAO_ROUTES } from './constants';

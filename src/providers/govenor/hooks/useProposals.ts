@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
 import { ProposalData } from '../types';
 import { getVoteString } from '../utils';
-import { useUserVotes } from './useUserVotes';
-import { useUserVotePowers } from './useUserVotePowers';
 import { useProposalsWithoutUserData } from './useProposalsWithoutUserData';
+import { useUserVotePowers } from './useUserVotePowers';
+import { useUserVotes } from './useUserVotes';
 
 const useProposals = (governorModule: GovernorModule | undefined) => {
   const userVotes = useUserVotes(governorModule);
