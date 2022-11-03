@@ -22,7 +22,7 @@ export default function useDAOName() {
 
     const latestEvent = events[0];
     if (!latestEvent) {
-      return `DAO at ${safeDisplayName}`;
+      return safeDisplayName;
     }
 
     const { daoName } = latestEvent.args;
