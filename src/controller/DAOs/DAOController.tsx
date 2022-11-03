@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import useSafeContracts from '../../hooks/useSafeContracts';
 import useSearchDao from '../../hooks/useSearchDao';
 import { GnosisAction } from '../../providers/fractal/constants/actions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
@@ -14,6 +15,7 @@ import { BASE_ROUTES } from '../../routes/constants';
  * Handles DAO validation, setting and unsetting of DAO and nagivating to DAOSearch when invalid
  */
 export function DAOController({ children }: { children: JSX.Element }) {
+  const { fractalNameRegistryContract } = useSafeContracts();
   const {
     gnosis: { safe },
     dispatches: { gnosisDispatch },
@@ -42,6 +44,24 @@ export function DAOController({ children }: { children: JSX.Element }) {
     return data;
   }, [address, chainId]);
 
+  const getDaoName = useCallback(async () => {
+    if (!fractalNameRegistryContract || !safe.address) {
+      return '';
+    }
+    const events = await fractalNameRegistryContract.queryFilter(
+      fractalNameRegistryContract.filters.FractalNameUpdated(safe.address)
+    );
+
+    const latestEvent = events[0];
+    if (!latestEvent) {
+      return '';
+    }
+
+    const { daoName } = latestEvent.args;
+
+    return daoName;
+  }, [fractalNameRegistryContract, safe.address]);
+
   useEffect(() => {
     if (address && signerOrProvider && account) {
       (async () => {
@@ -49,9 +69,13 @@ export function DAOController({ children }: { children: JSX.Element }) {
           type: GnosisAction.SET_SAFE,
           payload: await retrieveGnosis(),
         });
+        gnosisDispatch({
+          type: GnosisAction.SET_DAO_NAME,
+          payload: await getDaoName(),
+        });
       })();
     }
-  }, [address, signerOrProvider, account, gnosisDispatch, retrieveGnosis]);
+  }, [address, signerOrProvider, account, gnosisDispatch, retrieveGnosis, getDaoName]);
 
   useEffect(() => {
     if (!loading) {
