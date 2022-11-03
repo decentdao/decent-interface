@@ -3,6 +3,7 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import useDisplayName from '../../hooks/useDisplayName';
 import useSafeContracts from '../../hooks/useSafeContracts';
 import useSearchDao from '../../hooks/useSearchDao';
 import { GnosisAction } from '../../providers/fractal/constants/actions';
@@ -26,6 +27,7 @@ export function DAOController({ children }: { children: JSX.Element }) {
   } = useWeb3Provider();
 
   const { errorMessage, address, updateSearchString, loading } = useSearchDao();
+  const safeDisplayName = useDisplayName(safe.address);
   const navigate = useNavigate();
 
   /**
@@ -54,13 +56,13 @@ export function DAOController({ children }: { children: JSX.Element }) {
 
     const latestEvent = events[0];
     if (!latestEvent) {
-      return '';
+      return `DAO at ${safeDisplayName}`;
     }
 
     const { daoName } = latestEvent.args;
 
     return daoName;
-  }, [fractalNameRegistryContract, safe.address]);
+  }, [fractalNameRegistryContract, safe.address, safeDisplayName]);
 
   useEffect(() => {
     if (address && signerOrProvider && account) {

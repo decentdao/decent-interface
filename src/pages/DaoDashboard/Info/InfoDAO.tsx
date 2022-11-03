@@ -27,7 +27,7 @@ export function InfoDAO() {
           textStyle="text-2xl-mono-regular"
           color="grayscale.100"
         >
-          {daoName || `DAO at ${MOCK_DAO_ADDRESS}`}
+          {daoName}
         </Text>
         {MOCK_IS_FAVORITE ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />}
         <Badge
