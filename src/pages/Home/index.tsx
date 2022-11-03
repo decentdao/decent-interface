@@ -93,7 +93,7 @@ function Home() {
     navigate(DAO_ROUTES.new.relative);
   };
   return (
-    <Center h="100vh">
+    <Center h="calc(100vh - 4rem)">
       <Flex
         flexDirection="column"
         alignItems="center"
