@@ -14,7 +14,7 @@ export function Governance() {
           <Link to="delegate">
             <TextButton label={t('delegate')} />
           </Link>
-          <Link to="proposals/new">
+          <Link to="new">
             <SecondaryButton label={t('createProposal', { ns: 'proposal' })} />
           </Link>
         </div>
