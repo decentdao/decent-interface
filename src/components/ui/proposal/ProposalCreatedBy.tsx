@@ -12,7 +12,7 @@ function ProposalCreatedBy({
   textSize?: string;
   addedClasses?: string;
 }) {
-  const proposerDisplayName = useDisplayName(proposalProposer);
+  const { displayName: proposerDisplayName } = useDisplayName(proposalProposer);
 
   return (
     <div className={`flex max-w-xs ${textSize} ${addedClasses}`}>

@@ -15,7 +15,7 @@ export function MenuItemWallet() {
   const {
     state: { account },
   } = useWeb3Provider();
-  const accountDisplayName = useDisplayName(account);
+  const { displayName: accountDisplayName } = useDisplayName(account);
   const avatarURL = useAvatar(account);
   const copyTextToClipboard = useCopyText();
   const { t } = useTranslation('menu');

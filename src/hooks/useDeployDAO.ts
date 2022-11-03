@@ -30,11 +30,14 @@ const useDeployDAO = () => {
     linearVotingMasterCopyContract,
     usulMasterCopyContract,
     zodiacModuleProxyFactoryContract,
+    fractalNameRegistryContract,
   } = useSafeContracts();
 
   const [contractCallDeploy, contractCallPending] = useTransaction();
 
   const { t } = useTranslation('transaction');
+  const { AddressZero, HashZero } = ethers.constants;
+  const { solidityKeccak256, getCreate2Address, defaultAbiCoder } = ethers.utils;
 
   const buildDeploySafeTx = useCallback(
     (daoData: GnosisDAO, hasUsul?: boolean) => {
@@ -49,8 +52,6 @@ const useDeployDAO = () => {
           return;
         }
 
-        const { AddressZero, HashZero } = ethers.constants;
-        const { solidityKeccak256, getCreate2Address } = ethers.utils;
         const gnosisDaoData = daoData as GnosisDAO;
         const saltNum = getRandomBytes();
 
@@ -111,13 +112,17 @@ const useDeployDAO = () => {
       gnosisSafeSingletonContract,
       multiSendContract,
       signerOrProvider,
+      AddressZero,
+      HashZero,
+      getCreate2Address,
+      solidityKeccak256,
     ]
   );
 
   const deployGnosisSafe = useCallback(
     (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
       const deploy = async () => {
-        if (!multiSendContract) {
+        if (!multiSendContract || !fractalNameRegistryContract || !signerOrProvider) {
           return;
         }
         const gnosisDaoData = daoData as GnosisDAO;
@@ -129,7 +134,47 @@ const useDeployDAO = () => {
 
         const { predictedGnosisSafeAddress, createSafeTx } = deploySafeTx;
 
-        const txs: MetaTransaction[] = [createSafeTx];
+        const signatures =
+          '0x000000000000000000000000' +
+          multiSendContract.address.slice(2) +
+          '0000000000000000000000000000000000000000000000000000000000000000' +
+          '01';
+
+        const safeContract = await GnosisSafe__factory.connect(
+          predictedGnosisSafeAddress,
+          signerOrProvider
+        );
+
+        const internaltTxs: MetaTransaction[] = [
+          buildContractCall(
+            fractalNameRegistryContract,
+            'updateDAOName',
+            [gnosisDaoData.daoName],
+            0,
+            false
+          ),
+        ];
+        const safeInternalTx = encodeMultiSend(internaltTxs);
+        const execInternalSafeTx = buildContractCall(
+          safeContract,
+          'execTransaction',
+          [
+            multiSendContract.address, // to
+            '0', // value
+            multiSendContract.interface.encodeFunctionData('multiSend', [safeInternalTx]), // calldata
+            '1', // operation
+            '0', // tx gas
+            '0', // base gas
+            '0', // gas price
+            AddressZero, // gas token
+            AddressZero, // receiver
+            signatures, // sigs
+          ],
+          0,
+          false
+        );
+
+        const txs: MetaTransaction[] = [createSafeTx, execInternalSafeTx];
         const safeTx = encodeMultiSend(txs);
 
         contractCallDeploy({
@@ -143,7 +188,15 @@ const useDeployDAO = () => {
 
       deploy();
     },
-    [buildDeploySafeTx, multiSendContract, contractCallDeploy, t]
+    [
+      buildDeploySafeTx,
+      multiSendContract,
+      contractCallDeploy,
+      signerOrProvider,
+      t,
+      AddressZero,
+      fractalNameRegistryContract,
+    ]
   );
   const deployGnosisSafeWithUsul = useCallback(
     (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
@@ -157,12 +210,12 @@ const useDeployDAO = () => {
           !linearVotingMasterCopyContract ||
           !multiSendContract ||
           !votesMasterCopy ||
+          !fractalNameRegistryContract ||
           !signerOrProvider
         ) {
           return;
         }
-        const { AddressZero } = ethers.constants;
-        const { solidityKeccak256, defaultAbiCoder, getCreate2Address } = ethers.utils;
+
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
@@ -297,6 +350,13 @@ const useDeployDAO = () => {
         );
 
         const internaltTxs: MetaTransaction[] = [
+          buildContractCall(
+            fractalNameRegistryContract,
+            'updateDAOName',
+            [gnosisDaoData.daoName],
+            0,
+            false
+          ),
           buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
           buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
           buildContractCall(
@@ -389,7 +449,12 @@ const useDeployDAO = () => {
       account,
       votesMasterCopy,
       signerOrProvider,
+      fractalNameRegistryContract,
       t,
+      AddressZero,
+      defaultAbiCoder,
+      getCreate2Address,
+      solidityKeccak256,
     ]
   );
 
