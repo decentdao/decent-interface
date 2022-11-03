@@ -31,6 +31,7 @@ function ProposalCreate() {
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useProposals();
+
   /**
    * adds new transaction form
    */
@@ -57,7 +58,7 @@ function ProposalCreate() {
     setProposalData(undefined);
 
     if (safe) {
-      navigate(`/daos/${safe.address}/governance`);
+      navigate(`/daos/${safe.address}/proposals`);
     }
   };
 
