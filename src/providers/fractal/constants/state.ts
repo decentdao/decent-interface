@@ -16,6 +16,7 @@ export const governanceInitialState: IGovernance = {
   proposalList: undefined,
   isConnectedUserAuth: undefined,
   governanceIsLoading: true,
+  governanceToken: undefined,
 };
 
 export const treasuryInitialState: ITreasury = {

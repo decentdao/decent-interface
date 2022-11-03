@@ -17,7 +17,9 @@ export function DAOController({ children }: { children: JSX.Element }) {
   const {
     gnosis: { safe },
     dispatches: { gnosisDispatch },
+    governance,
   } = useFractal();
+  console.log('governance: ', governance);
   const params = useParams();
   const {
     state: { signerOrProvider, account, isProviderLoading, chainId },

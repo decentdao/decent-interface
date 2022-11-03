@@ -1,15 +1,19 @@
-import { useState, useEffect, useCallback, useMemo, useReducer } from 'react';
+import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
 import { BigNumber } from 'ethers';
-import { GovernorModule, VotesToken } from '../../../assets/typechain-types/module-governor';
-import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
+import { VotesToken, VotesToken__factory } from '../../../assets/typechain-types/votes-token';
+import {
+  OZLinearVoting,
+  OZLinearVoting__factory,
+  Usul,
+} from '../../../assets/typechain-types/usul';
+
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import {
   TransferListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
-  ClaimListener,
-} from '../types';
-import { logError } from '../../../helpers/errorLogging';
+} from '../../govenor/types';
+import { GnosisModuleType, IGnosisModuleData } from '../types/governance';
 
 interface ITokenData {
   name: string | undefined;
@@ -25,16 +29,9 @@ interface ITokenAccount {
   isDelegatesSet: boolean | undefined;
 }
 
-interface IGoveranceTokenData {
-  name: string | undefined;
-  symbol: string | undefined;
-  decimals: number | undefined;
-  address: string | undefined;
-  userBalance: BigNumber | undefined;
-  delegatee: string | undefined;
-  votingWeight: BigNumber | undefined;
-  proposalTokenThreshold: BigNumber | undefined;
-  isDelegatesSet: boolean | undefined;
+export interface IGoveranceTokenData extends ITokenData, ITokenAccount {
+  votingContract: OZLinearVoting | undefined;
+  tokenContract: VotesToken | undefined;
 }
 
 const initialState = {
@@ -45,8 +42,9 @@ const initialState = {
   userBalance: undefined,
   delegatee: undefined,
   votingWeight: undefined,
-  proposalTokenThreshold: undefined,
   isDelegatesSet: undefined,
+  votingContract: undefined,
+  tokenContract: undefined,
 };
 
 enum TokenActions {
@@ -54,7 +52,8 @@ enum TokenActions {
   UPDATE_DELEGATEE,
   UPDATE_VOTING_WEIGHT,
   UPDATE_ACCOUNT,
-  UPDATE_PROPOSAL_THRESHOLD,
+  UPDATE_VOTING_CONTRACT,
+  UPDATE_TOKEN_CONTRACT,
   RESET,
 }
 type TokenAction =
@@ -62,7 +61,8 @@ type TokenAction =
   | { type: TokenActions.UPDATE_ACCOUNT; payload: ITokenAccount }
   | { type: TokenActions.UPDATE_DELEGATEE; payload: string }
   | { type: TokenActions.UPDATE_VOTING_WEIGHT; payload: BigNumber }
-  | { type: TokenActions.UPDATE_PROPOSAL_THRESHOLD; payload: BigNumber }
+  | { type: TokenActions.UPDATE_VOTING_CONTRACT; payload: OZLinearVoting }
+  | { type: TokenActions.UPDATE_TOKEN_CONTRACT; payload: VotesToken }
   | { type: TokenActions.RESET };
 
 const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
@@ -79,29 +79,90 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
       return { ...state, votingWeight: action.payload };
     case TokenActions.UPDATE_VOTING_WEIGHT:
       return { ...initialState };
-    case TokenActions.UPDATE_PROPOSAL_THRESHOLD:
-      return { ...state, proposalTokenThreshold: action.payload };
+    case TokenActions.UPDATE_VOTING_CONTRACT:
+      return { ...state, votingContract: action.payload };
+    case TokenActions.UPDATE_TOKEN_CONTRACT:
+      return { ...state, tokenContract: action.payload };
   }
   return state;
 };
 
-const useTokenData = (
-  governorModule: GovernorModule | undefined,
-  tokenContract: VotesToken | undefined,
-  claimContract: ClaimSubsidiary | undefined
-) => {
+const useTokenData = (modules: IGnosisModuleData[]) => {
   const {
-    state: { account },
+    state: { account, signerOrProvider },
   } = useWeb3Provider();
+  const [votingContract, setVotingContract] = useState<OZLinearVoting>();
+  const [tokenContract, setTokenContract] = useState<VotesToken>();
 
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [userClaimAmount, setTokenClaimAmount] = useState<BigNumber>();
+
+  const usulModule = useMemo(
+    () => modules.find(module => module.moduleType === GnosisModuleType.USUL)?.moduleContract,
+    [modules]
+  ) as Usul | undefined;
+
+  // set voting contract
+  useEffect(() => {
+    if (!usulModule || !signerOrProvider) {
+      return;
+    }
+
+    (async () => {
+      // todo: This assumes that only one strategy has been enabled, but Usul supports more than one
+      const votingContractAddress = await usulModule
+        .queryFilter(usulModule.filters.EnabledStrategy())
+        .then(strategiesEnabled => {
+          return strategiesEnabled[0].args.strategy;
+        });
+
+      setVotingContract(OZLinearVoting__factory.connect(votingContractAddress, signerOrProvider));
+    })();
+  }, [signerOrProvider, usulModule]);
+
+  // set token contract
+  useEffect(() => {
+    if (!votingContract || !signerOrProvider) {
+      return;
+    }
+
+    (async () => {
+      console.log('token: ', await votingContract.governanceToken());
+      setTokenContract(
+        VotesToken__factory.connect(await votingContract.governanceToken(), signerOrProvider)
+      );
+    })();
+  }, [signerOrProvider, votingContract]);
+
+  // dispatch voting contract
+  useEffect(() => {
+    if (!votingContract) {
+      return;
+    }
+
+    dispatch({
+      type: TokenActions.UPDATE_VOTING_CONTRACT,
+      payload: votingContract,
+    });
+  }, [votingContract]);
+
+  // dispatch token contract
+  useEffect(() => {
+    if (!tokenContract) {
+      return;
+    }
+
+    dispatch({
+      type: TokenActions.UPDATE_TOKEN_CONTRACT,
+      payload: tokenContract,
+    });
+  }, [tokenContract]);
 
   // get token data
   useEffect(() => {
     if (!tokenContract) {
       return;
     }
+
     (async () => {
       const tokenName = await tokenContract.name();
       const tokenSymbol = await tokenContract.symbol();
@@ -123,6 +184,7 @@ const useTokenData = (
     if (!tokenContract || !account) {
       return;
     }
+
     const tokenBalance = await tokenContract.balanceOf(account);
     const tokenDelegatee = await tokenContract.delegates(account);
     const tokenVotingWeight = await tokenContract.getVotes(account);
@@ -147,15 +209,6 @@ const useTokenData = (
     getTokenAccount();
   }, [getTokenAccount]);
 
-  // Get initial user claim amount
-  useEffect(() => {
-    if (!claimContract || !account) {
-      setTokenClaimAmount(undefined);
-      return;
-    }
-    claimContract.calculateClaimAmount(account).then(setTokenClaimAmount).catch(logError);
-  }, [claimContract, account]);
-
   // Setup token transfer events listener
   useEffect(() => {
     if (tokenContract === undefined || !account) {
@@ -176,27 +229,7 @@ const useTokenData = (
       tokenContract.off(filterTransferTo, listenerCallback);
       tokenContract.off(filterTransferFrom, listenerCallback);
     };
-  }, [account, tokenContract, getTokenAccount]);
-
-  // Setup token claim events listener
-  useEffect(() => {
-    if (claimContract === undefined || tokenContract === undefined || !account) {
-      setTokenClaimAmount(undefined);
-      return;
-    }
-
-    const filter = claimContract.filters.SnapClaimed(null, tokenContract.address, account, null);
-
-    const listenerCallback: ClaimListener = () => {
-      setTokenClaimAmount(BigNumber.from('0'));
-    };
-
-    claimContract.on(filter, listenerCallback);
-
-    return () => {
-      claimContract.off(filter, listenerCallback);
-    };
-  }, [account, tokenContract, claimContract]);
+  }, [account, getTokenAccount, tokenContract]);
 
   // Setup token delegate changed events listener
   useEffect(() => {
@@ -219,7 +252,7 @@ const useTokenData = (
     return () => {
       tokenContract.off(filter, listenerCallback);
     };
-  }, [account, tokenContract, getTokenAccount]);
+  }, [account, getTokenAccount, tokenContract]);
 
   // Setup listeners for when voting weight increases or decreases
   useEffect(() => {
@@ -244,25 +277,7 @@ const useTokenData = (
     };
   }, [account, tokenContract]);
 
-  const getProposalTokenThreshold = useCallback(async () => {
-    if (!governorModule) {
-      return;
-    }
-    const proposalThreshold = await governorModule.proposalThreshold();
-    dispatch({ type: TokenActions.UPDATE_PROPOSAL_THRESHOLD, payload: proposalThreshold });
-  }, [governorModule]);
-
-  useEffect(() => {
-    getProposalTokenThreshold();
-  }, [getProposalTokenThreshold]);
-
-  const data = useMemo(
-    () => ({
-      userClaimAmount,
-      ...state,
-    }),
-    [state, userClaimAmount]
-  );
+  const data = useMemo(() => state, [state]);
   return data;
 };
 

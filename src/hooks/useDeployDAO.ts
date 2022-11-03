@@ -219,6 +219,7 @@ const useDeployDAO = () => {
           tokenSalt,
           solidityKeccak256(['bytes'], [VotesToken__factory.bytecode])
         );
+        console.log('predictedTokenAddress: ', predictedTokenAddress);
 
         const encodedStrategyInitParams = defaultAbiCoder.encode(
           ['address', 'address', 'address', 'uint256', 'uint256', 'uint256', 'string'],
