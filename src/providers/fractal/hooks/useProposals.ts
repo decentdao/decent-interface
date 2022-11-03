@@ -10,7 +10,7 @@ import { Proposal } from '../types/usul';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';
 import { GnosisModuleType } from '../types';
 
-export default function useUsulProposals() {
+export default function useProposals() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
   const [usulContract, setUsulContract] = useState<Usul>();
   const [votingStrategiesAddresses, setVotingStrategiesAddresses] = useState<string[]>([]);

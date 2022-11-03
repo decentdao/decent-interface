@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
+import { Governance } from '../pages/Governance';
+import ProposalCreate from '../pages/ProposalCreate';
 import { DAO_ROUTES } from './constants';
 
 function DAOSubRoutes() {
@@ -21,7 +23,7 @@ function DAOSubRoutes() {
         />
         <Route
           path={DAO_ROUTES.proposals.path}
-          element={<div />}
+          element={<Governance />}
         />
         <Route
           path={DAO_ROUTES.proposal.path}
@@ -29,7 +31,7 @@ function DAOSubRoutes() {
         />
         <Route
           path={DAO_ROUTES.proposalNew.path}
-          element={<div />}
+          element={<ProposalCreate />}
         />
       </Routes>
     </DAOController>

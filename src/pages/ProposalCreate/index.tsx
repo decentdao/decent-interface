@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { logError } from '../../helpers/errorLogging';
 import { useTranslation } from 'react-i18next';
+import useProposals from '../../providers/fractal/hooks/useProposals';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -19,16 +20,7 @@ const defaultTransaction = {
   parameters: '',
 };
 
-interface IProposalCreate {
-  submitProposal: (proposal: {
-    proposalData: ProposalExecuteData | undefined;
-    successCallback: () => void;
-  }) => void;
-  pendingCreateTx: boolean;
-  isUserAuthorized: boolean;
-}
-
-function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: IProposalCreate) {
+function ProposalCreate() {
   const {
     gnosis: { safe },
   } = useFractal();
@@ -38,6 +30,7 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
+  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useProposals();
   /**
    * adds new transaction form
    */
@@ -126,12 +119,12 @@ function ProposalCreate({ submitProposal, pendingCreateTx, isUserAuthorized }: I
   }, [proposalData, transactions]);
 
   const isNextDisabled = useMemo(
-    () => !isUserAuthorized || !proposalDescription.trim().length,
-    [isUserAuthorized, proposalDescription]
+    () => !canUserCreateProposal || !proposalDescription.trim().length,
+    [canUserCreateProposal, proposalDescription]
   );
   const isCreateDisabled = useMemo(
-    () => !isUserAuthorized || !isValidProposal || pendingCreateTx,
-    [pendingCreateTx, isValidProposal, isUserAuthorized]
+    () => !canUserCreateProposal || !isValidProposal || pendingCreateTx,
+    [pendingCreateTx, isValidProposal, canUserCreateProposal]
   );
 
   const { t } = useTranslation(['proposal', 'common']);

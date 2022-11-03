@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
-import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
-import ProposalCard from './ProposalCard';
+import useProposals from '../../providers/fractal/hooks/useProposals';
+import { UsulProposalCard } from './ProposalCard';
 
-function ProposalsList() {
-  const { proposals } = useGovenorModule();
+export default function ProposalsList() {
+  const { proposals } = useProposals();
   const { t } = useTranslation('proposal');
 
   if (proposals === undefined) {
@@ -17,13 +17,11 @@ function ProposalsList() {
   return (
     <div className="flex flex-col -my-2">
       {[...proposals].reverse().map(proposal => (
-        <ProposalCard
-          key={proposal.number}
+        <UsulProposalCard
+          key={proposal.proposalNumber.toNumber()}
           proposal={proposal}
         />
       ))}
     </div>
   );
 }
-
-export default ProposalsList;
