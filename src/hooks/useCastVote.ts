@@ -6,11 +6,11 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 
 const useCastVote = ({
-  proposalId,
+  proposalNumber,
   vote,
   setPending,
 }: {
-  proposalId: BigNumber | undefined;
+  proposalNumber: BigNumber;
   vote: number | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -31,19 +31,19 @@ const useCastVote = ({
     if (
       !signerOrProvider ||
       governorModuleContract === undefined ||
-      proposalId === undefined ||
+      proposalNumber === undefined ||
       vote === undefined
     ) {
       return;
     }
 
     contractCallCastVote({
-      contractFn: () => governorModuleContract.castVote(proposalId, vote),
+      contractFn: () => governorModuleContract.castVote(proposalNumber, vote),
       pendingMessage: t('pendingCastVote'),
       failedMessage: t('failedCastVote'),
       successMessage: t('successCastVote'),
     });
-  }, [contractCallCastVote, governorModuleContract, proposalId, signerOrProvider, vote, t]);
+  }, [contractCallCastVote, governorModuleContract, proposalNumber, signerOrProvider, vote, t]);
   return castVote;
 };
 
