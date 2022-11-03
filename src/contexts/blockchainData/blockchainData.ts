@@ -20,7 +20,7 @@ const useBlockchainDatas = () => {
 
   const currentBlockNumber = useCurrentBlockNumber();
   const currentTimestamp = useCurrentTimestamp(currentBlockNumber);
-  const accountDisplayName = useDisplayName(account);
+  const { displayName: accountDisplayName } = useDisplayName(account);
 
   const blockchainData: BlockchainData = {
     currentBlockNumber,
