@@ -5,6 +5,7 @@ import { useActionToast } from './hooks/toasts/useActionToast';
 import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
 import FractalRoutes from './routes/FractalRoutes';
+import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 
 function App() {
   const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
@@ -25,7 +26,7 @@ function App() {
       templateAreas={`"nav header"
       "nav main"`}
       gridTemplateColumns={'4.25rem 1fr'}
-      gridTemplateRows="4rem minmax(calc(100vh - 4rem), 100%)"
+      gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
       <GridItem

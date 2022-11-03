@@ -7,6 +7,7 @@ import logo from '../../assets/images/fractal-text-logo.svg';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { ReactNode } from 'react';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../constants/url';
+import { CONTENT_HEIGHT } from '../../constants/common';
 
 interface IconWithTextProps {
   icon: ReactNode;
@@ -93,7 +94,7 @@ function Home() {
     navigate(DAO_ROUTES.new.relative);
   };
   return (
-    <Center h="calc(100vh - 4rem)">
+    <Center h={CONTENT_HEIGHT}>
       <Flex
         flexDirection="column"
         alignItems="center"
