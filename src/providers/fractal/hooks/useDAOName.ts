@@ -1,23 +1,25 @@
-import { useCallback, useEffect } from 'react';
-import { useFractal } from './useFractal';
+import { Dispatch, useCallback, useEffect } from 'react';
 import useDisplayName from '../../../hooks/useDisplayName';
 import useSafeContracts from '../../../hooks/useSafeContracts';
 import { GnosisAction } from '../constants';
+import { GnosisActions } from '../types';
 
-export default function useDAOName() {
-  const {
-    gnosis: { safe },
-    dispatches: { gnosisDispatch },
-  } = useFractal();
+export default function useDAOName({
+  address,
+  gnosisDispatch,
+}: {
+  address?: string;
+  gnosisDispatch: Dispatch<GnosisActions>;
+}) {
   const { fractalNameRegistryContract } = useSafeContracts();
-  const { displayName } = useDisplayName(safe?.address);
+  const { displayName } = useDisplayName(address);
 
   const getDaoName = useCallback(async () => {
-    if (!fractalNameRegistryContract || !safe?.address) {
+    if (!fractalNameRegistryContract || !address) {
       return '';
     }
     const events = await fractalNameRegistryContract.queryFilter(
-      fractalNameRegistryContract.filters.FractalNameUpdated(safe.address)
+      fractalNameRegistryContract.filters.FractalNameUpdated(address)
     );
 
     const latestEvent = events[0];
@@ -28,7 +30,7 @@ export default function useDAOName() {
     const { daoName } = latestEvent.args;
 
     return daoName;
-  }, [fractalNameRegistryContract, safe?.address, displayName]);
+  }, [fractalNameRegistryContract, address, displayName]);
 
   useEffect(() => {
     const loadDaoName = async () => {
@@ -39,5 +41,5 @@ export default function useDAOName() {
     };
 
     loadDaoName();
-  });
+  }, [getDaoName, gnosisDispatch]);
 }
