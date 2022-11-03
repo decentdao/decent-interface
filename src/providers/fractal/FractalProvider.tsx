@@ -7,6 +7,7 @@ import {
   TreasuryAction,
   treasuryInitialState,
 } from './constants';
+import useDAOName from './hooks/useDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisGovernance } from './hooks/useGnosisGovernance';
@@ -43,6 +44,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useGnosisApiServices(gnosis.safe.address, treasuryDispatch);
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
   useGnosisGovernance(gnosis.safe, governanceDispatch);
+  useDAOName();
 
   useEffect(() => {
     if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
