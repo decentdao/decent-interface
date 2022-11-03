@@ -229,7 +229,6 @@ const useDeployDAO = () => {
           // solidityKeccak256(['bytes'], [VotesToken__factory.bytecode])
           solidityKeccak256(['bytes'], [tokenByteCodeLinear])
         );
-        console.log('predictedTokenAddress: ', predictedTokenAddress);
 
         const encodedStrategyInitParams = defaultAbiCoder.encode(
           ['address', 'address', 'address', 'uint256', 'uint256', 'uint256', 'string'],
@@ -262,7 +261,6 @@ const useDeployDAO = () => {
           strategySalt,
           solidityKeccak256(['bytes'], [strategyByteCodeLinear])
         );
-
         const encodedInitUsulData = defaultAbiCoder.encode(
           ['address', 'address', 'address', 'address[]'],
           [
@@ -290,7 +288,6 @@ const useDeployDAO = () => {
           usulSalt,
           solidityKeccak256(['bytes'], [usulByteCodeLinear])
         );
-
         const signatures =
           '0x000000000000000000000000' +
           multiSendContract.address.slice(2) +
@@ -330,7 +327,7 @@ const useDeployDAO = () => {
         const createTokenTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [votesMasterCopyContract.address, encodedSetUpTokenData, tokenSalt],
+          [votesMasterCopyContract.address, encodedSetUpTokenData, tokenNonce],
           0,
           false
         );
