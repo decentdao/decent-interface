@@ -5,7 +5,6 @@ import { EthAddress } from '../types';
 export type ContractAddressesChainMap = { [chaindId: number]: EthAddress };
 export function useAddresses(chainId: number | undefined) {
   const [addresses, setAddresses] = useState<{
-    metaFactory?: EthAddress;
     daoFactory?: EthAddress;
     treasuryModuleFactory?: EthAddress;
     tokenFactory?: EthAddress;
@@ -33,7 +32,6 @@ export function useAddresses(chainId: number | undefined) {
   useEffect(() => {
     if (!chainId) return;
     if (
-      !process.env.REACT_APP_METAFACTORY_ADDRESSES ||
       !process.env.REACT_APP_DAOFACTORY_ADDRESSES ||
       !process.env.REACT_APP_TREASURYMODULEFACTORY_ADDRESSES ||
       !process.env.REACT_APP_TOKENFACTORY_ADDRESSES ||
@@ -61,10 +59,6 @@ export function useAddresses(chainId: number | undefined) {
       setAddresses({});
       return;
     }
-
-    const metaFactoryNetworksAddresses: ContractAddressesChainMap = JSON.parse(
-      process.env.REACT_APP_METAFACTORY_ADDRESSES
-    );
     const daoFactoryNetworksAddresses: ContractAddressesChainMap = JSON.parse(
       process.env.REACT_APP_DAOFACTORY_ADDRESSES
     );
@@ -132,7 +126,6 @@ export function useAddresses(chainId: number | undefined) {
       process.env.REACT_APP_FRACTAL_NAME_REGISTRY_ADDRESSES
     );
 
-    const metaFactoryAddress = metaFactoryNetworksAddresses[chainId];
     const daoFactoryAddress = daoFactoryNetworksAddresses[chainId];
     const treasuryModuleFactoryAddress = treasuryModuleFactoryNetworksAddresses[chainId];
     const tokenFactoryAddress = tokenFactoryNetworksAddresses[chainId];
@@ -157,7 +150,6 @@ export function useAddresses(chainId: number | undefined) {
     const fractalNameRegistry = fractalNameRegistryAddresses[chainId];
 
     if (
-      !metaFactoryAddress ||
       !daoFactoryAddress ||
       !treasuryModuleFactoryAddress ||
       !tokenFactoryAddress ||
@@ -187,7 +179,6 @@ export function useAddresses(chainId: number | undefined) {
     }
 
     setAddresses({
-      metaFactory: metaFactoryAddress,
       daoFactory: daoFactoryAddress,
       treasuryModuleFactory: treasuryModuleFactoryAddress,
       tokenFactory: tokenFactoryAddress,
