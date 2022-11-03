@@ -14,6 +14,7 @@ export interface IFractalContext {
 }
 
 export interface IGnosis {
+  daoName: string;
   safe: GnosisSafe;
   modules: IGnosisModuleData[];
   isGnosisLoading: boolean;

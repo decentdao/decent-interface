@@ -30,7 +30,7 @@ function Delegate() {
       votingTokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
     },
   } = useGovenorModule();
-  const delegateeDisplayName = useDisplayName(delegatee);
+  const { displayName: delegateeDisplayName } = useDisplayName(delegatee);
 
   const readableBalance = useMemo(() => {
     if (!userBalance || !decimals || !symbol) {

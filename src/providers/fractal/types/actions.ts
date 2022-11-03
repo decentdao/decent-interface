@@ -6,6 +6,7 @@ import { GnosisAssetNonFungible, GnosisAssetFungible } from './treasury';
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE; payload: GnosisSafe }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
+  | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
 

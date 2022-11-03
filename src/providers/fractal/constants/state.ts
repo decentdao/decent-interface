@@ -6,6 +6,7 @@ export const gnosisInitialState: IGnosis = {
   modules: [],
   safe: {},
   isGnosisLoading: true,
+  daoName: '',
 };
 
 export const governanceInitialState: IGovernance = {

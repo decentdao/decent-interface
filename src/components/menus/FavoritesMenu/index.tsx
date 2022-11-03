@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FavoritesList } from './FavoritesList';
 
 export function FavoritesMenu() {
-  const { t } = useTranslation('menu');
+  const { t } = useTranslation('dashboard');
   return (
     <Menu isLazy>
       <Fragment>
