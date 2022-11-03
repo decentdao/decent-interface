@@ -217,7 +217,12 @@ const useDeployDAO = () => {
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
           votesMasterCopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
-        const tokenSalt = getRandomBytes();
+        const tokenNonce = getRandomBytes();
+        // const tokenSalt = getRandomBytes();
+        const tokenSalt = solidityKeccak256(
+          ['bytes32', 'uint256'],
+          [solidityKeccak256(['bytes'], [encodedSetUpTokenData]), tokenNonce]
+        );
         const predictedTokenAddress = getCreate2Address(
           zodiacModuleProxyFactoryContract.address,
           tokenSalt,
