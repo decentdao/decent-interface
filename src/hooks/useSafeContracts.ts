@@ -15,7 +15,12 @@ import {
   OZLinearVoting__factory,
   OZLinearVoting,
 } from '../assets/typechain-types/usul';
-import { FractalModule, FractalModule__factory } from '../assets/typechain-types/fractal-contracts';
+import {
+  FractalModule,
+  FractalModule__factory,
+  FractalNameRegistry__factory,
+  FractalNameRegistry,
+} from '../assets/typechain-types/fractal-contracts';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useAddresses } from './useAddresses';
 
@@ -31,6 +36,8 @@ export default function useSafeContracts() {
     useState<OZLinearVoting>(); // 1:1 Token Voting contract
   const [fractalModuleMasterCopyContract, setFractalModuleMasterCopyContract] =
     useState<FractalModule>();
+  const [fractalNameRegistryContract, setFractalNameRegistryContract] =
+    useState<FractalNameRegistry>();
   const {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
@@ -43,6 +50,7 @@ export default function useSafeContracts() {
     usulMasterCopy,
     multiSend,
     fractalModuleMasterCopy,
+    fractalNameRegistry,
   } = useAddresses(chainId);
 
   useEffect(() => {
@@ -54,6 +62,7 @@ export default function useSafeContracts() {
       !gnosisSafe ||
       !multiSend ||
       !fractalModuleMasterCopy ||
+      !fractalNameRegistry ||
       !signerOrProvider
     ) {
       setGnosisSafeFactoryContract(undefined);
@@ -62,6 +71,7 @@ export default function useSafeContracts() {
       setLinearVotingMasterCopyContract(undefined);
       setGnosisSafeSingletonContract(undefined);
       setFractalModuleMasterCopyContract(undefined);
+      setFractalNameRegistryContract(undefined);
       return;
     }
 
@@ -85,6 +95,10 @@ export default function useSafeContracts() {
     setFractalModuleMasterCopyContract(
       FractalModule__factory.connect(fractalModuleMasterCopy.address, signerOrProvider)
     );
+
+    setFractalNameRegistryContract(
+      FractalNameRegistry__factory.connect(fractalNameRegistry.address, signerOrProvider)
+    );
   }, [
     gnosisSafeFactory,
     gnosisSafe,
@@ -94,6 +108,7 @@ export default function useSafeContracts() {
     signerOrProvider,
     multiSend,
     fractalModuleMasterCopy,
+    fractalNameRegistry,
   ]);
 
   return {
@@ -104,5 +119,6 @@ export default function useSafeContracts() {
     linearVotingMasterCopyContract,
     multiSendContract,
     fractalModuleMasterCopyContract,
+    fractalNameRegistryContract,
   };
 }
