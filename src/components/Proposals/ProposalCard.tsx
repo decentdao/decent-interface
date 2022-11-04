@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
+import { Proposal } from '../../providers/fractal/types/usul';
 import ContentBox from '../ui/ContentBox';
 import StatusBox from '../ui/StatusBox';
-import ProposalNumber from '../ui/proposal/ProposalNumber';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
-import { Proposal } from '../../providers/fractal/types/usul';
+import ProposalNumber from '../ui/proposal/ProposalNumber';
 
 export default function ProposalCard({ proposal }: { proposal: Proposal }) {
   return (

@@ -1,5 +1,5 @@
 import { Box, MenuList, Text } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useFavorites from '../../../hooks/useFavorites';

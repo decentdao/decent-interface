@@ -1,4 +1,4 @@
-import { useRef, ReactText, useEffect, useState } from 'react';
+import { ReactText, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -81,14 +81,7 @@ export function useUserProposalValidation() {
       toast.dismiss(thresholdToastId.current);
     }
     setCanUserCreateProposal(true);
-  }, [
-    proposalTokenThreshold,
-    votingWeight,
-    isDelegatesSet,
-    governorModuleContract,
-    navigate,
-    t,
-  ]);
+  }, [proposalTokenThreshold, votingWeight, isDelegatesSet, governorModuleContract, navigate, t]);
 
   useEffect(() => {
     return () => {

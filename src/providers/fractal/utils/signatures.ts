@@ -1,4 +1,4 @@
-import { utils, BigNumberish, Signer } from 'ethers';
+import { BigNumberish, Signer, utils } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { GnosisTransaction } from '../types/gnosis';
 

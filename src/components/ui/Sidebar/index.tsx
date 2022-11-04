@@ -12,7 +12,7 @@ import {
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../constants/url';
+import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../constants/url';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
 

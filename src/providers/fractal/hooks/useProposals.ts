@@ -1,14 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
-import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
+import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
 import { ProposalExecuteData } from '../../../types/proposal';
-import { useFractal } from './useFractal';
+import { GnosisModuleType } from '../types';
 import { Proposal } from '../types/usul';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';
-import { GnosisModuleType } from '../types';
+import { useFractal } from './useFractal';
 
 export default function useProposals() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function getStorageValue<T>(key: string, defaultValue: T) {
   // getting stored value
