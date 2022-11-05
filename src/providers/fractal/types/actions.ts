@@ -1,11 +1,12 @@
-import { IGnosisModuleData, IGovernance } from './governance';
 import { GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
+import { IGnosisModuleData, IGovernance } from './governance';
 import { GnosisSafe } from './state';
-import { GnosisAssetNonFungible, GnosisAssetFungible } from './treasury';
+import { GnosisAssetFungible, GnosisAssetNonFungible } from './treasury';
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE; payload: GnosisSafe }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
+  | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
 

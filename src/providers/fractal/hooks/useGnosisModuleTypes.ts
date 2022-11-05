@@ -1,7 +1,7 @@
 import { Dispatch, useEffect } from 'react';
 import useSafeContracts from '../../../hooks/useSafeContracts';
-import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 import { GnosisAction } from '../constants';
+import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 
 export function useGnosisModuleTypes(
   gnosisDispatch: Dispatch<GnosisActions>,

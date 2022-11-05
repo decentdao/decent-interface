@@ -1,5 +1,5 @@
-import { EthAddress } from '.';
 import { BigNumberInput } from './../components/DaoCreator/provider/types/index';
+import { EthAddress } from '.';
 
 export type TokenAllocation = {
   isValidAddress: boolean;

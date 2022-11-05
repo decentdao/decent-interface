@@ -1,7 +1,7 @@
+import { IDAO__factory, IModuleBase__factory } from '@fractal-framework/core-contracts';
 import { useEffect, useState } from 'react';
 
 import use165Contracts from './use165Contracts';
-import { IDAO__factory, IModuleBase__factory } from '@fractal-framework/core-contracts';
 import useSupportsInterfaces from './useSupportsInterfaces';
 
 const useIsDAO = (address: string | undefined) => {

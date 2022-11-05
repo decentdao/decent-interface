@@ -1,10 +1,10 @@
-import { TreasuryAction } from './../constants/actions';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { useCallback, useEffect } from 'react';
 import axios from 'axios';
+import { useCallback, useEffect } from 'react';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
 import { GnosisAssetFungible, GnosisAssetNonFungible, TreasuryActions } from '../types';
 import { buildGnosisApiUrl } from '../utils';
+import { TreasuryAction } from './../constants/actions';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information

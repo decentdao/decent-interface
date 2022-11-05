@@ -8,7 +8,7 @@ interface IFavorite {
   address: string;
 }
 export function Favorite({ address }: IFavorite) {
-  const displayName = useDisplayName(address);
+  const { displayName } = useDisplayName(address);
   const navigate = useNavigate();
   return (
     <MenuItem

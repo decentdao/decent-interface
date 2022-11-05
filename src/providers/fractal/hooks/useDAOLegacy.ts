@@ -1,8 +1,8 @@
-import { useWeb3Provider } from './../../../contexts/web3Data/hooks/useWeb3Provider';
-import { useCallback, useEffect, useState } from 'react';
 import { DAOFactory, DAOFactory__factory } from '@fractal-framework/core-contracts';
-import { DAOCreationListener } from '../types';
+import { useCallback, useEffect, useState } from 'react';
 import { useAddresses } from '../../../hooks/useAddresses';
+import { DAOCreationListener } from '../types';
+import { useWeb3Provider } from './../../../contexts/web3Data/hooks/useWeb3Provider';
 
 // @todo Update to use for Gnosis v1
 /**

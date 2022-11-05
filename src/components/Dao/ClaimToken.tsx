@@ -1,10 +1,10 @@
+import { ethers } from 'ethers';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import useClaimToken from '../../hooks/useClaimToken';
+import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
 import ContentBox from '../ui/ContentBox';
 import { PrimaryButton } from '../ui/forms/Button';
-import useClaimToken from '../../hooks/useClaimToken';
-import { ethers } from 'ethers';
-import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
-import { useTranslation } from 'react-i18next';
 
 function ClaimToken() {
   const [pending, setPending] = useState<boolean>(false);
