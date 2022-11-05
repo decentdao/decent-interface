@@ -1,15 +1,20 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
 import { InfoProposals } from './InfoProposals';
 import { InfoTreasury } from './InfoTreasury';
 
-function InfoCard({
+// @TODO where should this component live?
+export function InfoCard({
   minWidth,
+  title,
+  titleTestId,
   children,
 }: {
-  minWidth: { [key: string]: string };
+  minWidth?: { [key: string]: string };
+  title?: string;
+  titleTestId?: string;
   children?: ReactNode;
 }) {
   return (
@@ -20,6 +25,18 @@ function InfoCard({
       p="1rem"
       borderRadius="0.5rem"
     >
+      {title && (
+        <Box>
+          <Text
+            data-testid={titleTestId}
+            variant="infoRegular"
+            marginBottom="0.75rem"
+          >
+            {title}
+          </Text>
+          <Divider color="chocolate.700" />
+        </Box>
+      )}
       {children}
     </Box>
   );

@@ -1,14 +1,13 @@
 {
     "titleTreasury": "{{daoName}} Treasury",
-    "titleTreasuryAddress": "Treasury address:",
-    "titleEthTokens": "ETH / Tokens",
-    "dataCredit": "Data from CoinGecko",
-    "titleNFTs": "NFTs",
-    "tokenSymbol": "Symbol",
-    "tokenName": "Name",
-    "tokenId": "Token Id",
-    "tokenAmount": "Amount",
-    "descTreasury": "Here you will see the tokens that have been sent to the {{daoName}} treasury address.",
-    "emptyTokens": "There are no tokens in this <1>treasury</1> at this time.",
-    "emptyNFTs": "There are no NFTs in this <1>treasury</1> at this time."
+    "buttonSendAssets": "Send Assets",
+    "titleTransactions": "Transactions",
+    "titleAssets": "Assets",
+    "subtitleCoinBalance": "Total Coin Balance",
+    "columnCoins": "Coins",
+    "columnValue": "Value",
+    "columnAllocation": "Allocation",
+    "columnNFTs": "NFTs",
+    "labelSent": "Sent",
+    "labelReceived": "Received"
 }

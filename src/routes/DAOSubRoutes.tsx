@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
+import Treasury from '../pages/Treasury';
 import { DAO_ROUTES } from './constants';
 
 function DAOSubRoutes() {
@@ -17,7 +18,7 @@ function DAOSubRoutes() {
         />
         <Route
           path={DAO_ROUTES.treasury.path}
-          element={<div />}
+          element={<Treasury />}
         />
         <Route
           path={DAO_ROUTES.proposals.path}
