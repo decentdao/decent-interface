@@ -38,12 +38,12 @@ export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
   );
 
   const parseActivities = useCallback(async () => {
-    if (!transactions.results.length || !safe) {
+    if (![...transactions.results].length || !safe) {
       return [];
     }
     setParsedActivities(
       await Promise.all(
-        transactions.results.map(async transaction => {
+        [...transactions.results].map(async transaction => {
           const isDeposit = transaction.transfers.every(
             t => t.to.toLowerCase() === safe.address!.toLowerCase()
           );
