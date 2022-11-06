@@ -28,6 +28,7 @@ export const useActivities = (
   } = useFractal();
 
   const [parsedActivities, setParsedActivities] = useState<Activity[]>([]);
+  const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
   const getAddressDisplay = useCallback(
     async (account: string) => {
@@ -129,6 +130,7 @@ export const useActivities = (
         })
       )
     );
+    setActivitiesLoading(false);
   }, [transactions, safe, getAddressDisplay]);
 
   useEffect(() => {
@@ -152,5 +154,5 @@ export const useActivities = (
   }, []);
   // @todo handle pagination? what is the limit? v2?
 
-  return { parsedActivities };
+  return { parsedActivities, isActivitiesLoading };
 };

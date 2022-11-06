@@ -1,5 +1,8 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Center, Flex, Text } from '@chakra-ui/react';
 import { useState } from 'react';
+import { InfoBox } from '../../../components/ui/containers/InfoBox';
+import { InfoCardLoader } from '../../../components/ui/loaders/InfoCardLoader';
+import Loading from '../../../components/ui/svg/Loading';
 import { ActivityFilters } from '../../../types';
 import { ActivityFilter } from './ActivityFilter';
 import { ActivitySort, SortBy } from './ActivitySort';
@@ -10,7 +13,11 @@ export function Activities() {
   const [filters, setFilters] = useState<ActivityFilters[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
 
-  const { parsedActivities } = useActivities(filters, sortBy);
+  const { parsedActivities, isActivitiesLoading } = useActivities(filters, sortBy);
+
+  if (isActivitiesLoading) {
+    return <InfoCardLoader />;
+  }
   return (
     <Box>
       <Flex
