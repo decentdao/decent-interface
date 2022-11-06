@@ -1,7 +1,7 @@
 import { Box, Text } from '@chakra-ui/react';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { AssetTransfer, TransferType } from '../../providers/fractal/types';
-import { coinFormatter } from '../../utils/numberFormats';
+import { formatCoin } from '../../utils/numberFormats';
 
 function isSentTransfer(safeAddress: string | undefined, transfer: AssetTransfer) {
   return safeAddress === transfer.from;
@@ -12,7 +12,7 @@ function formattedDate(transfer: AssetTransfer) {
 }
 
 function formattedAmount(transfer: AssetTransfer) {
-  return coinFormatter(transfer.value, transfer?.tokenInfo?.decimals, transfer?.tokenInfo?.symbol);
+  return formatCoin(transfer.value, transfer?.tokenInfo?.decimals, transfer?.tokenInfo?.symbol);
 }
 
 function addressDisplay(safeAddress: string | undefined, transfer: AssetTransfer) {
