@@ -1,22 +1,22 @@
+import { ChakraProvider } from '@chakra-ui/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { HashRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { HelmetProvider, Helmet } from 'react-helmet-async';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import 'react-toastify/dist/ReactToastify.css';
 import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';
-import reportWebVitals from './reportWebVitals';
-import { BlockchainDataProvider } from './contexts/blockchainData';
 import App from './App';
-import { Web3Provider } from './contexts/web3Data/Web3Provider';
-import { FractalProvider } from './providers/fractal/FractalProvider';
-import { ErrorFallback } from './components/ErrorFallback';
-import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
-import { ChakraProvider } from '@chakra-ui/react';
 import { theme } from './assets/theme';
+import { ErrorFallback } from './components/ErrorFallback';
+import { BlockchainDataProvider } from './contexts/blockchainData';
+import { Web3Provider } from './contexts/web3Data/Web3Provider';
+import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
+import { FractalProvider } from './providers/fractal/FractalProvider';
+import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

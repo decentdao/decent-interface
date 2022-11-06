@@ -1,9 +1,9 @@
-import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
-import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
-import { useCallback, useEffect } from 'react';
-import { useTransaction } from '../contexts/web3Data/transactions';
 import { BigNumber } from 'ethers';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTransaction } from '../contexts/web3Data/transactions';
+import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
+import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
 
 const useCastVote = ({
   proposalId,

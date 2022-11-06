@@ -1,7 +1,7 @@
+import { Box, Image } from '@chakra-ui/react';
 import { Jazzicon } from '@ukstv/jazzicon-react';
 import { Suspense } from 'react';
 import { useImage } from 'react-image';
-import { Box, Image } from '@chakra-ui/react';
 
 type AvatarSize = 'icon' | 'lg';
 const avatarSizes: { [size: string]: string } = {

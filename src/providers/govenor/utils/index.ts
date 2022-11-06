@@ -1,4 +1,4 @@
-import { providers, BigNumber } from 'ethers';
+import { BigNumber, providers } from 'ethers';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
 import { ProposalDataWithoutUserData } from '../types/proposal';
 

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useCastVote from '../../hooks/useCastVote';
+import { ProposalData, ProposalState } from '../../providers/govenor/types';
+import ContentBanner from '../ui/ContentBanner';
 import { PrimaryButton, SecondaryButton } from '../ui/forms/Button';
 import Check from '../ui/svg/Check';
-import ContentBanner from '../ui/ContentBanner';
-import { ProposalData, ProposalState } from '../../providers/govenor/types';
-import { useTranslation } from 'react-i18next';
 
 function CastVote({ proposal }: { proposal: ProposalData }) {
   // Vote Enum

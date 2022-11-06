@@ -1,6 +1,6 @@
-import differenceInMinutes from 'date-fns/differenceInMinutes';
-import differenceInHours from 'date-fns/differenceInHours';
 import differenceInDays from 'date-fns/differenceInDays';
+import differenceInHours from 'date-fns/differenceInHours';
+import differenceInMinutes from 'date-fns/differenceInMinutes';
 import differenceInMonths from 'date-fns/differenceInMonths';
 import differenceInYears from 'date-fns/differenceInYears';
 import { TFunction } from 'react-i18next';

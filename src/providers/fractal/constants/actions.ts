@@ -2,6 +2,7 @@ export enum GnosisAction {
   SET_SAFE,
   SET_SAFE_TRANSACTIONS,
   SET_MODULES,
+  SET_DAO_NAME,
   INVALIDATE,
   RESET,
 }

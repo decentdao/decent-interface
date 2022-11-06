@@ -3,10 +3,10 @@ import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/u
 import { Providers } from '../../../contexts/web3Data/types';
 import {
   Proposal,
+  ProposalIsPassedError,
   ProposalState,
   ProposalVotesSummary,
   strategyProposalStates,
-  ProposalIsPassedError,
 } from '../types/usul';
 
 export const getProposalState = async (

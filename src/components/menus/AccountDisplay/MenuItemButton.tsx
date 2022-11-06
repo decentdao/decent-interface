@@ -1,4 +1,4 @@
-import { Flex, Text, MenuItem } from '@chakra-ui/react';
+import { Flex, MenuItem, Text } from '@chakra-ui/react';
 import { Fragment } from 'react';
 
 /**

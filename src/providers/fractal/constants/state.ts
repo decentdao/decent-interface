@@ -1,6 +1,6 @@
+import { IGovernance } from './../types/governance';
 import { IGnosis } from './../types/state';
 import { ITreasury } from './../types/treasury';
-import { IGovernance } from './../types/governance';
 
 export const gnosisInitialState: IGnosis = {
   modules: [],
@@ -12,6 +12,7 @@ export const gnosisInitialState: IGnosis = {
   },
   safe: {},
   isGnosisLoading: true,
+  daoName: '',
 };
 
 export const governanceInitialState: IGovernance = {
