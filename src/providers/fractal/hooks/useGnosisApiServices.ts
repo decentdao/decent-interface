@@ -1,15 +1,9 @@
-import { GnosisAction, TreasuryAction } from './../constants/actions';
+import { TreasuryAction } from './../constants/actions';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { logError } from '../../../helpers/errorLogging';
-import {
-  GnosisActions,
-  GnosisAssetFungible,
-  GnosisAssetNonFungible,
-  GnosisTransactionsResponse,
-  TreasuryActions,
-} from '../types';
+import { GnosisAssetFungible, GnosisAssetNonFungible, TreasuryActions } from '../types';
 import { buildGnosisApiUrl } from '../utils';
 
 /**
@@ -20,8 +14,7 @@ import { buildGnosisApiUrl } from '../utils';
  */
 export function useGnosisApiServices(
   safeAddress: string | undefined,
-  treasuryDispatch: React.Dispatch<TreasuryActions>,
-  gnosisDispatch: React.Dispatch<GnosisActions>
+  treasuryDispatch: React.Dispatch<TreasuryActions>
 ) {
   const {
     state: { chainId },
@@ -61,28 +54,10 @@ export function useGnosisApiServices(
     }
   }, [chainId, safeAddress, treasuryDispatch]);
 
-  const getGnosisSafeTransactions = useCallback(async () => {
-    if (!safeAddress) {
-      return;
-    }
-    try {
-      const { data } = await axios.get<GnosisTransactionsResponse>(
-        buildGnosisApiUrl(chainId, `/safes/${safeAddress}/all-transactions/`)
-      );
-      gnosisDispatch({
-        type: GnosisAction.SET_SAFE_TRANSACTIONS,
-        payload: data,
-      });
-    } catch (e) {
-      logError(e);
-    }
-  }, [chainId, safeAddress, gnosisDispatch]);
-
   useEffect(() => {
     getGnosisSafeFungibleAssets();
     getGnosisSafeNonFungibleAssets();
-    getGnosisSafeTransactions();
-  }, [getGnosisSafeFungibleAssets, getGnosisSafeNonFungibleAssets, getGnosisSafeTransactions]);
+  }, [getGnosisSafeFungibleAssets, getGnosisSafeNonFungibleAssets]);
 
   return;
 }

@@ -40,7 +40,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   // @todo update to handle new contracts
   // const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
 
-  useGnosisApiServices(gnosis.safe.address, treasuryDispatch, gnosisDispatch);
+  useGnosisApiServices(gnosis.safe.address, treasuryDispatch);
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
   useGnosisGovernance(gnosis.safe, governanceDispatch);
 

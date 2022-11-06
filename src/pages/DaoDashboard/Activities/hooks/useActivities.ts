@@ -5,28 +5,22 @@ import { SortBy } from '../ActivitySort';
 import { BigNumber, constants } from 'ethers';
 import { ActivityFilters, Activity } from '../../../../types';
 import { formatWeiToValue, getTimestampString } from '../../../../utils';
+import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
+import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
+import axios from 'axios';
+import { GnosisAction } from '../../../../providers/fractal/constants';
+import { logError } from '../../../../helpers/errorLogging';
 
-export const useActivities = (
-  filter: ActivityFilters[],
-  sortBy: SortBy,
-  ordering?: string,
-  limit?: string,
-  offset?: string
-) => {
-  console.log({
-    offset,
-    filter,
-    sortBy,
-    ordering,
-    limit,
-  });
+export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
   const {
-    state: { provider },
+    state: { provider, chainId },
   } = useWeb3Provider();
   const {
     gnosis: { safe, transactions },
+    dispatches: { gnosisDispatch },
   } = useFractal();
 
+  const [sortedActivities, setSortedActivities] = useState<Activity[]>([]);
   const [parsedActivities, setParsedActivities] = useState<Activity[]>([]);
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
@@ -44,13 +38,12 @@ export const useActivities = (
   );
 
   const parseActivities = useCallback(async () => {
-    const results = transactions.results;
-    if (!results.length || !safe) {
+    if (!transactions.results.length || !safe) {
       return [];
     }
     setParsedActivities(
       await Promise.all(
-        results.map(async transaction => {
+        transactions.results.map(async transaction => {
           const isDeposit = transaction.transfers.every(
             t => t.to.toLowerCase() === safe.address!.toLowerCase()
           );
@@ -131,28 +124,60 @@ export const useActivities = (
       )
     );
     setActivitiesLoading(false);
-  }, [transactions, safe, getAddressDisplay]);
+  }, [safe, getAddressDisplay, transactions]);
+
+  const getGnosisSafeTransactions = useCallback(async () => {
+    if (!safe.address) {
+      return;
+    }
+    try {
+      const { data } = await axios.get<GnosisTransactionsResponse>(
+        buildGnosisApiUrl(chainId, `/safes/${safe.address}/all-transactions/`)
+      );
+      gnosisDispatch({
+        type: GnosisAction.SET_SAFE_TRANSACTIONS,
+        payload: data,
+      });
+    } catch (e) {
+      logError(e);
+    }
+  }, [chainId, safe, gnosisDispatch]);
 
   useEffect(() => {
-    parseActivities();
-  }, [parseActivities]);
+    if (!transactions.results.length) {
+      getGnosisSafeTransactions();
+    }
+  }, [getGnosisSafeTransactions, transactions]);
 
-  // handles filters
-  // const filteredValues = useMemo<Activity[]>(() => {
-  //   return [];
-  // }, []);
+  useEffect(() => {
+    if (transactions.results.length) {
+      parseActivities();
+    }
+  }, [transactions, parseActivities]);
 
   // handles sorting
-  // const sortedValues = useMemo(() => {
-  //   // if (transactions.results.length) {
-  //   // }
-  //   return;
-  // }, []);
+  useEffect(() => {
+    const sortedTransactions = [...parsedActivities].sort((a, b) => {
+      const dataA = new Date(a.eventDate).getTime();
+      const dataB = new Date(b.eventDate).getTime();
+      if (sortBy === SortBy.Oldest) {
+        return dataA - dataB;
+      }
+      return dataB - dataA;
+    });
+    setSortedActivities(sortedTransactions);
+  }, [parsedActivities, sortBy]);
 
   useEffect(() => {
-    // sets acitivites
-  }, []);
-  // @todo handle pagination? what is the limit? v2?
+    if (sortedActivities.length) {
+      setActivitiesLoading(false);
+    }
+  }, [sortedActivities]);
 
-  return { parsedActivities, isActivitiesLoading };
+  // @todo handles filtering
+  useEffect(() => {
+    console.log(filter);
+  }, [filter]);
+
+  return { sortedActivities, isActivitiesLoading };
 };
