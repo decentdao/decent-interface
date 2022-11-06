@@ -53,5 +53,9 @@
     "labelDateYear_other": "{{count}} years",
     "toastClipboardCopy": "Copied to clipboard",
     "newest": "Newest",
-    "oldest": "Oldest"
+    "oldest": "Oldest",
+    "received": "Recieved",
+    "send": "Send",
+    "from": "from",
+    "to": "to"
 }

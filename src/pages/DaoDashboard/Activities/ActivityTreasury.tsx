@@ -1,6 +1,7 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
 import { Activity } from '../../../types';
 import { AcitivityCard } from './ActivityCard';
@@ -49,12 +50,13 @@ interface IActivityTreasury {
 }
 
 export function ActivityTreasury({ asset }: IActivityTreasury) {
+  const { t } = useTranslation();
   const transferTypeStr = useMemo(() => {
-    return asset.isDeposit ? 'Recieved' : 'Sent';
-  }, [asset]);
+    return asset.isDeposit ? t('received') : t('sent');
+  }, [asset, t]);
   const transferDirStr = useMemo(() => {
-    return asset.isDeposit ? 'from' : 'to';
-  }, [asset]);
+    return asset.isDeposit ? t('from') : t('to');
+  }, [asset, t]);
 
   return (
     <AcitivityCard
@@ -74,14 +76,17 @@ export function ActivityTreasury({ asset }: IActivityTreasury) {
         />
       }
       RightElement={
-        <EtherscanLinkAddress>
+        <EtherscanLinkAddress
+          path="tx"
+          address={asset.transaction.txHash}
+        >
           <Button
             variant="text"
             size="lg"
             px="0px"
             rightIcon={<ArrowAngleUp boxSize="1.5rem" />}
           >
-            View on Etherscan
+            {t('labelEtherscan')}
           </Button>
         </EtherscanLinkAddress>
       }
