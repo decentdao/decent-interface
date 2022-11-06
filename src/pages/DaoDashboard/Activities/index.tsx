@@ -1,9 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
+import { ActivityFilters } from '../../../types';
 import { ActivityFilter } from './ActivityFilter';
 import { ActivitySort, SortBy } from './ActivitySort';
 import { ActivityTreasury } from './ActivityTreasury';
-import { ActivityFilters, useActivities } from './hooks/useActivities';
+import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
   const [filters, setFilters] = useState<ActivityFilters[]>([]);

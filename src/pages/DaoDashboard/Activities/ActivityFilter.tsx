@@ -2,7 +2,7 @@ import { Button, Flex } from '@chakra-ui/react';
 import { ActiveTwo, Clock, CloseX } from '@decent-org/fractal-ui';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityFilters } from './hooks/useActivities';
+import { ActivityFilters } from '../../../types';
 
 interface IActivityFilter {
   filters: ActivityFilters[];

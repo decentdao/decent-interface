@@ -1,32 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useFractal } from './../../../../providers/fractal/hooks/useFractal';
-import { EthereumTxWithTransfers } from './../../../../providers/fractal/types/gnosis';
 import { SortBy } from '../ActivitySort';
 import { formatUnits } from 'ethers/lib/utils';
 import { BigNumber, constants } from 'ethers';
-
-export enum ActivityFilters {
-  All,
-  Pending,
-  Active,
-  Rejected,
-}
-
-export enum TreasuryAcitivityTypes {
-  DEPOSIT,
-  WITHDRAW,
-}
-
-export type Activity = {
-  transaction: EthereumTxWithTransfers;
-  treasuryActivityType?: TreasuryAcitivityTypes;
-  transferAddresses: string[];
-  transferAmountTotals: string[];
-  eventDate: string;
-  eventType: string;
-  isDeposit: boolean;
-};
+import { ActivityFilters, Activity, TreasuryActivityTypes } from '../../../../types';
 
 export const getTimestampString = (time: Date | undefined) => {
   if (time === undefined) return '...';
@@ -160,7 +138,7 @@ export const useActivities = (
             })
           );
 
-          let treasuryAcitivityType: TreasuryAcitivityTypes | undefined;
+          let treasuryAcitivityType: TreasuryActivityTypes | undefined;
 
           return {
             transaction,
