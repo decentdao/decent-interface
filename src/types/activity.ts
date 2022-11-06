@@ -14,7 +14,6 @@ export enum TreasuryActivityTypes {
 
 export type Activity = {
   transaction: EthereumTxWithTransfers;
-  treasuryActivityType?: TreasuryActivityTypes;
   transferAddresses: string[];
   transferAmountTotals: string[];
   eventDate: string;

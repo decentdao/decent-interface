@@ -2,7 +2,7 @@ import { Button, Flex, Text } from '@chakra-ui/react';
 import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
-import { Activity, TreasuryActivityTypes } from '../../../types';
+import { Activity } from '../../../types';
 import { AcitivityCard } from './ActivityCard';
 
 function ActivityDescription({
@@ -59,7 +59,7 @@ export function ActivityTreasury({ asset }: IActivityTreasury) {
   return (
     <AcitivityCard
       Badge={
-        asset.treasuryActivityType === TreasuryActivityTypes.DEPOSIT ? (
+        asset.isDeposit ? (
           <SquareSolidArrowDown color="sand.700" />
         ) : (
           <SquareSolidArrowUp color="sand.700" />

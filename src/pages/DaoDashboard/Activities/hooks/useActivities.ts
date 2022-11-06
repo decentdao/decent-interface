@@ -2,9 +2,8 @@ import { useState, useCallback, useEffect } from 'react';
 import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useFractal } from './../../../../providers/fractal/hooks/useFractal';
 import { SortBy } from '../ActivitySort';
-import { formatUnits } from 'ethers/lib/utils';
 import { BigNumber, constants } from 'ethers';
-import { ActivityFilters, Activity, TreasuryActivityTypes } from '../../../../types';
+import { ActivityFilters, Activity } from '../../../../types';
 import { formatWeiToValue, getTimestampString } from '../../../../utils';
 
 export const useActivities = (
@@ -55,6 +54,10 @@ export const useActivities = (
             t => t.to.toLowerCase() === safe.address!.toLowerCase()
           );
 
+          /**
+           * This returns a Mapping of the total amount of each token involved in the transfers
+           * along with the symbol and decimals of those tokens
+           */
           const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
             if (cur.type === 'ETHER_TRANSFER' && cur.value) {
               if (prev.has(constants.AddressZero)) {
@@ -104,28 +107,21 @@ export const useActivities = (
               return `${totalAmount} ${symbol}`;
             }
           );
-          let transferAddressesDisplayArr = await Promise.all(
-            transaction.transfers.map(async (transfer, i, arr) => {
-              const addressOrName =
-                arr.length > 1 && (i + 1) % 2 == 0
-                  ? ' ' +
-                    (await getAddressDisplay(
-                      transfer.to === safe.address ? transfer.from : transfer.to
-                    ))
-                  : await getAddressDisplay(
-                      transfer.to === safe.address ? transfer.from : transfer.to
-                    );
+          const transferAddressesDisplayArr = await Promise.all(
+            transaction.transfers.map(async transfer => {
+              const addressOrName = await getAddressDisplay(
+                transfer.to.toLowerCase() === safe.address!.toLowerCase()
+                  ? transfer.from
+                  : transfer.to
+              );
               return addressOrName;
             })
           );
-
-          let treasuryAcitivityType: TreasuryActivityTypes | undefined;
 
           return {
             transaction,
             eventDate: getTimestampString(new Date(transaction.executionDate)),
             eventType: 'Treasury',
-            treasuryAcitivityType,
             transferAddresses: transferAddressesDisplayArr,
             transferAmountTotals: transferAmountTotalsArr,
             isDeposit,
