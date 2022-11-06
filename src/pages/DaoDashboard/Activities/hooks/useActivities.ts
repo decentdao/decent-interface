@@ -143,19 +143,28 @@ export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
     }
   }, [chainId, safe, gnosisDispatch]);
 
+  /**
+   * Retreives data on load and dispatches to Fractal Provider
+   */
   useEffect(() => {
     if (!transactions.results.length) {
       getGnosisSafeTransactions();
     }
   }, [getGnosisSafeTransactions, transactions]);
 
+  /**
+   * Parses returned data when retrieved for the dashboard activities
+   */
   useEffect(() => {
     if (transactions.results.length) {
       parseActivities();
     }
   }, [transactions, parseActivities]);
 
-  // handles sorting
+  /**
+   * After data is parsed it is sorted based on execution data
+   * updates when a different sort is selected
+   */
   useEffect(() => {
     const sortedTransactions = [...parsedActivities].sort((a, b) => {
       const dataA = new Date(a.eventDate).getTime();
@@ -168,6 +177,9 @@ export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
     setSortedActivities(sortedTransactions);
   }, [parsedActivities, sortBy]);
 
+  /**
+   * When data is ready, set loading to false
+   */
   useEffect(() => {
     if (sortedActivities.length) {
       setActivitiesLoading(false);
