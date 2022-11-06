@@ -14,5 +14,6 @@ export enum GovernanceAction {
 export enum TreasuryAction {
   UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS,
   UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,
+  UPDATE_GNOSIS_SAFE_TRANSFERS,
   RESET,
 }

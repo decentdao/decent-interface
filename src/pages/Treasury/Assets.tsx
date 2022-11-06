@@ -7,7 +7,7 @@ import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
 import TooltipWrapper from '../../components/ui/TooltipWrapper';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../providers/fractal/types';
-import { formatPercentage, usdFormatter } from '../../utils/numberFormats';
+import { formatPercentage, coinFormatter, usdFormatter } from '../../utils/numberFormats';
 
 //
 // TODO:
@@ -42,12 +42,7 @@ function formatTokens(assets: GnosisAssetFungible[]) {
       iconUrl: asset.token === null ? '' : asset.token.logoUri,
       address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
       name: asset.token === null ? 'Ether' : asset.token.name,
-      formattedTotal:
-        asset.token === null
-          ? ethers.utils.formatEther(asset.balance) + ' ETH'
-          : ethers.utils.formatUnits(asset.balance, asset.token.decimals) +
-            ' ' +
-            asset.token.symbol,
+      formattedTotal: coinFormatter(asset.balance, asset?.token?.decimals, asset?.token?.symbol),
       fiatValue: Number(asset.fiatBalance),
       fiatConversion: Number(asset.fiatConversion),
       symbol: asset.token === null ? 'ETH' : asset.token.symbol,
@@ -188,10 +183,7 @@ function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: bool
   const name = asset.name ? asset.name : asset.tokenSymbol;
   const id = asset.id.toString();
   return (
-    <HStack
-      key={asset.address}
-      marginBottom={isLast ? '0rem' : '1.5rem'}
-    >
+    <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
       <Image
         src={image}
         fallbackSrc="https://maneki-gang.s3.amazonaws.com/thumbs/1b4c08fc0db5c607.png"
@@ -253,7 +245,7 @@ export function Assets() {
       {assetsNonFungible.length > 0 && <NFTHeader />}
       {assetsNonFungible.map(asset => (
         <NFTRow
-          key={asset.address}
+          key={asset.id}
           asset={asset}
           isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
         />

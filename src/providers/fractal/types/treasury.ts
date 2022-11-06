@@ -62,5 +62,52 @@ export interface ITreasury {
   transactions: Transaction[];
   assetsFungible: GnosisAssetFungible[];
   assetsNonFungible: GnosisAssetNonFungible[];
+  transfers: AssetTransfer[];
   treasuryIsLoading: boolean;
+}
+
+export interface AssetTransfers {
+  count: number;
+  // next: undefined; TODO pagination...
+  // previous: undefined;
+  results: AssetTransfer[];
+}
+
+export enum TransferType {
+  ETHER_TRANSFER = 'ETHER_TRANSFER',
+  ERC20_TRANSFER = 'ERC20_TRANSFER',
+  ERC721_TRANSFER = 'ERC721_TRANSFER',
+}
+
+export enum TokenType {
+  ERC20,
+  ERC721,
+}
+
+export interface TokenInfo {
+  type: TokenType;
+  address: string;
+  name: string;
+  symbol: string;
+  logoUri: string;
+  decimals: number;
+}
+
+export interface AssetTransfer {
+  type: TransferType;
+  executionDate: string; // todo Date?
+  blockNumber: BigNumber;
+  transactionHash: string;
+  to: string;
+  from: string;
+
+  // ETHER_TRANSFER and ERC20_TRANSFER
+  value: BigNumber;
+
+  // ERC20_TRANSFER and ERC721_TRANSFER
+  tokenAddress: string;
+  tokenInfo: TokenInfo;
+
+  // ERC721_TRANSFER
+  tokenId: string;
 }
