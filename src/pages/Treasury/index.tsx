@@ -1,11 +1,15 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../components/ui/Header/PageHeader';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { InfoCard } from '../DaoDashboard/Info';
 import { Assets } from './Assets';
 import { Transactions } from './Transactions';
 
 function Treasury() {
+  const {
+    gnosis: { daoName },
+  } = useFractal();
   const { t } = useTranslation('treasury');
   return (
     <Box
@@ -13,7 +17,7 @@ function Treasury() {
       px={{ sm: '1rem', xl: 'auto' }}
     >
       <PageHeader
-        title={t('titleTreasury', { daoName: '' })}
+        title={t('titleTreasury', { daoName: daoName })}
         titleTestId={'title-treasury'}
         buttonText={t('buttonSendAssets')}
         buttonClick={undefined}

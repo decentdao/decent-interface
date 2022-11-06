@@ -1,22 +1,92 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Divider, HStack, Image, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
+import arrow from '../../assets/images/transfer-arrow.svg';
+import received from '../../assets/images/transfer-received.svg';
+import sent from '../../assets/images/transfer-sent.svg';
+import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
+import { formatDatesDiffReadable } from '../../helpers/dateTime';
+import useDisplayName from '../../hooks/useDisplayName';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { AssetTransfer, TransferType } from '../../providers/fractal/types';
+import { TransferType } from '../../providers/fractal/types';
 import { formatCoin } from '../../utils/numberFormats';
 
-function isSentTransfer(safeAddress: string | undefined, transfer: AssetTransfer) {
-  return safeAddress === transfer.from;
-}
-
-function formattedDate(transfer: AssetTransfer) {
-  return transfer.executionDate; // TODO
-}
-
-function formattedAmount(transfer: AssetTransfer) {
-  return formatCoin(transfer.value, transfer?.tokenInfo?.decimals, transfer?.tokenInfo?.symbol);
-}
-
-function addressDisplay(safeAddress: string | undefined, transfer: AssetTransfer) {
-  return isSentTransfer(safeAddress, transfer) ? transfer.to : transfer.from;
+function TransferRow({
+  isSent,
+  date,
+  logoUri,
+  displayAmount,
+  transferAddress,
+  isLast,
+}: {
+  isSent: boolean;
+  date: string;
+  logoUri: string;
+  displayAmount: string;
+  transferAddress: string;
+  isLast: boolean;
+}) {
+  const displayAddress = useDisplayName(transferAddress);
+  const { t } = useTranslation(['treasury', 'common']);
+  const dateFormatted = formatDatesDiffReadable(new Date(date), new Date(), t);
+  return (
+    <Box>
+      <HStack
+        align="center"
+        marginTop="1rem"
+        marginBottom={isLast ? '0rem' : '1rem'}
+      >
+        <Image
+          src={isSent ? sent : received}
+          w="1.5rem"
+          h="1.5rem"
+        />
+        <Box paddingStart="0.5rem">
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="grayscale.100"
+          >
+            {t(isSent ? 'labelSent' : 'labelReceived')}
+          </Text>
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {dateFormatted}
+          </Text>
+        </Box>
+        <Image
+          src={logoUri}
+          fallbackSrc=""
+          w="1.25rem"
+          h="1.25rem"
+        />
+        <Text
+          textStyle="text-base-sans-regular"
+          color={isSent ? 'grayscale.100' : '#60B55E'}
+          data-testid="link-token-name"
+        >
+          {isSent ? '- ' : '+ ' + displayAmount}
+        </Text>
+        <EtherscanLinkAddress address={transferAddress}>
+          <HStack>
+            <Text
+              textStyle="text-base-sans-regular"
+              color="gold.500"
+              align="end"
+            >
+              {displayAddress.displayName}
+            </Text>
+            <Image
+              src={arrow}
+              w="0.625rem"
+              h="0.625rem"
+            />
+          </HStack>
+        </EtherscanLinkAddress>
+      </HStack>
+      {!isLast && <Divider color="chocolate.700" />}
+    </Box>
+  );
 }
 
 export function Transactions() {
@@ -24,19 +94,24 @@ export function Transactions() {
     gnosis: { safe },
     treasury: { transfers },
   } = useFractal();
-  // const { t } = useTranslation('treasury');
   return (
     <Box>
       {transfers.map(transfer => {
         return (
           transfer.type != TransferType.ERC721_TRANSFER && (
-            <Box key={transfer.transactionHash}>
-              <Text>-----</Text>
-              <Text>{isSentTransfer(safe.address, transfer) ? 'true' : 'false'}</Text>
-              <Text>{formattedDate(transfer)}</Text>
-              <Text>{formattedAmount(transfer)}</Text>
-              <Text>{addressDisplay(safe.address, transfer)}</Text>
-            </Box>
+            <TransferRow
+              key={transfer.transactionHash}
+              isSent={safe.address === transfer.from}
+              date={transfer.executionDate}
+              logoUri={''}
+              displayAmount={formatCoin(
+                transfer.value,
+                transfer?.tokenInfo?.decimals,
+                transfer?.tokenInfo?.symbol
+              )}
+              transferAddress={safe.address === transfer.from ? transfer.to : transfer.from}
+              isLast={transfers[transfers.length - 1] === transfer}
+            />
           )
         );
       })}
