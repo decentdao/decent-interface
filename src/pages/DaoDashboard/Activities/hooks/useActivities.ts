@@ -5,26 +5,7 @@ import { SortBy } from '../ActivitySort';
 import { formatUnits } from 'ethers/lib/utils';
 import { BigNumber, constants } from 'ethers';
 import { ActivityFilters, Activity, TreasuryActivityTypes } from '../../../../types';
-
-export const getTimestampString = (time: Date | undefined) => {
-  if (time === undefined) return '...';
-
-  return (
-    time.toLocaleDateString('en-US', { month: 'short' }) +
-    ' ' +
-    time.toLocaleDateString('en-US', { day: 'numeric' }) +
-    ', ' +
-    time.toLocaleDateString('en-US', { year: 'numeric' })
-  );
-};
-
-const formatWeiToValue = (amountInWei: string, decimals: number) => {
-  const value = Number(formatUnits(amountInWei, decimals));
-  return new Intl.NumberFormat(undefined, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: decimals,
-  }).format(value);
-};
+import { formatWeiToValue, getTimestampString } from '../../../../utils';
 
 export const useActivities = (
   filter: ActivityFilters[],
