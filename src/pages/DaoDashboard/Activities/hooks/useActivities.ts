@@ -1,15 +1,15 @@
-import { useState, useCallback, useEffect } from 'react';
+import axios from 'axios';
+import { BigNumber, constants } from 'ethers';
+import { useCallback, useEffect, useState } from 'react';
+import { logError } from '../../../../helpers/errorLogging';
+import { GnosisAction } from '../../../../providers/fractal/constants';
+import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
+import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
+import { Activity, ActivityFilters } from '../../../../types';
+import { formatWeiToValue, getTimestampString } from '../../../../utils';
+import { SortBy } from '../ActivitySort';
 import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useFractal } from './../../../../providers/fractal/hooks/useFractal';
-import { SortBy } from '../ActivitySort';
-import { BigNumber, constants } from 'ethers';
-import { ActivityFilters, Activity } from '../../../../types';
-import { formatWeiToValue, getTimestampString } from '../../../../utils';
-import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
-import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
-import axios from 'axios';
-import { GnosisAction } from '../../../../providers/fractal/constants';
-import { logError } from '../../../../helpers/errorLogging';
 
 export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
   const {
