@@ -9,6 +9,8 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
   switch (action.type) {
     case GnosisAction.SET_SAFE:
       return { ...state, safe: { ...action.payload }, isGnosisLoading: false };
+    case GnosisAction.SET_SAFE_TRANSACTIONS:
+      return { ...state, transactions: { ...action.payload }, isGnosisLoading: false };
     case GnosisAction.SET_MODULES:
       return { ...state, modules: action.payload, isGnosisLoading: false };
     case GnosisAction.RESET:

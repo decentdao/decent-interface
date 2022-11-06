@@ -4,6 +4,12 @@ import { IGovernance } from './../types/governance';
 
 export const gnosisInitialState: IGnosis = {
   modules: [],
+  transactions: {
+    count: null,
+    next: null,
+    previous: null,
+    results: [],
+  },
   safe: {},
   isGnosisLoading: true,
 };

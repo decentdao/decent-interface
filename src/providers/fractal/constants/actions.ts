@@ -1,5 +1,6 @@
 export enum GnosisAction {
   SET_SAFE,
+  SET_SAFE_TRANSACTIONS,
   SET_MODULES,
   INVALIDATE,
   RESET,

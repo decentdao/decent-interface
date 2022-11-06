@@ -1,4 +1,5 @@
 import { GnosisActions, GovernanceActions, TreasuryActions } from './actions';
+import { GnosisTransactionsResponse } from './gnosis';
 import { IGnosisModuleData, IGovernance } from './governance';
 import { ITreasury } from './treasury';
 
@@ -16,6 +17,7 @@ export interface IFractalContext {
 export interface IGnosis {
   safe: GnosisSafe;
   modules: IGnosisModuleData[];
+  transactions: GnosisTransactionsResponse;
   isGnosisLoading: boolean;
 }
 

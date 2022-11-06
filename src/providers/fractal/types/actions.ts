@@ -2,9 +2,11 @@ import { IGnosisModuleData, IGovernance } from './governance';
 import { GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
 import { GnosisSafe } from './state';
 import { GnosisAssetNonFungible, GnosisAssetFungible } from './treasury';
+import { GnosisTransactionsResponse } from './gnosis';
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE; payload: GnosisSafe }
+  | { type: GnosisAction.SET_SAFE_TRANSACTIONS; payload: GnosisTransactionsResponse }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
