@@ -1,6 +1,6 @@
 import useDisplayName from '../../hooks/useDisplayName';
-import CopyToClipboard from './CopyToClipboard';
 import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
+import CopyToClipboard from './CopyToClipboard';
 
 interface TooltipAddressContentProps {
   address: string;

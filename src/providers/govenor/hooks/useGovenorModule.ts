@@ -1,10 +1,10 @@
-import { VotesToken } from './../../../assets/typechain-types/module-treasury/contracts/mocks/VotesToken';
 import { BigNumber } from 'ethers';
 import { Context, createContext, useContext } from 'react';
 import { GovernorModule, Timelock } from '../../../assets/typechain-types/module-governor';
 import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
-import { ProposalData } from '../types';
 import { ProposalExecuteData } from '../../../types/proposal';
+import { ProposalData } from '../types';
+import { VotesToken } from './../../../assets/typechain-types/module-treasury/contracts/mocks/VotesToken';
 
 export interface IGovernorModule {
   governorModuleContract: GovernorModule | undefined;

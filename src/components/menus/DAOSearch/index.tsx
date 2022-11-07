@@ -1,9 +1,9 @@
 import { Box, Menu, MenuButton, MenuList } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
 import { Input, Search } from '@decent-org/fractal-ui';
+import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useSearchDao from '../../../hooks/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
-import { useTranslation } from 'react-i18next';
 
 export function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState('');

@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { utils } from 'ethers';
-
 import { ERC165 } from '@fractal-framework/core-contracts';
-import useInterfaceSelectors from './useInterfaceSelectors';
+import { utils } from 'ethers';
+import { useEffect, useState } from 'react';
+
 import { ContractMatch } from '../types/contractMatch';
+import useInterfaceSelectors from './useInterfaceSelectors';
 
 const useSupportsInterfaces = (contracts: ERC165[] | undefined, interfaces: utils.Interface[]) => {
   const [supportsInterfaces, setSupportsInterfaces] = useState<ContractMatch[]>();

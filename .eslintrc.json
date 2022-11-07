@@ -70,6 +70,15 @@
                 "singleAttributePerLine": true
             }
         ],
+        "import/order": [
+            "error", 
+            { 
+                "alphabetize": { 
+                    "order": "asc",
+                    "caseInsensitive": false
+                }
+            }
+        ],
         // react hook rules
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",

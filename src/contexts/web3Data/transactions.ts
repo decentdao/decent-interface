@@ -1,5 +1,5 @@
 import { ContractReceipt, ethers } from 'ethers';
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { logError } from '../../helpers/errorLogging';

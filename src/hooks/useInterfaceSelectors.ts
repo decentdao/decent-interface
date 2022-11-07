@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { utils, BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
+import { useEffect, useState } from 'react';
 
 const useInterfaceSelectors = (interfaces: utils.Interface[]) => {
   const [selectors, setSelectors] = useState<string[]>();

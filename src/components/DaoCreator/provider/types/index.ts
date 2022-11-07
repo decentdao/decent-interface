@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
-import { NFTToFund, TokenToFund } from '../../SubsidiaryFunding/types/index';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
+import { NFTToFund, TokenToFund } from '../../SubsidiaryFunding/types/index';
 
 export enum CreatorProviderActions {
   SET_STEP,

@@ -1,9 +1,9 @@
-import { GovernorModule } from './../../../assets/typechain-types/module-governor/contracts/Governor/GovernorModule';
 import { useCallback } from 'react';
-import { useTransaction } from '../../../contexts/web3Data/transactions';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { ProposalExecuteData } from '../../../types/proposal';
 import { useTranslation } from 'react-i18next';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { useTransaction } from '../../../contexts/web3Data/transactions';
+import { ProposalExecuteData } from '../../../types/proposal';
+import { GovernorModule } from './../../../assets/typechain-types/module-governor/contracts/Governor/GovernorModule';
 
 const useCreateProposal = (governorModuleContract: GovernorModule | undefined) => {
   const {

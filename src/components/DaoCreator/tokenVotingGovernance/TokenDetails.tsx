@@ -1,13 +1,13 @@
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { utils } from 'ethers';
+import { useTranslation } from 'react-i18next';
+import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
-import TokenAllocations from './TokenAllocations';
-import ContentBox from '../../ui/ContentBox';
+import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
-import { utils } from 'ethers';
-import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
-import { useTranslation } from 'react-i18next';
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import TokenAllocations from './TokenAllocations';
 
 function TokenDetails() {
   const {
