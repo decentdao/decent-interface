@@ -6,25 +6,27 @@ import EtherscanTransactionLink from '../../components/ui/EtherscanTransactionLi
 import { ShortenedAddressLink } from '../../components/ui/ShortenedAddressLink';
 import { formatDatesDiffReadable } from '../../helpers/dateTime';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { TransferType } from '../../providers/fractal/types';
+import { TokenInfo, TransferType } from '../../providers/fractal/types';
 import { formatCoin } from '../../utils/numberFormats';
 
 function TransferRow({
   isSent,
   date,
-  logoUri,
   displayAmount,
   transferAddress,
   isLast,
   transactionHash,
+  tokenId,
+  tokenInfo,
 }: {
   isSent: boolean;
   date: string;
-  logoUri: string;
-  displayAmount: string;
+  displayAmount?: string;
   transferAddress: string;
   isLast: boolean;
   transactionHash: string;
+  tokenId?: string;
+  tokenInfo?: TokenInfo;
 }) {
   const { t } = useTranslation(['treasury', 'common']);
   const dateFormatted = formatDatesDiffReadable(new Date(date), new Date(), t);
@@ -58,7 +60,7 @@ function TransferRow({
         </HStack>
         <HStack w="33%">
           <Image
-            src={logoUri}
+            src={tokenInfo ? tokenInfo.logoUri : ''}
             fallbackSrc=""
             w="1.25rem"
             h="1.25rem"
@@ -67,9 +69,10 @@ function TransferRow({
             <Text
               textStyle="text-base-sans-regular"
               color={isSent ? 'grayscale.100' : '#60B55E'}
-              data-testid="link-token-amount"
+              data-testid={tokenId ? 'link-token-name' : 'link-token-amount'}
             >
-              {isSent ? '- ' : '+ ' + displayAmount}
+              {(isSent ? '- ' : '+ ') +
+                (tokenId ? tokenInfo?.name + ' #' + tokenId : displayAmount)}
             </Text>
           </EtherscanTransactionLink>
         </HStack>
@@ -95,22 +98,25 @@ export function Transactions() {
     <Box>
       {transfers.map(transfer => {
         return (
-          transfer.type != TransferType.ERC721_TRANSFER && (
-            <TransferRow
-              key={transfer.transactionHash}
-              isSent={safe.address === transfer.from}
-              date={transfer.executionDate}
-              logoUri={''}
-              displayAmount={formatCoin(
-                transfer.value,
-                transfer?.tokenInfo?.decimals,
-                transfer?.tokenInfo?.symbol
-              )}
-              transferAddress={safe.address === transfer.from ? transfer.to : transfer.from}
-              isLast={transfers[transfers.length - 1] === transfer}
-              transactionHash={transfer.transactionHash}
-            />
-          )
+          <TransferRow
+            key={transfer.transactionHash}
+            isSent={safe.address === transfer.from}
+            date={transfer.executionDate}
+            displayAmount={
+              transfer?.tokenId
+                ? undefined
+                : formatCoin(
+                    transfer.value,
+                    transfer?.tokenInfo?.decimals,
+                    transfer?.tokenInfo?.symbol
+                  )
+            }
+            transferAddress={safe.address === transfer.from ? transfer.to : transfer.from}
+            isLast={transfers[transfers.length - 1] === transfer}
+            transactionHash={transfer.transactionHash}
+            tokenId={transfer?.tokenId}
+            tokenInfo={transfer?.tokenInfo}
+          />
         );
       })}
     </Box>
