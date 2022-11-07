@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { format } from 'date-fns';
 import { BigNumber, constants } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { logError } from '../../../../helpers/errorLogging';
 import { GnosisAction } from '../../../../providers/fractal/constants';
 import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
@@ -22,88 +22,81 @@ export const useActivities = (sortBy: SortBy) => {
   } = useFractal();
 
   const [sortedActivities, setSortedActivities] = useState<Activity[]>([]);
-  const [parsedActivities, setParsedActivities] = useState<Activity[]>([]);
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
-  const parseActivities = useCallback(async () => {
+  const parsedActivities = useMemo(() => {
     if (![...transactions.results].length || !safe) {
       return [];
     }
-    setParsedActivities(
-      await Promise.all(
-        [...transactions.results].map(async transaction => {
-          const isDeposit = transaction.transfers.every(
-            t => t.to.toLowerCase() === safe.address!.toLowerCase()
-          );
+    return [...transactions.results].map(transaction => {
+      const isDeposit = transaction.transfers.every(
+        t => t.to.toLowerCase() === safe.address!.toLowerCase()
+      );
 
-          /**
-           * This returns a Mapping of the total amount of each token involved in the transfers
-           * along with the symbol and decimals of those tokens
-           */
-          const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
-            if (cur.type === GnosisTransferType.ETHER && cur.value) {
-              if (prev.has(constants.AddressZero)) {
-                const prevValue = prev.get(constants.AddressZero);
-                prev.set(constants.AddressZero, {
-                  bn: prevValue.bn.add(BigNumber.from(cur.value)),
-                  symbol: 'ETHER',
-                  decimals: 18,
-                });
-              }
-              prev.set(constants.AddressZero, {
-                bn: BigNumber.from(cur.value),
-                symbol: 'ETHER',
-                decimals: 18,
-              });
-            }
-            if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
-              prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
-                bn: BigNumber.from(1),
-                symbol: cur.tokenInfo.symbol,
-                decimals: 0,
-              });
-            }
-            if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
-              if (prev.has(cur.tokenInfo.address)) {
-                const prevValue = prev.get(cur.tokenInfo.address);
-                prev.set(cur.tokenInfo.address, {
-                  ...prevValue,
-                  bn: prevValue.bn.add(BigNumber.from(cur.value)),
-                });
-              } else {
-                prev.set(cur.tokenAddress, {
-                  bn: BigNumber.from(cur.value),
-                  symbol: cur.tokenInfo.symbol,
-                  decimals: cur.tokenInfo.decimals,
-                });
-              }
-            }
+      /**
+       * This returns a Mapping of the total amount of each token involved in the transfers
+       * along with the symbol and decimals of those tokens
+       */
+      const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
+        if (cur.type === GnosisTransferType.ETHER && cur.value) {
+          if (prev.has(constants.AddressZero)) {
+            const prevValue = prev.get(constants.AddressZero);
+            prev.set(constants.AddressZero, {
+              bn: prevValue.bn.add(BigNumber.from(cur.value)),
+              symbol: 'ETHER',
+              decimals: 18,
+            });
+          }
+          prev.set(constants.AddressZero, {
+            bn: BigNumber.from(cur.value),
+            symbol: 'ETHER',
+            decimals: 18,
+          });
+        }
+        if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+          prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
+            bn: BigNumber.from(1),
+            symbol: cur.tokenInfo.symbol,
+            decimals: 0,
+          });
+        }
+        if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+          if (prev.has(cur.tokenInfo.address)) {
+            const prevValue = prev.get(cur.tokenInfo.address);
+            prev.set(cur.tokenInfo.address, {
+              ...prevValue,
+              bn: prevValue.bn.add(BigNumber.from(cur.value)),
+            });
+          } else {
+            prev.set(cur.tokenAddress, {
+              bn: BigNumber.from(cur.value),
+              symbol: cur.tokenInfo.symbol,
+              decimals: cur.tokenInfo.decimals,
+            });
+          }
+        }
 
-            return prev;
-          }, new Map());
+        return prev;
+      }, new Map());
 
-          const transferAmountTotalsArr = Array.from(transferAmountTotalsMap.values()).map(
-            token => {
-              const totalAmount = formatWeiToValue(token.bn, token.decimals);
-              const symbol = token.symbol;
-              return `${totalAmount} ${symbol}`;
-            }
-          );
-          const transferAddresses = transaction.transfers.map(transfer =>
-            transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
-          );
+      const transferAmountTotalsArr = Array.from(transferAmountTotalsMap.values()).map(token => {
+        const totalAmount = formatWeiToValue(token.bn, token.decimals);
+        const symbol = token.symbol;
+        return `${totalAmount} ${symbol}`;
+      });
+      const transferAddresses = transaction.transfers.map(transfer =>
+        transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
+      );
 
-          return {
-            transaction,
-            eventDate: format(new Date(transaction.executionDate), 'MMM dd yyyy'),
-            eventType: ActivityEventType.Treasury,
-            transferAddresses,
-            transferAmountTotals: transferAmountTotalsArr,
-            isDeposit,
-          };
-        })
-      )
-    );
+      return {
+        transaction,
+        eventDate: format(new Date(transaction.executionDate), 'MMM dd yyyy'),
+        eventType: ActivityEventType.Treasury,
+        transferAddresses,
+        transferAmountTotals: transferAmountTotalsArr,
+        isDeposit,
+      };
+    });
   }, [safe, transactions]);
 
   const getGnosisSafeTransactions = useCallback(async () => {
@@ -131,13 +124,6 @@ export const useActivities = (sortBy: SortBy) => {
       getGnosisSafeTransactions();
     }
   }, [getGnosisSafeTransactions, transactions]);
-
-  /**
-   * Parses returned data when retrieved for the dashboard activities
-   */
-  useEffect(() => {
-    parseActivities();
-  }, [transactions, parseActivities]);
 
   /**
    * After data is parsed it is sorted based on execution data
