@@ -19,10 +19,10 @@ test.describe.serial('Confirm Wallet is Connected to Fractal', async () => {
 
     await expect(home.notificationLocator(Notification.Connected)).toBeVisible();
 
-    /* Assert defined wallet address is present ("0xf39F...2266") */
+    /* Assert defined wallet address is present ("0xf39F ... 2266") */
     await home.clickHeaderMenuDropdown();
     await expect(page.locator('[data-testid=walletMenu-accountDisplay]')).toContainText(
-      '0xf39F...2266'
+      '0xf39F ... 2266'
     );
   });
 

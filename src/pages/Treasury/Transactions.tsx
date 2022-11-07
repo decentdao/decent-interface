@@ -67,7 +67,7 @@ function TransferRow({
             <Text
               textStyle="text-base-sans-regular"
               color={isSent ? 'grayscale.100' : '#60B55E'}
-              data-testid="link-token-name"
+              data-testid="link-token-amount"
             >
               {isSent ? '- ' : '+ ' + displayAmount}
             </Text>
@@ -75,7 +75,10 @@ function TransferRow({
         </HStack>
         <HStack w="33%">
           <Spacer />
-          <ShortenedAddressLink address={transferAddress} />
+          <ShortenedAddressLink
+            data-testid="link-transfer-address"
+            address={transferAddress}
+          />
         </HStack>
       </HStack>
       {!isLast && <Divider color="chocolate.700" />}

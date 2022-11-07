@@ -41,7 +41,7 @@ function formatCoins(assets: GnosisAssetFungible[]) {
     };
     displayData[i] = formatted;
   }
-  displayData.sort((a, b) => b.fiatValue - a.fiatValue);
+  displayData.sort((a, b) => b.fiatValue - a.fiatValue); // sort by USD value
   return {
     totalFiatValue: totalFiatValue,
     displayData: displayData,
@@ -178,6 +178,7 @@ function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: bool
       <EtherscanLinkNFT
         address={asset.address}
         tokenId={id}
+        data-testid="link-nft-image"
       >
         <Image
           src={image}
@@ -226,7 +227,12 @@ export function Assets() {
       >
         {t('subtitleCoinBalance')}
       </Text>
-      <Text variant="infoLarge">{formatUSD(tokenDisplay.totalFiatValue)}</Text>
+      <Text
+        data-testid="text-usd-total"
+        variant="infoLarge"
+      >
+        {formatUSD(tokenDisplay.totalFiatValue)}
+      </Text>
       {tokenDisplay.displayData.length > 0 && <CoinHeader />}
       {tokenDisplay.displayData.map(asset => {
         return (

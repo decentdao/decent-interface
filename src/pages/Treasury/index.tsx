@@ -9,14 +9,10 @@ import { Transactions } from './Transactions';
 // TODO:
 // 1. assets token image fallbackSrc + alt
 // 2. transactions token image fallbackSrc + alt
-// 2. NFT image fallbackSrc + alt
-// 3. Empty state (design input needed)
-// 4. are we adding white borders around all NFT image?
-// 5. discuss merging "Tokens" and "Coins" lists on right (and use full token name)
-// 6. discuss USD value in transactions list
-// 7. is space with + and no space with - intentional?
-// 8. any additional transaction / token etherscan links?
-// 9. are we showing NFT transfers?
+// 3. NFT image fallbackSrc + alt
+// 4. Empty state (string in transactions list)
+// 5. add historical USD value to transactions list (via coingecko?)
+// 6. show NFT transfers
 
 function Treasury() {
   const {
