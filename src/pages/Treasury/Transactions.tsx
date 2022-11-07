@@ -1,4 +1,4 @@
-import { Box, Divider, HStack, Image, Text } from '@chakra-ui/react';
+import { Box, Divider, HStack, Image, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import arrow from '../../assets/images/transfer-arrow.svg';
 import received from '../../assets/images/transfer-received.svg';
@@ -35,54 +35,61 @@ function TransferRow({
         marginTop="1rem"
         marginBottom={isLast ? '0rem' : '1rem'}
       >
-        <Image
-          src={isSent ? sent : received}
-          w="1.5rem"
-          h="1.5rem"
-        />
-        <Box paddingStart="0.5rem">
-          <Text
-            textStyle="text-sm-sans-regular"
-            color="grayscale.100"
-          >
-            {t(isSent ? 'labelSent' : 'labelReceived')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {dateFormatted}
-          </Text>
-        </Box>
-        <Image
-          src={logoUri}
-          fallbackSrc=""
-          w="1.25rem"
-          h="1.25rem"
-        />
-        <Text
-          textStyle="text-base-sans-regular"
-          color={isSent ? 'grayscale.100' : '#60B55E'}
-          data-testid="link-token-name"
-        >
-          {isSent ? '- ' : '+ ' + displayAmount}
-        </Text>
-        <EtherscanLinkAddress address={transferAddress}>
-          <HStack>
+        <HStack w="33%">
+          <Image
+            src={isSent ? sent : received}
+            w="1.5rem"
+            h="1.5rem"
+          />
+          <Box paddingStart="0.5rem">
+            <Text
+              textStyle="text-sm-sans-regular"
+              color="grayscale.100"
+            >
+              {t(isSent ? 'labelSent' : 'labelReceived')}
+            </Text>
             <Text
               textStyle="text-base-sans-regular"
-              color="gold.500"
-              align="end"
+              color="chocolate.200"
             >
-              {displayAddress.displayName}
+              {dateFormatted}
             </Text>
-            <Image
-              src={arrow}
-              w="0.625rem"
-              h="0.625rem"
-            />
-          </HStack>
-        </EtherscanLinkAddress>
+          </Box>
+        </HStack>
+        <HStack w="33%">
+          <Image
+            src={logoUri}
+            fallbackSrc=""
+            w="1.25rem"
+            h="1.25rem"
+          />
+          <Text
+            textStyle="text-base-sans-regular"
+            color={isSent ? 'grayscale.100' : '#60B55E'}
+            data-testid="link-token-name"
+          >
+            {isSent ? '- ' : '+ ' + displayAmount}
+          </Text>
+        </HStack>
+        <HStack w="33%">
+          <Spacer />
+          <EtherscanLinkAddress address={transferAddress}>
+            <HStack>
+              <Text
+                textStyle="text-base-sans-regular"
+                color="gold.500"
+                align="end"
+              >
+                {displayAddress.displayName}
+              </Text>
+              <Image
+                src={arrow}
+                w="0.625rem"
+                h="0.625rem"
+              />
+            </HStack>
+          </EtherscanLinkAddress>
+        </HStack>
       </HStack>
       {!isLast && <Divider color="chocolate.700" />}
     </Box>
