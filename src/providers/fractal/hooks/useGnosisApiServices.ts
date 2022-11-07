@@ -3,7 +3,6 @@ import { useCallback, useEffect } from 'react';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
 import {
-  AssetTransfer,
   AssetTransfers,
   GnosisAssetFungible,
   GnosisAssetNonFungible,
