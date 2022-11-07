@@ -19,13 +19,10 @@ export function Activities() {
   return (
     <Box>
       <Flex
-        justifyContent="space-between"
+        justifyContent="flex-end"
         alignItems="center"
+        my="1rem"
       >
-        <ActivityFilter
-          filters={filters}
-          setFilters={setFilters}
-        />
         <ActivitySort
           sortBy={sortBy}
           setSortBy={setSortBy}
