@@ -1,11 +1,10 @@
 import { Box, Divider, HStack, Image, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import arrow from '../../assets/images/transfer-arrow.svg';
 import received from '../../assets/images/transfer-received.svg';
 import sent from '../../assets/images/transfer-sent.svg';
-import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../../components/ui/EtherscanTransactionLink';
+import { ShortenedAddressLink } from '../../components/ui/ShortenedAddressLink';
 import { formatDatesDiffReadable } from '../../helpers/dateTime';
-import useDisplayName from '../../hooks/useDisplayName';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { TransferType } from '../../providers/fractal/types';
 import { formatCoin } from '../../utils/numberFormats';
@@ -17,6 +16,7 @@ function TransferRow({
   displayAmount,
   transferAddress,
   isLast,
+  transactionHash,
 }: {
   isSent: boolean;
   date: string;
@@ -24,8 +24,8 @@ function TransferRow({
   displayAmount: string;
   transferAddress: string;
   isLast: boolean;
+  transactionHash: string;
 }) {
-  const displayAddress = useDisplayName(transferAddress);
   const { t } = useTranslation(['treasury', 'common']);
   const dateFormatted = formatDatesDiffReadable(new Date(date), new Date(), t);
   return (
@@ -63,32 +63,19 @@ function TransferRow({
             w="1.25rem"
             h="1.25rem"
           />
-          <Text
-            textStyle="text-base-sans-regular"
-            color={isSent ? 'grayscale.100' : '#60B55E'}
-            data-testid="link-token-name"
-          >
-            {isSent ? '- ' : '+ ' + displayAmount}
-          </Text>
+          <EtherscanTransactionLink txHash={transactionHash}>
+            <Text
+              textStyle="text-base-sans-regular"
+              color={isSent ? 'grayscale.100' : '#60B55E'}
+              data-testid="link-token-name"
+            >
+              {isSent ? '- ' : '+ ' + displayAmount}
+            </Text>
+          </EtherscanTransactionLink>
         </HStack>
         <HStack w="33%">
           <Spacer />
-          <EtherscanLinkAddress address={transferAddress}>
-            <HStack>
-              <Text
-                textStyle="text-base-sans-regular"
-                color="gold.500"
-                align="end"
-              >
-                {displayAddress.displayName}
-              </Text>
-              <Image
-                src={arrow}
-                w="0.625rem"
-                h="0.625rem"
-              />
-            </HStack>
-          </EtherscanLinkAddress>
+          <ShortenedAddressLink address={transferAddress} />
         </HStack>
       </HStack>
       {!isLast && <Divider color="chocolate.700" />}
@@ -118,6 +105,7 @@ export function Transactions() {
               )}
               transferAddress={safe.address === transfer.from ? transfer.to : transfer.from}
               isLast={transfers[transfers.length - 1] === transfer}
+              transactionHash={transfer.transactionHash}
             />
           )
         );

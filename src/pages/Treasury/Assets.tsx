@@ -9,14 +9,6 @@ import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../providers/fractal/types';
 import { formatPercentage, formatCoin, formatUSD } from '../../utils/numberFormats';
 
-//
-// TODO:
-// 1. token image fallbackSrc
-// 2. NFT image fallbackSrc
-// 3. Empty states (design input needed)
-// 4. are we adding white borders around all NFT image?
-// 5. center align token image with text...
-
 interface TokenDisplayData {
   iconUrl: string;
   address: string;
@@ -32,7 +24,7 @@ interface TokenDisplayData {
  * opportunity to also format some of the display data here, rather than inline with the
  * components.
  */
-function formatTokens(assets: GnosisAssetFungible[]) {
+function formatCoins(assets: GnosisAssetFungible[]) {
   let totalFiatValue = 0;
   let displayData: TokenDisplayData[] = new Array(assets.length);
   for (let i = 0; i < assets.length; i++) {
@@ -56,7 +48,7 @@ function formatTokens(assets: GnosisAssetFungible[]) {
   };
 }
 
-function TokenHeader() {
+function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
     <Box>
@@ -65,7 +57,7 @@ function TokenHeader() {
         marginTop="1.5rem"
         marginBottom="1.5rem"
       />
-      <HStack marginBottom="1rem">
+      <HStack marginBottom="0.5rem">
         <Text
           w="33%"
           variant="infoSmall"
@@ -90,7 +82,7 @@ function TokenHeader() {
   );
 }
 
-function TokenRow({
+function CoinRow({
   safe,
   totalFiat,
   asset,
@@ -104,29 +96,28 @@ function TokenRow({
       align="top"
       marginBottom="0.75rem"
     >
-      <HStack
-        align="top"
-        w="33%"
-      >
-        <Image
-          src={asset.iconUrl}
-          fallbackSrc="https://safe-transaction-assets.safe.global/tokens/logos/0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85.png"
-          w="0.83rem"
-          h="0.83rem"
-          alt={asset.name}
-        />
-        <Text
-          height="auto"
-          variant="infoRegular"
-          data-testid="link-token-name"
-        >
-          {asset.address === ethers.constants.AddressZero ? (
-            <EtherscanLinkAddress address={safe}>{asset.name}</EtherscanLinkAddress>
-          ) : (
-            <EtherscanLinkToken address={asset.address}>{asset.name}</EtherscanLinkToken>
-          )}
-        </Text>
-      </HStack>
+      <Box w="33%">
+        <HStack>
+          <Image
+            src={asset.iconUrl}
+            fallbackSrc=""
+            alt=""
+            w="0.83rem"
+            h="0.83rem"
+          />
+          <Text
+            height="auto"
+            variant="infoRegular"
+            data-testid="link-token-name"
+          >
+            {asset.address === ethers.constants.AddressZero ? (
+              <EtherscanLinkAddress address={safe}>{asset.name}</EtherscanLinkAddress>
+            ) : (
+              <EtherscanLinkToken address={asset.address}>{asset.name}</EtherscanLinkToken>
+            )}
+          </Text>
+        </HStack>
+      </Box>
       <Box w="33%">
         <Text
           variant="infoRegular"
@@ -165,7 +156,7 @@ function NFTHeader() {
       <Divider
         color="chocolate.700"
         marginTop="0.75rem"
-        marginBottom="0.5rem"
+        marginBottom="1.5rem"
       />
       <Text
         w="33%"
@@ -184,14 +175,19 @@ function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: bool
   const id = asset.id.toString();
   return (
     <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
-      <Image
-        src={image}
-        fallbackSrc="https://maneki-gang.s3.amazonaws.com/thumbs/1b4c08fc0db5c607.png"
-        w="3rem"
-        h="3rem"
-        alt={name}
-        marginRight="0.75rem"
-      />
+      <EtherscanLinkNFT
+        address={asset.address}
+        tokenId={id}
+      >
+        <Image
+          src={image}
+          fallbackSrc=""
+          alt=""
+          w="3rem"
+          h="3rem"
+          marginRight="0.75rem"
+        />
+      </EtherscanLinkNFT>
       <Text
         variant="infoRegular"
         data-testid="link-nft-name"
@@ -219,7 +215,7 @@ export function Assets() {
     treasury: { assetsFungible, assetsNonFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
-  const tokenDisplay = formatTokens(assetsFungible);
+  const tokenDisplay = formatCoins(assetsFungible);
   return (
     <Box>
       {' '}
@@ -231,10 +227,10 @@ export function Assets() {
         {t('subtitleCoinBalance')}
       </Text>
       <Text variant="infoLarge">{formatUSD(tokenDisplay.totalFiatValue)}</Text>
-      {tokenDisplay.displayData.length > 0 && <TokenHeader />}
+      {tokenDisplay.displayData.length > 0 && <CoinHeader />}
       {tokenDisplay.displayData.map(asset => {
         return (
-          <TokenRow
+          <CoinRow
             safe={safe.address!}
             totalFiat={tokenDisplay.totalFiatValue}
             key={asset.address}

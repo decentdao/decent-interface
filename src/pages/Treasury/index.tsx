@@ -2,9 +2,21 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { InfoCard } from '../DaoDashboard/Info';
 import { Assets } from './Assets';
+import { InfoBox } from './InfoBox';
 import { Transactions } from './Transactions';
+
+// TODO:
+// 1. assets token image fallbackSrc + alt
+// 2. transactions token image fallbackSrc + alt
+// 2. NFT image fallbackSrc + alt
+// 3. Empty state (design input needed)
+// 4. are we adding white borders around all NFT image?
+// 5. discuss merging "Tokens" and "Coins" lists on right (and use full token name)
+// 6. discuss USD value in transactions list
+// 7. is space with + and no space with - intentional?
+// 8. any additional transaction / token etherscan links?
+// 9. are we showing NFT transfers?
 
 function Treasury() {
   const {
@@ -28,20 +40,20 @@ function Treasury() {
         gap="1rem"
         flexWrap="wrap"
       >
-        <InfoCard
+        <InfoBox
           minWidth={{ sm: '100%', xl: '60%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
         >
           <Transactions />
-        </InfoCard>
-        <InfoCard
+        </InfoBox>
+        <InfoBox
           minWidth={{ sm: '100%', xl: '30%' }}
           title={t('titleAssets')}
           titleTestId="title-assets"
         >
           <Assets />
-        </InfoCard>
+        </InfoBox>
       </Flex>
     </Box>
   );
