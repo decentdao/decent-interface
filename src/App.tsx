@@ -1,9 +1,10 @@
-import { useLocalStorage } from './hooks/useLocalStorage';
-import './i18n';
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
-import { useActionToast } from './hooks/toasts/useActionToast';
+import './i18n';
 import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
+import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
+import { useActionToast } from './hooks/toasts/useActionToast';
+import { useLocalStorage } from './hooks/useLocalStorage';
 import FractalRoutes from './routes/FractalRoutes';
 
 function App() {
@@ -25,7 +26,7 @@ function App() {
       templateAreas={`"nav header"
       "nav main"`}
       gridTemplateColumns={'4.25rem 1fr'}
-      gridTemplateRows="4rem minmax(calc(100vh - 4rem), 100%)"
+      gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
       <GridItem

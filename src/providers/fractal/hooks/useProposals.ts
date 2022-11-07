@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
+import { useCallback, useEffect, useState } from 'react';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
+import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { Proposal } from '../types/usul';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';

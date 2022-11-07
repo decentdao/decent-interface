@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { logError } from '../helpers/errorLogging';
 import { EthAddress } from '../types';
 

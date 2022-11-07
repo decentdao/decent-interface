@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import useCastVote from '../../providers/fractal/hooks/useCastVote';
+import { Proposal, ProposalState } from '../../providers/fractal/types';
+import ContentBanner from '../ui/ContentBanner';
 import { PrimaryButton, SecondaryButton } from '../ui/forms/Button';
 import Check from '../ui/svg/Check';
-import ContentBanner from '../ui/ContentBanner';
-import { useTranslation } from 'react-i18next';
-import { Proposal, ProposalState } from '../../providers/fractal/types';
 
 interface IOptionSelected {
   newVote?: number;

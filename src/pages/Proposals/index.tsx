@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ProposalsList from '../../components/Proposals/ProposalsList';
-import { TextButton, SecondaryButton } from '../../components/ui/forms/Button';
 import H1 from '../../components/ui/H1';
+import { TextButton, SecondaryButton } from '../../components/ui/forms/Button';
 
 export function Governance() {
   const { t } = useTranslation(['common', 'proposal']);

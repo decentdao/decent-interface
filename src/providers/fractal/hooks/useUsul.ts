@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
-import { ProposalExecuteData } from '../../../types/proposal';
-import { logError } from '../../../helpers/errorLogging';
-import { useFractal } from './useFractal';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../../../helpers/errorLogging';
+import { ProposalExecuteData } from '../../../types/proposal';
 import { GnosisModuleType } from '../types';
+import { useFractal } from './useFractal';
 
 export default function useUsul() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);

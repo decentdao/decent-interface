@@ -1,14 +1,14 @@
-import { ChangeEvent } from 'react';
+import { Box, Text } from '@chakra-ui/react';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
+import { ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import ContentBanner from '../../ui/ContentBanner';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions, GovernanceTypes } from '../provider/types';
-import { useTranslation } from 'react-i18next';
-import { Box, Text } from '@chakra-ui/react';
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 
 function GovernanceDetails() {
   const {

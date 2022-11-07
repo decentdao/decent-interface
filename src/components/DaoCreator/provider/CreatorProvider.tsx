@@ -1,5 +1,7 @@
-import { ReactNode, useMemo, useReducer } from 'react';
+import { Box, Text } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
+import { ReactNode, useMemo, useReducer } from 'react';
+import { useTranslation } from 'react-i18next';
 import ConnectWalletToast from '../../ConnectWalletToast';
 import { StepButtons } from '../StepButtons';
 
@@ -7,15 +9,13 @@ import { CreatorContext } from './hooks/useCreator';
 import { useStepName } from './hooks/useStepName';
 import { useSteps } from './hooks/useSteps';
 import {
-  CreatorProviderActions,
   CreatorProviderActionTypes,
+  CreatorProviderActions,
   CreatorState,
   CreatorSteps,
   DAOTrigger,
   GovernanceTypes,
 } from './types';
-import { useTranslation } from 'react-i18next';
-import { Box, Text } from '@chakra-ui/react';
 
 export const initialState: CreatorState = {
   step: CreatorSteps.ESSENTIALS,

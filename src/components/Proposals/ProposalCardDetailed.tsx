@@ -1,8 +1,8 @@
 import { Proposal } from '../../providers/fractal/types';
 import ContentBox from '../ui/ContentBox';
+import StatusBox from '../ui/StatusBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalNumber from '../ui/proposal/ProposalNumber';
-import StatusBox from '../ui/StatusBox';
 
 function ProposalCardDetailed({ proposal }: { proposal: Proposal }) {
   return (

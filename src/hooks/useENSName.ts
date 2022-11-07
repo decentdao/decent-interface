@@ -1,6 +1,6 @@
-import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { logError } from '../helpers/errorLogging';
+import { useWeb3Provider } from './../contexts/web3Data/hooks/useWeb3Provider';
 
 const useENSName = (account?: string | null) => {
   const {

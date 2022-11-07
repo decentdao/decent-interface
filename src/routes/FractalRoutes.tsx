@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import Home from '../pages/Home';
-import { DAO_ROUTES } from './constants';
 import DAORoutes from './DAORoutes';
+import { DAO_ROUTES } from './constants';
 
 function FractalRoutes() {
   return (
