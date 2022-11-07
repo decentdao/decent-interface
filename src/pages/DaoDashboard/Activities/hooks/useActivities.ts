@@ -21,82 +21,83 @@ export const useActivities = (sortBy: SortBy) => {
     dispatches: { gnosisDispatch },
   } = useFractal();
 
-  const [sortedActivities, setSortedActivities] = useState<Activity[]>([]);
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
   const parsedActivities = useMemo(() => {
     if (![...transactions.results].length || !safe) {
       return [];
     }
-    return [...transactions.results].map(transaction => {
-      const isDeposit = transaction.transfers.every(
-        t => t.to.toLowerCase() === safe.address!.toLowerCase()
-      );
+    return [...transactions.results]
+      .filter(t => !!t.transfers.length)
+      .map(transaction => {
+        const isDeposit = transaction.transfers.every(
+          t => t.to.toLowerCase() === safe.address!.toLowerCase()
+        );
 
-      /**
-       * This returns a Mapping of the total amount of each token involved in the transfers
-       * along with the symbol and decimals of those tokens
-       */
-      const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
-        if (cur.type === GnosisTransferType.ETHER && cur.value) {
-          if (prev.has(constants.AddressZero)) {
-            const prevValue = prev.get(constants.AddressZero);
+        /**
+         * This returns a Mapping of the total amount of each token involved in the transfers
+         * along with the symbol and decimals of those tokens
+         */
+        const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
+          if (cur.type === GnosisTransferType.ETHER && cur.value) {
+            if (prev.has(constants.AddressZero)) {
+              const prevValue = prev.get(constants.AddressZero);
+              prev.set(constants.AddressZero, {
+                bn: prevValue.bn.add(BigNumber.from(cur.value)),
+                symbol: 'ETHER',
+                decimals: 18,
+              });
+            }
             prev.set(constants.AddressZero, {
-              bn: prevValue.bn.add(BigNumber.from(cur.value)),
+              bn: BigNumber.from(cur.value),
               symbol: 'ETHER',
               decimals: 18,
             });
           }
-          prev.set(constants.AddressZero, {
-            bn: BigNumber.from(cur.value),
-            symbol: 'ETHER',
-            decimals: 18,
-          });
-        }
-        if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
-          prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
-            bn: BigNumber.from(1),
-            symbol: cur.tokenInfo.symbol,
-            decimals: 0,
-          });
-        }
-        if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
-          if (prev.has(cur.tokenInfo.address)) {
-            const prevValue = prev.get(cur.tokenInfo.address);
-            prev.set(cur.tokenInfo.address, {
-              ...prevValue,
-              bn: prevValue.bn.add(BigNumber.from(cur.value)),
-            });
-          } else {
-            prev.set(cur.tokenAddress, {
-              bn: BigNumber.from(cur.value),
+          if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+            prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
+              bn: BigNumber.from(1),
               symbol: cur.tokenInfo.symbol,
-              decimals: cur.tokenInfo.decimals,
+              decimals: 0,
             });
           }
-        }
+          if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+            if (prev.has(cur.tokenInfo.address)) {
+              const prevValue = prev.get(cur.tokenInfo.address);
+              prev.set(cur.tokenInfo.address, {
+                ...prevValue,
+                bn: prevValue.bn.add(BigNumber.from(cur.value)),
+              });
+            } else {
+              prev.set(cur.tokenAddress, {
+                bn: BigNumber.from(cur.value),
+                symbol: cur.tokenInfo.symbol,
+                decimals: cur.tokenInfo.decimals,
+              });
+            }
+          }
 
-        return prev;
-      }, new Map());
+          return prev;
+        }, new Map());
 
-      const transferAmountTotalsArr = Array.from(transferAmountTotalsMap.values()).map(token => {
-        const totalAmount = formatWeiToValue(token.bn, token.decimals);
-        const symbol = token.symbol;
-        return `${totalAmount} ${symbol}`;
+        const transferAmountTotalsArr = Array.from(transferAmountTotalsMap.values()).map(token => {
+          const totalAmount = formatWeiToValue(token.bn, token.decimals);
+          const symbol = token.symbol;
+          return `${totalAmount} ${symbol}`;
+        });
+        const transferAddresses = transaction.transfers.map(transfer =>
+          transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
+        );
+
+        return {
+          transaction,
+          eventDate: format(new Date(transaction.executionDate), 'MMM dd yyyy'),
+          eventType: ActivityEventType.Treasury,
+          transferAddresses,
+          transferAmountTotals: transferAmountTotalsArr,
+          isDeposit,
+        };
       });
-      const transferAddresses = transaction.transfers.map(transfer =>
-        transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
-      );
-
-      return {
-        transaction,
-        eventDate: format(new Date(transaction.executionDate), 'MMM dd yyyy'),
-        eventType: ActivityEventType.Treasury,
-        transferAddresses,
-        transferAmountTotals: transferAmountTotalsArr,
-        isDeposit,
-      };
-    });
   }, [safe, transactions]);
 
   const getGnosisSafeTransactions = useCallback(async () => {
@@ -129,8 +130,8 @@ export const useActivities = (sortBy: SortBy) => {
    * After data is parsed it is sorted based on execution data
    * updates when a different sort is selected
    */
-  useEffect(() => {
-    const sortedTransactions = [...parsedActivities].sort((a, b) => {
+  const sortedActivities = useMemo(() => {
+    return [...parsedActivities].sort((a, b) => {
       const dataA = new Date(a.eventDate).getTime();
       const dataB = new Date(b.eventDate).getTime();
       if (sortBy === SortBy.Oldest) {
@@ -138,7 +139,6 @@ export const useActivities = (sortBy: SortBy) => {
       }
       return dataB - dataA;
     });
-    setSortedActivities(sortedTransactions);
   }, [parsedActivities, sortBy]);
 
   /**
