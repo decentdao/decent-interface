@@ -1,7 +1,6 @@
 // files to ignore
 
-tailwind.config.js
-postcss.config.js
+src/assets/typechain-types
 config-overrides.js
 /docker
 playwright.config.ts

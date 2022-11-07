@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
 import { BigNumber, ethers } from 'ethers';
+import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
 import { VotesToken, VotesToken__factory } from '../../../assets/typechain-types/fractal-contracts';
 import {
   OZLinearVoting,
@@ -9,9 +9,9 @@ import {
 
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import {
-  TransferListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
+  TransferListener,
 } from '../../govenor/types';
 import { GnosisModuleType, IGnosisModuleData } from '../types/governance';
 

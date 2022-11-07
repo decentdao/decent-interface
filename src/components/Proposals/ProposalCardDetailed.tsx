@@ -1,34 +1,20 @@
-import { ProposalData } from '../../providers/govenor/types';
+import { Proposal } from '../../providers/fractal/types';
 import ContentBox from '../ui/ContentBox';
-import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
-import ProposalDescription from '../ui/proposal/ProposalDescription';
-import ProposalId from '../ui/proposal/ProposalId';
-import ProposalNumber from '../ui/proposal/ProposalNumber';
-import ProposalTime from '../ui/proposal/ProposalTime';
 import StatusBox from '../ui/StatusBox';
+import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
+import ProposalNumber from '../ui/proposal/ProposalNumber';
 
-function ProposalCardDetailed({ proposal }: { proposal: ProposalData }) {
+function ProposalCardDetailed({ proposal }: { proposal: Proposal }) {
   return (
     <div>
       <ContentBox>
         <div className="flex items-center">
-          <StatusBox status={proposal.state} />
-          <ProposalNumber proposalNumber={proposal.number} />
-          <ProposalTime
-            proposalStartString={proposal.startTimeString}
-            proposalEndString={proposal.endTimeString}
-          />
+          <StatusBox state={proposal.state} />
+          <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
         </div>
-        <ProposalDescription proposalDesc={proposal.description} />
         <div className="pt-4 border-t border-gray-200">
           <ProposalCreatedBy
             proposalProposer={proposal.proposer}
-            addedClasses={'justify-between items-center'}
-            includeClipboard
-          />
-          <ProposalId
-            proposalId={proposal.id}
-            proposalIdSub={proposal.idSubstring}
             addedClasses={'justify-between items-center'}
             includeClipboard
           />

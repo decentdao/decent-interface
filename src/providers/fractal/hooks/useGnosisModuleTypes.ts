@@ -1,10 +1,10 @@
 import { Dispatch, useEffect } from 'react';
-import useSafeContracts from '../../../hooks/useSafeContracts';
-import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
-import { GnosisAction } from '../constants';
-import { Usul__factory } from '../../../assets/typechain-types/usul';
 import { FractalModule__factory } from '../../../assets/typechain-types/fractal-contracts';
+import { Usul__factory } from '../../../assets/typechain-types/usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import useSafeContracts from '../../../hooks/useSafeContracts';
+import { GnosisAction } from '../constants';
+import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 
 export function useGnosisModuleTypes(
   gnosisDispatch: Dispatch<GnosisActions>,

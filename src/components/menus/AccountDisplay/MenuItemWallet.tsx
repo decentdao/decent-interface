@@ -1,4 +1,4 @@
-import { Flex, Text, MenuItem } from '@chakra-ui/react';
+import { Flex, MenuItem, Text } from '@chakra-ui/react';
 import { Copy } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
@@ -15,7 +15,7 @@ export function MenuItemWallet() {
   const {
     state: { account },
   } = useWeb3Provider();
-  const accountDisplayName = useDisplayName(account);
+  const { displayName: accountDisplayName } = useDisplayName(account);
   const avatarURL = useAvatar(account);
   const copyTextToClipboard = useCopyText();
   const { t } = useTranslation('menu');

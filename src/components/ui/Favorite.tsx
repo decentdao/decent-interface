@@ -1,8 +1,8 @@
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useFavorites from '../../hooks/useFavorites';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { StarFilled, StarEmpty } from '../ui/svg/Star';
 import TooltipWrapper from '../ui/TooltipWrapper';
+import { StarEmpty, StarFilled } from '../ui/svg/Star';
 
 function FavoriteButton({
   icon,

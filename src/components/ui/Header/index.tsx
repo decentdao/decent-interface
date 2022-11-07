@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
-import { DAOSearch } from '../../menus/DAOSearch';
 import { AccountDisplay } from '../../menus/AccountDisplay';
+import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
 
 function Header() {

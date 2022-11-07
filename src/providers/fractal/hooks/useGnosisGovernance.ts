@@ -1,9 +1,9 @@
-import { useSubDAODeploy } from './useSubDAODeploy';
-import { GovernanceAction } from './../constants/actions';
 import { Dispatch, useEffect } from 'react';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { IGnosis, GovernanceActions } from '../types';
+import { GovernanceAction } from './../constants/actions';
 import useGovernanceTokenData from './useGovernanceTokenData';
+import { useSubDAODeploy } from './useSubDAODeploy';
 
 export const useGnosisGovernance = (
   { safe: { owners, address }, modules }: IGnosis,

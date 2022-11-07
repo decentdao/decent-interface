@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import useDelegateVote from '../../hooks/useDelegateVote';
-import useDisplayName from '../../hooks/useDisplayName';
-import ContentBox from '../../components/ui/ContentBox';
-import ContentBanner from '../../components/ui/ContentBanner';
-import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
-import Input from '../../components/ui/forms/Input';
-import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
-import InputBox from '../../components/ui/forms/InputBox';
 import cx from 'classnames';
-import useAddress from '../../hooks/useAddress';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ContentBanner from '../../components/ui/ContentBanner';
+import ContentBox from '../../components/ui/ContentBox';
+import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
+import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
+import Input from '../../components/ui/forms/Input';
+import InputBox from '../../components/ui/forms/InputBox';
 import DataLoadingWrapper from '../../components/ui/loaders/DataLoadingWrapper';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { useTranslation } from 'react-i18next';
+import useAddress from '../../hooks/useAddress';
+import useDelegateVote from '../../hooks/useDelegateVote';
+import useDisplayName from '../../hooks/useDisplayName';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 
 export function Delegate() {
@@ -78,7 +78,7 @@ export function Delegate() {
             Current Delegatee:
             <EtherscanLinkAddress address={governanceToken.delegatee}>
               <DataLoadingWrapper isLoading={!delegateeDisplayName}>
-                <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
+                <span className="text-gold-500 ml-2">{delegateeDisplayName.displayName}</span>
               </DataLoadingWrapper>
             </EtherscanLinkAddress>
           </div>

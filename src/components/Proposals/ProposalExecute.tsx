@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { ProposalData, ProposalState } from '../../providers/govenor/types';
-import useExecuteTransaction from '../../hooks/useExecuteTransaction';
-import { useBlockchainData } from '../../contexts/blockchainData';
-import { ProposalAction } from './ProposalAction';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useBlockchainData } from '../../contexts/blockchainData';
+import useExecuteTransaction from '../../hooks/useExecuteTransaction';
+import { ProposalData, ProposalState } from '../../providers/govenor/types';
+import { ProposalAction } from './ProposalAction';
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);

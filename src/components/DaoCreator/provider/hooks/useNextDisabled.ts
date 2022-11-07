@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import { BigNumber } from 'ethers';
+import { useEffect, useState } from 'react';
 import { CreatorState, CreatorSteps, GovernanceTypes } from './../types';
 
 /**

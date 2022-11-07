@@ -1,5 +1,5 @@
-import { ChangeEvent, FormEvent, useCallback } from 'react';
 import cx from 'classnames';
+import { ChangeEvent, FormEvent, useCallback } from 'react';
 
 export enum RestrictCharTypes {
   WHOLE_NUMBERS_ONLY,

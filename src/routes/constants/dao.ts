@@ -20,13 +20,13 @@ export const DAO_ROUTES = {
     path: 'proposals',
   },
   proposal: {
-    relative: (daoAddress: string, proposalId: string) =>
-      `/daos/${daoAddress}/proposals/${proposalId}`,
-    path: ':proposalId',
+    relative: (daoAddress: string, proposalNumber: string) =>
+      `/daos/${daoAddress}/proposals/${proposalNumber}`,
+    path: 'proposals/:proposalNumber',
   },
   proposalNew: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/proposals/new`,
-    path: 'new',
+    path: 'proposals/new',
   },
   delegate: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/delegate`,

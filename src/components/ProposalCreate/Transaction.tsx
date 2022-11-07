@@ -1,14 +1,14 @@
+import { ethers } from 'ethers';
+import { useTranslation } from 'react-i18next';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../../helpers/errorLogging';
+import { checkAddress } from '../../hooks/useAddress';
+import { TransactionData } from '../../types/transaction';
+import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import { TextButton } from '../ui/forms/Button';
 import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
-import ContentBox from '../ui/ContentBox';
-import { checkAddress } from '../../hooks/useAddress';
-import { ethers } from 'ethers';
-import { TransactionData } from '../../types/transaction';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { logError } from '../../helpers/errorLogging';
-import { useTranslation } from 'react-i18next';
 
 interface TransactionProps {
   transaction: TransactionData;

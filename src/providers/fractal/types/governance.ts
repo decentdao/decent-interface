@@ -1,5 +1,5 @@
-import { Usul } from '../../../assets/typechain-types/usul';
 import { FractalModule } from '../../../assets/typechain-types/fractal-contracts';
+import { Usul } from '../../../assets/typechain-types/usul';
 import { IGoveranceTokenData } from '../hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {

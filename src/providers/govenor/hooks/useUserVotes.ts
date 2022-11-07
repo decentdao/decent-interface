@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';

@@ -1,12 +1,13 @@
 import { Box, Center, Flex, HStack, Image, Text } from '@chakra-ui/react';
 import { Button, Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { DAO_ROUTES } from '../../routes/constants';
 import logo from '../../assets/images/fractal-text-logo.svg';
+import { CONTENT_HEIGHT } from '../../constants/common';
+import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants/url';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { ReactNode } from 'react';
-import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../constants/url';
+import { DAO_ROUTES } from '../../routes/constants';
 
 interface IconWithTextProps {
   icon: ReactNode;
@@ -93,7 +94,7 @@ function Home() {
     navigate(DAO_ROUTES.new.relative);
   };
   return (
-    <Center h="100vh">
+    <Center h={CONTENT_HEIGHT}>
       <Flex
         flexDirection="column"
         alignItems="center"

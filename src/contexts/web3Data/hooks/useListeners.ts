@@ -1,13 +1,13 @@
 import WalletConnectProvider from '@walletconnect/ethereum-provider';
-import { ConnectFn, ModalProvider } from '../types';
-import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
-import { getSupportedChains, getChainsWithMetadata } from '../chains';
-import { clearErrorContext, setLoggedWallet, setErrorContext } from '../../../helpers/errorLogging';
-import { useTranslation } from 'react-i18next';
+import { clearErrorContext, setErrorContext, setLoggedWallet } from '../../../helpers/errorLogging';
+import { getChainsWithMetadata, getSupportedChains } from '../chains';
+import { ConnectFn, ModalProvider } from '../types';
 
 /**
  * Sets event listeners on wallet connection
