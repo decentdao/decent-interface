@@ -6,7 +6,7 @@ import { logError } from '../../../../helpers/errorLogging';
 import { GnosisAction } from '../../../../providers/fractal/constants';
 import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
 import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
-import { Activity, ActivityEventType, GnosisTransferType } from '../../../../types';
+import { ActivityEventType, GnosisTransferType } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
 import { SortBy } from '../ActivitySort';
 import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
