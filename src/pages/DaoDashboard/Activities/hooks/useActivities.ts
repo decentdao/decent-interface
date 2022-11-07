@@ -156,9 +156,7 @@ export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
    * Parses returned data when retrieved for the dashboard activities
    */
   useEffect(() => {
-    if (transactions.results.length) {
-      parseActivities();
-    }
+    parseActivities();
   }, [transactions, parseActivities]);
 
   /**
@@ -187,9 +185,7 @@ export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
   }, [sortedActivities]);
 
   // @todo handles filtering
-  useEffect(() => {
-    console.log(filter);
-  }, [filter]);
+  useEffect(() => {}, [filter]);
 
   return { sortedActivities, isActivitiesLoading };
 };
