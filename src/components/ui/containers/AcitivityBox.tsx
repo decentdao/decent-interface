@@ -1,10 +1,10 @@
-import { Box, ScaleFade } from '@chakra-ui/react';
+import { Box, SlideFade } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 export function ActivityBox({ children }: { children?: ReactNode }) {
   return (
-    <ScaleFade
-      initialScale={0.1}
+    <SlideFade
+      offsetY={'-100%'}
       in={true}
     >
       <Box
@@ -16,6 +16,6 @@ export function ActivityBox({ children }: { children?: ReactNode }) {
       >
         {children}
       </Box>
-    </ScaleFade>
+    </SlideFade>
   );
 }
