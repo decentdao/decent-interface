@@ -16,7 +16,7 @@ export function SearchDisplay({ loading, errorMessage, validAddress, address }: 
   const { t } = useTranslation(['common', 'dashboard']);
   const navigate = useNavigate();
 
-  const displayName = useDisplayName(address);
+  const { displayName } = useDisplayName(address);
   if (loading && address) {
     return (
       <Box>

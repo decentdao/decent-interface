@@ -1,6 +1,6 @@
-import { createAccountSubstring } from '../../hooks/useDisplayName';
-import CopyToClipboard from './CopyToClipboard';
+import useDisplayName from '../../hooks/useDisplayName';
 import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
+import CopyToClipboard from './CopyToClipboard';
 
 interface TooltipAddressContentProps {
   address: string;
@@ -8,12 +8,13 @@ interface TooltipAddressContentProps {
 }
 
 function TooltipAddressContent({ address, title }: TooltipAddressContentProps) {
+  const { accountSubstring } = useDisplayName(address);
   return (
     <div>
       <h4 className="text-gray-50 text-xs">{title}</h4>
       <div className="flex text-gold-500">
         <EtherscanLinkAddress address={address}>
-          <span className="cursor-pointer text-sm">{createAccountSubstring(address)}</span>
+          <span className="cursor-pointer text-sm">{accountSubstring}</span>
         </EtherscanLinkAddress>
         <CopyToClipboard textToCopy={address} />
       </div>

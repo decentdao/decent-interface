@@ -1,10 +1,10 @@
-import { TokenAllocation } from '../../../types/tokenAllocation';
-import { checkAddress } from '../../../hooks/useAddress';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
+import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { checkAddress } from '../../../hooks/useAddress';
+import { TokenAllocation } from '../../../types/tokenAllocation';
+import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 
 interface TokenAllocationProps {
   index: number;

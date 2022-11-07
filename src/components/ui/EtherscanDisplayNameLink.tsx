@@ -2,7 +2,7 @@ import useDisplayName from '../../hooks/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
 
 function EtherscanDisplayNameLink({ address }: { address?: string }) {
-  const displayName = useDisplayName(address);
+  const { displayName } = useDisplayName(address);
 
   if (!address) {
     return null;

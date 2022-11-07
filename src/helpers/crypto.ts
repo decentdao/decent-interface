@@ -1,5 +1,5 @@
-import { BigNumber, Contract, utils, constants } from 'ethers';
-import { SafeTransaction, MetaTransaction } from '../types/transaction';
+import { BigNumber, Contract, constants, utils } from 'ethers';
+import { MetaTransaction, SafeTransaction } from '../types/transaction';
 
 export function getRandomBytes() {
   const bytes8Array = new Uint8Array(32);

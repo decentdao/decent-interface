@@ -1,7 +1,7 @@
-import { Routes, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import DaoCreate from '../pages/DaoCreate';
-import { DAO_ROUTES } from './constants';
 import DAOSubRoutes from './DAOSubRoutes';
+import { DAO_ROUTES } from './constants';
 
 function DAORoutes() {
   return (

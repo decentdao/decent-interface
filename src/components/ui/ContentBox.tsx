@@ -1,5 +1,5 @@
-import ContentBoxTitle from './ContentBoxTitle';
 import { Box } from '@chakra-ui/react';
+import ContentBoxTitle from './ContentBoxTitle';
 
 function ContentBox({
   title,

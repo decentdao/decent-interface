@@ -1,15 +1,15 @@
 import { BigNumber } from 'ethers';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
 import useBlockchainDatas from '../../../contexts/blockchainData/blockchainData';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
 import {
-  ProposalDataWithoutUserData,
   ProposalCreatedListener,
+  ProposalDataWithoutUserData,
+  ProposalExecutedListener,
   ProposalQueuedListener,
   ProposalState,
-  ProposalExecutedListener,
   VoteCastListener,
 } from '../types';
 import { getProposalData, getVotePercentages } from '../utils';
