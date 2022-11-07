@@ -10,9 +10,7 @@ import { Transactions } from './Transactions';
 // 1. assets token image fallbackSrc + alt
 // 2. transactions token image fallbackSrc + alt
 // 3. NFT image fallbackSrc + alt
-// 4. Empty state (string in transactions list)
 // 5. add historical USD value to transactions list (via coingecko?)
-// 6. show NFT transfers
 
 function Treasury() {
   const {

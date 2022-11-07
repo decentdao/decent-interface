@@ -6,7 +6,7 @@ import EtherscanTransactionLink from '../../components/ui/EtherscanTransactionLi
 import { ShortenedAddressLink } from '../../components/ui/ShortenedAddressLink';
 import { formatDatesDiffReadable } from '../../helpers/dateTime';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { TokenInfo, TransferType } from '../../providers/fractal/types';
+import { TokenInfo } from '../../providers/fractal/types';
 import { formatCoin } from '../../utils/numberFormats';
 
 function TransferRow({
@@ -89,6 +89,21 @@ function TransferRow({
   );
 }
 
+function EmptyTransactions() {
+  const { t } = useTranslation('treasury');
+  return (
+    <Text
+      textStyle="text-base-sans-regular"
+      color="grayscale.100"
+      data-testid="text-empty-transactions"
+      marginTop="1rem"
+      align="center"
+    >
+      {t('textEmptyTransactions')}
+    </Text>
+  );
+}
+
 export function Transactions() {
   const {
     gnosis: { safe },
@@ -96,6 +111,7 @@ export function Transactions() {
   } = useFractal();
   return (
     <Box>
+      {transfers.length === 0 && <EmptyTransactions />}
       {transfers.map(transfer => {
         return (
           <TransferRow
