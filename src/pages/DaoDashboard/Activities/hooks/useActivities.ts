@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { format } from 'date-fns';
 import { BigNumber, constants } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { logError } from '../../../../helpers/errorLogging';
@@ -6,7 +7,7 @@ import { GnosisAction } from '../../../../providers/fractal/constants';
 import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
 import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
 import { Activity, ActivityEventType, GnosisTransferType } from '../../../../types';
-import { formatWeiToValue, getTimestampString } from '../../../../utils';
+import { formatWeiToValue } from '../../../../utils';
 import { SortBy } from '../ActivitySort';
 import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useFractal } from './../../../../providers/fractal/hooks/useFractal';
@@ -94,7 +95,7 @@ export const useActivities = (sortBy: SortBy) => {
 
           return {
             transaction,
-            eventDate: getTimestampString(new Date(transaction.executionDate)),
+            eventDate: format(new Date(transaction.executionDate), 'MMM dd yyyy'),
             eventType: ActivityEventType.Treasury,
             transferAddresses,
             transferAmountTotals: transferAmountTotalsArr,
