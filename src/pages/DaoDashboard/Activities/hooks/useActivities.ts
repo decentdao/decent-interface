@@ -123,7 +123,6 @@ export const useActivities = (sortBy: SortBy) => {
         })
       )
     );
-    setActivitiesLoading(false);
   }, [safe, getAddressDisplay, transactions]);
 
   const getGnosisSafeTransactions = useCallback(async () => {
