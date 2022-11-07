@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
+import { Delegate } from '../pages/Delegate';
 import { DAO_ROUTES } from './constants';
 
 function DAOSubRoutes() {
@@ -30,6 +31,10 @@ function DAOSubRoutes() {
         <Route
           path={DAO_ROUTES.proposalNew.path}
           element={<div />}
+        />
+        <Route
+          path={DAO_ROUTES.delegate.path}
+          element={<Delegate />}
         />
       </Routes>
     </DAOController>
