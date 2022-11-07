@@ -69,7 +69,7 @@ export function useGnosisApiServices(
       );
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS,
-        payload: data.results,
+        payload: data,
       });
     } catch (e) {
       logError(e);

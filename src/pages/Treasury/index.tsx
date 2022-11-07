@@ -6,12 +6,6 @@ import { Assets } from './Assets';
 import { InfoBox } from './InfoBox';
 import { Transactions } from './Transactions';
 
-// TODO:
-// 1. assets token image fallbackSrc + alt
-// 2. transactions token image fallbackSrc + alt
-// 3. NFT image fallbackSrc + alt
-// 5. add historical USD value to transactions list (via coingecko?)
-
 function Treasury() {
   const {
     gnosis: { daoName },

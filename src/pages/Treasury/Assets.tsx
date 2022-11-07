@@ -1,6 +1,9 @@
 import { Box, Divider, HStack, Image, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import coinDefault from '../../assets/images/coin-icon-default.svg';
+import ethDefault from '../../assets/images/coin-icon-eth.svg';
+import nftDefault from '../../assets/images/nft-image-default.svg';
 import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../components/ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
@@ -10,7 +13,7 @@ import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../providers/fra
 import { formatPercentage, formatCoin, formatUSD } from '../../utils/numberFormats';
 
 interface TokenDisplayData {
-  iconUrl: string;
+  iconUri: string;
   address: string;
   name: string;
   formattedTotal: string;
@@ -31,7 +34,7 @@ function formatCoins(assets: GnosisAssetFungible[]) {
     let asset = assets[i];
     totalFiatValue += Number(asset.fiatBalance);
     const formatted: TokenDisplayData = {
-      iconUrl: asset.token === null ? '' : asset.token.logoUri,
+      iconUri: asset.token === null ? ethDefault : asset.token.logoUri,
       address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
       name: asset.token === null ? 'Ether' : asset.token.name,
       formattedTotal: formatCoin(asset.balance, asset?.token?.decimals, asset?.token?.symbol),
@@ -99,9 +102,9 @@ function CoinRow({
       <Box w="33%">
         <HStack>
           <Image
-            src={asset.iconUrl}
-            fallbackSrc=""
-            alt=""
+            src={asset.iconUri}
+            fallbackSrc={coinDefault}
+            alt={asset.name}
             w="0.83rem"
             h="0.83rem"
           />
@@ -171,7 +174,7 @@ function NFTHeader() {
 
 function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: boolean }) {
   const image = asset.imageUri ? asset.imageUri : asset.logoUri;
-  const name = asset.name ? asset.name : asset.tokenSymbol;
+  const name = asset.name ? asset.name : asset.tokenName;
   const id = asset.id.toString();
   return (
     <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
@@ -182,8 +185,8 @@ function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: bool
       >
         <Image
           src={image}
-          fallbackSrc=""
-          alt=""
+          fallbackSrc={nftDefault}
+          alt={name}
           w="3rem"
           h="3rem"
           marginRight="0.75rem"

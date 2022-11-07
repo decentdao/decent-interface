@@ -62,14 +62,17 @@ export interface ITreasury {
   transactions: Transaction[];
   assetsFungible: GnosisAssetFungible[];
   assetsNonFungible: GnosisAssetNonFungible[];
-  transfers: AssetTransfer[];
+  transfers?: AssetTransfers;
   treasuryIsLoading: boolean;
 }
 
+// TODO pagination using next url
+// currently we will be displaying
+// the most recent 100 transfers
 export interface AssetTransfers {
   count: number;
-  // next: undefined; TODO pagination...
-  // previous: undefined;
+  next: string;
+  previous: string;
   results: AssetTransfer[];
 }
 
@@ -95,7 +98,7 @@ export interface TokenInfo {
 
 export interface AssetTransfer {
   type: TransferType;
-  executionDate: string; // todo Date?
+  executionDate: string;
   blockNumber: BigNumber;
   transactionHash: string;
   to: string;

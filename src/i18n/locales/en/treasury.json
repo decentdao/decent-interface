@@ -10,5 +10,6 @@
     "columnNFTs": "NFTs",
     "labelSent": "Sent",
     "labelReceived": "Received",
-    "textEmptyTransactions": "No transfers yet."
+    "textEmptyTransactions": "No transfers yet.",
+    "textMoreTransactions": "View more"
 }

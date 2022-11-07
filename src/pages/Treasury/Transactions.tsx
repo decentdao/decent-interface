@@ -1,16 +1,21 @@
 import { Box, Divider, HStack, Image, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import coinDefault from '../../assets/images/coin-icon-default.svg';
+import ethDefault from '../../assets/images/coin-icon-eth.svg';
+import nftDefault from '../../assets/images/nft-image-default.svg';
 import received from '../../assets/images/transfer-received.svg';
 import sent from '../../assets/images/transfer-sent.svg';
+import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
 import EtherscanTransactionLink from '../../components/ui/EtherscanTransactionLink';
 import { ShortenedAddressLink } from '../../components/ui/ShortenedAddressLink';
 import { formatDatesDiffReadable } from '../../helpers/dateTime';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { TokenInfo } from '../../providers/fractal/types';
+import { TokenInfo, TransferType } from '../../providers/fractal/types';
 import { formatCoin } from '../../utils/numberFormats';
 
 function TransferRow({
   isSent,
+  type,
   date,
   displayAmount,
   transferAddress,
@@ -20,6 +25,7 @@ function TransferRow({
   tokenInfo,
 }: {
   isSent: boolean;
+  type: TransferType;
   date: string;
   displayAmount?: string;
   transferAddress: string;
@@ -30,6 +36,18 @@ function TransferRow({
 }) {
   const { t } = useTranslation(['treasury', 'common']);
   const dateFormatted = formatDatesDiffReadable(new Date(date), new Date(), t);
+  let imageSrc;
+  switch (type) {
+    case TransferType.ERC20_TRANSFER:
+    case TransferType.ERC721_TRANSFER:
+      imageSrc = tokenInfo?.logoUri;
+      break;
+    case TransferType.ETHER_TRANSFER:
+      imageSrc = ethDefault;
+      break;
+    default:
+      imageSrc = coinDefault;
+  }
   return (
     <Box>
       <HStack
@@ -60,8 +78,9 @@ function TransferRow({
         </HStack>
         <HStack w="33%">
           <Image
-            src={tokenInfo ? tokenInfo.logoUri : ''}
-            fallbackSrc=""
+            src={imageSrc}
+            fallbackSrc={tokenId ? nftDefault : coinDefault}
+            alt={tokenId ? tokenInfo?.name : displayAmount}
             w="1.25rem"
             h="1.25rem"
           />
@@ -104,18 +123,39 @@ function EmptyTransactions() {
   );
 }
 
+function MoreTransactions({ address }: { address: string | undefined }) {
+  const { t } = useTranslation('treasury');
+  return (
+    <EtherscanLinkAddress address={address}>
+      <Text
+        textStyle="text-sm-sans-regular"
+        color="grayscale.100"
+        data-testid="link-more-transactions"
+        marginTop="1rem"
+        align="center"
+      >
+        {t('textMoreTransactions')}
+      </Text>
+    </EtherscanLinkAddress>
+  );
+}
+
 export function Transactions() {
   const {
     gnosis: { safe },
     treasury: { transfers },
   } = useFractal();
+
+  if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
+
+  const results = transfers.results;
   return (
     <Box>
-      {transfers.length === 0 && <EmptyTransactions />}
-      {transfers.map(transfer => {
+      {results.map(transfer => {
         return (
           <TransferRow
             key={transfer.transactionHash}
+            type={transfer.type}
             isSent={safe.address === transfer.from}
             date={transfer.executionDate}
             displayAmount={
@@ -128,13 +168,14 @@ export function Transactions() {
                   )
             }
             transferAddress={safe.address === transfer.from ? transfer.to : transfer.from}
-            isLast={transfers[transfers.length - 1] === transfer}
+            isLast={results[results.length - 1] === transfer}
             transactionHash={transfer.transactionHash}
             tokenId={transfer?.tokenId}
             tokenInfo={transfer?.tokenInfo}
           />
         );
       })}
+      {transfers.next && <MoreTransactions address={safe.address} />}
     </Box>
   );
 }
