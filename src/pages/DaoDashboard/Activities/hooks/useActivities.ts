@@ -5,13 +5,13 @@ import { logError } from '../../../../helpers/errorLogging';
 import { GnosisAction } from '../../../../providers/fractal/constants';
 import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
 import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
-import { Activity, ActivityFilters } from '../../../../types';
+import { Activity } from '../../../../types';
 import { formatWeiToValue, getTimestampString } from '../../../../utils';
 import { SortBy } from '../ActivitySort';
 import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
 import { useFractal } from './../../../../providers/fractal/hooks/useFractal';
 
-export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
+export const useActivities = (sortBy: SortBy) => {
   const {
     state: { provider, chainId },
   } = useWeb3Provider();
@@ -183,9 +183,6 @@ export const useActivities = (filter: ActivityFilters[], sortBy: SortBy) => {
       setActivitiesLoading(false);
     }
   }, [sortedActivities]);
-
-  // @todo handles filtering
-  useEffect(() => {}, [filter]);
 
   return { sortedActivities, isActivitiesLoading };
 };
