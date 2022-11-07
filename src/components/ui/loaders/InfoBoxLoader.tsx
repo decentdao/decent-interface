@@ -10,7 +10,7 @@ const animationKeyframes = keyframes`
 
 const animation = `${animationKeyframes} 1s infinite`;
 
-export function InfoCardLoader() {
+export function InfoBoxLoader() {
   return (
     <InfoBox minHeight="auto">
       <Flex
