@@ -7,9 +7,14 @@ import useDisplayName from '../../../hooks/useDisplayName';
 import { Activity } from '../../../types';
 import { AcitivityCard } from './ActivityCard';
 
-function ActivityAddress({ address }: { address: string }) {
+function ActivityAddress({ address, addComma }: { address: string; addComma: boolean }) {
   const { displayName } = useDisplayName(address);
-  return <Text>{displayName}</Text>;
+  return (
+    <Text>
+      {displayName}
+      {addComma && ', '}
+    </Text>
+  );
 }
 
 function ActivityDescription({
@@ -28,6 +33,7 @@ function ActivityDescription({
       color="grayscale.100"
       textStyle="text-lg-mono-semibold"
       gap="0.5rem"
+      flexWrap="wrap"
     >
       <Text>{transferTypeStr}</Text>
       <Text>{totalAmounts.join(', ')}</Text>
@@ -35,10 +41,11 @@ function ActivityDescription({
       {transferAddresses.length > 2 ? (
         <Text>{transferAddresses.length} addresses</Text>
       ) : (
-        transferAddresses.map((address, i) => (
+        transferAddresses.map((address, i, arr) => (
           <ActivityAddress
             key={address + i}
             address={address}
+            addComma={i !== arr.length - 1}
           />
         ))
       )}
