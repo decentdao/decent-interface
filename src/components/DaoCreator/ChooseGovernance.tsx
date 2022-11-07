@@ -1,17 +1,17 @@
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { Divider, RadioGroup } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import {
-  getChainsWithMetadata,
-  getChainMetadataById,
-  isChainSupportedOnGnosis,
-  getSupportedChains,
   GNOSIS_UNSUPPORTED_CHAIN_IDS,
+  getChainMetadataById,
+  getChainsWithMetadata,
+  getSupportedChains,
+  isChainSupportedOnGnosis,
 } from '../../contexts/web3Data/chains';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import ContentBox from '../ui/ContentBox';
 import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorProviderActions, GovernanceTypes } from './provider/types';
-import { useTranslation } from 'react-i18next';
-import { Divider, RadioGroup } from '@chakra-ui/react';
 
 export function ChooseGovernance() {
   const {

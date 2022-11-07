@@ -1,11 +1,11 @@
-import { useLocalStorage } from './hooks/useLocalStorage';
-import './i18n';
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
-import { useActionToast } from './hooks/toasts/useActionToast';
+import './i18n';
 import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
-import FractalRoutes from './routes/FractalRoutes';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
+import { useActionToast } from './hooks/toasts/useActionToast';
+import { useLocalStorage } from './hooks/useLocalStorage';
+import FractalRoutes from './routes/FractalRoutes';
 
 function App() {
   const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(

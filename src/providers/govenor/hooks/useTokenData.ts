@@ -1,15 +1,15 @@
-import { useState, useEffect, useCallback, useMemo, useReducer } from 'react';
 import { BigNumber } from 'ethers';
+import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
 import { GovernorModule, VotesToken } from '../../../assets/typechain-types/module-governor';
 import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { logError } from '../../../helpers/errorLogging';
 import {
-  TransferListener,
+  ClaimListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
-  ClaimListener,
+  TransferListener,
 } from '../types';
-import { logError } from '../../../helpers/errorLogging';
 
 interface ITokenData {
   name: string | undefined;

@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useMemo, useReducer } from 'react';
-import Web3Modal from 'web3modal';
-import type { ConnectFn, DisconnectFn, InitialState } from './types';
-import { ActionTypes, Web3ProviderActions } from './actions';
-import { WEB3_MODAL_CONFIG } from './web3Modal.config';
-import { toast } from 'react-toastify';
-import { useListeners } from './hooks/useListeners';
-import { getSupportedChains } from './chains';
-import { Web3ProviderContext } from './hooks/useWeb3Provider';
 import { useTranslation } from 'react-i18next';
-import { getLocalFallbackProvider, getFallbackProvider, getInjectedProvider } from './utils';
+import { toast } from 'react-toastify';
+import Web3Modal from 'web3modal';
+import { ActionTypes, Web3ProviderActions } from './actions';
+import { getSupportedChains } from './chains';
+import { useListeners } from './hooks/useListeners';
+import { Web3ProviderContext } from './hooks/useWeb3Provider';
+import type { ConnectFn, DisconnectFn, InitialState } from './types';
+import { getFallbackProvider, getInjectedProvider, getLocalFallbackProvider } from './utils';
+import { WEB3_MODAL_CONFIG } from './web3Modal.config';
 
 const initialState: InitialState = {
   account: null,

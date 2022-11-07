@@ -1,20 +1,20 @@
-import { useCallback } from 'react';
 import { BigNumber, ethers } from 'ethers';
+import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { VotesToken__factory } from '../assets/typechain-types/fractal-contracts';
 import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
+import { OZLinearVoting__factory, Usul__factory } from '../assets/typechain-types/usul';
+import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
+import { useTransaction } from '../contexts/web3Data/transactions';
+import { buildContractCall, encodeMultiSend, getRandomBytes } from '../helpers';
+import { MetaTransaction } from '../types/transaction';
 import {
-  TokenGovernanceDAO,
   GnosisDAO,
   GovernanceTypes,
+  TokenGovernanceDAO,
 } from './../components/DaoCreator/provider/types/index';
 import { useAddresses } from './useAddresses';
-import { useTransaction } from '../contexts/web3Data/transactions';
-import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import useSafeContracts from './useSafeContracts';
-import { useTranslation } from 'react-i18next';
-import { buildContractCall, encodeMultiSend, getRandomBytes } from '../helpers';
-import { OZLinearVoting__factory, Usul__factory } from '../assets/typechain-types/usul';
-import { MetaTransaction } from '../types/transaction';
 
 type DeployDAOSuccessCallback = (daoAddress: string) => void;
 

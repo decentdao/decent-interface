@@ -1,10 +1,10 @@
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 
 import {
-  gnosisInitialState,
   GovernanceAction,
-  governanceInitialState,
   TreasuryAction,
+  gnosisInitialState,
+  governanceInitialState,
   treasuryInitialState,
 } from './constants';
 import useDAOName from './hooks/useDAOName';
@@ -14,7 +14,7 @@ import { useGnosisGovernance } from './hooks/useGnosisGovernance';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { governanceReducer, initializeGovernanceState } from './reducers/governance';
-import { initializeTreasuryState, TreasuryReducer } from './reducers/treasury';
+import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
 
 /**
  * Uses Context API to provider DAO information to app

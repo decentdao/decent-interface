@@ -1,19 +1,19 @@
-import { useMemo, useState } from 'react';
+import cx from 'classnames';
 import { utils } from 'ethers';
+import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import ContentBanner from '../../components/ui/ContentBanner';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import useAddress from '../../hooks/useAddress';
 import useDelegateVote from '../../hooks/useDelegateVote';
 import useDisplayName from '../../hooks/useDisplayName';
-import ContentBox from '../ui/ContentBox';
-import ContentBanner from '../../components/ui/ContentBanner';
-import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
-import Input from '../ui/forms/Input';
-import { SecondaryButton } from '../ui/forms/Button';
-import InputBox from '../ui/forms/InputBox';
-import cx from 'classnames';
-import useAddress from '../../hooks/useAddress';
-import DataLoadingWrapper from '../ui/loaders/DataLoadingWrapper';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
-import { useTranslation } from 'react-i18next';
+import ContentBox from '../ui/ContentBox';
+import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
+import { SecondaryButton } from '../ui/forms/Button';
+import Input from '../ui/forms/Input';
+import InputBox from '../ui/forms/InputBox';
+import DataLoadingWrapper from '../ui/loaders/DataLoadingWrapper';
 
 function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');

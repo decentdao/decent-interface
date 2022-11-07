@@ -1,11 +1,11 @@
+import { ChooseGovernance } from './ChooseGovernance';
 import DAODetails from './DAODetails';
+import { SubsidiaryFunding } from './SubsidiaryFunding';
+import { GnosisConfig } from './gnosis/GnosisConfig';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorSteps } from './provider/types';
-import { SubsidiaryFunding } from './SubsidiaryFunding';
-import TokenDetails from './tokenVotingGovernance/TokenDetails';
-import { ChooseGovernance } from './ChooseGovernance';
-import { GnosisConfig } from './gnosis/GnosisConfig';
 import GovernanceDetails from './tokenVotingGovernance/GovernanceDetails';
+import TokenDetails from './tokenVotingGovernance/TokenDetails';
 
 function StepController() {
   const { state } = useCreator();

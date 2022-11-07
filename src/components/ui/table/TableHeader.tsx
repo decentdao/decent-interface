@@ -1,6 +1,6 @@
+import cx from 'classnames';
 import { Fragment } from 'react';
 import { TableHeaderItem } from './TableHeaderItem';
-import cx from 'classnames';
 interface ITableHeader {
   gridType: string;
   titles: string[];
