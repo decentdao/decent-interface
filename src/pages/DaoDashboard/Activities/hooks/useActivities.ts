@@ -45,7 +45,7 @@ export const useActivities = (sortBy: SortBy) => {
               if (prev.has(constants.AddressZero)) {
                 const prevValue = prev.get(constants.AddressZero);
                 prev.set(constants.AddressZero, {
-                  bn: prevValue.add(BigNumber.from(cur.value)),
+                  bn: prevValue.bn.add(BigNumber.from(cur.value)),
                   symbol: 'ETHER',
                   decimals: 18,
                 });
@@ -57,7 +57,7 @@ export const useActivities = (sortBy: SortBy) => {
               });
             }
             if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
-              prev.set(cur.tokenAddress + cur.tokenId, {
+              prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
                 bn: BigNumber.from(1),
                 symbol: cur.tokenInfo.symbol,
                 decimals: 0,
