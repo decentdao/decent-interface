@@ -106,7 +106,10 @@ export const useActivities = (sortBy: SortBy) => {
     }
     try {
       const { data } = await axios.get<GnosisTransactionsResponse>(
-        buildGnosisApiUrl(chainId, `/safes/${safe.address}/all-transactions/`)
+        buildGnosisApiUrl(
+          chainId,
+          `/safes/${safe.address}/all-transactions/?limit=100&executed=true`
+        )
       );
       gnosisDispatch({
         type: GnosisAction.SET_SAFE_TRANSACTIONS,
