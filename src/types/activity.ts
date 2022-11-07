@@ -17,6 +17,16 @@ export type Activity = {
   transferAddresses: string[];
   transferAmountTotals: string[];
   eventDate: string;
-  eventType: string;
+  eventType: ActivityEventType;
   isDeposit: boolean;
 };
+
+export enum ActivityEventType {
+  Treasury,
+}
+
+export enum GnosisTransferType {
+  ERC721 = 'ERC721_TRANSFER',
+  ERC20 = 'ERC20_TRANSFER',
+  ETHER = 'ETHER_TRANSFER',
+}

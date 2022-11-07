@@ -5,7 +5,7 @@ import { logError } from '../../../../helpers/errorLogging';
 import { GnosisAction } from '../../../../providers/fractal/constants';
 import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
 import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
-import { Activity } from '../../../../types';
+import { Activity, ActivityEventType, GnosisTransferType } from '../../../../types';
 import { formatWeiToValue, getTimestampString } from '../../../../utils';
 import { SortBy } from '../ActivitySort';
 import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
@@ -40,7 +40,7 @@ export const useActivities = (sortBy: SortBy) => {
            * along with the symbol and decimals of those tokens
            */
           const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
-            if (cur.type === 'ETHER_TRANSFER' && cur.value) {
+            if (cur.type === GnosisTransferType.ETHER && cur.value) {
               if (prev.has(constants.AddressZero)) {
                 const prevValue = prev.get(constants.AddressZero);
                 prev.set(constants.AddressZero, {
@@ -55,14 +55,14 @@ export const useActivities = (sortBy: SortBy) => {
                 decimals: 18,
               });
             }
-            if (cur.type === 'ERC721_TRANSFER' && cur.tokenInfo && cur.tokenId) {
+            if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
               prev.set(cur.tokenAddress + cur.tokenId, {
                 bn: BigNumber.from(1),
                 symbol: cur.tokenInfo.symbol,
                 decimals: 0,
               });
             }
-            if (cur.type === 'ERC20_TRANSFER' && cur.value && cur.tokenInfo) {
+            if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
               if (prev.has(cur.tokenInfo.address)) {
                 const prevValue = prev.get(cur.tokenInfo.address);
                 prev.set(cur.tokenInfo.address, {
@@ -95,7 +95,7 @@ export const useActivities = (sortBy: SortBy) => {
           return {
             transaction,
             eventDate: getTimestampString(new Date(transaction.executionDate)),
-            eventType: 'Treasury',
+            eventType: ActivityEventType.Treasury,
             transferAddresses,
             transferAmountTotals: transferAmountTotalsArr,
             isDeposit,
