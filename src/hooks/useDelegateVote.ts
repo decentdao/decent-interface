@@ -1,23 +1,26 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { useGovenorModule } from '../providers/govenor/hooks/useGovenorModule';
+import { VotesToken } from '../assets/typechain-types/fractal-contracts';
 
 const useDelegateVote = ({
   delegatee,
-  successCallback,
+  votingTokenContract,
+  setPending,
 }: {
   delegatee: string | undefined;
-  successCallback: () => void;
+  votingTokenContract: VotesToken | undefined;
+  setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const {
-    votingToken: { votingTokenContract },
-  } = useGovenorModule();
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
+
+  useEffect(() => {
+    setPending(contractCallPending);
+  }, [setPending, contractCallPending]);
 
   const { t } = useTranslation('transaction');
 
-  let delegateVote = useCallback(() => {
+  const delegateVote = useCallback(() => {
     if (votingTokenContract === undefined || delegatee === undefined) {
       return;
     }
@@ -27,11 +30,10 @@ const useDelegateVote = ({
       pendingMessage: t('pendingDelegateVote'),
       failedMessage: t('failedDelegateVote'),
       successMessage: t('successDelegateVote'),
-      successCallback: () => successCallback(),
     });
-  }, [contractCallDelegateVote, votingTokenContract, delegatee, successCallback, t]);
+  }, [contractCallDelegateVote, votingTokenContract, delegatee, t]);
 
-  return [delegateVote, contractCallPending] as const;
+  return delegateVote;
 };
 
 export default useDelegateVote;
