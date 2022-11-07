@@ -25,6 +25,7 @@ export function Activities() {
           setSortBy={setSortBy}
         />
       </Flex>
+
       <Flex
         flexDirection="column"
         gap="1rem"
