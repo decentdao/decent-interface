@@ -10,9 +10,6 @@ export function Activities() {
 
   const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
 
-  if (isActivitiesLoading) {
-    return <InfoBoxLoader />;
-  }
   return (
     <Box>
       <Flex
@@ -25,18 +22,21 @@ export function Activities() {
           setSortBy={setSortBy}
         />
       </Flex>
-
-      <Flex
-        flexDirection="column"
-        gap="1rem"
-      >
-        {sortedActivities.map((asset, i) => (
-          <ActivityTreasury
-            key={i}
-            asset={asset}
-          />
-        ))}
-      </Flex>
+      {isActivitiesLoading ? (
+        <InfoBoxLoader />
+      ) : (
+        <Flex
+          flexDirection="column"
+          gap="1rem"
+        >
+          {sortedActivities.map((asset, i) => (
+            <ActivityTreasury
+              key={i}
+              asset={asset}
+            />
+          ))}
+        </Flex>
+      )}
     </Box>
   );
 }
