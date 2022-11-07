@@ -3,8 +3,14 @@ import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
+import useDisplayName from '../../../hooks/useDisplayName';
 import { Activity } from '../../../types';
 import { AcitivityCard } from './ActivityCard';
+
+function ActivityAddress({ address }: { address: string }) {
+  const { displayName } = useDisplayName(address);
+  return <Text>{displayName}</Text>;
+}
 
 function ActivityDescription({
   transferTypeStr,
@@ -27,19 +33,14 @@ function ActivityDescription({
       <Text>{totalAmounts.join(', ')}</Text>
       <Text>{transferDirStr}</Text>
       {transferAddresses.length > 2 ? (
-        <Text
-          color="grayscale.100"
-          textStyle="text-lg-mono-semibold"
-        >
-          {transferAddresses.length} addresses
-        </Text>
+        <Text>{transferAddresses.length} addresses</Text>
       ) : (
-        <Text
-          color="grayscale.100"
-          textStyle="text-lg-mono-semibold"
-        >
-          {transferAddresses.join()}
-        </Text>
+        transferAddresses.map((address, i) => (
+          <ActivityAddress
+            key={address + i}
+            address={address}
+          />
+        ))
       )}
     </Flex>
   );

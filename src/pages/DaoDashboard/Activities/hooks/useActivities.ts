@@ -13,7 +13,7 @@ import { useFractal } from './../../../../providers/fractal/hooks/useFractal';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
-    state: { provider, chainId },
+    state: { chainId },
   } = useWeb3Provider();
   const {
     gnosis: { safe, transactions },
@@ -23,19 +23,6 @@ export const useActivities = (sortBy: SortBy) => {
   const [sortedActivities, setSortedActivities] = useState<Activity[]>([]);
   const [parsedActivities, setParsedActivities] = useState<Activity[]>([]);
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
-
-  const getAddressDisplay = useCallback(
-    async (account: string) => {
-      if (provider) {
-        const ensName = await provider.lookupAddress(account);
-        if (ensName) {
-          return ensName;
-        }
-      }
-      return `${account.substring(0, 8)}...${account.slice(-4)}`;
-    },
-    [provider]
-  );
 
   const parseActivities = useCallback(async () => {
     if (![...transactions.results].length || !safe) {
@@ -101,29 +88,22 @@ export const useActivities = (sortBy: SortBy) => {
               return `${totalAmount} ${symbol}`;
             }
           );
-          const transferAddressesDisplayArr = await Promise.all(
-            transaction.transfers.map(async transfer => {
-              const addressOrName = await getAddressDisplay(
-                transfer.to.toLowerCase() === safe.address!.toLowerCase()
-                  ? transfer.from
-                  : transfer.to
-              );
-              return addressOrName;
-            })
+          const transferAddresses = transaction.transfers.map(transfer =>
+            transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
           );
 
           return {
             transaction,
             eventDate: getTimestampString(new Date(transaction.executionDate)),
             eventType: 'Treasury',
-            transferAddresses: transferAddressesDisplayArr,
+            transferAddresses,
             transferAmountTotals: transferAmountTotalsArr,
             isDeposit,
           };
         })
       )
     );
-  }, [safe, getAddressDisplay, transactions]);
+  }, [safe, transactions]);
 
   const getGnosisSafeTransactions = useCallback(async () => {
     if (!safe.address) {
