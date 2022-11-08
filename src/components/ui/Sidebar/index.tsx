@@ -9,9 +9,9 @@ import {
   Treasury,
   Tree,
 } from '@decent-org/fractal-ui';
-import { Fragment } from 'react';
+import { Fragment, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../constants/url';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
@@ -37,6 +37,20 @@ function Sidebar() {
       safe: { address },
     },
   } = useFractal();
+
+  const { pathname } = useLocation();
+
+  const activeColors = useCallback(
+    (key: string) => {
+      return {
+        color: pathname === DAO_ROUTES[key].relative(address!) ? 'gold.500' : 'inherit',
+        _hover: {
+          color: pathname === DAO_ROUTES[key].relative(address!) ? 'gold.500-hover' : 'inherit',
+        },
+      };
+    },
+    [pathname, address]
+  );
   return (
     <Flex
       alignItems="center"
@@ -68,10 +82,12 @@ function Sidebar() {
               <Link
                 data-testid="sidebar-daoHomeLink"
                 to={DAO_ROUTES.dao.relative(address)}
+                aria-label="DAO Dashboard Link"
               >
                 <Home
                   boxSize="1.5rem"
                   minWidth="auto"
+                  {...activeColors('dao')}
                 />
               </Link>
             </SidebarTooltipWrapper>
@@ -79,10 +95,12 @@ function Sidebar() {
               <Link
                 data-testid="sidebar-nodes"
                 to={DAO_ROUTES.nodes.relative(address)}
+                aria-label="Nodes Link"
               >
                 <Tree
                   boxSize="1.5rem"
                   minWidth="auto"
+                  {...activeColors('nodes')}
                 />
               </Link>
             </SidebarTooltipWrapper>
@@ -90,10 +108,12 @@ function Sidebar() {
               <Link
                 data-testid="sidebar-proposalsLink"
                 to={DAO_ROUTES.proposals.relative(address)}
+                aria-label="Proposals Link"
               >
                 <Proposals
                   boxSize="1.5rem"
                   minWidth="auto"
+                  {...activeColors('proposals')}
                 />
               </Link>
             </SidebarTooltipWrapper>
@@ -101,11 +121,12 @@ function Sidebar() {
               <Link
                 data-testid="sidebar-treasuryLink"
                 to={DAO_ROUTES.treasury.relative(address)}
+                aria-label="Treasury Link"
               >
                 <Treasury
-                  aria-label="Treasury Link"
                   boxSize="1.5rem"
                   minWidth="auto"
+                  {...activeColors('treasury')}
                 />
               </Link>
             </SidebarTooltipWrapper>
