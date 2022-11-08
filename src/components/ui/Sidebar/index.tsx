@@ -75,23 +75,23 @@ function Sidebar() {
                 />
               </Link>
             </SidebarTooltipWrapper>
-            <SidebarTooltipWrapper label={t('proposals')}>
-              <Link
-                data-testid="sidebar-proposalsLink"
-                to={DAO_ROUTES.proposals.relative(address)}
-              >
-                <Proposals
-                  boxSize="1.5rem"
-                  minWidth="auto"
-                />
-              </Link>
-            </SidebarTooltipWrapper>
             <SidebarTooltipWrapper label={t('nodes')}>
               <Link
                 data-testid="sidebar-nodes"
                 to={DAO_ROUTES.nodes.relative(address)}
               >
                 <Tree
+                  boxSize="1.5rem"
+                  minWidth="auto"
+                />
+              </Link>
+            </SidebarTooltipWrapper>
+            <SidebarTooltipWrapper label={t('proposals')}>
+              <Link
+                data-testid="sidebar-proposalsLink"
+                to={DAO_ROUTES.proposals.relative(address)}
+              >
+                <Proposals
                   boxSize="1.5rem"
                   minWidth="auto"
                 />
