@@ -1,3 +1,7 @@
+import { FractalModule } from '../../../assets/typechain-types/fractal-contracts';
+import { Usul } from '../../../assets/typechain-types/usul';
+import { IGoveranceTokenData } from '../hooks/useGovernanceTokenData';
+
 export enum GovernanceTypes {
   GNOSIS_SAFE = 'safe',
   GNOSIS_SAFE_USUL = 'usul safe',
@@ -29,6 +33,7 @@ export interface IModuleData {
 }
 
 export interface IGnosisModuleData {
+  moduleContract: Usul | FractalModule | undefined;
   moduleAddress: string;
   moduleType: GnosisModuleType;
 }
@@ -54,6 +59,7 @@ export interface IGovernance {
   isCreateSubDAOPending?: boolean;
   proposalList?: any[];
   governanceIsLoading: boolean;
+  governanceToken?: IGoveranceTokenData;
 }
 
 export interface GnosisConfig {
