@@ -1,13 +1,13 @@
 import { Route, Routes } from 'react-router-dom';
 import DaoCreate from '../pages/DaoCreate';
 import DAOSubRoutes from './DAOSubRoutes';
-import { DAO_ROUTES } from './constants';
+import { BASE_ROUTES, DAO_ROUTES } from './constants';
 
 function DAORoutes() {
   return (
     <Routes>
       <Route
-        path={DAO_ROUTES.new.path}
+        path={BASE_ROUTES.daosNew}
         element={<DaoCreate />}
       />
       <Route
