@@ -4,6 +4,7 @@ import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
 import ProposalCreate from '../pages/ProposalCreate';
 import { Governance } from '../pages/Proposals';
+import SubDaoCreate from '../pages/SubDaoCreate';
 import { DAO_ROUTES } from './constants';
 
 function DAOSubRoutes() {
@@ -33,6 +34,10 @@ function DAOSubRoutes() {
         <Route
           path={DAO_ROUTES.proposalNew.path}
           element={<ProposalCreate />}
+        />
+        <Route
+          path={DAO_ROUTES.proposalSubDao.path}
+          element={<SubDaoCreate />}
         />
       </Routes>
     </DAOController>
