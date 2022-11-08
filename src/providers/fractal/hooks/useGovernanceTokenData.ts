@@ -7,6 +7,7 @@ import {
   Usul,
 } from '../../../assets/typechain-types/usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import useSafeContracts from '../../../hooks/useSafeContracts';
 import { formatCoin } from '../../../utils/numberFormats';
 import {
   DelegateChangedListener,
@@ -122,6 +123,8 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const { zodiacModuleProxyFactoryContract, linearVotingMasterCopyContract } = useSafeContracts();
+
   const usulModule = useMemo(
     () => modules.find(module => module.moduleType === GnosisModuleType.USUL)?.moduleContract,
     [modules]
@@ -129,21 +132,47 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
 
   // set voting contract
   useEffect(() => {
-    if (!usulModule || !signerOrProvider) {
+    if (
+      !usulModule ||
+      !zodiacModuleProxyFactoryContract ||
+      !linearVotingMasterCopyContract ||
+      !signerOrProvider
+    ) {
       return;
     }
 
+    // This assumes that there is a single voting strategy installed on the Usul module
+    // If the first strategy contract isn't the OZ Linear Voting contract, then the voting contract is set to undefined
     (async () => {
-      // todo: This assumes that only one strategy has been enabled, but Usul supports more than one
       const votingContractAddress = await usulModule
         .queryFilter(usulModule.filters.EnabledStrategy())
         .then(strategiesEnabled => {
           return strategiesEnabled[0].args.strategy;
         });
 
-      setVotingContract(OZLinearVoting__factory.connect(votingContractAddress, signerOrProvider));
+      const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
+        votingContractAddress,
+        null
+      );
+
+      const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract
+        .queryFilter(filter)
+        .then(proxiesCreated => {
+          return proxiesCreated[0].args.masterCopy;
+        });
+
+      if (votingContractMasterCopyAddress === linearVotingMasterCopyContract.address) {
+        setVotingContract(OZLinearVoting__factory.connect(votingContractAddress, signerOrProvider));
+      } else {
+        setVotingContract(undefined);
+      }
     })();
-  }, [signerOrProvider, usulModule]);
+  }, [
+    linearVotingMasterCopyContract,
+    signerOrProvider,
+    usulModule,
+    zodiacModuleProxyFactoryContract,
+  ]);
 
   // set token contract
   useEffect(() => {
@@ -291,7 +320,10 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
       _fromDelegate: string,
       toDelegate: string
     ) => {
-      dispatch({ type: TokenActions.UPDATE_DELEGATEE, payload: toDelegate });
+      dispatch({
+        type: TokenActions.UPDATE_DELEGATEE,
+        payload: toDelegate,
+      });
     };
 
     tokenContract.on(filter, listenerCallback);
