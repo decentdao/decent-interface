@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
 import { VotesToken, VotesToken__factory } from '../../../assets/typechain-types/fractal-contracts';
 import {
@@ -6,8 +6,8 @@ import {
   OZLinearVoting__factory,
   Usul,
 } from '../../../assets/typechain-types/usul';
-
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { formatCoin } from '../../../utils/numberFormats';
 import {
   DelegateChangedListener,
   DelegateVotesChangedListener,
@@ -118,6 +118,7 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
   const [votingContract, setVotingContract] = useState<OZLinearVoting>();
   const [tokenContract, setTokenContract] = useState<VotesToken>();
   const [decimals, setDecimals] = useState<number>();
+  const [symbol, setSymbol] = useState<string>();
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -157,6 +158,7 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
     })();
   }, [signerOrProvider, votingContract]);
 
+  // set decimals
   useEffect(() => {
     if (!tokenContract) {
       setDecimals(undefined);
@@ -164,6 +166,16 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
     }
 
     tokenContract.decimals().then(setDecimals);
+  }, [tokenContract]);
+
+  // set symbol
+  useEffect(() => {
+    if (!tokenContract) {
+      setSymbol(undefined);
+      return;
+    }
+
+    tokenContract.symbol().then(setSymbol);
   }, [tokenContract]);
 
   // dispatch voting contract
@@ -221,7 +233,6 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
     const tokenBalance = await tokenContract.balanceOf(account);
     const tokenDelegatee = await tokenContract.delegates(account);
     const tokenVotingWeight = await tokenContract.getVotes(account);
-    const tokenDecimals = await tokenContract.decimals();
 
     const isDelegatesSet = !!(
       await tokenContract.queryFilter(tokenContract.filters.DelegateChanged())
@@ -231,14 +242,14 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
       type: TokenActions.UPDATE_ACCOUNT,
       payload: {
         userBalance: tokenBalance,
-        userBalanceString: ethers.utils.formatUnits(tokenBalance, tokenDecimals),
+        userBalanceString: formatCoin(tokenBalance, decimals, symbol),
         delegatee: tokenDelegatee,
         votingWeight: tokenVotingWeight,
-        votingWeightString: ethers.utils.formatUnits(tokenVotingWeight, tokenDecimals),
+        votingWeightString: formatCoin(tokenVotingWeight, decimals, symbol),
         isDelegatesSet,
       },
     });
-  }, [tokenContract, account]);
+  }, [tokenContract, account, decimals, symbol]);
 
   // get token account data
   useEffect(() => {
@@ -307,7 +318,7 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
         type: TokenActions.UPDATE_VOTING_WEIGHTS,
         payload: {
           votingWeight: currentBalance,
-          votingWeightString: ethers.utils.formatUnits(currentBalance, decimals),
+          votingWeightString: formatCoin(currentBalance, decimals, symbol),
         },
       });
     };
@@ -317,7 +328,7 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
     return () => {
       tokenContract.off(filter, callback);
     };
-  }, [account, decimals, tokenContract]);
+  }, [account, decimals, symbol, tokenContract]);
 
   const data = useMemo(() => state, [state]);
   return data;
