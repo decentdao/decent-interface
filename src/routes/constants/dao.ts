@@ -28,4 +28,8 @@ export const DAO_ROUTES = {
     relative: (daoAddress: string) => `/daos/${daoAddress}/proposals/new`,
     path: 'proposals/new',
   },
+  proposalSubDao: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/proposals/new/subdao`,
+    path: 'proposals/new/subdao',
+  },
 };
