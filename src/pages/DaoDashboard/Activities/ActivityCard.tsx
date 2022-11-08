@@ -10,12 +10,7 @@ interface IAcitivityCard {
   Badge?: ReactNode;
 }
 
-export function AcitivityCard({
-  Badge,
-  eventDate = '2022-10-03',
-  description,
-  RightElement,
-}: IAcitivityCard) {
+export function AcitivityCard({ Badge, eventDate, description, RightElement }: IAcitivityCard) {
   return (
     <ActivityBox>
       <Flex
