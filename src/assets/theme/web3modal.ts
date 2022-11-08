@@ -39,7 +39,7 @@ export default {
     borderColor: 'gold.500 !important',
   },
 
-  '.walletconnect-modal__base > div:nth-child(3)': {
+  '.walletconnect-modal__base > div:nth-of-type(3)': {
     backgroundColor: 'black.400 !important',
     borderRadius: '0.5rem !important',
     padding: '0.5rem !important',
