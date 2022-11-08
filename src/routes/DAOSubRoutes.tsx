@@ -15,7 +15,7 @@ function DAOSubRoutes() {
           element={<DaoDashboard />}
         />
         <Route
-          path={DAO_ROUTES.activties.path}
+          path={DAO_ROUTES.nodes.path}
           element={<div />}
         />
         <Route
