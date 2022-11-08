@@ -4,7 +4,7 @@ import { Info } from './Info';
 
 export function DaoDashboard() {
   return (
-    <Box py="1.5rem">
+    <Box p="1.5rem">
       <Info />
       <Activities />
     </Box>

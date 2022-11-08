@@ -13,20 +13,20 @@ export function Info() {
     >
       <Flex
         flexWrap="wrap"
-        gap="1.5rem"
+        gap="1rem"
         justifyContent="center"
         mb="1rem"
       >
-        <InfoBox minWidth={{ sm: '90%', xl: '41.5rem' }}>
+        <InfoBox minWidth={{ sm: '100%', xl: '34.5%', '2xl': '41rem' }}>
           <InfoDAO />
         </InfoBox>
-        <InfoBox minWidth={{ sm: '90%', lg: '44%', xl: '14.4375rem' }}>
+        <InfoBox minWidth={{ sm: '100%', lg: '34.5%', xl: '23.5%', '2xl': '14rem' }}>
           <InfoGovernance />
         </InfoBox>
-        <InfoBox minWidth={{ sm: '43%', lg: '44%', xl: '10.3125rem' }}>
+        <InfoBox minWidth={{ sm: '100%', lg: '32%', xl: '21%', '2xl': '10rem' }}>
           <InfoProposals />
         </InfoBox>
-        <InfoBox minWidth={{ sm: '43%', lg: '43%', xl: '87%', '2xl': '9.25rem' }}>
+        <InfoBox minWidth={{ sm: '100%', lg: '30%', xl: '15%', '2xl': '9rem' }}>
           <InfoTreasury />
         </InfoBox>
       </Flex>
