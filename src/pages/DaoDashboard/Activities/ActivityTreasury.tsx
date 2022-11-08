@@ -28,6 +28,7 @@ function ActivityDescription({
   totalAmounts: string[];
   transferAddresses: string[];
 }) {
+  const { t } = useTranslation();
   return (
     <Flex
       color="grayscale.100"
@@ -39,7 +40,7 @@ function ActivityDescription({
       <Text>{totalAmounts.join(', ')}</Text>
       <Text>{transferDirStr}</Text>
       {transferAddresses.length > 2 ? (
-        <Text>{transferAddresses.length} addresses</Text>
+        <Text>{t('addresses', { numOfAddresses: transferAddresses.length })}</Text>
       ) : (
         transferAddresses.map((address, i, arr) => (
           <ActivityAddress
