@@ -15,6 +15,10 @@ function DAORoutes() {
           element={<DaoDashboard />}
         />
         <Route
+          path={DAO_ROUTES.new.path}
+          element={<div />}
+        />
+        <Route
           path={DAO_ROUTES.nodes.path}
           element={<div />}
         />
