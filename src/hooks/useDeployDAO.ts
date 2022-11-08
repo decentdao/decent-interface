@@ -7,6 +7,8 @@ import { OZLinearVoting__factory, Usul__factory } from '../assets/typechain-type
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../helpers';
+import useProposals from '../providers/fractal/hooks/useProposals';
+import { ProposalExecuteData } from '../types/proposal';
 import { MetaTransaction } from '../types/transaction';
 import {
   GnosisDAO,
@@ -34,6 +36,7 @@ const useDeployDAO = () => {
   } = useSafeContracts();
 
   const [contractCallDeploy, contractCallPending] = useTransaction();
+  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useProposals();
 
   const { t } = useTranslation('transaction');
   const { AddressZero, HashZero } = ethers.constants;
@@ -120,7 +123,11 @@ const useDeployDAO = () => {
   );
 
   const deployGnosisSafe = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
+    (
+      daoData: GnosisDAO | TokenGovernanceDAO,
+      successCallback: DeployDAOSuccessCallback | (() => void),
+      isSubDao: boolean
+    ) => {
       const deploy = async () => {
         if (!multiSendContract || !fractalNameRegistryContract || !signerOrProvider) {
           return;
@@ -176,30 +183,48 @@ const useDeployDAO = () => {
 
         const txs: MetaTransaction[] = [createSafeTx, execInternalSafeTx];
         const safeTx = encodeMultiSend(txs);
-
-        contractCallDeploy({
-          contractFn: () => multiSendContract.multiSend(safeTx),
-          pendingMessage: t('pendingDeployGnosis'),
-          failedMessage: t('failedDeployGnosis'),
-          successMessage: t('successDeployGnosis'),
-          successCallback: () => successCallback(predictedGnosisSafeAddress),
-        });
+        if (isSubDao) {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          const successCallback = () => {
+            console.log('hello');
+          };
+          const proposalData: ProposalExecuteData = {
+            targets: [multiSendContract.address],
+            values: [BigNumber.from('0')],
+            calldatas: [multiSendContract.interface.encodeFunctionData('multiSend', [safeTx])],
+            description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
+          };
+          submitProposal({ proposalData, successCallback });
+        } else {
+          contractCallDeploy({
+            contractFn: () => multiSendContract.multiSend(safeTx),
+            pendingMessage: t('pendingDeployGnosis'),
+            failedMessage: t('failedDeployGnosis'),
+            successMessage: t('successDeployGnosis'),
+            successCallback: () => successCallback(predictedGnosisSafeAddress),
+          });
+        }
       };
 
       deploy();
     },
     [
-      buildDeploySafeTx,
       multiSendContract,
-      contractCallDeploy,
-      signerOrProvider,
-      t,
-      AddressZero,
       fractalNameRegistryContract,
+      signerOrProvider,
+      buildDeploySafeTx,
+      AddressZero,
+      submitProposal,
+      contractCallDeploy,
+      t,
     ]
   );
   const deployGnosisSafeWithUsul = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: DeployDAOSuccessCallback) => {
+    (
+      daoData: GnosisDAO | TokenGovernanceDAO,
+      successCallback: DeployDAOSuccessCallback,
+      isSubDao: boolean
+    ) => {
       const deploy = async () => {
         if (
           !account ||
@@ -426,45 +451,64 @@ const useDeployDAO = () => {
         ];
         const safeTx = encodeMultiSend(txs);
 
-        contractCallDeploy({
-          contractFn: () => multiSendContract.multiSend(safeTx),
-          pendingMessage: t('pendingDeployGnosis'),
-          failedMessage: t('failedDeployGnosis'),
-          successMessage: t('successDeployGnosis'),
-          successCallback: () => successCallback(predictedGnosisSafeAddress),
-        });
+        if (isSubDao) {
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          const successCallback = () => {
+            console.log('hello');
+          };
+          const proposalData: ProposalExecuteData = {
+            targets: [multiSendContract.address],
+            values: [BigNumber.from('0')],
+            calldatas: [multiSendContract.interface.encodeFunctionData('multiSend', [safeTx])],
+            description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
+          };
+          submitProposal({ proposalData, successCallback });
+        } else {
+          contractCallDeploy({
+            contractFn: () => multiSendContract.multiSend(safeTx),
+            pendingMessage: t('pendingDeployGnosis'),
+            failedMessage: t('failedDeployGnosis'),
+            successMessage: t('successDeployGnosis'),
+            successCallback: () => successCallback(predictedGnosisSafeAddress),
+          });
+        }
       };
 
       deploy();
     },
     [
-      contractCallDeploy,
-      buildDeploySafeTx,
+      account,
+      gnosisSafeFactoryContract,
+      gnosisSafeSingletonContract?.address,
       usulMasterCopyContract,
       zodiacModuleProxyFactoryContract,
-      gnosisSafeFactoryContract,
       linearVotingMasterCopyContract,
-      gnosisSafeSingletonContract,
       multiSendContract,
-      account,
       votesMasterCopy,
-      signerOrProvider,
       fractalNameRegistryContract,
-      t,
-      AddressZero,
+      signerOrProvider,
+      buildDeploySafeTx,
       defaultAbiCoder,
       getCreate2Address,
       solidityKeccak256,
+      AddressZero,
+      submitProposal,
+      contractCallDeploy,
+      t,
     ]
   );
 
   const deployDao = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: DeployDAOSuccessCallback) => {
+    (
+      daoData: TokenGovernanceDAO | GnosisDAO,
+      successCallback: (daoAddress: string) => void | (() => void),
+      isSubDao: boolean
+    ) => {
       switch (daoData.governance) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
-          return deployGnosisSafeWithUsul(daoData, successCallback);
+          return deployGnosisSafeWithUsul(daoData, successCallback, isSubDao);
         case GovernanceTypes.GNOSIS_SAFE:
-          return deployGnosisSafe(daoData, successCallback);
+          return deployGnosisSafe(daoData, successCallback, isSubDao);
       }
     },
     [deployGnosisSafeWithUsul, deployGnosisSafe]
