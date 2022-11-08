@@ -1,4 +1,7 @@
 import { Dispatch, useEffect } from 'react';
+import { FractalModule__factory } from '../../../assets/typechain-types/fractal-contracts';
+import { Usul__factory } from '../../../assets/typechain-types/usul';
+import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useSafeContracts from '../../../hooks/useSafeContracts';
 import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
@@ -7,6 +10,10 @@ export function useGnosisModuleTypes(
   gnosisDispatch: Dispatch<GnosisActions>,
   moduleAddresses?: string[]
 ) {
+  const {
+    state: { signerOrProvider },
+  } = useWeb3Provider();
+
   const {
     zodiacModuleProxyFactoryContract,
     usulMasterCopyContract,
@@ -18,7 +25,8 @@ export function useGnosisModuleTypes(
       !zodiacModuleProxyFactoryContract ||
       !usulMasterCopyContract ||
       !fractalModuleMasterCopyContract ||
-      !moduleAddresses
+      !moduleAddresses ||
+      !signerOrProvider
     ) {
       return;
     }
@@ -39,17 +47,29 @@ export function useGnosisModuleTypes(
         moduleAddresses.map(async moduleAddress => {
           const masterCopyAddress = await getMasterCopyAddress(moduleAddress);
 
-          const moduleType =
-            masterCopyAddress === usulMasterCopyContract.address
-              ? GnosisModuleType.USUL
-              : masterCopyAddress === fractalModuleMasterCopyContract.address
-              ? GnosisModuleType.FRACTAL
-              : GnosisModuleType.UNKNOWN;
+          let module: IGnosisModuleData;
 
-          return {
-            moduleAddress,
-            moduleType,
-          } as IGnosisModuleData;
+          if (masterCopyAddress === usulMasterCopyContract.address) {
+            module = {
+              moduleContract: Usul__factory.connect(moduleAddress, signerOrProvider),
+              moduleAddress: moduleAddress,
+              moduleType: GnosisModuleType.USUL,
+            };
+          } else if (masterCopyAddress === fractalModuleMasterCopyContract.address) {
+            module = {
+              moduleContract: FractalModule__factory.connect(moduleAddress, signerOrProvider),
+              moduleAddress: moduleAddress,
+              moduleType: GnosisModuleType.FRACTAL,
+            };
+          } else {
+            module = {
+              moduleContract: undefined,
+              moduleAddress: moduleAddress,
+              moduleType: GnosisModuleType.UNKNOWN,
+            };
+          }
+
+          return module;
         })
       ).then(modules => {
         gnosisDispatch({
@@ -64,5 +84,6 @@ export function useGnosisModuleTypes(
     fractalModuleMasterCopyContract,
     moduleAddresses,
     gnosisDispatch,
+    signerOrProvider,
   ]);
 }
