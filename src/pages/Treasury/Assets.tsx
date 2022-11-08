@@ -1,4 +1,4 @@
-import { Box, Divider, HStack, Image, Text } from '@chakra-ui/react';
+import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import coinDefault from '../../assets/images/coin-icon-default.svg';
@@ -7,7 +7,6 @@ import nftDefault from '../../assets/images/nft-image-default.svg';
 import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../components/ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
-import TooltipWrapper from '../../components/ui/TooltipWrapper';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../providers/fractal/types';
 import { formatPercentage, formatCoin, formatUSD } from '../../utils/numberFormats';
@@ -129,13 +128,12 @@ function CoinRow({
           {asset.formattedTotal}
         </Text>
         <Text variant="infoSmall">
-          <TooltipWrapper
-            content={`1 ${asset.symbol} = ${formatUSD(asset.fiatConversion)}`}
-            isVisible
+          <Tooltip
+            label={`1 ${asset.symbol} = ${formatUSD(asset.fiatConversion)}`}
             placement="top-start"
           >
             {formatUSD(asset.fiatValue)}
-          </TooltipWrapper>
+          </Tooltip>
         </Text>
       </Box>
       <Box w="33%">
