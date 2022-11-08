@@ -4,10 +4,10 @@ import {
   Documents,
   FractalBrand,
   Home,
-  Notifications,
   Proposals,
   SupportQuestion,
   Treasury,
+  Tree,
 } from '@decent-org/fractal-ui';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -86,12 +86,12 @@ function Sidebar() {
                 />
               </Link>
             </SidebarTooltipWrapper>
-            <SidebarTooltipWrapper label={t('activityFeed')}>
+            <SidebarTooltipWrapper label={t('nodes')}>
               <Link
-                data-testid="sidebar-activityLink"
-                to={DAO_ROUTES.activties.relative(address)}
+                data-testid="sidebar-nodes"
+                to={DAO_ROUTES.nodes.relative(address)}
               >
-                <Notifications
+                <Tree
                   boxSize="1.5rem"
                   minWidth="auto"
                 />
