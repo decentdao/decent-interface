@@ -7,10 +7,6 @@ export const DAO_ROUTES: DAORoutes = {
     relative: () => '/daos',
     path: 'daos/:address/*',
   },
-  daosNew: {
-    relative: () => '/daos/new',
-    path: 'new',
-  },
   dao: {
     relative: (daoAddress: string) => `/daos/${daoAddress}`,
     path: '*',

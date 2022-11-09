@@ -1,5 +1,5 @@
-import { NavPage } from './NavPage';
 import { Page } from '@playwright/test';
+import { NavPage } from './NavPage';
 
 export class DAOHome extends NavPage {
   readonly address: string;

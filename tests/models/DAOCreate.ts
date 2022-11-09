@@ -3,7 +3,7 @@ import { NavPage } from './NavPage';
 
 export class DAOCreate extends NavPage {
   async visit() {
-    super.visitPath('/daos/new');
+    super.visitPath('/create');
     return this;
   }
 
