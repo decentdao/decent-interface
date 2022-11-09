@@ -1,4 +1,4 @@
-import { BigNumber, Contract, constants, utils, ethers } from 'ethers';
+import { BigNumber, Contract, constants, utils } from 'ethers';
 import { MetaTransaction, SafeTransaction } from '../types/transaction';
 
 export function getRandomBytes() {
