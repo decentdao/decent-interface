@@ -52,7 +52,7 @@ test.describe('Visit App Homepage', async () => {
   test('home create button works', async ({ page }) => {
     await home.connectToWallet(); // connect via the dropdown menu
     await home.clickCreateAFractal();
-    await expect(page).toHaveURL(home.baseUrl + '/daos/new');
+    await expect(page).toHaveURL(home.baseUrl + '/create');
   });
 
   test('FAQ button works', async () => {

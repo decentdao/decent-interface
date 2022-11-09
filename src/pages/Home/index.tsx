@@ -91,7 +91,7 @@ function Home() {
   } = useWeb3Provider();
   const navigate = useNavigate();
   const createDAO = () => {
-    navigate(BASE_ROUTES.daosNew);
+    navigate(BASE_ROUTES.create);
   };
   return (
     <Center h={CONTENT_HEIGHT}>
