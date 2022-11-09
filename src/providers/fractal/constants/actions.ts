@@ -19,5 +19,6 @@ export enum TreasuryAction {
 
 export enum AccountAction {
   UPDATE_DAO_FAVORITES,
+  UPDATE_AUDIT_MESSAGE,
   RESET,
 }

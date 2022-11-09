@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useWeb3Provider } from './../../../contexts/web3Data/hooks/useWeb3Provider';
-import { AccountAction } from './../constants/actions';
+import { useWeb3Provider } from '../../../../contexts/web3Data/hooks/useWeb3Provider';
+import { AccountAction } from '../../constants/actions';
 import { CacheKeys } from './useLocalStorage';
 
 interface IUseFavorties {

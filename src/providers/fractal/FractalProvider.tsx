@@ -8,13 +8,13 @@ import {
   treasuryInitialState,
   connectedAccountInitialState,
 } from './constants';
-import { useAccountFavorites } from './hooks/useAccountFavorites';
+import { useAccount } from './hooks/account/useAccount';
+import { useLocalStorage } from './hooks/account/useLocalStorage';
 import useDAOName from './hooks/useDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisGovernance } from './hooks/useGnosisGovernance';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
-import { useLocalStorage } from './hooks/useLocalStorage';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
 import { governanceReducer, initializeGovernanceState } from './reducers/governance';
@@ -56,7 +56,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
   useGnosisGovernance(gnosis, governanceDispatch);
   useDAOName({ address: gnosis.safe.address, gnosisDispatch });
-  useAccountFavorites({
+  useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });

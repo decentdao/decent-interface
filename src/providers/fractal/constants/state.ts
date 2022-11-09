@@ -28,6 +28,10 @@ export const treasuryInitialState: ITreasury = {
 };
 
 export const connectedAccountInitialState: IConnectedAccount = {
+  audit: {
+    acceptAudit: () => {},
+    hasAccepted: undefined,
+  },
   favorites: {
     favoritesList: [],
     isConnectedFavorited: false,

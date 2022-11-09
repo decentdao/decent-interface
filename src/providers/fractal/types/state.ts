@@ -35,6 +35,12 @@ export interface GnosisSafe {
 
 export interface IConnectedAccount {
   favorites: IFavorites;
+  audit: IAudit;
+}
+
+export interface IAudit {
+  hasAccepted?: boolean;
+  acceptAudit: () => void;
 }
 
 export interface IFavorites {

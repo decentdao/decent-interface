@@ -4,17 +4,23 @@ import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
-import { CacheKeys } from './providers/fractal/hooks/useLocalStorage';
+import { useFractal } from './providers/fractal/hooks/useFractal';
 import FractalRoutes from './routes/FractalRoutes';
 
 function App() {
+  const {
+    account: {
+      audit: { hasAccepted, acceptAudit },
+    },
+  } = useFractal();
+
   useActionToast({
     toastId: 'audit:toast',
     testId: 'toast-audit',
-    isVisible: !localStorage.getItem(CacheKeys.AUDIT),
+    isVisible: hasAccepted !== undefined && !hasAccepted,
     titleTranslationKey: 'auditDisclaimer',
     buttonTranslationKey: 'accept',
-    buttonOnClick: () => localStorage.setItem(CacheKeys.AUDIT, JSON.stringify(true)),
+    buttonOnClick: () => acceptAudit(),
   });
 
   return (
