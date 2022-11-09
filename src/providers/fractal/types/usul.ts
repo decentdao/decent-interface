@@ -35,6 +35,7 @@ export type Proposal = {
   deadline?: number;
   proposer: string;
   proposalNumber: BigNumber;
+  userVote?: ProposalVote;
 };
 
 export enum ProposalIsPassedError {
