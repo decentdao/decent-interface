@@ -163,6 +163,7 @@ export function Transactions() {
                 ? undefined
                 : formatCoin(
                     transfer.value,
+                    true,
                     transfer?.tokenInfo?.decimals,
                     transfer?.tokenInfo?.symbol
                   )

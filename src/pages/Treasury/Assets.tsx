@@ -36,7 +36,7 @@ function formatCoins(assets: GnosisAssetFungible[]) {
       iconUri: asset.token === null ? ethDefault : asset.token.logoUri,
       address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
       name: asset.token === null ? 'Ether' : asset.token.name,
-      formattedTotal: formatCoin(asset.balance, asset?.token?.decimals, asset?.token?.symbol),
+      formattedTotal: formatCoin(asset.balance, true, asset?.token?.decimals, asset?.token?.symbol),
       fiatValue: Number(asset.fiatBalance),
       fiatConversion: Number(asset.fiatConversion),
       symbol: asset.token === null ? 'ETH' : asset.token.symbol,
@@ -99,7 +99,7 @@ function CoinRow({
       marginBottom="0.75rem"
     >
       <Box w="33%">
-        <HStack>
+        <HStack marginEnd="1rem">
           <Image
             src={asset.iconUri}
             fallbackSrc={coinDefault}
@@ -110,17 +110,18 @@ function CoinRow({
           <Text
             height="auto"
             variant="infoRegular"
-            data-testid="link-token-name"
+            data-testid="link-token-symbol"
+            noOfLines={2}
           >
             {asset.address === ethers.constants.AddressZero ? (
-              <EtherscanLinkAddress address={safe}>{asset.name}</EtherscanLinkAddress>
+              <EtherscanLinkAddress address={safe}>{asset.symbol}</EtherscanLinkAddress>
             ) : (
-              <EtherscanLinkToken address={asset.address}>{asset.name}</EtherscanLinkToken>
+              <EtherscanLinkToken address={asset.address}>{asset.symbol}</EtherscanLinkToken>
             )}
           </Text>
         </HStack>
       </Box>
-      <Box w="33%">
+      <Box w="37%">
         <Text
           variant="infoRegular"
           marginBottom="0.25rem"
@@ -136,8 +137,8 @@ function CoinRow({
           </Tooltip>
         </Text>
       </Box>
-      <Box w="33%">
-        {asset.fiatValue > 0 && (
+      <Box w="30%">
+        {asset.fiatValue / totalFiat > 0.0001 && (
           <Text
             align="end"
             variant="infoRegular"
@@ -193,12 +194,15 @@ function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: bool
       <Text
         variant="infoRegular"
         data-testid="link-nft-name"
+        noOfLines={1}
       >
         <EtherscanLinkAddress address={asset.address}>{name}</EtherscanLinkAddress>
       </Text>
       <Text
         variant="infoRegular"
         data-testid="link-nft-id"
+        maxWidth="5rem"
+        noOfLines={1}
       >
         <EtherscanLinkNFT
           address={asset.address}

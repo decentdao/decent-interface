@@ -29,14 +29,14 @@ function Treasury() {
         flexWrap="wrap"
       >
         <InfoBox
-          minWidth={{ sm: '100%', xl: '60%' }}
+          minWidth={{ sm: '100%', xl: '55%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
         >
           <Transactions />
         </InfoBox>
         <InfoBox
-          minWidth={{ sm: '100%', xl: '30%' }}
+          minWidth={{ sm: '100%', xl: '35%' }}
           title={t('titleAssets')}
           titleTestId="title-assets"
         >
