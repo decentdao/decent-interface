@@ -3,12 +3,20 @@ type DAORoutes = {
 };
 
 export const DAO_ROUTES: DAORoutes = {
+  daos: {
+    relative: () => '/daos',
+    path: 'daos/:address/*',
+  },
+  daosNew: {
+    relative: () => '/daos/new',
+    path: 'new',
+  },
   dao: {
     relative: (daoAddress: string) => `/daos/${daoAddress}`,
-    path: ':address/*',
+    path: '*',
   },
-  new: {
-    relative: (daoAddress: string) => `daos/${daoAddress}/new`,
+  newSubDao: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/new`,
     path: 'new',
   },
   nodes: {
