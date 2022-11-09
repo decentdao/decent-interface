@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ProposalData } from '../../providers/govenor/types';
+import { Proposal } from '../../providers/fractal/types';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage?: number }) {
   return (
@@ -10,24 +10,24 @@ function VotesPercentage({ label, percentage }: { label: string; percentage?: nu
   );
 }
 
-function ProposalVotes({ proposal }: { proposal: ProposalData }) {
+function ProposalVotes({ proposal }: { proposal: Proposal }) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-grow flex-col h-full bg-gray-600 my-2 ml-4 p-2 pb-4 rounded-md">
       <div className="flex mx-2 my-2 text-gray-25 mb-3 text-lg font-semibold">Results</div>
       <VotesPercentage
         label={t('yes')}
-        percentage={proposal.forVotesPercent}
+        percentage={proposal.votes.yes.toNumber()}
       />
 
       <VotesPercentage
         label={t('no')}
-        percentage={proposal.againstVotesPercent}
+        percentage={proposal.votes.no.toNumber()}
       />
 
       <VotesPercentage
         label={t('abstain')}
-        percentage={proposal.abstainVotesPercent}
+        percentage={proposal.votes.abstain.toNumber()}
       />
     </div>
   );
