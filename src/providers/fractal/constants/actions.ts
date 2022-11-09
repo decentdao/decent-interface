@@ -16,3 +16,8 @@ export enum TreasuryAction {
   UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,
   RESET,
 }
+
+export enum AccountAction {
+  UPDATE_DAO_FAVORITES,
+  RESET,
+}
