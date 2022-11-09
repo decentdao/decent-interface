@@ -9,7 +9,7 @@ import { PrimaryButton, SecondaryButton, TextButton } from '../../components/ui/
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import useProposals from '../../providers/fractal/hooks/useProposals';
+import useUsul from '../../providers/fractal/hooks/useUsul';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
 
@@ -30,7 +30,7 @@ function ProposalCreate() {
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
-  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useProposals();
+  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useUsul();
 
   /**
    * adds new transaction form
