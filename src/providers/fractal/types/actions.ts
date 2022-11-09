@@ -1,7 +1,7 @@
-import { GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
+import { AccountAction, GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
 import { GnosisTransactionsResponse } from './gnosis';
 import { IGnosisModuleData, IGovernance } from './governance';
-import { GnosisSafe } from './state';
+import { GnosisSafe, IFavorites, IAudit } from './state';
 import { GnosisAssetNonFungible, GnosisAssetFungible } from './treasury';
 
 export type GnosisActions =
@@ -26,3 +26,7 @@ export type TreasuryActions =
       payload: GnosisAssetNonFungible[];
     }
   | { type: TreasuryAction.RESET };
+
+export type AccountActions =
+  | { type: AccountAction.UPDATE_DAO_FAVORITES; payload: IFavorites }
+  | { type: AccountAction.UPDATE_AUDIT_MESSAGE; payload: IAudit };

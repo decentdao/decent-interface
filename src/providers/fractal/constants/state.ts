@@ -1,5 +1,5 @@
 import { IGovernance } from './../types/governance';
-import { IGnosis } from './../types/state';
+import { IConnectedAccount, IGnosis } from './../types/state';
 import { ITreasury } from './../types/treasury';
 
 export const gnosisInitialState: IGnosis = {
@@ -31,4 +31,16 @@ export const treasuryInitialState: ITreasury = {
   assetsFungible: [],
   assetsNonFungible: [],
   treasuryIsLoading: true,
+};
+
+export const connectedAccountInitialState: IConnectedAccount = {
+  audit: {
+    acceptAudit: () => {},
+    hasAccepted: undefined,
+  },
+  favorites: {
+    favoritesList: [],
+    isConnectedFavorited: false,
+    toggleFavorite: () => {},
+  },
 };
