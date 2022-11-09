@@ -42,3 +42,48 @@ export interface GnosisTransactionAPI {
   signature: string; // '<0x prefixed hex string>' One or more ethereum ECDSA signatures of the `contractTransactionHash` as an hex string
   origin: string; // Give more information about the transaction, e.g. "My Custom Safe app"
 }
+
+export interface TokenInfoResponse {
+  type: string;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logoUri: string;
+}
+
+export interface GnosisTransfer {
+  // 'ETHER_TRANSFER'
+  type: string;
+  // '2022-11-04T17:46:12Z'
+  executionDate: string;
+  blockNumber: number;
+  transactionHash: string;
+  to: string;
+  // in wei
+  value: string | null;
+  tokenId: string | null;
+  tokenAddress: string | null;
+  tokenInfo: TokenInfoResponse | null;
+  from: string;
+}
+
+export interface EthereumTxWithTransfers {
+  // '2022-11-04T17:46:12Z'
+  executionDate: string;
+  to: string;
+  data: string | null;
+  txHash: string;
+  blockNumber: number;
+  transfers: GnosisTransfer[];
+  // 'ETHEREUM_TRANSACTION' | "MULTISIG_TRANSACTION"
+  txType: string;
+  from: string;
+}
+
+export interface GnosisTransactionsResponse {
+  count: number | null;
+  next: null; // @todo update other type
+  previous: null; // @todo update other type
+  results: EthereumTxWithTransfers[];
+}

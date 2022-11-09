@@ -4,6 +4,12 @@ import { ITreasury } from './../types/treasury';
 
 export const gnosisInitialState: IGnosis = {
   modules: [],
+  transactions: {
+    count: null,
+    next: null,
+    previous: null,
+    results: [],
+  },
   safe: {},
   isGnosisLoading: true,
   daoName: '',

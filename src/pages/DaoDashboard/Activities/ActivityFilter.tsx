@@ -1,15 +1,16 @@
 import { Button, Flex } from '@chakra-ui/react';
 import { ActiveTwo, Clock, CloseX } from '@decent-org/fractal-ui';
-import { Dispatch, SetStateAction, useCallback } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ActivityFilters } from '../../../types';
 
 interface IActivityFilter {
-  filters: string[];
-  setFilters: Dispatch<SetStateAction<string[]>>;
+  filters: ActivityFilters[];
+  setFilters: Dispatch<SetStateAction<ActivityFilters[]>>;
 }
 
 export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
-  const handleClick = (filter: string) => {
+  const handleClick = (filter: ActivityFilters) => {
     setFilters(prevFilterArr => {
       if (prevFilterArr.length === 3) {
         return [filter];
@@ -23,19 +24,6 @@ export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
     });
   };
 
-  const filterColors = useCallback(
-    (filter: string) => {
-      if (filters.includes(filter) && filters.length < 3) {
-        return;
-      }
-      return {
-        borderColor: 'grayscale.100',
-        color: 'grayscale.100',
-      };
-    },
-    [filters]
-  );
-
   const { t } = useTranslation('badge');
   return (
     <Flex
@@ -46,8 +34,8 @@ export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
         variant="tertiary"
         data-testid="filter-pending"
         leftIcon={<Clock />}
-        onClick={() => handleClick('pending')}
-        {...filterColors('pending')}
+        onClick={() => handleClick(ActivityFilters.Pending)}
+        isDisabled={filters.includes(ActivityFilters.Pending) && filters.length < 3}
       >
         {t('pending')}
       </Button>
@@ -55,8 +43,8 @@ export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
         variant="tertiary"
         data-testid="filter-active"
         leftIcon={<ActiveTwo />}
-        onClick={() => handleClick('active')}
-        {...filterColors('active')}
+        onClick={() => handleClick(ActivityFilters.Active)}
+        isDisabled={filters.includes(ActivityFilters.Active) && filters.length < 3}
       >
         {t('active')}
       </Button>
@@ -64,8 +52,8 @@ export function ActivityFilter({ filters, setFilters }: IActivityFilter) {
         variant="tertiary"
         data-testid="filter-rejected"
         leftIcon={<CloseX />}
-        onClick={() => handleClick('rejected')}
-        {...filterColors('rejected')}
+        onClick={() => handleClick(ActivityFilters.Rejected)}
+        isDisabled={filters.includes(ActivityFilters.Rejected) && filters.length < 3}
       >
         {t('rejected')}
       </Button>
