@@ -1,11 +1,12 @@
+import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import axios from 'axios';
-import { ethers } from 'ethers';
+import { Signer } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
-import { GnosisSafe__factory } from '../../../assets/typechain-types/gnosis-safe';
 import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { buildSafeAPIPost } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { ProposalExecuteData } from '../../../types/proposal';
 import { GnosisModuleType } from '../types';
@@ -44,53 +45,21 @@ export default function useProposals() {
           return;
         }
         setPendingCreateTx(true);
-        const gnosisContract = await GnosisSafe__factory.connect(safe.address, signerOrProvider);
-        const nonce = await (await gnosisContract.nonce()).toString();
-        const safeTx = {
-          to: proposalData.targets[0],
-          value: 0,
-          data: proposalData.calldatas[0],
-          operation: 0,
-          safeTxGas: 0,
-          baseGas: 0,
-          gasPrice: 0,
-          gasToken: ethers.constants.AddressZero,
-          refundReceiver: ethers.constants.AddressZero,
-          nonce: nonce,
-        };
-        const txHash = await (
-          await gnosisContract.getTransactionHash(
-            safeTx.to,
-            safeTx.value,
-            safeTx.data,
-            safeTx.operation,
-            safeTx.safeTxGas,
-            safeTx.baseGas,
-            safeTx.gasPrice,
-            safeTx.gasToken,
-            safeTx.refundReceiver,
-            safeTx.nonce
-          )
-        ).toString();
         try {
+          // todo: check that all txs will get posted
+          // todo: update success callbacks
+          // todo: cleanup routes and general cleanup
           await axios.post(
             buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
-            {
-              safe: safe.address,
-              to: safeTx.to,
-              value: safeTx.value,
-              data: safeTx.data,
-              operation: safeTx.operation,
-              safeTxGas: safeTx.safeTxGas,
-              baseGas: safeTx.baseGas,
-              gasPrice: safeTx.gasPrice,
-              gasToken: safeTx.gasToken,
-              refundReceiver: safeTx.refundReceiver,
-              nonce: safeTx.nonce,
-              contractTransactionHash: txHash,
-              sender: account,
-              // signature: signatures,
-            }
+            await buildSafeAPIPost(
+              safe.address,
+              signerOrProvider as Signer & TypedDataSigner,
+              chainId,
+              {
+                to: proposalData.targets[0],
+                data: proposalData.calldatas[0],
+              }
+            )
           );
           successCallback();
         } catch (e) {
