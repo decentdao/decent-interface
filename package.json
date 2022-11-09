@@ -39,7 +39,6 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "react-toastify": "^9.0.8",
-    "use-react-router-breadcrumbs": "^3.2.1",
     "util": "^0.12.4",
     "web-vitals": "^2.1.4",
     "web3modal": "^1.9.8"
@@ -84,6 +83,6 @@
     "lint-staged": "^13.0.3",
     "playwright": "^1.26.0",
     "prettier": "^2.7.1",
-    "typescript": "^4.8.4"
+    "typescript": "^4.8.0"
   }
 }

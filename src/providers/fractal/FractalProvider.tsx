@@ -43,7 +43,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
 
   useGnosisApiServices(gnosis.safe.address, treasuryDispatch);
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
-  useGnosisGovernance(gnosis.safe, governanceDispatch);
+  useGnosisGovernance(gnosis, governanceDispatch);
   useDAOName({ address: gnosis.safe.address, gnosisDispatch });
 
   useEffect(() => {
