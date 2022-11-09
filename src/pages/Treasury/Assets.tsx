@@ -2,53 +2,14 @@ import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import coinDefault from '../../assets/images/coin-icon-default.svg';
-import ethDefault from '../../assets/images/coin-icon-eth.svg';
 import nftDefault from '../../assets/images/nft-image-default.svg';
 import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../components/ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../providers/fractal/types';
-import { formatPercentage, formatCoin, formatUSD } from '../../utils/numberFormats';
-
-interface TokenDisplayData {
-  iconUri: string;
-  address: string;
-  name: string;
-  formattedTotal: string;
-  symbol: string;
-  fiatValue: number;
-  fiatConversion: number;
-}
-
-/**
- * We need to iterate through the tokens to get a sum of total assets, so we take the
- * opportunity to also format some of the display data here, rather than inline with the
- * components.
- */
-function formatCoins(assets: GnosisAssetFungible[]) {
-  let totalFiatValue = 0;
-  let displayData: TokenDisplayData[] = new Array(assets.length);
-  for (let i = 0; i < assets.length; i++) {
-    let asset = assets[i];
-    totalFiatValue += Number(asset.fiatBalance);
-    const formatted: TokenDisplayData = {
-      iconUri: asset.token === null ? ethDefault : asset.token.logoUri,
-      address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
-      name: asset.token === null ? 'Ether' : asset.token.name,
-      formattedTotal: formatCoin(asset.balance, true, asset?.token?.decimals, asset?.token?.symbol),
-      fiatValue: Number(asset.fiatBalance),
-      fiatConversion: Number(asset.fiatConversion),
-      symbol: asset.token === null ? 'ETH' : asset.token.symbol,
-    };
-    displayData[i] = formatted;
-  }
-  displayData.sort((a, b) => b.fiatValue - a.fiatValue); // sort by USD value
-  return {
-    totalFiatValue: totalFiatValue,
-    displayData: displayData,
-  };
-}
+import { GnosisAssetNonFungible } from '../../providers/fractal/types';
+import { formatPercentage, formatUSD } from '../../utils/numberFormats';
+import { formatCoins, TokenDisplayData } from './utils';
 
 function CoinHeader() {
   const { t } = useTranslation('treasury');
@@ -103,7 +64,7 @@ function CoinRow({
           <Image
             src={asset.iconUri}
             fallbackSrc={coinDefault}
-            alt={asset.name}
+            alt={asset.symbol}
             w="0.83rem"
             h="0.83rem"
           />
@@ -126,11 +87,16 @@ function CoinRow({
           variant="infoRegular"
           marginBottom="0.25rem"
         >
-          {asset.formattedTotal}
+          <Tooltip
+            label={asset.fullCoinTotal}
+            placement="top-start"
+          >
+            {asset.truncatedCoinTotal}
+          </Tooltip>
         </Text>
         <Text variant="infoSmall">
           <Tooltip
-            label={`1 ${asset.symbol} = ${formatUSD(asset.fiatConversion)}`}
+            label={asset.fiatConversion}
             placement="top-start"
           >
             {formatUSD(asset.fiatValue)}
@@ -221,7 +187,7 @@ export function Assets() {
     treasury: { assetsFungible, assetsNonFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
-  const tokenDisplay = formatCoins(assetsFungible);
+  const coinDisplay = formatCoins(assetsFungible);
   return (
     <Box>
       {' '}
@@ -236,16 +202,16 @@ export function Assets() {
         data-testid="text-usd-total"
         variant="infoLarge"
       >
-        {formatUSD(tokenDisplay.totalFiatValue)}
+        {formatUSD(coinDisplay.totalFiatValue)}
       </Text>
-      {tokenDisplay.displayData.length > 0 && <CoinHeader />}
-      {tokenDisplay.displayData.map(asset => {
+      {coinDisplay.displayData.length > 0 && <CoinHeader />}
+      {coinDisplay.displayData.map(coin => {
         return (
           <CoinRow
+            key={coin.address}
             safe={safe.address!}
-            totalFiat={tokenDisplay.totalFiatValue}
-            key={asset.address}
-            asset={asset}
+            totalFiat={coinDisplay.totalFiatValue}
+            asset={coin}
           />
         );
       })}
