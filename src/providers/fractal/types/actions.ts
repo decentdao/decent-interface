@@ -1,10 +1,12 @@
 import { AccountAction, GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
+import { GnosisTransactionsResponse } from './gnosis';
 import { IGnosisModuleData, IGovernance } from './governance';
 import { GnosisSafe, IFavorites, IAudit } from './state';
-import { GnosisAssetFungible, GnosisAssetNonFungible } from './treasury';
+import { GnosisAssetNonFungible, GnosisAssetFungible } from './treasury';
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE; payload: GnosisSafe }
+  | { type: GnosisAction.SET_SAFE_TRANSACTIONS; payload: GnosisTransactionsResponse }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.INVALIDATE }
