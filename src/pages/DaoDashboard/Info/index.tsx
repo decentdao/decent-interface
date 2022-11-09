@@ -1,51 +1,35 @@
-import { Box, Flex } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { Flex } from '@chakra-ui/react';
+import { InfoBox } from '../../../components/ui/containers/InfoBox';
 import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
 import { InfoProposals } from './InfoProposals';
 import { InfoTreasury } from './InfoTreasury';
 
-function InfoCard({
-  minWidth,
-  children,
-}: {
-  minWidth: { [key: string]: string };
-  children?: ReactNode;
-}) {
-  return (
-    <Box
-      flexGrow={1}
-      minWidth={minWidth}
-      bg="black.900-semi-transparent"
-      p="1rem"
-      borderRadius="0.5rem"
-    >
-      {children}
-    </Box>
-  );
-}
-
 export function Info() {
   return (
     <Flex
-      flexWrap="wrap"
-      gap="1.5rem"
+      flexDirection="column"
       minH="10.5rem"
-      justifyContent="center"
-      mb="1rem"
     >
-      <InfoCard minWidth={{ sm: '100%', xl: '41.5rem' }}>
-        <InfoDAO />
-      </InfoCard>
-      <InfoCard minWidth={{ sm: '100%', xl: '14.4375rem' }}>
-        <InfoGovernance />
-      </InfoCard>
-      <InfoCard minWidth={{ sm: '100%', md: '45%', xl: '10.3125rem' }}>
-        <InfoProposals />
-      </InfoCard>
-      <InfoCard minWidth={{ sm: '100%', md: '45%', xl: '9.25rem' }}>
-        <InfoTreasury />
-      </InfoCard>
+      <Flex
+        flexWrap="wrap"
+        gap="1rem"
+        justifyContent="center"
+        mb="1rem"
+      >
+        <InfoBox minWidth={{ sm: '100%', xl: '34.5%', '2xl': '41rem' }}>
+          <InfoDAO />
+        </InfoBox>
+        <InfoBox minWidth={{ sm: '100%', lg: '34.5%', xl: '23.5%', '2xl': '14rem' }}>
+          <InfoGovernance />
+        </InfoBox>
+        <InfoBox minWidth={{ sm: '100%', lg: '32%', xl: '21%', '2xl': '10rem' }}>
+          <InfoProposals />
+        </InfoBox>
+        <InfoBox minWidth={{ sm: '100%', lg: '30%', xl: '15%', '2xl': '9rem' }}>
+          <InfoTreasury />
+        </InfoBox>
+      </Flex>
     </Flex>
   );
 }
