@@ -1,11 +1,11 @@
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { GnosisSafe__factory } from '../../../assets/typechain-types/gnosis-safe';
 import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { calculateSafeTransactionHash } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { ProposalExecuteData } from '../../../types/proposal';
 import { GnosisModuleType } from '../types';
@@ -40,38 +40,53 @@ export default function useProposals() {
       }
 
       if (!usulContract || !votingStrategiesAddresses) {
-        if (!safe.address || !account) {
+        if (!safe.address || !account || !signerOrProvider) {
           return;
         }
         setPendingCreateTx(true);
+        const gnosisContract = await GnosisSafe__factory.connect(safe.address, signerOrProvider);
+        const nonce = await (await gnosisContract.nonce()).toString();
+        const safeTx = {
+          to: proposalData.targets[0],
+          value: 0,
+          data: proposalData.calldatas[0],
+          operation: 0,
+          safeTxGas: 0,
+          baseGas: 0,
+          gasPrice: 0,
+          gasToken: ethers.constants.AddressZero,
+          refundReceiver: ethers.constants.AddressZero,
+          nonce: nonce,
+        };
+        const txHash = await (
+          await gnosisContract.getTransactionHash(
+            safeTx.to,
+            safeTx.value,
+            safeTx.data,
+            safeTx.operation,
+            safeTx.safeTxGas,
+            safeTx.baseGas,
+            safeTx.gasPrice,
+            safeTx.gasToken,
+            safeTx.refundReceiver,
+            safeTx.nonce
+          )
+        ).toString();
         try {
-          const txHash = calculateSafeTransactionHash(safe.address, chainId, {
-            to: proposalData.targets[0],
-            value: 0,
-            data: proposalData.calldatas[0],
-            operation: 0,
-            safeTxGas: 0,
-            baseGas: 0,
-            gasPrice: 0,
-            gasToken: ethers.constants.AddressZero,
-            refundReceiver: ethers.constants.AddressZero,
-            nonce: 1,
-          });
-
           await axios.post(
             buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
             {
               safe: safe.address,
-              to: proposalData.targets[0],
-              value: 0,
-              data: proposalData.calldatas[0],
-              operation: 0,
-              gasToken: ethers.constants.AddressZero,
-              safeTxGas: 0,
-              baseGas: 0,
-              gasPrice: 0,
-              refundReceiver: ethers.constants.AddressZero,
-              nonce: 1,
+              to: safeTx.to,
+              value: safeTx.value,
+              data: safeTx.data,
+              operation: safeTx.operation,
+              safeTxGas: safeTx.safeTxGas,
+              baseGas: safeTx.baseGas,
+              gasPrice: safeTx.gasPrice,
+              gasToken: safeTx.gasToken,
+              refundReceiver: safeTx.refundReceiver,
+              nonce: safeTx.nonce,
               contractTransactionHash: txHash,
               sender: account,
               // signature: signatures,
@@ -110,7 +125,7 @@ export default function useProposals() {
         setPendingCreateTx(false);
       }
     },
-    [chainId, safe.address, usulContract, votingStrategiesAddresses]
+    [account, chainId, safe.address, signerOrProvider, usulContract, votingStrategiesAddresses]
   );
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
