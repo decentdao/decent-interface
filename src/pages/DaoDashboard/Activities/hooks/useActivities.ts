@@ -148,10 +148,10 @@ export const useActivities = (sortBy: SortBy) => {
    * When data is ready, set loading to false
    */
   useEffect(() => {
-    if (sortedActivities.length) {
+    if (transactions.count !== null) {
       setActivitiesLoading(false);
     }
-  }, [sortedActivities]);
+  }, [transactions]);
 
   return { sortedActivities, isActivitiesLoading };
 };

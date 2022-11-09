@@ -1,5 +1,7 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { InfoBox } from '../../../components/ui/containers/InfoBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
 import { ActivitySort, SortBy } from './ActivitySort';
 import { ActivityTreasury } from './ActivityTreasury';
@@ -9,7 +11,7 @@ export function Activities() {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
 
   const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
-
+  const { t } = useTranslation('dashboard');
   return (
     <Box>
       <Flex
@@ -24,7 +26,7 @@ export function Activities() {
       </Flex>
       {isActivitiesLoading ? (
         <InfoBoxLoader />
-      ) : (
+      ) : sortedActivities.length ? (
         <Flex
           flexDirection="column"
           gap="1rem"
@@ -36,6 +38,21 @@ export function Activities() {
             />
           ))}
         </Flex>
+      ) : (
+        <InfoBox>
+          <Flex
+            h="8rem"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text
+              textStyle="text-xl-mono-bold"
+              color="chocolate.100"
+            >
+              {t('noActivity')}
+            </Text>
+          </Flex>
+        </InfoBox>
       )}
     </Box>
   );
