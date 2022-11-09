@@ -26,5 +26,6 @@
     "titleProposals": "Proposals",
     "titlePending": "Pending",
     "titlePassed": "Passed",
-    "titleTreasury": "Treasury"
+    "titleTreasury": "Treasury",
+    "noActivity": "No Activity"
 }
