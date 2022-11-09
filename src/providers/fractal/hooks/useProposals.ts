@@ -1,12 +1,16 @@
+import axios from 'axios';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { calculateSafeTransactionHash } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { ProposalExecuteData } from '../../../types/proposal';
 import { GnosisModuleType } from '../types';
 import { Proposal } from '../types/usul';
+import { buildGnosisApiUrl } from '../utils';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';
 import { useFractal } from './useFractal';
 
@@ -17,10 +21,10 @@ export default function useProposals() {
   const [proposals, setProposals] = useState<Proposal[]>();
 
   const {
-    state: { signerOrProvider },
+    state: { signerOrProvider, chainId, account },
   } = useWeb3Provider();
   const {
-    gnosis: { modules },
+    gnosis: { safe, modules },
   } = useFractal();
 
   const submitProposal = useCallback(
@@ -31,12 +35,59 @@ export default function useProposals() {
       proposalData: ProposalExecuteData | undefined;
       successCallback: () => void;
     }) => {
-      if (!usulContract || !votingStrategiesAddresses || !proposalData) {
+      if (!proposalData) {
         return;
       }
 
-      setPendingCreateTx(true);
+      if (!usulContract || !votingStrategiesAddresses) {
+        if (!safe.address || !account) {
+          return;
+        }
+        setPendingCreateTx(true);
+        try {
+          const txHash = calculateSafeTransactionHash(safe.address, chainId, {
+            to: proposalData.targets[0],
+            value: 0,
+            data: proposalData.calldatas[0],
+            operation: 0,
+            safeTxGas: 0,
+            baseGas: 0,
+            gasPrice: 0,
+            gasToken: ethers.constants.AddressZero,
+            refundReceiver: ethers.constants.AddressZero,
+            nonce: 1,
+          });
 
+          await axios.post(
+            buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
+            {
+              safe: safe.address,
+              to: proposalData.targets[0],
+              value: 0,
+              data: proposalData.calldatas[0],
+              operation: 0,
+              gasToken: ethers.constants.AddressZero,
+              safeTxGas: 0,
+              baseGas: 0,
+              gasPrice: 0,
+              refundReceiver: ethers.constants.AddressZero,
+              nonce: 1,
+              contractTransactionHash: txHash,
+              sender: account,
+              // signature: signatures,
+            }
+          );
+          successCallback();
+        } catch (e) {
+          logError(e, 'Error during Multi-sig proposal creation');
+        } finally {
+          setPendingCreateTx(false);
+        }
+      }
+
+      if (!usulContract || !votingStrategiesAddresses) {
+        return;
+      }
       try {
         const txHashes = await Promise.all(
           proposalData.targets.map(async (target, index) => {
@@ -59,7 +110,7 @@ export default function useProposals() {
         setPendingCreateTx(false);
       }
     },
-    [usulContract, votingStrategiesAddresses]
+    [chainId, safe.address, usulContract, votingStrategiesAddresses]
   );
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
