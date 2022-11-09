@@ -8,7 +8,7 @@ export function InfoBox({
 }: {
   minHeight?: string;
   minWidth?: { [key: string]: string } | string;
-  children?: ReactNode;
+  children: ReactNode;
 }) {
   return (
     <Box
