@@ -24,10 +24,10 @@ export const useActivities = (sortBy: SortBy) => {
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
   const parsedActivities = useMemo(() => {
-    if (![...transactions.results].length || !safe) {
+    if (!transactions.results.length || !safe) {
       return [];
     }
-    return [...transactions.results]
+    return transactions.results
       .filter(t => !!t.transfers.length)
       .map(transaction => {
         const isDeposit = transaction.transfers.every(
