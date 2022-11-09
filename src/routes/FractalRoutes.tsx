@@ -12,11 +12,11 @@ function FractalRoutes() {
         element={<Home />}
       />
       <Route
-        path={BASE_ROUTES.daosNew}
+        path={BASE_ROUTES.create}
         element={<DaoCreate />}
       />
       <Route
-        path={DAO_ROUTES.dao.path}
+        path={DAO_ROUTES.daos.path}
         element={<DAORoutes />}
       />
     </Routes>
