@@ -20,7 +20,7 @@ function App() {
     isVisible: hasAccepted !== undefined && !hasAccepted,
     titleTranslationKey: 'auditDisclaimer',
     buttonTranslationKey: 'accept',
-    buttonOnClick: () => acceptAudit(),
+    buttonOnClick: acceptAudit,
   });
 
   return (

@@ -40,8 +40,8 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavort
       let updatedFavorites = [] as string[];
       if (rawFavorites) {
         const parsedFavorites = JSON.parse(rawFavorites);
-        if ([...favoritesList].includes(normalizedAddress)) {
-          updatedFavorites = [...favoritesList].filter(favorite => favorite !== normalizedAddress);
+        if (favoritesList.includes(normalizedAddress)) {
+          updatedFavorites = favoritesList.filter(favorite => favorite !== normalizedAddress);
           const newValue = JSON.stringify({
             ...parsedFavorites,
             [chainId]: updatedFavorites,
