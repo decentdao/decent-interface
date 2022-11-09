@@ -9,6 +9,9 @@ interface IUseFavorties {
   accountDispatch: any;
 }
 
+/**
+ * handles loading favorites data into Fractal state
+ */
 export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavorties) => {
   const [favoritesList, setFavorites] = useState<string[]>([]);
 
@@ -16,21 +19,29 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavort
     state: { chainId },
   } = useWeb3Provider();
 
+  /**
+   * @returns favorited status of loaded safe
+   */
   const isConnectedFavorited = useMemo(
     () => (!safeAddress ? false : favoritesList.includes(safeAddress)),
     [safeAddress, favoritesList]
   );
 
+  /**
+   * checks if given address is favorited:
+   * if favorited it will remove from local storage and state
+   * if not favorited, given address will be saved to local storage with the give id
+   */
   const toggleFavorite = useCallback(
-    (key: string) => {
-      const normalizedAddress = ethers.utils.getAddress(key);
+    (address: string) => {
+      const normalizedAddress = ethers.utils.getAddress(address);
       const rawFavorites = localStorage.getItem(CacheKeys.FAVORITES);
+
       let updatedFavorites = [] as string[];
       if (rawFavorites) {
         const parsedFavorites = JSON.parse(rawFavorites);
         if ([...favoritesList].includes(normalizedAddress)) {
           updatedFavorites = [...favoritesList].filter(favorite => favorite !== normalizedAddress);
-
           const newValue = JSON.stringify({
             ...parsedFavorites,
             [chainId]: updatedFavorites,
@@ -58,13 +69,12 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavort
     }
   }, [chainId]);
 
-  // load Favorites
   useEffect(() => {
     loadFavorites();
   }, [loadFavorites]);
 
-  // set Favorites
   useEffect(() => {
+    // this keeps the account information update to date with any changes made.
     accountDispatch({
       type: AccountAction.UPDATE_DAO_FAVORITES,
       payload: {

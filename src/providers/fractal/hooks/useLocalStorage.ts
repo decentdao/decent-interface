@@ -5,7 +5,11 @@ export enum CacheKeys {
   AUDIT = 'not_audited_acceptance',
 }
 
-// mapping to allow adding new caching options' defaultValues easier
+/**
+ * Maps Cached Values
+ * @dev update this array to create a new cached item
+ * these items are automatically mapped through and added to a user's localstorage on first vist
+ */
 const CACHE_MAPPING = [
   {
     key: CacheKeys.FAVORITES,
