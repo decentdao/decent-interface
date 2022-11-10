@@ -1,5 +1,5 @@
 import { HStack, Image, Text } from '@chakra-ui/react';
-import arrow from '../../assets/images/transfer-arrow.svg';
+import arrow from '../../assets/images/address-arrow.svg';
 import useDisplayName from '../../hooks/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
 

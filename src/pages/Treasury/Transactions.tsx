@@ -1,9 +1,8 @@
 import { Box, Divider, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/react';
+import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import coinDefault from '../../assets/images/coin-icon-default.svg';
 import nftDefault from '../../assets/images/nft-image-default.svg';
-import received from '../../assets/images/transfer-received.svg';
-import sent from '../../assets/images/transfer-sent.svg';
 import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
 import EtherscanTransactionLink from '../../components/ui/EtherscanTransactionLink';
 import { ShortenedAddressLink } from '../../components/ui/ShortenedAddressLink';
@@ -21,11 +20,19 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         marginBottom={displayData.isLast ? '0rem' : '1rem'}
       >
         <HStack w="33%">
-          <Image
-            src={displayData.eventType == TokenEventType.WITHDRAW ? sent : received}
-            w="1.5rem"
-            h="1.5rem"
-          />
+          {displayData.eventType == TokenEventType.WITHDRAW ? (
+            <SquareSolidArrowUp
+              w="1.5rem"
+              h="1.5rem"
+              color="grayscale.100"
+            />
+          ) : (
+            <SquareSolidArrowDown
+              w="1.5rem"
+              h="1.5rem"
+              color="#60B55E"
+            />
+          )}
           <Box paddingStart="0.5rem">
             <Text
               textStyle="text-sm-sans-regular"

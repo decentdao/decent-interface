@@ -23,20 +23,23 @@ function CoinHeader() {
       <HStack marginBottom="0.5rem">
         <Text
           w="33%"
-          variant="infoSmall"
+          textStyle="text-sm-sans-regular"
+          color="chocolate.200"
         >
           {t('columnCoins')}
         </Text>
         <Text
           w="33%"
-          variant="infoSmall"
+          textStyle="text-sm-sans-regular"
+          color="chocolate.200"
         >
           {t('columnValue')}
         </Text>
         <Text
           w="33%"
           align="end"
-          variant="infoSmall"
+          textStyle="text-sm-sans-regular"
+          color="chocolate.200"
         >
           {t('columnAllocation')}
         </Text>
@@ -70,7 +73,8 @@ function CoinRow({
           />
           <Text
             height="auto"
-            variant="infoRegular"
+            textStyle="text-base-sans-regular"
+            color="grayscale.100"
             data-testid="link-token-symbol"
             noOfLines={2}
           >
@@ -84,7 +88,8 @@ function CoinRow({
       </Box>
       <Box w="37%">
         <Text
-          variant="infoRegular"
+          textStyle="text-base-sans-regular"
+          color="grayscale.100"
           marginBottom="0.25rem"
         >
           <Tooltip
@@ -94,7 +99,10 @@ function CoinRow({
             {asset.truncatedCoinTotal}
           </Tooltip>
         </Text>
-        <Text variant="infoSmall">
+        <Text
+          textStyle="text-sm-sans-regular"
+          color="chocolate.200"
+        >
           <Tooltip
             label={asset.fiatConversion}
             placement="top-start"
@@ -107,7 +115,8 @@ function CoinRow({
         {asset.fiatValue / totalFiat > 0.0001 && (
           <Text
             align="end"
-            variant="infoRegular"
+            textStyle="text-base-sans-regular"
+            color="grayscale.100"
           >
             {formatPercentage(asset.fiatValue, totalFiat)}
           </Text>
@@ -128,7 +137,8 @@ function NFTHeader() {
       />
       <Text
         w="33%"
-        variant="infoSmall"
+        textStyle="text-sm-sans-regular"
+        color="chocolate.200"
         marginBottom="1rem"
       >
         {t('columnNFTs')}
@@ -158,14 +168,16 @@ function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: bool
         />
       </EtherscanLinkNFT>
       <Text
-        variant="infoRegular"
+        textStyle="text-base-sans-regular"
+        color="grayscale.100"
         data-testid="link-nft-name"
         noOfLines={1}
       >
         <EtherscanLinkAddress address={asset.address}>{name}</EtherscanLinkAddress>
       </Text>
       <Text
-        variant="infoRegular"
+        textStyle="text-base-sans-regular"
+        color="grayscale.100"
         data-testid="link-nft-id"
         maxWidth="5rem"
         noOfLines={1}
@@ -192,7 +204,8 @@ export function Assets() {
     <Box>
       {' '}
       <Text
-        variant="infoSmall"
+        textStyle="text-sm-sans-regular"
+        color="chocolate.200"
         marginTop="1.5rem"
         marginBottom="0.5rem"
       >
@@ -200,7 +213,8 @@ export function Assets() {
       </Text>
       <Text
         data-testid="text-usd-total"
-        variant="infoLarge"
+        textStyle="text-lg-mono-regular"
+        color="grayscale.100"
       >
         {formatUSD(coinDisplay.totalFiatValue)}
       </Text>

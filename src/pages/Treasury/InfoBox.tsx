@@ -24,7 +24,8 @@ export function InfoBox({
         <Box>
           <Text
             data-testid={titleTestId}
-            variant="infoRegular"
+            textStyle="text-base-sans-regular"
+            color="grayscale.100"
             marginBottom="0.75rem"
           >
             {title}

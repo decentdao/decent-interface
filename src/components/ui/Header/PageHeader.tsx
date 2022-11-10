@@ -45,7 +45,10 @@ function PageHeader({
           </Button>
         )}
       </Flex>
-      <Divider marginTop="1rem" />
+      <Divider
+        marginTop="1rem"
+        borderColor="chocolate.400"
+      />
     </Box>
   );
 }
