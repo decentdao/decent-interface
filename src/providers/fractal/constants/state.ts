@@ -1,9 +1,15 @@
 import { IGovernance } from './../types/governance';
-import { IGnosis } from './../types/state';
+import { IConnectedAccount, IGnosis } from './../types/state';
 import { ITreasury } from './../types/treasury';
 
 export const gnosisInitialState: IGnosis = {
   modules: [],
+  transactions: {
+    count: null,
+    next: null,
+    previous: null,
+    results: [],
+  },
   safe: {},
   isGnosisLoading: true,
   daoName: '',
@@ -26,4 +32,16 @@ export const treasuryInitialState: ITreasury = {
   assetsNonFungible: [],
   transfers: undefined,
   treasuryIsLoading: true,
+};
+
+export const connectedAccountInitialState: IConnectedAccount = {
+  audit: {
+    acceptAudit: () => {},
+    hasAccepted: undefined,
+  },
+  favorites: {
+    favoritesList: [],
+    isConnectedFavorited: false,
+    toggleFavorite: () => {},
+  },
 };

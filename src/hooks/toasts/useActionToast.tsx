@@ -1,4 +1,5 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
+import { Button } from '@decent-org/fractal-ui';
 import { Fragment, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -27,7 +28,6 @@ export function useActionToast({
       toast.dismiss(toastId);
       return;
     }
-
     toast(
       <Fragment>
         <Flex
@@ -45,7 +45,7 @@ export function useActionToast({
             color="gold.500"
             my="1"
             textStyle="textStyles.text-md-mono-bold"
-            variant="unstyled"
+            variant="text"
             onClick={buttonOnClick}
           >
             {t(buttonTranslationKey)}

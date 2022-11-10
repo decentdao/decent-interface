@@ -20,7 +20,7 @@ export function MenuItems() {
       bg="grayscale.black"
       border="none"
       sx={{
-        '& > :nth-child(1)': {
+        '& > :nth-of-type(1)': {
           borderTopRadius: 'lg',
         },
         '& > :last-child': {

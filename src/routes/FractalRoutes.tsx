@@ -1,7 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
+import DaoCreate from '../pages/DaoCreate';
 import Home from '../pages/Home';
 import DAORoutes from './DAORoutes';
-import { DAO_ROUTES } from './constants';
+import { BASE_ROUTES, DAO_ROUTES } from './constants';
 
 function FractalRoutes() {
   return (
@@ -11,7 +12,11 @@ function FractalRoutes() {
         element={<Home />}
       />
       <Route
-        path={DAO_ROUTES.dao.path}
+        path={BASE_ROUTES.create}
+        element={<DaoCreate />}
+      />
+      <Route
+        path={DAO_ROUTES.daos.path}
         element={<DAORoutes />}
       />
     </Routes>

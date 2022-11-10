@@ -11,5 +11,6 @@
     "labelSent": "Sent",
     "labelReceived": "Received",
     "textEmptyTransactions": "No transfers yet.",
-    "textMoreTransactions": "View more"
+    "textMoreTransactions": "View more",
+    "addresses": "{{numOfAddressses}} addresses"
 }
