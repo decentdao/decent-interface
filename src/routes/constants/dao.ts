@@ -1,15 +1,23 @@
-export const DAO_ROUTES = {
+type DAORoutes = {
+  [route: string]: { relative: (...args: any) => string; path: string };
+};
+
+export const DAO_ROUTES: DAORoutes = {
+  daos: {
+    relative: () => '/daos',
+    path: 'daos/:address/*',
+  },
   dao: {
     relative: (daoAddress: string) => `/daos/${daoAddress}`,
-    path: ':address/*',
+    path: '*',
   },
-  new: {
-    relative: 'daos/new',
+  newSubDao: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/new`,
     path: 'new',
   },
-  activties: {
-    relative: (daoAddress: string) => `/daos/${daoAddress}/activities`,
-    path: 'activities',
+  nodes: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/nodes`,
+    path: 'nodes',
   },
   treasury: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/treasury`,

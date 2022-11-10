@@ -4,23 +4,25 @@ import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { useFractal } from './providers/fractal/hooks/useFractal';
 import FractalRoutes from './routes/FractalRoutes';
 
 function App() {
-  const [notAuditedAcceptance, setNotAuditedAcceptance] = useLocalStorage(
-    'not_audited_acceptance',
-    false
-  );
+  const {
+    account: {
+      audit: { hasAccepted, acceptAudit },
+    },
+  } = useFractal();
 
   useActionToast({
     toastId: 'audit:toast',
     testId: 'toast-audit',
-    isVisible: !notAuditedAcceptance,
+    isVisible: hasAccepted !== undefined && !hasAccepted,
     titleTranslationKey: 'auditDisclaimer',
     buttonTranslationKey: 'accept',
-    buttonOnClick: () => setNotAuditedAcceptance(true),
+    buttonOnClick: acceptAudit,
   });
+
   return (
     <Grid
       templateAreas={`"nav header"

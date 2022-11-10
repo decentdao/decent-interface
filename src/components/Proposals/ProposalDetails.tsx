@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-// import ProposalVotes from './ProposalVotes';
 // import ProposalQueue from './ProposalQueue';
 // import ProposalExecute from './ProposalExecute';
-// import CastVote from './CastVote';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import useProposals from '../../providers/fractal/hooks/useProposals';
 import { Proposal } from '../../providers/fractal/types';
+import CastVote from './CastVote';
 import ProposalCardDetailed from './ProposalCardDetailed';
+import ProposalVotes from './ProposalVotes';
 
 function ProposalDetails() {
   const params = useParams();
@@ -42,8 +42,8 @@ function ProposalDetails() {
       {/* <ProposalExecute proposal={proposal} /> */}
       <ProposalCardDetailed proposal={proposal} />
       <div className="flex">
-        {/* <CastVote proposal={proposal} />
-        <ProposalVotes proposal={proposal} /> */}
+        <CastVote proposal={proposal} />
+        <ProposalVotes proposal={proposal} />
       </div>
     </div>
   );

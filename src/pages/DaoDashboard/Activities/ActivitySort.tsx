@@ -17,7 +17,7 @@ function SortMenuItem({
   testId: string;
   onClick: () => void;
 }) {
-  const { t } = useTranslation('sort');
+  const { t } = useTranslation();
   return (
     <MenuItem
       py="0.5rem"

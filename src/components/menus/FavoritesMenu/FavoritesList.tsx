@@ -1,32 +1,14 @@
 import { Box, MenuList, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import useFavorites from '../../../hooks/useFavorites';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { Favorite } from './Favorite';
 
 export function FavoritesList() {
   const {
-    state: { chainId },
-  } = useWeb3Provider();
-
-  const { favorites } = useFavorites();
-
-  const [chainFavorites, setChainFavorites] = useState<string[]>([]);
-
-  useEffect(() => {
-    if (!chainId) {
-      setChainFavorites([]);
-      return;
-    }
-
-    if (!favorites[chainId]) {
-      setChainFavorites([]);
-      return;
-    }
-
-    setChainFavorites(favorites[chainId]);
-  }, [favorites, chainId]);
+    account: {
+      favorites: { favoritesList },
+    },
+  } = useFractal();
 
   const { t } = useTranslation('dashboard');
   return (
@@ -46,7 +28,7 @@ export function FavoritesList() {
           {t('titleFavorites')}
         </Text>
         <Box mt="0.5rem">
-          {chainFavorites.length === 0 ? (
+          {favoritesList.length === 0 ? (
             <Box>{t('emptyFavorites')}</Box>
           ) : (
             <Box
@@ -70,7 +52,7 @@ export function FavoritesList() {
                 },
               }}
             >
-              {chainFavorites.map(favorite => (
+              {favoritesList.map(favorite => (
                 <Favorite
                   key={favorite}
                   address={favorite}
