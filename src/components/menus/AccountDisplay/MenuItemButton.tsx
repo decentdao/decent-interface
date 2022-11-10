@@ -26,7 +26,7 @@ export function MenuItemButton({
         border="1px solid"
         borderColor="chocolate.700"
         _hover={{
-          bg: 'chocolate.900',
+          color: 'gold.500-hover',
         }}
       >
         <Flex
