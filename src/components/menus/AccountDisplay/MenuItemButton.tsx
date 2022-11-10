@@ -20,7 +20,7 @@ export function MenuItemButton({
     <Fragment>
       <MenuItem
         cursor="pointer"
-        p="1rem 1.5rem"
+        p="1.5rem"
         data-testid={testId}
         onClick={onClick}
         border="1px solid"
