@@ -13,7 +13,7 @@ function DaoCreate() {
   const [deploy, pending] = useDeployDAO();
 
   const deployDAO = (daoData: GnosisDAO) => {
-    deploy(daoData, successCallback, false);
+    deploy(daoData, successCallback);
   };
 
   return (
