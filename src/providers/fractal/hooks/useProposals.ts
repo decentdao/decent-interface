@@ -41,11 +41,12 @@ export default function useProposals() {
       }
 
       if (!usulContract || !votingStrategiesAddresses) {
-        if (!safe.address || !account || !signerOrProvider) {
+        if (!safe.address || !signerOrProvider) {
           return;
         }
         setPendingCreateTx(true);
         try {
+          // todo: pending txs
           // todo: check that all txs will get posted
           // todo: update success callbacks
           // todo: cleanup routes and general cleanup
@@ -66,35 +67,33 @@ export default function useProposals() {
           logError(e, 'Error during Multi-sig proposal creation');
         } finally {
           setPendingCreateTx(false);
+          return;
+        }
+      } else {
+        try {
+          const txHashes = await Promise.all(
+            proposalData.targets.map(async (target, index) => {
+              return usulContract.getTransactionHash(
+                target,
+                proposalData.values[index],
+                proposalData.calldatas[index],
+                0
+              );
+            })
+          );
+          // @todo: Implement voting strategy proposal selection when we will support multiple strategies on single Usul instance
+          await (
+            await usulContract.submitProposal(txHashes, votingStrategiesAddresses[0], '0x')
+          ).wait(); // Third parameter is optional on Usul
+          successCallback();
+        } catch (e) {
+          logError(e, 'Error during Usul proposal creation');
+        } finally {
+          setPendingCreateTx(false);
         }
       }
-
-      if (!usulContract || !votingStrategiesAddresses) {
-        return;
-      }
-      try {
-        const txHashes = await Promise.all(
-          proposalData.targets.map(async (target, index) => {
-            return usulContract.getTransactionHash(
-              target,
-              proposalData.values[index],
-              proposalData.calldatas[index],
-              0
-            );
-          })
-        );
-        // @todo: Implement voting strategy proposal selection when we will support multiple strategies on single Usul instance
-        await (
-          await usulContract.submitProposal(txHashes, votingStrategiesAddresses[0], '0x')
-        ).wait(); // Third parameter is optional on Usul
-        successCallback();
-      } catch (e) {
-        logError(e, 'Error during Usul proposal creation');
-      } finally {
-        setPendingCreateTx(false);
-      }
     },
-    [account, chainId, safe.address, signerOrProvider, usulContract, votingStrategiesAddresses]
+    [chainId, safe.address, signerOrProvider, usulContract, votingStrategiesAddresses]
   );
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
