@@ -10,7 +10,9 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import closex from '../assets/images/modal-close.svg';
+import { DelegateModal } from './DelegateModal';
 
 const useFractalModal = (title: string, content: ReactNode) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -55,12 +57,10 @@ export const useDelegateModal = () => {
   const closeWrap = function () {
     if (close) close();
   };
+  const delegate = <DelegateModal close={closeWrap} />;
+  const { t } = useTranslation('delegate');
 
-  // TODO modal content
-  const delegate = <Text onClick={closeWrap}>awesome!</Text>;
-
-  const [modal, onOpen, onClose] = useFractalModal('Delegate Voting Tokens', delegate);
+  const [modal, onOpen, onClose] = useFractalModal(t('delegateTitle'), delegate);
   close = onClose;
-
   return [modal, onOpen] as const;
 };
