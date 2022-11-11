@@ -1,7 +1,7 @@
 import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { Input, LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import EtherscanLinkAddress from '../components/ui/EtherscanLinkAddress';
 import DataLoadingWrapper from '../components/ui/loaders/DataLoadingWrapper';
@@ -10,8 +10,10 @@ import useAddress from '../hooks/useAddress';
 import useDelegateVote from '../hooks/useDelegateVote';
 import useDisplayName from '../hooks/useDisplayName';
 import { useFractal } from '../providers/fractal/hooks/useFractal';
+import { ModalState, ModalContext } from './ModalProvider';
+import { useFractalModal } from './useFractalModal';
 
-export function DelegateModal({ close }: { close: Function }) {
+function DelegateModal({ close }: { close: Function }) {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
   const { t } = useTranslation(['delegate', 'common']);
   const [pending, setPending] = useState<boolean>(false);
@@ -137,3 +139,19 @@ export function DelegateModal({ close }: { close: Function }) {
     </Box>
   );
 }
+
+export const useDelegateModal = () => {
+  const { setValue } = useContext<ModalState>(ModalContext);
+  const { t } = useTranslation('delegate');
+
+  // TODO pass in onClose to DelegateModal somehow...
+  const [modal, onOpen, onClose] = useFractalModal(
+    t('delegateTitle'),
+    <DelegateModal close={() => {}} />
+  );
+
+  return () => {
+    setValue(modal); // this feels janky?
+    onOpen();
+  };
+};
