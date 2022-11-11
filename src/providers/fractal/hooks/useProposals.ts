@@ -22,7 +22,7 @@ export default function useProposals() {
   const [proposals, setProposals] = useState<Proposal[]>();
 
   const {
-    state: { signerOrProvider, chainId, account },
+    state: { signerOrProvider, chainId },
   } = useWeb3Provider();
   const {
     gnosis: { safe, modules },
@@ -46,9 +46,7 @@ export default function useProposals() {
         }
         setPendingCreateTx(true);
         try {
-          // todo: pending txs
           // todo: check that all txs will get posted
-          // todo: update success callbacks
           // todo: cleanup routes and general cleanup
           await axios.post(
             buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
