@@ -7,23 +7,29 @@ import {
   ModalOverlay,
   Spacer,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 import closex from '../assets/images/modal-close.svg';
-import { DelegateModal } from './DelegateModal';
 
-const useFractalModal = (title: string, content: ReactNode) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const modal = (
+export function FractalModalBase({
+  title,
+  isOpen,
+  onClose,
+  children,
+}: {
+  title: string;
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}) {
+  return (
     <Modal
       isCentered
       size="xl"
       isOpen={isOpen}
       onClose={onClose}
     >
-      <ModalOverlay backgroundColor="#0000008c" />
+      <ModalOverlay backgroundColor="black.900-semi-transparent" />
       <ModalContent
         backgroundColor="black.900"
         padding="1.5rem"
@@ -46,22 +52,8 @@ const useFractalModal = (title: string, content: ReactNode) => {
           color="chocolate.700"
           marginBottom="1rem"
         />
-        {content}
+        {children}
       </ModalContent>
     </Modal>
   );
-  return [modal, onOpen, onClose] as const;
-};
-
-export const useDelegateModal = () => {
-  let close: Function | undefined;
-  const closeWrap = function () {
-    if (close) close();
-  };
-  const delegate = <DelegateModal close={closeWrap} />;
-  const { t } = useTranslation('delegate');
-
-  const [modal, onOpen, onClose] = useFractalModal(t('delegateTitle'), delegate);
-  close = onClose;
-  return [modal, onOpen] as const;
-};
+}
