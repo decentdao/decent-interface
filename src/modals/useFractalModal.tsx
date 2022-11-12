@@ -1,52 +1,9 @@
-import {
-  Divider,
-  HStack,
-  Image,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Spacer,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
-import { ReactNode } from 'react';
-import closex from '../assets/images/modal-close.svg';
+import { useContext } from 'react';
+import { CurrentModal, ModalContext, ModalType } from './ModalProvider';
 
-export const useFractalModal = (title: string, content: ReactNode) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const modal = (
-    <Modal
-      isCentered
-      size="xl"
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <ModalOverlay backgroundColor="black.900-semi-transparent" />
-      <ModalContent
-        backgroundColor="black.900"
-        padding="1.5rem"
-        shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
-      >
-        <HStack marginBottom="1rem">
-          <Text
-            color="grayscale.100"
-            textStyle="text-lg-mono-medium"
-          >
-            {title}
-          </Text>
-          <Spacer />
-          <Image
-            src={closex}
-            onClick={onClose}
-          />
-        </HStack>
-        <Divider
-          color="chocolate.700"
-          marginBottom="1rem"
-        />
-        {content}
-      </ModalContent>
-    </Modal>
-  );
-  return [modal, onOpen, onClose] as const;
+export const useFractalModal = (modal: ModalType) => {
+  const { setCurrent } = useContext<CurrentModal>(ModalContext);
+  return () => {
+    setCurrent(modal);
+  };
 };
