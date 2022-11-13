@@ -19,10 +19,19 @@ export const ModalContext = createContext<CurrentModal>({
   setCurrent: () => {},
 });
 
+/**
+ * A provider that handles displaying modals in the app.
+ *
+ * To add a new modal:
+ *  1. Create the modal content as a component, excluding the title of the modal (see e.g. DelegateModal).
+ *  2. Add the modal to the ModalType enum.
+ *  3. Handle assigning your new modal component for that ModalType here in the provider switch case.
+ *  4. Utilize the useFractalModal hook to get a click listener to open your new modal.
+ */
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [current, setCurrent] = useState<ModalType>(ModalType.NONE);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { t } = useTranslation('delegate'); // TODO split titles into their own namespaces?
+  const { t } = useTranslation('modals');
   useEffect(() => {
     if (current != ModalType.NONE) onOpen();
   });

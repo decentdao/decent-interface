@@ -13,7 +13,7 @@ import { useFractal } from '../providers/fractal/hooks/useFractal';
 
 export function DelegateModal({ close }: { close: Function }) {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
-  const { t } = useTranslation(['delegate', 'common']);
+  const { t } = useTranslation(['modals', 'common']);
   const [pending, setPending] = useState<boolean>(false);
 
   const {

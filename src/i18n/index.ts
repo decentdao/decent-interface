@@ -5,8 +5,8 @@ import BADGE_EN from './locales/en/badge.json';
 import COMMON_EN from './locales/en/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
 import DASHBOARD_EN from './locales/en/dashboard.json';
-import DELEGATE_EN from './locales/en/delegate.json';
 import MENU_EN from './locales/en/menu.json';
+import MODALS_EN from './locales/en/modals.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
 import SIDEBAR_EN from './locales/en/sidebar.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
@@ -44,7 +44,7 @@ const resources = {
     treasury: TREASURY_EN,
     sidebar: SIDEBAR_EN,
     badge: BADGE_EN,
-    delegate: DELEGATE_EN,
+    modals: MODALS_EN,
   },
 };
 

@@ -11,6 +11,10 @@ import {
 import { ReactNode } from 'react';
 import closex from '../assets/images/modal-close.svg';
 
+/**
+ * The base wrapper component for a modal.  This displays the Chakra components necessary to open a modal,
+ * as well as the title of the modal.  The child component provided is displayed as the modal content.
+ */
 export function FractalModalBase({
   title,
   isOpen,
