@@ -1,4 +1,4 @@
-import { Divider, HStack, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
+import { Divider, Flex, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 
@@ -30,7 +30,7 @@ export function FractalModalBase({
         padding="1.5rem"
         shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
       >
-        <HStack marginBottom="1rem">
+        <Flex marginBottom="1rem">
           <Text
             color="grayscale.100"
             textStyle="text-lg-mono-medium"
@@ -39,7 +39,7 @@ export function FractalModalBase({
           </Text>
           <Spacer />
           <CloseX onClick={onClose} />
-        </HStack>
+        </Flex>
         <Divider
           color="chocolate.700"
           marginBottom="1rem"

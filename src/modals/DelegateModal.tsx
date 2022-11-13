@@ -90,11 +90,15 @@ export function DelegateModal({ close }: { close: Function }) {
           align="end"
           color="grayscale.100"
         >
-          <EtherscanLinkAddress address={governanceToken.delegatee}>
-            <DataLoadingWrapper isLoading={!delegateeDisplayName}>
-              {delegateeDisplayName.displayName}
-            </DataLoadingWrapper>
-          </EtherscanLinkAddress>
+          {governanceToken?.delegatee === constants.AddressZero ? (
+            '--'
+          ) : (
+            <EtherscanLinkAddress address={governanceToken.delegatee}>
+              <DataLoadingWrapper isLoading={!delegateeDisplayName}>
+                {delegateeDisplayName.displayName}
+              </DataLoadingWrapper>
+            </EtherscanLinkAddress>
+          )}
         </Text>
       </SimpleGrid>
       <Divider
