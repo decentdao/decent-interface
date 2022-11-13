@@ -1,15 +1,6 @@
-import {
-  Divider,
-  HStack,
-  Image,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Spacer,
-  Text,
-} from '@chakra-ui/react';
+import { Divider, HStack, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
+import { CloseX } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
-import closex from '../assets/images/modal-close.svg';
 
 /**
  * The base wrapper component for a modal.  This displays the Chakra components necessary to open a modal,
@@ -47,10 +38,7 @@ export function FractalModalBase({
             {title}
           </Text>
           <Spacer />
-          <Image
-            src={closex}
-            onClick={onClose}
-          />
+          <CloseX onClick={onClose} />
         </HStack>
         <Divider
           color="chocolate.700"
