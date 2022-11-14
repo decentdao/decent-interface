@@ -54,7 +54,5 @@
     "labelDateYear_plural": "{{count}} years",
     "toastClipboardCopy": "Copied to clipboard",
     "newest": "Newest",
-    "oldest": "Oldest",
-    "ago": "ago",
-    "left": "left"
+    "oldest": "Oldest"
 }
