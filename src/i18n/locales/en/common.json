@@ -42,7 +42,7 @@
     "errorInvalidAddress": "Invalid address",
     "errorSentryFallback": "There was an unexpected error",
     "errorGeneral": "There was an error! Check your browser's console logs for more details.",
-    "labelDateJustNow": "< 5 minutes",
+    "labelDateJustNow": "just now",
     "labelDateMinutes": "{{count}} minutes",
     "labelDateHour_single": "{{count}} hour",
     "labelDateHour_plural": "{{count}} hours",

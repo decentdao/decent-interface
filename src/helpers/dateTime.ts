@@ -4,7 +4,6 @@ import differenceInMinutes from 'date-fns/differenceInMinutes';
 import differenceInMonths from 'date-fns/differenceInMonths';
 import differenceInYears from 'date-fns/differenceInYears';
 import { TFunction } from 'react-i18next';
-import { common } from '../assets/typechain-types/fractal-contracts/@gnosis.pm/safe-contracts/contracts';
 
 export function formatDatesDiffReadable(
   dateStart: Date,
