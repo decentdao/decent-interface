@@ -1,14 +1,18 @@
 import { Box, Divider, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/react';
 import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import coinDefault from '../../assets/images/coin-icon-default.svg';
-import nftDefault from '../../assets/images/nft-image-default.svg';
-import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
-import EtherscanTransactionLink from '../../components/ui/EtherscanTransactionLink';
-import { ShortenedAddressLink } from '../../components/ui/ShortenedAddressLink';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { TransferType } from '../../providers/fractal/types';
-import { TokenEventType, TransferDisplayData, useFormatTransfers } from './utils';
+import coinDefault from '../../../assets/images/coin-icon-default.svg';
+import nftDefault from '../../../assets/images/nft-image-default.svg';
+import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../../../components/ui/EtherscanTransactionLink';
+import { ShortenedAddressLink } from '../../../components/ui/ShortenedAddressLink';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { TransferType } from '../../../providers/fractal/types/treasury';
+import {
+  TokenEventType,
+  TransferDisplayData,
+  useFormatTransfers,
+} from '../hooks/useFormatTransfers';
 
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
@@ -135,7 +139,10 @@ export function Transactions() {
     treasury: { transfers },
   } = useFractal();
 
-  const displayData = useFormatTransfers(transfers ? transfers.results : [], safe.address!);
+  const displayData: TransferDisplayData[] = useFormatTransfers(
+    transfers ? transfers.results : [],
+    safe.address!
+  );
 
   if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
 

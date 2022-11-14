@@ -1,7 +1,7 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
-export function InfoBox({
+export function TitledInfoBox({
   minWidth,
   title,
   titleTestId,

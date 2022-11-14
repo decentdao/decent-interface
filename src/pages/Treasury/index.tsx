@@ -1,10 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../components/ui/Header/PageHeader';
+import { TitledInfoBox } from '../../components/ui/containers/TitledInfoBox';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { Assets } from './Assets';
-import { InfoBox } from './InfoBox';
-import { Transactions } from './Transactions';
+import { Assets } from './components/Assets';
+import { Transactions } from './components/Transactions';
 
 function Treasury() {
   const {
@@ -28,20 +28,20 @@ function Treasury() {
         gap="1rem"
         flexWrap="wrap"
       >
-        <InfoBox
+        <TitledInfoBox
           minWidth={{ sm: '100%', xl: '55%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
         >
           <Transactions />
-        </InfoBox>
-        <InfoBox
+        </TitledInfoBox>
+        <TitledInfoBox
           minWidth={{ sm: '100%', xl: '35%' }}
           title={t('titleAssets')}
           titleTestId="title-assets"
         >
           <Assets />
-        </InfoBox>
+        </TitledInfoBox>
       </Flex>
     </Box>
   );

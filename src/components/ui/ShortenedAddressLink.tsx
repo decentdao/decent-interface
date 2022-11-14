@@ -1,5 +1,5 @@
-import { HStack, Image, Text } from '@chakra-ui/react';
-import arrow from '../../assets/images/address-arrow.svg';
+import { HStack, Text } from '@chakra-ui/react';
+import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import useDisplayName from '../../hooks/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
 
@@ -15,10 +15,10 @@ export function ShortenedAddressLink({ address }: { address: string }) {
         >
           {displayAddress.displayName}
         </Text>
-        <Image
-          src={arrow}
-          w="0.625rem"
-          h="0.625rem"
+        <ArrowAngleUp
+          color="gold.500"
+          w="1.25rem"
+          h="1.25rem"
         />
       </HStack>
     </EtherscanLinkAddress>

@@ -1,15 +1,15 @@
 import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import coinDefault from '../../assets/images/coin-icon-default.svg';
-import nftDefault from '../../assets/images/nft-image-default.svg';
-import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
-import EtherscanLinkNFT from '../../components/ui/EtherscanLinkNFT';
-import EtherscanLinkToken from '../../components/ui/EtherscanLinkToken';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { GnosisAssetNonFungible } from '../../providers/fractal/types';
-import { formatPercentage, formatUSD } from '../../utils/numberFormats';
-import { formatCoins, TokenDisplayData } from './utils';
+import coinDefault from '../../../assets/images/coin-icon-default.svg';
+import nftDefault from '../../../assets/images/nft-image-default.svg';
+import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
+import EtherscanLinkNFT from '../../../components/ui/EtherscanLinkNFT';
+import EtherscanLinkToken from '../../../components/ui/EtherscanLinkToken';
+import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { GnosisAssetNonFungible } from '../../../providers/fractal/types';
+import { formatPercentage, formatUSD } from '../../../utils/numberFormats';
+import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
 function CoinHeader() {
   const { t } = useTranslation('treasury');
@@ -199,7 +199,7 @@ export function Assets() {
     treasury: { assetsFungible, assetsNonFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
-  const coinDisplay = formatCoins(assetsFungible);
+  const coinDisplay = useFormatCoins(assetsFungible);
   return (
     <Box>
       {' '}
