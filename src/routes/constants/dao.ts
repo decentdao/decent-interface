@@ -36,8 +36,4 @@ export const DAO_ROUTES: DAORoutes = {
     relative: (daoAddress: string) => `/daos/${daoAddress}/proposals/new`,
     path: 'proposals/new',
   },
-  delegate: {
-    relative: (daoAddress: string) => `/daos/${daoAddress}/delegate`,
-    path: 'delegate',
-  },
 };

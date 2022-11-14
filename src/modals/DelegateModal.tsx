@@ -4,7 +4,6 @@ import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import EtherscanLinkAddress from '../components/ui/EtherscanLinkAddress';
-import DataLoadingWrapper from '../components/ui/loaders/DataLoadingWrapper';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import useAddress from '../hooks/useAddress';
 import useDelegateVote from '../hooks/useDelegateVote';
@@ -48,7 +47,7 @@ export function DelegateModal({ close }: { close: Function }) {
     setNewDelegatee(account);
   };
 
-  if (!governanceToken) return <div>Loading</div>;
+  if (!governanceToken) return <></>;
 
   return (
     <Box>
@@ -94,9 +93,7 @@ export function DelegateModal({ close }: { close: Function }) {
             '--'
           ) : (
             <EtherscanLinkAddress address={governanceToken.delegatee}>
-              <DataLoadingWrapper isLoading={!delegateeDisplayName}>
-                {delegateeDisplayName.displayName}
-              </DataLoadingWrapper>
+              {delegateeDisplayName.displayName}
             </EtherscanLinkAddress>
           )}
         </Text>
