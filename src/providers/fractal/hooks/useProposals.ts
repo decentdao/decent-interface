@@ -34,13 +34,13 @@ export default function useProposals() {
       successCallback,
     }: {
       proposalData: ProposalExecuteData | undefined;
-      successCallback: () => void;
+      successCallback: (daoAddress: string) => void;
     }) => {
       if (!proposalData) {
         return;
       }
 
-      if (!usulContract || !votingStrategiesAddresses) {
+      if (!usulContract || !votingStrategiesAddresses || !safe.address) {
         if (!safe.address || !signerOrProvider) {
           return;
         }
@@ -60,7 +60,7 @@ export default function useProposals() {
               }
             )
           );
-          successCallback();
+          successCallback(safe.address);
         } catch (e) {
           logError(e, 'Error during Multi-sig proposal creation');
         } finally {
@@ -83,7 +83,7 @@ export default function useProposals() {
           await (
             await usulContract.submitProposal(txHashes, votingStrategiesAddresses[0], '0x')
           ).wait(); // Third parameter is optional on Usul
-          successCallback();
+          successCallback(safe.address);
         } catch (e) {
           logError(e, 'Error during Usul proposal creation');
         } finally {
