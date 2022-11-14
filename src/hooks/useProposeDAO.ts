@@ -13,7 +13,7 @@ const useProposeDAO = () => {
   const [build] = useBuildDAOTx();
 
   const proposeDao = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: () => void) => {
+    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
       const propose = async () => {
         if (!multiSendContract) {
           return;
