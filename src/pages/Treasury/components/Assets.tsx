@@ -68,8 +68,8 @@ function CoinRow({
             src={asset.iconUri}
             fallbackSrc={coinDefault}
             alt={asset.symbol}
-            w="0.83rem"
-            h="0.83rem"
+            w="1rem"
+            h="1rem"
           />
           <Text
             height="auto"

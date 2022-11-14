@@ -59,8 +59,8 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
               displayData.transferType === TransferType.ERC721_TRANSFER ? nftDefault : coinDefault
             }
             alt={displayData.assetDisplay}
-            w="1.25rem"
-            h="1.25rem"
+            w="1.5rem"
+            h="1.5rem"
           />
           <EtherscanTransactionLink txHash={displayData.transactionHash}>
             <Tooltip
