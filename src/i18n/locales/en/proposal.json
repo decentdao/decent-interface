@@ -42,5 +42,8 @@
     "buttonDelegate": "Delegate",
     "errorCantCreateProposal": "Voting weight is less than the required threshold to create proposals",
     "labelRemoveTransaction": "Remove Transaction",
-    "errorInvalidFragments": "Invalid fragments"
+    "errorInvalidFragments": "Invalid fragments",
+    "createdBy": "Created By: {{proposer}}",
+    "timeLeft": "{{time}} left",
+    "timeAgo": "{{time}} ago"
 }

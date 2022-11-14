@@ -12,7 +12,7 @@ function ProposalCardDetailed({ proposal }: { proposal: Proposal }) {
         <StatusBox state={proposal.state} />
         <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
       </Flex>
-      <Box className="pt-4 border-t border-gray-200">
+      <Box>
         <ProposalCreatedBy
           proposalProposer={proposal.proposer}
           includeClipboard

@@ -4,7 +4,7 @@ import { formatDatesDiffReadable } from '../../../helpers/dateTime';
 import Clock from '../svg/Clock';
 
 function ProposalTime({ deadline }: { deadline: number }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('proposal');
   const deadlineDate = new Date(deadline * 1000);
   const now = new Date();
 
@@ -19,9 +19,7 @@ function ProposalTime({ deadline }: { deadline: number }) {
         gap={1}
         alignItems="start"
       >
-        <Text>
-          {diffReadable} {t(isPassed ? 'ago' : 'left')}
-        </Text>
+        <Text>{t(isPassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}</Text>
       </Flex>
     </Flex>
   );

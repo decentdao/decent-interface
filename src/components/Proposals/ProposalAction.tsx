@@ -3,11 +3,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Proposal, ProposalState } from '../../providers/fractal/types';
 
-interface ProposalActionProps {
-  proposal: Proposal;
-}
-
-export function ProposalAction({ proposal }: ProposalActionProps) {
+export function ProposalAction({ proposal }: { proposal: Proposal }) {
   const [pending, setPending] = useState(false);
   const { t } = useTranslation();
 
@@ -15,20 +11,26 @@ export function ProposalAction({ proposal }: ProposalActionProps) {
     // @todo - call proper contract func based on proposal state and user permission
     setPending(true);
 
-    if (proposal.state === ProposalState.Pending) {
-      // Call vote
+    switch (proposal.state) {
+      case ProposalState.Active:
+      // Call Vote action - probably redirect to proposal details where CastVote component would handle proper vote casting
+      case ProposalState.Pending:
+      // Call proposal queueing action
+      case ProposalState.Executing:
+      // Call proposal execution action
     }
 
     setPending(false);
   };
 
   const label = useMemo(() => {
-    if (proposal.state === ProposalState.Active) {
-      return t('vote');
-    } else if (proposal.state === ProposalState.Pending) {
-      return t('execute');
-    } else if (proposal.state === ProposalState.Executing) {
-      return t('queue');
+    switch (proposal.state) {
+      case ProposalState.Active:
+        return t('vote');
+      case ProposalState.Pending:
+        return t('queue');
+      case ProposalState.Executing:
+        return t('execute');
     }
   }, [proposal, t]);
 

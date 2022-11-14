@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import ProposalDetails from '../components/Proposals/ProposalDetails';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
 import { Delegate } from '../pages/Delegate';
 import ProposalCreate from '../pages/ProposalCreate';
+import ProposalDetails from '../pages/ProposalDetails';
 import { Governance } from '../pages/Proposals';
 import { DAO_ROUTES } from './constants';
 
