@@ -2,16 +2,12 @@ import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
 import { GnosisDAO } from '../../components/DaoCreator/provider/types';
 import useProposeDAO from '../../hooks/useProposeDAO';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
 
 function SubDaoCreate() {
-  const {
-    gnosis: { safe },
-  } = useFractal();
   const navigate = useNavigate();
 
-  const successCallback = () => {
-    navigate(`/daos/${safe.address}`);
+  const successCallback = (daoAddress: string) => {
+    navigate(`/daos/${daoAddress}`);
   };
 
   const [propose, pending] = useProposeDAO();
