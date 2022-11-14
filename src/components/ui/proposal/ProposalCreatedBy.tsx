@@ -12,7 +12,7 @@ function ProposalCreatedBy({
   const { displayName: proposerDisplayName } = useDisplayName(proposalProposer);
 
   return (
-    <Flex>
+    <Flex width="100%">
       <Text>Created By: {proposerDisplayName}</Text>
       {includeClipboard && <CopyToClipboard textToCopy={proposalProposer} />}
     </Flex>

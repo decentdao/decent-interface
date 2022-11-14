@@ -13,11 +13,15 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
   return (
     <Link to={proposal.proposalNumber.toString()}>
       <ContentBox>
-        <Flex justifyContent="space-between">
-          <Flex>
+        <Flex
+          justifyContent="space-between"
+          flexWrap="wrap"
+        >
+          <Flex flexWrap="wrap">
             <Flex
               alignItems="center"
               gap="2"
+              width="100%"
             >
               <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
               <StatusBox state={proposal.state} />
