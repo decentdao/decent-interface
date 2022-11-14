@@ -19,7 +19,7 @@ export function formatDatesDiffReadable(
   if (diffInMinutes < 5) {
     formattedString = t('labelDateJustNow');
   } else if (diffInMinutes < 60) {
-    formattedString = t('labelDateMinutes', { count: Math.floor(diffInMinutes) });
+    formattedString = t('labelDateMinutes', { ns: 'common', count: Math.floor(diffInMinutes) });
   } else if (diffInMinutes < 60 * 24) {
     const diffInHours = Math.abs(differenceInHours(dateStart, dateEnd));
     formattedString = t(diffInHours === 1 ? 'labelDateHour_single' : 'labelDateHour_plural', {

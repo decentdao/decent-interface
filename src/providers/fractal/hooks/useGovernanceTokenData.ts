@@ -271,10 +271,10 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
       type: TokenActions.UPDATE_ACCOUNT,
       payload: {
         userBalance: tokenBalance,
-        userBalanceString: formatCoin(tokenBalance, decimals, symbol),
+        userBalanceString: formatCoin(tokenBalance, true, decimals, symbol),
         delegatee: tokenDelegatee,
         votingWeight: tokenVotingWeight,
-        votingWeightString: formatCoin(tokenVotingWeight, decimals, symbol),
+        votingWeightString: formatCoin(tokenVotingWeight, true, decimals, symbol),
         isDelegatesSet,
       },
     });
@@ -350,7 +350,7 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
         type: TokenActions.UPDATE_VOTING_WEIGHTS,
         payload: {
           votingWeight: currentBalance,
-          votingWeightString: formatCoin(currentBalance, decimals, symbol),
+          votingWeightString: formatCoin(currentBalance, true, decimals, symbol),
         },
       });
     };

@@ -5,6 +5,7 @@ import { Delegate } from '../pages/Delegate';
 import ProposalCreate from '../pages/ProposalCreate';
 import ProposalDetails from '../pages/ProposalDetails';
 import { Governance } from '../pages/Proposals';
+import Treasury from '../pages/Treasury';
 import { DAO_ROUTES } from './constants';
 
 function DAOSubRoutes() {
@@ -24,7 +25,7 @@ function DAOSubRoutes() {
       />
       <Route
         path={DAO_ROUTES.treasury.path}
-        element={<div />}
+        element={<Treasury />}
       />
       <Route
         path={DAO_ROUTES.proposals.path}
