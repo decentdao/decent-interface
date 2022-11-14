@@ -17,6 +17,7 @@
     "to": "To",
     "from": "From",
     "execute": "Execute",
+    "queue": "Queue",
     "dao": "DAO",
     "move": "Move",
     "recommend" : "Recommend",

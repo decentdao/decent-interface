@@ -1,5 +1,5 @@
 import { Text } from '@chakra-ui/react';
-import { Proposal } from '../../providers/fractal/types';
+import { Proposal } from '../../../providers/fractal/types';
 
 export default function ProposalTitle({ proposal }: { proposal: Proposal }) {
   return (
