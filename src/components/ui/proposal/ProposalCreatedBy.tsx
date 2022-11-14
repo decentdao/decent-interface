@@ -1,22 +1,23 @@
 import { Flex, Text } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import useDisplayName from '../../../hooks/useDisplayName';
-import CopyToClipboard from '../CopyToClipboard';
+import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
-function ProposalCreatedBy({
-  proposalProposer,
-  includeClipboard,
-}: {
-  proposalProposer: string;
-  includeClipboard?: boolean;
-}) {
-  const { t } = useTranslation('proposal');
+function ProposalCreatedBy({ proposalProposer }: { proposalProposer: string }) {
   const { displayName: proposerDisplayName } = useDisplayName(proposalProposer);
 
   return (
     <Flex width="100%">
-      <Text>{t('createdBy', { proposer: proposerDisplayName })}</Text>
-      {includeClipboard && <CopyToClipboard textToCopy={proposalProposer} />}
+      <Trans
+        i18nKey="proposedBy"
+        ns="proposal"
+        tOptions={{ proposer: proposerDisplayName }}
+      >
+        <Text>Proposed by </Text>
+        <EtherscanLinkAddress address={proposalProposer}>
+          <Text color="gold.500">{proposerDisplayName}</Text>
+        </EtherscanLinkAddress>
+      </Trans>
     </Flex>
   );
 }

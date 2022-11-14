@@ -22,14 +22,22 @@ export function formatDatesDiffReadable(
     formattedString = t('labelDateMinutes', { count: Math.floor(diffInMinutes) });
   } else if (diffInMinutes < 60 * 24) {
     const diffInHours = Math.abs(differenceInHours(dateStart, dateEnd));
-    formattedString = t('labelDateHour', { count: diffInHours });
+    formattedString = t(diffInHours === 1 ? 'labelDateHour_single' : 'labelDateHour_plural', {
+      count: diffInHours,
+    });
   } else if (diffInMonths < 1) {
-    formattedString = t('labelDateDay', { count: diffInDays });
+    formattedString = t(diffInDays === 1 ? 'labelDateDay_single' : 'labelDateDay_plural', {
+      count: diffInDays,
+    });
   } else if (diffInMonths < 12) {
-    formattedString = t('labelDateMonth', { count: diffInMonths });
+    formattedString = t(diffInMonths === 1 ? 'labelDateMonth_single' : 'labelDateMonth_plural', {
+      count: diffInMonths,
+    });
   } else {
     const diffInYears = Math.abs(differenceInYears(dateStart, dateEnd));
-    formattedString = t('labelDateYear', { count: diffInYears });
+    formattedString = t(diffInYears === 1 ? 'labelDateYear_single' : 'labelDateYear_plural', {
+      count: diffInYears,
+    });
   }
 
   return formattedString;

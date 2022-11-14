@@ -1,11 +1,15 @@
-import { Text, Flex, Box } from '@chakra-ui/react';
+import { Text, Flex, Box, Grid, GridItem } from '@chakra-ui/react';
 import { Button } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import CastVote from '../../components/Proposals/CastVote';
-import ProposalCardDetailed from '../../components/Proposals/ProposalCardDetailed';
 import ProposalVotes from '../../components/Proposals/ProposalVotes';
+import ContentBox from '../../components/ui/ContentBox';
+import StatusBox from '../../components/ui/StatusBox';
+import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
+import ProposalTime from '../../components/ui/proposal/ProposalTime';
+import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../providers/fractal/hooks/useProposals';
 import { Proposal } from '../../providers/fractal/types';
@@ -48,15 +52,27 @@ function ProposalDetails() {
           {t('proposals', { ns: 'sidebar' })}
         </Button>
       </Link>
-      <Box>
-        <Box>
-          <ProposalCardDetailed proposal={proposal} />
+      <Grid
+        gap={4}
+        templateColumns="repeat(3, 1fr)"
+      >
+        <GridItem colSpan={2}>
+          <ContentBox>
+            <Flex alignItems="center">
+              <StatusBox state={proposal.state} />
+              {proposal.deadline && <ProposalTime deadline={proposal.deadline} />}
+              <ProposalTitle proposal={proposal} />
+            </Flex>
+            <Box>
+              <ProposalCreatedBy proposalProposer={proposal.proposer} />
+            </Box>
+          </ContentBox>
           <ProposalVotes proposal={proposal} />
-        </Box>
-        <Flex>
+        </GridItem>
+        <GridItem colSpan={1}>
           <CastVote proposal={proposal} />
-        </Flex>
-      </Box>
+        </GridItem>
+      </Grid>
     </Box>
   );
 }
