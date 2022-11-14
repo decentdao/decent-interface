@@ -43,7 +43,7 @@
     "errorCantCreateProposal": "Voting weight is less than the required threshold to create proposals",
     "labelRemoveTransaction": "Remove Transaction",
     "errorInvalidFragments": "Invalid fragments",
-    "proposedBy": "<0>Proposed by </0> <1>{{proposer}}</1>",
+    "proposedBy": "Proposed by",
     "timeLeft": "{{time}} left",
     "timeAgo": "{{time}} ago"
 }

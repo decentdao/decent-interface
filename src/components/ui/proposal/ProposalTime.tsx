@@ -19,7 +19,7 @@ function ProposalTime({ deadline }: { deadline: number }) {
         gap={1}
         alignItems="start"
       >
-        <Text>{t(isPassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}</Text>
+        <Text color="sand.700">{t(isPassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}</Text>
       </Flex>
     </Flex>
   );

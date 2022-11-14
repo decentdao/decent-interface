@@ -43,7 +43,7 @@ function ProposalDetails() {
 
   return (
     <Box mt="3rem">
-      <Link to={`/daos/${DAO_ROUTES.delegate.relative(params.address)}/proposals`}>
+      <Link to={DAO_ROUTES.proposals.relative(params.address)}>
         <Button
           size="lg"
           variant="text"
@@ -58,12 +58,25 @@ function ProposalDetails() {
       >
         <GridItem colSpan={2}>
           <ContentBox>
-            <Flex alignItems="center">
-              <StatusBox state={proposal.state} />
-              {proposal.deadline && <ProposalTime deadline={proposal.deadline} />}
-              <ProposalTitle proposal={proposal} />
+            <Flex
+              alignItems="center"
+              flexWrap="wrap"
+            >
+              <Flex
+                gap={4}
+                alignItems="center"
+              >
+                <StatusBox state={proposal.state} />
+                {proposal.deadline && <ProposalTime deadline={proposal.deadline} />}
+              </Flex>
+              <Box
+                w="full"
+                mt={4}
+              >
+                <ProposalTitle proposal={proposal} />
+              </Box>
             </Flex>
-            <Box>
+            <Box mt={4}>
               <ProposalCreatedBy proposalProposer={proposal.proposer} />
             </Box>
           </ContentBox>
