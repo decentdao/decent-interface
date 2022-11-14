@@ -47,6 +47,8 @@ export function OptionMenu({
               }}
               textStyle="text-base-mono-medium"
               color="grayscale.100"
+              paddingStart="0rem"
+              paddingEnd="0rem"
             >
               {t(option.optionKey)}
             </MenuItem>
