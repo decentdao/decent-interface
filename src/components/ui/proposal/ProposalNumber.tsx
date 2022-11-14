@@ -1,11 +1,7 @@
-function ProposalNumber({
-  proposalNumber,
-  textSize,
-}: {
-  proposalNumber: number;
-  textSize?: string;
-}) {
-  return <div className={`px-4 text-gray-25 ${textSize}`}>#{proposalNumber}</div>;
+import { Text } from '@chakra-ui/react';
+
+function ProposalNumber({ proposalNumber }: { proposalNumber: number }) {
+  return <Text textStyle="text-xl-mono-bold">#{proposalNumber}</Text>;
 }
 
 export default ProposalNumber;

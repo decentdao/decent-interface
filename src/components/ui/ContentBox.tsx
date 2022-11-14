@@ -1,14 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import ContentBoxTitle from './ContentBoxTitle';
 
-function ContentBox({
-  title,
-  children,
-}: {
-  title?: string;
-  isLightBackground?: boolean;
-  children: React.ReactNode;
-}) {
+function ContentBox({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
     <Box
       rounded="lg"
