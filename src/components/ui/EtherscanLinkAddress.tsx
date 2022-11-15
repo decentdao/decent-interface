@@ -1,3 +1,4 @@
+import { Link } from '@chakra-ui/react';
 import useSubDomain from '../../hooks/useSubDomain';
 
 function EtherscanLinkAddress({
@@ -13,13 +14,12 @@ function EtherscanLinkAddress({
   const href = address ? `https://${subdomain}etherscan.io/${path}/${address}` : undefined;
 
   return (
-    <a
+    <Link
       href={href}
-      target="_blank"
-      rel="noreferrer"
+      isExternal
     >
       {children}
-    </a>
+    </Link>
   );
 }
 

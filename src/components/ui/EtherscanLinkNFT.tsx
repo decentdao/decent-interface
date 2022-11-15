@@ -1,3 +1,4 @@
+import { Link } from '@chakra-ui/react';
 import useSubDomain from '../../hooks/useSubDomain';
 
 function EtherscanLinkNFT({
@@ -11,13 +12,12 @@ function EtherscanLinkNFT({
 }) {
   const subdomain = useSubDomain();
   return (
-    <a
+    <Link
       href={`https://${subdomain}etherscan.io/nft/${address}/${tokenId}`}
-      target="_blank"
-      rel="noreferrer"
+      isExternal
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
