@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useAvatar from '../../../hooks/useAvatar';
@@ -31,12 +31,15 @@ export function Connected() {
   return (
     <Flex
       alignItems="center"
-      gap="2"
+      gap="0.75rem"
+      color="grayscale.100"
     >
-      <Avatar
-        address={account}
-        url={avatarURL}
-      />
+      <Box mt="0.125rem">
+        <Avatar
+          address={account}
+          url={avatarURL}
+        />
+      </Box>
       <Text textStyle="text-sm-mono-semibold">{accountDisplayName}</Text>
       <ArrowDown />
     </Flex>
