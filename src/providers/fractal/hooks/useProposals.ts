@@ -26,7 +26,7 @@ export default function useProposals() {
     gnosis: { safe },
   } = useFractal();
 
-  const submitTxProposal = useCallback(
+  const submitProposal = useCallback(
     async ({
       proposalData,
       successCallback,
@@ -155,7 +155,7 @@ export default function useProposals() {
   return {
     proposals,
     pendingCreateTx,
-    submitTxProposal,
+    submitProposal,
     canUserCreateProposal: true,
   };
 }
