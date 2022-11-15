@@ -20,13 +20,13 @@ export function MenuItemButton({
     <Fragment>
       <MenuItem
         cursor="pointer"
-        p="1rem 1.5rem"
+        p="1.5rem"
         data-testid={testId}
         onClick={onClick}
         border="1px solid"
         borderColor="chocolate.700"
         _hover={{
-          bg: 'chocolate.900',
+          color: 'gold.500-hover',
         }}
       >
         <Flex

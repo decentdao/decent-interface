@@ -8,8 +8,8 @@ export function AccountDisplay() {
     <Menu isLazy>
       <Fragment>
         <MenuButton
-          w="9.9375rem"
           data-testid="header-accountMenu"
+          pr="1rem"
         >
           <MenuButtonDisplay />
         </MenuButton>

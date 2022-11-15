@@ -1,5 +1,6 @@
-import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
 import { Copy, StarGoldSolid, StarOutline } from '@decent-org/fractal-ui';
+import { ManageDAOMenu } from '../../../components/menus/ManageDAO/ManageDAOMenu';
 import { Badge } from '../../../components/ui/badges/Badge';
 import useDisplayName from '../../../hooks/useDisplayName';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
@@ -56,6 +57,8 @@ export function InfoDAO() {
           labelKey={MOCK_IS_SUB_DAO ? 'child' : 'parent'}
           size="sm"
         />
+        <Spacer />
+        <ManageDAOMenu />
       </Flex>
       <Flex
         alignItems="center"
