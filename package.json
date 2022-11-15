@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^2.3.4",
-    "@decent-org/fractal-ui": "^0.0.21",
+    "@decent-org/fractal-ui": "^0.0.22",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@ethersproject/abstract-signer": "^5.7.0",
@@ -53,8 +53,7 @@
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
     "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "tests": "playwright test",
-    "prepare": "husky install"
+    "tests": "playwright test"
   },
   "browserslist": {
     "production": [
@@ -80,8 +79,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "husky": "^8.0.1",
-    "lint-staged": "^13.0.3",
     "playwright": "^1.26.0",
     "prettier": "^2.7.1",
     "typescript": "^4.8.0"

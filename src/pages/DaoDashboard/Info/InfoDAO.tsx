@@ -1,5 +1,6 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
 import { Copy, StarGoldSolid, StarOutline } from '@decent-org/fractal-ui';
+import { ManageDAOMenu } from '../../../components/menus/ManageDAO/ManageDAOMenu';
 import { Badge } from '../../../components/ui/badges/Badge';
 import useDisplayName from '../../../hooks/useDisplayName';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
@@ -9,13 +10,22 @@ export function InfoDAO() {
   const {
     gnosis: { safe, daoName },
   } = useFractal();
+
   const copyToClipboard = useCopyText();
   const { accountSubstring } = useDisplayName(safe.address);
 
-  // @todo replace mocked values
-  const MOCK_IS_FAVORITE = false;
-  const MOCK_IS_SUB_DAO = false;
+  const {
+    account: {
+      favorites: { isConnectedFavorited, toggleFavorite },
+    },
+  } = useFractal();
 
+  // @todo replace mocked values
+  const MOCK_IS_SUB_DAO = false;
+  if (!safe.address) {
+    // @todo replace with a loader
+    return <div />;
+  }
   return (
     <Box data-testid="dashboard-daoInfo">
       <Flex
@@ -30,11 +40,25 @@ export function InfoDAO() {
         >
           {daoName}
         </Text>
-        {MOCK_IS_FAVORITE ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />}
+        <IconButton
+          variant="unstyled"
+          minWidth="0px"
+          aria-label="Favorite Toggle"
+          icon={
+            isConnectedFavorited ? (
+              <StarGoldSolid boxSize="1.5rem" />
+            ) : (
+              <StarOutline boxSize="1.5rem" />
+            )
+          }
+          onClick={() => toggleFavorite(safe.address!)}
+        />
         <Badge
           labelKey={MOCK_IS_SUB_DAO ? 'child' : 'parent'}
           size="sm"
         />
+        <Spacer />
+        <ManageDAOMenu />
       </Flex>
       <Flex
         alignItems="center"

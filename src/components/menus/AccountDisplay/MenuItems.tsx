@@ -13,6 +13,7 @@ export function MenuItems() {
   } = useWeb3Provider();
   return (
     <MenuList
+      p="0"
       w="16.25rem"
       rounded="lg"
       shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
@@ -20,7 +21,7 @@ export function MenuItems() {
       bg="grayscale.black"
       border="none"
       sx={{
-        '& > :nth-child(1)': {
+        '& > :nth-of-type(1)': {
           borderTopRadius: 'lg',
         },
         '& > :last-child': {

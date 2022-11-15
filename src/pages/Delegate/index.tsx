@@ -1,23 +1,27 @@
 import cx from 'classnames';
-import { utils } from 'ethers';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ContentBanner from '../../components/ui/ContentBanner';
+import ContentBox from '../../components/ui/ContentBox';
+import EtherscanLinkAddress from '../../components/ui/EtherscanLinkAddress';
+import { PrimaryButton, SecondaryButton } from '../../components/ui/forms/Button';
+import Input from '../../components/ui/forms/Input';
+import InputBox from '../../components/ui/forms/InputBox';
+import DataLoadingWrapper from '../../components/ui/loaders/DataLoadingWrapper';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useAddress from '../../hooks/useAddress';
 import useDelegateVote from '../../hooks/useDelegateVote';
 import useDisplayName from '../../hooks/useDisplayName';
-import { useGovenorModule } from '../../providers/govenor/hooks/useGovenorModule';
-import ContentBox from '../ui/ContentBox';
-import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
-import { SecondaryButton } from '../ui/forms/Button';
-import Input from '../ui/forms/Input';
-import InputBox from '../ui/forms/InputBox';
-import DataLoadingWrapper from '../ui/loaders/DataLoadingWrapper';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
 
-function Delegate() {
+export function Delegate() {
   const [newDelegatee, setNewDelegatee] = useState<string>('');
   const { t } = useTranslation(['common', 'dashboard']);
+  const [pending, setPending] = useState<boolean>(false);
+
+  const {
+    governance: { governanceToken },
+  } = useFractal();
 
   const {
     state: { account },
@@ -25,26 +29,13 @@ function Delegate() {
 
   const [, validAddress] = useAddress(newDelegatee);
 
-  const {
-    votingToken: {
-      votingTokenData: { decimals, symbol, userBalance, delegatee, votingWeight },
-    },
-  } = useGovenorModule();
-  const { displayName: delegateeDisplayName } = useDisplayName(delegatee);
+  const delegateVote = useDelegateVote({
+    delegatee: newDelegatee,
+    votingTokenContract: governanceToken?.tokenContract,
+    setPending: setPending,
+  });
 
-  const readableBalance = useMemo(() => {
-    if (!userBalance || !decimals || !symbol) {
-      return;
-    }
-    return `${utils.formatUnits(userBalance, decimals)} ${symbol}`;
-  }, [decimals, userBalance, symbol]);
-
-  const readableVotingWeight = useMemo(() => {
-    if (!votingWeight || !decimals || !symbol) {
-      return;
-    }
-    return `${utils.formatUnits(votingWeight, decimals)} ${symbol}`;
-  }, [decimals, votingWeight, symbol]);
+  const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
 
   const errorMessage = validAddress === false ? t('errorInvalidAddress') : undefined;
 
@@ -56,10 +47,7 @@ function Delegate() {
     setNewDelegatee(account);
   };
 
-  const [delegateVote, pending] = useDelegateVote({
-    delegatee: newDelegatee,
-    successCallback: () => setNewDelegatee(''),
-  });
+  if (!governanceToken) return <div>Loading</div>;
 
   return (
     <>
@@ -84,31 +72,23 @@ function Delegate() {
           </InputBox>
           <div className="flex mr-2 my-1 text-gray-50">
             Balance:
-            <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={readableBalance === undefined}>
-                {readableBalance}
-              </DataLoadingWrapper>
-            </span>
+            <span className="text-gray-25 ml-2">{governanceToken.userBalanceString}</span>
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
             Current Delegatee:
-            <EtherscanLinkAddress address={delegatee}>
+            <EtherscanLinkAddress address={governanceToken.delegatee}>
               <DataLoadingWrapper isLoading={!delegateeDisplayName}>
-                <span className="text-gold-500 ml-2">{delegateeDisplayName}</span>
+                <span className="text-gold-500 ml-2">{delegateeDisplayName.displayName}</span>
               </DataLoadingWrapper>
             </EtherscanLinkAddress>
           </div>
           <div className="flex mr-2 my-1 text-gray-50">
             Current Voting Weight:
-            <span className="text-gray-25 ml-2">
-              <DataLoadingWrapper isLoading={readableVotingWeight === undefined}>
-                {readableVotingWeight}
-              </DataLoadingWrapper>
-            </span>
+            <span className="text-gray-25 ml-2">{governanceToken.votingWeightString}</span>
           </div>
-          <SecondaryButton
+          <PrimaryButton
             disabled={!validAddress || newDelegatee.trim() === '' || pending}
-            onClick={() => delegateVote()}
+            onClick={delegateVote}
             label={t('delegate')}
             className="-ml-0 mt-4"
           />

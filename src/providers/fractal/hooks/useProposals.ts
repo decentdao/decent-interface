@@ -2,33 +2,31 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import axios from 'axios';
 import { Signer } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
-import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { buildSafeAPIPost } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { ProposalExecuteData } from '../../../types/proposal';
-import { GnosisModuleType } from '../types';
 import { Proposal } from '../types/usul';
 import { buildGnosisApiUrl } from '../utils';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';
 import { useFractal } from './useFractal';
+import useUsul from './useUsul';
 
 export default function useProposals() {
+  const { usulContract, votingStrategiesAddresses } = useUsul();
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
-  const [usulContract, setUsulContract] = useState<Usul>();
-  const [votingStrategiesAddresses, setVotingStrategiesAddresses] = useState<string[]>([]);
   const [proposals, setProposals] = useState<Proposal[]>();
 
   const {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
   const {
-    gnosis: { safe, modules },
+    gnosis: { safe },
   } = useFractal();
 
-  const submitProposal = useCallback(
+  const submitTxProposal = useCallback(
     async ({
       proposalData,
       successCallback,
@@ -116,48 +114,6 @@ export default function useProposals() {
   );
 
   useEffect(() => {
-    const init = async () => {
-      if (!signerOrProvider || !modules) {
-        return;
-      }
-
-      const usulModule = modules.find(module => module.moduleType === GnosisModuleType.USUL);
-
-      if (!usulModule) {
-        return;
-      }
-
-      try {
-        const moduleContract = Usul__factory.connect(usulModule.moduleAddress, signerOrProvider);
-        const [strategies] = await moduleContract.getStrategiesPaginated(
-          '0x0000000000000000000000000000000000000001',
-          10
-        );
-        const proposalCreatedFilter = moduleContract.filters.ProposalCreated();
-        const proposalCreatedEvents = await moduleContract.queryFilter(proposalCreatedFilter);
-        const mappedProposals = await Promise.all(
-          proposalCreatedEvents.map(({ args }) => {
-            return mapProposalCreatedEventToProposal(
-              args[0],
-              args[1],
-              args[2],
-              moduleContract,
-              signerOrProvider
-            );
-          })
-        );
-
-        setUsulContract(moduleContract);
-        setVotingStrategiesAddresses(strategies);
-        setProposals(mappedProposals);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    init();
-  }, [modules, signerOrProvider]);
-
-  useEffect(() => {
     if (!usulContract || !signerOrProvider) {
       return;
     }
@@ -171,10 +127,35 @@ export default function useProposals() {
     };
   }, [usulContract, signerOrProvider, proposalCreatedListener]);
 
+  useEffect(() => {
+    if (!usulContract || !signerOrProvider) {
+      return;
+    }
+
+    const loadProposals = async () => {
+      const proposalCreatedFilter = usulContract.filters.ProposalCreated();
+      const proposalCreatedEvents = await usulContract.queryFilter(proposalCreatedFilter);
+      const mappedProposals = await Promise.all(
+        proposalCreatedEvents.map(({ args }) => {
+          return mapProposalCreatedEventToProposal(
+            args[0],
+            args[1],
+            args[2],
+            usulContract,
+            signerOrProvider
+          );
+        })
+      );
+      setProposals(mappedProposals);
+    };
+
+    loadProposals();
+  }, [usulContract, signerOrProvider]);
+
   return {
     proposals,
     pendingCreateTx,
-    submitProposal,
+    submitTxProposal,
     canUserCreateProposal: true,
   };
 }

@@ -7,7 +7,7 @@ import logo from '../../assets/images/fractal-text-logo.svg';
 import { CONTENT_HEIGHT } from '../../constants/common';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants/url';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { DAO_ROUTES } from '../../routes/constants';
+import { BASE_ROUTES } from '../../routes/constants';
 
 interface IconWithTextProps {
   icon: ReactNode;
@@ -91,7 +91,7 @@ function Home() {
   } = useWeb3Provider();
   const navigate = useNavigate();
   const createDAO = () => {
-    navigate(DAO_ROUTES.new.relative);
+    navigate(BASE_ROUTES.create);
   };
   return (
     <Center h={CONTENT_HEIGHT}>

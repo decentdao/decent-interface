@@ -55,13 +55,17 @@ export function MenuItemWallet() {
             cursor="pointer"
           >
             <Text
+              maxWidth="8rem"
+              whiteSpace="nowrap"
+              overflowX="hidden"
+              textOverflow="ellipsis"
               data-testid="walletMenu-accountDisplay"
               textStyle="text-base-mono-medium"
               color="grayscale.100"
             >
               {accountDisplayName}
             </Text>
-            <Copy />
+            <Copy boxSize="1.5rem" />
           </Flex>
         </Flex>
         <Avatar
