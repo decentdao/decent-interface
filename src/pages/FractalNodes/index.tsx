@@ -1,18 +1,30 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../components/ui/Header/PageHeader';
-import { DAOInfoCard } from '../../components/ui/cards/DAOInfoCard';
+import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { DAO_ROUTES } from '../../routes/constants';
 import { NodeLines } from './NodeLines';
 
 export function FractalNodes() {
   const {
     gnosis: { safe },
   } = useFractal();
-
+  const navigate = useNavigate();
   const [isParentExpanded, setIsParentExpended] = useState(true);
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(false);
+
+  const getOptions = (safeAddress: string) => {
+    return [
+      {
+        optionKey: 'optionCreateSubDAO',
+        function: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+      },
+      { optionKey: 'optionInitiateFreeze', function: () => {} }, // TODO freeze hook (if parent voting holder)
+    ];
+  };
 
   if (!safe.address) {
     return <InfoBoxLoader />;
@@ -35,11 +47,12 @@ export function FractalNodes() {
         titleTestId="nodes-title"
       />
       {parentDAOAddress && (
-        <DAOInfoCard
+        <DAONodeCard
           safeAddress={parentDAOAddress}
           toggleExpansion={parentExpansionToggle}
           expanded={isParentExpanded}
           hasChildren={true}
+          options={getOptions(parentDAOAddress)}
         />
       )}
 
@@ -52,11 +65,12 @@ export function FractalNodes() {
           />
         )}
         {isParentExpanded && (
-          <DAOInfoCard
+          <DAONodeCard
             safeAddress={safe.address}
             toggleExpansion={childrenExpansionToggle}
             expanded={isChildrenExpanded}
             hasChildren={!!daoPermissionList.length}
+            options={getOptions(safe.address)}
           />
         )}
       </Flex>
@@ -76,10 +90,11 @@ export function FractalNodes() {
                 extendHeight={hasMore}
                 indentfactor={!!parentDAOAddress ? 4 : 1}
               />
-              <DAOInfoCard
+              <DAONodeCard
                 safeAddress={safeAddress}
                 toggleExpansion={() => {}}
                 expanded={false}
+                options={getOptions(safeAddress)}
               />
             </Flex>
           );

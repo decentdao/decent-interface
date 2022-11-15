@@ -1,16 +1,17 @@
-import { Flex, IconButton, Text } from '@chakra-ui/react';
+import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
 import {
   ArrowDownSm,
   StarGoldSolid,
   StarOutline,
   Copy,
-  VEllipsis,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import useDisplayName from '../../../hooks/useDisplayName';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { ManageDAOMenu } from '../../menus/ManageDAO/ManageDAOMenu';
+import { Option } from '../../menus/OptionMenu';
 
 interface IDAOInfoCard {
   safeAddress: string;
@@ -18,9 +19,16 @@ interface IDAOInfoCard {
   expanded?: boolean;
   hasChildren?: boolean;
   viewChildren?: boolean;
+  options?: Option[];
 }
 
-export function DAOInfoCard({ safeAddress, toggleExpansion, expanded, hasChildren }: IDAOInfoCard) {
+export function DAOInfoCard({
+  safeAddress,
+  toggleExpansion,
+  expanded,
+  hasChildren,
+  options,
+}: IDAOInfoCard) {
   const {
     account: {
       favorites: { isConnectedFavorited, toggleFavorite },
@@ -31,13 +39,8 @@ export function DAOInfoCard({ safeAddress, toggleExpansion, expanded, hasChildre
   const { daoRegistryName } = useDAOName({ address: safeAddress });
   return (
     <Flex
-      alignItems="center"
       justifyContent="space-between"
-      h="6.75rem"
       w="full"
-      bg="black.900-semi-transparent"
-      p="1rem"
-      borderRadius="0.5rem"
     >
       <Flex alignItems="center">
         {/* CARET */}
@@ -63,7 +66,10 @@ export function DAOInfoCard({ safeAddress, toggleExpansion, expanded, hasChildre
           />
         )}
         {/* DAO NAME AND INFO */}
-        <Flex flexDirection="column">
+        <Flex
+          flexDirection="column"
+          gap="0.5rem"
+        >
           <Flex
             alignItems="center"
             gap="1rem"
@@ -105,11 +111,21 @@ export function DAOInfoCard({ safeAddress, toggleExpansion, expanded, hasChildre
         </Flex>
       </Flex>
       {/* Veritical Elipsis */}
-      <IconButton
-        aria-label="dao-action-menu"
-        variant="ghost"
-        icon={<VEllipsis boxSize="1.5rem" />}
-      />
+      {options && !!options.length && <ManageDAOMenu options={options} />}
     </Flex>
+  );
+}
+
+export function DAONodeCard(props: IDAOInfoCard) {
+  return (
+    <Box
+      h="6.75rem"
+      bg="black.900-semi-transparent"
+      p="1rem"
+      borderRadius="0.5rem"
+      w="full"
+    >
+      <DAOInfoCard {...props} />
+    </Box>
   );
 }
