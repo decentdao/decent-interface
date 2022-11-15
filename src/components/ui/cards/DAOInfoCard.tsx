@@ -1,5 +1,12 @@
 import { Flex, IconButton, Text } from '@chakra-ui/react';
-import { ArrowDownSm, StarGoldSolid, StarOutline, Copy, VEllipsis } from '@decent-org/fractal-ui';
+import {
+  ArrowDownSm,
+  StarGoldSolid,
+  StarOutline,
+  Copy,
+  VEllipsis,
+  ArrowRightSm,
+} from '@decent-org/fractal-ui';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import useDisplayName from '../../../hooks/useDisplayName';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
@@ -7,9 +14,13 @@ import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 
 interface IDAOInfoCard {
   safeAddress: string;
+  toggleExpansion: () => void;
+  expanded: boolean;
+  hasChildren?: boolean;
+  viewChildren?: boolean;
 }
 
-export function DAOInfoCard({ safeAddress }: IDAOInfoCard) {
+export function DAOInfoCard({ safeAddress, toggleExpansion, expanded, hasChildren }: IDAOInfoCard) {
   const {
     account: {
       favorites: { isConnectedFavorited, toggleFavorite },
@@ -30,17 +41,27 @@ export function DAOInfoCard({ safeAddress }: IDAOInfoCard) {
     >
       <Flex alignItems="center">
         {/* CARET */}
-        <IconButton
-          variant="ghost"
-          minWidth="0px"
-          aria-label="Favorite Toggle"
-          icon={
-            <ArrowDownSm
-              boxSize="1.5rem"
-              mr="1.5rem"
-            />
-          }
-        />
+        {hasChildren && (
+          <IconButton
+            variant="ghost"
+            minWidth="0px"
+            aria-label="Favorite Toggle"
+            icon={
+              expanded ? (
+                <ArrowDownSm
+                  boxSize="1.5rem"
+                  mr="1.5rem"
+                />
+              ) : (
+                <ArrowRightSm
+                  boxSize="1.5rem"
+                  mr="1.5rem"
+                />
+              )
+            }
+            onClick={toggleExpansion}
+          />
+        )}
         {/* DAO NAME AND INFO */}
         <Flex flexDirection="column">
           <Flex
