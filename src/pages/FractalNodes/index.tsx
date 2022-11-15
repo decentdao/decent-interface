@@ -31,7 +31,7 @@ export function FractalNodes() {
   }
   // @todo replace these variables
   const parentDAOAddress: string | undefined = undefined;
-  const daoPermissionList: string[] = [];
+  const daoPermissionList: string[] = [safe.address, safe.address];
 
   const parentExpansionToggle = () => {
     setIsParentExpended(v => !v);
@@ -92,7 +92,6 @@ export function FractalNodes() {
               />
               <DAONodeCard
                 safeAddress={safeAddress}
-                toggleExpansion={() => {}}
                 expanded={false}
                 options={getOptions(safeAddress)}
               />
