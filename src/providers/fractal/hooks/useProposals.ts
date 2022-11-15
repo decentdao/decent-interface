@@ -46,8 +46,6 @@ export default function useProposals() {
         }
         setPendingCreateTx(true);
         try {
-          // todo: check that all txs will get posted
-          // todo: cleanup routes and general cleanup
           await axios.post(
             buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
             await buildSafeAPIPost(
