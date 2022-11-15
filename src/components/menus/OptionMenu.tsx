@@ -24,13 +24,7 @@ export function OptionMenu({
       isLazy
       gutter={16}
     >
-      <MenuButton
-        p="0px"
-        h="fit-content"
-        m="0px"
-      >
-        {icon}
-      </MenuButton>
+      <MenuButton h="fit-content">{icon}</MenuButton>
       <MenuList
         rounded="lg"
         shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}

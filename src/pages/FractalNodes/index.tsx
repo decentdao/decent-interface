@@ -51,7 +51,7 @@ export function FractalNodes() {
           safeAddress={parentDAOAddress}
           toggleExpansion={parentExpansionToggle}
           expanded={isParentExpanded}
-          hasChildren={true}
+          numberOfChildrenDAO={1}
           options={getOptions(parentDAOAddress)}
         />
       )}
@@ -69,7 +69,7 @@ export function FractalNodes() {
             safeAddress={safe.address}
             toggleExpansion={childrenExpansionToggle}
             expanded={isChildrenExpanded}
-            hasChildren={!!daoPermissionList.length}
+            numberOfChildrenDAO={daoPermissionList.length}
             options={getOptions(safe.address)}
           />
         )}

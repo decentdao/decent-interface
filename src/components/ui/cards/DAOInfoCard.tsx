@@ -17,7 +17,7 @@ interface IDAOInfoCard {
   safeAddress: string;
   toggleExpansion?: () => void;
   expanded?: boolean;
-  hasChildren?: boolean;
+  numberOfChildrenDAO?: number;
   viewChildren?: boolean;
   options?: Option[];
 }
@@ -26,7 +26,7 @@ export function DAOInfoCard({
   safeAddress,
   toggleExpansion,
   expanded,
-  hasChildren,
+  numberOfChildrenDAO,
   options,
 }: IDAOInfoCard) {
   const {
@@ -44,7 +44,7 @@ export function DAOInfoCard({
     >
       <Flex alignItems="center">
         {/* CARET */}
-        {hasChildren && (
+        {!!toggleExpansion && (
           <IconButton
             variant="ghost"
             minWidth="0px"
@@ -94,6 +94,15 @@ export function DAOInfoCard({
               }
               onClick={() => toggleFavorite(safeAddress)}
             />
+            {!!numberOfChildrenDAO && (
+              <Box
+                bg="chocolate.500"
+                borderRadius="4px"
+                p="0.25rem 0.5rem"
+              >
+                <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
+              </Box>
+            )}
           </Flex>
           <Flex
             alignItems="center"

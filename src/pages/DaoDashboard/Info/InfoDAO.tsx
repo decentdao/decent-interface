@@ -9,7 +9,7 @@ export function InfoDAO() {
   } = useFractal();
 
   // @todo replace mocked values
-  const MOCK_IS_SUB_DAO = false;
+  const subDAOsWithPermissions = [];
   const navigate = useNavigate();
 
   if (!safe.address) {
@@ -26,6 +26,7 @@ export function InfoDAO() {
     <DAOInfoCard
       safeAddress={safe.address}
       options={options}
+      numberOfChildrenDAO={subDAOsWithPermissions.length}
     />
   );
 }
