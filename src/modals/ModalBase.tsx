@@ -2,27 +2,23 @@ import { Divider, Flex, Modal, ModalContent, ModalOverlay, Spacer, Text } from '
 import { CloseX } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 
-/**
- * The base wrapper component for a modal.  This displays the Chakra components necessary to open a modal,
- * as well as the title of the modal.  The child component provided is displayed as the modal content.
- */
-export function FractalModalBase({
-  title,
-  isOpen,
-  onClose,
-  children,
-}: {
+interface ModuleBaseProps {
   title: string;
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
-}) {
+}
+/**
+ * The base wrapper component for a modal.  This displays the Chakra components necessary to open a modal,
+ * as well as the title of the modal.  The child component provided is displayed as the modal content.
+ */
+export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
       size="xl"
-      isOpen={isOpen}
-      onClose={onClose}
+      isOpen={props.isOpen}
+      onClose={props.onClose}
     >
       <ModalOverlay backgroundColor="black.900-semi-transparent" />
       <ModalContent
@@ -35,16 +31,16 @@ export function FractalModalBase({
             color="grayscale.100"
             textStyle="text-lg-mono-medium"
           >
-            {title}
+            {props.title}
           </Text>
           <Spacer />
-          <CloseX onClick={onClose} />
+          <CloseX onClick={props.onClose} />
         </Flex>
         <Divider
           color="chocolate.700"
           marginBottom="1rem"
         />
-        {children}
+        {props.children}
       </ModalContent>
     </Modal>
   );

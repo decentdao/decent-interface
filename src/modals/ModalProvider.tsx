@@ -2,7 +2,7 @@ import { Portal, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DelegateModal } from './DelegateModal';
-import { FractalModalBase } from './FractalModalBase';
+import { ModalBase } from './ModalBase';
 
 export enum ModalType {
   NONE,
@@ -54,16 +54,14 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   }
 
   const display = content ? (
-    <FractalModalBase
+    <ModalBase
       title={title}
       isOpen={isOpen}
       onClose={onSetClosed}
     >
       {content}
-    </FractalModalBase>
-  ) : (
-    <></>
-  );
+    </ModalBase>
+  ) : null;
 
   return (
     <ModalContext.Provider value={{ current, setCurrent }}>

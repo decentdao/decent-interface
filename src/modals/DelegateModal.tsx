@@ -18,36 +18,31 @@ export function DelegateModal({ close }: { close: Function }) {
   const {
     governance: { governanceToken },
   } = useFractal();
-
   const {
     state: { account },
   } = useWeb3Provider();
 
   const [, validAddress] = useAddress(newDelegatee);
-
+  const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
     votingTokenContract: governanceToken?.tokenContract,
     setPending: setPending,
   });
-  const onDelegateClick = function () {
+
+  const delegateSelf = () => {
+    if (account) setNewDelegatee(account);
+  };
+
+  const onDelegateClick = () => {
     delegateVote();
     if (close) close();
   };
 
-  const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
-
   const errorMessage =
     validAddress === false ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
-  const delegateSelf = () => {
-    if (!account) {
-      return;
-    }
-    setNewDelegatee(account);
-  };
-
-  if (!governanceToken) return <></>;
+  if (!governanceToken) return null;
 
   return (
     <Box>
@@ -108,7 +103,7 @@ export function DelegateModal({ close }: { close: Function }) {
         <Text
           textStyle="text-sm-sans-regular"
           color="gold.500-active"
-          onClick={() => delegateSelf()}
+          onClick={delegateSelf}
         >
           {t('linkSelfDelegate')}
         </Text>
