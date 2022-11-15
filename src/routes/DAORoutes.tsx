@@ -3,6 +3,7 @@ import ProposalDetails from '../components/Proposals/ProposalDetails';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
 import { Delegate } from '../pages/Delegate';
+import { FractalNodes } from '../pages/FractalNodes';
 import ProposalCreate from '../pages/ProposalCreate';
 import { Governance } from '../pages/Proposals';
 import Treasury from '../pages/Treasury';
@@ -21,7 +22,7 @@ function DAOSubRoutes() {
       />
       <Route
         path={DAO_ROUTES.nodes.path}
-        element={<div />}
+        element={<FractalNodes />}
       />
       <Route
         path={DAO_ROUTES.treasury.path}
