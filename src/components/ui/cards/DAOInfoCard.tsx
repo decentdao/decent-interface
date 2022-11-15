@@ -14,8 +14,8 @@ import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 
 interface IDAOInfoCard {
   safeAddress: string;
-  toggleExpansion: () => void;
-  expanded: boolean;
+  toggleExpansion?: () => void;
+  expanded?: boolean;
   hasChildren?: boolean;
   viewChildren?: boolean;
 }
