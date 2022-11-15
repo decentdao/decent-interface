@@ -2,7 +2,7 @@ import { AccountAction, GnosisAction, GovernanceAction, TreasuryAction } from '.
 import { GnosisTransactionsResponse } from './gnosis';
 import { IGnosisModuleData, IGovernance } from './governance';
 import { GnosisSafe, IFavorites, IAudit } from './state';
-import { GnosisAssetNonFungible, GnosisAssetFungible } from './treasury';
+import { GnosisAssetNonFungible, GnosisAssetFungible, AssetTransfers } from './treasury';
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE; payload: GnosisSafe }
@@ -24,6 +24,10 @@ export type TreasuryActions =
   | {
       type: TreasuryAction.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS;
       payload: GnosisAssetNonFungible[];
+    }
+  | {
+      type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS;
+      payload: AssetTransfers;
     }
   | { type: TreasuryAction.RESET };
 
