@@ -6,6 +6,6 @@ export function useTreasuryTotalUSD(): string {
     treasury: { assetsFungible },
   } = useFractal();
   let totalUSD = 0;
-  assetsFungible.map(asset => (totalUSD += Number(asset.fiatBalance)));
+  assetsFungible.forEach(asset => (totalUSD += Number(asset.fiatBalance)));
   return formatUSD(totalUSD);
 }
