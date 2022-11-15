@@ -2,7 +2,12 @@ import axios from 'axios';
 import { useCallback, useEffect } from 'react';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
-import { GnosisAssetFungible, GnosisAssetNonFungible, TreasuryActions } from '../types';
+import {
+  AssetTransfers,
+  GnosisAssetFungible,
+  GnosisAssetNonFungible,
+  TreasuryActions,
+} from '../types';
 import { buildGnosisApiUrl } from '../utils';
 import { TreasuryAction } from './../constants/actions';
 
@@ -54,10 +59,28 @@ export function useGnosisApiServices(
     }
   }, [chainId, safeAddress, treasuryDispatch]);
 
+  const getGnosisSafeTransfers = useCallback(async () => {
+    if (!safeAddress) {
+      return;
+    }
+    try {
+      const { data } = await axios.get<AssetTransfers>(
+        buildGnosisApiUrl(chainId, `/safes/${safeAddress}/transfers/`)
+      );
+      treasuryDispatch({
+        type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS,
+        payload: data,
+      });
+    } catch (e) {
+      logError(e);
+    }
+  }, [chainId, safeAddress, treasuryDispatch]);
+
   useEffect(() => {
     getGnosisSafeFungibleAssets();
     getGnosisSafeNonFungibleAssets();
-  }, [getGnosisSafeFungibleAssets, getGnosisSafeNonFungibleAssets]);
+    getGnosisSafeTransfers();
+  }, [getGnosisSafeFungibleAssets, getGnosisSafeNonFungibleAssets, getGnosisSafeTransfers]);
 
   return;
 }

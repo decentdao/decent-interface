@@ -30,6 +30,7 @@ export const treasuryInitialState: ITreasury = {
   transactions: [],
   assetsFungible: [],
   assetsNonFungible: [],
+  transfers: undefined,
   treasuryIsLoading: true,
 };
 
