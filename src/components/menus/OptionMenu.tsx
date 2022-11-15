@@ -20,7 +20,10 @@ export function OptionMenu({
 }) {
   const { t } = useTranslation(namespace);
   return (
-    <Menu isLazy>
+    <Menu
+      isLazy
+      gutter={16}
+    >
       <MenuButton
         p="0px"
         h="fit-content"
