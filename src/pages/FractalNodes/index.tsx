@@ -30,8 +30,8 @@ export function FractalNodes() {
     return <InfoBoxLoader />;
   }
   // @todo replace these variables
-  const parentDAOAddress: string | undefined = safe.address;
-  const daoPermissionList: string[] = [safe.address, safe.address];
+  const parentDAOAddress: string | undefined = undefined;
+  const daoPermissionList: string[] = [];
 
   const parentExpansionToggle = () => {
     setIsParentExpended(v => !v);
@@ -67,7 +67,7 @@ export function FractalNodes() {
         {isParentExpanded && (
           <DAONodeCard
             safeAddress={safe.address}
-            toggleExpansion={childrenExpansionToggle}
+            toggleExpansion={!!daoPermissionList.length ? childrenExpansionToggle : undefined}
             expanded={isChildrenExpanded}
             numberOfChildrenDAO={daoPermissionList.length}
             options={getOptions(safe.address)}
