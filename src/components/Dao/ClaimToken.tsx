@@ -33,7 +33,7 @@ function ClaimToken() {
   }
 
   return (
-    <ContentBox isLightBackground>
+    <ContentBox>
       <div className="flex justify-between items-center">
         <div className="text-gray-25">
           {t('labelClaimTokens', { value: formattedValue, symbol: symbol })}
