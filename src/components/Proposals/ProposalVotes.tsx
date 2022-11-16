@@ -145,7 +145,7 @@ function ProposalVotes({
   return (
     <>
       <ContentBox bg="black.900-semi-transparent">
-        <Text textStyle="text-xl-mono-bold">{t('breakdownTitle', { ns: 'proposal' })}</Text>
+        <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
         <Grid
           templateColumns="repeat(5, 1fr)"
           gap={7}
@@ -195,7 +195,7 @@ function ProposalVotes({
         </Grid>
       </ContentBox>
       <ContentBox bg="black.900-semi-transparent">
-        <Text textStyle="text-xl-mono-bold">{t('votesTitle', { ns: 'proposal' })}</Text>
+        <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
         <Divider
           color="chocolate.700"
           marginTop={4}

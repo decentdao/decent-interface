@@ -1,9 +1,10 @@
-import { Text, Flex, Box, Grid, GridItem } from '@chakra-ui/react';
+import { Text, Flex, Box, Grid, GridItem, Divider } from '@chakra-ui/react';
 import { Button } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import CastVote from '../../components/Proposals/CastVote';
+import ProposalSummary from '../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../components/Proposals/ProposalVotes';
 import ContentBox from '../../components/ui/ContentBox';
 import StatusBox from '../../components/ui/StatusBox';
@@ -79,8 +80,10 @@ function ProposalDetails() {
                 w="full"
                 mt={4}
               >
-                <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
-                <ProposalTitle proposal={proposal} />
+                <Flex gap={2}>
+                  <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
+                  <ProposalTitle proposal={proposal} />
+                </Flex>
                 <ProposalExecutableCode proposal={proposal} />
               </Box>
             </Flex>
@@ -95,6 +98,10 @@ function ProposalDetails() {
           />
         </GridItem>
         <GridItem colSpan={1}>
+          <ProposalSummary
+            proposal={proposal}
+            quorum={15} // @todo - get quorum from strategy contract
+          />
           <CastVote proposal={proposal} />
         </GridItem>
       </Grid>

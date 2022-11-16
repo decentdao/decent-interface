@@ -33,7 +33,8 @@ export type Proposal = {
   state: ProposalState;
   govTokenAddress: string | null;
   votes: ProposalVotesSummary;
-  deadline?: number;
+  startBlock: BigNumber;
+  deadline: number;
   proposer: string;
   proposalNumber: BigNumber;
   userVote?: ProposalVote;

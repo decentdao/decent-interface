@@ -67,14 +67,16 @@ export const mapProposalCreatedEventToProposal = async (
   signerOrProvider: Signer | Providers
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
-  const { deadline } = await strategyContract.proposals(proposalNumber);
+  const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
   const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
+
   // @todo: Retrieve proposal hashes for future decoding
   const MOCK_TX_HASHES = ['0x', '0x', '0x'];
   const proposal: Proposal = {
     proposalNumber,
     proposer,
+    startBlock,
     deadline: deadline.toNumber(),
     state,
     govTokenAddress: await strategyContract.governanceToken(),
