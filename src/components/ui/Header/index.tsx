@@ -19,7 +19,6 @@ function Header() {
       <Flex
         alignItems="center"
         h="full"
-        gap="8"
       >
         {!!account && <FavoritesMenu />}
         <AccountDisplay />

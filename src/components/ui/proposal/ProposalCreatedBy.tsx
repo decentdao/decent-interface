@@ -1,25 +1,22 @@
+import { Flex, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/useDisplayName';
-import CopyToClipboard from '../CopyToClipboard';
+import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
-function ProposalCreatedBy({
-  proposalProposer,
-  includeClipboard,
-  textSize = '',
-  addedClasses = '',
-}: {
-  proposalProposer: string;
-  includeClipboard?: boolean;
-  textSize?: string;
-  addedClasses?: string;
-}) {
+function ProposalCreatedBy({ proposalProposer }: { proposalProposer: string }) {
+  const { t } = useTranslation('proposal');
   const { displayName: proposerDisplayName } = useDisplayName(proposalProposer);
 
   return (
-    <div className={`flex max-w-xs ${textSize} ${addedClasses}`}>
-      <div className="text-gray-50">Created By:</div>
-      <div className="text-gold-500 ml-2">{proposerDisplayName}</div>
-      {includeClipboard && <CopyToClipboard textToCopy={proposalProposer} />}
-    </div>
+    <Flex
+      width="100%"
+      gap={2}
+    >
+      <Text>{t('proposedBy')}</Text>
+      <EtherscanLinkAddress address={proposalProposer}>
+        <Text color="gold.500">{proposerDisplayName}</Text>
+      </EtherscanLinkAddress>
+    </Flex>
   );
 }
 

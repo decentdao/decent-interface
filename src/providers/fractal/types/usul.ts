@@ -36,6 +36,7 @@ export type Proposal = {
   proposer: string;
   proposalNumber: BigNumber;
   userVote?: ProposalVote;
+  txHashes: string[];
 };
 
 export enum ProposalIsPassedError {
