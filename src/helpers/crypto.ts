@@ -91,7 +91,7 @@ export const buildSafeAPIPost = async (
   }
 ): Promise<SafePostTransaction> => {
   const gnosisContract = await GnosisSafe__factory.connect(safeAddress, signerOrProvider);
-  const nonce = !template.nonce ? await (await gnosisContract.nonce()).toString() : template.nonce;
+  const nonce = !template.nonce ? (await gnosisContract.nonce()).toString() : template.nonce;
   const safeTx = {
     to: template.to,
     value: template.value || 0,
