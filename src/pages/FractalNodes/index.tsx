@@ -1,9 +1,11 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Center, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
+import { BarLoader } from '../../components/ui/loaders/BarLoader';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
+import { HEADER_HEIGHT } from '../../constants/common';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../routes/constants';
 import { NodeLines } from './NodeLines';
@@ -25,10 +27,14 @@ export function FractalNodes() {
       { optionKey: 'optionInitiateFreeze', function: () => {} }, // TODO freeze hook (if parent voting holder)
     ];
   };
-
   if (!safe.address) {
-    return <InfoBoxLoader />;
+    return (
+      <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
+        <BarLoader />
+      </Center>
+    );
   }
+
   // @todo replace these variables
   const parentDAOAddress: string | undefined = undefined;
   const daoPermissionList: string[] = [];
