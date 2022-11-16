@@ -18,14 +18,14 @@ export function Governance() {
         <Flex gap="4">
           <Link to={DAO_ROUTES.delegate.relative(safe.address)}>
             <Button
-              size="md"
+              size="base"
               variant="text"
             >
               {t('delegate')}
             </Button>
           </Link>
           <Link to="new">
-            <Button size="md">{t('createProposal', { ns: 'proposal' })}</Button>
+            <Button size="base">{t('createProposal', { ns: 'proposal' })}</Button>
           </Link>
         </Flex>
       </Flex>
