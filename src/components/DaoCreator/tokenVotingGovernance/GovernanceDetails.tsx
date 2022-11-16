@@ -12,7 +12,7 @@ import { CreatorProviderActions, GovernanceTypes } from '../provider/types';
 
 function GovernanceDetails() {
   const {
-    state: { govModule, govToken, governance },
+    state: { govModule, governance },
     dispatch,
   } = useCreator();
 
@@ -25,15 +25,6 @@ function GovernanceDetails() {
         [field]: value,
       },
     });
-  };
-
-  const onThresholdChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newThreshold = BigNumber.from(event.target.value || 0);
-    if (newThreshold.lte(govToken.tokenSupply.bigNumberValue!)) {
-      fieldUpdate(newThreshold, 'proposalThreshold');
-    } else {
-      fieldUpdate(govToken.tokenSupply, 'proposalThreshold');
-    }
   };
 
   const onVotingPeriodChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,46 +51,6 @@ function GovernanceDetails() {
     <Box>
       <ContentBox>
         <ContentBoxTitle>Proposal Settings</ContentBoxTitle>
-        <InputBox>
-          <LabelWrapper
-            label={t('labelProposalRequirement', { ns: 'daoCreate' })}
-            subLabel={t('helperProposalRequirement', { ns: 'daoCreate' })}
-          >
-            <Input
-              size="base"
-              type="number"
-              value={govModule.proposalThreshold.toString()}
-              rightElement={t('tokens')}
-              onChange={onThresholdChange}
-              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-              min="0"
-              data-testid="govConfig-proposalThreshold"
-            />
-          </LabelWrapper>
-        </InputBox>
-        <InputBox>
-          <LabelWrapper
-            label={t('labelVoteStartDelay', { ns: 'daoCreate' })}
-            subLabel={t('helperVoteStartDelay', { ns: 'daoCreate' })}
-          >
-            <Input
-              size="base"
-              type="number"
-              value={govModule.voteStartDelay.toString()}
-              onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'voteStartDelay')}
-              rightElement={blocks}
-              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-              min="0"
-              data-testid="govConfig-voteStartDelay"
-            />
-          </LabelWrapper>
-          <Text
-            textStyle="text-sm-sans-regular"
-            color="gold.400"
-          >
-            {t('exampleVoteStartDelay', { ns: 'daoCreate' })}
-          </Text>
-        </InputBox>
         <InputBox>
           <LabelWrapper
             label={t('labelVotingPeriod', { ns: 'daoCreate' })}
@@ -138,25 +89,6 @@ function GovernanceDetails() {
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min="0"
               data-testid="govConfig-quorum"
-            />
-          </LabelWrapper>
-        </InputBox>
-        <InputBox>
-          <LabelWrapper
-            label={t('labelLateQuorumDelay', { ns: 'daoCreate' })}
-            subLabel={t('helperLateQuorumDelay', { ns: 'daoCreate' })}
-          >
-            <Input
-              size="base"
-              type="number"
-              value={govModule.lateQuorumExecution.toString()}
-              onChange={e =>
-                fieldUpdate(BigNumber.from(e.target.value || 0), 'lateQuorumExecution')
-              }
-              label={t('labelLateQuorumDelay', { ns: 'daoCreate' })}
-              rightElement={blocks}
-              min="0"
-              data-testid="govConfig-lateQuorumExecution"
             />
           </LabelWrapper>
         </InputBox>

@@ -62,11 +62,8 @@ type DAOGovenorToken = {
 };
 
 type DAOGovenorModuleConfig = {
-  proposalThreshold: BigNumber;
   quorum: BigNumber;
   executionDelay: BigNumber;
-  lateQuorumExecution: BigNumber;
-  voteStartDelay: BigNumber;
   votingPeriod: BigNumber;
 };
 
@@ -102,11 +99,8 @@ export interface TokenGovernanceDAO extends DAODetails {
   tokenSymbol: string;
   tokenSupply: BigNumberInput;
   tokenAllocations: TokenAllocation[];
-  proposalThreshold: BigNumber;
   quorum: BigNumber;
   executionDelay: BigNumber;
-  lateQuorumExecution: BigNumber;
-  voteStartDelay: BigNumber;
   votingPeriod: BigNumber;
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
