@@ -2,6 +2,7 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import axios from 'axios';
 import { Signer } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { GnosisSafe__factory } from '../../../assets/typechain-types/fractal-contracts';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
@@ -44,15 +45,17 @@ export default function useProposals() {
         }
         setPendingCreateTx(true);
         try {
+          const gnosisContract = await GnosisSafe__factory.connect(safe.address, signerOrProvider);
           await axios.post(
             buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
             await buildSafeAPIPost(
-              safe.address,
+              gnosisContract,
               signerOrProvider as Signer & TypedDataSigner,
               chainId,
               {
                 to: proposalData.targets[0],
                 data: proposalData.calldatas[0],
+                nonce: (await gnosisContract.nonce()).toNumber(),
               }
             )
           );
@@ -64,6 +67,7 @@ export default function useProposals() {
           return;
         }
       } else {
+        setPendingCreateTx(true);
         try {
           const txHashes = await Promise.all(
             proposalData.targets.map(async (target, index) => {
