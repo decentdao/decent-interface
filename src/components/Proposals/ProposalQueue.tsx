@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useQueueTransaction from '../../hooks/useQueueTransaction';
+import { Proposal } from '../../providers/fractal/types';
 import { ProposalData, ProposalState } from '../../providers/govenor/types';
 import { ProposalAction } from './ProposalAction';
 
@@ -18,14 +19,8 @@ function ProposalQueue({ proposal }: { proposal: ProposalData }) {
     return null;
   }
 
-  return (
-    <ProposalAction
-      btnLabel={t('btnQueueProposal')}
-      label={t('labelQueueProposal')}
-      actionFunc={queueTransaction}
-      pending={pending}
-    />
-  );
+  // @todo - remove this component once execution is implemented directly under ProposalAction component
+  return <ProposalAction proposal={proposal as unknown as Proposal} />;
 }
 
 export default ProposalQueue;
