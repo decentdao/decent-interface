@@ -3,10 +3,12 @@ import { createContext, ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
+import { SendAssetsModal } from './SendAssetsModal';
 
 export enum ModalType {
   NONE,
   DELEGATE,
+  SEND_ASSETS,
 }
 
 export interface CurrentModal {
@@ -46,6 +48,10 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     case ModalType.DELEGATE:
       title = t('delegateTitle');
       content = <DelegateModal close={onSetClosed} />;
+      break;
+    case ModalType.SEND_ASSETS:
+      title = t('sendAssetsTitle');
+      content = <SendAssetsModal close={onSetClosed} />;
       break;
     case ModalType.NONE:
     default:
