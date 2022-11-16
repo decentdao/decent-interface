@@ -1,6 +1,5 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { BigNumber, Contract, constants, utils, BigNumberish, Signer, ethers } from 'ethers';
-import { GnosisSafe__factory } from '../assets/typechain-types/fractal-contracts';
+import { BigNumber, Contract, constants, utils, BigNumberish, Signer } from 'ethers';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
 export interface SafeSignature {
