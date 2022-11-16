@@ -60,8 +60,9 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Proposa
     <Box
       bg="black.900"
       borderRadius="4px"
-      marginTop={8}
+      marginTop={4}
       paddingTop={2}
+      paddingBottom={2}
     >
       <Accordion allowToggle>
         <AccordionItem
