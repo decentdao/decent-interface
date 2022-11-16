@@ -51,11 +51,24 @@ export const getProposalVotesSummary = async (
 ): Promise<ProposalVotesSummary> => {
   const { strategy: strategyAddress } = await usulContract.proposals(proposalNumber);
   const strategy = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
-  const { yesVotes, noVotes, abstainVotes } = await strategy.proposals(proposalNumber);
+  const { yesVotes, noVotes, abstainVotes, startBlock } = await strategy.proposals(proposalNumber);
+
+  let quorum;
+
+  try {
+    quorum = await strategy.quorum(startBlock);
+  } catch (e) {
+    // For who knows reason - strategy.quorum might give you an error
+    // Seems like occuring when token deployment haven't worked properly
+    console.error('Error while getting strategy quorum', quorum);
+    quorum = BigNumber.from(0);
+  }
+
   return {
     yes: yesVotes,
     no: noVotes,
     abstain: abstainVotes,
+    quorum,
   };
 };
 

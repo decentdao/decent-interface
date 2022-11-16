@@ -21,6 +21,7 @@ export type ProposalVotesSummary = {
   yes: BigNumber;
   no: BigNumber;
   abstain: BigNumber;
+  quorum: BigNumber
 };
 
 export type ProposalVote = {

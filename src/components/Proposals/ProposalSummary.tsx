@@ -43,16 +43,11 @@ function SummaryProgressBar({
     </Flex>
   );
 }
-export default function ProposalSummary({
-  proposal,
-  quorum,
-}: {
-  proposal: Proposal;
-  quorum: number;
-}) {
+export default function ProposalSummary({ proposal }: { proposal: Proposal }) {
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);
   const startBlockTimeStamp = useCurrentTimestamp(proposal.startBlock.toNumber());
 
+  const quorum = proposal.votes.quorum.toNumber();
   const requiredVotesToPass = Math.max(proposal.votes.no.toNumber() + 1, quorum);
   const dateFormat = 'MMM dd, yyyy, h:mm aa';
 

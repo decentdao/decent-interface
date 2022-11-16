@@ -34,7 +34,7 @@ export default function ProgressBar({
           {value}%
         </Text>
       )}
-      {requiredValue && requiredValue > 0 && (
+      {!!(requiredValue && requiredValue > 0) && (
         <Box
           position="absolute"
           top="-10px"

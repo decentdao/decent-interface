@@ -1,4 +1,4 @@
-import { Text, Flex, Box, Grid, GridItem, Divider } from '@chakra-ui/react';
+import { Text, Flex, Box, Grid, GridItem } from '@chakra-ui/react';
 import { Button } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -98,10 +98,7 @@ function ProposalDetails() {
           />
         </GridItem>
         <GridItem colSpan={1}>
-          <ProposalSummary
-            proposal={proposal}
-            quorum={15} // @todo - get quorum from strategy contract
-          />
+          <ProposalSummary proposal={proposal} />
           <CastVote proposal={proposal} />
         </GridItem>
       </Grid>
