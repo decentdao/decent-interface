@@ -1,5 +1,7 @@
 import { Box, Progress, Text } from '@chakra-ui/react';
 
+// @todo - Adjust @decent-org/fractal-ui theme for Progress bar to move colors there
+// And add border for filled track - this seem to be doable only on theme level
 export default function ProgressBar({ value }: { value: number }) {
   return (
     <Box

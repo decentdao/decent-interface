@@ -17,6 +17,9 @@ import useProposals from '../../providers/fractal/hooks/useProposals';
 import { Proposal } from '../../providers/fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
+const MOCK_GOV_TOKEN_TOTAL_SUPPLY = 10000;
+const MOCK_GOV_TOKEN_SYMBOL = 'FRCTL';
+
 function ProposalDetails() {
   const params = useParams();
 
@@ -85,7 +88,11 @@ function ProposalDetails() {
               <ProposalCreatedBy proposalProposer={proposal.proposer} />
             </Box>
           </ContentBox>
-          <ProposalVotes proposal={proposal} />
+          <ProposalVotes
+            proposal={proposal}
+            govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
+            govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
+          />
         </GridItem>
         <GridItem colSpan={1}>
           <CastVote proposal={proposal} />
