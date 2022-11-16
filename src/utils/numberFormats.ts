@@ -1,4 +1,4 @@
-import { BigNumber, constants, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { GnosisAssetFungible } from '../providers/fractal/types';
 
 export const formatPercentage = (numerator: number, denominator: number) => {
@@ -8,6 +8,7 @@ export const formatPercentage = (numerator: number, denominator: number) => {
 const usdFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
+  minimumFractionDigits: 0,
 });
 
 export const formatUSD = (rawUSD: number | string) => {

@@ -11,8 +11,10 @@ import { Transactions } from './components/Transactions';
 function Treasury() {
   const {
     gnosis: { daoName },
+    treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
+  const showButton = assetsFungible.length > 0; // TODO also only show if the user is a DAO signer or delegated token holder..
   return (
     <Box
       py="1.5rem"
@@ -21,7 +23,7 @@ function Treasury() {
       <PageHeader
         title={t('titleTreasury', { daoName: daoName })}
         titleTestId={'title-treasury'}
-        buttonText={t('buttonSendAssets')}
+        buttonText={showButton ? t('buttonSendAssets') : undefined}
         buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
         buttonTestId="link-send-assets"
       />

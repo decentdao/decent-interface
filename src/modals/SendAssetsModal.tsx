@@ -4,6 +4,7 @@ import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../hooks/useAddress';
+import useSendAssets from '../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../providers/fractal/hooks/useFractal';
 import { formatCoinFromAsset, formatCoinUnitsFromAsset, formatUSD } from '../utils/numberFormats';
 
@@ -13,55 +14,51 @@ export function SendAssetsModal({ close }: { close: Function }) {
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
 
-  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [selectedAssetIndex, setSelectedAssetIndex] = useState<number>(0);
   const [usdSelected, setUSDSelected] = useState<boolean>(false);
   const [amountInput, setAmountInput] = useState<string>('');
   const [destination, setDestination] = useState<string>('');
+  const selectedAsset = assetsFungible[selectedAssetIndex];
+  const sendAssets = useSendAssets({
+    normalizedBalance: amountInput,
+    asset: selectedAsset,
+    destinationAddress: destination,
+  });
 
   const handleCoinChange = (value: string) => {
     const index = Number(value);
     if (Number(assetsFungible[index].fiatBalance) == 0) {
       setUSDSelected(false);
     }
-    setSelectedIndex(index);
+    setSelectedAssetIndex(index);
   };
   const handleAmountChange = (value: string) => {
     setAmountInput(value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'));
   };
-
-  const [pending, setPending] = useState<boolean>(false);
-
-  const selectedAsset = assetsFungible[selectedIndex];
 
   const calculateCoins = (fiatConversion: string, input: string, symbol?: string) => {
     if (!input) input = '0';
     const amount = Number(input) / Number(fiatConversion);
     return amount + ' ' + (symbol ? symbol : 'ETH');
   };
+
   const convertedTotal = usdSelected
     ? calculateCoins(selectedAsset.fiatConversion, amountInput, selectedAsset?.token?.symbol)
     : formatUSD(Number(amountInput) * Number(selectedAsset.fiatConversion));
-
-  const normalizedAmount = formatCoinUnitsFromAsset(selectedAsset);
-  console.log('blah -------');
-  console.log('blah: ' + usdSelected);
-  console.log('blah: ' + normalizedAmount);
-  console.log('blah: ' + Number(amountInput));
-  console.log('blah: ' + Number(selectedAsset.fiatBalance));
-
-  const overDraft = usdSelected
-    ? Number(amountInput) > Number(selectedAsset.fiatBalance)
-    : Number(amountInput) > normalizedAmount;
 
   const [, validAddress] = useAddress(destination);
   const destinationError =
     validAddress === false ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
+  const overDraft = usdSelected
+    ? Number(amountInput) > Number(selectedAsset.fiatBalance)
+    : Number(amountInput) > formatCoinUnitsFromAsset(selectedAsset);
+
   const submitDisabled: boolean =
     !destination || validAddress === false || !amountInput || overDraft;
 
   const onSubmit = () => {
-    // TODO submit transaction
+    sendAssets();
     close();
   };
 
@@ -75,6 +72,11 @@ export function SendAssetsModal({ close }: { close: Function }) {
           <Text marginBottom="0.5rem">{t('selectLabel')}</Text>
           <Select
             variant="outline"
+            bg="input.background"
+            borderColor="black.200"
+            borderWidth="1px"
+            borderRadius="4px"
+            color="white"
             onChange={e => handleCoinChange(e.target.value)}
           >
             {assetsFungible.map(asset => (
@@ -94,8 +96,17 @@ export function SendAssetsModal({ close }: { close: Function }) {
           >
             <Text>{t('amountLabel')}</Text>
             <Spacer />
-            <Text marginEnd="0.5rem">USD</Text>
+            <Text
+              marginEnd="0.5rem"
+              color={Number(selectedAsset.fiatBalance) == 0 ? 'grayscale.800' : 'grayscale.500'}
+            >
+              USD
+            </Text>
             <Switch
+              bg="input.background"
+              borderRadius="28px"
+              color="white"
+              colorScheme="drab"
               isDisabled={Number(selectedAsset.fiatBalance) == 0}
               size="md"
               isChecked={usdSelected}
@@ -105,7 +116,7 @@ export function SendAssetsModal({ close }: { close: Function }) {
           <Input
             size="base"
             width="full"
-            placeholder="0.00"
+            placeholder="0"
             value={amountInput}
             onChange={e => handleAmountChange(e.target.value)}
           />
@@ -116,13 +127,13 @@ export function SendAssetsModal({ close }: { close: Function }) {
         color="grayscale.500"
         marginTop="0.75rem"
       >
-        <Text>
+        <Text color={overDraft ? 'alert-red.normal' : 'grayscale.500'}>
           {t('selectSublabel', {
             balance: formatCoinFromAsset(selectedAsset, false),
           })}
         </Text>
         <Spacer />
-        <Text color={overDraft ? 'alert-red.normal' : 'grayscale.500'}>{convertedTotal}</Text>
+        {Number(selectedAsset.fiatBalance) > 0 && <Text>{convertedTotal}</Text>}
       </Flex>
       <Text
         textStyle="text-sm-sans-regular"
