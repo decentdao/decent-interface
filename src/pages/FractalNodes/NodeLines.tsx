@@ -1,11 +1,13 @@
 import { Box } from '@chakra-ui/react';
 
 export function NodeLines({
+  isCurrentDAO,
   hasMore,
   isFirstChild,
   extendHeight,
   indentfactor = 1,
 }: {
+  isCurrentDAO?: boolean;
   hasMore?: boolean;
   isFirstChild?: boolean;
   extendHeight?: boolean;
@@ -40,7 +42,7 @@ export function NodeLines({
           position="absolute"
           bottom="-4.5156245px"
           right="-4.5156245px"
-          bg="chocolate.400"
+          bg={isCurrentDAO ? 'gold.500' : 'chocolate.400'}
         />
       </Box>
       {hasMore && (

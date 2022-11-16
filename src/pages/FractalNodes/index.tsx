@@ -31,7 +31,7 @@ export function FractalNodes() {
   }
   // @todo replace these variables
   const parentDAOAddress: string | undefined = undefined;
-  const daoPermissionList: string[] = [safe.address, safe.address];
+  const daoPermissionList: string[] = [];
 
   const parentExpansionToggle = () => {
     setIsParentExpended(v => !v);
@@ -59,6 +59,7 @@ export function FractalNodes() {
       <Flex mt="1rem">
         {parentDAOAddress && isParentExpanded && (
           <NodeLines
+            isCurrentDAO
             isFirstChild
             hasMore={!!daoPermissionList.length && isChildrenExpanded}
             extendHeight={!!daoPermissionList.length}

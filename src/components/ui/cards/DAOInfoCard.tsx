@@ -126,6 +126,13 @@ export function DAOInfoCard({
 }
 
 export function DAONodeCard(props: IDAOInfoCard) {
+  const {
+    gnosis: { safe },
+  } = useFractal();
+
+  const isCurrentDAO = props.safeAddress === safe.address;
+  const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
+
   return (
     <Box
       h="6.75rem"
@@ -133,6 +140,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
       p="1rem"
       borderRadius="0.5rem"
       w="full"
+      {...border}
     >
       <DAOInfoCard {...props} />
     </Box>
