@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlockchainData } from '../../contexts/blockchainData';
 import useExecuteTransaction from '../../hooks/useExecuteTransaction';
+import { Proposal } from '../../providers/fractal/types';
 import { ProposalData, ProposalState } from '../../providers/govenor/types';
 import { ProposalAction } from './ProposalAction';
 
@@ -33,14 +34,8 @@ function ProposalExecute({ proposal }: { proposal: ProposalData }) {
 
   if (!show) return null;
 
-  return (
-    <ProposalAction
-      btnLabel={t('execute')}
-      label={t('labelExecute', { ns: 'proposal' })}
-      actionFunc={executeTransaction}
-      pending={pending}
-    />
-  );
+  // @todo - remove this component once execution is implemented directly under ProposalAction component
+  return <ProposalAction proposal={proposal as unknown as Proposal} />;
 }
 
 export default ProposalExecute;

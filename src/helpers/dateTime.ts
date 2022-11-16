@@ -17,19 +17,31 @@ export function formatDatesDiffReadable(
 
   let formattedString = '';
   if (diffInMinutes < 5) {
-    formattedString = t('labelDateJustNow');
+    formattedString = t('labelDateJustNow', { ns: 'common' });
   } else if (diffInMinutes < 60) {
     formattedString = t('labelDateMinutes', { ns: 'common', count: Math.floor(diffInMinutes) });
   } else if (diffInMinutes < 60 * 24) {
     const diffInHours = Math.abs(differenceInHours(dateStart, dateEnd));
-    formattedString = t('labelDateHour', { ns: 'common', count: diffInHours });
+    formattedString = t('labelDateHour', {
+      count: diffInHours,
+      ns: 'common',
+    });
   } else if (diffInMonths < 1) {
-    formattedString = t('labelDateDay', { ns: 'common', count: diffInDays });
+    formattedString = t('labelDateDay', {
+      count: diffInDays,
+      ns: 'common',
+    });
   } else if (diffInMonths < 12) {
-    formattedString = t('labelDateMonth', { ns: 'common', count: diffInMonths });
+    formattedString = t('labelDateMonth', {
+      count: diffInMonths,
+      ns: 'common',
+    });
   } else {
     const diffInYears = Math.abs(differenceInYears(dateStart, dateEnd));
-    formattedString = t('labelDateYear', { ns: 'common', count: diffInYears });
+    formattedString = t('labelDateYear', {
+      count: diffInYears,
+      ns: 'common',
+    });
   }
 
   return formattedString;
