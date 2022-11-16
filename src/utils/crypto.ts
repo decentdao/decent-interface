@@ -1,5 +1,6 @@
 import { DecodedTransaction } from '../types';
 
+// eslint-disable-next-line
 export const decodeTransactionHashes = (txHashes: string[]): DecodedTransaction[] => {
   // @todo - implement decoding transactions
 

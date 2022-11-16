@@ -7,7 +7,7 @@ import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalNumber from '../ui/proposal/ProposalNumber';
 import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalTitle from '../ui/proposal/ProposalTitle';
-import { ProposalAction } from './ProposalAction';
+import { ProposalAction } from './ProposalActions/ProposalAction';
 
 export default function ProposalCard({ proposal }: { proposal: Proposal }) {
   return (

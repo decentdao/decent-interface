@@ -3,7 +3,7 @@ import { Button } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import CastVote from '../../components/Proposals/CastVote';
+import { ProposalAction } from '../../components/Proposals/ProposalActions/ProposalAction';
 import ProposalSummary from '../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../components/Proposals/ProposalVotes';
 import ContentBox from '../../components/ui/ContentBox';
@@ -99,7 +99,10 @@ function ProposalDetails() {
         </GridItem>
         <GridItem colSpan={1}>
           <ProposalSummary proposal={proposal} />
-          <CastVote proposal={proposal} />
+          <ProposalAction
+            proposal={proposal}
+            expandedView
+          />
         </GridItem>
       </Grid>
     </Box>

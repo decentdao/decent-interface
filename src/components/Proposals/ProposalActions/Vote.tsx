@@ -2,12 +2,12 @@ import { Text } from '@chakra-ui/react';
 import { Button, CloseX } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCastVote from '../../providers/fractal/hooks/useCastVote';
-import { Proposal, ProposalState } from '../../providers/fractal/types';
-import ContentBox from '../ui/ContentBox';
-import Check from '../ui/svg/Check';
+import useCastVote from '../../../providers/fractal/hooks/useCastVote';
+import { Proposal, ProposalState } from '../../../providers/fractal/types';
+import ContentBox from '../../ui/ContentBox';
+import Check from '../../ui/svg/Check';
 
-function CastVote({ proposal }: { proposal: Proposal }) {
+function Vote({ proposal }: { proposal: Proposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['proposal', 'common']);
 
@@ -51,4 +51,4 @@ function CastVote({ proposal }: { proposal: Proposal }) {
   );
 }
 
-export default CastVote;
+export default Vote;
