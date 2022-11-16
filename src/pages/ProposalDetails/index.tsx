@@ -8,6 +8,8 @@ import ProposalVotes from '../../components/Proposals/ProposalVotes';
 import ContentBox from '../../components/ui/ContentBox';
 import StatusBox from '../../components/ui/StatusBox';
 import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
+import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
+import ProposalNumber from '../../components/ui/proposal/ProposalNumber';
 import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
@@ -45,6 +47,7 @@ function ProposalDetails() {
     <Box mt="3rem">
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
         <Button
+          paddingLeft={0}
           size="lg"
           variant="text"
         >
@@ -57,7 +60,7 @@ function ProposalDetails() {
         templateColumns="repeat(3, 1fr)"
       >
         <GridItem colSpan={2}>
-          <ContentBox>
+          <ContentBox bg="black.900-semi-transparent">
             <Flex
               alignItems="center"
               flexWrap="wrap"
@@ -73,7 +76,9 @@ function ProposalDetails() {
                 w="full"
                 mt={4}
               >
+                <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
                 <ProposalTitle proposal={proposal} />
+                <ProposalExecutableCode proposal={proposal} />
               </Box>
             </Flex>
             <Box mt={4}>

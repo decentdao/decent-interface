@@ -14,24 +14,22 @@ function VotesPercentage({ label, percentage }: { label: string; percentage?: nu
 function ProposalVotes({ proposal }: { proposal: Proposal }) {
   const { t } = useTranslation();
   return (
-    <ContentBox>
-      <div className="flex flex-grow flex-col h-full bg-gray-600 my-2 ml-4 p-2 pb-4 rounded-md">
-        <div className="flex mx-2 my-2 text-gray-25 mb-3 text-lg font-semibold">Results</div>
-        <VotesPercentage
-          label={t('yes')}
-          percentage={proposal.votes.yes.toNumber()}
-        />
+    <ContentBox bg="black.900-semi-transparent">
+      <div className="flex mx-2 my-2 text-gray-25 mb-3 text-lg font-semibold">Results</div>
+      <VotesPercentage
+        label={t('yes')}
+        percentage={proposal.votes.yes.toNumber()}
+      />
 
-        <VotesPercentage
-          label={t('no')}
-          percentage={proposal.votes.no.toNumber()}
-        />
+      <VotesPercentage
+        label={t('no')}
+        percentage={proposal.votes.no.toNumber()}
+      />
 
-        <VotesPercentage
-          label={t('abstain')}
-          percentage={proposal.votes.abstain.toNumber()}
-        />
-      </div>
+      <VotesPercentage
+        label={t('abstain')}
+        percentage={proposal.votes.abstain.toNumber()}
+      />
     </ContentBox>
   );
 }

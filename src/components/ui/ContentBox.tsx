@@ -1,14 +1,20 @@
 import { Box } from '@chakra-ui/react';
 import ContentBoxTitle from './ContentBoxTitle';
 
-function ContentBox({ title, children }: { title?: string; children: React.ReactNode }) {
+interface ContentBoxProps {
+  title?: string;
+  children: React.ReactNode;
+  bg?: string;
+}
+
+function ContentBox({ title, children, bg = 'black.900' }: ContentBoxProps) {
   return (
     <Box
       rounded="lg"
       p="1rem 1.5rem"
       my="4"
       shadow="dark-lg"
-      bg="black.900"
+      bg={bg}
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}
       <Box

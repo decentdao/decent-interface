@@ -1,6 +1,7 @@
 import { BigNumber, Signer } from 'ethers';
 import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
 import { Providers } from '../../../contexts/web3Data/types';
+import { decodeTransactionHashes } from '../../../utils/crypto';
 import {
   Proposal,
   ProposalIsPassedError,
@@ -69,6 +70,8 @@ export const mapProposalCreatedEventToProposal = async (
   const { deadline } = await strategyContract.proposals(proposalNumber);
   const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
   const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
+  // @todo: Retrieve proposal hashes for future decoding
+  const MOCK_TX_HASHES = ['0x', '0x', '0x'];
   const proposal: Proposal = {
     proposalNumber,
     proposer,
@@ -76,7 +79,8 @@ export const mapProposalCreatedEventToProposal = async (
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
-    txHashes: [], // @todo: Retrieve proposal hashes for future decoding
+    txHashes: MOCK_TX_HASHES,
+    decodedTransactions: decodeTransactionHashes(MOCK_TX_HASHES),
   };
 
   return proposal;

@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { DecodedTransaction } from '../../../types';
 
 export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
 
@@ -37,6 +38,7 @@ export type Proposal = {
   proposalNumber: BigNumber;
   userVote?: ProposalVote;
   txHashes: string[];
+  decodedTransactions: DecodedTransaction[];
 };
 
 export enum ProposalIsPassedError {

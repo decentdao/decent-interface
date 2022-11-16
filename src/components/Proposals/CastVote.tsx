@@ -50,7 +50,7 @@ function CastVote({ proposal }: { proposal: Proposal }) {
     setPending: setPending,
   });
   return (
-    <ContentBox>
+    <ContentBox bg="black.900-semi-transparent">
       <div className="flex flex-col bg-gray-600 my-2 p-2 pb-4 w-3/5 rounded-md">
         <div className="flex mx-2 my-2 text-gray-25 text-lg font-semibold">Cast Vote</div>
         <hr className="mx-2 mb-6 border-gray-200" />
