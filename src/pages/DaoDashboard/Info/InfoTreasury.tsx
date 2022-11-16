@@ -7,6 +7,7 @@ interface IDAOGovernance {}
 
 export function InfoTreasury({}: IDAOGovernance) {
   const { t } = useTranslation('dashboard');
+  const totalUSD = useTreasuryTotalUSD();
 
   return (
     <Box data-testid="dashboard-daoProposals">
@@ -28,7 +29,7 @@ export function InfoTreasury({}: IDAOGovernance) {
         textStyle="text-lg-mono-semibold"
         color="grayscale.100"
       >
-        {useTreasuryTotalUSD()}
+        {totalUSD}
       </Text>
     </Box>
   );
