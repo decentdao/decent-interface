@@ -54,85 +54,6 @@ export const buildSignatureBytes = (signatures: SafeSignature[]): string => {
   return signatureBytes;
 };
 
-export const safeSignTypedData = async (
-  signer: Signer & TypedDataSigner,
-  safe: Contract,
-  safeTx: SafeTransaction,
-  chainId?: BigNumberish
-): Promise<SafeSignature> => {
-  if (!chainId && !signer.provider) throw Error('Provider required to retrieve chainId');
-  const cid = chainId || (await signer.provider!.getNetwork()).chainId;
-  const signerAddress = await signer.getAddress();
-  return {
-    signer: signerAddress,
-    data: await signer._signTypedData(
-      { verifyingContract: safe.address, chainId: cid },
-      EIP712_SAFE_TX_TYPE,
-      safeTx
-    ),
-  };
-};
-
-export const buildSafeAPIPost = async (
-  safeAddress: string,
-  signerOrProvider: Signer & TypedDataSigner,
-  chainId: number,
-  template: {
-    to: string;
-    value?: BigNumber | number | string;
-    data?: string;
-    operation?: number;
-    safeTxGas?: number | string;
-    baseGas?: number | string;
-    gasPrice?: number | string;
-    gasToken?: string;
-    refundReceiver?: string;
-    nonce?: number;
-  }
-): Promise<SafePostTransaction> => {
-  const gnosisContract = await GnosisSafe__factory.connect(safeAddress, signerOrProvider);
-  const nonce = !template.nonce ? (await gnosisContract.nonce()).toString() : template.nonce;
-  const safeTx = {
-    to: template.to,
-    value: template.value || 0,
-    data: template.data || '0x',
-    operation: template.operation || 0,
-    safeTxGas: template.safeTxGas || 0,
-    baseGas: template.baseGas || 0,
-    gasPrice: template.gasPrice || 0,
-    gasToken: template.gasToken || ethers.constants.AddressZero,
-    refundReceiver: template.refundReceiver || ethers.constants.AddressZero,
-    nonce: nonce,
-  };
-
-  const txHash = calculateSafeTransactionHash(gnosisContract, safeTx, chainId);
-  const sig = [
-    await safeSignTypedData(
-      signerOrProvider as Signer & TypedDataSigner,
-      gnosisContract,
-      safeTx,
-      chainId
-    ),
-  ];
-  const signatureBytes = buildSignatureBytes(sig);
-  return {
-    safe: safeAddress,
-    to: safeTx.to,
-    value: safeTx.value,
-    data: safeTx.data,
-    operation: safeTx.operation,
-    safeTxGas: safeTx.safeTxGas,
-    baseGas: safeTx.baseGas,
-    gasPrice: safeTx.gasPrice,
-    gasToken: safeTx.gasToken,
-    refundReceiver: safeTx.refundReceiver,
-    nonce: safeTx.nonce,
-    contractTransactionHash: txHash,
-    sender: await signerOrProvider.getAddress(),
-    signature: signatureBytes,
-  };
-};
-
 export const buildSafeTransaction = (template: {
   to: string;
   value?: BigNumber | number | string;
@@ -156,6 +77,72 @@ export const buildSafeTransaction = (template: {
     gasToken: template.gasToken || constants.AddressZero,
     refundReceiver: template.refundReceiver || constants.AddressZero,
     nonce: template.nonce,
+  };
+};
+
+export const safeSignTypedData = async (
+  signer: Signer & TypedDataSigner,
+  safe: Contract,
+  safeTx: SafeTransaction,
+  chainId?: BigNumberish
+): Promise<SafeSignature> => {
+  if (!chainId && !signer.provider) throw Error('Provider required to retrieve chainId');
+  const cid = chainId || (await signer.provider!.getNetwork()).chainId;
+  const signerAddress = await signer.getAddress();
+  return {
+    signer: signerAddress,
+    data: await signer._signTypedData(
+      { verifyingContract: safe.address, chainId: cid },
+      EIP712_SAFE_TX_TYPE,
+      safeTx
+    ),
+  };
+};
+
+export const buildSafeAPIPost = async (
+  gnosisContract: Contract,
+  signerOrProvider: Signer & TypedDataSigner,
+  chainId: number,
+  template: {
+    to: string;
+    value?: BigNumber | number | string;
+    data?: string;
+    operation?: number;
+    safeTxGas?: number | string;
+    baseGas?: number | string;
+    gasPrice?: number | string;
+    gasToken?: string;
+    refundReceiver?: string;
+    nonce: number;
+  }
+): Promise<SafePostTransaction> => {
+  const safeTx = buildSafeTransaction(template);
+
+  const txHash = calculateSafeTransactionHash(gnosisContract, safeTx, chainId);
+  const sig = [
+    await safeSignTypedData(
+      signerOrProvider as Signer & TypedDataSigner,
+      gnosisContract,
+      safeTx,
+      chainId
+    ),
+  ];
+  const signatureBytes = buildSignatureBytes(sig);
+  return {
+    safe: gnosisContract.address,
+    to: safeTx.to,
+    value: safeTx.value,
+    data: safeTx.data,
+    operation: safeTx.operation,
+    safeTxGas: safeTx.safeTxGas,
+    baseGas: safeTx.baseGas,
+    gasPrice: safeTx.gasPrice,
+    gasToken: safeTx.gasToken,
+    refundReceiver: safeTx.refundReceiver,
+    nonce: safeTx.nonce,
+    contractTransactionHash: txHash,
+    sender: await signerOrProvider.getAddress(),
+    signature: signatureBytes,
   };
 };
 
