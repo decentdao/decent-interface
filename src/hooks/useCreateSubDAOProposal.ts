@@ -1,12 +1,12 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
+import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/provider/types/index';
 import useProposals from '../providers/fractal/hooks/useProposals';
 import { ProposalExecuteData } from '../types/proposal';
-import { GnosisDAO, TokenGovernanceDAO } from './../components/DaoCreator/provider/types/index';
 import useBuildDAOTx from './useBuildDAOTx';
 import useSafeContracts from './useSafeContracts';
 
-const useProposeDAO = () => {
+const useCreateSubDAOProposal = () => {
   const { multiSendContract } = useSafeContracts();
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useProposals();
@@ -42,4 +42,4 @@ const useProposeDAO = () => {
   return [proposeDao, pendingCreateTx, canUserCreateProposal] as const;
 };
 
-export default useProposeDAO;
+export default useCreateSubDAOProposal;
