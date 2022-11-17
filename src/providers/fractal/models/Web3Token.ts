@@ -1,8 +1,5 @@
 import { ethers } from 'ethers';
-import {
-  IERC20Metadata,
-  IERC20Metadata__factory,
-} from '../../../assets/typechain-types/votes-token';
+import { IERC20Metadata, IERC20Metadata__factory } from '../../../assets/typechain-types/usul';
 export class Web3Token {
   public contract: IERC20Metadata;
 

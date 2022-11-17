@@ -1,7 +1,7 @@
+import { TokenClaim } from '@fractal-framework/fractal-contracts/typechain-types/contracts';
 import { BigNumber } from 'ethers';
 import { Context, createContext, useContext } from 'react';
 import { GovernorModule, Timelock } from '../../../assets/typechain-types/module-governor';
-import { ClaimSubsidiary } from '../../../assets/typechain-types/votes-token';
 import { ProposalExecuteData } from '../../../types/proposal';
 import { ProposalData } from '../types';
 import { VotesToken } from './../../../assets/typechain-types/module-treasury/contracts/mocks/VotesToken';
@@ -32,7 +32,7 @@ export interface IGovernorModule {
       isDelegatesSet: boolean | undefined;
     };
   };
-  claimModuleContract: ClaimSubsidiary | undefined;
+  claimModuleContract: TokenClaim | undefined;
 }
 
 export const GovernorContext = createContext<IGovernorModule | null>(null);

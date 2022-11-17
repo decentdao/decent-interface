@@ -29,7 +29,7 @@ const useClaimToken = ({
     }
 
     contractCallClaimToken({
-      contractFn: () => claimModuleContract.claimSnap(account),
+      contractFn: () => claimModuleContract.claimToken(account),
       pendingMessage: t('pendingClaimTokens'),
       failedMessage: t('failedClaimTokens'),
       successMessage: t('successClaimTokens'),
