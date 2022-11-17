@@ -1,5 +1,5 @@
 import { Portal, useDisclosure } from '@chakra-ui/react';
-import { createContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
@@ -21,6 +21,11 @@ export const ModalContext = createContext<CurrentModal>({
   setCurrent: () => {},
 });
 
+interface ModalUI {
+  title: string;
+  content: ReactNode | null;
+  onSetClosed: () => void;
+}
 /**
  * A provider that handles displaying modals in the app.
  *
@@ -37,27 +42,30 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (current != ModalType.NONE) onOpen();
   });
-  const onSetClosed = () => {
-    setCurrent(ModalType.NONE);
-    onClose();
-  };
 
-  let title;
-  let content;
-  switch (current) {
-    case ModalType.DELEGATE:
-      title = t('delegateTitle');
-      content = <DelegateModal close={onSetClosed} />;
-      break;
-    case ModalType.SEND_ASSETS:
-      title = t('sendAssetsTitle');
-      content = <SendAssetsModal close={onSetClosed} />;
-      break;
-    case ModalType.NONE:
-    default:
-      title = '';
-      content = null;
-  }
+  const { title, content, onSetClosed } = useMemo<ModalUI>(() => {
+    const cl = () => {
+      setCurrent(ModalType.NONE);
+      onClose();
+    };
+    let ti;
+    let co;
+    switch (current) {
+      case ModalType.DELEGATE:
+        ti = t('delegateTitle');
+        co = <DelegateModal close={cl} />;
+        break;
+      case ModalType.SEND_ASSETS:
+        ti = t('sendAssetsTitle');
+        co = <SendAssetsModal close={cl} />;
+        break;
+      case ModalType.NONE:
+      default:
+        ti = '';
+        co = null;
+    }
+    return { title: ti, content: co, onSetClosed: cl };
+  }, [current, onClose, t]);
 
   const display = content ? (
     <ModalBase

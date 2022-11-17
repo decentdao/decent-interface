@@ -4,6 +4,7 @@ import { DaoDashboard } from '../pages/DaoDashboard';
 import ProposalCreate from '../pages/ProposalCreate';
 import ProposalDetails from '../pages/ProposalDetails';
 import { Governance } from '../pages/Proposals';
+import SubDaoCreate from '../pages/SubDaoCreate';
 import Treasury from '../pages/Treasury';
 import { DAO_ROUTES } from './constants';
 
@@ -16,7 +17,7 @@ function DAOSubRoutes() {
       />
       <Route
         path={DAO_ROUTES.newSubDao.path}
-        element={<div />}
+        element={<SubDaoCreate />}
       />
       <Route
         path={DAO_ROUTES.nodes.path}

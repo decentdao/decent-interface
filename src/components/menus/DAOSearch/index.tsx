@@ -85,7 +85,7 @@ export function DAOSearch() {
           onFocus={focusInput}
           border="none"
           rounded="lg"
-          shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
+          shadow="menu-gold"
           bg="grayscale.black"
           hidden={!errorMessage && !address}
         >
