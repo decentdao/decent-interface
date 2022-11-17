@@ -1,5 +1,6 @@
 import { Text, Flex, Box, Grid, GridItem } from '@chakra-ui/react';
 import { Button } from '@decent-org/fractal-ui';
+import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
@@ -18,7 +19,7 @@ import useProposals from '../../providers/fractal/hooks/useProposals';
 import { Proposal } from '../../providers/fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
-const MOCK_GOV_TOKEN_TOTAL_SUPPLY = 10000;
+const MOCK_GOV_TOKEN_TOTAL_SUPPLY = BigNumber.from('500000000000000000000000000');
 const MOCK_GOV_TOKEN_SYMBOL = 'FRCTL';
 
 function ProposalDetails() {
@@ -98,7 +99,10 @@ function ProposalDetails() {
           />
         </GridItem>
         <GridItem colSpan={1}>
-          <ProposalSummary proposal={proposal} />
+          <ProposalSummary
+            proposal={proposal}
+            govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
+          />
           <ProposalAction
             proposal={proposal}
             expandedView

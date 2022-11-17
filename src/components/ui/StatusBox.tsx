@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { ProposalState } from '../../providers/fractal/types/usul';
 
@@ -9,13 +9,13 @@ export default function StatusBox({ state }: StatusBoxProps) {
   const { t } = useTranslation('proposal');
   return (
     <Box
-      px="12px"
-      py="5px"
+      px="8px"
+      py="2px"
       bg="sand.700"
       borderRadius="7px"
       color="black"
     >
-      {t(state)}
+      <Text textStyle="text-sm-mono-semibold">{t(state)}</Text>
     </Box>
   );
 }

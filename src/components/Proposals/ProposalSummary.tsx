@@ -1,5 +1,6 @@
 import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useCurrentTimestamp from '../../contexts/blockchainData/useCurrentTimestamp';
 import { Proposal } from '../../providers/fractal/types';
@@ -43,12 +44,20 @@ function SummaryProgressBar({
     </Flex>
   );
 }
-export default function ProposalSummary({ proposal }: { proposal: Proposal }) {
+export default function ProposalSummary({
+  proposal: { startBlock, votes, deadline },
+  govTokenTotalSupply,
+}: {
+  proposal: Proposal;
+  govTokenTotalSupply: BigNumber;
+}) {
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);
-  const startBlockTimeStamp = useCurrentTimestamp(proposal.startBlock.toNumber());
+  const startBlockTimeStamp = useCurrentTimestamp(startBlock.toNumber());
 
-  const quorum = proposal.votes.quorum.toNumber();
-  const requiredVotesToPass = Math.max(proposal.votes.no.toNumber() + 1, quorum);
+  const yesVotesPercentage = votes.yes.div(govTokenTotalSupply).mul(100).toNumber();
+  const noVotesPercentage = votes.no.div(govTokenTotalSupply).mul(100).toNumber();
+  const quorum = votes.quorum.toNumber();
+  const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
   const dateFormat = 'MMM dd, yyyy, h:mm aa';
 
   return (
@@ -79,7 +88,7 @@ export default function ProposalSummary({ proposal }: { proposal: Proposal }) {
           >
             {t('proposalSummaryEndDate')}
           </Text>
-          <Text>{format(proposal.deadline * 1000, dateFormat)}</Text>
+          <Text>{format(deadline * 1000, dateFormat)}</Text>
         </Flex>
         <Divider color="chocolate.700" />
       </Box>
@@ -87,13 +96,13 @@ export default function ProposalSummary({ proposal }: { proposal: Proposal }) {
         <SummaryProgressBar
           label={t('support', { ns: 'sidebar' })}
           helperText={t('proposalSupportSummaryHelper', { count: requiredVotesToPass })}
-          percentage={proposal.votes.yes.toNumber()}
+          percentage={yesVotesPercentage}
           requiredPercentage={requiredVotesToPass}
         />
         <SummaryProgressBar
           label={t('quorum', { ns: 'common' })}
           helperText={t('proposalQuorumSummaryHelper', { count: quorum })}
-          percentage={proposal.votes.yes.toNumber()}
+          percentage={noVotesPercentage}
           requiredPercentage={quorum}
         />
       </Box>

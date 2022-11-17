@@ -92,7 +92,7 @@ function ProposalVoteItem({
   govTokenSymbol,
 }: {
   vote: ProposalVote;
-  govTokenTotalSupply: number;
+  govTokenTotalSupply: BigNumber;
   govTokenSymbol: string;
 }) {
   const { t } = useTranslation();
@@ -119,12 +119,12 @@ function ProposalVoteItem({
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">
-          {(vote.weight.toNumber() / govTokenTotalSupply) * 100}%
+          {vote.weight.div(govTokenTotalSupply).mul(100).toNumber()}%
         </Text>
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">
-          {vote.weight.toNumber()} {govTokenSymbol}
+          {vote.weight.toString()} {govTokenSymbol}
         </Text>
       </GridItem>
     </Grid>
@@ -132,15 +132,21 @@ function ProposalVoteItem({
 }
 
 function ProposalVotes({
-  proposal,
+  proposal: {
+    votes: { yes, no, abstain },
+  },
   govTokenTotalSupply,
   govTokenSymbol,
 }: {
   proposal: Proposal;
-  govTokenTotalSupply: number;
+  govTokenTotalSupply: BigNumber;
   govTokenSymbol: string;
 }) {
   const { t } = useTranslation(['common', 'proposal']);
+
+  const yesVotesPercentage = yes.div(govTokenTotalSupply).mul(100).toNumber();
+  const noVotesPercentage = no.div(govTokenTotalSupply).mul(100).toNumber();
+  const abstainVotesPercentage = abstain.div(govTokenTotalSupply).mul(100).toNumber();
 
   return (
     <>
@@ -154,7 +160,7 @@ function ProposalVotes({
             <CircularProgress
               color="drab.900"
               trackColor="drab.700"
-              value={proposal.votes.yes.toNumber()}
+              value={yesVotesPercentage}
               size="156px"
               marginTop={4}
             >
@@ -163,7 +169,7 @@ function ProposalVotes({
                   textStyle="text-lg-mono-regular"
                   color="grayscale.100"
                 >
-                  {proposal.votes.yes.toNumber()}%
+                  {yesVotesPercentage}%
                 </Text>
                 <Text
                   textStyle="text-lg-mono-regular"
@@ -180,16 +186,16 @@ function ProposalVotes({
           >
             <VotesPercentage
               label={t('yes')}
-              percentage={proposal.votes.yes.toNumber()}
+              percentage={yesVotesPercentage}
             />
             <VotesPercentage
               label={t('no')}
-              percentage={proposal.votes.no.toNumber()}
+              percentage={noVotesPercentage}
             />
 
             <VotesPercentage
               label={t('abstain')}
-              percentage={proposal.votes.abstain.toNumber()}
+              percentage={abstainVotesPercentage}
             />
           </GridItem>
         </Grid>
