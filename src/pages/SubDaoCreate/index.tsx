@@ -10,15 +10,15 @@ function SubDaoCreate() {
     navigate(`/daos/${daoAddress}`);
   };
 
-  const [propose, pending] = useCreateSubDAOProposal();
+  const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();
 
   const proposeSubDAO = (daoData: GnosisDAO) => {
-    propose(daoData, successCallback);
+    proposeDao(daoData, successCallback);
   };
 
   return (
     <DaoCreator
-      pending={pending}
+      pending={pendingCreateTx}
       deployDAO={proposeSubDAO}
       isSubDAO={true}
     />

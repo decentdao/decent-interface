@@ -39,7 +39,7 @@ const useCreateSubDAOProposal = () => {
     [multiSendContract, build, submitProposal]
   );
 
-  return [proposeDao, pendingCreateTx, canUserCreateProposal] as const;
+  return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;
 };
 
 export default useCreateSubDAOProposal;
