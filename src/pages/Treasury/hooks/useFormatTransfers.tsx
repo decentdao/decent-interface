@@ -49,7 +49,7 @@ export function useFormatTransfers(
 
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
-      transferType: transfer.type,
+      transferType: transfer.type as TransferType,
       dateTimeDisplay: formatDatesDiffReadable(new Date(transfer.executionDate), new Date(), t),
       image: imageSrc,
       assetDisplay:

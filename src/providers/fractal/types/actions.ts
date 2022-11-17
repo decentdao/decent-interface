@@ -1,10 +1,15 @@
+import SafeServiceClient, {
+  SafeBalanceUsdResponse,
+  SafeCollectibleResponse,
+  TransferListResponse,
+} from '@gnosis.pm/safe-service-client';
 import { AccountAction, GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
 import { GnosisTransactionsResponse } from './gnosis';
 import { IGnosisModuleData, IGovernance } from './governance';
 import { GnosisSafe, IFavorites, IAudit } from './state';
-import { GnosisAssetNonFungible, GnosisAssetFungible, AssetTransfers } from './treasury';
 
 export type GnosisActions =
+  | { type: GnosisAction.SET_SAFE_SERVICE_CLIENT; payload: SafeServiceClient }
   | { type: GnosisAction.SET_SAFE; payload: GnosisSafe }
   | { type: GnosisAction.SET_SAFE_TRANSACTIONS; payload: GnosisTransactionsResponse }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
@@ -19,15 +24,15 @@ export type GovernanceActions =
 export type TreasuryActions =
   | {
       type: TreasuryAction.UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS;
-      payload: GnosisAssetFungible[];
+      payload: SafeBalanceUsdResponse[];
     }
   | {
       type: TreasuryAction.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS;
-      payload: GnosisAssetNonFungible[];
+      payload: SafeCollectibleResponse[];
     }
   | {
       type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS;
-      payload: AssetTransfers;
+      payload: TransferListResponse;
     }
   | { type: TreasuryAction.RESET };
 
