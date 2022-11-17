@@ -24,7 +24,7 @@ export function ModalBase(props: ModuleBaseProps) {
       <ModalContent
         backgroundColor="black.900"
         padding="1.5rem"
-        shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
+        shadow="menu-gold"
       >
         <Flex marginBottom="1rem">
           <Text

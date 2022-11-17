@@ -64,7 +64,7 @@ export function ActivitySort({ sortBy, setSortBy }: IActivitySort) {
       <MenuList
         border="none"
         rounded="lg"
-        shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
+        shadow="menu-gold"
         bg="grayscale.black"
         p="0.5rem 1rem"
         minWidth="min-content"
