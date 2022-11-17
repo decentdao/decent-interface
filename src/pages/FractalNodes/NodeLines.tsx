@@ -5,15 +5,15 @@ export function NodeLines({
   hasMore,
   isFirstChild,
   extendHeight,
-  indentfactor = 1,
+  indentFactor = 1,
 }: {
   isCurrentDAO?: boolean;
   hasMore?: boolean;
   isFirstChild?: boolean;
   extendHeight?: boolean;
-  indentfactor?: number;
+  indentFactor?: number;
 }) {
-  const width = (1.5 * indentfactor).toString() + 'rem';
+  const width = (1.5 * indentFactor).toString() + 'rem';
   return (
     <Box>
       <Box

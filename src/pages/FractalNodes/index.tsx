@@ -94,7 +94,7 @@ export function FractalNodes() {
                 hasMore={hasMore}
                 isFirstChild={isFirstChild}
                 extendHeight={hasMore}
-                indentfactor={!!parentDAOAddress ? 4 : 1}
+                indentFactor={!!parentDAOAddress ? 4 : 1}
               />
               <DAONodeCard
                 safeAddress={safeAddress}
