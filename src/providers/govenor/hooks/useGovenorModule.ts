@@ -1,11 +1,9 @@
-import { TokenClaim } from '@fractal-framework/fractal-contracts/dist/typechain-types';
+import { TokenClaim, VotesToken } from '@fractal-framework/fractal-contracts/dist/typechain-types';
 import { BigNumber } from 'ethers';
 import { Context, createContext, useContext } from 'react';
 import { GovernorModule, Timelock } from '../../../assets/typechain-types/module-governor';
 import { ProposalExecuteData } from '../../../types/proposal';
 import { ProposalData } from '../types';
-import { VotesToken } from './../../../assets/typechain-types/module-treasury/contracts/mocks/VotesToken';
-
 export interface IGovernorModule {
   governorModuleContract: GovernorModule | undefined;
   timelockModuleContract: Timelock | undefined;
