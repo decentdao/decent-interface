@@ -1,10 +1,10 @@
 import { Routes, Route } from 'react-router-dom';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
-import { Delegate } from '../pages/Delegate';
 import ProposalCreate from '../pages/ProposalCreate';
 import ProposalDetails from '../pages/ProposalDetails';
 import { Governance } from '../pages/Proposals';
+import SubDaoCreate from '../pages/SubDaoCreate';
 import Treasury from '../pages/Treasury';
 import { DAO_ROUTES } from './constants';
 
@@ -17,7 +17,7 @@ function DAOSubRoutes() {
       />
       <Route
         path={DAO_ROUTES.newSubDao.path}
-        element={<div />}
+        element={<SubDaoCreate />}
       />
       <Route
         path={DAO_ROUTES.nodes.path}
@@ -38,10 +38,6 @@ function DAOSubRoutes() {
       <Route
         path={DAO_ROUTES.proposalNew.path}
         element={<ProposalCreate />}
-      />
-      <Route
-        path={DAO_ROUTES.delegate.path}
-        element={<Delegate />}
       />
     </Routes>
   );

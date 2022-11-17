@@ -12,6 +12,13 @@ export interface MetaTransaction {
   data: string;
   operation: number;
 }
+
+export interface SafePostTransaction extends SafeTransaction {
+  safe: string;
+  contractTransactionHash: string;
+  sender: string;
+  signature: string;
+}
 export interface SafeTransaction extends MetaTransaction {
   safeTxGas: string | number;
   baseGas: string | number;

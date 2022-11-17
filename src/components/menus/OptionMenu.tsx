@@ -25,7 +25,7 @@ export function OptionMenu({
         <MenuButton as={Box}>{icon}</MenuButton>
         <MenuList
           rounded="lg"
-          shadow={'0px 0px 48px rgba(250, 189, 46, 0.48)'}
+          shadow="menu-gold"
           mr={['auto', '1rem']}
           bg="grayscale.black"
           border="none"
