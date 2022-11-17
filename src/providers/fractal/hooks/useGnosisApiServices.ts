@@ -36,10 +36,15 @@ export function useGnosisApiServices(
       signer: signerOrProvider as Signer,
     });
 
+    const network =
+      process.env.REACT_APP_LOCAL_CHAIN_ID === chainId.toString()
+        ? 'goerli'
+        : CHAIN_DATA_LIST[chainId].network;
+
     gnosisDispatch({
       type: GnosisAction.SET_SAFE_SERVICE_CLIENT,
       payload: new SafeServiceClient({
-        txServiceUrl: `https://safe-transaction-${CHAIN_DATA_LIST[chainId].network}.safe.global`,
+        txServiceUrl: `https://safe-transaction-${network}.safe.global`,
         ethAdapter,
       }),
     });
