@@ -1,5 +1,7 @@
-import { TokenClaim } from '@fractal-framework/fractal-contracts/typechain-types/contracts';
-import { TokenClaim__factory } from '@fractal-framework/fractal-contracts/typechain-types/factories/contracts';
+import {
+  TokenClaim,
+  TokenClaim__factory,
+} from '@fractal-framework/fractal-contracts/dist/typechain-types';
 import { useEffect, useState } from 'react';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 

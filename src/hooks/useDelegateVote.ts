@@ -1,4 +1,4 @@
-import { VotesToken } from '@fractal-framework/fractal-contracts/typechain-types/contracts';
+import { VotesToken } from '@fractal-framework/fractal-contracts/dist/typechain-types';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../contexts/web3Data/transactions';
