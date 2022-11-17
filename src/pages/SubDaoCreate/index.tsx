@@ -2,12 +2,13 @@ import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
 import { GnosisDAO } from '../../components/DaoCreator/provider/types';
 import useCreateSubDAOProposal from '../../hooks/useCreateSubDAOProposal';
+import { DAO_ROUTES } from '../../routes/constants';
 
 function SubDaoCreate() {
   const navigate = useNavigate();
 
   const successCallback = (daoAddress: string) => {
-    navigate(`/daos/${daoAddress}`);
+    navigate(DAO_ROUTES.dao.relative(daoAddress));
   };
 
   const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();
