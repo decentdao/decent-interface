@@ -1,4 +1,4 @@
-import { TokenClaim, VotesToken } from '@fractal-framework/fractal-contracts/dist/typechain-types';
+import { TokenClaim, VotesToken } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { Context, createContext, useContext } from 'react';
 import { GovernorModule, Timelock } from '../../../assets/typechain-types/module-governor';

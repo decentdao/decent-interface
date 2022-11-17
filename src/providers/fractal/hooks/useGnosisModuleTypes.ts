@@ -1,4 +1,4 @@
-import { FractalModule__factory } from '@fractal-framework/fractal-contracts/dist/typechain-types';
+import { FractalModule__factory } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect } from 'react';
 import { Usul__factory } from '../../../assets/typechain-types/usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';

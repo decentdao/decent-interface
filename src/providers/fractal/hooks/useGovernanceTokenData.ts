@@ -1,7 +1,4 @@
-import {
-  VotesToken,
-  VotesToken__factory,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types';
+import { VotesToken, VotesToken__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
 import {

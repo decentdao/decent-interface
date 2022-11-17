@@ -3,7 +3,7 @@ import {
   FractalModule__factory,
   FractalNameRegistry,
   FractalNameRegistry__factory,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types';
+} from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import {
   GnosisSafe,

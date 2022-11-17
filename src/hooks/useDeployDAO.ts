@@ -1,4 +1,4 @@
-import { VotesToken__factory } from '@fractal-framework/fractal-contracts/dist/typechain-types';
+import { VotesToken__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
