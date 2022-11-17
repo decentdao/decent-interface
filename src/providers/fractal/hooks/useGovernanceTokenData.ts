@@ -271,10 +271,10 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
       type: TokenActions.UPDATE_ACCOUNT,
       payload: {
         userBalance: tokenBalance,
-        userBalanceString: formatCoin(tokenBalance, true, decimals, symbol),
+        userBalanceString: formatCoin(tokenBalance, false, decimals, symbol),
         delegatee: tokenDelegatee,
         votingWeight: tokenVotingWeight,
-        votingWeightString: formatCoin(tokenVotingWeight, true, decimals, symbol),
+        votingWeightString: formatCoin(tokenVotingWeight, false, decimals, symbol),
         isDelegatesSet,
       },
     });

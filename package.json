@@ -6,6 +6,7 @@
     "@decent-org/fractal-ui": "^0.0.22",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
+    "@ethersproject/abstract-signer": "^5.7.0",
     "@fontsource/ibm-plex-mono": "^4.5.12",
     "@fontsource/ibm-plex-sans": "^4.5.13",
     "@fractal-framework/core-contracts": "^0.1.9",
