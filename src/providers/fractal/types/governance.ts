@@ -1,4 +1,4 @@
-import { FractalModule } from '../../../assets/typechain-types/fractal-contracts';
+import { FractalModule } from '@fractal-framework/fractal-contracts/dist/typechain-types';
 import { Usul } from '../../../assets/typechain-types/usul';
 import { IGoveranceTokenData } from '../hooks/useGovernanceTokenData';
 

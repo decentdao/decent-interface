@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
 import {
   FractalModule,
   FractalModule__factory,
   FractalNameRegistry,
   FractalNameRegistry__factory,
-} from '../assets/typechain-types/fractal-contracts';
+} from '@fractal-framework/fractal-contracts/dist/typechain-types';
+import { useEffect, useState } from 'react';
 import {
   GnosisSafe,
   GnosisSafeProxyFactory,

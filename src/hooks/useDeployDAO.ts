@@ -1,7 +1,7 @@
+import { VotesToken__factory } from '@fractal-framework/fractal-contracts/dist/typechain-types';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { VotesToken__factory } from '../assets/typechain-types/fractal-contracts';
 import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import { OZLinearVoting__factory, Usul__factory } from '../assets/typechain-types/usul';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
