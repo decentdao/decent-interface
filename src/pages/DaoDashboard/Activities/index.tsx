@@ -1,8 +1,7 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
-import { InfoBox } from '../../../components/ui/containers/InfoBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
 import { ActivitySort, SortBy } from './ActivitySort';
 import { ActivityTreasury } from './ActivityTreasury';
