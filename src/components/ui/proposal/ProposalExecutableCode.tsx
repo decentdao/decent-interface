@@ -69,28 +69,33 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Proposa
           borderTop="none"
           borderBottom="none"
         >
-          <Text
-            color="grayscale.100"
-            textStyle="text-button-md-semibold"
-          >
-            <AccordionButton>
-              <AccordionIcon />
-              {t('showExecutableCode')}
-            </AccordionButton>
-          </Text>
-          <AccordionPanel paddingBottom={4}>
-            <Flex
-              gap={2}
-              flexWrap="wrap"
-            >
-              {proposal.decodedTransactions.map((tx, i) => (
-                <TransactionBlock
-                  transaction={tx}
-                  key={i}
+          {({ isExpanded }) => (
+            <>
+              <AccordionButton
+                textStyle="text-button-md-semibold"
+                color="grayscale.100"
+              >
+                <AccordionIcon
+                  marginRight={3}
+                  transform={`rotate(-${isExpanded ? '0' : '90'}deg)`}
                 />
-              ))}
-            </Flex>
-          </AccordionPanel>
+                {t('showExecutableCode')}
+              </AccordionButton>
+              <AccordionPanel paddingBottom={4}>
+                <Flex
+                  gap={2}
+                  flexWrap="wrap"
+                >
+                  {proposal.decodedTransactions.map((tx, i) => (
+                    <TransactionBlock
+                      transaction={tx}
+                      key={i}
+                    />
+                  ))}
+                </Flex>
+              </AccordionPanel>
+            </>
+          )}
         </AccordionItem>
       </Accordion>
     </Box>

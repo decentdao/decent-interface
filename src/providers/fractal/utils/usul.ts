@@ -1,6 +1,7 @@
 import { BigNumber, Signer } from 'ethers';
 import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
 import { Providers } from '../../../contexts/web3Data/types';
+import { logError } from '../../../helpers/errorLogging';
 import { decodeTransactionHashes } from '../../../utils/crypto';
 import {
   Proposal,
@@ -60,7 +61,7 @@ export const getProposalVotesSummary = async (
   } catch (e) {
     // For who knows reason - strategy.quorum might give you an error
     // Seems like occuring when token deployment haven't worked properly
-    console.error('Error while getting strategy quorum', quorum);
+    logError('Error while getting strategy quorum');
     quorum = BigNumber.from(0);
   }
 

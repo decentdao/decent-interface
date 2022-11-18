@@ -8,10 +8,10 @@ import { ProposalAction } from '../../components/Proposals/ProposalActions/Propo
 import ProposalSummary from '../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../components/Proposals/ProposalVotes';
 import ContentBox from '../../components/ui/ContentBox';
-import StatusBox from '../../components/ui/StatusBox';
 import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
 import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
 import ProposalNumber from '../../components/ui/proposal/ProposalNumber';
+import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
 import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
@@ -74,7 +74,7 @@ function ProposalDetails() {
                 gap={4}
                 alignItems="center"
               >
-                <StatusBox state={proposal.state} />
+                <ProposalStateBox state={proposal.state} />
                 {proposal.deadline && <ProposalTime deadline={proposal.deadline} />}
               </Flex>
               <Box

@@ -13,7 +13,6 @@ function ContentBox({ title, children, bg = 'black.900' }: ContentBoxProps) {
       rounded="lg"
       p="1rem 1.5rem"
       my="4"
-      shadow="dark-lg"
       bg={bg}
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}

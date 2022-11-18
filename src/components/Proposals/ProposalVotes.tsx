@@ -1,5 +1,4 @@
 import {
-  Box,
   CircularProgress,
   CircularProgressLabel,
   Divider,
@@ -14,6 +13,7 @@ import useDisplayName from '../../hooks/useDisplayName';
 import { Proposal, ProposalVote } from '../../providers/fractal/types';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';
+import StatusBox from '../ui/StatusBox';
 
 // @todo - get this data from strategy contract/gov token contract, update votes mapping
 const MOCK_VOTES: ProposalVote[] = [
@@ -106,16 +106,9 @@ function ProposalVoteItem({
         <Text textStyle="text-base-sans-regular">{displayName}</Text>
       </GridItem>
       <GridItem colSpan={1}>
-        <Box
-          px="12px"
-          py="5px"
-          bg={vote.choice === 'yes' ? 'sand.700' : 'sand.800'}
-          borderRadius="7px"
-          color="black"
-          display="inline-block"
-        >
+        <StatusBox>
           <Text textStyle="text-sm-mono-semibold">{t(vote.choice)}</Text>
-        </Box>
+        </StatusBox>
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">

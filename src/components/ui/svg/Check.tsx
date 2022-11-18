@@ -1,4 +1,7 @@
-function Check({ fill = '#FABD2E' }: { fill?: string }) {
+import { useToken } from '@chakra-ui/react';
+
+function Check({ fill = 'gold.500' }: { fill?: string }) {
+  const [fillHex] = useToken('colors', [fill]);
   return (
     <svg
       width="24"
@@ -9,7 +12,7 @@ function Check({ fill = '#FABD2E' }: { fill?: string }) {
     >
       <path
         d="m10 15.172 9.193-9.193 1.415 1.414L10 18l-6.364-6.364 1.414-1.414 4.95 4.95z"
-        fill={fill}
+        fill={fillHex}
       />
     </svg>
   );
