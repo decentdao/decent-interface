@@ -27,12 +27,13 @@ export function SendAssetsModal({ close }: { close: Function }) {
 
   const handleCoinChange = (value: string) => {
     const index = Number(value);
-    if (Number(assetsFungible[index].fiatBalance) == 0) {
+    if (Number(assetsFungible[index].fiatBalance) === 0) {
       setUSDSelected(false);
     }
     setSelectedAssetIndex(index);
   };
   const handleAmountChange = (value: string) => {
+    // strip out non numbers (0-9. allowed)
     setAmountInput(value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'));
   };
 
@@ -98,7 +99,7 @@ export function SendAssetsModal({ close }: { close: Function }) {
             <Spacer />
             <Text
               marginEnd="0.5rem"
-              color={Number(selectedAsset.fiatBalance) == 0 ? 'grayscale.800' : 'grayscale.500'}
+              color={Number(selectedAsset.fiatBalance) === 0 ? 'grayscale.800' : 'grayscale.500'}
             >
               USD
             </Text>
@@ -107,7 +108,7 @@ export function SendAssetsModal({ close }: { close: Function }) {
               borderRadius="28px"
               color="white"
               colorScheme="drab"
-              isDisabled={Number(selectedAsset.fiatBalance) == 0}
+              isDisabled={Number(selectedAsset.fiatBalance) === 0}
               size="md"
               isChecked={usdSelected}
               onChange={e => setUSDSelected(e.target.checked)}
