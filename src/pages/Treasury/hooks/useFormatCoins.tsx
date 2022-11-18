@@ -16,12 +16,11 @@ export interface TokenDisplayData {
 
 export function useFormatCoins(assets: GnosisAssetFungible[]) {
   let totalFiatValue = 0;
-  let displayData: TokenDisplayData[] = [];
+  let displayData: TokenDisplayData[] = new Array(assets.length);
   for (let i = 0; i < assets.length; i++) {
     let asset = assets[i];
     totalFiatValue += Number(asset.fiatBalance);
     let symbol = asset.token === null ? 'ETH' : asset.token.symbol;
-    if (symbol === 'ETH' && asset.balance === '0') continue; // if Eth balance is zero, don't add it to the list
     const formatted: TokenDisplayData = {
       iconUri: asset.token === null ? ethDefault : asset.token.logoUri,
       address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
@@ -37,7 +36,7 @@ export function useFormatCoins(assets: GnosisAssetFungible[]) {
       fullCoinTotal: formatCoin(asset.balance, false, asset?.token?.decimals, asset?.token?.symbol),
       fiatDisplayValue: formatUSD(Number(asset.fiatBalance)),
     };
-    displayData.push(formatted);
+    displayData[i] = formatted;
   }
   displayData.sort((a, b) => b.fiatValue - a.fiatValue); // sort by USD value
   return {
