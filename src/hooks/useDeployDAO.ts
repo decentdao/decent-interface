@@ -1,10 +1,5 @@
-import { VotesToken__factory } from '@fractal-framework/fractal-contracts';
-import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
-import { OZLinearVoting__factory, Usul__factory } from '../assets/typechain-types/usul';
-import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../contexts/web3Data/transactions';
 import { GnosisDAO, TokenGovernanceDAO } from './../components/DaoCreator/provider/types/index';
 import useBuildDAOTx from './useBuildDAOTx';
