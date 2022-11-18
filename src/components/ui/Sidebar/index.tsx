@@ -138,7 +138,7 @@ function Sidebar() {
         gap="2rem"
         mb="8"
       >
-        <SidebarTooltipWrapper label={t('support')}>
+        <SidebarTooltipWrapper label={t('faq')}>
           <a
             data-testid="sidebarExternal-support"
             href={URL_FAQ}
