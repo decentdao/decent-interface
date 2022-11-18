@@ -11,7 +11,6 @@ import useDisplayName from '../../../hooks/useDisplayName';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { ManageDAOMenu } from '../../menus/ManageDAO/ManageDAOMenu';
-import { Option } from '../../menus/OptionMenu';
 
 interface IDAOInfoCard {
   safeAddress: string;
@@ -19,7 +18,6 @@ interface IDAOInfoCard {
   expanded?: boolean;
   numberOfChildrenDAO?: number;
   viewChildren?: boolean;
-  options?: Option[];
 }
 
 export function DAOInfoCard({
@@ -27,7 +25,6 @@ export function DAOInfoCard({
   toggleExpansion,
   expanded,
   numberOfChildrenDAO,
-  options,
 }: IDAOInfoCard) {
   const {
     account: {
@@ -120,7 +117,8 @@ export function DAOInfoCard({
         </Flex>
       </Flex>
       {/* Veritical Elipsis */}
-      {options && !!options.length && <ManageDAOMenu options={options} />}
+      {/* @todo add viewable conditions */}
+      <ManageDAOMenu safeAddress={safeAddress} />
     </Flex>
   );
 }

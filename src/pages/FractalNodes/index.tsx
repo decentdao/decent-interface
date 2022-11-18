@@ -1,31 +1,19 @@
 import { Box, Center, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
 import { HEADER_HEIGHT } from '../../constants/common';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../routes/constants';
 import { NodeLines } from './NodeLines';
 
 export function FractalNodes() {
   const {
     gnosis: { safe },
   } = useFractal();
-  const navigate = useNavigate();
   const [isParentExpanded, setIsParentExpended] = useState(true);
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(false);
 
-  const getOptions = (safeAddress: string) => {
-    return [
-      {
-        optionKey: 'optionCreateSubDAO',
-        function: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
-      },
-      { optionKey: 'optionInitiateFreeze', function: () => {} }, // TODO freeze hook (if parent voting holder)
-    ];
-  };
   if (!safe.address) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
@@ -57,7 +45,6 @@ export function FractalNodes() {
           toggleExpansion={parentExpansionToggle}
           expanded={isParentExpanded}
           numberOfChildrenDAO={1}
-          options={getOptions(parentDAOAddress)}
         />
       )}
 
@@ -76,7 +63,6 @@ export function FractalNodes() {
             toggleExpansion={!!daoPermissionList.length ? childrenExpansionToggle : undefined}
             expanded={isChildrenExpanded}
             numberOfChildrenDAO={daoPermissionList.length}
-            options={getOptions(safe.address)}
           />
         )}
       </Flex>
@@ -99,7 +85,6 @@ export function FractalNodes() {
               <DAONodeCard
                 safeAddress={safeAddress}
                 expanded={false}
-                options={getOptions(safeAddress)}
               />
             </Flex>
           );
