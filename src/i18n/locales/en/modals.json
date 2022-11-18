@@ -1,0 +1,10 @@
+{
+    "delegateTitle": "Delegate Voting Tokens",
+    "titleBalance": "Balance",
+    "titleWeight": "Voting Weight",
+    "titleDelegatedTo": "Delegated to",
+    "linkSelfDelegate": "Delegate to self",
+    "labelDelegateInput": "Delegate address",
+    "sublabelDelegateInput": "In order to vote you will need to delegate your tokens to yourself or a representative to vote on your behalf. Ethereum wallet address or ENS only.",
+    "buttonDelegate": "Delegate Voting Tokens"
+  }
