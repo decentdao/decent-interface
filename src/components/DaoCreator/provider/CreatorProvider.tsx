@@ -45,11 +45,8 @@ export const initialState: CreatorState = {
     parentAllocationAmount: undefined,
   },
   govModule: {
-    proposalThreshold: BigNumber.from(0),
     quorum: BigNumber.from(4),
     executionDelay: BigNumber.from(6545),
-    lateQuorumExecution: BigNumber.from(0),
-    voteStartDelay: BigNumber.from(6545),
     votingPeriod: BigNumber.from(45818),
   },
   funding: {

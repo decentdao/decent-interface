@@ -29,7 +29,10 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
             <ProposalTitle proposal={proposal} />
             <ProposalCreatedBy proposalProposer={proposal.proposer} />
           </Flex>
-          <Flex>
+          <Flex
+            flexWrap="wrap"
+            justifyContent="flex-end"
+          >
             {proposal.deadline && <ProposalTime deadline={proposal.deadline} />}
             <ProposalAction proposal={proposal} />
           </Flex>
