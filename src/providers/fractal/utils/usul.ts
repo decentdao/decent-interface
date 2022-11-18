@@ -76,6 +76,7 @@ export const mapProposalCreatedEventToProposal = async (
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
+    txHashes: [], // @todo: Retrieve proposal hashes for future decoding
   };
 
   return proposal;

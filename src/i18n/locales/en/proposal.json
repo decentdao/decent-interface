@@ -20,6 +20,7 @@
     "labelExecute": "Proposal ready for execution",
     "btnQueueProposal": "Queue Proposal",
     "labelQueueProposal": "Proposal has succeeded and ready to queue",
+    "pageTitle": "Proposals",
     "toastSignGnosis": "Please sign Gnosis transaction",
     "toastGnosisSigned": "Transaction signed and posted to Gnosis",
     "statePending": "Pending",
@@ -41,5 +42,8 @@
     "buttonDelegate": "Delegate",
     "errorCantCreateProposal": "Voting weight is less than the required threshold to create proposals",
     "labelRemoveTransaction": "Remove Transaction",
-    "errorInvalidFragments": "Invalid fragments"
+    "errorInvalidFragments": "Invalid fragments",
+    "proposedBy": "Proposed by",
+    "timeLeft": "{{time}} left",
+    "timeAgo": "{{time}} ago"
 }
