@@ -3,6 +3,12 @@ import { DecodedTransaction } from '../../../types';
 
 export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
 
+export enum UsulVoteChoice {
+  No,
+  Yes,
+  Abstain,
+}
+
 export enum ProposalState {
   Active = 'stateActive',
   Canceled = 'stateCanceled',

@@ -11,6 +11,7 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../hooks/useDisplayName';
 import { Proposal, ProposalVote } from '../../providers/fractal/types';
+import { formatCoin } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';
 import StatusBox from '../ui/StatusBox';
@@ -117,7 +118,7 @@ function ProposalVoteItem({
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">
-          {vote.weight.toString()} {govTokenSymbol}
+          {formatCoin(vote.weight, true, 18, govTokenSymbol)}
         </Text>
       </GridItem>
     </Grid>

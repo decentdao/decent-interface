@@ -1,5 +1,6 @@
 import { BigNumber, ethers } from 'ethers';
 
+export const DEFAULT_DATE_FORMAT = 'MMM dd, yyyy, h:mm aa';
 export const formatPercentage = (numerator: number, denominator: number) => {
   return parseFloat(((100 * numerator) / denominator).toPrecision(3)) + '%';
 };

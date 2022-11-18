@@ -10,7 +10,7 @@ export default function StatusBox({ children }: { children: ReactNode }) {
       display="inline-flex"
       alignItems="center"
       bg="sand.700"
-      borderRadius="7px"
+      borderRadius="4px"
       color="black"
     >
       {children}

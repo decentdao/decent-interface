@@ -4,46 +4,10 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useCurrentTimestamp from '../../contexts/blockchainData/useCurrentTimestamp';
 import { Proposal } from '../../providers/fractal/types';
+import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
-import ProgressBar from '../ui/ProgressBar';
+import { ExtendedProgressBar } from '../ui/ProgressBar';
 
-interface SummaryProgressBarProps {
-  label: string;
-  helperText: string;
-  percentage: number;
-  requiredPercentage: number;
-}
-function SummaryProgressBar({
-  label,
-  helperText,
-  percentage,
-  requiredPercentage,
-}: SummaryProgressBarProps) {
-  return (
-    <Flex
-      flexWrap="wrap"
-      marginTop={2}
-    >
-      <Text
-        marginTop={2}
-        marginBottom={3}
-        textStyle="text-base-sans-regular"
-      >
-        {label}
-      </Text>
-      <ProgressBar
-        value={percentage}
-        requiredValue={requiredPercentage}
-      />
-      <Text
-        textStyle="text-sm-sans-regular"
-        marginTop={3}
-      >
-        {helperText}
-      </Text>
-    </Flex>
-  );
-}
 export default function ProposalSummary({
   proposal: { startBlock, votes, deadline },
   govTokenTotalSupply,
@@ -58,7 +22,6 @@ export default function ProposalSummary({
   const noVotesPercentage = votes.no.div(govTokenTotalSupply).mul(100).toNumber();
   const quorum = votes.quorum.toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
-  const dateFormat = 'MMM dd, yyyy, h:mm aa';
 
   return (
     <ContentBox bg="black.900-semi-transparent">
@@ -75,7 +38,7 @@ export default function ProposalSummary({
           >
             {t('proposalSummaryStartDate')}
           </Text>
-          <Text>{format(startBlockTimeStamp * 1000, dateFormat)}</Text>
+          <Text>{format(startBlockTimeStamp * 1000, DEFAULT_DATE_FORMAT)}</Text>
         </Flex>
         <Flex
           marginTop={4}
@@ -88,18 +51,18 @@ export default function ProposalSummary({
           >
             {t('proposalSummaryEndDate')}
           </Text>
-          <Text>{format(deadline * 1000, dateFormat)}</Text>
+          <Text>{format(deadline * 1000, DEFAULT_DATE_FORMAT)}</Text>
         </Flex>
         <Divider color="chocolate.700" />
       </Box>
       <Box marginTop={4}>
-        <SummaryProgressBar
+        <ExtendedProgressBar
           label={t('support', { ns: 'sidebar' })}
           helperText={t('proposalSupportSummaryHelper', { count: requiredVotesToPass })}
           percentage={yesVotesPercentage}
           requiredPercentage={requiredVotesToPass}
         />
-        <SummaryProgressBar
+        <ExtendedProgressBar
           label={t('quorum', { ns: 'common' })}
           helperText={t('proposalQuorumSummaryHelper', { count: quorum })}
           percentage={noVotesPercentage}
