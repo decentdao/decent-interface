@@ -11,7 +11,7 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../hooks/useDisplayName';
 import { Proposal, ProposalVote } from '../../providers/fractal/types';
-import { formatCoin } from '../../utils/numberFormats';
+import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';
 import StatusBox from '../ui/StatusBox';
@@ -21,52 +21,52 @@ const MOCK_VOTES: ProposalVote[] = [
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29d',
     choice: 'no',
-    weight: BigNumber.from(150),
+    weight: BigNumber.from('150000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29a',
     choice: 'yes',
-    weight: BigNumber.from(2000),
+    weight: BigNumber.from('2000000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29b',
     choice: 'yes',
-    weight: BigNumber.from(100),
+    weight: BigNumber.from('100000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29c',
     choice: 'yes',
-    weight: BigNumber.from(75),
+    weight: BigNumber.from('75000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29e',
     choice: 'abstain',
-    weight: BigNumber.from(400),
+    weight: BigNumber.from('400000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29f',
     choice: 'no',
-    weight: BigNumber.from(150),
+    weight: BigNumber.from('150000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29g',
     choice: 'yes',
-    weight: BigNumber.from(150),
+    weight: BigNumber.from('150000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29k',
     choice: 'yes',
-    weight: BigNumber.from(150),
+    weight: BigNumber.from('150000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29l',
     choice: 'yes',
-    weight: BigNumber.from(150),
+    weight: BigNumber.from('150000000000000000000'),
   },
   {
     voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29m',
     choice: 'no',
-    weight: BigNumber.from(150),
+    weight: BigNumber.from('150000000000000000000'),
   },
 ];
 
@@ -90,10 +90,12 @@ function VotesPercentage({ label, percentage }: { label: string; percentage: num
 function ProposalVoteItem({
   vote,
   govTokenTotalSupply,
+  govTokenDecimals,
   govTokenSymbol,
 }: {
   vote: ProposalVote;
   govTokenTotalSupply: BigNumber;
+  govTokenDecimals: number;
   govTokenSymbol: string;
 }) {
   const { t } = useTranslation();
@@ -113,12 +115,12 @@ function ProposalVoteItem({
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">
-          {vote.weight.div(govTokenTotalSupply).mul(100).toNumber()}%
+          {formatPercentage(vote.weight, govTokenTotalSupply)}
         </Text>
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">
-          {formatCoin(vote.weight, true, 18, govTokenSymbol)}
+          {formatCoin(vote.weight, false, govTokenDecimals, govTokenSymbol)}
         </Text>
       </GridItem>
     </Grid>
@@ -130,10 +132,12 @@ function ProposalVotes({
     votes: { yes, no, abstain },
   },
   govTokenTotalSupply,
+  govTokenDecimals,
   govTokenSymbol,
 }: {
   proposal: Proposal;
   govTokenTotalSupply: BigNumber;
+  govTokenDecimals: number;
   govTokenSymbol: string;
 }) {
   const { t } = useTranslation(['common', 'proposal']);
@@ -210,6 +214,7 @@ function ProposalVotes({
               key={vote.voter}
               vote={vote}
               govTokenTotalSupply={govTokenTotalSupply}
+              govTokenDecimals={govTokenDecimals}
               govTokenSymbol={govTokenSymbol}
             />
           ))}

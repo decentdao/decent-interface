@@ -19,7 +19,8 @@ import useProposals from '../../providers/fractal/hooks/useProposals';
 import { Proposal } from '../../providers/fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
-const MOCK_GOV_TOKEN_TOTAL_SUPPLY = BigNumber.from('500000000000000000000000000');
+const MOCK_GOV_TOKEN_TOTAL_SUPPLY = BigNumber.from('3475000000000000000000');
+const MOCK_GOV_TOKEN_DECIMALS = 18;
 const MOCK_GOV_TOKEN_SYMBOL = 'FRCTL';
 
 function ProposalDetails() {
@@ -94,6 +95,7 @@ function ProposalDetails() {
           </ContentBox>
           <ProposalVotes
             proposal={proposal}
+            govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
             govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
             govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
           />
