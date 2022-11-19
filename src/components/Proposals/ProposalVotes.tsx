@@ -120,7 +120,7 @@ function ProposalVoteItem({
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">
-          {formatCoin(vote.weight, false, govTokenDecimals, govTokenSymbol)}
+          {formatCoin(vote.weight, true, govTokenDecimals, govTokenSymbol)}
         </Text>
       </GridItem>
     </Grid>
