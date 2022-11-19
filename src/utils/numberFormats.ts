@@ -7,9 +7,12 @@ export const formatPercentage = (
   numerator: BigNumber | number | string,
   denominator: BigNumber | number | string
 ) => {
-  const divide = bigDecimal.divide(numerator.toString(), denominator.toString(), 18);
-  const percent = parseFloat(bigDecimal.multiply(divide, 100)).toPrecision(3);
-  return percent + '%';
+  const fraction = bigDecimal.divide(numerator.toString(), denominator.toString(), 18);
+  const percent = parseFloat(bigDecimal.multiply(fraction, 100));
+  if (percent < 0.01) {
+    return '< 0.01%';
+  }
+  return Number(percent.toFixed(2)) + '%';
 };
 
 const usdFormatter = new Intl.NumberFormat('en-US', {
