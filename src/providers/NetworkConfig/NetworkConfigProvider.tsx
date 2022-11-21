@@ -61,15 +61,7 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(chainId));
 
   useEffect(() => {
-    switch (chainId) {
-      case 5:
-      case 31337:
-        setConfig(goerliConfig);
-        break;
-      case 1:
-      case 11155111:
-        break;
-    }
+    setConfig(getNetworkConfig(chainId));
   }, [chainId]);
 
   return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
