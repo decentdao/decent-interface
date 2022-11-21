@@ -12,5 +12,7 @@ export const mainnetConfig: NetworkConfig = {
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',
+    claimingFactory: '',
+    claimingMasterCopy: '',
   },
 };

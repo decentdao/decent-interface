@@ -12,5 +12,7 @@ export const sepoliaConfig: NetworkConfig = {
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',
+    claimingFactory: '',
+    claimingMasterCopy: '',
   },
 };

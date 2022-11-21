@@ -14,6 +14,8 @@ export type NetworkConfig = {
     fractalModuleMasterCopy: string;
     fractalNameRegistry: string;
     votesTokenMasterCopy: string;
+    claimingFactory: string;
+    claimingMasterCopy: string;
   };
 };
 
@@ -29,6 +31,8 @@ export const defaultState = {
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',
+    claimingFactory: '',
+    claimingMasterCopy: '',
   },
 };
 
