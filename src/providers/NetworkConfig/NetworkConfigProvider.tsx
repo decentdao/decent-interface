@@ -5,12 +5,12 @@ import { goerliConfig } from './networks';
 export type NetworkConfig = {
   safeBaseURL: string;
   contracts: {
-    gnosisFactory: string;
     gnosisSafe: string;
+    gnosisSafeFactory: string;
+    zodiacModuleProxyFactory: string;
+    linearVotingMasterCopy: string;
     gnosisMultisend: string;
     usulMasterCopy: string;
-    zodiacProxyFactory: string;
-    oneToOneTokenVotingMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalNameRegistry: string;
     votesTokenMasterCopy: string;
@@ -20,15 +20,15 @@ export type NetworkConfig = {
 export const defaultState = {
   safeBaseURL: '',
   contracts: {
-    gnosisFactory: '',
     gnosisSafe: '',
-    votesTokenMasterCopy: '',
+    gnosisSafeFactory: '',
+    zodiacModuleProxyFactory: '',
+    linearVotingMasterCopy: '',
     gnosisMultisend: '',
     usulMasterCopy: '',
-    zodiacProxyFactory: '',
-    oneToOneTokenVotingMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
+    votesTokenMasterCopy: '',
   },
 };
 
