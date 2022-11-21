@@ -2,12 +2,12 @@ import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { Proposal } from '../../providers/fractal/types/usul';
 import ContentBox from '../ui/ContentBox';
-import StatusBox from '../ui/StatusBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalNumber from '../ui/proposal/ProposalNumber';
+import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalTitle from '../ui/proposal/ProposalTitle';
-import { ProposalAction } from './ProposalAction';
+import { ProposalAction } from './ProposalActions/ProposalAction';
 
 export default function ProposalCard({ proposal }: { proposal: Proposal }) {
   return (
@@ -24,7 +24,7 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
               width="100%"
             >
               <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
-              <StatusBox state={proposal.state} />
+              <ProposalStateBox state={proposal.state} />
             </Flex>
             <ProposalTitle proposal={proposal} />
             <ProposalCreatedBy proposalProposer={proposal.proposer} />

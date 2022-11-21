@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import useQueueTransaction from '../../hooks/useQueueTransaction';
 import { Proposal } from '../../providers/fractal/types';
 import { ProposalData, ProposalState } from '../../providers/govenor/types';
-import { ProposalAction } from './ProposalAction';
+import { ProposalAction } from './ProposalActions/ProposalAction';
 
 function ProposalQueue({ proposal }: { proposal: ProposalData }) {
   const [pending, setPending] = useState<boolean>(false);

@@ -1,5 +1,11 @@
 import { BigNumber } from 'ethers';
 
+export interface DecodedTransaction {
+  target: string;
+  function: string;
+  parameterTypes: string[];
+  parameterValues: string[];
+}
 export interface MetaTransaction {
   to: string;
   value: string | number | BigNumber;
