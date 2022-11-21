@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { DAOController } from '../controller/DAOs/DAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
+import { FractalNodes } from '../pages/FractalNodes';
 import ProposalCreate from '../pages/ProposalCreate';
 import ProposalDetails from '../pages/ProposalDetails';
 import { Governance } from '../pages/Proposals';
@@ -21,7 +22,7 @@ function DAOSubRoutes() {
       />
       <Route
         path={DAO_ROUTES.nodes.path}
-        element={<div />}
+        element={<FractalNodes />}
       />
       <Route
         path={DAO_ROUTES.treasury.path}
