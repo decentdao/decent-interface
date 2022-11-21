@@ -7,6 +7,8 @@ export const initializeGnosisState = (_initialState: IGnosis) => {
 
 export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis => {
   switch (action.type) {
+    case GnosisAction.SET_SAFE_SERVICE_CLIENT:
+      return { ...state, safeService: action.payload };
     case GnosisAction.SET_SAFE:
       return { ...state, safe: { ...action.payload }, isGnosisLoading: false };
     case GnosisAction.SET_SAFE_TRANSACTIONS:

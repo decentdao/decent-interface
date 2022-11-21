@@ -52,7 +52,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   // const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
 
   useLocalStorage();
-  useGnosisApiServices(gnosis.safe.address, treasuryDispatch);
+  useGnosisApiServices(gnosis, treasuryDispatch, gnosisDispatch);
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
   useGnosisGovernance(gnosis, governanceDispatch);
   useDAOName({ address: gnosis.safe.address, gnosisDispatch });

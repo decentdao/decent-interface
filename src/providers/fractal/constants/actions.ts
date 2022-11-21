@@ -1,4 +1,5 @@
 export enum GnosisAction {
+  SET_SAFE_SERVICE_CLIENT,
   SET_SAFE,
   SET_SAFE_TRANSACTIONS,
   SET_MODULES,
