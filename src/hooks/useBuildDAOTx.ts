@@ -265,8 +265,8 @@ const useBuildDAOTx = () => {
             predictedTokenAddress,
             '0x0000000000000000000000000000000000000001',
             tokenGovernanceDaoData.votingPeriod,
-            tokenGovernanceDaoData.proposalThreshold,
-            tokenGovernanceDaoData.votingPeriod,
+            tokenGovernanceDaoData.quorum,
+            tokenGovernanceDaoData.executionDelay,
             'linearVoting',
           ]
         );

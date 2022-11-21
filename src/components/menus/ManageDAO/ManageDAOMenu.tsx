@@ -1,17 +1,33 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
-import { Option, OptionMenu } from '../OptionMenu';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { DAO_ROUTES } from '../../../routes/constants';
+import { OptionMenu } from '../OptionMenu';
 
-const OPTIONS: Option[] = [
-  { optionKey: 'optionCreateSubDAO', function: () => {} }, // TODO subDAO creation hook
-  { optionKey: 'optionInitiateFreeze', function: () => {} }, // TODO freeze hook (if parent voting holder)
-];
+export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
+  const navigate = useNavigate();
 
-export function ManageDAOMenu() {
+  const options = useMemo(
+    () => [
+      {
+        optionKey: 'optionCreateSubDAO',
+        function: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+      },
+      { optionKey: 'optionInitiateFreeze', function: () => {} }, // TODO freeze hook (if parent voting holder)
+    ],
+    [safeAddress, navigate]
+  );
+
   return (
     <OptionMenu
-      icon={<VEllipsis />}
+      icon={
+        <VEllipsis
+          boxSize="1.5rem"
+          mt="0.25rem"
+        />
+      }
       titleKey={'titleManageDAO'}
-      options={OPTIONS}
+      options={options}
       namespace={'menu'}
     />
   );
