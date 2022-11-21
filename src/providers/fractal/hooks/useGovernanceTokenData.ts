@@ -1,6 +1,6 @@
+import { VotesToken, VotesToken__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
-import { VotesToken, VotesToken__factory } from '../../../assets/typechain-types/fractal-contracts';
 import {
   OZLinearVoting,
   OZLinearVoting__factory,
