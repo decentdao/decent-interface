@@ -21,7 +21,7 @@
     "labelExecute": "Proposal ready for execution",
     "btnQueueProposal": "Queue Proposal",
     "labelQueueProposal": "Proposal has succeeded and ready to queue",
-    "pageTitle": "Proposals",
+    "pageTitle": "{{daoName}} Proposals",
     "toastSignGnosis": "Please sign Gnosis transaction",
     "toastGnosisSigned": "Transaction signed and posted to Gnosis",
     "statePending": "Pending",

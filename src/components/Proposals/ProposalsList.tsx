@@ -1,6 +1,8 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../providers/fractal/hooks/useProposals';
+import { EmptyBox } from '../ui/containers/EmptyBox';
+import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import ProposalCard from './ProposalCard';
 
 export default function ProposalsList() {
@@ -8,11 +10,11 @@ export default function ProposalsList() {
   const { t } = useTranslation('proposal');
 
   if (proposals === undefined) {
-    return <Text textStyle="text-sm-sans-regular">{t('loadingProposals')}</Text>;
+    return <InfoBoxLoader />;
   }
 
   if (proposals.length === 0) {
-    return <Text textStyle="text-sm-sans-regular">{t('emptyProposals')}</Text>;
+    return <EmptyBox emptyText={t('emptyProposals')} />;
   }
 
   return (

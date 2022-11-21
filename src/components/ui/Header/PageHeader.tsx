@@ -1,6 +1,17 @@
 import { Box, Divider, Flex, Spacer, Text } from '@chakra-ui/react';
 import { Button } from '@decent-org/fractal-ui';
+import { ReactNode } from 'react';
 
+interface IPageHeader {
+  title: string;
+  titleTestId: string;
+  buttonSize?: 'sm' | 'base' | 'lg';
+  buttonVariant?: 'text';
+  buttonText?: string;
+  buttonClick?: () => void;
+  buttonTestId?: string;
+  children?: ReactNode;
+}
 /**
  * A component which displays a page title and an optional action button.
  * Intended to be used as the main title for a page.
@@ -8,16 +19,13 @@ import { Button } from '@decent-org/fractal-ui';
 function PageHeader({
   title,
   titleTestId,
+  buttonVariant,
+  buttonSize,
   buttonText,
   buttonClick,
   buttonTestId,
-}: {
-  title: string;
-  titleTestId: string;
-  buttonText?: string;
-  buttonClick?: () => void;
-  buttonTestId?: string;
-}) {
+  children,
+}: IPageHeader) {
   return (
     <Box
       marginTop="3rem"
@@ -39,11 +47,13 @@ function PageHeader({
           <Button
             onClick={buttonClick}
             data-testid={buttonTestId}
-            size="sm"
+            size={buttonSize || 'sm'}
+            variant={buttonVariant}
           >
             {buttonText}
           </Button>
         )}
+        {children}
       </Flex>
       <Divider
         marginTop="1rem"
