@@ -15,6 +15,7 @@ import { ErrorFallback } from './components/ErrorFallback';
 import { BlockchainDataProvider } from './contexts/blockchainData';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
+import { ModalProvider } from './modals/ModalProvider';
 import { FractalProvider } from './providers/fractal/FractalProvider';
 import reportWebVitals from './reportWebVitals';
 
@@ -43,7 +44,9 @@ root.render(
                       newestOnTop={false}
                       pauseOnFocusLoss={false}
                     />
-                    <App />
+                    <ModalProvider>
+                      <App />
+                    </ModalProvider>
                   </FractalProvider>
                 </BlockchainDataProvider>
               </Web3Provider>
