@@ -1,9 +1,17 @@
 import { Flex, Text } from '@chakra-ui/react';
+import { Calendar } from '@decent-org/fractal-ui';
+
 import { useTranslation } from 'react-i18next';
 import { formatDatesDiffReadable } from '../../../helpers/dateTime';
 import Clock from '../svg/Clock';
 
-function ProposalTime({ deadline }: { deadline: number }) {
+function ProposalTime({
+  deadline,
+  icon = 'clock',
+}: {
+  deadline: number;
+  icon?: 'clock' | 'calendar';
+}) {
   const { t } = useTranslation('proposal');
   const deadlineDate = new Date(deadline * 1000);
   const now = new Date();
@@ -14,14 +22,12 @@ function ProposalTime({ deadline }: { deadline: number }) {
     <Flex
       className="flex"
       justifyContent="flex-end"
-      width="100%"
+      alignItems="center"
     >
-      <Clock fill="sand.700" />
+      {icon === 'clock' ? <Clock fill="sand.700" /> : <Calendar color="sand.700" />}
       <Flex
-        flexWrap="wrap"
         px={2}
         gap={1}
-        alignItems="start"
       >
         <Text color="sand.700">{t(isPassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}</Text>
       </Flex>
