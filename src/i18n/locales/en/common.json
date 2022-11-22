@@ -56,5 +56,8 @@
     "labelDateYear_other": "{{count}} years",
     "toastClipboardCopy": "Copied to clipboard",
     "newest": "Newest",
-    "oldest": "Oldest"
+    "oldest": "Oldest",
+    "filter": "Filter",
+    "selectAll": "Select All",
+    "clear": "Clear"
 }

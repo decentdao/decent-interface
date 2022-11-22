@@ -1,30 +1,45 @@
-import { Menu, MenuButton, Text, MenuItem, MenuList } from '@chakra-ui/react';
+import { Box, Menu, MenuButton, Text, MenuItem, MenuList, As, Checkbox } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface Option {
   optionKey: string;
-  function: Function;
+  function: () => void;
+  isSelected?: boolean;
 }
 
-export function OptionMenu({
-  icon,
-  titleKey,
-  options,
-  namespace,
-}: {
-  icon: ReactNode;
+interface IOptionMenu {
+  trigger: ReactNode;
   titleKey: string;
   options: Option[];
   namespace: string;
-}) {
+  buttonAs?: As;
+  showOptionSelected?: boolean;
+  buttonProps?: Record<string, string>;
+}
+
+export function OptionMenu({
+  trigger,
+  titleKey,
+  options,
+  namespace,
+  buttonAs,
+  showOptionSelected,
+  buttonProps,
+}: IOptionMenu) {
   const { t } = useTranslation(namespace);
   return (
     <Menu
       isLazy
       gutter={16}
     >
-      <MenuButton h="fit-content">{icon}</MenuButton>
+      <MenuButton
+        as={buttonAs}
+        h="fit-content"
+        {...buttonProps}
+      >
+        {trigger}
+      </MenuButton>
       <MenuList
         rounded="lg"
         shadow="menu-gold"
@@ -42,16 +57,16 @@ export function OptionMenu({
         </Text>
         {options.map(option => (
           <MenuItem
-            as={Text}
+            as={showOptionSelected ? Box : Text}
             key={option.optionKey}
-            onClick={() => {
-              option.function();
-            }}
+            onClick={option.function}
             textStyle="text-base-mono-medium"
             color="grayscale.100"
             paddingStart="0rem"
             paddingEnd="0rem"
+            gap={2}
           >
+            {showOptionSelected && <Checkbox isChecked={option.isSelected} />}
             {t(option.optionKey)}
           </MenuItem>
         ))}

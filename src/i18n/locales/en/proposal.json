@@ -31,9 +31,12 @@
     "stateSucceeded": "Succeeded",
     "stateQueued": "Queued",
     "stateExpired": "Expired",
+    "stateExecuting": "Executing",
+    "stateUninitialized": "Uninitialized",
     "stateExecuted": "Executed",
     "stateFailed": "Failed",
     "stateUnknown": "Unknown",
+    "stateTimeLocked": "Time Locked",
     "showExecutableCode": "Show executable code",
     "loadingProposals": "Proposals loading...",
     "emptyProposals": "No proposals",
@@ -57,5 +60,7 @@
     "timeAgo": "{{time}} ago",
     "votesTitle": "Votes",
     "queueTitle": "Queue Transaction",
-    "executeTitle": "Execute Transaction"
+    "executeTitle": "Execute Transaction",
+    "filterProposals": "All Proposals",
+    "filter": "Filter"
 }

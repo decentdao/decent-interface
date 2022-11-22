@@ -20,7 +20,7 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
 
   return (
     <OptionMenu
-      icon={
+      trigger={
         <VEllipsis
           boxSize="1.5rem"
           mt="0.25rem"

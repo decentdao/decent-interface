@@ -26,7 +26,7 @@ const MOCK_GOV_TOKEN_SYMBOL = 'FRCTL';
 function ProposalDetails() {
   const params = useParams();
 
-  const { proposals } = useProposals();
+  const { proposals } = useProposals({});
   const [proposal, setProposal] = useState<Proposal>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 

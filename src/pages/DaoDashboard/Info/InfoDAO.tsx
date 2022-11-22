@@ -1,4 +1,5 @@
 import { DAOInfoCard } from '../../../components/ui/cards/DAOInfoCard';
+import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 
 export function InfoDAO() {
@@ -10,8 +11,7 @@ export function InfoDAO() {
   const subDAOsWithPermissions = [];
 
   if (!safe.address) {
-    // @todo replace with a loader
-    return <div />;
+    return <InfoBoxLoader />;
   }
 
   return (

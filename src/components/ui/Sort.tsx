@@ -2,11 +2,7 @@ import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/rea
 import { ArrowDownSm } from '@decent-org/fractal-ui';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-
-export enum SortBy {
-  Newest = 'newest',
-  Oldest = 'oldest',
-}
+import { SortBy } from '../../types';
 
 function SortMenuItem({
   labelKey,
@@ -35,12 +31,12 @@ function SortMenuItem({
   );
 }
 
-interface IActivitySort {
+interface ISort {
   sortBy: SortBy;
   setSortBy: Dispatch<SetStateAction<SortBy>>;
 }
 
-export function ActivitySort({ sortBy, setSortBy }: IActivitySort) {
+export function Sort({ sortBy, setSortBy }: ISort) {
   const { t } = useTranslation();
   return (
     <Menu direction="ltr">
