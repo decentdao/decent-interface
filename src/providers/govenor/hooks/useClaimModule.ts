@@ -1,12 +1,9 @@
+import { TokenClaim, TokenClaim__factory } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
-import {
-  ClaimSubsidiary,
-  ClaimSubsidiary__factory,
-} from '../../../assets/typechain-types/votes-token';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 
 const useClaimModule = (moduleAddress: string | undefined) => {
-  const [claimModule, setClaimModule] = useState<ClaimSubsidiary>();
+  const [claimModule, setClaimModule] = useState<TokenClaim>();
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
@@ -17,7 +14,7 @@ const useClaimModule = (moduleAddress: string | undefined) => {
       return;
     }
 
-    setClaimModule(ClaimSubsidiary__factory.connect(moduleAddress, signerOrProvider));
+    setClaimModule(TokenClaim__factory.connect(moduleAddress, signerOrProvider));
   }, [moduleAddress, signerOrProvider]);
 
   return claimModule;

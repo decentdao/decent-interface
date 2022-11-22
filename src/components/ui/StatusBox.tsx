@@ -1,21 +1,19 @@
 import { Box } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
-import { ProposalState } from '../../providers/fractal/types/usul';
+import { ReactNode } from 'react';
 
-interface StatusBoxProps {
-  state: ProposalState;
-}
-export default function StatusBox({ state }: StatusBoxProps) {
-  const { t } = useTranslation('proposal');
+export default function StatusBox({ children }: { children: ReactNode }) {
   return (
     <Box
-      px="12px"
-      py="5px"
+      px="8px"
+      py="2px"
+      height="22px"
+      display="inline-flex"
+      alignItems="center"
       bg="sand.700"
-      borderRadius="7px"
+      borderRadius="4px"
       color="black"
     >
-      {t(state)}
+      {children}
     </Box>
   );
 }
