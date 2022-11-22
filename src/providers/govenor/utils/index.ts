@@ -1,6 +1,5 @@
 import { BigNumber, providers } from 'ethers';
 import { GovernorModule } from '../../../assets/typechain-types/module-governor';
-import { ProposalDataWithoutUserData } from '../types/proposal';
 
 // TODO should we translate on chain data?
 export const getVoteString = (voteNumber: number) => {
@@ -87,45 +86,4 @@ export const getVotePercentages = (
     forVotesPercent: forVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
     abstainVotesPercent: abstainVotesCount.mul(1000000).div(totalVotes).toNumber() / 10000,
   };
-};
-
-// Get proposal data that isn't included in the proposal created event
-export const getProposalData = (
-  provider: providers.BaseProvider | null,
-  governorModule: GovernorModule,
-  proposal: ProposalDataWithoutUserData
-) => {
-  return Promise.all([
-    governorModule.proposalVotes(proposal.id),
-    governorModule.state(proposal.id),
-    getBlockTimestamp(provider, proposal.startBlock.toNumber()),
-    getBlockTimestamp(provider, proposal.endBlock.toNumber()),
-    governorModule.proposalEta(proposal.id),
-    proposal,
-  ]).then(([votes, state, startTime, endTime, eta, proposalData]) => {
-    const votePercentages = getVotePercentages(
-      votes.againstVotes,
-      votes.forVotes,
-      votes.abstainVotes
-    );
-
-    proposalData.againstVotesPercent = votePercentages.againstVotesPercent;
-    proposalData.forVotesPercent = votePercentages.forVotesPercent;
-    proposalData.abstainVotesPercent = votePercentages.abstainVotesPercent;
-
-    proposalData.idSubstring = `${proposalData.id.toString().substring(0, 4)}...${proposalData.id
-      .toString()
-      .slice(-4)}`;
-    proposalData.state = state;
-    proposalData.startTime = startTime;
-    proposalData.endTime = endTime;
-    proposalData.startTimeString = getTimestampString(startTime);
-    proposalData.endTimeString = getTimestampString(endTime);
-    proposalData.eta = eta.toNumber();
-    proposalData.forVotesCount = votes.forVotes;
-    proposalData.againstVotesCount = votes.againstVotes;
-    proposalData.abstainVotesCount = votes.abstainVotes;
-
-    return proposalData;
-  });
 };

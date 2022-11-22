@@ -3,14 +3,13 @@ import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../contexts/web3Data/transactions';
-import { ProposalData } from '../providers/govenor/types';
 import { useGovenorModule } from './../providers/govenor/hooks/useGovenorModule';
 
 const useExecuteTransaction = ({
   proposalData,
   setPending,
 }: {
-  proposalData: ProposalData;
+  proposalData: any;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {

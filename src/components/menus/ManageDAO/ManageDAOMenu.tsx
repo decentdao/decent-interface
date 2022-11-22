@@ -11,9 +11,9 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
     () => [
       {
         optionKey: 'optionCreateSubDAO',
-        function: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+        onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
       },
-      { optionKey: 'optionInitiateFreeze', function: () => {} }, // TODO freeze hook (if parent voting holder)
+      { optionKey: 'optionInitiateFreeze', onClick: () => {} }, // TODO freeze hook (if parent voting holder)
     ],
     [safeAddress, navigate]
   );

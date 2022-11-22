@@ -3,11 +3,10 @@ import { BigNumber } from 'ethers';
 import { Context, createContext, useContext } from 'react';
 import { GovernorModule, Timelock } from '../../../assets/typechain-types/module-governor';
 import { ProposalExecuteData } from '../../../types/proposal';
-import { ProposalData } from '../types';
 export interface IGovernorModule {
   governorModuleContract: GovernorModule | undefined;
   timelockModuleContract: Timelock | undefined;
-  proposals: ProposalData[] | undefined;
+  proposals: any[] | undefined;
   createProposal: {
     pendingCreateTx: boolean;
     submitProposal: (proposal: {

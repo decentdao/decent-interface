@@ -1,15 +1,18 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
+import useCurrentTimestamp from '../../contexts/blockchainData/useCurrentTimestamp';
 import { Proposal } from '../../providers/fractal/types/usul';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
-import ProposalNumber from '../ui/proposal/ProposalNumber';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalTitle from '../ui/proposal/ProposalTitle';
 import { ProposalAction } from './ProposalActions/ProposalAction';
 
 export default function ProposalCard({ proposal }: { proposal: Proposal }) {
+  const now = new Date();
+  const proposalCreatedTimestamp = useCurrentTimestamp(proposal.startBlock.toNumber());
+
   return (
     <Link to={proposal.proposalNumber.toString()}>
       <ContentBox>
@@ -23,17 +26,19 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
               gap="2"
               width="100%"
             >
-              <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
               <ProposalStateBox state={proposal.state} />
+              <ProposalTime deadline={proposalCreatedTimestamp} />
             </Flex>
             <ProposalTitle proposal={proposal} />
             <ProposalCreatedBy proposalProposer={proposal.proposer} />
           </Flex>
           <Flex
-            flexWrap="wrap"
+            alignItems="center"
             justifyContent="flex-end"
           >
-            {proposal.deadline && <ProposalTime deadline={proposal.deadline} />}
+            {proposal.deadline * 1000 > now.getMilliseconds() && (
+              <ProposalTime deadline={proposal.deadline} />
+            )}
             <ProposalAction proposal={proposal} />
           </Flex>
         </Flex>

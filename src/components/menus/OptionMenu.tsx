@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 export interface Option {
   optionKey: string;
-  function: () => void;
+  onClick: () => void;
   isSelected?: boolean;
 }
 
@@ -15,7 +15,9 @@ interface IOptionMenu {
   namespace: string;
   buttonAs?: As;
   showOptionSelected?: boolean;
-  buttonProps?: Record<string, string>;
+  buttonProps?: Record<string, string | boolean | number>;
+  children?: ReactNode;
+  closeOnSelect?: boolean;
 }
 
 export function OptionMenu({
@@ -26,6 +28,8 @@ export function OptionMenu({
   buttonAs,
   showOptionSelected,
   buttonProps,
+  children,
+  closeOnSelect = true,
 }: IOptionMenu) {
   const { t } = useTranslation(namespace);
   return (
@@ -55,18 +59,27 @@ export function OptionMenu({
         >
           {t(titleKey)}
         </Text>
+        {children}
         {options.map(option => (
           <MenuItem
             as={showOptionSelected ? Box : Text}
             key={option.optionKey}
-            onClick={option.function}
+            onClick={option.onClick}
             textStyle="text-base-mono-medium"
             color="grayscale.100"
             paddingStart="0rem"
             paddingEnd="0rem"
             gap={2}
+            closeOnSelect={closeOnSelect}
           >
-            {showOptionSelected && <Checkbox isChecked={option.isSelected} />}
+            {showOptionSelected && (
+              <Checkbox
+                isChecked={option.isSelected}
+                onChange={option.onClick}
+                colorScheme="gold"
+                iconColor="black.900"
+              />
+            )}
             {t(option.optionKey)}
           </MenuItem>
         ))}

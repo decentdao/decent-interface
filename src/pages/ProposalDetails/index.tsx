@@ -10,7 +10,6 @@ import ProposalVotes from '../../components/Proposals/ProposalVotes';
 import ContentBox from '../../components/ui/ContentBox';
 import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
 import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
-import ProposalNumber from '../../components/ui/proposal/ProposalNumber';
 import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
 import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
@@ -76,16 +75,13 @@ function ProposalDetails() {
                 alignItems="center"
               >
                 <ProposalStateBox state={proposal.state} />
-                {proposal.deadline && <ProposalTime deadline={proposal.deadline} />}
+                <ProposalTime deadline={proposal.deadline} />
               </Flex>
               <Box
                 w="full"
                 mt={4}
               >
-                <Flex gap={2}>
-                  <ProposalNumber proposalNumber={proposal.proposalNumber.toNumber()} />
-                  <ProposalTitle proposal={proposal} />
-                </Flex>
+                <ProposalTitle proposal={proposal} />
                 <ProposalExecutableCode proposal={proposal} />
               </Box>
             </Flex>
