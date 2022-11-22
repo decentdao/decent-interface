@@ -3,6 +3,10 @@ import {
   FractalModule__factory,
   FractalNameRegistry,
   FractalNameRegistry__factory,
+  VetoGuard,
+  VetoGuard__factory,
+  VetoMultisigVoting,
+  VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import {
@@ -38,6 +42,9 @@ export default function useSafeContracts() {
     useState<FractalModule>();
   const [fractalNameRegistryContract, setFractalNameRegistryContract] =
     useState<FractalNameRegistry>();
+  const [vetoGuardMasterCopyContract, setVetoGuardMasterCopyContract] = useState<VetoGuard>();
+  const [vetoMultisigVotingMasterCopyContract, setvetoMultisigVotingMasterCopyContract] =
+    useState<VetoMultisigVoting>();
   const {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
@@ -51,6 +58,8 @@ export default function useSafeContracts() {
     multiSend,
     fractalModuleMasterCopy,
     fractalNameRegistry,
+    vetoGuardMasterCopy,
+    votesMasterCopy,
   } = useAddresses(chainId);
 
   useEffect(() => {
@@ -63,6 +72,8 @@ export default function useSafeContracts() {
       !multiSend ||
       !fractalModuleMasterCopy ||
       !fractalNameRegistry ||
+      !vetoGuardMasterCopy ||
+      !votesMasterCopy ||
       !signerOrProvider
     ) {
       setGnosisSafeFactoryContract(undefined);
@@ -72,6 +83,9 @@ export default function useSafeContracts() {
       setGnosisSafeSingletonContract(undefined);
       setFractalModuleMasterCopyContract(undefined);
       setFractalNameRegistryContract(undefined);
+      setVetoGuardMasterCopyContract(undefined);
+      setVetoGuardMasterCopyContract(undefined);
+
       return;
     }
 
@@ -99,6 +113,12 @@ export default function useSafeContracts() {
     setFractalNameRegistryContract(
       FractalNameRegistry__factory.connect(fractalNameRegistry.address, signerOrProvider)
     );
+    setVetoGuardMasterCopyContract(
+      VetoGuard__factory.connect(vetoGuardMasterCopy.address, signerOrProvider)
+    );
+    setvetoMultisigVotingMasterCopyContract(
+      VetoMultisigVoting__factory.connect(votesMasterCopy.address, signerOrProvider)
+    );
   }, [
     gnosisSafeFactory,
     gnosisSafe,
@@ -109,6 +129,8 @@ export default function useSafeContracts() {
     multiSend,
     fractalModuleMasterCopy,
     fractalNameRegistry,
+    vetoGuardMasterCopy,
+    votesMasterCopy,
   ]);
 
   return {
@@ -120,5 +142,7 @@ export default function useSafeContracts() {
     multiSendContract,
     fractalModuleMasterCopyContract,
     fractalNameRegistryContract,
+    vetoGuardMasterCopyContract,
+    vetoMultisigVotingMasterCopyContract,
   };
 }
