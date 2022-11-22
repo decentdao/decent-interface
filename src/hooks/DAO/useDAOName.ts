@@ -16,14 +16,14 @@ export default function useDAOName({ address }: { address?: string }) {
       return '';
     }
 
-    const events = await fractalNameRegistryContract.queryFilter(
-      fractalNameRegistryContract.filters.FractalNameUpdated(address)
-    );
-
     if (ensName) {
       setDAORegistryName(ensName);
       return;
     }
+
+    const events = await fractalNameRegistryContract.queryFilter(
+      fractalNameRegistryContract.filters.FractalNameUpdated(address)
+    );
 
     const latestEvent = events[0];
     if (!latestEvent) {
