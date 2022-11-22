@@ -1,38 +1,226 @@
+import {
+  CircularProgress,
+  CircularProgressLabel,
+  Divider,
+  Flex,
+  Grid,
+  GridItem,
+  Text,
+} from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { Proposal } from '../../providers/fractal/types';
+import useDisplayName from '../../hooks/useDisplayName';
+import { Proposal, ProposalVote } from '../../providers/fractal/types';
+import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
+import ProgressBar from '../ui/ProgressBar';
+import StatusBox from '../ui/StatusBox';
 
-function VotesPercentage({ label, percentage }: { label: string; percentage?: number }) {
+// @todo - get this data from strategy contract/gov token contract, update votes mapping
+const MOCK_VOTES: ProposalVote[] = [
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29d',
+    choice: 'no',
+    weight: BigNumber.from('150000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29a',
+    choice: 'yes',
+    weight: BigNumber.from('2000000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29b',
+    choice: 'yes',
+    weight: BigNumber.from('100000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29c',
+    choice: 'yes',
+    weight: BigNumber.from('75000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29e',
+    choice: 'abstain',
+    weight: BigNumber.from('400000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29f',
+    choice: 'no',
+    weight: BigNumber.from('150000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29g',
+    choice: 'yes',
+    weight: BigNumber.from('150000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29k',
+    choice: 'yes',
+    weight: BigNumber.from('150000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29l',
+    choice: 'yes',
+    weight: BigNumber.from('150000000000000000000'),
+  },
+  {
+    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29m',
+    choice: 'no',
+    weight: BigNumber.from('150000000000000000000'),
+  },
+];
+
+function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
-    <div className="flex flex-row mx-2 py-3 border-t border-gray-200">
-      <div className="flex flex-grow mr-4 text-gray-50 font-medium">{label}</div>
-      <div className="flex ml-2 text-gray-25 text-lg font-semibold font-mono">{percentage}%</div>
-    </div>
+    <Flex
+      flexWrap="wrap"
+      marginTop={2}
+    >
+      <Text
+        marginTop={2}
+        marginBottom={2}
+      >
+        {label}
+      </Text>
+      <ProgressBar value={percentage} />
+    </Flex>
   );
 }
 
-function ProposalVotes({ proposal }: { proposal: Proposal }) {
+function ProposalVoteItem({
+  vote,
+  govTokenTotalSupply,
+  govTokenDecimals,
+  govTokenSymbol,
+}: {
+  vote: ProposalVote;
+  govTokenTotalSupply: BigNumber;
+  govTokenDecimals: number;
+  govTokenSymbol: string;
+}) {
   const { t } = useTranslation();
+  const { displayName } = useDisplayName(vote.voter);
   return (
-    <ContentBox>
-      <div className="flex flex-grow flex-col h-full bg-gray-600 my-2 ml-4 p-2 pb-4 rounded-md">
-        <div className="flex mx-2 my-2 text-gray-25 mb-3 text-lg font-semibold">Results</div>
-        <VotesPercentage
-          label={t('yes')}
-          percentage={proposal.votes.yes.toNumber()}
-        />
+    <Grid
+      templateColumns="repeat(4, 1fr)"
+      width="100%"
+    >
+      <GridItem colSpan={1}>
+        <Text textStyle="text-base-sans-regular">{displayName}</Text>
+      </GridItem>
+      <GridItem colSpan={1}>
+        <StatusBox>
+          <Text textStyle="text-sm-mono-semibold">{t(vote.choice)}</Text>
+        </StatusBox>
+      </GridItem>
+      <GridItem colSpan={1}>
+        <Text textStyle="text-base-sans-regular">
+          {formatPercentage(vote.weight, govTokenTotalSupply)}
+        </Text>
+      </GridItem>
+      <GridItem colSpan={1}>
+        <Text textStyle="text-base-sans-regular">
+          {formatCoin(vote.weight, true, govTokenDecimals, govTokenSymbol)}
+        </Text>
+      </GridItem>
+    </Grid>
+  );
+}
 
-        <VotesPercentage
-          label={t('no')}
-          percentage={proposal.votes.no.toNumber()}
-        />
+function ProposalVotes({
+  proposal: {
+    votes: { yes, no, abstain },
+  },
+  govTokenTotalSupply,
+  govTokenDecimals,
+  govTokenSymbol,
+}: {
+  proposal: Proposal;
+  govTokenTotalSupply: BigNumber;
+  govTokenDecimals: number;
+  govTokenSymbol: string;
+}) {
+  const { t } = useTranslation(['common', 'proposal']);
 
-        <VotesPercentage
-          label={t('abstain')}
-          percentage={proposal.votes.abstain.toNumber()}
+  const yesVotesPercentage = yes.div(govTokenTotalSupply).mul(100).toNumber();
+  const noVotesPercentage = no.div(govTokenTotalSupply).mul(100).toNumber();
+  const abstainVotesPercentage = abstain.div(govTokenTotalSupply).mul(100).toNumber();
+
+  return (
+    <>
+      <ContentBox bg="black.900-semi-transparent">
+        <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
+        <Grid
+          templateColumns="repeat(5, 1fr)"
+          gap={7}
+        >
+          <GridItem colSpan={1}>
+            <CircularProgress
+              color="drab.900"
+              trackColor="drab.700"
+              value={yesVotesPercentage}
+              size="156px"
+              marginTop={4}
+            >
+              <CircularProgressLabel>
+                <Text
+                  textStyle="text-lg-mono-regular"
+                  color="grayscale.100"
+                >
+                  {yesVotesPercentage}%
+                </Text>
+                <Text
+                  textStyle="text-lg-mono-regular"
+                  color="grayscale.100"
+                >
+                  {t('yes')}
+                </Text>
+              </CircularProgressLabel>
+            </CircularProgress>
+          </GridItem>
+          <GridItem
+            colSpan={4}
+            rowGap={4}
+          >
+            <VotesPercentage
+              label={t('yes')}
+              percentage={yesVotesPercentage}
+            />
+            <VotesPercentage
+              label={t('no')}
+              percentage={noVotesPercentage}
+            />
+
+            <VotesPercentage
+              label={t('abstain')}
+              percentage={abstainVotesPercentage}
+            />
+          </GridItem>
+        </Grid>
+      </ContentBox>
+      <ContentBox bg="black.900-semi-transparent">
+        <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
+        <Divider
+          color="chocolate.700"
+          marginTop={4}
+          marginBottom={4}
         />
-      </div>
-    </ContentBox>
+        <Flex
+          flexWrap="wrap"
+          gap={4}
+        >
+          {MOCK_VOTES.map(vote => (
+            <ProposalVoteItem
+              key={vote.voter}
+              vote={vote}
+              govTokenTotalSupply={govTokenTotalSupply}
+              govTokenDecimals={govTokenDecimals}
+              govTokenSymbol={govTokenSymbol}
+            />
+          ))}
+        </Flex>
+      </ContentBox>
+    </>
   );
 }
 

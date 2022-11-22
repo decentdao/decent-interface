@@ -8,11 +8,9 @@ import useUsul from './useUsul';
 
 const useCastVote = ({
   proposalNumber,
-  vote,
   setPending,
 }: {
   proposalNumber: BigNumber;
-  vote: number | undefined;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { votingStrategiesAddresses } = useUsul();
@@ -28,28 +26,31 @@ const useCastVote = ({
 
   const { t } = useTranslation('transaction');
 
-  const castVote = useCallback(() => {
-    if (
-      !signerOrProvider ||
-      proposalNumber === undefined ||
-      vote === undefined ||
-      !votingStrategiesAddresses[0]
-    ) {
-      return;
-    }
+  const castVote = useCallback(
+    (vote: number) => {
+      if (
+        !signerOrProvider ||
+        proposalNumber === undefined ||
+        vote === undefined ||
+        !votingStrategiesAddresses[0]
+      ) {
+        return;
+      }
 
-    const votingStrategyContract = OZLinearVoting__factory.connect(
-      votingStrategiesAddresses[0],
-      signerOrProvider
-    );
+      const votingStrategyContract = OZLinearVoting__factory.connect(
+        votingStrategiesAddresses[0],
+        signerOrProvider
+      );
 
-    contractCallCastVote({
-      contractFn: () => votingStrategyContract.vote(proposalNumber, vote, '0x'),
-      pendingMessage: t('pendingCastVote'),
-      failedMessage: t('failedCastVote'),
-      successMessage: t('successCastVote'),
-    });
-  }, [contractCallCastVote, proposalNumber, signerOrProvider, vote, t, votingStrategiesAddresses]);
+      contractCallCastVote({
+        contractFn: () => votingStrategyContract.vote(proposalNumber, vote, '0x'),
+        pendingMessage: t('pendingCastVote'),
+        failedMessage: t('failedCastVote'),
+        successMessage: t('successCastVote'),
+      });
+    },
+    [contractCallCastVote, proposalNumber, signerOrProvider, t, votingStrategiesAddresses]
+  );
   return castVote;
 };
 

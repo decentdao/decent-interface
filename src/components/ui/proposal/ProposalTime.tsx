@@ -16,7 +16,7 @@ function ProposalTime({ deadline }: { deadline: number }) {
       justifyContent="flex-end"
       width="100%"
     >
-      <Clock />
+      <Clock fill="sand.700" />
       <Flex
         flexWrap="wrap"
         px={2}

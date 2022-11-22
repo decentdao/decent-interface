@@ -1,8 +1,8 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
+import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { Signer } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
-import { GnosisSafe__factory } from '../../../assets/typechain-types/fractal-contracts';
 import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';

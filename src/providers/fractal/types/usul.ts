@@ -1,6 +1,13 @@
 import { BigNumber } from 'ethers';
+import { DecodedTransaction } from '../../../types';
 
 export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
+
+export enum UsulVoteChoice {
+  No,
+  Yes,
+  Abstain,
+}
 
 export enum ProposalState {
   Active = 'stateActive',
@@ -20,6 +27,7 @@ export type ProposalVotesSummary = {
   yes: BigNumber;
   no: BigNumber;
   abstain: BigNumber;
+  quorum: BigNumber;
 };
 
 export type ProposalVote = {
@@ -32,11 +40,13 @@ export type Proposal = {
   state: ProposalState;
   govTokenAddress: string | null;
   votes: ProposalVotesSummary;
-  deadline?: number;
+  startBlock: BigNumber;
+  deadline: number;
   proposer: string;
   proposalNumber: BigNumber;
   userVote?: ProposalVote;
   txHashes: string[];
+  decodedTransactions: DecodedTransaction[];
 };
 
 export enum ProposalIsPassedError {

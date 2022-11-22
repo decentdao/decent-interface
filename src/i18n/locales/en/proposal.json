@@ -1,4 +1,5 @@
 {
+    "breakdownTitle": "Breakdown",
     "labelProposalDesc": "Proposal Description",
     "helperProposalDesc": "What's the goal of this proposal? Explain the desired outcome and why it matters",
     "labelTargetAddress": "Target Address",
@@ -33,6 +34,7 @@
     "stateExecuted": "Executed",
     "stateFailed": "Failed",
     "stateUnknown": "Unknown",
+    "showExecutableCode": "Show executable code",
     "loadingProposals": "Proposals loading...",
     "emptyProposals": "No proposals",
     "createProposal": "Create Proposal",
@@ -43,7 +45,17 @@
     "errorCantCreateProposal": "Voting weight is less than the required threshold to create proposals",
     "labelRemoveTransaction": "Remove Transaction",
     "errorInvalidFragments": "Invalid fragments",
+    "proposalSummaryTitle": "Proposal Details",
+    "proposalSummaryStartDate": "Start Date",
+    "proposalSummaryEndDate": "End Date",
+    "proposalSupportSummaryHelper": "Minimum {{count}}% support required",
+    "proposalQuorumSummaryHelper": "Minimum {{count}}% required",
     "proposedBy": "Proposed by",
+    "proposalTitle_one": "Proposal to execute {{count}} transaction on {{target}}",
+    "proposalTitle_other": "Proposal to execute {{count}} transactions on {{target}}",
     "timeLeft": "{{time}} left",
-    "timeAgo": "{{time}} ago"
+    "timeAgo": "{{time}} ago",
+    "votesTitle": "Votes",
+    "queueTitle": "Queue Transaction",
+    "executeTitle": "Execute Transaction"
 }

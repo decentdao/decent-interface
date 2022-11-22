@@ -4,7 +4,7 @@ import { useBlockchainData } from '../../contexts/blockchainData';
 import useExecuteTransaction from '../../hooks/useExecuteTransaction';
 import { Proposal } from '../../providers/fractal/types';
 import { ProposalData, ProposalState } from '../../providers/govenor/types';
-import { ProposalAction } from './ProposalAction';
+import { ProposalAction } from './ProposalActions/ProposalAction';
 
 function ProposalExecute({ proposal }: { proposal: ProposalData }) {
   const [show, setShow] = useState<boolean>(false);
