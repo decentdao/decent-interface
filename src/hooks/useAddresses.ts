@@ -27,6 +27,8 @@ export function useAddresses(chainId: number | undefined) {
     multiSend?: EthAddress;
     fractalModuleMasterCopy?: EthAddress;
     fractalNameRegistry?: EthAddress;
+    vetoGuardMasterCopy?: EthAddress;
+    vetoMultisigVotingMasterCopy?: EthAddress;
   }>({});
 
   useEffect(() => {
@@ -53,7 +55,9 @@ export function useAddresses(chainId: number | undefined) {
       !process.env.REACT_APP_GNOSIS_MULTISEND_ADDRESSES ||
       !process.env.REACT_APP_VOTES_TOKEN_MASTERCOPY_ADDRESSES ||
       !process.env.REACT_APP_FRACTAL_MODULE_MASTERCOPY_ADDRESSES ||
-      !process.env.REACT_APP_FRACTAL_NAME_REGISTRY_ADDRESSES
+      !process.env.REACT_APP_FRACTAL_NAME_REGISTRY_ADDRESSES ||
+      !process.env.REACT_APP_VETO_GUARD_ADDRESSES ||
+      !process.env.REACT_APP_VETO_MULTISIG_VOTING_ADDRESSES
     ) {
       logError('Addresses not set!');
       setAddresses({});
@@ -125,6 +129,12 @@ export function useAddresses(chainId: number | undefined) {
     const fractalNameRegistryAddresses: ContractAddressesChainMap = JSON.parse(
       process.env.REACT_APP_FRACTAL_NAME_REGISTRY_ADDRESSES
     );
+    const vetoGuardAddresses: ContractAddressesChainMap = JSON.parse(
+      process.env.REACT_APP_VETO_GUARD_ADDRESSES
+    );
+    const vetoMultisigVotingAddresses: ContractAddressesChainMap = JSON.parse(
+      process.env.REACT_APP_VETO_MULTISIG_VOTING_ADDRESSES
+    );
 
     const daoFactoryAddress = daoFactoryNetworksAddresses[chainId];
     const treasuryModuleFactoryAddress = treasuryModuleFactoryNetworksAddresses[chainId];
@@ -148,6 +158,8 @@ export function useAddresses(chainId: number | undefined) {
     const votesMasterCopy = votesMasterCopyAddresses[chainId];
     const fractalModuleMasterCopy = fractalModuleMasterCopyAddresses[chainId];
     const fractalNameRegistry = fractalNameRegistryAddresses[chainId];
+    const vetoGuardMasterCopy = vetoGuardAddresses[chainId];
+    const vetoMultisigVotingMasterCopy = vetoMultisigVotingAddresses[chainId];
 
     if (
       !daoFactoryAddress ||
@@ -171,7 +183,9 @@ export function useAddresses(chainId: number | undefined) {
       !multiSend ||
       !votesMasterCopy ||
       !fractalModuleMasterCopy ||
-      !fractalNameRegistry
+      !fractalNameRegistry ||
+      !vetoGuardMasterCopy ||
+      !vetoMultisigVotingMasterCopy
     ) {
       logError(`At least one address for network ${chainId} is not set!`);
       setAddresses({});
@@ -201,6 +215,8 @@ export function useAddresses(chainId: number | undefined) {
       votesMasterCopy,
       fractalModuleMasterCopy,
       fractalNameRegistry,
+      vetoGuardMasterCopy,
+      vetoMultisigVotingMasterCopy,
     });
   }, [chainId]);
 
