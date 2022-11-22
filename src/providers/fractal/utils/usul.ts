@@ -1,6 +1,8 @@
 import { BigNumber, Signer } from 'ethers';
 import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
 import { Providers } from '../../../contexts/web3Data/types';
+import { logError } from '../../../helpers/errorLogging';
+import { decodeTransactionHashes } from '../../../utils/crypto';
 import {
   Proposal,
   ProposalIsPassedError,
@@ -50,11 +52,24 @@ export const getProposalVotesSummary = async (
 ): Promise<ProposalVotesSummary> => {
   const { strategy: strategyAddress } = await usulContract.proposals(proposalNumber);
   const strategy = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
-  const { yesVotes, noVotes, abstainVotes } = await strategy.proposals(proposalNumber);
+  const { yesVotes, noVotes, abstainVotes, startBlock } = await strategy.proposals(proposalNumber);
+
+  let quorum;
+
+  try {
+    quorum = await strategy.quorum(startBlock);
+  } catch (e) {
+    // For who knows reason - strategy.quorum might give you an error
+    // Seems like occuring when token deployment haven't worked properly
+    logError('Error while getting strategy quorum');
+    quorum = BigNumber.from(0);
+  }
+
   return {
     yes: yesVotes,
     no: noVotes,
     abstain: abstainVotes,
+    quorum,
   };
 };
 
@@ -66,17 +81,22 @@ export const mapProposalCreatedEventToProposal = async (
   signerOrProvider: Signer | Providers
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
-  const { deadline } = await strategyContract.proposals(proposalNumber);
+  const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
   const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
+
+  // @todo: Retrieve proposal hashes for future decoding
+  const MOCK_TX_HASHES = ['0x', '0x', '0x'];
   const proposal: Proposal = {
     proposalNumber,
     proposer,
+    startBlock,
     deadline: deadline.toNumber(),
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
-    txHashes: [], // @todo: Retrieve proposal hashes for future decoding
+    txHashes: MOCK_TX_HASHES,
+    decodedTransactions: decodeTransactionHashes(MOCK_TX_HASHES),
   };
 
   return proposal;

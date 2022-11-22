@@ -9,10 +9,14 @@ function ProposalTime({ deadline }: { deadline: number }) {
   const now = new Date();
 
   const diffReadable = formatDatesDiffReadable(deadlineDate, now, t);
-  const isPassed = deadline > now.getMilliseconds();
+  const isPassed = deadlineDate.getMilliseconds() > now.getMilliseconds();
   return (
-    <Flex className="flex">
-      <Clock />
+    <Flex
+      className="flex"
+      justifyContent="flex-end"
+      width="100%"
+    >
+      <Clock fill="sand.700" />
       <Flex
         flexWrap="wrap"
         px={2}

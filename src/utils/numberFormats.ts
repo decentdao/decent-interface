@@ -1,8 +1,19 @@
 import { BigNumber, ethers } from 'ethers';
+import bigDecimal from 'js-big-decimal';
 import { GnosisAssetFungible } from '../providers/fractal/types';
 
-export const formatPercentage = (numerator: number, denominator: number) => {
-  return parseFloat(((100 * numerator) / denominator).toPrecision(3)) + '%';
+export const DEFAULT_DATE_FORMAT = 'MMM dd, yyyy, h:mm aa';
+
+export const formatPercentage = (
+  numerator: BigNumber | number | string,
+  denominator: BigNumber | number | string
+) => {
+  const fraction = bigDecimal.divide(numerator.toString(), denominator.toString(), 18);
+  const percent = parseFloat(bigDecimal.multiply(fraction, 100));
+  if (percent < 0.01) {
+    return '< 0.01%';
+  }
+  return Number(percent.toFixed(2)) + '%';
 };
 
 const usdFormatter = new Intl.NumberFormat('en-US', {

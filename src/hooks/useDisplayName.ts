@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import useENSName from './useENSName';
 
-const createAccountSubstring = (account: string) => {
+export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
 };
 
