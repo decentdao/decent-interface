@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Flex, Select, Spacer, Switch, Text } from '@chakra-ui/react';
-import { Input, LabelWrapper } from '@decent-org/fractal-ui';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,10 +31,6 @@ export function SendAssetsModal({ close }: { close: Function }) {
       setUSDSelected(false);
     }
     setSelectedAssetIndex(index);
-  };
-  const handleAmountChange = (value: string) => {
-    // strip out non numbers (0-9. allowed)
-    setAmountInput(value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1'));
   };
 
   const calculateCoins = (fiatConversion: string, input: string, symbol?: string) => {
@@ -118,8 +114,9 @@ export function SendAssetsModal({ close }: { close: Function }) {
             size="base"
             width="full"
             placeholder="0"
+            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
             value={amountInput}
-            onChange={e => handleAmountChange(e.target.value)}
+            onChange={e => setAmountInput(e.target.value)}
           />
         </Box>
       </Flex>
