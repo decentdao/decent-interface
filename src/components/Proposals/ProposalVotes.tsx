@@ -146,8 +146,6 @@ function ProposalVotes({
   const noVotesPercentage = no.div(govTokenTotalSupply).mul(100).toNumber();
   const abstainVotesPercentage = abstain.div(govTokenTotalSupply).mul(100).toNumber();
 
-  console.log(yesVotesPercentage);
-
   return (
     <>
       <ContentBox bg="black.900-semi-transparent">
