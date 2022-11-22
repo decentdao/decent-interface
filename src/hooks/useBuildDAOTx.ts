@@ -1,4 +1,8 @@
-import { FractalModule__factory, VotesToken__factory } from '@fractal-framework/fractal-contracts';
+import {
+  FractalModule__factory,
+  VetoGuard__factory,
+  VotesToken__factory,
+} from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
@@ -28,6 +32,8 @@ const useBuildDAOTx = () => {
     zodiacModuleProxyFactoryContract,
     fractalNameRegistryContract,
     fractalModuleMasterCopyContract,
+    vetoGuardMasterCopyContract,
+    vetoMultisigVotingMasterCopyContract,
   } = useSafeContracts();
 
   const { AddressZero, HashZero } = ethers.constants;
@@ -122,7 +128,9 @@ const useBuildDAOTx = () => {
           !fractalNameRegistryContract ||
           !signerOrProvider ||
           !zodiacModuleProxyFactoryContract ||
-          !fractalModuleMasterCopyContract
+          !fractalModuleMasterCopyContract ||
+          !vetoGuardMasterCopyContract ||
+          !vetoMultisigVotingMasterCopyContract
         ) {
           return;
         }
@@ -171,6 +179,33 @@ const useBuildDAOTx = () => {
           solidityKeccak256(['bytes'], [fractalByteCodeLinear])
         );
 
+        const setVetoGuardCalldata =
+          // eslint-disable-next-line camelcase
+          VetoGuard__factory.createInterface().encodeFunctionData('setUp', [
+            ethers.utils.defaultAbiCoder.encode(
+              ['uint256', 'address', 'address', 'address'],
+              [
+                0, // Execution Delay
+                safeContract.address, // Owner
+                vetoMultisigVotingMasterCopyContract.address, // Veto Voting
+                safeContract.address, // Gnosis Safe
+              ]
+            ),
+          ]);
+        const vetoByteCodeLinear =
+          '0x602d8060093d393df3363d3d373d3d3d363d73' +
+          vetoGuardMasterCopyContract.address.slice(2) +
+          '5af43d82803e903d91602b57fd5bf3';
+        const vetoSalt = solidityKeccak256(
+          ['bytes32', 'uint256'],
+          [solidityKeccak256(['bytes'], [setVetoGuardCalldata]), saltNum]
+        );
+        const predictedVetoModuleAddress = getCreate2Address(
+          zodiacModuleProxyFactoryContract.address,
+          vetoSalt,
+          solidityKeccak256(['bytes'], [vetoByteCodeLinear])
+        );
+
         const internaltTxs: MetaTransaction[] = [
           // Name Registry
           buildContractCall(
@@ -196,6 +231,16 @@ const useBuildDAOTx = () => {
             0,
             false
           ),
+          // Deploy Veto Guard
+          buildContractCall(
+            zodiacModuleProxyFactoryContract,
+            'deployModule',
+            [vetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
+            0,
+            false
+          ),
+          // Enable Veto Guard
+          buildContractCall(safeContract, 'setGuard', [predictedVetoModuleAddress], 0, false),
         ];
         const safeInternalTx = encodeMultiSend(internaltTxs);
         const execInternalSafeTx = buildContractCall(
@@ -235,7 +280,9 @@ const useBuildDAOTx = () => {
       fractalModuleMasterCopyContract,
       getCreate2Address,
       solidityKeccak256,
-      saltNum
+      saltNum,
+      vetoGuardMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
     ]
   );
   const buildUsulTx = useCallback(
