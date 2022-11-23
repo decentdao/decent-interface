@@ -8,6 +8,8 @@ import { ProposalAction } from '../../components/Proposals/ProposalActions/Propo
 import ProposalSummary from '../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../components/Proposals/ProposalVotes';
 import ContentBox from '../../components/ui/ContentBox';
+import { EmptyBox } from '../../components/ui/containers/EmptyBox';
+import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
 import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
 import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
@@ -26,7 +28,7 @@ function ProposalDetails() {
   const params = useParams();
 
   const { proposals } = useProposals({});
-  const [proposal, setProposal] = useState<Proposal>();
+  const [proposal, setProposal] = useState<Proposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ function ProposalDetails() {
     const proposalNumber = parseInt(params.proposalNumber);
     const foundProposal = proposals.find(p => p.proposalNumber.toNumber() === proposalNumber);
     if (foundProposal === undefined) {
-      setProposal(undefined);
+      setProposal(null);
       return;
     }
     setProposal(foundProposal);
@@ -49,7 +51,10 @@ function ProposalDetails() {
   }
 
   return (
-    <Box mt="3rem">
+    <Box
+      p="1.5rem"
+      mt="3rem"
+    >
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
         <Button
           paddingLeft={0}
@@ -60,53 +65,64 @@ function ProposalDetails() {
           {t('proposals', { ns: 'sidebar' })}
         </Button>
       </Link>
-      <Grid
-        gap={4}
-        templateColumns="repeat(3, 1fr)"
-      >
-        <GridItem colSpan={2}>
-          <ContentBox bg="black.900-semi-transparent">
-            <Flex
-              alignItems="center"
-              flexWrap="wrap"
-            >
+      {proposal === undefined ? (
+        <Box mt={7}>
+          <InfoBoxLoader />
+        </Box>
+      ) : proposal === null ? (
+        <EmptyBox
+          emptyText={t('noProposal')}
+          m="2rem 0 0 0"
+        />
+      ) : (
+        <Grid
+          gap={4}
+          templateColumns="repeat(3, 1fr)"
+        >
+          <GridItem colSpan={2}>
+            <ContentBox bg="black.900-semi-transparent">
               <Flex
-                gap={4}
                 alignItems="center"
+                flexWrap="wrap"
               >
-                <ProposalStateBox state={proposal.state} />
-                <ProposalTime deadline={proposal.deadline} />
+                <Flex
+                  gap={4}
+                  alignItems="center"
+                >
+                  <ProposalStateBox state={proposal.state} />
+                  <ProposalTime deadline={proposal.deadline} />
+                </Flex>
+                <Box
+                  w="full"
+                  mt={4}
+                >
+                  <ProposalTitle proposal={proposal} />
+                  <ProposalExecutableCode proposal={proposal} />
+                </Box>
               </Flex>
-              <Box
-                w="full"
-                mt={4}
-              >
-                <ProposalTitle proposal={proposal} />
-                <ProposalExecutableCode proposal={proposal} />
+              <Box mt={4}>
+                <ProposalCreatedBy proposalProposer={proposal.proposer} />
               </Box>
-            </Flex>
-            <Box mt={4}>
-              <ProposalCreatedBy proposalProposer={proposal.proposer} />
-            </Box>
-          </ContentBox>
-          <ProposalVotes
-            proposal={proposal}
-            govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
-            govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
-            govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
-          />
-        </GridItem>
-        <GridItem colSpan={1}>
-          <ProposalSummary
-            proposal={proposal}
-            govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
-          />
-          <ProposalAction
-            proposal={proposal}
-            expandedView
-          />
-        </GridItem>
-      </Grid>
+            </ContentBox>
+            <ProposalVotes
+              proposal={proposal}
+              govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
+              govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
+              govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
+            />
+          </GridItem>
+          <GridItem colSpan={1}>
+            <ProposalSummary
+              proposal={proposal}
+              govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
+            />
+            <ProposalAction
+              proposal={proposal}
+              expandedView
+            />
+          </GridItem>
+        </Grid>
+      )}
     </Box>
   );
 }

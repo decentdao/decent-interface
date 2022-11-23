@@ -121,7 +121,7 @@ export default function ProposalsList() {
               variant="text"
               textStyle="text-xl-mono-bold"
             >
-              {t('createFirstProposal')}
+              {t('createProposal')}
             </Button>
           </Link>
         </EmptyBox>
