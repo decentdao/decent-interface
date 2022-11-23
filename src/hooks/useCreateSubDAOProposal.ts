@@ -19,7 +19,7 @@ const useCreateSubDAOProposal = () => {
           return;
         }
 
-        const builtSafeTx = await build(daoData);
+        const builtSafeTx = await build(daoData, true);
         if (!builtSafeTx) {
           return;
         }
