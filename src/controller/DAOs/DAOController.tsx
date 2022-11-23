@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -6,8 +5,6 @@ import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useSearchDao from '../../hooks/useSearchDao';
 import { GnosisAction } from '../../providers/fractal/constants/actions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import { GnosisSafe } from '../../providers/fractal/types';
-import { buildGnosisApiUrl } from '../../providers/fractal/utils';
 import { BASE_ROUTES } from '../../routes/constants';
 
 /**
@@ -15,12 +12,12 @@ import { BASE_ROUTES } from '../../routes/constants';
  */
 export function DAOController({ children }: { children: JSX.Element }) {
   const {
-    gnosis: { safe },
+    gnosis: { safe, safeService },
     dispatches: { gnosisDispatch },
   } = useFractal();
   const params = useParams();
   const {
-    state: { signerOrProvider, account, isProviderLoading, chainId },
+    state: { signerOrProvider, account, isProviderLoading },
   } = useWeb3Provider();
 
   const { errorMessage, address, updateSearchString, loading } = useSearchDao();
@@ -37,21 +34,16 @@ export function DAOController({ children }: { children: JSX.Element }) {
 
   useEffect(() => loadDAO(), [loadDAO]);
 
-  const retrieveGnosis = useCallback(async () => {
-    const { data } = await axios.get<GnosisSafe>(buildGnosisApiUrl(chainId, `/safes/${address}`));
-    return data;
-  }, [address, chainId]);
-
   useEffect(() => {
-    if (address && signerOrProvider && account) {
+    if (address && signerOrProvider && account && safeService) {
       (async () => {
         gnosisDispatch({
           type: GnosisAction.SET_SAFE,
-          payload: await retrieveGnosis(),
+          payload: await safeService.getSafeInfo(address),
         });
       })();
     }
-  }, [address, signerOrProvider, account, gnosisDispatch, retrieveGnosis]);
+  }, [address, signerOrProvider, account, gnosisDispatch, safeService]);
 
   useEffect(() => {
     if (!loading) {
