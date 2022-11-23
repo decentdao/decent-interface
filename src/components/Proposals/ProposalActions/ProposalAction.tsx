@@ -1,6 +1,7 @@
 import { Button } from '@decent-org/fractal-ui';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Proposal, ProposalState } from '../../../providers/fractal/types';
 import { Execute } from './Execute';
 import Queue from './Queue';
@@ -14,6 +15,7 @@ export function ProposalAction({
   expandedView?: boolean;
 }) {
   const [pending, setPending] = useState(false);
+  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const handleClick = () => {
@@ -22,11 +24,17 @@ export function ProposalAction({
 
     switch (proposal.state) {
       case ProposalState.Active:
-      // Call Vote action - probably redirect to proposal details where CastVote component would handle proper vote casting
+        // Call Vote action - probably redirect to proposal details where CastVote component would handle proper vote casting
+        break;
       case ProposalState.Pending:
-      // Call proposal queueing action
+        // Call proposal queueing action
+        break;
       case ProposalState.Executing:
-      // Call proposal execution action
+        // Call proposal execution action
+        break;
+      default:
+        navigate(proposal.proposalNumber.toString());
+        break;
     }
 
     setPending(false);
@@ -44,6 +52,17 @@ export function ProposalAction({
   }, [proposal, t]);
 
   if (!label) {
+    if (!expandedView) {
+      return (
+        <Button
+          bg="chocolate.500"
+          color="gold.500"
+          onClick={handleClick}
+        >
+          {t('view')}
+        </Button>
+      );
+    }
     // This means that Proposal in state where there's no action to perform
     return null;
   }
