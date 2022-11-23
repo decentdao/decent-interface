@@ -15,7 +15,6 @@ export function MenuItemNetwork() {
   const { t } = useTranslation('menu');
   return (
     <Box
-      data-testid="accountMenu-network"
       cursor="default"
       p="1rem 1.5rem"
     >
@@ -40,7 +39,12 @@ export function MenuItemNetwork() {
             bg={color}
             rounded="full"
           />
-          <Text textStyle="text-base-mono-medium">{t(nameKey)}</Text>
+          <Text
+            data-testid="accountMenu-network"
+            textStyle="text-base-mono-medium"
+          >
+            {t(nameKey)}
+          </Text>
         </MenuItem>
       </Flex>
     </Box>
