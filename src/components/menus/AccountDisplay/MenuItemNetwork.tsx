@@ -14,8 +14,7 @@ export function MenuItemNetwork() {
   const { nameKey, color } = useChainData(chainId);
   const { t } = useTranslation('menu');
   return (
-    <MenuItem
-      data-testid="accountMenu-network"
+    <Box
       cursor="default"
       p="1rem 1.5rem"
     >
@@ -29,7 +28,8 @@ export function MenuItemNetwork() {
         >
           {t('network')}
         </Text>
-        <Flex
+        <MenuItem
+          padding={0}
           alignItems="center"
           gap="2"
         >
@@ -38,10 +38,15 @@ export function MenuItemNetwork() {
             h="1rem"
             bg={color}
             rounded="full"
-          ></Box>
-          <Text textStyle="text-base-mono-medium">{t(nameKey)}</Text>
-        </Flex>
+          />
+          <Text
+            data-testid="accountMenu-network"
+            textStyle="text-base-mono-medium"
+          >
+            {t(nameKey)}
+          </Text>
+        </MenuItem>
       </Flex>
-    </MenuItem>
+    </Box>
   );
 }
