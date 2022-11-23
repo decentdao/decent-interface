@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useCurrentTimestamp from '../../contexts/blockchainData/useCurrentTimestamp';
-import { Proposal } from '../../providers/fractal/types/usul';
+import { Proposal, ProposalState } from '../../providers/fractal/types/usul';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
@@ -25,6 +25,7 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
             >
               <ProposalStateBox state={proposal.state} />
               <ProposalTime
+                isRejected={proposal.state === ProposalState.Rejected}
                 deadline={proposalCreatedTimestamp}
                 icon="calendar"
               />
@@ -38,9 +39,10 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
             gap={8}
             width="30%"
           >
-            {proposal.deadline * 1000 > now.getMilliseconds() && (
-              <ProposalTime deadline={proposal.deadline} />
-            )}
+            {proposal.deadline * 1000 > now.getMilliseconds() &&
+              proposal.state === ProposalState.Active && (
+                <ProposalTime deadline={proposal.deadline} />
+              )}
             <ProposalAction proposal={proposal} />
           </Flex>
         </Flex>

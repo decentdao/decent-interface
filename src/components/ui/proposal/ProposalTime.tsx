@@ -1,17 +1,18 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { Calendar } from '@decent-org/fractal-ui';
+import { format } from 'date-fns';
 
 import { useTranslation } from 'react-i18next';
 import { formatDatesDiffReadable } from '../../../helpers/dateTime';
+import { DEFAULT_DATE_FORMAT } from '../../../utils/numberFormats';
 import Clock from '../svg/Clock';
 
-function ProposalTime({
-  deadline,
-  icon = 'clock',
-}: {
+type ProposalTimeProps = {
   deadline: number;
   icon?: 'clock' | 'calendar';
-}) {
+  isRejected?: boolean;
+};
+function ProposalTime({ deadline, icon = 'clock', isRejected }: ProposalTimeProps) {
   const { t } = useTranslation('proposal');
   const deadlineDate = new Date(deadline * 1000);
   const now = new Date();
@@ -29,7 +30,11 @@ function ProposalTime({
         px={2}
         gap={1}
       >
-        <Text color="sand.700">{t(isPassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}</Text>
+        <Text color="sand.700">
+          {isRejected
+            ? format(deadlineDate, DEFAULT_DATE_FORMAT)
+            : t(isPassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}
+        </Text>
       </Flex>
     </Flex>
   );

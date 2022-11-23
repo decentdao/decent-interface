@@ -1,7 +1,8 @@
 import { BigNumber, ethers } from 'ethers';
 import bigDecimal from 'js-big-decimal';
 
-export const DEFAULT_DATE_FORMAT = 'MMM dd, yyyy, h:mm aa';
+export const DEFAULT_DATE_TIME_FORMAT = 'MMM dd, yyyy, h:mm aa';
+export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 
 export const formatPercentage = (
   numerator: BigNumber | number | string,
