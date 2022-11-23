@@ -55,8 +55,7 @@ export function ProposalAction({
     if (!expandedView) {
       return (
         <Button
-          bg="chocolate.500"
-          color="gold.500"
+          variant="secondary"
           onClick={handleClick}
         >
           {t('view')}

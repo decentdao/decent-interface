@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck, Tree } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 
@@ -14,10 +14,10 @@ const BADGE_MAPPING: BadgeType = {
   child: { Icon: Tree, bg: 'chocolate.500', color: 'gold.500' },
 };
 
-type BadgeSize = { [key: string]: { width: string; height: string } };
+type BadgeSize = { [key: string]: { minWidth: string; height: string } };
 const BADGE_SIZES: BadgeSize = {
-  sm: { width: '5rem', height: '1.375rem' },
-  base: { width: '5.4375rem', height: '1.375rem' },
+  sm: { minWidth: '5rem', height: '1.375rem' },
+  base: { minWidth: '5.4375rem', height: '1.375rem' },
 };
 
 interface IBadge {
@@ -40,7 +40,7 @@ export function Badge({ labelKey, size }: IBadge) {
       {...colors}
     >
       <Icon />
-      {t(labelKey)}
+      <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
     </Flex>
   );
 }

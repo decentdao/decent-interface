@@ -15,7 +15,7 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
 
   return (
     <Link to={proposal.proposalNumber.toString()}>
-      <ContentBox>
+      <ContentBox bg="black.900-semi-transparent">
         <Flex justifyContent="space-between">
           <Flex flexWrap="wrap">
             <Flex
