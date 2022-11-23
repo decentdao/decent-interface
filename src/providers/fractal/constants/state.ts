@@ -3,6 +3,7 @@ import { IConnectedAccount, IGnosis } from './../types/state';
 import { ITreasury } from './../types/treasury';
 
 export const gnosisInitialState: IGnosis = {
+  safeService: undefined,
   modules: [],
   transactions: {
     count: null,
