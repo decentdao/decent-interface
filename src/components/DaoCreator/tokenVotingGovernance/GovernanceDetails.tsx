@@ -45,7 +45,7 @@ function GovernanceDetails() {
   };
 
   const { t } = useTranslation(['common', 'daoCreate']);
-  const blocks = t('blocks');
+  const seconds = t('seconds');
 
   return (
     <Box>
@@ -61,7 +61,7 @@ function GovernanceDetails() {
               type="number"
               value={govModule.votingPeriod.toString()}
               onChange={onVotingPeriodChange}
-              rightElement={blocks}
+              rightElement={seconds}
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min={isSafeWithUsul ? '2' : '1'}
               data-testid="govConfig-votingPeriod"
@@ -102,7 +102,7 @@ function GovernanceDetails() {
               type="number"
               value={govModule.executionDelay.toString()}
               onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'executionDelay')}
-              rightElement={blocks}
+              rightElement={seconds}
               restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
               min="0"
               data-testid="govConfig-executionDelay"
