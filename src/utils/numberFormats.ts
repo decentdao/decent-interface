@@ -1,6 +1,6 @@
+import { SafeBalanceUsdResponse } from '@gnosis.pm/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import bigDecimal from 'js-big-decimal';
-import { GnosisAssetFungible } from '../providers/fractal/types';
 
 export const DEFAULT_DATE_FORMAT = 'MMM dd, yyyy, h:mm aa';
 
@@ -37,7 +37,7 @@ export const formatCoinUnits = (
     : parseFloat(ethers.utils.formatEther(rawBalance));
 };
 
-export const formatCoinUnitsFromAsset = (asset: GnosisAssetFungible): number => {
+export const formatCoinUnitsFromAsset = (asset: SafeBalanceUsdResponse): number => {
   return formatCoinUnits(asset.balance, asset?.token?.decimals, asset?.token?.symbol);
 };
 
@@ -58,6 +58,6 @@ export const formatCoin = (
     : coinFormatter.format(amount) + ' ETH';
 };
 
-export const formatCoinFromAsset = (asset: GnosisAssetFungible, truncate: boolean): string => {
+export const formatCoinFromAsset = (asset: SafeBalanceUsdResponse, truncate: boolean): string => {
   return formatCoin(asset.balance, truncate, asset?.token?.decimals, asset?.token?.symbol);
 };

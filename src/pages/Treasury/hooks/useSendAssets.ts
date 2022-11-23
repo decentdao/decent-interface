@@ -1,6 +1,6 @@
+import { SafeBalanceUsdResponse } from '@gnosis.pm/safe-service-client';
 import { constants } from 'ethers';
 import { useCallback } from 'react';
-import { GnosisAssetFungible } from '../../../providers/fractal/types';
 
 // TODO create send assets proposal
 const useSendAssets = ({
@@ -12,7 +12,7 @@ const useSendAssets = ({
   destinationAddress,
 }: {
   normalizedBalance: string;
-  asset: GnosisAssetFungible;
+  asset: SafeBalanceUsdResponse;
   destinationAddress: string;
 }) => {
   const rawBalance =
