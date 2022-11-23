@@ -1,3 +1,4 @@
+import SafeServiceClient, { SafeInfoResponse } from '@gnosis.pm/safe-service-client';
 import { GnosisActions, GovernanceActions, TreasuryActions } from './actions';
 import { GnosisTransactionsResponse } from './gnosis';
 import { IGnosisModuleData, IGovernance } from './governance';
@@ -17,24 +18,12 @@ export interface IFractalContext {
 
 export interface IGnosis {
   daoName: string;
-  safe: GnosisSafe;
+  safeService?: SafeServiceClient;
+  safe: Partial<SafeInfoResponse>;
   modules: IGnosisModuleData[];
   transactions: GnosisTransactionsResponse;
   isGnosisLoading: boolean;
 }
-
-export interface GnosisSafe {
-  address?: string;
-  nonce?: number;
-  threshold?: number;
-  owners?: string[];
-  masterCopy?: string;
-  modules?: string[];
-  fallbackHandler?: string;
-  guard?: string;
-  version?: string;
-}
-
 export interface IConnectedAccount {
   favorites: IFavorites;
   audit: IAudit;

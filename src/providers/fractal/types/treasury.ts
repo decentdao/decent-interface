@@ -1,3 +1,9 @@
+import {
+  SafeBalanceUsdResponse,
+  SafeCollectibleResponse,
+  TransferListResponse,
+  TransferResponse,
+} from '@gnosis.pm/safe-service-client';
 import { BigNumber } from 'ethers';
 import { EthAddress } from '../../../types';
 import { ContractEvent } from '../../../types/contract';
@@ -37,43 +43,12 @@ export type Transaction =
   | ERC20TokenEvent
   | ERC721TokenEvent;
 
-export interface GnosisAssetFungible {
-  balance: string;
-  ethValue: string;
-  fiatBalance: string;
-  fiatCode: string;
-  fiatConversion: string;
-  timestamp: string;
-  token: { decimals: number; logoUri: string; name: string; symbol: string };
-  tokenAddress: string;
-}
-export interface GnosisAssetNonFungible extends EthAddress {
-  tokenName: string;
-  tokenSymbol: string;
-  logoUri: string;
-  id: string;
-  uri: string;
-  name: string;
-  description: string;
-  imageUri: string;
-}
-
 export interface ITreasury {
   transactions: Transaction[];
-  assetsFungible: GnosisAssetFungible[];
-  assetsNonFungible: GnosisAssetNonFungible[];
-  transfers?: AssetTransfers;
+  assetsFungible: SafeBalanceUsdResponse[];
+  assetsNonFungible: SafeCollectibleResponse[];
+  transfers?: TransferListResponse;
   treasuryIsLoading: boolean;
-}
-
-// TODO pagination using next url
-// currently we will be displaying
-// the most recent 100 transfers
-export interface AssetTransfers {
-  count: number;
-  next: string;
-  previous: string;
-  results: AssetTransfer[];
 }
 
 export enum TransferType {
@@ -96,21 +71,6 @@ export interface TokenInfo {
   decimals: number;
 }
 
-export interface AssetTransfer {
-  type: TransferType;
-  executionDate: string;
-  blockNumber: BigNumber;
-  transactionHash: string;
-  to: string;
-  from: string;
-
-  // ETHER_TRANSFER and ERC20_TRANSFER
-  value: BigNumber;
-
-  // ERC20_TRANSFER and ERC721_TRANSFER
-  tokenAddress: string;
+export interface AssetTransfer extends TransferResponse {
   tokenInfo: TokenInfo;
-
-  // ERC721_TRANSFER
-  tokenId: string;
 }
