@@ -9,6 +9,7 @@ import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
 import { OZLinearVoting__factory, Usul__factory } from '../assets/typechain-types/usul';
 import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../helpers';
+import { useFractal } from '../providers/fractal/hooks/useFractal';
 import { MetaTransaction } from '../types/transaction';
 import {
   GnosisDAO,
@@ -35,6 +36,10 @@ const useBuildDAOTx = () => {
     vetoGuardMasterCopyContract,
     vetoMultisigVotingMasterCopyContract,
   } = useSafeContracts();
+
+  const {
+    gnosis: { safe },
+  } = useFractal();
 
   const { AddressZero, HashZero } = ethers.constants;
   const { solidityKeccak256, getCreate2Address, defaultAbiCoder } = ethers.utils;
@@ -121,7 +126,7 @@ const useBuildDAOTx = () => {
   );
 
   const buildMultisigTx = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO) => {
+    (daoData: GnosisDAO | TokenGovernanceDAO, isSubdao?: boolean) => {
       const buildTx = async () => {
         if (
           !multiSendContract ||
@@ -156,14 +161,34 @@ const useBuildDAOTx = () => {
 
         // Fractal Module
         // todo: switch if it is a sub dao
-        const setModuleCalldata =
-          // eslint-disable-next-line camelcase
-          FractalModule__factory.createInterface().encodeFunctionData('setUp', [
-            ethers.utils.defaultAbiCoder.encode(
-              ['address', 'address', 'address', 'address[]'],
-              [safeContract.address, safeContract.address, safeContract.address, []]
-            ),
-          ]);
+        // if it is a sub dao -- we need to know what the current gnosis safe is...
+        // VetoVoting contract needs to be deployed and setup before setting to vetoguard
+        // todo: add for usul
+        const setModuleCalldata = isSubdao
+          ? // eslint-disable-next-line camelcase
+            FractalModule__factory.createInterface().encodeFunctionData('setUp', [
+              ethers.utils.defaultAbiCoder.encode(
+                ['address', 'address', 'address', 'address[]'],
+                [
+                  safe.address, // Controlling DAO
+                  safeContract.address, // Avatar
+                  safeContract.address, // Target
+                  [], // Authorized Controllers
+                ]
+              ),
+            ])
+          : // eslint-disable-next-line camelcase
+            FractalModule__factory.createInterface().encodeFunctionData('setUp', [
+              ethers.utils.defaultAbiCoder.encode(
+                ['address', 'address', 'address', 'address[]'],
+                [
+                  safeContract.address, // Controlling DAO
+                  safeContract.address, // Avatar
+                  safeContract.address, // Target
+                  [], // Authorized Controllers
+                ]
+              ),
+            ]);
 
         const fractalByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
@@ -179,19 +204,30 @@ const useBuildDAOTx = () => {
           solidityKeccak256(['bytes'], [fractalByteCodeLinear])
         );
 
-        const setVetoGuardCalldata =
-          // eslint-disable-next-line camelcase
-          VetoGuard__factory.createInterface().encodeFunctionData('setUp', [
-            ethers.utils.defaultAbiCoder.encode(
-              ['uint256', 'address', 'address', 'address'],
-              [
-                0, // Execution Delay
-                safeContract.address, // Owner
-                vetoMultisigVotingMasterCopyContract.address, // Veto Voting
-                safeContract.address, // Gnosis Safe
-              ]
-            ),
-          ]);
+        const setVetoGuardCalldata = isSubdao
+          ? // eslint-disable-next-line camelcase
+            VetoGuard__factory.createInterface().encodeFunctionData('setUp', [
+              ethers.utils.defaultAbiCoder.encode(
+                ['uint256', 'address', 'address', 'address'],
+                [
+                  0, // Execution Delay
+                  safe.address, // Controlling DAO
+                  vetoMultisigVotingMasterCopyContract.address, // Veto Voting
+                  safeContract.address, // Gnosis Safe
+                ]
+              ),
+            ])
+          : VetoGuard__factory.createInterface().encodeFunctionData('setUp', [
+              ethers.utils.defaultAbiCoder.encode(
+                ['uint256', 'address', 'address', 'address'],
+                [
+                  0, // Execution Delay
+                  safeContract.address, // Controlling DAO
+                  vetoMultisigVotingMasterCopyContract.address, // Veto Voting
+                  safeContract.address, // Gnosis Safe
+                ]
+              ),
+            ]);
         const vetoByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
           vetoGuardMasterCopyContract.address.slice(2) +
@@ -283,6 +319,7 @@ const useBuildDAOTx = () => {
       saltNum,
       vetoGuardMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
+      safe.address,
     ]
   );
   const buildUsulTx = useCallback(
@@ -538,12 +575,12 @@ const useBuildDAOTx = () => {
   );
 
   const buildDao = useCallback(
-    async (daoData: TokenGovernanceDAO | GnosisDAO) => {
+    async (daoData: TokenGovernanceDAO | GnosisDAO, isSubdao?: boolean) => {
       switch (daoData.governance) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
           return buildUsulTx(daoData);
         case GovernanceTypes.GNOSIS_SAFE:
-          return buildMultisigTx(daoData);
+          return buildMultisigTx(daoData, isSubdao);
       }
     },
     [buildUsulTx, buildMultisigTx]
