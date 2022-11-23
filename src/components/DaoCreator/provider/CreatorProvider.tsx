@@ -46,8 +46,8 @@ export const initialState: CreatorState = {
   },
   govModule: {
     quorum: BigNumber.from(4),
-    executionDelay: BigNumber.from(6545),
-    votingPeriod: BigNumber.from(45818),
+    executionDelay: BigNumber.from(86400),
+    votingPeriod: BigNumber.from(604800),
   },
   funding: {
     tokensToFund: [],

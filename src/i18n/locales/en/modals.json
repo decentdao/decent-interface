@@ -6,5 +6,13 @@
     "linkSelfDelegate": "Delegate to self",
     "labelDelegateInput": "Delegate address",
     "sublabelDelegateInput": "In order to vote you will need to delegate your tokens to yourself or a representative to vote on your behalf. Ethereum wallet address or ENS only.",
-    "buttonDelegate": "Delegate Voting Tokens"
+    "buttonDelegate": "Delegate Voting Tokens",
+    "sendAssetsTitle": "Send Assets",
+    "selectLabel": "Select asset",
+    "selectSublabel": "Available balance {{balance}}",
+    "amountLabel": "How much?",
+    "destinationLabel": "Where would you like to send this?",
+    "destinationSublabel": "Ethereum wallet address or ENS only",
+    "sendAssetsSubmit": "Review",
+    "errorOverdraft": "Not enough funds"
   }

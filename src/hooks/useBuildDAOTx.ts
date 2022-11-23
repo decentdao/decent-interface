@@ -11,14 +11,13 @@ import {
   GovernanceTypes,
   TokenGovernanceDAO,
 } from './../components/DaoCreator/provider/types/index';
-import { useAddresses } from './useAddresses';
 import useSafeContracts from './useSafeContracts';
 
 const useBuildDAOTx = () => {
   const {
-    state: { account, signerOrProvider, chainId },
+    state: { account, signerOrProvider },
   } = useWeb3Provider();
-  const { votesMasterCopy } = useAddresses(chainId);
+
   const {
     multiSendContract,
     gnosisSafeFactoryContract,
@@ -27,6 +26,7 @@ const useBuildDAOTx = () => {
     usulMasterCopyContract,
     zodiacModuleProxyFactoryContract,
     fractalNameRegistryContract,
+    votesMasterCopyContract,
   } = useSafeContracts();
 
   const { AddressZero, HashZero } = ethers.constants;
@@ -194,9 +194,9 @@ const useBuildDAOTx = () => {
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMasterCopyContract ||
           !multiSendContract ||
-          !votesMasterCopy ||
           !fractalNameRegistryContract ||
-          !signerOrProvider
+          !signerOrProvider ||
+          !votesMasterCopyContract
         ) {
           return;
         }
@@ -205,10 +205,6 @@ const useBuildDAOTx = () => {
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
         const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
-        const votesMasterCopyContract = VotesToken__factory.connect(
-          votesMasterCopy.address,
-          signerOrProvider
-        );
 
         if (!deploySafeTx) {
           return;
@@ -424,7 +420,6 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       linearVotingMasterCopyContract,
       multiSendContract,
-      votesMasterCopy,
       fractalNameRegistryContract,
       signerOrProvider,
       buildDeploySafeTx,
@@ -432,6 +427,7 @@ const useBuildDAOTx = () => {
       getCreate2Address,
       solidityKeccak256,
       AddressZero,
+      votesMasterCopyContract,
     ]
   );
 

@@ -1,6 +1,5 @@
 import { DAOFactory, DAOFactory__factory } from '@fractal-framework/core-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { useAddresses } from '../../../hooks/useAddresses';
 import { DAOCreationListener } from '../types';
 import { useWeb3Provider } from './../../../contexts/web3Data/hooks/useWeb3Provider';
 
@@ -14,9 +13,11 @@ export function useDAOLegacy(daoAddress?: string) {
   const [parentDAO, setParentDAO] = useState<string>();
   const [subsidiaryDAOs, setSubsidiaryDAOs] = useState<string[]>([]);
   const {
-    state: { chainId, signerOrProvider },
+    state: { signerOrProvider },
   } = useWeb3Provider();
-  const { daoFactory } = useAddresses(chainId);
+
+  //@todo update to proper address
+  const daoFactory = '';
 
   const getPastEvents = useCallback(async (_daoContract: DAOFactory, filter: any) => {
     const events = await _daoContract.queryFilter(filter);
@@ -27,7 +28,7 @@ export function useDAOLegacy(daoAddress?: string) {
     if (!daoFactory || !signerOrProvider || !daoAddress) {
       return;
     }
-    const daoFactoryContract = DAOFactory__factory.connect(daoFactory.address, signerOrProvider);
+    const daoFactoryContract = DAOFactory__factory.connect(daoFactory, signerOrProvider);
 
     // retrieves creation event for current DAO
     (async () => {
