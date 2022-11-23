@@ -38,7 +38,7 @@ export const formatCoinUnits = (
 };
 
 export const formatCoinUnitsFromAsset = (asset: SafeBalanceUsdResponse): number => {
-  return formatCoinUnits(asset.balance, asset?.token?.decimals, asset?.token?.symbol);
+  return formatCoinUnits(asset.balance, asset.token?.decimals, asset.token?.symbol);
 };
 
 export const formatCoin = (

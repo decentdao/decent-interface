@@ -1,5 +1,5 @@
-import { Box, Button, Divider, Flex, Select, Spacer, Switch, Text } from '@chakra-ui/react';
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { Box, Divider, Flex, Select, Spacer, Switch, Text } from '@chakra-ui/react';
+import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +8,7 @@ import useSendAssets from '../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../providers/fractal/hooks/useFractal';
 import { formatCoinFromAsset, formatCoinUnitsFromAsset, formatUSD } from '../utils/numberFormats';
 
-export function SendAssetsModal({ close }: { close: Function }) {
+export function SendAssetsModal({ close }: { close: () => void }) {
   const {
     treasury: { assetsFungible },
   } = useFractal();
