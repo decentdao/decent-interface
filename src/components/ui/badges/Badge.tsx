@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next';
 type BadgeType = { [key: string]: { Icon: any; bg: string; color: string } };
 
 const BADGE_MAPPING: BadgeType = {
-  pending: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
-  active: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
-  passed: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
-  executed: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
-  rejected: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  statePending: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  stateActive: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
+  statePassed: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
+  stateExecuted: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
+  stateRejected: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   parent: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
   child: { Icon: Tree, bg: 'chocolate.500', color: 'gold.500' },
 };
@@ -29,7 +29,7 @@ export function Badge({ labelKey, size }: IBadge) {
   const { Icon, ...colors } = BADGE_MAPPING[labelKey];
   const sizes = BADGE_SIZES[size];
 
-  const { t } = useTranslation('badge');
+  const { t } = useTranslation('proposal');
   return (
     <Flex
       padding="0.125rem 0.5rem"

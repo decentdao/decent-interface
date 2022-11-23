@@ -20,7 +20,6 @@ export function Governance() {
         title={t('pageTitle', { daoName, ns: 'proposal' })}
         titleTestId={'title-proposals'}
         buttonVariant="text"
-        buttonSize="base"
         buttonText={t('delegate')}
         buttonClick={useFractalModal(ModalType.DELEGATE)}
         buttonTestId="link-delegate"

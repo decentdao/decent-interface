@@ -4,8 +4,8 @@ import { ReactNode } from 'react';
 export function InfoBox({
   minWidth = '100%',
   minHeight = '10.5rem',
-  m,
   children,
+  ...rest
 }: {
   minHeight?: string;
   minWidth?: { [key: string]: string } | string;
@@ -19,8 +19,8 @@ export function InfoBox({
       minHeight={minHeight}
       bg="black.900-semi-transparent"
       p="1rem"
-      m={m}
       borderRadius="0.5rem"
+      {...rest}
     >
       {children}
     </Box>

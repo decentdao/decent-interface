@@ -1,5 +1,6 @@
+import { Flex } from '@chakra-ui/react';
 import { DAOInfoCard } from '../../../components/ui/cards/DAOInfoCard';
-import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
+import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 
 export function InfoDAO() {
@@ -11,7 +12,16 @@ export function InfoDAO() {
   const subDAOsWithPermissions = [];
 
   if (!safe.address) {
-    return <InfoBoxLoader />;
+    return (
+      <Flex
+        minHeight="9.5rem"
+        width="100%"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <BarLoader />
+      </Flex>
+    );
   }
 
   return (

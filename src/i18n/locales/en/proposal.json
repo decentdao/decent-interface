@@ -63,5 +63,7 @@
     "queueTitle": "Queue Transaction",
     "executeTitle": "Execute Transaction",
     "filterProposals": "All Proposals",
-    "filter": "Filter"
+    "filter": "Filter",
+    "parent": "Parent",
+    "child": "Child"
 }

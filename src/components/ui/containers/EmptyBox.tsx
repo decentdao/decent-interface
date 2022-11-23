@@ -5,14 +5,14 @@ import { InfoBox } from './InfoBox';
 export function EmptyBox({
   emptyText,
   children,
-  m,
+  ...rest
 }: {
   emptyText: string;
   children?: ReactNode;
   m?: string | number;
 }) {
   return (
-    <InfoBox m={m}>
+    <InfoBox {...rest}>
       <Flex
         h="8rem"
         alignItems="center"

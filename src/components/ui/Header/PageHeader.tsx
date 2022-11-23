@@ -5,7 +5,6 @@ import { ReactNode } from 'react';
 interface IPageHeader {
   title: string;
   titleTestId: string;
-  buttonSize?: 'sm' | 'base' | 'lg';
   buttonVariant?: 'text';
   buttonText?: string;
   buttonClick?: () => void;
@@ -20,7 +19,6 @@ function PageHeader({
   title,
   titleTestId,
   buttonVariant,
-  buttonSize,
   buttonText,
   buttonClick,
   buttonTestId,
@@ -47,7 +45,7 @@ function PageHeader({
           <Button
             onClick={buttonClick}
             data-testid={buttonTestId}
-            size={buttonSize || 'sm'}
+            size="base"
             variant={buttonVariant}
           >
             {buttonText}
