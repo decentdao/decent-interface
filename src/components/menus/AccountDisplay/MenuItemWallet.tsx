@@ -1,4 +1,4 @@
-import { Flex, MenuItem, Text } from '@chakra-ui/react';
+import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { Copy } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
@@ -24,7 +24,7 @@ export function MenuItemWallet() {
     return null;
   }
   return (
-    <MenuItem
+    <Box
       data-testid="accountMenu-wallet"
       bg="black.900"
       cursor="default"
@@ -46,7 +46,8 @@ export function MenuItemWallet() {
           >
             {t('wallet')}
           </Text>
-          <Flex
+          <MenuItem
+            padding={0}
             alignItems="center"
             gap="2"
             aria-label="copy address"
@@ -66,7 +67,7 @@ export function MenuItemWallet() {
               {accountDisplayName}
             </Text>
             <Copy boxSize="1.5rem" />
-          </Flex>
+          </MenuItem>
         </Flex>
         <Avatar
           size="lg"
@@ -74,6 +75,6 @@ export function MenuItemWallet() {
           url={avatarURL}
         />
       </Flex>
-    </MenuItem>
+    </Box>
   );
 }
