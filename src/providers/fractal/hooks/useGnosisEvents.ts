@@ -1,8 +1,8 @@
+import { GnosisSafe } from '@fractal-framework/fractal-contracts';
+import { TypedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
-import { TypedEvent } from '../../../assets/typechain-types/gnosis-safe/common';
 import { TokenDepositEvent, TokenEventType, TokenWithdrawEvent } from '../types';
-import { GnosisSafe } from './../../../assets/typechain-types/gnosis-safe/contracts/GnosisSafe';
 
 const useGnosisEvents = (gnosisSafe?: GnosisSafe) => {
   const [depositEvents, setDepositEvents] = useState<TokenDepositEvent[]>([]);

@@ -14,8 +14,6 @@ import {
   GnosisSafe__factory,
   MultiSend,
   MultiSend__factory,
-} from '../../assets/typechain-types/gnosis-safe';
-import {
   ModuleProxyFactory,
   ModuleProxyFactory__factory,
   OZLinearVoting,

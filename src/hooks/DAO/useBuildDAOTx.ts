@@ -1,7 +1,6 @@
-import { VotesToken__factory } from '@fractal-framework/fractal-contracts';
+import { VotesToken__factory, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
-import { GnosisSafe__factory } from '../../assets/typechain-types/gnosis-safe';
 import { OZLinearVoting__factory, Usul__factory } from '../../assets/typechain-types/usul';
 import {
   GnosisDAO,
