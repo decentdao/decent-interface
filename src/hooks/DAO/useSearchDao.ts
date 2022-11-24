@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIsGnosisSafe from '../safe/useIsSafe';
-import useAddress from '../utlities/useAddress';
+import useAddress from '../utils/useAddress';
 
 const useSearchDao = () => {
   const [searchString, setSearchString] = useState<string>();

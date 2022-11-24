@@ -1,6 +1,6 @@
 import { HStack, Text } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
-import useDisplayName from '../../hooks/utlities/useDisplayName';
+import useDisplayName from '../../hooks/utils/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
 
 export function ShortenedAddressLink({ address }: { address: string }) {

@@ -1,4 +1,4 @@
-import useDisplayName from '../../hooks/useDisplayName';
+import useDisplayName from '../../hooks/utils/useDisplayName';
 import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
 import CopyToClipboard from './CopyToClipboard';
 

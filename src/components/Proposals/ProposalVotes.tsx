@@ -9,8 +9,8 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import useDisplayName from '../../hooks/utlities/useDisplayName';
-import { Proposal, ProposalVote } from '../../providers/fractal/types';
+import useDisplayName from '../../hooks/utils/useDisplayName';
+import { Proposal, ProposalVote } from '../../providers/Fractal/types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';

@@ -5,8 +5,8 @@ import { useCallback, useEffect } from 'react';
 import { CHAIN_DATA_LIST } from 'web3modal';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
+import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
-import { GnosisAction, TreasuryAction } from './../constants/actions';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information

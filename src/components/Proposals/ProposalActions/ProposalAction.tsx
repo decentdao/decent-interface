@@ -2,7 +2,7 @@ import { Button } from '@decent-org/fractal-ui';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Proposal, ProposalState } from '../../../providers/fractal/types';
+import { Proposal, ProposalState } from '../../../providers/Fractal/types';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';

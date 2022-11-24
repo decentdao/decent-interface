@@ -5,9 +5,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import useDelegateVote from '../../hooks/DAO/useDelegateVote';
-import useAddress from '../../hooks/utlities/useAddress';
-import useDisplayName from '../../hooks/utlities/useDisplayName';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import useAddress from '../../hooks/utils/useAddress';
+import useDisplayName from '../../hooks/utils/useDisplayName';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {

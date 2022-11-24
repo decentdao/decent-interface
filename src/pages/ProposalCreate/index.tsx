@@ -8,8 +8,8 @@ import H1 from '../../components/ui/H1';
 import { PrimaryButton, SecondaryButton, TextButton } from '../../components/ui/forms/Button';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { logError } from '../../helpers/errorLogging';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
-import useSubmitProposal from '../../providers/fractal/hooks/useSubmitProposal';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
 

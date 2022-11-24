@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import useSafeContracts from '../safe/useSafeContracts';
-import useDisplayName from '../utlities/useDisplayName';
+import useDisplayName from '../utils/useDisplayName';
 
 export default function useDAOName({ address }: { address?: string }) {
   const { fractalNameRegistryContract } = useSafeContracts();

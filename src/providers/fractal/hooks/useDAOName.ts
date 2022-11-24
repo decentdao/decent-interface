@@ -1,6 +1,6 @@
 import { Dispatch, useCallback, useEffect } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import useDisplayName from '../../../hooks/utlities/useDisplayName';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { GnosisAction } from '../constants';
 import { GnosisActions } from '../types';
 

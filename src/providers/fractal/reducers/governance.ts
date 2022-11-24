@@ -1,6 +1,6 @@
 import { GovernanceAction, governanceInitialState } from '../constants';
-import { GovernanceActions } from './../types/actions';
-import { IGovernance } from './../types/governance';
+import { GovernanceActions } from '../types/actions';
+import { IGovernance } from '../types/governance';
 
 export const initializeGovernanceState = (_initialState: IGovernance) => {
   return _initialState;

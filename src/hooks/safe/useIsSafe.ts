@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
-import { buildGnosisApiUrl } from '../../providers/fractal/utils/api';
+import { buildGnosisApiUrl } from '../../providers/Fractal/utils/api';
 
 const useIsGnosisSafe = (address: string | undefined) => {
   const [loading, setLoading] = useState<boolean>();
