@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { createAccountSubstring } from '../../../hooks/useDisplayName';
+import { createAccountSubstring } from '../../../hooks/utlities/useDisplayName';
 import { Proposal } from '../../../providers/fractal/types';
 
 export default function ProposalTitle({ proposal }: { proposal: Proposal }) {

@@ -7,8 +7,8 @@ import {
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
 import useDAOName from '../../../hooks/DAO/useDAOName';
-import useDisplayName from '../../../hooks/useDisplayName';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
+import useDisplayName from '../../../hooks/utlities/useDisplayName';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
 import { ManageDAOMenu } from '../../menus/ManageDAO/ManageDAOMenu';
 

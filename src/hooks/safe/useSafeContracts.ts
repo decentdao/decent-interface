@@ -14,7 +14,7 @@ import {
   GnosisSafe__factory,
   MultiSend,
   MultiSend__factory,
-} from '../assets/typechain-types/gnosis-safe';
+} from '../../assets/typechain-types/gnosis-safe';
 import {
   ModuleProxyFactory,
   ModuleProxyFactory__factory,
@@ -22,9 +22,9 @@ import {
   OZLinearVoting__factory,
   Usul,
   Usul__factory,
-} from '../assets/typechain-types/usul';
-import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
-import { useNetworkConfg } from './../providers/NetworkConfig/NetworkConfigProvider';
+} from '../../assets/typechain-types/usul';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSafeContracts() {
   const [multiSendContract, setMultisendContract] = useState<MultiSend>();

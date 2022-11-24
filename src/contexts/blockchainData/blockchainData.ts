@@ -1,4 +1,4 @@
-import useDisplayName from '../../hooks/useDisplayName';
+import useDisplayName from '../../hooks/utlities/useDisplayName';
 import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
 import useCurrentBlockNumber from './useCurrentBlockNumber';
 import useCurrentTimestamp from './useCurrentTimestamp';

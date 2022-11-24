@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
 import { GnosisDAO } from '../../components/DaoCreator/provider/types';
-import useDeployDAO from '../../hooks/useDeployDAO';
+import useDeployDAO from '../../hooks/DAO/useDeployDAO';
 
 function DaoCreate() {
   const navigate = useNavigate();

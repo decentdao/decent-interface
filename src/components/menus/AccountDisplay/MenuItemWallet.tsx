@@ -2,9 +2,9 @@ import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { Copy } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import useAvatar from '../../../hooks/useAvatar';
-import useDisplayName from '../../../hooks/useDisplayName';
+import useAvatar from '../../../hooks/utlities/useAvatar';
 import { useCopyText } from '../../../hooks/utlities/useCopyText';
+import useDisplayName from '../../../hooks/utlities/useDisplayName';
 import Avatar from '../../ui/Header/Avatar';
 
 /**

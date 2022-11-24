@@ -7,7 +7,7 @@ import {
   Usul,
 } from '../../../assets/typechain-types/usul';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import useSafeContracts from '../../../hooks/useSafeContracts';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { formatCoin } from '../../../utils/numberFormats';
 import { DelegateChangedListener, DelegateVotesChangedListener, TransferListener } from '../types';
 import { GnosisModuleType, IGnosisModuleData } from '../types/governance';

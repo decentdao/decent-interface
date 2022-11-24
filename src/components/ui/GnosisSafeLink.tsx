@@ -1,4 +1,4 @@
-import useGnosisSafeLink from '../../hooks/useGnosisSafeLink';
+import useGnosisSafeLink from '../../hooks/safe/useSafeLink';
 import { PrimaryButton } from './forms/Button';
 
 function GnosisSafeLink({ address, label }: { address: string | undefined; label: string }) {

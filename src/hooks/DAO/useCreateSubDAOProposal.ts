@@ -1,10 +1,10 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
-import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/provider/types/index';
-import useSubmitProposal from '../providers/fractal/hooks/useSubmitProposal';
-import { ProposalExecuteData } from '../types/proposal';
+import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
+import useSubmitProposal from '../../providers/fractal/hooks/useSubmitProposal';
+import { ProposalExecuteData } from '../../types/proposal';
+import useSafeContracts from '../safe/useSafeContracts';
 import useBuildDAOTx from './useBuildDAOTx';
-import useSafeContracts from './useSafeContracts';
 
 const useCreateSubDAOProposal = () => {
   const { multiSendContract } = useSafeContracts();

@@ -2,7 +2,7 @@ import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/frac
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { checkAddress } from '../../../hooks/useAddress';
+import { checkAddress } from '../../../hooks/utlities/useAddress';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 

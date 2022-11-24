@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTransaction } from '../contexts/web3Data/transactions';
-import { GnosisDAO, TokenGovernanceDAO } from './../components/DaoCreator/provider/types/index';
+import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
+import { useTransaction } from '../../contexts/web3Data/transactions';
+import useSafeContracts from '../safe/useSafeContracts';
 import useBuildDAOTx from './useBuildDAOTx';
-import useSafeContracts from './useSafeContracts';
 
 const useDeployDAO = () => {
   const { multiSendContract } = useSafeContracts();

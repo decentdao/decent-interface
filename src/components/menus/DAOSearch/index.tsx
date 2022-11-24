@@ -2,7 +2,7 @@ import { Box, Menu, MenuButton, MenuList } from '@chakra-ui/react';
 import { Input, Search } from '@decent-org/fractal-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSearchDao from '../../../hooks/useSearchDao';
+import useSearchDao from '../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch() {

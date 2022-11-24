@@ -1,17 +1,17 @@
 import { VotesToken__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
-import { GnosisSafe__factory } from '../assets/typechain-types/gnosis-safe';
-import { OZLinearVoting__factory, Usul__factory } from '../assets/typechain-types/usul';
-import { useWeb3Provider } from '../contexts/web3Data/hooks/useWeb3Provider';
-import { buildContractCall, encodeMultiSend, getRandomBytes } from '../helpers';
-import { MetaTransaction } from '../types/transaction';
+import { GnosisSafe__factory } from '../../assets/typechain-types/gnosis-safe';
+import { OZLinearVoting__factory, Usul__factory } from '../../assets/typechain-types/usul';
 import {
   GnosisDAO,
   GovernanceTypes,
   TokenGovernanceDAO,
-} from './../components/DaoCreator/provider/types/index';
-import useSafeContracts from './useSafeContracts';
+} from '../../components/DaoCreator/provider/types/index';
+import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
+import { MetaTransaction } from '../../types/transaction';
+import useSafeContracts from '../safe/useSafeContracts';
 
 const useBuildDAOTx = () => {
   const {
