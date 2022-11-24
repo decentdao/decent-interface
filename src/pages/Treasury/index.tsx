@@ -16,10 +16,7 @@ function Treasury() {
   const { t } = useTranslation('treasury');
   const showButton = assetsFungible.length > 0; // TODO also only show if the user is a DAO signer or delegated token holder..
   return (
-    <Box
-      py="1.5rem"
-      px={{ sm: '1rem', xl: 'auto' }}
-    >
+    <Box>
       <PageHeader
         title={t('titleTreasury', { daoName: daoName })}
         titleTestId={'title-treasury'}
