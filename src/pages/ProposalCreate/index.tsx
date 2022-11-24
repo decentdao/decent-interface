@@ -1,10 +1,10 @@
+import { Text } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import H1 from '../../components/ui/H1';
 import { PrimaryButton, SecondaryButton, TextButton } from '../../components/ui/forms/Button';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { logError } from '../../helpers/errorLogging';
@@ -133,7 +133,7 @@ function ProposalCreate() {
   return (
     <div>
       <div>
-        <H1>{t('createProposal')}</H1>
+        <Text>{t('createProposal')}</Text>
         <form onSubmit={e => e.preventDefault()}>
           {step === 0 && (
             <Essentials

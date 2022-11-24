@@ -14,7 +14,7 @@ import { Proposal, ProposalVote } from '../../providers/Fractal/types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';
-import StatusBox from '../ui/StatusBox';
+import StatusBox from '../ui/badges/StatusBox';
 
 // @todo - get this data from strategy contract/gov token contract, update votes mapping
 const MOCK_VOTES: ProposalVote[] = [
