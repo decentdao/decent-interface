@@ -26,9 +26,9 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
           mt="0.25rem"
         />
       }
-      titleKey={'titleManageDAO'}
+      titleKey="titleManageDAO"
       options={options}
-      namespace={'menu'}
+      namespace="menu"
     />
   );
 }

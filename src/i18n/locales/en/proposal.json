@@ -61,7 +61,8 @@
     "votesTitle": "Votes",
     "queueTitle": "Queue Transaction",
     "executeTitle": "Execute Transaction",
-    "filterProposals": "All Proposals",
+    "filterProposalsAllSelected": "All Proposals",
+    "filterProposalsNSelected": "Filter {{count}}",
     "filter": "Filter",
     "parent": "Parent",
     "child": "Child"

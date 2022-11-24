@@ -1,9 +1,20 @@
-import { Box, Menu, MenuButton, Text, MenuItem, MenuList, As, Checkbox } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Menu,
+  MenuButton,
+  Text,
+  MenuItem,
+  MenuList,
+  As,
+  Checkbox,
+} from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface Option {
   optionKey: string;
+  count?: number;
   onClick: () => void;
   isSelected?: boolean;
 }
@@ -18,6 +29,7 @@ interface IOptionMenu {
   buttonProps?: Record<string, string | boolean | number>;
   children?: ReactNode;
   closeOnSelect?: boolean;
+  showOptionCount?: boolean;
 }
 
 export function OptionMenu({
@@ -27,6 +39,7 @@ export function OptionMenu({
   namespace,
   buttonAs,
   showOptionSelected,
+  showOptionCount,
   buttonProps,
   children,
   closeOnSelect = true,
@@ -72,15 +85,25 @@ export function OptionMenu({
             gap={2}
             closeOnSelect={closeOnSelect}
           >
-            {showOptionSelected && (
-              <Checkbox
-                isChecked={option.isSelected}
-                onChange={option.onClick}
-                colorScheme="gold"
-                iconColor="black.900"
-              />
+            <Flex>
+              {showOptionSelected && (
+                <Checkbox
+                  isChecked={option.isSelected}
+                  onChange={option.onClick}
+                  colorScheme="gold"
+                  iconColor="black.900"
+                />
+              )}
+              {t(option.optionKey)}
+            </Flex>
+            {showOptionCount && (
+              <Text
+                textStyle="text-base-mono-medium"
+                color={option.count ? 'grayscale.100' : 'grayscale.500'}
+              >
+                {option.count}
+              </Text>
             )}
-            {t(option.optionKey)}
           </MenuItem>
         ))}
       </MenuList>

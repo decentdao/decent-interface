@@ -34,9 +34,12 @@ function SortMenuItem({
 interface ISort {
   sortBy: SortBy;
   setSortBy: Dispatch<SetStateAction<SortBy>>;
+  buttonProps?: {
+    disabled?: boolean;
+  };
 }
 
-export function Sort({ sortBy, setSortBy }: ISort) {
+export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
   const { t } = useTranslation();
   return (
     <Menu direction="ltr">
@@ -48,6 +51,7 @@ export function Sort({ sortBy, setSortBy }: ISort) {
             color: 'gold.500-hover',
           },
         }}
+        {...buttonProps}
       >
         <Flex
           alignItems="center"

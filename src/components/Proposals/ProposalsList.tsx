@@ -1,4 +1,4 @@
-import { Box, Button as ChakraButton, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { ArrowDown, Button } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +17,9 @@ export default function ProposalsList() {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const [filters, setFilters] = useState<ProposalState[]>(allStates);
 
+  const { t } = useTranslation(['proposal', 'common']);
+  const { proposals, getProposalsTotal } = useProposals({ sortBy, filters });
+
   const toggleFilter = (filter: ProposalState) => {
     setFilters(prevState => {
       if (prevState.includes(filter)) {
@@ -26,14 +29,20 @@ export default function ProposalsList() {
       }
     });
   };
+
   const options = allStates.map(state => ({
     optionKey: state,
+    count: getProposalsTotal(state),
     onClick: () => toggleFilter(state),
     isSelected: filters.includes(state),
   }));
 
-  const { t } = useTranslation(['proposal', 'common']);
-  const { proposals } = useProposals({ sortBy, filters });
+  const filterTitle =
+    filters.length === 1
+      ? t(filters[0])
+      : filters.length === allStates.length || filters.length === 0 // No filters selected means no filtering applied
+      ? t('filterProposalsAllSelected')
+      : t('filterProposalsNSelected', { count: filters.length });
 
   return (
     <Box>
@@ -41,22 +50,20 @@ export default function ProposalsList() {
         <OptionMenu
           trigger={
             <Box>
-              {t('filterProposals')} <ArrowDown />
+              {filterTitle} <ArrowDown />
             </Box>
           }
           options={options}
           namespace="proposal"
           titleKey="filter"
-          closeOnSelect={false}
-          buttonAs={ChakraButton} // Using "raw" Chakra Button here cause our own will not accept additional props passed via buttonProps
+          buttonAs={Button}
           buttonProps={{
-            variant: 'outline',
-            border: '1px solid',
-            borderColor: 'gold.500',
-            color: 'gold.500',
+            variant: 'tertiary',
             disabled: !proposals,
           }}
+          closeOnSelect={false}
           showOptionSelected
+          showOptionCount
         >
           <Box>
             <Flex justifyContent="space-between">
@@ -98,6 +105,7 @@ export default function ProposalsList() {
         <Sort
           sortBy={sortBy}
           setSortBy={setSortBy}
+          buttonProps={{ disabled: !proposals }}
         />
       </Flex>
       {proposals === undefined ? (
