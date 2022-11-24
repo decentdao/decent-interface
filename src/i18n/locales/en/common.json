@@ -23,7 +23,7 @@
     "dao": "DAO",
     "move": "Move",
     "recommend" : "Recommend",
-    "blocks": "Blocks",
+    "seconds": "Seconds",
     "tokens": "Tokens",
     "quorum": "Quorum",
     "deploy": "Deploy",

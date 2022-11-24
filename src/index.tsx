@@ -16,6 +16,7 @@ import { BlockchainDataProvider } from './contexts/blockchainData';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
 import { ModalProvider } from './modals/ModalProvider';
+import { NetworkConfigProvider } from './providers/NetworkConfig/NetworkConfigProvider';
 import { FractalProvider } from './providers/fractal/FractalProvider';
 import reportWebVitals from './reportWebVitals';
 
@@ -36,19 +37,21 @@ root.render(
           <FractalErrorBoundary fallback={ErrorFallback}>
             <ChakraProvider theme={theme}>
               <Web3Provider>
-                <BlockchainDataProvider>
-                  <FractalProvider>
-                    <ToastContainer
-                      position="bottom-center"
-                      closeButton={false}
-                      newestOnTop={false}
-                      pauseOnFocusLoss={false}
-                    />
-                    <ModalProvider>
-                      <App />
-                    </ModalProvider>
-                  </FractalProvider>
-                </BlockchainDataProvider>
+                <NetworkConfigProvider>
+                  <BlockchainDataProvider>
+                    <FractalProvider>
+                      <ToastContainer
+                        position="bottom-center"
+                        closeButton={false}
+                        newestOnTop={false}
+                        pauseOnFocusLoss={false}
+                      />
+                      <ModalProvider>
+                        <App />
+                      </ModalProvider>
+                    </FractalProvider>
+                  </BlockchainDataProvider>
+                </NetworkConfigProvider>
               </Web3Provider>
             </ChakraProvider>
           </FractalErrorBoundary>

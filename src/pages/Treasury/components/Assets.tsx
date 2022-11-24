@@ -1,4 +1,5 @@
 import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { SafeCollectibleResponse } from '@gnosis.pm/safe-service-client';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
@@ -7,7 +8,6 @@ import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../../components/ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../../components/ui/EtherscanLinkToken';
 import { useFractal } from '../../../providers/fractal/hooks/useFractal';
-import { GnosisAssetNonFungible } from '../../../providers/fractal/types';
 import { formatPercentage, formatUSD } from '../../../utils/numberFormats';
 import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
@@ -147,7 +147,7 @@ function NFTHeader() {
   );
 }
 
-function NFTRow({ asset, isLast }: { asset: GnosisAssetNonFungible; isLast: boolean }) {
+function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boolean }) {
   const image = asset.imageUri ? asset.imageUri : asset.logoUri;
   const name = asset.name ? asset.name : asset.tokenName;
   const id = asset.id.toString();

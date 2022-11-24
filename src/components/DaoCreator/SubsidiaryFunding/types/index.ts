@@ -1,11 +1,11 @@
-import { GnosisAssetFungible, GnosisAssetNonFungible } from '../../../../providers/fractal/types';
+import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@gnosis.pm/safe-service-client';
 import { BigNumberInput } from './../../provider/types/index';
 
 export type TokenToFund = {
-  asset: GnosisAssetFungible;
+  asset: SafeBalanceUsdResponse;
   amount: BigNumberInput;
 };
 
 export type NFTToFund = {
-  asset: GnosisAssetNonFungible;
+  asset: SafeCollectibleResponse;
 };
