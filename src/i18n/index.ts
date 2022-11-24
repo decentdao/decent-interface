@@ -1,7 +1,6 @@
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
-import BADGE_EN from './locales/en/badge.json';
 import COMMON_EN from './locales/en/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
 import DASHBOARD_EN from './locales/en/dashboard.json';
@@ -43,7 +42,6 @@ const resources = {
     transaction: TRANSACTION_EN,
     treasury: TREASURY_EN,
     sidebar: SIDEBAR_EN,
-    badge: BADGE_EN,
     modals: MODALS_EN,
   },
 };
