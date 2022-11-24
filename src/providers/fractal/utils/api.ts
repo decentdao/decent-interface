@@ -1,4 +1,4 @@
-import { getChainMetadataById } from './../../../contexts/web3Data/chains';
+import { getChainMetadataById } from '../../../contexts/web3Data/chains';
 
 /**
  * builds url for gnosis api requests
