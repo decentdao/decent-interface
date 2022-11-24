@@ -7,10 +7,7 @@ import { GnosisAction } from '../../providers/fractal/constants/actions';
 import { useFractal } from '../../providers/fractal/hooks/useFractal';
 import { BASE_ROUTES } from '../../routes/constants';
 
-/**
- * Handles DAO validation, setting and unsetting of DAO and nagivating to DAOSearch when invalid
- */
-export function DAOController({ children }: { children: JSX.Element }) {
+export default function useDAOController() {
   const {
     gnosis: { safe, safeService },
     dispatches: { gnosisDispatch },
@@ -60,5 +57,4 @@ export function DAOController({ children }: { children: JSX.Element }) {
       gnosisDispatch({ type: GnosisAction.RESET });
     };
   }, [gnosisDispatch]);
-  return children;
 }

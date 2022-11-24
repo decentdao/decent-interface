@@ -15,7 +15,7 @@ import { ErrorFallback } from './components/ErrorFallback';
 import { BlockchainDataProvider } from './contexts/blockchainData';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
-import { ModalProvider } from './modals/ModalProvider';
+import { ModalProvider } from './components/modals/ModalProvider';
 import { NetworkConfigProvider } from './providers/NetworkConfig/NetworkConfigProvider';
 import { FractalProvider } from './providers/fractal/FractalProvider';
 import reportWebVitals from './reportWebVitals';

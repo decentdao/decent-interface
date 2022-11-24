@@ -3,10 +3,10 @@ import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/frac
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useAddress from '../hooks/utlities/useAddress';
-import useSendAssets from '../pages/Treasury/hooks/useSendAssets';
-import { useFractal } from '../providers/fractal/hooks/useFractal';
-import { formatCoinFromAsset, formatCoinUnitsFromAsset, formatUSD } from '../utils/numberFormats';
+import useAddress from '../../hooks/utlities/useAddress';
+import useSendAssets from '../../pages/Treasury/hooks/useSendAssets';
+import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { formatCoinFromAsset, formatCoinUnitsFromAsset, formatUSD } from '../../utils/numberFormats';
 
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
