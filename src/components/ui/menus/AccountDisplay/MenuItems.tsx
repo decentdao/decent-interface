@@ -1,6 +1,6 @@
 import { MenuList } from '@chakra-ui/react';
 import { Connect, Disconnect } from '@decent-org/fractal-ui';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../../../contexts/web3Data/hooks/useWeb3Provider';
 import { MenuItemButton } from './MenuItemButton';
 import { MenuItemNetwork } from './MenuItemNetwork';
 import { MenuItemWallet } from './MenuItemWallet';

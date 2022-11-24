@@ -1,8 +1,8 @@
 import { MenuItem, Text } from '@chakra-ui/react';
 import { StarGoldSolid } from '@decent-org/fractal-ui';
 import { useNavigate } from 'react-router-dom';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { DAO_ROUTES } from '../../../routes/constants';
+import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { DAO_ROUTES } from '../../../../routes/constants';
 
 interface IFavorite {
   address: string;

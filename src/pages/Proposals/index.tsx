@@ -3,8 +3,8 @@ import { Button } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ProposalsList from '../../components/Proposals/ProposalsList';
-import { ModalType } from '../../components/modals/ModalProvider';
-import { useFractalModal } from '../../components/modals/useFractalModal';
+import { ModalType } from '../../components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 

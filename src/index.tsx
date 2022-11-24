@@ -12,7 +12,7 @@ import '@fontsource/ibm-plex-sans';
 import App from './App';
 import { theme } from './assets/theme';
 import { ErrorFallback } from './components/ErrorFallback';
-import { ModalProvider } from './components/modals/ModalProvider';
+import { ModalProvider } from './components/ui/modals/ModalProvider';
 import { BlockchainDataProvider } from './contexts/blockchainData';
 import { Web3Provider } from './contexts/web3Data/Web3Provider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';

@@ -1,6 +1,6 @@
 import { Box, MenuList, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { Favorite } from './Favorite';
 
 export function FavoritesList() {

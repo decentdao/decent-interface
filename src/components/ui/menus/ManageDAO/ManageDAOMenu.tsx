@@ -1,7 +1,7 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DAO_ROUTES } from '../../../routes/constants';
+import { DAO_ROUTES } from '../../../../routes/constants';
 import { OptionMenu } from '../OptionMenu';
 
 export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {

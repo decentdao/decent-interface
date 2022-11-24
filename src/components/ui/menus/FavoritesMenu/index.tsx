@@ -2,7 +2,7 @@ import { Flex, Menu, MenuButton, Text } from '@chakra-ui/react';
 import { StarGoldSolid } from '@decent-org/fractal-ui';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import DownArrow from '../../ui/svg/DownArrow';
+import DownArrow from '../../svg/DownArrow';
 import { FavoritesList } from './FavoritesList';
 
 export function FavoritesMenu() {
