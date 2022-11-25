@@ -3,11 +3,11 @@ import { Input, LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useAddress from '../../../hooks/utils/useAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
 import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {

@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
-import { useWeb3Provider } from '../../../../contexts/web3Data/hooks/useWeb3Provider';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useWeb3Provider } from '../../../../providers/web3Data/hooks/useWeb3Provider';
 import Avatar from '../../Header/Avatar';
 
 export function NotConnected() {

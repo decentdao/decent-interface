@@ -6,8 +6,8 @@ import {
   OZLinearVoting__factory,
   Usul,
 } from '../../../assets/typechain-types/usul';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
+import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
 import { formatCoin } from '../../../utils/numberFormats';
 import { DelegateChangedListener, DelegateVotesChangedListener, TransferListener } from '../types';
 import { GnosisModuleType, IGnosisModuleData } from '../types/governance';

@@ -1,5 +1,5 @@
 import { Dispatch, useEffect } from 'react';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
 import { GovernanceAction } from '../constants/actions';
 import { IGnosis, GovernanceActions } from '../types';
 import useGovernanceTokenData from './useGovernanceTokenData';

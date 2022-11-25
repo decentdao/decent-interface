@@ -2,7 +2,7 @@ import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import useCurrentTimestamp from '../../contexts/blockchainData/useCurrentTimestamp';
+import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
 import { Proposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';

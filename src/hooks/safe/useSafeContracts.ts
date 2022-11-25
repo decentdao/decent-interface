@@ -21,8 +21,8 @@ import {
   Usul,
   Usul__factory,
 } from '../../assets/typechain-types/usul';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider';
 
 export default function useSafeContracts() {
   const [multiSendContract, setMultisendContract] = useState<MultiSend>();

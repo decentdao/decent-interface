@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight, Button } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider';
 import { useCreator } from './provider/hooks/useCreator';
 import { useNextDisabled } from './provider/hooks/useNextDisabled';
 import { CreatorProviderActions, CreatorSteps, DAOTrigger } from './provider/types';

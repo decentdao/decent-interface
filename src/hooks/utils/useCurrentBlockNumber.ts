@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useWeb3Provider } from '../web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider';
 
 const useCurrentBlockNumber = () => {
   const [blockNumber, setBlockNumber] = useState<number>();

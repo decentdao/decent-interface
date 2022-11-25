@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider';
 
 function useSubDomain() {
   let {

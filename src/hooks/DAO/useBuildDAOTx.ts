@@ -7,8 +7,8 @@ import {
   GovernanceTypes,
   TokenGovernanceDAO,
 } from '../../components/DaoCreator/provider/types/index';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
+import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider';
 import { MetaTransaction } from '../../types/transaction';
 import useSafeContracts from '../safe/useSafeContracts';
 

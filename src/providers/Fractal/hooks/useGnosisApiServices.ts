@@ -3,8 +3,8 @@ import SafeServiceClient from '@gnosis.pm/safe-service-client';
 import { ethers, Signer } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { CHAIN_DATA_LIST } from 'web3modal';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../../helpers/errorLogging';
+import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
 import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
 
