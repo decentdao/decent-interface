@@ -1,5 +1,5 @@
-import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
-import { Input, LabelWrapper } from '@decent-org/fractal-ui';
+import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text, Input } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -114,9 +114,6 @@ export function DelegateModal({ close }: { close: Function }) {
       >
         <Input
           data-testid="essentials-daoName"
-          type="text"
-          size="base"
-          width="full"
           placeholder={constants.AddressZero}
           value={newDelegatee}
           onChange={e => setNewDelegatee(e.target.value)}

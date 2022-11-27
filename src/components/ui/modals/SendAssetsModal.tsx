@@ -1,5 +1,17 @@
-import { Box, Divider, Flex, Select, Spacer, Switch, Text, Button } from '@chakra-ui/react';
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import {
+  Box,
+  Divider,
+  Flex,
+  Select,
+  Spacer,
+  Switch,
+  Text,
+  Button,
+  Input,
+  NumberInput,
+  NumberInputField,
+} from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -114,14 +126,14 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               onChange={e => setUSDSelected(e.target.checked)}
             />
           </Flex>
-          <Input
-            size="base"
-            width="full"
+          <NumberInput
             placeholder="0"
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+            precision={0}
             value={amountInput}
-            onChange={e => setAmountInput(e.target.value)}
-          />
+            onChange={setAmountInput}
+          >
+            <NumberInputField />
+          </NumberInput>
         </Box>
       </Flex>
       <Flex
@@ -155,8 +167,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       >
         <Input
           type="text"
-          size="base"
-          width="full"
           placeholder={constants.AddressZero}
           value={destination}
           onChange={e => setDestination(e.target.value)}

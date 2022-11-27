@@ -1,7 +1,8 @@
+import { Input } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
-import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 
 function Essentials({
@@ -16,14 +17,15 @@ function Essentials({
     <ContentBox>
       <ContentBoxTitle>Essentials</ContentBoxTitle>
       <InputBox>
-        <Input
-          type="text"
-          value={proposalDescription}
-          onChange={e => setProposalDescription(e.target.value)}
+        <LabelWrapper
           label={t('labelProposalDesc')}
-          helperText={t('helperProposalDesc')}
-          disabled={false}
-        />
+          subLabel={t('helperProposalDesc')}
+        >
+          <Input
+            value={proposalDescription}
+            onChange={e => setProposalDescription(e.target.value)}
+          />
+        </LabelWrapper>
       </InputBox>
     </ContentBox>
   );

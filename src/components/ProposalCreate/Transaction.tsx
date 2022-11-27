@@ -1,4 +1,6 @@
-import { ethers } from 'ethers';
+import { Input, Button } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
+import { constants, ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { checkAddress } from '../../hooks/utils/useAddress';
@@ -6,8 +8,6 @@ import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider'
 import { TransactionData } from '../../types/transaction';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
-import { TextButton } from '../ui/forms/Button';
-import Input from '../ui/forms/Input';
 import InputBox from '../ui/forms/InputBox';
 
 interface TransactionProps {
@@ -106,8 +106,9 @@ function Transaction({
         <ContentBoxTitle>Transaction</ContentBoxTitle>
         {transactionCount > 1 && (
           <div className="flex justify-end">
-            <TextButton
-              className="mx-0 px-0 w-fit"
+            <Button
+              variant="text"
+              minWidth="0px"
               onClick={() => removeTransaction(transactionNumber)}
               disabled={
                 pending &&
@@ -118,57 +119,70 @@ function Transaction({
                   transaction.parameters
                 )
               }
-              label={t('labelRemoveTransaction')}
-            />
+            >
+              {t('labelRemoveTransaction')}
+            </Button>
           </div>
         )}
       </div>
       <InputBox>
-        <Input
-          type="text"
-          value={transaction.targetAddress}
-          onChange={e => updateTargetAddress(e.target.value)}
+        <LabelWrapper
           label={t('labelTargetAddress')}
-          helperText={t('helperTargetAddress')}
-          disabled={pending}
+          subLabel={t('helperTargetAddress')}
           errorMessage={transaction.addressError}
-        />
+        >
+          <Input
+            value={transaction.targetAddress}
+            placeholder={constants.AddressZero}
+            onChange={e => updateTargetAddress(e.target.value)}
+            disabled={pending}
+          />
+        </LabelWrapper>
       </InputBox>
       <InputBox>
-        <Input
-          type="text"
-          value={transaction.functionName}
-          onChange={e => updateFunctionName(e.target.value)}
+        <LabelWrapper
           label={t('labelFunctionName')}
-          exampleText={'transfer'}
-          disabled={pending}
-          helperText={t('helperFunctionName')}
+          subLabel={t('helperFunctionName')}
           errorMessage={transaction.fragmentError}
-        />
+        >
+          <Input
+            type="text"
+            value={transaction.functionName}
+            onChange={e => updateFunctionName(e.target.value)}
+            placeholder={'transfer'}
+            disabled={pending}
+          />
+        </LabelWrapper>
       </InputBox>
       <InputBox>
-        <Input
-          type="textarea"
-          value={transaction.functionSignature}
-          onChange={e => updateFunctionSignature(e.target.value)}
+        <LabelWrapper
           label={t('labelFunctionSignature')}
-          helperText={t('helperFunctionSignature')}
-          disabled={pending}
-          exampleText={'address to, uint amount'}
+          subLabel={t('helperFunctionSignature')}
           errorMessage={transaction.fragmentError}
-        />
+        >
+          <Input
+            size="xl"
+            value={transaction.functionSignature}
+            onChange={e => updateFunctionSignature(e.target.value)}
+            disabled={pending}
+            placeholder={'address to, uint amount'}
+          />
+        </LabelWrapper>
       </InputBox>
       <InputBox>
-        <Input
-          type="textarea"
-          value={transaction.parameters}
-          onChange={e => updateParameters(e.target.value)}
+        <LabelWrapper
           label={t('labelParameters')}
-          helperText={t('helperParameters')}
-          disabled={pending}
-          exampleText={'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'}
+          subLabel={t('helperParameters')}
           errorMessage={transaction.fragmentError}
-        />
+        >
+          <Input
+            size="xl"
+            value={transaction.parameters}
+            onChange={e => updateParameters(e.target.value)}
+            disabled={pending}
+            placeholder={'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'}
+          />
+        </LabelWrapper>
       </InputBox>
     </ContentBox>
   );

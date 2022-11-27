@@ -1,5 +1,4 @@
-import { Box } from '@chakra-ui/react';
-import { Button } from '@decent-org/fractal-ui';
+import { Box, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ProposalsList from '../../components/Proposals/ProposalsList';
@@ -28,12 +27,7 @@ export function Governance() {
         buttonTestId="link-delegate"
       >
         <Link to="new">
-          <Button
-            size="base"
-            marginLeft={4}
-          >
-            {t('createProposal', { ns: 'proposal' })}
-          </Button>
+          <Button marginLeft={4}>{t('createProposal', { ns: 'proposal' })}</Button>
         </Link>
       </PageHeader>
       <ProposalsList />

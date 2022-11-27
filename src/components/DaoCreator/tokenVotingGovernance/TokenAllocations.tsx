@@ -1,8 +1,9 @@
-import { Box, Grid, Text, Button } from '@chakra-ui/react';
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { Box, Grid, Text, Button, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
@@ -26,6 +27,8 @@ function TokenAllocations({
   fieldUpdate,
 }: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
+
+  const { limitDecimalsOnKeyDown } = useFormHelpers();
 
   const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
     const newTokenAllocations = [...tokenAllocations];
@@ -108,19 +111,17 @@ function TokenAllocations({
           <LabelWrapper
             label={t('labelParentAllocation')}
             subLabel={t('helperParentAllocation')}
-            restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
             errorMessage={hasAmountError ? t('errorOverallocated') : ''}
-            decimals={DEFAULT_TOKEN_DECIMALS}
           >
-            <Input
-              size="base"
-              type="number"
+            <NumberInput
               isInvalid={hasAmountError}
               data-testid="tokenVoting-parentTokenAllocationInput"
               value={parentAllocationAmount.value}
-              onChange={e => onParentAllocationChange(e.target.value)}
-              min="0"
-            />
+              onChange={onParentAllocationChange}
+              onKeyDown={e => limitDecimalsOnKeyDown(e, parentAllocationAmount.value, 4)}
+            >
+              <NumberInputField />
+            </NumberInput>
           </LabelWrapper>
         </InputBox>
       )}
