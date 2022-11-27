@@ -1,5 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react';
-import { Button } from '@decent-org/fractal-ui';
+import { Flex, Text, Button } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';

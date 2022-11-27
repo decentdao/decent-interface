@@ -1,5 +1,5 @@
-import { Box, Divider, Flex, Select, Spacer, Switch, Text } from '@chakra-ui/react';
-import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { Box, Divider, Flex, Select, Spacer, Switch, Text, Button } from '@chakra-ui/react';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

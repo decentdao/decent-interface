@@ -1,5 +1,5 @@
-import { Box, Center, Flex, HStack, Image, Text } from '@chakra-ui/react';
-import { Button, Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
+import { Box, Center, Flex, HStack, Image, Text, Button } from '@chakra-ui/react';
+import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

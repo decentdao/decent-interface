@@ -1,5 +1,5 @@
-import { Box, Grid, Text } from '@chakra-ui/react';
-import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { Box, Grid, Text, Button } from '@chakra-ui/react';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

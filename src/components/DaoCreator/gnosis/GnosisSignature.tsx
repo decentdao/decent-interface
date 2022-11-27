@@ -1,5 +1,5 @@
-import { Grid } from '@chakra-ui/react';
-import { Button, Input, LabelWrapper } from '@decent-org/fractal-ui';
+import { Grid, Button } from '@chakra-ui/react';
+import { Input, LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { checkAddress } from '../../../hooks/utils/useAddress';

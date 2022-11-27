@@ -1,4 +1,5 @@
-import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { Button } from '@chakra-ui/react';
+import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { checkAddress } from '../../../hooks/utils/useAddress';
