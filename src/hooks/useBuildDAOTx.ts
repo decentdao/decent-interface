@@ -65,8 +65,7 @@ const useBuildDAOTx = () => {
                   ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
                   multiSendContract.address,
                 ],
-            // todo: test first! this needs to be changed to actual threshold number
-            hasUsul ? 1 : gnosisDaoData.trustedAddresses.length, // threshold
+            1, // Threshold
             AddressZero,
             HashZero,
             AddressZero,
@@ -75,6 +74,7 @@ const useBuildDAOTx = () => {
             AddressZero,
           ]
         );
+        console.log(gnosisDaoData.trustedAddresses);
 
         const predictedGnosisSafeAddress = getCreate2Address(
           gnosisSafeFactoryContract.address,
@@ -157,7 +157,6 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
-        // todo: need to remove the multisend contract from this gnosis safe
         if (parentDAOAddress) {
           // Fractal Module
           const setModuleCalldata =
@@ -295,6 +294,18 @@ const useBuildDAOTx = () => {
             ),
             // Enable Veto Guard
             buildContractCall(safeContract, 'setGuard', [predictedVetoModuleAddress], 0, false),
+            // Remove Multisend Contract
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [
+                gnosisDaoData.trustedAddresses[gnosisDaoData.trustedAddresses.length - 1].address,
+                multiSendContract.address,
+                gnosisDaoData.signatureThreshold,
+              ],
+              0,
+              false
+            ),
           ];
         } else {
           internaltTxs = [
@@ -303,6 +314,18 @@ const useBuildDAOTx = () => {
               fractalNameRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            // Remove Multisend Contract
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [
+                gnosisDaoData.trustedAddresses[gnosisDaoData.trustedAddresses.length - 1].address,
+                multiSendContract.address,
+                gnosisDaoData.signatureThreshold,
+              ],
               0,
               false
             ),
