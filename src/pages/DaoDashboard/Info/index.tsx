@@ -13,7 +13,7 @@ export function Info() {
     >
       <Flex
         flexWrap="wrap"
-        columnGap="1rem"
+        gap="1rem"
         justifyContent="space-between"
         mb="1rem"
       >
