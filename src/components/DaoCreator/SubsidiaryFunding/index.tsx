@@ -1,6 +1,6 @@
 import { BigNumber, utils } from 'ethers';
 import { useState } from 'react';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';

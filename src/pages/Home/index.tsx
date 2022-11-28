@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/fractal-text-logo.svg';
 import { CONTENT_HEIGHT } from '../../constants/common';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants/url';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
 
 interface IconWithTextProps {

@@ -9,7 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Proposal } from '../../../providers/fractal/types';
+import { Proposal } from '../../../providers/Fractal/types';
 import { DecodedTransaction } from '../../../types';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {

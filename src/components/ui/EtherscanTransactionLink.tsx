@@ -1,4 +1,4 @@
-import useSubDomain from '../../hooks/useSubDomain';
+import useSubDomain from '../../hooks/utils/useSubDomain';
 
 function EtherscanTransactionLink({
   txHash,

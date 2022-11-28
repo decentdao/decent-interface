@@ -2,9 +2,9 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { TitledInfoBox } from '../../components/ui/containers/TitledInfoBox';
-import { ModalType } from '../../modals/ModalProvider';
-import { useFractalModal } from '../../modals/useFractalModal';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { ModalType } from '../../components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../components/ui/modals/useFractalModal';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { Assets } from './components/Assets';
 import { Transactions } from './components/Transactions';
 

@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { DAOInfoCard } from '../../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../../components/ui/loaders/BarLoader';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 
 export function InfoDAO() {
   const {

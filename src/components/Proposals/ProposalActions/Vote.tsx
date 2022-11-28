@@ -2,8 +2,8 @@ import { Text } from '@chakra-ui/react';
 import { Button, CloseX } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCastVote from '../../../providers/fractal/hooks/useCastVote';
-import { Proposal, ProposalState, UsulVoteChoice } from '../../../providers/fractal/types';
+import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
+import { Proposal, ProposalState, UsulVoteChoice } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
 import Check from '../../ui/svg/Check';
 

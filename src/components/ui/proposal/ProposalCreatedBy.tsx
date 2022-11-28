@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import useDisplayName from '../../../hooks/useDisplayName';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
 function ProposalCreatedBy({ proposalProposer }: { proposalProposer: string }) {
