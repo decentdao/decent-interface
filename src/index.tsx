@@ -12,12 +12,11 @@ import '@fontsource/ibm-plex-sans';
 import App from './App';
 import { theme } from './assets/theme';
 import { ErrorFallback } from './components/ErrorFallback';
-import { BlockchainDataProvider } from './contexts/blockchainData';
-import { Web3Provider } from './contexts/web3Data/Web3Provider';
+import { ModalProvider } from './components/ui/modals/ModalProvider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
-import { ModalProvider } from './modals/ModalProvider';
+import { FractalProvider } from './providers/Fractal/FractalProvider';
 import { NetworkConfigProvider } from './providers/NetworkConfig/NetworkConfigProvider';
-import { FractalProvider } from './providers/fractal/FractalProvider';
+import { Web3Provider } from './providers/Web3Data/Web3Provider';
 import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
@@ -38,19 +37,17 @@ root.render(
             <ChakraProvider theme={theme}>
               <Web3Provider>
                 <NetworkConfigProvider>
-                  <BlockchainDataProvider>
-                    <FractalProvider>
-                      <ToastContainer
-                        position="bottom-center"
-                        closeButton={false}
-                        newestOnTop={false}
-                        pauseOnFocusLoss={false}
-                      />
-                      <ModalProvider>
-                        <App />
-                      </ModalProvider>
-                    </FractalProvider>
-                  </BlockchainDataProvider>
+                  <FractalProvider>
+                    <ToastContainer
+                      position="bottom-center"
+                      closeButton={false}
+                      newestOnTop={false}
+                      pauseOnFocusLoss={false}
+                    />
+                    <ModalProvider>
+                      <App />
+                    </ModalProvider>
+                  </FractalProvider>
                 </NetworkConfigProvider>
               </Web3Provider>
             </ChakraProvider>

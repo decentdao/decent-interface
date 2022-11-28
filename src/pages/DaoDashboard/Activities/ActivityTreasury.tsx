@@ -3,7 +3,7 @@ import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
-import useDisplayName from '../../../hooks/useDisplayName';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { Activity } from '../../../types';
 import { AcitivityCard } from './ActivityCard';
 

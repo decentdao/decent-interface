@@ -1,4 +1,4 @@
-import { ProposalState } from '../../../providers/fractal/types/usul';
+import { ProposalState } from '../../../providers/Fractal/types/usul';
 import { Badge } from '../badges/Badge';
 
 interface ProposalStateBoxProps {

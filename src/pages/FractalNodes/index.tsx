@@ -4,7 +4,7 @@ import PageHeader from '../../components/ui/Header/PageHeader';
 import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
 import { HEADER_HEIGHT } from '../../constants/common';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { NodeLines } from './NodeLines';
 
 export function FractalNodes() {

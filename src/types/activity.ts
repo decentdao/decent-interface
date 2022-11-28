@@ -1,4 +1,4 @@
-import { EthereumTxWithTransfers } from '../providers/fractal/types';
+import { EthereumTxWithTransfers } from '../providers/Fractal/types';
 
 export enum ActivityFilters {
   All,
