@@ -122,7 +122,7 @@ const useBuildDAOTx = () => {
   );
 
   const buildMultisigTx = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO, isSubdao?: boolean, parentDAOAddress?: string) => {
+    (daoData: GnosisDAO | TokenGovernanceDAO, parentDAOAddress?: string) => {
       const buildTx = async () => {
         if (
           !multiSendContract ||
@@ -603,16 +603,12 @@ const useBuildDAOTx = () => {
   );
 
   const buildDao = useCallback(
-    async (
-      daoData: TokenGovernanceDAO | GnosisDAO,
-      isSubdao?: boolean,
-      parentDAOAddress?: string
-    ) => {
+    async (daoData: TokenGovernanceDAO | GnosisDAO, parentDAOAddress?: string) => {
       switch (daoData.governance) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
           return buildUsulTx(daoData);
         case GovernanceTypes.GNOSIS_SAFE:
-          return buildMultisigTx(daoData, isSubdao, parentDAOAddress);
+          return buildMultisigTx(daoData, parentDAOAddress);
       }
     },
     [buildUsulTx, buildMultisigTx]
