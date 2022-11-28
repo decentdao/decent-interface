@@ -11,24 +11,24 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
     () => [
       {
         optionKey: 'optionCreateSubDAO',
-        function: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+        onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
       },
-      { optionKey: 'optionInitiateFreeze', function: () => {} }, // TODO freeze hook (if parent voting holder)
+      { optionKey: 'optionInitiateFreeze', onClick: () => {} }, // TODO freeze hook (if parent voting holder)
     ],
     [safeAddress, navigate]
   );
 
   return (
     <OptionMenu
-      icon={
+      trigger={
         <VEllipsis
           boxSize="1.5rem"
           mt="0.25rem"
         />
       }
-      titleKey={'titleManageDAO'}
+      titleKey="titleManageDAO"
       options={options}
-      namespace={'menu'}
+      namespace="menu"
     />
   );
 }

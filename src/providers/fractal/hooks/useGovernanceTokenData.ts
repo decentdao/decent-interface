@@ -9,11 +9,7 @@ import {
 import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
 import useSafeContracts from '../../../hooks/useSafeContracts';
 import { formatCoin } from '../../../utils/numberFormats';
-import {
-  DelegateChangedListener,
-  DelegateVotesChangedListener,
-  TransferListener,
-} from '../../govenor/types';
+import { DelegateChangedListener, DelegateVotesChangedListener, TransferListener } from '../types';
 import { GnosisModuleType, IGnosisModuleData } from '../types/governance';
 
 interface ITokenData {

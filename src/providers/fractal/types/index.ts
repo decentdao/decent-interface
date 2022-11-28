@@ -5,3 +5,4 @@ export * from './governance';
 export * from './usul';
 export * from './actions';
 export * from './gnosis';
+export * from './token';

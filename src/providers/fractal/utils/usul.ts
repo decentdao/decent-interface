@@ -85,8 +85,22 @@ export const mapProposalCreatedEventToProposal = async (
   const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
   const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
 
-  // @todo: Retrieve proposal hashes for future decoding
-  const MOCK_TX_HASHES = ['0x', '0x', '0x'];
+  const txHashes = [];
+  let i = 0;
+  let finished = false;
+  while (!finished) {
+    try {
+      // Usul nor strategy contract is not returning whole array -
+      // this is the only way to get those hashes
+      const txHash = await usulContract.getTxHash(proposalNumber, i);
+      txHashes.push(txHash);
+      i++;
+    } catch (e) {
+      // Means there's no hashes anymore
+      finished = true;
+    }
+  }
+
   const proposal: Proposal = {
     proposalNumber,
     proposer,
@@ -95,8 +109,8 @@ export const mapProposalCreatedEventToProposal = async (
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
-    txHashes: MOCK_TX_HASHES,
-    decodedTransactions: decodeTransactionHashes(MOCK_TX_HASHES),
+    txHashes,
+    decodedTransactions: decodeTransactionHashes(txHashes),
   };
 
   return proposal;
