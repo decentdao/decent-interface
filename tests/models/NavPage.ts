@@ -26,7 +26,7 @@ export abstract class NavPage extends FractalPage {
   async menuLocator(selector: MenuItems) {
     switch (selector) {
       case MenuItems.Network:
-        return this.page.locator('[data-testid=accountMenu-network] div div p');
+        return this.page.locator('[data-testid=accountMenu-network]');
       default:
         return undefined;
     }

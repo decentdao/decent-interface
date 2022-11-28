@@ -1,6 +1,6 @@
+import { SafeBalanceUsdResponse } from '@gnosis.pm/safe-service-client';
 import { ethers } from 'ethers';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
-import { GnosisAssetFungible } from '../../../providers/fractal/types';
 import { formatCoin, formatUSD } from '../../../utils/numberFormats';
 
 export interface TokenDisplayData {
@@ -14,7 +14,7 @@ export interface TokenDisplayData {
   fiatConversion: string;
 }
 
-export function useFormatCoins(assets: GnosisAssetFungible[]) {
+export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
   let totalFiatValue = 0;
   let displayData: TokenDisplayData[] = new Array(assets.length);
   for (let i = 0; i < assets.length; i++) {

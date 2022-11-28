@@ -2,9 +2,9 @@ import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import useCurrentTimestamp from '../../contexts/blockchainData/useCurrentTimestamp';
-import { Proposal } from '../../providers/fractal/types';
-import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
+import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
+import { Proposal } from '../../providers/Fractal/types';
+import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import { ExtendedProgressBar } from '../ui/ProgressBar';
 
@@ -38,7 +38,7 @@ export default function ProposalSummary({
           >
             {t('proposalSummaryStartDate')}
           </Text>
-          <Text>{format(startBlockTimeStamp * 1000, DEFAULT_DATE_FORMAT)}</Text>
+          <Text>{format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}</Text>
         </Flex>
         <Flex
           marginTop={4}
@@ -51,7 +51,7 @@ export default function ProposalSummary({
           >
             {t('proposalSummaryEndDate')}
           </Text>
-          <Text>{format(deadline * 1000, DEFAULT_DATE_FORMAT)}</Text>
+          <Text>{format(deadline * 1000, DEFAULT_DATE_TIME_FORMAT)}</Text>
         </Flex>
         <Divider color="chocolate.700" />
       </Box>

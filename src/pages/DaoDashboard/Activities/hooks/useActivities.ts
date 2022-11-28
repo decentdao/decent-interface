@@ -3,14 +3,13 @@ import { format } from 'date-fns';
 import { BigNumber, constants } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { logError } from '../../../../helpers/errorLogging';
-import { GnosisAction } from '../../../../providers/fractal/constants';
-import { GnosisTransactionsResponse } from '../../../../providers/fractal/types';
-import { buildGnosisApiUrl } from '../../../../providers/fractal/utils';
-import { ActivityEventType, GnosisTransferType } from '../../../../types';
+import { GnosisAction } from '../../../../providers/Fractal/constants';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { GnosisTransactionsResponse } from '../../../../providers/Fractal/types';
+import { buildGnosisApiUrl } from '../../../../providers/Fractal/utils';
+import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
+import { ActivityEventType, GnosisTransferType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
-import { SortBy } from '../ActivitySort';
-import { useWeb3Provider } from './../../../../contexts/web3Data/hooks/useWeb3Provider';
-import { useFractal } from './../../../../providers/fractal/hooks/useFractal';
 
 export const useActivities = (sortBy: SortBy) => {
   const {

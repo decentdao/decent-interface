@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import useENSName from '../useENSName';
-import useSafeContracts from '../useSafeContracts';
+import useSafeContracts from '../safe/useSafeContracts';
+import useENSName from '../utils/useENSName';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;

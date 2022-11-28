@@ -12,11 +12,11 @@ import '@fontsource/ibm-plex-sans';
 import App from './App';
 import { theme } from './assets/theme';
 import { ErrorFallback } from './components/ErrorFallback';
-import { BlockchainDataProvider } from './contexts/blockchainData';
-import { Web3Provider } from './contexts/web3Data/Web3Provider';
+import { ModalProvider } from './components/ui/modals/ModalProvider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
-import { ModalProvider } from './modals/ModalProvider';
-import { FractalProvider } from './providers/fractal/FractalProvider';
+import { FractalProvider } from './providers/Fractal/FractalProvider';
+import { NetworkConfigProvider } from './providers/NetworkConfig/NetworkConfigProvider';
+import { Web3Provider } from './providers/Web3Data/Web3Provider';
 import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
@@ -36,7 +36,7 @@ root.render(
           <FractalErrorBoundary fallback={ErrorFallback}>
             <ChakraProvider theme={theme}>
               <Web3Provider>
-                <BlockchainDataProvider>
+                <NetworkConfigProvider>
                   <FractalProvider>
                     <ToastContainer
                       position="bottom-center"
@@ -48,7 +48,7 @@ root.render(
                       <App />
                     </ModalProvider>
                   </FractalProvider>
-                </BlockchainDataProvider>
+                </NetworkConfigProvider>
               </Web3Provider>
             </ChakraProvider>
           </FractalErrorBoundary>

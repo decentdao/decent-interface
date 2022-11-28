@@ -1,9 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import { ActivitySort, SortBy } from './ActivitySort';
+import { SortBy } from '../../../types';
 import { ActivityTreasury } from './ActivityTreasury';
 import { useActivities } from './hooks/useActivities';
 
@@ -19,7 +20,7 @@ export function Activities() {
         alignItems="center"
         my="1rem"
       >
-        <ActivitySort
+        <Sort
           sortBy={sortBy}
           setSortBy={setSortBy}
         />

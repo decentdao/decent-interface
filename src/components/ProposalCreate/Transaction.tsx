@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
 import { logError } from '../../helpers/errorLogging';
-import { checkAddress } from '../../hooks/useAddress';
+import { checkAddress } from '../../hooks/utils/useAddress';
+import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { TransactionData } from '../../types/transaction';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';

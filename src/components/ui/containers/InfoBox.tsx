@@ -5,9 +5,11 @@ export function InfoBox({
   minWidth = '100%',
   minHeight = '10.5rem',
   children,
+  ...rest
 }: {
   minHeight?: string;
   minWidth?: { [key: string]: string } | string;
+  m?: string | number;
   children: ReactNode;
 }) {
   return (
@@ -18,6 +20,7 @@ export function InfoBox({
       bg="black.900-semi-transparent"
       p="1rem"
       borderRadius="0.5rem"
+      {...rest}
     >
       {children}
     </Box>
