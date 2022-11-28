@@ -2,9 +2,9 @@ import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { OZLinearVoting__factory } from '../../../assets/typechain-types/usul';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { useTransaction } from '../../../contexts/web3Data/transactions';
-import useUsul from '../../../providers/fractal/hooks/useUsul';
+import useUsul from '../../../providers/Fractal/hooks/useUsul';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useTransaction } from '../../../providers/Web3Data/transactions';
 
 export default function useQueueProposal() {
   const { t } = useTranslation('transaction');
