@@ -65,6 +65,7 @@ const useBuildDAOTx = () => {
                   ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
                   multiSendContract.address,
                 ],
+            // todo: test first! this needs to be changed to actual threshold number
             hasUsul ? 1 : gnosisDaoData.trustedAddresses.length, // threshold
             AddressZero,
             HashZero,
@@ -156,6 +157,7 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
+        // todo: need to remove the multisend contract from this gnosis safe
         if (parentDAOAddress) {
           // Fractal Module
           const setModuleCalldata =
@@ -351,7 +353,7 @@ const useBuildDAOTx = () => {
     ]
   );
   const buildUsulTx = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO) => {
+    (daoData: GnosisDAO | TokenGovernanceDAO, parentDAOAddress?: string) => {
       const buildTx = async () => {
         if (
           !account ||
@@ -363,6 +365,7 @@ const useBuildDAOTx = () => {
           !multiSendContract ||
           !votesMasterCopy ||
           !fractalNameRegistryContract ||
+          !fractalModuleMasterCopyContract ||
           !signerOrProvider
         ) {
           return;
@@ -501,31 +504,109 @@ const useBuildDAOTx = () => {
           signerOrProvider
         );
 
-        const internaltTxs: MetaTransaction[] = [
-          buildContractCall(
-            fractalNameRegistryContract,
-            'updateDAOName',
-            [gnosisDaoData.daoName],
-            0,
-            false
-          ),
-          buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
-          buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
-          buildContractCall(
-            safeContract,
-            'addOwnerWithThreshold',
-            [usulContract.address, 1],
-            0,
-            false
-          ),
-          buildContractCall(
-            safeContract,
-            'removeOwner',
-            [usulContract.address, multiSendContract.address, 1],
-            0,
-            false
-          ),
-        ];
+        let internaltTxs: MetaTransaction[];
+        if (parentDAOAddress) {
+          // Fractal Module
+          const setModuleCalldata =
+            // eslint-disable-next-line camelcase
+            FractalModule__factory.createInterface().encodeFunctionData('setUp', [
+              ethers.utils.defaultAbiCoder.encode(
+                ['address', 'address', 'address', 'address[]'],
+                [
+                  parentDAOAddress, // Owner -- Parent DAO
+                  safeContract.address, // Avatar
+                  safeContract.address, // Target
+                  [], // Authorized Controllers
+                ]
+              ),
+            ]);
+
+          const fractalByteCodeLinear =
+            '0x602d8060093d393df3363d3d373d3d3d363d73' +
+            fractalModuleMasterCopyContract.address.slice(2) +
+            '5af43d82803e903d91602b57fd5bf3';
+          const fractalSalt = solidityKeccak256(
+            ['bytes32', 'uint256'],
+            [solidityKeccak256(['bytes'], [setModuleCalldata]), saltNum]
+          );
+          const predictedFractalModuleAddress = getCreate2Address(
+            zodiacModuleProxyFactoryContract.address,
+            fractalSalt,
+            solidityKeccak256(['bytes'], [fractalByteCodeLinear])
+          );
+
+          internaltTxs = [
+            buildContractCall(
+              fractalNameRegistryContract,
+              'updateDAOName',
+              [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
+            buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
+
+            // Deploy Fractal Module
+            buildContractCall(
+              zodiacModuleProxyFactoryContract,
+              'deployModule',
+              [fractalModuleMasterCopyContract.address, setModuleCalldata, saltNum],
+              0,
+              false
+            ),
+            // Enable Fractal Module
+            buildContractCall(
+              safeContract,
+              'enableModule',
+              [predictedFractalModuleAddress],
+              0,
+              false
+            ),
+            // Add Usul Contract as the Safe owner
+            buildContractCall(
+              safeContract,
+              'addOwnerWithThreshold',
+              [usulContract.address, 1],
+              0,
+              false
+            ),
+            // Remove Multisend contract
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [usulContract.address, multiSendContract.address, 1],
+              0,
+              false
+            ),
+          ];
+        } else {
+          internaltTxs = [
+            buildContractCall(
+              fractalNameRegistryContract,
+              'updateDAOName',
+              [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
+            buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
+            buildContractCall(
+              safeContract,
+              'addOwnerWithThreshold',
+              [usulContract.address, 1],
+              0,
+              false
+            ),
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [usulContract.address, multiSendContract.address, 1],
+              0,
+              false
+            ),
+          ];
+        }
+
         const safeInternalTx = encodeMultiSend(internaltTxs);
 
         const createTokenTx = buildContractCall(
@@ -593,6 +674,8 @@ const useBuildDAOTx = () => {
       multiSendContract,
       votesMasterCopy,
       fractalNameRegistryContract,
+      fractalModuleMasterCopyContract,
+      saltNum,
       signerOrProvider,
       buildDeploySafeTx,
       defaultAbiCoder,
@@ -606,7 +689,7 @@ const useBuildDAOTx = () => {
     async (daoData: TokenGovernanceDAO | GnosisDAO, parentDAOAddress?: string) => {
       switch (daoData.governance) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
-          return buildUsulTx(daoData);
+          return buildUsulTx(daoData, parentDAOAddress);
         case GovernanceTypes.GNOSIS_SAFE:
           return buildMultisigTx(daoData, parentDAOAddress);
       }
