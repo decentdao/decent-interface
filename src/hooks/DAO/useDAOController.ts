@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import useSearchDao from '../../hooks/DAO/useSearchDao';
 import { GnosisAction } from '../../providers/Fractal/constants/actions';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
 
 export default function useDAOController() {

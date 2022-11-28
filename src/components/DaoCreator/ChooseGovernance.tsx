@@ -6,8 +6,8 @@ import {
   getChainsWithMetadata,
   getSupportedChains,
   isChainSupportedOnGnosis,
-} from '../../providers/web3Data/chains';
-import { useWeb3Provider } from '../../providers/web3Data/hooks/useWeb3Provider';
+} from '../../providers/Web3Data/chains';
+import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../ui/ContentBox';
 import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
 import { useCreator } from './provider/hooks/useCreator';

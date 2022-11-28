@@ -3,7 +3,7 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { checkAddress } from '../../../hooks/utils/useAddress';
-import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useCreator } from '../provider/hooks/useCreator';
 import { TrustedAddress } from '../provider/types';
 

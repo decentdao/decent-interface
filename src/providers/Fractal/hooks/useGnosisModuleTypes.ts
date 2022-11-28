@@ -2,7 +2,7 @@ import { FractalModule__factory } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect } from 'react';
 import { Usul__factory } from '../../../assets/typechain-types/usul';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 

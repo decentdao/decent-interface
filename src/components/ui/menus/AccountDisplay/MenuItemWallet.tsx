@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { useWeb3Provider } from '../../../../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
 import Avatar from '../../Header/Avatar';
 
 /**
