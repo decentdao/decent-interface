@@ -16,7 +16,7 @@ import { ModalProvider } from './components/ui/modals/ModalProvider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
 import { FractalProvider } from './providers/Fractal/FractalProvider';
 import { NetworkConfigProvider } from './providers/NetworkConfig/NetworkConfigProvider';
-import { Web3Provider } from './providers/web3Data/Web3Provider';
+import { Web3Provider } from './providers/Web3Data/Web3Provider';
 import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');

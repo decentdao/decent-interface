@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Usul, Usul__factory } from '../../../assets/typechain-types/usul';
-import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisModuleType } from '../types';
 import { useFractal } from './useFractal';
 

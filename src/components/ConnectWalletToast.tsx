@@ -3,7 +3,7 @@ import { Button } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useWeb3Provider } from '../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../providers/Web3Data/hooks/useWeb3Provider';
 
 function ToastContent({ label }: { label: string }) {
   const { connect } = useWeb3Provider();

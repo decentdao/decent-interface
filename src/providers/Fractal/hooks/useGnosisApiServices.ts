@@ -4,7 +4,7 @@ import { ethers, Signer } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { CHAIN_DATA_LIST } from 'web3modal';
 import { logError } from '../../../helpers/errorLogging';
-import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
 

@@ -5,7 +5,7 @@ import { Signer } from 'ethers';
 import { useCallback, useState } from 'react';
 import { buildSafeAPIPost } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
-import { useWeb3Provider } from '../../../providers/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { ProposalExecuteData } from '../../../types';
 import { buildGnosisApiUrl } from '../utils';
 import { useFractal } from './useFractal';

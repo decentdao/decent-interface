@@ -1,8 +1,8 @@
 import { BigNumber, Signer } from 'ethers';
 import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
 import { logError } from '../../../helpers/errorLogging';
-import { Providers } from '../../../providers/web3Data/types';
 import { decodeTransactionHashes } from '../../../utils/crypto';
+import { Providers } from '../../Web3Data/types';
 import {
   Proposal,
   ProposalIsPassedError,

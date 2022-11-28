@@ -7,9 +7,9 @@ import { GnosisAction } from '../../../../providers/Fractal/constants';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GnosisTransactionsResponse } from '../../../../providers/Fractal/types';
 import { buildGnosisApiUrl } from '../../../../providers/Fractal/utils';
+import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
 import { ActivityEventType, GnosisTransferType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
-import { useWeb3Provider } from './../../../../providers/web3Data/hooks/useWeb3Provider';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
