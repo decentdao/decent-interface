@@ -1,4 +1,4 @@
-import { VotesToken__factory, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
+import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { OZLinearVoting__factory, Usul__factory } from '../../assets/typechain-types/usul';
@@ -246,11 +246,19 @@ const useBuildDAOTx = () => {
           'setUp',
           [encodedInitTokenData]
         );
-        const tokenSalt = getRandomBytes();
+        const tokenByteCodeLinear =
+          '0x602d8060093d393df3363d3d373d3d3d363d73' +
+          votesMasterCopyContract.address.slice(2) +
+          '5af43d82803e903d91602b57fd5bf3';
+        const tokenNonce = getRandomBytes();
+        const tokenSalt = solidityKeccak256(
+          ['bytes32', 'uint256'],
+          [solidityKeccak256(['bytes'], [encodedSetUpTokenData]), tokenNonce]
+        );
         const predictedTokenAddress = getCreate2Address(
           zodiacModuleProxyFactoryContract.address,
           tokenSalt,
-          solidityKeccak256(['bytes'], [VotesToken__factory.bytecode])
+          solidityKeccak256(['bytes'], [tokenByteCodeLinear])
         );
 
         const encodedStrategyInitParams = defaultAbiCoder.encode(
@@ -359,7 +367,7 @@ const useBuildDAOTx = () => {
         const createTokenTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [votesMasterCopyContract.address, encodedSetUpTokenData, tokenSalt],
+          [votesMasterCopyContract.address, encodedSetUpTokenData, tokenNonce],
           0,
           false
         );
