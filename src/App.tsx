@@ -57,8 +57,11 @@ function App() {
       </GridItem>
       <GridItem area={'main'}>
         <Container
+          display="grid"
           maxWidth="container.xl"
+          mt={6}
           px="0"
+          mx={[6, null, null, null, null, 'auto']}
         >
           <FractalRoutes />
         </Container>

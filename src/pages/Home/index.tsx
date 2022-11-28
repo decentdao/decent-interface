@@ -1,4 +1,4 @@
-import { Box, Center, Flex, HStack, Image, Text, Button } from '@chakra-ui/react';
+import { Box, Center, Flex, HStack, Image, Text, Button, Link } from '@chakra-ui/react';
 import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +18,10 @@ interface IconWithTextProps {
 
 function IconWithText({ icon, label, url, testid }: IconWithTextProps) {
   return (
-    <a
+    <Link
       data-testid={testid}
       href={url}
-      rel="noreferrer noopener"
-      target="_blank"
+      isExternal
     >
       <HStack>
         {icon}
@@ -33,7 +32,7 @@ function IconWithText({ icon, label, url, testid }: IconWithTextProps) {
           {label}
         </Text>
       </HStack>
-    </a>
+    </Link>
   );
 }
 

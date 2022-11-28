@@ -50,10 +50,7 @@ function ProposalDetails() {
   }
 
   return (
-    <Box
-      p="1.5rem"
-      mt="3rem"
-    >
+    <Box>
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
         <Button
           paddingLeft={0}
