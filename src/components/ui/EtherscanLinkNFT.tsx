@@ -1,5 +1,5 @@
 import { Link } from '@chakra-ui/react';
-import useSubDomain from '../../hooks/useSubDomain';
+import useSubDomain from '../../hooks/utils/useSubDomain';
 
 function EtherscanLinkNFT({
   address,

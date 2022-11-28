@@ -16,8 +16,8 @@ import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
 import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
-import useProposals from '../../providers/fractal/hooks/useProposals';
-import { Proposal } from '../../providers/fractal/types';
+import useProposals from '../../providers/Fractal/hooks/useProposals';
+import { Proposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 const MOCK_GOV_TOKEN_TOTAL_SUPPLY = BigNumber.from('3475000000000000000000');

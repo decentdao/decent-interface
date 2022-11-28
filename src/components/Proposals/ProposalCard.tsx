@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import useCurrentTimestamp from '../../contexts/blockchainData/useCurrentTimestamp';
-import { Proposal, ProposalState } from '../../providers/fractal/types/usul';
+import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
+import { Proposal, ProposalState } from '../../providers/Fractal/types/usul';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';

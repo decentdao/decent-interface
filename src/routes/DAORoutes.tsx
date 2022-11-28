@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { DAOController } from '../controller/DAOs/DAOController';
+import useDAOController from '../hooks/DAO/useDAOController';
 import { DaoDashboard } from '../pages/DaoDashboard';
 import { FractalNodes } from '../pages/FractalNodes';
 import ProposalCreate from '../pages/ProposalCreate';
@@ -45,15 +45,14 @@ function DAOSubRoutes() {
 }
 
 function DAORoutes() {
+  useDAOController();
   return (
-    <DAOController>
-      <Routes>
-        <Route
-          path={DAO_ROUTES.dao.path}
-          element={<DAOSubRoutes />}
-        />
-      </Routes>
-    </DAOController>
+    <Routes>
+      <Route
+        path={DAO_ROUTES.dao.path}
+        element={<DAOSubRoutes />}
+      />
+    </Routes>
   );
 }
 

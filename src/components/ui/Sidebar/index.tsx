@@ -13,7 +13,7 @@ import { Fragment, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../constants/url';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
 
 function SidebarTooltipWrapper({ label, children }: { label: string; children: JSX.Element }) {

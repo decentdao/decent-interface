@@ -3,13 +3,13 @@ import { ArrowDown, Button } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import useProposals from '../../providers/fractal/hooks/useProposals';
-import { ProposalState } from '../../providers/fractal/types';
+import useProposals from '../../providers/Fractal/hooks/useProposals';
+import { ProposalState } from '../../providers/Fractal/types';
 import { SortBy } from '../../types';
-import { OptionMenu } from '../menus/OptionMenu';
 import { Sort } from '../ui/Sort';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
+import { OptionMenu } from '../ui/menus/OptionMenu';
 import ProposalCard from './ProposalCard';
 
 export default function ProposalsList() {

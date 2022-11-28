@@ -4,7 +4,7 @@ import Header from './components/ui/Header';
 import Sidebar from './components/ui/Sidebar';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
-import { useFractal } from './providers/fractal/hooks/useFractal';
+import { useFractal } from './providers/Fractal/hooks/useFractal';
 import FractalRoutes from './routes/FractalRoutes';
 
 function App() {

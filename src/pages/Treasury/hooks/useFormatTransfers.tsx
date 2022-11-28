@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { formatDatesDiffReadable } from '../../../helpers/dateTime';
-import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/fractal/types';
+import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/Fractal/types';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export enum TokenEventType {
