@@ -7,7 +7,7 @@ import nftDefault from '../../../assets/images/nft-image-default.svg';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../../components/ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../../components/ui/EtherscanLinkToken';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { formatPercentage, formatUSD } from '../../../utils/numberFormats';
 import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 

@@ -1,8 +1,8 @@
 import { Flex } from '@chakra-ui/react';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import { AccountDisplay } from '../../menus/AccountDisplay';
-import { DAOSearch } from '../../menus/DAOSearch';
-import { FavoritesMenu } from '../../menus/FavoritesMenu';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { AccountDisplay } from '../menus/AccountDisplay';
+import { DAOSearch } from '../menus/DAOSearch';
+import { FavoritesMenu } from '../menus/FavoritesMenu';
 
 function Header() {
   const {

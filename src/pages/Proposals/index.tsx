@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ProposalsList from '../../components/Proposals/ProposalsList';
 import PageHeader from '../../components/ui/Header/PageHeader';
-import { ModalType } from '../../modals/ModalProvider';
-import { useFractalModal } from '../../modals/useFractalModal';
-import { useFractal } from '../../providers/fractal/hooks/useFractal';
+import { ModalType } from '../../components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../components/ui/modals/useFractalModal';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 
 export function Governance() {
   const { t } = useTranslation(['common', 'proposal']);
