@@ -6,14 +6,10 @@ import {
   OZLinearVoting__factory,
   Usul,
 } from '../../../assets/typechain-types/usul';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
-import useSafeContracts from '../../../hooks/useSafeContracts';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { formatCoin } from '../../../utils/numberFormats';
-import {
-  DelegateChangedListener,
-  DelegateVotesChangedListener,
-  TransferListener,
-} from '../../govenor/types';
+import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
+import { DelegateChangedListener, DelegateVotesChangedListener, TransferListener } from '../types';
 import { GnosisModuleType, IGnosisModuleData } from '../types/governance';
 
 interface ITokenData {

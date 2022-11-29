@@ -1,4 +1,4 @@
-import { Box, Center, Flex, HStack, Image, Text } from '@chakra-ui/react';
+import { Box, Center, Flex, HStack, Image, Text, Link } from '@chakra-ui/react';
 import { Button, Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/fractal-text-logo.svg';
 import { CONTENT_HEIGHT } from '../../constants/common';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants/url';
-import { useWeb3Provider } from '../../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
 
 interface IconWithTextProps {
@@ -18,11 +18,10 @@ interface IconWithTextProps {
 
 function IconWithText({ icon, label, url, testid }: IconWithTextProps) {
   return (
-    <a
+    <Link
       data-testid={testid}
       href={url}
-      rel="noreferrer noopener"
-      target="_blank"
+      isExternal
     >
       <HStack>
         {icon}
@@ -33,7 +32,7 @@ function IconWithText({ icon, label, url, testid }: IconWithTextProps) {
           {label}
         </Text>
       </HStack>
-    </a>
+    </Link>
   );
 }
 

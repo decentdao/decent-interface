@@ -7,10 +7,10 @@ import {
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
 import useDAOName from '../../../hooks/DAO/useDAOName';
-import useDisplayName from '../../../hooks/useDisplayName';
-import { useCopyText } from '../../../hooks/utlities/useCopyText';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
-import { ManageDAOMenu } from '../../menus/ManageDAO/ManageDAOMenu';
+import { useCopyText } from '../../../hooks/utils/useCopyText';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
   safeAddress: string;

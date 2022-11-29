@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
 import { GnosisDAO } from '../../components/DaoCreator/provider/types';
-import useCreateSubDAOProposal from '../../hooks/useCreateSubDAOProposal';
+// eslint-disable-next-line import/namespace, import/default, import/no-named-as-default
+import useCreateSubDAOProposal from '../../hooks/DAO/useCreateSubDAOProposal';
 import { DAO_ROUTES } from '../../routes/constants';
 
 function SubDaoCreate() {

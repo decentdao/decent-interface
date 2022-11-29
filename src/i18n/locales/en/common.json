@@ -23,7 +23,7 @@
     "dao": "DAO",
     "move": "Move",
     "recommend" : "Recommend",
-    "blocks": "Blocks",
+    "seconds": "Seconds",
     "tokens": "Tokens",
     "quorum": "Quorum",
     "deploy": "Deploy",
@@ -56,5 +56,8 @@
     "labelDateYear_other": "{{count}} years",
     "toastClipboardCopy": "Copied to clipboard",
     "newest": "Newest",
-    "oldest": "Oldest"
+    "oldest": "Oldest",
+    "filter": "Filter",
+    "selectAll": "Select All",
+    "clear": "Clear"
 }

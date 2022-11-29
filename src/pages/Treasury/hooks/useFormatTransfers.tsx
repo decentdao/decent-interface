@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { formatDatesDiffReadable } from '../../../helpers/dateTime';
-import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/fractal/types';
+import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/Fractal/types';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export enum TokenEventType {
@@ -49,7 +49,7 @@ export function useFormatTransfers(
 
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
-      transferType: transfer.type,
+      transferType: transfer.type as TransferType,
       dateTimeDisplay: formatDatesDiffReadable(new Date(transfer.executionDate), new Date(), t),
       image: imageSrc,
       assetDisplay:

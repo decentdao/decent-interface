@@ -1,30 +1,38 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { Button } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ProposalsList from '../../components/Proposals/ProposalsList';
-import { ModalType } from '../../modals/ModalProvider';
-import { useFractalModal } from '../../modals/useFractalModal';
+import PageHeader from '../../components/ui/Header/PageHeader';
+import { ModalType } from '../../components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../components/ui/modals/useFractalModal';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 
 export function Governance() {
   const { t } = useTranslation(['common', 'proposal']);
+  const {
+    gnosis: { daoName },
+  } = useFractal();
+
   return (
-    <Box mt="3rem">
-      <Flex justifyContent="space-between">
-        <Text textStyle="text-2xl-mono-bold">{t('pageTitle', { ns: 'proposal' })}</Text>
-        <Flex gap="4">
+    <Box>
+      <PageHeader
+        title={t('pageTitle', { daoName, ns: 'proposal' })}
+        titleTestId={'title-proposals'}
+        buttonVariant="text"
+        buttonText={t('delegate')}
+        buttonClick={useFractalModal(ModalType.DELEGATE)}
+        buttonTestId="link-delegate"
+      >
+        <Link to="new">
           <Button
             size="base"
-            variant="text"
-            onClick={useFractalModal(ModalType.DELEGATE)}
+            marginLeft={4}
           >
-            {t('delegate')}
+            {t('createProposal', { ns: 'proposal' })}
           </Button>
-          <Link to="new">
-            <Button size="base">{t('createProposal', { ns: 'proposal' })}</Button>
-          </Link>
-        </Flex>
-      </Flex>
+        </Link>
+      </PageHeader>
       <ProposalsList />
     </Box>
   );

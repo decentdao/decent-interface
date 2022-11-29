@@ -1,7 +1,7 @@
 import { Dispatch, useEffect } from 'react';
-import { useWeb3Provider } from '../../../contexts/web3Data/hooks/useWeb3Provider';
+import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
+import { GovernanceAction } from '../constants/actions';
 import { IGnosis, GovernanceActions } from '../types';
-import { GovernanceAction } from './../constants/actions';
 import useGovernanceTokenData from './useGovernanceTokenData';
 import { useSubDAODeploy } from './useSubDAODeploy';
 

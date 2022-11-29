@@ -1,8 +1,6 @@
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
 import ProgressBarDelimiter from './svg/ProgressBarDelimiter';
 
-// @todo - Adjust @decent-org/fractal-ui theme for Progress bar to move colors there
-// And add border for filled track - this seem to be doable only on theme level
 export default function ProgressBar({
   value,
   requiredValue,
@@ -17,11 +15,7 @@ export default function ProgressBar({
     >
       <Progress
         value={value}
-        colorScheme="drab"
-        bg="drab.700"
         size="lg"
-        height={6}
-        borderRadius="12px"
       />
       {value > 0 && (
         <Text

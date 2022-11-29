@@ -6,8 +6,8 @@ import nftDefault from '../../../assets/images/nft-image-default.svg';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
 import EtherscanTransactionLink from '../../../components/ui/EtherscanTransactionLink';
 import { ShortenedAddressLink } from '../../../components/ui/ShortenedAddressLink';
-import { useFractal } from '../../../providers/fractal/hooks/useFractal';
-import { TransferType } from '../../../providers/fractal/types/treasury';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { AssetTransfer, TransferType } from '../../../providers/Fractal/types/treasury';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -140,7 +140,7 @@ export function Transactions() {
   } = useFractal();
 
   const displayData: TransferDisplayData[] = useFormatTransfers(
-    transfers ? transfers.results : [],
+    transfers ? (transfers.results as AssetTransfer[]) : [],
     safe.address!
   );
 
