@@ -602,7 +602,7 @@ const useBuildDAOTx = () => {
               ethers.utils.defaultAbiCoder.encode(
                 ['uint256', 'address', 'address', 'address'],
                 [
-                  gnosisDaoData.governance, // Execution Delay
+                  tokenGovernanceDaoData.executionDelay, // Execution Delay
                   parentDAOAddress, // Owner -- Parent DAO
                   vetoERC20VotingContract.address, // Veto Voting
                   safeContract.address, // Gnosis Safe
