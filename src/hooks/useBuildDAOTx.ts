@@ -198,7 +198,6 @@ const useBuildDAOTx = () => {
             ethers.constants.HashZero,
             solidityKeccak256(['bytes'], [vetoMultisigByteCodeLinear])
           );
-
           const vetoMultiContract = VetoMultisigVoting__factory.connect(
             predictedVetoMultisigAddress,
             signerOrProvider
@@ -213,7 +212,7 @@ const useBuildDAOTx = () => {
                 [
                   0, // Execution Delay
                   parentDAOAddress, // Owner -- Parent DAO
-                  predictedVetoMultisigAddress, // Veto Voting
+                  vetoMultiContract.address, // Veto Voting
                   safeContract.address, // Gnosis Safe
                 ]
               ),
@@ -257,7 +256,7 @@ const useBuildDAOTx = () => {
               0,
               false
             ),
-            // Deploy Veto Multisig
+            // Deploy Veto Multisig Voting
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
