@@ -688,7 +688,7 @@ const useBuildDAOTx = () => {
               false
             ),
             // Enable Veto Guard
-            buildContractCall(safeContract, 'setGuard', [vetoGuardContract.address], 0, false),
+            buildContractCall(usulContract, 'setGuard', [vetoGuardContract.address], 0, false),
 
             // Add Usul Contract as the Safe owner
             buildContractCall(
