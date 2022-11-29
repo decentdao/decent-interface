@@ -14,10 +14,7 @@ export function Governance() {
   } = useFractal();
 
   return (
-    <Box
-      p="1.5rem"
-      mt="1.5rem"
-    >
+    <Box>
       <PageHeader
         title={t('pageTitle', { daoName, ns: 'proposal' })}
         titleTestId={'title-proposals'}

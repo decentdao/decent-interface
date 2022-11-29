@@ -14,7 +14,7 @@ export function Info() {
       <Flex
         flexWrap="wrap"
         gap="1rem"
-        justifyContent="center"
+        justifyContent="space-between"
         mb="1rem"
       >
         <InfoBox minWidth={{ sm: '100%', xl: '34.5%', '2xl': '41rem' }}>
