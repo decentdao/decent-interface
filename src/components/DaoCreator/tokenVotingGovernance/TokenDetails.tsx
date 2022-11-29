@@ -75,7 +75,9 @@ function TokenDetails() {
             data-testid="tokenVoting-tokenSupplyInput"
             value={govToken.tokenSupply.value}
             onChange={tokenSupply => onSupplyChange(tokenSupply)}
-            onKeyDown={e => limitDecimalsOnKeyDown(e, govToken.tokenSupply.value, 4)}
+            onKeyDown={e =>
+              limitDecimalsOnKeyDown(e, govToken.tokenSupply.value, DEFAULT_TOKEN_DECIMALS)
+            }
           >
             <NumberInputField />
           </NumberInput>

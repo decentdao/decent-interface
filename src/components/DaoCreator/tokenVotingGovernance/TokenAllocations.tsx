@@ -118,7 +118,9 @@ function TokenAllocations({
               data-testid="tokenVoting-parentTokenAllocationInput"
               value={parentAllocationAmount.value}
               onChange={onParentAllocationChange}
-              onKeyDown={e => limitDecimalsOnKeyDown(e, parentAllocationAmount.value, 4)}
+              onKeyDown={e =>
+                limitDecimalsOnKeyDown(e, parentAllocationAmount.value, DEFAULT_TOKEN_DECIMALS)
+              }
             >
               <NumberInputField />
             </NumberInput>
