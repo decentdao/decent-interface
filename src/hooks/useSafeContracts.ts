@@ -3,6 +3,8 @@ import {
   FractalModule__factory,
   FractalNameRegistry,
   FractalNameRegistry__factory,
+  VetoERC20Voting,
+  VetoERC20Voting__factory,
   VetoGuard,
   VetoGuard__factory,
   VetoMultisigVoting,
@@ -45,6 +47,8 @@ export default function useSafeContracts() {
   const [vetoGuardMasterCopyContract, setVetoGuardMasterCopyContract] = useState<VetoGuard>();
   const [vetoMultisigVotingMasterCopyContract, setvetoMultisigVotingMasterCopyContract] =
     useState<VetoMultisigVoting>();
+  const [vetoERC20VotingMasterCopyContract, setvetoERC20VotingMasterCopyContract] =
+    useState<VetoERC20Voting>();
   const {
     state: { signerOrProvider, chainId },
   } = useWeb3Provider();
@@ -59,6 +63,8 @@ export default function useSafeContracts() {
     fractalModuleMasterCopy,
     fractalNameRegistry,
     vetoGuardMasterCopy,
+    vetoMultisigVotingMasterCopy,
+    vetoERC20VotingMasterCopy,
     votesMasterCopy,
   } = useAddresses(chainId);
 
@@ -73,6 +79,8 @@ export default function useSafeContracts() {
       !fractalModuleMasterCopy ||
       !fractalNameRegistry ||
       !vetoGuardMasterCopy ||
+      !vetoMultisigVotingMasterCopy ||
+      !vetoERC20VotingMasterCopy ||
       !votesMasterCopy ||
       !signerOrProvider
     ) {
@@ -84,8 +92,8 @@ export default function useSafeContracts() {
       setFractalModuleMasterCopyContract(undefined);
       setFractalNameRegistryContract(undefined);
       setVetoGuardMasterCopyContract(undefined);
-      setVetoGuardMasterCopyContract(undefined);
-
+      setvetoMultisigVotingMasterCopyContract(undefined);
+      setvetoERC20VotingMasterCopyContract(undefined);
       return;
     }
 
@@ -117,7 +125,10 @@ export default function useSafeContracts() {
       VetoGuard__factory.connect(vetoGuardMasterCopy.address, signerOrProvider)
     );
     setvetoMultisigVotingMasterCopyContract(
-      VetoMultisigVoting__factory.connect(votesMasterCopy.address, signerOrProvider)
+      VetoMultisigVoting__factory.connect(vetoMultisigVotingMasterCopy.address, signerOrProvider)
+    );
+    setvetoERC20VotingMasterCopyContract(
+      VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy.address, signerOrProvider)
     );
   }, [
     gnosisSafeFactory,
@@ -130,6 +141,8 @@ export default function useSafeContracts() {
     fractalModuleMasterCopy,
     fractalNameRegistry,
     vetoGuardMasterCopy,
+    vetoMultisigVotingMasterCopy,
+    vetoERC20VotingMasterCopy,
     votesMasterCopy,
   ]);
 
@@ -144,5 +157,6 @@ export default function useSafeContracts() {
     fractalNameRegistryContract,
     vetoGuardMasterCopyContract,
     vetoMultisigVotingMasterCopyContract,
+    vetoERC20VotingMasterCopyContract,
   };
 }
