@@ -190,13 +190,20 @@ const useBuildDAOTx = () => {
           vetoMultisigVotingMasterCopyContract
         ) {
           // VETO MULTISIG
+          const setVetoMultiVotingCalldata =
+            // eslint-disable-next-line camelcase
+            VetoMultisigVoting__factory.createInterface().encodeFunctionData('owner');
           const vetoMultisigByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
             vetoMultisigVotingMasterCopyContract.address.slice(2) +
             '5af43d82803e903d91602b57fd5bf3';
+          const vetoMulitVotingSalt = solidityKeccak256(
+            ['bytes32', 'uint256'],
+            [solidityKeccak256(['bytes'], [setVetoMultiVotingCalldata]), saltNum]
+          );
           const predictedVetoMultisigAddress = getCreate2Address(
             zodiacModuleProxyFactoryContract.address,
-            ethers.constants.HashZero,
+            vetoMulitVotingSalt,
             solidityKeccak256(['bytes'], [vetoMultisigByteCodeLinear])
           );
           const vetoMultiContract = VetoMultisigVoting__factory.connect(
@@ -253,7 +260,7 @@ const useBuildDAOTx = () => {
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
-              [vetoMultisigVotingMasterCopyContract.address, ethers.constants.HashZero, saltNum],
+              [vetoMultisigVotingMasterCopyContract.address, setVetoMultiVotingCalldata, saltNum],
               0,
               false
             ),
@@ -334,6 +341,7 @@ const useBuildDAOTx = () => {
             ),
           ];
         }
+        console.log(predictedFractalModuleAddress);
 
         const safeInternalTx = encodeMultiSend(internaltTxs);
         const execInternalSafeTx = buildContractCall(
