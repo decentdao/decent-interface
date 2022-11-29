@@ -129,7 +129,8 @@ const useBuildDAOTx = () => {
           !multiSendContract ||
           !fractalNameRegistryContract ||
           !signerOrProvider ||
-          !zodiacModuleProxyFactoryContract
+          !zodiacModuleProxyFactoryContract ||
+          !fractalModuleMasterCopyContract
         ) {
           return;
         }
@@ -153,41 +154,41 @@ const useBuildDAOTx = () => {
           signerOrProvider
         );
 
+        // Fractal Module
+        const setModuleCalldata =
+          // eslint-disable-next-line camelcase
+          FractalModule__factory.createInterface().encodeFunctionData('setUp', [
+            ethers.utils.defaultAbiCoder.encode(
+              ['address', 'address', 'address', 'address[]'],
+              [
+                parentDAOAddress ? parentDAOAddress : safeContract.address, // Owner -- Parent DAO
+                safeContract.address, // Avatar
+                safeContract.address, // Target
+                [], // Authorized Controllers
+              ]
+            ),
+          ]);
+
+        const fractalByteCodeLinear =
+          '0x602d8060093d393df3363d3d373d3d3d363d73' +
+          fractalModuleMasterCopyContract.address.slice(2) +
+          '5af43d82803e903d91602b57fd5bf3';
+        const fractalSalt = solidityKeccak256(
+          ['bytes32', 'uint256'],
+          [solidityKeccak256(['bytes'], [setModuleCalldata]), saltNum]
+        );
+        const predictedFractalModuleAddress = getCreate2Address(
+          zodiacModuleProxyFactoryContract.address,
+          fractalSalt,
+          solidityKeccak256(['bytes'], [fractalByteCodeLinear])
+        );
+
         let internaltTxs: MetaTransaction[];
         if (
           parentDAOAddress &&
-          fractalModuleMasterCopyContract &&
           vetoGuardMasterCopyContract &&
           vetoMultisigVotingMasterCopyContract
         ) {
-          // Fractal Module
-          const setModuleCalldata =
-            // eslint-disable-next-line camelcase
-            FractalModule__factory.createInterface().encodeFunctionData('setUp', [
-              ethers.utils.defaultAbiCoder.encode(
-                ['address', 'address', 'address', 'address[]'],
-                [
-                  parentDAOAddress, // Owner -- Parent DAO
-                  safeContract.address, // Avatar
-                  safeContract.address, // Target
-                  [], // Authorized Controllers
-                ]
-              ),
-            ]);
-
-          const fractalByteCodeLinear =
-            '0x602d8060093d393df3363d3d373d3d3d363d73' +
-            fractalModuleMasterCopyContract.address.slice(2) +
-            '5af43d82803e903d91602b57fd5bf3';
-          const fractalSalt = solidityKeccak256(
-            ['bytes32', 'uint256'],
-            [solidityKeccak256(['bytes'], [setModuleCalldata]), saltNum]
-          );
-          const predictedFractalModuleAddress = getCreate2Address(
-            zodiacModuleProxyFactoryContract.address,
-            fractalSalt,
-            solidityKeccak256(['bytes'], [fractalByteCodeLinear])
-          );
           // VETO MULTISIG
           const vetoMultisigByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
@@ -237,14 +238,6 @@ const useBuildDAOTx = () => {
               fractalNameRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
-              0,
-              false
-            ),
-            // Deploy Fractal Module
-            buildContractCall(
-              zodiacModuleProxyFactoryContract,
-              'deployModule',
-              [fractalModuleMasterCopyContract.address, setModuleCalldata, saltNum],
               0,
               false
             ),
@@ -318,6 +311,15 @@ const useBuildDAOTx = () => {
               0,
               false
             ),
+            // Enable Fractal Module
+            buildContractCall(
+              safeContract,
+              'enableModule',
+              [predictedFractalModuleAddress],
+              0,
+              false
+            ),
+
             // Remove Multisend Contract
             buildContractCall(
               safeContract,
@@ -353,7 +355,16 @@ const useBuildDAOTx = () => {
           false
         );
 
-        const txs: MetaTransaction[] = [createSafeTx, execInternalSafeTx];
+        // Deploy Fractal Module
+        const fractalModuleTx = buildContractCall(
+          zodiacModuleProxyFactoryContract,
+          'deployModule',
+          [fractalModuleMasterCopyContract.address, setModuleCalldata, saltNum],
+          0,
+          false
+        );
+
+        const txs: MetaTransaction[] = [createSafeTx, fractalModuleTx, execInternalSafeTx];
         const safeTx = encodeMultiSend(txs);
 
         return { predictedGnosisSafeAddress, createSafeTx, safeTx };
@@ -591,7 +602,7 @@ const useBuildDAOTx = () => {
               ethers.utils.defaultAbiCoder.encode(
                 ['uint256', 'address', 'address', 'address'],
                 [
-                  0, // Execution Delay
+                  gnosisDaoData.governance, // Execution Delay
                   parentDAOAddress, // Owner -- Parent DAO
                   vetoERC20VotingContract.address, // Veto Voting
                   safeContract.address, // Gnosis Safe
