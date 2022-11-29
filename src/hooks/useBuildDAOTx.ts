@@ -559,23 +559,10 @@ const useBuildDAOTx = () => {
             solidityKeccak256(['bytes'], [fractalByteCodeLinear])
           );
 
-          // VETO ERC20
-          const setVetoERC20Calldata =
+          // VETO ERC20 Voting
+          const setVetoERC20VotingCalldata =
             // eslint-disable-next-line camelcase
-            VetoERC20Voting__factory.createInterface().encodeFunctionData('setUp', [
-              ethers.utils.defaultAbiCoder.encode(
-                ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
-                [
-                  parentDAOAddress, // Owner -- Parent DAO
-                  0, // VetoVotesThreshold
-                  0, // FreezeVotesThreshold
-                  0, // FreezeProposalBlockDuration
-                  0, // FreezeBlockDuration
-                  predictedTokenAddress, // Votes Token
-                  ethers.constants.AddressZero, // VetoGuard
-                ]
-              ),
-            ]);
+            VetoERC20Voting__factory.createInterface().encodeFunctionData('owner');
 
           const vetoERC20ByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
@@ -583,24 +570,34 @@ const useBuildDAOTx = () => {
             '5af43d82803e903d91602b57fd5bf3';
           const vetoERC20Salt = solidityKeccak256(
             ['bytes32', 'uint256'],
-            [solidityKeccak256(['bytes'], [setVetoERC20Calldata]), saltNum]
+            [solidityKeccak256(['bytes'], [setVetoERC20VotingCalldata]), saltNum]
           );
 
-          const predictedVetoERC20Address = getCreate2Address(
+          const predictedVetoERC20VotingAddress = getCreate2Address(
             zodiacModuleProxyFactoryContract.address,
             vetoERC20Salt,
             solidityKeccak256(['bytes'], [vetoERC20ByteCodeLinear])
           );
 
-          const vetoERC20Contract = VetoERC20Voting__factory.connect(
-            predictedVetoERC20Address,
+          const vetoERC20VotingContract = VetoERC20Voting__factory.connect(
+            predictedVetoERC20VotingAddress,
             signerOrProvider
           );
 
           // VETO GUARD
-          const dummyVetoGuardCalldata =
+          const setVetoGuardCalldata =
             // eslint-disable-next-line camelcase
-            VetoGuard__factory.createInterface().encodeFunctionData('owner');
+            VetoGuard__factory.createInterface().encodeFunctionData('setUp', [
+              ethers.utils.defaultAbiCoder.encode(
+                ['uint256', 'address', 'address', 'address'],
+                [
+                  0, // Execution Delay
+                  parentDAOAddress, // Owner -- Parent DAO
+                  vetoERC20VotingContract.address, // Veto Voting
+                  safeContract.address, // Gnosis Safe
+                ]
+              ),
+            ]);
 
           const vetoByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
@@ -608,7 +605,7 @@ const useBuildDAOTx = () => {
             '5af43d82803e903d91602b57fd5bf3';
           const vetoSalt = solidityKeccak256(
             ['bytes32', 'uint256'],
-            [solidityKeccak256(['bytes'], [dummyVetoGuardCalldata]), saltNum]
+            [solidityKeccak256(['bytes'], [setVetoGuardCalldata]), saltNum]
           );
           const predictedVetoModuleAddress = getCreate2Address(
             zodiacModuleProxyFactoryContract.address,
@@ -649,11 +646,32 @@ const useBuildDAOTx = () => {
               false
             ),
 
-            // Deploy Veto ERC20
+            // Deploy Veto ERC20 Voting
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
-              [vetoERC20VotingMasterCopyContract.address, setVetoERC20Calldata, saltNum],
+              [vetoERC20VotingMasterCopyContract.address, setVetoERC20VotingCalldata, saltNum],
+              0,
+              false
+            ),
+            // Setup Veto ERC20 Voting
+            buildContractCall(
+              vetoERC20VotingContract,
+              'setUp',
+              [
+                ethers.utils.defaultAbiCoder.encode(
+                  ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
+                  [
+                    parentDAOAddress, // Owner -- Parent DAO
+                    0, // VetoVotesThreshold
+                    0, // FreezeVotesThreshold
+                    0, // FreezeProposalBlockDuration
+                    0, // FreezeBlockDuration
+                    predictedTokenAddress, // Votes Token
+                    vetoGuardContract.address, // VetoGuard
+                  ]
+                ),
+              ],
               0,
               false
             ),
@@ -662,30 +680,12 @@ const useBuildDAOTx = () => {
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
-              [vetoGuardMasterCopyContract.address, dummyVetoGuardCalldata, saltNum],
-              0,
-              false
-            ),
-            // Setup Veto Guard
-            buildContractCall(
-              vetoGuardContract,
-              'setUp',
-              [
-                ethers.utils.defaultAbiCoder.encode(
-                  ['uint256', 'address', 'address', 'address'],
-                  [
-                    0, // Execution Delay
-                    parentDAOAddress, // Owner -- Parent DAO
-                    vetoERC20Contract.address, // Veto Voting
-                    safeContract.address, // Gnosis Safe
-                  ]
-                ),
-              ],
+              [vetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
               0,
               false
             ),
             // Enable Veto Guard
-            buildContractCall(safeContract, 'setGuard', [predictedVetoModuleAddress], 0, false),
+            buildContractCall(safeContract, 'setGuard', [vetoGuardContract.address], 0, false),
 
             // Add Usul Contract as the Safe owner
             buildContractCall(
@@ -780,7 +780,6 @@ const useBuildDAOTx = () => {
           createTokenTx,
           deployStrategyTx,
           deployUsulTx,
-          // deploysafeguard,
           execInternalSafeTx,
         ];
         const safeTx = encodeMultiSend(txs);
