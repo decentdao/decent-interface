@@ -11,17 +11,12 @@ function ContentBox({ title, children, bg = 'black.900' }: ContentBoxProps) {
   return (
     <Box
       rounded="lg"
-      p="1rem 1.5rem"
-      my="4"
+      p="1rem"
+      my="2"
       bg={bg}
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}
-      <Box
-        px="2"
-        py="4"
-      >
-        {children}
-      </Box>
+      <Box pb="4">{children}</Box>
     </Box>
   );
 }

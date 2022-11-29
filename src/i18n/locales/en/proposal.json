@@ -3,7 +3,7 @@
     "labelProposalDesc": "Proposal Description",
     "helperProposalDesc": "What's the goal of this proposal? Explain the desired outcome and why it matters",
     "labelTargetAddress": "Target Address",
-    "helperTargetAddress": "The smart contract address this proposal will modify",
+    "helperTargetAddress": "The smart contract address this proposal will modify. Ethereum or ENS only.",
     "labelFunctionName": "Function Name",
     "helperFunctionName": "The name of the function to be called if this proposal passes",
     "labelFunctionSignature": "Function Signature",
@@ -65,5 +65,6 @@
     "filterProposalsNSelected": "Filter {{count}}",
     "filter": "Filter",
     "parent": "Parent",
-    "child": "Child"
+    "child": "Child",
+    "example": "Example"
 }

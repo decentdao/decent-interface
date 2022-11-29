@@ -1,4 +1,15 @@
-import { Input, Button } from '@chakra-ui/react';
+import {
+  Flex,
+  Input,
+  Button,
+  HStack,
+  VStack,
+  Text,
+  Textarea,
+  Box,
+  Grid,
+  GridItem,
+} from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants, ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
@@ -8,7 +19,7 @@ import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider'
 import { TransactionData } from '../../types/transaction';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
-import InputBox from '../ui/forms/InputBox';
+import { InputComponent } from './InputComponent';
 
 interface TransactionProps {
   transaction: TransactionData;
@@ -62,6 +73,7 @@ function Transaction({
       !isValidAddress && targetAddress.trim()
         ? t('errorInvalidAddress', { ns: 'common' })
         : undefined;
+    console.log(transaction);
     updateTransaction(newTransactionData, transactionNumber);
   };
 
@@ -100,90 +112,71 @@ function Transaction({
     newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
+
   return (
     <ContentBox>
-      <div className="flex justify-between">
-        <ContentBoxTitle>Transaction</ContentBoxTitle>
-        {transactionCount > 1 && (
-          <div className="flex justify-end">
-            <Button
-              variant="text"
-              minWidth="0px"
-              onClick={() => removeTransaction(transactionNumber)}
-              disabled={
-                pending &&
-                transaction.targetAddress.trim().length > 0 &&
-                validateFunctionData(
-                  transaction.functionName,
-                  transaction.functionSignature,
-                  transaction.parameters
-                )
-              }
-            >
-              {t('labelRemoveTransaction')}
-            </Button>
-          </div>
-        )}
-      </div>
-      <InputBox>
-        <LabelWrapper
+      <ContentBoxTitle>Transaction {transactionCount}</ContentBoxTitle>
+      {transactionCount > 1 && (
+        <Button
+          variant="text"
+          minWidth="0px"
+          onClick={() => removeTransaction(transactionNumber)}
+          disabled={
+            pending &&
+            transaction.targetAddress.trim().length > 0 &&
+            validateFunctionData(
+              transaction.functionName,
+              transaction.functionSignature,
+              transaction.parameters
+            )
+          }
+        >
+          {t('labelRemoveTransaction')}
+        </Button>
+      )}
+      <VStack
+        align="left"
+        spacing={4}
+        mt={6}
+      >
+        <InputComponent
           label={t('labelTargetAddress')}
-          subLabel={t('helperTargetAddress')}
+          helper={t('helperTargetAddress')}
+          isRequired={true}
+          value={transaction.targetAddress}
+          onChange={e => updateTargetAddress(e.target.value)}
+          disabled={pending}
+          exampleText="yourdomain.ens"
           errorMessage={transaction.addressError}
-        >
-          <Input
-            value={transaction.targetAddress}
-            placeholder={constants.AddressZero}
-            onChange={e => updateTargetAddress(e.target.value)}
-            disabled={pending}
-          />
-        </LabelWrapper>
-      </InputBox>
-      <InputBox>
-        <LabelWrapper
+        />
+        <InputComponent
           label={t('labelFunctionName')}
-          subLabel={t('helperFunctionName')}
-          errorMessage={transaction.fragmentError}
-        >
-          <Input
-            type="text"
-            value={transaction.functionName}
-            onChange={e => updateFunctionName(e.target.value)}
-            placeholder={'transfer'}
-            disabled={pending}
-          />
-        </LabelWrapper>
-      </InputBox>
-      <InputBox>
-        <LabelWrapper
+          helper={t('helperFunctionName')}
+          isRequired={true}
+          value={transaction.functionName}
+          onChange={e => updateFunctionName(e.target.value)}
+          disabled={pending}
+          exampleText="transfer"
+        />
+        <InputComponent
           label={t('labelFunctionSignature')}
-          subLabel={t('helperFunctionSignature')}
-          errorMessage={transaction.fragmentError}
-        >
-          <Input
-            size="xl"
-            value={transaction.functionSignature}
-            onChange={e => updateFunctionSignature(e.target.value)}
-            disabled={pending}
-            placeholder={'address to, uint amount'}
-          />
-        </LabelWrapper>
-      </InputBox>
-      <InputBox>
-        <LabelWrapper
+          helper={t('helperFunctionSignature')}
+          isRequired={true}
+          value={transaction.functionSignature}
+          onChange={e => updateFunctionSignature(e.target.value)}
+          disabled={pending}
+          exampleText="address to, uint amount"
+        />
+        <InputComponent
           label={t('labelParameters')}
-          subLabel={t('helperParameters')}
-          errorMessage={transaction.fragmentError}
-        >
-          <Input
-            size="xl"
-            value={transaction.parameters}
-            onChange={e => updateParameters(e.target.value)}
-            disabled={pending}
-            placeholder={'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'}
-          />
-        </LabelWrapper>
-      </InputBox>
+          helper={t('helperParameters')}
+          isRequired={true}
+          value={transaction.parameters}
+          onChange={e => updateParameters(e.target.value)}
+          disabled={pending}
+          exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'
+        />
+      </VStack>
     </ContentBox>
   );
 }

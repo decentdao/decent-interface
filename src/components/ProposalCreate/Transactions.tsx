@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react';
 import { TransactionData } from '../../types/transaction';
 import Transaction from './Transaction';
 
@@ -21,7 +22,7 @@ function Transactions({
   };
 
   return (
-    <div>
+    <Box>
       {transactions.map((transaction, index) => (
         <Transaction
           key={index}
@@ -33,7 +34,7 @@ function Transactions({
           pending={pending}
         />
       ))}
-    </div>
+    </Box>
   );
 }
 

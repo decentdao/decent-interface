@@ -74,12 +74,16 @@ export function GnosisConfig() {
     setThresholdError(error);
   }, [signatureThreshold, numberOfSigners, t]);
 
+  const CUSTOM_FLOATING_POINT_REGEX = /^[0-9]$/;
+  // const options = {
+  //   isValidCharacter: (v: string) => CUSTOM_FLOATING_POINT_REGEX.test(v),
+
   return (
     <ContentBox>
       <ContentBoxTitle>{t('titleCreateGnosis')}</ContentBoxTitle>
       <InputBox>
         <LabelWrapper
-          label={t('labelSigThreshold')}
+          label={t('ssslabelSigThreshold')}
           subLabel={t('helperSigThreshold')}
           errorMessage={thresholdError}
         >
@@ -87,6 +91,7 @@ export function GnosisConfig() {
             value={signatureThreshold}
             onChange={updateThreshold}
             data-testid="gnosisConfig-thresholdInput"
+            isValidCharacter={(v: string) => /^[0-9]$/.test(v)}
           >
             <NumberInputField />
           </NumberInput>
