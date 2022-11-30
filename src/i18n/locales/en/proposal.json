@@ -56,8 +56,6 @@
     "proposedBy": "Proposed by",
     "proposalTitle_one": "Proposal to execute {{count}} transaction on {{target}}",
     "proposalTitle_other": "Proposal to execute {{count}} transactions on {{target}}",
-    "timeLeft": "{{time}} left",
-    "timeAgo": "{{time}} ago",
     "votesTitle": "Votes",
     "queueTitle": "Queue Transaction",
     "executeTitle": "Execute Transaction",
