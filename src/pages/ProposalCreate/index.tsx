@@ -10,16 +10,13 @@ import {
   AlertDescription,
   AlertIcon,
 } from '@chakra-ui/react';
-
 import { CloseX, Info } from '@decent-org/fractal-ui';
-import { Button, Text } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Transactions from '../../components/ProposalCreate/Transactions';
 import ContentBox from '../../components/ui/ContentBox';
-import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
