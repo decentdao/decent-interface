@@ -1,33 +1,19 @@
-import {
-  Flex,
-  Input,
-  Button,
-  HStack,
-  VStack,
-  Text,
-  Textarea,
-  Box,
-  Grid,
-  GridItem,
-} from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
-import { constants, ethers } from 'ethers';
+import { VStack } from '@chakra-ui/react';
+import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { checkAddress } from '../../hooks/utils/useAddress';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { TransactionData } from '../../types/transaction';
-import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
-import { InputComponent } from './InputComponent';
+import { InputComponent, TextareaComponent } from './InputComponent';
 
 interface TransactionProps {
   transaction: TransactionData;
   transactionNumber: number;
   pending: boolean;
   updateTransaction: (transactionData: TransactionData, transactionNumber: number) => void;
-  removeTransaction: (transactionNumber: number) => void;
-  transactionCount: number;
+  // removeTransaction: (transactionNumber: number) => void;
+  // transactionCount: number;
 }
 
 function Transaction({
@@ -35,8 +21,6 @@ function Transaction({
   transactionNumber,
   pending,
   updateTransaction,
-  removeTransaction,
-  transactionCount,
 }: TransactionProps) {
   const {
     state: { provider },
@@ -113,11 +97,6 @@ function Transaction({
   };
 
   return (
-    // <ContentBox>
-    //   <ContentBoxTitle>Transaction {transactionCount}</ContentBoxTitle>
-    //   {transactionCount > 1 && (
-
-    //   )}
     <VStack
       align="left"
       spacing={4}
@@ -133,7 +112,7 @@ function Transaction({
         exampleText="yourdomain.ens"
         errorMessage={transaction.addressError}
       />
-      <InputComponent
+      <TextareaComponent
         label={t('labelFunctionName')}
         helper={t('helperFunctionName')}
         isRequired={true}
@@ -143,7 +122,7 @@ function Transaction({
         exampleText="transfer"
         errorMessage={transaction.fragmentError}
       />
-      <InputComponent
+      <TextareaComponent
         label={t('labelFunctionSignature')}
         helper={t('helperFunctionSignature')}
         isRequired={true}
@@ -153,7 +132,7 @@ function Transaction({
         exampleText="address to, uint amount"
         errorMessage={transaction.fragmentError}
       />
-      <InputComponent
+      <TextareaComponent
         label={t('labelParameters')}
         helper={t('helperParameters')}
         isRequired={true}
@@ -164,7 +143,6 @@ function Transaction({
         errorMessage={transaction.fragmentError}
       />
     </VStack>
-    // </ContentBox>
   );
 }
 

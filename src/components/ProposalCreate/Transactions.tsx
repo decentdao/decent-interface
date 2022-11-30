@@ -2,19 +2,15 @@ import {
   Box,
   Accordion,
   AccordionButton,
-  AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Button,
   HStack,
+  Icon,
+  IconButton,
 } from '@chakra-ui/react';
 import { ArrowDown, ArrowRight } from '@decent-org/fractal-ui';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { encodeMultiSend } from '../../helpers';
 import { TransactionData } from '../../types/transaction';
-import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
 import Transaction from './Transaction';
 
 interface TransactionsProps {
@@ -22,7 +18,6 @@ interface TransactionsProps {
   pending: boolean;
   setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
   removeTransaction: (transactionNumber: number) => void;
-  //  expandedTransactions: number[];
 }
 
 function Transactions({
@@ -30,8 +25,7 @@ function Transactions({
   pending,
   setTransactions,
   removeTransaction,
-}: //  expandedTransactions,
-TransactionsProps) {
+}: TransactionsProps) {
   const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
     const transactionsArr = [...transactions];
     transactionsArr[transactionNumber] = { ...transactionData };
@@ -44,6 +38,22 @@ TransactionsProps) {
     const newTransactionData = Object.assign({}, transactions[transactionNumber]);
     newTransactionData.isExpanded = !transactions[transactionNumber].isExpanded;
     updateTransaction(newTransactionData, transactionNumber);
+  }
+
+  //TODO: placeholder for delete icon, remove when added to decent-ui
+  function DeleteIcon() {
+    return (
+      <Icon
+        viewBox="0 0 16 18"
+        _hover={{ fill: 'gold.500-hover' }}
+        fill="grayscale.100"
+      >
+        <path
+          xmlns="http://www.w3.org/2000/svg"
+          d="M5 0V1H0V3H1V16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H13C13.5304 18 14.0391 17.7893 14.4142 17.4142C14.7893 17.0391 15 16.5304 15 16V3H16V1H11V0H5ZM3 3H13V16H3V3ZM5 5V14H7V5H5ZM9 5V14H11V5H9Z"
+        />
+      </Icon>
+    );
   }
 
   return (
@@ -59,40 +69,43 @@ TransactionsProps) {
           borderBottom="none"
         >
           {({ isExpanded }) => (
-            <ContentBox>
+            <Box
+              rounded="lg"
+              p="1rem"
+              my="2"
+              bg="black.900"
+            >
               <HStack justify="space-between">
-                <AccordionButton onClick={() => toggleExpanded(index)}>
+                <AccordionButton
+                  onClick={() => toggleExpanded(index)}
+                  p={0}
+                  textStyle="text-button-md-semibold"
+                  color="grayscale.100"
+                >
                   {isExpanded ? <ArrowDown boxSize="1.5rem" /> : <ArrowRight fontSize="1.5rem" />}
-                  <Box
-                    flex="1"
-                    textAlign="left"
-                  >
-                    Transaction {index + 1}
-                  </Box>
+                  {t('transaction')} {index + 1}
                 </AccordionButton>
-                {index !== 0 && (
-                  <Button
-                    variant="text"
-                    minWidth="0px"
+                {index !== 0 ? (
+                  <IconButton
+                    icon={<DeleteIcon />}
+                    aria-label={t('removetransactionlabel')}
+                    variant="unstyled"
                     onClick={() => removeTransaction(index)}
-                    disabled={pending && transaction.targetAddress.trim().length > 0}
-                    pr={0}
-                  >
-                    {t('labelRemoveTransaction')}
-                  </Button>
+                    minWidth="auto"
+                  />
+                ) : (
+                  <Box h="36px" />
                 )}
               </HStack>
-              <AccordionPanel>
+              <AccordionPanel p={0}>
                 <Transaction
                   transaction={transaction}
                   transactionNumber={index}
                   updateTransaction={updateTransaction}
-                  removeTransaction={removeTransaction}
-                  transactionCount={transactions.length}
                   pending={pending}
                 />
               </AccordionPanel>
-            </ContentBox>
+            </Box>
           )}
         </AccordionItem>
       ))}
@@ -101,25 +114,3 @@ TransactionsProps) {
 }
 
 export default Transactions;
-
-{
-  /* <ContentBox>
-<ContentBoxTitle>Transaction {transactionCount}</ContentBoxTitle>
-{transactionCount > 1 && (
-  <Button
-    variant="text"
-    minWidth="0px"
-    onClick={() => removeTransaction(transactionNumber)}
-    disabled={
-      pending &&
-      transaction.targetAddress.trim().length > 0 &&
-      validateFunctionData(
-        transaction.functionName,
-        transaction.functionSignature,
-        transaction.parameters
-      )
-    }
-  >
-    {t('labelRemoveTransaction')}
-  </Button> */
-}

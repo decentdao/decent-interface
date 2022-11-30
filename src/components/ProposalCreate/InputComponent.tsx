@@ -1,48 +1,38 @@
-import {
-  Flex,
-  Input,
-  Button,
-  HStack,
-  VStack,
-  Text,
-  Textarea,
-  Box,
-  Grid,
-  GridItem,
-} from '@chakra-ui/react';
+import { Input, HStack, Text, Textarea, Grid, GridItem } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { constants, ethers } from 'ethers';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { logError } from '../../helpers/errorLogging';
-import { checkAddress } from '../../hooks/utils/useAddress';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
-import { TransactionData } from '../../types/transaction';
-import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
 
-interface InputProps {
+interface BaseProps {
   label: string;
   helper: string;
   isRequired: boolean;
   value: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
   disabled: boolean;
   exampleText: string;
   errorMessage?: string;
+  children: React.ReactNode;
 }
 
-const lableStyleTODO = {
-  bg: 'chocolate.700',
-  borderRadius: '4px',
-  p: '3px 4px',
-  color: 'grayscale.100',
-  fontSize: '12px',
-};
+interface InputProps extends Omit<BaseProps, 'children'> {
+  onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
+}
 
-export function InputComponent(props: InputProps) {
+interface TextareaProps extends Omit<BaseProps, 'children'> {
+  onChange: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
+}
+
+// TODO. this is the style to be applied to the example text once a JSX component can be passed to LabelWrapper
+// const exampleLabelStyle = {
+//   bg: 'chocolate.700',
+//   borderRadius: '4px',
+//   p: '3px 4px',
+//   color: 'grayscale.100',
+//   fontSize: '12px',
+// };
+
+function BaseComponent(props: BaseProps) {
   const { t } = useTranslation(['proposal', 'common']);
-  const { label, helper, isRequired, value, onChange, disabled, exampleText, errorMessage } = props;
+  const { label, helper, isRequired, exampleText, errorMessage, children } = props;
   return (
     <Grid
       columnGap={3}
@@ -62,13 +52,36 @@ export function InputComponent(props: InputProps) {
           subLabel={`${t('example')}: ${exampleText}`}
           errorMessage={errorMessage}
         >
-          <Input
-            value={value}
-            onChange={onChange}
-            disabled={disabled}
-          />
+          {children}
         </LabelWrapper>
       </GridItem>
     </Grid>
+  );
+}
+
+export function InputComponent(props: InputProps) {
+  const { value, disabled, onChange } = props;
+  return (
+    <BaseComponent {...props}>
+      <Input
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+      />
+    </BaseComponent>
+  );
+}
+
+export function TextareaComponent(props: TextareaProps) {
+  const { value, disabled, onChange } = props;
+  return (
+    <BaseComponent {...props}>
+      <Textarea
+        resize="none"
+        onChange={onChange}
+        value={value}
+        disabled={disabled}
+      ></Textarea>
+    </BaseComponent>
   );
 }

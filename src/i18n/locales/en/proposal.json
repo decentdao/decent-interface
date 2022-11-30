@@ -67,5 +67,8 @@
     "parent": "Parent",
     "child": "Child",
     "example": "Example",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "transaction": "Transaction",
+    "proposal": "Proposal",
+    "transactionExecutionAlertMessage": "Transactions execute in the order they are added."
 }

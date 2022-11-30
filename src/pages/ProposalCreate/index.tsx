@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Transactions from '../../components/ProposalCreate/Transactions';
 import ContentBox from '../../components/ui/ContentBox';
+import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
 import Alert from '../../components/ui/svg/Alert';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -159,29 +160,27 @@ function ProposalCreate() {
           align="left"
           spacing={6}
         >
-          <ContentBox
-            bg="black.900-semi-transparent"
-            title="Proposal #13 TODO"
-          >
+          <ContentBox bg="black.900-semi-transparent">
+            <Text textStyle="text-lg-mono-medium">{t('proposal')}</Text>
+            <form onSubmit={e => e.preventDefault()}>
+              <Transactions
+                transactions={transactions}
+                setTransactions={setTransactions}
+                removeTransaction={removeTransaction}
+                pending={pendingCreateTx}
+              />
+            </form>
             <VStack
               align="left"
-              spacing={4}
+              spacing={6}
+              pt={2}
             >
-              <form onSubmit={e => e.preventDefault()}>
-                <Transactions
-                  transactions={transactions}
-                  setTransactions={setTransactions}
-                  removeTransaction={removeTransaction}
-                  pending={pendingCreateTx}
-                  //                expandedTransactions={expandedTransactions}
-                />
-              </form>
-
               <Button
                 variant="text"
                 onClick={addTransaction}
                 disabled={pendingCreateTx}
                 w="fit-content"
+                pl={0}
               >
                 {t('labelAddTransaction')}
               </Button>
@@ -201,7 +200,7 @@ function ProposalCreate() {
                 </AlertIcon>
                 <AlertDescription>
                   <Text textStyle="text-lg-mono-medium">
-                    Transactions execute in the order they are added.
+                    {t('transactionExecutionAlertMessage')}
                   </Text>
                 </AlertDescription>
               </ChakraAlert>
