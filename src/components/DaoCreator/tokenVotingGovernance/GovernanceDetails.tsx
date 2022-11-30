@@ -1,8 +1,15 @@
-import { Box, Text } from '@chakra-ui/react';
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import {
+  Box,
+  Text,
+  NumberInput,
+  NumberInputField,
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
-import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import ContentBanner from '../../ui/ContentBanner';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
@@ -18,6 +25,8 @@ function GovernanceDetails() {
 
   const isSafeWithUsul = governance === GovernanceTypes.GNOSIS_SAFE_USUL;
 
+  const { restrictChars } = useFormHelpers();
+
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
       type: CreatorProviderActions.UPDATE_GOV_CONFIG,
@@ -27,16 +36,16 @@ function GovernanceDetails() {
     });
   };
 
-  const onVotingPeriodChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newVotingPeriod = BigNumber.from(event.target.value || 0);
+  const onVotingPeriodChange = (votingPeriod: string) => {
+    const newVotingPeriod = BigNumber.from(votingPeriod || 0);
 
     if (newVotingPeriod.gt(0)) {
       fieldUpdate(newVotingPeriod, 'votingPeriod');
     }
   };
 
-  const onQuorumChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newQuorumNum = BigNumber.from(event.target.value || 0);
+  const onQuorumChange = (quorum: string) => {
+    const newQuorumNum = BigNumber.from(quorum || 0);
     if (newQuorumNum.lte(100)) {
       fieldUpdate(newQuorumNum, 'quorum');
     } else {
@@ -56,16 +65,19 @@ function GovernanceDetails() {
             label={t('labelVotingPeriod', { ns: 'daoCreate' })}
             subLabel={t('helperVotingPeriod', { ns: 'daoCreate' })}
           >
-            <Input
-              size="base"
-              type="number"
+            <NumberInput
               value={govModule.votingPeriod.toString()}
               onChange={onVotingPeriodChange}
-              rightElement={seconds}
-              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-              min={isSafeWithUsul ? '2' : '1'}
+              min={isSafeWithUsul ? 2 : 1}
+              precision={0}
               data-testid="govConfig-votingPeriod"
-            />
+              onKeyDown={restrictChars}
+            >
+              <InputGroup>
+                <NumberInputField />
+                <InputRightElement mr="4">{seconds}</InputRightElement>
+              </InputGroup>
+            </NumberInput>
           </LabelWrapper>
           <Text
             textStyle="text-sm-sans-regular"
@@ -80,16 +92,18 @@ function GovernanceDetails() {
             label={t('quorum')}
             subLabel={t('helperQuorum', { ns: 'daoCreate' })}
           >
-            <Input
-              size="base"
-              type="number"
+            <NumberInput
               value={govModule.quorum.toString()}
               onChange={onQuorumChange}
-              rightElement="%"
-              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-              min="0"
+              precision={0}
               data-testid="govConfig-quorum"
-            />
+              onKeyDown={restrictChars}
+            >
+              <InputGroup>
+                <NumberInputField />
+                <InputRightElement>%</InputRightElement>
+              </InputGroup>
+            </NumberInput>
           </LabelWrapper>
         </InputBox>
         <InputBox>
@@ -97,16 +111,21 @@ function GovernanceDetails() {
             label={t('labelProposalExecutionDelay', { ns: 'daoCreate' })}
             subLabel={t('helperProposalExecutionDelay', { ns: 'daoCreate' })}
           >
-            <Input
-              size="base"
-              type="number"
+            <NumberInput
               value={govModule.executionDelay.toString()}
-              onChange={e => fieldUpdate(BigNumber.from(e.target.value || 0), 'executionDelay')}
-              rightElement={seconds}
-              restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-              min="0"
+              onChange={executionDelay =>
+                fieldUpdate(BigNumber.from(executionDelay || 0), 'executionDelay')
+              }
+              min={isSafeWithUsul ? 2 : 1}
+              precision={0}
               data-testid="govConfig-executionDelay"
-            />
+              onKeyDown={restrictChars}
+            >
+              <InputGroup>
+                <NumberInputField />
+                <InputRightElement mr="4">{seconds}</InputRightElement>
+              </InputGroup>
+            </NumberInput>
           </LabelWrapper>
           <Text
             textStyle="text-sm-sans-regular"

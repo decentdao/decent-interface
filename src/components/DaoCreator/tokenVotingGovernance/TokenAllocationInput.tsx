@@ -1,7 +1,9 @@
-import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { Button, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { checkAddress } from '../../../hooks/utils/useAddress';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
@@ -26,6 +28,8 @@ function TokenAllocationInput({
   } = useWeb3Provider();
 
   const { t } = useTranslation(['common', 'daoCreate']);
+
+  const { limitDecimalsOnKeyDown } = useFormHelpers();
 
   const updateAddress = async (address: string) => {
     let isValidAddress = false;
@@ -70,11 +74,8 @@ function TokenAllocationInput({
         }
       >
         <Input
-          size="base"
-          type="text"
           value={tokenAllocation.address}
           onChange={event => updateAddress(event.target.value)}
-          width="full"
           data-testid="tokenVoting-tokenAllocationAddressInput"
         />
       </LabelWrapper>
@@ -87,16 +88,17 @@ function TokenAllocationInput({
             : undefined
         }
       >
-        <Input
-          size="base"
-          type="number"
-          isInvalid={hasAmountError || !!tokenAllocation.addressError}
+        <NumberInput
           value={tokenAllocation.amount.value}
-          onChange={event => updateAmount(event.target.value)}
-          restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
-          decimals={DEFAULT_TOKEN_DECIMALS}
+          onChange={tokenAmount => updateAmount(tokenAmount)}
+          isInvalid={hasAmountError || !!tokenAllocation.addressError}
           data-testid="tokenVoting-tokenAllocationAmountInput"
-        />
+          onKeyDown={e =>
+            limitDecimalsOnKeyDown(e, tokenAllocation.amount.value, DEFAULT_TOKEN_DECIMALS)
+          }
+        >
+          <NumberInputField />
+        </NumberInput>
       </LabelWrapper>
       <Button
         variant="text"

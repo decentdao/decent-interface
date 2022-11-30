@@ -1,4 +1,4 @@
-import { TextButton } from './forms/Button';
+import { Button } from '@chakra-ui/react';
 
 export function ToastContent({
   title,
@@ -12,10 +12,12 @@ export function ToastContent({
   return (
     <div className="flex flex-col items-center">
       <div>{title}</div>
-      <TextButton
-        label={label}
+      <Button
+        variant="text"
         onClick={action}
-      />
+      >
+        {label}
+      </Button>
     </div>
   );
 }

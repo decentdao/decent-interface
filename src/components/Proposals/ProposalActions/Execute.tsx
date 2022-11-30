@@ -1,5 +1,4 @@
-import { Text } from '@chakra-ui/react';
-import { Button } from '@decent-org/fractal-ui';
+import { Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Proposal, ProposalState } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';

@@ -1,5 +1,5 @@
+import { Button } from '@chakra-ui/react';
 import useGnosisSafeLink from '../../hooks/safe/useSafeLink';
-import { PrimaryButton } from './forms/Button';
 
 function GnosisSafeLink({ address, label }: { address: string | undefined; label: string }) {
   const gnosisLink = useGnosisSafeLink(address);
@@ -12,7 +12,7 @@ function GnosisSafeLink({ address, label }: { address: string | undefined; label
       target="_blank"
       rel="noreferrer"
     >
-      <PrimaryButton label={label} />
+      <Button>{label}</Button>
     </a>
   );
 }
