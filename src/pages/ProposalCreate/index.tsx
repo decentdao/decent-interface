@@ -9,6 +9,7 @@ import {
   Alert as ChakraAlert,
   AlertDescription,
   AlertIcon,
+  Box,
 } from '@chakra-ui/react';
 import { CloseX, Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
@@ -37,7 +38,9 @@ function ProposalCreate() {
   } = useFractal();
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
-  const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
+  const [transactions, setTransactions] = useState<TransactionData[]>([
+    Object.assign({}, defaultTransaction),
+  ]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -46,7 +49,9 @@ function ProposalCreate() {
    * adds new transaction form
    */
   const addTransaction = () => {
-    setTransactions([...transactions, defaultTransaction]);
+    const newTransactionData = Object.assign({}, defaultTransaction);
+    transactions[transactions.length - 1].isExpanded = false; // this makes sure the previous transaction is colapsed when adding a new transaction
+    setTransactions([...transactions, newTransactionData]);
   };
 
   const removeTransaction = (transactionNumber: number) => {
@@ -141,7 +146,9 @@ function ProposalCreate() {
             width="fit-content"
             variant="text"
             leftIcon={<CloseX />}
-            onClick={() => navigate(-1)}
+            onClick={() =>
+              safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
+            }
           >
             {t('cancel', { ns: 'common' })}
           </Button>
@@ -153,8 +160,17 @@ function ProposalCreate() {
           align="left"
           spacing={6}
         >
-          <ContentBox bg="black.900-semi-transparent">
-            <Text textStyle="text-lg-mono-medium">{t('proposal')}</Text>
+          <Box
+            rounded="lg"
+            p="1rem"
+            bg="black.900-semi-transparent"
+          >
+            <Text
+              pb={4}
+              textStyle="text-lg-mono-medium"
+            >
+              {t('proposal')}
+            </Text>
             <form onSubmit={e => e.preventDefault()}>
               <Transactions
                 transactions={transactions}
@@ -211,7 +227,7 @@ function ProposalCreate() {
                 {t('createProposal')}
               </Button>
             </VStack>
-          </ContentBox>
+          </Box>
         </VStack>
       </GridItem>
       <GridItem area="details">
