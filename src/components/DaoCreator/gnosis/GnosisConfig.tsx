@@ -30,6 +30,7 @@ export function GnosisConfig() {
 
   const handleSignersChanges = (numberStr: string) => {
     let numOfSigners = Number(numberStr);
+    if (numOfSigners > 999) return;
     if (trustedAddresses.length !== numOfSigners) {
       const gnosisAddresses = [...trustedAddresses];
       const trustedAddressLength = trustedAddresses.length;
