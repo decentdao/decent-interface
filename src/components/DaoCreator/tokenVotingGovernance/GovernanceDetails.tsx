@@ -9,6 +9,7 @@ import {
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import ContentBanner from '../../ui/ContentBanner';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
@@ -23,6 +24,8 @@ function GovernanceDetails() {
   } = useCreator();
 
   const isSafeWithUsul = governance === GovernanceTypes.GNOSIS_SAFE_USUL;
+
+  const { restrictChars } = useFormHelpers();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -68,6 +71,7 @@ function GovernanceDetails() {
               min={isSafeWithUsul ? 2 : 1}
               precision={0}
               data-testid="govConfig-votingPeriod"
+              onKeyDown={restrictChars}
             >
               <InputGroup>
                 <NumberInputField />
@@ -93,6 +97,7 @@ function GovernanceDetails() {
               onChange={onQuorumChange}
               precision={0}
               data-testid="govConfig-quorum"
+              onKeyDown={restrictChars}
             >
               <InputGroup>
                 <NumberInputField />
@@ -114,6 +119,7 @@ function GovernanceDetails() {
               min={isSafeWithUsul ? 2 : 1}
               precision={0}
               data-testid="govConfig-executionDelay"
+              onKeyDown={restrictChars}
             >
               <InputGroup>
                 <NumberInputField />

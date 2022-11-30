@@ -2,6 +2,7 @@ import { Text, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
@@ -18,6 +19,8 @@ export function GnosisConfig() {
   } = useCreator();
   const [thresholdError, setThresholdError] = useState('');
   const [numberOfSigners, setNumberOfSigners] = useState<number>(trustedAddresses.length);
+
+  const { restrictChars } = useFormHelpers();
 
   const fieldUpdate = (value: TrustedAddress[] | string, field: string) => {
     dispatch({
@@ -88,6 +91,7 @@ export function GnosisConfig() {
             value={signatureThreshold}
             onChange={updateThreshold}
             data-testid="gnosisConfig-thresholdInput"
+            onKeyDown={restrictChars}
           >
             <NumberInputField />
           </NumberInput>
@@ -102,6 +106,7 @@ export function GnosisConfig() {
             value={numberOfSigners}
             onChange={handleSignersChanges}
             data-testid="gnosisConfig-numberOfSignerInput"
+            onKeyDown={restrictChars}
           >
             <NumberInputField />
           </NumberInput>
