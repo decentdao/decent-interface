@@ -59,9 +59,8 @@ export function InputComponent(props: InputProps) {
       </GridItem>
       <GridItem>
         <LabelWrapper
-          label="bbb"
-          subLabel="bullshit"
-          error={errorMessage}
+          subLabel={`${t('example')}: ${exampleText}`}
+          errorMessage={errorMessage}
         >
           <Input
             value={value}

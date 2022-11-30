@@ -73,7 +73,6 @@ function Transaction({
       !isValidAddress && targetAddress.trim()
         ? t('errorInvalidAddress', { ns: 'common' })
         : undefined;
-    console.log(transaction);
     updateTransaction(newTransactionData, transactionNumber);
   };
 
@@ -114,70 +113,58 @@ function Transaction({
   };
 
   return (
-    <ContentBox>
-      <ContentBoxTitle>Transaction {transactionCount}</ContentBoxTitle>
-      {transactionCount > 1 && (
-        <Button
-          variant="text"
-          minWidth="0px"
-          onClick={() => removeTransaction(transactionNumber)}
-          disabled={
-            pending &&
-            transaction.targetAddress.trim().length > 0 &&
-            validateFunctionData(
-              transaction.functionName,
-              transaction.functionSignature,
-              transaction.parameters
-            )
-          }
-        >
-          {t('labelRemoveTransaction')}
-        </Button>
-      )}
-      <VStack
-        align="left"
-        spacing={4}
-        mt={6}
-      >
-        <InputComponent
-          label={t('labelTargetAddress')}
-          helper={t('helperTargetAddress')}
-          isRequired={true}
-          value={transaction.targetAddress}
-          onChange={e => updateTargetAddress(e.target.value)}
-          disabled={pending}
-          exampleText="yourdomain.ens"
-          errorMessage={transaction.addressError}
-        />
-        <InputComponent
-          label={t('labelFunctionName')}
-          helper={t('helperFunctionName')}
-          isRequired={true}
-          value={transaction.functionName}
-          onChange={e => updateFunctionName(e.target.value)}
-          disabled={pending}
-          exampleText="transfer"
-        />
-        <InputComponent
-          label={t('labelFunctionSignature')}
-          helper={t('helperFunctionSignature')}
-          isRequired={true}
-          value={transaction.functionSignature}
-          onChange={e => updateFunctionSignature(e.target.value)}
-          disabled={pending}
-          exampleText="address to, uint amount"
-        />
-        <InputComponent
-          label={t('labelParameters')}
-          helper={t('helperParameters')}
-          isRequired={true}
-          value={transaction.parameters}
-          onChange={e => updateParameters(e.target.value)}
-          disabled={pending}
-          exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'
-        />
-      </VStack>
-    </ContentBox>
+    // <ContentBox>
+    //   <ContentBoxTitle>Transaction {transactionCount}</ContentBoxTitle>
+    //   {transactionCount > 1 && (
+
+    //   )}
+    <VStack
+      align="left"
+      spacing={4}
+      mt={6}
+    >
+      <InputComponent
+        label={t('labelTargetAddress')}
+        helper={t('helperTargetAddress')}
+        isRequired={true}
+        value={transaction.targetAddress}
+        onChange={e => updateTargetAddress(e.target.value)}
+        disabled={pending}
+        exampleText="yourdomain.ens"
+        errorMessage={transaction.addressError}
+      />
+      <InputComponent
+        label={t('labelFunctionName')}
+        helper={t('helperFunctionName')}
+        isRequired={true}
+        value={transaction.functionName}
+        onChange={e => updateFunctionName(e.target.value)}
+        disabled={pending}
+        exampleText="transfer"
+        errorMessage={transaction.fragmentError}
+      />
+      <InputComponent
+        label={t('labelFunctionSignature')}
+        helper={t('helperFunctionSignature')}
+        isRequired={true}
+        value={transaction.functionSignature}
+        onChange={e => updateFunctionSignature(e.target.value)}
+        disabled={pending}
+        exampleText="address to, uint amount"
+        errorMessage={transaction.fragmentError}
+      />
+      <InputComponent
+        label={t('labelParameters')}
+        helper={t('helperParameters')}
+        isRequired={true}
+        value={transaction.parameters}
+        onChange={e => updateParameters(e.target.value)}
+        disabled={pending}
+        exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'
+        errorMessage={transaction.fragmentError}
+      />
+    </VStack>
+    // </ContentBox>
   );
 }
 

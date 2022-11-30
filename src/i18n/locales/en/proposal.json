@@ -66,5 +66,6 @@
     "filter": "Filter",
     "parent": "Parent",
     "child": "Child",
-    "example": "Example"
+    "example": "Example",
+    "cancel": "Cancel"
 }

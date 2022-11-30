@@ -41,13 +41,13 @@ export function useGnosisApiServices(
         ? 'goerli'
         : CHAIN_DATA_LIST[chainId].network;
 
-    gnosisDispatch({
-      type: GnosisAction.SET_SAFE_SERVICE_CLIENT,
-      payload: new SafeServiceClient({
-        txServiceUrl: `https://safe-transaction-${network}.safe.global`,
-        ethAdapter,
-      }),
-    });
+    // gnosisDispatch({
+    //   type: GnosisAction.SET_SAFE_SERVICE_CLIENT,
+    //   payload: new SafeServiceClient({
+    //     txServiceUrl: `https://safe-transaction-${network}.safe.global`,
+    //     ethAdapter,
+    //   }),
+    // });
   }, [account, signerOrProvider, gnosisDispatch, chainId]);
 
   const getGnosisSafeFungibleAssets = useCallback(async () => {
