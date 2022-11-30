@@ -3,7 +3,6 @@ import {
   VetoERC20Voting__factory,
   VetoGuard__factory,
   VetoMultisigVoting__factory,
-  VotesToken__factory,
   GnosisSafe__factory,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
@@ -370,7 +369,7 @@ const useBuildDAOTx = () => {
           [fractalModuleMasterCopyContract.address, setModuleCalldata, saltNum],
           0,
           false
-        );
+        ); // todo: fractal setup should be done here
 
         const txs: MetaTransaction[] = [createSafeTx, fractalModuleTx, execInternalSafeTx];
         const safeTx = encodeMultiSend(txs);
