@@ -60,6 +60,7 @@
     "queueTitle": "Queue Transaction",
     "executeTitle": "Execute Transaction",
     "filterProposalsAllSelected": "All Proposals",
+    "filterProposalsNoneSelected": "No Proposals",
     "filterProposalsNSelected": "Filter {{count}}",
     "filter": "Filter",
     "parent": "Parent",
