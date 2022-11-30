@@ -1,5 +1,4 @@
-import { Text, Flex, Box, Grid, GridItem } from '@chakra-ui/react';
-import { Button } from '@decent-org/fractal-ui';
+import { Text, Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';

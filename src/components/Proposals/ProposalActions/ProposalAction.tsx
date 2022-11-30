@@ -1,4 +1,4 @@
-import { Button } from '@decent-org/fractal-ui';
+import { Button } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

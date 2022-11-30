@@ -1,5 +1,4 @@
-import { Box, Divider, Flex, Spacer, Text } from '@chakra-ui/react';
-import { Button } from '@decent-org/fractal-ui';
+import { Box, Divider, Flex, Spacer, Text, Button } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 interface IPageHeader {

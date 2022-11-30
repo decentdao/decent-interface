@@ -1,4 +1,5 @@
-import { Input, LabelWrapper } from '@decent-org/fractal-ui';
+import { Input } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import ContentBox from '../ui/ContentBox';
@@ -30,9 +31,6 @@ function DAODetails() {
         >
           <Input
             data-testid="essentials-daoName"
-            type="text"
-            size="base"
-            width="full"
             value={state.essentials.daoName}
             onChange={daoNameChange}
           />
