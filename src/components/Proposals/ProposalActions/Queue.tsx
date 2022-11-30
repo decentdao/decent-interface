@@ -1,5 +1,4 @@
-import { Text } from '@chakra-ui/react';
-import { Button } from '@decent-org/fractal-ui';
+import { Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import useQueueProposal from '../../../hooks/DAO/proposal/useQueueProposal';
 import { Proposal, ProposalState } from '../../../providers/Fractal/types';

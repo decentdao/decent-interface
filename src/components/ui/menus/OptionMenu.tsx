@@ -92,6 +92,7 @@ export function OptionMenu({
                   onChange={option.onClick}
                   colorScheme="gold"
                   iconColor="black.900"
+                  marginEnd="0.5rem"
                 />
               )}
               {t(option.optionKey)}

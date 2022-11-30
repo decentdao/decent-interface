@@ -1,9 +1,22 @@
-import { Box, Divider, Flex, Select, Spacer, Switch, Text } from '@chakra-ui/react';
-import { Button, Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import {
+  Box,
+  Divider,
+  Flex,
+  Select,
+  Spacer,
+  Switch,
+  Text,
+  Button,
+  Input,
+  NumberInput,
+  NumberInputField,
+} from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
@@ -28,6 +41,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     asset: selectedAsset,
     destinationAddress: destination,
   });
+
+  const { restrictChars } = useFormHelpers();
 
   const handleCoinChange = (value: string) => {
     const index = Number(value);
@@ -114,14 +129,15 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               onChange={e => setUSDSelected(e.target.checked)}
             />
           </Flex>
-          <Input
-            size="base"
-            width="full"
+          <NumberInput
             placeholder="0"
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
+            precision={0}
             value={amountInput}
-            onChange={e => setAmountInput(e.target.value)}
-          />
+            onChange={setAmountInput}
+            onKeyDown={restrictChars}
+          >
+            <NumberInputField />
+          </NumberInput>
         </Box>
       </Flex>
       <Flex
@@ -155,8 +171,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       >
         <Input
           type="text"
-          size="base"
-          width="full"
           placeholder={constants.AddressZero}
           value={destination}
           onChange={e => setDestination(e.target.value)}

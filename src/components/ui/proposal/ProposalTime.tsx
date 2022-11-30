@@ -13,7 +13,7 @@ type ProposalTimeProps = {
   isRejected?: boolean;
 };
 function ProposalTime({ deadline, icon = 'clock', isRejected }: ProposalTimeProps) {
-  const { t } = useTranslation('proposal');
+  const { t } = useTranslation('common');
   const deadlineDate = new Date(deadline * 1000);
   const now = new Date();
 

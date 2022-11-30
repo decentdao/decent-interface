@@ -1,5 +1,5 @@
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
-import { ArrowDown, Button } from '@decent-org/fractal-ui';
+import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
+import { ArrowDown } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -40,8 +40,10 @@ export default function ProposalsList() {
   const filterTitle =
     filters.length === 1
       ? t(filters[0])
-      : filters.length === allStates.length || filters.length === 0 // No filters selected means no filtering applied
+      : filters.length === allStates.length
       ? t('filterProposalsAllSelected')
+      : filters.length === 0 // No filters selected means no filtering applied
+      ? t('filterProposalsNoneSelected')
       : t('filterProposalsNSelected', { count: filters.length });
 
   return (

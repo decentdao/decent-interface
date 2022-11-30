@@ -1,7 +1,8 @@
-import { Text } from '@chakra-ui/react';
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { Text, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
@@ -19,6 +20,8 @@ export function GnosisConfig() {
   const [thresholdError, setThresholdError] = useState('');
   const [numberOfSigners, setNumberOfSigners] = useState<number>(trustedAddresses.length);
 
+  const { restrictChars } = useFormHelpers();
+
   const fieldUpdate = (value: TrustedAddress[] | string, field: string) => {
     dispatch({
       type: CreatorProviderActions.UPDATE_GNOSIS_CONFIG,
@@ -28,8 +31,9 @@ export function GnosisConfig() {
     });
   };
 
-  const handleSignersChanges = (event: ChangeEvent<HTMLInputElement>) => {
-    let numOfSigners = Number(event.target.value);
+  const handleSignersChanges = (numberStr: string) => {
+    let numOfSigners = Number(numberStr);
+    if (numOfSigners > 999) return;
     if (trustedAddresses.length !== numOfSigners) {
       const gnosisAddresses = [...trustedAddresses];
       const trustedAddressLength = trustedAddresses.length;
@@ -83,15 +87,14 @@ export function GnosisConfig() {
           subLabel={t('helperSigThreshold')}
           errorMessage={thresholdError}
         >
-          <Input
-            data-testid="gnosisConfig-thresholdInput"
-            size="base"
-            type="text"
+          <NumberInput
             value={signatureThreshold}
-            onChange={event => updateThreshold(event.target.value)}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            w="full"
-          />
+            onChange={updateThreshold}
+            data-testid="gnosisConfig-thresholdInput"
+            onKeyDown={restrictChars}
+          >
+            <NumberInputField />
+          </NumberInput>
         </LabelWrapper>
       </InputBox>
       <InputBox>
@@ -99,15 +102,14 @@ export function GnosisConfig() {
           label={t('helperSigners')}
           subLabel={t('helperSigners')}
         >
-          <Input
-            data-testid="gnosisConfig-numberOfSignerInput"
-            size="base"
-            type="number"
+          <NumberInput
             value={numberOfSigners}
             onChange={handleSignersChanges}
-            restrictChar={RestrictCharTypes.WHOLE_NUMBERS_ONLY}
-            w="full"
-          />
+            data-testid="gnosisConfig-numberOfSignerInput"
+            onKeyDown={restrictChars}
+          >
+            <NumberInputField />
+          </NumberInput>
         </LabelWrapper>
       </InputBox>
 
