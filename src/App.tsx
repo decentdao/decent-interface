@@ -61,6 +61,7 @@ function App() {
           maxWidth="container.xl"
           mt={6}
           px="0"
+          paddingBottom="2rem"
           mx={[6, null, null, null, null, 'auto']}
         >
           <FractalRoutes />
