@@ -1,12 +1,26 @@
-import { Text } from '@chakra-ui/react';
+import {
+  Button,
+  Text,
+  Grid,
+  GridItem,
+  VStack,
+  HStack,
+  Divider,
+  Alert as ChakraAlert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+} from '@chakra-ui/react';
+
+import { CloseX, Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import { PrimaryButton, SecondaryButton, TextButton } from '../../components/ui/forms/Button';
-import LeftArrow from '../../components/ui/svg/LeftArrow';
+import ContentBox from '../../components/ui/ContentBox';
+import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
+import Alert from '../../components/ui/svg/Alert';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
@@ -18,6 +32,7 @@ const defaultTransaction = {
   functionName: '',
   functionSignature: '',
   parameters: '',
+  isExpanded: true,
 };
 
 function ProposalCreate() {
@@ -25,9 +40,9 @@ function ProposalCreate() {
     gnosis: { safe },
   } = useFractal();
 
-  const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
+  //  const [expandedTransactions, setExpandedTransactions] = useState<Array<number>>([0]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -36,20 +51,14 @@ function ProposalCreate() {
    * adds new transaction form
    */
   const addTransaction = () => {
+    console.log('addnew', transactions.length);
     setTransactions([...transactions, defaultTransaction]);
+    //    setExpandedTransactions([...expandedTransactions, transactions.length]);
   };
 
   const removeTransaction = (transactionNumber: number) => {
     const filteredTransactions = transactions.filter((_, i) => i !== transactionNumber);
     setTransactions(filteredTransactions);
-  };
-
-  const decrementStep = () => {
-    setStep(currentStep => currentStep - 1);
-  };
-
-  const incrementStep = () => {
-    setStep(currentStep => currentStep + 1);
   };
 
   const successCallback = () => {
@@ -119,81 +128,115 @@ function ProposalCreate() {
     return true;
   }, [proposalData, transactions]);
 
-  const isNextDisabled = useMemo(
-    () => !canUserCreateProposal || !proposalDescription.trim().length,
-    [canUserCreateProposal, proposalDescription]
-  );
-  const isCreateDisabled = useMemo(
-    () => !canUserCreateProposal || !isValidProposal || pendingCreateTx,
-    [pendingCreateTx, isValidProposal, canUserCreateProposal]
-  );
+  const isCreateDisabled = useMemo(() => {
+    return !canUserCreateProposal || !isValidProposal || pendingCreateTx;
+  }, [pendingCreateTx, isValidProposal, canUserCreateProposal]);
 
   const { t } = useTranslation(['proposal', 'common']);
 
   return (
-    <div>
-      <div>
-        <Text>{t('createProposal')}</Text>
-        <form onSubmit={e => e.preventDefault()}>
-          {step === 0 && (
-            <Essentials
-              proposalDescription={proposalDescription}
-              setProposalDescription={setProposalDescription}
-            />
-          )}
-          {step === 1 && (
-            <Transactions
-              transactions={transactions}
-              setTransactions={setTransactions}
-              removeTransaction={removeTransaction}
-              pending={pendingCreateTx}
-            />
-          )}
-        </form>
-        {step === 1 && (
-          <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
-            <TextButton
-              onClick={addTransaction}
-              disabled={pendingCreateTx}
-              label={t('labelAddTransaction')}
-            />
-          </div>
-        )}
-        <div className="flex items-center justify-center mt-4 space-x-4">
-          {step === 1 && (
-            <TextButton
-              type="button"
-              onClick={decrementStep}
-              disabled={pendingCreateTx}
-              icon={<LeftArrow />}
-              label={t('prev', { ns: 'common' })}
-            />
-          )}
-          {step === 1 && (
-            <PrimaryButton
-              type="button"
-              onClick={() =>
-                submitProposal({
-                  proposalData,
-                  successCallback,
-                })
-              }
-              disabled={isCreateDisabled}
-              label={t('createProposal')}
-              isLarge
-            />
-          )}
-          {step === 0 && (
-            <SecondaryButton
-              type="button"
-              onClick={incrementStep}
-              disabled={isNextDisabled}
-              label={t('labelAddTransactions')}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+    <Grid
+      columnGap={4}
+      templateColumns="2fr 1fr"
+      templateAreas={`"header header"
+                      "content details"`}
+    >
+      <GridItem area="header">
+        <VStack align="left">
+          <Button
+            paddingLeft={0}
+            width="fit-content"
+            variant="text"
+            leftIcon={<CloseX />}
+            onClick={() => navigate(-1)}
+          >
+            {t('cancel')}
+          </Button>
+          <Text textStyle="text-2xl-mono-regular">{t('createProposal')}</Text>
+        </VStack>
+      </GridItem>
+      <GridItem area="content">
+        <VStack
+          align="left"
+          spacing={6}
+        >
+          <ContentBox bg="black.900-semi-transparent">
+            <Text textStyle="text-lg-mono-medium">{t('proposal')}</Text>
+            <form onSubmit={e => e.preventDefault()}>
+              <Transactions
+                transactions={transactions}
+                setTransactions={setTransactions}
+                removeTransaction={removeTransaction}
+                pending={pendingCreateTx}
+              />
+            </form>
+            <VStack
+              align="left"
+              spacing={6}
+              pt={2}
+            >
+              <Button
+                variant="text"
+                onClick={addTransaction}
+                disabled={pendingCreateTx}
+                w="fit-content"
+                pl={0}
+              >
+                {t('labelAddTransaction')}
+              </Button>
+              <ChakraAlert
+                border="1px solid"
+                borderColor="#0085FF"
+                status="error"
+                bg="#152023"
+                w="100%"
+                borderRadius={8}
+              >
+                <AlertIcon color="#0085FF">
+                  <Info
+                    boxSize="1.5rem"
+                    color="#0085FF"
+                  />
+                </AlertIcon>
+                <AlertDescription>
+                  <Text textStyle="text-lg-mono-medium">
+                    {t('transactionExecutionAlertMessage')}
+                  </Text>
+                </AlertDescription>
+              </ChakraAlert>
+              <Divider color="chocolate.700" />
+              <Button
+                w="100%"
+                onClick={() =>
+                  submitProposal({
+                    proposalData,
+                    successCallback,
+                  })
+                }
+                disabled={isCreateDisabled}
+              >
+                {t('createProposal')}
+              </Button>
+            </VStack>
+          </ContentBox>
+        </VStack>
+      </GridItem>
+      <GridItem area="details">
+        <ContentBox bg="black.900-semi-transparent">
+          <Text textStyle="text-2xl-mono-bold">{t('proposalDetails')}</Text>
+          <Divider my={3} />
+          <HStack justifyContent="space-between">
+            <Text
+              fontSize="sm"
+              variant="secondary"
+            >
+              TODO: Signers
+            </Text>
+            <Text variant="secondary">3/5</Text>
+          </HStack>
+        </ContentBox>
+      </GridItem>
+    </Grid>
   );
 }
 

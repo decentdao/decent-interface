@@ -1,22 +1,17 @@
+import { VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { checkAddress } from '../../hooks/utils/useAddress';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { TransactionData } from '../../types/transaction';
-import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
-import { TextButton } from '../ui/forms/Button';
-import Input from '../ui/forms/Input';
-import InputBox from '../ui/forms/InputBox';
+import { InputComponent, TextareaComponent } from './InputComponent';
 
 interface TransactionProps {
   transaction: TransactionData;
   transactionNumber: number;
   pending: boolean;
   updateTransaction: (transactionData: TransactionData, transactionNumber: number) => void;
-  removeTransaction: (transactionNumber: number) => void;
-  transactionCount: number;
 }
 
 function Transaction({
@@ -24,8 +19,6 @@ function Transaction({
   transactionNumber,
   pending,
   updateTransaction,
-  removeTransaction,
-  transactionCount,
 }: TransactionProps) {
   const {
     state: { provider },
@@ -100,77 +93,54 @@ function Transaction({
     newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
+
   return (
-    <ContentBox>
-      <div className="flex justify-between">
-        <ContentBoxTitle>Transaction</ContentBoxTitle>
-        {transactionCount > 1 && (
-          <div className="flex justify-end">
-            <TextButton
-              className="mx-0 px-0 w-fit"
-              onClick={() => removeTransaction(transactionNumber)}
-              disabled={
-                pending &&
-                transaction.targetAddress.trim().length > 0 &&
-                validateFunctionData(
-                  transaction.functionName,
-                  transaction.functionSignature,
-                  transaction.parameters
-                )
-              }
-              label={t('labelRemoveTransaction')}
-            />
-          </div>
-        )}
-      </div>
-      <InputBox>
-        <Input
-          type="text"
-          value={transaction.targetAddress}
-          onChange={e => updateTargetAddress(e.target.value)}
-          label={t('labelTargetAddress')}
-          helperText={t('helperTargetAddress')}
-          disabled={pending}
-          errorMessage={transaction.addressError}
-        />
-      </InputBox>
-      <InputBox>
-        <Input
-          type="text"
-          value={transaction.functionName}
-          onChange={e => updateFunctionName(e.target.value)}
-          label={t('labelFunctionName')}
-          exampleText={'transfer'}
-          disabled={pending}
-          helperText={t('helperFunctionName')}
-          errorMessage={transaction.fragmentError}
-        />
-      </InputBox>
-      <InputBox>
-        <Input
-          type="textarea"
-          value={transaction.functionSignature}
-          onChange={e => updateFunctionSignature(e.target.value)}
-          label={t('labelFunctionSignature')}
-          helperText={t('helperFunctionSignature')}
-          disabled={pending}
-          exampleText={'address to, uint amount'}
-          errorMessage={transaction.fragmentError}
-        />
-      </InputBox>
-      <InputBox>
-        <Input
-          type="textarea"
-          value={transaction.parameters}
-          onChange={e => updateParameters(e.target.value)}
-          label={t('labelParameters')}
-          helperText={t('helperParameters')}
-          disabled={pending}
-          exampleText={'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'}
-          errorMessage={transaction.fragmentError}
-        />
-      </InputBox>
-    </ContentBox>
+    <VStack
+      align="left"
+      spacing={4}
+      mt={6}
+    >
+      <InputComponent
+        label={t('labelTargetAddress')}
+        helper={t('helperTargetAddress')}
+        isRequired={true}
+        value={transaction.targetAddress}
+        onChange={e => updateTargetAddress(e.target.value)}
+        disabled={pending}
+        exampleText="yourdomain.ens"
+        errorMessage={transaction.addressError}
+      />
+      <TextareaComponent
+        label={t('labelFunctionName')}
+        helper={t('helperFunctionName')}
+        isRequired={true}
+        value={transaction.functionName}
+        onChange={e => updateFunctionName(e.target.value)}
+        disabled={pending}
+        exampleText="transfer"
+        errorMessage={transaction.fragmentError}
+      />
+      <TextareaComponent
+        label={t('labelFunctionSignature')}
+        helper={t('helperFunctionSignature')}
+        isRequired={true}
+        value={transaction.functionSignature}
+        onChange={e => updateFunctionSignature(e.target.value)}
+        disabled={pending}
+        exampleText="address to, uint amount"
+        errorMessage={transaction.fragmentError}
+      />
+      <TextareaComponent
+        label={t('labelParameters')}
+        helper={t('helperParameters')}
+        isRequired={true}
+        value={transaction.parameters}
+        onChange={e => updateParameters(e.target.value)}
+        disabled={pending}
+        exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'
+        errorMessage={transaction.fragmentError}
+      />
+    </VStack>
   );
 }
 
