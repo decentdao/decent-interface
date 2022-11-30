@@ -9,7 +9,6 @@ import {
   Alert as ChakraAlert,
   AlertDescription,
   AlertIcon,
-  AlertTitle,
 } from '@chakra-ui/react';
 
 import { CloseX, Info } from '@decent-org/fractal-ui';
@@ -19,8 +18,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Transactions from '../../components/ProposalCreate/Transactions';
 import ContentBox from '../../components/ui/ContentBox';
-import ContentBoxTitle from '../../components/ui/ContentBoxTitle';
-import Alert from '../../components/ui/svg/Alert';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
@@ -53,7 +50,6 @@ function ProposalCreate() {
   const addTransaction = () => {
     console.log('addnew', transactions.length);
     setTransactions([...transactions, defaultTransaction]);
-    //    setExpandedTransactions([...expandedTransactions, transactions.length]);
   };
 
   const removeTransaction = (transactionNumber: number) => {
