@@ -38,7 +38,6 @@ function ProposalCreate() {
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
-  //  const [expandedTransactions, setExpandedTransactions] = useState<Array<number>>([0]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -47,7 +46,6 @@ function ProposalCreate() {
    * adds new transaction form
    */
   const addTransaction = () => {
-    console.log('addnew', transactions.length);
     setTransactions([...transactions, defaultTransaction]);
   };
 
@@ -145,7 +143,7 @@ function ProposalCreate() {
             leftIcon={<CloseX />}
             onClick={() => navigate(-1)}
           >
-            {t('cancel')}
+            {t('cancel', { ns: 'common' })}
           </Button>
           <Text textStyle="text-2xl-mono-regular">{t('createProposal')}</Text>
         </VStack>
@@ -218,7 +216,7 @@ function ProposalCreate() {
       </GridItem>
       <GridItem area="details">
         <ContentBox bg="black.900-semi-transparent">
-          <Text textStyle="text-2xl-mono-bold">{t('proposalDetails')}</Text>
+          <Text textStyle="text-2xl-mono-bold">{t('proposalSummaryTitle')}</Text>
           <Divider my={3} />
           <HStack justifyContent="space-between">
             <Text

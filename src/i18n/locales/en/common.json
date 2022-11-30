@@ -1,4 +1,4 @@
-{   
+{
     "auditDisclaimer": "WARNING: this project is not audited, use at your own risk.",
     "no": "No",
     "yes": "Yes",
@@ -22,7 +22,7 @@
     "queue": "Queue",
     "dao": "DAO",
     "move": "Move",
-    "recommend" : "Recommend",
+    "recommend": "Recommend",
     "seconds": "Seconds",
     "tokens": "Tokens",
     "quorum": "Quorum",
@@ -61,5 +61,6 @@
     "selectAll": "Select All",
     "clear": "Clear",
     "timeLeft": "{{time}} left",
-    "timeAgo": "{{time}} ago"
+    "timeAgo": "{{time}} ago",
+    "cancel": "Cancel"
 }
