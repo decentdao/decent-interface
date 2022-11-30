@@ -30,6 +30,7 @@ export function useFormatTransfers(
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
   const { t } = useTranslation('common');
+  const now = new Date();
 
   for (let i = 0; i < transfers.length; i++) {
     let transfer = transfers[i];
@@ -50,7 +51,9 @@ export function useFormatTransfers(
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
-      dateTimeDisplay: formatDatesDiffReadable(new Date(transfer.executionDate), new Date(), t),
+      dateTimeDisplay: t('timeAgo', {
+        time: formatDatesDiffReadable(new Date(transfer.executionDate), now, t),
+      }),
       image: imageSrc,
       assetDisplay:
         transfer.type === TransferType.ERC721_TRANSFER

@@ -30,6 +30,11 @@ export function GnosisConfig() {
 
   const handleSignersChanges = (event: ChangeEvent<HTMLInputElement>) => {
     let numOfSigners = Number(event.target.value);
+
+    // don't let the initial set of signers to be greater than 999,
+    // since rendering that many inputs can freeze the browser
+    if (numOfSigners > 999) return;
+
     if (trustedAddresses.length !== numOfSigners) {
       const gnosisAddresses = [...trustedAddresses];
       const trustedAddressLength = trustedAddresses.length;
