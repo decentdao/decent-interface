@@ -1,5 +1,4 @@
 import { Flex, Text } from '@chakra-ui/react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity } from '../../../types';
 import { ActivityAddress } from './ActivityAddress';
@@ -7,12 +6,8 @@ import { ActivityAddress } from './ActivityAddress';
 function TransferDescription({ asset }: { asset: Activity }) {
   const { t } = useTranslation();
 
-  const transferTypeStr = useMemo(() => {
-    return asset.isDeposit ? t('receive') : t('send');
-  }, [asset, t]);
-  const transferDirStr = useMemo(() => {
-    return asset.isDeposit ? t('from') : t('to');
-  }, [asset, t]);
+  const transferTypeStr = asset.isDeposit ? t('receive') : t('send');
+  const transferDirStr = asset.isDeposit ? t('from') : t('to');
 
   if (!asset.transaction.transfers.length) {
     return null;
