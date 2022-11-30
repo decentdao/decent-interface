@@ -1,5 +1,13 @@
-import { Box, Menu, MenuButton, MenuList } from '@chakra-ui/react';
-import { Input, Search } from '@decent-org/fractal-ui';
+import {
+  Box,
+  Menu,
+  MenuButton,
+  MenuList,
+  Input,
+  InputGroup,
+  InputLeftElement,
+} from '@chakra-ui/react';
+import { Search } from '@decent-org/fractal-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSearchDao from '../../../../hooks/DAO/useSearchDao';
@@ -7,7 +15,7 @@ import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch() {
   const [searchAddressInput, setSearchAddressInput] = useState('');
-  const inputRef = useRef<HTMLInputElement>();
+  const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation(['dashboard']);
 
   const {
@@ -67,19 +75,21 @@ export function DAOSearch() {
           w="full"
           data-testid="header-searchMenuButton"
         >
-          <Input
-            ref={inputRef}
-            leftElement={
+          <InputGroup>
+            <InputLeftElement>
               <Search
                 boxSize="1.5rem"
                 color="grayscale.300"
               />
-            }
-            placeholder={t('searchDAOPlaceholder')}
-            minWidth="full"
-            onChange={e => setSearchAddressInput(e.target.value)}
-            value={searchAddressInput}
-          />
+            </InputLeftElement>
+            <Input
+              ref={inputRef}
+              size="baseAddonLeft"
+              placeholder={t('searchDAOPlaceholder')}
+              onChange={e => setSearchAddressInput(e.target.value)}
+              value={searchAddressInput}
+            />
+          </InputGroup>
         </MenuButton>
         <MenuList
           onFocus={focusInput}

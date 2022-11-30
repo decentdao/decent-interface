@@ -1,11 +1,17 @@
 import { VStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { Input, Button } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
+import { constants, ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { checkAddress } from '../../hooks/utils/useAddress';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { TransactionData } from '../../types/transaction';
 import { InputComponent, TextareaComponent } from './InputComponent';
+import ContentBox from '../ui/ContentBox';
+import ContentBoxTitle from '../ui/ContentBoxTitle';
+import InputBox from '../ui/forms/InputBox';
 
 interface TransactionProps {
   transaction: TransactionData;

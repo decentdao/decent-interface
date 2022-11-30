@@ -1,5 +1,5 @@
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
-import { ArrowDown, Button } from '@decent-org/fractal-ui';
+import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
+import { ArrowDown } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

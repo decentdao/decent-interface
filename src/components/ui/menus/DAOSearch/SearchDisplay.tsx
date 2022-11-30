@@ -1,5 +1,4 @@
-import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
-import { Button } from '@decent-org/fractal-ui';
+import { Box, Flex, MenuItem, Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';

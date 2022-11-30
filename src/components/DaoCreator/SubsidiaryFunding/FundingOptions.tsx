@@ -1,10 +1,9 @@
+import { Button } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import ContentBox from '../../ui/ContentBox';
-import { PrimaryButton } from '../../ui/forms/Button';
 import { NFTToFund, TokenToFund } from './types';
-
 interface IFundingOptions {
   selectedTokenIndex?: number;
   selectedNFTIndex?: number;
@@ -76,11 +75,12 @@ export function FundingOptions({
             />
           ))}
         </select>
-        <PrimaryButton
-          label={t('add')}
+        <Button
           onClick={addToken}
           disabled={isAddDisabled}
-        />
+        >
+          {t('add')}
+        </Button>
       </div>
       <div className="flex">
         <select
@@ -100,11 +100,12 @@ export function FundingOptions({
             />
           ))}
         </select>
-        <PrimaryButton
-          label={t('move')}
+        <Button
           onClick={moveNFT}
           disabled={isMoveDisabled}
-        />
+        >
+          {t('move')}
+        </Button>
       </div>
     </ContentBox>
   );

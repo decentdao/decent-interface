@@ -1,6 +1,6 @@
+import { Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import ContentBox from './ui/ContentBox';
-import { PrimaryButton } from './ui/forms/Button';
 import InputBox from './ui/forms/InputBox';
 import Alert from './ui/svg/Alert';
 
@@ -11,6 +11,7 @@ interface ISentryErrorFallback {
   resetError(): void;
 }
 
+// @todo replace classnames with chakra-ui component properties
 export function ErrorFallback({}: ISentryErrorFallback) {
   const { t } = useTranslation();
   return (
@@ -24,11 +25,13 @@ export function ErrorFallback({}: ISentryErrorFallback) {
                 <div className="text-gray-25 text-mono">Oops!</div>
               </div>
               <div className="text-gray-50 text-mono">{t('errorSentryFallback')}</div>
-              <PrimaryButton
-                label={t('reload')}
-                className="my-2 w-full"
+              <Button
+                my="0.5rem"
+                w="full"
                 onClick={() => window.location.reload()}
-              />
+              >
+                {t('reload')}
+              </Button>
             </div>
           </InputBox>
         </ContentBox>
