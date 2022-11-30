@@ -340,7 +340,6 @@ const useBuildDAOTx = () => {
             ),
           ];
         }
-        console.log(predictedFractalModuleAddress);
 
         const safeInternalTx = encodeMultiSend(internaltTxs);
         const execInternalSafeTx = buildContractCall(
@@ -369,7 +368,7 @@ const useBuildDAOTx = () => {
           [fractalModuleMasterCopyContract.address, setModuleCalldata, saltNum],
           0,
           false
-        ); // todo: fractal setup should be done here
+        );
 
         const txs: MetaTransaction[] = [createSafeTx, fractalModuleTx, execInternalSafeTx];
         const safeTx = encodeMultiSend(txs);
