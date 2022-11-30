@@ -1,4 +1,5 @@
 import { Button } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '../../../components/ui/badges/Badge';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -12,6 +13,9 @@ export function ActivityGovernance({ asset }: { asset: Activity }) {
   const {
     gnosis: { safe },
   } = useFractal();
+
+  const { t } = useTranslation();
+
   return (
     <AcitivityCard
       Badge={
@@ -30,7 +34,7 @@ export function ActivityGovernance({ asset }: { asset: Activity }) {
             navigate(DAO_ROUTES.proposal.relative(safe.address, asset.eventSafeTxHash))
           }
         >
-          View
+          {t('view')}
         </Button>
       }
       eventDate={asset.eventDate}

@@ -39,6 +39,7 @@ function TransferDescription({ asset }: { asset: Activity }) {
 }
 
 export function ActivityDescription({ asset }: { asset: Activity }) {
+  const { t } = useTranslation('dashboard');
   return (
     <Flex
       color="grayscale.100"
@@ -47,9 +48,11 @@ export function ActivityDescription({ asset }: { asset: Activity }) {
       flexWrap="wrap"
     >
       {!!asset.eventTransactionsCount && (
-        <Text>Proposal to execute {asset.eventTransactionsCount} transactions</Text>
+        <Text> {t('proposalDescription', { txCount: asset.eventTransactionsCount })}</Text>
       )}
-      {!!asset.transaction.transfers.length && !!asset.eventTransactionsCount && <Text> to </Text>}
+      {!!asset.transaction.transfers.length && !!asset.eventTransactionsCount && (
+        <Text> {t('to')} </Text>
+      )}
 
       <TransferDescription asset={asset} />
     </Flex>
