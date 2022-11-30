@@ -6,9 +6,9 @@ export const gnosisInitialState: IGnosis = {
   safeService: undefined,
   modules: [],
   transactions: {
-    count: null,
-    next: null,
-    previous: null,
+    count: 0,
+    next: undefined,
+    previous: undefined,
     results: [],
   },
   safe: {},
