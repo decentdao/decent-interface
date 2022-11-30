@@ -1,23 +1,19 @@
-import axios from 'axios';
+import {
+  EthereumTxWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  SafeMultisigTransactionWithTransfersResponse,
+} from '@gnosis.pm/safe-service-client';
 import { format } from 'date-fns';
 import { BigNumber, constants } from 'ethers';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { logError } from '../../../../helpers/errorLogging';
-import { GnosisAction } from '../../../../providers/Fractal/constants';
+import { useEffect, useMemo, useState } from 'react';
+import { BadgeLabels } from '../../../../components/ui/badges/Badge';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { GnosisTransactionsResponse } from '../../../../providers/Fractal/types';
-import { buildGnosisApiUrl } from '../../../../providers/Fractal/utils';
-import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
 import { ActivityEventType, GnosisTransferType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
-    state: { chainId },
-  } = useWeb3Provider();
-  const {
     gnosis: { safe, transactions },
-    dispatches: { gnosisDispatch },
   } = useFractal();
 
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
@@ -26,107 +22,162 @@ export const useActivities = (sortBy: SortBy) => {
     if (!transactions.results.length || !safe) {
       return [];
     }
-    return transactions.results
-      .filter(t => !!t.transfers.length)
-      .map(transaction => {
-        const isDeposit = transaction.transfers.every(
-          t => t.to.toLowerCase() === safe.address!.toLowerCase()
-        );
+    return transactions.results.map((transaction, i, transactionArr) => {
+      const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
 
-        /**
-         * This returns a Mapping of the total amount of each token involved in the transfers
-         * along with the symbol and decimals of those tokens
-         */
-        const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
-          if (cur.type === GnosisTransferType.ETHER && cur.value) {
-            if (prev.has(constants.AddressZero)) {
-              const prevValue = prev.get(constants.AddressZero);
-              prev.set(constants.AddressZero, {
-                bn: prevValue.bn.add(BigNumber.from(cur.value)),
-                symbol: 'ETHER',
-                decimals: 18,
-              });
-            }
+      const isDeposit = transaction.transfers.every(
+        t => t.to.toLowerCase() === safe.address!.toLowerCase()
+      );
+
+      /**
+       * This returns a Mapping of the total amount of each token involved in the transfers
+       * along with the symbol and decimals of those tokens
+       */
+      const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
+        if (cur.type === GnosisTransferType.ETHER && cur.value) {
+          if (prev.has(constants.AddressZero)) {
+            const prevValue = prev.get(constants.AddressZero);
             prev.set(constants.AddressZero, {
-              bn: BigNumber.from(cur.value),
+              bn: prevValue.bn.add(BigNumber.from(cur.value)),
               symbol: 'ETHER',
               decimals: 18,
             });
           }
-          if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
-            prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
-              bn: BigNumber.from(1),
+          prev.set(constants.AddressZero, {
+            bn: BigNumber.from(cur.value),
+            symbol: 'ETHER',
+            decimals: 18,
+          });
+        }
+        if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+          prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
+            bn: BigNumber.from(1),
+            symbol: cur.tokenInfo.symbol,
+            decimals: 0,
+          });
+        }
+        if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+          if (prev.has(cur.tokenInfo.address)) {
+            const prevValue = prev.get(cur.tokenInfo.address);
+            prev.set(cur.tokenInfo.address, {
+              ...prevValue,
+              bn: prevValue.bn.add(BigNumber.from(cur.value)),
+            });
+          } else {
+            prev.set(cur.tokenAddress, {
+              bn: BigNumber.from(cur.value),
               symbol: cur.tokenInfo.symbol,
-              decimals: 0,
+              decimals: cur.tokenInfo.decimals,
             });
           }
-          if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
-            if (prev.has(cur.tokenInfo.address)) {
-              const prevValue = prev.get(cur.tokenInfo.address);
-              prev.set(cur.tokenInfo.address, {
-                ...prevValue,
-                bn: prevValue.bn.add(BigNumber.from(cur.value)),
-              });
-            } else {
-              prev.set(cur.tokenAddress, {
-                bn: BigNumber.from(cur.value),
-                symbol: cur.tokenInfo.symbol,
-                decimals: cur.tokenInfo.decimals,
-              });
-            }
+        }
+
+        return prev;
+      }, new Map());
+
+      const eventTransactionMap = new Map<number, any>();
+
+      const parseTransactions = (parameters: any[]) => {
+        if (!parameters || !parameters.length) {
+          return;
+        }
+        parameters.forEach((param: any) => {
+          const dataDecoded = param.dataDecoded || param.valueDecoded;
+
+          if (param.to) {
+            eventTransactionMap.set(eventTransactionMap.size, {
+              address: param.to,
+            });
           }
-
-          return prev;
-        }, new Map());
-
-        const transferAmountTotalsArr = Array.from(transferAmountTotalsMap.values()).map(token => {
-          const totalAmount = formatWeiToValue(token.bn, token.decimals);
-          const symbol = token.symbol;
-          return `${totalAmount} ${symbol}`;
+          return parseTransactions(dataDecoded);
         });
-        const transferAddresses = transaction.transfers.map(transfer =>
-          transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
-        );
+      };
 
-        return {
-          transaction,
-          eventDate: format(new Date(transaction.executionDate), 'MMM dd yyyy'),
-          eventType: ActivityEventType.Treasury,
-          transferAddresses,
-          transferAmountTotals: transferAmountTotalsArr,
-          isDeposit,
-        };
+      const dataDecoded = (
+        transaction as
+          | SafeModuleTransactionWithTransfersResponse
+          | SafeMultisigTransactionWithTransfersResponse
+      ).dataDecoded as any;
+      if (dataDecoded && isMultiSigTransaction) {
+        parseTransactions(dataDecoded.parameters);
+      }
+
+      const transferAmountTotals = Array.from(transferAmountTotalsMap.values()).map(token => {
+        const totalAmount = formatWeiToValue(token.bn, token.decimals);
+        const symbol = token.symbol;
+        return `${totalAmount} ${symbol}`;
       });
-  }, [safe, transactions]);
-
-  const getGnosisSafeTransactions = useCallback(async () => {
-    if (!safe.address) {
-      return;
-    }
-    try {
-      const { data } = await axios.get<GnosisTransactionsResponse>(
-        buildGnosisApiUrl(
-          chainId,
-          `/safes/${safe.address}/all-transactions/?limit=100&executed=true`
-        )
+      const transferAddresses = transaction.transfers.map(transfer =>
+        transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
       );
-      gnosisDispatch({
-        type: GnosisAction.SET_SAFE_TRANSACTIONS,
-        payload: data,
-      });
-    } catch (e) {
-      logError(e);
-    }
-  }, [chainId, safe, gnosisDispatch]);
 
-  /**
-   * Retreives data on load and dispatches to Fractal Provider
-   */
-  useEffect(() => {
-    if (!transactions.results.length) {
-      getGnosisSafeTransactions();
-    }
-  }, [getGnosisSafeTransactions, transactions]);
+      const eventDate = format(
+        new Date(
+          (transaction as SafeMultisigTransactionWithTransfersResponse).submissionDate ||
+            (
+              transaction as
+                | SafeModuleTransactionWithTransfersResponse
+                | SafeMultisigTransactionWithTransfersResponse
+            ).executionDate
+        ),
+        'MMM dd yyyy'
+      );
+
+      const eventTxHash =
+        (
+          transaction as
+            | SafeMultisigTransactionWithTransfersResponse
+            | SafeModuleTransactionWithTransfersResponse
+        ).transactionHash || (transaction as EthereumTxWithTransfersResponse).txHash;
+
+      const eventSafeTxHash = (transaction as SafeMultisigTransactionWithTransfersResponse)
+        .safeTxHash;
+
+      const eventType = isMultiSigTransaction
+        ? ActivityEventType.Governance
+        : ActivityEventType.Treasury;
+
+      const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
+
+      const isRejected = transactionArr.find(
+        tx =>
+          (tx as SafeMultisigTransactionWithTransfersResponse).nonce ===
+            multiSigTransaction.nonce &&
+          (tx as SafeMultisigTransactionWithTransfersResponse).safeTxHash !==
+            multiSigTransaction.safeTxHash &&
+          (tx as SafeMultisigTransactionWithTransfersResponse).isExecuted
+      );
+
+      const isPending =
+        multiSigTransaction.confirmations?.length !== multiSigTransaction.confirmationsRequired;
+
+      const eventState = isRejected
+        ? BadgeLabels.STATE_REJECTED
+        : isPending
+        ? BadgeLabels.STATE_PENDING
+        : !multiSigTransaction.isExecuted
+        ? BadgeLabels.STATE_ACTIVE
+        : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
+        ? BadgeLabels.STATE_EXECUTED
+        : undefined;
+
+      const eventNonce = multiSigTransaction.nonce;
+
+      return {
+        transaction,
+        transferAddresses,
+        transferAmountTotals,
+        isDeposit,
+        eventDate,
+        eventType,
+        eventTxHash,
+        eventSafeTxHash,
+        eventTransactionsCount: isMultiSigTransaction ? eventTransactionMap.size || 1 : undefined,
+        eventState,
+        eventNonce: eventNonce,
+      };
+    });
+  }, [safe, transactions]);
 
   /**
    * After data is parsed it is sorted based on execution data
