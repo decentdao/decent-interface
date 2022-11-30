@@ -1,15 +1,14 @@
 import {
   EthereumTxWithTransfersResponse,
-  SafeModuleTransactionWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
 } from '@gnosis.pm/safe-service-client';
 import { format } from 'date-fns';
-import { BigNumber, constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { BadgeLabels } from '../../../../components/ui/badges/Badge';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { ActivityEventType, GnosisTransferType, SortBy } from '../../../../types';
+import { ActivityEventType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
+import { useActivityParser } from './useActivityParser';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
@@ -17,6 +16,7 @@ export const useActivities = (sortBy: SortBy) => {
   } = useFractal();
 
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
+  const { totalsReducer, eventTransactionMapping } = useActivityParser();
 
   const parsedActivities = useMemo(() => {
     if (!transactions.results.length || !safe) {
@@ -24,84 +24,20 @@ export const useActivities = (sortBy: SortBy) => {
     }
     return transactions.results.map((transaction, i, transactionArr) => {
       const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
+      const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
+      const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
+      // ETHEREUM TRANSACTION
+
+      // Determines whether transaction transfer is being sent or received if exists
       const isDeposit = transaction.transfers.every(
         t => t.to.toLowerCase() === safe.address!.toLowerCase()
       );
 
-      /**
-       * This returns a Mapping of the total amount of each token involved in the transfers
-       * along with the symbol and decimals of those tokens
-       */
-      const transferAmountTotalsMap = transaction.transfers.reduce((prev, cur) => {
-        if (cur.type === GnosisTransferType.ETHER && cur.value) {
-          if (prev.has(constants.AddressZero)) {
-            const prevValue = prev.get(constants.AddressZero);
-            prev.set(constants.AddressZero, {
-              bn: prevValue.bn.add(BigNumber.from(cur.value)),
-              symbol: 'ETHER',
-              decimals: 18,
-            });
-          }
-          prev.set(constants.AddressZero, {
-            bn: BigNumber.from(cur.value),
-            symbol: 'ETHER',
-            decimals: 18,
-          });
-        }
-        if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
-          prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
-            bn: BigNumber.from(1),
-            symbol: cur.tokenInfo.symbol,
-            decimals: 0,
-          });
-        }
-        if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
-          if (prev.has(cur.tokenInfo.address)) {
-            const prevValue = prev.get(cur.tokenInfo.address);
-            prev.set(cur.tokenInfo.address, {
-              ...prevValue,
-              bn: prevValue.bn.add(BigNumber.from(cur.value)),
-            });
-          } else {
-            prev.set(cur.tokenAddress, {
-              bn: BigNumber.from(cur.value),
-              symbol: cur.tokenInfo.symbol,
-              decimals: cur.tokenInfo.decimals,
-            });
-          }
-        }
+      // returns mapping of Asset -> Asset Total Value by getting the total of each asset transfered
+      const transferAmountTotalsMap = transaction.transfers.reduce(totalsReducer, new Map());
 
-        return prev;
-      }, new Map());
-
-      const eventTransactionMap = new Map<number, any>();
-
-      const parseTransactions = (parameters: any[]) => {
-        if (!parameters || !parameters.length) {
-          return;
-        }
-        parameters.forEach((param: any) => {
-          const dataDecoded = param.dataDecoded || param.valueDecoded;
-
-          if (param.to) {
-            eventTransactionMap.set(eventTransactionMap.size, {
-              address: param.to,
-            });
-          }
-          return parseTransactions(dataDecoded);
-        });
-      };
-
-      const dataDecoded = (
-        transaction as
-          | SafeModuleTransactionWithTransfersResponse
-          | SafeMultisigTransactionWithTransfersResponse
-      ).dataDecoded as any;
-      if (dataDecoded && isMultiSigTransaction) {
-        parseTransactions(dataDecoded.parameters);
-      }
-
+      // formats totals array into readable string with Symbol
       const transferAmountTotals = Array.from(transferAmountTotalsMap.values()).map(token => {
         const totalAmount = formatWeiToValue(token.bn, token.decimals);
         const symbol = token.symbol;
@@ -111,42 +47,43 @@ export const useActivities = (sortBy: SortBy) => {
         transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
       );
 
+      // Date that event is created
+      // @note for ethereum transactions event these are the execution date
       const eventDate = format(
-        new Date(
-          (transaction as SafeMultisigTransactionWithTransfersResponse).submissionDate ||
-            (
-              transaction as
-                | SafeModuleTransactionWithTransfersResponse
-                | SafeMultisigTransactionWithTransfersResponse
-            ).executionDate
-        ),
+        new Date(multiSigTransaction.submissionDate || ethereumTransaction.executionDate),
         'MMM dd yyyy'
       );
 
-      const eventTxHash =
-        (
-          transaction as
-            | SafeMultisigTransactionWithTransfersResponse
-            | SafeModuleTransactionWithTransfersResponse
-        ).transactionHash || (transaction as EthereumTxWithTransfersResponse).txHash;
+      // block explorer transaction hash. This is only being used for ETHEREUM TRANSACTIONS
+      const eventTxHash = ethereumTransaction.txHash || multiSigTransaction.transactionHash;
 
-      const eventSafeTxHash = (transaction as SafeMultisigTransactionWithTransfersResponse)
-        .safeTxHash;
+      // MULTISIG SPECIFIC
+
+      // mapping of each interacted contract address. this is used to calculate the number of transactions in a multisig transaction
+      const eventTransactionMap = eventTransactionMapping(
+        multiSigTransaction,
+        isMultiSigTransaction
+      );
+
+      // Used as the proposal id for multisig transactions
+      const eventSafeTxHash = multiSigTransaction.safeTxHash;
 
       const eventType = isMultiSigTransaction
         ? ActivityEventType.Governance
         : ActivityEventType.Treasury;
 
-      const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
+      // nonce of current event
+      const eventNonce = multiSigTransaction.nonce;
 
-      const isRejected = transactionArr.find(
-        tx =>
-          (tx as SafeMultisigTransactionWithTransfersResponse).nonce ===
-            multiSigTransaction.nonce &&
-          (tx as SafeMultisigTransactionWithTransfersResponse).safeTxHash !==
-            multiSigTransaction.safeTxHash &&
-          (tx as SafeMultisigTransactionWithTransfersResponse).isExecuted
-      );
+      // Check to see if a proposal has been successfully executed to reject current transaction
+      const isRejected = transactionArr.find(tx => {
+        const multiSigTx = tx as SafeMultisigTransactionWithTransfersResponse;
+        return (
+          multiSigTx.nonce === eventNonce &&
+          multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
+          multiSigTx.isExecuted
+        );
+      });
 
       const isPending =
         multiSigTransaction.confirmations?.length !== multiSigTransaction.confirmationsRequired;
@@ -160,8 +97,6 @@ export const useActivities = (sortBy: SortBy) => {
         : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
         ? BadgeLabels.STATE_EXECUTED
         : undefined;
-
-      const eventNonce = multiSigTransaction.nonce;
 
       return {
         transaction,
@@ -177,7 +112,7 @@ export const useActivities = (sortBy: SortBy) => {
         eventNonce: eventNonce,
       };
     });
-  }, [safe, transactions]);
+  }, [safe, transactions, totalsReducer, eventTransactionMapping]);
 
   /**
    * After data is parsed it is sorted based on execution data
