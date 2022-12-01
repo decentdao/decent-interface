@@ -6,12 +6,12 @@ import { ActivityAddress } from './ActivityAddress';
 function TransferDescription({ asset }: { asset: Activity }) {
   const { t } = useTranslation();
 
-  const transferTypeStr = asset.isDeposit ? t('receive') : t('send');
-  const transferDirStr = asset.isDeposit ? t('from') : t('to');
-
   if (!asset.transaction.transfers.length) {
     return null;
   }
+
+  const transferTypeStr = asset.isDeposit ? t('receive') : t('send');
+  const transferDirStr = asset.isDeposit ? t('from') : t('to');
 
   return (
     <>
