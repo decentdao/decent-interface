@@ -22,7 +22,7 @@ import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
-import { isDev, useProposeStuff } from '../../utils/dev';
+import { notProd, useProposeStuff } from '../../utils/dev';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -154,7 +154,7 @@ function ProposalCreate() {
             {t('cancel', { ns: 'common' })}
           </Button>
           <Text
-            onClick={isDev() ? testPropose : undefined}
+            onClick={notProd() ? testPropose : undefined}
             textStyle="text-2xl-mono-regular"
           >
             {t('createProposal')}
