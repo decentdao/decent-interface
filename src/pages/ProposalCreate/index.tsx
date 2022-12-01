@@ -17,7 +17,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import ContentBox from '../../components/ui/ContentBox';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
@@ -134,7 +133,7 @@ function ProposalCreate() {
 
   return (
     <Grid
-      columnGap={4}
+      gap={4}
       templateColumns="2fr 1fr"
       templateAreas={`"header header"
                       "content details"`}
@@ -231,8 +230,12 @@ function ProposalCreate() {
         </VStack>
       </GridItem>
       <GridItem area="details">
-        <ContentBox bg="black.900-semi-transparent">
-          <Text textStyle="text-2xl-mono-bold">{t('proposalSummaryTitle')}</Text>
+        <Box
+          rounded="lg"
+          p="1rem"
+          bg="black.900-semi-transparent"
+        >
+          <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
           <Divider my={3} />
           <HStack justifyContent="space-between">
             <Text
@@ -243,7 +246,7 @@ function ProposalCreate() {
             </Text>
             <Text variant="secondary">3/5</Text>
           </HStack>
-        </ContentBox>
+        </Box>
       </GridItem>
     </Grid>
   );
