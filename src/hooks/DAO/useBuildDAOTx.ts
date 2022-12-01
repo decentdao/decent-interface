@@ -839,6 +839,7 @@ const useBuildDAOTx = () => {
       saltNum,
       signerOrProvider,
       buildDeploySafeTx,
+      buildFractalModuleData,
       defaultAbiCoder,
       getCreate2Address,
       solidityKeccak256,
