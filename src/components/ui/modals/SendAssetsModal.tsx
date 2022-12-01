@@ -16,6 +16,7 @@ import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
@@ -40,6 +41,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     asset: selectedAsset,
     destinationAddress: destination,
   });
+
+  const { restrictChars } = useFormHelpers();
 
   const handleCoinChange = (value: string) => {
     const index = Number(value);
@@ -131,6 +134,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             precision={0}
             value={amountInput}
             onChange={setAmountInput}
+            onKeyDown={restrictChars}
           >
             <NumberInputField />
           </NumberInput>

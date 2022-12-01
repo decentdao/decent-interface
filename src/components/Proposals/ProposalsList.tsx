@@ -40,8 +40,10 @@ export default function ProposalsList() {
   const filterTitle =
     filters.length === 1
       ? t(filters[0])
-      : filters.length === allStates.length || filters.length === 0 // No filters selected means no filtering applied
+      : filters.length === allStates.length
       ? t('filterProposalsAllSelected')
+      : filters.length === 0 // No filters selected means no filtering applied
+      ? t('filterProposalsNoneSelected')
       : t('filterProposalsNSelected', { count: filters.length });
 
   return (
