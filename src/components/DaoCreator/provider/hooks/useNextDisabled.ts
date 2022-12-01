@@ -57,16 +57,20 @@ export function useNextDisabled(state: CreatorState) {
                 return false;
               }
             });
-          if (!isAddressesValid) {
+          if (!govToken.tokenAllocations.length || !isAddressesValid) {
             setIsDisabled(true);
             break;
           }
 
-          const isAllocationsValid = govToken.tokenAllocations
+          const totalAllocations = govToken.tokenAllocations
             .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
-            .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
-            .add(govToken.parentAllocationAmount?.bigNumberValue || 0)
-            .lte(govToken.tokenSupply.bigNumberValue!);
+            .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
+
+          const isAllocationsValid =
+            !totalAllocations.isZero() &&
+            totalAllocations
+              .add(govToken.parentAllocationAmount?.bigNumberValue || 0)
+              .lte(govToken.tokenSupply.bigNumberValue!);
 
           setIsDisabled(!isAllocationsValid);
           break;
@@ -75,14 +79,16 @@ export function useNextDisabled(state: CreatorState) {
         break;
       case CreatorSteps.GOV_CONFIG: {
         const isEssentialsComplete = !!essentials.daoName.trim();
+        const totalAllocations = govToken.tokenAllocations
+          .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
+          .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
         const isGovTokenComplete =
           !!govToken.tokenName.trim() &&
           !!govToken.tokenSymbol.trim() &&
           state.govToken.tokenSupply.bigNumberValue!.gt(0) &&
-          govToken.tokenAllocations
-            .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
-            .reduce((prev, curr) => prev.add(curr), BigNumber.from(0))
-            .lte(state.govToken.tokenSupply.bigNumberValue!);
+          govToken.tokenAllocations.length &&
+          !totalAllocations.isZero() &&
+          totalAllocations.lte(state.govToken.tokenSupply.bigNumberValue!);
         const isGovModuleComplete =
           govModule.quorum.gte(0) &&
           govModule.quorum.lte(100) &&
