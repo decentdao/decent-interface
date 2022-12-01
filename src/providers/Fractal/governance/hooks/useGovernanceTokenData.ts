@@ -1,16 +1,21 @@
 import { VotesToken, VotesToken__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
+import { useState, useReducer, useMemo, useEffect, useCallback } from 'react';
 import {
   OZLinearVoting,
-  OZLinearVoting__factory,
   Usul,
-} from '../../../assets/typechain-types/usul';
-import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { formatCoin } from '../../../utils/numberFormats';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { DelegateChangedListener, DelegateVotesChangedListener, TransferListener } from '../types';
-import { GnosisModuleType, IGnosisModuleData } from '../types/governance';
+  OZLinearVoting__factory,
+} from '../../../../assets/typechain-types/usul';
+import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
+import { formatCoin } from '../../../../utils/numberFormats';
+import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
+import {
+  IGnosisModuleData,
+  GnosisModuleType,
+  TransferListener,
+  DelegateChangedListener,
+  DelegateVotesChangedListener,
+} from '../../types';
 
 interface ITokenData {
   name: string | undefined;

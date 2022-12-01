@@ -1,4 +1,4 @@
-import { IGovernance } from '../types/governance';
+import { IGovernance } from '../governance/types';
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';
 

@@ -1,23 +1,23 @@
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 
 import {
-  GovernanceAction,
   TreasuryAction,
   gnosisInitialState,
   governanceInitialState,
   treasuryInitialState,
   connectedAccountInitialState,
 } from './constants';
+import { GovernanceAction } from './governance/actions';
+import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
+import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
 import { useLocalStorage } from './hooks/account/useLocalStorage';
 import useDAOName from './hooks/useDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
-import { useGnosisGovernance } from './hooks/useGnosisGovernance';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
-import { governanceReducer, initializeGovernanceState } from './reducers/governance';
 import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
 
 /**

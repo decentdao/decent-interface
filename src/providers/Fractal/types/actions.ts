@@ -5,8 +5,8 @@ import SafeServiceClient, {
   SafeInfoResponse,
   TransferListResponse,
 } from '@gnosis.pm/safe-service-client';
-import { AccountAction, GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
-import { IGnosisModuleData, IGovernance } from './governance';
+import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
+import { IGnosisModuleData } from '../governance/types';
 import { IFavorites, IAudit } from './state';
 
 export type GnosisActions =
@@ -17,10 +17,6 @@ export type GnosisActions =
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
-
-export type GovernanceActions =
-  | { type: GovernanceAction.ADD_GOVERNANCE_DATA; payload: IGovernance }
-  | { type: GovernanceAction.RESET };
 
 export type TreasuryActions =
   | {

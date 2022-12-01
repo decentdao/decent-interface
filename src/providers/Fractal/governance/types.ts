@@ -1,6 +1,6 @@
 import { FractalModule } from '@fractal-framework/fractal-contracts';
 import { Usul } from '../../../assets/typechain-types/usul';
-import { IGoveranceTokenData } from '../hooks/useGovernanceTokenData';
+import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
   GNOSIS_SAFE = 'safe',
