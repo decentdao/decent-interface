@@ -1,12 +1,19 @@
+import {
+  Button,
+  InputGroup,
+  InputRightElement,
+  NumberInput,
+  NumberInputField,
+} from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import { useState } from 'react';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../ui/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../ui/EtherscanLinkToken';
-import Input, { RestrictCharTypes } from '../../ui/forms/Input';
 import { Close } from '../../ui/svg/Close';
 import { TableRow } from '../../ui/table';
 import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
@@ -20,6 +27,8 @@ export function SubsidiaryFunding() {
     state: { funding, essentials },
     dispatch,
   } = useCreator();
+
+  const { limitDecimalsOnKeyDown } = useFormHelpers();
 
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
@@ -175,17 +184,30 @@ export function SubsidiaryFunding() {
               <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
                 {tokenToFund.asset.fiatBalance}
               </div>
-              <Input
-                containerClassName="-mb-5 pr-4"
-                placeholder="0.000000000000000000"
-                onClickMax={() => maxFundToken(index)}
-                type="number"
+              <NumberInput
                 value={tokenToFund.amount.value}
-                onChange={e => onTokenFundChange(e.target.value, index)}
-                max={tokenToFund.asset.fiatBalance}
-                restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
-                decimals={tokenToFund.asset.token.decimals}
-              />
+                onChange={tokenAmount => onTokenFundChange(tokenAmount, index)}
+                max={Number(tokenToFund.asset.fiatBalance)}
+                onKeyDown={e =>
+                  limitDecimalsOnKeyDown(
+                    e,
+                    tokenToFund.amount.value,
+                    tokenToFund.asset.token.decimals
+                  )
+                }
+              >
+                <InputGroup>
+                  <NumberInputField placeholder="0.000000000000000000" />
+                  <InputRightElement>
+                    <Button
+                      variant="text"
+                      onClick={() => maxFundToken(index)}
+                    >
+                      Max
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </NumberInput>
               <div onClick={() => removeTokenFund(index)}>
                 <Close />
               </div>

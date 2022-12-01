@@ -59,5 +59,7 @@
     "oldest": "Oldest",
     "filter": "Filter",
     "selectAll": "Select All",
-    "clear": "Clear"
+    "clear": "Clear",
+    "timeLeft": "{{time}} left",
+    "timeAgo": "{{time}} ago"
 }

@@ -1,6 +1,8 @@
-import { Input, LabelWrapper, RestrictCharTypes } from '@decent-org/fractal-ui';
+import { Input, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
@@ -14,6 +16,8 @@ function TokenDetails() {
     state: { govToken },
     dispatch,
   } = useCreator();
+
+  const { limitDecimalsOnKeyDown } = useFormHelpers();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -43,8 +47,6 @@ function TokenDetails() {
           subLabel={t('helperTokenName')}
         >
           <Input
-            size="base"
-            type="text"
             data-testid="tokenVoting-tokenNameInput"
             value={govToken.tokenName}
             onChange={e => fieldUpdate(e.target.value, 'tokenName')}
@@ -58,8 +60,6 @@ function TokenDetails() {
           subLabel={t('helperTokenSymbol')}
         >
           <Input
-            size="base"
-            type="text"
             data-testid="tokenVoting-tokenSymbolInput"
             value={govToken.tokenSymbol}
             onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
@@ -71,15 +71,16 @@ function TokenDetails() {
           label={t('labelTokenSupply')}
           subLabel={t('helperTokenSupply')}
         >
-          <Input
-            size="base"
-            type="number"
+          <NumberInput
             data-testid="tokenVoting-tokenSupplyInput"
             value={govToken.tokenSupply.value}
-            onChange={e => onSupplyChange(e.target.value)}
-            decimals={DEFAULT_TOKEN_DECIMALS}
-            restrictChar={RestrictCharTypes.FLOAT_NUMBERS}
-          />
+            onChange={tokenSupply => onSupplyChange(tokenSupply)}
+            onKeyDown={e =>
+              limitDecimalsOnKeyDown(e, govToken.tokenSupply.value, DEFAULT_TOKEN_DECIMALS)
+            }
+          >
+            <NumberInputField />
+          </NumberInput>
         </LabelWrapper>
       </InputBox>
       <TokenAllocations

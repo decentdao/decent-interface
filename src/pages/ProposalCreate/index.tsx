@@ -1,11 +1,10 @@
-import { Text } from '@chakra-ui/react';
+import { Button, Text } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import { PrimaryButton, SecondaryButton, TextButton } from '../../components/ui/forms/Button';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -152,26 +151,29 @@ function ProposalCreate() {
         </form>
         {step === 1 && (
           <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
-            <TextButton
+            <Button
+              variant="text"
               onClick={addTransaction}
               disabled={pendingCreateTx}
-              label={t('labelAddTransaction')}
-            />
+            >
+              {t('labelAddTransaction')}
+            </Button>
           </div>
         )}
         <div className="flex items-center justify-center mt-4 space-x-4">
           {step === 1 && (
-            <TextButton
-              type="button"
+            <Button
+              variant="text"
               onClick={decrementStep}
               disabled={pendingCreateTx}
-              icon={<LeftArrow />}
-              label={t('prev', { ns: 'common' })}
-            />
+              rightIcon={<LeftArrow />}
+            >
+              {t('prev', { ns: 'common' })}
+            </Button>
           )}
           {step === 1 && (
-            <PrimaryButton
-              type="button"
+            <Button
+              size="lg"
               onClick={() =>
                 submitProposal({
                   proposalData,
@@ -179,17 +181,18 @@ function ProposalCreate() {
                 })
               }
               disabled={isCreateDisabled}
-              label={t('createProposal')}
-              isLarge
-            />
+            >
+              {t('createProposal')}
+            </Button>
           )}
           {step === 0 && (
-            <SecondaryButton
-              type="button"
+            <Button
+              variant="secondary"
               onClick={incrementStep}
               disabled={isNextDisabled}
-              label={t('labelAddTransactions')}
-            />
+            >
+              {t('labelAddTransactions')}
+            </Button>
           )}
         </div>
       </div>
