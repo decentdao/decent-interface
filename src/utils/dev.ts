@@ -2,6 +2,14 @@ import useSafeContracts from '../hooks/safe/useSafeContracts';
 import { useFractal } from '../providers/Fractal/hooks/useFractal';
 import { shuffle } from './arrays';
 
+export const isProd = () => {
+  return process.env.NODE_ENV !== 'production';
+};
+
+export const isDev = () => {
+  return process.env.NODE_ENV === 'development';
+};
+
 export const useProposeStuff = (doSomething: Function) => {
   const {
     gnosis: { safe },
