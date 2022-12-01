@@ -7,7 +7,7 @@ import { ProposalExecuteData } from '../../types/proposal';
 import useSafeContracts from '../safe/useSafeContracts';
 import useBuildDAOTx from './useBuildDAOTx';
 
-const useCreateSubDAOProposal = () => {
+export const useCreateSubDAOProposal = () => {
   const { multiSendContract } = useSafeContracts();
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -45,5 +45,3 @@ const useCreateSubDAOProposal = () => {
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;
 };
-
-export default useCreateSubDAOProposal;
