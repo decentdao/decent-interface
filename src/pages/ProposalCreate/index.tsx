@@ -22,6 +22,7 @@ import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
+import { useProposeStuff } from '../../utils/dev';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -43,6 +44,9 @@ function ProposalCreate() {
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+
+  const testPropose = useProposeStuff(setTransactions);
+  const testClick = process.env.NODE_ENV !== 'production' ? testPropose : undefined;
 
   /**
    * adds new transaction form
@@ -151,7 +155,12 @@ function ProposalCreate() {
           >
             {t('cancel', { ns: 'common' })}
           </Button>
-          <Text textStyle="text-2xl-mono-regular">{t('createProposal')}</Text>
+          <Text
+            onClick={testClick}
+            textStyle="text-2xl-mono-regular"
+          >
+            {t('createProposal')}
+          </Text>
         </VStack>
       </GridItem>
       <GridItem area="content">
