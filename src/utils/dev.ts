@@ -3,7 +3,7 @@ import { useFractal } from '../providers/Fractal/hooks/useFractal';
 import { shuffle } from './arrays';
 
 export const isProd = () => {
-  return process.env.NODE_ENV !== 'production';
+  return process.env.NODE_ENV === 'production';
 };
 
 export const isDev = () => {
