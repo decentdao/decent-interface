@@ -4,14 +4,24 @@ import { useTranslation } from 'react-i18next';
 
 type BadgeType = { [key: string]: { Icon: any; bg: string; color: string } };
 
+export enum BadgeLabels {
+  STATE_PENDING = 'statePending',
+  STATE_ACTIVE = 'stateActive',
+  STATE_PASSED = 'statePassed',
+  STATE_EXECUTED = 'stateExecuted',
+  STATE_REJECTED = 'stateRejected',
+  PARENT = 'parent',
+  CHILD = 'child',
+}
+
 const BADGE_MAPPING: BadgeType = {
-  statePending: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
-  stateActive: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
-  statePassed: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
-  stateExecuted: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
-  stateRejected: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
-  parent: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
-  child: { Icon: Tree, bg: 'chocolate.500', color: 'gold.500' },
+  [BadgeLabels.STATE_PENDING]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.STATE_ACTIVE]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.STATE_PASSED]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.STATE_EXECUTED]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.STATE_REJECTED]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.PARENT]: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
+  [BadgeLabels.CHILD]: { Icon: Tree, bg: 'chocolate.500', color: 'gold.500' },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };

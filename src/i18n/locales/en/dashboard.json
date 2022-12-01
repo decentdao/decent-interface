@@ -27,5 +27,6 @@
     "titlePending": "Pending",
     "titlePassed": "Passed",
     "titleTreasury": "Treasury",
-    "noActivity": "No Activity"
+    "noActivity": "No Activity",
+    "proposalDescription": "Proposal to execute {{txCount}} transactions"
 }

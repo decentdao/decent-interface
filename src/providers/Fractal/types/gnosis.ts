@@ -80,10 +80,3 @@ export interface EthereumTxWithTransfers {
   txType: string;
   from: string;
 }
-
-export interface GnosisTransactionsResponse {
-  count: number | null;
-  next: null; // @todo update other type
-  previous: null; // @todo update other type
-  results: EthereumTxWithTransfers[];
-}

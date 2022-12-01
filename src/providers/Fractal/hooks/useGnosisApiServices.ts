@@ -92,11 +92,31 @@ export function useGnosisApiServices(
     }
   }, [address, treasuryDispatch, safeService]);
 
+  const getGnosisSafeTransactions = useCallback(async () => {
+    if (!address || !safeService) {
+      return;
+    }
+    try {
+      gnosisDispatch({
+        type: GnosisAction.SET_SAFE_TRANSACTIONS,
+        payload: await safeService.getAllTransactions(address),
+      });
+    } catch (e) {
+      logError(e);
+    }
+  }, [address, safeService, gnosisDispatch]);
+
   useEffect(() => {
     getGnosisSafeFungibleAssets();
     getGnosisSafeNonFungibleAssets();
     getGnosisSafeTransfers();
-  }, [getGnosisSafeFungibleAssets, getGnosisSafeNonFungibleAssets, getGnosisSafeTransfers]);
+    getGnosisSafeTransactions();
+  }, [
+    getGnosisSafeFungibleAssets,
+    getGnosisSafeNonFungibleAssets,
+    getGnosisSafeTransfers,
+    getGnosisSafeTransactions,
+  ]);
 
   return;
 }
