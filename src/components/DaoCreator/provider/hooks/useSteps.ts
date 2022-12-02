@@ -70,7 +70,16 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
+            nextStep: CreatorSteps.GUARD_CONFIG,
             prevStep: CreatorSteps.GNOSIS_WITH_USUL,
+          },
+        });
+        break;
+      case CreatorSteps.GUARD_CONFIG:
+        dispatch({
+          type: CreatorProviderActions.UPDATE_STEP,
+          payload: {
+            prevStep: CreatorSteps.GOV_CONFIG,
           },
         });
         break;
