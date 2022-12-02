@@ -1,6 +1,8 @@
-import SafeServiceClient, { SafeInfoResponse } from '@gnosis.pm/safe-service-client';
+import SafeServiceClient, {
+  AllTransactionsListResponse,
+  SafeInfoResponse,
+} from '@gnosis.pm/safe-service-client';
 import { GnosisActions, GovernanceActions, TreasuryActions } from './actions';
-import { GnosisTransactionsResponse } from './gnosis';
 import { IGnosisModuleData, IGovernance } from './governance';
 import { ITreasury } from './treasury';
 
@@ -21,7 +23,7 @@ export interface IGnosis {
   safeService?: SafeServiceClient;
   safe: Partial<SafeInfoResponse>;
   modules: IGnosisModuleData[];
-  transactions: GnosisTransactionsResponse;
+  transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
 }
 export interface IConnectedAccount {

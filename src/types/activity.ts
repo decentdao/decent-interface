@@ -1,4 +1,9 @@
-import { EthereumTxWithTransfers } from '../providers/Fractal/types';
+import {
+  EthereumTxWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  SafeMultisigTransactionWithTransfersResponse,
+} from '@gnosis.pm/safe-service-client';
+import { BadgeLabels } from './../components/ui/badges/Badge';
 
 export enum ActivityFilters {
   All,
@@ -13,16 +18,25 @@ export enum TreasuryActivityTypes {
 }
 
 export type Activity = {
-  transaction: EthereumTxWithTransfers;
+  transaction:
+    | SafeModuleTransactionWithTransfersResponse
+    | SafeMultisigTransactionWithTransfersResponse
+    | EthereumTxWithTransfersResponse;
   transferAddresses: string[];
   transferAmountTotals: string[];
+  isDeposit: boolean;
   eventDate: string;
   eventType: ActivityEventType;
-  isDeposit: boolean;
+  eventTxHash?: string;
+  eventSafeTxHash?: string;
+  eventTransactionsCount?: number;
+  eventNonce?: number;
+  eventState?: BadgeLabels;
 };
 
 export enum ActivityEventType {
   Treasury,
+  Governance,
 }
 
 export enum GnosisTransferType {
