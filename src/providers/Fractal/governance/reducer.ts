@@ -8,7 +8,7 @@ export const initializeGovernanceState = (_initialState: IGovernance) => {
 
 export const governanceReducer = (state: IGovernance, action: GovernanceActions): IGovernance => {
   switch (action.type) {
-    case GovernanceAction.ADD_GOVERNANCE_DATA:
+    case GovernanceAction.SET_GOVERNANCE:
       return { ...state, ...action.payload };
     case GovernanceAction.RESET:
       return initializeGovernanceState(governanceInitialState);

@@ -3,33 +3,14 @@ import { Usul } from '../../../assets/typechain-types/usul';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
-  GNOSIS_SAFE = 'safe',
-  GNOSIS_SAFE_USUL = 'usul safe',
+  GNOSIS_SAFE = 'Multisig',
+  GNOSIS_SAFE_USUL = 'Usul',
 }
 
 export enum GnosisModuleType {
   USUL,
   FRACTAL,
   UNKNOWN,
-}
-
-// TODO left untranslated because this is likely going away
-export enum ModuleTypes {
-  TIMELOCK = 'Timelock Module',
-  TOKEN_VOTING_GOVERNANCE = 'Token Governance',
-  TREASURY = 'Treasury Module',
-  CLAIMING = 'Claiming Contract',
-  GNOSIS_WRAPPER = 'Gnosis Safe Governance',
-}
-export interface ModuleSelectState {
-  isLoading: boolean;
-  moduleType: string | null;
-  moduleAddress: string | null;
-}
-
-export interface IModuleData {
-  moduleAddress: string;
-  moduleType: ModuleTypes;
 }
 
 export interface IGnosisModuleData {
@@ -52,14 +33,21 @@ export type CreateProposalFunc = (proposal: {
 }) => void;
 
 export interface IGovernance {
-  createProposalFunc?: CreateProposalFunc;
-  isCreateProposalPending?: boolean;
-  isConnectedUserAuth?: boolean;
-  createSubDAOFunc?: CreateDAOFunc;
-  isCreateSubDAOPending?: boolean;
+  actions: {
+    createProposal?: {
+      func: CreateProposalFunc;
+      pending: boolean;
+    };
+    createSubDAO?: {
+      func: CreateDAOFunc;
+      pending: boolean;
+    };
+  };
+  type: GovernanceTypes | null;
   proposalList?: any[];
-  governanceIsLoading: boolean;
   governanceToken?: IGoveranceTokenData;
+  proposals?: any;
+  governanceIsLoading: boolean;
 }
 
 export interface GnosisConfig {

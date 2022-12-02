@@ -17,14 +17,12 @@ export const gnosisInitialState: IGnosis = {
 };
 
 export const governanceInitialState: IGovernance = {
-  createSubDAOFunc: undefined,
-  isCreateSubDAOPending: undefined,
-  createProposalFunc: undefined,
-  isCreateProposalPending: undefined,
+  actions: {},
+  type: null,
   proposalList: undefined,
-  isConnectedUserAuth: undefined,
   governanceIsLoading: true,
   governanceToken: undefined,
+  proposals: undefined,
 };
 
 export const treasuryInitialState: ITreasury = {

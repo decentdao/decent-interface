@@ -54,12 +54,12 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useLocalStorage();
   useGnosisApiServices(gnosis, treasuryDispatch, gnosisDispatch);
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
-  useGnosisGovernance(gnosis, governanceDispatch);
   useDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
+  useGnosisGovernance(gnosis, governanceDispatch);
   useEffect(() => {
     if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
       governanceDispatch({ type: GovernanceAction.RESET });

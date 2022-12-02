@@ -1,40 +1,51 @@
-// import { useSubDAODeploy } from './useSubDAODeploy';
-
 import { Dispatch, useEffect } from 'react';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
-import { IGnosis } from '../../types';
+import { GovernanceTypes, IGnosis } from '../../types';
 import { GovernanceActions, GovernanceAction } from '../actions';
 import useGovernanceTokenData from './useGovernanceTokenData';
+import { useVotingContracts } from './useVotingContracts';
 
 export const useGnosisGovernance = (
-  { safe: { owners, address }, modules }: IGnosis,
+  { safe, modules }: IGnosis,
   gonvernanceDispatch: Dispatch<GovernanceActions>
 ) => {
   const {
     state: { account },
   } = useWeb3Provider();
 
-  // const { deploySubDao, deploySubDAOPending } = useSubDAODeploy();
-
-  const governanceTokenData = useGovernanceTokenData(modules);
+  const { votingContract, tokenContract, isContractsLoading } = useVotingContracts(modules);
+  const governanceTokenData = useGovernanceTokenData(votingContract, tokenContract);
 
   useEffect(() => {
-    if (!account || !address) {
+    if (!account || !safe.address || isContractsLoading) {
       return;
     }
 
+    const governanceType = !!votingContract
+      ? GovernanceTypes.GNOSIS_SAFE_USUL
+      : !votingContract
+      ? GovernanceTypes.GNOSIS_SAFE
+      : null;
+
     gonvernanceDispatch({
-      type: GovernanceAction.ADD_GOVERNANCE_DATA,
+      type: GovernanceAction.SET_GOVERNANCE,
       payload: {
-        createSubDAOFunc: () => {},
-        isCreateSubDAOPending: false,
-        isCreateProposalPending: false,
-        createProposalFunc: () => {},
-        isConnectedUserAuth: owners?.includes(account || ''),
-        governanceIsLoading: false,
+        actions: {},
+        type: governanceType,
         governanceToken: governanceTokenData,
+        governanceIsLoading: false,
       },
     });
-  }, [account, address, owners, gonvernanceDispatch, governanceTokenData]);
+  }, [
+    account,
+    safe.address,
+    gonvernanceDispatch,
+    governanceTokenData,
+    votingContract,
+    isContractsLoading,
+  ]);
+
+  useEffect(() => {}, []);
+
   return;
 };
