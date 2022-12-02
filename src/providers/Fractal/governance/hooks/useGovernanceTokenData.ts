@@ -141,6 +141,7 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
       // @todo handle errors
       const votingPeriod = await votingContract.votingPeriod();
       const blockNumber = await provider.getBlockNumber();
+      // @note Two is subtracted from current block number to ensure that blocks are in sync with other providers
       const quorum = await votingContract.quorum(blockNumber - 2);
 
       dispatch({
