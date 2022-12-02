@@ -44,8 +44,4 @@ export const useGnosisGovernance = (
     votingContract,
     isContractsLoading,
   ]);
-
-  useEffect(() => {}, []);
-
-  return;
 };
