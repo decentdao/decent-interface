@@ -1,5 +1,6 @@
 import { ChooseGovernance } from './ChooseGovernance';
 import DAODetails from './DAODetails';
+import GuardDetails from './GuardDetails';
 import { SubsidiaryFunding } from './SubsidiaryFunding';
 import { GnosisConfig } from './gnosis/GnosisConfig';
 import { useCreator } from './provider/hooks/useCreator';
@@ -24,6 +25,8 @@ function StepController() {
       return <TokenDetails />;
     case CreatorSteps.GOV_CONFIG:
       return <GovernanceDetails />;
+    case CreatorSteps.GUARD_CONFIG:
+      return <GuardDetails />;
     default:
       return <></>;
   }
