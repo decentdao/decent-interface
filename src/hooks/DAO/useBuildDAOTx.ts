@@ -179,7 +179,9 @@ const useBuildDAOTx = () => {
           !fractalNameRegistryContract ||
           !signerOrProvider ||
           !zodiacModuleProxyFactoryContract ||
-          !fractalModuleMasterCopyContract
+          !fractalModuleMasterCopyContract ||
+          !vetoGuardMasterCopyContract ||
+          !vetoMultisigVotingMasterCopyContract
         ) {
           return;
         }
@@ -210,11 +212,7 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
-        if (
-          parentDAOAddress &&
-          vetoGuardMasterCopyContract &&
-          vetoMultisigVotingMasterCopyContract
-        ) {
+        if (parentDAOAddress) {
           // VETO MULTISIG
           const setVetoMultiVotingCalldata =
             // eslint-disable-next-line camelcase
@@ -435,7 +433,9 @@ const useBuildDAOTx = () => {
           !fractalNameRegistryContract ||
           !fractalModuleMasterCopyContract ||
           !signerOrProvider ||
-          !votesTokenMasterCopyContract
+          !votesTokenMasterCopyContract ||
+          !vetoERC20VotingMasterCopyContract ||
+          !vetoGuardMasterCopyContract
         ) {
           return;
         }
@@ -584,7 +584,7 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
-        if (parentDAOAddress && vetoERC20VotingMasterCopyContract && vetoGuardMasterCopyContract) {
+        if (parentDAOAddress) {
           // VETO ERC20 Voting
           const setVetoERC20VotingCalldata =
             // eslint-disable-next-line camelcase
