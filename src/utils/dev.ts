@@ -19,7 +19,7 @@ export const useProposeStuff = (doSomething: Function) => {
       'string _collectionName, string _collectionSymbol, string _tokenName, string _tokenDescription, string _tokenImage, address _recipient',
     parameters: `"Random Duck", "DCK", "A duck", "This random duck NFT was generated to test Fractal. Quack quack.", "https://random-d.uk/api/${
       Math.floor(Math.random() * 284) + 1
-    }.jpg", ${safe.address}`,
+    }.jpg", "${safe.address}"`,
     isExpanded: true,
   };
   const today = new Date().toLocaleString('default', { weekday: 'long' });
@@ -27,7 +27,7 @@ export const useProposeStuff = (doSomething: Function) => {
     targetAddress: fractalNameRegistryContract?.address,
     functionName: 'updateDAOName',
     functionSignature: 'string _name',
-    parameters: `${today} DAO`,
+    parameters: `"${today} DAO"`,
     isExpanded: true,
   };
   return () => {
