@@ -5,10 +5,9 @@ import {
   AccordionItem,
   AccordionPanel,
   HStack,
-  Icon,
   IconButton,
 } from '@chakra-ui/react';
-import { ArrowDown, ArrowRight } from '@decent-org/fractal-ui';
+import { ArrowDown, ArrowRight, Trash } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { TransactionData } from '../../types/transaction';
 import Transaction from './Transaction';
@@ -40,22 +39,6 @@ function Transactions({
     updateTransaction(newTransactionData, transactionNumber);
   }
 
-  //TODO: placeholder for delete icon, remove when added to decent-ui
-  function DeleteIcon() {
-    return (
-      <Icon
-        viewBox="0 0 16 18"
-        _hover={{ fill: 'gold.500-hover' }}
-        fill="grayscale.100"
-      >
-        <path
-          xmlns="http://www.w3.org/2000/svg"
-          d="M5 0V1H0V3H1V16C1 16.5304 1.21071 17.0391 1.58579 17.4142C1.96086 17.7893 2.46957 18 3 18H13C13.5304 18 14.0391 17.7893 14.4142 17.4142C14.7893 17.0391 15 16.5304 15 16V3H16V1H11V0H5ZM3 3H13V16H3V3ZM5 5V14H7V5H5ZM9 5V14H11V5H9Z"
-        />
-      </Icon>
-    );
-  }
-
   return (
     <Accordion
       allowToggle
@@ -71,7 +54,7 @@ function Transactions({
           {({ isExpanded }) => (
             <Box
               rounded="lg"
-              p="1rem"
+              p={3}
               my="2"
               bg="black.900"
             >
@@ -87,11 +70,12 @@ function Transactions({
                 </AccordionButton>
                 {index !== 0 ? (
                   <IconButton
-                    icon={<DeleteIcon />}
+                    icon={<Trash boxSize="24px" />}
                     aria-label={t('removetransactionlabel')}
                     variant="unstyled"
                     onClick={() => removeTransaction(index)}
                     minWidth="auto"
+                    _hover={{ color: 'gold.500' }}
                   />
                 ) : (
                   <Box h="36px" />

@@ -6,9 +6,9 @@ import {
   VStack,
   HStack,
   Divider,
-  Alert as ChakraAlert,
-  AlertDescription,
+  Alert,
   AlertIcon,
+  AlertTitle,
   Box,
 } from '@chakra-ui/react';
 import { CloseX, Info } from '@decent-org/fractal-ui';
@@ -192,26 +192,15 @@ function ProposalCreate() {
               >
                 {t('labelAddTransaction')}
               </Button>
-              <ChakraAlert
-                border="1px solid"
-                borderColor="#0085FF"
-                status="error"
-                bg="#152023"
-                w="100%"
-                borderRadius={8}
-              >
-                <AlertIcon color="#0085FF">
+              <Alert status="info">
+                <AlertIcon>
                   <Info
-                    boxSize="1.5rem"
-                    color="#0085FF"
+                  // boxSize="24px"
+                  // color="blue.500"
                   />
                 </AlertIcon>
-                <AlertDescription>
-                  <Text textStyle="text-lg-mono-medium">
-                    {t('transactionExecutionAlertMessage')}
-                  </Text>
-                </AlertDescription>
-              </ChakraAlert>
+                <AlertTitle>{t('transactionExecutionAlertMessage')}</AlertTitle>
+              </Alert>
               <Divider color="chocolate.700" />
               <Button
                 w="100%"
