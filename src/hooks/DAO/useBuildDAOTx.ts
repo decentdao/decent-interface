@@ -232,7 +232,7 @@ const useBuildDAOTx = () => {
             vetoMulitVotingSalt,
             solidityKeccak256(['bytes'], [vetoMultisigByteCodeLinear])
           );
-          const vetoMultiContract = VetoMultisigVoting__factory.connect(
+          const vetoMultisigVotingContract = VetoMultisigVoting__factory.connect(
             predictedVetoMultisigAddress,
             signerOrProvider
           );
@@ -246,23 +246,23 @@ const useBuildDAOTx = () => {
                 [
                   0, // Execution Delay
                   parentDAOAddress, // Owner -- Parent DAO
-                  vetoMultiContract.address, // Veto Voting
+                  vetoMultisigVotingContract.address, // Veto Voting
                   safeContract.address, // Gnosis Safe
                 ]
               ),
             ]);
-          const vetoByteCodeLinear =
+          const vetoGuardByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
             vetoGuardMasterCopyContract.address.slice(2) +
             '5af43d82803e903d91602b57fd5bf3';
-          const vetoSalt = solidityKeccak256(
+          const vetoGuardSalt = solidityKeccak256(
             ['bytes32', 'uint256'],
             [solidityKeccak256(['bytes'], [setVetoGuardCalldata]), saltNum]
           );
           const predictedVetoModuleAddress = getCreate2Address(
             zodiacModuleProxyFactoryContract.address,
-            vetoSalt,
-            solidityKeccak256(['bytes'], [vetoByteCodeLinear])
+            vetoGuardSalt,
+            solidityKeccak256(['bytes'], [vetoGuardByteCodeLinear])
           );
 
           internaltTxs = [
@@ -292,7 +292,7 @@ const useBuildDAOTx = () => {
             ),
             // Setup Veto Multisig
             buildContractCall(
-              vetoMultiContract,
+              vetoMultisigVotingContract,
               'setUp',
               [
                 ethers.utils.defaultAbiCoder.encode(
@@ -625,18 +625,18 @@ const useBuildDAOTx = () => {
               ),
             ]);
 
-          const vetoByteCodeLinear =
+          const vetoGuardByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
             vetoGuardMasterCopyContract.address.slice(2) +
             '5af43d82803e903d91602b57fd5bf3';
-          const vetoSalt = solidityKeccak256(
+          const vetoGuardSalt = solidityKeccak256(
             ['bytes32', 'uint256'],
             [solidityKeccak256(['bytes'], [setVetoGuardCalldata]), saltNum]
           );
           const predictedVetoModuleAddress = getCreate2Address(
             zodiacModuleProxyFactoryContract.address,
-            vetoSalt,
-            solidityKeccak256(['bytes'], [vetoByteCodeLinear])
+            vetoGuardSalt,
+            solidityKeccak256(['bytes'], [vetoGuardByteCodeLinear])
           );
 
           const vetoGuardContract = VetoGuard__factory.connect(
