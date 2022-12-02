@@ -58,6 +58,7 @@ function ForwardButton({
     case CreatorSteps.CHOOSE_GOVERNANCE:
     case CreatorSteps.ESSENTIALS:
     case CreatorSteps.FUNDING:
+    case CreatorSteps.GOV_CONFIG:
     case CreatorSteps.GNOSIS_WITH_USUL:
       const canSkip =
         state.step === CreatorSteps.FUNDING &&
@@ -78,7 +79,7 @@ function ForwardButton({
           {canSkip ? t('skip') : t('next')}
         </Button>
       );
-    case CreatorSteps.GOV_CONFIG:
+    case CreatorSteps.GUARD_CONFIG:
     case CreatorSteps.PURE_GNOSIS: {
       return (
         <Button
