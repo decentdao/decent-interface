@@ -60,6 +60,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     accountDispatch,
   });
   useGnosisGovernance(gnosis, governanceDispatch);
+
   useEffect(() => {
     if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
       governanceDispatch({ type: GovernanceAction.RESET });

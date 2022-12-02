@@ -117,8 +117,9 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
       return { ...state, ...action.payload, isLoading: false };
     case TokenActions.UPDATE_TOKEN_CONTRACT:
       return { ...state, tokenContract: action.payload, isLoading: false };
+    case TokenActions.RESET:
+      return { ...initialState };
   }
-  return state;
 };
 const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToken) => {
   const {
@@ -130,6 +131,9 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
   // dispatch voting contract
   useEffect(() => {
     if (!votingContract || !provider) {
+      dispatch({
+        type: TokenActions.RESET,
+      });
       return;
     }
 

@@ -83,5 +83,13 @@ export const useVotingContracts = (modules: IGnosisModuleData[]) => {
     zodiacModuleProxyFactoryContract,
   ]);
 
+  useEffect(() => {
+    if (!usulModule && !isContractsLoading) {
+      setVotingContract(undefined);
+      setTokenContract(undefined);
+      return;
+    }
+  }, [usulModule, isContractsLoading]);
+
   return { votingContract, tokenContract, isContractsLoading };
 };
