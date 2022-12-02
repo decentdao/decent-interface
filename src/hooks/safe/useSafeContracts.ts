@@ -49,7 +49,7 @@ export default function useSafeContracts() {
     useState<VetoMultisigVoting>();
   const [vetoERC20VotingMasterCopyContract, setvetoERC20VotingMasterCopyContract] =
     useState<VetoERC20Voting>();
-  const [votesMasterCopyContract, setVotesMasterCopyContract] = useState<VotesToken>();
+  const [votesTokenMasterCopyContract, setVotesTokenMasterCopyContract] = useState<VotesToken>();
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
@@ -67,7 +67,7 @@ export default function useSafeContracts() {
       vetoGuardMasterCopy,
       vetoMultisigVotingMasterCopy,
       vetoERC20VotingMasterCopy,
-      votesMasterCopy,
+      votesTokenMasterCopy,
     },
   } = useNetworkConfg();
 
@@ -80,7 +80,7 @@ export default function useSafeContracts() {
       setGnosisSafeSingletonContract(undefined);
       setFractalModuleMasterCopyContract(undefined);
       setFractalNameRegistryContract(undefined);
-      setVotesMasterCopyContract(undefined);
+      setVotesTokenMasterCopyContract(undefined);
       setVetoGuardMasterCopyContract(undefined);
       setvetoMultisigVotingMasterCopyContract(undefined);
       setvetoERC20VotingMasterCopyContract(undefined);
@@ -119,7 +119,9 @@ export default function useSafeContracts() {
       VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy, signerOrProvider)
     );
 
-    setVotesMasterCopyContract(VotesToken__factory.connect(votesMasterCopy, signerOrProvider));
+    setVotesTokenMasterCopyContract(
+      VotesToken__factory.connect(votesTokenMasterCopy, signerOrProvider)
+    );
   }, [
     gnosisSafeFactory,
     gnosisSafe,
@@ -133,7 +135,7 @@ export default function useSafeContracts() {
     vetoGuardMasterCopy,
     vetoMultisigVotingMasterCopy,
     vetoERC20VotingMasterCopy,
-    votesMasterCopy,
+    votesTokenMasterCopy,
   ]);
 
   return {
@@ -148,6 +150,6 @@ export default function useSafeContracts() {
     vetoGuardMasterCopyContract,
     vetoMultisigVotingMasterCopyContract,
     vetoERC20VotingMasterCopyContract,
-    votesMasterCopyContract,
+    votesTokenMasterCopyContract,
   };
 }

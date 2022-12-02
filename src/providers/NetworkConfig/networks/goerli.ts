@@ -11,7 +11,7 @@ export const goerliConfig: NetworkConfig = {
     usulMasterCopy: '0xCdea1582a57Ca4A678070Fa645aaf3a40c2164C1',
     fractalModuleMasterCopy: '0x78193b2fd8292Fb35DD90C45dC304B2A10125D68',
     fractalNameRegistry: '0xBdE1D5bd4007973A4BD4D9b1b3a4d4BE1Bc7C4F2',
-    votesMasterCopy: '0xe4dB69c0A5Ef88a73083cdC190379675bE7EcBFa',
+    votesTokenMasterCopy: '0xe4dB69c0A5Ef88a73083cdC190379675bE7EcBFa',
     claimingFactory: '0x4B9EB3B2c649dA44B71aD3960BB2062dCC7AA955',
     claimingMasterCopy: '0x703935eb5a35E586C23C269Db0C55da0ad02C4bf',
     vetoGuardMasterCopy: '0x7d817caD2eC343C2aEa5FfEa1bEBaCB0A71165c6',

@@ -36,7 +36,7 @@ const useBuildDAOTx = () => {
     vetoGuardMasterCopyContract,
     vetoMultisigVotingMasterCopyContract,
     vetoERC20VotingMasterCopyContract,
-    votesMasterCopyContract,
+    votesTokenMasterCopyContract,
   } = useSafeContracts();
 
   const { AddressZero, HashZero } = ethers.constants;
@@ -435,7 +435,7 @@ const useBuildDAOTx = () => {
           !fractalNameRegistryContract ||
           !fractalModuleMasterCopyContract ||
           !signerOrProvider ||
-          !votesMasterCopyContract
+          !votesTokenMasterCopyContract
         ) {
           return;
         }
@@ -482,13 +482,13 @@ const useBuildDAOTx = () => {
           ]
         );
 
-        const encodedSetUpTokenData = votesMasterCopyContract.interface.encodeFunctionData(
+        const encodedSetUpTokenData = votesTokenMasterCopyContract.interface.encodeFunctionData(
           'setUp',
           [encodedInitTokenData]
         );
         const tokenByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          votesMasterCopyContract.address.slice(2) +
+          votesTokenMasterCopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
         const tokenNonce = getRandomBytes();
         const tokenSalt = solidityKeccak256(
@@ -763,7 +763,7 @@ const useBuildDAOTx = () => {
         const createTokenTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [votesMasterCopyContract.address, encodedSetUpTokenData, tokenNonce],
+          [votesTokenMasterCopyContract.address, encodedSetUpTokenData, tokenNonce],
           0,
           false
         );
@@ -844,7 +844,7 @@ const useBuildDAOTx = () => {
       getCreate2Address,
       solidityKeccak256,
       AddressZero,
-      votesMasterCopyContract,
+      votesTokenMasterCopyContract,
     ]
   );
 

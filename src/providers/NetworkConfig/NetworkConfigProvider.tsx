@@ -13,7 +13,7 @@ export type NetworkConfig = {
     usulMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalNameRegistry: string;
-    votesMasterCopy: string;
+    votesTokenMasterCopy: string;
     claimingFactory: string;
     claimingMasterCopy: string;
     vetoGuardMasterCopy: string;
@@ -33,7 +33,7 @@ export const defaultState = {
     usulMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
-    votesMasterCopy: '',
+    votesTokenMasterCopy: '',
     claimingFactory: '',
     claimingMasterCopy: '',
     vetoGuardMasterCopy: '',
