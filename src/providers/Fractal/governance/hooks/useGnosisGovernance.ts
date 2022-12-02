@@ -7,7 +7,7 @@ import { useVotingContracts } from './useVotingContracts';
 
 export const useGnosisGovernance = (
   { safe, modules }: IGnosis,
-  gonvernanceDispatch: Dispatch<GovernanceActions>
+  governanceDispatch: Dispatch<GovernanceActions>
 ) => {
   const {
     state: { account },
@@ -27,7 +27,7 @@ export const useGnosisGovernance = (
       ? GovernanceTypes.GNOSIS_SAFE
       : null;
 
-    gonvernanceDispatch({
+    governanceDispatch({
       type: GovernanceAction.SET_GOVERNANCE,
       payload: {
         actions: {},
@@ -39,7 +39,7 @@ export const useGnosisGovernance = (
   }, [
     account,
     safe.address,
-    gonvernanceDispatch,
+    governanceDispatch,
     governanceTokenData,
     votingContract,
     isContractsLoading,
