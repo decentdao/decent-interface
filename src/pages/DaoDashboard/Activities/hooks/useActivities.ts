@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { BadgeLabels } from '../../../../components/ui/badges/Badge';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { ActivityEventType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
 import { useActivityParser } from './useActivityParser';
@@ -13,6 +14,7 @@ import { useActivityParser } from './useActivityParser';
 export const useActivities = (sortBy: SortBy) => {
   const {
     gnosis: { safe, transactions },
+    governance: { type },
   } = useFractal();
 
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
@@ -115,11 +117,23 @@ export const useActivities = (sortBy: SortBy) => {
   }, [safe, transactions, totalsReducer, eventTransactionMapping]);
 
   /**
+   * filters out initial multisig transaction on USUL enabled safes
+   */
+  const filterActivities = useMemo(() => {
+    if (type === GovernanceTypes.GNOSIS_SAFE_USUL) {
+      return [...parsedActivities].filter(
+        activity => activity.eventType === ActivityEventType.Treasury
+      );
+    }
+    return [...parsedActivities];
+  }, [parsedActivities, type]);
+
+  /**
    * After data is parsed it is sorted based on execution data
    * updates when a different sort is selected
    */
   const sortedActivities = useMemo(() => {
-    return [...parsedActivities].sort((a, b) => {
+    return [...filterActivities].sort((a, b) => {
       const dataA = new Date(a.eventDate).getTime();
       const dataB = new Date(b.eventDate).getTime();
       if (sortBy === SortBy.Oldest) {
@@ -127,11 +141,12 @@ export const useActivities = (sortBy: SortBy) => {
       }
       return dataB - dataA;
     });
-  }, [parsedActivities, sortBy]);
+  }, [filterActivities, sortBy]);
 
   /**
    * When data is ready, set loading to false
    */
+
   useEffect(() => {
     if (transactions.count !== null) {
       setActivitiesLoading(false);

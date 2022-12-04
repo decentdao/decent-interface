@@ -1,13 +1,13 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
 import { BigNumber, utils } from 'ethers';
 import { useReducer, useMemo, useEffect, useCallback } from 'react';
-import { OZLinearVoting } from '../../../../assets/typechain-types/usul';
 import { formatCoin } from '../../../../utils/numberFormats';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import {
   TransferListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
+  GovernanceContracts,
 } from '../../types';
 
 interface ITokenData {
@@ -119,11 +119,7 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
   }
 };
 
-interface IUseTokenData {
-  votingContract?: OZLinearVoting;
-  tokenContract?: VotesToken;
-}
-const useTokenData = ({ votingContract, tokenContract }: IUseTokenData) => {
+const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContracts) => {
   const {
     state: { account, provider },
   } = useWeb3Provider();
@@ -132,7 +128,7 @@ const useTokenData = ({ votingContract, tokenContract }: IUseTokenData) => {
 
   // dispatch voting contract
   useEffect(() => {
-    if (!votingContract || !provider) {
+    if (!ozLinearVotingContract || !provider) {
       dispatch({
         type: TokenActions.RESET,
       });
@@ -141,9 +137,10 @@ const useTokenData = ({ votingContract, tokenContract }: IUseTokenData) => {
 
     (async () => {
       // @todo handle errors
-      const votingPeriod = await votingContract.votingPeriod();
+      const votingPeriod = await ozLinearVotingContract.votingPeriod();
       const blockNumber = await provider.getBlockNumber();
-      const quorum = await votingContract.quorum(blockNumber - 2);
+      const quorum = await ozLinearVotingContract.quorum(blockNumber - 2);
+      console.log('🚀 ~ file: useGovernanceTokenData.ts:147 ~ quorum', quorum);
 
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
@@ -153,7 +150,7 @@ const useTokenData = ({ votingContract, tokenContract }: IUseTokenData) => {
         },
       });
     })();
-  }, [votingContract, provider]);
+  }, [ozLinearVotingContract, provider]);
 
   // dispatch token contract
   useEffect(() => {

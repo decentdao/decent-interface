@@ -16,7 +16,7 @@ import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../providers/Fractal/hooks/useProposals';
-import { Proposal } from '../../providers/Fractal/types';
+import { TxProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 const MOCK_GOV_TOKEN_TOTAL_SUPPLY = BigNumber.from('3475000000000000000000');
@@ -27,7 +27,7 @@ function ProposalDetails() {
   const params = useParams();
 
   const { proposals } = useProposals({});
-  const [proposal, setProposal] = useState<Proposal | null>();
+  const [proposal, setProposal] = useState<TxProposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 
   useEffect(() => {

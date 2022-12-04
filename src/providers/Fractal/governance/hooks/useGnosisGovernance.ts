@@ -3,6 +3,8 @@ import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { GovernanceTypes, IGnosis, IGovernance } from '../../types';
 import { GovernanceActions, GovernanceAction } from '../actions';
 import useGovernanceTokenData from './useGovernanceTokenData';
+import { useSafeMultisigTxs } from './useSafeMultisigTxs';
+import useUsulProposals from './useUsulProposals';
 import { useVotingContracts } from './useVotingContracts';
 
 interface IUseGnosisGovernance {
@@ -20,17 +22,22 @@ export const useGnosisGovernance = ({
     state: { account },
   } = useWeb3Provider();
 
-  useVotingContracts(gnosis.modules, governanceDispatch);
+  // load voting contracts
+  useVotingContracts({ gnosis, governanceDispatch });
+  // if voting contracts are loaded, load governance data
   const governanceTokenData = useGovernanceTokenData(governance.contracts);
+
+  // loads transactions (multisig) or proposals (usul)
+  useUsulProposals({ governance, governanceDispatch });
+  useSafeMultisigTxs({ governance, gnosis, governanceDispatch });
 
   useEffect(() => {
     if (!account || !gnosis.safe.address || governance.contracts.contractsIsLoading) {
       return;
     }
-
-    const governanceType = !!governance.contracts.OZlinearVotingContract
+    const governanceType = !!governance.contracts.ozLinearVotingContract
       ? GovernanceTypes.GNOSIS_SAFE_USUL
-      : !governance.contracts.OZlinearVotingContract
+      : !governance.contracts.ozLinearVotingContract
       ? GovernanceTypes.GNOSIS_SAFE
       : null;
 
@@ -47,7 +54,7 @@ export const useGnosisGovernance = ({
     gnosis.safe.address,
     governanceDispatch,
     governanceTokenData,
-    governance.contracts.OZlinearVotingContract,
+    governance.contracts.ozLinearVotingContract,
     governance.contracts.contractsIsLoading,
   ]);
 };

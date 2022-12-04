@@ -9,12 +9,18 @@ import {
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { GovernanceAction, GovernanceActions } from '../actions';
-import { GnosisModuleType, IGnosisModuleData } from '../types';
+import { GnosisModuleType } from '../types';
+import { IGnosis } from './../../types/state';
 
-export const useVotingContracts = (
-  modules: IGnosisModuleData[],
-  governanceDispatch: Dispatch<GovernanceActions>
-) => {
+interface IUseVotingContracts {
+  gnosis: IGnosis;
+  governanceDispatch: Dispatch<GovernanceActions>;
+}
+
+export const useVotingContracts = ({
+  gnosis: { modules, isGnosisLoading },
+  governanceDispatch,
+}: IUseVotingContracts) => {
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
@@ -29,10 +35,17 @@ export const useVotingContracts = (
   const loadUsulContracts = useCallback(async () => {
     if (
       !signerOrProvider ||
-      !usulModule ||
       !zodiacModuleProxyFactoryContract ||
-      !linearVotingMasterCopyContract
+      !linearVotingMasterCopyContract ||
+      isGnosisLoading
     ) {
+      return;
+    }
+
+    if (!usulModule) {
+      governanceDispatch({
+        type: GovernanceAction.CONTRACTS_LOADED,
+      });
       return;
     }
 
@@ -69,7 +82,7 @@ export const useVotingContracts = (
     governanceDispatch({
       type: GovernanceAction.SET_USUL_CONTRACTS,
       payload: {
-        OZlinearVotingContract: ozLinearContract,
+        ozLinearVotingContract: ozLinearContract,
         usulContract: usulContract,
         tokenContract: tokenContract,
         contractsIsLoading: false,
@@ -81,6 +94,7 @@ export const useVotingContracts = (
     zodiacModuleProxyFactoryContract,
     linearVotingMasterCopyContract,
     usulModule,
+    isGnosisLoading,
   ]);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
-import { Proposal, ProposalState } from '../../providers/Fractal/types/usul';
+import { TxProposal, TxProposalState } from '../../providers/Fractal/types';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
@@ -9,7 +9,7 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalTitle from '../ui/proposal/ProposalTitle';
 import { ProposalAction } from './ProposalActions/ProposalAction';
 
-export default function ProposalCard({ proposal }: { proposal: Proposal }) {
+export default function ProposalCard({ proposal }: { proposal: TxProposal }) {
   const now = new Date();
   const proposalCreatedTimestamp = useCurrentTimestamp(proposal.startBlock.toNumber());
 
@@ -25,7 +25,7 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
             >
               <ProposalStateBox state={proposal.state} />
               <ProposalTime
-                isRejected={proposal.state === ProposalState.Rejected}
+                isRejected={proposal.state === TxProposalState.Rejected}
                 deadline={proposalCreatedTimestamp}
                 icon="calendar"
               />
@@ -40,7 +40,7 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
             width="30%"
           >
             {proposal.deadline * 1000 > now.getMilliseconds() &&
-              proposal.state === ProposalState.Active && (
+              proposal.state === TxProposalState.Active && (
                 <ProposalTime deadline={proposal.deadline} />
               )}
             <ProposalAction proposal={proposal} />

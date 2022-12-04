@@ -3,19 +3,19 @@ import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/u
 import { logError } from '../../../helpers/errorLogging';
 import { decodeTransactionHashes } from '../../../utils/crypto';
 import { Providers } from '../../Web3Data/types';
+import { strategyTxProposalStates } from '../governance/constants';
 import {
-  Proposal,
   ProposalIsPassedError,
-  ProposalState,
   ProposalVotesSummary,
-  strategyProposalStates,
-} from '../types/usul';
+  TxProposal,
+  TxProposalState,
+} from './../governance/types';
 
-export const getProposalState = async (
+export const getTxProposalState = async (
   usulContract: Usul,
   proposalId: BigNumber,
   signerOrProvider: Signer | Providers
-): Promise<ProposalState> => {
+): Promise<TxProposalState> => {
   const state = await usulContract.state(proposalId);
   if (state === 0) {
     // Usul says proposal is active, but we need to get more info in this case
@@ -28,21 +28,21 @@ export const getProposalState = async (
       try {
         // This function never returns false, it either returns true or throws an error
         await strategy.isPassed(proposalId);
-        return ProposalState.Pending;
+        return TxProposalState.Pending;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
-          return ProposalState.Rejected;
+          return TxProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
-          return ProposalState.Failed;
+          return TxProposalState.Failed;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
-          return ProposalState.Active;
+          return TxProposalState.Active;
         }
-        return ProposalState.Failed;
+        return TxProposalState.Failed;
       }
     }
-    return ProposalState.Active;
+    return TxProposalState.Active;
   }
-  return strategyProposalStates[state];
+  return strategyTxProposalStates[state];
 };
 
 export const getProposalVotesSummary = async (
@@ -82,7 +82,7 @@ export const mapProposalCreatedEventToProposal = async (
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
-  const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
+  const state = await getTxProposalState(usulContract, proposalNumber, signerOrProvider);
   const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
 
   const txHashes = [];
@@ -101,7 +101,7 @@ export const mapProposalCreatedEventToProposal = async (
     }
   }
 
-  const proposal: Proposal = {
+  const proposal: TxProposal = {
     proposalNumber,
     proposer,
     startBlock,

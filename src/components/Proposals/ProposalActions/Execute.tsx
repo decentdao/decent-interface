@@ -1,13 +1,13 @@
 import { Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Proposal, ProposalState } from '../../../providers/Fractal/types';
+import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
 
-export function Execute({ proposal }: { proposal: Proposal }) {
+export function Execute({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
 
   // @todo - check permissions for user to queue
-  const disabled = proposal.state !== ProposalState.Executing;
+  const disabled = proposal.state !== TxProposalState.Executing;
 
   return (
     <ContentBox bg="black.900-semi-transparent">

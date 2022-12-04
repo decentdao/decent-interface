@@ -19,7 +19,11 @@ export const gnosisInitialState: IGnosis = {
 export const governanceInitialState: IGovernance = {
   actions: {},
   type: null,
-  proposalList: undefined,
+  txProposalsInfo: {
+    txProposals: [],
+    pending: undefined,
+    passed: undefined,
+  },
   governanceIsLoading: true,
   governanceToken: undefined,
   contracts: {

@@ -3,7 +3,7 @@ import { TypedListener } from '../../../assets/typechain-types/usul/common';
 import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { SortBy } from '../../../types';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { Proposal, ProposalState } from '../types/usul';
+import { TxProposalState, TxProposal } from '../types';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';
 import useUsul from './useUsul';
 
@@ -12,10 +12,10 @@ export default function useProposals({
   filters,
 }: {
   sortBy?: SortBy;
-  filters?: ProposalState[];
+  filters?: TxProposalState[];
 }) {
   const { usulContract } = useUsul();
-  const [proposals, setProposals] = useState<Proposal[]>();
+  const [proposals, setProposals] = useState<TxProposal[]>();
 
   const {
     state: { signerOrProvider },
@@ -44,7 +44,7 @@ export default function useProposals({
     [usulContract, signerOrProvider]
   );
 
-  const getProposalsTotal = (state: ProposalState) => {
+  const getProposalsTotal = (state: TxProposalState) => {
     if (proposals) {
       return proposals.filter(proposal => proposal.state === state).length;
     }
