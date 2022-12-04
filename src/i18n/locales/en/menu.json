@@ -11,7 +11,7 @@
     "toastSwitchChain": "Switch to a supported chain: {{chainsNames}}",
     "toastConnected": "Connected",
     "toastChainChangedUnsupported": "Chain changed: Switch to a supported chain: {{chainsNames}}",
-    "toastChainChanged": "Chain changed: {{chainId}}",
+    "toastChainChanged": "Chain changed: {{chainName}}",
     "toastAccountRevoked": "Account access revoked",
     "toastAccountChanged": "Account changed",
     "toastAccountDisconnected": "Account disconnected",
