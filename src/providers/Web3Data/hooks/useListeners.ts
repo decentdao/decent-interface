@@ -90,7 +90,7 @@ const useListeners = (
     };
     const disconnectCallback = () => {
       clearErrorContext();
-      toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
+      toast(t('toastDisconnected'), { toastId: 'disconnected' });
       // switch to a default provider
       connectDefaultProvider();
       // remove listeners
