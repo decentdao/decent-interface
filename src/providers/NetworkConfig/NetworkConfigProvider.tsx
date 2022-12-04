@@ -46,9 +46,8 @@ const getNetworkConfig = (chainId: number) => {
     case 5:
     case 31337:
       return goerliConfig;
-    // @todo create config files for mainnet and sepolia networks
+    // @todo create config file for mainnet
     case 1:
-    case 11155111:
     default:
       return defaultState;
   }

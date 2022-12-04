@@ -19,7 +19,6 @@
     "wallet": "Wallet",
     "mainnet": "Mainnet",
     "goerli": "Goerli Test Network",
-    "sepolia": "Sepolia Test Network",
     "local": "Local Test Network",
     "titleManageDAO": "Manage DAO",
     "optionCreateSubDAO": "Add a Node",
