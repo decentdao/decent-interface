@@ -22,7 +22,9 @@ export const governanceInitialState: IGovernance = {
   proposalList: undefined,
   governanceIsLoading: true,
   governanceToken: undefined,
-  proposals: undefined,
+  contracts: {
+    contractsIsLoading: true,
+  },
 };
 
 export const treasuryInitialState: ITreasury = {

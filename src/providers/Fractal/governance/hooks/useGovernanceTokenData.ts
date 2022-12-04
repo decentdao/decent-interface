@@ -27,8 +27,6 @@ interface ITokenAccount {
 }
 
 export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
-  votingContract: OZLinearVoting | undefined;
-  tokenContract: VotesToken | undefined;
   isLoading?: boolean;
 }
 
@@ -74,7 +72,6 @@ type TokenAction =
   | {
       type: TokenActions.UPDATE_VOTING_CONTRACT;
       payload: {
-        votingContract: OZLinearVoting;
         votingPeriod: string;
         quorum: string;
       };
@@ -121,7 +118,12 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
       return { ...initialState };
   }
 };
-const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToken) => {
+
+interface IUseTokenData {
+  votingContract?: OZLinearVoting;
+  tokenContract?: VotesToken;
+}
+const useTokenData = ({ votingContract, tokenContract }: IUseTokenData) => {
   const {
     state: { account, provider },
   } = useWeb3Provider();
@@ -146,7 +148,6 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
         payload: {
-          votingContract,
           votingPeriod: utils.formatUnits(votingPeriod, 0),
           quorum: utils.formatUnits(quorum),
         },

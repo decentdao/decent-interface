@@ -1,5 +1,5 @@
-import { FractalModule } from '@fractal-framework/fractal-contracts';
-import { Usul } from '../../../assets/typechain-types/usul';
+import { FractalModule, VotesToken } from '@fractal-framework/fractal-contracts';
+import { OZLinearVoting, Usul } from '../../../assets/typechain-types/usul';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -46,7 +46,7 @@ export interface IGovernance {
   type: GovernanceTypes | null;
   proposalList?: any[];
   governanceToken?: IGoveranceTokenData;
-  proposals?: any;
+  contracts: GovernanceContracts;
   governanceIsLoading: boolean;
 }
 
@@ -56,3 +56,10 @@ export interface GnosisConfig {
 }
 
 export interface GnosisDAO extends DAODetails, GnosisConfig {}
+
+export interface GovernanceContracts {
+  OZlinearVotingContract?: OZLinearVoting;
+  usulContract?: Usul;
+  tokenContract?: VotesToken;
+  contractsIsLoading: boolean;
+}
