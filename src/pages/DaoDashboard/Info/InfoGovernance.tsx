@@ -31,19 +31,17 @@ export function InfoGovernance() {
   const quorum = governanceToken?.quorum ? `${Number(governanceToken.quorum) * 100}%` : null;
 
   return (
-    <Box data-testid="dashboard-daoGovernance">
+    <Box
+      data-testid="dashboard-daoGovernance"
+      textStyle="text-sm-sans-regular"
+    >
       <Flex
         alignItems="center"
         gap="0.5rem"
         mb="1rem"
       >
         <Govern />
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="grayscale.100"
-        >
-          {t('titleGovernance')}
-        </Text>
+        <Text color="grayscale.100">{t('titleGovernance')}</Text>
       </Flex>
 
       <Flex
@@ -51,18 +49,8 @@ export function InfoGovernance() {
         justifyContent="space-between"
         mb="0.25rem"
       >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
-        >
-          {t('titleType')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {type}
-        </Text>
+        <Text color="chocolate.200">{t('titleType')}</Text>
+        <Text color="grayscale.100">{type}</Text>
       </Flex>
 
       {votingPeriod && (
@@ -71,18 +59,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('titleVotingPeriod')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {votingPeriod}
-          </Text>
+          <Text color="chocolate.200">{t('titleVotingPeriod')}</Text>
+          <Text color="grayscale.100">{votingPeriod}</Text>
         </Flex>
       )}
       {quorum && (
@@ -91,18 +69,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('titleQuorum')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {quorum}
-          </Text>
+          <Text color="chocolate.200">{t('titleQuorum')}</Text>
+          <Text color="grayscale.100">{quorum}</Text>
         </Flex>
       )}
     </Box>
