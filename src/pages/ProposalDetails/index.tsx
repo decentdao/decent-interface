@@ -47,7 +47,7 @@ function ProposalDetails() {
   if (proposal === undefined) {
     return <Text>{t('loadingProposals')}</Text>;
   }
-
+  const usulProposal = proposal as UsulProposal;
   return (
     <Box>
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
@@ -75,7 +75,7 @@ function ProposalDetails() {
           templateColumns="repeat(3, 1fr)"
         >
           <GridItem colSpan={2}>
-            {(proposal as UsulProposal).votes && (
+            {usulProposal.votes && (
               <>
                 <ContentBox bg="black.900-semi-transparent">
                   <Flex
@@ -87,7 +87,7 @@ function ProposalDetails() {
                       alignItems="center"
                     >
                       <ProposalStateBox state={proposal.state} />
-                      <ProposalTime deadline={(proposal as UsulProposal).deadline} />
+                      <ProposalTime deadline={usulProposal.deadline} />
                     </Flex>
                     <Box
                       w="full"
@@ -97,11 +97,13 @@ function ProposalDetails() {
                       <ProposalExecutableCode proposal={proposal} />
                     </Box>
                   </Flex>
-                  <Box mt={4}>
-                    <ProposalCreatedBy proposalProposer={(proposal as UsulProposal).proposer} />
-                  </Box>
+                  {usulProposal.proposer && (
+                    <Box mt={4}>
+                      <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
+                    </Box>
+                  )}
                 </ContentBox>
-                {(proposal as UsulProposal).govTokenAddress && (
+                {usulProposal.govTokenAddress && (
                   <ProposalVotes
                     proposal={proposal as UsulProposal}
                     govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
