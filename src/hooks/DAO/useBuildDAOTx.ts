@@ -34,7 +34,8 @@ const useBuildDAOTx = () => {
     zodiacModuleProxyFactoryContract,
     fractalNameRegistryContract,
     fractalModuleMasterCopyContract,
-    vetoGuardMasterCopyContract,
+    gnosisVetoGuardMasterCopyContract,
+    usulVetoGuardMasterCopyContract,
     vetoMultisigVotingMasterCopyContract,
     vetoERC20VotingMasterCopyContract,
     votesTokenMasterCopyContract,
@@ -181,7 +182,7 @@ const useBuildDAOTx = () => {
           !signerOrProvider ||
           !zodiacModuleProxyFactoryContract ||
           !fractalModuleMasterCopyContract ||
-          !vetoGuardMasterCopyContract ||
+          !gnosisVetoGuardMasterCopyContract ||
           !vetoMultisigVotingMasterCopyContract
         ) {
           return;
@@ -254,7 +255,7 @@ const useBuildDAOTx = () => {
             ]);
           const vetoGuardByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
-            vetoGuardMasterCopyContract.address.slice(2) +
+            gnosisVetoGuardMasterCopyContract.address.slice(2) +
             '5af43d82803e903d91602b57fd5bf3';
           const vetoGuardSalt = solidityKeccak256(
             ['bytes32', 'uint256'],
@@ -316,7 +317,7 @@ const useBuildDAOTx = () => {
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
-              [vetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
+              [gnosisVetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
               0,
               false
             ),
@@ -418,7 +419,7 @@ const useBuildDAOTx = () => {
       getCreate2Address,
       solidityKeccak256,
       saltNum,
-      vetoGuardMasterCopyContract,
+      gnosisVetoGuardMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
     ]
   );
@@ -438,7 +439,7 @@ const useBuildDAOTx = () => {
           !signerOrProvider ||
           !votesTokenMasterCopyContract ||
           !vetoERC20VotingMasterCopyContract ||
-          !vetoGuardMasterCopyContract
+          !usulVetoGuardMasterCopyContract
         ) {
           return;
         }
@@ -631,7 +632,7 @@ const useBuildDAOTx = () => {
 
           const vetoGuardByteCodeLinear =
             '0x602d8060093d393df3363d3d373d3d3d363d73' +
-            vetoGuardMasterCopyContract.address.slice(2) +
+            usulVetoGuardMasterCopyContract.address.slice(2) +
             '5af43d82803e903d91602b57fd5bf3';
           const vetoGuardSalt = solidityKeccak256(
             ['bytes32', 'uint256'],
@@ -702,7 +703,7 @@ const useBuildDAOTx = () => {
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
-              [vetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
+              [usulVetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
               0,
               false
             ),
@@ -838,7 +839,7 @@ const useBuildDAOTx = () => {
       multiSendContract,
       fractalNameRegistryContract,
       fractalModuleMasterCopyContract,
-      vetoGuardMasterCopyContract,
+      usulVetoGuardMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
       saltNum,
       signerOrProvider,
