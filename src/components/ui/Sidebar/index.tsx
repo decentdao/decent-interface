@@ -143,13 +143,13 @@ function Sidebar() {
         mb="8"
       >
         <Divider color="chocolate.700" />
-        <SidebarTooltipWrapper label={t('support')}>
+        <SidebarTooltipWrapper label={t('faq')}>
           <a
-            data-testid="sidebarExternal-support"
+            data-testid="sidebarExternal-faq"
             href={URL_FAQ}
             rel="noreferrer noopener"
             target="_blank"
-            aria-label={t('ariaLabelSupport')}
+            aria-label={t('ariaLabelFAQ')}
           >
             <SupportQuestion
               boxSize="1.5rem"

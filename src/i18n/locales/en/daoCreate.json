@@ -10,6 +10,8 @@
     "labelSigThreshold": "Signature Threshold",
     "labelSigners": "Signers",
     "helperSigners": "How many trusted users for Gnosis Safe",
+    "titleTrustedAddresses": "Trusted Addresses",
+    "subTitleTrustedAddresses": "The addresses added here have permission to submit and approve transactions",
     "helperSigThreshold": "How many signatures are needed to pass a proposal.",
     "titleEssentials": "Configure Essentials",
     "titleChooseGovernance": "Choose Governance",
