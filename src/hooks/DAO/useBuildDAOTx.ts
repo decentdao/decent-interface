@@ -12,6 +12,7 @@ import { OZLinearVoting__factory, Usul__factory } from '../../assets/typechain-t
 import {
   GnosisDAO,
   GovernanceTypes,
+  SubDAO,
   TokenGovernanceDAO,
 } from '../../components/DaoCreator/provider/types/index';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
@@ -213,6 +214,8 @@ const useBuildDAOTx = () => {
 
         let internaltTxs: MetaTransaction[];
         if (parentDAOAddress) {
+          const subDAOData = daoData as SubDAO;
+
           // VETO MULTISIG
           const setVetoMultiVotingCalldata =
             // eslint-disable-next-line camelcase
@@ -297,10 +300,10 @@ const useBuildDAOTx = () => {
                   ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
                   [
                     parentDAOAddress, // Owner -- Parent DAO
-                    0, // VetoVotesThreshold
-                    0, // FreezeVotesThreshold
-                    0, // FreezeProposalBlockDuration
-                    0, // FreezeBlockDuration
+                    subDAOData.vetoVotesThreshold, // VetoVotesThreshold
+                    subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
+                    subDAOData.freezeProposalBlockDuration, // FreezeProposalBlockDuration
+                    subDAOData.freezeBlockDuration, // FreezeBlockDuration
                     parentDAOAddress, // ParentGnosisSafe -- Parent DAO
                     predictedVetoModuleAddress, // VetoGuard
                   ]
@@ -585,6 +588,7 @@ const useBuildDAOTx = () => {
 
         let internaltTxs: MetaTransaction[];
         if (parentDAOAddress) {
+          const subDAOData = daoData as SubDAO;
           // VETO ERC20 Voting
           const setVetoERC20VotingCalldata =
             // eslint-disable-next-line camelcase
@@ -681,10 +685,10 @@ const useBuildDAOTx = () => {
                   ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
                   [
                     parentDAOAddress, // Owner -- Parent DAO
-                    0, // VetoVotesThreshold
-                    0, // FreezeVotesThreshold
-                    0, // FreezeProposalBlockDuration
-                    0, // FreezeBlockDuration
+                    subDAOData.vetoVotesThreshold, // VetoVotesThreshold
+                    subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
+                    subDAOData.freezeProposalBlockDuration, // FreezeProposalBlockDuration
+                    subDAOData.freezeBlockDuration, // FreezeBlockDuration
                     predictedTokenAddress, // Votes Token
                     vetoGuardContract.address, // VetoGuard
                   ]
