@@ -54,54 +54,53 @@ function ForwardButton({
   const isNextDisabled = useNextDisabled(state);
   const deployLabel = isSubDAO ? t('labelDeploySubDAO', { ns: 'daoCreate' }) : t('deploy');
 
-  switch (state.step) {
-    case CreatorSteps.CHOOSE_GOVERNANCE:
-    case CreatorSteps.ESSENTIALS:
-    case CreatorSteps.FUNDING:
-    case CreatorSteps.GOV_CONFIG:
-    case CreatorSteps.GNOSIS_WITH_USUL:
-    case CreatorSteps.PURE_GNOSIS:
-      const canSkip =
-        state.step === CreatorSteps.FUNDING &&
-        state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
-      return (
-        <Button
-          data-testid="create-nextButton"
-          size="lg"
-          onClick={() =>
-            dispatch({
-              type: CreatorProviderActions.SET_STEP,
-              payload: state.nextStep!,
-            })
-          }
-          isDisabled={isNextDisabled}
-          rightIcon={<ArrowRight />}
-        >
-          {canSkip ? t('skip') : t('next')}
-        </Button>
-      );
-    case CreatorSteps.GUARD_CONFIG: {
-      return (
-        <Button
-          data-testid="create-deployDAO"
-          onClick={() =>
-            deployDAO({
-              ...state.essentials,
-              ...state.govToken,
-              ...state.gnosis,
-              ...state.govModule,
-              governance: state.governance,
-            })
-          }
-          size="lg"
-          isDisabled={pending || !account || isNextDisabled}
-        >
-          {deployLabel}
-        </Button>
-      );
-    }
-    default:
-      return null;
+  if (
+    state.step === CreatorSteps.ESSENTIALS ||
+    state.step === CreatorSteps.CHOOSE_GOVERNANCE ||
+    state.step === CreatorSteps.FUNDING ||
+    state.step === CreatorSteps.GNOSIS_WITH_USUL ||
+    (state.step === CreatorSteps.GOV_CONFIG && isSubDAO) ||
+    (state.step === CreatorSteps.PURE_GNOSIS && isSubDAO)
+  ) {
+    const canSkip =
+      state.step === CreatorSteps.FUNDING &&
+      state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
+    return (
+      <Button
+        data-testid="create-nextButton"
+        size="lg"
+        onClick={() =>
+          dispatch({
+            type: CreatorProviderActions.SET_STEP,
+            payload: state.nextStep!,
+          })
+        }
+        isDisabled={isNextDisabled}
+        rightIcon={<ArrowRight />}
+      >
+        {canSkip ? t('skip') : t('next')}
+      </Button>
+    );
+  } else {
+    return (
+      <Button
+        data-testid="create-deployDAO"
+        onClick={() =>
+          deployDAO({
+            ...state.essentials,
+            ...state.govToken,
+            ...state.gnosis,
+            ...state.govModule,
+            ...state.vetoGuard,
+            governance: state.governance,
+          })
+        }
+        size="lg"
+        isDisabled={pending || !account || isNextDisabled}
+      >
+        {deployLabel}
+      </Button>
+    );
   }
 }
 
