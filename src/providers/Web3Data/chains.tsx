@@ -28,6 +28,10 @@ const formatChainsList = (chains: string): number[] => {
 };
 
 export const getChainMetadataById = (id: number): ChainMetadata | undefined => {
+  CHAINS.forEach((meta: ChainMetadata) => {
+    console.log('TEST available chainId: ' + meta.id);
+  });
+  console.log('TEST setting chainId: ' + id);
   return CHAINS.find(chain => chain.id === id);
 };
 
