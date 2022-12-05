@@ -52,7 +52,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            nextStep: null,
+            nextStep: CreatorSteps.GUARD_CONFIG,
             prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
           },
         });
@@ -79,7 +79,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            prevStep: CreatorSteps.GOV_CONFIG,
+            prevStep: isPureGnosis ? CreatorSteps.PURE_GNOSIS : CreatorSteps.GOV_CONFIG,
           },
         });
         break;
