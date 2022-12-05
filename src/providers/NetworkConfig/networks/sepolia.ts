@@ -14,5 +14,8 @@ export const sepoliaConfig: NetworkConfig = {
     votesTokenMasterCopy: '',
     claimingFactory: '',
     claimingMasterCopy: '',
+    vetoGuardMasterCopy: '',
+    vetoMultisigVotingMasterCopy: '',
+    vetoERC20VotingMasterCopy: '',
   },
 };
