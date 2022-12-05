@@ -2,8 +2,9 @@ import SafeServiceClient, {
   AllTransactionsListResponse,
   SafeInfoResponse,
 } from '@gnosis.pm/safe-service-client';
-import { GnosisActions, GovernanceActions, TreasuryActions } from './actions';
-import { IGnosisModuleData, IGovernance } from './governance';
+import { GovernanceActions } from '../governance/actions';
+import { IGovernance, IGnosisModuleData } from '../governance/types';
+import { GnosisActions, TreasuryActions } from './actions';
 import { ITreasury } from './treasury';
 
 export interface IFractalContext {

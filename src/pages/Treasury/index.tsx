@@ -14,7 +14,9 @@ function Treasury() {
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
-  const showButton = assetsFungible.length > 0; // TODO also only show if the user is a DAO signer or delegated token holder..
+  // TODO show only if the user is a DAO signer or delegated token holder and assets > 0
+  // TODO needs transaction implementation
+  const showButton = false && assetsFungible.length > 0;
   return (
     <Box>
       <PageHeader

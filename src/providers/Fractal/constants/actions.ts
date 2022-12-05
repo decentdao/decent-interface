@@ -8,11 +8,6 @@ export enum GnosisAction {
   RESET,
 }
 
-export enum GovernanceAction {
-  ADD_GOVERNANCE_DATA,
-  RESET,
-}
-
 export enum TreasuryAction {
   UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS,
   UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,

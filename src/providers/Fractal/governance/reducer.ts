@@ -1,6 +1,6 @@
-import { GovernanceAction, governanceInitialState } from '../constants';
-import { GovernanceActions } from '../types/actions';
-import { IGovernance } from '../types/governance';
+import { governanceInitialState } from '../constants';
+import { GovernanceAction, GovernanceActions } from './actions';
+import { IGovernance } from './types';
 
 export const initializeGovernanceState = (_initialState: IGovernance) => {
   return _initialState;
@@ -8,7 +8,7 @@ export const initializeGovernanceState = (_initialState: IGovernance) => {
 
 export const governanceReducer = (state: IGovernance, action: GovernanceActions): IGovernance => {
   switch (action.type) {
-    case GovernanceAction.ADD_GOVERNANCE_DATA:
+    case GovernanceAction.SET_GOVERNANCE:
       return { ...state, ...action.payload };
     case GovernanceAction.RESET:
       return initializeGovernanceState(governanceInitialState);

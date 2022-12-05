@@ -1,4 +1,4 @@
-import { IGovernance } from '../types/governance';
+import { IGovernance } from '../governance/types';
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';
 
@@ -17,14 +17,12 @@ export const gnosisInitialState: IGnosis = {
 };
 
 export const governanceInitialState: IGovernance = {
-  createSubDAOFunc: undefined,
-  isCreateSubDAOPending: undefined,
-  createProposalFunc: undefined,
-  isCreateProposalPending: undefined,
+  actions: {},
+  type: null,
   proposalList: undefined,
-  isConnectedUserAuth: undefined,
   governanceIsLoading: true,
   governanceToken: undefined,
+  proposals: undefined,
 };
 
 export const treasuryInitialState: ITreasury = {
