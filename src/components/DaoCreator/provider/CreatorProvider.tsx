@@ -49,6 +49,12 @@ export const initialState: CreatorState = {
     executionDelay: BigNumber.from(86400),
     votingPeriod: BigNumber.from(604800),
   },
+  vetoGuard: {
+    vetoVotesThreshold: BigNumber.from(100),
+    freezeVotesThreshold: BigNumber.from(200),
+    freezeProposalBlockDuration: BigNumber.from(50400),
+    freezeBlockDuration: BigNumber.from(50400),
+  },
   funding: {
     tokensToFund: [],
     nftsToFund: [],
@@ -71,6 +77,8 @@ const reducer = (state: CreatorState, action: CreatorProviderActionTypes) => {
       return { ...state, govToken: { ...state.govToken, ...action.payload } };
     case CreatorProviderActions.UPDATE_GOV_CONFIG:
       return { ...state, govModule: { ...state.govModule, ...action.payload } };
+    case CreatorProviderActions.UPDATE_GUARD_CONFIG:
+      return { ...state, vetoGuard: { ...state.vetoGuard, ...action.payload } };
     case CreatorProviderActions.UPDATE_GNOSIS_CONFIG: {
       return { ...state, gnosis: { ...state.gnosis, ...action.payload } };
     }
