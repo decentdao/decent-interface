@@ -19,7 +19,7 @@ import { CreatorProviderActions } from './provider/types';
 
 function GuardDetails() {
   const {
-    state: { vetoGuard },
+    state: { vetoGuard, governance },
     dispatch,
   } = useCreator();
 
@@ -33,7 +33,10 @@ function GuardDetails() {
       },
     });
   };
-
+  const onExecutionDetailsChange = (executionDetails: string) => {
+    const newExecution = BigNumber.from(executionDetails || 0);
+    fieldUpdate(newExecution, 'executionDetails');
+  };
   const onVetoVotesThresholdChange = (vetoVotesThreshold: string) => {
     const newVetoVotesThreshold = BigNumber.from(vetoVotesThreshold || 0);
     fieldUpdate(newVetoVotesThreshold, 'vetoVotesThreshold');
@@ -56,11 +59,36 @@ function GuardDetails() {
   const { t } = useTranslation(['common', 'daoCreate']);
   const votes = t('votes');
   const blocks = t('blocks');
-
   return (
     <Box>
       <ContentBox>
         <ContentBoxTitle>Veto Guard Settings</ContentBoxTitle>
+        <InputBox>
+          <LabelWrapper
+            label={ governance === 'safe' ? t('labelExecutionDelayBlocks', { ns: 'daoCreate' }) : t('labelExecutionPeriod', { ns: 'daoCreate' }) }
+            subLabel={governance === 'safe' ? t('helperExecutionDelayBlocks', { ns: 'daoCreate' }) : t('helperExecutionPeriod', { ns: 'daoCreate' })}
+          >
+            <NumberInput
+              value={vetoGuard.executionDetails.toString()}
+              onChange={onExecutionDetailsChange}
+              min={1}
+              precision={0}
+              data-testid="guardConfig-executionDetails"
+              onKeyDown={restrictChars}
+            >
+              <InputGroup>
+                <NumberInputField />
+                <InputRightElement mr="4">{blocks}</InputRightElement>
+              </InputGroup>
+            </NumberInput>
+          </LabelWrapper>
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="gold.400"
+          >
+            {t('exampleFreezeProposalBlockDuration', { ns: 'daoCreate' })}
+          </Text>
+        </InputBox>
         <InputBox>
           <LabelWrapper
             label={t('labelVetoVotesThreshold', { ns: 'daoCreate' })}
