@@ -54,7 +54,8 @@ function GuardDetails() {
   };
 
   const { t } = useTranslation(['common', 'daoCreate']);
-  const seconds = t('seconds');
+  const votes = t('votes');
+  const blocks = t('blocks');
 
   return (
     <Box>
@@ -62,8 +63,8 @@ function GuardDetails() {
         <ContentBoxTitle>Veto Guard Settings</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('labelVotingPeriod', { ns: 'daoCreate' })}
-            subLabel={t('helperVotingPeriod', { ns: 'daoCreate' })}
+            label={t('labelVetoVotesThreshold', { ns: 'daoCreate' })}
+            subLabel={t('helperVetoVotesThreshold', { ns: 'daoCreate' })}
           >
             <NumberInput
               value={govModule.votingPeriod.toString()}
@@ -75,22 +76,15 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
+                <InputRightElement mr="4">{votes}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
-          <Text
-            textStyle="text-sm-sans-regular"
-            color="gold.400"
-          >
-            {t('exampleVotingPeriod', { ns: 'daoCreate' })}
-          </Text>
         </InputBox>
-        <ContentBoxTitle>Governance Setup</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('quorum')}
-            subLabel={t('helperQuorum', { ns: 'daoCreate' })}
+            label={t('labelFreezeVotesThreshold', { ns: 'daoCreate' })}
+            subLabel={t('helperFreezeVotesThreshold', { ns: 'daoCreate' })}
           >
             <NumberInput
               value={govModule.quorum.toString()}
@@ -101,15 +95,15 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement>%</InputRightElement>
+                <InputRightElement mr="4">{votes}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelProposalExecutionDelay', { ns: 'daoCreate' })}
-            subLabel={t('helperProposalExecutionDelay', { ns: 'daoCreate' })}
+            label={t('labelFreezeProposalBlockDuration', { ns: 'daoCreate' })}
+            subLabel={t('helperFreezeProposalBlockDuration', { ns: 'daoCreate' })}
           >
             <NumberInput
               value={govModule.executionDelay.toString()}
@@ -123,7 +117,7 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
+                <InputRightElement mr="4">{blocks}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
@@ -131,11 +125,39 @@ function GuardDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleProposalExecutionDelay', { ns: 'daoCreate' })}
+            {t('exampleFreezeProposalBlockDuration', { ns: 'daoCreate' })}
+          </Text>
+        </InputBox>
+        <InputBox>
+          <LabelWrapper
+            label={t('labelFreezeBlockDuration', { ns: 'daoCreate' })}
+            subLabel={t('helperFreezeBlockDuration', { ns: 'daoCreate' })}
+          >
+            <NumberInput
+              value={govModule.executionDelay.toString()}
+              onChange={executionDelay =>
+                fieldUpdate(BigNumber.from(executionDelay || 0), 'executionDelay')
+              }
+              min={isSafeWithUsul ? 2 : 1}
+              precision={0}
+              data-testid="govConfig-executionDelay"
+              onKeyDown={restrictChars}
+            >
+              <InputGroup>
+                <NumberInputField />
+                <InputRightElement mr="4">{blocks}</InputRightElement>
+              </InputGroup>
+            </NumberInput>
+          </LabelWrapper>
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="gold.400"
+          >
+            {t('exampleFreezeBlockDuration', { ns: 'daoCreate' })}
           </Text>
         </InputBox>
       </ContentBox>
-      <ContentBanner description={t('governanceDescription', { ns: 'daoCreate' })} />
+      <ContentBanner description={t('vetoGuardDescription', { ns: 'daoCreate' })} />
     </Box>
   );
 }
