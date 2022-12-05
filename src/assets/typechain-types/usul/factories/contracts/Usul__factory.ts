@@ -747,7 +747,7 @@ const _abi = [
     name: "state",
     outputs: [
       {
-        internalType: "enum Usul.TxProposalState",
+        internalType: "enum Usul.ProposalState",
         name: "",
         type: "uint8",
       },
