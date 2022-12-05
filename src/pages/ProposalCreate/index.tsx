@@ -1,22 +1,34 @@
-import { Button, Text } from '@chakra-ui/react';
+import {
+  Button,
+  Text,
+  Grid,
+  GridItem,
+  VStack,
+  HStack,
+  Divider,
+  Alert,
+  AlertTitle,
+  Box,
+} from '@chakra-ui/react';
+import { CloseX, Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import Essentials from '../../components/ProposalCreate/Essentials';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
+import { notProd, useProposeStuff } from '../../utils/dev';
 
 const defaultTransaction = {
   targetAddress: '',
   functionName: '',
   functionSignature: '',
   parameters: '',
+  isExpanded: true,
 };
 
 function ProposalCreate() {
@@ -24,31 +36,27 @@ function ProposalCreate() {
     gnosis: { safe },
   } = useFractal();
 
-  const [step, setStep] = useState<number>(0);
   const [proposalDescription, setProposalDescription] = useState<string>('');
-  const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
+  const [transactions, setTransactions] = useState<TransactionData[]>([
+    Object.assign({}, defaultTransaction),
+  ]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+  const testPropose = useProposeStuff(setTransactions);
 
   /**
    * adds new transaction form
    */
   const addTransaction = () => {
-    setTransactions([...transactions, defaultTransaction]);
+    const newTransactionData = Object.assign({}, defaultTransaction);
+    transactions[transactions.length - 1].isExpanded = false; // this makes sure the previous transaction is colapsed when adding a new transaction
+    setTransactions([...transactions, newTransactionData]);
   };
 
   const removeTransaction = (transactionNumber: number) => {
     const filteredTransactions = transactions.filter((_, i) => i !== transactionNumber);
     setTransactions(filteredTransactions);
-  };
-
-  const decrementStep = () => {
-    setStep(currentStep => currentStep - 1);
-  };
-
-  const incrementStep = () => {
-    setStep(currentStep => currentStep + 1);
   };
 
   const successCallback = () => {
@@ -118,85 +126,119 @@ function ProposalCreate() {
     return true;
   }, [proposalData, transactions]);
 
-  const isNextDisabled = useMemo(
-    () => !canUserCreateProposal || !proposalDescription.trim().length,
-    [canUserCreateProposal, proposalDescription]
-  );
-  const isCreateDisabled = useMemo(
-    () => !canUserCreateProposal || !isValidProposal || pendingCreateTx,
-    [pendingCreateTx, isValidProposal, canUserCreateProposal]
-  );
+  const isCreateDisabled = useMemo(() => {
+    return !canUserCreateProposal || !isValidProposal || pendingCreateTx;
+  }, [pendingCreateTx, isValidProposal, canUserCreateProposal]);
 
   const { t } = useTranslation(['proposal', 'common']);
 
   return (
-    <div>
-      <div>
-        <Text>{t('createProposal')}</Text>
-        <form onSubmit={e => e.preventDefault()}>
-          {step === 0 && (
-            <Essentials
-              proposalDescription={proposalDescription}
-              setProposalDescription={setProposalDescription}
-            />
-          )}
-          {step === 1 && (
-            <Transactions
-              transactions={transactions}
-              setTransactions={setTransactions}
-              removeTransaction={removeTransaction}
-              pending={pendingCreateTx}
-            />
-          )}
-        </form>
-        {step === 1 && (
-          <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
-            <Button
-              variant="text"
-              onClick={addTransaction}
-              disabled={pendingCreateTx}
+    <Grid
+      gap={4}
+      templateColumns="2fr 1fr"
+      templateAreas={`"header header"
+                      "content details"`}
+    >
+      <GridItem area="header">
+        <VStack align="left">
+          <Button
+            paddingLeft={0}
+            width="fit-content"
+            variant="text"
+            leftIcon={<CloseX />}
+            onClick={() =>
+              safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
+            }
+          >
+            {t('cancel', { ns: 'common' })}
+          </Button>
+          <Text
+            onClick={notProd() ? testPropose : undefined}
+            textStyle="text-2xl-mono-regular"
+          >
+            {t('createProposal')}
+          </Text>
+        </VStack>
+      </GridItem>
+      <GridItem area="content">
+        <VStack
+          align="left"
+          spacing={6}
+        >
+          <Box
+            rounded="lg"
+            p="1rem"
+            bg="black.900-semi-transparent"
+          >
+            <Text
+              pb={4}
+              textStyle="text-lg-mono-medium"
             >
-              {t('labelAddTransaction')}
-            </Button>
-          </div>
-        )}
-        <div className="flex items-center justify-center mt-4 space-x-4">
-          {step === 1 && (
-            <Button
-              variant="text"
-              onClick={decrementStep}
-              disabled={pendingCreateTx}
-              rightIcon={<LeftArrow />}
+              {t('proposal')}
+            </Text>
+            <form onSubmit={e => e.preventDefault()}>
+              <Transactions
+                transactions={transactions}
+                setTransactions={setTransactions}
+                removeTransaction={removeTransaction}
+                pending={pendingCreateTx}
+              />
+            </form>
+            <VStack
+              align="left"
+              spacing={6}
+              pt={2}
             >
-              {t('prev', { ns: 'common' })}
-            </Button>
-          )}
-          {step === 1 && (
-            <Button
-              size="lg"
-              onClick={() =>
-                submitProposal({
-                  proposalData,
-                  successCallback,
-                })
-              }
-              disabled={isCreateDisabled}
-            >
-              {t('createProposal')}
-            </Button>
-          )}
-          {step === 0 && (
-            <Button
+              <Button
+                variant="text"
+                onClick={addTransaction}
+                disabled={pendingCreateTx}
+                w="fit-content"
+                pl={0}
+              >
+                {t('labelAddTransaction')}
+              </Button>
+              <Alert status="info">
+                <Info boxSize="24px" />
+                <AlertTitle>{t('transactionExecutionAlertMessage')}</AlertTitle>
+              </Alert>
+              <Divider color="chocolate.700" />
+              <Button
+                w="100%"
+                onClick={() =>
+                  submitProposal({
+                    proposalData,
+                    successCallback,
+                  })
+                }
+                disabled={isCreateDisabled}
+              >
+                {t('createProposal')}
+              </Button>
+            </VStack>
+          </Box>
+        </VStack>
+      </GridItem>
+      <GridItem area="details">
+        <Box
+          rounded="lg"
+          p="1rem"
+          bg="black.900-semi-transparent"
+        >
+          <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
+          <Divider my={3} />
+          <HStack justifyContent="space-between">
+            <Text
+              fontSize="sm"
               variant="secondary"
-              onClick={incrementStep}
-              disabled={isNextDisabled}
             >
-              {t('labelAddTransactions')}
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
+              TODO: Signers
+            </Text>
+            <Text variant="secondary">3/5</Text>
+          </HStack>
+        </Box>
+      </GridItem>
+    </Grid>
   );
 }
 
