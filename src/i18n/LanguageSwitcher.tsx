@@ -6,12 +6,10 @@ import { supportedLanguages } from '.';
 
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
-  const changeLanguage = (lang: string) => i18n.changeLanguage(lang);
-
   let supported = Object.keys(supportedLanguages).map(function (languageCode) {
     return {
       optionKey: languageCode,
-      onClick: () => changeLanguage(languageCode),
+      onClick: () => i18n.changeLanguage(languageCode),
     };
   });
 
@@ -20,29 +18,25 @@ export function LanguageSwitcher() {
     supported = [
       {
         optionKey: 'en',
-        onClick: () => changeLanguage('EN'),
+        onClick: () => i18n.changeLanguage('en'),
       },
       {
         optionKey: 'es',
-        onClick: () => changeLanguage('ES'),
+        onClick: () => i18n.changeLanguage('es'),
       },
       {
-        optionKey: 'zh-CN',
-        onClick: () => changeLanguage('zh_CN'),
+        optionKey: 'zh',
+        onClick: () => i18n.changeLanguage('zh'),
       },
     ];
   }
   // --- END TODO ---
 
-  if (supported.length < 2) {
-    return null;
-  }
-
   return (
     <OptionMenu
       trigger={
         <Center>
-          <Text>{i18n.language}</Text>
+          <Text>{i18n.language.toUpperCase()}</Text>
           <ArrowRight />
         </Center>
       }
