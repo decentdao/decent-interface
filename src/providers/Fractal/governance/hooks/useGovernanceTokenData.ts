@@ -140,7 +140,6 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       const votingPeriod = await ozLinearVotingContract.votingPeriod();
       const blockNumber = await provider.getBlockNumber();
       const quorum = await ozLinearVotingContract.quorum(blockNumber - 2);
-      console.log('🚀 ~ file: useGovernanceTokenData.ts:147 ~ quorum', quorum);
 
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,

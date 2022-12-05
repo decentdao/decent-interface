@@ -46,7 +46,7 @@ export interface IGovernance {
     };
   };
   type: GovernanceTypes | null;
-  txProposalsInfo: TxProposlsInfo;
+  txProposalsInfo: TxProposalsInfo;
   governanceToken?: IGoveranceTokenData;
   contracts: GovernanceContracts;
   governanceIsLoading: boolean;
@@ -78,24 +78,28 @@ export enum TxProposalState {
   Rejected = 'stateRejected',
 }
 
-export interface TxProposal {
-  // BOTH
-  state: TxProposalState; // TxProposalState
-  startBlock: BigNumber; // submittedDate | block number
-  proposer: string; // created by | this can stay the same
-  proposalNumber: BigNumber; // proposal/safeTxHash id
-  txHashes: string[]; // number of transactions?
-  decodedTransactions: DecodedTransaction[]; // update recursive method?
-  // USUL
-  govTokenAddress: string | null; // don't need this
+export interface UsulProposal extends TxProposal {
+  proposer: string;
+  govTokenAddress: string | null;
   votes: ProposalVotesSummary;
   deadline: number;
-  userVote?: ProposalVote | undefined;
-  // MULTISIG
+  userVote?: ProposalVote;
+  startBlock: BigNumber;
 }
 
-export interface TxProposlsInfo {
-  txProposals: TxProposal[];
+export interface SafeTransaction extends TxProposal {
+  submissionDate?: string;
+}
+
+export interface TxProposal {
+  state: TxProposalState;
+  proposalNumber: string;
+  txHashes: string[];
+  decodedTransactions: DecodedTransaction[];
+}
+
+export interface TxProposalsInfo {
+  txProposals: SafeTransaction[] | UsulProposal[];
   pending?: number; // active/queued (usul) | not executed (multisig)
   passed?: number; // executed (usul/multisig)
 }

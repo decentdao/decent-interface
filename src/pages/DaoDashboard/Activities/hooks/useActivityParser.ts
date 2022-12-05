@@ -1,6 +1,7 @@
 import {
   TransferWithTokenInfoResponse,
   SafeMultisigTransactionWithTransfersResponse,
+  SafeMultisigTransactionResponse,
 } from '@gnosis.pm/safe-service-client';
 import { constants, BigNumber } from 'ethers';
 import { useCallback } from 'react';
@@ -49,7 +50,9 @@ export const useActivityParser = () => {
   }, []);
 
   const eventTransactionMapping = (
-    multiSigTransaction: SafeMultisigTransactionWithTransfersResponse,
+    multiSigTransaction:
+      | SafeMultisigTransactionWithTransfersResponse
+      | SafeMultisigTransactionResponse,
     isMultiSigTransaction: boolean
   ) => {
     const eventTransactionMap = new Map<number, any>();
@@ -62,7 +65,7 @@ export const useActivityParser = () => {
 
         if (param.to) {
           eventTransactionMap.set(eventTransactionMap.size, {
-            address: param.to,
+            ...param,
           });
         }
         return parseTransactions(dataDecoded);

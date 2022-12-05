@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
-import { TxProposal, TxProposalState } from '../../providers/Fractal/types';
+import { SafeTransaction, TxProposalState, UsulProposal } from '../../providers/Fractal/types';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
@@ -9,9 +9,11 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalTitle from '../ui/proposal/ProposalTitle';
 import { ProposalAction } from './ProposalActions/ProposalAction';
 
-export default function ProposalCard({ proposal }: { proposal: TxProposal }) {
+export default function ProposalCard({ proposal }: { proposal: UsulProposal | SafeTransaction }) {
   const now = new Date();
-  const proposalCreatedTimestamp = useCurrentTimestamp(proposal.startBlock.toNumber());
+  const proposalCreatedTimestamp = useCurrentTimestamp(
+    (proposal as UsulProposal).startBlock.toNumber()
+  );
 
   return (
     <Link to={proposal.proposalNumber.toString()}>
@@ -26,12 +28,15 @@ export default function ProposalCard({ proposal }: { proposal: TxProposal }) {
               <ProposalStateBox state={proposal.state} />
               <ProposalTime
                 isRejected={proposal.state === TxProposalState.Rejected}
+                submissionDate={(proposal as SafeTransaction).submissionDate}
                 deadline={proposalCreatedTimestamp}
                 icon="calendar"
               />
             </Flex>
             <ProposalTitle proposal={proposal} />
-            <ProposalCreatedBy proposalProposer={proposal.proposer} />
+            {(proposal as UsulProposal).deadline && (
+              <ProposalCreatedBy proposalProposer={(proposal as UsulProposal).proposer} />
+            )}
           </Flex>
           <Flex
             alignItems="center"
@@ -39,9 +44,10 @@ export default function ProposalCard({ proposal }: { proposal: TxProposal }) {
             gap={8}
             width="30%"
           >
-            {proposal.deadline * 1000 > now.getMilliseconds() &&
+            {(proposal as UsulProposal).deadline &&
+              (proposal as UsulProposal).deadline * 1000 > now.getMilliseconds() &&
               proposal.state === TxProposalState.Active && (
-                <ProposalTime deadline={proposal.deadline} />
+                <ProposalTime deadline={(proposal as UsulProposal).deadline} />
               )}
             <ProposalAction proposal={proposal} />
           </Flex>

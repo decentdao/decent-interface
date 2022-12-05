@@ -1,5 +1,6 @@
 import { Text, Button } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
+import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
@@ -12,7 +13,7 @@ function Vote({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation();
 
   const castVote = useCastVote({
-    proposalNumber: proposal.proposalNumber,
+    proposalNumber: BigNumber.from(proposal.proposalNumber),
     setPending: setPending,
   });
 

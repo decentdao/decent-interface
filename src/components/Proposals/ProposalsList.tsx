@@ -117,7 +117,7 @@ export default function ProposalsList() {
       ) : proposals.length > 0 ? (
         proposals.map(proposal => (
           <ProposalCard
-            key={proposal.proposalNumber.toNumber()}
+            key={proposal.proposalNumber}
             proposal={proposal}
           />
         ))

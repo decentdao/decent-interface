@@ -1,10 +1,10 @@
-import { GovernanceContracts, GovernanceTypes, TxProposlsInfo } from '../types';
+import { GovernanceContracts, GovernanceTypes, TxProposalsInfo } from '../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export type GovernanceActions =
   | { type: GovernanceAction.SET_USUL_CONTRACTS; payload: GovernanceContracts }
   | { type: GovernanceAction.CONTRACTS_LOADED }
-  | { type: GovernanceAction.UPDATE_TX_PROPOSALS; payload: TxProposlsInfo }
+  | { type: GovernanceAction.UPDATE_PROPOSALS; payload: TxProposalsInfo }
   | {
       type: GovernanceAction.SET_GOVERNANCE;
       payload: {
@@ -18,7 +18,7 @@ export type GovernanceActions =
 export enum GovernanceAction {
   SET_GOVERNANCE,
   SET_USUL_CONTRACTS,
-  UPDATE_TX_PROPOSALS,
+  UPDATE_PROPOSALS,
   CONTRACTS_LOADED,
   RESET,
 }

@@ -12,8 +12,8 @@ export const governanceReducer = (state: IGovernance, action: GovernanceActions)
       return { ...state, ...action.payload };
     case GovernanceAction.SET_USUL_CONTRACTS:
       return { ...state, contracts: action.payload };
-    case GovernanceAction.UPDATE_TX_PROPOSALS:
-      return { ...state, txProposalsInfo: action.payload };
+    case GovernanceAction.UPDATE_PROPOSALS:
+      return { ...state, txProposalsInfo: { ...action.payload } };
     case GovernanceAction.CONTRACTS_LOADED:
       return { ...state, contracts: { ...state, contractsIsLoading: false } };
     case GovernanceAction.RESET:

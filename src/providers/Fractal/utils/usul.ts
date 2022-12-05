@@ -7,8 +7,8 @@ import { strategyTxProposalStates } from '../governance/constants';
 import {
   ProposalIsPassedError,
   ProposalVotesSummary,
-  TxProposal,
   TxProposalState,
+  UsulProposal,
 } from './../governance/types';
 
 export const getTxProposalState = async (
@@ -101,8 +101,8 @@ export const mapProposalCreatedEventToProposal = async (
     }
   }
 
-  const proposal: TxProposal = {
-    proposalNumber,
+  const proposal: UsulProposal = {
+    proposalNumber: proposalNumber.toString(),
     proposer,
     startBlock,
     deadline: deadline.toNumber(),

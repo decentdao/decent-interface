@@ -38,7 +38,7 @@ export default function useUsulProposals({
       const proposals = [...txProposalsInfo.txProposals, proposal];
 
       governanceDispatch({
-        type: GovernanceAction.UPDATE_TX_PROPOSALS,
+        type: GovernanceAction.UPDATE_PROPOSALS,
         payload: {
           txProposals: proposals,
           passed: txProposalsInfo.passed,
@@ -53,7 +53,6 @@ export default function useUsulProposals({
     if (!usulContract || !signerOrProvider) {
       return;
     }
-
     const filter = usulContract.filters.ProposalCreated();
 
     usulContract.on(filter, proposalCreatedListener);
@@ -83,19 +82,19 @@ export default function useUsulProposals({
         })
       );
       const passedProposals = mappedProposals.reduce(
-        (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev++ : prev),
+        (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
         0
       );
       // @todo no queued?
       const pendingProposals = mappedProposals.reduce(
         (prev, proposal) =>
           proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Pending
-            ? prev++
+            ? prev + 1
             : prev,
         0
       );
       governanceDispatch({
-        type: GovernanceAction.UPDATE_TX_PROPOSALS,
+        type: GovernanceAction.UPDATE_PROPOSALS,
         payload: {
           txProposals: mappedProposals,
           passed: passedProposals,

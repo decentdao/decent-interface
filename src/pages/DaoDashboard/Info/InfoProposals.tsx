@@ -13,7 +13,6 @@ export function InfoProposals({}: IDAOGovernance) {
     },
   } = useFractal();
 
-  // @todo replace mocked values
   return (
     <Box data-testid="dashboard-daoProposals">
       <Flex

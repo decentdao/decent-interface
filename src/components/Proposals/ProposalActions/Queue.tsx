@@ -1,4 +1,5 @@
 import { Text, Button } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useQueueProposal from '../../../hooks/DAO/proposal/useQueueProposal';
 import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
@@ -17,7 +18,7 @@ export default function Queue({ proposal }: { proposal: TxProposal }) {
         width="full"
         disabled={disabled}
         marginTop={5}
-        onClick={() => queueProposal(proposal.proposalNumber)}
+        onClick={() => queueProposal(BigNumber.from(proposal.proposalNumber))}
       >
         {t('queue', { ns: 'common' })}
       </Button>
