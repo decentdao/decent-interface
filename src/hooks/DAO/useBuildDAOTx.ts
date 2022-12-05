@@ -245,7 +245,7 @@ const useBuildDAOTx = () => {
               ethers.utils.defaultAbiCoder.encode(
                 ['uint256', 'address', 'address', 'address'],
                 [
-                  0, // Execution Delay
+                  subDAOData.executionDetails, // Execution Delay
                   parentDAOAddress, // Owner -- Parent DAO
                   vetoMultisigVotingContract.address, // Veto Voting
                   safeContract.address, // Gnosis Safe
@@ -621,7 +621,7 @@ const useBuildDAOTx = () => {
               ethers.utils.defaultAbiCoder.encode(
                 ['uint256', 'address', 'address', 'address'],
                 [
-                  tokenGovernanceDaoData.executionDelay, // Execution Delay
+                  subDAOData.executionDetails, // Execution Period
                   parentDAOAddress, // Owner -- Parent DAO
                   vetoERC20VotingContract.address, // Veto Voting
                   safeContract.address, // Gnosis Safe
