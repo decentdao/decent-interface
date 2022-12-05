@@ -37,7 +37,7 @@ export default function ProposalCard({ proposal }: { proposal: UsulProposal | Sa
               />
             </Flex>
             <ProposalTitle proposal={proposal} />
-            {(proposal as UsulProposal).deadline && (
+            {usulProposal.deadline && (
               <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
             )}
           </Flex>
