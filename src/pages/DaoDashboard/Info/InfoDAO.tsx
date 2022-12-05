@@ -14,7 +14,7 @@ export function InfoDAO() {
   if (!safe.address) {
     return (
       <Flex
-        minHeight="9.5rem"
+        minHeight="8.5rem"
         width="100%"
         alignItems="center"
         justifyContent="center"

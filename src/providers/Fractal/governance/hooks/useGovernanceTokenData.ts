@@ -1,16 +1,14 @@
-import { VotesToken, VotesToken__factory } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
-import { useEffect, useCallback, useMemo, useReducer, useState } from 'react';
+import { VotesToken } from '@fractal-framework/fractal-contracts';
+import { BigNumber, utils } from 'ethers';
+import { useReducer, useMemo, useEffect, useCallback } from 'react';
+import { OZLinearVoting } from '../../../../assets/typechain-types/usul';
+import { formatCoin } from '../../../../utils/numberFormats';
+import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import {
-  OZLinearVoting,
-  OZLinearVoting__factory,
-  Usul,
-} from '../../../assets/typechain-types/usul';
-import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { formatCoin } from '../../../utils/numberFormats';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { DelegateChangedListener, DelegateVotesChangedListener, TransferListener } from '../types';
-import { GnosisModuleType, IGnosisModuleData } from '../types/governance';
+  TransferListener,
+  DelegateChangedListener,
+  DelegateVotesChangedListener,
+} from '../../types';
 
 interface ITokenData {
   name: string | undefined;
@@ -28,9 +26,15 @@ interface ITokenAccount {
   isDelegatesSet: boolean | undefined;
 }
 
-export interface IGoveranceTokenData extends ITokenData, ITokenAccount {
+export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
   votingContract: OZLinearVoting | undefined;
   tokenContract: VotesToken | undefined;
+  isLoading?: boolean;
+}
+
+export interface VotingTokenConfig {
+  votingPeriod?: string;
+  quorum?: string;
 }
 
 const initialState = {
@@ -46,6 +50,8 @@ const initialState = {
   isDelegatesSet: undefined,
   votingContract: undefined,
   tokenContract: undefined,
+  votingPeriod: undefined,
+  quorum: undefined,
 };
 
 enum TokenActions {
@@ -65,7 +71,14 @@ type TokenAction =
       type: TokenActions.UPDATE_VOTING_WEIGHTS;
       payload: { votingWeight: BigNumber; votingWeightString: string };
     }
-  | { type: TokenActions.UPDATE_VOTING_CONTRACT; payload: OZLinearVoting }
+  | {
+      type: TokenActions.UPDATE_VOTING_CONTRACT;
+      payload: {
+        votingContract: OZLinearVoting;
+        votingPeriod: string;
+        quorum: string;
+      };
+    }
   | { type: TokenActions.UPDATE_TOKEN_CONTRACT; payload: VotesToken }
   | { type: TokenActions.RESET };
 
@@ -101,119 +114,46 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
         votingWeightString: action.payload.votingWeightString,
       };
     case TokenActions.UPDATE_VOTING_CONTRACT:
-      return { ...state, votingContract: action.payload };
+      return { ...state, ...action.payload, isLoading: false };
     case TokenActions.UPDATE_TOKEN_CONTRACT:
-      return { ...state, tokenContract: action.payload };
+      return { ...state, tokenContract: action.payload, isLoading: false };
+    case TokenActions.RESET:
+      return { ...initialState };
   }
-  return state;
 };
-
-const useTokenData = (modules: IGnosisModuleData[]) => {
+const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToken) => {
   const {
-    state: { account, signerOrProvider },
+    state: { account, provider },
   } = useWeb3Provider();
-  const [votingContract, setVotingContract] = useState<OZLinearVoting>();
-  const [tokenContract, setTokenContract] = useState<VotesToken>();
-  const [decimals, setDecimals] = useState<number>();
-  const [symbol, setSymbol] = useState<string>();
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { zodiacModuleProxyFactoryContract, linearVotingMasterCopyContract } = useSafeContracts();
-
-  const usulModule = useMemo(
-    () => modules.find(module => module.moduleType === GnosisModuleType.USUL)?.moduleContract,
-    [modules]
-  ) as Usul | undefined;
-
-  // set voting contract
-  useEffect(() => {
-    if (
-      !usulModule ||
-      !zodiacModuleProxyFactoryContract ||
-      !linearVotingMasterCopyContract ||
-      !signerOrProvider
-    ) {
-      return;
-    }
-
-    // This assumes that there is a single voting strategy installed on the Usul module
-    // If the first strategy contract isn't the OZ Linear Voting contract, then the voting contract is set to undefined
-    (async () => {
-      const votingContractAddress = await usulModule
-        .queryFilter(usulModule.filters.EnabledStrategy())
-        .then(strategiesEnabled => {
-          return strategiesEnabled[0].args.strategy;
-        });
-
-      const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
-        votingContractAddress,
-        null
-      );
-
-      const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract
-        .queryFilter(filter)
-        .then(proxiesCreated => {
-          return proxiesCreated[0].args.masterCopy;
-        });
-
-      if (votingContractMasterCopyAddress === linearVotingMasterCopyContract.address) {
-        setVotingContract(OZLinearVoting__factory.connect(votingContractAddress, signerOrProvider));
-      } else {
-        setVotingContract(undefined);
-      }
-    })();
-  }, [
-    linearVotingMasterCopyContract,
-    signerOrProvider,
-    usulModule,
-    zodiacModuleProxyFactoryContract,
-  ]);
-
-  // set token contract
-  useEffect(() => {
-    if (!votingContract || !signerOrProvider) {
-      return;
-    }
-
-    (async () => {
-      setTokenContract(
-        VotesToken__factory.connect(await votingContract.governanceToken(), signerOrProvider)
-      );
-    })();
-  }, [signerOrProvider, votingContract]);
-
-  // set decimals
-  useEffect(() => {
-    if (!tokenContract) {
-      setDecimals(undefined);
-      return;
-    }
-
-    tokenContract.decimals().then(setDecimals);
-  }, [tokenContract]);
-
-  // set symbol
-  useEffect(() => {
-    if (!tokenContract) {
-      setSymbol(undefined);
-      return;
-    }
-
-    tokenContract.symbol().then(setSymbol);
-  }, [tokenContract]);
-
   // dispatch voting contract
   useEffect(() => {
-    if (!votingContract) {
+    if (!votingContract || !provider) {
+      dispatch({
+        type: TokenActions.RESET,
+      });
       return;
     }
 
-    dispatch({
-      type: TokenActions.UPDATE_VOTING_CONTRACT,
-      payload: votingContract,
-    });
-  }, [votingContract]);
+    (async () => {
+      // @todo handle errors
+      const votingPeriod = await votingContract.votingPeriod();
+      const blockNumber = await provider.getBlockNumber();
+      // @note Two is subtracted from current block number to ensure that blocks are in sync with other providers
+      const quorum = await votingContract.quorum(blockNumber - 2);
+
+      dispatch({
+        type: TokenActions.UPDATE_VOTING_CONTRACT,
+        payload: {
+          votingContract,
+          votingPeriod: utils.formatUnits(votingPeriod, 0),
+          quorum: utils.formatUnits(quorum),
+        },
+      });
+    })();
+  }, [votingContract, provider]);
 
   // dispatch token contract
   useEffect(() => {
@@ -267,14 +207,14 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
       type: TokenActions.UPDATE_ACCOUNT,
       payload: {
         userBalance: tokenBalance,
-        userBalanceString: formatCoin(tokenBalance, false, decimals, symbol),
+        userBalanceString: formatCoin(tokenBalance, false, state.decimals, state.symbol),
         delegatee: tokenDelegatee,
         votingWeight: tokenVotingWeight,
-        votingWeightString: formatCoin(tokenVotingWeight, false, decimals, symbol),
+        votingWeightString: formatCoin(tokenVotingWeight, false, state.decimals, state.symbol),
         isDelegatesSet,
       },
     });
-  }, [tokenContract, account, decimals, symbol]);
+  }, [tokenContract, account, state.decimals, state.symbol]);
 
   // get token account data
   useEffect(() => {
@@ -346,7 +286,7 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
         type: TokenActions.UPDATE_VOTING_WEIGHTS,
         payload: {
           votingWeight: currentBalance,
-          votingWeightString: formatCoin(currentBalance, true, decimals, symbol),
+          votingWeightString: formatCoin(currentBalance, true, state.decimals, state.symbol),
         },
       });
     };
@@ -356,7 +296,7 @@ const useTokenData = (modules: IGnosisModuleData[]) => {
     return () => {
       tokenContract.off(filter, callback);
     };
-  }, [account, decimals, symbol, tokenContract]);
+  }, [account, state.decimals, state.symbol, tokenContract]);
 
   const data = useMemo(() => state, [state]);
   return data;
