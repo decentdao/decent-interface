@@ -7,9 +7,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { BadgeLabels } from '../../../../components/ui/badges/Badge';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
+import { eventTransactionMapping, totalsReducer } from '../../../../providers/Fractal/utils';
 import { ActivityEventType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
-import { useActivityParser } from './useActivityParser';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
@@ -18,7 +18,6 @@ export const useActivities = (sortBy: SortBy) => {
   } = useFractal();
 
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
-  const { totalsReducer, eventTransactionMapping } = useActivityParser();
 
   const parsedActivities = useMemo(() => {
     if (!transactions.results.length || !safe) {
@@ -114,7 +113,7 @@ export const useActivities = (sortBy: SortBy) => {
         eventNonce: eventNonce,
       };
     });
-  }, [safe, transactions, totalsReducer, eventTransactionMapping]);
+  }, [safe, transactions]);
 
   /**
    * filters out initial multisig transaction on USUL enabled safes

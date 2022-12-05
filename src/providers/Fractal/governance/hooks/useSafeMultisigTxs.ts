@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { Dispatch, useEffect, useCallback } from 'react';
 import { IGnosis } from '../../types';
+import { eventTransactionMapping } from '../../utils';
 import { GovernanceAction, GovernanceActions } from '../actions';
 import { IGovernance, TxProposalState } from './../types';
 interface IUseSafeMultisigTxs {
@@ -17,8 +18,6 @@ export const useSafeMultisigTxs = ({
   },
   governanceDispatch,
 }: IUseSafeMultisigTxs) => {
-  // const { eventTransactionMapping } = useActivityParser();
-
   const getMultisigTx = useCallback(async () => {
     if (!safeService || !address || !type) {
       return;
@@ -31,7 +30,7 @@ export const useSafeMultisigTxs = ({
 
     const multisigTxs = multiSigTransactions.results.map((transaction, _, transactionArr) => {
       // mapping of each interacted contract address. this is used to calculate the number of transactions in a multisig transaction
-      // const eventTransactionMap = eventTransactionMapping(transaction, true);
+      const eventTransactionMap = eventTransactionMapping(transaction, true);
 
       // Used as the proposal id for multisig transactions
       const eventSafeTxHash = transaction.safeTxHash;
@@ -62,8 +61,7 @@ export const useSafeMultisigTxs = ({
         state: eventState,
         submissionDate: eventDate, // update this
         proposalNumber: eventSafeTxHash,
-        txHashes: [],
-        // txHashes: Array.from(eventTransactionMap.values()).map((event: any) => event.to),
+        txHashes: Array.from(eventTransactionMap.values()).map((event: any) => event.to),
         decodedTransactions: [],
       };
     });

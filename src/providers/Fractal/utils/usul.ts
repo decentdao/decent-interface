@@ -1,6 +1,12 @@
-import { BigNumber, Signer } from 'ethers';
+import {
+  SafeMultisigTransactionWithTransfersResponse,
+  SafeMultisigTransactionResponse,
+  TransferWithTokenInfoResponse,
+} from '@gnosis.pm/safe-service-client';
+import { BigNumber, constants, Signer } from 'ethers';
 import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
 import { logError } from '../../../helpers/errorLogging';
+import { GnosisTransferType } from '../../../types';
 import { decodeTransactionHashes } from '../../../utils/crypto';
 import { Providers } from '../../Web3Data/types';
 import { strategyTxProposalStates } from '../governance/constants';
@@ -114,4 +120,76 @@ export const mapProposalCreatedEventToProposal = async (
   };
 
   return proposal;
+};
+
+export const eventTransactionMapping = (
+  multiSigTransaction:
+    | SafeMultisigTransactionWithTransfersResponse
+    | SafeMultisigTransactionResponse,
+  isMultiSigTransaction: boolean
+) => {
+  const eventTransactionMap = new Map<number, any>();
+  const parseTransactions = (parameters: any[]) => {
+    if (!parameters || !parameters.length) {
+      return;
+    }
+    parameters.forEach((param: any) => {
+      const dataDecoded = param.dataDecoded || param.valueDecoded;
+
+      if (param.to) {
+        eventTransactionMap.set(eventTransactionMap.size, {
+          ...param,
+        });
+      }
+      return parseTransactions(dataDecoded);
+    });
+  };
+
+  const dataDecoded = multiSigTransaction.dataDecoded as any;
+  if (dataDecoded && isMultiSigTransaction) {
+    parseTransactions(dataDecoded.parameters);
+  }
+  return eventTransactionMap;
+};
+
+export const totalsReducer = (prev: Map<any, any>, cur: TransferWithTokenInfoResponse) => {
+  if (cur.type === GnosisTransferType.ETHER && cur.value) {
+    if (prev.has(constants.AddressZero)) {
+      const prevValue = prev.get(constants.AddressZero);
+      prev.set(constants.AddressZero, {
+        bn: prevValue.bn.add(BigNumber.from(cur.value)),
+        symbol: 'ETHER',
+        decimals: 18,
+      });
+    }
+    prev.set(constants.AddressZero, {
+      bn: BigNumber.from(cur.value),
+      symbol: 'ETHER',
+      decimals: 18,
+    });
+  }
+  if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+    prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
+      bn: BigNumber.from(1),
+      symbol: cur.tokenInfo.symbol,
+      decimals: 0,
+    });
+  }
+  if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+    if (prev.has(cur.tokenInfo.address)) {
+      const prevValue = prev.get(cur.tokenInfo.address);
+      prev.set(cur.tokenInfo.address, {
+        ...prevValue,
+        bn: prevValue.bn.add(BigNumber.from(cur.value)),
+      });
+    } else {
+      prev.set(cur.tokenAddress, {
+        bn: BigNumber.from(cur.value),
+        symbol: cur.tokenInfo.symbol,
+        decimals: cur.tokenInfo.decimals,
+      });
+    }
+  }
+
+  return prev;
 };
