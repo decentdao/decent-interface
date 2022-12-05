@@ -75,7 +75,7 @@ function ProposalDetails() {
           templateColumns="repeat(3, 1fr)"
         >
           <GridItem colSpan={2}>
-            {usulProposal.votes && (
+            {usulProposal.govTokenAddress && (
               <>
                 <ContentBox bg="black.900-semi-transparent">
                   <Flex
