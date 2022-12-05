@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import { SortBy } from '../../../types';
+import { ActivityEventType, SortBy } from '../../../types';
+import { ActivityGovernance } from './ActivityGovernance';
 import { ActivityTreasury } from './ActivityTreasury';
 import { useActivities } from './hooks/useActivities';
 
@@ -32,12 +33,22 @@ export function Activities() {
           flexDirection="column"
           gap="1rem"
         >
-          {sortedActivities.map((asset, i) => (
-            <ActivityTreasury
-              key={i}
-              asset={asset}
-            />
-          ))}
+          {sortedActivities.map((asset, i) => {
+            if (asset.eventType === ActivityEventType.Governance) {
+              return (
+                <ActivityGovernance
+                  key={i}
+                  asset={asset}
+                />
+              );
+            }
+            return (
+              <ActivityTreasury
+                key={i}
+                asset={asset}
+              />
+            );
+          })}
         </Flex>
       ) : (
         <EmptyBox emptyText={t('noActivity')} />
