@@ -8,7 +8,7 @@ interface BaseProps {
   isRequired: boolean;
   value: string;
   disabled: boolean;
-  exampleText: string;
+  subLabel?: React.ReactNode;
   errorMessage?: string;
   children: React.ReactNode;
 }
@@ -21,18 +21,9 @@ interface TextareaProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
 }
 
-// TODO. this is the style to be applied to the example text once a JSX component can be passed to LabelWrapper
-// const exampleLabelStyle = {
-//   bg: 'chocolate.700',
-//   borderRadius: '4px',
-//   p: '3px 4px',
-//   color: 'grayscale.100',
-//   fontSize: '12px',
-// };
-
 function BaseComponent(props: BaseProps) {
   const { t } = useTranslation(['proposal', 'common']);
-  const { label, helper, isRequired, exampleText, errorMessage, children } = props;
+  const { label, helper, isRequired, subLabel, errorMessage, children } = props;
   return (
     <Grid
       columnGap={3}
@@ -49,7 +40,7 @@ function BaseComponent(props: BaseProps) {
       </GridItem>
       <GridItem>
         <LabelWrapper
-          subLabel={`${t('example')}: ${exampleText}`}
+          subLabel={subLabel}
           errorMessage={errorMessage}
         >
           {children}

@@ -7,7 +7,6 @@ import {
   HStack,
   Divider,
   Alert,
-  AlertIcon,
   AlertTitle,
   Box,
 } from '@chakra-ui/react';
@@ -200,12 +199,7 @@ function ProposalCreate() {
                 {t('labelAddTransaction')}
               </Button>
               <Alert status="info">
-                <AlertIcon>
-                  <Info
-                  // boxSize="24px"
-                  // color="blue.500"
-                  />
-                </AlertIcon>
+                <Info boxSize="24px" />
                 <AlertTitle>{t('transactionExecutionAlertMessage')}</AlertTitle>
               </Alert>
               <Divider color="chocolate.700" />

@@ -1,4 +1,4 @@
-import { VStack } from '@chakra-ui/react';
+import { VStack, HStack, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
@@ -94,6 +94,15 @@ function Transaction({
     updateTransaction(newTransactionData, transactionNumber);
   };
 
+  const exampleLabelStyle = {
+    bg: 'chocolate.700',
+    borderRadius: '4px',
+    px: '4px',
+    py: '1px',
+    color: 'grayscale.100',
+    fontSize: '12px',
+  };
+
   return (
     <VStack
       align="left"
@@ -107,7 +116,14 @@ function Transaction({
         value={transaction.targetAddress}
         onChange={e => updateTargetAddress(e.target.value)}
         disabled={pending}
-        exampleText="yourdomain.ens"
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>yourdomain.ens</Text>
+            <Text>{` ${t('or', { ns: 'common' })} `}</Text>
+            <Text {...exampleLabelStyle}>0x4168592...</Text>
+          </HStack>
+        }
         errorMessage={transaction.addressError}
       />
       <TextareaComponent
@@ -117,27 +133,44 @@ function Transaction({
         value={transaction.functionName}
         onChange={e => updateFunctionName(e.target.value)}
         disabled={pending}
-        exampleText="transfer"
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>transfer</Text>
+          </HStack>
+        }
         errorMessage={transaction.fragmentError}
       />
       <TextareaComponent
         label={t('labelFunctionSignature')}
         helper={t('helperFunctionSignature')}
-        isRequired={true}
+        isRequired={false}
         value={transaction.functionSignature}
         onChange={e => updateFunctionSignature(e.target.value)}
         disabled={pending}
-        exampleText="address to, uint amount"
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>address to, uint amount</Text>
+          </HStack>
+        }
         errorMessage={transaction.fragmentError}
       />
       <TextareaComponent
         label={t('labelParameters')}
         helper={t('helperParameters')}
-        isRequired={true}
+        isRequired={false}
         value={transaction.parameters}
         onChange={e => updateParameters(e.target.value)}
         disabled={pending}
-        exampleText='"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>
+              {'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", 1000000000'}
+            </Text>
+          </HStack>
+        }
         errorMessage={transaction.fragmentError}
       />
     </VStack>
