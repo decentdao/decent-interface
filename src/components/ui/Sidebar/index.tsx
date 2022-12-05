@@ -142,7 +142,7 @@ function Sidebar() {
         gap="2rem"
         mb="8"
       >
-      	<Divider color="chocolate.700" />
+        <Divider color="chocolate.700" />
         <SidebarTooltipWrapper label={t('support')}>
           <a
             data-testid="sidebarExternal-support"
