@@ -1,6 +1,5 @@
 import { Input, HStack, Text, Textarea, Grid, GridItem } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { useTranslation } from 'react-i18next';
 
 interface BaseProps {
   label: string;
@@ -22,7 +21,6 @@ interface TextareaProps extends Omit<BaseProps, 'children'> {
 }
 
 function BaseComponent(props: BaseProps) {
-  const { t } = useTranslation(['proposal', 'common']);
   const { label, helper, isRequired, subLabel, errorMessage, children } = props;
   return (
     <Grid
