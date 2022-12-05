@@ -6,7 +6,13 @@ import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
 import { clearErrorContext, setErrorContext, setLoggedWallet } from '../../../helpers/errorLogging';
-import { ChainMetadata, CHAINS, getChainMetadataById, getChainsWithMetadata, getSupportedChains } from '../chains';
+import {
+  ChainMetadata,
+  CHAINS,
+  getChainMetadataById,
+  getChainsWithMetadata,
+  getSupportedChains,
+} from '../chains';
 import { ConnectFn, ModalProvider } from '../types';
 
 /**
