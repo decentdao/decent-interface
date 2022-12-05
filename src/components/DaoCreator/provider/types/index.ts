@@ -39,7 +39,7 @@ export type CreatorProviderActionTypes =
   | { type: CreatorProviderActions.UPDATE_GOVERNANCE; payload: GovernanceTypes }
   | { type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN; payload: DAOGovenorToken }
   | { type: CreatorProviderActions.UPDATE_GOV_CONFIG; payload: DAOGovenorModuleConfig }
-  | { type: CreatorProviderActions.UPDATE_GUARD_CONFIG; payload: DAOGovenorModuleConfig }
+  | { type: CreatorProviderActions.UPDATE_GUARD_CONFIG; payload: DAOVetoGuardConfig }
   | { type: CreatorProviderActions.UPDATE_GNOSIS_CONFIG; payload: GnosisDAO }
   | { type: CreatorProviderActions.UPDATE_FUNDING; payload: DAOFunding }
   | {
@@ -70,6 +70,13 @@ type DAOGovenorModuleConfig = {
   votingPeriod: BigNumber;
 };
 
+type DAOVetoGuardConfig = {
+  vetoVotesThreshold: BigNumber;
+  freezeVotesThreshold: BigNumber;
+  freezeProposalBlockDuration: BigNumber;
+  freezeBlockDuration: BigNumber;
+};
+
 type DAOFunding = {
   tokensToFund: TokenToFund[];
   nftsToFund: NFTToFund[];
@@ -84,6 +91,7 @@ export interface CreatorState {
   essentials: DAOEssentials;
   govToken: DAOGovenorToken;
   govModule: DAOGovenorModuleConfig;
+  vetoGuard: DAOVetoGuardConfig;
   funding: DAOFunding;
 }
 
