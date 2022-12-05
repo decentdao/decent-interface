@@ -36,25 +36,21 @@ function GuardDetails() {
 
   const onVetoVotesThresholdChange = (vetoVotesThreshold: string) => {
     const newVetoVotesThreshold = BigNumber.from(vetoVotesThreshold || 0);
-
-      fieldUpdate(newVetoVotesThreshold, 'vetoVotesThreshold');
+    fieldUpdate(newVetoVotesThreshold, 'vetoVotesThreshold');
   };
   const onFreezeVotesThresholdChange = (freezeVotesThreshold: string) => {
     const newFreezeVotesThreshold = BigNumber.from(freezeVotesThreshold || 0);
-
-      fieldUpdate(newFreezeVotesThreshold, 'freezeVotesThreshold');
+    fieldUpdate(newFreezeVotesThreshold, 'freezeVotesThreshold');
   };
 
   const onFreezeProposalBlockDurationChange = (freezeProposalBlockDuration: string) => {
     const newFreezeProposalBlockDuration = BigNumber.from(freezeProposalBlockDuration || 0);
-
-      fieldUpdate(newFreezeProposalBlockDuration, 'freezeProposalBlockDuration');
+    fieldUpdate(newFreezeProposalBlockDuration, 'freezeProposalBlockDuration');
   };
 
   const onFreezeBlockDurationChange = (freezeBlockDuration: string) => {
     const newFreezeBlockDuration = BigNumber.from(freezeBlockDuration || 0);
-
-      fieldUpdate(newFreezeBlockDuration, 'freezeBlockDuration');
+    fieldUpdate(newFreezeBlockDuration, 'freezeBlockDuration');
   };
 
   const { t } = useTranslation(['common', 'daoCreate']);
