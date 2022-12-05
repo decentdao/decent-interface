@@ -105,6 +105,13 @@ export type BigNumberInput = {
   bigNumberValue: BigNumber | null;
 };
 
+export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
+  vetoVotesThreshold: BigNumber;
+  freezeVotesThreshold: BigNumber;
+  freezeProposalBlockDuration: BigNumber;
+  freezeBlockDuration: BigNumber;
+}
+
 export interface TokenGovernanceDAO extends DAODetails {
   tokenName: string;
   tokenSymbol: string;
