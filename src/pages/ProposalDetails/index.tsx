@@ -97,27 +97,23 @@ function ProposalDetails() {
                       <ProposalExecutableCode proposal={proposal} />
                     </Box>
                   </Flex>
-                  {usulProposal.proposer && (
-                    <Box mt={4}>
-                      <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
-                    </Box>
-                  )}
+                  <Box mt={4}>
+                    <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
+                  </Box>
                 </ContentBox>
-                {usulProposal.govTokenAddress && (
-                  <ProposalVotes
-                    proposal={proposal as UsulProposal}
-                    govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
-                    govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
-                    govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
-                  />
-                )}
+                <ProposalVotes
+                  proposal={usulProposal}
+                  govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
+                  govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
+                  govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
+                />
               </>
             )}
           </GridItem>
-          {(proposal as UsulProposal).govTokenAddress && (
+          {usulProposal.govTokenAddress && (
             <GridItem colSpan={1}>
               <ProposalSummary
-                proposal={proposal as UsulProposal}
+                proposal={usulProposal}
                 govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
               />
               <ProposalAction
