@@ -1,6 +1,6 @@
 export const GNOSIS_UNSUPPORTED_CHAIN_IDS = [11155111];
 
-type ChainMetadata = {
+export type ChainMetadata = {
   name: string;
   id: number;
 };
@@ -8,7 +8,7 @@ type ChainMetadata = {
 /* We might use something https://github.com/ethereum-lists/chains
  * if number of supported chains would grew up, this should remain sync with SUPPORTED_CHAIN_IDS of both dev site and prod
  */
-const CHAINS: ChainMetadata[] = [
+export const CHAINS: ChainMetadata[] = [
   {
     name: 'Mainnet',
     id: 1,
@@ -28,10 +28,6 @@ const formatChainsList = (chains: string): number[] => {
 };
 
 export const getChainMetadataById = (id: number): ChainMetadata | undefined => {
-  CHAINS.forEach((meta: ChainMetadata) => {
-    console.log('TEST available chainId: ' + meta.id);
-  });
-  console.log('TEST setting chainId: ' + id);
   return CHAINS.find(chain => chain.id === id);
 };
 

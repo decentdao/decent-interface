@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
 import { clearErrorContext, setErrorContext, setLoggedWallet } from '../../../helpers/errorLogging';
-import { getChainMetadataById, getChainsWithMetadata, getSupportedChains } from '../chains';
+import { ChainMetadata, CHAINS, getChainMetadataById, getChainsWithMetadata, getSupportedChains } from '../chains';
 import { ConnectFn, ModalProvider } from '../types';
 
 /**
@@ -24,6 +24,12 @@ const useListeners = (
   const [modalProvider, setModalProvider] = useState<ModalProvider | null>(null);
 
   const supportedChains = getSupportedChains();
+  supportedChains.forEach((id: number) => {
+    console.log('TEST supportedChains: ' + id);
+  });
+  CHAINS.forEach((meta: ChainMetadata) => {
+    console.log('TEST CHAINS: ' + meta.id + ', ' + meta?.name);
+  });
   const chainsNames = getChainsWithMetadata(supportedChains)
     .map(chain => chain.name)
     .join(', ');
