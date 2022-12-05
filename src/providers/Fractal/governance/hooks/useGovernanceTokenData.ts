@@ -1,13 +1,13 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
 import { BigNumber, utils } from 'ethers';
 import { useReducer, useMemo, useEffect, useCallback } from 'react';
-import { OZLinearVoting } from '../../../../assets/typechain-types/usul';
 import { formatCoin } from '../../../../utils/numberFormats';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import {
   TransferListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
+  GovernanceContracts,
 } from '../../types';
 
 interface ITokenData {
@@ -27,8 +27,6 @@ interface ITokenAccount {
 }
 
 export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
-  votingContract: OZLinearVoting | undefined;
-  tokenContract: VotesToken | undefined;
   isLoading?: boolean;
 }
 
@@ -74,7 +72,6 @@ type TokenAction =
   | {
       type: TokenActions.UPDATE_VOTING_CONTRACT;
       payload: {
-        votingContract: OZLinearVoting;
         votingPeriod: string;
         quorum: string;
       };
@@ -121,7 +118,8 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
       return { ...initialState };
   }
 };
-const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToken) => {
+
+const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContracts) => {
   const {
     state: { account, provider },
   } = useWeb3Provider();
@@ -130,7 +128,7 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
 
   // dispatch voting contract
   useEffect(() => {
-    if (!votingContract || !provider) {
+    if (!ozLinearVotingContract || !provider) {
       dispatch({
         type: TokenActions.RESET,
       });
@@ -139,21 +137,20 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
 
     (async () => {
       // @todo handle errors
-      const votingPeriod = await votingContract.votingPeriod();
+      const votingPeriod = await ozLinearVotingContract.votingPeriod();
       const blockNumber = await provider.getBlockNumber();
       // @note Two is subtracted from current block number to ensure that blocks are in sync with other providers
-      const quorum = await votingContract.quorum(blockNumber - 2);
+      const quorum = await ozLinearVotingContract.quorum(blockNumber - 2);
 
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
         payload: {
-          votingContract,
           votingPeriod: utils.formatUnits(votingPeriod, 0),
           quorum: utils.formatUnits(quorum),
         },
       });
     })();
-  }, [votingContract, provider]);
+  }, [ozLinearVotingContract, provider]);
 
   // dispatch token contract
   useEffect(() => {
