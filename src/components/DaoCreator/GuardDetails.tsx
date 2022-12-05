@@ -65,8 +65,16 @@ function GuardDetails() {
         <ContentBoxTitle>Veto Guard Settings</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={ governance === 'safe' ? t('labelExecutionDelayBlocks', { ns: 'daoCreate' }) : t('labelExecutionPeriod', { ns: 'daoCreate' }) }
-            subLabel={governance === 'safe' ? t('helperExecutionDelayBlocks', { ns: 'daoCreate' }) : t('helperExecutionPeriod', { ns: 'daoCreate' })}
+            label={
+              governance === 'safe'
+                ? t('labelExecutionDelayBlocks', { ns: 'daoCreate' })
+                : t('labelExecutionPeriod', { ns: 'daoCreate' })
+            }
+            subLabel={
+              governance === 'safe'
+                ? t('helperExecutionDelayBlocks', { ns: 'daoCreate' })
+                : t('helperExecutionPeriod', { ns: 'daoCreate' })
+            }
           >
             <NumberInput
               value={vetoGuard.executionDetails.toString()}
