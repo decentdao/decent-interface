@@ -71,6 +71,7 @@ type DAOGovenorModuleConfig = {
 };
 
 type DAOVetoGuardConfig = {
+  executionDetails: BigNumber;
   vetoVotesThreshold: BigNumber;
   freezeVotesThreshold: BigNumber;
   freezeProposalBlockDuration: BigNumber;
@@ -106,6 +107,7 @@ export type BigNumberInput = {
 };
 
 export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
+  executionDetails: BigNumber;
   vetoVotesThreshold: BigNumber;
   freezeVotesThreshold: BigNumber;
   freezeProposalBlockDuration: BigNumber;
