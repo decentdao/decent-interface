@@ -14,7 +14,8 @@ export const goerliConfig: NetworkConfig = {
     votesTokenMasterCopy: '0xe4dB69c0A5Ef88a73083cdC190379675bE7EcBFa',
     claimingFactory: '0x4B9EB3B2c649dA44B71aD3960BB2062dCC7AA955',
     claimingMasterCopy: '0x703935eb5a35E586C23C269Db0C55da0ad02C4bf',
-    vetoGuardMasterCopy: '0x7d817caD2eC343C2aEa5FfEa1bEBaCB0A71165c6',
+    gnosisVetoGuardMasterCopy: '0x7d817caD2eC343C2aEa5FfEa1bEBaCB0A71165c6',
+    usulVetoGuardMasterCopy: '0x7d817caD2eC343C2aEa5FfEa1bEBaCB0A71165c6', // todo: this needs to change
     vetoMultisigVotingMasterCopy: '0xaf593302eAd44C054901d32e03Bf39Ec14a8ef06',
     vetoERC20VotingMasterCopy: '0xEAA8B09e64b3cdAF342976e4543e999cA9903cDE',
   },
