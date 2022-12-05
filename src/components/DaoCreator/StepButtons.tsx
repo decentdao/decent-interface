@@ -60,6 +60,7 @@ function ForwardButton({
     case CreatorSteps.FUNDING:
     case CreatorSteps.GOV_CONFIG:
     case CreatorSteps.GNOSIS_WITH_USUL:
+    case CreatorSteps.PURE_GNOSIS:
       const canSkip =
         state.step === CreatorSteps.FUNDING &&
         state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
@@ -79,8 +80,7 @@ function ForwardButton({
           {canSkip ? t('skip') : t('next')}
         </Button>
       );
-    case CreatorSteps.GUARD_CONFIG:
-    case CreatorSteps.PURE_GNOSIS: {
+    case CreatorSteps.GUARD_CONFIG: {
       return (
         <Button
           data-testid="create-deployDAO"
