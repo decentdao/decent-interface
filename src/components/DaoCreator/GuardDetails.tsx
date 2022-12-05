@@ -15,15 +15,13 @@ import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions, GovernanceTypes } from './provider/types';
+import { CreatorProviderActions } from './provider/types';
 
 function GuardDetails() {
   const {
-    state: { govModule, governance },
+    state: { vetoGuard },
     dispatch,
   } = useCreator();
-
-  const isSafeWithUsul = governance === GovernanceTypes.GNOSIS_SAFE_USUL;
 
   const { restrictChars } = useFormHelpers();
 
@@ -36,21 +34,27 @@ function GuardDetails() {
     });
   };
 
-  const onVotingPeriodChange = (votingPeriod: string) => {
-    const newVotingPeriod = BigNumber.from(votingPeriod || 0);
+  const onVetoVotesThresholdChange = (vetoVotesThreshold: string) => {
+    const newVetoVotesThreshold = BigNumber.from(vetoVotesThreshold || 0);
 
-    if (newVotingPeriod.gt(0)) {
-      fieldUpdate(newVotingPeriod, 'votingPeriod');
-    }
+      fieldUpdate(newVetoVotesThreshold, 'vetoVotesThreshold');
+  };
+  const onFreezeVotesThresholdChange = (freezeVotesThreshold: string) => {
+    const newFreezeVotesThreshold = BigNumber.from(freezeVotesThreshold || 0);
+
+      fieldUpdate(newFreezeVotesThreshold, 'freezeVotesThreshold');
   };
 
-  const onQuorumChange = (quorum: string) => {
-    const newQuorumNum = BigNumber.from(quorum || 0);
-    if (newQuorumNum.lte(100)) {
-      fieldUpdate(newQuorumNum, 'quorum');
-    } else {
-      fieldUpdate(BigNumber.from(100), 'quorum');
-    }
+  const onFreezeProposalBlockDurationChange = (freezeProposalBlockDuration: string) => {
+    const newFreezeProposalBlockDuration = BigNumber.from(freezeProposalBlockDuration || 0);
+
+      fieldUpdate(newFreezeProposalBlockDuration, 'freezeProposalBlockDuration');
+  };
+
+  const onFreezeBlockDurationChange = (freezeBlockDuration: string) => {
+    const newFreezeBlockDuration = BigNumber.from(freezeBlockDuration || 0);
+
+      fieldUpdate(newFreezeBlockDuration, 'freezeBlockDuration');
   };
 
   const { t } = useTranslation(['common', 'daoCreate']);
@@ -67,11 +71,11 @@ function GuardDetails() {
             subLabel={t('helperVetoVotesThreshold', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={govModule.votingPeriod.toString()}
-              onChange={onVotingPeriodChange}
-              min={isSafeWithUsul ? 2 : 1}
+              value={vetoGuard.vetoVotesThreshold.toString()}
+              onChange={onVetoVotesThresholdChange}
+              min={1}
               precision={0}
-              data-testid="govConfig-votingPeriod"
+              data-testid="guardConfig-vetoVotesThreshold"
               onKeyDown={restrictChars}
             >
               <InputGroup>
@@ -87,10 +91,10 @@ function GuardDetails() {
             subLabel={t('helperFreezeVotesThreshold', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={govModule.quorum.toString()}
-              onChange={onQuorumChange}
+              value={vetoGuard.freezeVotesThreshold.toString()}
+              onChange={onFreezeVotesThresholdChange}
               precision={0}
-              data-testid="govConfig-quorum"
+              data-testid="guardConfig-freezeVotesThreshold"
               onKeyDown={restrictChars}
             >
               <InputGroup>
@@ -106,13 +110,11 @@ function GuardDetails() {
             subLabel={t('helperFreezeProposalBlockDuration', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={govModule.executionDelay.toString()}
-              onChange={executionDelay =>
-                fieldUpdate(BigNumber.from(executionDelay || 0), 'executionDelay')
-              }
-              min={isSafeWithUsul ? 2 : 1}
+              value={vetoGuard.freezeProposalBlockDuration.toString()}
+              onChange={onFreezeProposalBlockDurationChange}
+              min={1}
               precision={0}
-              data-testid="govConfig-executionDelay"
+              data-testid="guardConfig-freezeProposalBlockDuration"
               onKeyDown={restrictChars}
             >
               <InputGroup>
@@ -134,13 +136,11 @@ function GuardDetails() {
             subLabel={t('helperFreezeBlockDuration', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={govModule.executionDelay.toString()}
-              onChange={executionDelay =>
-                fieldUpdate(BigNumber.from(executionDelay || 0), 'executionDelay')
-              }
-              min={isSafeWithUsul ? 2 : 1}
+              value={vetoGuard.freezeBlockDuration.toString()}
+              onChange={onFreezeBlockDurationChange}
+              min={1}
               precision={0}
-              data-testid="govConfig-executionDelay"
+              data-testid="guardConfig-freezeBlockDuration"
               onKeyDown={restrictChars}
             >
               <InputGroup>
