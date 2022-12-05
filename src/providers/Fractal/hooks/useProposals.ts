@@ -1,11 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { TypedListener } from '../../../assets/typechain-types/usul/common';
-import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
+import { useMemo } from 'react';
 import { SortBy } from '../../../types';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { TxProposalState, TxProposal } from '../types';
-import { mapProposalCreatedEventToProposal } from '../utils/usul';
-import useUsul from './useUsul';
+import { TxProposalState } from '../types';
+import { useFractal } from './useFractal';
 
 export default function useProposals({
   sortBy,
@@ -14,86 +10,23 @@ export default function useProposals({
   sortBy?: SortBy;
   filters?: TxProposalState[];
 }) {
-  const { usulContract } = useUsul();
-  const [proposals, setProposals] = useState<TxProposal[]>();
-
   const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
-
-  const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
-    async (strategyAddress, proposalNumber, proposer) => {
-      if (!usulContract || !signerOrProvider) {
-        return;
-      }
-      const proposal = await mapProposalCreatedEventToProposal(
-        strategyAddress,
-        proposalNumber,
-        proposer,
-        usulContract,
-        signerOrProvider
-      );
-
-      setProposals(prevState => {
-        if (prevState) {
-          return [...prevState, proposal];
-        }
-        return [proposal];
-      });
+    governance: {
+      txProposalsInfo: { txProposals },
     },
-    [usulContract, signerOrProvider]
-  );
+  } = useFractal();
 
   const getProposalsTotal = (state: TxProposalState) => {
-    if (proposals) {
-      return proposals.filter(proposal => proposal.state === state).length;
+    if (txProposals.length) {
+      return txProposals.filter(proposal => proposal.state === state).length;
     }
   };
 
-  useEffect(() => {
-    if (!usulContract || !signerOrProvider) {
-      return;
-    }
-
-    const filter = usulContract.filters.ProposalCreated();
-
-    usulContract.on(filter, proposalCreatedListener);
-
-    return () => {
-      usulContract.off(filter, proposalCreatedListener);
-    };
-  }, [usulContract, signerOrProvider, proposalCreatedListener]);
-
-  useEffect(() => {
-    if (!usulContract || !signerOrProvider) {
-      return;
-    }
-
-    const loadProposals = async () => {
-      const proposalCreatedFilter = usulContract.filters.ProposalCreated();
-      const proposalCreatedEvents = await usulContract.queryFilter(proposalCreatedFilter);
-      const mappedProposals = await Promise.all(
-        proposalCreatedEvents.map(({ args }) => {
-          return mapProposalCreatedEventToProposal(
-            args[0],
-            args[1],
-            args[2],
-            usulContract,
-            signerOrProvider
-          );
-        })
-      );
-      setProposals(mappedProposals);
-    };
-
-    loadProposals();
-  }, [usulContract, signerOrProvider]);
-
   const sortedAndFilteredProposals = useMemo(() => {
-    if (proposals && (sortBy || filters)) {
-      let sorted = proposals; // They returned in oldest sorting from contract by default
+    if (txProposals && (sortBy || filters)) {
+      let sorted = txProposals; // They returned in oldest sorting from contract by default
       if (sortBy === SortBy.Newest) {
-        sorted = [...proposals].reverse(); // .reverse mutates original array - we have to create new one
+        sorted = [...txProposals].reverse(); // .reverse mutates original array - we have to create new one
       }
 
       let filtered = sorted;
@@ -104,8 +37,8 @@ export default function useProposals({
       return filtered;
     }
 
-    return proposals;
-  }, [sortBy, filters, proposals]);
+    return txProposals;
+  }, [sortBy, filters, txProposals]);
 
   return {
     proposals: sortedAndFilteredProposals,

@@ -99,7 +99,7 @@ export interface TxProposal {
 }
 
 export interface TxProposalsInfo {
-  txProposals: SafeTransaction[] | UsulProposal[];
+  txProposals: (SafeTransaction | UsulProposal)[];
   pending?: number; // active/queued (usul) | not executed (multisig)
   passed?: number; // executed (usul/multisig)
 }

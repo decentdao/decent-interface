@@ -11,8 +11,11 @@ import { ProposalAction } from './ProposalActions/ProposalAction';
 
 export default function ProposalCard({ proposal }: { proposal: UsulProposal | SafeTransaction }) {
   const now = new Date();
+  const usulProposal = proposal as UsulProposal;
+  const multisigTransaction = proposal as SafeTransaction;
+
   const proposalCreatedTimestamp = useCurrentTimestamp(
-    (proposal as UsulProposal).startBlock.toNumber()
+    usulProposal.startBlock ? usulProposal.startBlock.toNumber() : undefined
   );
 
   return (
@@ -28,14 +31,14 @@ export default function ProposalCard({ proposal }: { proposal: UsulProposal | Sa
               <ProposalStateBox state={proposal.state} />
               <ProposalTime
                 isRejected={proposal.state === TxProposalState.Rejected}
-                submissionDate={(proposal as SafeTransaction).submissionDate}
+                submissionDate={multisigTransaction.submissionDate}
                 deadline={proposalCreatedTimestamp}
                 icon="calendar"
               />
             </Flex>
             <ProposalTitle proposal={proposal} />
             {(proposal as UsulProposal).deadline && (
-              <ProposalCreatedBy proposalProposer={(proposal as UsulProposal).proposer} />
+              <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
             )}
           </Flex>
           <Flex
@@ -44,10 +47,10 @@ export default function ProposalCard({ proposal }: { proposal: UsulProposal | Sa
             gap={8}
             width="30%"
           >
-            {(proposal as UsulProposal).deadline &&
-              (proposal as UsulProposal).deadline * 1000 > now.getMilliseconds() &&
+            {usulProposal.deadline &&
+              usulProposal.deadline * 1000 > now.getMilliseconds() &&
               proposal.state === TxProposalState.Active && (
-                <ProposalTime deadline={(proposal as UsulProposal).deadline} />
+                <ProposalTime deadline={usulProposal.deadline} />
               )}
             <ProposalAction proposal={proposal} />
           </Flex>
