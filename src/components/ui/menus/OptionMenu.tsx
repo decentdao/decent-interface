@@ -8,6 +8,7 @@ import {
   MenuList,
   As,
   Checkbox,
+  Divider,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +22,7 @@ export interface Option {
 
 interface IOptionMenu {
   trigger: ReactNode;
-  titleKey: string;
+  titleKey?: string;
   options: Option[];
   namespace: string;
   buttonAs?: As;
@@ -30,6 +31,7 @@ interface IOptionMenu {
   children?: ReactNode;
   closeOnSelect?: boolean;
   showOptionCount?: boolean;
+  showDividers?: boolean;
 }
 
 export function OptionMenu({
@@ -40,6 +42,7 @@ export function OptionMenu({
   buttonAs,
   showOptionSelected,
   showOptionCount,
+  showDividers,
   buttonProps,
   children,
   closeOnSelect = true,
@@ -65,47 +68,57 @@ export function OptionMenu({
         border="none"
         padding="1rem"
       >
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
-          marginBottom="0.5rem"
-        >
-          {t(titleKey)}
-        </Text>
+        {titleKey && (
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="chocolate.200"
+            marginBottom="0.5rem"
+          >
+            {t(titleKey)}
+          </Text>
+        )}
         {children}
         {options.map(option => (
-          <MenuItem
-            as={showOptionSelected ? Box : Text}
-            key={option.optionKey}
-            onClick={option.onClick}
-            textStyle="text-base-mono-medium"
-            color="grayscale.100"
-            paddingStart="0rem"
-            paddingEnd="0rem"
-            gap={2}
-            closeOnSelect={closeOnSelect}
-          >
-            <Flex>
-              {showOptionSelected && (
-                <Checkbox
-                  isChecked={option.isSelected}
-                  onChange={option.onClick}
-                  colorScheme="gold"
-                  iconColor="black.900"
-                  marginEnd="0.5rem"
-                />
+          <Box key={option.optionKey}>
+            <MenuItem
+              as={showOptionSelected ? Box : Text}
+              onClick={option.onClick}
+              textStyle="text-base-mono-medium"
+              color="grayscale.100"
+              paddingStart="0rem"
+              paddingEnd="0rem"
+              gap={2}
+              closeOnSelect={closeOnSelect}
+            >
+              <Flex>
+                {showOptionSelected && (
+                  <Checkbox
+                    isChecked={option.isSelected}
+                    onChange={option.onClick}
+                    colorScheme="gold"
+                    iconColor="black.900"
+                    marginEnd="0.5rem"
+                  />
+                )}
+                {t(option.optionKey)}
+              </Flex>
+              {showOptionCount && (
+                <Text
+                  textStyle="text-base-mono-medium"
+                  color={option.count ? 'grayscale.100' : 'grayscale.500'}
+                >
+                  {option.count}
+                </Text>
               )}
-              {t(option.optionKey)}
-            </Flex>
-            {showOptionCount && (
-              <Text
-                textStyle="text-base-mono-medium"
-                color={option.count ? 'grayscale.100' : 'grayscale.500'}
-              >
-                {option.count}
-              </Text>
+            </MenuItem>
+            {showDividers && options[options.length - 1] !== option && (
+              <Divider
+                marginTop="0.25rem"
+                marginBottom="0.25rem"
+                color="chocolate.700"
+              />
             )}
-          </MenuItem>
+          </Box>
         ))}
       </MenuList>
     </Menu>
