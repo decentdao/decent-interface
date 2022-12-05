@@ -19,11 +19,6 @@ const chainsMetaData: EVMChainMetaData = {
     chainId: 5,
     color: 'gold.300',
   },
-  1115511: {
-    nameKey: 'sepolia',
-    chainId: 11155111,
-    color: 'grayscale.white',
-  },
   [parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID || '31337', 10)]: {
     nameKey: 'local',
     chainId: parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID || '31337', 10),
