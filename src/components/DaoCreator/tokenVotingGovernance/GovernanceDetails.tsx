@@ -59,7 +59,7 @@ function GovernanceDetails() {
   return (
     <Box>
       <ContentBox>
-        <ContentBoxTitle>{t('titleGovernanceDetails', { ns: 'daoCreate' })}</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleProposalSettings', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
             label={t('labelVotingPeriod', { ns: 'daoCreate' })}
