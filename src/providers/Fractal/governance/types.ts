@@ -85,6 +85,7 @@ export interface UsulProposal extends TxProposal {
   deadline: number;
   userVote?: ProposalVote;
   startBlock: BigNumber;
+  blockTimestamp: number;
 }
 
 export interface SafeTransaction extends TxProposal {

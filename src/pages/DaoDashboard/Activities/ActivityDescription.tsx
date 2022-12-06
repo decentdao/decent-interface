@@ -1,27 +1,35 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Activity } from '../../../types';
+import { Activity, ActivityEventType, GovernanceActivity, TreasuryActivity } from '../../../types';
 import { ActivityAddress } from './ActivityAddress';
 
-function TransferDescription({ asset }: { asset: Activity }) {
+function TreasuryDescription({ activity }: { activity: Activity }) {
   const { t } = useTranslation();
 
-  if (!asset.transaction.transfers.length) {
+  const treasuryActivity = activity as TreasuryActivity;
+
+  if (!!treasuryActivity.transaction && !treasuryActivity.transaction.transfers.length) {
     return null;
   }
 
-  const transferTypeStr = asset.isDeposit ? t('receive') : t('send');
-  const transferDirStr = asset.isDeposit ? t('from') : t('to');
+  const transferTypeStr =
+    treasuryActivity.isDeposit && activity.eventType !== ActivityEventType.Governance
+      ? t('receive')
+      : t('send');
+  const transferDirStr =
+    treasuryActivity.isDeposit && activity.eventType !== ActivityEventType.Governance
+      ? t('from')
+      : t('to');
 
   return (
     <>
       <Text>
-        {transferTypeStr} {asset.transferAmountTotals.join(', ')} {transferDirStr}
+        {transferTypeStr} {treasuryActivity.transferAmountTotals.join(', ')} {transferDirStr}
       </Text>
-      {asset.transferAddresses.length > 2 ? (
-        <Text>{t('addresses', { numOfAddresses: asset.transferAddresses.length })}</Text>
+      {treasuryActivity.transferAddresses.length > 2 ? (
+        <Text>{t('addresses', { numOfAddresses: treasuryActivity.transferAddresses.length })}</Text>
       ) : (
-        asset.transferAddresses.map((address, i, arr) => (
+        treasuryActivity.transferAddresses.map((address, i, arr) => (
           <ActivityAddress
             key={address + i}
             address={address}
@@ -32,9 +40,21 @@ function TransferDescription({ asset }: { asset: Activity }) {
     </>
   );
 }
-
-export function ActivityDescription({ asset }: { asset: Activity }) {
+function GovernanceDescription({ activity }: { activity: GovernanceActivity }) {
   const { t } = useTranslation('dashboard');
+
+  return (
+    <>
+      {!!activity.eventTransactionsCount && (
+        <Text> {t('proposalDescription', { txCount: activity.eventTransactionsCount })}</Text>
+      )}
+    </>
+  );
+}
+
+export function ActivityDescription({ activity }: { activity: Activity }) {
+  const { t } = useTranslation();
+  const governanceActivity = activity as GovernanceActivity;
   return (
     <Flex
       color="grayscale.100"
@@ -42,14 +62,14 @@ export function ActivityDescription({ asset }: { asset: Activity }) {
       gap="0.5rem"
       flexWrap="wrap"
     >
-      {!!asset.eventTransactionsCount && (
-        <Text> {t('proposalDescription', { txCount: asset.eventTransactionsCount })}</Text>
+      {activity.eventType === ActivityEventType.Governance && (
+        <>
+          <GovernanceDescription activity={governanceActivity} />
+          {!!governanceActivity.transaction?.transfers.length &&
+            !!governanceActivity.eventTransactionsCount && <Text> {t('to')} </Text>}
+        </>
       )}
-      {!!asset.transaction.transfers.length && !!asset.eventTransactionsCount && (
-        <Text> {t('to')} </Text>
-      )}
-
-      <TransferDescription asset={asset} />
+      {!!activity.transaction && <TreasuryDescription activity={activity} />}
     </Flex>
   );
 }

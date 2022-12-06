@@ -19,12 +19,12 @@ export default function useUsulProposals({
   governanceDispatch,
 }: IUseUsulProposals) {
   const {
-    state: { signerOrProvider },
+    state: { signerOrProvider, provider },
   } = useWeb3Provider();
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
     async (strategyAddress, proposalNumber, proposer) => {
-      if (!usulContract || !signerOrProvider) {
+      if (!usulContract || !signerOrProvider || !provider) {
         return;
       }
       const proposal = await mapProposalCreatedEventToProposal(
@@ -32,7 +32,8 @@ export default function useUsulProposals({
         proposalNumber,
         proposer,
         usulContract,
-        signerOrProvider
+        signerOrProvider,
+        provider
       );
 
       const proposals = [...txProposalsInfo.txProposals, proposal];
@@ -46,7 +47,7 @@ export default function useUsulProposals({
         },
       });
     },
-    [usulContract, signerOrProvider, governanceDispatch, txProposalsInfo]
+    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo]
   );
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function useUsulProposals({
   }, [usulContract, signerOrProvider, proposalCreatedListener]);
 
   useEffect(() => {
-    if (!usulContract || !signerOrProvider) {
+    if (!usulContract || !signerOrProvider || !provider) {
       return;
     }
 
@@ -77,7 +78,8 @@ export default function useUsulProposals({
             args[1],
             args[2],
             usulContract,
-            signerOrProvider
+            signerOrProvider,
+            provider
           );
         })
       );
@@ -104,5 +106,5 @@ export default function useUsulProposals({
     };
 
     loadProposals();
-  }, [usulContract, signerOrProvider, governanceDispatch]);
+  }, [usulContract, signerOrProvider, governanceDispatch, provider]);
 }

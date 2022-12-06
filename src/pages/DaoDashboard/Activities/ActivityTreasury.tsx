@@ -2,31 +2,27 @@ import { Button } from '@chakra-ui/react';
 import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
-import { Activity } from '../../../types';
+import { TreasuryActivity } from '../../../types';
 import { AcitivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
-interface IActivityTreasury {
-  asset: Activity;
-}
-
-export function ActivityTreasury({ asset }: IActivityTreasury) {
+export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
   const { t } = useTranslation();
   return (
     <AcitivityCard
       Badge={
-        asset.isDeposit ? (
+        activity.isDeposit ? (
           <SquareSolidArrowDown color="sand.700" />
         ) : (
           <SquareSolidArrowUp color="sand.700" />
         )
       }
-      description={<ActivityDescription asset={asset} />}
+      description={<ActivityDescription activity={activity} />}
       RightElement={
-        asset.eventTxHash ? (
+        activity.transactionHash ? (
           <EtherscanLinkAddress
             path="tx"
-            address={asset.eventTxHash}
+            address={activity.transactionHash}
           >
             <Button
               variant="text"
@@ -39,7 +35,7 @@ export function ActivityTreasury({ asset }: IActivityTreasury) {
           </EtherscanLinkAddress>
         ) : undefined
       }
-      eventDate={asset.eventDate}
+      eventDate={activity.eventDate}
     />
   );
 }

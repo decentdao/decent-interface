@@ -4,17 +4,21 @@ import {
 } from '@gnosis.pm/safe-service-client';
 import { format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
-import { BadgeLabels } from '../../../../components/ui/badges/Badge';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { eventTransactionMapping, totalsReducer } from '../../../../providers/Fractal/utils';
 import { ActivityEventType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
+import { UsulProposal, TxProposalState } from './../../../../providers/Fractal/governance/types';
+import { Activity, GovernanceActivity } from './../../../../types/activity';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
     gnosis: { safe, transactions },
-    governance: { type },
+    governance: {
+      type,
+      txProposalsInfo: { txProposals },
+    },
   } = useFractal();
 
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
@@ -56,7 +60,7 @@ export const useActivities = (sortBy: SortBy) => {
       );
 
       // block explorer transaction hash. This is only being used for ETHEREUM TRANSACTIONS
-      const eventTxHash = ethereumTransaction.txHash || multiSigTransaction.transactionHash;
+      const transactionHash = ethereumTransaction.txHash || multiSigTransaction.transactionHash;
 
       // MULTISIG SPECIFIC
 
@@ -89,29 +93,30 @@ export const useActivities = (sortBy: SortBy) => {
       const isPending =
         multiSigTransaction.confirmations?.length !== multiSigTransaction.confirmationsRequired;
 
-      const eventState = isRejected
-        ? BadgeLabels.STATE_REJECTED
+      const state = isRejected
+        ? TxProposalState.Rejected
         : isPending
-        ? BadgeLabels.STATE_PENDING
+        ? TxProposalState.Pending
         : !multiSigTransaction.isExecuted
-        ? BadgeLabels.STATE_ACTIVE
+        ? TxProposalState.Active
         : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
-        ? BadgeLabels.STATE_EXECUTED
+        ? TxProposalState.Executed
         : undefined;
 
-      return {
+      const activity: Activity = {
         transaction,
         transferAddresses,
         transferAmountTotals,
         isDeposit,
         eventDate,
         eventType,
-        eventTxHash,
-        eventSafeTxHash,
+        transactionHash,
+        proposalNumber: eventSafeTxHash,
         eventTransactionsCount: isMultiSigTransaction ? eventTransactionMap.size || 1 : undefined,
-        eventState,
-        eventNonce: eventNonce,
+        state,
       };
+
+      return activity;
     });
   }, [safe, transactions]);
 
@@ -120,18 +125,31 @@ export const useActivities = (sortBy: SortBy) => {
    */
   const filterActivities = useMemo(() => {
     if (type === GovernanceTypes.GNOSIS_SAFE_USUL) {
-      return [...parsedActivities].filter(
-        activity => activity.eventType === ActivityEventType.Treasury
-      );
+      const txActivities = [...txProposals].map(proposal => {
+        const usulProposal = proposal as UsulProposal;
+
+        const activity: GovernanceActivity = {
+          eventDate: format(new Date(usulProposal.blockTimestamp * 1000), 'MMM dd yyyy'),
+          eventType: ActivityEventType.Governance,
+          proposalNumber: usulProposal.proposalNumber,
+          state: proposal.state,
+          eventTransactionsCount: usulProposal.txHashes.length,
+        };
+        return activity;
+      });
+      return [
+        ...parsedActivities.filter(activity => activity.eventType === ActivityEventType.Treasury),
+        ...txActivities,
+      ];
     }
     return [...parsedActivities];
-  }, [parsedActivities, type]);
+  }, [parsedActivities, type, txProposals]);
 
   /**
    * After data is parsed it is sorted based on execution data
    * updates when a different sort is selected
    */
-  const sortedActivities = useMemo(() => {
+  const sortedActivities: Activity[] = useMemo(() => {
     return [...filterActivities].sort((a, b) => {
       const dataA = new Date(a.eventDate).getTime();
       const dataB = new Date(b.eventDate).getTime();

@@ -84,12 +84,14 @@ export const mapProposalCreatedEventToProposal = async (
   proposalNumber: BigNumber,
   proposer: string,
   usulContract: Usul,
-  signerOrProvider: Signer | Providers
+  signerOrProvider: Signer | Providers,
+  provider: Providers
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getTxProposalState(usulContract, proposalNumber, signerOrProvider);
   const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
+  const block = await provider.getBlock(startBlock.toNumber());
 
   const txHashes = [];
   let i = 0;
@@ -111,6 +113,7 @@ export const mapProposalCreatedEventToProposal = async (
     proposalNumber: proposalNumber.toString(),
     proposer,
     startBlock,
+    blockTimestamp: block.timestamp,
     deadline: deadline.toNumber(),
     state,
     govTokenAddress: await strategyContract.governanceToken(),
