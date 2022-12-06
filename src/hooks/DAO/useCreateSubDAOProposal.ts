@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
+import { GnosisModuleType } from '../../providers/Fractal/types';
 import { ProposalExecuteData } from '../../types/proposal';
 import useSafeContracts from '../safe/useSafeContracts';
 import useBuildDAOTx from './useBuildDAOTx';
@@ -13,8 +14,17 @@ export const useCreateSubDAOProposal = () => {
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const [build] = useBuildDAOTx();
   const {
-    gnosis: { safe },
+    gnosis: { safe, modules },
   } = useFractal();
+
+  const isParentUsul = useCallback(() => {
+    for (let i = 0; i < modules.length; i++) {
+      if (modules[i].moduleType === GnosisModuleType.USUL) {
+        return true;
+      }
+    }
+    return false;
+  }, [modules]);
 
   const proposeDao = useCallback(
     (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
@@ -23,7 +33,7 @@ export const useCreateSubDAOProposal = () => {
           return;
         }
 
-        const builtSafeTx = await build(daoData, safe.address);
+        const builtSafeTx = await build(daoData, safe.address, isParentUsul());
         if (!builtSafeTx) {
           return;
         }
@@ -40,7 +50,7 @@ export const useCreateSubDAOProposal = () => {
       };
       propose();
     },
-    [multiSendContract, build, safe.address, submitProposal]
+    [multiSendContract, build, safe.address, submitProposal, isParentUsul]
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;
