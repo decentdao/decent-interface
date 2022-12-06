@@ -55,5 +55,9 @@
     "labelFractalName": "Fractal Name",
     "helperFractalName": "What is your Fractal called?",
     "labelDeploySubDAO": "Create subDAO Proposal",
-    "labelCreateSubDAO": "Create a subDAO"
+    "labelCreateSubDAO": "Create a subDAO",
+    "titleProposalSettings": "Proposal Settings",
+    "titleGovSetup": "Governance Setup",
+    "titleAllocations": "Token Allocations",
+    "titleMintToken": "Mint a New Token"
 }
