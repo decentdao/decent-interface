@@ -3,14 +3,14 @@
   "proposals": "Proposals",
   "nodes": "Nodes",
   "treasury": "Treasury",
-  "support": "Support",
+  "faq": "FAQ",
   "documentation": "Documentation",
   "ariaLabelFractalBrand": "Navigate Fractal Home",
   "ariaLabelHome": "Navigate DAO Home",
   "ariaLabelProposals": "Navigate DAO Proposals",
   "ariaLabelActivities": "Navigate DAO Activities",
   "ariaLabelTreasury": "Navigate DAO Treasury",
-  "ariaLabelSupport": "Link to support site",
+  "ariaLabelFAQ": "Link to FAQ",
   "ariaLabelDiscord": "Link to Discord",
-  "ariaLabelDocumentation": "Link to documentation site"
+  "ariaLabelDocumentation": "Link to documentation"
 }

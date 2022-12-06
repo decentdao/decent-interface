@@ -65,7 +65,7 @@ export abstract class NavPage extends FractalPage {
   }
 
   async clickLeftMenuSupport() {
-    await this.page.click('[data-testid=sidebarExternal-support"]');
+    await this.page.click('[data-testid=sidebarExternal-faq"]');
   }
 
   async clickLeftMenuDiscord() {

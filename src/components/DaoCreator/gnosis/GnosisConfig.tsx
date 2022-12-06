@@ -99,7 +99,7 @@ export function GnosisConfig() {
       </InputBox>
       <InputBox>
         <LabelWrapper
-          label={t('helperSigners')}
+          label={t('labelSigners')}
           subLabel={t('helperSigners')}
         >
           <NumberInput
@@ -113,14 +113,14 @@ export function GnosisConfig() {
         </LabelWrapper>
       </InputBox>
 
-      <ContentBoxTitle>Trusted Addresses</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleTrustedAddresses')}</ContentBoxTitle>
       <Text
         textStyle="text-sm-sans-medium"
         my="0.25rem"
         color="chocolate.100"
         className="text-gray-50 text-xs font-medium my-4"
       >
-        The addresses added here have permission to submit and approve transactions
+        {t('subTitleTrustedAddresses')}
       </Text>
       <InputBox data-testid="gnosisConfig-signatureList">
         {trustedAddresses.map((trustee, i) => (

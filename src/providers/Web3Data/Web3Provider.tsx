@@ -107,7 +107,7 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
    * Disconnects wallet, sets provider to fallback
    */
   const disconnect: DisconnectFn = useCallback(() => {
-    toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
+    toast(t('toastDisconnected'), { toastId: 'disconnected' });
     // switch to a default provider
     connectDefaultProvider();
   }, [connectDefaultProvider, t]);

@@ -1,5 +1,6 @@
 import { MenuList } from '@chakra-ui/react';
 import { Connect, Disconnect } from '@decent-org/fractal-ui';
+import { useTranslation } from 'react-i18next';
 import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
 import { MenuItemButton } from './MenuItemButton';
 import { MenuItemNetwork } from './MenuItemNetwork';
@@ -11,6 +12,7 @@ export function MenuItems() {
     disconnect,
     state: { account },
   } = useWeb3Provider();
+  const { t } = useTranslation('menu');
   return (
     <MenuList
       p="0"
@@ -34,7 +36,7 @@ export function MenuItems() {
       {!account && (
         <MenuItemButton
           testId="accountMenu-connect"
-          label="Connect"
+          label={t('connect')}
           Icon={Connect}
           onClick={connect}
         />
@@ -42,7 +44,7 @@ export function MenuItems() {
       {account && (
         <MenuItemButton
           testId="accountMenu-disconnect"
-          label="Disconnect"
+          label={t('disconnect')}
           Icon={Disconnect}
           onClick={disconnect}
         />

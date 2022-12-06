@@ -537,6 +537,7 @@ const useBuildDAOTx = () => {
           !multiSendContract ||
           !fractalNameRegistryContract ||
           !fractalModuleMasterCopyContract ||
+          !vetoERC20VotingMasterCopyContract ||
           !signerOrProvider ||
           !votesTokenMasterCopyContract ||
           !vetoERC20VotingMasterCopyContract ||
