@@ -103,7 +103,7 @@ const useBuildDAOTx = () => {
         !signerOrProvider
       ) {
         return {
-          vetoVotingContract: '',
+          vetoVoting: '',
           setVetoVotingCalldata: '',
         };
       }
@@ -125,16 +125,13 @@ const useBuildDAOTx = () => {
         [solidityKeccak256(['bytes'], [setVetoVotingCalldata]), saltNum]
       );
       return {
-        vetoVotingContract: vetoVotesType.connect(
-          // predicted address
-          getCreate2Address(
-            zodiacModuleProxyFactoryContract.address,
-            vetoVotingSalt,
-            solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
-          ),
-          signerOrProvider
+        vetoVoting: getCreate2Address(
+          zodiacModuleProxyFactoryContract.address,
+          vetoVotingSalt,
+          solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
         ),
         setVetoVotingCalldata: setVetoVotingCalldata,
+        vetoVotesType,
       };
     },
     [
@@ -151,9 +148,10 @@ const useBuildDAOTx = () => {
     (
       executionDetails: BigNumber,
       parentDAOAddress: string,
-      vetoVoting: Contract,
+      vetoVotingAddress: string,
       safeAddress: string,
-      isUsul: boolean
+      usulAddress?: string,
+      strategyAddress?: string
     ) => {
       if (
         !gnosisVetoGuardMasterCopyContract ||
@@ -166,25 +164,36 @@ const useBuildDAOTx = () => {
         };
       }
 
-      const vetoGuardMasterCopyContract = isUsul
+      const vetoGuardMasterCopyContract = usulAddress
         ? usulVetoGuardMasterCopyContract
         : gnosisVetoGuardMasterCopyContract;
 
-      const vetoGuardType = isUsul ? UsulVetoGuard__factory : VetoGuard__factory;
+      const vetoGuardType = usulAddress ? UsulVetoGuard__factory : VetoGuard__factory;
 
       // VETO GUARD
       const setVetoGuardCalldata =
         // eslint-disable-next-line camelcase
         vetoGuardType.createInterface().encodeFunctionData('setUp', [
-          ethers.utils.defaultAbiCoder.encode(
-            ['uint256', 'address', 'address', 'address'],
-            [
-              executionDetails, // Execution Delay
-              parentDAOAddress, // Owner -- Parent DAO
-              vetoVoting.address, // Veto Voting
-              safeAddress, // Gnosis Safe
-            ]
-          ),
+          usulAddress
+            ? ethers.utils.defaultAbiCoder.encode(
+                ['address', 'address', 'address', 'address', 'uint256'],
+                [
+                  parentDAOAddress, // Owner -- Parent DAO
+                  vetoVotingAddress, // Veto Voting
+                  strategyAddress, // Base Strategy
+                  usulAddress, // USUL
+                  executionDetails, // Execution Delay
+                ]
+              )
+            : ethers.utils.defaultAbiCoder.encode(
+                ['uint256', 'address', 'address', 'address'],
+                [
+                  executionDetails, // Execution Delay
+                  parentDAOAddress, // Owner -- Parent DAO
+                  vetoVotingAddress, // Veto Voting
+                  safeAddress, // Gnosis Safe
+                ]
+              ),
         ]);
       const vetoGuardByteCodeLinear =
         '0x602d8060093d393df3363d3d373d3d3d363d73' +
@@ -340,16 +349,14 @@ const useBuildDAOTx = () => {
         if (parentDAOAddress && parentIsUsul !== undefined) {
           const subDAOData = daoData as SubDAO;
           // Veto Votes
-          const { vetoVotingContract, setVetoVotingCalldata } =
-            buildVetoVotesContractData(parentIsUsul);
+          const { vetoVoting, setVetoVotingCalldata } = buildVetoVotesContractData(parentIsUsul);
 
           // Veto Guard
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
             subDAOData.executionDetails,
             parentDAOAddress,
-            vetoVotingContract as Contract,
-            safeContract.address,
-            false
+            vetoVoting,
+            safeContract.address
           );
 
           internaltTxs = [
@@ -691,7 +698,8 @@ const useBuildDAOTx = () => {
             parentDAOAddress,
             vetoVotingContract as Contract,
             safeContract.address,
-            true
+            predictedUsulAddress,
+            predictedStrategyAddress
           );
 
           internaltTxs = [
