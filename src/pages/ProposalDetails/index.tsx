@@ -31,7 +31,7 @@ function ProposalDetails() {
   const { t } = useTranslation(['proposal', 'sidebar']);
 
   useEffect(() => {
-    if (proposals === undefined || params.proposalNumber === undefined) {
+    if (!proposals || !params.proposalNumber) {
       setProposal(undefined);
       return;
     }
@@ -44,7 +44,7 @@ function ProposalDetails() {
     setProposal(foundProposal);
   }, [proposals, params.proposalNumber]);
 
-  if (proposal === undefined) {
+  if (!proposal) {
     return <Text>{t('loadingProposals')}</Text>;
   }
   const usulProposal = proposal as UsulProposal;

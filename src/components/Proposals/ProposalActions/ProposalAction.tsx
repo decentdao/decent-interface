@@ -33,7 +33,7 @@ export function ProposalAction({
         // Call proposal execution action
         break;
       default:
-        navigate(proposal.proposalNumber.toString());
+        navigate(proposal.proposalNumber);
         break;
     }
 
