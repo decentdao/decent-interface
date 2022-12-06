@@ -34,3 +34,8 @@ export const useProposeStuff = (doSomething: Function) => {
     doSomething(shuffle([randomDuckNFT, daoNameChange]));
   };
 };
+
+export const testErrorBoundary = () => {
+  const empty: string[] = [];
+  empty[1].charAt(1);
+};
