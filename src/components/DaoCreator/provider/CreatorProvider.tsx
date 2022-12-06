@@ -46,13 +46,13 @@ export const initialState: CreatorState = {
   },
   govModule: {
     quorum: BigNumber.from(4),
-    executionDelay: BigNumber.from(86400),
+    executionDelay: BigNumber.from(14400),
     votingPeriod: BigNumber.from(604800),
   },
   vetoGuard: {
-    executionDetails: BigNumber.from(50400),
-    vetoVotesThreshold: BigNumber.from(100),
-    freezeVotesThreshold: BigNumber.from(200),
+    executionDetails: BigNumber.from(14400),
+    vetoVotesThreshold: BigNumber.from(1000000),
+    freezeVotesThreshold: BigNumber.from(1000000),
     freezeProposalBlockDuration: BigNumber.from(50400),
     freezeBlockDuration: BigNumber.from(50400),
   },
