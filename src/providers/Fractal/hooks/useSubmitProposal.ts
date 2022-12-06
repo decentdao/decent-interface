@@ -70,15 +70,17 @@ export default function useSubmitProposal() {
             operation: 0,
           }));
 
-          // @todo: Implement voting strategy proposal selection when we will support multiple strategies on single Usul instance
-          await usulContract.submitProposalWithMetaData(
-            votingStrategiesAddresses[0],
-            '0x',
-            transactions,
-            proposalData.title,
-            proposalData.description,
-            proposalData.documentationUrl
-          );
+          // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Usul instance
+          await (
+            await usulContract.submitProposalWithMetaData(
+              votingStrategiesAddresses[0],
+              '0x',
+              transactions,
+              proposalData.title,
+              proposalData.description,
+              proposalData.documentationUrl
+            )
+          ).wait();
           successCallback(safe.address);
         } catch (e) {
           logError(e, 'Error during Usul proposal creation');
