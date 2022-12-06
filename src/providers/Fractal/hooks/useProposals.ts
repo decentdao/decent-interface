@@ -114,10 +114,11 @@ export default function useProposals({
       const proposalMetaDataCreatedEvents = await usulContract.queryFilter(
         proposalMetaDataCreatedFilter
       );
+
       let mappedProposals = await Promise.all(
         proposalCreatedEvents.map(({ args }) => {
-          const metaDataEvent = proposalMetaDataCreatedEvents.find(
-            event => event.args[0] === args[1]
+          const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
+            event.args.proposalId.eq(args.proposalNumber)
           );
           let metaData;
           if (metaDataEvent) {

@@ -20,7 +20,7 @@ export default function ProposalSummary({
 
   const yesVotesPercentage = votes.yes.div(govTokenTotalSupply).mul(100).toNumber();
   const noVotesPercentage = votes.no.div(govTokenTotalSupply).mul(100).toNumber();
-  const quorum = votes.quorum.toNumber();
+  const quorum = govTokenTotalSupply.div(votes.quorum).toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
   return (
