@@ -99,7 +99,7 @@ export function GnosisConfig() {
       </InputBox>
       <InputBox>
         <LabelWrapper
-          label={t('helperSigners')}
+          label={t('labelSigners')}
           subLabel={t('helperSigners')}
         >
           <NumberInput
