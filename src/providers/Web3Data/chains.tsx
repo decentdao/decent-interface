@@ -14,16 +14,8 @@ const CHAINS: ChainMetadata[] = [
     id: 1,
   },
   {
-    name: 'Rinkeby',
-    id: 4,
-  },
-  {
     name: 'Goerli',
     id: 5,
-  },
-  {
-    name: 'Sepolia',
-    id: 11155111,
   },
   {
     name: 'Local Dev Chain',

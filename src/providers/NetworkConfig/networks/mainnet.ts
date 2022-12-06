@@ -14,5 +14,8 @@ export const mainnetConfig: NetworkConfig = {
     votesTokenMasterCopy: '',
     claimingFactory: '',
     claimingMasterCopy: '',
+    vetoGuardMasterCopy: '',
+    vetoMultisigVotingMasterCopy: '',
+    vetoERC20VotingMasterCopy: '',
   },
 };

@@ -24,7 +24,9 @@ const usdFormatter = new Intl.NumberFormat('en-US', {
 });
 
 export const formatUSD = (rawUSD: number | string) => {
-  return usdFormatter.format(Number(rawUSD));
+  const formatted = usdFormatter.format(Number(rawUSD));
+  const decimalIndex = formatted.indexOf('.');
+  return decimalIndex != -1 && formatted.length - decimalIndex !== 3 ? formatted + '0' : formatted;
 };
 
 export const formatCoinUnits = (
