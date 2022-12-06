@@ -32,12 +32,13 @@ export const useGnosisGovernance = ({
   useSafeMultisigTxs({ governance, gnosis, governanceDispatch });
 
   useEffect(() => {
-    if (!account || !gnosis.safe.address || governance.contracts.contractsIsLoading) {
+    if (!account || !gnosis.safe || governance.contracts.contractsIsLoading) {
       return;
     }
     const governanceType = !!governance.contracts.ozLinearVotingContract
       ? GovernanceTypes.GNOSIS_SAFE_USUL
-      : !governance.contracts.ozLinearVotingContract
+      : !governance.contracts.ozLinearVotingContract &&
+        !gnosis.safe.modules?.includes((gnosis.safe.owners || [])[0])
       ? GovernanceTypes.GNOSIS_SAFE
       : null;
 
@@ -51,7 +52,7 @@ export const useGnosisGovernance = ({
     });
   }, [
     account,
-    gnosis.safe.address,
+    gnosis.safe,
     governanceDispatch,
     governanceTokenData,
     governance.contracts.ozLinearVotingContract,
