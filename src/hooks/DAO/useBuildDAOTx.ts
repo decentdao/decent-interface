@@ -95,7 +95,7 @@ const useBuildDAOTx = () => {
     ]
   );
   const buildVetoVotesContractData = useCallback(
-    (parentIsUsul: boolean) => {
+    (parentTokenAddress: string | undefined) => {
       if (
         !vetoERC20VotingMasterCopyContract ||
         !vetoMultisigVotingMasterCopyContract ||
@@ -110,11 +110,13 @@ const useBuildDAOTx = () => {
       }
 
       // VETO Voting Contract
-      const vetoVotesMasterCopyContract = parentIsUsul
+      const vetoVotesMasterCopyContract = parentTokenAddress
         ? vetoERC20VotingMasterCopyContract
         : vetoMultisigVotingMasterCopyContract;
 
-      const vetoVotesType = parentIsUsul ? VetoERC20Voting__factory : VetoMultisigVoting__factory;
+      const vetoVotesType = parentTokenAddress
+        ? VetoERC20Voting__factory
+        : VetoMultisigVoting__factory;
 
       const setVetoVotingCalldata = vetoVotesType.createInterface().encodeFunctionData('owner');
       const vetoVotingByteCodeLinear =
@@ -305,7 +307,7 @@ const useBuildDAOTx = () => {
     (
       daoData: GnosisDAO | TokenGovernanceDAO,
       parentDAOAddress?: string,
-      parentIsUsul?: boolean
+      parentTokenAddress?: string
     ) => {
       const buildTx = async () => {
         if (
@@ -347,11 +349,11 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
-        if (parentDAOAddress && parentIsUsul !== undefined) {
+        if (parentDAOAddress) {
           const subDAOData = daoData as SubDAO;
           // Veto Votes
           const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
-            buildVetoVotesContractData(parentIsUsul);
+            buildVetoVotesContractData(parentTokenAddress);
 
           // Veto Guard
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
@@ -378,7 +380,7 @@ const useBuildDAOTx = () => {
               0,
               false
             ),
-            // Deploy Veto Multisig Voting
+            // Deploy Veto Voting
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
@@ -386,7 +388,7 @@ const useBuildDAOTx = () => {
               0,
               false
             ),
-            // Setup Veto Multisig
+            // Setup Veto Voting
             buildContractCall(
               vetoVotesType.connect(vetoVotingAddress, signerOrProvider),
               'setUp',
@@ -399,7 +401,7 @@ const useBuildDAOTx = () => {
                     subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
                     subDAOData.freezeProposalBlockDuration, // FreezeProposalBlockDuration
                     subDAOData.freezeBlockDuration, // FreezeBlockDuration
-                    parentDAOAddress, // ParentGnosisSafe -- Parent DAO
+                    parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
                     predictedVetoModuleAddress, // VetoGuard
                   ]
                 ),
@@ -522,7 +524,7 @@ const useBuildDAOTx = () => {
     (
       daoData: GnosisDAO | TokenGovernanceDAO,
       parentDAOAddress?: string,
-      parentIsUsul?: boolean
+      parentTokenAddress?: string
     ) => {
       const buildTx = async () => {
         if (
@@ -687,12 +689,12 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
-        if (parentDAOAddress && parentIsUsul !== undefined) {
+        if (parentDAOAddress) {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
           const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
-            buildVetoVotesContractData(parentIsUsul);
+            buildVetoVotesContractData(parentTokenAddress);
 
           // Veto Guard
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
@@ -745,7 +747,7 @@ const useBuildDAOTx = () => {
                     subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
                     subDAOData.freezeProposalBlockDuration, // FreezeProposalBlockDuration
                     subDAOData.freezeBlockDuration, // FreezeBlockDuration
-                    predictedTokenAddress, // Votes Token
+                    parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
                     predictedVetoModuleAddress, // VetoGuard
                   ]
                 ),
@@ -914,13 +916,13 @@ const useBuildDAOTx = () => {
     async (
       daoData: TokenGovernanceDAO | GnosisDAO,
       parentDAOAddress?: string,
-      parentIsUsul?: boolean
+      parentTokenAddress?: string
     ) => {
       switch (daoData.governance) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
-          return buildUsulTx(daoData, parentDAOAddress, parentIsUsul);
+          return buildUsulTx(daoData, parentDAOAddress, parentTokenAddress);
         case GovernanceTypes.GNOSIS_SAFE:
-          return buildMultisigTx(daoData, parentDAOAddress, parentIsUsul);
+          return buildMultisigTx(daoData, parentDAOAddress, parentTokenAddress);
       }
     },
     [buildUsulTx, buildMultisigTx]
