@@ -1,7 +1,11 @@
+import { TypedListener } from '@fractal-framework/core-contracts/dist/common';
+import {
+  ProposalCreatedEvent,
+  ProposalMetadataCreatedEvent,
+} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { TypedListener } from '../../../assets/typechain-types/usul/common';
-import { ProposalCreatedEvent } from '../../../assets/typechain-types/usul/contracts/Usul';
 import { SortBy } from '../../../types';
+import { decodeTransactions } from '../../../utils/crypto';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { Proposal, ProposalState } from '../types/usul';
 import { mapProposalCreatedEventToProposal } from '../utils/usul';
@@ -22,7 +26,7 @@ export default function useProposals({
   } = useWeb3Provider();
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
-    async (strategyAddress, proposalNumber, proposer) => {
+    async (...[strategyAddress, proposalNumber, proposer]) => {
       if (!usulContract || !signerOrProvider) {
         return;
       }
@@ -44,6 +48,37 @@ export default function useProposals({
     [usulContract, signerOrProvider]
   );
 
+  const proposalMetaDataCreatedListener: TypedListener<ProposalMetadataCreatedEvent> = useCallback(
+    async (...[proposalNumber, transactions, title, description, documentationUrl]) => {
+      if (!usulContract || !signerOrProvider) {
+        return;
+      }
+
+      setProposals(prevState => {
+        if (prevState) {
+          return prevState.map(proposal => {
+            if (proposal.proposalNumber.eq(proposalNumber)) {
+              return {
+                ...proposal,
+                metaData: {
+                  title,
+                  description,
+                  documentationUrl,
+                  decodedTransactions: decodeTransactions(transactions),
+                },
+              };
+            }
+
+            return proposal;
+          });
+        }
+
+        return prevState;
+      });
+    },
+    [usulContract, signerOrProvider]
+  );
+
   const getProposalsTotal = (state: ProposalState) => {
     if (proposals) {
       return proposals.filter(proposal => proposal.state === state).length;
@@ -55,14 +90,17 @@ export default function useProposals({
       return;
     }
 
-    const filter = usulContract.filters.ProposalCreated();
+    const proposalCreatedFilter = usulContract.filters.ProposalCreated();
+    const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
 
-    usulContract.on(filter, proposalCreatedListener);
+    usulContract.on(proposalCreatedFilter, proposalCreatedListener);
+    usulContract.on(proposalMetaDataCreatedFilter, proposalMetaDataCreatedListener);
 
     return () => {
-      usulContract.off(filter, proposalCreatedListener);
+      usulContract.off(proposalCreatedFilter, proposalCreatedListener);
+      usulContract.off(proposalMetaDataCreatedFilter, proposalMetaDataCreatedListener);
     };
-  }, [usulContract, signerOrProvider, proposalCreatedListener]);
+  }, [usulContract, signerOrProvider, proposalCreatedListener, proposalMetaDataCreatedListener]);
 
   useEffect(() => {
     if (!usulContract || !signerOrProvider) {
@@ -71,18 +109,34 @@ export default function useProposals({
 
     const loadProposals = async () => {
       const proposalCreatedFilter = usulContract.filters.ProposalCreated();
+      const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
       const proposalCreatedEvents = await usulContract.queryFilter(proposalCreatedFilter);
-      const mappedProposals = await Promise.all(
+      const proposalMetaDataCreatedEvents = await usulContract.queryFilter(
+        proposalMetaDataCreatedFilter
+      );
+      let mappedProposals = await Promise.all(
         proposalCreatedEvents.map(({ args }) => {
+          const metaDataEvent = proposalMetaDataCreatedEvents.find(
+            event => event.args[0] === args[1]
+          );
+          let metaData;
+          if (metaDataEvent) {
+            metaData = {
+              decodedTransactions: decodeTransactions(metaDataEvent.args[1]),
+            };
+          }
+
           return mapProposalCreatedEventToProposal(
             args[0],
             args[1],
             args[2],
             usulContract,
-            signerOrProvider
+            signerOrProvider,
+            metaData
           );
         })
       );
+
       setProposals(mappedProposals);
     };
 

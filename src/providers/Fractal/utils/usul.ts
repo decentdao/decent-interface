@@ -1,18 +1,18 @@
+import { OZLinearVoting__factory, FractalUsul } from '@fractal-framework/fractal-contracts';
 import { BigNumber, Signer } from 'ethers';
-import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
 import { logError } from '../../../helpers/errorLogging';
-import { decodeTransactionHashes } from '../../../utils/crypto';
 import { Providers } from '../../Web3Data/types';
 import {
   Proposal,
   ProposalIsPassedError,
+  ProposalMetaData,
   ProposalState,
   ProposalVotesSummary,
   strategyProposalStates,
 } from '../types/usul';
 
 export const getProposalState = async (
-  usulContract: Usul,
+  usulContract: FractalUsul,
   proposalId: BigNumber,
   signerOrProvider: Signer | Providers
 ): Promise<ProposalState> => {
@@ -46,7 +46,7 @@ export const getProposalState = async (
 };
 
 export const getProposalVotesSummary = async (
-  usulContract: Usul,
+  usulContract: FractalUsul,
   proposalNumber: BigNumber,
   signerOrProvider: Signer | Providers
 ): Promise<ProposalVotesSummary> => {
@@ -77,8 +77,9 @@ export const mapProposalCreatedEventToProposal = async (
   strategyAddress: string,
   proposalNumber: BigNumber,
   proposer: string,
-  usulContract: Usul,
-  signerOrProvider: Signer | Providers
+  usulContract: FractalUsul,
+  signerOrProvider: Signer | Providers,
+  metaData?: ProposalMetaData
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
@@ -110,7 +111,7 @@ export const mapProposalCreatedEventToProposal = async (
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
     txHashes,
-    decodedTransactions: decodeTransactionHashes(txHashes),
+    metaData,
   };
 
   return proposal;

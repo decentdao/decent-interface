@@ -1,7 +1,10 @@
-import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
+import {
+  GnosisSafe__factory,
+  OZLinearVoting__factory,
+  FractalUsul__factory,
+} from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
-import { OZLinearVoting__factory, Usul__factory } from '../../assets/typechain-types/usul';
 import {
   GnosisDAO,
   GovernanceTypes,
@@ -22,7 +25,7 @@ const useBuildDAOTx = () => {
     gnosisSafeFactoryContract,
     gnosisSafeSingletonContract,
     linearVotingMasterCopyContract,
-    usulMasterCopyContract,
+    fractalUsulMasterCopyContract,
     zodiacModuleProxyFactoryContract,
     fractalNameRegistryContract,
     votesMasterCopyContract,
@@ -189,7 +192,7 @@ const useBuildDAOTx = () => {
           !account ||
           !gnosisSafeFactoryContract ||
           !gnosisSafeSingletonContract?.address ||
-          !usulMasterCopyContract ||
+          !fractalUsulMasterCopyContract ||
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMasterCopyContract ||
           !multiSendContract ||
@@ -302,13 +305,14 @@ const useBuildDAOTx = () => {
             [predictedStrategyAddress],
           ]
         );
-        const encodedSetupUsulData = usulMasterCopyContract.interface.encodeFunctionData('setUp', [
-          encodedInitUsulData,
-        ]);
+        const encodedSetupUsulData = fractalUsulMasterCopyContract.interface.encodeFunctionData(
+          'setUp',
+          [encodedInitUsulData]
+        );
 
         const usulByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          usulMasterCopyContract.address.slice(2) +
+          fractalUsulMasterCopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
         const usulNonce = getRandomBytes();
         const usulSalt = solidityKeccak256(
@@ -331,7 +335,10 @@ const useBuildDAOTx = () => {
           predictedGnosisSafeAddress,
           signerOrProvider
         );
-        const usulContract = await Usul__factory.connect(predictedUsulAddress, signerOrProvider);
+        const usulContract = await FractalUsul__factory.connect(
+          predictedUsulAddress,
+          signerOrProvider
+        );
         const linearVotingContract = await OZLinearVoting__factory.connect(
           predictedStrategyAddress,
           signerOrProvider
@@ -382,7 +389,7 @@ const useBuildDAOTx = () => {
         const deployUsulTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [usulMasterCopyContract.address, encodedSetupUsulData, usulNonce],
+          [fractalUsulMasterCopyContract.address, encodedSetupUsulData, usulNonce],
           0,
           false
         );
@@ -423,7 +430,7 @@ const useBuildDAOTx = () => {
       account,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract?.address,
-      usulMasterCopyContract,
+      fractalUsulMasterCopyContract,
       zodiacModuleProxyFactoryContract,
       linearVotingMasterCopyContract,
       multiSendContract,

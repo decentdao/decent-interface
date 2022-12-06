@@ -1,7 +1,6 @@
-import { VotesToken } from '@fractal-framework/fractal-contracts';
+import { VotesToken, OZLinearVoting } from '@fractal-framework/fractal-contracts';
 import { BigNumber, utils } from 'ethers';
 import { useReducer, useMemo, useEffect, useCallback } from 'react';
-import { OZLinearVoting } from '../../../../assets/typechain-types/usul';
 import { formatCoin } from '../../../../utils/numberFormats';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import {

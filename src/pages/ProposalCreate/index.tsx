@@ -94,7 +94,9 @@ function ProposalCreate() {
           }
           return '';
         }),
+        title: '',
         description: proposalDescription,
+        documentationUrl: '',
       };
       setProposalData(proposal);
     } catch (e) {

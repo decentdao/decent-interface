@@ -30,7 +30,9 @@ const useCreateSubDAOProposal = () => {
           targets: [multiSendContract.address],
           values: [BigNumber.from('0')],
           calldatas: [multiSendContract.interface.encodeFunctionData('multiSend', [safeTx])],
+          title: 'Create SubDAO',
           description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
+          documentationUrl: '',
         };
         submitProposal({ proposalData, successCallback });
       };

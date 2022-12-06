@@ -1,5 +1,4 @@
-import { FractalModule } from '@fractal-framework/fractal-contracts';
-import { Usul } from '../../../assets/typechain-types/usul';
+import { FractalModule, FractalUsul } from '@fractal-framework/fractal-contracts';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -14,7 +13,7 @@ export enum GnosisModuleType {
 }
 
 export interface IGnosisModuleData {
-  moduleContract: Usul | FractalModule | undefined;
+  moduleContract: FractalUsul | FractalModule | undefined;
   moduleAddress: string;
   moduleType: GnosisModuleType;
 }

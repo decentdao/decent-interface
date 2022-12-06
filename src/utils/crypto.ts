@@ -1,7 +1,7 @@
-import { DecodedTransaction } from '../types';
+import { DecodedTransaction, MetaTransaction } from '../types';
 
 // eslint-disable-next-line
-export const decodeTransactionHashes = (txHashes: string[]): DecodedTransaction[] => {
+export const decodeTransactions = (transactions: MetaTransaction[]): DecodedTransaction[] => {
   // @todo - implement decoding transactions
 
   const MOCK_DECODED_TRANSACTIONS: DecodedTransaction[] = [

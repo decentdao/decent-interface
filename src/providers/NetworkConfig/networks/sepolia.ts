@@ -8,7 +8,7 @@ export const sepoliaConfig: NetworkConfig = {
     zodiacModuleProxyFactory: '',
     linearVotingMasterCopy: '',
     gnosisMultisend: '',
-    usulMasterCopy: '',
+    fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',

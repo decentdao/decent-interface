@@ -1,10 +1,11 @@
-import { VotesToken, VotesToken__factory } from '@fractal-framework/fractal-contracts';
-import { useEffect, useMemo, useState } from 'react';
 import {
+  VotesToken,
+  VotesToken__factory,
   OZLinearVoting,
   OZLinearVoting__factory,
-  Usul,
-} from '../../../../assets/typechain-types/usul';
+  FractalUsul,
+} from '@fractal-framework/fractal-contracts';
+import { useEffect, useMemo, useState } from 'react';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { GnosisModuleType, IGnosisModuleData } from '../types';
@@ -23,7 +24,7 @@ export const useVotingContracts = (modules: IGnosisModuleData[]) => {
   const usulModule = useMemo(
     () => modules.find(module => module.moduleType === GnosisModuleType.USUL)?.moduleContract,
     [modules]
-  ) as Usul | undefined;
+  ) as FractalUsul | undefined;
 
   // set token contract
   useEffect(() => {

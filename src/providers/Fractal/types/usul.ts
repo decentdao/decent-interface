@@ -36,6 +36,12 @@ export type ProposalVote = {
   weight: BigNumber;
 };
 
+export type ProposalMetaData = {
+  title?: string;
+  description?: string;
+  documentationUrl?: string;
+  decodedTransactions: DecodedTransaction[];
+};
 export type Proposal = {
   state: ProposalState;
   govTokenAddress: string | null;
@@ -46,7 +52,7 @@ export type Proposal = {
   proposalNumber: BigNumber;
   userVote?: ProposalVote;
   txHashes: string[];
-  decodedTransactions: DecodedTransaction[];
+  metaData?: ProposalMetaData;
 };
 
 export enum ProposalIsPassedError {
