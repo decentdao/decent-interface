@@ -103,8 +103,9 @@ const useBuildDAOTx = () => {
         !signerOrProvider
       ) {
         return {
-          vetoVoting: '',
+          vetoVotingAddress: '',
           setVetoVotingCalldata: '',
+          vetoVotesType: VetoERC20Voting__factory || VetoMultisigVoting__factory,
         };
       }
 
@@ -125,7 +126,7 @@ const useBuildDAOTx = () => {
         [solidityKeccak256(['bytes'], [setVetoVotingCalldata]), saltNum]
       );
       return {
-        vetoVoting: getCreate2Address(
+        vetoVotingAddress: getCreate2Address(
           zodiacModuleProxyFactoryContract.address,
           vetoVotingSalt,
           solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
@@ -349,13 +350,14 @@ const useBuildDAOTx = () => {
         if (parentDAOAddress && parentIsUsul !== undefined) {
           const subDAOData = daoData as SubDAO;
           // Veto Votes
-          const { vetoVoting, setVetoVotingCalldata } = buildVetoVotesContractData(parentIsUsul);
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
+            buildVetoVotesContractData(parentIsUsul);
 
           // Veto Guard
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
             subDAOData.executionDetails,
             parentDAOAddress,
-            vetoVoting,
+            vetoVotingAddress,
             safeContract.address
           );
 
@@ -386,7 +388,7 @@ const useBuildDAOTx = () => {
             ),
             // Setup Veto Multisig
             buildContractCall(
-              vetoVotingContract as Contract,
+              vetoVotesType.connect(vetoVotingAddress, signerOrProvider),
               'setUp',
               [
                 ethers.utils.defaultAbiCoder.encode(
@@ -689,14 +691,14 @@ const useBuildDAOTx = () => {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
-          const { vetoVotingContract, setVetoVotingCalldata } =
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
             buildVetoVotesContractData(parentIsUsul);
 
           // Veto Guard
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
             subDAOData.executionDetails,
             parentDAOAddress,
-            vetoVotingContract as Contract,
+            vetoVotingAddress,
             safeContract.address,
             predictedUsulAddress,
             predictedStrategyAddress
@@ -722,7 +724,7 @@ const useBuildDAOTx = () => {
               false
             ),
 
-            // Deploy Veto ERC20 Voting
+            // Deploy Veto Voting
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
@@ -730,9 +732,9 @@ const useBuildDAOTx = () => {
               0,
               false
             ),
-            // Setup Veto ERC20 Voting
+            // Setup Veto Voting
             buildContractCall(
-              vetoVotingContract as Contract,
+              vetoVotesType.connect(vetoVotingAddress, signerOrProvider),
               'setUp',
               [
                 ethers.utils.defaultAbiCoder.encode(
