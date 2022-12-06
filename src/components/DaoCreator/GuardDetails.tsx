@@ -94,7 +94,7 @@ function GuardDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleFreezeProposalBlockDuration', { ns: 'daoCreate' })}
+            {t('exampleExecutionPeriod', { ns: 'daoCreate' })}
           </Text>
         </InputBox>
         <InputBox>
