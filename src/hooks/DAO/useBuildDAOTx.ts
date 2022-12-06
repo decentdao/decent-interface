@@ -7,7 +7,7 @@ import {
   GnosisSafe,
   UsulVetoGuard__factory,
 } from '@fractal-framework/fractal-contracts';
-import { BigNumber, Contract, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { OZLinearVoting__factory, Usul__factory } from '../../assets/typechain-types/usul';
 import {
