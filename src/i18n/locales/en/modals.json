@@ -13,6 +13,5 @@
     "amountLabel": "How much?",
     "destinationLabel": "Where would you like to send this?",
     "destinationSublabel": "Ethereum wallet address or ENS only",
-    "sendAssetsSubmit": "Review",
-    "errorOverdraft": "Not enough funds"
+    "sendAssetsSubmit": "Review"
   }

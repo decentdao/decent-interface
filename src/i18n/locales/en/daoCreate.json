@@ -18,7 +18,6 @@
     "titleGnosis": "Wrapped Gnosis Configuration",
     "titleGnosisUsul": "Gnosis Safe Configuration with Usul Module attached and 1:1 Token Voting Strategy",
     "titlePureGnosis": "Gnosis Safe Configuration",
-    "titleGovToken": "Treasury and Governance Token",
     "titleGovConfig": "Governance Configuration",
     "titleFunding": "Funding",
     "stepName": "{{daoName}} {{stepName}} ",
@@ -46,8 +45,6 @@
     "helperTokenSymbol": "Max: 5 characters",    
     "labelTokenSupply": "Token Supply",
     "helperTokenSupply": "Max: 18 decimals",
-    "label1To1Voting": "1:1 Token Voting",
-    "desc1To1Voting": "Governance with tokens giving voting power to token holders.",
     "descGnosis": "Gnosis Powered, Multi-signature governance allows you define an access/control-scheme through multiple signers that need to confirm transactions",
     "descPureGnosis": "Create Pure Gnosis Safe with no additional governance attached - default Multi-signature will be used.",
     "descGnosisUsul": "Create Gnosis Safe with Governance attached based on Usul module and 1:1 Token Voting Strategy.",
@@ -55,5 +52,8 @@
     "labelFractalName": "Fractal Name",
     "helperFractalName": "What is your Fractal called?",
     "labelDeploySubDAO": "Create subDAO Proposal",
-    "labelCreateSubDAO": "Create a subDAO"
+    "titleProposalSettings": "Proposal Settings",
+    "titleGovSetup": "Governance Setup",
+    "titleAllocations": "Token Allocations",
+    "titleMintToken": "Mint a New Token"
 }

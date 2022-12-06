@@ -6,6 +6,15 @@ import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
 import { useFractal } from './providers/Fractal/hooks/useFractal';
 import FractalRoutes from './routes/FractalRoutes';
+import { notProd, testErrorBoundary } from './utils/dev';
+
+function localDevConfigs() {
+  if (notProd()) {
+    if (process.env.REACT_APP_TEST_ERROR_BOUNDARY === 'true') {
+      testErrorBoundary();
+    }
+  }
+}
 
 function App() {
   const {
@@ -22,6 +31,8 @@ function App() {
     buttonTranslationKey: 'accept',
     buttonOnClick: acceptAudit,
   });
+
+  localDevConfigs();
 
   return (
     <Grid
