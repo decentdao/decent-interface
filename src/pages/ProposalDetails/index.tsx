@@ -37,7 +37,7 @@ function ProposalDetails() {
     }
 
     const foundProposal = proposals.find(p => p.proposalNumber === params.proposalNumber);
-    if (foundProposal === undefined) {
+    if (!foundProposal) {
       setProposal(null);
       return;
     }
