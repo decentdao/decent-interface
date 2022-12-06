@@ -94,9 +94,8 @@ const useBuildDAOTx = () => {
       solidityKeccak256,
     ]
   );
-
   const buildVetoVotesContractData = useCallback(
-    (parentGovernanceType: boolean) => {
+    (parentIsUsul: boolean) => {
       if (
         !vetoERC20VotingMasterCopyContract ||
         !vetoMultisigVotingMasterCopyContract ||
@@ -110,13 +109,11 @@ const useBuildDAOTx = () => {
       }
 
       // VETO Voting Contract
-      const vetoVotesMasterCopyContract = parentGovernanceType
+      const vetoVotesMasterCopyContract = parentIsUsul
         ? vetoERC20VotingMasterCopyContract
         : vetoMultisigVotingMasterCopyContract;
 
-      const vetoVotesType = parentGovernanceType
-        ? VetoERC20Voting__factory
-        : VetoMultisigVoting__factory;
+      const vetoVotesType = parentIsUsul ? VetoERC20Voting__factory : VetoMultisigVoting__factory;
 
       const setVetoVotingCalldata = vetoVotesType.createInterface().encodeFunctionData('owner');
       const vetoVotingByteCodeLinear =
@@ -150,7 +147,6 @@ const useBuildDAOTx = () => {
       vetoMultisigVotingMasterCopyContract,
     ]
   );
-
   const buildVetoGuardData = useCallback(
     (
       executionDetails: BigNumber,
@@ -216,7 +212,6 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
     ]
   );
-
   const buildDeploySafeTx = useCallback(
     (daoData: GnosisDAO, hasUsul?: boolean) => {
       const buildTx = async () => {
@@ -300,7 +295,7 @@ const useBuildDAOTx = () => {
     (
       daoData: GnosisDAO | TokenGovernanceDAO,
       parentDAOAddress?: string,
-      parentGovernanceType?: boolean
+      parentIsUsul?: boolean
     ) => {
       const buildTx = async () => {
         if (
@@ -342,11 +337,11 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
-        if (parentDAOAddress && parentGovernanceType !== undefined) {
+        if (parentDAOAddress && parentIsUsul !== undefined) {
           const subDAOData = daoData as SubDAO;
           // Veto Votes
           const { vetoVotingContract, setVetoVotingCalldata } =
-            buildVetoVotesContractData(parentGovernanceType);
+            buildVetoVotesContractData(parentIsUsul);
 
           // Veto Guard
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
@@ -518,7 +513,7 @@ const useBuildDAOTx = () => {
     (
       daoData: GnosisDAO | TokenGovernanceDAO,
       parentDAOAddress?: string,
-      parentGovernanceType?: boolean
+      parentIsUsul?: boolean
     ) => {
       const buildTx = async () => {
         if (
@@ -683,12 +678,12 @@ const useBuildDAOTx = () => {
         );
 
         let internaltTxs: MetaTransaction[];
-        if (parentDAOAddress && parentGovernanceType !== undefined) {
+        if (parentDAOAddress && parentIsUsul !== undefined) {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
           const { vetoVotingContract, setVetoVotingCalldata } =
-            buildVetoVotesContractData(parentGovernanceType);
+            buildVetoVotesContractData(parentIsUsul);
 
           // Veto Guard
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
@@ -909,13 +904,13 @@ const useBuildDAOTx = () => {
     async (
       daoData: TokenGovernanceDAO | GnosisDAO,
       parentDAOAddress?: string,
-      parentGovernanceType?: boolean
+      parentIsUsul?: boolean
     ) => {
       switch (daoData.governance) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
-          return buildUsulTx(daoData, parentDAOAddress, parentGovernanceType);
+          return buildUsulTx(daoData, parentDAOAddress, parentIsUsul);
         case GovernanceTypes.GNOSIS_SAFE:
-          return buildMultisigTx(daoData, parentDAOAddress, parentGovernanceType);
+          return buildMultisigTx(daoData, parentDAOAddress, parentIsUsul);
       }
     },
     [buildUsulTx, buildMultisigTx]
