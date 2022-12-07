@@ -110,6 +110,7 @@ export default function ProposalsList() {
           buttonProps={{ disabled: !proposals }}
         />
       </Flex>
+
       {proposals === undefined ? (
         <Box mt={7}>
           <InfoBoxLoader />
