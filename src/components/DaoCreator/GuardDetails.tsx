@@ -15,7 +15,7 @@ import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions } from './provider/types';
+import { CreatorProviderActions, GovernanceTypes } from './provider/types';
 
 function GuardDetails() {
   const {
@@ -66,12 +66,12 @@ function GuardDetails() {
         <InputBox>
           <LabelWrapper
             label={
-              governance === 'safe'
+              governance === GovernanceTypes.GNOSIS_SAFE
                 ? t('labelExecutionDelayBlocks', { ns: 'daoCreate' })
                 : t('labelExecutionPeriod', { ns: 'daoCreate' })
             }
             subLabel={
-              governance === 'safe'
+              governance === GovernanceTypes.GNOSIS_SAFE
                 ? t('helperExecutionDelayBlocks', { ns: 'daoCreate' })
                 : t('helperExecutionPeriod', { ns: 'daoCreate' })
             }
