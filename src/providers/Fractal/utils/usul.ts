@@ -1,4 +1,8 @@
-import { OZLinearVoting__factory, FractalUsul } from '@fractal-framework/fractal-contracts';
+import {
+  OZLinearVoting__factory,
+  FractalUsul,
+  OZLinearVoting,
+} from '@fractal-framework/fractal-contracts';
 import { BigNumber, Signer } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { Providers } from '../../Web3Data/types';
@@ -7,8 +11,10 @@ import {
   ProposalIsPassedError,
   ProposalMetaData,
   ProposalState,
+  ProposalVote,
   ProposalVotesSummary,
   strategyProposalStates,
+  VOTE_CHOICES,
 } from '../types/usul';
 
 export const getProposalState = async (
@@ -73,6 +79,23 @@ export const getProposalVotesSummary = async (
   };
 };
 
+export const getProposalVotes = async (
+  strategyContract: OZLinearVoting,
+  proposalNumber: BigNumber
+): Promise<ProposalVote[]> => {
+  const voteEventFilter = strategyContract.filters.Voted();
+  const votes = await strategyContract.queryFilter(voteEventFilter);
+  const proposalVotesEvent = votes.filter(voteEvent =>
+    voteEvent.args.proposalId.eq(proposalNumber)
+  );
+
+  return proposalVotesEvent.map(({ args }) => ({
+    voter: args.voter,
+    choice: VOTE_CHOICES[args.support],
+    weight: args.weight,
+  }));
+};
+
 export const mapProposalCreatedEventToProposal = async (
   strategyAddress: string,
   proposalNumber: BigNumber,
@@ -84,7 +107,12 @@ export const mapProposalCreatedEventToProposal = async (
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
-  const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
+  const votesSummary = await getProposalVotesSummary(
+    usulContract,
+    proposalNumber,
+    signerOrProvider
+  );
+  const votes = await getProposalVotes(strategyContract, proposalNumber);
 
   const txHashes = [];
   let i = 0;
@@ -110,6 +138,7 @@ export const mapProposalCreatedEventToProposal = async (
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
+    votesSummary,
     txHashes,
     metaData,
   };

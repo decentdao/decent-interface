@@ -45,7 +45,8 @@ export type ProposalMetaData = {
 export type Proposal = {
   state: ProposalState;
   govTokenAddress: string | null;
-  votes: ProposalVotesSummary;
+  votes: ProposalVote[];
+  votesSummary: ProposalVotesSummary;
   startBlock: BigNumber;
   deadline: number;
   proposer: string;

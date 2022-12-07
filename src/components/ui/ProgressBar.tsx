@@ -15,7 +15,7 @@ export default function ProgressBar({
     >
       <Progress
         value={value}
-        size="lg"
+        height="24px"
       />
       {value > 0 && (
         <Text

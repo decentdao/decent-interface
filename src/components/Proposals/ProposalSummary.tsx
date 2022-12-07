@@ -9,7 +9,7 @@ import ContentBox from '../ui/ContentBox';
 import { ExtendedProgressBar } from '../ui/ProgressBar';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votes, deadline },
+  proposal: { startBlock, votesSummary, deadline },
   govTokenTotalSupply,
 }: {
   proposal: Proposal;
@@ -18,9 +18,9 @@ export default function ProposalSummary({
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);
   const startBlockTimeStamp = useCurrentTimestamp(startBlock.toNumber());
 
-  const yesVotesPercentage = votes.yes.div(govTokenTotalSupply).mul(100).toNumber();
-  const noVotesPercentage = votes.no.div(govTokenTotalSupply).mul(100).toNumber();
-  const quorum = govTokenTotalSupply.div(votes.quorum).toNumber();
+  const yesVotesPercentage = votesSummary.yes.div(govTokenTotalSupply).mul(100).toNumber();
+  const noVotesPercentage = votesSummary.no.div(govTokenTotalSupply).mul(100).toNumber();
+  const quorum = govTokenTotalSupply.div(votesSummary.quorum).toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
   return (
