@@ -1,11 +1,11 @@
-import { Center, Text } from '@chakra-ui/react';
-import { ArrowRight } from '@decent-org/fractal-ui';
+import { Globe } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { OptionMenu } from '../components/ui/menus/OptionMenu';
 import { supportedLanguages } from '.';
 
 export function LanguageSwitcher() {
   const { i18n } = useTranslation();
+
   let supported = Object.keys(supportedLanguages).map(function (languageCode) {
     return {
       optionKey: languageCode,
@@ -32,13 +32,15 @@ export function LanguageSwitcher() {
   }
   // --- END TODO ---
 
+  if (supported.length < 2) return null;
+
   return (
     <OptionMenu
       trigger={
-        <Center>
-          <Text>{i18n.language.toUpperCase()}</Text>
-          <ArrowRight />
-        </Center>
+        <Globe
+          boxSize="1.5rem"
+          minWidth="auto"
+        />
       }
       options={supported}
       namespace="languages"
