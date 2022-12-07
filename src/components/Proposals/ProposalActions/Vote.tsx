@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
 import { Proposal, ProposalState, UsulVoteChoice } from '../../../providers/Fractal/types';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';
 import Check from '../../ui/svg/Check';
 
@@ -11,12 +12,19 @@ function Vote({ proposal }: { proposal: Proposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation();
 
+  const {
+    state: { account },
+  } = useWeb3Provider();
+
   const castVote = useCastVote({
     proposalNumber: proposal.proposalNumber,
     setPending: setPending,
   });
 
-  const disabled = pending || proposal.state !== ProposalState.Active; // @todo - check permissions for user to vote
+  const disabled =
+    pending ||
+    proposal.state !== ProposalState.Active ||
+    !!proposal.votes.find(vote => vote.voter === account);
 
   return (
     <ContentBox bg="black.900-semi-transparent">

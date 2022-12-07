@@ -16,6 +16,7 @@ export default function ProgressBar({
       <Progress
         value={value}
         height="24px"
+        maxWidth="100%"
       />
       {value > 0 && (
         <Text
@@ -26,7 +27,7 @@ export default function ProgressBar({
           height="100%"
           position="absolute"
           top="0"
-          left={`calc(${value - 5}% - 20px)`}
+          left={`calc(${Math.min(value - 5, 90)}% - 20px)`}
         >
           {value}%
         </Text>

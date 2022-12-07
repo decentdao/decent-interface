@@ -57,7 +57,7 @@ export default function ProposalSummary({
       </Box>
       <Box marginTop={4}>
         <ExtendedProgressBar
-          label={t('support', { ns: 'sidebar' })}
+          label={t('support')}
           helperText={t('proposalSupportSummaryHelper', { count: requiredVotesToPass })}
           percentage={yesVotesPercentage}
           requiredPercentage={requiredVotesToPass}
