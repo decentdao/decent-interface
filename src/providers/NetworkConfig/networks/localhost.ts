@@ -9,7 +9,7 @@ export const localhostConfig: NetworkConfig = {
     zodiacModuleProxyFactory: '0x740020d3B1BF3E64e84dbA7175fC560B85EdB9bC',
     linearVotingMasterCopy: '0x948db5691cc97AEcb4fF5FfcAEb72594B74D9D52',
     gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
-    usulMasterCopy: '0xCdea1582a57Ca4A678070Fa645aaf3a40c2164C1',
+    fractalUsulMasterCopy: '0xCdea1582a57Ca4A678070Fa645aaf3a40c2164C1',
     fractalModuleMasterCopy: '0x260BcebDb25fa17f63972010E7b4EfC5C1D0fE0f',
     fractalNameRegistry: '0x14d56CE23F76921203b1a092744A067D7d8963c2',
     votesTokenMasterCopy: '0x0697DCa73151da93D18CDdF5DB52f9A8363c9Ba9',

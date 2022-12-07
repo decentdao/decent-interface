@@ -1,24 +1,24 @@
+import { FractalUsul, OZLinearVoting__factory } from '@fractal-framework/fractal-contracts';
 import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeMultisigTransactionResponse,
   TransferWithTokenInfoResponse,
 } from '@gnosis.pm/safe-service-client';
 import { BigNumber, constants, Signer } from 'ethers';
-import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
 import { logError } from '../../../helpers/errorLogging';
 import { GnosisTransferType } from '../../../types';
-import { decodeTransactionHashes } from '../../../utils/crypto';
 import { Providers } from '../../Web3Data/types';
 import { strategyTxProposalStates } from '../governance/constants';
 import {
   ProposalIsPassedError,
+  ProposalMetaData,
   ProposalVotesSummary,
   TxProposalState,
   UsulProposal,
 } from './../governance/types';
 
 export const getTxProposalState = async (
-  usulContract: Usul,
+  usulContract: FractalUsul,
   proposalId: BigNumber,
   signerOrProvider: Signer | Providers
 ): Promise<TxProposalState> => {
@@ -52,7 +52,7 @@ export const getTxProposalState = async (
 };
 
 export const getProposalVotesSummary = async (
-  usulContract: Usul,
+  usulContract: FractalUsul,
   proposalNumber: BigNumber,
   signerOrProvider: Signer | Providers
 ): Promise<ProposalVotesSummary> => {
@@ -83,8 +83,9 @@ export const mapProposalCreatedEventToProposal = async (
   strategyAddress: string,
   proposalNumber: BigNumber,
   proposer: string,
-  usulContract: Usul,
-  signerOrProvider: Signer | Providers
+  usulContract: FractalUsul,
+  signerOrProvider: Signer | Providers,
+  metaData?: ProposalMetaData
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
@@ -116,7 +117,7 @@ export const mapProposalCreatedEventToProposal = async (
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
     txHashes,
-    decodedTransactions: decodeTransactionHashes(txHashes),
+    metaData,
   };
 
   return proposal;

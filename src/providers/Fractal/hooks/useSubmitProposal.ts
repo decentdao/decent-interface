@@ -63,20 +63,24 @@ export default function useSubmitProposal() {
       } else {
         setPendingCreateTx(true);
         try {
-          const txHashes = await Promise.all(
-            proposalData.targets.map(async (target, index) => {
-              return usulContract.getTransactionHash(
-                target,
-                proposalData.values[index],
-                proposalData.calldatas[index],
-                0
-              );
-            })
-          );
-          // @todo: Implement voting strategy proposal selection when we will support multiple strategies on single Usul instance
+          const transactions = proposalData.targets.map((target, index) => ({
+            to: target,
+            value: proposalData.values[index],
+            data: proposalData.calldatas[index],
+            operation: 0,
+          }));
+
+          // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Usul instance
           await (
-            await usulContract.submitProposal(txHashes, votingStrategiesAddresses[0], '0x')
-          ).wait(); // Third parameter is optional on Usul
+            await usulContract.submitProposalWithMetaData(
+              votingStrategiesAddresses[0],
+              '0x',
+              transactions,
+              proposalData.title,
+              proposalData.description,
+              proposalData.documentationUrl
+            )
+          ).wait();
           successCallback(safe.address);
         } catch (e) {
           logError(e, 'Error during Usul proposal creation');
@@ -85,7 +89,7 @@ export default function useSubmitProposal() {
         }
       }
     },
-    [chainId, safe.address, signerOrProvider, usulContract, votingStrategiesAddresses]
+    [chainId, safe, signerOrProvider, usulContract, votingStrategiesAddresses]
   );
 
   return { submitProposal, pendingCreateTx, canUserCreateProposal: true };
