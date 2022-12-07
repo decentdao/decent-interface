@@ -10,7 +10,7 @@ import {
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../hooks/utils/useDisplayName';
-import { Proposal, ProposalVote } from '../../providers/Fractal/types';
+import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';
@@ -82,7 +82,7 @@ function ProposalVotes({
   govTokenDecimals,
   govTokenSymbol,
 }: {
-  proposal: Proposal;
+  proposal: UsulProposal;
   govTokenTotalSupply: BigNumber;
   govTokenDecimals: number;
   govTokenSymbol: string;
