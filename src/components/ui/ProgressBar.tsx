@@ -14,7 +14,7 @@ export default function ProgressBar({
       position="relative"
     >
       <Progress
-        value={value}
+        value={Math.min(value, 100)}
         height="24px"
         maxWidth="100%"
       />
@@ -29,7 +29,7 @@ export default function ProgressBar({
           top="0"
           left={`calc(${Math.min(value - 5, 90)}% - 20px)`}
         >
-          {value}%
+          {Math.min(value, 100)}%
         </Text>
       )}
       {!!(requiredValue && requiredValue > 0) && (
@@ -71,7 +71,7 @@ export function ExtendedProgressBar({
         {label}
       </Text>
       <ProgressBar
-        value={percentage}
+        value={Math.min(percentage, 100)}
         requiredValue={requiredPercentage}
       />
       <Text

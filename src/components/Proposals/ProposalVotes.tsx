@@ -105,7 +105,7 @@ function ProposalVotes({
             <CircularProgress
               color="drab.900"
               trackColor="drab.700"
-              value={yesVotesPercentage}
+              value={Math.min(yesVotesPercentage, 100)}
               size="156px"
               marginTop={4}
             >
@@ -114,7 +114,7 @@ function ProposalVotes({
                   textStyle="text-lg-mono-regular"
                   color="grayscale.100"
                 >
-                  {yesVotesPercentage}%
+                  {Math.min(yesVotesPercentage, 100)}%
                 </Text>
                 <Text
                   textStyle="text-lg-mono-regular"

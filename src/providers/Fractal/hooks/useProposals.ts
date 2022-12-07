@@ -22,7 +22,7 @@ export default function useProposals({
   const [proposals, setProposals] = useState<Proposal[]>();
 
   const {
-    state: { signerOrProvider },
+    state: { signerOrProvider, chainId },
   } = useWeb3Provider();
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
@@ -54,18 +54,20 @@ export default function useProposals({
         return;
       }
 
+      const metaData = {
+        title,
+        description,
+        documentationUrl,
+        decodedTransactions: await decodeTransactions(transactions, chainId),
+      };
+
       setProposals(prevState => {
         if (prevState) {
           return prevState.map(proposal => {
             if (proposal.proposalNumber.eq(proposalNumber)) {
               return {
                 ...proposal,
-                metaData: {
-                  title,
-                  description,
-                  documentationUrl,
-                  decodedTransactions: decodeTransactions(transactions),
-                },
+                metaData,
               };
             }
 
@@ -76,7 +78,7 @@ export default function useProposals({
         return prevState;
       });
     },
-    [usulContract, signerOrProvider]
+    [usulContract, signerOrProvider, chainId]
   );
 
   const getProposalsTotal = (state: ProposalState) => {
@@ -116,14 +118,17 @@ export default function useProposals({
       );
 
       let mappedProposals = await Promise.all(
-        proposalCreatedEvents.map(({ args }) => {
+        proposalCreatedEvents.map(async ({ args }) => {
           const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
             event.args.proposalId.eq(args.proposalNumber)
           );
           let metaData;
           if (metaDataEvent) {
             metaData = {
-              decodedTransactions: decodeTransactions(metaDataEvent.args[1]),
+              decodedTransactions: await decodeTransactions(
+                metaDataEvent.args.transactions,
+                chainId
+              ),
             };
           }
 
@@ -142,7 +147,7 @@ export default function useProposals({
     };
 
     loadProposals();
-  }, [usulContract, signerOrProvider]);
+  }, [usulContract, signerOrProvider, chainId]);
 
   const sortedAndFilteredProposals = useMemo(() => {
     if (proposals && (sortBy || filters)) {
