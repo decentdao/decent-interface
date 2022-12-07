@@ -59,7 +59,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
-  useGnosisGovernance(gnosis, governanceDispatch);
+  useGnosisGovernance({ governance, gnosis, governanceDispatch });
 
   useEffect(() => {
     if (!gnosis.safe.address && !gnosis.isGnosisLoading) {

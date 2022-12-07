@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
-import { Proposal } from '../../providers/Fractal/types';
+import { UsulProposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import { ExtendedProgressBar } from '../ui/ProgressBar';
@@ -12,7 +12,7 @@ export default function ProposalSummary({
   proposal: { startBlock, votes, deadline },
   govTokenTotalSupply,
 }: {
-  proposal: Proposal;
+  proposal: UsulProposal;
   govTokenTotalSupply: BigNumber;
 }) {
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);

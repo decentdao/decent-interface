@@ -1,4 +1,6 @@
-import { FractalModule, FractalUsul } from '@fractal-framework/fractal-contracts';
+import { FractalModule, FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
+import { BigNumber } from 'ethers';
+import { DecodedTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -43,9 +45,9 @@ export interface IGovernance {
     };
   };
   type: GovernanceTypes | null;
-  proposalList?: any[];
+  txProposalsInfo: TxProposalsInfo;
   governanceToken?: IGoveranceTokenData;
-  proposals?: any;
+  contracts: GovernanceContracts;
   governanceIsLoading: boolean;
 }
 
@@ -55,3 +57,75 @@ export interface GnosisConfig {
 }
 
 export interface GnosisDAO extends DAODetails, GnosisConfig {}
+
+export interface GovernanceContracts {
+  ozLinearVotingContract?: OZLinearVoting;
+  usulContract?: Usul;
+  tokenContract?: VotesToken;
+  contractsIsLoading: boolean;
+}
+
+export enum TxProposalState {
+  Active = 'stateActive',
+  Canceled = 'stateCanceled',
+  TimeLocked = 'stateTimeLocked',
+  Executed = 'stateExecuted',
+  Executing = 'stateExecuting',
+  Uninitialized = 'stateUninitialized',
+  Pending = 'statePending',
+  Failed = 'stateFailed',
+  Rejected = 'stateRejected',
+}
+
+export interface UsulProposal extends TxProposal {
+  proposer: string;
+  govTokenAddress: string | null;
+  votes: ProposalVotesSummary;
+  deadline: number;
+  userVote?: ProposalVote;
+  startBlock: BigNumber;
+}
+
+export interface SafeTransaction extends TxProposal {
+  submissionDate?: string;
+}
+
+export interface TxProposal {
+  state: TxProposalState;
+  proposalNumber: string;
+  txHashes: string[];
+  decodedTransactions: DecodedTransaction[];
+}
+
+export interface TxProposalsInfo {
+  txProposals: (SafeTransaction | UsulProposal)[];
+  pending?: number; // active/queued (usul) | not executed (multisig)
+  passed?: number; // executed (usul/multisig)
+}
+
+export type ProposalVotesSummary = {
+  yes: BigNumber;
+  no: BigNumber;
+  abstain: BigNumber;
+  quorum: BigNumber;
+};
+
+export type ProposalVote = {
+  voter: string;
+  choice: typeof VOTE_CHOICES[number];
+  weight: BigNumber;
+};
+
+export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
+
+export enum UsulVoteChoice {
+  No,
+  Yes,
+  Abstain,
+}
+
+export enum ProposalIsPassedError {
+  MAJORITY_YES_VOTES_NOT_REACHED = 'majority yesVotes not reached',
+  QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
+  PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
+}
