@@ -9,7 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Proposal } from '../../../providers/Fractal/types';
+import { TxProposal } from '../../../providers/Fractal/types';
 import { DecodedTransaction } from '../../../types';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {
@@ -53,7 +53,7 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
   );
 }
 
-export default function ProposalExecutableCode({ proposal }: { proposal: Proposal }) {
+export default function ProposalExecutableCode({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation('proposal');
 
   return (

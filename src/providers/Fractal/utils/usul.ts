@@ -1,27 +1,33 @@
 import {
-  OZLinearVoting__factory,
   FractalUsul,
+  OZLinearVoting__factory,
   OZLinearVoting,
 } from '@fractal-framework/fractal-contracts';
-import { BigNumber, Signer } from 'ethers';
-import { logError } from '../../../helpers/errorLogging';
-import { Providers } from '../../Web3Data/types';
 import {
-  Proposal,
+  SafeMultisigTransactionWithTransfersResponse,
+  SafeMultisigTransactionResponse,
+  TransferWithTokenInfoResponse,
+} from '@gnosis.pm/safe-service-client';
+import { BigNumber, constants, Signer } from 'ethers';
+import { logError } from '../../../helpers/errorLogging';
+import { GnosisTransferType } from '../../../types';
+import { Providers } from '../../Web3Data/types';
+import { strategyTxProposalStates } from '../governance/constants';
+import {
   ProposalIsPassedError,
   ProposalMetaData,
-  ProposalState,
   ProposalVote,
   ProposalVotesSummary,
-  strategyProposalStates,
+  TxProposalState,
+  UsulProposal,
   VOTE_CHOICES,
-} from '../types/usul';
+} from './../governance/types';
 
-export const getProposalState = async (
+export const getTxProposalState = async (
   usulContract: FractalUsul,
   proposalId: BigNumber,
   signerOrProvider: Signer | Providers
-): Promise<ProposalState> => {
+): Promise<TxProposalState> => {
   const state = await usulContract.state(proposalId);
   if (state === 0) {
     // Usul says proposal is active, but we need to get more info in this case
@@ -34,21 +40,21 @@ export const getProposalState = async (
       try {
         // This function never returns false, it either returns true or throws an error
         await strategy.isPassed(proposalId);
-        return ProposalState.Pending;
+        return TxProposalState.Pending;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
-          return ProposalState.Rejected;
+          return TxProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
-          return ProposalState.Failed;
+          return TxProposalState.Failed;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
-          return ProposalState.Active;
+          return TxProposalState.Active;
         }
-        return ProposalState.Failed;
+        return TxProposalState.Failed;
       }
     }
-    return ProposalState.Active;
+    return TxProposalState.Active;
   }
-  return strategyProposalStates[state];
+  return strategyTxProposalStates[state];
 };
 
 export const getProposalVotesSummary = async (
@@ -106,7 +112,7 @@ export const mapProposalCreatedEventToProposal = async (
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
-  const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
+  const state = await getTxProposalState(usulContract, proposalNumber, signerOrProvider);
   const votesSummary = await getProposalVotesSummary(
     usulContract,
     proposalNumber,
@@ -130,8 +136,8 @@ export const mapProposalCreatedEventToProposal = async (
     }
   }
 
-  const proposal: Proposal = {
-    proposalNumber,
+  const proposal: UsulProposal = {
+    proposalNumber: proposalNumber.toString(),
     proposer,
     startBlock,
     deadline: deadline.toNumber(),
@@ -144,4 +150,76 @@ export const mapProposalCreatedEventToProposal = async (
   };
 
   return proposal;
+};
+
+export const eventTransactionMapping = (
+  multiSigTransaction:
+    | SafeMultisigTransactionWithTransfersResponse
+    | SafeMultisigTransactionResponse,
+  isMultiSigTransaction: boolean
+) => {
+  const eventTransactionMap = new Map<number, any>();
+  const parseTransactions = (parameters: any[]) => {
+    if (!parameters || !parameters.length) {
+      return;
+    }
+    parameters.forEach((param: any) => {
+      const dataDecoded = param.dataDecoded || param.valueDecoded;
+
+      if (param.to) {
+        eventTransactionMap.set(eventTransactionMap.size, {
+          ...param,
+        });
+      }
+      return parseTransactions(dataDecoded);
+    });
+  };
+
+  const dataDecoded = multiSigTransaction.dataDecoded as any;
+  if (dataDecoded && isMultiSigTransaction) {
+    parseTransactions(dataDecoded.parameters);
+  }
+  return eventTransactionMap;
+};
+
+export const totalsReducer = (prev: Map<any, any>, cur: TransferWithTokenInfoResponse) => {
+  if (cur.type === GnosisTransferType.ETHER && cur.value) {
+    if (prev.has(constants.AddressZero)) {
+      const prevValue = prev.get(constants.AddressZero);
+      prev.set(constants.AddressZero, {
+        bn: prevValue.bn.add(BigNumber.from(cur.value)),
+        symbol: 'ETHER',
+        decimals: 18,
+      });
+    }
+    prev.set(constants.AddressZero, {
+      bn: BigNumber.from(cur.value),
+      symbol: 'ETHER',
+      decimals: 18,
+    });
+  }
+  if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+    prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
+      bn: BigNumber.from(1),
+      symbol: cur.tokenInfo.symbol,
+      decimals: 0,
+    });
+  }
+  if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+    if (prev.has(cur.tokenInfo.address)) {
+      const prevValue = prev.get(cur.tokenInfo.address);
+      prev.set(cur.tokenInfo.address, {
+        ...prevValue,
+        bn: prevValue.bn.add(BigNumber.from(cur.value)),
+      });
+    } else {
+      prev.set(cur.tokenAddress, {
+        bn: BigNumber.from(cur.value),
+        symbol: cur.tokenInfo.symbol,
+        decimals: cur.tokenInfo.decimals,
+      });
+    }
+  }
+
+  return prev;
 };

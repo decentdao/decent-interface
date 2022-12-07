@@ -3,8 +3,8 @@ import { ArrowDown } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import useProposals from '../../hooks/DAO/proposal/useProposals';
-import { ProposalState } from '../../providers/Fractal/types';
+import useProposals from '../../providers/Fractal/hooks/useProposals';
+import { TxProposalState } from '../../providers/Fractal/types';
 import { SortBy } from '../../types';
 import { Sort } from '../ui/Sort';
 import { EmptyBox } from '../ui/containers/EmptyBox';
@@ -13,14 +13,14 @@ import { OptionMenu } from '../ui/menus/OptionMenu';
 import ProposalCard from './ProposalCard';
 
 export default function ProposalsList() {
-  const allStates = Object.values(ProposalState);
+  const allStates = Object.values(TxProposalState);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
-  const [filters, setFilters] = useState<ProposalState[]>(allStates);
+  const [filters, setFilters] = useState<TxProposalState[]>(allStates);
 
   const { t } = useTranslation(['proposal', 'common']);
   const { proposals, getProposalsTotal } = useProposals({ sortBy, filters });
 
-  const toggleFilter = (filter: ProposalState) => {
+  const toggleFilter = (filter: TxProposalState) => {
     setFilters(prevState => {
       if (prevState.includes(filter)) {
         return prevState.filter(state => state !== filter);
@@ -117,7 +117,7 @@ export default function ProposalsList() {
       ) : proposals.length > 0 ? (
         proposals.map(proposal => (
           <ProposalCard
-            key={proposal.proposalNumber.toNumber()}
+            key={proposal.proposalNumber}
             proposal={proposal}
           />
         ))
