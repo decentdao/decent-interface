@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
-import { Proposal, ProposalState } from '../../providers/Fractal/types/usul';
+import { SafeTransaction, TxProposalState, UsulProposal } from '../../providers/Fractal/types';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
@@ -9,12 +9,17 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalTitle from '../ui/proposal/ProposalTitle';
 import { ProposalAction } from './ProposalActions/ProposalAction';
 
-export default function ProposalCard({ proposal }: { proposal: Proposal }) {
+export default function ProposalCard({ proposal }: { proposal: UsulProposal | SafeTransaction }) {
   const now = new Date();
-  const proposalCreatedTimestamp = useCurrentTimestamp(proposal.startBlock.toNumber());
+  const usulProposal = proposal as UsulProposal;
+  const multisigTransaction = proposal as SafeTransaction;
+
+  const proposalCreatedTimestamp = useCurrentTimestamp(
+    usulProposal.startBlock ? usulProposal.startBlock.toNumber() : undefined
+  );
 
   return (
-    <Link to={proposal.proposalNumber.toString()}>
+    <Link to={proposal.proposalNumber}>
       <ContentBox bg="black.900-semi-transparent">
         <Flex justifyContent="space-between">
           <Flex flexWrap="wrap">
@@ -25,13 +30,16 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
             >
               <ProposalStateBox state={proposal.state} />
               <ProposalTime
-                isRejected={proposal.state === ProposalState.Rejected}
+                isRejected={proposal.state === TxProposalState.Rejected}
+                submissionDate={multisigTransaction.submissionDate}
                 deadline={proposalCreatedTimestamp}
                 icon="calendar"
               />
             </Flex>
             <ProposalTitle proposal={proposal} />
-            <ProposalCreatedBy proposalProposer={proposal.proposer} />
+            {usulProposal.deadline && (
+              <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
+            )}
           </Flex>
           <Flex
             alignItems="center"
@@ -39,9 +47,10 @@ export default function ProposalCard({ proposal }: { proposal: Proposal }) {
             gap={8}
             width="30%"
           >
-            {proposal.deadline * 1000 > now.getMilliseconds() &&
-              proposal.state === ProposalState.Active && (
-                <ProposalTime deadline={proposal.deadline} />
+            {usulProposal.deadline &&
+              usulProposal.deadline * 1000 > now.getMilliseconds() &&
+              proposal.state === TxProposalState.Active && (
+                <ProposalTime deadline={usulProposal.deadline} />
               )}
             <ProposalAction proposal={proposal} />
           </Flex>

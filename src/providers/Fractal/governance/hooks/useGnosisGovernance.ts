@@ -1,36 +1,49 @@
 import { Dispatch, useEffect } from 'react';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
-import { GovernanceTypes, IGnosis } from '../../types';
+import { GovernanceTypes, IGnosis, IGovernance } from '../../types';
 import { GovernanceActions, GovernanceAction } from '../actions';
 import useGovernanceTokenData from './useGovernanceTokenData';
+import { useSafeMultisigTxs } from './useSafeMultisigTxs';
+import useUsulProposals from './useUsulProposals';
 import { useVotingContracts } from './useVotingContracts';
 
-export const useGnosisGovernance = (
-  { safe, modules }: IGnosis,
-  governanceDispatch: Dispatch<GovernanceActions>
-) => {
+interface IUseGnosisGovernance {
+  governance: IGovernance;
+  gnosis: IGnosis;
+  governanceDispatch: Dispatch<GovernanceActions>;
+}
+
+export const useGnosisGovernance = ({
+  governance,
+  gnosis,
+  governanceDispatch,
+}: IUseGnosisGovernance) => {
   const {
     state: { account },
   } = useWeb3Provider();
 
-  const { votingContract, tokenContract, isContractsLoading } = useVotingContracts(modules);
-  const governanceTokenData = useGovernanceTokenData(votingContract, tokenContract);
+  // load voting contracts
+  useVotingContracts({ gnosis, governanceDispatch });
+  // if voting contracts are loaded, load governance data
+  const governanceTokenData = useGovernanceTokenData(governance.contracts);
+
+  // loads transactions (multisig) or proposals (usul)
+  useUsulProposals({ governance, governanceDispatch });
+  useSafeMultisigTxs({ governance, gnosis, governanceDispatch });
 
   useEffect(() => {
-    if (!account || !safe.address || isContractsLoading) {
+    if (!account || !gnosis.safe.address || governance.contracts.contractsIsLoading) {
       return;
     }
-
-    const governanceType = !!votingContract
+    const governanceType = !!governance.contracts.ozLinearVotingContract
       ? GovernanceTypes.GNOSIS_SAFE_USUL
-      : !votingContract
+      : !governance.contracts.ozLinearVotingContract
       ? GovernanceTypes.GNOSIS_SAFE
       : null;
 
     governanceDispatch({
       type: GovernanceAction.SET_GOVERNANCE,
       payload: {
-        actions: {},
         type: governanceType,
         governanceToken: governanceTokenData,
         governanceIsLoading: false,
@@ -38,10 +51,10 @@ export const useGnosisGovernance = (
     });
   }, [
     account,
-    safe.address,
+    gnosis.safe.address,
     governanceDispatch,
     governanceTokenData,
-    votingContract,
-    isContractsLoading,
+    governance.contracts.ozLinearVotingContract,
+    governance.contracts.contractsIsLoading,
   ]);
 };

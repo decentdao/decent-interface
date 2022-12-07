@@ -16,7 +16,7 @@ import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../providers/Fractal/hooks/useProposals';
-import { Proposal } from '../../providers/Fractal/types';
+import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 const MOCK_GOV_TOKEN_TOTAL_SUPPLY = BigNumber.from('3475000000000000000000');
@@ -27,28 +27,27 @@ function ProposalDetails() {
   const params = useParams();
 
   const { proposals } = useProposals({});
-  const [proposal, setProposal] = useState<Proposal | null>();
+  const [proposal, setProposal] = useState<TxProposal | UsulProposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 
   useEffect(() => {
-    if (proposals === undefined || params.proposalNumber === undefined) {
+    if (!proposals || !params.proposalNumber) {
       setProposal(undefined);
       return;
     }
 
-    const proposalNumber = parseInt(params.proposalNumber);
-    const foundProposal = proposals.find(p => p.proposalNumber.toNumber() === proposalNumber);
-    if (foundProposal === undefined) {
+    const foundProposal = proposals.find(p => p.proposalNumber === params.proposalNumber);
+    if (!foundProposal) {
       setProposal(null);
       return;
     }
     setProposal(foundProposal);
   }, [proposals, params.proposalNumber]);
 
-  if (proposal === undefined) {
+  if (!proposal) {
     return <Text>{t('loadingProposals')}</Text>;
   }
-
+  const usulProposal = proposal as UsulProposal;
   return (
     <Box>
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
@@ -76,47 +75,53 @@ function ProposalDetails() {
           templateColumns="repeat(3, 1fr)"
         >
           <GridItem colSpan={2}>
-            <ContentBox bg="black.900-semi-transparent">
-              <Flex
-                alignItems="center"
-                flexWrap="wrap"
-              >
-                <Flex
-                  gap={4}
-                  alignItems="center"
-                >
-                  <ProposalStateBox state={proposal.state} />
-                  <ProposalTime deadline={proposal.deadline} />
-                </Flex>
-                <Box
-                  w="full"
-                  mt={4}
-                >
-                  <ProposalTitle proposal={proposal} />
-                  <ProposalExecutableCode proposal={proposal} />
-                </Box>
-              </Flex>
-              <Box mt={4}>
-                <ProposalCreatedBy proposalProposer={proposal.proposer} />
-              </Box>
-            </ContentBox>
-            <ProposalVotes
-              proposal={proposal}
-              govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
-              govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
-              govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
-            />
+            {usulProposal.govTokenAddress && (
+              <>
+                <ContentBox bg="black.900-semi-transparent">
+                  <Flex
+                    alignItems="center"
+                    flexWrap="wrap"
+                  >
+                    <Flex
+                      gap={4}
+                      alignItems="center"
+                    >
+                      <ProposalStateBox state={proposal.state} />
+                      <ProposalTime deadline={usulProposal.deadline} />
+                    </Flex>
+                    <Box
+                      w="full"
+                      mt={4}
+                    >
+                      <ProposalTitle proposal={proposal} />
+                      <ProposalExecutableCode proposal={proposal} />
+                    </Box>
+                  </Flex>
+                  <Box mt={4}>
+                    <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
+                  </Box>
+                </ContentBox>
+                <ProposalVotes
+                  proposal={usulProposal}
+                  govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
+                  govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
+                  govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
+                />
+              </>
+            )}
           </GridItem>
-          <GridItem colSpan={1}>
-            <ProposalSummary
-              proposal={proposal}
-              govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
-            />
-            <ProposalAction
-              proposal={proposal}
-              expandedView
-            />
-          </GridItem>
+          {usulProposal.govTokenAddress && (
+            <GridItem colSpan={1}>
+              <ProposalSummary
+                proposal={usulProposal}
+                govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
+              />
+              <ProposalAction
+                proposal={proposal}
+                expandedView
+              />
+            </GridItem>
+          )}
         </Grid>
       )}
     </Box>
