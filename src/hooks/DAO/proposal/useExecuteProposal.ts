@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Proposal } from '../../../providers/Fractal/types';
+import { TxProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import { MetaTransaction } from '../../../types';
@@ -16,8 +16,13 @@ export default function useExecuteProposal() {
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
-    (proposal: Proposal) => {
-      if (!usulContract || !signerOrProvider || !proposal.metaData) {
+    (proposal: TxProposal) => {
+      if (
+        !usulContract ||
+        !signerOrProvider ||
+        !proposal.metaData ||
+        !proposal.metaData.transactions
+      ) {
         return;
       }
 
