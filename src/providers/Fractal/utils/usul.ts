@@ -1,3 +1,4 @@
+import { FractalUsul, OZLinearVoting__factory } from '@fractal-framework/fractal-contracts';
 import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeMultisigTransactionResponse,
@@ -17,7 +18,7 @@ import {
 } from './../governance/types';
 
 export const getTxProposalState = async (
-  usulContract: Usul,
+  usulContract: FractalUsul,
   proposalId: BigNumber,
   signerOrProvider: Signer | Providers
 ): Promise<TxProposalState> => {

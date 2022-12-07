@@ -1,6 +1,7 @@
+import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
 import { Dispatch, useCallback, useEffect } from 'react';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
-import { ProposalCreatedEvent } from '../../../../assets/typechain-types/usul/contracts/Usul';
+import { decodeTransactions } from '../../../../utils/crypto';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { IGovernance, TxProposalState } from '../../types';
 import { mapProposalCreatedEventToProposal } from '../../utils';
@@ -23,7 +24,7 @@ export default function useUsulProposals({
   } = useWeb3Provider();
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
-    async (strategyAddress, proposalNumber, proposer) => {
+    async (...[strategyAddress, proposalNumber, proposer]) => {
       if (!usulContract || !signerOrProvider) {
         return;
       }
@@ -69,15 +70,30 @@ export default function useUsulProposals({
 
     const loadProposals = async () => {
       const proposalCreatedFilter = usulContract.filters.ProposalCreated();
+      const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
       const proposalCreatedEvents = await usulContract.queryFilter(proposalCreatedFilter);
+      const proposalMetaDataCreatedEvents = await usulContract.queryFilter(
+        proposalMetaDataCreatedFilter
+      );
+
       const mappedProposals = await Promise.all(
         proposalCreatedEvents.map(({ args }) => {
+          const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
+            event.args.proposalId.eq(args.proposalNumber)
+          );
+          let metaData;
+          if (metaDataEvent) {
+            metaData = {
+              decodedTransactions: decodeTransactions(metaDataEvent.args[1]),
+            };
+          }
           return mapProposalCreatedEventToProposal(
             args[0],
             args[1],
             args[2],
             usulContract,
-            signerOrProvider
+            signerOrProvider,
+            metaData
           );
         })
       );
