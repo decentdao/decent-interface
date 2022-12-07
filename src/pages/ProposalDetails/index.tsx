@@ -1,4 +1,4 @@
-import { Text, Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
+import { Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -44,9 +44,6 @@ function ProposalDetails() {
     setProposal(foundProposal);
   }, [proposals, params.proposalNumber]);
 
-  if (!proposal) {
-    return <Text>{t('loadingProposals')}</Text>;
-  }
   const usulProposal = proposal as UsulProposal;
   return (
     <Box>

@@ -20,7 +20,7 @@ export default function useUsulProposals({
   governanceDispatch,
 }: IUseUsulProposals) {
   const {
-    state: { signerOrProvider },
+    state: { signerOrProvider, chainId },
   } = useWeb3Provider();
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
@@ -77,14 +77,17 @@ export default function useUsulProposals({
       );
 
       const mappedProposals = await Promise.all(
-        proposalCreatedEvents.map(({ args }) => {
+        proposalCreatedEvents.map(async ({ args }) => {
           const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
             event.args.proposalId.eq(args.proposalNumber)
           );
           let metaData;
           if (metaDataEvent) {
             metaData = {
-              decodedTransactions: decodeTransactions(metaDataEvent.args[1]),
+              decodedTransactions: await decodeTransactions(
+                metaDataEvent.args.transactions,
+                chainId
+              ),
             };
           }
           return mapProposalCreatedEventToProposal(
@@ -120,5 +123,5 @@ export default function useUsulProposals({
     };
 
     loadProposals();
-  }, [usulContract, signerOrProvider, governanceDispatch]);
+  }, [usulContract, signerOrProvider, governanceDispatch, chainId]);
 }

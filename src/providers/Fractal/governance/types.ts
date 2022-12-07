@@ -92,7 +92,8 @@ export type ProposalMetaData = {
 export interface UsulProposal extends TxProposal {
   proposer: string;
   govTokenAddress: string | null;
-  votes: ProposalVotesSummary;
+  votesSummary: ProposalVotesSummary;
+  votes: ProposalVote[];
   deadline: number;
   userVote?: ProposalVote;
   startBlock: BigNumber;

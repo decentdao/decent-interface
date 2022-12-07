@@ -4,7 +4,13 @@ import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
-import { TxProposal, TxProposalState, UsulVoteChoice } from '../../../providers/Fractal/types';
+import {
+  TxProposal,
+  TxProposalState,
+  UsulProposal,
+  UsulVoteChoice,
+} from '../../../providers/Fractal/types';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';
 import Check from '../../ui/svg/Check';
 
@@ -12,12 +18,21 @@ function Vote({ proposal }: { proposal: TxProposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation();
 
+  const usulProposal = proposal as UsulProposal;
+
+  const {
+    state: { account },
+  } = useWeb3Provider();
+
   const castVote = useCastVote({
     proposalNumber: BigNumber.from(proposal.proposalNumber),
     setPending: setPending,
   });
 
-  const disabled = pending || proposal.state !== TxProposalState.Active; // @todo - check permissions for user to vote
+  const disabled =
+    pending ||
+    proposal.state !== TxProposalState.Active ||
+    !!usulProposal.votes.find(vote => vote.voter === account);
 
   return (
     <ContentBox bg="black.900-semi-transparent">
