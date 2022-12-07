@@ -3,7 +3,6 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorProviderActions } from './provider/types';
