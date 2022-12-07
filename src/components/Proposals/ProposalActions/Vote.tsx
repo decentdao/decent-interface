@@ -1,22 +1,23 @@
 import { Text, Button } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
+import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
-import { Proposal, ProposalState, UsulVoteChoice } from '../../../providers/Fractal/types';
+import { TxProposal, TxProposalState, UsulVoteChoice } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
 import Check from '../../ui/svg/Check';
 
-function Vote({ proposal }: { proposal: Proposal }) {
+function Vote({ proposal }: { proposal: TxProposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation();
 
   const castVote = useCastVote({
-    proposalNumber: proposal.proposalNumber,
+    proposalNumber: BigNumber.from(proposal.proposalNumber),
     setPending: setPending,
   });
 
-  const disabled = pending || proposal.state !== ProposalState.Active; // @todo - check permissions for user to vote
+  const disabled = pending || proposal.state !== TxProposalState.Active; // @todo - check permissions for user to vote
 
   return (
     <ContentBox bg="black.900-semi-transparent">
