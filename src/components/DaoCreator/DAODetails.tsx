@@ -23,7 +23,6 @@ function DAODetails() {
 
   return (
     <ContentBox>
-      <ContentBoxTitle>Essentials</ContentBoxTitle>
       <InputBox>
         <LabelWrapper
           label={t('labelFractalName')}
