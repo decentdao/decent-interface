@@ -2,7 +2,7 @@ import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
+import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { Proposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
@@ -16,7 +16,7 @@ export default function ProposalSummary({
   govTokenTotalSupply: BigNumber;
 }) {
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);
-  const startBlockTimeStamp = useCurrentTimestamp(startBlock.toNumber());
+  const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
 
   const yesVotesPercentage = votesSummary.yes.div(govTokenTotalSupply).mul(100).toNumber();
   const noVotesPercentage = votesSummary.no.div(govTokenTotalSupply).mul(100).toNumber();

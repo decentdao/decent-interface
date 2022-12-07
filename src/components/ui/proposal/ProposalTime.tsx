@@ -18,7 +18,8 @@ function ProposalTime({ deadline, icon = 'clock', isRejected }: ProposalTimeProp
   const now = new Date();
 
   const diffReadable = formatDatesDiffReadable(deadlineDate, now, t);
-  const isPassed = deadlineDate.getMilliseconds() > now.getMilliseconds();
+  const isDeadlinePassed = now.getTime() > deadlineDate.getTime();
+
   return (
     <Flex
       className="flex"
@@ -33,7 +34,7 @@ function ProposalTime({ deadline, icon = 'clock', isRejected }: ProposalTimeProp
         <Text color="sand.700">
           {isRejected
             ? format(deadlineDate, DEFAULT_DATE_FORMAT)
-            : t(isPassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}
+            : t(isDeadlinePassed ? 'timeAgo' : 'timeLeft', { time: diffReadable })}
         </Text>
       </Flex>
     </Flex>
