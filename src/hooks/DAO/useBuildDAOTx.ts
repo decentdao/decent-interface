@@ -174,30 +174,28 @@ const useBuildDAOTx = () => {
         const vetoGuardType = usulAddress ? UsulVetoGuard__factory : VetoGuard__factory;
 
         // VETO GUARD
-        const setVetoGuardCalldata =
-          // eslint-disable-next-line camelcase
-          vetoGuardType.createInterface().encodeFunctionData('setUp', [
-            usulAddress
-              ? ethers.utils.defaultAbiCoder.encode(
-                  ['address', 'address', 'address', 'address', 'uint256'],
-                  [
-                    parentDAOAddress, // Owner -- Parent DAO
-                    vetoVotingAddress, // Veto Voting
-                    strategyAddress, // Base Strategy
-                    usulAddress, // USUL
-                    executionDetails, // Execution Delay
-                  ]
-                )
-              : ethers.utils.defaultAbiCoder.encode(
-                  ['uint256', 'address', 'address', 'address'],
-                  [
-                    executionDetails, // Execution Delay
-                    parentDAOAddress, // Owner -- Parent DAO
-                    vetoVotingAddress, // Veto Voting
-                    safeAddress, // Gnosis Safe
-                  ]
-                ),
-          ]);
+        const setVetoGuardCalldata = vetoGuardType.createInterface().encodeFunctionData('setUp', [
+          usulAddress
+            ? ethers.utils.defaultAbiCoder.encode(
+                ['address', 'address', 'address', 'address', 'uint256'],
+                [
+                  parentDAOAddress, // Owner -- Parent DAO
+                  vetoVotingAddress, // Veto Voting
+                  strategyAddress, // Base Strategy
+                  usulAddress, // USUL
+                  executionDetails, // Execution Delay
+                ]
+              )
+            : ethers.utils.defaultAbiCoder.encode(
+                ['uint256', 'address', 'address', 'address'],
+                [
+                  executionDetails, // Execution Delay
+                  parentDAOAddress, // Owner -- Parent DAO
+                  vetoVotingAddress, // Veto Voting
+                  safeAddress, // Gnosis Safe
+                ]
+              ),
+        ]);
         const vetoGuardByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
           vetoGuardMasterCopyContract.address.slice(2) +
@@ -269,7 +267,6 @@ const useBuildDAOTx = () => {
           solidityKeccak256(
             ['bytes', 'uint256'],
             [
-              // eslint-disable-next-line camelcase
               await gnosisSafeFactoryContract.proxyCreationCode(),
               gnosisSafeSingletonContract.address,
             ]
