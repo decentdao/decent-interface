@@ -703,11 +703,14 @@ const useBuildDAOTx = () => {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
-          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
-            buildVetoVotesContractData(parentTokenAddress);
+          const deployVetoVotesTx = await buildVetoVotesContractData(parentTokenAddress);
+          if (!deployVetoVotesTx) {
+            return;
+          }
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = deployVetoVotesTx;
 
           // Veto Guard
-          const { predictedVetoModuleAddress, setVetoGuardCalldata } = buildVetoGuardData(
+          const deployVetoGuardTx = await buildVetoGuardData(
             subDAOData.executionDetails,
             parentDAOAddress,
             vetoVotingAddress,
@@ -715,6 +718,10 @@ const useBuildDAOTx = () => {
             predictedUsulAddress,
             predictedStrategyAddress
           );
+          if (!deployVetoGuardTx) {
+            return;
+          }
+          const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
 
           internaltTxs = [
             buildContractCall(
