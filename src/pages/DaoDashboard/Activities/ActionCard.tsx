@@ -1,42 +1,49 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { Calendar } from '@decent-org/fractal-ui';
+import { Calendar, Clock } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { ActivityBox } from '../../../components/ui/containers/AcitivityBox';
+import { ActionBox } from '../../../components/ui/containers/ActionBox';
 
 interface IAcitivityCard {
   eventDate: string;
-  description: ReactNode;
+  LeftElement?: ReactNode;
   RightElement?: ReactNode;
   Badge?: ReactNode;
+  borderColor?: string;
 }
 
-export function ActionCard({ Badge, eventDate, description, RightElement }: IAcitivityCard) {
+export function ActionCard({
+  Badge,
+  eventDate,
+  LeftElement,
+  RightElement,
+  borderColor,
+}: IAcitivityCard) {
   return (
-    <ActivityBox>
+    <ActionBox borderColor={borderColor}>
       <Flex
         justifyContent="space-between"
         alignItems="center"
       >
         <Flex flexDirection="column">
           <Flex
-            color="sand.700"
+            color="white"
             alignItems="center"
             gap="1rem"
-            mb="1rem"
           >
+            {LeftElement}
             {Badge}
             <Flex
               alignItems="center"
               gap="0.5rem"
             >
-              <Calendar />
+              <Clock fill="sand.700" />
               <Text textStyle="text-base-sans-regular">{eventDate}</Text>
             </Flex>
           </Flex>
-          <Box>{description}</Box>
         </Flex>
         {RightElement}
       </Flex>
-    </ActivityBox>
+    </ActionBox>
   );
 }
