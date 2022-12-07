@@ -95,7 +95,7 @@ const useBuildDAOTx = () => {
     ]
   );
   const buildVetoVotesContractData = useCallback(
-    (parentTokenAddress: string | undefined) => {
+    (parentTokenAddress?: string) => {
       if (
         !vetoERC20VotingMasterCopyContract ||
         !vetoMultisigVotingMasterCopyContract ||
