@@ -3,7 +3,7 @@ import { CloseX } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
+import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import {
   TxProposal,
   TxProposalState,

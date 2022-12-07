@@ -2,8 +2,8 @@ import { OZLinearVoting__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { useTransaction } from '../../Web3Data/transactions';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useTransaction } from '../../../providers/Web3Data/transactions';
 import useUsul from './useUsul';
 
 const useCastVote = ({

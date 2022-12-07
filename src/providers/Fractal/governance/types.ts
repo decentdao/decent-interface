@@ -5,7 +5,7 @@ import {
   VotesToken,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { DecodedTransaction } from '../../../types';
+import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -86,6 +86,7 @@ export type ProposalMetaData = {
   title?: string;
   description?: string;
   documentationUrl?: string;
+  transactions?: MetaTransaction[];
   decodedTransactions: DecodedTransaction[];
 };
 

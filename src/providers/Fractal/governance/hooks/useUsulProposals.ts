@@ -84,6 +84,7 @@ export default function useUsulProposals({
           let metaData;
           if (metaDataEvent) {
             metaData = {
+              transactions: metaDataEvent.args.transactions,
               decodedTransactions: await decodeTransactions(
                 metaDataEvent.args.transactions,
                 chainId
