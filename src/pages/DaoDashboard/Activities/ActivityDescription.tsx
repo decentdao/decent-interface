@@ -43,17 +43,19 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
 function GovernanceDescription({ activity }: { activity: GovernanceActivity }) {
   const { t } = useTranslation('dashboard');
 
+  if (!activity.eventTransactionsCount && activity.eventType !== ActivityEventType.Governance) {
+    return null;
+  }
+
   return (
     <>
-      {!!activity.eventTransactionsCount && (
-        <Text> {t('proposalDescription', { txCount: activity.eventTransactionsCount })}</Text>
-      )}
+      <Text> {t('proposalDescription', { txCount: activity.eventTransactionsCount })}</Text>
+      {!!activity.transaction?.transfers.length && <Text> {t('to')} </Text>}
     </>
   );
 }
 
 export function ActivityDescription({ activity }: { activity: Activity }) {
-  const { t } = useTranslation();
   const governanceActivity = activity as GovernanceActivity;
   return (
     <Flex
@@ -62,13 +64,7 @@ export function ActivityDescription({ activity }: { activity: Activity }) {
       gap="0.5rem"
       flexWrap="wrap"
     >
-      {activity.eventType === ActivityEventType.Governance && (
-        <>
-          <GovernanceDescription activity={governanceActivity} />
-          {!!governanceActivity.transaction?.transfers.length &&
-            !!governanceActivity.eventTransactionsCount && <Text> {t('to')} </Text>}
-        </>
-      )}
+      <GovernanceDescription activity={governanceActivity} />
       {!!activity.transaction && <TreasuryDescription activity={activity} />}
     </Flex>
   );
