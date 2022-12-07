@@ -5,10 +5,10 @@ import { Signer } from 'ethers';
 import { useCallback, useState } from 'react';
 import { buildSafeAPIPost } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { ProposalExecuteData } from '../../../types';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { buildGnosisApiUrl } from '../utils';
-import { useFractal } from './useFractal';
 import useUsul from './useUsul';
 
 export default function useSubmitProposal() {

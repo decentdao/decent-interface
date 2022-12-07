@@ -1,8 +1,8 @@
 import { FractalUsul__factory, FractalUsul } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect } from 'react';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { GnosisModuleType } from '../types';
-import { useFractal } from './useFractal';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { GnosisModuleType } from '../../../providers/Fractal/types';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 
 export default function useUsul() {
   const [usulContract, setUsulContract] = useState<FractalUsul>();

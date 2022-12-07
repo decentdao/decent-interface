@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import Transactions from '../../components/ProposalCreate/Transactions';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
+import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
 import { notProd, useProposeStuff } from '../../utils/dev';

@@ -4,11 +4,11 @@ import {
   ProposalMetadataCreatedEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Proposal, ProposalState } from '../../../providers/Fractal/types/usul';
+import { mapProposalCreatedEventToProposal } from '../../../providers/Fractal/utils/usul';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { SortBy } from '../../../types';
 import { decodeTransactions } from '../../../utils/crypto';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
-import { Proposal, ProposalState } from '../types/usul';
-import { mapProposalCreatedEventToProposal } from '../utils/usul';
 import useUsul from './useUsul';
 
 export default function useProposals({

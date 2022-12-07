@@ -2,7 +2,7 @@ import { Text, Button } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
+import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import { Proposal, ProposalState, UsulVoteChoice } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';

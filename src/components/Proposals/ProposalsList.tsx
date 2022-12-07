@@ -3,7 +3,7 @@ import { ArrowDown } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import useProposals from '../../providers/Fractal/hooks/useProposals';
+import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { ProposalState } from '../../providers/Fractal/types';
 import { SortBy } from '../../types';
 import { Sort } from '../ui/Sort';
