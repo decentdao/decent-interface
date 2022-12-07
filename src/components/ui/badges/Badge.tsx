@@ -7,8 +7,8 @@ type BadgeType = { [key: string]: { Icon: any; bg: string; color: string } };
 export enum BadgeLabels {
   STATE_PENDING = 'statePending',
   STATE_ACTIVE = 'stateActive',
-  STATE_PASSED = 'statePassed',
   STATE_EXECUTED = 'stateExecuted',
+  STATE_EXECUTING = 'stateExecuting',
   STATE_REJECTED = 'stateRejected',
   PARENT = 'parent',
   CHILD = 'child',
@@ -17,7 +17,7 @@ export enum BadgeLabels {
 const BADGE_MAPPING: BadgeType = {
   [BadgeLabels.STATE_PENDING]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_ACTIVE]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.STATE_PASSED]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.STATE_EXECUTING]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_EXECUTED]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_REJECTED]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.PARENT]: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
