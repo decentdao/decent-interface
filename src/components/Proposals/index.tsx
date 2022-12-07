@@ -2,17 +2,14 @@ import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { TxProposalState } from '../../providers/Fractal/types';
 import { SortBy } from '../../types';
 import { Sort } from '../ui/Sort';
-import { EmptyBox } from '../ui/containers/EmptyBox';
-import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import { OptionMenu } from '../ui/menus/OptionMenu';
-import ProposalCard from './ProposalCard';
+import { ProposalsList } from './ProposalsList';
 
-export default function ProposalsList() {
+export default function Proposals() {
   const allStates = Object.values(TxProposalState);
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const [filters, setFilters] = useState<TxProposalState[]>(allStates);
@@ -47,12 +44,15 @@ export default function ProposalsList() {
       : t('filterProposalsNSelected', { count: filters.length });
 
   return (
-    <Box>
-      <Flex gap={6}>
+    <>
+      <Flex
+        gap={6}
+        mb="1.5rem"
+      >
         <OptionMenu
           trigger={
             <Box>
-              {filterTitle} <ArrowDown />
+              {filterTitle} <ArrowDown boxSize="1.5rem" />
             </Box>
           }
           options={options}
@@ -111,32 +111,7 @@ export default function ProposalsList() {
         />
       </Flex>
 
-      {proposals === undefined ? (
-        <Box mt={7}>
-          <InfoBoxLoader />
-        </Box>
-      ) : proposals.length > 0 ? (
-        proposals.map(proposal => (
-          <ProposalCard
-            key={proposal.proposalNumber}
-            proposal={proposal}
-          />
-        ))
-      ) : (
-        <EmptyBox
-          emptyText={t('emptyProposals')}
-          m="2rem 0 0 0"
-        >
-          <Link to="new">
-            <Button
-              variant="text"
-              textStyle="text-xl-mono-bold"
-            >
-              {t('createProposal')}
-            </Button>
-          </Link>
-        </EmptyBox>
-      )}
-    </Box>
+      <ProposalsList proposals={proposals} />
+    </>
   );
 }

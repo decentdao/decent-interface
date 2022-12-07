@@ -1,6 +1,15 @@
-type DAORoutes = {
-  [route: string]: { relative: (...args: any) => string; path: string };
-};
+type RouteInfo = { relative: (...args: any) => string; path: string };
+type RouteIndex = { [key: string]: RouteInfo };
+interface DAORoutes extends RouteIndex {
+  dao: RouteInfo;
+  daos: RouteInfo;
+  newSubDao: RouteInfo;
+  nodes: RouteInfo;
+  treasury: RouteInfo;
+  proposals: RouteInfo;
+  proposal: RouteInfo;
+  proposalNew: RouteInfo;
+}
 
 export const DAO_ROUTES: DAORoutes = {
   daos: {

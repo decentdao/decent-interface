@@ -8,9 +8,13 @@ export default function ProposalTitle({ proposal }: { proposal: TxProposal }) {
   const targets = proposal?.metaData?.decodedTransactions.map(tx =>
     createAccountSubstring(tx.target)
   );
+  const proposalNumber =
+    proposal.proposalNumber.length > 8
+      ? createAccountSubstring(proposal.proposalNumber)
+      : proposal.proposalNumber;
   return (
-    <Text textStyle="text-xl-mono-bold">
-      #{proposal.proposalNumber}{' '}
+    <Text textStyle="text-lg-mono-bold">
+      #{proposalNumber}{' '}
       {t('proposalTitle', {
         count: proposal.txHashes.length,
         target: [...new Set(targets)].join(', '),
