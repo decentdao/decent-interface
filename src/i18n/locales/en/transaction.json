@@ -8,7 +8,7 @@
     "pendingQueue": "Queuing Transaction...",
     "failedQueue": "Queuing Failed",
     "successQueue": "Queuing Completed",
-    "pendingExecuting": "Executing Transaction...",
+    "pendingExecute": "Executing Transaction...",
     "failedExecute": "Execution Failed",
     "successExecute": "Execution Succeeded",
     "errorTransactionUnknown": "Not sure what happened with that transaction",
