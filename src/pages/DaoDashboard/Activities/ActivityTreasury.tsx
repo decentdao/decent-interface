@@ -3,13 +3,13 @@ import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-
 import { useTranslation } from 'react-i18next';
 import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
 import { TreasuryActivity } from '../../../types';
-import { AcitivityCard } from './ActivityCard';
+import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
 export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
   const { t } = useTranslation();
   return (
-    <AcitivityCard
+    <ActivityCard
       Badge={
         activity.isDeposit ? (
           <SquareSolidArrowDown color="sand.700" />

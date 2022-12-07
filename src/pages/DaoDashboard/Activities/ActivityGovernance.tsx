@@ -5,7 +5,7 @@ import { Badge } from '../../../components/ui/badges/Badge';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../../routes/constants';
 import { GovernanceActivity } from '../../../types';
-import { AcitivityCard } from './ActivityCard';
+import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
 export function ActivityGovernance({ activity }: { activity: GovernanceActivity }) {
@@ -17,7 +17,7 @@ export function ActivityGovernance({ activity }: { activity: GovernanceActivity 
   const { t } = useTranslation();
 
   return (
-    <AcitivityCard
+    <ActivityCard
       Badge={
         activity.state && (
           <Badge
