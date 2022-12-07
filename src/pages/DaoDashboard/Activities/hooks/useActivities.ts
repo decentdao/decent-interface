@@ -9,6 +9,7 @@ import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { eventTransactionMapping, totalsReducer } from '../../../../providers/Fractal/utils';
 import { ActivityEventType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
+import { DEFAULT_DATE_FORMAT } from '../../../../utils/numberFormats';
 import { UsulProposal, TxProposalState } from './../../../../providers/Fractal/governance/types';
 import { Activity, GovernanceActivity } from './../../../../types/activity';
 
@@ -27,7 +28,7 @@ export const useActivities = (sortBy: SortBy) => {
     if (!transactions.results.length || !safe) {
       return [];
     }
-    return transactions.results.map((transaction, i, transactionArr) => {
+    return transactions.results.map((transaction, _, transactionArr) => {
       const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
       const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
@@ -56,7 +57,7 @@ export const useActivities = (sortBy: SortBy) => {
       // @note for ethereum transactions event these are the execution date
       const eventDate = format(
         new Date(multiSigTransaction.submissionDate || ethereumTransaction.executionDate),
-        'MMM dd yyyy'
+        DEFAULT_DATE_FORMAT
       );
 
       // block explorer transaction hash. This is only being used for ETHEREUM TRANSACTIONS
@@ -129,7 +130,7 @@ export const useActivities = (sortBy: SortBy) => {
         const usulProposal = proposal as UsulProposal;
 
         const activity: GovernanceActivity = {
-          eventDate: format(new Date(usulProposal.blockTimestamp * 1000), 'MMM dd yyyy'),
+          eventDate: format(new Date(usulProposal.blockTimestamp * 1000), DEFAULT_DATE_FORMAT),
           eventType: ActivityEventType.Governance,
           proposalNumber: usulProposal.proposalNumber,
           state: proposal.state,
