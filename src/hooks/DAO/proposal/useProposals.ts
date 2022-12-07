@@ -58,6 +58,7 @@ export default function useProposals({
         title,
         description,
         documentationUrl,
+        transactions,
         decodedTransactions: await decodeTransactions(transactions, chainId),
       };
 
@@ -125,6 +126,7 @@ export default function useProposals({
           let metaData;
           if (metaDataEvent) {
             metaData = {
+              transactions: metaDataEvent.args.transactions,
               decodedTransactions: await decodeTransactions(
                 metaDataEvent.args.transactions,
                 chainId

@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { DecodedTransaction } from '../../../types';
+import { DecodedTransaction, MetaTransaction } from '../../../types';
 
 export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
 
@@ -41,6 +41,7 @@ export type ProposalMetaData = {
   description?: string;
   documentationUrl?: string;
   decodedTransactions: DecodedTransaction[];
+  transactions: MetaTransaction[];
 };
 export type Proposal = {
   state: ProposalState;
