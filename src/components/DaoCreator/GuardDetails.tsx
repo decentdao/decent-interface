@@ -62,7 +62,7 @@ function GuardDetails() {
   return (
     <Box>
       <ContentBox>
-        <ContentBoxTitle>Veto Guard Settings</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleGuardConfig', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
             label={
