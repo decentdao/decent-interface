@@ -1,5 +1,13 @@
 import { Flex, Text } from '@chakra-ui/react';
-import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck, Tree } from '@decent-org/fractal-ui';
+import {
+  ActiveTwo,
+  Check,
+  ClockTwo,
+  CloseX,
+  DoubleCheck,
+  Tree,
+  Shield,
+} from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 
 type BadgeType = { [key: string]: { Icon: any; bg: string; color: string } };
@@ -10,6 +18,7 @@ export enum BadgeLabels {
   STATE_PASSED = 'statePassed',
   STATE_EXECUTED = 'stateExecuted',
   STATE_REJECTED = 'stateRejected',
+  STATE_FREEZE_INIT = 'stateFreezeInit',
   PARENT = 'parent',
   CHILD = 'child',
 }
@@ -20,6 +29,7 @@ const BADGE_MAPPING: BadgeType = {
   [BadgeLabels.STATE_PASSED]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_EXECUTED]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_REJECTED]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.STATE_FREEZE_INIT]: { Icon: Shield, bg: 'blue.400', color: 'grayscale.black' },
   [BadgeLabels.PARENT]: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
   [BadgeLabels.CHILD]: { Icon: Tree, bg: 'chocolate.500', color: 'gold.500' },
 };
