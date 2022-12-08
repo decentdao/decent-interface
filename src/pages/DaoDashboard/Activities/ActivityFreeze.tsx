@@ -5,7 +5,7 @@ import { AcitivityCard } from './ActivityCard';
 import { FreezeDescription } from './ActivityDescription';
 
 export function ActivityFreeze() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
 
   return (
     <AcitivityCard
@@ -16,7 +16,18 @@ export function ActivityFreeze() {
         />
       }
       description={<FreezeDescription />}
-      RightElement={<Button variant="secondary">{t('view')}</Button>}
+      RightElement={
+        <Button
+          variant="ghost"
+          bgColor={'black.900'}
+          border="1px"
+          borderColor={'blue.500'}
+          textColor={'blue.500'}
+          onClick={() => {}}
+        >
+          {t('freezeButton')}
+        </Button>
+      }
       eventDate={'wow'}
     />
   );
