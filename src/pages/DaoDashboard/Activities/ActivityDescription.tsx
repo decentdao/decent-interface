@@ -54,7 +54,7 @@ export function ActivityDescription({ asset }: { asset: Activity }) {
   );
 }
 
-export function FreezeDescription({ description }: { description: string }) {
+export function FreezeDescription() {
   const { t } = useTranslation('dashboard');
   return (
     <Flex
@@ -63,7 +63,7 @@ export function FreezeDescription({ description }: { description: string }) {
       gap="0.5rem"
       flexWrap="wrap"
     >
-      <Text> {description}</Text>
+      <Text> {t('freezeDescription')}</Text>
     </Flex>
   );
 }

@@ -15,7 +15,7 @@ export function ActivityFreeze() {
           size="base"
         />
       }
-      description={<FreezeDescription description="Freeze initiated on transaction" />}
+      description={<FreezeDescription />}
       RightElement={<Button variant="secondary">{t('view')}</Button>}
       eventDate={'wow'}
     />
