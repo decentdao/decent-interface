@@ -29,6 +29,7 @@ export function ActivityFreeze() {
         </Button>
       }
       eventDate={'wow'}
+      boxBorderColor={'blue.500'}
     />
   );
 }
