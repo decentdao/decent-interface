@@ -3,7 +3,7 @@ import {
   SafeModuleTransactionWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
 } from '@gnosis.pm/safe-service-client';
-import { BadgeLabels } from './../components/ui/badges/Badge';
+import { TxProposalState } from './../providers/Fractal/governance/types';
 
 export enum ActivityFilters {
   All,
@@ -17,22 +17,31 @@ export enum TreasuryActivityTypes {
   WITHDRAW,
 }
 
-export type Activity = {
-  transaction:
-    | SafeModuleTransactionWithTransfersResponse
-    | SafeMultisigTransactionWithTransfersResponse
-    | EthereumTxWithTransfersResponse;
+export interface TreasuryActivity extends ActivityBase {
   transferAddresses: string[];
   transferAmountTotals: string[];
   isDeposit: boolean;
+}
+
+export interface GovernanceActivity extends ActivityBase {
+  state?: TxProposalState;
+  proposalNumber: string;
+  eventTransactionsCount?: number;
+}
+
+export type Activity = TreasuryActivity | GovernanceActivity;
+
+export type ActivityTransactionType =
+  | SafeMultisigTransactionWithTransfersResponse
+  | SafeModuleTransactionWithTransfersResponse
+  | EthereumTxWithTransfersResponse;
+
+export interface ActivityBase {
   eventDate: string;
   eventType: ActivityEventType;
-  eventTxHash?: string;
-  eventSafeTxHash?: string;
-  eventTransactionsCount?: number;
-  eventNonce?: number;
-  eventState?: BadgeLabels;
-};
+  transaction?: ActivityTransactionType;
+  transactionHash?: string | null;
+}
 
 export enum ActivityEventType {
   Treasury,

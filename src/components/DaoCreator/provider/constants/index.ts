@@ -3,8 +3,8 @@ import { CreatorSteps } from '../types';
 export const CREATOR_STEP_TITLE_KEYS = {
   [CreatorSteps.ESSENTIALS]: 'titleEssentials',
   [CreatorSteps.CHOOSE_GOVERNANCE]: 'titleChooseGovernance',
-  [CreatorSteps.PURE_GNOSIS]: 'titlePureGnosis',
-  [CreatorSteps.GNOSIS_WITH_USUL]: 'titleGnosisUsul',
+  [CreatorSteps.PURE_GNOSIS]: 'titleSafeConfig',
+  [CreatorSteps.GNOSIS_WITH_USUL]: 'titleUsulConfig',
   [CreatorSteps.GNOSIS_GOVERNANCE]: 'titleGnosis',
   [CreatorSteps.GOV_CONFIG]: 'titleGovConfig',
   [CreatorSteps.FUNDING]: 'titleFunding',

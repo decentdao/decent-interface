@@ -1,5 +1,3 @@
-export const GNOSIS_UNSUPPORTED_CHAIN_IDS = [11155111];
-
 type ChainMetadata = {
   name: string;
   id: number;
@@ -29,10 +27,6 @@ const formatChainsList = (chains: string): number[] => {
 
 export const getChainMetadataById = (id: number): ChainMetadata | undefined => {
   return CHAINS.find(chain => chain.id === id);
-};
-
-export const isChainSupportedOnGnosis = (id: number) => {
-  return !GNOSIS_UNSUPPORTED_CHAIN_IDS.find(chainId => Number(chainId) === id);
 };
 
 export const getChainsWithMetadata = (chainIds: number[]): ChainMetadata[] => {

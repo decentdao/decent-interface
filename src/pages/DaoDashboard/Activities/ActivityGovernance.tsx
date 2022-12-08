@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Badge } from '../../../components/ui/badges/Badge';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../../routes/constants';
-import { Activity } from '../../../types';
-import { AcitivityCard } from './ActivityCard';
+import { GovernanceActivity } from '../../../types';
+import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
-export function ActivityGovernance({ asset }: { asset: Activity }) {
+export function ActivityGovernance({ activity }: { activity: GovernanceActivity }) {
   const navigate = useNavigate();
   const {
     gnosis: { safe },
@@ -17,27 +17,27 @@ export function ActivityGovernance({ asset }: { asset: Activity }) {
   const { t } = useTranslation();
 
   return (
-    <AcitivityCard
+    <ActivityCard
       Badge={
-        asset.eventState && (
+        activity.state && (
           <Badge
-            labelKey={asset.eventState}
+            labelKey={activity.state}
             size="base"
           />
         )
       }
-      description={<ActivityDescription asset={asset} />}
+      description={<ActivityDescription activity={activity} />}
       RightElement={
         <Button
           variant="secondary"
           onClick={() =>
-            navigate(DAO_ROUTES.proposal.relative(safe.address, asset.eventSafeTxHash))
+            navigate(DAO_ROUTES.proposal.relative(safe.address, activity.transactionHash))
           }
         >
           {t('view')}
         </Button>
       }
-      eventDate={asset.eventDate}
+      eventDate={activity.eventDate}
     />
   );
 }

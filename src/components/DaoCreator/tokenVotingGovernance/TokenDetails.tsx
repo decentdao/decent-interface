@@ -39,7 +39,7 @@ function TokenDetails() {
 
   return (
     <ContentBox>
-      <ContentBoxTitle>{t('titleMintToken')}</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleTokenParams')}</ContentBoxTitle>
       <InputBox>
         <LabelWrapper
           label={t('labelTokenName')}

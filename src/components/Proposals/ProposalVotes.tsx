@@ -1,4 +1,5 @@
 import {
+  Box,
   CircularProgress,
   CircularProgressLabel,
   Divider,
@@ -10,65 +11,13 @@ import {
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../hooks/utils/useDisplayName';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';
 import StatusBox from '../ui/badges/StatusBox';
-
-// @todo - get this data from strategy contract/gov token contract, update votes mapping
-const MOCK_VOTES: ProposalVote[] = [
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29d',
-    choice: 'no',
-    weight: BigNumber.from('150000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29a',
-    choice: 'yes',
-    weight: BigNumber.from('2000000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29b',
-    choice: 'yes',
-    weight: BigNumber.from('100000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29c',
-    choice: 'yes',
-    weight: BigNumber.from('75000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29e',
-    choice: 'abstain',
-    weight: BigNumber.from('400000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29f',
-    choice: 'no',
-    weight: BigNumber.from('150000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29g',
-    choice: 'yes',
-    weight: BigNumber.from('150000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29k',
-    choice: 'yes',
-    weight: BigNumber.from('150000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29l',
-    choice: 'yes',
-    weight: BigNumber.from('150000000000000000000'),
-  },
-  {
-    voter: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29m',
-    choice: 'no',
-    weight: BigNumber.from('150000000000000000000'),
-  },
-];
+import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
@@ -129,22 +78,28 @@ function ProposalVoteItem({
 
 function ProposalVotes({
   proposal: {
-    votes: { yes, no, abstain },
+    votesSummary: { yes, no, abstain },
+    votes,
   },
-  govTokenTotalSupply,
-  govTokenDecimals,
-  govTokenSymbol,
 }: {
   proposal: UsulProposal;
-  govTokenTotalSupply: BigNumber;
-  govTokenDecimals: number;
-  govTokenSymbol: string;
 }) {
+  const {
+    governance: { governanceToken },
+  } = useFractal();
   const { t } = useTranslation(['common', 'proposal']);
 
-  const yesVotesPercentage = yes.div(govTokenTotalSupply).mul(100).toNumber();
-  const noVotesPercentage = no.div(govTokenTotalSupply).mul(100).toNumber();
-  const abstainVotesPercentage = abstain.div(govTokenTotalSupply).mul(100).toNumber();
+  if (!governanceToken || !governanceToken.totalSupply) {
+    return (
+      <Box mt={4}>
+        <InfoBoxLoader />
+      </Box>
+    );
+  }
+
+  const yesVotesPercentage = yes.div(governanceToken.totalSupply).mul(100).toNumber();
+  const noVotesPercentage = no.div(governanceToken.totalSupply).mul(100).toNumber();
+  const abstainVotesPercentage = abstain.div(governanceToken.totalSupply).mul(100).toNumber();
 
   return (
     <>
@@ -158,7 +113,7 @@ function ProposalVotes({
             <CircularProgress
               color="drab.900"
               trackColor="drab.700"
-              value={yesVotesPercentage}
+              value={Math.min(yesVotesPercentage, 100)}
               size="156px"
               marginTop={4}
             >
@@ -167,7 +122,7 @@ function ProposalVotes({
                   textStyle="text-lg-mono-regular"
                   color="grayscale.100"
                 >
-                  {yesVotesPercentage}%
+                  {Math.min(yesVotesPercentage, 100)}%
                 </Text>
                 <Text
                   textStyle="text-lg-mono-regular"
@@ -209,13 +164,13 @@ function ProposalVotes({
           flexWrap="wrap"
           gap={4}
         >
-          {MOCK_VOTES.map(vote => (
+          {votes.map(vote => (
             <ProposalVoteItem
               key={vote.voter}
               vote={vote}
-              govTokenTotalSupply={govTokenTotalSupply}
-              govTokenDecimals={govTokenDecimals}
-              govTokenSymbol={govTokenSymbol}
+              govTokenTotalSupply={governanceToken.totalSupply!}
+              govTokenDecimals={governanceToken.decimals!}
+              govTokenSymbol={governanceToken.symbol!}
             />
           ))}
         </Flex>

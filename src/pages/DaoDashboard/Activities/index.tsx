@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import { ActivityEventType, SortBy } from '../../../types';
+import { ActivityEventType, GovernanceActivity, SortBy, TreasuryActivity } from '../../../types';
 import { ActivityGovernance } from './ActivityGovernance';
 import { ActivityTreasury } from './ActivityTreasury';
 import { useActivities } from './hooks/useActivities';
@@ -33,19 +33,19 @@ export function Activities() {
           flexDirection="column"
           gap="1rem"
         >
-          {sortedActivities.map((asset, i) => {
-            if (asset.eventType === ActivityEventType.Governance) {
+          {sortedActivities.map((activity, i) => {
+            if (activity.eventType === ActivityEventType.Governance) {
               return (
                 <ActivityGovernance
                   key={i}
-                  asset={asset}
+                  activity={activity as GovernanceActivity}
                 />
               );
             }
             return (
               <ActivityTreasury
                 key={i}
-                asset={asset}
+                activity={activity as TreasuryActivity}
               />
             );
           })}
