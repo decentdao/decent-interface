@@ -8,11 +8,18 @@ interface IAcitivityCard {
   description: ReactNode;
   RightElement?: ReactNode;
   Badge?: ReactNode;
+  boxBorderColor?: string;
 }
 
-export function AcitivityCard({ Badge, eventDate, description, RightElement }: IAcitivityCard) {
+export function AcitivityCard({
+  Badge,
+  eventDate,
+  description,
+  RightElement,
+  boxBorderColor,
+}: IAcitivityCard) {
   return (
-    <ActivityBox>
+    <ActivityBox borderColor={boxBorderColor}>
       <Flex
         justifyContent="space-between"
         alignItems="center"
