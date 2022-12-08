@@ -29,5 +29,6 @@
     "titleTreasury": "Treasury",
     "noActivity": "No Activity",
     "proposalDescription": "Proposal to execute {{txCount}} transactions",
-    "freezeDescription": "Freeze Initiated on DAO"
+    "freezeDescription": "Freeze Initiated on DAO",
+    "freezeButton": "Freeze"
 }
