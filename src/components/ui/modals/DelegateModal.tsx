@@ -103,13 +103,15 @@ export function DelegateModal({ close }: { close: Function }) {
       <Flex alignItems="center">
         <Text color="grayscale.100">{t('labelDelegateInput')}</Text>
         <Spacer />
-        <Text
+        <Button
+          pr={0}
+          variant="text"
           textStyle="text-sm-sans-regular"
           color="gold.500-active"
           onClick={delegateSelf}
         >
           {t('linkSelfDelegate')}
-        </Text>
+        </Button>
       </Flex>
       <LabelWrapper
         subLabel={t('sublabelDelegateInput')}

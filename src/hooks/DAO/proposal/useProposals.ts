@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { TxProposalState } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
-import { TxProposalState } from '../types';
-import { useFractal } from './useFractal';
 
 export default function useProposals({
   sortBy,
