@@ -1,4 +1,5 @@
 import {
+  Box,
   CircularProgress,
   CircularProgressLabel,
   Divider,
@@ -10,11 +11,13 @@ import {
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../hooks/utils/useDisplayName';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import ProgressBar from '../ui/ProgressBar';
 import StatusBox from '../ui/badges/StatusBox';
+import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
@@ -78,20 +81,25 @@ function ProposalVotes({
     votesSummary: { yes, no, abstain },
     votes,
   },
-  govTokenTotalSupply,
-  govTokenDecimals,
-  govTokenSymbol,
 }: {
   proposal: UsulProposal;
-  govTokenTotalSupply: BigNumber;
-  govTokenDecimals: number;
-  govTokenSymbol: string;
 }) {
+  const {
+    governance: { governanceToken },
+  } = useFractal();
   const { t } = useTranslation(['common', 'proposal']);
 
-  const yesVotesPercentage = yes.div(govTokenTotalSupply).mul(100).toNumber();
-  const noVotesPercentage = no.div(govTokenTotalSupply).mul(100).toNumber();
-  const abstainVotesPercentage = abstain.div(govTokenTotalSupply).mul(100).toNumber();
+  if (!governanceToken || !governanceToken.totalSupply) {
+    return (
+      <Box mt={4}>
+        <InfoBoxLoader />
+      </Box>
+    );
+  }
+
+  const yesVotesPercentage = yes.div(governanceToken.totalSupply).mul(100).toNumber();
+  const noVotesPercentage = no.div(governanceToken.totalSupply).mul(100).toNumber();
+  const abstainVotesPercentage = abstain.div(governanceToken.totalSupply).mul(100).toNumber();
 
   return (
     <>
@@ -160,9 +168,9 @@ function ProposalVotes({
             <ProposalVoteItem
               key={vote.voter}
               vote={vote}
-              govTokenTotalSupply={govTokenTotalSupply}
-              govTokenDecimals={govTokenDecimals}
-              govTokenSymbol={govTokenSymbol}
+              govTokenTotalSupply={governanceToken.totalSupply!}
+              govTokenDecimals={governanceToken.decimals!}
+              govTokenSymbol={governanceToken.symbol!}
             />
           ))}
         </Flex>

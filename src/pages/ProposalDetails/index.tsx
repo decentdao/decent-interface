@@ -1,5 +1,4 @@
 import { Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
@@ -18,10 +17,6 @@ import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
-
-const MOCK_GOV_TOKEN_TOTAL_SUPPLY = BigNumber.from('3475000000000000000000');
-const MOCK_GOV_TOKEN_DECIMALS = 18;
-const MOCK_GOV_TOKEN_SYMBOL = 'FRCTL';
 
 function ProposalDetails() {
   const params = useParams();
@@ -98,21 +93,13 @@ function ProposalDetails() {
                     <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
                   </Box>
                 </ContentBox>
-                <ProposalVotes
-                  proposal={usulProposal}
-                  govTokenDecimals={MOCK_GOV_TOKEN_DECIMALS}
-                  govTokenSymbol={MOCK_GOV_TOKEN_SYMBOL}
-                  govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
-                />
+                <ProposalVotes proposal={usulProposal} />
               </>
             )}
           </GridItem>
           {usulProposal.govTokenAddress && (
             <GridItem colSpan={1}>
-              <ProposalSummary
-                proposal={usulProposal}
-                govTokenTotalSupply={MOCK_GOV_TOKEN_TOTAL_SUPPLY}
-              />
+              <ProposalSummary proposal={usulProposal} />
               <ProposalAction
                 proposal={proposal}
                 expandedView
