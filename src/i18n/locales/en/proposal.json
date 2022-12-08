@@ -37,6 +37,7 @@
     "stateFailed": "Failed",
     "stateUnknown": "Unknown",
     "stateTimeLocked": "Time Locked",
+    "stateFreezeInit": "Freeze Initiated",
     "showExecutableCode": "Show executable code",
     "noProposal": "No proposal found.",
     "emptyProposals": "No proposals found.",
