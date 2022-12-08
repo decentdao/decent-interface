@@ -31,5 +31,6 @@
     "proposalDescription": "Proposal to execute {{txCount}} transactions",
     "freezeDescription": "Freeze Initiated on DAO",
     "freezeButton": "Freeze",
-    "freezeDaysLeft": "days left"
+    "freezeDaysLeft": "4 days left",
+    "tipFreeze": " required freeze votes"
 }
