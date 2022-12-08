@@ -12,7 +12,7 @@ export default function ProposalTitle({ proposal }: { proposal: TxProposal }) {
     <Text textStyle="text-xl-mono-bold">
       #{proposal.proposalNumber}{' '}
       {t('proposalTitle', {
-        count: proposal.txHashes.length,
+        count: targets?.length,
         target: [...new Set(targets)].join(', '),
       })}
     </Text>
