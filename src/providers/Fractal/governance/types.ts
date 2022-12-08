@@ -1,5 +1,11 @@
-import { FractalModule } from '@fractal-framework/fractal-contracts';
-import { Usul } from '../../../assets/typechain-types/usul';
+import {
+  FractalModule,
+  FractalUsul,
+  OZLinearVoting,
+  VotesToken,
+} from '@fractal-framework/fractal-contracts';
+import { BigNumber } from 'ethers';
+import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -14,7 +20,7 @@ export enum GnosisModuleType {
 }
 
 export interface IGnosisModuleData {
-  moduleContract: Usul | FractalModule | undefined;
+  moduleContract: FractalUsul | FractalModule | undefined;
   moduleAddress: string;
   moduleType: GnosisModuleType;
 }
@@ -44,9 +50,9 @@ export interface IGovernance {
     };
   };
   type: GovernanceTypes | null;
-  proposalList?: any[];
+  txProposalsInfo: TxProposalsInfo;
   governanceToken?: IGoveranceTokenData;
-  proposals?: any;
+  contracts: GovernanceContracts;
   governanceIsLoading: boolean;
 }
 
@@ -56,3 +62,85 @@ export interface GnosisConfig {
 }
 
 export interface GnosisDAO extends DAODetails, GnosisConfig {}
+
+export interface GovernanceContracts {
+  ozLinearVotingContract?: OZLinearVoting;
+  usulContract?: FractalUsul;
+  tokenContract?: VotesToken;
+  contractsIsLoading: boolean;
+}
+
+export enum TxProposalState {
+  Active = 'stateActive',
+  Canceled = 'stateCanceled',
+  TimeLocked = 'stateTimeLocked',
+  Executed = 'stateExecuted',
+  Executing = 'stateExecuting',
+  Uninitialized = 'stateUninitialized',
+  Pending = 'statePending',
+  Failed = 'stateFailed',
+  Rejected = 'stateRejected',
+}
+
+export type ProposalMetaData = {
+  title?: string;
+  description?: string;
+  documentationUrl?: string;
+  transactions?: MetaTransaction[];
+  decodedTransactions: DecodedTransaction[];
+};
+
+export interface UsulProposal extends TxProposal {
+  proposer: string;
+  govTokenAddress: string | null;
+  votesSummary: ProposalVotesSummary;
+  votes: ProposalVote[];
+  deadline: number;
+  userVote?: ProposalVote;
+  startBlock: BigNumber;
+  blockTimestamp: number;
+}
+
+export interface MultisigTransaction extends TxProposal {
+  submissionDate?: string;
+}
+
+export interface TxProposal {
+  state: TxProposalState;
+  proposalNumber: string;
+  txHashes: string[];
+  metaData?: ProposalMetaData;
+}
+
+export interface TxProposalsInfo {
+  txProposals: (MultisigTransaction | UsulProposal)[];
+  pending?: number; // active/queued (usul) | not executed (multisig)
+  passed?: number; // executed (usul/multisig)
+}
+
+export type ProposalVotesSummary = {
+  yes: BigNumber;
+  no: BigNumber;
+  abstain: BigNumber;
+  quorum: BigNumber;
+};
+
+export type ProposalVote = {
+  voter: string;
+  choice: typeof VOTE_CHOICES[number];
+  weight: BigNumber;
+};
+
+export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
+
+export enum UsulVoteChoice {
+  No,
+  Yes,
+  Abstain,
+}
+
+export enum ProposalIsPassedError {
+  MAJORITY_YES_VOTES_NOT_REACHED = 'majority yesVotes not reached',
+  QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
+  PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
+}

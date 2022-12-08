@@ -1,16 +1,16 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Calendar } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
-import { ActivityBox } from '../../../components/ui/containers/AcitivityBox';
+import { ActivityBox } from '../../../components/ui/containers/ActivityBox';
 
-interface IAcitivityCard {
+interface IActivityCard {
   eventDate: string;
   description: ReactNode;
   RightElement?: ReactNode;
   Badge?: ReactNode;
 }
 
-export function AcitivityCard({ Badge, eventDate, description, RightElement }: IAcitivityCard) {
+export function ActivityCard({ Badge, eventDate, description, RightElement }: IActivityCard) {
   return (
     <ActivityBox>
       <Flex

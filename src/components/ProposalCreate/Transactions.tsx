@@ -41,7 +41,6 @@ function Transactions({
 
   return (
     <Accordion
-      allowToggle
       allowMultiple
       index={transactions.map((tr, index) => (tr.isExpanded ? index : -1))}
     >

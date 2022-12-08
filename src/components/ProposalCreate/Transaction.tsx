@@ -119,7 +119,7 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>yourdomain.ens</Text>
+            <Text {...exampleLabelStyle}>yourdomain.eth</Text>
             <Text>{` ${t('or', { ns: 'common' })} `}</Text>
             <Text {...exampleLabelStyle}>0x4168592...</Text>
           </HStack>

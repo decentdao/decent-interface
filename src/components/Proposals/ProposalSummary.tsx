@@ -1,26 +1,40 @@
 import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
-import { Proposal } from '../../providers/Fractal/types';
+import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { UsulProposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
 import { ExtendedProgressBar } from '../ui/ProgressBar';
+import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votes, deadline },
-  govTokenTotalSupply,
+  proposal: { startBlock, votesSummary, deadline },
 }: {
-  proposal: Proposal;
-  govTokenTotalSupply: BigNumber;
+  proposal: UsulProposal;
 }) {
+  const {
+    governance: { governanceToken },
+  } = useFractal();
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);
-  const startBlockTimeStamp = useCurrentTimestamp(startBlock.toNumber());
+  const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
 
-  const yesVotesPercentage = votes.yes.div(govTokenTotalSupply).mul(100).toNumber();
-  const noVotesPercentage = votes.no.div(govTokenTotalSupply).mul(100).toNumber();
-  const quorum = votes.quorum.toNumber();
+  if (!governanceToken || !governanceToken.totalSupply) {
+    return (
+      <Box mt={4}>
+        <InfoBoxLoader />
+      </Box>
+    );
+  }
+
+  const yesVotesPercentage = votesSummary.yes.div(governanceToken.totalSupply).mul(100).toNumber();
+  const noVotesPercentage = votesSummary.no.div(governanceToken.totalSupply).mul(100).toNumber();
+  const abstainVotesPercentage = votesSummary.abstain
+    .div(governanceToken.totalSupply)
+    .mul(100)
+    .toNumber();
+  const quorum = votesSummary.quorum.div(governanceToken.totalSupply.div(100)).toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
   return (
@@ -57,7 +71,7 @@ export default function ProposalSummary({
       </Box>
       <Box marginTop={4}>
         <ExtendedProgressBar
-          label={t('support', { ns: 'sidebar' })}
+          label={t('support')}
           helperText={t('proposalSupportSummaryHelper', { count: requiredVotesToPass })}
           percentage={yesVotesPercentage}
           requiredPercentage={requiredVotesToPass}
@@ -65,7 +79,7 @@ export default function ProposalSummary({
         <ExtendedProgressBar
           label={t('quorum', { ns: 'common' })}
           helperText={t('proposalQuorumSummaryHelper', { count: quorum })}
-          percentage={noVotesPercentage}
+          percentage={yesVotesPercentage + noVotesPercentage + abstainVotesPercentage}
           requiredPercentage={quorum}
         />
       </Box>

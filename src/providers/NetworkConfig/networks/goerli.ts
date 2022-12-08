@@ -8,7 +8,7 @@ export const goerliConfig: NetworkConfig = {
     zodiacModuleProxyFactory: '0x740020d3B1BF3E64e84dbA7175fC560B85EdB9bC',
     linearVotingMasterCopy: '0x948db5691cc97AEcb4fF5FfcAEb72594B74D9D52',
     gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
-    usulMasterCopy: '0xCdea1582a57Ca4A678070Fa645aaf3a40c2164C1',
+    fractalUsulMasterCopy: '0x985e9fc210434b01d3DeF715b4FC8deee034840D',
     fractalModuleMasterCopy: '0x78193b2fd8292Fb35DD90C45dC304B2A10125D68',
     fractalNameRegistry: '0xBdE1D5bd4007973A4BD4D9b1b3a4d4BE1Bc7C4F2',
     votesTokenMasterCopy: '0xe4dB69c0A5Ef88a73083cdC190379675bE7EcBFa',

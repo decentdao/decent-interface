@@ -53,7 +53,7 @@ function GovernanceDetails() {
     }
   };
 
-  const { t } = useTranslation(['common', 'daoCreate']);
+  const { t } = useTranslation(['daoCreate', 'common']);
   const seconds = t('seconds');
 
   return (
@@ -62,8 +62,8 @@ function GovernanceDetails() {
         <ContentBoxTitle>{t('titleProposalSettings', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('labelVotingPeriod', { ns: 'daoCreate' })}
-            subLabel={t('helperVotingPeriod', { ns: 'daoCreate' })}
+            label={t('labelVotingPeriod')}
+            subLabel={t('helperVotingPeriod')}
           >
             <NumberInput
               value={govModule.votingPeriod.toString()}
@@ -83,14 +83,13 @@ function GovernanceDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleVotingPeriod', { ns: 'daoCreate' })}
+            {t('exampleVotingPeriod')}
           </Text>
         </InputBox>
-        <ContentBoxTitle>{t('titleGovSetup', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('quorum')}
-            subLabel={t('helperQuorum', { ns: 'daoCreate' })}
+            label={t('quorum', { ns: 'common' })}
+            subLabel={t('helperQuorum')}
           >
             <NumberInput
               value={govModule.quorumPercentage.toString()}
@@ -108,8 +107,8 @@ function GovernanceDetails() {
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelProposalExecutionDelay', { ns: 'daoCreate' })}
-            subLabel={t('helperProposalExecutionDelay', { ns: 'daoCreate' })}
+            label={t('labelProposalExecutionDelay')}
+            subLabel={t('helperProposalExecutionDelay')}
           >
             <NumberInput
               value={govModule.executionDelay.toString()}
@@ -131,11 +130,11 @@ function GovernanceDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleProposalExecutionDelay', { ns: 'daoCreate' })}
+            {t('exampleProposalExecutionDelay')}
           </Text>
         </InputBox>
       </ContentBox>
-      <ContentBanner description={t('governanceDescription', { ns: 'daoCreate' })} />
+      <ContentBanner description={t('governanceDescription')} />
     </Box>
   );
 }

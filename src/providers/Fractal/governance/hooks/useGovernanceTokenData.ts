@@ -9,6 +9,7 @@ import {
   TransferListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
+  GovernanceContracts,
 } from '../../types';
 
 interface ITokenData {
@@ -16,6 +17,7 @@ interface ITokenData {
   symbol: string | undefined;
   decimals: number | undefined;
   address: string | undefined;
+  totalSupply: BigNumber | undefined;
 }
 
 interface ITokenAccount {
@@ -28,8 +30,6 @@ interface ITokenAccount {
 }
 
 export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
-  votingContract: OZLinearVoting | undefined;
-  tokenContract: VotesToken | undefined;
   isLoading?: boolean;
 }
 
@@ -94,8 +94,8 @@ type TokenAction =
 const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
   switch (action.type) {
     case TokenActions.UPDATE_TOKEN:
-      const { name, symbol, decimals, address } = action.payload;
-      return { ...state, name, symbol, decimals, address };
+      const { name, symbol, decimals, address, totalSupply } = action.payload;
+      return { ...state, name, symbol, decimals, address, totalSupply };
     case TokenActions.UPDATE_ACCOUNT:
       const {
         userBalance,
@@ -130,7 +130,8 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
       return { ...initialState };
   }
 };
-const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToken) => {
+
+const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContracts) => {
   const {
     state: { account, provider },
   } = useWeb3Provider();
@@ -140,7 +141,7 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
 
   // dispatch voting contract
   useEffect(() => {
-    if (!votingContract || !provider) {
+    if (!ozLinearVotingContract || !provider) {
       dispatch({
         type: TokenActions.RESET,
       });
@@ -152,7 +153,6 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
       const votingPeriod = await votingContract.votingPeriod();
       const quorumPercentage = await votingContract.quorumNumerator();
       const timeLockPeriod = await votingContract.timeLockPeriod();
-
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
         payload: {
@@ -197,6 +197,7 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
       const tokenSymbol = await tokenContract.symbol();
       const tokenDecimals = await tokenContract.decimals();
       const tokenAddress = tokenContract.address;
+      const totalSupply = await tokenContract.totalSupply();
       dispatch({
         type: TokenActions.UPDATE_TOKEN,
         payload: {
@@ -204,6 +205,7 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
           symbol: tokenSymbol,
           decimals: tokenDecimals,
           address: tokenAddress,
+          totalSupply,
         },
       });
     })();
