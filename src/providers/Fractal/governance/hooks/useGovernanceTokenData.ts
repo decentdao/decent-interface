@@ -1,7 +1,6 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useReducer, useMemo, useEffect, useCallback } from 'react';
-import { OZLinearVoting } from '../../../../assets/typechain-types/usul';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { formatCoin } from '../../../../utils/numberFormats';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
@@ -49,6 +48,7 @@ const initialState = {
   symbol: undefined,
   decimals: undefined,
   address: undefined,
+  totalSupply: undefined,
   userBalance: undefined,
   userBalanceString: undefined,
   delegatee: undefined,
@@ -82,7 +82,6 @@ type TokenAction =
   | {
       type: TokenActions.UPDATE_VOTING_CONTRACT;
       payload: {
-        votingContract: OZLinearVoting;
         votingPeriod: BNFormattedPair;
         quorumPercentage: BNFormattedPair;
         timeLockPeriod: BNFormattedPair;
@@ -150,13 +149,12 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
 
     (async () => {
       // @todo handle errors
-      const votingPeriod = await votingContract.votingPeriod();
-      const quorumPercentage = await votingContract.quorumNumerator();
-      const timeLockPeriod = await votingContract.timeLockPeriod();
+      const votingPeriod = await ozLinearVotingContract.votingPeriod();
+      const quorumPercentage = await ozLinearVotingContract.quorumNumerator();
+      const timeLockPeriod = await ozLinearVotingContract.timeLockPeriod();
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
         payload: {
-          votingContract,
           votingPeriod: {
             value: votingPeriod,
             formatted: getTimeDuration(votingPeriod.toString()),
@@ -172,7 +170,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
         },
       });
     })();
-  }, [votingContract, provider, getTimeDuration]);
+  }, [ozLinearVotingContract, provider, getTimeDuration]);
 
   // dispatch token contract
   useEffect(() => {
