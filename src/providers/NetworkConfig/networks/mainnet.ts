@@ -8,7 +8,7 @@ export const mainnetConfig: NetworkConfig = {
     zodiacModuleProxyFactory: '',
     linearVotingMasterCopy: '',
     gnosisMultisend: '',
-    usulMasterCopy: '',
+    fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',

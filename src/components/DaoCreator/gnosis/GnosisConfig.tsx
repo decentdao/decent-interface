@@ -80,7 +80,22 @@ export function GnosisConfig() {
 
   return (
     <ContentBox>
-      <ContentBoxTitle>{t('titleCreateGnosis')}</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleSignerConfig')}</ContentBoxTitle>
+      <InputBox>
+        <LabelWrapper
+          label={t('labelSigners')}
+          subLabel={t('helperSigners')}
+        >
+          <NumberInput
+            value={numberOfSigners}
+            onChange={handleSignersChanges}
+            data-testid="gnosisConfig-numberOfSignerInput"
+            onKeyDown={restrictChars}
+          >
+            <NumberInputField />
+          </NumberInput>
+        </LabelWrapper>
+      </InputBox>
       <InputBox>
         <LabelWrapper
           label={t('labelSigThreshold')}
@@ -97,28 +112,11 @@ export function GnosisConfig() {
           </NumberInput>
         </LabelWrapper>
       </InputBox>
-      <InputBox>
-        <LabelWrapper
-          label={t('labelSigners')}
-          subLabel={t('helperSigners')}
-        >
-          <NumberInput
-            value={numberOfSigners}
-            onChange={handleSignersChanges}
-            data-testid="gnosisConfig-numberOfSignerInput"
-            onKeyDown={restrictChars}
-          >
-            <NumberInputField />
-          </NumberInput>
-        </LabelWrapper>
-      </InputBox>
-
       <ContentBoxTitle>{t('titleTrustedAddresses')}</ContentBoxTitle>
       <Text
         textStyle="text-sm-sans-medium"
         my="0.25rem"
         color="chocolate.100"
-        className="text-gray-50 text-xs font-medium my-4"
       >
         {t('subTitleTrustedAddresses')}
       </Text>

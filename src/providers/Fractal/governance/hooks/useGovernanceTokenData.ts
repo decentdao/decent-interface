@@ -15,6 +15,7 @@ interface ITokenData {
   symbol: string | undefined;
   decimals: number | undefined;
   address: string | undefined;
+  totalSupply: BigNumber | undefined;
 }
 
 interface ITokenAccount {
@@ -50,6 +51,7 @@ const initialState = {
   tokenContract: undefined,
   votingPeriod: undefined,
   quorum: undefined,
+  totalSupply: undefined,
 };
 
 enum TokenActions {
@@ -82,8 +84,8 @@ type TokenAction =
 const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
   switch (action.type) {
     case TokenActions.UPDATE_TOKEN:
-      const { name, symbol, decimals, address } = action.payload;
-      return { ...state, name, symbol, decimals, address };
+      const { name, symbol, decimals, address, totalSupply } = action.payload;
+      return { ...state, name, symbol, decimals, address, totalSupply };
     case TokenActions.UPDATE_ACCOUNT:
       const {
         userBalance,
@@ -175,6 +177,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       const tokenSymbol = await tokenContract.symbol();
       const tokenDecimals = await tokenContract.decimals();
       const tokenAddress = tokenContract.address;
+      const totalSupply = await tokenContract.totalSupply();
       dispatch({
         type: TokenActions.UPDATE_TOKEN,
         payload: {
@@ -182,6 +185,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
           symbol: tokenSymbol,
           decimals: tokenDecimals,
           address: tokenAddress,
+          totalSupply,
         },
       });
     })();

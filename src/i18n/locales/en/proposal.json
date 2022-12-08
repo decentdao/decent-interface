@@ -40,9 +40,8 @@
     "filterProposalsNoneSelected": "No Proposals",
     "filterProposalsNSelected": "Filter {{count}}",
     "filter": "Filter",
-    "parent": "Parent",
-    "child": "Child",
     "transaction": "Transaction",
     "proposal": "Proposal",
-    "transactionExecutionAlertMessage": "Transactions execute in the order they are added."
+    "transactionExecutionAlertMessage": "Transactions execute in the order they are added.",
+    "support": "Support"
 }

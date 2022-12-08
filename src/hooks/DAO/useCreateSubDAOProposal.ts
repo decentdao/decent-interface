@@ -2,9 +2,9 @@ import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import useSubmitProposal from '../../providers/Fractal/hooks/useSubmitProposal';
 import { ProposalExecuteData } from '../../types/proposal';
 import useSafeContracts from '../safe/useSafeContracts';
+import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
@@ -35,7 +35,9 @@ export const useCreateSubDAOProposal = () => {
           targets: [multiSendContract.address],
           values: [BigNumber.from('0')],
           calldatas: [multiSendContract.interface.encodeFunctionData('multiSend', [safeTx])],
+          title: 'Create SubDAO',
           description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
+          documentationUrl: '',
         };
         submitProposal({ proposalData, successCallback });
       };

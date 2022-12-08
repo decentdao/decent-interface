@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
-import { SafeTransaction, TxProposalState, UsulProposal } from '../../providers/Fractal/types';
+import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
+import { MultisigTransaction, TxProposalState, UsulProposal } from '../../providers/Fractal/types';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
@@ -9,12 +9,16 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import ProposalTitle from '../ui/proposal/ProposalTitle';
 import { ProposalAction } from './ProposalActions/ProposalAction';
 
-export default function ProposalCard({ proposal }: { proposal: UsulProposal | SafeTransaction }) {
+export default function ProposalCard({
+  proposal,
+}: {
+  proposal: UsulProposal | MultisigTransaction;
+}) {
   const now = new Date();
   const usulProposal = proposal as UsulProposal;
-  const multisigTransaction = proposal as SafeTransaction;
+  const multisigTransaction = proposal as MultisigTransaction;
 
-  const proposalCreatedTimestamp = useCurrentTimestamp(
+  const proposalCreatedTimestamp = useBlockTimestamp(
     usulProposal.startBlock ? usulProposal.startBlock.toNumber() : undefined
   );
 

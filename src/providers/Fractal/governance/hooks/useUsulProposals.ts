@@ -1,6 +1,7 @@
+import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
 import { Dispatch, useCallback, useEffect } from 'react';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
-import { ProposalCreatedEvent } from '../../../../assets/typechain-types/usul/contracts/Usul';
+import { decodeTransactions } from '../../../../utils/crypto';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { IGovernance, TxProposalState } from '../../types';
 import { mapProposalCreatedEventToProposal } from '../../utils';
@@ -19,12 +20,12 @@ export default function useUsulProposals({
   governanceDispatch,
 }: IUseUsulProposals) {
   const {
-    state: { signerOrProvider },
+    state: { signerOrProvider, provider, chainId },
   } = useWeb3Provider();
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
-    async (strategyAddress, proposalNumber, proposer) => {
-      if (!usulContract || !signerOrProvider) {
+    async (...[strategyAddress, proposalNumber, proposer]) => {
+      if (!usulContract || !signerOrProvider || !provider) {
         return;
       }
       const proposal = await mapProposalCreatedEventToProposal(
@@ -32,7 +33,8 @@ export default function useUsulProposals({
         proposalNumber,
         proposer,
         usulContract,
-        signerOrProvider
+        signerOrProvider,
+        provider
       );
 
       const proposals = [...txProposalsInfo.txProposals, proposal];
@@ -46,7 +48,7 @@ export default function useUsulProposals({
         },
       });
     },
-    [usulContract, signerOrProvider, governanceDispatch, txProposalsInfo]
+    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo]
   );
 
   useEffect(() => {
@@ -63,21 +65,41 @@ export default function useUsulProposals({
   }, [usulContract, signerOrProvider, proposalCreatedListener]);
 
   useEffect(() => {
-    if (!usulContract || !signerOrProvider) {
+    if (!usulContract || !signerOrProvider || !provider) {
       return;
     }
 
     const loadProposals = async () => {
       const proposalCreatedFilter = usulContract.filters.ProposalCreated();
+      const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
       const proposalCreatedEvents = await usulContract.queryFilter(proposalCreatedFilter);
+      const proposalMetaDataCreatedEvents = await usulContract.queryFilter(
+        proposalMetaDataCreatedFilter
+      );
+
       const mappedProposals = await Promise.all(
-        proposalCreatedEvents.map(({ args }) => {
+        proposalCreatedEvents.map(async ({ args }) => {
+          const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
+            event.args.proposalId.eq(args.proposalNumber)
+          );
+          let metaData;
+          if (metaDataEvent) {
+            metaData = {
+              transactions: metaDataEvent.args.transactions,
+              decodedTransactions: await decodeTransactions(
+                metaDataEvent.args.transactions,
+                chainId
+              ),
+            };
+          }
           return mapProposalCreatedEventToProposal(
             args[0],
             args[1],
             args[2],
             usulContract,
-            signerOrProvider
+            signerOrProvider,
+            provider,
+            metaData
           );
         })
       );
@@ -104,5 +126,5 @@ export default function useUsulProposals({
     };
 
     loadProposals();
-  }, [usulContract, signerOrProvider, governanceDispatch]);
+  }, [usulContract, signerOrProvider, governanceDispatch, provider, chainId]);
 }

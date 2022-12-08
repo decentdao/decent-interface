@@ -10,7 +10,7 @@ export type NetworkConfig = {
     zodiacModuleProxyFactory: string;
     linearVotingMasterCopy: string;
     gnosisMultisend: string;
-    usulMasterCopy: string;
+    fractalUsulMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalNameRegistry: string;
     votesTokenMasterCopy: string;
@@ -31,7 +31,7 @@ export const defaultState = {
     zodiacModuleProxyFactory: '',
     linearVotingMasterCopy: '',
     gnosisMultisend: '',
-    usulMasterCopy: '',
+    fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',

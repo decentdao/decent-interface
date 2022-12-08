@@ -13,13 +13,15 @@ type ProposalTimeProps = {
   isRejected?: boolean;
   submissionDate?: string;
 };
+
 function ProposalTime({ deadline, submissionDate, icon = 'clock', isRejected }: ProposalTimeProps) {
   const { t } = useTranslation('common');
   const deadlineDate = new Date(deadline * 1000);
   const now = new Date();
 
   const diffReadable = formatDatesDiffReadable(deadlineDate, now, t);
-  const isPassed = deadlineDate.getMilliseconds() > now.getMilliseconds();
+  const isDeadlinePassed = now.getTime() > deadlineDate.getTime();
+
   return (
     <Flex
       className="flex"
@@ -34,7 +36,9 @@ function ProposalTime({ deadline, submissionDate, icon = 'clock', isRejected }: 
         <Text color="sand.700">
           {isRejected
             ? format(deadlineDate, DEFAULT_DATE_FORMAT)
-            : t(isPassed ? 'timeAgo' : 'timeLeft', { time: submissionDate || diffReadable })}
+            : t(isDeadlinePassed ? 'timeAgo' : 'timeLeft', {
+                time: submissionDate || diffReadable,
+              })}
         </Text>
       </Flex>
     </Flex>
