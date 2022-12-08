@@ -30,5 +30,6 @@
     "noActivity": "No Activity",
     "proposalDescription": "Proposal to execute {{txCount}} transactions",
     "freezeDescription": "Freeze Initiated on DAO",
-    "freezeButton": "Freeze"
+    "freezeButton": "Freeze",
+    "freezeDaysLeft": "days left"
 }
