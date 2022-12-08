@@ -12,6 +12,6 @@
     "selectSublabel": "Available balance {{balance}}",
     "amountLabel": "How much?",
     "destinationLabel": "Where would you like to send this?",
-    "destinationSublabel": "Ethereum wallet address or ENS only",
+    "destinationSublabel": "Ethereum wallet address or ENS only.",
     "sendAssetsSubmit": "Review"
   }
