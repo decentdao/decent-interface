@@ -10,6 +10,7 @@ export enum BadgeLabels {
   STATE_EXECUTED = 'stateExecuted',
   STATE_EXECUTING = 'stateExecuting',
   STATE_REJECTED = 'stateRejected',
+  STATE_TIME_LOCKED = 'stateTimeLocked',
   PARENT = 'parent',
   CHILD = 'child',
 }
@@ -18,6 +19,7 @@ const BADGE_MAPPING: BadgeType = {
   [BadgeLabels.STATE_PENDING]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_ACTIVE]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_EXECUTING]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
+  [BadgeLabels.STATE_TIME_LOCKED]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_EXECUTED]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_REJECTED]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.PARENT]: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
