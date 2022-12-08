@@ -1,4 +1,4 @@
-import { Flex, Text, Button } from '@chakra-ui/react';
+import { Flex, Text, Button, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '../../../components/ui/badges/Badge';
 import { AcitivityCard } from './ActivityCard';
@@ -7,6 +7,8 @@ import { FreezeDescription } from './ActivityDescription';
 export function ActivityFreeze() {
   const { t } = useTranslation('dashboard');
   // state should exist here
+  const currentVotes = '6000';
+  const totalNeeded = '10000';
 
   return (
     <AcitivityCard
@@ -19,10 +21,18 @@ export function ActivityFreeze() {
       description={<FreezeDescription />}
       RightElement={
         <Flex
-          color="sand.700"
+          color="blue.500"
           alignItems="center"
-          gap="1rem"
+          gap="2rem"
         >
+          <Text textStyle="text-base-sans-regular">
+            <Tooltip
+              label={currentVotes + ' / ' + totalNeeded + t('tipFreeze')}
+              placement="bottom"
+            >
+              {currentVotes + ' / ' + totalNeeded}
+            </Tooltip>
+          </Text>
           <Text textStyle="text-base-sans-regular">{t('freezeDaysLeft')}</Text>
           <Button
             variant="ghost"
