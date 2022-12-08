@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import { ActivityBox } from '../../../components/ui/containers/AcitivityBox';
 
 interface IAcitivityCard {
-  eventDate: string;
+  eventDate?: string;
   description: ReactNode;
   RightElement?: ReactNode;
   Badge?: ReactNode;
@@ -32,13 +32,15 @@ export function AcitivityCard({
             mb="1rem"
           >
             {Badge}
-            <Flex
-              alignItems="center"
-              gap="0.5rem"
-            >
-              <Calendar />
-              <Text textStyle="text-base-sans-regular">{eventDate}</Text>
-            </Flex>
+            {eventDate && (
+              <Flex
+                alignItems="center"
+                gap="0.5rem"
+              >
+                <Calendar />
+                <Text textStyle="text-base-sans-regular">{eventDate}</Text>
+              </Flex>
+            )}
           </Flex>
           <Box>{description}</Box>
         </Flex>
