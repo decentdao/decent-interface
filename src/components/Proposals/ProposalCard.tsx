@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
-import useCurrentTimestamp from '../../hooks/utils/useCurrentTimestamp';
+import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { MultisigTransaction, TxProposalState, UsulProposal } from '../../providers/Fractal/types';
 import ContentBox from '../ui/ContentBox';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
@@ -18,7 +18,7 @@ export default function ProposalCard({
   const usulProposal = proposal as UsulProposal;
   const multisigTransaction = proposal as MultisigTransaction;
 
-  const proposalCreatedTimestamp = useCurrentTimestamp(
+  const proposalCreatedTimestamp = useBlockTimestamp(
     usulProposal.startBlock ? usulProposal.startBlock.toNumber() : undefined
   );
 

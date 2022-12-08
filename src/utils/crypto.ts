@@ -1,29 +1,35 @@
-import { DecodedTransaction } from '../types';
+import axios from 'axios';
+import { buildGnosisApiUrl } from '../providers/Fractal/utils';
+import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../types';
 
-// eslint-disable-next-line
-export const decodeTransactionHashes = (txHashes: string[]): DecodedTransaction[] => {
-  // @todo - implement decoding transactions
-
-  const MOCK_DECODED_TRANSACTIONS: DecodedTransaction[] = [
-    {
-      target: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29d',
-      function: 'firstFunction',
-      parameterTypes: ['uint256', 'string'],
-      parameterValues: ['420', 'hello world'],
-    },
-    {
-      target: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29d',
-      function: 'secondFunction',
-      parameterTypes: ['uint256', 'string'],
-      parameterValues: ['420', 'hello world'],
-    },
-    {
-      target: '0x6a0db4cef1ce2a5f81c8e6322862439f71aca29d',
-      function: 'thirdFunction',
-      parameterTypes: ['uint256', 'string'],
-      parameterValues: ['420', 'hello world'],
-    },
-  ];
-
-  return MOCK_DECODED_TRANSACTIONS;
+export const decodeTransactions = async (
+  transactions: MetaTransaction[],
+  chainId: number
+): Promise<DecodedTransaction[]> => {
+  const apiUrl = buildGnosisApiUrl(chainId, '/data-decoder/');
+  return Promise.all(
+    transactions.map(async tx => {
+      try {
+        const decodedData = (
+          await axios.post(apiUrl, {
+            to: tx.to,
+            data: tx.data,
+          })
+        ).data;
+        return {
+          target: tx.to,
+          function: decodedData.method,
+          parameterTypes: decodedData.parameters.map((param: DecodedTxParam) => param.type),
+          parameterValues: decodedData.parameters.map((param: DecodedTxParam) => param.value),
+        };
+      } catch (e) {
+        return {
+          target: tx.to,
+          function: 'unkown',
+          parameterTypes: [],
+          parameterValues: [],
+        };
+      }
+    })
+  );
 };

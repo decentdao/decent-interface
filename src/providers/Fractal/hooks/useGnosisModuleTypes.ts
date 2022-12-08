@@ -1,6 +1,5 @@
-import { FractalModule__factory } from '@fractal-framework/fractal-contracts';
+import { FractalModule__factory, FractalUsul__factory } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect } from 'react';
-import { Usul__factory } from '../../../assets/typechain-types/usul';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
@@ -16,14 +15,14 @@ export function useGnosisModuleTypes(
 
   const {
     zodiacModuleProxyFactoryContract,
-    usulMasterCopyContract,
+    fractalUsulMasterCopyContract,
     fractalModuleMasterCopyContract,
   } = useSafeContracts();
 
   useEffect(() => {
     if (
       !zodiacModuleProxyFactoryContract ||
-      !usulMasterCopyContract ||
+      !fractalUsulMasterCopyContract ||
       !fractalModuleMasterCopyContract ||
       !moduleAddresses ||
       !signerOrProvider
@@ -49,9 +48,9 @@ export function useGnosisModuleTypes(
 
           let module: IGnosisModuleData;
 
-          if (masterCopyAddress === usulMasterCopyContract.address) {
+          if (masterCopyAddress === fractalUsulMasterCopyContract.address) {
             module = {
-              moduleContract: Usul__factory.connect(moduleAddress, signerOrProvider),
+              moduleContract: FractalUsul__factory.connect(moduleAddress, signerOrProvider),
               moduleAddress: moduleAddress,
               moduleType: GnosisModuleType.USUL,
             };
@@ -80,7 +79,7 @@ export function useGnosisModuleTypes(
     })();
   }, [
     zodiacModuleProxyFactoryContract,
-    usulMasterCopyContract,
+    fractalUsulMasterCopyContract,
     fractalModuleMasterCopyContract,
     moduleAddresses,
     gnosisDispatch,

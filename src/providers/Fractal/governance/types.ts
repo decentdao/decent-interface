@@ -1,7 +1,11 @@
-import { FractalModule, VotesToken } from '@fractal-framework/fractal-contracts';
+import {
+  FractalModule,
+  FractalUsul,
+  OZLinearVoting,
+  VotesToken,
+} from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { OZLinearVoting, Usul } from '../../../assets/typechain-types/usul';
-import { DecodedTransaction } from '../../../types';
+import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -16,7 +20,7 @@ export enum GnosisModuleType {
 }
 
 export interface IGnosisModuleData {
-  moduleContract: Usul | FractalModule | undefined;
+  moduleContract: FractalUsul | FractalModule | undefined;
   moduleAddress: string;
   moduleType: GnosisModuleType;
 }
@@ -61,7 +65,7 @@ export interface GnosisDAO extends DAODetails, GnosisConfig {}
 
 export interface GovernanceContracts {
   ozLinearVotingContract?: OZLinearVoting;
-  usulContract?: Usul;
+  usulContract?: FractalUsul;
   tokenContract?: VotesToken;
   contractsIsLoading: boolean;
 }
@@ -78,10 +82,19 @@ export enum TxProposalState {
   Rejected = 'stateRejected',
 }
 
+export type ProposalMetaData = {
+  title?: string;
+  description?: string;
+  documentationUrl?: string;
+  transactions?: MetaTransaction[];
+  decodedTransactions: DecodedTransaction[];
+};
+
 export interface UsulProposal extends TxProposal {
   proposer: string;
   govTokenAddress: string | null;
-  votes: ProposalVotesSummary;
+  votesSummary: ProposalVotesSummary;
+  votes: ProposalVote[];
   deadline: number;
   userVote?: ProposalVote;
   startBlock: BigNumber;
@@ -96,7 +109,7 @@ export interface TxProposal {
   state: TxProposalState;
   proposalNumber: string;
   txHashes: string[];
-  decodedTransactions: DecodedTransaction[];
+  metaData?: ProposalMetaData;
 }
 
 export interface TxProposalsInfo {

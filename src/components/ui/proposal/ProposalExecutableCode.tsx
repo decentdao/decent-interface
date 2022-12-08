@@ -86,7 +86,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: TxPropo
                   gap={2}
                   flexWrap="wrap"
                 >
-                  {proposal.decodedTransactions.map((tx, i) => (
+                  {proposal?.metaData?.decodedTransactions.map((tx, i) => (
                     <TransactionBlock
                       transaction={tx}
                       key={i}

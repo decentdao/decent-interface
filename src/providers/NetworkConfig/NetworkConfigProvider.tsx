@@ -10,7 +10,7 @@ export type NetworkConfig = {
     zodiacModuleProxyFactory: string;
     linearVotingMasterCopy: string;
     gnosisMultisend: string;
-    usulMasterCopy: string;
+    fractalUsulMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalNameRegistry: string;
     votesTokenMasterCopy: string;
@@ -30,7 +30,7 @@ export const defaultState = {
     zodiacModuleProxyFactory: '',
     linearVotingMasterCopy: '',
     gnosisMultisend: '',
-    usulMasterCopy: '',
+    fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',
@@ -52,9 +52,8 @@ const getNetworkConfig = (chainId: number) => {
     case 5:
     case 31337:
       return goerliConfig;
-    // @todo create config files for mainnet and sepolia networks
+    // @todo create config file for mainnet
     case 1:
-    case 11155111:
     default:
       return defaultState;
   }

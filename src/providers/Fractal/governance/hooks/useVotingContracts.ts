@@ -1,11 +1,12 @@
-import { VotesToken, VotesToken__factory } from '@fractal-framework/fractal-contracts';
-import { Dispatch, useEffect, useMemo, useCallback } from 'react';
 import {
+  VotesToken,
+  VotesToken__factory,
   OZLinearVoting,
   OZLinearVoting__factory,
-  Usul,
-  Usul__factory,
-} from '../../../../assets/typechain-types/usul';
+  FractalUsul,
+  FractalUsul__factory,
+} from '@fractal-framework/fractal-contracts';
+import { Dispatch, useEffect, useMemo, useCallback } from 'react';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { GovernanceAction, GovernanceActions } from '../actions';
@@ -30,7 +31,7 @@ export const useVotingContracts = ({
   const usulModule = useMemo(
     () => modules.find(module => module.moduleType === GnosisModuleType.USUL)?.moduleContract,
     [modules]
-  ) as Usul | undefined;
+  ) as FractalUsul | undefined;
 
   const loadUsulContracts = useCallback(async () => {
     if (
@@ -49,7 +50,7 @@ export const useVotingContracts = ({
       return;
     }
 
-    const usulContract = Usul__factory.connect(usulModule.address, signerOrProvider);
+    const usulContract = FractalUsul__factory.connect(usulModule.address, signerOrProvider);
     let ozLinearContract: OZLinearVoting | undefined;
     let tokenContract: VotesToken | undefined;
 

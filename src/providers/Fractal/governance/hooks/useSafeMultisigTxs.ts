@@ -62,7 +62,9 @@ export const useSafeMultisigTxs = ({
         submissionDate: eventDate, // update this
         proposalNumber: eventSafeTxHash,
         txHashes: Array.from(eventTransactionMap.values()).map((event: any) => event.to),
-        decodedTransactions: [],
+        metaData: {
+          decodedTransactions: [],
+        },
       };
     });
 

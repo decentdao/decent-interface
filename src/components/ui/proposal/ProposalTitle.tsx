@@ -5,7 +5,9 @@ import { TxProposal } from '../../../providers/Fractal/types';
 
 export default function ProposalTitle({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation('proposal');
-  const targets = proposal.decodedTransactions.map(tx => createAccountSubstring(tx.target));
+  const targets = proposal?.metaData?.decodedTransactions.map(tx =>
+    createAccountSubstring(tx.target)
+  );
   return (
     <Text textStyle="text-xl-mono-bold">
       #{proposal.proposalNumber}{' '}
