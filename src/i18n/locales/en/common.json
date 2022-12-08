@@ -32,7 +32,7 @@
     "labelViewDAO": "View DAO",
     "labelDAOFound": "DAO Found!",
     "labelEtherscan": "View on Etherscan",
-    "errorInvalidAddress": "Invalid Eth address",
+    "errorInvalidAddress": "Invalid Eth address.",
     "errorSentryFallbackTitle": "Oops!",
     "errorSentryFallbackMessage": "An unexpected error occurred. Try reloading or <1>ask the devs to do something</1>.",
     "errorGeneral": "An unexpected error occurred. Please try again later.",
