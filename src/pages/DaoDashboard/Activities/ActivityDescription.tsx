@@ -53,3 +53,17 @@ export function ActivityDescription({ asset }: { asset: Activity }) {
     </Flex>
   );
 }
+
+export function FreezeDescription({ description }: { description: string }) {
+  const { t } = useTranslation('dashboard');
+  return (
+    <Flex
+      color="grayscale.100"
+      textStyle="text-lg-mono-semibold"
+      gap="0.5rem"
+      flexWrap="wrap"
+    >
+      <Text> {description}</Text>
+    </Flex>
+  );
+}
