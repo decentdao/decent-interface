@@ -3,7 +3,7 @@ import { Dispatch, useEffect, useCallback } from 'react';
 import { IGnosis } from '../../types';
 import { eventTransactionMapping } from '../../utils';
 import { GovernanceAction, GovernanceActions } from '../actions';
-import { IGovernance, TxProposalState } from './../types';
+import { IGovernance, TxProposalState, GovernanceTypes } from './../types';
 interface IUseSafeMultisigTxs {
   governance: IGovernance;
   gnosis: IGnosis;
@@ -92,6 +92,8 @@ export const useSafeMultisigTxs = ({
   }, [safeService, address, governanceDispatch, type]);
 
   useEffect(() => {
-    getMultisigTx();
-  }, [getMultisigTx]);
+    if (type === GovernanceTypes.GNOSIS_SAFE) {
+      getMultisigTx();
+    }
+  }, [getMultisigTx, type]);
 };

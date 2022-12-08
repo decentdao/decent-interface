@@ -1,29 +1,16 @@
 import { Flex, Text } from '@chakra-ui/react';
-import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck, Tree } from '@decent-org/fractal-ui';
+import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { TxProposalState } from '../../../providers/Fractal/types';
 
 type BadgeType = { [key: string]: { Icon: any; bg: string; color: string } };
 
-export enum BadgeLabels {
-  STATE_PENDING = 'statePending',
-  STATE_ACTIVE = 'stateActive',
-  STATE_EXECUTED = 'stateExecuted',
-  STATE_EXECUTING = 'stateExecuting',
-  STATE_REJECTED = 'stateRejected',
-  STATE_TIME_LOCKED = 'stateTimeLocked',
-  PARENT = 'parent',
-  CHILD = 'child',
-}
-
 const BADGE_MAPPING: BadgeType = {
-  [BadgeLabels.STATE_PENDING]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.STATE_ACTIVE]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.STATE_EXECUTING]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.STATE_TIME_LOCKED]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.STATE_EXECUTED]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.STATE_REJECTED]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.PARENT]: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
-  [BadgeLabels.CHILD]: { Icon: Tree, bg: 'chocolate.500', color: 'gold.500' },
+  [TxProposalState.Pending]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Active]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Executing]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Executed]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Rejected]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };

@@ -98,9 +98,10 @@ export interface UsulProposal extends TxProposal {
   deadline: number;
   userVote?: ProposalVote;
   startBlock: BigNumber;
+  blockTimestamp: number;
 }
 
-export interface SafeTransaction extends TxProposal {
+export interface MultisigTransaction extends TxProposal {
   submissionDate?: string;
 }
 
@@ -112,7 +113,7 @@ export interface TxProposal {
 }
 
 export interface TxProposalsInfo {
-  txProposals: (SafeTransaction | UsulProposal)[];
+  txProposals: (MultisigTransaction | UsulProposal)[];
   pending?: number; // active/queued (usul) | not executed (multisig)
   passed?: number; // executed (usul/multisig)
 }
