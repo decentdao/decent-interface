@@ -1,12 +1,10 @@
-import { Box, Button, Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Sort } from '../../../components/ui/Sort';
-import { Badge } from '../../../components/ui/badges/Badge';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
 import { ActivityEventType, SortBy } from '../../../types';
-import { AcitivityCard } from './ActivityCard';
 import { ActivityFreeze } from './ActivityFreeze';
 import { ActivityGovernance } from './ActivityGovernance';
 import { ActivityTreasury } from './ActivityTreasury';
