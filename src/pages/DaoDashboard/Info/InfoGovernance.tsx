@@ -57,14 +57,14 @@ export function InfoGovernance() {
           <Text color="grayscale.100">{governanceToken?.votingPeriod?.formatted}</Text>
         </Flex>
       )}
-      {governanceToken?.quorum && (
+      {governanceToken?.quorumPercentage && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
         >
           <Text color="chocolate.200">{t('titleQuorum')}</Text>
-          <Text color="grayscale.100">{governanceToken?.quorum?.formatted}</Text>
+          <Text color="grayscale.100">{governanceToken?.quorumPercentage?.formatted}</Text>
         </Flex>
       )}
     </Box>

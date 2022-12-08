@@ -44,12 +44,12 @@ function GovernanceDetails() {
     }
   };
 
-  const onQuorumChange = (quorum: string) => {
-    const newQuorumNum = BigNumber.from(quorum || 0);
+  const onQuorumChange = (quorumPercentage: string) => {
+    const newQuorumNum = BigNumber.from(quorumPercentage || 0);
     if (newQuorumNum.lte(100)) {
-      fieldUpdate(newQuorumNum, 'quorum');
+      fieldUpdate(newQuorumNum, 'quorumPercentage');
     } else {
-      fieldUpdate(BigNumber.from(100), 'quorum');
+      fieldUpdate(BigNumber.from(100), 'quorumPercentage');
     }
   };
 
@@ -93,10 +93,10 @@ function GovernanceDetails() {
             subLabel={t('helperQuorum', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={govModule.quorum.toString()}
+              value={govModule.quorumPercentage.toString()}
               onChange={onQuorumChange}
               precision={0}
-              data-testid="govConfig-quorum"
+              data-testid="govConfig-quorumPercentage"
               onKeyDown={restrictChars}
             >
               <InputGroup>

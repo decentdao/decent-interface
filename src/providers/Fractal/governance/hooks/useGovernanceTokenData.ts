@@ -33,15 +33,15 @@ export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTo
   isLoading?: boolean;
 }
 
-interface ValueFormattedPair {
+interface BNFormattedPair {
   value: BigNumber;
   formatted?: string;
 }
 
 export interface VotingTokenConfig {
-  votingPeriod?: ValueFormattedPair;
-  quorum?: ValueFormattedPair;
-  timeLockPeriod?: ValueFormattedPair;
+  votingPeriod?: BNFormattedPair;
+  quorumPercentage?: BNFormattedPair;
+  timeLockPeriod?: BNFormattedPair;
 }
 
 const initialState = {
@@ -58,7 +58,7 @@ const initialState = {
   votingContract: undefined,
   tokenContract: undefined,
   votingPeriod: undefined,
-  quorum: undefined,
+  quorumPercentage: undefined,
   timeLockPeriod: undefined,
 };
 
@@ -83,9 +83,9 @@ type TokenAction =
       type: TokenActions.UPDATE_VOTING_CONTRACT;
       payload: {
         votingContract: OZLinearVoting;
-        votingPeriod: ValueFormattedPair;
-        quorum: ValueFormattedPair;
-        timeLockPeriod: ValueFormattedPair;
+        votingPeriod: BNFormattedPair;
+        quorumPercentage: BNFormattedPair;
+        timeLockPeriod: BNFormattedPair;
       };
     }
   | { type: TokenActions.UPDATE_TOKEN_CONTRACT; payload: VotesToken }
@@ -150,7 +150,7 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
     (async () => {
       // @todo handle errors
       const votingPeriod = await votingContract.votingPeriod();
-      const quorum = await votingContract.quorumNumerator();
+      const quorumPercentage = await votingContract.quorumNumerator();
       const timeLockPeriod = await votingContract.timeLockPeriod();
 
       dispatch({
@@ -161,9 +161,9 @@ const useTokenData = (votingContract?: OZLinearVoting, tokenContract?: VotesToke
             value: votingPeriod,
             formatted: getTimeDuration(votingPeriod.toString()),
           },
-          quorum: {
-            value: quorum,
-            formatted: quorum.toString() + '%',
+          quorumPercentage: {
+            value: quorumPercentage,
+            formatted: quorumPercentage.toString() + '%',
           },
           timeLockPeriod: {
             value: timeLockPeriod,
