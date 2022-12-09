@@ -29,10 +29,9 @@ export const useActivities = (sortBy: SortBy) => {
     if (!transactions.results.length || !safe) {
       return [];
     }
-    return transactions.results.map((transaction, _, transactionArr) => {
+    return transactions.results.map((transaction, i, transactionArr) => {
       const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
       const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
-      console.log('🚀 ~ file: useActivities.ts:35 ~ multiSigTransaction', multiSigTransaction);
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
       // Determines whether transaction transfer is being sent or received if exists
@@ -89,14 +88,31 @@ export const useActivities = (sortBy: SortBy) => {
 
       const eventNonce = multiSigTransaction.nonce;
 
-      const isRejected = transactionArr.find(tx => {
+      const noncePair = transactionArr.find(tx => {
         const multiSigTx = tx as SafeMultisigTransactionWithTransfersResponse;
         return (
           multiSigTx.nonce === eventNonce &&
-          multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
-          multiSigTx.isExecuted
+          multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash
         );
       });
+
+      const isMultisigRejectionTx =
+        isMultiSigTransaction &&
+        !multiSigTransaction.data &&
+        multiSigTransaction.to === multiSigTransaction.safe &&
+        noncePair &&
+        BigNumber.from(multiSigTransaction.value).isZero();
+
+      const isRejected =
+        isMultiSigTransaction &&
+        transactionArr.find(tx => {
+          const multiSigTx = tx as SafeMultisigTransactionWithTransfersResponse;
+          return (
+            multiSigTx.nonce === eventNonce &&
+            multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
+            multiSigTx.isExecuted
+          );
+        });
 
       const isPending =
         multiSigTransaction.confirmations?.length !== multiSigTransaction.confirmationsRequired;
@@ -118,6 +134,10 @@ export const useActivities = (sortBy: SortBy) => {
         isDeposit,
         eventDate,
         eventType,
+        multisigRejectedProposalNumber:
+          isMultisigRejectionTx && !!noncePair
+            ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
+            : undefined,
         proposalNumber: eventSafeTxHash,
         targets: [transaction.to],
         txHashes,

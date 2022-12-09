@@ -1,5 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { Activity, ActivityEventType, GovernanceActivity, TreasuryActivity } from '../../../types';
 import { ActivityAddress } from './ActivityAddress';
 
@@ -10,18 +11,21 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
 
   const isGovernanceActivity = activity.eventType === ActivityEventType.Governance;
   const isDeposit = treasuryActivity.isDeposit;
+  const hasTransfers = !!treasuryActivity.transferAddresses.length;
 
-  const transferTypeStr =
-    !isGovernanceActivity && isDeposit
-      ? t('receive')
-      : isGovernanceActivity && !isDeposit
-      ? t('transfer')
-      : t('send');
+  const transferTypeStr = !hasTransfers
+    ? undefined
+    : !isGovernanceActivity && isDeposit
+    ? t('receive')
+    : isGovernanceActivity && !isDeposit
+    ? t('transfer')
+    : t('send');
 
-  const transferDirStr =
-    treasuryActivity.isDeposit && activity.eventType !== ActivityEventType.Governance
-      ? t('from')
-      : t('to');
+  const transferDirStr = !hasTransfers
+    ? undefined
+    : treasuryActivity.isDeposit && activity.eventType !== ActivityEventType.Governance
+    ? t('from')
+    : t('to');
 
   return (
     <>
@@ -61,8 +65,12 @@ function GovernanceDescription({ activity }: { activity: Activity }) {
 
   return (
     <>
+      <Text># {createAccountSubstring(governanceActivity.proposalNumber)}</Text>
       <Text>
-        {t('proposalDescription', { ns: 'dashboard', txCount: governanceActivity.txHashes.length })}{' '}
+        {t('proposalDescription', {
+          ns: 'dashboard',
+          txCount: governanceActivity.txHashes.length,
+        })}{' '}
       </Text>
       {txCount > 1 ? (
         <Text>{t('addresses', { ns: 'treasury', numOfAddresses: txCount })}</Text>
@@ -75,7 +83,18 @@ function GovernanceDescription({ activity }: { activity: Activity }) {
           />
         ))
       )}
-      {hasTransfers && <Text> {t('to')} </Text>}
+      {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
+      {governanceActivity.multisigRejectedProposalNumber && (
+        <Text>
+          {' '}
+          {t('proposalOnChainRejection', {
+            ns: 'dashboard',
+            proposalNumber: createAccountSubstring(
+              governanceActivity.multisigRejectedProposalNumber
+            ),
+          })}{' '}
+        </Text>
+      )}
     </>
   );
 }
@@ -87,6 +106,7 @@ export function ActivityDescription({ activity }: { activity: Activity }) {
       color="grayscale.100"
       textStyle="text-lg-mono-semibold"
       gap="0.5rem"
+      mr="1rem"
       flexWrap="wrap"
     >
       <GovernanceDescription activity={governanceActivity} />

@@ -28,6 +28,7 @@ export interface GovernanceActivity extends ActivityBase {
   proposalNumber: string;
   targets: string[];
   txHashes: string[];
+  multisigRejectedProposalNumber?: string;
 }
 
 export type Activity = TreasuryActivity | GovernanceActivity;
