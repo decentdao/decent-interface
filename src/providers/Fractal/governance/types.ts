@@ -144,7 +144,6 @@ export type ActivityTransactionType =
   | SafeModuleTransactionWithTransfersResponse
   | EthereumTxWithTransfersResponse;
 
-
 export enum ActivityEventType {
   Treasury,
   Governance,

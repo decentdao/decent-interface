@@ -53,7 +53,11 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
   );
 }
 
-export default function ProposalExecutableCode({ proposal }: { proposal: GovernanceActivity | UsulProposal }) {
+export default function ProposalExecutableCode({
+  proposal,
+}: {
+  proposal: GovernanceActivity | UsulProposal;
+}) {
   const { t } = useTranslation('proposal');
 
   return (
