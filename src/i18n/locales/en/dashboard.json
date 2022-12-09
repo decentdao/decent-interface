@@ -13,7 +13,7 @@
     "titlePassed": "Passed",
     "titleTreasury": "Treasury",
     "noActivity": "No Activity",
-    "proposalDescription": "Proposal to execute {{txCount}} transactions.",
+    "proposalDescription": "Proposal to execute {{txCount}} transactions on",
     "labelFreezeInitiated": "Freeze Initiated",
     "timeRemaining": "{{time}} remaining",
     "labelUndoFreeze": "Undo Freeze",
