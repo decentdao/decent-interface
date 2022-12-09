@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import {
-  TxProposal,
+  GovernanceActivity,
   TxProposalState,
   UsulProposal,
   UsulVoteChoice,
@@ -14,7 +14,7 @@ import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provid
 import ContentBox from '../../ui/ContentBox';
 import Check from '../../ui/svg/Check';
 
-function Vote({ proposal }: { proposal: TxProposal }) {
+function Vote({ proposal }: { proposal: GovernanceActivity | UsulProposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation();
 

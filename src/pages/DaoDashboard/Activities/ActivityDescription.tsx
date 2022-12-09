@@ -1,7 +1,12 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { Activity, ActivityEventType, GovernanceActivity, TreasuryActivity } from '../../../types';
+import {
+  Activity,
+  TreasuryActivity,
+  ActivityEventType,
+  GovernanceActivity,
+} from '../../../providers/Fractal/types';
 import { ActivityAddress } from './ActivityAddress';
 
 function TreasuryDescription({ activity }: { activity: Activity }) {
@@ -60,7 +65,8 @@ function GovernanceDescription({ activity }: { activity: Activity }) {
   const governanceActivity = activity as GovernanceActivity;
   const treasuryActivity = activity as TreasuryActivity;
 
-  const hasTransfers = !!treasuryActivity.transferAddresses.length;
+  const hasTransfers =
+    treasuryActivity.transferAddresses && !!treasuryActivity.transferAddresses.length;
   const txCount = governanceActivity.txHashes.length;
 
   return (

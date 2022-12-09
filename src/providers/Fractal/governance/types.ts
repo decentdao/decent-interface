@@ -4,6 +4,11 @@ import {
   OZLinearVoting,
   VotesToken,
 } from '@fractal-framework/fractal-contracts';
+import {
+  SafeMultisigTransactionWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  EthereumTxWithTransfersResponse,
+} from '@gnosis.pm/safe-service-client';
 import { BigNumber } from 'ethers';
 import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
@@ -37,6 +42,12 @@ export type CreateProposalFunc = (proposal: {
   proposalData: {};
   successCallback: () => void;
 }) => void;
+
+export interface TxProposalsInfo {
+  txProposals: (UsulProposal | GovernanceActivity)[];
+  pending?: number; // active/queued (usul) | not executed (multisig)
+  passed?: number; // executed (usul/multisig)
+}
 
 export interface IGovernance {
   actions: {
@@ -90,32 +101,59 @@ export type ProposalMetaData = {
   decodedTransactions: DecodedTransaction[];
 };
 
-export interface UsulProposal extends TxProposal {
+export enum TreasuryActivityTypes {
+  DEPOSIT,
+  WITHDRAW,
+}
+
+export interface UsulProposal extends GovernanceActivity {
   proposer: string;
   govTokenAddress: string | null;
   votesSummary: ProposalVotesSummary;
   votes: ProposalVote[];
   deadline: number;
-  userVote?: ProposalVote;
   startBlock: BigNumber;
-  blockTimestamp: number;
-}
-
-export interface MultisigTransaction extends TxProposal {
-  submissionDate?: string;
-}
-
-export interface TxProposal {
-  state: TxProposalState;
-  proposalNumber: string;
-  txHashes: string[];
+  userVote?: ProposalVote;
   metaData?: ProposalMetaData;
 }
 
-export interface TxProposalsInfo {
-  txProposals: (MultisigTransaction | UsulProposal)[];
-  pending?: number; // active/queued (usul) | not executed (multisig)
-  passed?: number; // executed (usul/multisig)
+export interface TreasuryActivity extends ActivityBase {
+  transferAddresses: string[];
+  transferAmountTotals: string[];
+  isDeposit: boolean;
+}
+
+export interface GovernanceActivity extends ActivityBase {
+  state: TxProposalState;
+  proposalNumber: string;
+  targets: string[];
+  txHashes: string[];
+  multisigRejectedProposalNumber?: string;
+}
+export interface ActivityBase {
+  eventDate: string;
+  eventType: ActivityEventType;
+  transaction?: ActivityTransactionType;
+  transactionHash?: string | null;
+}
+
+export type Activity = TreasuryActivity | GovernanceActivity;
+
+export type ActivityTransactionType =
+  | SafeMultisigTransactionWithTransfersResponse
+  | SafeModuleTransactionWithTransfersResponse
+  | EthereumTxWithTransfersResponse;
+
+
+export enum ActivityEventType {
+  Treasury,
+  Governance,
+}
+
+export enum GnosisTransferType {
+  ERC721 = 'ERC721_TRANSFER',
+  ERC20 = 'ERC20_TRANSFER',
+  ETHER = 'ETHER_TRANSFER',
 }
 
 export type ProposalVotesSummary = {

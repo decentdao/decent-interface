@@ -107,3 +107,9 @@ export declare type DataDecoded = {
   method: string;
   parameters?: Parameter[];
 };
+
+export type AssetTotals = {
+  bn: BigNumber;
+  symbol: string;
+  decimals: number;
+};

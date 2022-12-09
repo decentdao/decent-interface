@@ -12,17 +12,16 @@ import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
 import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
 import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
 import ProposalTime from '../../components/ui/proposal/ProposalTime';
-import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
-import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
+import { GovernanceActivity, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 function ProposalDetails() {
   const params = useParams();
 
   const { proposals } = useProposals({});
-  const [proposal, setProposal] = useState<TxProposal | UsulProposal | null>();
+  const [proposal, setProposal] = useState<GovernanceActivity | UsulProposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 
   useEffect(() => {
@@ -85,7 +84,7 @@ function ProposalDetails() {
                       w="full"
                       mt={4}
                     >
-                      <ProposalTitle proposal={proposal} />
+                      {/* <ProposalTitle proposal={proposal} /> */}
                       <ProposalExecutableCode proposal={proposal} />
                     </Box>
                   </Flex>

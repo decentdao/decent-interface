@@ -1,10 +1,14 @@
 import { Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import useExecuteProposal from '../../../hooks/DAO/proposal/useExecuteProposal';
-import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
+import {
+  GovernanceActivity,
+  TxProposalState,
+  UsulProposal,
+} from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
 
-export function Execute({ proposal }: { proposal: TxProposal }) {
+export function Execute({ proposal }: { proposal: UsulProposal | GovernanceActivity }) {
   const { t } = useTranslation(['proposal', 'common']);
   const { executeProposal, pending } = useExecuteProposal();
 

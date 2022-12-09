@@ -1,16 +1,12 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { MultisigTransaction, UsulProposal } from '../../providers/Fractal/types';
+import { ActivityGovernance } from '../../pages/DaoDashboard/Activities/ActivityGovernance';
+import { GovernanceActivity, UsulProposal } from '../../providers/Fractal/types';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
-import ProposalCard from './ProposalCard';
 
-export function ProposalsList({
-  proposals,
-}: {
-  proposals: (MultisigTransaction | UsulProposal)[];
-}) {
+export function ProposalsList({ proposals }: { proposals: (GovernanceActivity | UsulProposal)[] }) {
   const { t } = useTranslation();
   return (
     <Flex
@@ -23,9 +19,9 @@ export function ProposalsList({
         </Box>
       ) : proposals.length > 0 ? (
         proposals.map(proposal => (
-          <ProposalCard
+          <ActivityGovernance
             key={proposal.proposalNumber}
-            proposal={proposal}
+            activity={proposal}
           />
         ))
       ) : (

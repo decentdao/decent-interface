@@ -1,10 +1,15 @@
-import { Button } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '../../../components/ui/badges/Badge';
+import ProposalTime from '../../../components/ui/proposal/ProposalTime';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import {
+  GovernanceActivity,
+  TxProposalState,
+  UsulProposal,
+} from '../../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../../routes/constants';
-import { GovernanceActivity } from '../../../types';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
@@ -15,7 +20,8 @@ export function ActivityGovernance({ activity }: { activity: GovernanceActivity 
   } = useFractal();
 
   const { t } = useTranslation();
-
+  const usulProposal = activity as UsulProposal;
+  const now = new Date();
   return (
     <ActivityCard
       Badge={
@@ -28,14 +34,24 @@ export function ActivityGovernance({ activity }: { activity: GovernanceActivity 
       }
       description={<ActivityDescription activity={activity} />}
       RightElement={
-        <Button
-          variant="secondary"
-          onClick={() =>
-            navigate(DAO_ROUTES.proposal.relative(safe.address, activity.transactionHash))
-          }
+        <Flex
+          gap={4}
+          alignItems="center"
         >
-          {t('view')}
-        </Button>
+          {usulProposal.deadline &&
+            usulProposal.deadline * 1000 > now.getMilliseconds() &&
+            usulProposal.state === TxProposalState.Active && (
+              <ProposalTime deadline={usulProposal.deadline} />
+            )}
+          <Button
+            variant="secondary"
+            onClick={() =>
+              navigate(DAO_ROUTES.proposal.relative(safe.address, activity.transactionHash))
+            }
+          >
+            {t('view')}
+          </Button>
+        </Flex>
       }
       eventDate={activity.eventDate}
     />

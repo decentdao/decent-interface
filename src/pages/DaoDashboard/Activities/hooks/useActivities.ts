@@ -8,11 +8,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { totalsReducer } from '../../../../providers/Fractal/utils';
-import { ActivityEventType, SortBy } from '../../../../types';
+import { SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/numberFormats';
-import { UsulProposal, TxProposalState } from './../../../../providers/Fractal/governance/types';
-import { Activity, GovernanceActivity } from './../../../../types/activity';
+import {
+  TxProposalState,
+  Activity,
+  ActivityEventType,
+} from './../../../../providers/Fractal/governance/types';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
@@ -34,7 +37,12 @@ export const useActivities = (sortBy: SortBy) => {
       const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
-      // Determines whether transaction transfer is being sent or received if exists
+      // @note for ethereum transactions event these are the execution date
+      const eventDate = format(
+        new Date(multiSigTransaction.submissionDate || ethereumTransaction.executionDate),
+        DEFAULT_DATE_FORMAT
+      );
+
       const isDeposit = transaction.transfers.length
         ? transaction.transfers.every(t => t.to.toLowerCase() === safe.address!.toLowerCase())
         : false;
@@ -62,12 +70,6 @@ export const useActivities = (sortBy: SortBy) => {
         transferAmountTotals.push(`${formatWeiToValue(multiSigTransaction.value, 18)} ETHER`);
         transferAddresses.push(multiSigTransaction.to);
       }
-
-      // @note for ethereum transactions event these are the execution date
-      const eventDate = format(
-        new Date(multiSigTransaction.submissionDate || ethereumTransaction.executionDate),
-        DEFAULT_DATE_FORMAT
-      );
 
       const mappedTxHashes = transaction.transfers.map(transfer => transfer.transactionHash);
 
@@ -125,7 +127,7 @@ export const useActivities = (sortBy: SortBy) => {
         ? TxProposalState.Active
         : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
         ? TxProposalState.Executed
-        : undefined;
+        : TxProposalState.Pending;
 
       const activity: Activity = {
         transaction,
@@ -153,22 +155,9 @@ export const useActivities = (sortBy: SortBy) => {
    */
   const filterActivities = useMemo(() => {
     if (type === GovernanceTypes.GNOSIS_SAFE_USUL) {
-      const txActivities = [...txProposals].map(proposal => {
-        const usulProposal = proposal as UsulProposal;
-        const targets = proposal.metaData!.decodedTransactions.map(tx => tx.target);
-        const activity: GovernanceActivity = {
-          eventDate: format(new Date(usulProposal.blockTimestamp * 1000), DEFAULT_DATE_FORMAT),
-          eventType: ActivityEventType.Governance,
-          proposalNumber: usulProposal.proposalNumber,
-          state: proposal.state,
-          targets,
-          txHashes: usulProposal.txHashes,
-        };
-        return activity;
-      });
       return [
         ...parsedActivities.filter(activity => activity.eventType === ActivityEventType.Treasury),
-        ...txActivities,
+        ...txProposals,
       ];
     }
     return [...parsedActivities];
