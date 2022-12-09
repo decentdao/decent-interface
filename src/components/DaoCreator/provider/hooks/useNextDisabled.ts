@@ -90,8 +90,8 @@ export function useNextDisabled(state: CreatorState) {
           !totalAllocations.isZero() &&
           totalAllocations.lte(state.govToken.tokenSupply.bigNumberValue!);
         const isGovModuleComplete =
-          govModule.quorum.gte(0) &&
-          govModule.quorum.lte(100) &&
+          govModule.quorumPercentage.gte(0) &&
+          govModule.quorumPercentage.lte(100) &&
           govModule.executionDelay.gte(0) &&
           govModule.votingPeriod.gt(isGnosisWithUsul ? 1 : 0);
         setIsDisabled(!isEssentialsComplete || !isGovModuleComplete || !isGovTokenComplete);
