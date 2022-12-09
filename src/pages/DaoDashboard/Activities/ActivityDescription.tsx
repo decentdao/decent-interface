@@ -8,10 +8,6 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
 
   const treasuryActivity = activity as TreasuryActivity;
 
-  if (!!treasuryActivity.transaction && !treasuryActivity.transaction.transfers.length) {
-    return null;
-  }
-
   const isGovernanceActivity = activity.eventType === ActivityEventType.Governance;
   const isDeposit = treasuryActivity.isDeposit;
 
@@ -51,25 +47,27 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
     </>
   );
 }
-function GovernanceDescription({ activity }: { activity: GovernanceActivity }) {
+function GovernanceDescription({ activity }: { activity: Activity }) {
   const { t } = useTranslation(['common', 'dashboard', 'treasury']);
 
   if (activity.eventType !== ActivityEventType.Governance) {
     return null;
   }
+  const governanceActivity = activity as GovernanceActivity;
+  const treasuryActivity = activity as TreasuryActivity;
 
-  const hasTransfers = !!activity.transaction?.transfers.length;
-  const txCount = activity.txHashes.length;
+  const hasTransfers = !!treasuryActivity.transferAddresses.length;
+  const txCount = governanceActivity.txHashes.length;
 
   return (
     <>
       <Text>
-        {t('proposalDescription', { ns: 'dashboard', txCount: activity.txHashes.length })}{' '}
+        {t('proposalDescription', { ns: 'dashboard', txCount: governanceActivity.txHashes.length })}{' '}
       </Text>
       {txCount > 1 ? (
         <Text>{t('addresses', { ns: 'treasury', numOfAddresses: txCount })}</Text>
       ) : (
-        activity.targets.map((address, i, arr) => (
+        governanceActivity.targets.map((address, i, arr) => (
           <ActivityAddress
             key={address + i}
             address={address}

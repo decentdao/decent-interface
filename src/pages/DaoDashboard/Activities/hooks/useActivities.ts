@@ -3,6 +3,7 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
 } from '@gnosis.pm/safe-service-client';
 import { format } from 'date-fns';
+import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
@@ -31,12 +32,13 @@ export const useActivities = (sortBy: SortBy) => {
     return transactions.results.map((transaction, _, transactionArr) => {
       const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
       const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
+      console.log('🚀 ~ file: useActivities.ts:35 ~ multiSigTransaction', multiSigTransaction);
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
       // Determines whether transaction transfer is being sent or received if exists
-      const isDeposit = transaction.transfers.every(
-        t => t.to.toLowerCase() === safe.address!.toLowerCase()
-      );
+      const isDeposit = transaction.transfers.length
+        ? transaction.transfers.every(t => t.to.toLowerCase() === safe.address!.toLowerCase())
+        : false;
 
       // returns mapping of Asset -> Asset Total Value by getting the total of each asset transfered
       const transferAmountTotalsMap = transaction.transfers.reduce(totalsReducer, new Map());
@@ -50,6 +52,17 @@ export const useActivities = (sortBy: SortBy) => {
       const transferAddresses = transaction.transfers.map(transfer =>
         transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
       );
+
+      const isEthSend =
+        isMultiSigTransaction &&
+        !multiSigTransaction.data &&
+        !multiSigTransaction.isExecuted &&
+        !BigNumber.from(multiSigTransaction.value).isZero();
+
+      if (isEthSend) {
+        transferAmountTotals.push(`${formatWeiToValue(multiSigTransaction.value, 18)} ETHER`);
+        transferAddresses.push(multiSigTransaction.to);
+      }
 
       // @note for ethereum transactions event these are the execution date
       const eventDate = format(
