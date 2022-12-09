@@ -64,13 +64,12 @@ function GovernanceDescription({ activity }: { activity: GovernanceActivity }) {
   return (
     <>
       <Text>
-        {' '}
         {t('proposalDescription', { ns: 'dashboard', txCount: activity.txHashes.length })}{' '}
       </Text>
       {txCount > 1 ? (
         <Text>{t('addresses', { ns: 'treasury', numOfAddresses: txCount })}</Text>
       ) : (
-        activity.txHashes.map((address, i, arr) => (
+        activity.targets.map((address, i, arr) => (
           <ActivityAddress
             key={address + i}
             address={address}
