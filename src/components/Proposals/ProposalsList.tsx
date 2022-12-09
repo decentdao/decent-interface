@@ -7,7 +7,7 @@ import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export function ProposalsList({ proposals }: { proposals: (GovernanceActivity | UsulProposal)[] }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('proposals');
   return (
     <Flex
       flexDirection="column"

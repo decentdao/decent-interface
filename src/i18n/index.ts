@@ -38,7 +38,7 @@ const resources = {
     daoCreate: DAOCREATE_EN,
     menu: MENU_EN,
     dashboard: DASHBOARD_EN,
-    proposal: PROPOSAL_EN,
+    proposals: PROPOSAL_EN,
     transaction: TRANSACTION_EN,
     treasury: TREASURY_EN,
     sidebar: SIDEBAR_EN,
