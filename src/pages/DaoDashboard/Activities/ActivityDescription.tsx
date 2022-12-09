@@ -4,7 +4,7 @@ import { Activity, ActivityEventType, GovernanceActivity, TreasuryActivity } fro
 import { ActivityAddress } from './ActivityAddress';
 
 function TreasuryDescription({ activity }: { activity: Activity }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['common', 'treasury']);
 
   const treasuryActivity = activity as TreasuryActivity;
 
@@ -33,7 +33,12 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
         {transferTypeStr} {treasuryActivity.transferAmountTotals.join(', ')} {transferDirStr}
       </Text>
       {treasuryActivity.transferAddresses.length > 2 ? (
-        <Text>{t('addresses', { numOfAddresses: treasuryActivity.transferAddresses.length })}</Text>
+        <Text>
+          {t('addresses', {
+            ns: 'treasury',
+            numOfAddresses: treasuryActivity.transferAddresses.length,
+          })}
+        </Text>
       ) : (
         treasuryActivity.transferAddresses.map((address, i, arr) => (
           <ActivityAddress
@@ -47,7 +52,7 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
   );
 }
 function GovernanceDescription({ activity }: { activity: GovernanceActivity }) {
-  const { t } = useTranslation(['dashboard', 'treasury']);
+  const { t } = useTranslation(['common', 'dashboard', 'treasury']);
 
   if (activity.eventType !== ActivityEventType.Governance) {
     return null;
@@ -58,9 +63,12 @@ function GovernanceDescription({ activity }: { activity: GovernanceActivity }) {
 
   return (
     <>
-      <Text> {t('proposalDescription', { txCount: activity.txHashes.length })} </Text>
+      <Text>
+        {' '}
+        {t('proposalDescription', { ns: 'dashboard', txCount: activity.txHashes.length })}{' '}
+      </Text>
       {txCount > 1 ? (
-        <Text>{t('addresses', { numOfAddresses: txCount })}</Text>
+        <Text>{t('addresses', { ns: 'treasury', numOfAddresses: txCount })}</Text>
       ) : (
         activity.txHashes.map((address, i, arr) => (
           <ActivityAddress
