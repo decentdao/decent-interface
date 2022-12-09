@@ -4,11 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
+import {
+  ActivityEventType,
+  GovernanceActivity,
+  TreasuryActivity,
+} from '../../../providers/Fractal/types';
+import { SortBy } from '../../../types';
 import { ActivityGovernance } from './ActivityGovernance';
 import { ActivityTreasury } from './ActivityTreasury';
 import { useActivities } from './hooks/useActivities';
-import { ActivityEventType, GovernanceActivity, TreasuryActivity } from '../../../providers/Fractal/types';
-import { SortBy } from '../../../types';
 
 export function Activities() {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);

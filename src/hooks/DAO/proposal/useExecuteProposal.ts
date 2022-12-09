@@ -17,7 +17,7 @@ export default function useExecuteProposal() {
 
   const executeProposal = useCallback(
     (proposal: GovernanceActivity | UsulProposal) => {
-      const usulProposal = proposal as UsulProposal
+      const usulProposal = proposal as UsulProposal;
       if (
         !usulContract ||
         !signerOrProvider ||
