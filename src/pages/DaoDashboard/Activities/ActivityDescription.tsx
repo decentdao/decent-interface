@@ -12,10 +12,16 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
     return null;
   }
 
+  const isGovernanceActivity = activity.eventType === ActivityEventType.Governance;
+  const isDeposit = treasuryActivity.isDeposit;
+
   const transferTypeStr =
-    treasuryActivity.isDeposit && activity.eventType !== ActivityEventType.Governance
+    !isGovernanceActivity && isDeposit
       ? t('receive')
+      : isGovernanceActivity && !isDeposit
+      ? t('transfer')
       : t('send');
+
   const transferDirStr =
     treasuryActivity.isDeposit && activity.eventType !== ActivityEventType.Governance
       ? t('from')
@@ -41,16 +47,30 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
   );
 }
 function GovernanceDescription({ activity }: { activity: GovernanceActivity }) {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation(['dashboard', 'treasury']);
 
-  if (!activity.eventTransactionsCount && activity.eventType !== ActivityEventType.Governance) {
+  if (activity.eventType !== ActivityEventType.Governance) {
     return null;
   }
 
+  const hasTransfers = !!activity.transaction?.transfers.length;
+  const txCount = activity.txHashes.length;
+
   return (
     <>
-      <Text> {t('proposalDescription', { txCount: activity.eventTransactionsCount })}</Text>
-      {!!activity.transaction?.transfers.length && <Text> {t('to')} </Text>}
+      <Text> {t('proposalDescription', { txCount: activity.txHashes.length })} </Text>
+      {txCount > 1 ? (
+        <Text>{t('addresses', { numOfAddresses: txCount })}</Text>
+      ) : (
+        activity.txHashes.map((address, i, arr) => (
+          <ActivityAddress
+            key={address + i}
+            address={address}
+            addComma={i !== arr.length - 1}
+          />
+        ))
+      )}
+      {hasTransfers && <Text> {t('to')} </Text>}
     </>
   );
 }

@@ -13,6 +13,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { GnosisTransferType } from '../../../types';
 import { Providers } from '../../Web3Data/types';
 import { strategyTxProposalStates } from '../governance/constants';
+import { Parameter, DataDecoded } from '../types';
 import {
   ProposalIsPassedError,
   ProposalMetaData,
@@ -162,23 +163,26 @@ export const eventTransactionMapping = (
   isMultiSigTransaction: boolean
 ) => {
   const eventTransactionMap = new Map<number, any>();
-  const parseTransactions = (parameters: any[]) => {
+  const parseTransactions = (parameters?: Parameter[]) => {
     if (!parameters || !parameters.length) {
       return;
     }
-    parameters.forEach((param: any) => {
-      const dataDecoded = param.dataDecoded || param.valueDecoded;
-
-      if (param.to) {
-        eventTransactionMap.set(eventTransactionMap.size, {
-          ...param,
+    parameters.forEach((param: Parameter) => {
+      const valueDecoded = param.valueDecoded;
+      if (valueDecoded) {
+        valueDecoded.forEach(value => {
+          eventTransactionMap.set(eventTransactionMap.size, {
+            ...valueDecoded,
+          });
+          if (value.dataDecoded?.parameters && value.dataDecoded?.parameters?.length) {
+            return parseTransactions(value.dataDecoded.parameters);
+          }
         });
       }
-      return parseTransactions(dataDecoded);
     });
   };
 
-  const dataDecoded = multiSigTransaction.dataDecoded as any;
+  const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;
   if (dataDecoded && isMultiSigTransaction) {
     parseTransactions(dataDecoded.parameters);
   }

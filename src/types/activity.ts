@@ -26,7 +26,8 @@ export interface TreasuryActivity extends ActivityBase {
 export interface GovernanceActivity extends ActivityBase {
   state?: TxProposalState;
   proposalNumber: string;
-  eventTransactionsCount?: number;
+  targets: string[];
+  txHashes: string[];
 }
 
 export type Activity = TreasuryActivity | GovernanceActivity;

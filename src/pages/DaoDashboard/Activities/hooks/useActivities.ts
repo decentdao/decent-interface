@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
-import { eventTransactionMapping, totalsReducer } from '../../../../providers/Fractal/utils';
+import { totalsReducer } from '../../../../providers/Fractal/utils';
 import { ActivityEventType, SortBy } from '../../../../types';
 import { formatWeiToValue } from '../../../../utils';
 import { DEFAULT_DATE_FORMAT } from '../../../../utils/numberFormats';
@@ -33,8 +33,6 @@ export const useActivities = (sortBy: SortBy) => {
       const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
-      // ETHEREUM TRANSACTION
-
       // Determines whether transaction transfer is being sent or received if exists
       const isDeposit = transaction.transfers.every(
         t => t.to.toLowerCase() === safe.address!.toLowerCase()
@@ -53,35 +51,31 @@ export const useActivities = (sortBy: SortBy) => {
         transfer.to.toLowerCase() === safe.address!.toLowerCase() ? transfer.from : transfer.to
       );
 
-      // Date that event is created
       // @note for ethereum transactions event these are the execution date
       const eventDate = format(
         new Date(multiSigTransaction.submissionDate || ethereumTransaction.executionDate),
         DEFAULT_DATE_FORMAT
       );
 
-      // block explorer transaction hash. This is only being used for ETHEREUM TRANSACTIONS
-      const transactionHash = ethereumTransaction.txHash || multiSigTransaction.transactionHash;
+      const mappedTxHashes = transaction.transfers.map(transfer => transfer.transactionHash);
 
-      // MULTISIG SPECIFIC
+      const txHashes =
+        isMultiSigTransaction && mappedTxHashes.length
+          ? mappedTxHashes
+          : isMultiSigTransaction
+          ? [multiSigTransaction.transactionHash]
+          : mappedTxHashes.length
+          ? mappedTxHashes
+          : [ethereumTransaction.txHash];
 
-      // mapping of each interacted contract address. this is used to calculate the number of transactions in a multisig transaction
-      const eventTransactionMap = eventTransactionMapping(
-        multiSigTransaction,
-        isMultiSigTransaction
-      );
-
-      // Used as the proposal id for multisig transactions
       const eventSafeTxHash = multiSigTransaction.safeTxHash;
 
       const eventType = isMultiSigTransaction
         ? ActivityEventType.Governance
         : ActivityEventType.Treasury;
 
-      // nonce of current event
       const eventNonce = multiSigTransaction.nonce;
 
-      // Check to see if a proposal has been successfully executed to reject current transaction
       const isRejected = transactionArr.find(tx => {
         const multiSigTx = tx as SafeMultisigTransactionWithTransfersResponse;
         return (
@@ -111,9 +105,9 @@ export const useActivities = (sortBy: SortBy) => {
         isDeposit,
         eventDate,
         eventType,
-        transactionHash,
         proposalNumber: eventSafeTxHash,
-        eventTransactionsCount: isMultiSigTransaction ? eventTransactionMap.size || 1 : undefined,
+        targets: [transaction.to],
+        txHashes,
         state,
       };
 
@@ -128,13 +122,14 @@ export const useActivities = (sortBy: SortBy) => {
     if (type === GovernanceTypes.GNOSIS_SAFE_USUL) {
       const txActivities = [...txProposals].map(proposal => {
         const usulProposal = proposal as UsulProposal;
-
+        const targets = proposal.metaData!.decodedTransactions.map(tx => tx.target);
         const activity: GovernanceActivity = {
           eventDate: format(new Date(usulProposal.blockTimestamp * 1000), DEFAULT_DATE_FORMAT),
           eventType: ActivityEventType.Governance,
           proposalNumber: usulProposal.proposalNumber,
           state: proposal.state,
-          eventTransactionsCount: usulProposal.txHashes.length,
+          targets,
+          txHashes: usulProposal.txHashes,
         };
         return activity;
       });
