@@ -1,12 +1,13 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import {
   Activity,
   TreasuryActivity,
   ActivityEventType,
   GovernanceActivity,
-} from '../../../providers/Fractal/types';
+} from '../../providers/Fractal/types';
+
 import { ActivityAddress } from './ActivityAddress';
 
 function TreasuryDescription({ activity }: { activity: Activity }) {
@@ -71,7 +72,7 @@ function GovernanceDescription({ activity }: { activity: Activity }) {
 
   return (
     <>
-      <Text># {createAccountSubstring(governanceActivity.proposalNumber)}</Text>
+      <Text>#{createAccountSubstring(governanceActivity.proposalNumber)}</Text>
       <Text>
         {t('proposalDescription', {
           ns: 'dashboard',

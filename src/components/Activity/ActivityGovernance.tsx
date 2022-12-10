@@ -1,15 +1,12 @@
 import { Button, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Badge } from '../../../components/ui/badges/Badge';
-import ProposalTime from '../../../components/ui/proposal/ProposalTime';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import {
-  GovernanceActivity,
-  TxProposalState,
-  UsulProposal,
-} from '../../../providers/Fractal/types';
-import { DAO_ROUTES } from '../../../routes/constants';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceActivity, UsulProposal, TxProposalState } from '../../providers/Fractal/types';
+import { DAO_ROUTES } from '../../routes/constants';
+import { Badge } from '../ui/badges/Badge';
+import ProposalTime from '../ui/proposal/ProposalTime';
+
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 

@@ -1,8 +1,8 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ActivityGovernance } from '../../pages/DaoDashboard/Activities/ActivityGovernance';
 import { TxProposal } from '../../providers/Fractal/types';
+import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 

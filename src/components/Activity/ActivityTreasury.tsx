@@ -1,8 +1,8 @@
 import { Button } from '@chakra-ui/react';
 import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
-import { TreasuryActivity } from '../../../providers/Fractal/types';
+import { TreasuryActivity } from '../../providers/Fractal/types';
+import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 

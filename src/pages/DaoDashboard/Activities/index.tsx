@@ -1,6 +1,8 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ActivityGovernance } from '../../../components/Activity/ActivityGovernance';
+import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury';
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
@@ -10,8 +12,6 @@ import {
   TreasuryActivity,
 } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
-import { ActivityGovernance } from './ActivityGovernance';
-import { ActivityTreasury } from './ActivityTreasury';
 import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
