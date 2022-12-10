@@ -1,16 +1,9 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import {
-  Activity,
-  TreasuryActivity,
-  ActivityEventType,
-  GovernanceActivity,
-} from '../../providers/Fractal/types';
-
+import { Activity, TreasuryActivity, ActivityEventType } from '../../providers/Fractal/types';
 import { ActivityAddress } from './ActivityAddress';
-import { ActivityDescriptionGovernance } from './ActivityDescriptionGovernance';
 
-function TreasuryDescription({ activity }: { activity: Activity }) {
+export function ActivityDescriptionTreasury({ activity }: { activity: Activity }) {
   const { t } = useTranslation(['common', 'treasury']);
 
   const treasuryActivity = activity as TreasuryActivity;
@@ -55,21 +48,5 @@ function TreasuryDescription({ activity }: { activity: Activity }) {
         ))
       )}
     </>
-  );
-}
-
-export function ActivityDescription({ activity }: { activity: Activity }) {
-  const governanceActivity = activity as GovernanceActivity;
-  return (
-    <Flex
-      color="grayscale.100"
-      textStyle="text-lg-mono-semibold"
-      gap="0.5rem"
-      mr="1rem"
-      flexWrap="wrap"
-    >
-      <ActivityDescriptionGovernance activity={governanceActivity} />
-      {!!activity.transaction && <TreasuryDescription activity={activity} />}
-    </Flex>
   );
 }
