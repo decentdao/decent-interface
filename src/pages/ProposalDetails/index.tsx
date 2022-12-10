@@ -2,6 +2,7 @@ import { Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
+import { ActivityDescriptionGovernance } from '../../components/Activity/ActivityDescriptionGovernance';
 import { ProposalAction } from '../../components/Proposals/ProposalActions/ProposalAction';
 import ProposalSummary from '../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../components/Proposals/ProposalVotes';
@@ -84,7 +85,7 @@ function ProposalDetails() {
                       w="full"
                       mt={4}
                     >
-                      {/* <ProposalTitle proposal={proposal} /> */}
+                      <ActivityDescriptionGovernance activity={proposal} />
                       <ProposalExecutableCode proposal={proposal} />
                     </Box>
                   </Flex>
