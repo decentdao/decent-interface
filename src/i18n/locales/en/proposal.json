@@ -9,6 +9,7 @@
     "labelParameters": "Parameters",
     "helperParameters": "Values used to call the function (comma separated).",
     "pageTitle": "{{daoName}} Proposals",
+    "ownerApproved": "Approved",
     "statePending": "Pending",
     "stateActive": "Active",
     "stateCanceled": "Canceled",
