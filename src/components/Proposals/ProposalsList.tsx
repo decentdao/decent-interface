@@ -2,11 +2,11 @@ import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ActivityGovernance } from '../../pages/DaoDashboard/Activities/ActivityGovernance';
-import { GovernanceActivity, UsulProposal } from '../../providers/Fractal/types';
+import { TxProposal } from '../../providers/Fractal/types';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
-export function ProposalsList({ proposals }: { proposals: (GovernanceActivity | UsulProposal)[] }) {
+export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
   const { t } = useTranslation('proposal');
   return (
     <Flex

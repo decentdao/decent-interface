@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GovernanceActivity, UsulProposal } from '../../../providers/Fractal/types';
+import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import { MetaTransaction } from '../../../types';
@@ -16,7 +16,7 @@ export default function useExecuteProposal() {
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
-    (proposal: GovernanceActivity | UsulProposal) => {
+    (proposal: TxProposal) => {
       const usulProposal = proposal as UsulProposal;
       if (
         !usulContract ||

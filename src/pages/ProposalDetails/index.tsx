@@ -14,14 +14,14 @@ import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
 import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
-import { GovernanceActivity, UsulProposal } from '../../providers/Fractal/types';
+import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 function ProposalDetails() {
   const params = useParams();
 
   const { proposals } = useProposals({});
-  const [proposal, setProposal] = useState<GovernanceActivity | UsulProposal | null>();
+  const [proposal, setProposal] = useState<TxProposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 
   useEffect(() => {

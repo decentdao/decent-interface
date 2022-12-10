@@ -2,14 +2,10 @@ import { Text, Button } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useQueueProposal from '../../../hooks/DAO/proposal/useQueueProposal';
-import {
-  GovernanceActivity,
-  TxProposalState,
-  UsulProposal,
-} from '../../../providers/Fractal/types';
+import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
 
-export default function Queue({ proposal }: { proposal: GovernanceActivity | UsulProposal }) {
+export default function Queue({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
   const { queueProposal, pending } = useQueueProposal();
 

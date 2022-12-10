@@ -44,7 +44,7 @@ export type CreateProposalFunc = (proposal: {
 }) => void;
 
 export interface TxProposalsInfo {
-  txProposals: (UsulProposal | GovernanceActivity)[];
+  txProposals: TxProposal[];
   pending?: number; // active/queued (usul) | not executed (multisig)
   passed?: number; // executed (usul/multisig)
 }
@@ -181,3 +181,5 @@ export enum ProposalIsPassedError {
   QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
   PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
 }
+
+export type TxProposal = UsulProposal | GovernanceActivity;
