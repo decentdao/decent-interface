@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { ActivityEventType, TxProposalState, Activity } from '../../providers/Fractal/types';
-import { totalsReducer } from '../../providers/Fractal/utils';
+import { parseDecodedData, totalsReducer } from '../../providers/Fractal/utils';
 import { formatWeiToValue } from '../../utils';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 
@@ -123,6 +123,17 @@ export function useParseSafeTxs(
         ? TxProposalState.Executed
         : TxProposalState.Pending;
 
+      const confirmations = multiSigTransaction.confirmations
+        ? multiSigTransaction.confirmations.map(signedInfo => signedInfo.owner)
+        : [];
+
+      const metaData =
+        isMultiSigTransaction && multiSigTransaction.dataDecoded
+          ? {
+              decodedTransactions: parseDecodedData(multiSigTransaction, isMultiSigTransaction),
+            }
+          : undefined;
+
       const activity: Activity = {
         transaction,
         transferAddresses,
@@ -130,6 +141,8 @@ export function useParseSafeTxs(
         isDeposit,
         eventDate,
         eventType,
+        confirmations: confirmations,
+        signersThreshold: multiSigTransaction.confirmationsRequired,
         multisigRejectedProposalNumber:
           isMultisigRejectionTx && !!noncePair
             ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
@@ -137,6 +150,7 @@ export function useParseSafeTxs(
         proposalNumber: eventSafeTxHash,
         targets: [transaction.to],
         txHashes,
+        metaData,
         state,
       };
       return activity;

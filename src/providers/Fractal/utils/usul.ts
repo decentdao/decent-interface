@@ -164,7 +164,7 @@ export const mapProposalCreatedEventToProposal = async (
   return proposal;
 };
 
-export const eventTransactionMapping = (
+export const parseDecodedData = (
   multiSigTransaction:
     | SafeMultisigTransactionWithTransfersResponse
     | SafeMultisigTransactionResponse,
@@ -179,8 +179,20 @@ export const eventTransactionMapping = (
       const valueDecoded = param.valueDecoded;
       if (valueDecoded) {
         valueDecoded.forEach(value => {
+          const decodedTransaction = {
+            target: value.to,
+            function: value.dataDecoded!.method,
+            parameterTypes:
+              !!value.dataDecoded && value.dataDecoded.parameters
+                ? value.dataDecoded.parameters.map(p => p.type)
+                : [],
+            parameterValues:
+              !!value.dataDecoded && value.dataDecoded.parameters
+                ? value.dataDecoded.parameters.map(p => p.value)
+                : [],
+          };
           eventTransactionMap.set(eventTransactionMap.size, {
-            ...valueDecoded,
+            ...decodedTransaction,
           });
           if (value.dataDecoded?.parameters && value.dataDecoded?.parameters?.length) {
             return parseTransactions(value.dataDecoded.parameters);
@@ -194,5 +206,5 @@ export const eventTransactionMapping = (
   if (dataDecoded && isMultiSigTransaction) {
     parseTransactions(dataDecoded.parameters);
   }
-  return eventTransactionMap;
+  return Array.from(eventTransactionMap.values());
 };

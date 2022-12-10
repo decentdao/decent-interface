@@ -1,22 +1,16 @@
-import { Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { ActivityDescription } from '../../components/Activity/ActivityDescription';
-import { ProposalAction } from '../../components/Proposals/ProposalActions/ProposalAction';
-import ProposalSummary from '../../components/Proposals/ProposalSummary';
-import ProposalVotes from '../../components/Proposals/ProposalVotes';
-import ContentBox from '../../components/ui/ContentBox';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
-import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
-import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
-import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
-import ProposalTime from '../../components/ui/proposal/ProposalTime';
+
 import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
+import { SafeTxDetails } from './SafeTxDetails';
+import { UsulProposalDetails } from './UsulProposalDetails';
 
 function ProposalDetails() {
   const params = useParams();
@@ -24,6 +18,8 @@ function ProposalDetails() {
   const { proposals } = useProposals({});
   const [proposal, setProposal] = useState<TxProposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
+
+  const usulProposal = proposal as UsulProposal;
 
   useEffect(() => {
     if (!proposals || !params.proposalNumber) {
@@ -41,7 +37,6 @@ function ProposalDetails() {
     setProposal(foundProposal);
   }, [proposals, params.proposalNumber]);
 
-  const usulProposal = proposal as UsulProposal;
   return (
     <Box>
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
@@ -63,52 +58,10 @@ function ProposalDetails() {
           emptyText={t('noProposal')}
           m="2rem 0 0 0"
         />
+      ) : usulProposal.govTokenAddress ? (
+        <UsulProposalDetails proposal={proposal} />
       ) : (
-        <Grid
-          gap={4}
-          templateColumns="repeat(3, 1fr)"
-        >
-          <GridItem colSpan={2}>
-            <>
-              <ContentBox bg="black.900-semi-transparent">
-                <Flex
-                  alignItems="center"
-                  flexWrap="wrap"
-                >
-                  <Flex
-                    gap={4}
-                    alignItems="center"
-                  >
-                    <ProposalStateBox state={proposal.state} />
-                    {usulProposal.deadline && <ProposalTime deadline={usulProposal.deadline} />}
-                  </Flex>
-                  <Box
-                    w="full"
-                    mt={4}
-                  >
-                    <ActivityDescription activity={proposal} />
-                    <ProposalExecutableCode proposal={proposal} />
-                  </Box>
-                </Flex>
-                {usulProposal.govTokenAddress && (
-                  <Box mt={4}>
-                    <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
-                  </Box>
-                )}
-              </ContentBox>
-              {usulProposal.govTokenAddress && <ProposalVotes proposal={usulProposal} />}
-            </>
-          </GridItem>
-          {usulProposal.govTokenAddress && (
-            <GridItem colSpan={1}>
-              <ProposalSummary proposal={usulProposal} />
-              <ProposalAction
-                proposal={proposal}
-                expandedView
-              />
-            </GridItem>
-          )}
-        </Grid>
+        <SafeTxDetails proposal={proposal} />
       )}
     </Box>
   );

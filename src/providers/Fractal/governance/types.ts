@@ -11,6 +11,7 @@ import {
 } from '@gnosis.pm/safe-service-client';
 import { BigNumber } from 'ethers';
 import { DecodedTransaction, MetaTransaction } from '../../../types';
+import { DataDecoded } from '../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -114,7 +115,6 @@ export interface UsulProposal extends GovernanceActivity {
   deadline: number;
   startBlock: BigNumber;
   userVote?: ProposalVote;
-  metaData?: ProposalMetaData;
 }
 
 export interface TreasuryActivity extends ActivityBase {
@@ -123,12 +123,18 @@ export interface TreasuryActivity extends ActivityBase {
   isDeposit: boolean;
 }
 
+export interface MultisigProposal extends GovernanceActivity {
+  confirmations: string[];
+  signersThreshold?: number;
+  multisigRejectedProposalNumber?: string;
+}
+
 export interface GovernanceActivity extends ActivityBase {
   state: TxProposalState;
   proposalNumber: string;
   targets: string[];
   txHashes: string[];
-  multisigRejectedProposalNumber?: string;
+  metaData?: ProposalMetaData;
 }
 export interface ActivityBase {
   eventDate: string;
@@ -137,7 +143,7 @@ export interface ActivityBase {
   transactionHash?: string | null;
 }
 
-export type Activity = TreasuryActivity | GovernanceActivity;
+export type Activity = TreasuryActivity | MultisigProposal | UsulProposal;
 
 export type ActivityTransactionType =
   | SafeMultisigTransactionWithTransfersResponse
@@ -182,4 +188,4 @@ export enum ProposalIsPassedError {
   PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
 }
 
-export type TxProposal = UsulProposal | GovernanceActivity;
+export type TxProposal = UsulProposal | MultisigProposal;

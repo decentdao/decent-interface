@@ -5,6 +5,7 @@ import {
   Activity,
   ActivityEventType,
   GovernanceActivity,
+  MultisigProposal,
   TreasuryActivity,
 } from '../../providers/Fractal/types';
 import { ActivityAddress } from './ActivityAddress';
@@ -43,7 +44,7 @@ function ActivityAddresses({ activity }: IActivityDescription) {
 
 function OnChainRejectionMessage({ activity }: IActivityDescription) {
   const { t } = useTranslation('dashboard');
-  const governanceActivity = activity as GovernanceActivity;
+  const governanceActivity = activity as MultisigProposal;
   if (!governanceActivity.multisigRejectedProposalNumber) {
     return null;
   }
