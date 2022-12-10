@@ -124,7 +124,7 @@ export function useParseSafeTxs(
         : TxProposalState.Pending;
 
       const confirmations = multiSigTransaction.confirmations
-        ? multiSigTransaction.confirmations.map(signedInfo => signedInfo.owner)
+        ? multiSigTransaction.confirmations
         : [];
 
       const metaData =
@@ -141,7 +141,7 @@ export function useParseSafeTxs(
         isDeposit,
         eventDate,
         eventType,
-        confirmations: confirmations,
+        confirmations,
         signersThreshold: multiSigTransaction.confirmationsRequired,
         multisigRejectedProposalNumber:
           isMultisigRejectionTx && !!noncePair

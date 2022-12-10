@@ -2,6 +2,8 @@ import { Box, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
+import { SafeTxDetails } from '../../components/Proposals/MultisigDetails';
+import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 
@@ -9,8 +11,6 @@ import LeftArrow from '../../components/ui/svg/LeftArrow';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
-import { SafeTxDetails } from './SafeTxDetails';
-import { UsulProposalDetails } from './UsulProposalDetails';
 
 function ProposalDetails() {
   const params = useParams();

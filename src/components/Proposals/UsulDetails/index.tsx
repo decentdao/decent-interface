@@ -1,11 +1,11 @@
 import { Grid, GridItem, Box } from '@chakra-ui/react';
-import { ProposalAction } from '../../components/Proposals/ProposalActions/ProposalAction';
-import ProposalSummary from '../../components/Proposals/ProposalSummary';
-import ProposalVotes from '../../components/Proposals/ProposalVotes';
-import ContentBox from '../../components/ui/ContentBox';
-import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
-import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
-import { ProposalInfo } from './ProposalInfo';
+import { ProposalAction } from '../../../components/Proposals/ProposalActions/ProposalAction';
+import ProposalSummary from '../../../components/Proposals/ProposalSummary';
+import ProposalVotes from '../../../components/Proposals/ProposalVotes';
+import ContentBox from '../../../components/ui/ContentBox';
+import ProposalCreatedBy from '../../../components/ui/proposal/ProposalCreatedBy';
+import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
+import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: TxProposal }) {
   const usulProposal = proposal as UsulProposal;

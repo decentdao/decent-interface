@@ -8,10 +8,10 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
+  SafeMultisigConfirmationResponse,
 } from '@gnosis.pm/safe-service-client';
 import { BigNumber } from 'ethers';
 import { DecodedTransaction, MetaTransaction } from '../../../types';
-import { DataDecoded } from '../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -83,6 +83,7 @@ export interface GovernanceContracts {
 }
 
 export enum TxProposalState {
+  Approved = 'ownerApproved',
   Active = 'stateActive',
   Canceled = 'stateCanceled',
   TimeLocked = 'stateTimeLocked',
@@ -124,7 +125,7 @@ export interface TreasuryActivity extends ActivityBase {
 }
 
 export interface MultisigProposal extends GovernanceActivity {
-  confirmations: string[];
+  confirmations: SafeMultisigConfirmationResponse[];
   signersThreshold?: number;
   multisigRejectedProposalNumber?: string;
 }

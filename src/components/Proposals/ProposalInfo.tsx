@@ -1,9 +1,9 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { ActivityDescription } from '../../components/Activity/ActivityDescription';
-import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
-import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
-import ProposalTime from '../../components/ui/proposal/ProposalTime';
 import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
+import { ActivityDescription } from '../Activity/ActivityDescription';
+import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
+import ProposalStateBox from '../ui/proposal/ProposalStateBox';
+import ProposalTime from '../ui/proposal/ProposalTime';
 
 export function ProposalInfo({ proposal }: { proposal: TxProposal }) {
   const usulProposal = proposal as UsulProposal;
