@@ -1,8 +1,8 @@
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { createAccountSubstring } from '../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
+import { ActivityAddress } from '../../Activity/ActivityAddress';
 import ContentBox from '../../ui/ContentBox';
 import { Badge } from '../../ui/badges/Badge';
 
@@ -14,7 +14,7 @@ function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigPr
       marginTop={4}
       justifyContent="space-between"
     >
-      <Text>{createAccountSubstring(owner)}</Text>
+      <ActivityAddress address={owner} />
       <Box>
         {ownerConfirmed && (
           <Badge
