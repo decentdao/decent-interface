@@ -55,7 +55,7 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
 
 export default function ProposalExecutableCode({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation('proposal');
-  if (proposal.metaData) {
+  if (!proposal.metaData) {
     return null;
   }
   return (
