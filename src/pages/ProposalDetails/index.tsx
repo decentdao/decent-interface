@@ -2,7 +2,7 @@ import { Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { ActivityDescriptionGovernance } from '../../components/Activity/ActivityDescriptionGovernance';
+import { ActivityDescription } from '../../components/Activity/ActivityDescription';
 import { ProposalAction } from '../../components/Proposals/ProposalActions/ProposalAction';
 import ProposalSummary from '../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../components/Proposals/ProposalVotes';
@@ -31,7 +31,9 @@ function ProposalDetails() {
       return;
     }
 
-    const foundProposal = proposals.find(p => p.proposalNumber === params.proposalNumber);
+    const foundProposal = proposals.find(p => {
+      return p.proposalNumber === params.proposalNumber;
+    });
     if (!foundProposal) {
       setProposal(null);
       return;
@@ -67,35 +69,35 @@ function ProposalDetails() {
           templateColumns="repeat(3, 1fr)"
         >
           <GridItem colSpan={2}>
-            {usulProposal.govTokenAddress && (
-              <>
-                <ContentBox bg="black.900-semi-transparent">
+            <>
+              <ContentBox bg="black.900-semi-transparent">
+                <Flex
+                  alignItems="center"
+                  flexWrap="wrap"
+                >
                   <Flex
+                    gap={4}
                     alignItems="center"
-                    flexWrap="wrap"
                   >
-                    <Flex
-                      gap={4}
-                      alignItems="center"
-                    >
-                      <ProposalStateBox state={proposal.state} />
-                      <ProposalTime deadline={usulProposal.deadline} />
-                    </Flex>
-                    <Box
-                      w="full"
-                      mt={4}
-                    >
-                      <ActivityDescriptionGovernance activity={proposal} />
-                      <ProposalExecutableCode proposal={proposal} />
-                    </Box>
+                    <ProposalStateBox state={proposal.state} />
+                    {usulProposal.deadline && <ProposalTime deadline={usulProposal.deadline} />}
                   </Flex>
+                  <Box
+                    w="full"
+                    mt={4}
+                  >
+                    <ActivityDescription activity={proposal} />
+                    <ProposalExecutableCode proposal={proposal} />
+                  </Box>
+                </Flex>
+                {usulProposal.govTokenAddress && (
                   <Box mt={4}>
                     <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
                   </Box>
-                </ContentBox>
-                <ProposalVotes proposal={usulProposal} />
-              </>
-            )}
+                )}
+              </ContentBox>
+              {usulProposal.govTokenAddress && <ProposalVotes proposal={usulProposal} />}
+            </>
           </GridItem>
           {usulProposal.govTokenAddress && (
             <GridItem colSpan={1}>
