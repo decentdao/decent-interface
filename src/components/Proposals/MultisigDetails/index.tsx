@@ -25,7 +25,7 @@ export function SafeTxDetails({ proposal }: { proposal: TxProposal }) {
       </GridItem>
       <GridItem colSpan={1}>
         <TxDetails proposal={txProposal} />
-        <TxActions />
+        <TxActions proposal={txProposal} />
       </GridItem>
     </Grid>
   );

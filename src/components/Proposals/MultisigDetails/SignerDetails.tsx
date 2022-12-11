@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Grid, GridItem, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
@@ -10,25 +10,30 @@ function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigPr
   const ownerConfirmed = proposal.confirmations.find(confirmInfo => confirmInfo.owner === owner);
 
   return (
-    <Flex
-      marginTop={4}
-      justifyContent="space-between"
+    <Grid
+      templateColumns="1fr auto 1fr"
+      my="0.75rem"
     >
-      <ActivityAddress address={owner} />
-      <Box>
+      <GridItem colSpan={1}>
+        <ActivityAddress address={owner} />
+      </GridItem>
+      <GridItem colSpan={1}>
         {ownerConfirmed && (
           <Badge
             labelKey={TxProposalState.Approved}
             size="sm"
           />
         )}
-      </Box>
-      <Box>
+      </GridItem>
+      <GridItem
+        colSpan={1}
+        placeSelf="end"
+      >
         {ownerConfirmed && (
           <Text>{format(new Date(ownerConfirmed.submissionDate), 'MMM dd yyyy hh:mm:ss')}</Text>
         )}
-      </Box>
-    </Flex>
+      </GridItem>
+    </Grid>
   );
 }
 
@@ -46,14 +51,16 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
       <Text textStyle="text-lg-mono-medium">Signers</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
+        <Box marginTop={4}>
+          {owners.map(owner => (
+            <OwnerInfoRow
+              key={owner}
+              owner={owner}
+              proposal={proposal}
+            />
+          ))}
+        </Box>
       </Box>
-      {owners.map(owner => (
-        <OwnerInfoRow
-          key={owner}
-          owner={owner}
-          proposal={proposal}
-        />
-      ))}
     </ContentBox>
   );
 }
