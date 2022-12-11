@@ -110,13 +110,8 @@ export function useParseSafeTxs(
           );
         });
 
-      const isPending =
-        multiSigTransaction.confirmations?.length !== multiSigTransaction.confirmationsRequired;
-
       const state = isRejected
         ? TxProposalState.Rejected
-        : isPending
-        ? TxProposalState.Pending
         : !multiSigTransaction.isExecuted
         ? TxProposalState.Active
         : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
