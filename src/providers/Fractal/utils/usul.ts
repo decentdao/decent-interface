@@ -182,7 +182,7 @@ export const parseDecodedData = (
         valueDecoded.forEach(value => {
           const decodedTransaction = {
             target: value.to,
-            function: value.dataDecoded!.method,
+            function: value.dataDecoded?.method,
             parameterTypes:
               !!value.dataDecoded && value.dataDecoded.parameters
                 ? value.dataDecoded.parameters.map(p => p.type)
@@ -207,7 +207,7 @@ export const parseDecodedData = (
   if (dataDecoded && isMultiSigTransaction) {
     const decodedTransaction = {
       target: multiSigTransaction.to,
-      function: dataDecoded!.method,
+      function: dataDecoded.method,
       parameterTypes: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
       parameterValues: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.value) : [],
     };
