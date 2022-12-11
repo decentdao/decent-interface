@@ -16,10 +16,17 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
   return (
     <Flex
       width="full"
+      textStyle="text-base-mono-regular"
+      color="grayscale.100"
       justifyContent="space-between"
     >
-      <Text>{paramKey}</Text>
-      <Text>{value}</Text>
+      <Text whiteSpace="nowrap">{paramKey}</Text>
+      <Text
+        textAlign="end"
+        maxWidth="70%"
+      >
+        {value}
+      </Text>
     </Flex>
   );
 }
