@@ -18,7 +18,9 @@ interface IActivityProposal {
 }
 
 function ActivityProposalNumber({ proposalNumber }: IActivityProposal) {
-  return <Text>#{createAccountSubstring(proposalNumber)}</Text>;
+  const displayText =
+    proposalNumber.length > 8 ? createAccountSubstring(proposalNumber) : proposalNumber;
+  return <Text>#{displayText}</Text>;
 }
 
 function ActivityAddresses({ activity }: IActivityDescription) {
