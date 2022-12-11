@@ -1,4 +1,4 @@
-import { SafeBalanceUsdResponse } from '@gnosis.pm/safe-service-client';
+import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import bigDecimal from 'js-big-decimal';
 

@@ -3,7 +3,7 @@ import {
   SafeCollectibleResponse,
   TransferListResponse,
   TransferResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { EthAddress } from '../../../types';
 import { ContractEvent } from '../../../types/contract';

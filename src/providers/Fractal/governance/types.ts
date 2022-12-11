@@ -5,11 +5,12 @@ import {
   VotesToken,
 } from '@fractal-framework/fractal-contracts';
 import {
+  SafeMultisigConfirmationResponse,
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
-  SafeMultisigConfirmationResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
+
 import { BigNumber } from 'ethers';
 import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';

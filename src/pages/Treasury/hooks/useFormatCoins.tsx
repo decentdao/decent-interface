@@ -1,4 +1,4 @@
-import { SafeBalanceUsdResponse } from '@gnosis.pm/safe-service-client';
+import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { formatCoin, formatUSD } from '../../../utils/numberFormats';
