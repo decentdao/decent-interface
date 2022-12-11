@@ -1,14 +1,11 @@
-import { ReactNode, useEffect, useMemo, useReducer } from 'react';
+import { ReactNode, useMemo, useReducer } from 'react';
 
 import {
-  TreasuryAction,
   gnosisInitialState,
   governanceInitialState,
   treasuryInitialState,
   connectedAccountInitialState,
-  GnosisAction,
 } from './constants';
-import { GovernanceAction } from './governance/actions';
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
