@@ -35,6 +35,7 @@
     "proposalTitle_one": "Proposal to execute {{count}} transaction on {{target}}.",
     "proposalTitle_other": "Proposal to execute {{count}} transactions on {{target}}.",
     "votesTitle": "Votes",
+    "signTitle": "Sign Transaction",
     "queueTitle": "Queue Transaction",
     "executeTitle": "Execute Transaction",
     "filterProposalsAllSelected": "All Proposals",
@@ -48,6 +49,10 @@
     "labelProposalQuorum": "Quorum",
     "labelProposalExecutionDelay": "Execution Delay",
     "labelProposalSigners": "Signers",
-    "support": "Support"
-
+    "support": "Support",
+    "signers": "Signers",
+    "txDetailsSigners": "Signers Required",
+    "created": "Created",
+    "transactionHash": "Transaction Hash",
+    "safeTXHash": "SafeTXHash"
 }

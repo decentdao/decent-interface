@@ -1,5 +1,6 @@
 import { Box, Divider, Grid, GridItem, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
 import { ActivityAddress } from '../../Activity/ActivityAddress';
@@ -43,12 +44,13 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
       safe: { owners },
     },
   } = useFractal();
+  const { t } = useTranslation('proposal');
   if (!owners) {
     return null;
   }
   return (
     <ContentBox bg="black.900-semi-transparent">
-      <Text textStyle="text-lg-mono-medium">Signers</Text>
+      <Text textStyle="text-lg-mono-medium">{t('signers')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <Box marginTop={4}>

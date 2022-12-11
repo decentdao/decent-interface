@@ -1,5 +1,6 @@
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 import { MultisigProposal } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
 import EtherscanDisplayNameLink from '../../ui/EtherscanDisplayNameLink';
@@ -30,27 +31,28 @@ export function InfoRow({
 }
 
 export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
+  const { t } = useTranslation('proposal');
   const signersRequired = `${proposal.confirmations.length}/${proposal.signersThreshold}`;
   return (
     <ContentBox bg="black.900-semi-transparent">
-      <Text textStyle="text-lg-mono-medium">Proposal Details</Text>
+      <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <InfoRow
-          property="Signers Required"
+          property={t('txDetailsSigners')}
           value={signersRequired}
         />
         <InfoRow
-          property="Created"
+          property={t('created')}
           value={format(new Date(proposal.eventDate), 'MMM dd yyyy hh:mm:ss')}
         />
         <InfoRow
-          property="Transaction Hash"
+          property={t('transactionHash')}
           value={proposal.transactionHash ? undefined : '-'}
           address={proposal.transactionHash}
         />
         <InfoRow
-          property="SafeTXHash"
+          property={t('safeTXHash')}
           address={proposal.proposalNumber}
         />
       </Box>

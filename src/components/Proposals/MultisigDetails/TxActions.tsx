@@ -24,7 +24,8 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const {
     state: { account, signerOrProvider, chainId },
   } = useWeb3Provider();
-  const { t } = useTranslation();
+  const { t } = useTranslation('proposal');
+
   const isOwner = safe.owners?.includes(account || '');
   const hasSigned = proposal.confirmations.find(confirm => confirm.owner === account);
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
@@ -93,15 +94,15 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   }
   const hasReachedThreshold = proposal.confirmations.length >= (safe.threshold || 0);
   const isExecutable = hasReachedThreshold && proposal.state === TxProposalState.Pending;
+  const pageTitle = isExecutable ? t('executeTitle') : t('signTitle');
 
   const buttonText = isExecutable ? t('execute') : t('approve');
   const buttonAction = isExecutable ? executeTransaction : confirmTransaction;
   const buttonIcon = isExecutable ? undefined : <Check boxSize="1.5rem" />;
   const isButtonActive = isOwner && (!hasSigned || hasReachedThreshold);
-
   return (
     <ContentBox bg="black.900-semi-transparent">
-      <Text textStyle="text-lg-mono-medium">Proposal Details</Text>
+      <Text textStyle="text-lg-mono-medium">{pageTitle}</Text>
       <Box marginTop={4}>
         <Button
           w="full"
