@@ -7,16 +7,15 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeMultisigTransactionResponse,
 } from '@safe-global/safe-service-client';
-
 import { format } from 'date-fns';
 import { BigNumber, Signer } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { Providers } from '../../Web3Data/types';
 import { strategyTxProposalStates } from '../governance/constants';
-import { Parameter, DataDecoded } from '../types';
-import { DEFAULT_DATE_FORMAT } from './../../../utils/numberFormats';
 import {
+  Parameter,
+  DataDecoded,
   ActivityEventType,
   ProposalIsPassedError,
   ProposalMetaData,
@@ -25,7 +24,8 @@ import {
   TxProposalState,
   UsulProposal,
   VOTE_CHOICES,
-} from './../governance/types';
+} from '../types';
+import { DEFAULT_DATE_FORMAT } from './../../../utils/numberFormats';
 
 export const getTxProposalState = async (
   usulContract: FractalUsul,
