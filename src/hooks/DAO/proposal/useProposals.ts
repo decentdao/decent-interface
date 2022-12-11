@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposalState } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
@@ -7,8 +7,8 @@ export default function useProposals({
   sortBy,
   filters,
 }: {
-  sortBy?: SortBy;
-  filters?: TxProposalState[];
+  sortBy: SortBy;
+  filters: TxProposalState[];
 }) {
   const {
     governance: {
@@ -16,32 +16,29 @@ export default function useProposals({
     },
   } = useFractal();
 
-  const getProposalsTotal = (state: TxProposalState) => {
-    if (txProposals.length) {
-      return txProposals.filter(proposal => proposal.state === state).length;
-    }
-  };
+  const getProposalsTotal = useCallback(
+    (state: TxProposalState) => {
+      if (txProposals.length) {
+        return txProposals.filter(proposal => proposal.state === state).length;
+      }
+    },
+    [txProposals]
+  );
 
   const sortedAndFilteredProposals = useMemo(() => {
-    if (txProposals && (sortBy || filters)) {
-      const sorted = [...txProposals].sort((a, b) => {
-        const dataA = new Date(a.eventDate).getTime();
-        const dataB = new Date(b.eventDate).getTime();
-        if (sortBy === SortBy.Oldest) {
-          return dataA - dataB;
-        }
-        return dataB - dataA;
-      }); // .reverse mutates original array - we have to create new one
-
-      let filtered = sorted;
-      if (filters) {
-        filtered = filtered.filter(proposal => filters.includes(proposal.state));
+    const sorted = [...txProposals].sort((a, b) => {
+      const dataA = new Date(a.eventDate).getTime();
+      const dataB = new Date(b.eventDate).getTime();
+      if (sortBy === SortBy.Oldest) {
+        return dataA - dataB;
       }
+      return dataB - dataA;
+    });
 
-      return filtered;
-    }
+    let filtered = sorted;
+    filtered = filtered.filter(proposal => filters.includes(proposal.state));
 
-    return txProposals;
+    return filtered;
   }, [sortBy, filters, txProposals]);
 
   return {

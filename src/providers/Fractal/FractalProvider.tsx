@@ -66,14 +66,6 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   });
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
 
-  useEffect(() => {
-    if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
-      gnosisDispatch({ type: GnosisAction.RESET });
-      governanceDispatch({ type: GovernanceAction.RESET });
-      treasuryDispatch({ type: TreasuryAction.RESET });
-    }
-  }, [governanceDispatch, treasuryDispatch, gnosis.safe.address, gnosis.isGnosisLoading]);
-
   const value = useMemo(
     () => ({
       gnosis,

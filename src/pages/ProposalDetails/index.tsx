@@ -8,26 +8,31 @@ import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 
 import LeftArrow from '../../components/ui/svg/LeftArrow';
-import useProposals from '../../hooks/DAO/proposal/useProposals';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 function ProposalDetails() {
   const params = useParams();
 
-  const { proposals } = useProposals({});
+  const {
+    governance: {
+      txProposalsInfo: { txProposals },
+    },
+  } = useFractal();
+
   const [proposal, setProposal] = useState<TxProposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 
   const usulProposal = proposal as UsulProposal;
 
   useEffect(() => {
-    if (!proposals || !params.proposalNumber) {
+    if (!txProposals || !params.proposalNumber) {
       setProposal(undefined);
       return;
     }
 
-    const foundProposal = proposals.find(p => {
+    const foundProposal = txProposals.find(p => {
       return p.proposalNumber === params.proposalNumber;
     });
     if (!foundProposal) {
@@ -35,7 +40,7 @@ function ProposalDetails() {
       return;
     }
     setProposal(foundProposal);
-  }, [proposals, params.proposalNumber]);
+  }, [txProposals, params.proposalNumber]);
 
   return (
     <Box>

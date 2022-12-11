@@ -26,7 +26,6 @@ export const useSafeMultisigTxs = ({
     if (!safeService || !safe.address || !type) {
       return;
     }
-
     if (!parsedActivities.length) {
       return;
     }
