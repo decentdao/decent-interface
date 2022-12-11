@@ -1,9 +1,9 @@
 import {
-  SafeMultisigTransactionWithTransfersResponse,
-  EthereumTxWithTransfersResponse,
   AllTransactionsListResponse,
   SafeInfoResponse,
-} from '@gnosis.pm/safe-service-client';
+  SafeMultisigTransactionWithTransfersResponse,
+  EthereumTxWithTransfersResponse,
+} from '@safe-global/safe-service-client';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
