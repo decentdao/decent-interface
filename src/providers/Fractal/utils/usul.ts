@@ -205,6 +205,15 @@ export const parseDecodedData = (
 
   const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;
   if (dataDecoded && isMultiSigTransaction) {
+    const decodedTransaction = {
+      target: multiSigTransaction.to,
+      function: dataDecoded!.method,
+      parameterTypes: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
+      parameterValues: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
+    };
+    eventTransactionMap.set(eventTransactionMap.size, {
+      ...decodedTransaction,
+    });
     parseTransactions(dataDecoded.parameters);
   }
   return Array.from(eventTransactionMap.values());
