@@ -24,10 +24,14 @@ export default function useProposals({
 
   const sortedAndFilteredProposals = useMemo(() => {
     if (txProposals && (sortBy || filters)) {
-      let sorted = txProposals; // They returned in oldest sorting from contract by default
-      if (sortBy === SortBy.Newest) {
-        sorted = [...txProposals].reverse(); // .reverse mutates original array - we have to create new one
-      }
+      const sorted = [...txProposals].sort((a, b) => {
+        const dataA = new Date(a.eventDate).getTime();
+        const dataB = new Date(b.eventDate).getTime();
+        if (sortBy === SortBy.Oldest) {
+          return dataA - dataB;
+        }
+        return dataB - dataA;
+      }); // .reverse mutates original array - we have to create new one
 
       let filtered = sorted;
       if (filters) {
