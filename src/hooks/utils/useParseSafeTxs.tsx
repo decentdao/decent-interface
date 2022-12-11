@@ -110,12 +110,17 @@ export function useParseSafeTxs(
           );
         });
 
+      const isQueued =
+        multiSigTransaction.confirmations?.length || 0 >= multiSigTransaction.confirmationsRequired;
+
       const state = isRejected
         ? TxProposalState.Rejected
-        : !multiSigTransaction.isExecuted
-        ? TxProposalState.Active
         : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
         ? TxProposalState.Executed
+        : isQueued
+        ? TxProposalState.Queued
+        : !multiSigTransaction.isExecuted
+        ? TxProposalState.Active
         : TxProposalState.Pending;
 
       const confirmations = multiSigTransaction.confirmations

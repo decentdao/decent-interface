@@ -18,6 +18,7 @@
     "stateUninitialized": "Uninitialized",
     "stateExecuted": "Executed",
     "stateFailed": "Failed",
+    "stateQueued": "Queued",
     "stateTimeLocked": "Time Locked",
     "showExecutableCode": "Show executable code",
     "noProposal": "No proposal found.",
@@ -54,5 +55,8 @@
     "txDetailsSigners": "Signers Required",
     "created": "Created",
     "transactionHash": "Transaction Hash",
-    "safeTXHash": "SafeTXHash"
+    "safeTXHash": "SafeTXHash",
+    "pendingSign": "Use wallet to sign transaction",
+    "failedSign": "Signing failed.",
+    "successSign": "Signing was successful"
 }

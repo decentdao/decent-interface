@@ -118,5 +118,5 @@ export function useGnosisApiServices(
     getGnosisSafeTransactions,
   ]);
 
-  return;
+  return { getGnosisSafeTransactions };
 }

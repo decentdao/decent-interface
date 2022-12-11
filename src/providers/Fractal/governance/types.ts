@@ -92,6 +92,7 @@ export enum TxProposalState {
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
   Pending = 'statePending',
+  Queued = 'stateQueued',
   Failed = 'stateFailed',
   Rejected = 'stateRejected',
 }

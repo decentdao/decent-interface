@@ -5,26 +5,27 @@ import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import {
-  buildSafeTransaction,
-  buildSignatureBytes,
-  SafeSignature,
-  safeSignTypedData,
-} from '../../../helpers';
+import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
+import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useTransaction } from '../../../providers/Web3Data/transactions';
 import ContentBox from '../../ui/ContentBox';
 
 export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const {
     gnosis: { safe, safeService },
+    actions: { getGnosisSafeTransactions },
   } = useFractal();
   const {
     state: { account, signerOrProvider, chainId },
   } = useWeb3Provider();
-  const { t } = useTranslation('proposal');
+  const { t } = useTranslation(['proposal', 'common', 'transaction']);
+
+  const [asyncRequest, asyncRequestPending] = useAsyncRequest();
+  const [contractCall, contractCallPending] = useTransaction();
 
   const isOwner = safe.owners?.includes(account || '');
   const hasSigned = proposal.confirmations.find(confirm => confirm.owner === account);
@@ -39,14 +40,22 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       const safeTx = buildSafeTransaction({
         ...multisigTx,
       });
-      const gnosisContract = await GnosisSafe__factory.connect(safe.address, signerOrProvider);
-      const signature: SafeSignature = await safeSignTypedData(
-        signerOrProvider as Signer & TypedDataSigner,
-        gnosisContract,
-        safeTx,
-        chainId
-      );
-      await safeService.confirmTransaction(proposal.proposalNumber, signature.data);
+
+      asyncRequest({
+        asyncFunc: () =>
+          (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
+            { verifyingContract: safe.address, chainId },
+            EIP712_SAFE_TX_TYPE,
+            safeTx
+          ),
+        failedMessage: t('failedSign'),
+        pendingMessage: t('pendingSign'),
+        successMessage: t('successSign'),
+        successCallback: async (signature: string) => {
+          await safeService.confirmTransaction(proposal.proposalNumber, signature);
+          setTimeout(() => Promise.resolve(getGnosisSafeTransactions()), 500);
+        },
+      });
     } catch (e) {
       logError(e, 'Error occured during transaction confirmation');
     }
@@ -72,18 +81,27 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
           data: confirmation.signature,
         }))
       );
-      await gnosisContract.execTransaction(
-        safeTx.to,
-        safeTx.value,
-        safeTx.data,
-        safeTx.operation,
-        safeTx.safeTxGas,
-        safeTx.baseGas,
-        safeTx.gasPrice,
-        safeTx.gasToken,
-        safeTx.refundReceiver,
-        signatures
-      );
+      contractCall({
+        contractFn: () =>
+          gnosisContract.execTransaction(
+            safeTx.to,
+            safeTx.value,
+            safeTx.data,
+            safeTx.operation,
+            safeTx.safeTxGas,
+            safeTx.baseGas,
+            safeTx.gasPrice,
+            safeTx.gasToken,
+            safeTx.refundReceiver,
+            signatures
+          ),
+        failedMessage: t('failedExecute', { ns: 'transaction' }),
+        pendingMessage: t('pendingExecute', { ns: 'transaction' }),
+        successMessage: t('successExecute', { ns: 'transaction' }),
+        successCallback: async () => {
+          setTimeout(() => Promise.resolve(getGnosisSafeTransactions()), 1000);
+        },
+      });
     } catch (e) {
       logError(e, 'Error occured during transaction execution');
     }
@@ -93,13 +111,16 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     return null;
   }
   const hasReachedThreshold = proposal.confirmations.length >= (safe.threshold || 0);
-  const isExecutable = hasReachedThreshold && proposal.state === TxProposalState.Pending;
+  const isExecutable =
+    hasReachedThreshold && hasSigned && proposal.state === TxProposalState.Queued;
   const pageTitle = isExecutable ? t('executeTitle') : t('signTitle');
 
-  const buttonText = isExecutable ? t('execute') : t('approve');
+  const buttonText = isExecutable ? t('execute', { ns: 'common' }) : t('approve', { ns: 'common' });
   const buttonAction = isExecutable ? executeTransaction : confirmTransaction;
   const buttonIcon = isExecutable ? undefined : <Check boxSize="1.5rem" />;
-  const isButtonActive = isOwner && (!hasSigned || hasReachedThreshold);
+  const isPending = asyncRequestPending || contractCallPending;
+  const isButtonActive = isOwner && !isPending;
+
   return (
     <ContentBox bg="black.900-semi-transparent">
       <Text textStyle="text-lg-mono-medium">{pageTitle}</Text>
