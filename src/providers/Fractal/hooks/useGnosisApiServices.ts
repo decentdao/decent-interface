@@ -15,7 +15,7 @@ import { GnosisActions, IGnosis, TreasuryActions } from '../types';
  * @returns
  */
 export function useGnosisApiServices(
-  { safe: { address }, safeService }: IGnosis,
+  { safe: { address }, safeService, providedSafeAddress, isGnosisLoading }: IGnosis,
   treasuryDispatch: React.Dispatch<TreasuryActions>,
   gnosisDispatch: React.Dispatch<GnosisActions>
 ) {
@@ -40,7 +40,6 @@ export function useGnosisApiServices(
       process.env.REACT_APP_LOCAL_CHAIN_ID === chainId.toString()
         ? 'goerli'
         : CHAIN_DATA_LIST[chainId].network;
-
     gnosisDispatch({
       type: GnosisAction.SET_SAFE_SERVICE_CLIENT,
       payload: new SafeServiceClient({
@@ -105,6 +104,18 @@ export function useGnosisApiServices(
       logError(e);
     }
   }, [address, safeService, gnosisDispatch]);
+
+  useEffect(() => {
+    if (!providedSafeAddress || !safeService || !isGnosisLoading) {
+      return;
+    }
+    (async () => {
+      gnosisDispatch({
+        type: GnosisAction.SET_SAFE,
+        payload: await safeService.getSafeInfo(providedSafeAddress),
+      });
+    })();
+  }, [providedSafeAddress, safeService, gnosisDispatch, isGnosisLoading]);
 
   useEffect(() => {
     getGnosisSafeFungibleAssets();

@@ -23,6 +23,7 @@ export interface IFractalContext {
 }
 
 export interface IGnosis {
+  providedSafeAddress?: string;
   daoName: string;
   safeService?: SafeServiceClient;
   safe: Partial<SafeInfoResponse>;

@@ -6,6 +6,7 @@ import {
   governanceInitialState,
   treasuryInitialState,
   connectedAccountInitialState,
+  GnosisAction,
 } from './constants';
 import { GovernanceAction } from './governance/actions';
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
@@ -67,6 +68,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
+      gnosisDispatch({ type: GnosisAction.RESET });
       governanceDispatch({ type: GovernanceAction.RESET });
       treasuryDispatch({ type: TreasuryAction.RESET });
     }
