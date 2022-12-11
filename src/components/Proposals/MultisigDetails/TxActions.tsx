@@ -26,11 +26,8 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
-
-  const isOwner = safe.owners?.includes(account || '');
-  const hasSigned = proposal.confirmations.find(confirm => confirm.owner === account);
-  const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
   const isExecuted = proposal.state === TxProposalState.Executed;
+  const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
   const confirmTransaction = async () => {
     try {
@@ -110,15 +107,20 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (isExecuted) {
     return null;
   }
+
+  const hasSigned = proposal.confirmations.find(confirm => confirm.owner === account);
   const hasReachedThreshold = proposal.confirmations.length >= (safe.threshold || 0);
+
+  const isOwner = safe.owners?.includes(account || '');
+  const isPending = asyncRequestPending || contractCallPending;
   const isExecutable =
     hasReachedThreshold && hasSigned && proposal.state === TxProposalState.Queued;
+
   const pageTitle = isExecutable ? t('executeTitle') : t('signTitle');
 
   const buttonText = isExecutable ? t('execute', { ns: 'common' }) : t('approve', { ns: 'common' });
   const buttonAction = isExecutable ? executeTransaction : confirmTransaction;
   const buttonIcon = isExecutable ? undefined : <Check boxSize="1.5rem" />;
-  const isPending = asyncRequestPending || contractCallPending;
   const isButtonActive = isOwner && !isPending;
 
   return (
