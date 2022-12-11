@@ -145,6 +145,7 @@ export function useParseSafeTxs(
         proposalNumber: eventSafeTxHash,
         targets: [transaction.to],
         txHashes,
+        transactionHash: multiSigTransaction.transactionHash,
         metaData,
         state,
       };
