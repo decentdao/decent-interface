@@ -15,6 +15,7 @@ import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisGovernance } from './hooks/useGnosisGovernance';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
+import { useGnosisVeto } from './hooks/useGnosisVeto';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
 import { governanceReducer, initializeGovernanceState } from './reducers/governance';
@@ -60,6 +61,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
+  useGnosisVeto(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
   useEffect(() => {
     if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
       governanceDispatch({ type: GovernanceAction.RESET });
