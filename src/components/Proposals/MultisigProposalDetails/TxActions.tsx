@@ -60,12 +60,13 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const executeTransaction = async () => {
     try {
-      if (!safeService || !signerOrProvider || !multisigTx || !safe.address) {
-        return;
-      }
-
-      if (!multisigTx.confirmations) {
-        console.log("this shouldn't ever be the case");
+      if (
+        !safeService ||
+        !signerOrProvider ||
+        !multisigTx ||
+        !safe.address ||
+        !multisigTx.confirmations
+      ) {
         return;
       }
       const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
