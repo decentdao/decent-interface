@@ -7,7 +7,7 @@ import { SignerDetails } from './SignerDetails';
 import { TxActions } from './TxActions';
 import { TxDetails } from './TxDetails';
 
-export function SafeTxDetails({ proposal }: { proposal: TxProposal }) {
+export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) {
   const txProposal = proposal as MultisigProposal;
   return (
     <Grid

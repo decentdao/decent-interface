@@ -2,7 +2,7 @@ import { Box, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { SafeTxDetails } from '../../components/Proposals/MultisigDetails';
+import { MultisigProposalDetails } from '../../components/Proposals/MultisigProposalDetails';
 import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
@@ -61,7 +61,7 @@ function ProposalDetails() {
       ) : usulProposal.govTokenAddress ? (
         <UsulProposalDetails proposal={proposal} />
       ) : (
-        <SafeTxDetails proposal={proposal} />
+        <MultisigProposalDetails proposal={proposal} />
       )}
     </Box>
   );
