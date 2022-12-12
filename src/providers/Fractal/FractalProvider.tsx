@@ -1,5 +1,4 @@
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
-
 import {
   TreasuryAction,
   gnosisInitialState,
@@ -16,10 +15,10 @@ import useDAOName from './hooks/useDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
+import useNodes from './hooks/useNodes';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
 import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
-
 /**
  * Uses Context API to provider DAO information to app
  */
@@ -60,6 +59,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     accountDispatch,
   });
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
+  useNodes({ gnosis, gnosisDispatch });
 
   useEffect(() => {
     if (!gnosis.safe.address && !gnosis.isGnosisLoading) {

@@ -78,6 +78,7 @@ export function OptionMenu({
             as={showOptionSelected ? Box : Text}
             key={option.optionKey}
             onClick={option.onClick}
+            cursor="pointer"
             textStyle="text-base-mono-medium"
             color="grayscale.100"
             paddingStart="0rem"
