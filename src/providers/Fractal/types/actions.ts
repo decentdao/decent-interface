@@ -1,10 +1,10 @@
 import SafeServiceClient, {
+  SafeInfoResponse,
   AllTransactionsListResponse,
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
-  SafeInfoResponse,
   TransferListResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
 import { IGnosisModuleData } from '../governance/types';
 import { IFavorites, IAudit } from './state';

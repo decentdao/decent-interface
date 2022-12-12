@@ -1,7 +1,7 @@
 import SafeServiceClient, {
-  AllTransactionsListResponse,
   SafeInfoResponse,
-} from '@gnosis.pm/safe-service-client';
+  AllTransactionsListResponse,
+} from '@safe-global/safe-service-client';
 import { GovernanceActions } from '../governance/actions';
 import { IGovernance, IGnosisModuleData } from '../governance/types';
 import { GnosisActions, TreasuryActions } from './actions';

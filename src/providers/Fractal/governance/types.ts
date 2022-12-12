@@ -8,7 +8,7 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';

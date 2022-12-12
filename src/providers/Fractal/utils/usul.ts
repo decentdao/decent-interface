@@ -6,7 +6,7 @@ import {
 import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeMultisigTransactionResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { format } from 'date-fns';
 import { BigNumber, Signer } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';

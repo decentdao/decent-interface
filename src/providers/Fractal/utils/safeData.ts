@@ -1,4 +1,4 @@
-import { TransferWithTokenInfoResponse } from '@gnosis.pm/safe-service-client';
+import { TransferWithTokenInfoResponse } from '@safe-global/safe-service-client';
 import { constants, BigNumber } from 'ethers';
 import { AssetTotals, GnosisTransferType } from '../types';
 
