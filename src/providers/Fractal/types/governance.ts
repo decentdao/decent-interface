@@ -5,6 +5,7 @@ import {
   VetoGuard,
   VetoMultisigVoting,
 } from '@fractal-framework/fractal-contracts';
+import { BigNumber } from 'ethers';
 import { Usul } from '../../../assets/typechain-types/usul';
 import { IGoveranceTokenData } from '../hooks/useGovernanceTokenData';
 
@@ -47,6 +48,13 @@ export interface IGnosisModuleData {
 export interface IGnosisVetoData {
   vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
+  freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
+  freezeProposalCreatedBlock: BigNumber; // Block number the freeze proposal was created at
+  freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
+  freezeProposalBlockDuration: BigNumber; // Number of blocks a freeze proposal has to succeed
+  freezeBlockDuration: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  userHasFreezeVoted: boolean;
+  isFrozen: boolean;
 }
 
 export type TrustedAddress = { address: string; error: boolean };
