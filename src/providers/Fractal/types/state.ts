@@ -3,7 +3,7 @@ import SafeServiceClient, {
   SafeInfoResponse,
 } from '@gnosis.pm/safe-service-client';
 import { GnosisActions, GovernanceActions, TreasuryActions } from './actions';
-import { IGnosisModuleData, IGovernance } from './governance';
+import { IGnosisModuleData, IGnosisVetoData, IGovernance } from './governance';
 import { ITreasury } from './treasury';
 
 export interface IFractalContext {
@@ -18,11 +18,16 @@ export interface IFractalContext {
   };
 }
 
+export type SafeInfoResponseWithGuard = SafeInfoResponse & {
+  guard?: string;
+};
+
 export interface IGnosis {
   daoName: string;
   safeService?: SafeServiceClient;
-  safe: Partial<SafeInfoResponse>;
+  safe: Partial<SafeInfoResponseWithGuard>;
   modules: IGnosisModuleData[];
+  guard: IGnosisVetoData;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
 }
