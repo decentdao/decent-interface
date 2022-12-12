@@ -16,6 +16,10 @@ export type NetworkConfig = {
     votesTokenMasterCopy: string;
     claimingFactory: string;
     claimingMasterCopy: string;
+    gnosisVetoGuardMasterCopy: string;
+    usulVetoGuardMasterCopy: string;
+    vetoMultisigVotingMasterCopy: string;
+    vetoERC20VotingMasterCopy: string;
   };
 };
 
@@ -33,6 +37,10 @@ export const defaultState = {
     votesTokenMasterCopy: '',
     claimingFactory: '',
     claimingMasterCopy: '',
+    gnosisVetoGuardMasterCopy: '',
+    usulVetoGuardMasterCopy: '',
+    vetoMultisigVotingMasterCopy: '',
+    vetoERC20VotingMasterCopy: '',
   },
 };
 
