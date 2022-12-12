@@ -5,6 +5,7 @@ import { ITreasury } from '../types/treasury';
 export const gnosisInitialState: IGnosis = {
   safeService: undefined,
   modules: [],
+  guard: { vetoGuardContract: undefined, vetoVotingContract: undefined },
   transactions: {
     count: 0,
     next: undefined,
