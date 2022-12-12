@@ -88,6 +88,15 @@ function ProposalVotes({
     governance: { governanceToken },
   } = useFractal();
   const { t } = useTranslation(['common', 'proposal']);
+  const totalVotesCasted = yes.add(no).add(abstain);
+
+  const getVotesPercentage = (voteTotal: BigNumber): number => {
+    if (totalVotesCasted.eq(0)) {
+      return 0;
+    }
+
+    return voteTotal.div(totalVotesCasted.div(100)).toNumber();
+  };
 
   if (!governanceToken || !governanceToken.totalSupply) {
     return (
@@ -97,9 +106,9 @@ function ProposalVotes({
     );
   }
 
-  const yesVotesPercentage = yes.div(governanceToken.totalSupply).mul(100).toNumber();
-  const noVotesPercentage = no.div(governanceToken.totalSupply).mul(100).toNumber();
-  const abstainVotesPercentage = abstain.div(governanceToken.totalSupply).mul(100).toNumber();
+  const yesVotesPercentage = getVotesPercentage(yes);
+  const noVotesPercentage = getVotesPercentage(no);
+  const abstainVotesPercentage = getVotesPercentage(abstain);
 
   return (
     <>
