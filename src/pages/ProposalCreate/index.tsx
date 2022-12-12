@@ -4,7 +4,6 @@ import {
   Grid,
   GridItem,
   VStack,
-  HStack,
   Divider,
   Alert,
   AlertTitle,
@@ -15,6 +14,7 @@ import { BigNumber, ethers } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import Transactions from '../../components/ProposalCreate/Transactions';
 import { logError } from '../../helpers/errorLogging';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
@@ -35,6 +35,7 @@ function ProposalCreate() {
   const {
     gnosis: { safe },
   } = useFractal();
+  const { t } = useTranslation(['proposal', 'common']);
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -132,8 +133,6 @@ function ProposalCreate() {
     return !canUserCreateProposal || !isValidProposal || pendingCreateTx;
   }, [pendingCreateTx, isValidProposal, canUserCreateProposal]);
 
-  const { t } = useTranslation(['proposal', 'common']);
-
   return (
     <Grid
       gap={4}
@@ -172,12 +171,6 @@ function ProposalCreate() {
             p="1rem"
             bg="black.900-semi-transparent"
           >
-            <Text
-              pb={4}
-              textStyle="text-lg-mono-medium"
-            >
-              {t('proposal')}
-            </Text>
             <form onSubmit={e => e.preventDefault()}>
               <Transactions
                 transactions={transactions}
@@ -222,23 +215,7 @@ function ProposalCreate() {
         </VStack>
       </GridItem>
       <GridItem area="details">
-        <Box
-          rounded="lg"
-          p="1rem"
-          bg="black.900-semi-transparent"
-        >
-          <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
-          <Divider my={3} />
-          <HStack justifyContent="space-between">
-            <Text
-              fontSize="sm"
-              variant="secondary"
-            >
-              TODO: Signers
-            </Text>
-            <Text variant="secondary">3/5</Text>
-          </HStack>
-        </Box>
+        <ProposalDetails />
       </GridItem>
     </Grid>
   );
