@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
+import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import { ActivityAddress } from '../../Activity/ActivityAddress';
 import ContentBox from '../../ui/ContentBox';
 import { Badge } from '../../ui/badges/Badge';
@@ -31,7 +32,7 @@ function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigPr
         placeSelf="end"
       >
         {ownerConfirmed && (
-          <Text>{format(new Date(ownerConfirmed.submissionDate), 'MMM dd yyyy hh:mm:ss')}</Text>
+          <Text>{format(new Date(ownerConfirmed.submissionDate), DEFAULT_DATE_TIME_FORMAT)}</Text>
         )}
       </GridItem>
     </Grid>

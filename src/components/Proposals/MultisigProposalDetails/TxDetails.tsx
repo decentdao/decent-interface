@@ -2,6 +2,7 @@ import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { MultisigProposal } from '../../../providers/Fractal/types';
+import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/ContentBox';
 import EtherscanDisplayNameLink from '../../ui/EtherscanDisplayNameLink';
 
@@ -44,7 +45,7 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         />
         <InfoRow
           property={t('created')}
-          value={format(new Date(proposal.eventDate), 'MMM dd yyyy hh:mm:ss')}
+          value={format(new Date(proposal.eventDate), DEFAULT_DATE_TIME_FORMAT)}
         />
         <InfoRow
           property={t('transactionHash')}
