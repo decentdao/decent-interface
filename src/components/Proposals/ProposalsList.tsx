@@ -50,6 +50,7 @@ export default function ProposalsList() {
     <Box>
       <Flex gap={6}>
         <OptionMenu
+          gutter={16}
           trigger={
             <Box>
               {filterTitle} <ArrowDown />

@@ -43,5 +43,10 @@
     "transaction": "Transaction",
     "proposal": "Proposal",
     "transactionExecutionAlertMessage": "Transactions execute in the order they are added.",
+    "labelProposalVotingPeriod": "Voting Period",
+    "labelProposalQuorum": "Quorum",
+    "labelProposalExecutionDelay": "Execution Delay",
+    "labelProposalSigners": "Signers",
     "support": "Support"
+
 }
