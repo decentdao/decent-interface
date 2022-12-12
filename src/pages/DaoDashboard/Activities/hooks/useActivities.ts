@@ -134,7 +134,7 @@ export const useActivities = (sortBy: SortBy) => {
           eventType: ActivityEventType.Governance,
           proposalNumber: usulProposal.proposalNumber,
           state: proposal.state,
-          eventTransactionsCount: usulProposal.txHashes.length,
+          eventTransactionsCount: usulProposal.metaData?.transactions?.length,
         };
         return activity;
       });
