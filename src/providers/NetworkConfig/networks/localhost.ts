@@ -15,5 +15,9 @@ export const localhostConfig: NetworkConfig = {
     votesTokenMasterCopy: '0x0697DCa73151da93D18CDdF5DB52f9A8363c9Ba9',
     claimingFactory: '0x4B9EB3B2c649dA44B71aD3960BB2062dCC7AA955',
     claimingMasterCopy: '0x15b099e0Ad85c0d10efba09c05C9e8dB1cDa61a8',
+    gnosisVetoGuardMasterCopy: '0x7d817caD2eC343C2aEa5FfEa1bEBaCB0A71165c6',
+    usulVetoGuardMasterCopy: '0xF28c885256f35e342adBDA195db2A5366A79eA9f', // todo: this needs to change
+    vetoMultisigVotingMasterCopy: '0xaf593302eAd44C054901d32e03Bf39Ec14a8ef06',
+    vetoERC20VotingMasterCopy: '0xEAA8B09e64b3cdAF342976e4543e999cA9903cDE',
   },
 };
