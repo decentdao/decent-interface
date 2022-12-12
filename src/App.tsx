@@ -51,6 +51,7 @@ function App() {
         position="fixed"
         w="4.25rem"
         minHeight="100vh"
+        zIndex="popover"
       >
         <Sidebar />
       </GridItem>
@@ -79,29 +80,6 @@ function App() {
         >
           <FractalRoutes />
         </Container>
-      </GridItem>
-      <GridItem area={'header'}>
-        <Box
-          as="header"
-          bg="chocolate.900"
-          h="4rem"
-          position="fixed"
-          w="calc(100% - 4.25rem)"
-        >
-          <Header />
-        </Box>
-      </GridItem>
-      <GridItem
-        area={'nav'}
-        display="flex"
-        flexDirection="column"
-        flexGrow="1"
-        bg="chocolate.900"
-        position="fixed"
-        w="4.25rem"
-        minHeight="100vh"
-      >
-        <Sidebar />
       </GridItem>
     </Grid>
   );
