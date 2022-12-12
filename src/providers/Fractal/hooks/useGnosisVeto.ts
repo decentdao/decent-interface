@@ -54,78 +54,59 @@ export function useGnosisVeto(
     };
 
     (async () => {
-      const guardMasterCopyAddress = await getMasterCopyAddress(guardAddress);
-
       let guard: IGnosisVetoData;
+      let vetoGuardContract;
 
-      if (guardMasterCopyAddress === gnosisVetoGuardMasterCopyContract.address) {
-        const vetoGuardContract = VetoGuard__factory.connect(guardAddress, signerOrProvider);
-        const votingAddress = await vetoGuardContract.vetoVoting();
-        const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
-        const vetoVotingType =
-          votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.address
-            ? VetoMultisigVoting__factory
-            : VetoERC20Voting__factory;
-        const vetoVotingContract = vetoVotingType.connect(votingAddress, signerOrProvider);
-        guard = {
-          vetoGuardContract: vetoGuardContract,
-          vetoVotingContract: vetoVotingContract,
-          freezeVotesThreshold: await vetoVotingContract.freezeVotesThreshold(),
-          freezeProposalCreatedBlock: await vetoVotingContract.freezeProposalCreatedBlock(),
-          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
-          freezeProposalBlockDuration: await vetoVotingContract.freezeProposalBlockDuration(),
-          freezeBlockDuration: await vetoVotingContract.freezeBlockDuration(),
-          userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
-            account,
-            await vetoVotingContract.freezeProposalCreatedBlock()
-          ),
-          isFrozen: await vetoVotingContract.isFrozen(),
-        };
-      } else if (guardAddress === ethers.constants.AddressZero) {
+      if (
+        guardAddress !== ethers.constants.AddressZero &&
+        (await getMasterCopyAddress(guardAddress)) === gnosisVetoGuardMasterCopyContract.address
+      ) {
+        vetoGuardContract = VetoGuard__factory.connect(guardAddress, signerOrProvider);
+      } else {
         const usulModule = modules?.find(module => module.moduleType === GnosisModuleType.USUL);
-        if (!usulModule || !usulModule.moduleContract) {
-          return;
+        if (
+          !usulModule ||
+          !usulModule.moduleContract ||
+          (await usulModule.moduleContract.getGuard()) === ethers.constants.AddressZero
+        ) {
+          return (guard = {
+            // todo: should this be returning?
+            vetoGuardContract: undefined,
+            vetoVotingContract: undefined,
+            freezeVotesThreshold: BigNumber.from(0),
+            freezeProposalCreatedBlock: BigNumber.from(0),
+            freezeProposalVoteCount: BigNumber.from(0),
+            freezeProposalBlockDuration: BigNumber.from(0),
+            freezeBlockDuration: BigNumber.from(0),
+            userHasFreezeVoted: false,
+            isFrozen: false,
+          });
         }
         const usulGuardAddress = await usulModule.moduleContract.getGuard();
-        const vetoGuardContract = UsulVetoGuard__factory.connect(
-          usulGuardAddress,
-          signerOrProvider
-        );
-        const votingAddress = await vetoGuardContract.vetoVoting();
-        const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
-        const vetoVotingType =
-          votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.address
-            ? VetoMultisigVoting__factory
-            : VetoERC20Voting__factory;
-        const vetoVotingContract = vetoVotingType.connect(votingAddress, signerOrProvider);
-
-        guard = {
-          vetoGuardContract: vetoGuardContract,
-          vetoVotingContract: vetoVotingContract,
-          freezeVotesThreshold: await vetoVotingContract.freezeVotesThreshold(),
-          freezeProposalCreatedBlock: await vetoVotingContract.freezeProposalCreatedBlock(),
-          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
-          freezeProposalBlockDuration: await vetoVotingContract.freezeProposalBlockDuration(),
-          freezeBlockDuration: await vetoVotingContract.freezeBlockDuration(),
-          userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
-            account,
-            await vetoVotingContract.freezeProposalCreatedBlock()
-          ),
-          isFrozen: await vetoVotingContract.isFrozen(),
-        };
-      } else {
-        guard = {
-          vetoGuardContract: undefined,
-          vetoVotingContract: undefined,
-          freezeVotesThreshold: BigNumber.from(0),
-          freezeProposalCreatedBlock: BigNumber.from(0),
-          freezeProposalVoteCount: BigNumber.from(0),
-          freezeProposalBlockDuration: BigNumber.from(0),
-          freezeBlockDuration: BigNumber.from(0),
-          userHasFreezeVoted: false,
-          isFrozen: false,
-        };
+        vetoGuardContract = UsulVetoGuard__factory.connect(usulGuardAddress, signerOrProvider);
       }
+
+      const votingAddress = await vetoGuardContract.vetoVoting();
+      const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
+      const vetoVotingType =
+        votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.address
+          ? VetoMultisigVoting__factory
+          : VetoERC20Voting__factory;
+      const vetoVotingContract = vetoVotingType.connect(votingAddress, signerOrProvider);
+      guard = {
+        vetoGuardContract: vetoGuardContract,
+        vetoVotingContract: vetoVotingContract,
+        freezeVotesThreshold: await vetoVotingContract.freezeVotesThreshold(),
+        freezeProposalCreatedBlock: await vetoVotingContract.freezeProposalCreatedBlock(),
+        freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
+        freezeProposalBlockDuration: await vetoVotingContract.freezeProposalBlockDuration(),
+        freezeBlockDuration: await vetoVotingContract.freezeBlockDuration(),
+        userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
+          account,
+          await vetoVotingContract.freezeProposalCreatedBlock()
+        ),
+        isFrozen: await vetoVotingContract.isFrozen(),
+      };
 
       gnosisDispatch({
         type: GnosisAction.SET_GUARD,
