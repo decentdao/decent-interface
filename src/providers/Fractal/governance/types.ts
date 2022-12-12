@@ -108,7 +108,7 @@ export interface MultisigTransaction extends TxProposal {
 export interface TxProposal {
   state: TxProposalState;
   proposalNumber: string;
-  txHashes: string[];
+  txHashes?: string[];
   metaData?: ProposalMetaData;
 }
 

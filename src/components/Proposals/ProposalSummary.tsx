@@ -1,5 +1,6 @@
 import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -19,6 +20,13 @@ export default function ProposalSummary({
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
+  const getVotesPercentage = (voteTotal: BigNumber): number => {
+    if (!governanceToken || !governanceToken.totalSupply || governanceToken.totalSupply.eq(0)) {
+      return 0;
+    }
+
+    return voteTotal.div(governanceToken.totalSupply.div(100)).toNumber();
+  };
 
   if (!governanceToken || !governanceToken.totalSupply) {
     return (
@@ -28,12 +36,9 @@ export default function ProposalSummary({
     );
   }
 
-  const yesVotesPercentage = votesSummary.yes.div(governanceToken.totalSupply).mul(100).toNumber();
-  const noVotesPercentage = votesSummary.no.div(governanceToken.totalSupply).mul(100).toNumber();
-  const abstainVotesPercentage = votesSummary.abstain
-    .div(governanceToken.totalSupply)
-    .mul(100)
-    .toNumber();
+  const yesVotesPercentage = getVotesPercentage(votesSummary.yes);
+  const noVotesPercentage = getVotesPercentage(votesSummary.no);
+  const abstainVotesPercentage = getVotesPercentage(votesSummary.abstain);
   const quorum = votesSummary.quorum.div(governanceToken.totalSupply.div(100)).toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
