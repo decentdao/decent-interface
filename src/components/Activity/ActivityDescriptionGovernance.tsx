@@ -1,6 +1,5 @@
 import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import {
   Activity,
   ActivityEventType,
@@ -8,6 +7,7 @@ import {
   MultisigProposal,
   TreasuryActivity,
 } from '../../providers/Fractal/types';
+import { createProposalNumberSubstring } from '../../utils/string';
 import { ActivityAddress } from './ActivityAddress';
 
 interface IActivityDescription {
@@ -18,9 +18,7 @@ interface IActivityProposal {
 }
 
 function ActivityProposalNumber({ proposalNumber }: IActivityProposal) {
-  const displayText =
-    proposalNumber.length > 8 ? createAccountSubstring(proposalNumber) : proposalNumber;
-  return <Text>#{displayText}</Text>;
+  return <Text>{createProposalNumberSubstring(proposalNumber)}</Text>;
 }
 
 function ActivityAddresses({ activity }: IActivityDescription) {
@@ -53,7 +51,9 @@ function OnChainRejectionMessage({ activity }: IActivityDescription) {
   return (
     <Text>
       {t('proposalOnChainRejection', {
-        proposalNumber: createAccountSubstring(governanceActivity.multisigRejectedProposalNumber),
+        proposalNumber: createProposalNumberSubstring(
+          governanceActivity.multisigRejectedProposalNumber
+        ),
       })}
     </Text>
   );
