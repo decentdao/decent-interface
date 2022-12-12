@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useCallback, useRef, useState } from 'react';
+import { Id, toast } from 'react-toastify';
 import { logError } from '../../helpers/errorLogging';
 
 interface AsyncRequestParams {
@@ -13,6 +13,7 @@ interface AsyncRequestParams {
 }
 
 export const useAsyncRequest = () => {
+  const toastRef = useRef<Id>();
   const [pending, setPending] = useState(false);
   const asyncRequestFunc = useCallback(
     async ({
@@ -24,9 +25,8 @@ export const useAsyncRequest = () => {
       successCallback,
       completedCallback,
     }: AsyncRequestParams) => {
-      let toastId: React.ReactText;
       try {
-        toastId = toast(pendingMessage, {
+        toastRef.current = toast(pendingMessage, {
           autoClose: false,
           closeOnClick: false,
           draggable: false,
@@ -38,7 +38,7 @@ export const useAsyncRequest = () => {
         if (!!response) {
           toast(successMessage);
           if (successCallback) successCallback(response);
-          toast.dismiss(toastId);
+          toast.dismiss(toastRef.current);
         } else {
           toast.error(failedMessage);
           if (failedCallback) failedCallback();
@@ -46,7 +46,7 @@ export const useAsyncRequest = () => {
         if (completedCallback) completedCallback();
         setPending(false);
       } catch (e) {
-        toast.dismiss();
+        toast.dismiss(toastRef.current);
         logError(e);
         setPending(false);
       }
