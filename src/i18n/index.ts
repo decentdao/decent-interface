@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next';
 import COMMON_EN from './locales/en/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
 import DASHBOARD_EN from './locales/en/dashboard.json';
+import LANGUAGES_EN from './locales/en/languages.json';
 import MENU_EN from './locales/en/menu.json';
 import MODALS_EN from './locales/en/modals.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
@@ -32,7 +33,7 @@ import TREASURY_EN from './locales/en/treasury.json';
  * https://www.i18next.com/translation-function/interpolation
  */
 
-const resources = {
+export const supportedLanguages = {
   en: {
     common: COMMON_EN,
     daoCreate: DAOCREATE_EN,
@@ -43,6 +44,7 @@ const resources = {
     treasury: TREASURY_EN,
     sidebar: SIDEBAR_EN,
     modals: MODALS_EN,
+    languages: LANGUAGES_EN,
   },
 };
 
@@ -50,7 +52,7 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources: resources,
+    resources: supportedLanguages,
     fallbackLng: 'en',
     defaultNS: 'common',
     interpolation: {
