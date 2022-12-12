@@ -9,6 +9,7 @@ import {
   As,
   Checkbox,
   Divider,
+  MenuProps,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,7 +21,7 @@ export interface Option {
   isSelected?: boolean;
 }
 
-interface IOptionMenu {
+interface IOptionMenu extends Omit<MenuProps, 'children'> {
   trigger: ReactNode;
   titleKey?: string;
   options: Option[];
@@ -46,12 +47,13 @@ export function OptionMenu({
   buttonProps,
   children,
   closeOnSelect = true,
+  ...rest
 }: IOptionMenu) {
   const { t } = useTranslation(namespace);
   return (
     <Menu
       isLazy
-      gutter={16}
+      {...rest}
     >
       <MenuButton
         as={buttonAs}

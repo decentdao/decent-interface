@@ -36,6 +36,7 @@ export function LanguageSwitcher() {
 
   return (
     <OptionMenu
+      offset={[16, 8]}
       trigger={
         <Globe
           boxSize="1.5rem"
@@ -44,7 +45,7 @@ export function LanguageSwitcher() {
       }
       options={supported}
       namespace="languages"
-      showDividers={true}
+      showDividers
     />
   );
 }
