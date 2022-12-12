@@ -69,7 +69,11 @@ export default function useDAOController() {
 
   useEffect(() => {
     return () => {
-      gnosisDispatch({ type: GnosisAction.RESET });
+      if (!params.address) {
+        gnosisDispatch({ type: GnosisAction.RESET });
+        treasuryDispatch({ type: TreasuryAction.RESET });
+        governanceDispatch({ type: GovernanceAction.RESET });
+      }
     };
-  }, [gnosisDispatch]);
+  }, [params.address, gnosisDispatch, treasuryDispatch, governanceDispatch]);
 }
