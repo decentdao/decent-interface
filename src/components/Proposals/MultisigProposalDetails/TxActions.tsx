@@ -30,10 +30,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
   const confirmTransaction = async () => {
+    if (!safeService || !signerOrProvider || !multisigTx || !safe.address) {
+      return;
+    }
     try {
-      if (!safeService || !signerOrProvider || !multisigTx || !safe.address) {
-        return;
-      }
       const safeTx = buildSafeTransaction({
         ...multisigTx,
       });
