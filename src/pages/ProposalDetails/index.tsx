@@ -59,7 +59,7 @@ function ProposalDetails() {
           m="2rem 0 0 0"
         />
       ) : usulProposal.govTokenAddress ? (
-        <UsulProposalDetails proposal={proposal} />
+        <UsulProposalDetails proposal={usulProposal} />
       ) : (
         <MultisigProposalDetails proposal={proposal} />
       )}
