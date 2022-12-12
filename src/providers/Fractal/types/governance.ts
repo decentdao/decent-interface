@@ -1,4 +1,10 @@
-import { FractalModule } from '@fractal-framework/fractal-contracts';
+import {
+  FractalModule,
+  UsulVetoGuard,
+  VetoERC20Voting,
+  VetoGuard,
+  VetoMultisigVoting,
+} from '@fractal-framework/fractal-contracts';
 import { Usul } from '../../../assets/typechain-types/usul';
 import { IGoveranceTokenData } from '../hooks/useGovernanceTokenData';
 
@@ -36,6 +42,11 @@ export interface IGnosisModuleData {
   moduleContract: Usul | FractalModule | undefined;
   moduleAddress: string;
   moduleType: GnosisModuleType;
+}
+
+export interface IGnosisVetoData {
+  vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
+  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }
 
 export type TrustedAddress = { address: string; error: boolean };
