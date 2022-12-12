@@ -31,7 +31,12 @@ export function ActivityGovernance({ activity }: { activity: GovernanceActivity 
         <Button
           variant="secondary"
           onClick={() =>
-            navigate(DAO_ROUTES.proposal.relative(safe.address, activity.transactionHash))
+            navigate(
+              DAO_ROUTES.proposal.relative(
+                safe.address,
+                activity.proposalNumber || activity.transactionHash
+              )
+            )
           }
         >
           {t('view')}

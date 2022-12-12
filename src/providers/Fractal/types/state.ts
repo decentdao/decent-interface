@@ -26,7 +26,7 @@ export interface IGnosis {
   modules: IGnosisModuleData[];
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
-  parentDaoAddress?: string;
+  parentDAOAddress?: string;
 }
 export interface IConnectedAccount {
   favorites: IFavorites;

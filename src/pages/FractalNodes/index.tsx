@@ -9,7 +9,7 @@ import { NodeLines } from './NodeLines';
 
 export function FractalNodes() {
   const {
-    gnosis: { safe },
+    gnosis: { safe, parentDAOAddress },
   } = useFractal();
   const [isParentExpanded, setIsParentExpended] = useState(true);
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(false);
@@ -23,7 +23,6 @@ export function FractalNodes() {
   }
 
   // @todo replace these variables
-  const parentDAOAddress: string | undefined = undefined;
   const daoPermissionList: string[] = [];
 
   const parentExpansionToggle = () => {
