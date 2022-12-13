@@ -8,7 +8,7 @@ export function ActivityBox({ children }: { children?: ReactNode }) {
       in={true}
     >
       <Box
-        maxHeight="8.125rem"
+        maxHeight="fit-content"
         minHeight="6.25rem"
         bg="black.900-semi-transparent"
         p="1rem"
