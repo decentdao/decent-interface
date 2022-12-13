@@ -19,6 +19,7 @@ export enum BadgeLabels {
   STATE_EXECUTED = 'stateExecuted',
   STATE_REJECTED = 'stateRejected',
   STATE_FREEZE_INIT = 'stateFreezeInit',
+  STATE_FROZEN = 'stateFrozen',
   PARENT = 'parent',
   CHILD = 'child',
 }
@@ -30,6 +31,7 @@ const BADGE_MAPPING: BadgeType = {
   [BadgeLabels.STATE_EXECUTED]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_REJECTED]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_FREEZE_INIT]: { Icon: Shield, bg: 'blue.400', color: 'grayscale.black' },
+  [BadgeLabels.STATE_FROZEN]: { Icon: Shield, bg: 'blue.400', color: 'grayscale.black' },
   [BadgeLabels.PARENT]: { Icon: Tree, bg: 'chocolate.500', color: 'grayscale.100' },
   [BadgeLabels.CHILD]: { Icon: Tree, bg: 'chocolate.500', color: 'gold.500' },
 };
