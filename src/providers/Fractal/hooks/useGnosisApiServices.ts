@@ -28,7 +28,7 @@ export function useGnosisApiServices(
     state: { signerOrProvider },
   } = useWeb3Provider();
 
-  const { setMethodonInterval } = useUpdateTimer(address);
+  const { setMethodOnInterval } = useUpdateTimer(address);
 
   useEffect(() => {
     if (!account || !signerOrProvider) {
@@ -121,12 +121,12 @@ export function useGnosisApiServices(
   }, [providedSafeAddress, safeService, gnosisDispatch, isGnosisLoading]);
 
   useEffect(() => {
-    setMethodonInterval(getGnosisSafeFungibleAssets);
-    setMethodonInterval(getGnosisSafeNonFungibleAssets);
-    setMethodonInterval(getGnosisSafeTransfers);
-    setMethodonInterval(getGnosisSafeTransactions);
+    setMethodOnInterval(getGnosisSafeFungibleAssets);
+    setMethodOnInterval(getGnosisSafeNonFungibleAssets);
+    setMethodOnInterval(getGnosisSafeTransfers);
+    setMethodOnInterval(getGnosisSafeTransactions);
   }, [
-    setMethodonInterval,
+    setMethodOnInterval,
     getGnosisSafeFungibleAssets,
     getGnosisSafeNonFungibleAssets,
     getGnosisSafeTransfers,

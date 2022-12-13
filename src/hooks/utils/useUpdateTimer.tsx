@@ -4,7 +4,7 @@ export const useUpdateTimer = (safeAddress?: string) => {
   const [timers, setTimers] = useState<NodeJS.Timer[]>([]);
   const twentySeconds = 20000; // in milliseconds
 
-  const setMethodonInterval = useCallback(
+  const setMethodOnInterval = useCallback(
     (getMethod: () => Promise<void>, milliseconds: number = twentySeconds) => {
       Promise.resolve(getMethod());
       const intervalId = setInterval(() => {
@@ -19,5 +19,5 @@ export const useUpdateTimer = (safeAddress?: string) => {
       timers.forEach(timer => clearInterval(timer));
     }
   }, [safeAddress, timers]);
-  return { setMethodonInterval };
+  return { setMethodOnInterval };
 };
