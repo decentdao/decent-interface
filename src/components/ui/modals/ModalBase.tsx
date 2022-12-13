@@ -1,6 +1,7 @@
 import { Divider, Flex, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 interface ModuleBaseProps {
   title: string;
@@ -20,7 +21,7 @@ export function ModalBase(props: ModuleBaseProps) {
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
-      <ModalOverlay backgroundColor="black.900-semi-transparent" />
+      <ModalOverlay backgroundColor={BACKGROUND_SEMI_TRANSPARENT} />
       <ModalContent
         backgroundColor="black.900"
         padding="1.5rem"

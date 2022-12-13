@@ -1,45 +1,47 @@
-import { Flex, Box, Grid, GridItem, Button } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { ProposalAction } from '../../components/Proposals/ProposalActions/ProposalAction';
-import ProposalSummary from '../../components/Proposals/ProposalSummary';
-import ProposalVotes from '../../components/Proposals/ProposalVotes';
-import ContentBox from '../../components/ui/ContentBox';
+import { MultisigProposalDetails } from '../../components/Proposals/MultisigProposalDetails';
+import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
-import ProposalCreatedBy from '../../components/ui/proposal/ProposalCreatedBy';
-import ProposalExecutableCode from '../../components/ui/proposal/ProposalExecutableCode';
-import ProposalStateBox from '../../components/ui/proposal/ProposalStateBox';
-import ProposalTime from '../../components/ui/proposal/ProposalTime';
-import ProposalTitle from '../../components/ui/proposal/ProposalTitle';
+
 import LeftArrow from '../../components/ui/svg/LeftArrow';
-import useProposals from '../../hooks/DAO/proposal/useProposals';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 function ProposalDetails() {
   const params = useParams();
 
-  const { proposals } = useProposals({});
-  const [proposal, setProposal] = useState<TxProposal | UsulProposal | null>();
+  const {
+    governance: {
+      txProposalsInfo: { txProposals },
+    },
+  } = useFractal();
+
+  const [proposal, setProposal] = useState<TxProposal | null>();
   const { t } = useTranslation(['proposal', 'sidebar']);
 
+  const usulProposal = proposal as UsulProposal;
+
   useEffect(() => {
-    if (!proposals || !params.proposalNumber) {
+    if (!txProposals || !params.proposalNumber) {
       setProposal(undefined);
       return;
     }
 
-    const foundProposal = proposals.find(p => p.proposalNumber === params.proposalNumber);
+    const foundProposal = txProposals.find(p => {
+      return p.proposalNumber === params.proposalNumber;
+    });
     if (!foundProposal) {
       setProposal(null);
       return;
     }
     setProposal(foundProposal);
-  }, [proposals, params.proposalNumber]);
+  }, [txProposals, params.proposalNumber]);
 
-  const usulProposal = proposal as UsulProposal;
   return (
     <Box>
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
@@ -61,52 +63,10 @@ function ProposalDetails() {
           emptyText={t('noProposal')}
           m="2rem 0 0 0"
         />
+      ) : usulProposal.govTokenAddress ? (
+        <UsulProposalDetails proposal={usulProposal} />
       ) : (
-        <Grid
-          gap={4}
-          templateColumns="repeat(3, 1fr)"
-        >
-          <GridItem colSpan={2}>
-            {usulProposal.govTokenAddress && (
-              <>
-                <ContentBox bg="black.900-semi-transparent">
-                  <Flex
-                    alignItems="center"
-                    flexWrap="wrap"
-                  >
-                    <Flex
-                      gap={4}
-                      alignItems="center"
-                    >
-                      <ProposalStateBox state={proposal.state} />
-                      <ProposalTime deadline={usulProposal.deadline} />
-                    </Flex>
-                    <Box
-                      w="full"
-                      mt={4}
-                    >
-                      <ProposalTitle proposal={proposal} />
-                      <ProposalExecutableCode proposal={proposal} />
-                    </Box>
-                  </Flex>
-                  <Box mt={4}>
-                    <ProposalCreatedBy proposalProposer={usulProposal.proposer} />
-                  </Box>
-                </ContentBox>
-                <ProposalVotes proposal={usulProposal} />
-              </>
-            )}
-          </GridItem>
-          {usulProposal.govTokenAddress && (
-            <GridItem colSpan={1}>
-              <ProposalSummary proposal={usulProposal} />
-              <ProposalAction
-                proposal={proposal}
-                expandedView
-              />
-            </GridItem>
-          )}
-        </Grid>
+        <MultisigProposalDetails proposal={proposal} />
       )}
     </Box>
   );

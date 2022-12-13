@@ -45,8 +45,9 @@ export const initialState: CreatorState = {
     parentAllocationAmount: undefined,
   },
   govModule: {
-    quorum: BigNumber.from(4),
-    executionDelay: BigNumber.from(14400),
+
+    quorumPercentage: BigNumber.from(4),
+    executionDelay: BigNumber.from(86400),
     votingPeriod: BigNumber.from(604800),
   },
   vetoGuard: {

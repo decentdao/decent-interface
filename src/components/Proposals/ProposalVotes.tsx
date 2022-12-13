@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
@@ -88,6 +89,15 @@ function ProposalVotes({
     governance: { governanceToken },
   } = useFractal();
   const { t } = useTranslation(['common', 'proposal']);
+  const totalVotesCasted = yes.add(no).add(abstain);
+
+  const getVotesPercentage = (voteTotal: BigNumber): number => {
+    if (totalVotesCasted.eq(0)) {
+      return 0;
+    }
+
+    return voteTotal.div(totalVotesCasted.div(100)).toNumber();
+  };
 
   if (!governanceToken || !governanceToken.totalSupply) {
     return (
@@ -97,13 +107,13 @@ function ProposalVotes({
     );
   }
 
-  const yesVotesPercentage = yes.div(governanceToken.totalSupply).mul(100).toNumber();
-  const noVotesPercentage = no.div(governanceToken.totalSupply).mul(100).toNumber();
-  const abstainVotesPercentage = abstain.div(governanceToken.totalSupply).mul(100).toNumber();
+  const yesVotesPercentage = getVotesPercentage(yes);
+  const noVotesPercentage = getVotesPercentage(no);
+  const abstainVotesPercentage = getVotesPercentage(abstain);
 
   return (
     <>
-      <ContentBox bg="black.900-semi-transparent">
+      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
         <Grid
           templateColumns="repeat(5, 1fr)"
@@ -153,7 +163,7 @@ function ProposalVotes({
           </GridItem>
         </Grid>
       </ContentBox>
-      <ContentBox bg="black.900-semi-transparent">
+      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
         <Divider
           color="chocolate.700"

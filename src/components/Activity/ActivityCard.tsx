@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Calendar } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
-import { ActivityBox } from '../../../components/ui/containers/ActivityBox';
+import { ActivityBox } from '../ui/containers/ActivityBox';
 
 interface IActivityCard {
   eventDate: string;

@@ -1,5 +1,4 @@
 export * from './contract';
-export * from './activity';
 export * from './contractMatch';
 export * from './execute';
 export * from './tokenAllocation';

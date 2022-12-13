@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TxProposal } from '../../../providers/Fractal/types';
+import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import { MetaTransaction } from '../../../types';
@@ -17,11 +17,12 @@ export default function useExecuteProposal() {
 
   const executeProposal = useCallback(
     (proposal: TxProposal) => {
+      const usulProposal = proposal as UsulProposal;
       if (
         !usulContract ||
         !signerOrProvider ||
-        !proposal.metaData ||
-        !proposal.metaData.transactions
+        !usulProposal.metaData ||
+        !usulProposal.metaData.transactions
       ) {
         return;
       }
@@ -31,7 +32,7 @@ export default function useExecuteProposal() {
       const data: string[] = [];
       const operations: number[] = [];
 
-      proposal.metaData.transactions.forEach(tx => {
+      usulProposal.metaData.transactions.forEach(tx => {
         targets.push(tx.to);
         values.push(tx.value);
         data.push(tx.data);

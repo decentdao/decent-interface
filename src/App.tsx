@@ -51,6 +51,7 @@ function App() {
         position="fixed"
         w="4.25rem"
         minHeight="100vh"
+        zIndex="popover"
       >
         <Sidebar />
       </GridItem>
@@ -66,14 +67,16 @@ function App() {
           <Header />
         </Box>
       </GridItem>
-      <GridItem area={'main'}>
+      <GridItem
+        area={'main'}
+        mx="1.5rem"
+      >
         <Container
           display="grid"
           maxWidth="container.xl"
           mt={6}
           px="0"
           paddingBottom="2rem"
-          mx={[6, null, null, null, null, 'auto']}
         >
           <FractalRoutes />
         </Container>

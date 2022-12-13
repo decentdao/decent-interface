@@ -1,4 +1,4 @@
-import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@gnosis.pm/safe-service-client';
+import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { BigNumberInput } from './../../provider/types/index';
 
 export type TokenToFund = {
