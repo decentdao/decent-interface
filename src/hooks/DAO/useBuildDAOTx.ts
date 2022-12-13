@@ -206,7 +206,7 @@ const useBuildDAOTx = () => {
           '0000000000000000000000000000000000000000000000000000000000000000' +
           '01';
 
-        const safeContract = await GnosisSafe__factory.connect(
+        const safeContract = GnosisSafe__factory.connect(
           predictedGnosisSafeAddress,
           signerOrProvider
         );
@@ -574,15 +574,12 @@ const useBuildDAOTx = () => {
           '0000000000000000000000000000000000000000000000000000000000000000' +
           '01';
 
-        const safeContract = await GnosisSafe__factory.connect(
+        const safeContract = GnosisSafe__factory.connect(
           predictedGnosisSafeAddress,
           signerOrProvider
         );
-        const usulContract = await FractalUsul__factory.connect(
-          predictedUsulAddress,
-          signerOrProvider
-        );
-        const linearVotingContract = await OZLinearVoting__factory.connect(
+        const usulContract = FractalUsul__factory.connect(predictedUsulAddress, signerOrProvider);
+        const linearVotingContract = OZLinearVoting__factory.connect(
           predictedStrategyAddress,
           signerOrProvider
         );

@@ -2,7 +2,7 @@ import {
   EthereumTxWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { TxProposalState } from './../providers/Fractal/governance/types';
 
 export enum ActivityFilters {

@@ -1,7 +1,7 @@
 import {
   EthereumTxWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';

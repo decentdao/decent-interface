@@ -39,7 +39,7 @@ export default function useSubmitProposal() {
         }
         setPendingCreateTx(true);
         try {
-          const gnosisContract = await GnosisSafe__factory.connect(safe.address, signerOrProvider);
+          const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
           await axios.post(
             buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
             await buildSafeAPIPost(

@@ -1,6 +1,6 @@
-import EthersAdapter from '@gnosis.pm/safe-ethers-lib';
-import SafeServiceClient from '@gnosis.pm/safe-service-client';
-import { ethers, Signer } from 'ethers';
+import EthersAdapter from '@safe-global/safe-ethers-lib';
+import SafeServiceClient from '@safe-global/safe-service-client';
+import { ethers } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { CHAIN_DATA_LIST } from 'web3modal';
 import { logError } from '../../../helpers/errorLogging';
@@ -33,7 +33,7 @@ export function useGnosisApiServices(
     }
     const ethAdapter = new EthersAdapter({
       ethers,
-      signer: signerOrProvider as Signer,
+      signerOrProvider,
     });
 
     const network =

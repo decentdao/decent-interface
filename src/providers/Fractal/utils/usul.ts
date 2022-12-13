@@ -7,7 +7,7 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeMultisigTransactionResponse,
   TransferWithTokenInfoResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { BigNumber, constants, Signer } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { GnosisTransferType } from '../../../types';

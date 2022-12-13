@@ -4,7 +4,7 @@ import SafeServiceClient, {
   SafeCollectibleResponse,
   SafeInfoResponse,
   TransferListResponse,
-} from '@gnosis.pm/safe-service-client';
+} from '@safe-global/safe-service-client';
 import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
 import { IGnosisModuleData } from '../governance/types';
 import { IFavorites, IAudit } from './state';
@@ -16,6 +16,7 @@ export type GnosisActions =
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.SET_DAO_PARENT; payload: string }
+  | { type: GnosisAction.SET_DAO_CHILDREN; payload: string[] }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
 
