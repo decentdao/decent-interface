@@ -74,8 +74,8 @@ type DAOVetoGuardConfig = {
   executionDetails: BigNumber;
   vetoVotesThreshold: BigNumber;
   freezeVotesThreshold: BigNumber;
-  freezeProposalBlockDuration: BigNumber;
-  freezeBlockDuration: BigNumber;
+  freezeProposalPeriod: BigNumber;
+  freezePeriod: BigNumber;
 };
 
 type DAOFunding = {
