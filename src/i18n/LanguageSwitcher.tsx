@@ -14,22 +14,20 @@ export function LanguageSwitcher() {
   });
 
   // --- TODO remove test langs when we have translations ---
-  if (process.env.NODE_ENV !== 'production') {
-    supported = [
-      {
-        optionKey: 'en',
-        onClick: () => i18n.changeLanguage('en'),
-      },
-      {
-        optionKey: 'es',
-        onClick: () => i18n.changeLanguage('es'),
-      },
-      {
-        optionKey: 'zh',
-        onClick: () => i18n.changeLanguage('zh'),
-      },
-    ];
-  }
+  supported = [
+    {
+      optionKey: 'en',
+      onClick: () => i18n.changeLanguage('en'),
+    },
+    {
+      optionKey: 'es',
+      onClick: () => i18n.changeLanguage('es'),
+    },
+    {
+      optionKey: 'zh',
+      onClick: () => i18n.changeLanguage('zh'),
+    },
+  ];
   // --- END TODO ---
 
   if (supported.length < 2) return null;
