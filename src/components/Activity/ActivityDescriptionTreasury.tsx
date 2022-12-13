@@ -15,7 +15,7 @@ export function ActivityDescriptionTreasury({ activity }: { activity: Activity }
   const transferTypeStr = !hasTransfers
     ? undefined
     : !isGovernanceActivity && isDeposit
-    ? t('receive')
+    ? t('received')
     : isGovernanceActivity && !isDeposit
     ? t('transfer')
     : t('send');
