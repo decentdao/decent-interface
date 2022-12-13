@@ -1,20 +1,25 @@
 import { Flex, Text, Button, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '../../../components/ui/badges/Badge';
+import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { AcitivityCard } from './ActivityCard';
 import { FreezeDescription } from './ActivityDescription';
 
 export function ActivityFreeze() {
   const { t } = useTranslation('dashboard');
-  // state should exist here
-  const currentVotes = '6000';
-  const totalNeeded = '10000';
 
   const {
     gnosis: { guard },
   } = useFractal();
   console.log(guard);
+  // const currentBlock = await useCurrentBlockNumber()
+  // const freezeProposalDaysLeft = currentBlock?.sub(guard.freezeProposalCreatedBlock.add(guard.freezeProposalBlockDuration)) / blocks in a day
+  // check isFreezeInit
+  // check isFrozen
+  // check userHasFreezeVoted
+  // check userCanFreezeVote
+  // update button during Frozen state / already voted stage
 
   return (
     <AcitivityCard
@@ -54,6 +59,7 @@ export function ActivityFreeze() {
             borderColor={'blue.500'}
             textColor={'blue.500'}
             onClick={() => {}}
+            disabled={guard.isFrozen || guard.userHasFreezeVoted}
           >
             {t('freezeButton')}
           </Button>
