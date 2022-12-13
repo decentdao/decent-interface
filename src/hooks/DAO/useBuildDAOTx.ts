@@ -741,7 +741,6 @@ const useBuildDAOTx = () => {
             return;
           }
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
-
           internaltTxs = [
             buildContractCall(
               fractalNameRegistryContract,
@@ -770,7 +769,6 @@ const useBuildDAOTx = () => {
                 vetoVotesType === VetoERC20Voting__factory
                   ? vetoERC20VotingMasterCopyContract.address
                   : vetoMultisigVotingMasterCopyContract.address,
-                ,
                 setVetoVotingCalldata,
                 saltNum,
               ],
@@ -862,7 +860,6 @@ const useBuildDAOTx = () => {
             ),
           ];
         }
-
         const safeInternalTx = encodeMultiSend(internaltTxs);
 
         const createTokenTx = buildContractCall(
