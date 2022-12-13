@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
@@ -112,7 +113,7 @@ function ProposalVotes({
 
   return (
     <>
-      <ContentBox bg="black.900-semi-transparent">
+      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
         <Grid
           templateColumns="repeat(5, 1fr)"
@@ -162,7 +163,7 @@ function ProposalVotes({
           </GridItem>
         </Grid>
       </ContentBox>
-      <ContentBox bg="black.900-semi-transparent">
+      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
         <Divider
           color="chocolate.700"

@@ -1,5 +1,6 @@
 import { Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useExecuteProposal from '../../../hooks/DAO/proposal/useExecuteProposal';
 import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
@@ -11,7 +12,7 @@ export function Execute({ proposal }: { proposal: TxProposal }) {
   const disabled = proposal.state !== TxProposalState.Executing || pending;
 
   return (
-    <ContentBox bg="black.900-semi-transparent">
+    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{t('executeTitle')}</Text>
       <Button
         onClick={() => executeProposal(proposal)}

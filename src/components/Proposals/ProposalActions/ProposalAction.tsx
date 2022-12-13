@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
+import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';
@@ -11,7 +11,7 @@ export function ProposalAction({
   proposal,
   expandedView,
 }: {
-  proposal: TxProposal;
+  proposal: UsulProposal;
   expandedView?: boolean;
 }) {
   const [pending, setPending] = useState(false);

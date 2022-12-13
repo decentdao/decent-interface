@@ -1,5 +1,5 @@
 import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
-import { SafeCollectibleResponse } from '@gnosis.pm/safe-service-client';
+import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
