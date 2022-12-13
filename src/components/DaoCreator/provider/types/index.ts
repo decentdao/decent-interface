@@ -112,8 +112,8 @@ export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
   executionPeriod: BigNumber;
   vetoVotesThreshold: BigNumber;
   freezeVotesThreshold: BigNumber;
-  freezeProposalBlockDuration: BigNumber;
-  freezeBlockDuration: BigNumber;
+  freezeProposalPeriod: BigNumber;
+  freezePeriod: BigNumber;
 }
 
 export interface TokenGovernanceDAO extends DAODetails {
