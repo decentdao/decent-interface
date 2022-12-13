@@ -7,6 +7,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
+import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information
@@ -26,6 +27,8 @@ export function useGnosisApiServices(
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
+
+  const { setMethodOnInterval } = useUpdateTimer(address);
 
   useEffect(() => {
     if (!account || !signerOrProvider) {
@@ -118,11 +121,12 @@ export function useGnosisApiServices(
   }, [providedSafeAddress, safeService, gnosisDispatch, isGnosisLoading]);
 
   useEffect(() => {
-    getGnosisSafeFungibleAssets();
-    getGnosisSafeNonFungibleAssets();
-    getGnosisSafeTransfers();
-    getGnosisSafeTransactions();
+    setMethodOnInterval(getGnosisSafeFungibleAssets);
+    setMethodOnInterval(getGnosisSafeNonFungibleAssets);
+    setMethodOnInterval(getGnosisSafeTransfers);
+    setMethodOnInterval(getGnosisSafeTransactions);
   }, [
+    setMethodOnInterval,
     getGnosisSafeFungibleAssets,
     getGnosisSafeNonFungibleAssets,
     getGnosisSafeTransfers,
