@@ -106,6 +106,7 @@ export function DAOInfoCard({
             alignItems="center"
             onClick={() => copyToClipboard(safeAddress)}
             gap="0.5rem"
+            cursor="pointer"
           >
             <Text
               textStyle="text-base-mono-regular"
@@ -113,7 +114,7 @@ export function DAOInfoCard({
             >
               {accountSubstring}
             </Text>
-            <Copy />
+            <Copy boxSize="1.5rem" />
           </Flex>
         </Flex>
       </Flex>
