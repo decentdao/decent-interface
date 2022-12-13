@@ -3,6 +3,7 @@ import { CloseX } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import {
   TxProposal,
@@ -35,7 +36,7 @@ function Vote({ proposal }: { proposal: TxProposal }) {
     !!usulProposal.votes.find(vote => vote.voter === account);
 
   return (
-    <ContentBox bg="black.900-semi-transparent">
+    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{t('vote')}</Text>
       <Button
         width="full"

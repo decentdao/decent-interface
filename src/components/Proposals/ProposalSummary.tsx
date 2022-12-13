@@ -1,6 +1,7 @@
 import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { UsulProposal } from '../../providers/Fractal/types';
@@ -38,7 +39,7 @@ export default function ProposalSummary({
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
   return (
-    <ContentBox bg="black.900-semi-transparent">
+    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />

@@ -1,4 +1,5 @@
 import { Grid, GridItem, Box } from '@chakra-ui/react';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { MultisigProposal, TxProposal } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
 import ProposalCreatedBy from '../../ui/proposal/ProposalCreatedBy';
@@ -15,7 +16,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) 
       templateColumns="repeat(3, 1fr)"
     >
       <GridItem colSpan={2}>
-        <ContentBox bg="black.900-semi-transparent">
+        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
           <ProposalInfo proposal={proposal} />
           <Box mt={4}>
             <ProposalCreatedBy proposalProposer={txProposal.confirmations[0].owner} />

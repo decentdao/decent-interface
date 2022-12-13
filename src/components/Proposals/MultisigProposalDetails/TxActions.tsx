@@ -5,6 +5,7 @@ import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
@@ -119,13 +120,13 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const pageTitle = isExecutable ? t('executeTitle') : t('signTitle');
 
-  const buttonText = isExecutable ? t('execute', { ns: 'common' }) : t('approve', { ns: 'common' });
+  const buttonText = t(isExecutable ? 'execute' : 'approve', { ns: 'common' });
   const buttonAction = isExecutable ? executeTransaction : confirmTransaction;
   const buttonIcon = isExecutable ? undefined : <Check boxSize="1.5rem" />;
   const isButtonActive = isOwner && !isPending;
 
   return (
-    <ContentBox bg="black.900-semi-transparent">
+    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{pageTitle}</Text>
       <Box marginTop={4}>
         <Button

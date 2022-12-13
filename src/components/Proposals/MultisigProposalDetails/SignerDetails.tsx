@@ -1,6 +1,7 @@
 import { Box, Divider, Grid, GridItem, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
@@ -50,7 +51,7 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
     return null;
   }
   return (
-    <ContentBox bg="black.900-semi-transparent">
+    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{t('signers')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
