@@ -26,19 +26,16 @@ export default function useProposals({
   );
 
   const sortedAndFilteredProposals = useMemo(() => {
-    const sorted = [...txProposals].sort((a, b) => {
-      const dataA = new Date(a.eventDate).getTime();
-      const dataB = new Date(b.eventDate).getTime();
-      if (sortBy === SortBy.Oldest) {
-        return dataA - dataB;
-      }
-      return dataB - dataA;
-    });
-
-    let filtered = sorted;
-    filtered = filtered.filter(proposal => filters.includes(proposal.state));
-
-    return filtered;
+    return [...txProposals]
+      .filter(proposal => filters.includes(proposal.state))
+      .sort((a, b) => {
+        const dataA = new Date(a.eventDate).getTime();
+        const dataB = new Date(b.eventDate).getTime();
+        if (sortBy === SortBy.Oldest) {
+          return dataA - dataB;
+        }
+        return dataB - dataA;
+      });
   }, [sortBy, filters, txProposals]);
 
   return {
