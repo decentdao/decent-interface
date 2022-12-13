@@ -108,7 +108,8 @@ export type BigNumberInput = {
 };
 
 export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
-  executionDetails: BigNumber;
+  timelockPeriod?: BigNumber;
+  executionPeriod: BigNumber;
   vetoVotesThreshold: BigNumber;
   freezeVotesThreshold: BigNumber;
   freezeProposalBlockDuration: BigNumber;
