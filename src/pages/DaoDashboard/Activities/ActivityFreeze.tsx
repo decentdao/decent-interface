@@ -1,6 +1,7 @@
 import { Flex, Text, Button, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '../../../components/ui/badges/Badge';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { AcitivityCard } from './ActivityCard';
 import { FreezeDescription } from './ActivityDescription';
 
@@ -10,11 +11,16 @@ export function ActivityFreeze() {
   const currentVotes = '6000';
   const totalNeeded = '10000';
 
+  const {
+    gnosis: { guard },
+  } = useFractal();
+  console.log(guard);
+
   return (
     <AcitivityCard
       Badge={
         <Badge
-          labelKey="stateFreezeInit"
+          labelKey={guard.isFrozen ? 'stateFrozen' : 'stateFreezeInit'}
           size="base"
         />
       }
