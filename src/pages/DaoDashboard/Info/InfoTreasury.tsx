@@ -1,6 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Treasury } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { BarLoader } from '../../../components/ui/loaders/BarLoader';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { useTreasuryTotalUSD } from '../../Treasury/hooks/useTreasuryTotalUSD';
 
 interface IDAOGovernance {}
@@ -8,6 +10,24 @@ interface IDAOGovernance {}
 export function InfoTreasury({}: IDAOGovernance) {
   const { t } = useTranslation('dashboard');
   const totalUSD = useTreasuryTotalUSD();
+
+  const {
+    gnosis: { safe },
+    governance: { governanceIsLoading },
+  } = useFractal();
+
+  if (!safe.address || governanceIsLoading) {
+    return (
+      <Flex
+        h="8.5rem"
+        width="100%"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <BarLoader />
+      </Flex>
+    );
+  }
 
   return (
     <Box data-testid="dashboard-daoProposals">
