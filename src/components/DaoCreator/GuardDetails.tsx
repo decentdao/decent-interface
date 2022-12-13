@@ -73,7 +73,7 @@ function GuardDetails() {
             subLabel={t('helperExecutionPeriod', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={vetoGuard.timelockPeriod.toString()}
+              value={vetoGuard.executionPeriod.toString()}
               onChange={onExecutionPeriodChange}
               min={1}
               precision={0}
@@ -100,7 +100,7 @@ function GuardDetails() {
               subLabel={t('helperTimelockPeriod', { ns: 'daoCreate' })}
             >
               <NumberInput
-                value={vetoGuard.executionPeriod.toString()}
+                value={vetoGuard.timelockPeriod.toString()}
                 onChange={onTimelockPeriodChange}
                 min={1}
                 precision={0}
@@ -162,11 +162,11 @@ function GuardDetails() {
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelFreezeProposalBlockDuration', { ns: 'daoCreate' })}
-            subLabel={t('helperFreezeProposalBlockDuration', { ns: 'daoCreate' })}
+            label={t('labelFreezeProposalPeriod', { ns: 'daoCreate' })}
+            subLabel={t('helperFreezeProposalPeriod', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={vetoGuard.freezePeriod.toString()}
+              value={vetoGuard.freezeProposalPeriod.toString()}
               onChange={onFreezeProposalPeriodChange}
               min={1}
               precision={0}
@@ -183,13 +183,13 @@ function GuardDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleFreezeProposalBlockDuration', { ns: 'daoCreate' })}
+            {t('exampleFreezeProposalPeriod', { ns: 'daoCreate' })}
           </Text>
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelFreezeBlockDuration', { ns: 'daoCreate' })}
-            subLabel={t('helperFreezeBlockDuration', { ns: 'daoCreate' })}
+            label={t('labelFreezePeriod', { ns: 'daoCreate' })}
+            subLabel={t('helperFreezePeriod', { ns: 'daoCreate' })}
           >
             <NumberInput
               value={vetoGuard.freezePeriod.toString()}
@@ -209,7 +209,7 @@ function GuardDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleFreezeBlockDuration', { ns: 'daoCreate' })}
+            {t('exampleFreezePeriod', { ns: 'daoCreate' })}
           </Text>
         </InputBox>
       </ContentBox>
