@@ -24,7 +24,7 @@ export function ActivityFreeze() {
           size="base"
         />
       }
-      description={<FreezeDescription />}
+      description={<FreezeDescription isFrozen={guard.isFrozen} />}
       RightElement={
         <Flex
           color="blue.500"
