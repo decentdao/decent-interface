@@ -7,6 +7,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
+import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information
@@ -15,7 +16,7 @@ import { GnosisActions, IGnosis, TreasuryActions } from '../types';
  * @returns
  */
 export function useGnosisApiServices(
-  { safe: { address }, safeService }: IGnosis,
+  { safe: { address }, safeService, providedSafeAddress, isGnosisLoading }: IGnosis,
   treasuryDispatch: React.Dispatch<TreasuryActions>,
   gnosisDispatch: React.Dispatch<GnosisActions>
 ) {
@@ -26,6 +27,8 @@ export function useGnosisApiServices(
   const {
     state: { signerOrProvider },
   } = useWeb3Provider();
+
+  const { setMethodOnInterval } = useUpdateTimer(address);
 
   useEffect(() => {
     if (!account || !signerOrProvider) {
@@ -40,7 +43,6 @@ export function useGnosisApiServices(
       process.env.REACT_APP_LOCAL_CHAIN_ID === chainId.toString()
         ? 'goerli'
         : CHAIN_DATA_LIST[chainId].network;
-
     gnosisDispatch({
       type: GnosisAction.SET_SAFE_SERVICE_CLIENT,
       payload: new SafeServiceClient({
@@ -107,16 +109,29 @@ export function useGnosisApiServices(
   }, [address, safeService, gnosisDispatch]);
 
   useEffect(() => {
-    getGnosisSafeFungibleAssets();
-    getGnosisSafeNonFungibleAssets();
-    getGnosisSafeTransfers();
-    getGnosisSafeTransactions();
+    if (!providedSafeAddress || !safeService || !isGnosisLoading) {
+      return;
+    }
+    (async () => {
+      gnosisDispatch({
+        type: GnosisAction.SET_SAFE,
+        payload: await safeService.getSafeInfo(providedSafeAddress),
+      });
+    })();
+  }, [providedSafeAddress, safeService, gnosisDispatch, isGnosisLoading]);
+
+  useEffect(() => {
+    setMethodOnInterval(getGnosisSafeFungibleAssets);
+    setMethodOnInterval(getGnosisSafeNonFungibleAssets);
+    setMethodOnInterval(getGnosisSafeTransfers);
+    setMethodOnInterval(getGnosisSafeTransactions);
   }, [
+    setMethodOnInterval,
     getGnosisSafeFungibleAssets,
     getGnosisSafeNonFungibleAssets,
     getGnosisSafeTransfers,
     getGnosisSafeTransactions,
   ]);
 
-  return;
+  return { getGnosisSafeTransactions };
 }

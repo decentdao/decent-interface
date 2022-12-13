@@ -4,6 +4,12 @@ import {
   OZLinearVoting,
   VotesToken,
 } from '@fractal-framework/fractal-contracts';
+import {
+  SafeMultisigConfirmationResponse,
+  SafeMultisigTransactionWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  EthereumTxWithTransfersResponse,
+} from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
@@ -38,6 +44,12 @@ export type CreateProposalFunc = (proposal: {
   successCallback: () => void;
 }) => void;
 
+export interface TxProposalsInfo {
+  txProposals: TxProposal[];
+  pending?: number; // active/queued (usul) | not executed (multisig)
+  passed?: number; // executed (usul/multisig)
+}
+
 export interface IGovernance {
   actions: {
     createProposal?: {
@@ -71,6 +83,7 @@ export interface GovernanceContracts {
 }
 
 export enum TxProposalState {
+  Approved = 'ownerApproved',
   Active = 'stateActive',
   Canceled = 'stateCanceled',
   TimeLocked = 'stateTimeLocked',
@@ -78,6 +91,7 @@ export enum TxProposalState {
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
   Pending = 'statePending',
+  Queued = 'stateQueued',
   Failed = 'stateFailed',
   Rejected = 'stateRejected',
 }
@@ -90,32 +104,62 @@ export type ProposalMetaData = {
   decodedTransactions: DecodedTransaction[];
 };
 
-export interface UsulProposal extends TxProposal {
+export enum TreasuryActivityTypes {
+  DEPOSIT,
+  WITHDRAW,
+}
+
+export interface UsulProposal extends GovernanceActivity {
   proposer: string;
   govTokenAddress: string | null;
   votesSummary: ProposalVotesSummary;
   votes: ProposalVote[];
   deadline: number;
-  userVote?: ProposalVote;
   startBlock: BigNumber;
-  blockTimestamp: number;
+  userVote?: ProposalVote;
 }
 
-export interface MultisigTransaction extends TxProposal {
-  submissionDate?: string;
+export interface TreasuryActivity extends ActivityBase {
+  transferAddresses: string[];
+  transferAmountTotals: string[];
+  isDeposit: boolean;
 }
 
-export interface TxProposal {
+export interface MultisigProposal extends GovernanceActivity {
+  confirmations: SafeMultisigConfirmationResponse[];
+  signersThreshold?: number;
+  multisigRejectedProposalNumber?: string;
+}
+
+export interface GovernanceActivity extends ActivityBase {
   state: TxProposalState;
   proposalNumber: string;
-  txHashes?: string[];
+  targets: string[];
   metaData?: ProposalMetaData;
 }
+export interface ActivityBase {
+  eventDate: string;
+  eventType: ActivityEventType;
+  transaction?: ActivityTransactionType;
+  transactionHash?: string | null;
+}
 
-export interface TxProposalsInfo {
-  txProposals: (MultisigTransaction | UsulProposal)[];
-  pending?: number; // active/queued (usul) | not executed (multisig)
-  passed?: number; // executed (usul/multisig)
+export type Activity = TreasuryActivity | MultisigProposal | UsulProposal;
+
+export type ActivityTransactionType =
+  | SafeMultisigTransactionWithTransfersResponse
+  | SafeModuleTransactionWithTransfersResponse
+  | EthereumTxWithTransfersResponse;
+
+export enum ActivityEventType {
+  Treasury,
+  Governance,
+}
+
+export enum GnosisTransferType {
+  ERC721 = 'ERC721_TRANSFER',
+  ERC20 = 'ERC20_TRANSFER',
+  ETHER = 'ETHER_TRANSFER',
 }
 
 export type ProposalVotesSummary = {
@@ -144,3 +188,5 @@ export enum ProposalIsPassedError {
   QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
   PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
 }
+
+export type TxProposal = UsulProposal | MultisigProposal;

@@ -11,6 +11,8 @@ const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Executing]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Executed]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Rejected]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Approved]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Queued]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Failed]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Canceled]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.TimeLocked]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },

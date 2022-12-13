@@ -1,6 +1,7 @@
 import { Text, Button } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useQueueProposal from '../../../hooks/DAO/proposal/useQueueProposal';
 import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/ContentBox';
@@ -12,7 +13,7 @@ export default function Queue({ proposal }: { proposal: TxProposal }) {
   const disabled = pending || proposal.state !== TxProposalState.Pending;
 
   return (
-    <ContentBox bg="black.900-semi-transparent">
+    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{t('queueTitle')}</Text>
       <Button
         width="full"

@@ -6,6 +6,7 @@ import {
   Copy,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -134,7 +135,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
   return (
     <Box
       h="6.75rem"
-      bg="black.900-semi-transparent"
+      bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
       w="full"

@@ -1,6 +1,6 @@
 import SafeServiceClient, {
-  AllTransactionsListResponse,
   SafeInfoResponse,
+  AllTransactionsListResponse,
 } from '@safe-global/safe-service-client';
 import { GovernanceActions } from '../governance/actions';
 import { IGovernance, IGnosisModuleData } from '../governance/types';
@@ -17,9 +17,13 @@ export interface IFractalContext {
     governanceDispatch: React.Dispatch<GovernanceActions>;
     gnosisDispatch: React.Dispatch<GnosisActions>;
   };
+  actions: {
+    getGnosisSafeTransactions: () => Promise<void>;
+  };
 }
 
 export interface IGnosis {
+  providedSafeAddress?: string;
   daoName: string;
   safeService?: SafeServiceClient;
   safe: Partial<SafeInfoResponse> & { guard?: string };

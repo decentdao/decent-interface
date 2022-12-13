@@ -42,29 +42,6 @@ function App() {
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
-      <GridItem area={'main'}>
-        <Container
-          display="grid"
-          maxWidth="container.xl"
-          mt={6}
-          px="0"
-          paddingBottom="2rem"
-          mx={[6, null, null, null, null, 'auto']}
-        >
-          <FractalRoutes />
-        </Container>
-      </GridItem>
-      <GridItem area={'header'}>
-        <Box
-          as="header"
-          bg="chocolate.900"
-          h="4rem"
-          position="fixed"
-          w="calc(100% - 4.25rem)"
-        >
-          <Header />
-        </Box>
-      </GridItem>
       <GridItem
         area={'nav'}
         display="flex"
@@ -74,8 +51,35 @@ function App() {
         position="fixed"
         w="4.25rem"
         minHeight="100vh"
+        zIndex="popover"
       >
         <Sidebar />
+      </GridItem>
+      <GridItem area={'header'}>
+        <Box
+          as="header"
+          bg="chocolate.900"
+          h="4rem"
+          position="fixed"
+          zIndex="sticky"
+          w="calc(100% - 4.25rem)"
+        >
+          <Header />
+        </Box>
+      </GridItem>
+      <GridItem
+        area={'main'}
+        mx="1.5rem"
+      >
+        <Container
+          display="grid"
+          maxWidth="container.xl"
+          mt={6}
+          px="0"
+          paddingBottom="2rem"
+        >
+          <FractalRoutes />
+        </Container>
       </GridItem>
     </Grid>
   );

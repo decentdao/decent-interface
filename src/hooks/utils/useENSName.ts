@@ -1,3 +1,4 @@
+import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
 import { logError } from '../../helpers/errorLogging';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
@@ -10,7 +11,7 @@ const useENSName = (account?: string | null) => {
   const [ensName, setEnsName] = useState<string | null>(null);
   useEffect(() => {
     let isMounted = true;
-    if (!provider || !account) {
+    if (!provider || !account || !isAddress(account)) {
       setEnsName(null);
       return;
     }

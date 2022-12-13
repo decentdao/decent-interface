@@ -1,12 +1,10 @@
-import { ReactNode, useEffect, useMemo, useReducer } from 'react';
+import { ReactNode, useMemo, useReducer } from 'react';
 import {
-  TreasuryAction,
   gnosisInitialState,
   governanceInitialState,
   treasuryInitialState,
   connectedAccountInitialState,
 } from './constants';
-import { GovernanceAction } from './governance/actions';
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
@@ -51,7 +49,11 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   // const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
 
   useLocalStorage();
-  useGnosisApiServices(gnosis, treasuryDispatch, gnosisDispatch);
+  const { getGnosisSafeTransactions } = useGnosisApiServices(
+    gnosis,
+    treasuryDispatch,
+    gnosisDispatch
+  );
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
   useDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
@@ -60,13 +62,6 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   });
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
-
-  useEffect(() => {
-    if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
-      governanceDispatch({ type: GovernanceAction.RESET });
-      treasuryDispatch({ type: TreasuryAction.RESET });
-    }
-  }, [governanceDispatch, treasuryDispatch, gnosis.safe.address, gnosis.isGnosisLoading]);
 
   const value = useMemo(
     () => ({
@@ -79,8 +74,11 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         treasuryDispatch,
         gnosisDispatch,
       },
+      actions: {
+        getGnosisSafeTransactions,
+      },
     }),
-    [gnosis, governance, treasury, account]
+    [gnosis, governance, treasury, account, getGnosisSafeTransactions]
   );
 
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
