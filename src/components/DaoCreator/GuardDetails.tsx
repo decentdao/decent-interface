@@ -46,19 +46,19 @@ function GuardDetails() {
     fieldUpdate(newFreezeVotesThreshold, 'freezeVotesThreshold');
   };
 
-  const onFreezeProposalBlockDurationChange = (freezeProposalBlockDuration: string) => {
-    const newFreezeProposalBlockDuration = BigNumber.from(freezeProposalBlockDuration || 0);
-    fieldUpdate(newFreezeProposalBlockDuration, 'freezeProposalBlockDuration');
+  const onFreezeProposalPeriodChange = (freezeProposalPeriod: string) => {
+    const newFreezePeriod = BigNumber.from(freezeProposalPeriod || 0);
+    fieldUpdate(newFreezePeriod, 'freezeProposalPeriod');
   };
 
-  const onFreezeBlockDurationChange = (freezeBlockDuration: string) => {
-    const newFreezeBlockDuration = BigNumber.from(freezeBlockDuration || 0);
-    fieldUpdate(newFreezeBlockDuration, 'freezeBlockDuration');
+  const onFreezePeriodChange = (freezePeriod: string) => {
+    const newFreezePeriod = BigNumber.from(freezePeriod || 0);
+    fieldUpdate(newFreezePeriod, 'freezePeriod');
   };
 
   const { t } = useTranslation(['common', 'daoCreate']);
   const votes = t('votes');
-  const blocks = t('blocks');
+  const seconds = t('seconds');
   return (
     <Box>
       <ContentBox>
@@ -86,7 +86,7 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{blocks}</InputRightElement>
+                <InputRightElement mr="4">{seconds}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
@@ -142,8 +142,8 @@ function GuardDetails() {
             subLabel={t('helperFreezeProposalBlockDuration', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={vetoGuard.freezeProposalBlockDuration.toString()}
-              onChange={onFreezeProposalBlockDurationChange}
+              value={vetoGuard.freezePeriod.toString()}
+              onChange={onFreezeProposalPeriodChange}
               min={1}
               precision={0}
               data-testid="guardConfig-freezeProposalBlockDuration"
@@ -151,7 +151,7 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{blocks}</InputRightElement>
+                <InputRightElement mr="4">{seconds}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
@@ -168,8 +168,8 @@ function GuardDetails() {
             subLabel={t('helperFreezeBlockDuration', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={vetoGuard.freezeBlockDuration.toString()}
-              onChange={onFreezeBlockDurationChange}
+              value={vetoGuard.freezePeriod.toString()}
+              onChange={onFreezePeriodChange}
               min={1}
               precision={0}
               data-testid="guardConfig-freezeBlockDuration"
@@ -177,7 +177,7 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{blocks}</InputRightElement>
+                <InputRightElement mr="4">{seconds}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
