@@ -108,6 +108,7 @@ const useBuildDAOTx = () => {
         }
 
         // VETO Voting Contract
+        // If parent DAO is a token voting DAO, then we must utilize the veto ERC20 Voting
         const vetoVotesMasterCopyContract = parentTokenAddress
           ? vetoERC20VotingMasterCopyContract
           : vetoMultisigVotingMasterCopyContract;
@@ -148,33 +149,40 @@ const useBuildDAOTx = () => {
     ]
   );
   const buildVetoGuardData = useCallback(
-    (
-      executionDetails: BigNumber,
-      parentDAOAddress: string,
-      vetoVotingAddress: string,
-      safeAddress: string,
-      usulAddress?: string,
-      strategyAddress?: string
-    ) => {
+    ({
+      executionPeriod,
+      parentDAOAddress,
+      vetoVotingAddress,
+      safeAddress,
+      usulAddress,
+      strategyAddress,
+      timelockPeriod,
+    }: {
+      executionPeriod: BigNumber;
+      parentDAOAddress: string;
+      vetoVotingAddress: string;
+      safeAddress: string;
+      usulAddress?: string;
+      strategyAddress?: string;
+      timelockPeriod?: BigNumber;
+    }) => {
       const buildVetoGuard = async () => {
         if (
           !gnosisVetoGuardMasterCopyContract ||
           !usulVetoGuardMasterCopyContract ||
           !zodiacModuleProxyFactoryContract
         ) {
-          return {
-            predictedVetoModuleAddress: '',
-            setVetoGuardCalldata: '',
-          };
+          return;
         }
 
+        // VETO GUARD Contract
+        // If dao config is a usul dao, then we must utilize the usulVetoGuard
         const vetoGuardMasterCopyContract = usulAddress
           ? usulVetoGuardMasterCopyContract
           : gnosisVetoGuardMasterCopyContract;
 
         const vetoGuardType = usulAddress ? UsulVetoGuard__factory : VetoGuard__factory;
 
-        // VETO GUARD
         const setVetoGuardCalldata = vetoGuardType.createInterface().encodeFunctionData('setUp', [
           usulAddress
             ? ethers.utils.defaultAbiCoder.encode(
@@ -184,13 +192,14 @@ const useBuildDAOTx = () => {
                   vetoVotingAddress, // Veto Voting
                   strategyAddress, // Base Strategy
                   usulAddress, // USUL
-                  executionDetails, // Execution Delay
+                  executionPeriod, // Execution Period
                 ]
               )
             : ethers.utils.defaultAbiCoder.encode(
-                ['uint256', 'address', 'address', 'address'],
+                ['uint256', 'uint256', 'address', 'address', 'address'],
                 [
-                  executionDetails, // Execution Delay
+                  timelockPeriod, // Timelock Period
+                  executionPeriod, // Execution Period
                   parentDAOAddress, // Owner -- Parent DAO
                   vetoVotingAddress, // Veto Voting
                   safeAddress, // Gnosis Safe
@@ -359,12 +368,13 @@ const useBuildDAOTx = () => {
           const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = deployVetoVotesTx;
 
           // Veto Guard
-          const deployVetoGuardTx = await buildVetoGuardData(
-            subDAOData.executionDetails,
-            parentDAOAddress,
-            vetoVotingAddress,
-            safeContract.address
-          );
+          const deployVetoGuardTx = await buildVetoGuardData({
+            executionPeriod: subDAOData.executionPeriod,
+            parentDAOAddress: parentDAOAddress,
+            vetoVotingAddress: vetoVotingAddress,
+            safeAddress: safeContract.address,
+            timelockPeriod: subDAOData.timelockPeriod,
+          });
           if (!deployVetoGuardTx) {
             return;
           }
@@ -712,14 +722,14 @@ const useBuildDAOTx = () => {
           const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = deployVetoVotesTx;
 
           // Veto Guard
-          const deployVetoGuardTx = await buildVetoGuardData(
-            subDAOData.executionDetails,
-            parentDAOAddress,
-            vetoVotingAddress,
-            safeContract.address,
-            predictedUsulAddress,
-            predictedStrategyAddress
-          );
+          const deployVetoGuardTx = await buildVetoGuardData({
+            executionPeriod: subDAOData.executionPeriod,
+            parentDAOAddress: parentDAOAddress,
+            vetoVotingAddress: vetoVotingAddress,
+            safeAddress: safeContract.address,
+            usulAddress: predictedUsulAddress,
+            strategyAddress: predictedStrategyAddress,
+          });
           if (!deployVetoGuardTx) {
             return;
           }
