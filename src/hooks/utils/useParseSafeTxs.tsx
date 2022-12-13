@@ -17,7 +17,7 @@ export function useParseSafeTxs(
   safe: Partial<SafeInfoResponse>
 ) {
   const parsedActivities = useMemo(() => {
-    if (!transactions.results.length) {
+    if (!transactions.results.length || !safe.address) {
       return [];
     }
 

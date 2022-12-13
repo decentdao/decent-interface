@@ -68,7 +68,6 @@ export default function useUsulProposals({
     if (!usulContract || !signerOrProvider || !provider) {
       return;
     }
-
     const loadProposals = async () => {
       const proposalCreatedFilter = usulContract.filters.ProposalCreated();
       const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
