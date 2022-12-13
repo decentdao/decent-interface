@@ -405,7 +405,13 @@ const useBuildDAOTx = () => {
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
-              [vetoMultisigVotingMasterCopyContract.address, setVetoVotingCalldata, saltNum],
+              [
+                vetoVotesType === VetoERC20Voting__factory
+                  ? vetoERC20VotingMasterCopyContract.address
+                  : vetoMultisigVotingMasterCopyContract.address,
+                setVetoVotingCalldata,
+                saltNum,
+              ],
               0,
               false
             ),
@@ -558,7 +564,7 @@ const useBuildDAOTx = () => {
           !multiSendContract ||
           !fractalNameRegistryContract ||
           !fractalModuleMasterCopyContract ||
-          !vetoERC20VotingMasterCopyContract ||
+          !vetoMultisigVotingMasterCopyContract ||
           !signerOrProvider ||
           !votesTokenMasterCopyContract ||
           !vetoERC20VotingMasterCopyContract ||
@@ -760,7 +766,14 @@ const useBuildDAOTx = () => {
             buildContractCall(
               zodiacModuleProxyFactoryContract,
               'deployModule',
-              [vetoERC20VotingMasterCopyContract.address, setVetoVotingCalldata, saltNum],
+              [
+                vetoVotesType === VetoERC20Voting__factory
+                  ? vetoERC20VotingMasterCopyContract.address
+                  : vetoMultisigVotingMasterCopyContract.address,
+                ,
+                setVetoVotingCalldata,
+                saltNum,
+              ],
               0,
               false
             ),
@@ -928,6 +941,7 @@ const useBuildDAOTx = () => {
       fractalModuleMasterCopyContract,
       usulVetoGuardMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
       saltNum,
       signerOrProvider,
       buildDeploySafeTx,
