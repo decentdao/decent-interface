@@ -34,11 +34,16 @@ export function ActivityFreeze() {
           <Text textStyle="text-base-sans-regular">
             <Tooltip
               label={
-                guard.freezeProposalVoteCount + ' / ' + guard.freezeVotesThreshold + t('tipFreeze')
+                guard.freezeProposalVoteCount.toString() +
+                ' / ' +
+                guard.freezeVotesThreshold.toString() +
+                t('tipFreeze')
               }
               placement="bottom"
             >
-              {guard.freezeProposalVoteCount + ' / ' + guard.freezeVotesThreshold}
+              {guard.freezeProposalVoteCount.toString() +
+                ' / ' +
+                guard.freezeVotesThreshold.toString()}
             </Tooltip>
           </Text>
           <Text textStyle="text-base-sans-regular">{t('freezeDaysLeft')}</Text>
