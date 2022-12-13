@@ -379,7 +379,6 @@ const useBuildDAOTx = () => {
             return;
           }
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
-
           internaltTxs = [
             // Name Registry
             buildContractCall(
@@ -416,8 +415,8 @@ const useBuildDAOTx = () => {
                     parentDAOAddress, // Owner -- Parent DAO
                     subDAOData.vetoVotesThreshold, // VetoVotesThreshold
                     subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
-                    subDAOData.freezeProposalBlockDuration, // FreezeProposalBlockDuration
-                    subDAOData.freezeBlockDuration, // FreezeBlockDuration
+                    subDAOData.freezeProposalPeriod, // FreezeProposalPeriod
+                    subDAOData.freezePeriod, // FreezeBlockPeriod
                     parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
                     predictedVetoModuleAddress, // VetoGuard
                   ]
@@ -774,8 +773,8 @@ const useBuildDAOTx = () => {
                     parentDAOAddress, // Owner -- Parent DAO
                     subDAOData.vetoVotesThreshold, // VetoVotesThreshold
                     subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
-                    subDAOData.freezeProposalBlockDuration, // FreezeProposalBlockDuration
-                    subDAOData.freezeBlockDuration, // FreezeBlockDuration
+                    subDAOData.freezeProposalPeriod, // FreezeProposalPeriod
+                    subDAOData.freezePeriod, // FreezePeriod
                     parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
                     predictedVetoModuleAddress, // VetoGuard
                   ]
