@@ -235,7 +235,7 @@ const useBuildDAOTx = () => {
     ]
   );
   const buildDeploySafeTx = useCallback(
-    (daoData: GnosisDAO, hasUsul?: boolean) => {
+    (daoData: GnosisDAO, hasUsul?: boolean, parentDAOAddress?: string) => {
       const buildTx = async () => {
         if (
           !account ||
@@ -249,15 +249,20 @@ const useBuildDAOTx = () => {
 
         const gnosisDaoData = daoData as GnosisDAO;
 
+        const signers = hasUsul
+          ? [multiSendContract.address]
+          : [
+              ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
+              multiSendContract.address,
+            ];
+        if (parentDAOAddress) {
+          signers.push(parentDAOAddress);
+        }
+
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
           'setup',
           [
-            hasUsul
-              ? [multiSendContract.address]
-              : [
-                  ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
-                  multiSendContract.address,
-                ],
+            signers,
             1, // Threshold
             AddressZero,
             HashZero,
@@ -332,7 +337,7 @@ const useBuildDAOTx = () => {
           return;
         }
         const gnosisDaoData = daoData as GnosisDAO;
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, false, parentDAOAddress);
 
         if (!deploySafeTx) {
           return;
@@ -346,7 +351,7 @@ const useBuildDAOTx = () => {
           '0000000000000000000000000000000000000000000000000000000000000000' +
           '01';
 
-        const safeContract = await GnosisSafe__factory.connect(
+        const safeContract = GnosisSafe__factory.connect(
           predictedGnosisSafeAddress,
           signerOrProvider
         );
@@ -565,7 +570,7 @@ const useBuildDAOTx = () => {
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true, parentDAOAddress);
 
         if (!deploySafeTx) {
           return;
@@ -690,15 +695,12 @@ const useBuildDAOTx = () => {
           '0000000000000000000000000000000000000000000000000000000000000000' +
           '01';
 
-        const safeContract = await GnosisSafe__factory.connect(
+        const safeContract = GnosisSafe__factory.connect(
           predictedGnosisSafeAddress,
           signerOrProvider
         );
-        const usulContract = await FractalUsul__factory.connect(
-          predictedUsulAddress,
-          signerOrProvider
-        );
-        const linearVotingContract = await OZLinearVoting__factory.connect(
+        const usulContract = FractalUsul__factory.connect(predictedUsulAddress, signerOrProvider);
+        const linearVotingContract = OZLinearVoting__factory.connect(
           predictedStrategyAddress,
           signerOrProvider
         );

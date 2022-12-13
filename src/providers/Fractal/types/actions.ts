@@ -16,6 +16,8 @@ export type GnosisActions =
   | { type: GnosisAction.SET_SAFE_TRANSACTIONS; payload: AllTransactionsListResponse }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
+  | { type: GnosisAction.SET_DAO_PARENT; payload: string }
+  | { type: GnosisAction.SET_DAO_CHILDREN; payload: string[] }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
 

@@ -13,6 +13,10 @@ const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Rejected]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Approved]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Queued]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Failed]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Canceled]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.TimeLocked]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Uninitialized]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
@@ -23,7 +27,7 @@ const BADGE_SIZES: BadgeSize = {
 
 interface IBadge {
   size: 'sm' | 'base';
-  labelKey: string;
+  labelKey: TxProposalState;
 }
 
 export function Badge({ labelKey, size }: IBadge) {
