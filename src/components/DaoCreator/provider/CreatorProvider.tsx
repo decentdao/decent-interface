@@ -52,10 +52,10 @@ export const initialState: CreatorState = {
   vetoGuard: {
     executionPeriod: BigNumber.from(14400),
     timelockPeriod: BigNumber.from(14400),
-    vetoVotesThreshold: BigNumber.from(1000000),
-    freezeVotesThreshold: BigNumber.from(1000000),
-    freezeProposalPeriod: BigNumber.from(50400),
-    freezePeriod: BigNumber.from(50400),
+    vetoVotesThreshold: BigNumber.from(0),
+    freezeVotesThreshold: BigNumber.from(0),
+    freezeProposalPeriod: BigNumber.from(604800),
+    freezePeriod: BigNumber.from(604800),
   },
   funding: {
     tokensToFund: [],
