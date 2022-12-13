@@ -85,6 +85,7 @@ export function OptionMenu({
             <MenuItem
               as={showOptionSelected ? Box : Text}
               onClick={option.onClick}
+              cursor="pointer"
               textStyle="text-base-mono-medium"
               color="grayscale.100"
               paddingStart="0rem"
@@ -92,8 +93,8 @@ export function OptionMenu({
               gap={2}
               closeOnSelect={closeOnSelect}
             >
-              <Flex>
-                {showOptionSelected && (
+              {showOptionSelected ? (
+                <Flex flex="1">
                   <Checkbox
                     isChecked={option.isSelected}
                     onChange={option.onClick}
@@ -101,13 +102,16 @@ export function OptionMenu({
                     iconColor="black.900"
                     marginEnd="0.5rem"
                   />
-                )}
-                {t(option.optionKey)}
-              </Flex>
+                  {t(option.optionKey)}
+                </Flex>
+              ) : (
+                t(option.optionKey)
+              )}
               {showOptionCount && (
                 <Text
                   textStyle="text-base-mono-medium"
                   color={option.count ? 'grayscale.100' : 'grayscale.500'}
+                  as="span"
                 >
                   {option.count}
                 </Text>

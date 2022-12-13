@@ -83,17 +83,19 @@ export interface GovernanceContracts {
 }
 
 export enum TxProposalState {
-  Approved = 'ownerApproved',
+  // Usul-specific states
   Active = 'stateActive',
   Canceled = 'stateCanceled',
   TimeLocked = 'stateTimeLocked',
   Executed = 'stateExecuted',
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
+  Rejected = 'stateRejected',
+  // Safe-specific states
   Pending = 'statePending',
   Queued = 'stateQueued',
   Failed = 'stateFailed',
-  Rejected = 'stateRejected',
+  Approved = 'ownerApproved',
 }
 
 export type ProposalMetaData = {
