@@ -33,9 +33,13 @@ function GuardDetails() {
       },
     });
   };
-  const onExecutionDetailsChange = (executionDetails: string) => {
-    const newExecution = BigNumber.from(executionDetails || 0);
-    fieldUpdate(newExecution, 'executionDetails');
+  const onExecutionPeriodChange = (executionPeriod: string) => {
+    const newExecutionPeriod = BigNumber.from(executionPeriod || 0);
+    fieldUpdate(newExecutionPeriod, 'executionPeriod');
+  };
+  const onTimelockPeriodChange = (timelockPeriod: string) => {
+    const newTimelockPeriod = BigNumber.from(timelockPeriod || 0);
+    fieldUpdate(newTimelockPeriod, 'timelockPeriod');
   };
   const onVetoVotesThresholdChange = (vetoVotesThreshold: string) => {
     const newVetoVotesThreshold = BigNumber.from(vetoVotesThreshold || 0);
@@ -65,20 +69,12 @@ function GuardDetails() {
         <ContentBoxTitle>{t('titleGuardConfig', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={
-              governance === GovernanceTypes.GNOSIS_SAFE
-                ? t('labelExecutionDelayBlocks', { ns: 'daoCreate' })
-                : t('labelExecutionPeriod', { ns: 'daoCreate' })
-            }
-            subLabel={
-              governance === GovernanceTypes.GNOSIS_SAFE
-                ? t('helperExecutionDelayBlocks', { ns: 'daoCreate' })
-                : t('helperExecutionPeriod', { ns: 'daoCreate' })
-            }
+            label={t('labelExecutionPeriod', { ns: 'daoCreate' })}
+            subLabel={t('helperExecutionPeriod', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={vetoGuard.executionDetails.toString()}
-              onChange={onExecutionDetailsChange}
+              value={vetoGuard.timelockPeriod.toString()}
+              onChange={onExecutionPeriodChange}
               min={1}
               precision={0}
               data-testid="guardConfig-executionDetails"
@@ -95,6 +91,32 @@ function GuardDetails() {
             color="gold.400"
           >
             {t('exampleExecutionPeriod', { ns: 'daoCreate' })}
+          </Text>
+        </InputBox>
+        <InputBox>
+          <LabelWrapper
+            label={t('labelTimelockPeriod', { ns: 'daoCreate' })}
+            subLabel={t('helperTimelockPeriod', { ns: 'daoCreate' })}
+          >
+            <NumberInput
+              value={vetoGuard.executionPeriod.toString()}
+              onChange={onTimelockPeriodChange}
+              min={1}
+              precision={0}
+              data-testid="guardConfig-executionDetails"
+              onKeyDown={restrictChars}
+            >
+              <InputGroup>
+                <NumberInputField />
+                <InputRightElement mr="4">{seconds}</InputRightElement>
+              </InputGroup>
+            </NumberInput>
+          </LabelWrapper>
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="gold.400"
+          >
+            {t('exampleTimelockPeriod', { ns: 'daoCreate' })}
           </Text>
         </InputBox>
         <InputBox>

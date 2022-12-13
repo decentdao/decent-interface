@@ -71,7 +71,8 @@ type DAOGovenorModuleConfig = {
 };
 
 type DAOVetoGuardConfig = {
-  executionDetails: BigNumber;
+  executionPeriod: BigNumber;
+  timelockPeriod: BigNumber;
   vetoVotesThreshold: BigNumber;
   freezeVotesThreshold: BigNumber;
   freezeProposalPeriod: BigNumber;
