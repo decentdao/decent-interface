@@ -22,7 +22,7 @@ export interface IFractalContext {
 export interface IGnosis {
   daoName: string;
   safeService?: SafeServiceClient;
-  safe: Partial<SafeInfoResponse>;
+  safe: Partial<SafeInfoResponse> & { guard?: string };
   modules: IGnosisModuleData[];
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;

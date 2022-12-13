@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { Dispatch, useEffect } from 'react';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
-import { IGnosis, GnosisActions, GnosisModuleType } from '../types';
+import { IGnosis, GnosisActions } from '../types';
 
 type SafeInfoWithGuard = { guard: string } & SafeInfoResponse; // safeService misses typing for guard :(
 export default function useNodes({
@@ -20,13 +20,13 @@ export default function useNodes({
   const { modules, safe, safeService } = gnosis;
   useEffect(() => {
     const loadDaoParent = async () => {
-      const fractalModule = modules.find(module => module.moduleType === GnosisModuleType.FRACTAL);
-      if (fractalModule && fractalModule.moduleContract) {
-        const fractalModuleOwner = await fractalModule.moduleContract.owner();
-        if (fractalModuleOwner !== safe.address) {
-          // When DAO don't have parent - module's address equals to DAO safe address.
-          // Otherwise - we can be sure that module's owner is parent DAO
-          gnosisDispatch({ type: GnosisAction.SET_DAO_PARENT, payload: fractalModuleOwner });
+      if (safe && safe.guard && signerOrProvider) {
+        if (safe.guard !== ethers.constants.AddressZero) {
+          const guard = VetoGuard__factory.connect(safe.guard, signerOrProvider);
+          const guardOwner = await guard.owner();
+          if (guardOwner !== safe.address) {
+            gnosisDispatch({ type: GnosisAction.SET_DAO_PARENT, payload: guardOwner });
+          }
         }
       } else {
         // Clearing the state
@@ -45,7 +45,7 @@ export default function useNodes({
           // Then the DAO is actually "lost" - but it will be up to child DAO to create proper proposal to replace old DAO from signers list with new parent DAO.
           const safeInfo = (await safeService.getSafeInfo(safeAddress)) as SafeInfoWithGuard;
           if (safeInfo.guard === ethers.constants.AddressZero) {
-            // Guard is not attached - seems like just gap in Safe API Service indexisng. 
+            // Guard is not attached - seems like just gap in Safe API Service indexisng.
             // Still, need to cover this case
             controlledSafes.push(safeAddress);
           } else {
@@ -63,5 +63,5 @@ export default function useNodes({
 
     loadDaoParent();
     loadDaoNodes();
-  }, [chainId, safe.address, modules, gnosisDispatch, signerOrProvider, safeService]);
+  }, [chainId, safe, modules, gnosisDispatch, signerOrProvider, safeService]);
 }
