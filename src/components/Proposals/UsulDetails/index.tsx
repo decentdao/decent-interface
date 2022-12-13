@@ -15,15 +15,13 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
       templateColumns="repeat(3, 1fr)"
     >
       <GridItem colSpan={2}>
-        <>
-          <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-            <ProposalInfo proposal={proposal} />
-            <Box mt={4}>
-              <ProposalCreatedBy proposalProposer={proposal.proposer} />
-            </Box>
-          </ContentBox>
-          <ProposalVotes proposal={proposal} />
-        </>
+        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+          <ProposalInfo proposal={proposal} />
+          <Box mt={4}>
+            <ProposalCreatedBy proposalProposer={proposal.proposer} />
+          </Box>
+        </ContentBox>
+        <ProposalVotes proposal={proposal} />
       </GridItem>
       <GridItem colSpan={1}>
         <ProposalSummary proposal={proposal} />
