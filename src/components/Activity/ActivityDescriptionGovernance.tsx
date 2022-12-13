@@ -24,7 +24,7 @@ function ActivityProposalNumber({ proposalNumber }: IActivityProposal) {
 function ActivityAddresses({ activity }: IActivityDescription) {
   const { t } = useTranslation('treasury');
   const governanceActivity = activity as GovernanceActivity;
-  const txCount = governanceActivity.txHashes.length;
+  const txCount = governanceActivity.targets.length;
 
   if (txCount > 1) {
     return <Text>{t('addresses', { ns: 'treasury', numOfAddresses: txCount })}</Text>;
@@ -73,7 +73,7 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
 
   const transactionDescription = t('proposalDescription', {
     ns: 'dashboard',
-    txCount: governanceActivity.txHashes.length,
+    txCount: governanceActivity.targets.length,
   });
 
   return (

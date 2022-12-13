@@ -64,17 +64,6 @@ export function useParseSafeTxs(
         transferAddresses.push(multiSigTransaction.to);
       }
 
-      const mappedTxHashes = transaction.transfers.map(transfer => transfer.transactionHash);
-
-      const txHashes =
-        isMultiSigTransaction && mappedTxHashes.length
-          ? mappedTxHashes
-          : isMultiSigTransaction
-          ? [multiSigTransaction.transactionHash]
-          : mappedTxHashes.length
-          ? mappedTxHashes
-          : [ethereumTransaction.txHash];
-
       const eventSafeTxHash = multiSigTransaction.safeTxHash;
 
       const eventType = isMultiSigTransaction
@@ -134,6 +123,10 @@ export function useParseSafeTxs(
             }
           : undefined;
 
+      const targets = metaData
+        ? [...metaData.decodedTransactions.map(tx => tx.target)]
+        : [transaction.to];
+
       const activity: Activity = {
         transaction,
         transferAddresses,
@@ -148,8 +141,7 @@ export function useParseSafeTxs(
             ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
             : undefined,
         proposalNumber: eventSafeTxHash,
-        targets: [transaction.to],
-        txHashes,
+        targets,
         transactionHash: multiSigTransaction.transactionHash,
         metaData,
         state,

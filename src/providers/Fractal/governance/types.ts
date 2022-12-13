@@ -135,7 +135,6 @@ export interface GovernanceActivity extends ActivityBase {
   state: TxProposalState;
   proposalNumber: string;
   targets: string[];
-  txHashes: string[];
   metaData?: ProposalMetaData;
 }
 export interface ActivityBase {

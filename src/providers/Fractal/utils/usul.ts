@@ -126,22 +126,6 @@ export const mapProposalCreatedEventToProposal = async (
     signerOrProvider
   );
 
-  const txHashes = [];
-  let i = 0;
-  let finished = false;
-  while (!finished) {
-    try {
-      // Usul nor strategy contract is not returning whole array -
-      // this is the only way to get those hashes
-      const txHash = await usulContract.getTxHash(proposalNumber, i);
-      txHashes.push(txHash);
-      i++;
-    } catch (e) {
-      // Means there's no hashes anymore
-      finished = true;
-    }
-  }
-
   const targets = metaData
     ? metaData.decodedTransactions.map(tx => createAccountSubstring(tx.target))
     : [];
@@ -158,7 +142,6 @@ export const mapProposalCreatedEventToProposal = async (
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
     votesSummary,
-    txHashes,
     metaData,
   };
 
