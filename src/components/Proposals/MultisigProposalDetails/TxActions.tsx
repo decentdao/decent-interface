@@ -110,7 +110,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   }
 
   const hasSigned = proposal.confirmations.find(confirm => confirm.owner === account);
-  const hasReachedThreshold = proposal.confirmations.length >= (safe.threshold || 0);
+  const hasReachedThreshold = proposal.confirmations.length >= (safe.threshold || 1);
 
   const isOwner = safe.owners?.includes(account || '');
   const isPending = asyncRequestPending || contractCallPending;
