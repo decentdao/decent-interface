@@ -161,7 +161,7 @@ export const parseDecodedData = (
     }
     parameters.forEach((param: Parameter) => {
       const valueDecoded = param.valueDecoded;
-      if (valueDecoded) {
+      if (Array.isArray(valueDecoded)) {
         valueDecoded.forEach(value => {
           const decodedTransaction = {
             target: value.to,
