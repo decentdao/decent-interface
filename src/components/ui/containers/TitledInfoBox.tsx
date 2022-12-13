@@ -1,5 +1,6 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 export function TitledInfoBox({
   minWidth,
@@ -16,7 +17,7 @@ export function TitledInfoBox({
     <Box
       flexGrow={1}
       minWidth={minWidth}
-      bg="black.900-semi-transparent"
+      bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1.5rem"
       borderRadius="0.5rem"
     >

@@ -2,7 +2,7 @@ import { Button, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceActivity, UsulProposal, TxProposalState } from '../../providers/Fractal/types';
+import { UsulProposal, TxProposalState, TxProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 import { Badge } from '../ui/badges/Badge';
 import ProposalTime from '../ui/proposal/ProposalTime';
@@ -10,7 +10,7 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
-export function ActivityGovernance({ activity }: { activity: GovernanceActivity }) {
+export function ActivityGovernance({ activity }: { activity: TxProposal }) {
   const navigate = useNavigate();
   const {
     gnosis: { safe },

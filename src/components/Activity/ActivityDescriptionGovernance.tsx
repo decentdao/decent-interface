@@ -1,12 +1,13 @@
 import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import {
   Activity,
   ActivityEventType,
   GovernanceActivity,
+  MultisigProposal,
   TreasuryActivity,
 } from '../../providers/Fractal/types';
+import { createProposalNumberSubstring } from '../../utils/string';
 import { ActivityAddress } from './ActivityAddress';
 
 interface IActivityDescription {
@@ -17,13 +18,13 @@ interface IActivityProposal {
 }
 
 function ActivityProposalNumber({ proposalNumber }: IActivityProposal) {
-  return <Text>#{createAccountSubstring(proposalNumber)}</Text>;
+  return <Text>{createProposalNumberSubstring(proposalNumber)}</Text>;
 }
 
 function ActivityAddresses({ activity }: IActivityDescription) {
   const { t } = useTranslation('treasury');
   const governanceActivity = activity as GovernanceActivity;
-  const txCount = governanceActivity.txHashes.length;
+  const txCount = governanceActivity.targets.length;
 
   if (txCount > 1) {
     return <Text>{t('addresses', { ns: 'treasury', numOfAddresses: txCount })}</Text>;
@@ -43,14 +44,16 @@ function ActivityAddresses({ activity }: IActivityDescription) {
 
 function OnChainRejectionMessage({ activity }: IActivityDescription) {
   const { t } = useTranslation('dashboard');
-  const governanceActivity = activity as GovernanceActivity;
+  const governanceActivity = activity as MultisigProposal;
   if (!governanceActivity.multisigRejectedProposalNumber) {
     return null;
   }
   return (
     <Text>
       {t('proposalOnChainRejection', {
-        proposalNumber: createAccountSubstring(governanceActivity.multisigRejectedProposalNumber),
+        proposalNumber: createProposalNumberSubstring(
+          governanceActivity.multisigRejectedProposalNumber
+        ),
       })}
     </Text>
   );
@@ -70,7 +73,7 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
 
   const transactionDescription = t('proposalDescription', {
     ns: 'dashboard',
-    txCount: governanceActivity.txHashes.length,
+    txCount: governanceActivity.targets.length,
   });
 
   return (

@@ -1,5 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 export function InfoBox({
   minWidth = '100%',
@@ -17,7 +18,7 @@ export function InfoBox({
       minWidth={minWidth}
       h="100%"
       minHeight={minHeight}
-      bg="black.900-semi-transparent"
+      bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
       {...rest}

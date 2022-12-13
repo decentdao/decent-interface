@@ -16,6 +16,7 @@ export function Governance() {
   } = useFractal();
   const delegate = useFractalModal(ModalType.DELEGATE);
   const isUsul = governance.type === GovernanceTypes.GNOSIS_SAFE_USUL;
+
   return (
     <Box>
       <PageHeader

@@ -13,9 +13,9 @@ import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { Providers } from '../../Web3Data/types';
 import { strategyTxProposalStates } from '../governance/constants';
-import { Parameter, DataDecoded } from '../types';
-import { DEFAULT_DATE_FORMAT } from './../../../utils/numberFormats';
 import {
+  Parameter,
+  DataDecoded,
   ActivityEventType,
   ProposalIsPassedError,
   ProposalMetaData,
@@ -24,7 +24,8 @@ import {
   TxProposalState,
   UsulProposal,
   VOTE_CHOICES,
-} from './../governance/types';
+} from '../types';
+import { DEFAULT_DATE_FORMAT } from './../../../utils/numberFormats';
 
 export const getTxProposalState = async (
   usulContract: FractalUsul,
@@ -125,22 +126,6 @@ export const mapProposalCreatedEventToProposal = async (
     signerOrProvider
   );
 
-  const txHashes = [];
-  let i = 0;
-  let finished = false;
-  while (!finished) {
-    try {
-      // Usul nor strategy contract is not returning whole array -
-      // this is the only way to get those hashes
-      const txHash = await usulContract.getTxHash(proposalNumber, i);
-      txHashes.push(txHash);
-      i++;
-    } catch (e) {
-      // Means there's no hashes anymore
-      finished = true;
-    }
-  }
-
   const targets = metaData
     ? metaData.decodedTransactions.map(tx => createAccountSubstring(tx.target))
     : [];
@@ -157,14 +142,13 @@ export const mapProposalCreatedEventToProposal = async (
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
     votesSummary,
-    txHashes,
     metaData,
   };
 
   return proposal;
 };
 
-export const eventTransactionMapping = (
+export const parseDecodedData = (
   multiSigTransaction:
     | SafeMultisigTransactionWithTransfersResponse
     | SafeMultisigTransactionResponse,
@@ -177,10 +161,22 @@ export const eventTransactionMapping = (
     }
     parameters.forEach((param: Parameter) => {
       const valueDecoded = param.valueDecoded;
-      if (valueDecoded) {
+      if (Array.isArray(valueDecoded)) {
         valueDecoded.forEach(value => {
+          const decodedTransaction = {
+            target: value.to,
+            function: value.dataDecoded?.method,
+            parameterTypes:
+              !!value.dataDecoded && value.dataDecoded.parameters
+                ? value.dataDecoded.parameters.map(p => p.type)
+                : [],
+            parameterValues:
+              !!value.dataDecoded && value.dataDecoded.parameters
+                ? value.dataDecoded.parameters.map(p => p.value)
+                : [],
+          };
           eventTransactionMap.set(eventTransactionMap.size, {
-            ...valueDecoded,
+            ...decodedTransaction,
           });
           if (value.dataDecoded?.parameters && value.dataDecoded?.parameters?.length) {
             return parseTransactions(value.dataDecoded.parameters);
@@ -192,7 +188,16 @@ export const eventTransactionMapping = (
 
   const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;
   if (dataDecoded && isMultiSigTransaction) {
+    const decodedTransaction = {
+      target: multiSigTransaction.to,
+      function: dataDecoded.method,
+      parameterTypes: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
+      parameterValues: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.value) : [],
+    };
+    eventTransactionMap.set(eventTransactionMap.size, {
+      ...decodedTransaction,
+    });
     parseTransactions(dataDecoded.parameters);
   }
-  return eventTransactionMap;
+  return Array.from(eventTransactionMap.values());
 };

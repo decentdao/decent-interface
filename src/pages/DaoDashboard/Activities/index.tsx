@@ -6,11 +6,7 @@ import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury'
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import {
-  ActivityEventType,
-  GovernanceActivity,
-  TreasuryActivity,
-} from '../../../providers/Fractal/types';
+import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
 import { useActivities } from './hooks/useActivities';
 
@@ -43,7 +39,7 @@ export function Activities() {
               return (
                 <ActivityGovernance
                   key={i}
-                  activity={activity as GovernanceActivity}
+                  activity={activity as TxProposal}
                 />
               );
             }

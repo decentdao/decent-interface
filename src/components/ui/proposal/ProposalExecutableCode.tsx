@@ -9,17 +9,24 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
+import { TxProposal } from '../../../providers/Fractal/types';
 import { DecodedTransaction } from '../../../types';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {
   return (
     <Flex
       width="full"
+      textStyle="text-base-mono-regular"
+      color="grayscale.100"
       justifyContent="space-between"
     >
-      <Text>{paramKey}</Text>
-      <Text>{value}</Text>
+      <Text whiteSpace="nowrap">{paramKey}</Text>
+      <Text
+        textAlign="end"
+        maxWidth="70%"
+      >
+        {value}
+      </Text>
     </Flex>
   );
 }
@@ -55,7 +62,9 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
 
 export default function ProposalExecutableCode({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation('proposal');
-
+  if (!proposal.metaData) {
+    return null;
+  }
   return (
     <Box
       bg="black.900"
@@ -86,7 +95,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: TxPropo
                   gap={2}
                   flexWrap="wrap"
                 >
-                  {(proposal as UsulProposal).metaData?.decodedTransactions.map((tx, i) => (
+                  {proposal.metaData?.decodedTransactions.map((tx, i) => (
                     <TransactionBlock
                       transaction={tx}
                       key={i}

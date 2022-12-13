@@ -7,7 +7,7 @@ import {
   TxProposalState,
   GovernanceTypes,
   ActivityEventType,
-  GovernanceActivity,
+  MultisigProposal,
 } from './../types';
 interface IUseSafeMultisigTxs {
   governance: IGovernance;
@@ -26,12 +26,11 @@ export const useSafeMultisigTxs = ({
     if (!safeService || !safe.address || !type) {
       return;
     }
-
     if (!parsedActivities.length) {
       return;
     }
 
-    const multisigTxs = (parsedActivities as GovernanceActivity[]).filter(
+    const multisigTxs = (parsedActivities as MultisigProposal[]).filter(
       tx => tx.eventType === ActivityEventType.Governance
     );
 

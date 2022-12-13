@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import Transactions from '../../components/ProposalCreate/Transactions';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { logError } from '../../helpers/errorLogging';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -169,7 +170,7 @@ function ProposalCreate() {
           <Box
             rounded="lg"
             p="1rem"
-            bg="black.900-semi-transparent"
+            bg={BACKGROUND_SEMI_TRANSPARENT}
           >
             <form onSubmit={e => e.preventDefault()}>
               <Transactions

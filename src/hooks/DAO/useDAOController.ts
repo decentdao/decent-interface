@@ -35,15 +35,15 @@ export default function useDAOController() {
   useEffect(() => {
     if (address && signerOrProvider && account && safeService) {
       (async () => {
-        gnosisDispatch({
-          type: GnosisAction.SET_SAFE,
-          payload: await safeService.getSafeInfo(address),
-        });
         treasuryDispatch({
           type: TreasuryAction.RESET,
         });
         governanceDispatch({
           type: GovernanceAction.RESET,
+        });
+        gnosisDispatch({
+          type: GnosisAction.SET_SAFE_ADDRESS,
+          payload: address,
         });
       })();
     }
@@ -69,7 +69,11 @@ export default function useDAOController() {
 
   useEffect(() => {
     return () => {
-      gnosisDispatch({ type: GnosisAction.RESET });
+      if (!params.address) {
+        gnosisDispatch({ type: GnosisAction.RESET });
+        treasuryDispatch({ type: TreasuryAction.RESET });
+        governanceDispatch({ type: GovernanceAction.RESET });
+      }
     };
-  }, [gnosisDispatch]);
+  }, [params.address, gnosisDispatch, treasuryDispatch, governanceDispatch]);
 }

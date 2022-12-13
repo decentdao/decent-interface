@@ -17,9 +17,13 @@ export interface IFractalContext {
     governanceDispatch: React.Dispatch<GovernanceActions>;
     gnosisDispatch: React.Dispatch<GnosisActions>;
   };
+  actions: {
+    getGnosisSafeTransactions: () => Promise<void>;
+  };
 }
 
 export interface IGnosis {
+  providedSafeAddress?: string;
   daoName: string;
   safeService?: SafeServiceClient;
   safe: Partial<SafeInfoResponse>;

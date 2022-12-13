@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { ActivityEventType, TxProposalState, Activity } from '../../providers/Fractal/types';
-import { totalsReducer } from '../../providers/Fractal/utils';
+import { parseDecodedData, totalsReducer } from '../../providers/Fractal/utils';
 import { formatWeiToValue } from '../../utils';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 
@@ -17,7 +17,7 @@ export function useParseSafeTxs(
   safe: Partial<SafeInfoResponse>
 ) {
   const parsedActivities = useMemo(() => {
-    if (!transactions.results.length) {
+    if (!transactions.results.length || !safe.address) {
       return [];
     }
 
@@ -64,17 +64,6 @@ export function useParseSafeTxs(
         transferAddresses.push(multiSigTransaction.to);
       }
 
-      const mappedTxHashes = transaction.transfers.map(transfer => transfer.transactionHash);
-
-      const txHashes =
-        isMultiSigTransaction && mappedTxHashes.length
-          ? mappedTxHashes
-          : isMultiSigTransaction
-          ? [multiSigTransaction.transactionHash]
-          : mappedTxHashes.length
-          ? mappedTxHashes
-          : [ethereumTransaction.txHash];
-
       const eventSafeTxHash = multiSigTransaction.safeTxHash;
 
       const eventType = isMultiSigTransaction
@@ -110,18 +99,33 @@ export function useParseSafeTxs(
           );
         });
 
-      const isPending =
-        multiSigTransaction.confirmations?.length !== multiSigTransaction.confirmationsRequired;
+      const isQueued =
+        multiSigTransaction.confirmations?.length || 0 >= multiSigTransaction.confirmationsRequired;
 
       const state = isRejected
         ? TxProposalState.Rejected
-        : isPending
-        ? TxProposalState.Pending
-        : !multiSigTransaction.isExecuted
-        ? TxProposalState.Active
         : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
         ? TxProposalState.Executed
+        : isQueued
+        ? TxProposalState.Queued
+        : !multiSigTransaction.isExecuted
+        ? TxProposalState.Active
         : TxProposalState.Pending;
+
+      const confirmations = multiSigTransaction.confirmations
+        ? multiSigTransaction.confirmations
+        : [];
+
+      const metaData =
+        isMultiSigTransaction && multiSigTransaction.dataDecoded
+          ? {
+              decodedTransactions: parseDecodedData(multiSigTransaction, isMultiSigTransaction),
+            }
+          : undefined;
+
+      const targets = metaData
+        ? [...metaData.decodedTransactions.map(tx => tx.target)]
+        : [transaction.to];
 
       const activity: Activity = {
         transaction,
@@ -130,13 +134,16 @@ export function useParseSafeTxs(
         isDeposit,
         eventDate,
         eventType,
+        confirmations,
+        signersThreshold: multiSigTransaction.confirmationsRequired,
         multisigRejectedProposalNumber:
           isMultisigRejectionTx && !!noncePair
             ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
             : undefined,
         proposalNumber: eventSafeTxHash,
-        targets: [transaction.to],
-        txHashes,
+        targets,
+        transactionHash: multiSigTransaction.transactionHash,
+        metaData,
         state,
       };
       return activity;
