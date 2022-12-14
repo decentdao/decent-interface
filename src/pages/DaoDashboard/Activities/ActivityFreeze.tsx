@@ -1,7 +1,7 @@
 import { Flex, Text, Button, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
-import { Badge } from '../../../components/ui/badges/Badge';
+// import { Badge } from '../../../components/ui/badges/Badge';
 // import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 // import useCurrentTimestamp from '../../../hooks/utils/useCurrentTimestamp';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -30,8 +30,8 @@ export function ActivityFreeze() {
   } = useFractal();
   console.log(guard);
   // const currentBlock = await useCurrentBlockNumber()
-  // const freezeProposalDaysLeft = useCurrentTimestamp - 
-  
+  // const freezeProposalDaysLeft = useCurrentTimestamp -
+
   // (guard.freeze.add(guard.freezeProposalBlockDuration))
   // check isFreezeInit
   // check isFrozen

@@ -5,9 +5,9 @@ import {
   VetoGuard,
   VetoMultisigVoting,
 } from '@fractal-framework/fractal-contracts';
+import { FractalUsul } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { Usul } from '../../../assets/typechain-types/usul';
-import { IGoveranceTokenData } from '../hooks/useGovernanceTokenData';
+import { IGoveranceTokenData } from '../governance/hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
   GNOSIS_SAFE = 'safe',
@@ -40,7 +40,7 @@ export interface IModuleData {
 }
 
 export interface IGnosisModuleData {
-  moduleContract: Usul | FractalModule | undefined;
+  moduleContract: FractalUsul | FractalModule | undefined;
   moduleAddress: string;
   moduleType: GnosisModuleType;
 }
