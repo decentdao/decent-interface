@@ -1,4 +1,4 @@
-import { Flex, Tooltip } from '@chakra-ui/react';
+import { Center, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import {
   Discord,
   Documents,
@@ -13,20 +13,23 @@ import { Fragment, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../constants/url';
+import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
 
 function SidebarTooltipWrapper({ label, children }: { label: string; children: JSX.Element }) {
   return (
-    <Tooltip
-      closeDelay={250}
-      gutter={10}
-      hasArrow
-      label={label}
-      placement="right"
-    >
-      {children}
-    </Tooltip>
+    <Center>
+      <Tooltip
+        closeDelay={250}
+        gutter={10}
+        hasArrow
+        label={label}
+        placement="right"
+      >
+        {children}
+      </Tooltip>
+    </Center>
   );
 }
 
@@ -134,17 +137,19 @@ function Sidebar() {
         )}
       </Flex>
       <Flex
+        alignSelf="normal"
         direction="column"
         gap="2rem"
         mb="8"
       >
-        <SidebarTooltipWrapper label={t('support')}>
+        <Divider color="chocolate.700" />
+        <SidebarTooltipWrapper label={t('faq')}>
           <a
-            data-testid="sidebarExternal-support"
+            data-testid="sidebarExternal-faq"
             href={URL_FAQ}
             rel="noreferrer noopener"
             target="_blank"
-            aria-label={t('ariaLabelSupport')}
+            aria-label={t('ariaLabelFAQ')}
           >
             <SupportQuestion
               boxSize="1.5rem"
@@ -180,6 +185,8 @@ function Sidebar() {
             />
           </a>
         </SidebarTooltipWrapper>
+        <Divider color="chocolate.700" />
+        <LanguageSwitcher />
       </Flex>
     </Flex>
   );

@@ -1,20 +1,49 @@
+import { Globe } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import Translate from '../components/ui/svg/Translate';
+import { OptionMenu } from '../components/ui/menus/OptionMenu';
+import { supportedLanguages } from '.';
 
-function LanguageSwitcher() {
+export function LanguageSwitcher() {
   const { i18n } = useTranslation();
+
+  let supported = Object.keys(supportedLanguages).map(function (languageCode) {
+    return {
+      optionKey: languageCode,
+      onClick: () => i18n.changeLanguage(languageCode),
+    };
+  });
+
+  // --- TODO remove test langs when we have translations ---
+  supported = [
+    {
+      optionKey: 'en',
+      onClick: () => i18n.changeLanguage('en'),
+    },
+    {
+      optionKey: 'es',
+      onClick: () => i18n.changeLanguage('es'),
+    },
+    {
+      optionKey: 'zh',
+      onClick: () => i18n.changeLanguage('zh'),
+    },
+  ];
+  // --- END TODO ---
+
+  if (supported.length < 2) return null;
+
   return (
-    <div className="flex items-center justify-start gap-4 p-4 hover:bg-slate-200 hover:text-black">
-      <Translate />
-      <select
-        className="bg-gray-500 focus:outline-none text-white hover:bg-slate-200 hover:text-black"
-        value={i18n.language}
-        onChange={e => i18n.changeLanguage(e.target.value)}
-      >
-        <option value="en">English</option>
-        <option value="es">Español</option>
-      </select>
-    </div>
+    <OptionMenu
+      offset={[16, 8]}
+      trigger={
+        <Globe
+          boxSize="1.5rem"
+          minWidth="auto"
+        />
+      }
+      options={supported}
+      namespace="languages"
+      showDividers
+    />
   );
 }
-export default LanguageSwitcher;

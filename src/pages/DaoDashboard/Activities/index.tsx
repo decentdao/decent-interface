@@ -1,13 +1,14 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ActivityGovernance } from '../../../components/Activity/ActivityGovernance';
+import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury';
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import { ActivityEventType, SortBy } from '../../../types';
+import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
+import { SortBy } from '../../../types';
 import { ActivityFreeze } from './ActivityFreeze';
-import { ActivityGovernance } from './ActivityGovernance';
-import { ActivityTreasury } from './ActivityTreasury';
 import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
@@ -35,19 +36,19 @@ export function Activities() {
           gap="1rem"
         >
           <ActivityFreeze />
-          {sortedActivities.map((asset, i) => {
-            if (asset.eventType === ActivityEventType.Governance) {
+          {sortedActivities.map((activity, i) => {
+            if (activity.eventType === ActivityEventType.Governance) {
               return (
                 <ActivityGovernance
                   key={i}
-                  asset={asset}
+                  activity={activity as TxProposal}
                 />
               );
             }
             return (
               <ActivityTreasury
                 key={i}
-                asset={asset}
+                activity={activity as TreasuryActivity}
               />
             );
           })}

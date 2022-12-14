@@ -6,6 +6,7 @@ import {
   Copy,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -28,12 +29,13 @@ export function DAOInfoCard({
 }: IDAOInfoCard) {
   const {
     account: {
-      favorites: { isConnectedFavorited, toggleFavorite },
+      favorites: { favoritesList, toggleFavorite },
     },
   } = useFractal();
   const copyToClipboard = useCopyText();
   const { accountSubstring } = useDisplayName(safeAddress);
   const { daoRegistryName } = useDAOName({ address: safeAddress });
+  const isFavorite = favoritesList.includes(safeAddress);
   return (
     <Flex
       justifyContent="space-between"
@@ -83,11 +85,7 @@ export function DAOInfoCard({
               minWidth="0px"
               aria-label="Favorite Toggle"
               icon={
-                isConnectedFavorited ? (
-                  <StarGoldSolid boxSize="1.5rem" />
-                ) : (
-                  <StarOutline boxSize="1.5rem" />
-                )
+                isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />
               }
               onClick={() => toggleFavorite(safeAddress)}
             />
@@ -105,6 +103,7 @@ export function DAOInfoCard({
             alignItems="center"
             onClick={() => copyToClipboard(safeAddress)}
             gap="0.5rem"
+            cursor="pointer"
           >
             <Text
               textStyle="text-base-mono-regular"
@@ -112,7 +111,7 @@ export function DAOInfoCard({
             >
               {accountSubstring}
             </Text>
-            <Copy />
+            <Copy boxSize="1.5rem" />
           </Flex>
         </Flex>
       </Flex>
@@ -134,7 +133,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
   return (
     <Box
       h="6.75rem"
-      bg="black.900-semi-transparent"
+      bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
       w="full"

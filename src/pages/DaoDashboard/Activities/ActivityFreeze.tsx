@@ -1,11 +1,26 @@
 import { Flex, Text, Button, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { Badge } from '../../../components/ui/badges/Badge';
-import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
-import useCurrentTimestamp from '../../../hooks/utils/useCurrentTimestamp';
+// import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
+// import useCurrentTimestamp from '../../../hooks/utils/useCurrentTimestamp';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { AcitivityCard } from './ActivityCard';
-import { FreezeDescription } from './ActivityDescription';
+// import { AcitivityCard } from './ActivityCard';
+// import { FreezeDescription } from './ActivityDescription';
+
+export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
+  const { t } = useTranslation('dashboard');
+  return (
+    <Flex
+      color="grayscale.100"
+      textStyle="text-lg-mono-semibold"
+      gap="0.5rem"
+      flexWrap="wrap"
+    >
+      <Text> {isFrozen ? t('frozenDescription') : t('freezeDescription')}</Text>
+    </Flex>
+  );
+}
 
 export function ActivityFreeze() {
   const { t } = useTranslation('dashboard');
@@ -25,13 +40,13 @@ export function ActivityFreeze() {
   // update button during Frozen state / already voted stage
 
   return (
-    <AcitivityCard
-      Badge={
-        <Badge
-          labelKey={guard.isFrozen ? 'stateFrozen' : 'stateFreezeInit'}
-          size="base"
-        />
-      }
+    <ActivityCard
+      // Badge={
+      //   <Badge
+      //     labelKey={guard.isFrozen ? 'stateFrozen' : 'stateFreezeInit'}
+      //     size="base"
+      //   />
+      // }
       description={<FreezeDescription isFrozen={guard.isFrozen} />}
       RightElement={
         <Flex

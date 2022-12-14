@@ -1,10 +1,20 @@
-import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
+import {
+  FractalModule__factory,
+  OZLinearVoting__factory,
+  FractalUsul__factory,
+  VetoERC20Voting__factory,
+  VetoGuard__factory,
+  VetoMultisigVoting__factory,
+  GnosisSafe__factory,
+  GnosisSafe,
+  UsulVetoGuard__factory,
+} from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
-import { OZLinearVoting__factory, Usul__factory } from '../../assets/typechain-types/usul';
 import {
   GnosisDAO,
   GovernanceTypes,
+  SubDAO,
   TokenGovernanceDAO,
 } from '../../components/DaoCreator/provider/types/index';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
@@ -22,17 +32,210 @@ const useBuildDAOTx = () => {
     gnosisSafeFactoryContract,
     gnosisSafeSingletonContract,
     linearVotingMasterCopyContract,
-    usulMasterCopyContract,
+    fractalUsulMasterCopyContract,
     zodiacModuleProxyFactoryContract,
     fractalNameRegistryContract,
-    votesMasterCopyContract,
+    fractalModuleMasterCopyContract,
+    gnosisVetoGuardMasterCopyContract,
+    usulVetoGuardMasterCopyContract,
+    vetoMultisigVotingMasterCopyContract,
+    vetoERC20VotingMasterCopyContract,
+    votesTokenMasterCopyContract,
   } = useSafeContracts();
 
   const { AddressZero, HashZero } = ethers.constants;
   const { solidityKeccak256, getCreate2Address, defaultAbiCoder } = ethers.utils;
+  const saltNum = getRandomBytes();
 
+  const buildFractalModuleData = useCallback(
+    (parentDAOAddress: string | undefined, safeContract: GnosisSafe) => {
+      if (!fractalModuleMasterCopyContract || !zodiacModuleProxyFactoryContract) {
+        return {
+          predictedFractalModuleAddress: '',
+          setModuleCalldata: '',
+        };
+      }
+      // Fractal Module
+      const setModuleCalldata =
+        // eslint-disable-next-line camelcase
+        FractalModule__factory.createInterface().encodeFunctionData('setUp', [
+          ethers.utils.defaultAbiCoder.encode(
+            ['address', 'address', 'address', 'address[]'],
+            [
+              parentDAOAddress ? parentDAOAddress : safeContract.address, // Owner -- Parent DAO
+              safeContract.address, // Avatar
+              safeContract.address, // Target
+              [], // Authorized Controllers
+            ]
+          ),
+        ]);
+
+      const fractalByteCodeLinear =
+        '0x602d8060093d393df3363d3d373d3d3d363d73' +
+        fractalModuleMasterCopyContract.address.slice(2) +
+        '5af43d82803e903d91602b57fd5bf3';
+      const fractalSalt = solidityKeccak256(
+        ['bytes32', 'uint256'],
+        [solidityKeccak256(['bytes'], [setModuleCalldata]), saltNum]
+      );
+      return {
+        predictedFractalModuleAddress: getCreate2Address(
+          zodiacModuleProxyFactoryContract.address,
+          fractalSalt,
+          solidityKeccak256(['bytes'], [fractalByteCodeLinear])
+        ),
+        setModuleCalldata: setModuleCalldata,
+      };
+    },
+    [
+      fractalModuleMasterCopyContract,
+      zodiacModuleProxyFactoryContract,
+      getCreate2Address,
+      saltNum,
+      solidityKeccak256,
+    ]
+  );
+  const buildVetoVotesContractData = useCallback(
+    (parentTokenAddress?: string) => {
+      const buildVetoVotes = async () => {
+        if (
+          !vetoERC20VotingMasterCopyContract ||
+          !vetoMultisigVotingMasterCopyContract ||
+          !zodiacModuleProxyFactoryContract ||
+          !signerOrProvider
+        ) {
+          return;
+        }
+
+        // VETO Voting Contract
+        // If parent DAO is a token voting DAO, then we must utilize the veto ERC20 Voting
+        const vetoVotesMasterCopyContract = parentTokenAddress
+          ? vetoERC20VotingMasterCopyContract
+          : vetoMultisigVotingMasterCopyContract;
+
+        const vetoVotesType = parentTokenAddress
+          ? VetoERC20Voting__factory
+          : VetoMultisigVoting__factory;
+
+        const setVetoVotingCalldata = vetoVotesType.createInterface().encodeFunctionData('owner');
+        const vetoVotingByteCodeLinear =
+          '0x602d8060093d393df3363d3d373d3d3d363d73' +
+          vetoVotesMasterCopyContract.address.slice(2) +
+          '5af43d82803e903d91602b57fd5bf3';
+        const vetoVotingSalt = solidityKeccak256(
+          ['bytes32', 'uint256'],
+          [solidityKeccak256(['bytes'], [setVetoVotingCalldata]), saltNum]
+        );
+        return {
+          vetoVotingAddress: getCreate2Address(
+            zodiacModuleProxyFactoryContract.address,
+            vetoVotingSalt,
+            solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
+          ),
+          setVetoVotingCalldata: setVetoVotingCalldata,
+          vetoVotesType,
+        };
+      };
+      return buildVetoVotes();
+    },
+    [
+      getCreate2Address,
+      saltNum,
+      solidityKeccak256,
+      zodiacModuleProxyFactoryContract,
+      signerOrProvider,
+      vetoERC20VotingMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
+    ]
+  );
+  const buildVetoGuardData = useCallback(
+    ({
+      executionPeriod,
+      parentDAOAddress,
+      vetoVotingAddress,
+      safeAddress,
+      usulAddress,
+      strategyAddress,
+      timelockPeriod,
+    }: {
+      executionPeriod: BigNumber;
+      parentDAOAddress: string;
+      vetoVotingAddress: string;
+      safeAddress: string;
+      usulAddress?: string;
+      strategyAddress?: string;
+      timelockPeriod?: BigNumber;
+    }) => {
+      const buildVetoGuard = async () => {
+        if (
+          !gnosisVetoGuardMasterCopyContract ||
+          !usulVetoGuardMasterCopyContract ||
+          !zodiacModuleProxyFactoryContract
+        ) {
+          return;
+        }
+
+        // VETO GUARD Contract
+        // If dao config is a usul dao, then we must utilize the usulVetoGuard
+        const vetoGuardMasterCopyContract = usulAddress
+          ? usulVetoGuardMasterCopyContract
+          : gnosisVetoGuardMasterCopyContract;
+
+        const vetoGuardType = usulAddress ? UsulVetoGuard__factory : VetoGuard__factory;
+
+        const setVetoGuardCalldata = vetoGuardType.createInterface().encodeFunctionData('setUp', [
+          usulAddress
+            ? ethers.utils.defaultAbiCoder.encode(
+                ['address', 'address', 'address', 'address', 'uint256'],
+                [
+                  parentDAOAddress, // Owner -- Parent DAO
+                  vetoVotingAddress, // Veto Voting
+                  strategyAddress, // Base Strategy
+                  usulAddress, // USUL
+                  executionPeriod, // Execution Period
+                ]
+              )
+            : ethers.utils.defaultAbiCoder.encode(
+                ['uint256', 'uint256', 'address', 'address', 'address'],
+                [
+                  timelockPeriod, // Timelock Period
+                  executionPeriod, // Execution Period
+                  parentDAOAddress, // Owner -- Parent DAO
+                  vetoVotingAddress, // Veto Voting
+                  safeAddress, // Gnosis Safe
+                ]
+              ),
+        ]);
+        const vetoGuardByteCodeLinear =
+          '0x602d8060093d393df3363d3d373d3d3d363d73' +
+          vetoGuardMasterCopyContract.address.slice(2) +
+          '5af43d82803e903d91602b57fd5bf3';
+        const vetoGuardSalt = solidityKeccak256(
+          ['bytes32', 'uint256'],
+          [solidityKeccak256(['bytes'], [setVetoGuardCalldata]), saltNum]
+        );
+        return {
+          predictedVetoModuleAddress: getCreate2Address(
+            zodiacModuleProxyFactoryContract.address,
+            vetoGuardSalt,
+            solidityKeccak256(['bytes'], [vetoGuardByteCodeLinear])
+          ),
+          setVetoGuardCalldata: setVetoGuardCalldata,
+        };
+      };
+      return buildVetoGuard();
+    },
+    [
+      getCreate2Address,
+      gnosisVetoGuardMasterCopyContract,
+      usulVetoGuardMasterCopyContract,
+      saltNum,
+      solidityKeccak256,
+      zodiacModuleProxyFactoryContract,
+    ]
+  );
   const buildDeploySafeTx = useCallback(
-    (daoData: GnosisDAO, hasUsul?: boolean) => {
+    (daoData: GnosisDAO, hasUsul?: boolean, parentDAOAddress?: string) => {
       const buildTx = async () => {
         if (
           !account ||
@@ -45,18 +248,22 @@ const useBuildDAOTx = () => {
         }
 
         const gnosisDaoData = daoData as GnosisDAO;
-        const saltNum = getRandomBytes();
+
+        const signers = hasUsul
+          ? [multiSendContract.address]
+          : [
+              ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
+              multiSendContract.address,
+            ];
+        if (parentDAOAddress) {
+          signers.push(parentDAOAddress);
+        }
 
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
           'setup',
           [
-            hasUsul
-              ? [multiSendContract.address]
-              : [
-                  ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
-                  multiSendContract.address,
-                ],
-            hasUsul ? 1 : gnosisDaoData.trustedAddresses.length, // threshold
+            signers,
+            1, // Threshold
             AddressZero,
             HashZero,
             AddressZero,
@@ -75,7 +282,6 @@ const useBuildDAOTx = () => {
           solidityKeccak256(
             ['bytes', 'uint256'],
             [
-              // eslint-disable-next-line camelcase
               await gnosisSafeFactoryContract.proxyCreationCode(),
               gnosisSafeSingletonContract.address,
             ]
@@ -108,17 +314,30 @@ const useBuildDAOTx = () => {
       HashZero,
       getCreate2Address,
       solidityKeccak256,
+      saltNum,
     ]
   );
-
   const buildMultisigTx = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO) => {
+    (
+      daoData: GnosisDAO | TokenGovernanceDAO,
+      parentDAOAddress?: string,
+      parentTokenAddress?: string
+    ) => {
       const buildTx = async () => {
-        if (!multiSendContract || !fractalNameRegistryContract || !signerOrProvider) {
+        if (
+          !multiSendContract ||
+          !fractalNameRegistryContract ||
+          !signerOrProvider ||
+          !zodiacModuleProxyFactoryContract ||
+          !fractalModuleMasterCopyContract ||
+          !gnosisVetoGuardMasterCopyContract ||
+          !vetoMultisigVotingMasterCopyContract ||
+          !vetoERC20VotingMasterCopyContract
+        ) {
           return;
         }
         const gnosisDaoData = daoData as GnosisDAO;
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, false, parentDAOAddress);
 
         if (!deploySafeTx) {
           return;
@@ -132,20 +351,148 @@ const useBuildDAOTx = () => {
           '0000000000000000000000000000000000000000000000000000000000000000' +
           '01';
 
-        const safeContract = await GnosisSafe__factory.connect(
+        const safeContract = GnosisSafe__factory.connect(
           predictedGnosisSafeAddress,
           signerOrProvider
         );
 
-        const internaltTxs: MetaTransaction[] = [
-          buildContractCall(
-            fractalNameRegistryContract,
-            'updateDAOName',
-            [gnosisDaoData.daoName],
-            0,
-            false
-          ),
-        ];
+        // Fractal Module
+        const { predictedFractalModuleAddress, setModuleCalldata } = buildFractalModuleData(
+          parentDAOAddress,
+          safeContract
+        );
+
+        let internaltTxs: MetaTransaction[];
+        if (parentDAOAddress) {
+          const subDAOData = daoData as SubDAO;
+          // Veto Votes
+          const deployVetoVotesTx = await buildVetoVotesContractData(parentTokenAddress);
+          if (!deployVetoVotesTx) {
+            return;
+          }
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = deployVetoVotesTx;
+
+          // Veto Guard
+          const deployVetoGuardTx = await buildVetoGuardData({
+            executionPeriod: subDAOData.executionPeriod,
+            parentDAOAddress: parentDAOAddress,
+            vetoVotingAddress: vetoVotingAddress,
+            safeAddress: safeContract.address,
+            timelockPeriod: subDAOData.timelockPeriod,
+          });
+          if (!deployVetoGuardTx) {
+            return;
+          }
+          const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
+          internaltTxs = [
+            // Name Registry
+            buildContractCall(
+              fractalNameRegistryContract,
+              'updateDAOName',
+              [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            // Enable Fractal Module
+            buildContractCall(
+              safeContract,
+              'enableModule',
+              [predictedFractalModuleAddress],
+              0,
+              false
+            ),
+            // Deploy Veto Voting
+            buildContractCall(
+              zodiacModuleProxyFactoryContract,
+              'deployModule',
+              [
+                vetoVotesType === VetoERC20Voting__factory
+                  ? vetoERC20VotingMasterCopyContract.address
+                  : vetoMultisigVotingMasterCopyContract.address,
+                setVetoVotingCalldata,
+                saltNum,
+              ],
+              0,
+              false
+            ),
+            // Setup Veto Voting
+            buildContractCall(
+              vetoVotesType.connect(vetoVotingAddress, signerOrProvider),
+              'setUp',
+              [
+                ethers.utils.defaultAbiCoder.encode(
+                  ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
+                  [
+                    parentDAOAddress, // Owner -- Parent DAO
+                    subDAOData.vetoVotesThreshold, // VetoVotesThreshold
+                    subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
+                    subDAOData.freezeProposalPeriod, // FreezeProposalPeriod
+                    subDAOData.freezePeriod, // FreezeBlockPeriod
+                    parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
+                    predictedVetoModuleAddress, // VetoGuard
+                  ]
+                ),
+              ],
+              0,
+              false
+            ),
+            // Deploy Veto Guard
+            buildContractCall(
+              zodiacModuleProxyFactoryContract,
+              'deployModule',
+              [gnosisVetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
+              0,
+              false
+            ),
+            // Enable Veto Guard
+            buildContractCall(safeContract, 'setGuard', [predictedVetoModuleAddress], 0, false),
+            // Remove Multisend Contract
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [
+                gnosisDaoData.trustedAddresses[gnosisDaoData.trustedAddresses.length - 1].address,
+                multiSendContract.address,
+                gnosisDaoData.signatureThreshold,
+              ],
+              0,
+              false
+            ),
+          ];
+        } else {
+          internaltTxs = [
+            // Name Registry
+            buildContractCall(
+              fractalNameRegistryContract,
+              'updateDAOName',
+              [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            // Enable Fractal Module
+            buildContractCall(
+              safeContract,
+              'enableModule',
+              [predictedFractalModuleAddress],
+              0,
+              false
+            ),
+
+            // Remove Multisend Contract
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [
+                gnosisDaoData.trustedAddresses[gnosisDaoData.trustedAddresses.length - 1].address,
+                multiSendContract.address,
+                gnosisDaoData.signatureThreshold,
+              ],
+              0,
+              false
+            ),
+          ];
+        }
+
         const safeInternalTx = encodeMultiSend(internaltTxs);
         const execInternalSafeTx = buildContractCall(
           safeContract,
@@ -166,7 +513,16 @@ const useBuildDAOTx = () => {
           false
         );
 
-        const txs: MetaTransaction[] = [createSafeTx, execInternalSafeTx];
+        // Deploy Fractal Module
+        const fractalModuleTx = buildContractCall(
+          zodiacModuleProxyFactoryContract,
+          'deployModule',
+          [fractalModuleMasterCopyContract.address, setModuleCalldata, saltNum],
+          0,
+          false
+        );
+
+        const txs: MetaTransaction[] = [createSafeTx, fractalModuleTx, execInternalSafeTx];
         const safeTx = encodeMultiSend(txs);
 
         return { predictedGnosisSafeAddress, createSafeTx, safeTx };
@@ -179,23 +535,40 @@ const useBuildDAOTx = () => {
       fractalNameRegistryContract,
       signerOrProvider,
       buildDeploySafeTx,
+      buildFractalModuleData,
+      buildVetoGuardData,
+      buildVetoVotesContractData,
+      vetoERC20VotingMasterCopyContract,
       AddressZero,
+      zodiacModuleProxyFactoryContract,
+      fractalModuleMasterCopyContract,
+      saltNum,
+      gnosisVetoGuardMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
     ]
   );
   const buildUsulTx = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO) => {
+    (
+      daoData: GnosisDAO | TokenGovernanceDAO,
+      parentDAOAddress?: string,
+      parentTokenAddress?: string
+    ) => {
       const buildTx = async () => {
         if (
           !account ||
           !gnosisSafeFactoryContract ||
           !gnosisSafeSingletonContract?.address ||
-          !usulMasterCopyContract ||
+          !fractalUsulMasterCopyContract ||
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMasterCopyContract ||
           !multiSendContract ||
           !fractalNameRegistryContract ||
+          !fractalModuleMasterCopyContract ||
+          !vetoMultisigVotingMasterCopyContract ||
           !signerOrProvider ||
-          !votesMasterCopyContract
+          !votesTokenMasterCopyContract ||
+          !vetoERC20VotingMasterCopyContract ||
+          !usulVetoGuardMasterCopyContract
         ) {
           return;
         }
@@ -203,7 +576,7 @@ const useBuildDAOTx = () => {
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true, parentDAOAddress);
 
         if (!deploySafeTx) {
           return;
@@ -242,13 +615,13 @@ const useBuildDAOTx = () => {
           ]
         );
 
-        const encodedSetUpTokenData = votesMasterCopyContract.interface.encodeFunctionData(
+        const encodedSetUpTokenData = votesTokenMasterCopyContract.interface.encodeFunctionData(
           'setUp',
           [encodedInitTokenData]
         );
         const tokenByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          votesMasterCopyContract.address.slice(2) +
+          votesTokenMasterCopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
         const tokenNonce = getRandomBytes();
         const tokenSalt = solidityKeccak256(
@@ -268,7 +641,7 @@ const useBuildDAOTx = () => {
             predictedTokenAddress,
             '0x0000000000000000000000000000000000000001',
             tokenGovernanceDaoData.votingPeriod,
-            tokenGovernanceDaoData.quorum,
+            tokenGovernanceDaoData.quorumPercentage,
             tokenGovernanceDaoData.executionDelay,
             'linearVoting',
           ]
@@ -302,13 +675,14 @@ const useBuildDAOTx = () => {
             [predictedStrategyAddress],
           ]
         );
-        const encodedSetupUsulData = usulMasterCopyContract.interface.encodeFunctionData('setUp', [
-          encodedInitUsulData,
-        ]);
+        const encodedSetupUsulData = fractalUsulMasterCopyContract.interface.encodeFunctionData(
+          'setUp',
+          [encodedInitUsulData]
+        );
 
         const usulByteCodeLinear =
           '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          usulMasterCopyContract.address.slice(2) +
+          fractalUsulMasterCopyContract.address.slice(2) +
           '5af43d82803e903d91602b57fd5bf3';
         const usulNonce = getRandomBytes();
         const usulSalt = solidityKeccak256(
@@ -327,47 +701,171 @@ const useBuildDAOTx = () => {
           '0000000000000000000000000000000000000000000000000000000000000000' +
           '01';
 
-        const safeContract = await GnosisSafe__factory.connect(
+        const safeContract = GnosisSafe__factory.connect(
           predictedGnosisSafeAddress,
           signerOrProvider
         );
-        const usulContract = await Usul__factory.connect(predictedUsulAddress, signerOrProvider);
-        const linearVotingContract = await OZLinearVoting__factory.connect(
+        const usulContract = FractalUsul__factory.connect(predictedUsulAddress, signerOrProvider);
+        const linearVotingContract = OZLinearVoting__factory.connect(
           predictedStrategyAddress,
           signerOrProvider
         );
 
-        const internaltTxs: MetaTransaction[] = [
-          buildContractCall(
-            fractalNameRegistryContract,
-            'updateDAOName',
-            [gnosisDaoData.daoName],
-            0,
-            false
-          ),
-          buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
-          buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
-          buildContractCall(
-            safeContract,
-            'addOwnerWithThreshold',
-            [usulContract.address, 1],
-            0,
-            false
-          ),
-          buildContractCall(
-            safeContract,
-            'removeOwner',
-            [usulContract.address, multiSendContract.address, 1],
-            0,
-            false
-          ),
-        ];
+        // Fractal Module
+        const { predictedFractalModuleAddress, setModuleCalldata } = buildFractalModuleData(
+          parentDAOAddress,
+          safeContract
+        );
+
+        let internaltTxs: MetaTransaction[];
+        if (parentDAOAddress) {
+          const subDAOData = daoData as SubDAO;
+
+          // Veto Votes
+          const deployVetoVotesTx = await buildVetoVotesContractData(parentTokenAddress);
+          if (!deployVetoVotesTx) {
+            return;
+          }
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = deployVetoVotesTx;
+
+          // Veto Guard
+          const deployVetoGuardTx = await buildVetoGuardData({
+            executionPeriod: subDAOData.executionPeriod,
+            parentDAOAddress: parentDAOAddress,
+            vetoVotingAddress: vetoVotingAddress,
+            safeAddress: safeContract.address,
+            usulAddress: predictedUsulAddress,
+            strategyAddress: predictedStrategyAddress,
+          });
+          if (!deployVetoGuardTx) {
+            return;
+          }
+          const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
+          internaltTxs = [
+            buildContractCall(
+              fractalNameRegistryContract,
+              'updateDAOName',
+              [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
+            buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
+
+            // Enable Fractal Module
+            buildContractCall(
+              safeContract,
+              'enableModule',
+              [predictedFractalModuleAddress],
+              0,
+              false
+            ),
+
+            // Deploy Veto Voting
+            buildContractCall(
+              zodiacModuleProxyFactoryContract,
+              'deployModule',
+              [
+                vetoVotesType === VetoERC20Voting__factory
+                  ? vetoERC20VotingMasterCopyContract.address
+                  : vetoMultisigVotingMasterCopyContract.address,
+                setVetoVotingCalldata,
+                saltNum,
+              ],
+              0,
+              false
+            ),
+            // Setup Veto Voting
+            buildContractCall(
+              vetoVotesType.connect(vetoVotingAddress, signerOrProvider),
+              'setUp',
+              [
+                ethers.utils.defaultAbiCoder.encode(
+                  ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
+                  [
+                    parentDAOAddress, // Owner -- Parent DAO
+                    subDAOData.vetoVotesThreshold, // VetoVotesThreshold
+                    subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
+                    subDAOData.freezeProposalPeriod, // FreezeProposalPeriod
+                    subDAOData.freezePeriod, // FreezePeriod
+                    parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
+                    predictedVetoModuleAddress, // VetoGuard
+                  ]
+                ),
+              ],
+              0,
+              false
+            ),
+
+            // Deploy Veto Guard
+            buildContractCall(
+              zodiacModuleProxyFactoryContract,
+              'deployModule',
+              [usulVetoGuardMasterCopyContract.address, setVetoGuardCalldata, saltNum],
+              0,
+              false
+            ),
+            // Enable Veto Guard
+            buildContractCall(usulContract, 'setGuard', [predictedVetoModuleAddress], 0, false),
+
+            // Add Usul Contract as the Safe owner
+            buildContractCall(
+              safeContract,
+              'addOwnerWithThreshold',
+              [usulContract.address, 1],
+              0,
+              false
+            ),
+            // Remove Multisend contract
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [usulContract.address, multiSendContract.address, 1],
+              0,
+              false
+            ),
+          ];
+        } else {
+          internaltTxs = [
+            buildContractCall(
+              fractalNameRegistryContract,
+              'updateDAOName',
+              [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
+            buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
+            // Enable Fractal Module
+            buildContractCall(
+              safeContract,
+              'enableModule',
+              [predictedFractalModuleAddress],
+              0,
+              false
+            ),
+            buildContractCall(
+              safeContract,
+              'addOwnerWithThreshold',
+              [usulContract.address, 1],
+              0,
+              false
+            ),
+            buildContractCall(
+              safeContract,
+              'removeOwner',
+              [usulContract.address, multiSendContract.address, 1],
+              0,
+              false
+            ),
+          ];
+        }
         const safeInternalTx = encodeMultiSend(internaltTxs);
 
         const createTokenTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [votesMasterCopyContract.address, encodedSetUpTokenData, tokenNonce],
+          [votesTokenMasterCopyContract.address, encodedSetUpTokenData, tokenNonce],
           0,
           false
         );
@@ -382,7 +880,15 @@ const useBuildDAOTx = () => {
         const deployUsulTx = buildContractCall(
           zodiacModuleProxyFactoryContract,
           'deployModule',
-          [usulMasterCopyContract.address, encodedSetupUsulData, usulNonce],
+          [fractalUsulMasterCopyContract.address, encodedSetupUsulData, usulNonce],
+          0,
+          false
+        );
+        // Deploy Fractal Module
+        const deployFractalModuleTx = buildContractCall(
+          zodiacModuleProxyFactoryContract,
+          'deployModule',
+          [fractalModuleMasterCopyContract.address, setModuleCalldata, saltNum],
           0,
           false
         );
@@ -410,6 +916,7 @@ const useBuildDAOTx = () => {
           createTokenTx,
           deployStrategyTx,
           deployUsulTx,
+          deployFractalModuleTx,
           execInternalSafeTx,
         ];
         const safeTx = encodeMultiSend(txs);
@@ -423,28 +930,40 @@ const useBuildDAOTx = () => {
       account,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract?.address,
-      usulMasterCopyContract,
+      fractalUsulMasterCopyContract,
       zodiacModuleProxyFactoryContract,
       linearVotingMasterCopyContract,
       multiSendContract,
       fractalNameRegistryContract,
+      fractalModuleMasterCopyContract,
+      usulVetoGuardMasterCopyContract,
+      vetoERC20VotingMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
+      saltNum,
       signerOrProvider,
       buildDeploySafeTx,
+      buildFractalModuleData,
+      buildVetoGuardData,
+      buildVetoVotesContractData,
       defaultAbiCoder,
       getCreate2Address,
       solidityKeccak256,
       AddressZero,
-      votesMasterCopyContract,
+      votesTokenMasterCopyContract,
     ]
   );
 
   const buildDao = useCallback(
-    async (daoData: TokenGovernanceDAO | GnosisDAO) => {
+    async (
+      daoData: TokenGovernanceDAO | GnosisDAO,
+      parentDAOAddress?: string,
+      parentTokenAddress?: string
+    ) => {
       switch (daoData.governance) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
-          return buildUsulTx(daoData);
+          return buildUsulTx(daoData, parentDAOAddress, parentTokenAddress);
         case GovernanceTypes.GNOSIS_SAFE:
-          return buildMultisigTx(daoData);
+          return buildMultisigTx(daoData, parentDAOAddress, parentTokenAddress);
       }
     },
     [buildUsulTx, buildMultisigTx]

@@ -39,8 +39,7 @@ function TokenDetails() {
 
   return (
     <ContentBox>
-      {/* @todo add translations */}
-      <ContentBoxTitle>Mint a New Token</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleTokenParams')}</ContentBoxTitle>
       <InputBox>
         <LabelWrapper
           label={t('labelTokenName')}

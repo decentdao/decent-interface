@@ -105,7 +105,7 @@ function TokenAllocations({
   return (
     <Box>
       {/* @todo add translations */}
-      <ContentBoxTitle>Token Allocations</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
       {canReceiveParentAllocations && !!parentAllocationAmount && (
         <InputBox>
           <LabelWrapper

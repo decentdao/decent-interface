@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CREATOR_STEP_TITLE_KEYS } from '../constants';
-import { CreatorState, CreatorSteps } from '../types';
+import { CreatorState } from '../types';
 
 /**
  * handles form page title
@@ -13,24 +13,7 @@ export function useStepName(state: CreatorState) {
   const [stepName, setStepName] = useState<string[]>(t(CREATOR_STEP_TITLE_KEYS[state.step]));
 
   useEffect(() => {
-    switch (state.step) {
-      case CreatorSteps.ESSENTIALS:
-        setStepName(t(CREATOR_STEP_TITLE_KEYS[state.step]));
-        break;
-      case CreatorSteps.GOV_CONFIG:
-      case CreatorSteps.FUNDING: {
-        setStepName(
-          t('stepName', {
-            daoName: state.essentials!.daoName,
-            stepName: t(CREATOR_STEP_TITLE_KEYS[state.step]),
-          })
-        );
-        break;
-      }
-      default:
-        setStepName(t(CREATOR_STEP_TITLE_KEYS[state.step]));
-        break;
-    }
+    setStepName(t(CREATOR_STEP_TITLE_KEYS[state.step]));
   }, [state.step, state.essentials, t]);
 
   return stepName;

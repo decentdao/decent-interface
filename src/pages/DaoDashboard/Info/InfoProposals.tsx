@@ -1,15 +1,34 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Proposals } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { BarLoader } from '../../../components/ui/loaders/BarLoader';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 
 interface IDAOGovernance {}
 
 export function InfoProposals({}: IDAOGovernance) {
   const { t } = useTranslation('dashboard');
+  const {
+    gnosis: { safe },
+    governance: {
+      txProposalsInfo: { passed, pending },
+      governanceIsLoading,
+    },
+  } = useFractal();
 
-  // @todo replace mocked values
-  const MOCK_PENDING_AMOUNT = '13';
-  const MOCK_PASSED_AMOUNT = '23';
+  if (!safe.address || governanceIsLoading) {
+    return (
+      <Flex
+        h="8.5rem"
+        width="100%"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <BarLoader />
+      </Flex>
+    );
+  }
+
   return (
     <Box data-testid="dashboard-daoProposals">
       <Flex
@@ -41,7 +60,7 @@ export function InfoProposals({}: IDAOGovernance) {
           textStyle="text-base-sans-regular"
           color="grayscale.100"
         >
-          {MOCK_PENDING_AMOUNT}
+          {pending}
         </Text>
       </Flex>
       <Flex
@@ -59,7 +78,7 @@ export function InfoProposals({}: IDAOGovernance) {
           textStyle="text-base-sans-regular"
           color="grayscale.100"
         >
-          {MOCK_PASSED_AMOUNT}
+          {passed}
         </Text>
       </Flex>
     </Box>

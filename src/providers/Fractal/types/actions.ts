@@ -1,26 +1,27 @@
 import SafeServiceClient, {
+  SafeInfoResponse,
   AllTransactionsListResponse,
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
   TransferListResponse,
-} from '@gnosis.pm/safe-service-client';
-import { AccountAction, GnosisAction, GovernanceAction, TreasuryAction } from '../constants';
-import { IGnosisModuleData, IGnosisVetoData, IGovernance } from './governance';
-import { IFavorites, IAudit, SafeInfoResponseWithGuard } from './state';
+} from '@safe-global/safe-service-client';
+import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
+import { IGnosisModuleData } from '../governance/types';
+import { IGnosisVetoData } from './governance';
+import { IFavorites, IAudit } from './state';
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE_SERVICE_CLIENT; payload: SafeServiceClient }
-  | { type: GnosisAction.SET_SAFE; payload: SafeInfoResponseWithGuard }
+  | { type: GnosisAction.SET_SAFE; payload: SafeInfoResponse }
+  | { type: GnosisAction.SET_SAFE_ADDRESS; payload: string }
   | { type: GnosisAction.SET_SAFE_TRANSACTIONS; payload: AllTransactionsListResponse }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
   | { type: GnosisAction.SET_GUARD; payload: IGnosisVetoData }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
+  | { type: GnosisAction.SET_DAO_PARENT; payload: string }
+  | { type: GnosisAction.SET_DAO_CHILDREN; payload: string[] }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
-
-export type GovernanceActions =
-  | { type: GovernanceAction.ADD_GOVERNANCE_DATA; payload: IGovernance }
-  | { type: GovernanceAction.RESET };
 
 export type TreasuryActions =
   | {

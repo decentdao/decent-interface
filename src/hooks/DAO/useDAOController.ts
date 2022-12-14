@@ -2,15 +2,16 @@ import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useSearchDao from '../../hooks/DAO/useSearchDao';
-import { GnosisAction } from '../../providers/Fractal/constants/actions';
+import { GnosisAction, TreasuryAction } from '../../providers/Fractal/constants/actions';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
+import { GovernanceAction } from './../../providers/Fractal/governance/actions';
 
 export default function useDAOController() {
   const {
     gnosis: { safe, safeService },
-    dispatches: { gnosisDispatch },
+    dispatches: { gnosisDispatch, governanceDispatch, treasuryDispatch },
   } = useFractal();
   const params = useParams();
   const {
@@ -34,13 +35,27 @@ export default function useDAOController() {
   useEffect(() => {
     if (address && signerOrProvider && account && safeService) {
       (async () => {
+        treasuryDispatch({
+          type: TreasuryAction.RESET,
+        });
+        governanceDispatch({
+          type: GovernanceAction.RESET,
+        });
         gnosisDispatch({
-          type: GnosisAction.SET_SAFE,
-          payload: await safeService.getSafeInfo(address),
+          type: GnosisAction.SET_SAFE_ADDRESS,
+          payload: address,
         });
       })();
     }
-  }, [address, signerOrProvider, account, gnosisDispatch, safeService]);
+  }, [
+    address,
+    signerOrProvider,
+    account,
+    gnosisDispatch,
+    safeService,
+    governanceDispatch,
+    treasuryDispatch,
+  ]);
 
   useEffect(() => {
     if (!loading) {
@@ -54,7 +69,11 @@ export default function useDAOController() {
 
   useEffect(() => {
     return () => {
-      gnosisDispatch({ type: GnosisAction.RESET });
+      if (!params.address) {
+        gnosisDispatch({ type: GnosisAction.RESET });
+        treasuryDispatch({ type: TreasuryAction.RESET });
+        governanceDispatch({ type: GovernanceAction.RESET });
+      }
     };
-  }, [gnosisDispatch]);
+  }, [params.address, gnosisDispatch, treasuryDispatch, governanceDispatch]);
 }

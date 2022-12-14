@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Proposal, ProposalState } from '../../../providers/Fractal/types';
+import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';
@@ -11,7 +11,7 @@ export function ProposalAction({
   proposal,
   expandedView,
 }: {
-  proposal: Proposal;
+  proposal: UsulProposal;
   expandedView?: boolean;
 }) {
   const [pending, setPending] = useState(false);
@@ -23,17 +23,17 @@ export function ProposalAction({
     setPending(true);
 
     switch (proposal.state) {
-      case ProposalState.Active:
+      case TxProposalState.Active:
         // Call Vote action - probably redirect to proposal details where CastVote component would handle proper vote casting
         break;
-      case ProposalState.Pending:
+      case TxProposalState.Pending:
         // Call proposal queueing action
         break;
-      case ProposalState.Executing:
+      case TxProposalState.Executing:
         // Call proposal execution action
         break;
       default:
-        navigate(proposal.proposalNumber.toString());
+        navigate(proposal.proposalNumber);
         break;
     }
 
@@ -42,11 +42,11 @@ export function ProposalAction({
 
   const label = useMemo(() => {
     switch (proposal.state) {
-      case ProposalState.Active:
+      case TxProposalState.Active:
         return t('vote');
-      case ProposalState.Pending:
+      case TxProposalState.Pending:
         return t('queue');
-      case ProposalState.Executing:
+      case TxProposalState.Executing:
         return t('execute');
     }
   }, [proposal, t]);
@@ -68,11 +68,11 @@ export function ProposalAction({
 
   if (expandedView) {
     switch (proposal.state) {
-      case ProposalState.Active:
+      case TxProposalState.Active:
         return <CastVote proposal={proposal} />;
-      case ProposalState.Pending:
+      case TxProposalState.Pending:
         return <Queue proposal={proposal} />;
-      case ProposalState.Executing:
+      case TxProposalState.Executing:
         return <Execute proposal={proposal} />;
     }
   }

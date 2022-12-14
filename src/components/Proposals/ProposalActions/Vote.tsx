@@ -1,25 +1,42 @@
 import { Text, Button } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
+import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCastVote from '../../../providers/Fractal/hooks/useCastVote';
-import { Proposal, ProposalState, UsulVoteChoice } from '../../../providers/Fractal/types';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
+import {
+  TxProposal,
+  TxProposalState,
+  UsulProposal,
+  UsulVoteChoice,
+} from '../../../providers/Fractal/types';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';
 import Check from '../../ui/svg/Check';
 
-function Vote({ proposal }: { proposal: Proposal }) {
+function Vote({ proposal }: { proposal: TxProposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation();
 
+  const usulProposal = proposal as UsulProposal;
+
+  const {
+    state: { account },
+  } = useWeb3Provider();
+
   const castVote = useCastVote({
-    proposalNumber: proposal.proposalNumber,
+    proposalNumber: BigNumber.from(proposal.proposalNumber),
     setPending: setPending,
   });
 
-  const disabled = pending || proposal.state !== ProposalState.Active; // @todo - check permissions for user to vote
+  const disabled =
+    pending ||
+    proposal.state !== TxProposalState.Active ||
+    !!usulProposal.votes.find(vote => vote.voter === account);
 
   return (
-    <ContentBox bg="black.900-semi-transparent">
+    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{t('vote')}</Text>
       <Button
         width="full"

@@ -1,6 +1,6 @@
 import { Button, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { utils } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { checkAddress } from '../../../hooks/utils/useAddress';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -75,6 +75,7 @@ function TokenAllocationInput({
       >
         <Input
           value={tokenAllocation.address}
+          placeholder={ethers.constants.AddressZero}
           onChange={event => updateAddress(event.target.value)}
           data-testid="tokenVoting-tokenAllocationAddressInput"
         />

@@ -16,7 +16,10 @@ export function DelegateModal({ close }: { close: Function }) {
   const [pending, setPending] = useState<boolean>(false);
 
   const {
-    governance: { governanceToken },
+    governance: {
+      governanceToken,
+      contracts: { tokenContract },
+    },
   } = useFractal();
   const {
     state: { account },
@@ -26,7 +29,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
-    votingTokenContract: governanceToken?.tokenContract,
+    votingTokenContract: tokenContract,
     setPending: setPending,
   });
 
@@ -100,13 +103,15 @@ export function DelegateModal({ close }: { close: Function }) {
       <Flex alignItems="center">
         <Text color="grayscale.100">{t('labelDelegateInput')}</Text>
         <Spacer />
-        <Text
+        <Button
+          pr={0}
+          variant="text"
           textStyle="text-sm-sans-regular"
           color="gold.500-active"
           onClick={delegateSelf}
         >
           {t('linkSelfDelegate')}
-        </Text>
+        </Button>
       </Flex>
       <LabelWrapper
         subLabel={t('sublabelDelegateInput')}

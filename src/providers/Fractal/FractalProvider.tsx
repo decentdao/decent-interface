@@ -1,26 +1,23 @@
-import { ReactNode, useEffect, useMemo, useReducer } from 'react';
-
+import { ReactNode, useMemo, useReducer } from 'react';
 import {
-  GovernanceAction,
-  TreasuryAction,
   gnosisInitialState,
   governanceInitialState,
   treasuryInitialState,
   connectedAccountInitialState,
 } from './constants';
+import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
+import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
 import { useLocalStorage } from './hooks/account/useLocalStorage';
 import useDAOName from './hooks/useDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
-import { useGnosisGovernance } from './hooks/useGnosisGovernance';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
 import { useGnosisVeto } from './hooks/useGnosisVeto';
+import useNodes from './hooks/useNodes';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
-import { governanceReducer, initializeGovernanceState } from './reducers/governance';
 import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
-
 /**
  * Uses Context API to provider DAO information to app
  */
@@ -53,21 +50,20 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   // const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
 
   useLocalStorage();
-  useGnosisApiServices(gnosis, treasuryDispatch, gnosisDispatch);
+  const { getGnosisSafeTransactions } = useGnosisApiServices(
+    gnosis,
+    treasuryDispatch,
+    gnosisDispatch
+  );
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
-  useGnosisGovernance(gnosis, governanceDispatch);
   useDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
   useGnosisVeto(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
-  useEffect(() => {
-    if (!gnosis.safe.address && !gnosis.isGnosisLoading) {
-      governanceDispatch({ type: GovernanceAction.RESET });
-      treasuryDispatch({ type: TreasuryAction.RESET });
-    }
-  }, [governanceDispatch, treasuryDispatch, gnosis.safe.address, gnosis.isGnosisLoading]);
+  useGnosisGovernance({ governance, gnosis, governanceDispatch });
+  useNodes({ gnosis, gnosisDispatch });
 
   const value = useMemo(
     () => ({
@@ -80,8 +76,11 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         treasuryDispatch,
         gnosisDispatch,
       },
+      actions: {
+        getGnosisSafeTransactions,
+      },
     }),
-    [gnosis, governance, treasury, account]
+    [gnosis, governance, treasury, account, getGnosisSafeTransactions]
   );
 
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;

@@ -1,22 +1,17 @@
-import { Input, Button } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
-import { constants, ethers } from 'ethers';
+import { VStack, HStack, Text } from '@chakra-ui/react';
+import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { checkAddress } from '../../hooks/utils/useAddress';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { TransactionData } from '../../types/transaction';
-import ContentBox from '../ui/ContentBox';
-import ContentBoxTitle from '../ui/ContentBoxTitle';
-import InputBox from '../ui/forms/InputBox';
+import { InputComponent, TextareaComponent } from './InputComponent';
 
 interface TransactionProps {
   transaction: TransactionData;
   transactionNumber: number;
   pending: boolean;
   updateTransaction: (transactionData: TransactionData, transactionNumber: number) => void;
-  removeTransaction: (transactionNumber: number) => void;
-  transactionCount: number;
 }
 
 function Transaction({
@@ -24,8 +19,6 @@ function Transaction({
   transactionNumber,
   pending,
   updateTransaction,
-  removeTransaction,
-  transactionCount,
 }: TransactionProps) {
   const {
     state: { provider },
@@ -100,91 +93,87 @@ function Transaction({
     newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
     updateTransaction(newTransactionData, transactionNumber);
   };
+
+  const exampleLabelStyle = {
+    bg: 'chocolate.700',
+    borderRadius: '4px',
+    px: '4px',
+    py: '1px',
+    color: 'grayscale.100',
+    fontSize: '12px',
+  };
+
   return (
-    <ContentBox>
-      <div className="flex justify-between">
-        <ContentBoxTitle>Transaction</ContentBoxTitle>
-        {transactionCount > 1 && (
-          <div className="flex justify-end">
-            <Button
-              variant="text"
-              minWidth="0px"
-              onClick={() => removeTransaction(transactionNumber)}
-              disabled={
-                pending &&
-                transaction.targetAddress.trim().length > 0 &&
-                validateFunctionData(
-                  transaction.functionName,
-                  transaction.functionSignature,
-                  transaction.parameters
-                )
-              }
-            >
-              {t('labelRemoveTransaction')}
-            </Button>
-          </div>
-        )}
-      </div>
-      <InputBox>
-        <LabelWrapper
-          label={t('labelTargetAddress')}
-          subLabel={t('helperTargetAddress')}
-          errorMessage={transaction.addressError}
-        >
-          <Input
-            value={transaction.targetAddress}
-            placeholder={constants.AddressZero}
-            onChange={e => updateTargetAddress(e.target.value)}
-            disabled={pending}
-          />
-        </LabelWrapper>
-      </InputBox>
-      <InputBox>
-        <LabelWrapper
-          label={t('labelFunctionName')}
-          subLabel={t('helperFunctionName')}
-          errorMessage={transaction.fragmentError}
-        >
-          <Input
-            type="text"
-            value={transaction.functionName}
-            onChange={e => updateFunctionName(e.target.value)}
-            placeholder={'transfer'}
-            disabled={pending}
-          />
-        </LabelWrapper>
-      </InputBox>
-      <InputBox>
-        <LabelWrapper
-          label={t('labelFunctionSignature')}
-          subLabel={t('helperFunctionSignature')}
-          errorMessage={transaction.fragmentError}
-        >
-          <Input
-            size="xl"
-            value={transaction.functionSignature}
-            onChange={e => updateFunctionSignature(e.target.value)}
-            disabled={pending}
-            placeholder={'address to, uint amount'}
-          />
-        </LabelWrapper>
-      </InputBox>
-      <InputBox>
-        <LabelWrapper
-          label={t('labelParameters')}
-          subLabel={t('helperParameters')}
-          errorMessage={transaction.fragmentError}
-        >
-          <Input
-            size="xl"
-            value={transaction.parameters}
-            onChange={e => updateParameters(e.target.value)}
-            disabled={pending}
-            placeholder={'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", "1000000000000000000"'}
-          />
-        </LabelWrapper>
-      </InputBox>
-    </ContentBox>
+    <VStack
+      align="left"
+      spacing={4}
+      mt={6}
+    >
+      <InputComponent
+        label={t('labelTargetAddress')}
+        helper={t('helperTargetAddress')}
+        isRequired={true}
+        value={transaction.targetAddress}
+        onChange={e => updateTargetAddress(e.target.value)}
+        disabled={pending}
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>yourdomain.eth</Text>
+            <Text>{` ${t('or', { ns: 'common' })} `}</Text>
+            <Text {...exampleLabelStyle}>0x4168592...</Text>
+          </HStack>
+        }
+        errorMessage={transaction.addressError}
+      />
+      <TextareaComponent
+        label={t('labelFunctionName')}
+        helper={t('helperFunctionName')}
+        isRequired={true}
+        value={transaction.functionName}
+        onChange={e => updateFunctionName(e.target.value)}
+        disabled={pending}
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>transfer</Text>
+          </HStack>
+        }
+        errorMessage={transaction.fragmentError}
+      />
+      <TextareaComponent
+        label={t('labelFunctionSignature')}
+        helper={t('helperFunctionSignature')}
+        isRequired={false}
+        value={transaction.functionSignature}
+        onChange={e => updateFunctionSignature(e.target.value)}
+        disabled={pending}
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>address to, uint amount</Text>
+          </HStack>
+        }
+        errorMessage={transaction.fragmentError}
+      />
+      <TextareaComponent
+        label={t('labelParameters')}
+        helper={t('helperParameters')}
+        isRequired={false}
+        value={transaction.parameters}
+        onChange={e => updateParameters(e.target.value)}
+        disabled={pending}
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>
+              {'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", 1000000000'}
+            </Text>
+          </HStack>
+        }
+        errorMessage={transaction.fragmentError}
+      />
+    </VStack>
   );
 }
 

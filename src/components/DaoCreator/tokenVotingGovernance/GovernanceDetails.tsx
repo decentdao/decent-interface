@@ -44,26 +44,26 @@ function GovernanceDetails() {
     }
   };
 
-  const onQuorumChange = (quorum: string) => {
-    const newQuorumNum = BigNumber.from(quorum || 0);
+  const onQuorumChange = (quorumPercentage: string) => {
+    const newQuorumNum = BigNumber.from(quorumPercentage || 0);
     if (newQuorumNum.lte(100)) {
-      fieldUpdate(newQuorumNum, 'quorum');
+      fieldUpdate(newQuorumNum, 'quorumPercentage');
     } else {
-      fieldUpdate(BigNumber.from(100), 'quorum');
+      fieldUpdate(BigNumber.from(100), 'quorumPercentage');
     }
   };
 
-  const { t } = useTranslation(['common', 'daoCreate']);
+  const { t } = useTranslation(['daoCreate', 'common']);
   const seconds = t('seconds');
 
   return (
     <Box>
       <ContentBox>
-        <ContentBoxTitle>Proposal Settings</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleProposalSettings', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('labelVotingPeriod', { ns: 'daoCreate' })}
-            subLabel={t('helperVotingPeriod', { ns: 'daoCreate' })}
+            label={t('labelVotingPeriod')}
+            subLabel={t('helperVotingPeriod')}
           >
             <NumberInput
               value={govModule.votingPeriod.toString()}
@@ -83,20 +83,19 @@ function GovernanceDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleVotingPeriod', { ns: 'daoCreate' })}
+            {t('exampleVotingPeriod')}
           </Text>
         </InputBox>
-        <ContentBoxTitle>Governance Setup</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('quorum')}
-            subLabel={t('helperQuorum', { ns: 'daoCreate' })}
+            label={t('quorum', { ns: 'common' })}
+            subLabel={t('helperQuorum')}
           >
             <NumberInput
-              value={govModule.quorum.toString()}
+              value={govModule.quorumPercentage.toString()}
               onChange={onQuorumChange}
               precision={0}
-              data-testid="govConfig-quorum"
+              data-testid="govConfig-quorumPercentage"
               onKeyDown={restrictChars}
             >
               <InputGroup>
@@ -108,8 +107,8 @@ function GovernanceDetails() {
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelProposalExecutionDelay', { ns: 'daoCreate' })}
-            subLabel={t('helperProposalExecutionDelay', { ns: 'daoCreate' })}
+            label={t('labelProposalExecutionDelay')}
+            subLabel={t('helperProposalExecutionDelay')}
           >
             <NumberInput
               value={govModule.executionDelay.toString()}
@@ -131,11 +130,11 @@ function GovernanceDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleProposalExecutionDelay', { ns: 'daoCreate' })}
+            {t('exampleProposalExecutionDelay')}
           </Text>
         </InputBox>
       </ContentBox>
-      <ContentBanner description={t('governanceDescription', { ns: 'daoCreate' })} />
+      <ContentBanner description={t('governanceDescription')} />
     </Box>
   );
 }

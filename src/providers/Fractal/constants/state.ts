@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
-import { IGovernance } from '../types/governance';
+import { IGovernance } from '../governance/types';
+// eslint-disable-next-line import/namespace
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';
 
@@ -29,14 +30,18 @@ export const gnosisInitialState: IGnosis = {
 };
 
 export const governanceInitialState: IGovernance = {
-  createSubDAOFunc: undefined,
-  isCreateSubDAOPending: undefined,
-  createProposalFunc: undefined,
-  isCreateProposalPending: undefined,
-  proposalList: undefined,
-  isConnectedUserAuth: undefined,
+  actions: {},
+  type: null,
+  txProposalsInfo: {
+    txProposals: [],
+    pending: undefined,
+    passed: undefined,
+  },
   governanceIsLoading: true,
   governanceToken: undefined,
+  contracts: {
+    contractsIsLoading: true,
+  },
 };
 
 export const treasuryInitialState: ITreasury = {

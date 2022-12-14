@@ -1,9 +1,11 @@
 import SafeServiceClient, {
-  AllTransactionsListResponse,
   SafeInfoResponse,
-} from '@gnosis.pm/safe-service-client';
-import { GnosisActions, GovernanceActions, TreasuryActions } from './actions';
-import { IGnosisModuleData, IGnosisVetoData, IGovernance } from './governance';
+  AllTransactionsListResponse,
+} from '@safe-global/safe-service-client';
+import { GovernanceActions } from '../governance/actions';
+import { IGovernance, IGnosisModuleData } from '../governance/types';
+import { GnosisActions, TreasuryActions } from './actions';
+import { IGnosisVetoData } from './governance';
 import { ITreasury } from './treasury';
 
 export interface IFractalContext {
@@ -16,6 +18,9 @@ export interface IFractalContext {
     governanceDispatch: React.Dispatch<GovernanceActions>;
     gnosisDispatch: React.Dispatch<GnosisActions>;
   };
+  actions: {
+    getGnosisSafeTransactions: () => Promise<void>;
+  };
 }
 
 export type SafeInfoResponseWithGuard = SafeInfoResponse & {
@@ -23,6 +28,7 @@ export type SafeInfoResponseWithGuard = SafeInfoResponse & {
 };
 
 export interface IGnosis {
+  providedSafeAddress?: string;
   daoName: string;
   safeService?: SafeServiceClient;
   safe: Partial<SafeInfoResponseWithGuard>;
@@ -30,6 +36,8 @@ export interface IGnosis {
   guard: IGnosisVetoData;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
+  parentDAOAddress?: string;
+  childNodes?: string[];
 }
 export interface IConnectedAccount {
   favorites: IFavorites;

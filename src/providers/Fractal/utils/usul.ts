@@ -1,21 +1,37 @@
-import { BigNumber, Signer } from 'ethers';
-import { OZLinearVoting__factory, Usul } from '../../../assets/typechain-types/usul';
-import { logError } from '../../../helpers/errorLogging';
-import { decodeTransactionHashes } from '../../../utils/crypto';
-import { Providers } from '../../Web3Data/types';
 import {
-  Proposal,
+  FractalUsul,
+  OZLinearVoting__factory,
+  OZLinearVoting,
+} from '@fractal-framework/fractal-contracts';
+import {
+  SafeMultisigTransactionWithTransfersResponse,
+  SafeMultisigTransactionResponse,
+} from '@safe-global/safe-service-client';
+import { format } from 'date-fns';
+import { BigNumber, Signer } from 'ethers';
+import { logError } from '../../../helpers/errorLogging';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { Providers } from '../../Web3Data/types';
+import { strategyTxProposalStates } from '../governance/constants';
+import {
+  Parameter,
+  DataDecoded,
+  ActivityEventType,
   ProposalIsPassedError,
-  ProposalState,
+  ProposalMetaData,
+  ProposalVote,
   ProposalVotesSummary,
-  strategyProposalStates,
-} from '../types/usul';
+  TxProposalState,
+  UsulProposal,
+  VOTE_CHOICES,
+} from '../types';
+import { DEFAULT_DATE_FORMAT } from './../../../utils/numberFormats';
 
-export const getProposalState = async (
-  usulContract: Usul,
+export const getTxProposalState = async (
+  usulContract: FractalUsul,
   proposalId: BigNumber,
   signerOrProvider: Signer | Providers
-): Promise<ProposalState> => {
+): Promise<TxProposalState> => {
   const state = await usulContract.state(proposalId);
   if (state === 0) {
     // Usul says proposal is active, but we need to get more info in this case
@@ -28,25 +44,25 @@ export const getProposalState = async (
       try {
         // This function never returns false, it either returns true or throws an error
         await strategy.isPassed(proposalId);
-        return ProposalState.Pending;
+        return TxProposalState.Pending;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
-          return ProposalState.Rejected;
+          return TxProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
-          return ProposalState.Failed;
+          return TxProposalState.Failed;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
-          return ProposalState.Active;
+          return TxProposalState.Active;
         }
-        return ProposalState.Failed;
+        return TxProposalState.Failed;
       }
     }
-    return ProposalState.Active;
+    return TxProposalState.Active;
   }
-  return strategyProposalStates[state];
+  return strategyTxProposalStates[state];
 };
 
 export const getProposalVotesSummary = async (
-  usulContract: Usul,
+  usulContract: FractalUsul,
   proposalNumber: BigNumber,
   signerOrProvider: Signer | Providers
 ): Promise<ProposalVotesSummary> => {
@@ -73,45 +89,115 @@ export const getProposalVotesSummary = async (
   };
 };
 
+export const getProposalVotes = async (
+  strategyContract: OZLinearVoting,
+  proposalNumber: BigNumber
+): Promise<ProposalVote[]> => {
+  const voteEventFilter = strategyContract.filters.Voted();
+  const votes = await strategyContract.queryFilter(voteEventFilter);
+  const proposalVotesEvent = votes.filter(voteEvent =>
+    voteEvent.args.proposalId.eq(proposalNumber)
+  );
+
+  return proposalVotesEvent.map(({ args }) => ({
+    voter: args.voter,
+    choice: VOTE_CHOICES[args.support],
+    weight: args.weight,
+  }));
+};
+
 export const mapProposalCreatedEventToProposal = async (
   strategyAddress: string,
   proposalNumber: BigNumber,
   proposer: string,
-  usulContract: Usul,
-  signerOrProvider: Signer | Providers
+  usulContract: FractalUsul,
+  signerOrProvider: Signer | Providers,
+  provider: Providers,
+  metaData?: ProposalMetaData
 ) => {
   const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
-  const state = await getProposalState(usulContract, proposalNumber, signerOrProvider);
-  const votes = await getProposalVotesSummary(usulContract, proposalNumber, signerOrProvider);
-
-  const txHashes = [];
-  let i = 0;
-  let finished = false;
-  while (!finished) {
-    try {
-      // Usul nor strategy contract is not returning whole array -
-      // this is the only way to get those hashes
-      const txHash = await usulContract.getTxHash(proposalNumber, i);
-      txHashes.push(txHash);
-      i++;
-    } catch (e) {
-      // Means there's no hashes anymore
-      finished = true;
-    }
-  }
-
-  const proposal: Proposal = {
+  const state = await getTxProposalState(usulContract, proposalNumber, signerOrProvider);
+  const votes = await getProposalVotes(strategyContract, proposalNumber);
+  const block = await provider.getBlock(startBlock.toNumber());
+  const votesSummary = await getProposalVotesSummary(
+    usulContract,
     proposalNumber,
+    signerOrProvider
+  );
+
+  const targets = metaData
+    ? metaData.decodedTransactions.map(tx => createAccountSubstring(tx.target))
+    : [];
+
+  const proposal: UsulProposal = {
+    eventType: ActivityEventType.Governance,
+    eventDate: format(new Date(block.timestamp * 1000), DEFAULT_DATE_FORMAT),
+    proposalNumber: proposalNumber.toString(),
+    targets,
     proposer,
     startBlock,
     deadline: deadline.toNumber(),
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
-    txHashes,
-    decodedTransactions: decodeTransactionHashes(txHashes),
+    votesSummary,
+    metaData,
   };
 
   return proposal;
+};
+
+export const parseDecodedData = (
+  multiSigTransaction:
+    | SafeMultisigTransactionWithTransfersResponse
+    | SafeMultisigTransactionResponse,
+  isMultiSigTransaction: boolean
+) => {
+  const eventTransactionMap = new Map<number, any>();
+  const parseTransactions = (parameters?: Parameter[]) => {
+    if (!parameters || !parameters.length) {
+      return;
+    }
+    parameters.forEach((param: Parameter) => {
+      const valueDecoded = param.valueDecoded;
+      if (Array.isArray(valueDecoded)) {
+        valueDecoded.forEach(value => {
+          const decodedTransaction = {
+            target: value.to,
+            function: value.dataDecoded?.method,
+            parameterTypes:
+              !!value.dataDecoded && value.dataDecoded.parameters
+                ? value.dataDecoded.parameters.map(p => p.type)
+                : [],
+            parameterValues:
+              !!value.dataDecoded && value.dataDecoded.parameters
+                ? value.dataDecoded.parameters.map(p => p.value)
+                : [],
+          };
+          eventTransactionMap.set(eventTransactionMap.size, {
+            ...decodedTransaction,
+          });
+          if (value.dataDecoded?.parameters && value.dataDecoded?.parameters?.length) {
+            return parseTransactions(value.dataDecoded.parameters);
+          }
+        });
+      }
+    });
+  };
+
+  const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;
+  if (dataDecoded && isMultiSigTransaction) {
+    const decodedTransaction = {
+      target: multiSigTransaction.to,
+      function: dataDecoded.method,
+      parameterTypes: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
+      parameterValues: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.value) : [],
+    };
+    eventTransactionMap.set(eventTransactionMap.size, {
+      ...decodedTransaction,
+    });
+    parseTransactions(dataDecoded.parameters);
+  }
+  return Array.from(eventTransactionMap.values());
 };

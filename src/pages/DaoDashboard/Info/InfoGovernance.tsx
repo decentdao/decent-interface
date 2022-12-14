@@ -1,28 +1,41 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { BarLoader } from '../../../components/ui/loaders/BarLoader';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 
 export function InfoGovernance() {
   const { t } = useTranslation('dashboard');
+  const {
+    gnosis: { safe },
+    governance: { type, governanceToken, governanceIsLoading },
+  } = useFractal();
 
-  // @todo replace mocked values
-  const MOCK_TYPE = 'Multisig';
-  const MOCK_VOTING_PERIOD = '3 days';
-  const MOCK_QUORUM = '30%';
+  if (!safe.address || governanceIsLoading) {
+    return (
+      <Flex
+        h="8.5rem"
+        width="100%"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <BarLoader />
+      </Flex>
+    );
+  }
+
   return (
-    <Box data-testid="dashboard-daoGovernance">
+    <Box
+      data-testid="dashboard-daoGovernance"
+      textStyle="text-sm-sans-regular"
+    >
       <Flex
         alignItems="center"
         gap="0.5rem"
         mb="1rem"
       >
         <Govern />
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="grayscale.100"
-        >
-          {t('titleGovernance')}
-        </Text>
+        <Text color="grayscale.100">{t('titleGovernance')}</Text>
       </Flex>
 
       <Flex
@@ -30,56 +43,30 @@ export function InfoGovernance() {
         justifyContent="space-between"
         mb="0.25rem"
       >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
-        >
-          {t('titleType')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {MOCK_TYPE}
-        </Text>
+        <Text color="chocolate.200">{t('titleType')}</Text>
+        <Text color="grayscale.100">{type}</Text>
       </Flex>
 
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        mb="0.25rem"
-      >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
+      {governanceToken?.votingPeriod && (
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          mb="0.25rem"
         >
-          {t('titleVotingPeriod')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
+          <Text color="chocolate.200">{t('titleVotingPeriod')}</Text>
+          <Text color="grayscale.100">{governanceToken?.votingPeriod?.formatted}</Text>
+        </Flex>
+      )}
+      {governanceToken?.quorumPercentage && (
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          mb="0.25rem"
         >
-          {MOCK_VOTING_PERIOD}
-        </Text>
-      </Flex>
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        mb="0.25rem"
-      >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
-        >
-          {t('titleQurom')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {MOCK_QUORUM}
-        </Text>
-      </Flex>
+          <Text color="chocolate.200">{t('titleQuorum')}</Text>
+          <Text color="grayscale.100">{governanceToken?.quorumPercentage?.formatted}</Text>
+        </Flex>
+      )}
     </Box>
   );
 }

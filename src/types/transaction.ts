@@ -35,4 +35,11 @@ export interface TransactionData {
   parameters: string;
   addressError?: string;
   fragmentError?: string;
+  isExpanded: boolean;
 }
+
+export type DecodedTxParam = {
+  name: string;
+  type: string;
+  value: string;
+};

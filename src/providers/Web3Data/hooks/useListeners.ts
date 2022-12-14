@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import Web3Modal from 'web3modal';
 
 import { clearErrorContext, setErrorContext, setLoggedWallet } from '../../../helpers/errorLogging';
-import { getChainsWithMetadata, getSupportedChains } from '../chains';
+import { getChainMetadataById, getChainsWithMetadata, getSupportedChains } from '../chains';
 import { ConnectFn, ModalProvider } from '../types';
 
 /**
@@ -67,7 +67,7 @@ const useListeners = (
         // switch to a default provider
         connectDefaultProvider();
       } else {
-        toast(t('toastChainChanged', { chainId: chainId }), {
+        toast(t('toastChainChanged', { chainName: getChainMetadataById(Number(chainId))?.name }), {
           toastId: 'connected',
         });
         connect();
@@ -90,7 +90,7 @@ const useListeners = (
     };
     const disconnectCallback = () => {
       clearErrorContext();
-      toast(t('toastAccountDisconnected'), { toastId: 'disconnected' });
+      toast(t('toastDisconnected'), { toastId: 'disconnected' });
       // switch to a default provider
       connectDefaultProvider();
       // remove listeners

@@ -33,8 +33,8 @@ root.render(
           <title>Fractal</title>
         </Helmet>
         <HashRouter>
-          <FractalErrorBoundary fallback={ErrorFallback}>
-            <ChakraProvider theme={theme}>
+          <ChakraProvider theme={theme}>
+            <FractalErrorBoundary fallback={<ErrorFallback />}>
               <Web3Provider>
                 <NetworkConfigProvider>
                   <FractalProvider>
@@ -50,8 +50,8 @@ root.render(
                   </FractalProvider>
                 </NetworkConfigProvider>
               </Web3Provider>
-            </ChakraProvider>
-          </FractalErrorBoundary>
+            </FractalErrorBoundary>
+          </ChakraProvider>
         </HashRouter>
       </HelmetProvider>
     </QueryClientProvider>
