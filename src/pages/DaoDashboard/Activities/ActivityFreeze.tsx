@@ -2,6 +2,7 @@ import { Flex, Text, Button, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '../../../components/ui/badges/Badge';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
+import useCurrentTimestamp from '../../../hooks/utils/useCurrentTimestamp';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { AcitivityCard } from './ActivityCard';
 import { FreezeDescription } from './ActivityDescription';
@@ -14,7 +15,9 @@ export function ActivityFreeze() {
   } = useFractal();
   console.log(guard);
   // const currentBlock = await useCurrentBlockNumber()
-  // const freezeProposalDaysLeft = currentBlock?.sub(guard.freezeProposalCreatedBlock.add(guard.freezeProposalBlockDuration)) / blocks in a day
+  // const freezeProposalDaysLeft = useCurrentTimestamp - 
+  
+  // (guard.freeze.add(guard.freezeProposalBlockDuration))
   // check isFreezeInit
   // check isFrozen
   // check userHasFreezeVoted
@@ -37,19 +40,21 @@ export function ActivityFreeze() {
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            <Tooltip
-              label={
-                guard.freezeProposalVoteCount.toString() +
-                ' / ' +
-                guard.freezeVotesThreshold.toString() +
-                t('tipFreeze')
-              }
-              placement="bottom"
-            >
-              {guard.freezeProposalVoteCount.toString() +
-                ' / ' +
-                guard.freezeVotesThreshold.toString()}
-            </Tooltip>
+            {!guard.isFrozen && (
+              <Tooltip
+                label={
+                  guard.freezeProposalVoteCount.toString() +
+                  ' / ' +
+                  guard.freezeVotesThreshold.toString() +
+                  t('tipFreeze')
+                }
+                placement="bottom"
+              >
+                {guard.freezeProposalVoteCount.toString() +
+                  ' / ' +
+                  guard.freezeVotesThreshold.toString()}
+              </Tooltip>
+            )}
           </Text>
           <Text textStyle="text-base-sans-regular">{t('freezeDaysLeft')}</Text>
           <Button
