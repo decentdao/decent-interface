@@ -151,7 +151,7 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>address to, uint amount</Text>
+            <Text {...exampleLabelStyle}>address to, uin256 amount</Text>
           </HStack>
         }
         errorMessage={transaction.fragmentError}

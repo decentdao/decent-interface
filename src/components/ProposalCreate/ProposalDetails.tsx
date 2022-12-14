@@ -52,7 +52,7 @@ export function ProposalDetails() {
                 <Text>{governanceToken?.quorumPercentage?.formatted}</Text>
               </HStack>
               <HStack justifyContent="space-between">
-                <Text color="chocolate.200">{t('labelProposalExecutionDelay')}</Text>
+                <Text color="chocolate.200">{t('labelProposalTimelock')}</Text>
                 <Text>{governanceToken?.timeLockPeriod?.formatted}</Text>
               </HStack>
             </>

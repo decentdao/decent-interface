@@ -107,17 +107,15 @@ function GovernanceDetails() {
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelProposalExecutionDelay')}
-            subLabel={t('helperProposalExecutionDelay')}
+            label={t('labelTimelockPeriod')}
+            subLabel={t('helperTimelockPeriod')}
           >
             <NumberInput
-              value={govModule.executionDelay.toString()}
-              onChange={executionDelay =>
-                fieldUpdate(BigNumber.from(executionDelay || 0), 'executionDelay')
-              }
+              value={govModule.timelock.toString()}
+              onChange={timelock => fieldUpdate(BigNumber.from(timelock || 0), 'timelock')}
               min={isSafeWithUsul ? 2 : 1}
               precision={0}
-              data-testid="govConfig-executionDelay"
+              data-testid="govConfig-timelock"
               onKeyDown={restrictChars}
             >
               <InputGroup>
@@ -130,7 +128,7 @@ function GovernanceDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleProposalExecutionDelay')}
+            {t('exampleTimelockPeriod')}
           </Text>
         </InputBox>
       </ContentBox>
