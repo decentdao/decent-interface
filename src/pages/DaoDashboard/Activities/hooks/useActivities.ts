@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParseSafeTxs } from '../../../../hooks/utils/useParseSafeTxs';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
@@ -7,12 +7,14 @@ import { Activity, ActivityEventType } from './../../../../providers/Fractal/gov
 
 export const useActivities = (sortBy: SortBy) => {
   const {
-    gnosis: { transactions, safe },
+    gnosis: { transactions, safe, isGnosisLoading },
     governance: {
       type,
       txProposalsInfo: { txProposals },
     },
   } = useFractal();
+
+  const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
   const parsedActivities = useParseSafeTxs(transactions, safe);
 
@@ -44,5 +46,15 @@ export const useActivities = (sortBy: SortBy) => {
     });
   }, [filterActivities, sortBy]);
 
-  return { sortedActivities };
+  /**
+   * When data is ready, set loading to false
+   */
+
+  useEffect(() => {
+    if (!isGnosisLoading && transactions.count === parsedActivities.length) {
+      setActivitiesLoading(false);
+    }
+  }, [isGnosisLoading, parsedActivities, transactions]);
+
+  return { sortedActivities, isActivitiesLoading };
 };

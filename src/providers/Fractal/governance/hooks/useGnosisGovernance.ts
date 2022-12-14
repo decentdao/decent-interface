@@ -47,7 +47,7 @@ export const useGnosisGovernance = ({
       payload: {
         type: governanceType,
         governanceToken: governanceTokenData,
-        governanceIsLoading: false,
+        governanceIsLoading: !governanceType,
       },
     });
   }, [
