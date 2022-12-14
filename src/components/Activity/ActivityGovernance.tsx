@@ -1,11 +1,9 @@
 import { Button, Flex } from '@chakra-ui/react';
-import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { UsulProposal, TxProposalState, TxProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
-import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { Badge } from '../ui/badges/Badge';
 import ProposalTime from '../ui/proposal/ProposalTime';
 
@@ -52,7 +50,7 @@ export function ActivityGovernance({ activity }: { activity: TxProposal }) {
           </Button>
         </Flex>
       }
-      eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
+      eventDate={activity.eventDate}
     />
   );
 }

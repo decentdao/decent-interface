@@ -4,11 +4,13 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
 } from '@safe-global/safe-service-client';
+import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { ActivityEventType, TxProposalState, Activity } from '../../providers/Fractal/types';
 import { parseDecodedData, totalsReducer } from '../../providers/Fractal/utils';
 import { formatWeiToValue } from '../../utils';
+import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 
 export function useParseSafeTxs(
   transactions: AllTransactionsListResponse,
@@ -25,8 +27,9 @@ export function useParseSafeTxs(
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
       // @note for ethereum transactions event these are the execution date
-      const eventDate = new Date(
-        multiSigTransaction.submissionDate || ethereumTransaction.executionDate
+      const eventDate = format(
+        new Date(multiSigTransaction.submissionDate || ethereumTransaction.executionDate),
+        DEFAULT_DATE_FORMAT
       );
 
       // @note it can be assumed that if there is no transfers it a receiving event
