@@ -23,6 +23,7 @@ export const governanceInitialState: IGovernance = {
     txProposals: [],
     pending: undefined,
     passed: undefined,
+    isProposalsLoading: true,
   },
   governanceIsLoading: true,
   governanceToken: undefined,

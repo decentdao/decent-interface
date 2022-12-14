@@ -48,6 +48,7 @@ export interface TxProposalsInfo {
   txProposals: TxProposal[];
   pending?: number; // active/queued (usul) | not executed (multisig)
   passed?: number; // executed (usul/multisig)
+  isProposalsLoading?: boolean;
 }
 
 export interface IGovernance {

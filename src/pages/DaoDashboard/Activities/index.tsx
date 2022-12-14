@@ -6,14 +6,20 @@ import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury'
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
 import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
+  const {
+    governance: {
+      txProposalsInfo: { isProposalsLoading },
+    },
+  } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
 
-  const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
+  const { sortedActivities } = useActivities(sortBy);
   const { t } = useTranslation('dashboard');
   return (
     <Box>
@@ -27,7 +33,7 @@ export function Activities() {
           setSortBy={setSortBy}
         />
       </Flex>
-      {isActivitiesLoading ? (
+      {isProposalsLoading ? (
         <InfoBoxLoader />
       ) : sortedActivities.length ? (
         <Flex

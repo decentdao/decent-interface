@@ -13,7 +13,7 @@ export const governanceReducer = (state: IGovernance, action: GovernanceActions)
     case GovernanceAction.SET_USUL_CONTRACTS:
       return { ...state, contracts: action.payload };
     case GovernanceAction.UPDATE_PROPOSALS:
-      return { ...state, txProposalsInfo: { ...action.payload } };
+      return { ...state, txProposalsInfo: { ...action.payload, isProposalsLoading: false } };
     case GovernanceAction.CONTRACTS_LOADED:
       return { ...state, contracts: { ...state, contractsIsLoading: false } };
     case GovernanceAction.RESET:

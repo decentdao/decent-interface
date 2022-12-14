@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParseSafeTxs } from '../../../../hooks/utils/useParseSafeTxs';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
@@ -13,8 +13,6 @@ export const useActivities = (sortBy: SortBy) => {
       txProposalsInfo: { txProposals },
     },
   } = useFractal();
-
-  const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
   const parsedActivities = useParseSafeTxs(transactions, safe);
 
@@ -46,15 +44,5 @@ export const useActivities = (sortBy: SortBy) => {
     });
   }, [filterActivities, sortBy]);
 
-  /**
-   * When data is ready, set loading to false
-   */
-
-  useEffect(() => {
-    if (transactions.count !== null) {
-      setActivitiesLoading(false);
-    }
-  }, [transactions]);
-
-  return { sortedActivities, isActivitiesLoading };
+  return { sortedActivities };
 };
