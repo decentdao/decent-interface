@@ -1,5 +1,6 @@
 import { Box, Center, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
@@ -11,8 +12,9 @@ export function FractalNodes() {
   const {
     gnosis: { safe, parentDAOAddress, childNodes },
   } = useFractal();
+  const { t } = useTranslation();
   const [isParentExpanded, setIsParentExpended] = useState(true);
-  const [isChildrenExpanded, setIsChildrenExpanded] = useState(false);
+  const [isChildrenExpanded, setIsChildrenExpanded] = useState(true);
 
   if (!safe.address) {
     return (
@@ -34,7 +36,7 @@ export function FractalNodes() {
   return (
     <Box>
       <PageHeader
-        title="Nodes"
+        title={t('titleNodes')}
         titleTestId="nodes-title"
       />
       {parentDAOAddress && (

@@ -10,6 +10,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useIsFavorite } from '../../../providers/Fractal/hooks/account/useAccountFavorites';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
@@ -29,12 +30,13 @@ export function DAOInfoCard({
 }: IDAOInfoCard) {
   const {
     account: {
-      favorites: { isConnectedFavorited, toggleFavorite },
+      favorites: { toggleFavorite },
     },
   } = useFractal();
   const copyToClipboard = useCopyText();
   const { accountSubstring } = useDisplayName(safeAddress);
   const { daoRegistryName } = useDAOName({ address: safeAddress });
+  const isFavorite = useIsFavorite(safeAddress);
   return (
     <Flex
       justifyContent="space-between"
@@ -84,11 +86,7 @@ export function DAOInfoCard({
               minWidth="0px"
               aria-label="Favorite Toggle"
               icon={
-                isConnectedFavorited ? (
-                  <StarGoldSolid boxSize="1.5rem" />
-                ) : (
-                  <StarOutline boxSize="1.5rem" />
-                )
+                isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />
               }
               onClick={() => toggleFavorite(safeAddress)}
             />
