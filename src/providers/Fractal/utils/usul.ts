@@ -7,7 +7,6 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeMultisigTransactionResponse,
 } from '@safe-global/safe-service-client';
-import { format } from 'date-fns';
 import { BigNumber, Signer } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
@@ -25,7 +24,6 @@ import {
   UsulProposal,
   VOTE_CHOICES,
 } from '../types';
-import { DEFAULT_DATE_FORMAT } from './../../../utils/numberFormats';
 
 export const getTxProposalState = async (
   usulContract: FractalUsul,
@@ -132,7 +130,7 @@ export const mapProposalCreatedEventToProposal = async (
 
   const proposal: UsulProposal = {
     eventType: ActivityEventType.Governance,
-    eventDate: format(new Date(block.timestamp * 1000), DEFAULT_DATE_FORMAT),
+    eventDate: new Date(block.timestamp * 1000),
     proposalNumber: proposalNumber.toString(),
     targets,
     proposer,

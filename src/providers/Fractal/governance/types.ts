@@ -140,7 +140,7 @@ export interface GovernanceActivity extends ActivityBase {
   metaData?: ProposalMetaData;
 }
 export interface ActivityBase {
-  eventDate: string;
+  eventDate: Date;
   eventType: ActivityEventType;
   transaction?: ActivityTransactionType;
   transactionHash?: string | null;
