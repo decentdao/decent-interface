@@ -4,7 +4,7 @@ import { TxProposal } from '../../providers/Fractal/types';
 import { ActivityAddress } from './ActivityAddress';
 
 export function ActivityDescriptionModule({ activity }: { activity: TxProposal }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation(['treasury', 'dashboard']);
   return (
     <Flex
       color="grayscale.100"

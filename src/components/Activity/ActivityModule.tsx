@@ -8,7 +8,7 @@ import { ActivityCard } from './ActivityCard';
 import { ActivityDescriptionModule } from './ActivityDescriptionModule';
 
 export function ActivityModule({ activity }: { activity: TxProposal }) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
   return (
     <ActivityCard
       Badge={
