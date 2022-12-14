@@ -14,6 +14,7 @@ export const useCreateSubDAOProposal = () => {
   const [build] = useBuildDAOTx();
   const {
     gnosis: { safe },
+    governance: { governanceToken },
   } = useFractal();
 
   const proposeDao = useCallback(
@@ -23,7 +24,7 @@ export const useCreateSubDAOProposal = () => {
           return;
         }
 
-        const builtSafeTx = await build(daoData, safe.address);
+        const builtSafeTx = await build(daoData, safe.address, governanceToken?.address);
         if (!builtSafeTx) {
           return;
         }
@@ -42,7 +43,7 @@ export const useCreateSubDAOProposal = () => {
       };
       propose();
     },
-    [multiSendContract, build, safe.address, submitProposal]
+    [multiSendContract, build, safe.address, submitProposal, governanceToken?.address]
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;
