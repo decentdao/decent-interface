@@ -5,14 +5,13 @@ import { ActivityAddress } from './ActivityAddress';
 
 export function ActivityDescriptionModule({ activity }: { activity: TxProposal }) {
   const { t } = useTranslation();
-  const moduleDescription = `Module executed ${activity.targets.length} transactions on`;
   return (
     <Flex
       color="grayscale.100"
       textStyle="text-lg-mono-semibold"
       gap="2"
     >
-      <Text>{moduleDescription}</Text>
+      <Text>{t('moduleDescription', { ns: 'dashboard', txCount: activity.targets.length })}</Text>
       {activity.targets.length > 2 ? (
         <Text>
           {t('addresses', {
