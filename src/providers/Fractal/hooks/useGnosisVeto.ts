@@ -4,7 +4,7 @@ import {
   VetoGuard__factory,
   VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { Dispatch, useEffect } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
@@ -69,18 +69,7 @@ export function useGnosisVeto(
           !usulModule.moduleContract ||
           (await usulModule.moduleContract.getGuard()) === ethers.constants.AddressZero
         ) {
-          return (guard = {
-            // todo: should this be returning?
-            vetoGuardContract: undefined,
-            vetoVotingContract: undefined,
-            freezeVotesThreshold: BigNumber.from(0),
-            freezeProposalCreatedBlock: BigNumber.from(0),
-            freezeProposalVoteCount: BigNumber.from(0),
-            freezeProposalBlockDuration: BigNumber.from(0),
-            freezeBlockDuration: BigNumber.from(0),
-            userHasFreezeVoted: false,
-            isFrozen: false,
-          });
+          return;
         }
         const usulGuardAddress = await usulModule.moduleContract.getGuard();
         vetoGuardContract = UsulVetoGuard__factory.connect(usulGuardAddress, signerOrProvider);
@@ -99,8 +88,8 @@ export function useGnosisVeto(
         freezeVotesThreshold: await vetoVotingContract.freezeVotesThreshold(),
         freezeProposalCreatedBlock: await vetoVotingContract.freezeProposalCreatedBlock(),
         freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
-        freezeProposalBlockDuration: await vetoVotingContract.freezeProposalBlockDuration(),
-        freezeBlockDuration: await vetoVotingContract.freezeBlockDuration(),
+        freezeProposalBlockDuration: await vetoVotingContract.freezeProposalPeriod(),
+        freezeBlockDuration: await vetoVotingContract.freezePeriod(),
         userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
           account,
           await vetoVotingContract.freezeProposalCreatedBlock()
