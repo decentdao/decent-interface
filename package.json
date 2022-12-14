@@ -9,7 +9,6 @@
     "@ethersproject/abstract-signer": "^5.7.0",
     "@fontsource/ibm-plex-mono": "^4.5.12",
     "@fontsource/ibm-plex-sans": "^4.5.13",
-    "@fractal-framework/core-contracts": "^0.1.9",
     "@fractal-framework/fractal-contracts": "^0.1.13",
     "@safe-global/safe-ethers-lib": "^1.7.0",
     "@safe-global/safe-service-client": "^1.4.0",
