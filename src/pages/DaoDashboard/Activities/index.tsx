@@ -1,4 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityGovernance } from '../../../components/Activity/ActivityGovernance';
@@ -6,6 +7,7 @@ import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury'
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
+import useBlockTimestamp from '../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
@@ -20,6 +22,7 @@ export function Activities() {
 
   const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
   const { t } = useTranslation('dashboard');
+  const currentTime = BigNumber.from(useBlockTimestamp());
   return (
     <Box>
       <Flex
@@ -36,7 +39,11 @@ export function Activities() {
         flexDirection="column"
         gap="1rem"
       >
-        {guard.vetoGuardContract && guard.vetoVotingContract && <ActivityFreeze guard={guard} />}
+        {(guard.isFrozen ||
+          guard.freezeProposalCreatedTime
+            .add(guard.freezeProposalPeriod)
+            .sub(currentTime)
+            .gt(0)) && <ActivityFreeze guard={guard} />}
         {isActivitiesLoading ? (
           <InfoBoxLoader />
         ) : sortedActivities.length ? (
