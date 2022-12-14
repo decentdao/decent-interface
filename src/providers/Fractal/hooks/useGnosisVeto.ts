@@ -87,10 +87,10 @@ export function useGnosisVeto(
         vetoGuardContract: vetoGuardContract,
         vetoVotingContract: vetoVotingContract,
         freezeVotesThreshold: await vetoVotingContract.freezeVotesThreshold(),
-        freezeProposalCreatedBlock: await vetoVotingContract.freezeProposalCreatedBlock(),
+        freezeProposalCreatedTime: await vetoVotingContract.freezeProposalCreatedTime(),
         freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
-        freezeProposalBlockDuration: await vetoVotingContract.freezeProposalPeriod(),
-        freezeBlockDuration: await vetoVotingContract.freezePeriod(),
+        freezeProposalPeriod: await vetoVotingContract.freezeProposalPeriod(),
+        freezePeriod: await vetoVotingContract.freezePeriod(),
         userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
           account,
           await vetoVotingContract.freezeProposalCreatedBlock()

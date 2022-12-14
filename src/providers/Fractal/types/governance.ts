@@ -49,10 +49,10 @@ export interface IGnosisVetoData {
   vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
   freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
-  freezeProposalCreatedBlock: BigNumber; // Block number the freeze proposal was created at
+  freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
   freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
-  freezeProposalBlockDuration: BigNumber; // Number of blocks a freeze proposal has to succeed
-  freezeBlockDuration: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  freezeProposalPeriod: BigNumber; // Number of blocks a freeze proposal has to succeed
+  freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
   userHasFreezeVoted: boolean;
   isFrozen: boolean;
 }
