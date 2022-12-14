@@ -5,6 +5,7 @@ import {
   NumberInputField,
   InputGroup,
   InputRightElement,
+  Hide,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
@@ -66,33 +67,7 @@ function GuardDetails() {
   return (
     <Box>
       <ContentBox>
-        <ContentBoxTitle>{t('titleGuardConfig', { ns: 'daoCreate' })}</ContentBoxTitle>
-        <InputBox>
-          <LabelWrapper
-            label={t('labelExecutionPeriod', { ns: 'daoCreate' })}
-            subLabel={t('helperExecutionPeriod', { ns: 'daoCreate' })}
-          >
-            <NumberInput
-              value={vetoGuard.executionPeriod.toString()}
-              onChange={onExecutionPeriodChange}
-              min={1}
-              precision={0}
-              data-testid="guardConfig-executionDetails"
-              onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
-              </InputGroup>
-            </NumberInput>
-          </LabelWrapper>
-          <Text
-            textStyle="text-sm-sans-regular"
-            color="gold.400"
-          >
-            {t('exampleExecutionPeriod', { ns: 'daoCreate' })}
-          </Text>
-        </InputBox>
+        <ContentBoxTitle>{t('titleParentGovernance', { ns: 'daoCreate' })}</ContentBoxTitle>
         {governance === GovernanceTypes.GNOSIS_SAFE && (
           <InputBox>
             <LabelWrapper
@@ -123,24 +98,54 @@ function GuardDetails() {
         )}
         <InputBox>
           <LabelWrapper
-            label={t('labelVetoVotesThreshold', { ns: 'daoCreate' })}
-            subLabel={t('helperVetoVotesThreshold', { ns: 'daoCreate' })}
+            label={t('labelExecutionPeriod', { ns: 'daoCreate' })}
+            subLabel={t('helperExecutionPeriod', { ns: 'daoCreate' })}
           >
             <NumberInput
-              value={vetoGuard.vetoVotesThreshold.toString()}
-              onChange={onVetoVotesThresholdChange}
+              value={vetoGuard.executionPeriod.toString()}
+              onChange={onExecutionPeriodChange}
               min={1}
               precision={0}
-              data-testid="guardConfig-vetoVotesThreshold"
+              data-testid="guardConfig-executionDetails"
               onKeyDown={restrictChars}
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{votes}</InputRightElement>
+                <InputRightElement mr="4">{seconds}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="gold.400"
+          >
+            {t('exampleExecutionPeriod', { ns: 'daoCreate' })}
+          </Text>
         </InputBox>
+        {/** TODO hiding Veto Threshold for now, since it's not implemented in the frontend */}
+        <Hide>
+          <InputBox>
+            <LabelWrapper
+              label={t('labelVetoVotesThreshold', { ns: 'daoCreate' })}
+              subLabel={t('helperVetoVotesThreshold', { ns: 'daoCreate' })}
+            >
+              <NumberInput
+                value={vetoGuard.vetoVotesThreshold.toString()}
+                onChange={onVetoVotesThresholdChange}
+                min={1}
+                precision={0}
+                data-testid="guardConfig-vetoVotesThreshold"
+                onKeyDown={restrictChars}
+              >
+                <InputGroup>
+                  <NumberInputField />
+                  <InputRightElement mr="4">{votes}</InputRightElement>
+                </InputGroup>
+              </NumberInput>
+            </LabelWrapper>
+          </InputBox>
+        </Hide>
+        <ContentBoxTitle>{t('titleFreezeParams', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
             label={t('labelFreezeVotesThreshold', { ns: 'daoCreate' })}
