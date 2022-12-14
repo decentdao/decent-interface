@@ -83,6 +83,7 @@ export interface GovernanceContracts {
 }
 
 export enum TxProposalState {
+  Module = 'stateModule',
   // Usul-specific states
   Active = 'stateActive',
   Canceled = 'stateCanceled',
@@ -156,6 +157,7 @@ export type ActivityTransactionType =
 export enum ActivityEventType {
   Treasury,
   Governance,
+  Module,
 }
 
 export enum GnosisTransferType {

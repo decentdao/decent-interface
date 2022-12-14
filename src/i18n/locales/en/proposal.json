@@ -11,6 +11,7 @@
     "pageTitle": "{{daoName}} Proposals",
     "ownerApproved": "Approved",
     "statePending": "Pending",
+    "stateModule": "Module",
     "stateActive": "Active",
     "stateCanceled": "Canceled",
     "stateRejected": "Rejected",
