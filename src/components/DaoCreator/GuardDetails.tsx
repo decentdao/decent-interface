@@ -61,18 +61,18 @@ function GuardDetails() {
     fieldUpdate(newFreezePeriod, 'freezePeriod');
   };
 
-  const { t } = useTranslation(['common', 'daoCreate']);
+  const { t } = useTranslation(['daoCreate']);
   const votes = t('votes');
   const seconds = t('seconds');
   return (
     <Box>
       <ContentBox>
-        <ContentBoxTitle>{t('titleParentGovernance', { ns: 'daoCreate' })}</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
         {governance === GovernanceTypes.GNOSIS_SAFE && (
           <InputBox>
             <LabelWrapper
-              label={t('labelTimelockPeriod', { ns: 'daoCreate' })}
-              subLabel={t('helperTimelockPeriod', { ns: 'daoCreate' })}
+              label={t('labelTimelockPeriod')}
+              subLabel={t('helperTimelockPeriod')}
             >
               <NumberInput
                 value={vetoGuard.timelockPeriod.toString()}
@@ -92,14 +92,14 @@ function GuardDetails() {
               textStyle="text-sm-sans-regular"
               color="gold.400"
             >
-              {t('exampleTimelockPeriod', { ns: 'daoCreate' })}
+              {t('exampleTimelockPeriod')}
             </Text>
           </InputBox>
         )}
         <InputBox>
           <LabelWrapper
-            label={t('labelExecutionPeriod', { ns: 'daoCreate' })}
-            subLabel={t('helperExecutionPeriod', { ns: 'daoCreate' })}
+            label={t('labelExecutionPeriod')}
+            subLabel={t('helperExecutionPeriod')}
           >
             <NumberInput
               value={vetoGuard.executionPeriod.toString()}
@@ -119,15 +119,15 @@ function GuardDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleExecutionPeriod', { ns: 'daoCreate' })}
+            {t('exampleExecutionPeriod')}
           </Text>
         </InputBox>
         {/** TODO hiding Veto Threshold for now, since it's not implemented in the frontend */}
         <Hide>
           <InputBox>
             <LabelWrapper
-              label={t('labelVetoVotesThreshold', { ns: 'daoCreate' })}
-              subLabel={t('helperVetoVotesThreshold', { ns: 'daoCreate' })}
+              label={t('labelVetoVotesThreshold')}
+              subLabel={t('helperVetoVotesThreshold')}
             >
               <NumberInput
                 value={vetoGuard.vetoVotesThreshold.toString()}
@@ -145,11 +145,11 @@ function GuardDetails() {
             </LabelWrapper>
           </InputBox>
         </Hide>
-        <ContentBoxTitle>{t('titleFreezeParams', { ns: 'daoCreate' })}</ContentBoxTitle>
+        <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('labelFreezeVotesThreshold', { ns: 'daoCreate' })}
-            subLabel={t('helperFreezeVotesThreshold', { ns: 'daoCreate' })}
+            label={t('labelFreezeVotesThreshold')}
+            subLabel={t('helperFreezeVotesThreshold')}
           >
             <NumberInput
               value={vetoGuard.freezeVotesThreshold.toString()}
@@ -167,8 +167,8 @@ function GuardDetails() {
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelFreezeProposalPeriod', { ns: 'daoCreate' })}
-            subLabel={t('helperFreezeProposalPeriod', { ns: 'daoCreate' })}
+            label={t('labelFreezeProposalPeriod')}
+            subLabel={t('helperFreezeProposalPeriod')}
           >
             <NumberInput
               value={vetoGuard.freezeProposalPeriod.toString()}
@@ -188,13 +188,13 @@ function GuardDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleFreezeProposalPeriod', { ns: 'daoCreate' })}
+            {t('exampleFreezeProposalPeriod')}
           </Text>
         </InputBox>
         <InputBox>
           <LabelWrapper
-            label={t('labelFreezePeriod', { ns: 'daoCreate' })}
-            subLabel={t('helperFreezePeriod', { ns: 'daoCreate' })}
+            label={t('labelFreezePeriod')}
+            subLabel={t('helperFreezePeriod')}
           >
             <NumberInput
               value={vetoGuard.freezePeriod.toString()}
@@ -214,11 +214,11 @@ function GuardDetails() {
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
-            {t('exampleFreezePeriod', { ns: 'daoCreate' })}
+            {t('exampleFreezePeriod')}
           </Text>
         </InputBox>
       </ContentBox>
-      <ContentBanner description={t('vetoGuardDescription', { ns: 'daoCreate' })} />
+      <ContentBanner description={t('vetoGuardDescription')} />
     </Box>
   );
 }
