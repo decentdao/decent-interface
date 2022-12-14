@@ -20,6 +20,10 @@ export function LanguageSwitcher() {
       onClick: () => i18n.changeLanguage('en'),
     },
     {
+      optionKey: 'uk',
+      onClick: () => i18n.changeLanguage('uk'),
+    },
+    {
       optionKey: 'es',
       onClick: () => i18n.changeLanguage('es'),
     },

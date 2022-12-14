@@ -12,5 +12,5 @@
     "labelReceived": "Отримано",
     "textEmptyTransactions": "Наразі нема виконаних трансферів",
     "textMoreTransactions": "Більше...",
-    "addresses": "{{numOfAddresses}} адреси"
+    "addresses": "{{numOfAddresses}} адресами"
 }
