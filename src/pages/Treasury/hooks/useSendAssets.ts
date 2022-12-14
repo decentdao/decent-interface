@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../types';
 
-// TODO create send assets proposal
 const useSendAssets = ({
   transferAmount,
   asset,
@@ -33,7 +32,7 @@ const useSendAssets = ({
 
     const proposalData: ProposalExecuteData = {
       targets: [tokenAddress],
-      values: [BigNumber.from('0')], // only set if ETH
+      values: [BigNumber.from('0')],
       calldatas: calldatas,
       title: 'Send Assets',
       description: 'to:' + destinationAddress + ' amt:' + transferAmount.toString(),
