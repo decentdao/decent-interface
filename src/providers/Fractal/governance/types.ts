@@ -92,12 +92,12 @@ export enum TxProposalState {
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
   Rejected = 'stateRejected',
-  Module = 'stateModule',
   // Safe-specific states
   Pending = 'statePending',
   Queued = 'stateQueued',
   Failed = 'stateFailed',
   Approved = 'ownerApproved',
+  Module = 'stateModule',
 }
 
 export type ProposalMetaData = {
