@@ -82,8 +82,8 @@ export interface GovernanceContracts {
   contractsIsLoading: boolean;
 }
 
+// @note its important that the other of Usul-specific states matches whats on the contract
 export enum TxProposalState {
-  Module = 'stateModule',
   // Usul-specific states
   Active = 'stateActive',
   Canceled = 'stateCanceled',
@@ -92,6 +92,7 @@ export enum TxProposalState {
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
   Rejected = 'stateRejected',
+  Module = 'stateModule',
   // Safe-specific states
   Pending = 'statePending',
   Queued = 'stateQueued',
