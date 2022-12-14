@@ -4,11 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { Badge } from '../../../components/ui/badges/Badge';
 import useBlockTimestamp from '../../../hooks/utils/useBlockTimestamp';
-// import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
-// import useCurrentTimestamp from '../../../hooks/utils/useCurrentTimestamp';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-// import { AcitivityCard } from './ActivityCard';
-// import { FreezeDescription } from './ActivityDescription';
+import { IGnosisVetoData } from '../../../providers/Fractal/types/governance';
+//todo: button colors if frozen
+//todo: get button working
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   const { t } = useTranslation('dashboard');
@@ -24,12 +22,9 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   );
 }
 
-export function ActivityFreeze() {
+export function ActivityFreeze({ guard }: { guard: IGnosisVetoData }) {
   const { t } = useTranslation('dashboard');
 
-  const {
-    gnosis: { guard },
-  } = useFractal();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const daysLeft = guard.isFrozen
     ? guard.freezeProposalCreatedTime.add(guard.freezePeriod).sub(currentTime).gt(0)
@@ -50,12 +45,6 @@ export function ActivityFreeze() {
           .toNumber()
       )
     : 0;
-
-  // check isFreezeInit
-  // check isFrozen
-  // check userHasFreezeVoted
-  // check userCanFreezeVote
-  // update button during Frozen state / already voted stage
 
   return (
     <ActivityCard
