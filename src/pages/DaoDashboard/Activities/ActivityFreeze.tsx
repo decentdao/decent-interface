@@ -30,15 +30,22 @@ export function ActivityFreeze() {
   const {
     gnosis: { guard },
   } = useFractal();
-  const currentTime = useBlockTimestamp();
-  const daysLeft = guard.freezeProposalCreatedTime
-    .add(guard.freezeProposalPeriod)
-    .sub(BigNumber.from(currentTime))
-    .gt(0)
+  const currentTime = BigNumber.from(useBlockTimestamp());
+  const daysLeft = guard.isFrozen
+    ? guard.freezeProposalCreatedTime.add(guard.freezePeriod).sub(currentTime).gt(0)
+      ? Math.round(
+          guard.freezeProposalCreatedTime
+            .add(guard.freezeProposalPeriod)
+            .sub(currentTime)
+            .div(86400)
+            .toNumber()
+        )
+      : 0
+    : guard.freezeProposalCreatedTime.add(guard.freezeProposalPeriod).sub(currentTime).gt(0)
     ? Math.round(
         guard.freezeProposalCreatedTime
           .add(guard.freezeProposalPeriod)
-          .sub(BigNumber.from(currentTime))
+          .sub(currentTime)
           .div(86400)
           .toNumber()
       )
@@ -66,7 +73,7 @@ export function ActivityFreeze() {
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            {!guard.isFrozen && (
+            {!guard.isFrozen && guard.freezeVotesThreshold.gt(0) && (
               <Tooltip
                 label={
                   guard.freezeProposalVoteCount.toString() +
@@ -82,18 +89,22 @@ export function ActivityFreeze() {
               </Tooltip>
             )}
           </Text>
-          <Text textStyle="text-base-sans-regular">{daysLeft + t('freezeDaysLeft')}</Text>
-          <Button
-            variant="ghost"
-            bgColor={'black.900'}
-            border="1px"
-            borderColor={'blue.500'}
-            textColor={'blue.500'}
-            onClick={() => {}}
-            disabled={guard.isFrozen || guard.userHasFreezeVoted}
-          >
-            {t('freezeButton')}
-          </Button>
+          {daysLeft > 0 && (
+            <Text textStyle="text-base-sans-regular">{daysLeft + t('freezeDaysLeft')}</Text>
+          )}
+          {!guard.isFrozen && (
+            <Button
+              variant="ghost"
+              bgColor={'black.900'}
+              border="1px"
+              borderColor={'blue.500'}
+              textColor={'blue.500'}
+              onClick={() => {}}
+              disabled={guard.isFrozen || guard.userHasFreezeVoted}
+            >
+              {guard.userHasFreezeVoted ? t('freezeVotedButton') : t('freezeButton')}
+            </Button>
+          )}
         </Flex>
       }
       boxBorderColor={'blue.500'}
