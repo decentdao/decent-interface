@@ -41,7 +41,7 @@ const BADGE_SIZES: BadgeSize = {
 
 interface IBadge {
   size: 'sm' | 'base';
-  labelKey: TxProposalState;
+  labelKey: TxProposalState | string;
 }
 
 export function Badge({ labelKey, size }: IBadge) {
