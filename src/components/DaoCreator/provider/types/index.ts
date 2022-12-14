@@ -9,6 +9,7 @@ export enum CreatorProviderActions {
   UPDATE_GOVERNANCE,
   UPDATE_GNOSIS_CONFIG,
   UPDATE_GOV_CONFIG,
+  UPDATE_GUARD_CONFIG,
   UPDATE_FUNDING,
   UPDATE_STEP,
   RESET,
@@ -21,6 +22,7 @@ export enum CreatorSteps {
   GNOSIS_GOVERNANCE,
   GNOSIS_WITH_USUL,
   GOV_CONFIG,
+  GUARD_CONFIG,
   FUNDING,
 }
 
@@ -37,6 +39,7 @@ export type CreatorProviderActionTypes =
   | { type: CreatorProviderActions.UPDATE_GOVERNANCE; payload: GovernanceTypes }
   | { type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN; payload: DAOGovenorToken }
   | { type: CreatorProviderActions.UPDATE_GOV_CONFIG; payload: DAOGovenorModuleConfig }
+  | { type: CreatorProviderActions.UPDATE_GUARD_CONFIG; payload: DAOVetoGuardConfig }
   | { type: CreatorProviderActions.UPDATE_GNOSIS_CONFIG; payload: GnosisDAO }
   | { type: CreatorProviderActions.UPDATE_FUNDING; payload: DAOFunding }
   | {
@@ -67,6 +70,15 @@ type DAOGovenorModuleConfig = {
   votingPeriod: BigNumber;
 };
 
+type DAOVetoGuardConfig = {
+  executionPeriod: BigNumber;
+  timelockPeriod: BigNumber;
+  vetoVotesThreshold: BigNumber;
+  freezeVotesThreshold: BigNumber;
+  freezeProposalPeriod: BigNumber;
+  freezePeriod: BigNumber;
+};
+
 type DAOFunding = {
   tokensToFund: TokenToFund[];
   nftsToFund: NFTToFund[];
@@ -81,6 +93,7 @@ export interface CreatorState {
   essentials: DAOEssentials;
   govToken: DAOGovenorToken;
   govModule: DAOGovenorModuleConfig;
+  vetoGuard: DAOVetoGuardConfig;
   funding: DAOFunding;
 }
 
@@ -93,6 +106,15 @@ export type BigNumberInput = {
   value: string;
   bigNumberValue: BigNumber | null;
 };
+
+export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
+  timelockPeriod?: BigNumber;
+  executionPeriod: BigNumber;
+  vetoVotesThreshold: BigNumber;
+  freezeVotesThreshold: BigNumber;
+  freezeProposalPeriod: BigNumber;
+  freezePeriod: BigNumber;
+}
 
 export interface TokenGovernanceDAO extends DAODetails {
   tokenName: string;

@@ -4,7 +4,7 @@ import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { AccountAction } from '../../constants/actions';
 import { CacheKeys } from './useLocalStorage';
 
-interface IUseFavorties {
+interface IUseFavorites {
   safeAddress?: string;
   accountDispatch: any;
 }
@@ -12,7 +12,7 @@ interface IUseFavorties {
 /**
  * handles loading favorites data into Fractal state
  */
-export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavorties) => {
+export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavorites) => {
   const [favoritesList, setFavorites] = useState<string[]>([]);
 
   const {

@@ -16,9 +16,10 @@ export interface TokenDisplayData {
 
 export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
   let totalFiatValue = 0;
-  let displayData: TokenDisplayData[] = new Array(assets.length);
+  let displayData: TokenDisplayData[] = [];
   for (let i = 0; i < assets.length; i++) {
     let asset = assets[i];
+    if (asset.balance === '0') continue;
     totalFiatValue += Number(asset.fiatBalance);
     let symbol = asset.token === null ? 'ETH' : asset.token.symbol;
     const formatted: TokenDisplayData = {
@@ -36,7 +37,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
       fullCoinTotal: formatCoin(asset.balance, false, asset?.token?.decimals, asset?.token?.symbol),
       fiatDisplayValue: formatUSD(Number(asset.fiatBalance)),
     };
-    displayData[i] = formatted;
+    displayData.push(formatted);
   }
   displayData.sort((a, b) => b.fiatValue - a.fiatValue); // sort by USD value
   return {

@@ -29,12 +29,13 @@ export function DAOInfoCard({
 }: IDAOInfoCard) {
   const {
     account: {
-      favorites: { isConnectedFavorited, toggleFavorite },
+      favorites: { favoritesList, toggleFavorite },
     },
   } = useFractal();
   const copyToClipboard = useCopyText();
   const { accountSubstring } = useDisplayName(safeAddress);
   const { daoRegistryName } = useDAOName({ address: safeAddress });
+  const isFavorite = favoritesList.includes(safeAddress);
   return (
     <Flex
       justifyContent="space-between"
@@ -84,11 +85,7 @@ export function DAOInfoCard({
               minWidth="0px"
               aria-label="Favorite Toggle"
               icon={
-                isConnectedFavorited ? (
-                  <StarGoldSolid boxSize="1.5rem" />
-                ) : (
-                  <StarOutline boxSize="1.5rem" />
-                )
+                isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />
               }
               onClick={() => toggleFavorite(safeAddress)}
             />
@@ -106,6 +103,7 @@ export function DAOInfoCard({
             alignItems="center"
             onClick={() => copyToClipboard(safeAddress)}
             gap="0.5rem"
+            cursor="pointer"
           >
             <Text
               textStyle="text-base-mono-regular"
@@ -113,7 +111,7 @@ export function DAOInfoCard({
             >
               {accountSubstring}
             </Text>
-            <Copy />
+            <Copy boxSize="1.5rem" />
           </Flex>
         </Flex>
       </Flex>
