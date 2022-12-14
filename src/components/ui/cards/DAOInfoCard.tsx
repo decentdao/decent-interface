@@ -10,7 +10,6 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useIsFavorite } from '../../../providers/Fractal/hooks/account/useAccountFavorites';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
@@ -30,13 +29,13 @@ export function DAOInfoCard({
 }: IDAOInfoCard) {
   const {
     account: {
-      favorites: { toggleFavorite },
+      favorites: { favoritesList, toggleFavorite },
     },
   } = useFractal();
   const copyToClipboard = useCopyText();
   const { accountSubstring } = useDisplayName(safeAddress);
   const { daoRegistryName } = useDAOName({ address: safeAddress });
-  const isFavorite = useIsFavorite(safeAddress);
+  const isFavorite = favoritesList.includes(safeAddress);
   return (
     <Flex
       justifyContent="space-between"

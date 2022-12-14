@@ -2,7 +2,6 @@ import { ethers } from 'ethers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { AccountAction } from '../../constants/actions';
-import { useFractal } from '../useFractal';
 import { CacheKeys } from './useLocalStorage';
 
 interface IUseFavorites {
@@ -85,16 +84,4 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavori
       },
     });
   }, [accountDispatch, isConnectedFavorited, toggleFavorite, favoritesList]);
-};
-
-/**
- * @returns favorited status of the provided safe address
- */
-export const useIsFavorite = (safeAddress: string) => {
-  const {
-    account: {
-      favorites: { favoritesList },
-    },
-  } = useFractal();
-  return !safeAddress ? false : favoritesList.includes(safeAddress);
 };
