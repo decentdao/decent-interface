@@ -12,7 +12,7 @@
     "@fractal-framework/core-contracts": "^0.1.9",
     "@gnosis.pm/safe-ethers-lib": "^1.6.1",
     "@gnosis.pm/safe-service-client": "^1.3.1",
-    "@fractal-framework/fractal-contracts": "^0.1.8",
+    "@fractal-framework/fractal-contracts": "^0.1.13",
     "@sentry/react": "^7.13.0",
     "@sentry/tracing": "^7.13.0",
     "@tanstack/react-query": "^4.2.3",
