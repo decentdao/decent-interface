@@ -17,7 +17,7 @@
     "freezeDescription": "Freeze Initiated on DAO",
     "frozenDescription": "DAO is Frozen",
     "freezeButton": "Freeze",
-    "freezeDaysLeft": "4 days left",
+    "freezeDaysLeft": " days left",
     "tipFreeze": " required freeze votes",
     "proposalOnChainRejection": "that rejects transaction {{proposalNumber}}",
     "proposalDescriptionCont": "that will",
