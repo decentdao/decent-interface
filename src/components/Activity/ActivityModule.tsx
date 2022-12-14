@@ -19,7 +19,7 @@ export function ActivityModule({ activity }: { activity: TxProposal }) {
       }
       description={<ActivityDescriptionModule activity={activity} />}
       RightElement={
-        activity.transactionHash ? (
+        !!activity.transactionHash && (
           <EtherscanLinkAddress
             path="tx"
             address={activity.transactionHash}
@@ -33,7 +33,7 @@ export function ActivityModule({ activity }: { activity: TxProposal }) {
               {t('labelEtherscan')}
             </Button>
           </EtherscanLinkAddress>
-        ) : undefined
+        )
       }
       eventDate={activity.eventDate}
     />
