@@ -1,11 +1,16 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import useCastFreezeVote from '../../../../hooks/DAO/useCastFreezeVote';
 import { DAO_ROUTES } from '../../../../routes/constants';
 import { OptionMenu } from '../OptionMenu';
 
 export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
   const navigate = useNavigate();
+  // const castFreezeVote = useCastFreezeVote({
+  //   vetoVotingContract: vetoVotingContract,
+  //   setPending: setPending,
+  // });
 
   const options = useMemo(
     () => [

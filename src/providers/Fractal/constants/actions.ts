@@ -19,6 +19,11 @@ export enum TreasuryAction {
   RESET,
 }
 
+export enum GuardAction {
+  UPDATE_FREEZE_VOTES,
+  RESET,
+}
+
 export enum AccountAction {
   UPDATE_DAO_FAVORITES,
   UPDATE_AUDIT_MESSAGE,

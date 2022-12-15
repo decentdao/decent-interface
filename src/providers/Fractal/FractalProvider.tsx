@@ -1,3 +1,4 @@
+import { VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { ReactNode, useMemo, useReducer } from 'react';
 import {
   gnosisInitialState,
@@ -15,6 +16,7 @@ import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
 import { useGnosisVeto } from './hooks/useGnosisVeto';
 import useNodes from './hooks/useNodes';
+import { useVetoFreeze } from './hooks/useVetoFreeze';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
 import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
@@ -64,6 +66,11 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useGnosisVeto(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
+  useVetoFreeze(
+    gnosis.guard,
+    gnosisDispatch,
+    gnosis.guard.vetoVotingContract as VetoMultisigVoting
+  );
 
   const value = useMemo(
     () => ({

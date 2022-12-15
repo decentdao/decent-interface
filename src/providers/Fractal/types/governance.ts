@@ -45,9 +45,13 @@ export interface IGnosisModuleData {
   moduleType: GnosisModuleType;
 }
 
-export interface IGnosisVetoData {
+export interface IGnosisVetoContract {
   vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
+  vetoVotingType: VetoERC20Voting | VetoMultisigVoting
+}
+
+export interface IGnosisFreezeData {
   freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
   freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
   freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes

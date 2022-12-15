@@ -5,7 +5,8 @@ import SafeServiceClient, {
   SafeCollectibleResponse,
   TransferListResponse,
 } from '@safe-global/safe-service-client';
-import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
+import { BigNumber } from 'ethers';
+import { AccountAction, GnosisAction, GuardAction, TreasuryAction } from '../constants';
 import { IGnosisModuleData } from '../governance/types';
 import { IGnosisVetoData } from './governance';
 import { IFavorites, IAudit } from './state';
@@ -35,6 +36,13 @@ export type TreasuryActions =
   | {
       type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS;
       payload: TransferListResponse;
+    }
+  | { type: TreasuryAction.RESET };
+
+export type GuardActions =
+  | {
+      type: GuardAction.UPDATE_FREEZE_VOTES;
+      payload: BigNumber;
     }
   | { type: TreasuryAction.RESET };
 
