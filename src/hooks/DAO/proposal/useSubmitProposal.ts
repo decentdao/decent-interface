@@ -45,7 +45,7 @@ export default function useSubmitProposal() {
 
         setPendingCreateTx(true);
 
-        let to, data;
+        let to, data, operation;
         if (proposalData.targets.length > 1) {
           // Need to wrap it in Multisend function call
           to = multiSendContract.address;
@@ -62,10 +62,13 @@ export default function useSubmitProposal() {
           data = multiSendContract.interface.encodeFunctionData('multiSend', [
             encodeMultiSend(tempData),
           ]);
+
+          operation = 1;
         } else {
           // Single transaction to post
           to = proposalData.targets[0];
           data = proposalData.calldatas[0];
+          operation = 0;
         }
 
         try {
@@ -79,6 +82,7 @@ export default function useSubmitProposal() {
               {
                 to,
                 data,
+                operation,
                 nonce: (await gnosisContract.nonce()).toNumber(),
               }
             )
