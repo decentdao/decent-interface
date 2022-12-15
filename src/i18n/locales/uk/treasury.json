@@ -1,0 +1,16 @@
+{
+    "titleTreasury": "{{daoName}} Скарбниця",
+    "buttonSendAssets": "Надіслати активи",
+    "titleTransactions": "Транзакції",
+    "titleAssets": "Активи",
+    "subtitleCoinBalance": "Загальний баланс монети",
+    "columnCoins": "Монети",
+    "columnValue": "Значення",
+    "columnAllocation": "Розподілення",
+    "columnNFTs": "NFT",
+    "labelSent": "Відправлено",
+    "labelReceived": "Отримано",
+    "textEmptyTransactions": "Наразі нема виконаних трансферів",
+    "textMoreTransactions": "Більше...",
+    "addresses": "{{numOfAddresses}} адресами"
+}
