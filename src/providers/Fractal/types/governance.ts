@@ -5,7 +5,6 @@ import {
   VetoGuard,
   VetoMultisigVoting,
   FractalUsul,
-  VetoERC20Voting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { IGoveranceTokenData } from '../governance/hooks/useGovernanceTokenData';
@@ -24,6 +23,7 @@ export enum GnosisModuleType {
 export enum VetoVotingType {
   ERC721,
   MULTISIG,
+  UNKNOWN,
 }
 
 // TODO left untranslated because this is likely going away
