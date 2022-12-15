@@ -1,16 +1,14 @@
 import { MenuItem, Text } from '@chakra-ui/react';
 import { StarGoldSolid } from '@decent-org/fractal-ui';
 import { useNavigate } from 'react-router-dom';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { DAO_ROUTES } from '../../../../routes/constants';
 
 interface IFavorite {
   address: string;
 }
 export function Favorite({ address }: IFavorite) {
-  const {
-    gnosis: { daoName },
-  } = useFractal();
+  const { daoRegistryName } = useDAOName({ address });
 
   const navigate = useNavigate();
 
@@ -33,7 +31,7 @@ export function Favorite({ address }: IFavorite) {
           color: 'gold.500',
         }}
       >
-        {daoName}
+        {daoRegistryName}
       </Text>
     </MenuItem>
   );
