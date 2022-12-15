@@ -642,7 +642,7 @@ const useBuildDAOTx = () => {
             '0x0000000000000000000000000000000000000001',
             tokenGovernanceDaoData.votingPeriod,
             tokenGovernanceDaoData.quorumPercentage,
-            tokenGovernanceDaoData.executionDelay,
+            tokenGovernanceDaoData.timelock,
             'linearVoting',
           ]
         );

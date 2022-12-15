@@ -4,7 +4,6 @@ import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/fractal-text-logo.svg';
-import { CONTENT_HEIGHT } from '../../constants/common';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants/url';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
@@ -93,7 +92,7 @@ function Home() {
     navigate(BASE_ROUTES.create);
   };
   return (
-    <Center h={CONTENT_HEIGHT}>
+    <Center h="full">
       <Flex
         flexDirection="column"
         alignItems="center"
