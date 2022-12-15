@@ -1,9 +1,9 @@
-import { Flex, Text, Button, Tooltip } from '@chakra-ui/react';
+import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
+import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
-import useBlockTimestamp from '../../../hooks/utils/useBlockTimestamp';
 import { IGnosisVetoData } from '../../../providers/Fractal/types/governance';
 //todo: button colors if frozen
 //todo: get button working
@@ -22,10 +22,15 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   );
 }
 
-export function ActivityFreeze({ guard }: { guard: IGnosisVetoData }) {
+export function ActivityFreeze({
+  guard,
+  currentTime,
+}: {
+  guard: IGnosisVetoData;
+  currentTime: BigNumber;
+}) {
   const { t } = useTranslation('dashboard');
 
-  const currentTime = BigNumber.from(useBlockTimestamp());
   const daysLeft = guard.isFrozen
     ? guard.freezeProposalCreatedTime.add(guard.freezePeriod).sub(currentTime).gt(0)
       ? Math.round(
@@ -81,18 +86,12 @@ export function ActivityFreeze({ guard }: { guard: IGnosisVetoData }) {
           {daysLeft > 0 && (
             <Text textStyle="text-base-sans-regular">{daysLeft + t('freezeDaysLeft')}</Text>
           )}
-          {!guard.isFrozen && (
-            <Button
-              variant="ghost"
-              bgColor={'black.900'}
-              border="1px"
-              borderColor={'blue.500'}
-              textColor={'blue.500'}
-              onClick={() => {}}
-              disabled={guard.isFrozen || guard.userHasFreezeVoted}
-            >
-              {guard.userHasFreezeVoted ? t('freezeVotedButton') : t('freezeButton')}
-            </Button>
+          {!guard.isFrozen && guard.vetoVotingContract && (
+            <FreezeButton
+              isFrozen={guard.isFrozen}
+              userHasFreezeVoted={guard.userHasFreezeVoted}
+              vetoVotingContract={guard.vetoVotingContract}
+            />
           )}
         </Flex>
       }

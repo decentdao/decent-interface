@@ -43,7 +43,12 @@ export function Activities() {
           guard.freezeProposalCreatedTime
             .add(guard.freezeProposalPeriod)
             .sub(currentTime)
-            .gt(0)) && <ActivityFreeze guard={guard} />}
+            .gt(0)) && (
+          <ActivityFreeze
+            guard={guard}
+            currentTime={currentTime}
+          />
+        )}
         {isActivitiesLoading ? (
           <InfoBoxLoader />
         ) : sortedActivities.length ? (
