@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react';
 import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useCastFreezeVote from '../../hooks/DAO/proposal/useCastFreezeVote';
+import useCastFreezeVote from '../../hooks/DAO/useCastFreezeVote';
 
 export function FreezeButton({
   isFrozen,
