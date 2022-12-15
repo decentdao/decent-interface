@@ -1,6 +1,7 @@
 import { Button, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers, utils } from 'ethers';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { checkAddress } from '../../../hooks/utils/useAddress';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -11,14 +12,20 @@ import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 interface TokenAllocationProps {
   index: number;
   tokenAllocation: TokenAllocation;
+  tokenAllocations: TokenAllocation[];
   hasAmountError: boolean;
-  updateTokenAllocation: (index: number, tokenAllocation: TokenAllocation) => void;
+  updateTokenAllocation: (
+    index: number,
+    snapshotTokenAllocations: TokenAllocation[],
+    tokenAllocation: TokenAllocation
+  ) => void;
   removeTokenAllocation: (index: number) => void;
 }
 
 function TokenAllocationInput({
   index,
   tokenAllocation,
+  tokenAllocations,
   hasAmountError,
   updateTokenAllocation,
   removeTokenAllocation,
@@ -31,36 +38,57 @@ function TokenAllocationInput({
 
   const { limitDecimalsOnKeyDown } = useFormHelpers();
 
-  const updateAddress = async (address: string) => {
-    let isValidAddress = false;
-    if (address.trim()) {
-      isValidAddress = await checkAddress(provider, address);
-    }
-    let errorMsg = undefined;
-    if (!isValidAddress) {
-      if (!provider && address.includes('.')) {
-        // simple check if this might be an ENS address
-        errorMsg = t('errorConnectWallet', { ns: 'daoCreate' });
-      } else if (address.trim()) {
-        errorMsg = t('errorInvalidAddress');
-      }
-    }
-    updateTokenAllocation(index, {
-      address: address,
-      isValidAddress: isValidAddress,
-      amount: tokenAllocation.amount,
-      addressError: errorMsg,
-    });
-  };
+  const updateAddress = useCallback(
+    async (
+      address: string,
+      snapShotTokenAllocation: TokenAllocation,
+      snapShotTokenAllocations: TokenAllocation[]
+    ) => {
+      let isValidAddress = false;
+      const duplicates = snapShotTokenAllocations.filter(
+        allocated => !!allocated.address.trim() && allocated.address === address
+      );
 
-  const updateAmount = (value: string) => {
-    updateTokenAllocation(index, {
-      address: tokenAllocation.address,
-      isValidAddress: tokenAllocation.isValidAddress,
-      amount: { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
-      addressError: tokenAllocation.addressError,
-    });
-  };
+      if (address && address.trim() && !duplicates.length) {
+        isValidAddress = await checkAddress(provider, address);
+      }
+      let errorMsg = undefined;
+
+      if (!isValidAddress) {
+        if (!provider && address.includes('.')) {
+          // simple check if this might be an ENS address
+          errorMsg = t('errorConnectWallet', { ns: 'daoCreate' });
+        } else if (duplicates.length) {
+          errorMsg = t('errorDuplicateAddress', { ns: 'daoCreate' });
+        } else if (address.trim()) {
+          errorMsg = t('errorInvalidAddress');
+        }
+      }
+      updateTokenAllocation(index, snapShotTokenAllocations, {
+        address: address,
+        isValidAddress: isValidAddress,
+        amount: snapShotTokenAllocation.amount,
+        addressError: errorMsg,
+      });
+    },
+    [index, provider, t, updateTokenAllocation]
+  );
+
+  const updateAmount = useCallback(
+    (
+      value: string,
+      snapShotTokenAllocation: TokenAllocation,
+      snapShotTokenAllocations: TokenAllocation[]
+    ) => {
+      updateTokenAllocation(index, snapShotTokenAllocations, {
+        address: snapShotTokenAllocation.address,
+        isValidAddress: snapShotTokenAllocation.isValidAddress,
+        amount: { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
+        addressError: snapShotTokenAllocation.addressError,
+      });
+    },
+    [index, updateTokenAllocation]
+  );
 
   return (
     <>
@@ -76,8 +104,9 @@ function TokenAllocationInput({
         <Input
           value={tokenAllocation.address}
           placeholder={ethers.constants.AddressZero}
-          onChange={event => updateAddress(event.target.value)}
+          onChange={event => updateAddress(event.target.value, tokenAllocation, tokenAllocations)}
           data-testid="tokenVoting-tokenAllocationAddressInput"
+          isInvalid={!!tokenAllocation.addressError}
         />
       </LabelWrapper>
       <LabelWrapper
@@ -91,8 +120,8 @@ function TokenAllocationInput({
       >
         <NumberInput
           value={tokenAllocation.amount.value}
-          onChange={tokenAmount => updateAmount(tokenAmount)}
-          isInvalid={hasAmountError || !!tokenAllocation.addressError}
+          onChange={tokenAmount => updateAmount(tokenAmount, tokenAllocation, tokenAllocations)}
+          isInvalid={hasAmountError}
           data-testid="tokenVoting-tokenAllocationAmountInput"
           onKeyDown={e =>
             limitDecimalsOnKeyDown(e, tokenAllocation.amount.value, DEFAULT_TOKEN_DECIMALS)

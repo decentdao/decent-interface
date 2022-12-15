@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { CreatorState, CreatorSteps, GovernanceTypes } from './../types';
 
@@ -48,16 +48,10 @@ export function useNextDisabled(state: CreatorState) {
             break;
           }
 
-          let isAddressesValid = true;
-          govToken.tokenAllocations
-            .map(tokenAllocation => tokenAllocation.isValidAddress)
-            .every(isValidAddress => {
-              if (!isValidAddress) {
-                isAddressesValid = false;
-                return false;
-              }
-            });
-          if (!govToken.tokenAllocations.length || !isAddressesValid) {
+          const isAddressesInValid = govToken.tokenAllocations.some(
+            allocation => !allocation.isValidAddress || !utils.isAddress(allocation.address)
+          );
+          if (!govToken.tokenAllocations.length || isAddressesInValid) {
             setIsDisabled(true);
             break;
           }
@@ -66,7 +60,13 @@ export function useNextDisabled(state: CreatorState) {
             .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
 
+          const isTokenAmountsInvalid = govToken.tokenAllocations.every(
+            allocation =>
+              !allocation.amount.bigNumberValue || allocation.amount.bigNumberValue.isZero()
+          );
+
           const isAllocationsValid =
+            !isTokenAmountsInvalid &&
             !totalAllocations.isZero() &&
             totalAllocations
               .add(govToken.parentAllocationAmount?.bigNumberValue || 0)
