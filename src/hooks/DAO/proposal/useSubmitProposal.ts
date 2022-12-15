@@ -19,6 +19,7 @@ export default function useSubmitProposal() {
   const { multiSendContract } = useSafeContracts();
   const { usulContract, votingStrategiesAddresses } = useUsul();
   const {
+    actions: { getGnosisSafeTransactions },
     gnosis: { safe },
   } = useFractal();
   const {
@@ -88,6 +89,7 @@ export default function useSubmitProposal() {
               }
             )
           );
+          await getGnosisSafeTransactions();
           successCallback(safe.address);
         } catch (e) {
           logError(e, 'Error during Multi-sig proposal creation');
@@ -125,7 +127,15 @@ export default function useSubmitProposal() {
         }
       }
     },
-    [chainId, safe, signerOrProvider, usulContract, votingStrategiesAddresses, multiSendContract]
+    [
+      usulContract,
+      votingStrategiesAddresses,
+      safe.address,
+      signerOrProvider,
+      multiSendContract,
+      chainId,
+      getGnosisSafeTransactions,
+    ]
   );
 
   return { submitProposal, pendingCreateTx, canUserCreateProposal: true };
