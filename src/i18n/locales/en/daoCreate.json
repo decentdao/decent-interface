@@ -52,6 +52,7 @@
     "exampleFreezePeriod": "604800 seconds = 1 week",
     "vetoGuardDescription": "These configuration values may be changed later on by passing a proposal to do so on this child DAO.",
     "errorConnectWallet": "Connect wallet to validate.",
+    "errorDuplicateAddress": "Duplicate Address",
     "errorOverallocated": "Allocated more than supply.",
     "labelParentAllocation": "Parent Allocation Amount",
     "helperParentAllocation": "Amount of tokens to allocate to parent DAO.",
