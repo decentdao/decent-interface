@@ -157,7 +157,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
           <NumberInput
             placeholder="0"
-            precision={isEth(selectedAsset) ? 18 : selectedAsset.token.decimals}
             value={amountInput}
             onChange={setAmountInput}
             onKeyDown={e =>
