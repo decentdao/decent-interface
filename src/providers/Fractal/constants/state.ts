@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { IGovernance } from '../governance/types';
+import { VetoVotingType } from '../types/governance';
 // eslint-disable-next-line import/namespace
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';
@@ -7,9 +8,12 @@ import { ITreasury } from '../types/treasury';
 export const gnosisInitialState: IGnosis = {
   safeService: undefined,
   modules: [],
-  guard: {
+  guardContracts: {
     vetoGuardContract: undefined,
     vetoVotingContract: undefined,
+    vetoVotingType: VetoVotingType.UNKNOWN,
+  },
+  freezeData: {
     freezeVotesThreshold: BigNumber.from(0),
     freezeProposalCreatedTime: BigNumber.from(0),
     freezeProposalVoteCount: BigNumber.from(0),

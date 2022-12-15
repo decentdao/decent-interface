@@ -12,11 +12,11 @@ import { useAccount } from './hooks/account/useAccount';
 import { useLocalStorage } from './hooks/account/useLocalStorage';
 import useDAOName from './hooks/useDAOName';
 import { FractalContext } from './hooks/useFractal';
+import { useFreezeData } from './hooks/useFreezeData';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
 import useNodes from './hooks/useNodes';
 import { useVetoContracts } from './hooks/useVetoContracts';
-import { useVetoFreeze } from './hooks/useVetoFreeze';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
 import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
@@ -66,11 +66,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useVetoContracts(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
-  useVetoFreeze(
-    gnosis.guard,
-    gnosisDispatch,
-    gnosis.guard.vetoVotingContract as VetoMultisigVoting
-  );
+  useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const value = useMemo(
     () => ({
