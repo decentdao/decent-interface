@@ -21,6 +21,7 @@ export function useParseSafeTxs(
 
     return transactions.results.map((transaction, _, transactionArr) => {
       const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
+      const isModuleTransaction = transaction.txType === 'MODULE_TRANSACTION';
       const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
@@ -65,6 +66,8 @@ export function useParseSafeTxs(
 
       const eventType = isMultiSigTransaction
         ? ActivityEventType.Governance
+        : isModuleTransaction
+        ? ActivityEventType.Module
         : ActivityEventType.Treasury;
 
       const eventNonce = multiSigTransaction.nonce;
@@ -99,7 +102,9 @@ export function useParseSafeTxs(
       const isQueued =
         multiSigTransaction.confirmations?.length || 0 >= multiSigTransaction.confirmationsRequired;
 
-      const state = isRejected
+      const state = isModuleTransaction
+        ? TxProposalState.Module
+        : isRejected
         ? TxProposalState.Rejected
         : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
         ? TxProposalState.Executed
@@ -114,9 +119,12 @@ export function useParseSafeTxs(
         : [];
 
       const metaData =
-        isMultiSigTransaction && multiSigTransaction.dataDecoded
+        (isMultiSigTransaction || isModuleTransaction) && multiSigTransaction.dataDecoded
           ? {
-              decodedTransactions: parseDecodedData(multiSigTransaction, isMultiSigTransaction),
+              decodedTransactions: parseDecodedData(
+                multiSigTransaction,
+                isMultiSigTransaction || isModuleTransaction
+              ),
             }
           : undefined;
 

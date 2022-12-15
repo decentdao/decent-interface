@@ -82,6 +82,7 @@ export interface GovernanceContracts {
   contractsIsLoading: boolean;
 }
 
+// @note its important that the other of Usul-specific states matches whats on the contract
 export enum TxProposalState {
   // Usul-specific states
   Active = 'stateActive',
@@ -96,6 +97,7 @@ export enum TxProposalState {
   Queued = 'stateQueued',
   Failed = 'stateFailed',
   Approved = 'ownerApproved',
+  Module = 'stateModule',
 }
 
 export type ProposalMetaData = {
@@ -156,6 +158,7 @@ export type ActivityTransactionType =
 export enum ActivityEventType {
   Treasury,
   Governance,
+  Module,
 }
 
 export enum GnosisTransferType {

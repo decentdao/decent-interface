@@ -66,7 +66,7 @@ type DAOGovenorToken = {
 
 type DAOGovenorModuleConfig = {
   quorumPercentage: BigNumber;
-  executionDelay: BigNumber;
+  timelock: BigNumber;
   votingPeriod: BigNumber;
 };
 
@@ -122,7 +122,7 @@ export interface TokenGovernanceDAO extends DAODetails {
   tokenSupply: BigNumberInput;
   tokenAllocations: TokenAllocation[];
   quorumPercentage: BigNumber;
-  executionDelay: BigNumber;
+  timelock: BigNumber;
   votingPeriod: BigNumber;
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
