@@ -48,7 +48,7 @@
     "transactionExecutionAlertMessage": "Transactions execute in the order they are added.",
     "labelProposalVotingPeriod": "Voting Period",
     "labelProposalQuorum": "Quorum",
-    "labelProposalExecutionDelay": "Execution Delay",
+    "labelProposalTimelock": "Timelock",
     "labelProposalSigners": "Signers",
     "support": "Support",
     "signers": "Signers",
