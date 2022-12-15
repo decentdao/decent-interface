@@ -28,9 +28,9 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
     case GnosisAction.SET_MODULES:
       return { ...state, modules: action.payload, isGnosisLoading: false };
     case GnosisAction.SET_GUARD_CONTRACTS:
-      return { ...state, guard: { ...action.payload }, isGnosisLoading: false };
+      return { ...state, guardContracts: { ...action.payload }, isGnosisLoading: false };
     case GnosisAction.SET_FREEZE_DATA:
-      return { ...state, guard: { ...action.payload }, isGnosisLoading: false };
+      return { ...state, freezeData: { ...action.payload }, isGnosisLoading: false };
     case GnosisAction.SET_DAO_NAME:
       return { ...state, daoName: action.payload };
     case GnosisAction.SET_DAO_PARENT:
