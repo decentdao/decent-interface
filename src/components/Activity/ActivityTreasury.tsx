@@ -1,7 +1,9 @@
 import { Button } from '@chakra-ui/react';
 import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
+import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { TreasuryActivity } from '../../providers/Fractal/types';
+import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
@@ -35,7 +37,7 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
           </EtherscanLinkAddress>
         ) : undefined
       }
-      eventDate={activity.eventDate}
+      eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
     />
   );
 }
