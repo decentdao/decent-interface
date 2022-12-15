@@ -1,27 +1,27 @@
 import { Button } from '@chakra-ui/react';
-import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
+import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { TreasuryActivity } from '../../providers/Fractal/types';
+import { TxProposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
+import { Badge } from '../ui/badges/Badge';
 import { ActivityCard } from './ActivityCard';
-import { ActivityDescription } from './ActivityDescription';
+import { ActivityDescriptionModule } from './ActivityDescriptionModule';
 
-export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
-  const { t } = useTranslation();
+export function ActivityModule({ activity }: { activity: TxProposal }) {
+  const { t } = useTranslation('common');
   return (
     <ActivityCard
       Badge={
-        activity.isDeposit ? (
-          <SquareSolidArrowDown color="sand.700" />
-        ) : (
-          <SquareSolidArrowUp color="sand.700" />
-        )
+        <Badge
+          size="base"
+          labelKey={activity.state}
+        />
       }
-      description={<ActivityDescription activity={activity} />}
+      description={<ActivityDescriptionModule activity={activity} />}
       RightElement={
-        activity.transactionHash ? (
+        !!activity.transactionHash && (
           <EtherscanLinkAddress
             path="tx"
             address={activity.transactionHash}
@@ -35,7 +35,7 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
               {t('labelEtherscan')}
             </Button>
           </EtherscanLinkAddress>
-        ) : undefined
+        )
       }
       eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
     />
