@@ -88,10 +88,18 @@ function ProposalCreate() {
         calldatas: transactions.map(transaction => {
           if (transaction.functionName) {
             const funcSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
-            const parametersArr = `[${transaction.parameters}]`;
+
+            const parametersArr = transaction.parameters.split(',').map(param => {
+              param = param.trim();
+              if (param.charAt(0) === '"' && param.charAt(param.length - 1) === '"')
+                param = param.slice(1, param.length - 1);
+              param = param.trim();
+              return param;
+            });
+
             return new ethers.utils.Interface([funcSignature]).encodeFunctionData(
               transaction.functionName,
-              JSON.parse(parametersArr)
+              parametersArr
             );
           }
           return '';

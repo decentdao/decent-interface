@@ -31,17 +31,24 @@ function Transaction({
     parameters: string
   ): boolean => {
     const functionSignatureStr = `function ${functionName}(${functionSignature})`;
-    const parametersArr = `[${parameters}]`;
+    const parametersArr = parameters.split(',').map(param => {
+      param = param.trim();
+      if (param.charAt(0) === '"' && param.charAt(param.length - 1) === '"')
+        param = param.slice(1, param.length - 1);
+      param = param.trim();
+      return param;
+    });
     try {
       new ethers.utils.Interface([functionSignatureStr]).encodeFunctionData(
         functionName,
-        JSON.parse(parametersArr)
+        parametersArr
       );
       return true;
     } catch (e) {
       logError(e);
       return false;
     }
+    return true;
   };
 
   const updateTargetAddress = async (targetAddress: string) => {
