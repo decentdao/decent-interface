@@ -1,4 +1,3 @@
-import { VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { ReactNode, useMemo, useReducer } from 'react';
 import {
   gnosisInitialState,
