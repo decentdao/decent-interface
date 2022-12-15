@@ -39,7 +39,7 @@ export default function useSubmitProposal() {
       if (!usulContract || !votingStrategiesAddresses || !safe.address) {
         // Submit a multisig proposal
 
-        if (!safe.address || !signerOrProvider || !multiSendContract) {
+        if (!safe.address || !signerOrProvider) {
           return;
         }
 
@@ -47,6 +47,7 @@ export default function useSubmitProposal() {
 
         let to, data, operation;
         if (proposalData.targets.length > 1) {
+          if (!multiSendContract) return;
           // Need to wrap it in Multisend function call
           to = multiSendContract.address;
 
