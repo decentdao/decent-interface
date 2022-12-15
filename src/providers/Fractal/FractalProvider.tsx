@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 import { useMatch } from 'react-router-dom';
-import { BASE_ROUTES } from '../../routes/constants';
+import { DAO_ROUTES } from '../../routes/constants';
 import {
   gnosisInitialState,
   governanceInitialState,
@@ -68,17 +68,16 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
 
-  const isHome = useMatch(BASE_ROUTES.landing);
-  const isCreate = useMatch(BASE_ROUTES.create);
+  const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
 
   useEffect(() => {
     // Resets Fractal state when not viewing DAO
-    if (!!isHome || !!isCreate) {
+    if (!isViewingDAO) {
       gnosisDispatch({ type: GnosisAction.RESET });
       treasuryDispatch({ type: TreasuryAction.RESET });
       governanceDispatch({ type: GovernanceAction.RESET });
     }
-  }, [gnosisDispatch, treasuryDispatch, governanceDispatch, isHome, isCreate]);
+  }, [gnosisDispatch, treasuryDispatch, governanceDispatch, isViewingDAO]);
 
   const value = useMemo(
     () => ({
