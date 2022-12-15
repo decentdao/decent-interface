@@ -92,7 +92,7 @@ export function useNextDisabled(state: CreatorState) {
         const isGovModuleComplete =
           govModule.quorumPercentage.gte(0) &&
           govModule.quorumPercentage.lte(100) &&
-          govModule.executionDelay.gte(0) &&
+          govModule.timelock.gte(0) &&
           govModule.votingPeriod.gt(isGnosisWithUsul ? 1 : 0);
         setIsDisabled(!isEssentialsComplete || !isGovModuleComplete || !isGovTokenComplete);
         break;
