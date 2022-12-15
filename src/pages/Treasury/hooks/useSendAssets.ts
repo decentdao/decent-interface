@@ -35,7 +35,7 @@ const useSendAssets = ({
       values: [BigNumber.from('0')],
       calldatas: calldatas,
       title: 'Send Assets',
-      description: 'to:' + destinationAddress + ' amt:' + transferAmount.toString(),
+      description: 'To:' + destinationAddress + ', amount:' + transferAmount.toString(),
       documentationUrl: '',
     };
 

@@ -73,7 +73,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     destinationAddress: destination,
   });
 
-  const { restrictChars } = useFormHelpers();
+  const { limitDecimalsOnKeyDown } = useFormHelpers();
 
   const handleCoinChange = (value: string) => {
     const index = Number(value);
@@ -84,7 +84,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   };
 
   const { isValidAddress } = useAddress(destination);
-  const destinationError = !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
+  const destinationError =
+    destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
   const overDraft = usdSelected
     ? Number(amountInput) > Number(selectedAsset.fiatBalance)
@@ -153,12 +154,19 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               onChange={e => setUSDSelected(e.target.checked)}
             />
           </Flex>
+
           <NumberInput
             placeholder="0"
             precision={isEth(selectedAsset) ? 18 : selectedAsset.token.decimals}
             value={amountInput}
             onChange={setAmountInput}
-            onKeyDown={restrictChars}
+            onKeyDown={e =>
+              limitDecimalsOnKeyDown(
+                e,
+                amountInput || '0',
+                isEth(selectedAsset) ? 18 : selectedAsset.token.decimals
+              )
+            }
           >
             <NumberInputField />
           </NumberInput>
