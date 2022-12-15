@@ -19,5 +19,6 @@
     "labelFreezeInitiated": "Freeze Initiated",
     "timeRemaining": "{{time}} remaining",
     "labelUndoFreeze": "Undo Freeze",
-    "labelDAOFrozen": "{{daoName}} Frozen"
+    "labelDAOFrozen": "{{daoName}} Frozen",
+    "moduleDescription": "Module executed {{txCount}} transactions on"
 }

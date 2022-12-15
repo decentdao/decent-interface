@@ -24,7 +24,7 @@ export const useActivities = (sortBy: SortBy) => {
   const filterActivities = useMemo(() => {
     if (type === GovernanceTypes.GNOSIS_SAFE_USUL) {
       return [
-        ...parsedActivities.filter(activity => activity.eventType === ActivityEventType.Treasury),
+        ...parsedActivities.filter(activity => activity.eventType !== ActivityEventType.Governance),
         ...txProposals,
       ];
     }
