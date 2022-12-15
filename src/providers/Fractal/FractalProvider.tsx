@@ -14,8 +14,8 @@ import useDAOName from './hooks/useDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
-import { useGnosisVeto } from './hooks/useGnosisVeto';
 import useNodes from './hooks/useNodes';
+import { useVetoContracts } from './hooks/useVetoContracts';
 import { useVetoFreeze } from './hooks/useVetoFreeze';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
@@ -63,7 +63,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
-  useGnosisVeto(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
+  useVetoContracts(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
   useVetoFreeze(

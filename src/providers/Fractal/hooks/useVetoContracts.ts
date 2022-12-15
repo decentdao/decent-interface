@@ -1,7 +1,9 @@
 import {
   UsulVetoGuard__factory,
+  VetoERC20Voting,
   VetoERC20Voting__factory,
   VetoGuard__factory,
+  VetoMultisigVoting,
   VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
@@ -10,9 +12,9 @@ import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
-import { IGnosisVetoData } from '../types/governance';
+import { IGnosisVetoContract, VetoVotingType } from '../types/governance';
 
-export function useGnosisVeto(
+export function useVetoContracts(
   gnosisDispatch: Dispatch<GnosisActions>,
   guardAddress?: string,
   modules?: IGnosisModuleData[]
@@ -55,7 +57,7 @@ export function useGnosisVeto(
     };
 
     (async () => {
-      let guard: IGnosisVetoData;
+      let contracts: IGnosisVetoContract;
       let vetoGuardContract;
 
       if (
@@ -83,24 +85,18 @@ export function useGnosisVeto(
           ? VetoMultisigVoting__factory
           : VetoERC20Voting__factory;
       const vetoVotingContract = vetoVotingType.connect(votingAddress, signerOrProvider);
-      guard = {
+      contracts = {
         vetoGuardContract: vetoGuardContract,
         vetoVotingContract: vetoVotingContract,
-        freezeVotesThreshold: await vetoVotingContract.freezeVotesThreshold(),
-        freezeProposalCreatedTime: await vetoVotingContract.freezeProposalCreatedTime(),
-        freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
-        freezeProposalPeriod: await vetoVotingContract.freezeProposalPeriod(),
-        freezePeriod: await vetoVotingContract.freezePeriod(),
-        userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
-          account,
-          await vetoVotingContract.freezeProposalCreatedBlock()
-        ),
-        isFrozen: await vetoVotingContract.isFrozen(),
+        vetoVotingType:
+          vetoVotingType === VetoMultisigVoting__factory
+            ? VetoVotingType.MULTISIG
+            : VetoVotingType.ERC721,
       };
 
       gnosisDispatch({
-        type: GnosisAction.SET_GUARD,
-        payload: guard,
+        type: GnosisAction.SET_GUARD_CONTRACTS,
+        payload: contracts,
       });
     })();
   }, [

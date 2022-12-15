@@ -27,7 +27,9 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
     // stores install modules of currently loaded DAO
     case GnosisAction.SET_MODULES:
       return { ...state, modules: action.payload, isGnosisLoading: false };
-    case GnosisAction.SET_GUARD:
+    case GnosisAction.SET_GUARD_CONTRACTS:
+      return { ...state, guard: { ...action.payload }, isGnosisLoading: false };
+    case GnosisAction.SET_FREEZE_DATA:
       return { ...state, guard: { ...action.payload }, isGnosisLoading: false };
     case GnosisAction.SET_DAO_NAME:
       return { ...state, daoName: action.payload };

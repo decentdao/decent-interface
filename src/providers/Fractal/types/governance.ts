@@ -4,8 +4,9 @@ import {
   VetoERC20Voting,
   VetoGuard,
   VetoMultisigVoting,
+  FractalUsul,
+  VetoERC20Voting__factory,
 } from '@fractal-framework/fractal-contracts';
-import { FractalUsul } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { IGoveranceTokenData } from '../governance/hooks/useGovernanceTokenData';
 
@@ -18,6 +19,11 @@ export enum GnosisModuleType {
   USUL,
   FRACTAL,
   UNKNOWN,
+}
+
+export enum VetoVotingType {
+  ERC721,
+  MULTISIG,
 }
 
 // TODO left untranslated because this is likely going away
@@ -48,7 +54,7 @@ export interface IGnosisModuleData {
 export interface IGnosisVetoContract {
   vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
-  vetoVotingType: VetoERC20Voting | VetoMultisigVoting
+  vetoVotingType: VetoVotingType;
 }
 
 export interface IGnosisFreezeData {
