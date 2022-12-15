@@ -7,7 +7,6 @@ import {
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -28,13 +27,13 @@ export function DAOInfoCard({
   numberOfChildrenDAO,
 }: IDAOInfoCard) {
   const {
+    gnosis: { daoName },
     account: {
       favorites: { favoritesList, toggleFavorite },
     },
   } = useFractal();
   const copyToClipboard = useCopyText();
   const { accountSubstring } = useDisplayName(safeAddress);
-  const { daoRegistryName } = useDAOName({ address: safeAddress });
   const isFavorite = favoritesList.includes(safeAddress);
   return (
     <Flex
@@ -78,7 +77,7 @@ export function DAOInfoCard({
               textStyle="text-2xl-mono-regular"
               color="grayscale.100"
             >
-              {daoRegistryName}
+              {daoName}
             </Text>
             <IconButton
               variant="ghost"
