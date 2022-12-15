@@ -5,7 +5,7 @@ import SafeServiceClient, {
 import { GovernanceActions } from '../governance/actions';
 import { IGovernance, IGnosisModuleData } from '../governance/types';
 import { GnosisActions, TreasuryActions } from './actions';
-import { IGnosisVetoData } from './governance';
+import { IGnosisFreezeData, IGnosisVetoContract } from './governance';
 import { ITreasury } from './treasury';
 
 export interface IFractalContext {
@@ -33,7 +33,8 @@ export interface IGnosis {
   safeService?: SafeServiceClient;
   safe: Partial<SafeInfoResponseWithGuard>;
   modules: IGnosisModuleData[];
-  guard: IGnosisVetoData;
+  guardContracts: IGnosisVetoContract;
+  freezeData: IGnosisFreezeData;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
   parentDAOAddress?: string;
