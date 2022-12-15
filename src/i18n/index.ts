@@ -11,6 +11,16 @@ import PROPOSAL_EN from './locales/en/proposal.json';
 import SIDEBAR_EN from './locales/en/sidebar.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
+import COMMON_UK from './locales/uk/common.json';
+import DAOCREATE_UK from './locales/uk/daoCreate.json';
+import DASHBOARD_UK from './locales/uk/dashboard.json';
+import LANGUAGES_UK from './locales/uk/languages.json';
+import MENU_UK from './locales/uk/menu.json';
+import MODALS_UK from './locales/uk/modals.json';
+import PROPOSAL_UK from './locales/uk/proposal.json';
+import SIDEBAR_UK from './locales/uk/sidebar.json';
+import TRANSACTION_UK from './locales/uk/transaction.json';
+import TREASURY_UK from './locales/uk/treasury.json';
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
  * language setting. This library is based on the popular i18next JavaScript library, tailored specificaly to React.
@@ -45,6 +55,18 @@ export const supportedLanguages = {
     sidebar: SIDEBAR_EN,
     modals: MODALS_EN,
     languages: LANGUAGES_EN,
+  },
+  uk: {
+    common: COMMON_UK,
+    daoCreate: DAOCREATE_UK,
+    menu: MENU_UK,
+    dashboard: DASHBOARD_UK,
+    proposal: PROPOSAL_UK,
+    transaction: TRANSACTION_UK,
+    treasury: TREASURY_UK,
+    sidebar: SIDEBAR_UK,
+    modals: MODALS_UK,
+    languages: LANGUAGES_UK,
   },
 };
 
