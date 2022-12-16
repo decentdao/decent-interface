@@ -1,11 +1,10 @@
 import { Button, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers, utils } from 'ethers';
+import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { checkAddress } from '../../../hooks/utils/useAddress';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 
@@ -30,48 +29,68 @@ function TokenAllocationInput({
   updateTokenAllocation,
   removeTokenAllocation,
 }: TokenAllocationProps) {
-  const {
-    state: { provider },
-  } = useWeb3Provider();
-
   const { t } = useTranslation(['common', 'daoCreate']);
 
   const { limitDecimalsOnKeyDown } = useFormHelpers();
 
   const updateAddress = useCallback(
-    async (
+    (
       address: string,
       snapShotTokenAllocation: TokenAllocation,
       snapShotTokenAllocations: TokenAllocation[]
     ) => {
-      let isValidAddress = false;
-      const duplicates = snapShotTokenAllocations.filter(
-        allocated => !!allocated.address.trim() && allocated.address === address
-      );
+      let isValidAddress = isAddress(address);
+      let hasDuplicateAddresses = false;
 
-      if (address && address.trim() && !duplicates.length) {
-        isValidAddress = await checkAddress(provider, address);
-      }
-      let errorMsg = undefined;
-
-      if (!isValidAddress) {
-        if (!provider && address.includes('.')) {
-          // simple check if this might be an ENS address
-          errorMsg = t('errorConnectWallet', { ns: 'daoCreate' });
-        } else if (duplicates.length) {
-          errorMsg = t('errorDuplicateAddress', { ns: 'daoCreate' });
-        } else if (address.trim()) {
-          errorMsg = t('errorInvalidAddress');
+      const updatedTokenAllocations = snapShotTokenAllocations.map((allocated, i, arr) => {
+        // if a duplicate address is found updates the error on that input and invalidates the address.
+        const isDuplicateAddress =
+          isAddress(allocated.address) &&
+          isAddress(address) &&
+          allocated.address.toLowerCase() === address.toLowerCase() &&
+          i !== index;
+        if (isDuplicateAddress) {
+          hasDuplicateAddresses = true;
+          return {
+            ...allocated,
+            addressError: t('errorDuplicateAddress', { ns: 'daoCreate' }),
+            isValidAddress: false,
+          };
         }
-      }
-      updateTokenAllocation(index, snapShotTokenAllocations, {
+
+        // searches for prev duplicate, if duplicate was updated, error is reset on it.
+        const prevAllocationState = arr[index];
+        const isOldDuplicateAddress =
+          isAddress(allocated.address) &&
+          isAddress(prevAllocationState.address) &&
+          allocated.address.toLowerCase() === prevAllocationState.address.toLowerCase() &&
+          address.toLowerCase() !== allocated.address.toLowerCase() &&
+          i !== index;
+        if (isOldDuplicateAddress) {
+          // resets error on duplicate
+          return {
+            ...allocated,
+            addressError: undefined,
+            isValidAddress: true,
+          };
+        }
+        return allocated;
+      });
+
+      const errorMsg = hasDuplicateAddresses
+        ? t('errorDuplicateAddress', { ns: 'daoCreate' })
+        : !isValidAddress && address.trim()
+        ? t('errorInvalidAddress')
+        : undefined;
+
+      updateTokenAllocation(index, updatedTokenAllocations, {
         address: address,
         isValidAddress: isValidAddress,
         amount: snapShotTokenAllocation.amount,
         addressError: errorMsg,
       });
     },
-    [index, provider, t, updateTokenAllocation]
+    [index, t, updateTokenAllocation]
   );
 
   const updateAmount = useCallback(
