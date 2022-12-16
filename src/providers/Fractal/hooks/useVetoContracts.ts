@@ -1,9 +1,7 @@
 import {
   UsulVetoGuard__factory,
-  VetoERC20Voting,
   VetoERC20Voting__factory,
   VetoGuard__factory,
-  VetoMultisigVoting,
   VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
