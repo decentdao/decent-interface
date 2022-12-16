@@ -14,7 +14,7 @@ import {
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { constants, BigNumber, utils } from 'ethers';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -50,9 +50,9 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const convertedTotal = usdSelected
     ? calculateCoins(selectedAsset.fiatConversion, amountInput || '0', selectedAsset?.token?.symbol)
-    : formatUSD(Number(amountInput) * Number(selectedAsset.fiatConversion));
+    : formatUSD(Number(amountInput || 0) * Number(selectedAsset.fiatConversion));
 
-  const transferAmount = () => {
+  const transferAmount = useMemo(() => {
     //the input is not validating the amountInput so this try catch is here for now to prevent a UI error
     // TODO remove once we have proper validation on the input
     try {
@@ -65,10 +65,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     } catch {
       return BigNumber.from('0');
     }
-  };
+  }, [amountInput, selectedAsset, usdSelected]);
 
   const sendAssets = useSendAssets({
-    transferAmount: transferAmount(),
+    transferAmount: transferAmount,
     asset: selectedAsset,
     destinationAddress: destination,
   });
