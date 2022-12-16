@@ -53,29 +53,23 @@ export function useFreezeData(
   useEffect(() => {
     if (
       !account ||
-      vetoGuardContract.vetoVotingType === VetoVotingType.MULTISIG ||
+      vetoGuardContract.vetoVotingType !== VetoVotingType.MULTISIG ||
       !vetoGuardContract.vetoVotingContract
     ) {
       return;
     }
 
-    let freeze: IGnosisFreezeData;
     const vetoVotingContract = vetoGuardContract.vetoVotingContract as VetoMultisigVoting;
 
     const filter = vetoVotingContract.filters.FreezeVoteCast();
 
-    const listenerCallback: FreezeVoteCastedListener = async () => {
+    const listenerCallback: FreezeVoteCastedListener = async (voter: string) => {
       gnosisDispatch({
-        type: GnosisAction.SET_FREEZE_DATA,
+        type: GnosisAction.FREEZE_VOTE_EVENT,
         payload: {
-          ...freeze,
-          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
+          isVoter: voter === account,
           freezeProposalCreatedTime: await vetoVotingContract.freezeProposalCreatedTime(),
-          userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
-            account,
-            await vetoVotingContract.freezeProposalCreatedBlock()
-          ),
-          isFrozen: await vetoVotingContract.isFrozen(),
+          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
         },
       });
     };
@@ -90,29 +84,23 @@ export function useFreezeData(
   useEffect(() => {
     if (
       !account ||
-      vetoGuardContract.vetoVotingType === VetoVotingType.ERC721 ||
+      vetoGuardContract.vetoVotingType !== VetoVotingType.ERC721 ||
       !vetoGuardContract.vetoVotingContract
     ) {
       return;
     }
 
-    let freeze: IGnosisFreezeData;
     const vetoVotingContract = vetoGuardContract.vetoVotingContract as VetoERC20Voting;
 
     const filter = vetoVotingContract.filters.FreezeVoteCast();
 
-    const listenerCallback: FreezeVoteCastedListener = async () => {
+    const listenerCallback: FreezeVoteCastedListener = async (voter: string) => {
       gnosisDispatch({
-        type: GnosisAction.SET_FREEZE_DATA,
+        type: GnosisAction.FREEZE_VOTE_EVENT,
         payload: {
-          ...freeze,
-          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
+          isVoter: voter === account,
           freezeProposalCreatedTime: await vetoVotingContract.freezeProposalCreatedTime(),
-          userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
-            account,
-            await vetoVotingContract.freezeProposalCreatedBlock()
-          ),
-          isFrozen: await vetoVotingContract.isFrozen(),
+          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
         },
       });
     };
