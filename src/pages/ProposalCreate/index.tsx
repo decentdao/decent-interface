@@ -10,14 +10,13 @@ import {
   Box,
 } from '@chakra-ui/react';
 import { CloseX, Info } from '@decent-org/fractal-ui';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import Transactions from '../../components/ProposalCreate/Transactions';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
-import { logError } from '../../helpers/errorLogging';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalExecuteData } from '../../types/proposal';
@@ -30,6 +29,7 @@ const defaultTransaction = {
   functionSignature: '',
   parameters: '',
   isExpanded: true,
+  encodedFunctionData: undefined,
 };
 
 function ProposalCreate() {
@@ -37,6 +37,7 @@ function ProposalCreate() {
     gnosis: { safe },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
+  //  const { transactions, setTransactions } = useProposalCreate();
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -72,48 +73,25 @@ function ProposalCreate() {
   };
 
   useEffect(() => {
-    try {
-      let hasError: boolean = false;
-      transactions.forEach((transaction: TransactionData) => {
-        if (transaction.addressError || transaction.fragmentError) {
-          hasError = true;
-        }
-      });
-      if (hasError) {
-        return;
+    let hasError: boolean = false;
+    transactions.forEach((transaction: TransactionData) => {
+      if (transaction.addressError || transaction.fragmentError) {
+        hasError = true;
       }
-      const proposal = {
-        targets: transactions.map(transaction => transaction.targetAddress),
-        values: transactions.map(() => BigNumber.from('0')),
-        calldatas: transactions.map(transaction => {
-          if (transaction.functionName) {
-            const funcSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
-
-            const parametersArr = transaction.parameters.split(',').map(param => {
-              param = param.trim();
-              if (param.charAt(0) === '"' && param.charAt(param.length - 1) === '"')
-                param = param.slice(1, param.length - 1);
-              param = param.trim();
-              return param;
-            });
-
-            return new ethers.utils.Interface([funcSignature]).encodeFunctionData(
-              transaction.functionName,
-              parametersArr
-            );
-          }
-          return '';
-        }),
-        title: '',
-        description: proposalDescription,
-        documentationUrl: '',
-      };
-      setProposalData(proposal);
-    } catch (e) {
-      logError(e);
-      // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData`
-      // these errors are handled in the onChange of the inputs in transactions
+    });
+    if (hasError) {
+      return;
     }
+    const proposal = {
+      targets: transactions.map(transaction => transaction.targetAddress),
+      values: transactions.map(() => BigNumber.from('0')),
+      calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
+      title: '',
+      description: proposalDescription,
+      documentationUrl: '',
+    };
+    console.log(proposal);
+    setProposalData(proposal);
   }, [transactions, proposalDescription]);
 
   const isValidProposal = useMemo(() => {

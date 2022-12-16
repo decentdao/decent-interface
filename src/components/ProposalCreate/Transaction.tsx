@@ -25,39 +25,33 @@ function Transaction({
   } = useWeb3Provider();
   const { t } = useTranslation(['proposal', 'common']);
 
-  const validateFunctionData = (
+  const encodeFunctionData = (
     functionName: string,
-    functionSignature: string,
-    parameters: string
-  ): boolean => {
-    const functionSignatureStr = `function ${functionName}(${functionSignature})`;
-    const parametersArr = parameters.split(',').map(param => {
-      param = param.trim();
-      if (param.charAt(0) === '"' && param.charAt(param.length - 1) === '"')
-        param = param.slice(1, param.length - 1);
-      param = param.trim();
-      return param;
-    });
+    dirtyfunctionSignature: string,
+    dirtyParameters: string
+  ): string | undefined => {
+    const functionSignature = `function ${functionName}(${dirtyfunctionSignature})`;
+    const parameters = !!dirtyParameters
+      ? dirtyParameters.split(',').map(p => (p = p.trim()))
+      : undefined;
     try {
-      new ethers.utils.Interface([functionSignatureStr]).encodeFunctionData(
-        functionName,
-        parametersArr
-      );
-      return true;
+      const encodedFunctionData = new ethers.utils.Interface([
+        functionSignature,
+      ]).encodeFunctionData(functionName, parameters);
+      return encodedFunctionData;
     } catch (e) {
-      logError(e);
-      return false;
+      //logError(e); //can we get this to not show in the console??
+      return;
     }
-    return true;
   };
 
   const updateTargetAddress = async (targetAddress: string) => {
+    const isValidAddress = !!targetAddress
+      ? await checkAddress(provider, targetAddress.trim())
+      : undefined;
+
     const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.targetAddress = targetAddress;
-    let isValidAddress = false;
-    if (targetAddress.trim()) {
-      isValidAddress = await checkAddress(provider, targetAddress);
-    }
+    newTransactionData.targetAddress = targetAddress.trim();
     newTransactionData.addressError =
       !isValidAddress && targetAddress.trim()
         ? t('errorInvalidAddress', { ns: 'common' })
@@ -65,40 +59,42 @@ function Transaction({
     updateTransaction(newTransactionData, transactionNumber);
   };
 
+  const updateTransactionValue = (
+    value: string,
+    encodedFunctionData: string | undefined,
+    key: keyof TransactionData
+  ) => {
+    const transactionCopy = { ...transaction, [key]: value };
+    transactionCopy.encodedFunctionData = encodedFunctionData;
+    transactionCopy.fragmentError = !encodeFunctionData ? t('errorInvalidFragments') : undefined;
+    updateTransaction(transactionCopy, transactionNumber);
+  };
+
   const updateFunctionName = (functionName: string) => {
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.functionName = functionName;
-    const isValidFragment = validateFunctionData(
+    const encodedFunctionData = encodeFunctionData(
       functionName,
       transaction.functionSignature,
       transaction.parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    updateTransactionValue(functionName, encodedFunctionData, 'functionName');
   };
 
   const updateFunctionSignature = (functionSignature: string) => {
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.functionSignature = functionSignature;
-    const isValidFragment = validateFunctionData(
+    const encodedFunctionData = encodeFunctionData(
       transaction.functionName,
       functionSignature,
       transaction.parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    updateTransactionValue(functionSignature, encodedFunctionData, 'functionSignature');
   };
 
   const updateParameters = (parameters: string) => {
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.parameters = parameters;
-    const isValidFragment = validateFunctionData(
+    const encodedFunctionData = encodeFunctionData(
       transaction.functionName,
       transaction.functionSignature,
       parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    updateTransactionValue(parameters, encodedFunctionData, 'parameters');
   };
 
   const exampleLabelStyle = {

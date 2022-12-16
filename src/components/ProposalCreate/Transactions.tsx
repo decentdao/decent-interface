@@ -14,15 +14,15 @@ import Transaction from './Transaction';
 
 interface TransactionsProps {
   transactions: TransactionData[];
-  pending: boolean;
   setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
+  pending: boolean;
   removeTransaction: (transactionNumber: number) => void;
 }
 
 function Transactions({
   transactions,
-  pending,
   setTransactions,
+  pending,
   removeTransaction,
 }: TransactionsProps) {
   const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
