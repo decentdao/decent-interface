@@ -4,7 +4,7 @@ import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
 import { GnosisActions } from '../types';
 import { IGnosisFreezeData, IGnosisVetoContract, VetoVotingType } from '../types/governance';
-import { FreezeVoteCastedListener } from '../types/vetoVoting';
+import { FreezeVoteCastedListener } from '../types/vetoVotingEvent';
 
 export function useFreezeData(
   vetoGuardContract: IGnosisVetoContract,
