@@ -36,8 +36,8 @@ function TokenAllocationInput({
   const updateAddress = useCallback(
     (
       address: string,
-      snapShotTokenAllocation: TokenAllocation,
-      snapShotTokenAllocations: TokenAllocation[]
+      snapShotTokenAllocations: TokenAllocation[],
+      snapShotTokenAllocation: TokenAllocation
     ) => {
       let isValidAddress = isAddress(address);
       let hasDuplicateAddresses = false;
@@ -96,8 +96,8 @@ function TokenAllocationInput({
   const updateAmount = useCallback(
     (
       value: string,
-      snapShotTokenAllocation: TokenAllocation,
-      snapShotTokenAllocations: TokenAllocation[]
+      snapShotTokenAllocations: TokenAllocation[],
+      snapShotTokenAllocation: TokenAllocation
     ) => {
       updateTokenAllocation(index, snapShotTokenAllocations, {
         address: snapShotTokenAllocation.address,
@@ -150,7 +150,7 @@ function TokenAllocationInput({
         <Input
           value={tokenAllocation.address}
           placeholder={ethers.constants.AddressZero}
-          onChange={event => updateAddress(event.target.value, tokenAllocation, tokenAllocations)}
+          onChange={event => updateAddress(event.target.value, tokenAllocations, tokenAllocation)}
           data-testid="tokenVoting-tokenAllocationAddressInput"
           isInvalid={!!tokenAllocation.addressError}
         />
@@ -166,7 +166,7 @@ function TokenAllocationInput({
       >
         <NumberInput
           value={tokenAllocation.amount.value}
-          onChange={tokenAmount => updateAmount(tokenAmount, tokenAllocation, tokenAllocations)}
+          onChange={tokenAmount => updateAmount(tokenAmount, tokenAllocations, tokenAllocation)}
           isInvalid={hasAmountError}
           data-testid="tokenVoting-tokenAllocationAmountInput"
           onKeyDown={e =>
