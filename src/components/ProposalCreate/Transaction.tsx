@@ -1,9 +1,8 @@
 import { VStack, HStack, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { isAddress } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
-import { checkAddress } from '../../hooks/utils/useAddress';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { TransactionData } from '../../types/transaction';
 import { InputComponent, TextareaComponent } from './InputComponent';
 
@@ -20,9 +19,6 @@ function Transaction({
   pending,
   updateTransaction,
 }: TransactionProps) {
-  const {
-    state: { provider },
-  } = useWeb3Provider();
   const { t } = useTranslation(['proposal', 'common']);
 
   const validateFunctionData = (
@@ -44,12 +40,12 @@ function Transaction({
     }
   };
 
-  const updateTargetAddress = async (targetAddress: string) => {
+  const updateTargetAddress = (targetAddress: string) => {
     const newTransactionData = Object.assign({}, transaction);
     newTransactionData.targetAddress = targetAddress;
     let isValidAddress = false;
     if (targetAddress.trim()) {
-      isValidAddress = await checkAddress(provider, targetAddress);
+      isValidAddress = isAddress(targetAddress);
     }
     newTransactionData.addressError =
       !isValidAddress && targetAddress.trim()
