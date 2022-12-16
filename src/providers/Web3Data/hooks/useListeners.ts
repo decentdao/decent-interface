@@ -24,7 +24,7 @@ const useListeners = (
   const [modalProvider, setModalProvider] = useState<ModalProvider | null>(null);
 
   const supportedChains = getSupportedChains();
-  const chainsNames = getChainsWithMetadata(supportedChains)
+  const chainNames = getChainsWithMetadata(supportedChains)
     .map(chain => chain.name)
     .join(', ');
   const { t } = useTranslation('menu');
@@ -36,7 +36,7 @@ const useListeners = (
       setErrorContext('chainId', _modalProvider.chainId);
       // check that connected chain is supported
       if (!supportedChains.includes(parseInt(_modalProvider.chainId))) {
-        toast(t('toastSwitchChain', { chainsNames: chainsNames }), {
+        toast(t('toastSwitchChain', { chainNames: chainNames }), {
           toastId: 'switchChain',
         });
         // switch to a default provider
@@ -54,14 +54,14 @@ const useListeners = (
     return () => {
       web3Modal.off('connect');
     };
-  }, [web3Modal, connectDefaultProvider, supportedChains, chainsNames, t]);
+  }, [web3Modal, connectDefaultProvider, supportedChains, chainNames, t]);
 
   useEffect(() => {
     const chainChangedCallback = (chainId: string) => {
       setErrorContext('chainId', chainId);
       if (!getSupportedChains().includes(parseInt(chainId))) {
         // check that connected chain is supported
-        toast(t('toastChainChangedUnsupported', { chainsNames: chainsNames }), {
+        toast(t('toastSwitchChain', { chainNames: chainNames }), {
           toastId: 'switchChain',
         });
         // switch to a default provider
@@ -117,7 +117,7 @@ const useListeners = (
         (modalProvider as ethers.providers.Web3Provider).removeAllListeners();
       }
     };
-  }, [modalProvider, web3Modal, connectDefaultProvider, connect, supportedChains, chainsNames, t]);
+  }, [modalProvider, web3Modal, connectDefaultProvider, connect, supportedChains, chainNames, t]);
 };
 
 export { useListeners };

@@ -68,8 +68,7 @@ function Sidebar() {
       >
         <FractalBrand
           aria-hidden
-          boxSize="2.25rem"
-          m="1rem auto"
+          boxSize="4.4rem"
           minWidth="auto"
         />
       </Link>

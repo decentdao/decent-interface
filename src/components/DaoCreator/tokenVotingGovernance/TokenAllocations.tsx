@@ -1,7 +1,7 @@
 import { Box, Grid, Text, Button, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { TokenAllocation } from '../../../types/tokenAllocation';
@@ -30,11 +30,18 @@ function TokenAllocations({
 
   const { limitDecimalsOnKeyDown } = useFormHelpers();
 
-  const updateTokenAllocation = (index: number, tokenAllocation: TokenAllocation) => {
-    const newTokenAllocations = [...tokenAllocations];
-    newTokenAllocations[index] = tokenAllocation;
-    fieldUpdate(newTokenAllocations, 'tokenAllocations');
-  };
+  const updateTokenAllocation = useCallback(
+    (
+      index: number,
+      snapShotTokenAllocations: TokenAllocation[],
+      tokenAllocation: TokenAllocation
+    ) => {
+      const newTokenAllocations = [...snapShotTokenAllocations];
+      newTokenAllocations[index] = { ...tokenAllocation };
+      fieldUpdate(newTokenAllocations, 'tokenAllocations');
+    },
+    [fieldUpdate]
+  );
 
   const addTokenAllocation = () => {
     if (tokenAllocations === undefined) {
@@ -53,12 +60,9 @@ function TokenAllocations({
     );
   };
 
-  const removeTokenAllocation = (index: number) => {
+  const removeTokenAllocation = (updatedTokenAllocations: TokenAllocation[]) => {
     if (tokenAllocations === undefined) return;
-    fieldUpdate(
-      [...tokenAllocations.slice(0, index), ...tokenAllocations.slice(index + 1)],
-      'tokenAllocations'
-    );
+    fieldUpdate(updatedTokenAllocations, 'tokenAllocations');
   };
 
   const onParentAllocationChange = (value: string) => {
@@ -153,6 +157,7 @@ function TokenAllocations({
                 index={index}
                 hasAmountError={hasAmountError}
                 tokenAllocation={tokenAllocation}
+                tokenAllocations={tokenAllocations}
                 updateTokenAllocation={updateTokenAllocation}
                 removeTokenAllocation={removeTokenAllocation}
               />

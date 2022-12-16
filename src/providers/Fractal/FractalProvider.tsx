@@ -1,15 +1,20 @@
-import { ReactNode, useMemo, useReducer } from 'react';
+import { ReactNode, useEffect, useMemo, useReducer } from 'react';
+import { useMatch } from 'react-router-dom';
+import { DAO_ROUTES } from '../../routes/constants';
 import {
   gnosisInitialState,
   governanceInitialState,
   treasuryInitialState,
   connectedAccountInitialState,
+  GnosisAction,
+  TreasuryAction,
 } from './constants';
+import { GovernanceAction } from './governance/actions';
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
 import { useLocalStorage } from './hooks/account/useLocalStorage';
-import useDAOName from './hooks/useDAOName';
+import useDispatchDAOName from './hooks/useDispatchDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
@@ -55,13 +60,24 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     gnosisDispatch
   );
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
-  useDAOName({ address: gnosis.safe.address, gnosisDispatch });
+  useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
+
+  const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
+
+  useEffect(() => {
+    // Resets Fractal state when not viewing DAO
+    if (!isViewingDAO) {
+      gnosisDispatch({ type: GnosisAction.RESET });
+      treasuryDispatch({ type: TreasuryAction.RESET });
+      governanceDispatch({ type: GovernanceAction.RESET });
+    }
+  }, [gnosisDispatch, treasuryDispatch, governanceDispatch, isViewingDAO]);
 
   const value = useMemo(
     () => ({

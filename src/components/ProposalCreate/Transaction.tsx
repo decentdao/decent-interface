@@ -1,5 +1,6 @@
 import { VStack, HStack, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
+import { isAddress } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { TransactionData } from '../../types/transaction';

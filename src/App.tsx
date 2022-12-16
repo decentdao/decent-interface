@@ -49,8 +49,8 @@ function App() {
         <Container
           display="grid"
           maxWidth="container.xl"
-          mt={6}
           px="0"
+          minH={CONTENT_HEIGHT}
           paddingBottom="2rem"
         >
           <FractalRoutes />
