@@ -63,7 +63,6 @@ function Transaction({
     const transactionCopy = { ...transaction, [key]: value };
     transactionCopy.encodedFunctionData = encodedFunctionData;
     transactionCopy.fragmentError = !encodeFunctionData ? t('errorInvalidFragments') : undefined;
-    console.log('trans update', transactionCopy);
     updateTransaction(transactionCopy, transactionNumber);
   };
 
