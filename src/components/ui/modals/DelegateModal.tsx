@@ -25,7 +25,7 @@ export function DelegateModal({ close }: { close: Function }) {
     state: { account },
   } = useWeb3Provider();
 
-  const [, validAddress] = useAddress(newDelegatee);
+  const { isValidAddress } = useAddress(newDelegatee);
   const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
@@ -43,7 +43,7 @@ export function DelegateModal({ close }: { close: Function }) {
   };
 
   const errorMessage =
-    validAddress === false ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
+    isValidAddress === false ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
   if (!governanceToken) return null;
 
@@ -127,7 +127,7 @@ export function DelegateModal({ close }: { close: Function }) {
       <Button
         marginTop="2rem"
         width="100%"
-        disabled={!validAddress || newDelegatee.trim() === '' || pending}
+        disabled={!isValidAddress || newDelegatee.trim() === '' || pending}
         onClick={onDelegateClick}
       >
         {t('buttonDelegate')}

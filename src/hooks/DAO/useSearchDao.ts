@@ -8,7 +8,7 @@ const useSearchDao = () => {
   const [errorMessage, setErrorMessage] = useState<string>();
   const [loading, setLoading] = useState<boolean>();
 
-  const [address, validAddress, addressLoading] = useAddress(searchString);
+  const { address, isValidAddress, isAddressLoading } = useAddress(searchString);
   const [addressIsGnosisSafe, isGnosisSafeLoading] = useIsGnosisSafe(address);
   const { t } = useTranslation('dashboard');
 
@@ -35,10 +35,10 @@ const useSearchDao = () => {
    * handles loading state of search
    */
   useEffect(() => {
-    if (addressLoading !== undefined) {
-      setLoading(addressLoading || isGnosisSafeLoading);
+    if (isAddressLoading !== undefined) {
+      setLoading(isAddressLoading || isGnosisSafeLoading);
     }
-  }, [addressLoading, isGnosisSafeLoading]);
+  }, [isAddressLoading, isGnosisSafeLoading]);
 
   /**
    * handles errors
@@ -55,11 +55,11 @@ const useSearchDao = () => {
       return;
     }
 
-    if (validAddress) {
+    if (isValidAddress) {
       return;
     }
 
-    if (!validAddress) {
+    if (!isValidAddress) {
       setErrorMessage(t('errorInvalidSearch'));
       return;
     }
@@ -69,7 +69,7 @@ const useSearchDao = () => {
     }
   }, [
     address,
-    validAddress,
+    isValidAddress,
     searchString,
     isGnosisSafeLoading,
     addressIsGnosisSafe,
@@ -82,7 +82,7 @@ const useSearchDao = () => {
     errorMessage,
     loading,
     address,
-    validAddress,
+    isValidAddress,
     updateSearchString,
     resetErrorState,
     addressIsGnosisSafe,
