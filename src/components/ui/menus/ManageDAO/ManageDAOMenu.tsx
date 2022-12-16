@@ -1,16 +1,24 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
-import { useMemo } from 'react';
+import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import useCastFreezeVote from '../../../../hooks/DAO/useCastFreezeVote';
+import useCastFreezeVote from '../../../../hooks/DAO/useCastFreezeVote';
 import { DAO_ROUTES } from '../../../../routes/constants';
 import { OptionMenu } from '../OptionMenu';
 
-export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
+export function ManageDAOMenu({
+  safeAddress,
+  vetoVotingContract,
+}: {
+  safeAddress: string;
+  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting;
+}) {
   const navigate = useNavigate();
-  // const castFreezeVote = useCastFreezeVote({
-  //   vetoVotingContract: vetoVotingContract,
-  //   setPending: setPending,
-  // });
+  const [pending, setPending] = useState<boolean>(false);
+  const castFreezeVote = useCastFreezeVote({
+    vetoVotingContract: vetoVotingContract,
+    setPending: setPending,
+  });
 
   const options = useMemo(
     () => [
@@ -18,9 +26,9 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
         optionKey: 'optionCreateSubDAO',
         onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
       },
-      { optionKey: 'optionInitiateFreeze', onClick: () => {} }, // TODO freeze hook (if parent voting holder)
+      { optionKey: 'optionInitiateFreeze', onClick: castFreezeVote }, // TODO freeze hook (if parent voting holder)
     ],
-    [safeAddress, navigate]
+    [safeAddress, navigate, castFreezeVote]
   );
 
   return (
