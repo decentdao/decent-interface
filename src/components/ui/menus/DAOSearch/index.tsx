@@ -8,7 +8,7 @@ import {
   InputLeftElement,
 } from '@chakra-ui/react';
 import { Search } from '@decent-org/fractal-ui';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSearchDao from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
@@ -44,9 +44,13 @@ export function DAOSearch() {
     }
   };
 
-  useEffect(() => {
-    updateSearchString(searchAddressInput);
-  }, [updateSearchString, searchAddressInput]);
+  const searchUpdate = useCallback(
+    (inputAddress: string) => {
+      setSearchAddressInput(inputAddress);
+      updateSearchString(inputAddress);
+    },
+    [updateSearchString]
+  );
 
   useEffect(() => {
     return () => {
@@ -67,6 +71,7 @@ export function DAOSearch() {
         onOpen={selectInput}
         onClose={() => {
           setSearchAddressInput('');
+          updateSearchString('');
           unFocusInput();
         }}
       >
@@ -86,7 +91,7 @@ export function DAOSearch() {
               ref={inputRef}
               size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
-              onChange={e => setSearchAddressInput(e.target.value)}
+              onChange={e => searchUpdate(e.target.value)}
               value={searchAddressInput}
             />
           </InputGroup>
