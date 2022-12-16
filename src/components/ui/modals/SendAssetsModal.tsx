@@ -12,8 +12,9 @@ import {
   NumberInputField,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { constants } from 'ethers';
-import { useState } from 'react';
+import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
+import { constants, BigNumber, utils } from 'ethers';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -33,23 +34,12 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const [selectedAssetIndex, setSelectedAssetIndex] = useState<number>(0);
   const [usdSelected, setUSDSelected] = useState<boolean>(false);
-  const [amountInput, setAmountInput] = useState<string>('');
+  const [amountInput, setAmountInput] = useState<string>();
   const [destination, setDestination] = useState<string>('');
   const selectedAsset = assetsFungible[selectedAssetIndex];
-  const sendAssets = useSendAssets({
-    normalizedBalance: amountInput,
-    asset: selectedAsset,
-    destinationAddress: destination,
-  });
 
-  const { restrictChars } = useFormHelpers();
-
-  const handleCoinChange = (value: string) => {
-    const index = Number(value);
-    if (Number(assetsFungible[index].fiatBalance) === 0) {
-      setUSDSelected(false);
-    }
-    setSelectedAssetIndex(index);
+  const isEth = (asset: SafeBalanceUsdResponse) => {
+    return asset && !asset.token;
   };
 
   const calculateCoins = (fiatConversion: string, input: string, symbol?: string) => {
@@ -59,19 +49,53 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   };
 
   const convertedTotal = usdSelected
-    ? calculateCoins(selectedAsset.fiatConversion, amountInput, selectedAsset?.token?.symbol)
-    : formatUSD(Number(amountInput) * Number(selectedAsset.fiatConversion));
+    ? calculateCoins(selectedAsset.fiatConversion, amountInput || '0', selectedAsset?.token?.symbol)
+    : formatUSD(Number(amountInput || 0) * Number(selectedAsset.fiatConversion));
 
-  const [, validAddress] = useAddress(destination);
+  const transferAmount = useMemo(() => {
+    //the input is not validating the amountInput so this try catch is here for now to prevent a UI error
+    // TODO remove once we have proper validation on the input
+    try {
+      return utils.parseUnits(
+        usdSelected
+          ? (Number(amountInput || '0') / Number(selectedAsset.fiatConversion)).toString()
+          : amountInput || '0',
+        isEth(selectedAsset) ? 18 : selectedAsset.token.decimals
+      );
+    } catch {
+      return BigNumber.from('0');
+    }
+  }, [amountInput, selectedAsset, usdSelected]);
+
+  const sendAssets = useSendAssets({
+    transferAmount: transferAmount,
+    asset: selectedAsset,
+    destinationAddress: destination,
+  });
+
+  const { limitDecimalsOnKeyDown } = useFormHelpers();
+
+  const handleCoinChange = (value: string) => {
+    const index = Number(value);
+    if (Number(assetsFungible[index].fiatBalance) === 0) {
+      setUSDSelected(false);
+    }
+    setSelectedAssetIndex(index);
+  };
+
+  const { isValidAddress } = useAddress(destination);
   const destinationError =
-    validAddress === false ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
+    destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
   const overDraft = usdSelected
     ? Number(amountInput) > Number(selectedAsset.fiatBalance)
     : Number(amountInput) > formatCoinUnitsFromAsset(selectedAsset);
 
-  const submitDisabled: boolean =
-    !destination || validAddress === false || !amountInput || overDraft;
+  const isSubmitDisabled =
+    isEth(selectedAsset) || // remove this check once we are able to send ETH
+    !isValidAddress ||
+    !amountInput ||
+    overDraft;
 
   const onSubmit = () => {
     sendAssets();
@@ -94,6 +118,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             borderRadius="4px"
             color="white"
             onChange={e => handleCoinChange(e.target.value)}
+            sx={{ '> option, > optgroup': { bg: 'input.background' } }} //TODO: This should be added to baseStyle of the theme?
           >
             {assetsFungible.map(asset => (
               <option
@@ -129,12 +154,18 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               onChange={e => setUSDSelected(e.target.checked)}
             />
           </Flex>
+
           <NumberInput
             placeholder="0"
-            precision={0}
             value={amountInput}
             onChange={setAmountInput}
-            onKeyDown={restrictChars}
+            onKeyDown={e =>
+              limitDecimalsOnKeyDown(
+                e,
+                amountInput || '0',
+                isEth(selectedAsset) ? 18 : selectedAsset.token.decimals
+              )
+            }
           >
             <NumberInputField />
           </NumberInput>
@@ -179,7 +210,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       <Button
         marginTop="2rem"
         width="100%"
-        disabled={submitDisabled}
+        disabled={isSubmitDisabled}
         onClick={onSubmit}
       >
         {t('sendAssetsSubmit')}
