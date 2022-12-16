@@ -7,7 +7,7 @@ import { Badge } from '../../../components/ui/badges/Badge';
 import {
   IGnosisFreezeData,
   IGnosisVetoContract,
-} from '../../../providers/Fractal/types/governance';
+} from '../../../providers/Fractal/governance/types';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   const { t } = useTranslation('dashboard');

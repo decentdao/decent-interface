@@ -3,9 +3,13 @@ import SafeServiceClient, {
   AllTransactionsListResponse,
 } from '@safe-global/safe-service-client';
 import { GovernanceActions } from '../governance/actions';
-import { IGovernance, IGnosisModuleData } from '../governance/types';
+import {
+  IGovernance,
+  IGnosisModuleData,
+  IGnosisFreezeData,
+  IGnosisVetoContract,
+} from '../governance/types';
 import { GnosisActions, TreasuryActions } from './actions';
-import { IGnosisFreezeData, IGnosisVetoContract } from './governance';
 import { ITreasury } from './treasury';
 
 export interface IFractalContext {

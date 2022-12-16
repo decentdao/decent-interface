@@ -9,8 +9,13 @@ import { Dispatch, useEffect } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
-import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
-import { IGnosisVetoContract, VetoVotingType } from '../types/governance';
+import {
+  GnosisActions,
+  GnosisModuleType,
+  IGnosisModuleData,
+  IGnosisVetoContract,
+  VetoVotingType,
+} from '../types';
 
 export function useVetoContracts(
   gnosisDispatch: Dispatch<GnosisActions>,

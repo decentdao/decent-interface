@@ -7,8 +7,7 @@ import SafeServiceClient, {
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
-import { IGnosisModuleData } from '../governance/types';
-import { IGnosisFreezeData, IGnosisVetoContract } from './governance';
+import { IGnosisModuleData, IGnosisFreezeData, IGnosisVetoContract } from '../governance/types';
 import { IFavorites, IAudit } from './state';
 
 export type GnosisActions =

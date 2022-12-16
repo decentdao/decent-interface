@@ -1,6 +1,5 @@
 import { BigNumber } from 'ethers';
-import { IGovernance } from '../governance/types';
-import { VetoVotingType } from '../types/governance';
+import { IGovernance, VetoVotingType } from '../governance/types';
 // eslint-disable-next-line import/namespace
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';

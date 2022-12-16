@@ -2,8 +2,7 @@ import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-
 import { Dispatch, useEffect } from 'react';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
-import { GnosisActions } from '../types';
-import { IGnosisFreezeData, IGnosisVetoContract, VetoVotingType } from '../types/governance';
+import { GnosisActions, IGnosisFreezeData, IGnosisVetoContract, VetoVotingType } from '../types';
 import { FreezeVoteCastedListener } from '../types/vetoVotingEvent';
 
 export function useFreezeData(
