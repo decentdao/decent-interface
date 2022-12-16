@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
-import { IGnosisVetoData } from '../../../providers/Fractal/types/governance';
-//todo: button colors if frozen
-//todo: get button working
+import {
+  IGnosisFreezeData,
+  IGnosisVetoContract,
+} from '../../../providers/Fractal/types/governance';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   const { t } = useTranslation('dashboard');
@@ -23,28 +24,33 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 }
 
 export function ActivityFreeze({
-  guard,
+  freezeData,
+  vetoContract,
   currentTime,
 }: {
-  guard: IGnosisVetoData;
+  freezeData: IGnosisFreezeData;
+  vetoContract: IGnosisVetoContract;
   currentTime: BigNumber;
 }) {
   const { t } = useTranslation('dashboard');
 
-  const daysLeft = guard.isFrozen
-    ? guard.freezeProposalCreatedTime.add(guard.freezePeriod).sub(currentTime).gt(0)
+  const daysLeft = freezeData.isFrozen
+    ? freezeData.freezeProposalCreatedTime.add(freezeData.freezePeriod).sub(currentTime).gt(0)
       ? Math.round(
-          guard.freezeProposalCreatedTime
-            .add(guard.freezeProposalPeriod)
+          freezeData.freezeProposalCreatedTime
+            .add(freezeData.freezeProposalPeriod)
             .sub(currentTime)
             .div(86400)
             .toNumber()
         )
       : 0
-    : guard.freezeProposalCreatedTime.add(guard.freezeProposalPeriod).sub(currentTime).gt(0)
+    : freezeData.freezeProposalCreatedTime
+        .add(freezeData.freezeProposalPeriod)
+        .sub(currentTime)
+        .gt(0)
     ? Math.round(
-        guard.freezeProposalCreatedTime
-          .add(guard.freezeProposalPeriod)
+        freezeData.freezeProposalCreatedTime
+          .add(freezeData.freezeProposalPeriod)
           .sub(currentTime)
           .div(86400)
           .toNumber()
@@ -55,11 +61,11 @@ export function ActivityFreeze({
     <ActivityCard
       Badge={
         <Badge
-          labelKey={guard.isFrozen ? 'stateFrozen' : 'stateFreezeInit'}
+          labelKey={freezeData.isFrozen ? 'stateFrozen' : 'stateFreezeInit'}
           size="base"
         />
       }
-      description={<FreezeDescription isFrozen={guard.isFrozen} />}
+      description={<FreezeDescription isFrozen={freezeData.isFrozen} />}
       RightElement={
         <Flex
           color="blue.500"
@@ -67,30 +73,30 @@ export function ActivityFreeze({
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            {!guard.isFrozen && guard.freezeVotesThreshold.gt(0) && (
+            {!freezeData.isFrozen && freezeData.freezeVotesThreshold.gt(0) && (
               <Tooltip
                 label={
-                  guard.freezeProposalVoteCount.toString() +
+                  freezeData.freezeProposalVoteCount.toString() +
                   ' / ' +
-                  guard.freezeVotesThreshold.toString() +
+                  freezeData.freezeVotesThreshold.toString() +
                   t('tipFreeze')
                 }
                 placement="bottom"
               >
-                {guard.freezeProposalVoteCount.toString() +
+                {freezeData.freezeProposalVoteCount.toString() +
                   ' / ' +
-                  guard.freezeVotesThreshold.toString()}
+                  freezeData.freezeVotesThreshold.toString()}
               </Tooltip>
             )}
           </Text>
           {daysLeft > 0 && (
             <Text textStyle="text-base-sans-regular">{daysLeft + t('freezeDaysLeft')}</Text>
           )}
-          {!guard.isFrozen && guard.vetoVotingContract && (
+          {!freezeData.isFrozen && vetoContract.vetoVotingContract && (
             <FreezeButton
-              isFrozen={guard.isFrozen}
-              userHasFreezeVoted={guard.userHasFreezeVoted}
-              vetoVotingContract={guard.vetoVotingContract}
+              isFrozen={freezeData.isFrozen}
+              userHasFreezeVoted={freezeData.userHasFreezeVoted}
+              vetoVotingContract={vetoContract.vetoVotingContract}
             />
           )}
         </Flex>
