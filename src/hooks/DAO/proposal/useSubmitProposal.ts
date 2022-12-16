@@ -1,21 +1,25 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { Signer } from 'ethers';
+import { BigNumber, Signer } from 'ethers';
 import { useCallback, useState } from 'react';
-import { buildSafeAPIPost } from '../../../helpers';
+import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
+
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
-import { ProposalExecuteData } from '../../../types';
+import { MetaTransaction, ProposalExecuteData } from '../../../types';
+import useSafeContracts from '../../safe/useSafeContracts';
 import useUsul from './useUsul';
 
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
 
+  const { multiSendContract } = useSafeContracts();
   const { usulContract, votingStrategiesAddresses } = useUsul();
   const {
+    actions: { getGnosisSafeTransactions },
     gnosis: { safe },
   } = useFractal();
   const {
@@ -34,10 +38,41 @@ export default function useSubmitProposal() {
       }
 
       if (!usulContract || !votingStrategiesAddresses || !safe.address) {
+        // Submit a multisig proposal
+
         if (!safe.address || !signerOrProvider) {
           return;
         }
+
         setPendingCreateTx(true);
+
+        let to, data, operation;
+        if (proposalData.targets.length > 1) {
+          if (!multiSendContract) return;
+          // Need to wrap it in Multisend function call
+          to = multiSendContract.address;
+
+          const tempData = proposalData.targets.map((target, index) => {
+            return {
+              to: target,
+              value: BigNumber.from(proposalData.values[index]),
+              data: proposalData.calldatas[index],
+              operation: 0,
+            } as MetaTransaction;
+          });
+
+          data = multiSendContract.interface.encodeFunctionData('multiSend', [
+            encodeMultiSend(tempData),
+          ]);
+
+          operation = 1;
+        } else {
+          // Single transaction to post
+          to = proposalData.targets[0];
+          data = proposalData.calldatas[0];
+          operation = 0;
+        }
+
         try {
           const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
           await axios.post(
@@ -47,12 +82,14 @@ export default function useSubmitProposal() {
               signerOrProvider as Signer & TypedDataSigner,
               chainId,
               {
-                to: proposalData.targets[0],
-                data: proposalData.calldatas[0],
+                to,
+                data,
+                operation,
                 nonce: (await gnosisContract.nonce()).toNumber(),
               }
             )
           );
+          await getGnosisSafeTransactions();
           successCallback(safe.address);
         } catch (e) {
           logError(e, 'Error during Multi-sig proposal creation');
@@ -61,6 +98,7 @@ export default function useSubmitProposal() {
           return;
         }
       } else {
+        // Submit a Usul proposal
         setPendingCreateTx(true);
         try {
           const transactions = proposalData.targets.map((target, index) => ({
@@ -89,7 +127,15 @@ export default function useSubmitProposal() {
         }
       }
     },
-    [chainId, safe, signerOrProvider, usulContract, votingStrategiesAddresses]
+    [
+      usulContract,
+      votingStrategiesAddresses,
+      safe.address,
+      signerOrProvider,
+      multiSendContract,
+      chainId,
+      getGnosisSafeTransactions,
+    ]
   );
 
   return { submitProposal, pendingCreateTx, canUserCreateProposal: true };

@@ -66,14 +66,4 @@ export default function useDAOController() {
       }
     }
   }, [errorMessage, account, loading, isProviderLoading, gnosisDispatch, address, navigate]);
-
-  useEffect(() => {
-    return () => {
-      if (!params.address) {
-        gnosisDispatch({ type: GnosisAction.RESET });
-        treasuryDispatch({ type: TreasuryAction.RESET });
-        governanceDispatch({ type: GovernanceAction.RESET });
-      }
-    };
-  }, [params.address, gnosisDispatch, treasuryDispatch, governanceDispatch]);
 }
