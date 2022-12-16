@@ -60,7 +60,7 @@ export function useNextDisabled(state: CreatorState) {
             .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
 
-          const isTokenAmountsInvalid = govToken.tokenAllocations.every(
+          const isTokenAmountsInvalid = govToken.tokenAllocations.some(
             allocation =>
               !allocation.amount.bigNumberValue || allocation.amount.bigNumberValue.isZero()
           );
