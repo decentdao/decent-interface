@@ -2,8 +2,6 @@ import { VStack, HStack, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
-import { checkAddress } from '../../hooks/utils/useAddress';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { TransactionData } from '../../types/transaction';
 import { InputComponent, TextareaComponent } from './InputComponent';
 
@@ -20,9 +18,6 @@ function Transaction({
   pending,
   updateTransaction,
 }: TransactionProps) {
-  const {
-    state: { provider },
-  } = useWeb3Provider();
   const { t } = useTranslation(['proposal', 'common']);
 
   const encodeFunctionData = (
@@ -35,28 +30,28 @@ function Transaction({
       ? dirtyParameters.split(',').map(p => (p = p.trim()))
       : undefined;
     try {
-      const encodedFunctionData = new ethers.utils.Interface([
-        functionSignature,
-      ]).encodeFunctionData(functionName, parameters);
-      return encodedFunctionData;
+      return new ethers.utils.Interface([functionSignature]).encodeFunctionData(
+        functionName,
+        parameters
+      );
     } catch (e) {
-      //logError(e); //can we get this to not show in the console??
+      logError(e); //can we get this to not show in the console??
       return;
     }
   };
 
-  const updateTargetAddress = async (targetAddress: string) => {
+  const updateTargetAddress = (targetAddress: string) => {
     const isValidAddress = !!targetAddress
-      ? await checkAddress(provider, targetAddress.trim())
+      ? ethers.utils.isAddress(targetAddress.trim().toLowerCase())
       : undefined;
 
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.targetAddress = targetAddress.trim();
-    newTransactionData.addressError =
+    const transactionCopy = Object.assign({}, transaction);
+    transactionCopy.targetAddress = targetAddress.trim();
+    transactionCopy.addressError =
       !isValidAddress && targetAddress.trim()
         ? t('errorInvalidAddress', { ns: 'common' })
         : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    updateTransaction(transactionCopy, transactionNumber);
   };
 
   const updateTransactionValue = (
@@ -67,6 +62,7 @@ function Transaction({
     const transactionCopy = { ...transaction, [key]: value };
     transactionCopy.encodedFunctionData = encodedFunctionData;
     transactionCopy.fragmentError = !encodeFunctionData ? t('errorInvalidFragments') : undefined;
+    console.log('trans update', transactionCopy);
     updateTransaction(transactionCopy, transactionNumber);
   };
 
@@ -170,7 +166,7 @@ function Transaction({
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
             <Text {...exampleLabelStyle}>
-              {'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", 1000000000'}
+              {'0xADC74eE329a23060d3CB431Be0AB313740c191E7, 1000000000'}
             </Text>
           </HStack>
         }

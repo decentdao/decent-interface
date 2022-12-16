@@ -37,7 +37,6 @@ function ProposalCreate() {
     gnosis: { safe },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
-  //  const { transactions, setTransactions } = useProposalCreate();
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -90,7 +89,6 @@ function ProposalCreate() {
       description: proposalDescription,
       documentationUrl: '',
     };
-    console.log(proposal);
     setProposalData(proposal);
   }, [transactions, proposalDescription]);
 
