@@ -9,36 +9,36 @@ const useAddress = (addressInput: string | undefined) => {
   } = useWeb3Provider();
 
   const [address, setAddress] = useState<string>();
-  const [validAddress, setValidAddress] = useState<boolean>();
-  const [loading, setLoading] = useState<boolean>();
+  const [isValidAddress, setIsValidAddress] = useState<boolean>();
+  const [isAddressLoading, setIsAddressLoading] = useState<boolean>();
 
   useEffect(() => {
-    setLoading(true);
+    setIsAddressLoading(true);
     if (addressInput === undefined) {
       setAddress(addressInput);
-      setValidAddress(false);
-      setLoading(false);
+      setIsValidAddress(false);
+      setIsAddressLoading(false);
       return;
     }
 
     if (!provider || addressInput.trim() === '') {
       setAddress(addressInput);
-      setValidAddress(undefined);
-      setLoading(undefined);
+      setIsValidAddress(undefined);
+      setIsAddressLoading(undefined);
       return;
     }
 
     if (addressInput === constants.AddressZero) {
       setAddress(addressInput);
-      setValidAddress(false);
-      setLoading(false);
+      setIsValidAddress(false);
+      setIsAddressLoading(false);
       return;
     }
 
     if (ethers.utils.isAddress(addressInput)) {
       setAddress(ethers.utils.getAddress(addressInput));
-      setValidAddress(true);
-      setLoading(false);
+      setIsValidAddress(true);
+      setIsAddressLoading(false);
       return;
     }
 
@@ -47,24 +47,22 @@ const useAddress = (addressInput: string | undefined) => {
       .then(resolvedAddress => {
         if (!resolvedAddress) {
           setAddress(addressInput);
-
-          setValidAddress(false);
-          setLoading(false);
+          setIsValidAddress(false);
+          setIsAddressLoading(false);
           return;
         }
         setAddress(resolvedAddress);
-        setValidAddress(true);
-        setLoading(false);
+        setIsValidAddress(true);
+        setIsAddressLoading(false);
       })
       .catch(() => {
         setAddress(addressInput);
-
-        setValidAddress(false);
-        setLoading(false);
+        setIsValidAddress(false);
+        setIsAddressLoading(false);
       });
   }, [provider, addressInput]);
 
-  return [address, validAddress, loading] as const;
+  return { address, isValidAddress, isAddressLoading };
 };
 
 export const checkAddress = async (provider: any, addressInput?: string): Promise<boolean> => {
