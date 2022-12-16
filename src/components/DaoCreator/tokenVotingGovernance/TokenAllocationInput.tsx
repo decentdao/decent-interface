@@ -1,66 +1,140 @@
 import { Button, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers, utils } from 'ethers';
+import { isAddress } from 'ethers/lib/utils';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { checkAddress } from '../../../hooks/utils/useAddress';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 
 interface TokenAllocationProps {
   index: number;
   tokenAllocation: TokenAllocation;
+  tokenAllocations: TokenAllocation[];
   hasAmountError: boolean;
-  updateTokenAllocation: (index: number, tokenAllocation: TokenAllocation) => void;
-  removeTokenAllocation: (index: number) => void;
+  updateTokenAllocation: (
+    index: number,
+    snapshotTokenAllocations: TokenAllocation[],
+    tokenAllocation: TokenAllocation
+  ) => void;
+  removeTokenAllocation: (updatedAllocations: TokenAllocation[]) => void;
 }
 
 function TokenAllocationInput({
   index,
   tokenAllocation,
+  tokenAllocations,
   hasAmountError,
   updateTokenAllocation,
   removeTokenAllocation,
 }: TokenAllocationProps) {
-  const {
-    state: { provider },
-  } = useWeb3Provider();
-
   const { t } = useTranslation(['common', 'daoCreate']);
 
   const { limitDecimalsOnKeyDown } = useFormHelpers();
 
-  const updateAddress = async (address: string) => {
-    let isValidAddress = false;
-    if (address.trim()) {
-      isValidAddress = await checkAddress(provider, address);
-    }
-    let errorMsg = undefined;
-    if (!isValidAddress) {
-      if (!provider && address.includes('.')) {
-        // simple check if this might be an ENS address
-        errorMsg = t('errorConnectWallet', { ns: 'daoCreate' });
-      } else if (address.trim()) {
-        errorMsg = t('errorInvalidAddress');
-      }
-    }
-    updateTokenAllocation(index, {
-      address: address,
-      isValidAddress: isValidAddress,
-      amount: tokenAllocation.amount,
-      addressError: errorMsg,
-    });
-  };
+  const updateAddress = useCallback(
+    (
+      address: string,
+      snapShotTokenAllocations: TokenAllocation[],
+      snapShotTokenAllocation: TokenAllocation
+    ) => {
+      let isValidAddress = isAddress(address);
+      let hasDuplicateAddresses = false;
 
-  const updateAmount = (value: string) => {
-    updateTokenAllocation(index, {
-      address: tokenAllocation.address,
-      isValidAddress: tokenAllocation.isValidAddress,
-      amount: { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
-      addressError: tokenAllocation.addressError,
-    });
-  };
+      const updatedTokenAllocations = snapShotTokenAllocations.map((allocated, i, arr) => {
+        // if a duplicate address is found updates the error on that input and invalidates the address.
+        const isDuplicateAddress =
+          isAddress(allocated.address) &&
+          isAddress(address) &&
+          allocated.address.toLowerCase() === address.toLowerCase() &&
+          i !== index;
+        if (isDuplicateAddress) {
+          hasDuplicateAddresses = true;
+          return {
+            ...allocated,
+            addressError: t('errorDuplicateAddress', { ns: 'daoCreate' }),
+            isValidAddress: false,
+          };
+        }
+
+        // searches for prev duplicate, if duplicate was updated, error is reset on it.
+        const prevAllocationState = arr[index];
+        const isOldDuplicateAddress =
+          isAddress(allocated.address) &&
+          isAddress(prevAllocationState.address) &&
+          allocated.address.toLowerCase() === prevAllocationState.address.toLowerCase() &&
+          address.toLowerCase() !== allocated.address.toLowerCase() &&
+          i !== index;
+        if (isOldDuplicateAddress) {
+          // resets error on duplicate
+          return {
+            ...allocated,
+            addressError: undefined,
+            isValidAddress: true,
+          };
+        }
+        return allocated;
+      });
+
+      const errorMsg = hasDuplicateAddresses
+        ? t('errorDuplicateAddress', { ns: 'daoCreate' })
+        : !isValidAddress && address.trim()
+        ? t('errorInvalidAddress')
+        : undefined;
+
+      updateTokenAllocation(index, updatedTokenAllocations, {
+        address: address,
+        isValidAddress: isValidAddress,
+        amount: snapShotTokenAllocation.amount,
+        addressError: errorMsg,
+      });
+    },
+    [index, t, updateTokenAllocation]
+  );
+
+  const updateAmount = useCallback(
+    (
+      value: string,
+      snapShotTokenAllocations: TokenAllocation[],
+      snapShotTokenAllocation: TokenAllocation
+    ) => {
+      updateTokenAllocation(index, snapShotTokenAllocations, {
+        address: snapShotTokenAllocation.address,
+        isValidAddress: snapShotTokenAllocation.isValidAddress,
+        amount: { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
+        addressError: snapShotTokenAllocation.addressError,
+      });
+    },
+    [index, updateTokenAllocation]
+  );
+
+  const removeAllocation = useCallback(
+    (allocationIndex: number) => {
+      const allocations = [...tokenAllocations].map((allocated, i, arr): TokenAllocation => {
+        // if a duplicate address is found removes error on duplicate.
+        const isDuplicateAddress =
+          isAddress(allocated.address) &&
+          isAddress(arr[allocationIndex].address) &&
+          allocated.address.toLowerCase() === arr[allocationIndex].address.toLowerCase() &&
+          i !== allocationIndex;
+        if (isDuplicateAddress) {
+          return {
+            ...allocated,
+            addressError: undefined,
+            isValidAddress: isAddress(allocated.address),
+          };
+        }
+        return allocated;
+      });
+      const filteredAllocations = [
+        ...allocations.slice(0, allocationIndex),
+        ...allocations.slice(allocationIndex + 1),
+      ];
+      removeTokenAllocation(filteredAllocations);
+    },
+    [tokenAllocations, removeTokenAllocation]
+  );
 
   return (
     <>
@@ -76,8 +150,9 @@ function TokenAllocationInput({
         <Input
           value={tokenAllocation.address}
           placeholder={ethers.constants.AddressZero}
-          onChange={event => updateAddress(event.target.value)}
+          onChange={event => updateAddress(event.target.value, tokenAllocations, tokenAllocation)}
           data-testid="tokenVoting-tokenAllocationAddressInput"
+          isInvalid={!!tokenAllocation.addressError}
         />
       </LabelWrapper>
       <LabelWrapper
@@ -91,8 +166,8 @@ function TokenAllocationInput({
       >
         <NumberInput
           value={tokenAllocation.amount.value}
-          onChange={tokenAmount => updateAmount(tokenAmount)}
-          isInvalid={hasAmountError || !!tokenAllocation.addressError}
+          onChange={tokenAmount => updateAmount(tokenAmount, tokenAllocations, tokenAllocation)}
+          isInvalid={hasAmountError}
           data-testid="tokenVoting-tokenAllocationAmountInput"
           onKeyDown={e =>
             limitDecimalsOnKeyDown(e, tokenAllocation.amount.value, DEFAULT_TOKEN_DECIMALS)
@@ -101,15 +176,17 @@ function TokenAllocationInput({
           <NumberInputField />
         </NumberInput>
       </LabelWrapper>
-      <Button
-        variant="text"
-        type="button"
-        onClick={() => removeTokenAllocation(index)}
-        px="0px"
-        data-testid="tokenVoting-tokenAllocationRemoveButton"
-      >
-        {t('remove')}
-      </Button>
+      {tokenAllocations.length > 1 && (
+        <Button
+          variant="text"
+          type="button"
+          onClick={() => removeAllocation(index)}
+          px="0px"
+          data-testid="tokenVoting-tokenAllocationRemoveButton"
+        >
+          {t('remove')}
+        </Button>
+      )}
     </>
   );
 }
