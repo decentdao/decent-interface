@@ -2,7 +2,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityGovernance } from '../../../components/Activity/ActivityGovernance';
+import { ActivityModule } from '../../../components/Activity/ActivityModule';
 import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury';
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
@@ -59,8 +59,10 @@ export function Activities() {
           >
             {sortedActivities.map((activity, i) => {
               if (activity.eventType === ActivityEventType.Governance) {
+              }
+              if (activity.eventType === ActivityEventType.Module) {
                 return (
-                  <ActivityGovernance
+                  <ActivityModule
                     key={i}
                     activity={activity as TxProposal}
                   />

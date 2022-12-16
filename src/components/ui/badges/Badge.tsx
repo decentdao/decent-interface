@@ -3,7 +3,7 @@ import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fra
 import { useTranslation } from 'react-i18next';
 import { TxProposalState } from '../../../providers/Fractal/types';
 
-type BadgeType = { [key: string]: { Icon: any; bg: string; color: string } };
+type BadgeType = { [key: string]: { Icon?: any; bg: string; color: string } };
 
 export enum BadgeLabels {
   STATE_PENDING = 'statePending',
@@ -31,6 +31,7 @@ const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Uninitialized]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [BadgeLabels.STATE_FREEZE_INIT]: { Icon: Check, bg: 'blue.400', color: 'grayscale.black' },
   [BadgeLabels.STATE_FROZEN]: { Icon: DoubleCheck, bg: 'blue.400', color: 'grayscale.black' },
+  [TxProposalState.Module]: { bg: 'sand.700', color: 'grayscale.black' },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
@@ -55,10 +56,11 @@ export function Badge({ labelKey, size }: IBadge) {
       alignItems="center"
       gap="0.125rem"
       borderRadius="0.25rem"
+      justifyContent="center"
       {...sizes}
       {...colors}
     >
-      <Icon />
+      {!!Icon && <Icon />}
       <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
     </Flex>
   );

@@ -1,0 +1,23 @@
+{
+    "connect": "Законнектити",
+    "connectWallet": "Законнектити гаманець",
+    "disconnect": "Розконектити",
+    "favorites": "Вподобані",
+    "faq": "FAQ",
+    "discord": "Discord",
+    "docs": "Доки",
+    "toastSwitchChain": "Переключіться на підтримувану ланку: {{chainNames}}",
+    "toastChainChanged": "Ланку змінено: {{chainName}}",
+    "toastAccountRevoked": "Доступ до акаунту відізвано.",
+    "toastAccountChanged": "Акаунт змінено.",
+    "toastConnected": "Акаунт законнектився.",
+    "toastDisconnected": "Аккаунт від'єднано.",
+    "network": "Мережа",
+    "wallet": "Крипто-гаманець",
+    "mainnet": "Mainnet",
+    "goerli": "Goerli Test Network",
+    "local": "Local Test Network",
+    "titleManageDAO": "Керувати DAO",
+    "optionCreateSubDAO": "Додати вузол",
+    "optionInitiateFreeze": "Ініціювати Замороження"
+}
