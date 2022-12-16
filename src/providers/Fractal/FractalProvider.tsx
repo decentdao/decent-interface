@@ -9,7 +9,7 @@ import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
 import { useLocalStorage } from './hooks/account/useLocalStorage';
-import useDAOName from './hooks/useDAOName';
+import useDispatchDAOName from './hooks/useDispatchDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
@@ -55,7 +55,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     gnosisDispatch
   );
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
-  useDAOName({ address: gnosis.safe.address, gnosisDispatch });
+  useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
