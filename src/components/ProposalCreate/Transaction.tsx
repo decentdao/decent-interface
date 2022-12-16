@@ -1,6 +1,5 @@
 import { VStack, HStack, Text } from '@chakra-ui/react';
-import { ethers } from 'ethers';
-import { isAddress } from 'ethers/lib/utils';
+import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { TransactionData } from '../../types/transaction';
@@ -31,10 +30,7 @@ function Transaction({
       ? dirtyParameters.split(',').map(p => (p = p.trim()))
       : undefined;
     try {
-      return new ethers.utils.Interface([functionSignature]).encodeFunctionData(
-        functionName,
-        parameters
-      );
+      return new utils.Interface([functionSignature]).encodeFunctionData(functionName, parameters);
     } catch (e) {
       logError(e); //can we get this to not show in the console??
       return;
@@ -43,7 +39,7 @@ function Transaction({
 
   const updateTargetAddress = (targetAddress: string) => {
     const isValidAddress = !!targetAddress
-      ? ethers.utils.isAddress(targetAddress.trim().toLowerCase())
+      ? utils.isAddress(targetAddress.trim().toLowerCase())
       : undefined;
 
     const transactionCopy = Object.assign({}, transaction);
