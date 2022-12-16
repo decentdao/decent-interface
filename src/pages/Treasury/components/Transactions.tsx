@@ -73,6 +73,8 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             >
               <Text
                 textStyle="text-base-sans-regular"
+                maxWidth="15rem"
+                noOfLines={1}
                 color={
                   displayData.eventType === TokenEventType.WITHDRAW ? 'grayscale.100' : '#60B55E'
                 }

@@ -7,7 +7,6 @@
     "discord": "Discord",
     "docs": "Доки",
     "toastSwitchChain": "Переключіться на підтримувану ланку: {{chainNames}}",
-    "toastChainChangedUnsupported": "Ланку змінено! Переключіться на підтримувану ланку: {{chainNames}}",
     "toastChainChanged": "Ланку змінено: {{chainName}}",
     "toastAccountRevoked": "Доступ до акаунту відізвано.",
     "toastAccountChanged": "Акаунт змінено.",
