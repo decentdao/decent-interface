@@ -1,9 +1,8 @@
 import { Grid, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers } from 'ethers';
+import { isAddress } from 'ethers/lib/utils';
 import { useTranslation } from 'react-i18next';
-import { checkAddress } from '../../../hooks/utils/useAddress';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useCreator } from '../provider/hooks/useCreator';
 import { TrustedAddress } from '../provider/types';
 
@@ -26,14 +25,10 @@ export function GnosisSignatures({
     },
   } = useCreator();
 
-  const {
-    state: { provider },
-  } = useWeb3Provider();
-
-  const updateAndValidateAddress = async (address: string) => {
+  const updateAndValidateAddress = (address: string) => {
     let isValidAddress = false;
     if (address.trim()) {
-      isValidAddress = await checkAddress(provider, address);
+      isValidAddress = isAddress(address);
     }
     const gnosisAddresses = [...trustedAddresses];
     gnosisAddresses[index] = { address: address, error: !isValidAddress };

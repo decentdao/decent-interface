@@ -18,7 +18,7 @@ import {
 } from './types';
 
 export const initialState: CreatorState = {
-  step: CreatorSteps.ESSENTIALS,
+  step: CreatorSteps.GNOSIS_WITH_USUL,
   prevStep: null,
   nextStep: null,
   governance: GovernanceTypes.GNOSIS_SAFE,
