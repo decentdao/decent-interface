@@ -89,7 +89,7 @@ export function useVetoContracts(
         vetoVotingType:
           vetoVotingType === VetoMultisigVoting__factory
             ? VetoVotingType.MULTISIG
-            : VetoVotingType.ERC721,
+            : VetoVotingType.ERC20,
       };
 
       gnosisDispatch({

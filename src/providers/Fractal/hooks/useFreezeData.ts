@@ -84,7 +84,7 @@ export function useFreezeData(
   useEffect(() => {
     if (
       !account ||
-      vetoGuardContract.vetoVotingType !== VetoVotingType.ERC721 ||
+      vetoGuardContract.vetoVotingType !== VetoVotingType.ERC20 ||
       !vetoGuardContract.vetoVotingContract
     ) {
       return;

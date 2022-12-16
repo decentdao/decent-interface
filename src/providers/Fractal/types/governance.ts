@@ -21,7 +21,7 @@ export enum GnosisModuleType {
 }
 
 export enum VetoVotingType {
-  ERC721,
+  ERC20,
   MULTISIG,
   UNKNOWN,
 }
