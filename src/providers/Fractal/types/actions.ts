@@ -5,6 +5,7 @@ import SafeServiceClient, {
   SafeCollectibleResponse,
   TransferListResponse,
 } from '@safe-global/safe-service-client';
+import { BigNumber } from 'ethers';
 import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
 import { IGnosisModuleData } from '../governance/types';
 import { IGnosisFreezeData, IGnosisVetoContract } from './governance';
@@ -18,6 +19,14 @@ export type GnosisActions =
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
   | { type: GnosisAction.SET_GUARD_CONTRACTS; payload: IGnosisVetoContract }
   | { type: GnosisAction.SET_FREEZE_DATA; payload: IGnosisFreezeData }
+  | {
+      type: GnosisAction.FREEZE_VOTE_EVENT;
+      payload: {
+        isVoter: boolean;
+        freezeProposalCreatedTime: BigNumber;
+        freezeProposalVoteCount: BigNumber;
+      };
+    }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.SET_DAO_PARENT; payload: string }
   | { type: GnosisAction.SET_DAO_CHILDREN; payload: string[] }
