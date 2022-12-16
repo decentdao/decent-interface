@@ -176,15 +176,17 @@ function TokenAllocationInput({
           <NumberInputField />
         </NumberInput>
       </LabelWrapper>
-      <Button
-        variant="text"
-        type="button"
-        onClick={() => removeAllocation(index)}
-        px="0px"
-        data-testid="tokenVoting-tokenAllocationRemoveButton"
-      >
-        {t('remove')}
-      </Button>
+      {tokenAllocations.length > 1 && (
+        <Button
+          variant="text"
+          type="button"
+          onClick={() => removeAllocation(index)}
+          px="0px"
+          data-testid="tokenVoting-tokenAllocationRemoveButton"
+        >
+          {t('remove')}
+        </Button>
+      )}
     </>
   );
 }
