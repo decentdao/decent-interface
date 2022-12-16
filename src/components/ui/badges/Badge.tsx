@@ -6,15 +6,8 @@ import { TxProposalState } from '../../../providers/Fractal/types';
 type BadgeType = { [key: string]: { Icon?: any; bg: string; color: string } };
 
 export enum BadgeLabels {
-  STATE_PENDING = 'statePending',
-  STATE_ACTIVE = 'stateActive',
-  STATE_PASSED = 'statePassed',
-  STATE_EXECUTED = 'stateExecuted',
-  STATE_REJECTED = 'stateRejected',
   STATE_FREEZE_INIT = 'stateFreezeInit',
   STATE_FROZEN = 'stateFrozen',
-  PARENT = 'parent',
-  CHILD = 'child',
 }
 
 const BADGE_MAPPING: BadgeType = {
