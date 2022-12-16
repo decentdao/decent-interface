@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { GnosisAction, gnosisInitialState } from '../constants';
 import { GnosisActions, IGnosis } from '../types';
 
@@ -28,9 +29,28 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
     case GnosisAction.SET_MODULES:
       return { ...state, modules: action.payload, isGnosisLoading: false };
     case GnosisAction.SET_GUARD_CONTRACTS:
-      return { ...state, guardContracts: { ...action.payload }, isGnosisLoading: false };
+      return { ...state, guardContracts: { ...action.payload } };
     case GnosisAction.SET_FREEZE_DATA:
-      return { ...state, freezeData: { ...action.payload }, isGnosisLoading: false };
+      return { ...state, freezeData: { ...action.payload } };
+    case GnosisAction.FREEZE_VOTE_EVENT: {
+      const freezeData = state.freezeData;
+      const { isVoter, freezeProposalCreatedTime, freezeProposalVoteCount } = action.payload;
+      const userHasFreezeVoted = isVoter;
+      const isFrozen = freezeProposalVoteCount.gte(
+        freezeData.freezeVotesThreshold || BigNumber.from(0)
+      );
+      return {
+        ...state,
+        freezeData: {
+          ...freezeData,
+          freezeProposalVoteCount,
+          userHasFreezeVoted,
+          isFrozen,
+          freezeProposalCreatedTime,
+        },
+        isGnosisLoading: false,
+      };
+    }
     case GnosisAction.SET_DAO_NAME:
       return { ...state, daoName: action.payload };
     case GnosisAction.SET_DAO_PARENT:
