@@ -16,7 +16,7 @@ import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
   const {
-    gnosis: { guard },
+    gnosis: { guardContracts, freezeData },
   } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
 
@@ -39,13 +39,14 @@ export function Activities() {
         flexDirection="column"
         gap="1rem"
       >
-        {(guard.isFrozen ||
-          guard.freezeProposalCreatedTime
-            .add(guard.freezeProposalPeriod)
+        {(freezeData.isFrozen ||
+          freezeData.freezeProposalCreatedTime
+            .add(freezeData.freezeProposalPeriod)
             .sub(currentTime)
             .gt(0)) && (
           <ActivityFreeze
-            guard={guard}
+            freezeData={freezeData}
+            vetoContract={guardContracts}
             currentTime={currentTime}
           />
         )}
