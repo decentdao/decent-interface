@@ -64,12 +64,18 @@ export function useFreezeData(
 
     const filter = vetoVotingContract.filters.FreezeVoteCast();
 
-    const listenerCallback: FreezeVoteCastedListener = () => {
+    const listenerCallback: FreezeVoteCastedListener = async () => {
       gnosisDispatch({
         type: GnosisAction.SET_FREEZE_DATA,
         payload: {
           ...freeze,
-          freezeProposalVoteCount: freeze.freezeProposalVoteCount.add(1),
+          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
+          freezeProposalCreatedTime: await vetoVotingContract.freezeProposalCreatedTime(),
+          userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
+            account,
+            await vetoVotingContract.freezeProposalCreatedBlock()
+          ),
+          isFrozen: await vetoVotingContract.isFrozen(),
         },
       });
     };
@@ -95,12 +101,18 @@ export function useFreezeData(
 
     const filter = vetoVotingContract.filters.FreezeVoteCast();
 
-    const listenerCallback: FreezeVoteCastedListener = () => {
+    const listenerCallback: FreezeVoteCastedListener = async () => {
       gnosisDispatch({
         type: GnosisAction.SET_FREEZE_DATA,
         payload: {
           ...freeze,
-          freezeProposalVoteCount: freeze.freezeProposalVoteCount.add(1),
+          freezeProposalVoteCount: await vetoVotingContract.freezeProposalVoteCount(),
+          freezeProposalCreatedTime: await vetoVotingContract.freezeProposalCreatedTime(),
+          userHasFreezeVoted: await vetoVotingContract.userHasFreezeVoted(
+            account,
+            await vetoVotingContract.freezeProposalCreatedBlock()
+          ),
+          isFrozen: await vetoVotingContract.isFrozen(),
         },
       });
     };
