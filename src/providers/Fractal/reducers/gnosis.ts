@@ -38,7 +38,7 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
     case GnosisAction.INVALIDATE:
     case GnosisAction.RESET:
       // @note safeService is preserved and doesn't need to be reset
-      return initializeGnosisState({ safeService: state.safeService, ...gnosisInitialState });
+      return initializeGnosisState({ ...gnosisInitialState, safeService: state.safeService });
     default:
       return state;
   }

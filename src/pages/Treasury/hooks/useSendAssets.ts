@@ -1,29 +1,47 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { constants } from 'ethers';
+import { BigNumber, constants, ethers } from 'ethers';
 import { useCallback } from 'react';
+import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
+import { ProposalExecuteData } from '../../../types';
 
-// TODO create send assets proposal
 const useSendAssets = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  normalizedBalance,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  transferAmount,
   asset,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   destinationAddress,
 }: {
-  normalizedBalance: string;
+  transferAmount: BigNumber;
   asset: SafeBalanceUsdResponse;
   destinationAddress: string;
 }) => {
-  const rawBalance =
-    Number(normalizedBalance) * (10 ^ (asset?.token?.decimals ? asset.token.decimals : 18));
+  const { submitProposal } = useSubmitProposal();
+
+  const successCallback = () => {
+    //TODO: need to add a toast and close modal
+  };
+
   const tokenAddress = asset.tokenAddress ? asset.tokenAddress : constants.AddressZero;
 
-  console.log('useSendAssets rawBalance: ' + rawBalance);
-  console.log('useSendAssets tokenAddress ' + tokenAddress);
-  console.log('useSendAssets destinationAddress ' + destinationAddress);
+  const sendAssets = useCallback(() => {
+    const funcSignature = 'function transfer(address to, uint256 value)';
+    const calldatas = [
+      new ethers.utils.Interface([funcSignature]).encodeFunctionData('transfer', [
+        destinationAddress,
+        transferAmount,
+      ]),
+    ];
 
-  const sendAssets = useCallback(() => {}, []);
+    const proposalData: ProposalExecuteData = {
+      targets: [tokenAddress],
+      values: [BigNumber.from('0')],
+      calldatas: calldatas,
+      title: 'Send Assets',
+      description: 'To:' + destinationAddress + ', amount:' + transferAmount.toString(),
+      documentationUrl: '',
+    };
+
+    submitProposal({ proposalData, successCallback });
+  }, [destinationAddress, transferAmount, submitProposal, tokenAddress]);
+
   return sendAssets;
 };
 
