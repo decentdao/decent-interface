@@ -18,7 +18,7 @@ interface TokenAllocationProps {
     snapshotTokenAllocations: TokenAllocation[],
     tokenAllocation: TokenAllocation
   ) => void;
-  removeTokenAllocation: (index: number) => void;
+  removeTokenAllocation: (updatedAllocations: TokenAllocation[]) => void;
 }
 
 function TokenAllocationInput({
@@ -109,6 +109,33 @@ function TokenAllocationInput({
     [index, updateTokenAllocation]
   );
 
+  const removeAllocation = useCallback(
+    (allocationIndex: number) => {
+      const allocations = [...tokenAllocations].map((allocated, i, arr): TokenAllocation => {
+        // if a duplicate address is found removes error on duplicate.
+        const isDuplicateAddress =
+          isAddress(allocated.address) &&
+          isAddress(arr[allocationIndex].address) &&
+          allocated.address.toLowerCase() === arr[allocationIndex].address.toLowerCase() &&
+          i !== allocationIndex;
+        if (isDuplicateAddress) {
+          return {
+            ...allocated,
+            addressError: undefined,
+            isValidAddress: isAddress(allocated.address),
+          };
+        }
+        return allocated;
+      });
+      const filteredAllocations = [
+        ...allocations.slice(0, allocationIndex),
+        ...allocations.slice(allocationIndex + 1),
+      ];
+      removeTokenAllocation(filteredAllocations);
+    },
+    [tokenAllocations, removeTokenAllocation]
+  );
+
   return (
     <>
       <LabelWrapper
@@ -152,7 +179,7 @@ function TokenAllocationInput({
       <Button
         variant="text"
         type="button"
-        onClick={() => removeTokenAllocation(index)}
+        onClick={() => removeAllocation(index)}
         px="0px"
         data-testid="tokenVoting-tokenAllocationRemoveButton"
       >

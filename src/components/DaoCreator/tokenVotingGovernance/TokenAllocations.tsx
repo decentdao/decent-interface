@@ -60,12 +60,9 @@ function TokenAllocations({
     );
   };
 
-  const removeTokenAllocation = (index: number) => {
+  const removeTokenAllocation = (updatedTokenAllocations: TokenAllocation[]) => {
     if (tokenAllocations === undefined) return;
-    fieldUpdate(
-      [...tokenAllocations.slice(0, index), ...tokenAllocations.slice(index + 1)],
-      'tokenAllocations'
-    );
+    fieldUpdate(updatedTokenAllocations, 'tokenAllocations');
   };
 
   const onParentAllocationChange = (value: string) => {
