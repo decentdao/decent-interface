@@ -8,9 +8,11 @@ import {
   Hide,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import ContentBanner from '../ui/ContentBanner';
 import ContentBox from '../ui/ContentBox';
@@ -24,8 +26,15 @@ function GuardDetails() {
     state: { vetoGuard, governance },
     dispatch,
   } = useCreator();
+  const {
+    gnosis: { safe },
+    governance: { type, governanceToken, governanceIsLoading },
+  } = useFractal();
 
   const { restrictChars } = useFormHelpers();
+  // used to set initial state dynamically, such as freeze / veto thresholds
+  const [isInitialized, setInitialized] = useState(false);
+  const [totalParentVotes, setTotalParentVotes] = useState(0);
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -65,6 +74,55 @@ function GuardDetails() {
   const { t } = useTranslation(['daoCreate']);
   const votes = t('votes');
   const seconds = t('seconds');
+
+  useEffect(() => {
+    if (!isInitialized) {
+      if (governanceIsLoading || !safe || !governanceToken) return;
+
+      let totalVotes: number;
+      switch (type) {
+        case GovernanceTypes.GNOSIS_SAFE_USUL:
+          totalVotes = parseInt(
+            ethers.utils.formatUnits(governanceToken.totalSupply!, governanceToken.decimals)
+          );
+          break;
+        case GovernanceTypes.GNOSIS_SAFE:
+        default:
+          totalVotes = safe.owners?.length || 0;
+      }
+      setTotalParentVotes(totalVotes);
+
+      const childThresholds = Math.ceil(totalVotes / 2);
+      dispatch({
+        type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
+        payload: {
+          ['vetoVotesThreshold']: childThresholds,
+          ['freezeVotesThreshold']: childThresholds,
+        },
+      });
+
+      setInitialized(true);
+    }
+  }, [
+    dispatch,
+    governance,
+    governanceIsLoading,
+    governanceToken,
+    isInitialized,
+    safe,
+    safe.threshold,
+    type,
+  ]);
+
+  const showVetoFreezeHelpers = totalParentVotes > 0;
+  const formattedVotesTotal = totalParentVotes.toLocaleString();
+  const vetoHelper = showVetoFreezeHelpers
+    ? t('helperVetoVotesThreshold', { totalVotes: formattedVotesTotal })
+    : null;
+  const freezeHelper = showVetoFreezeHelpers
+    ? t('helperFreezeVotesThreshold', { totalVotes: formattedVotesTotal })
+    : null;
+
   return (
     <Box>
       <ContentBox>
@@ -128,7 +186,7 @@ function GuardDetails() {
           <InputBox>
             <LabelWrapper
               label={t('labelVetoVotesThreshold')}
-              subLabel={t('helperVetoVotesThreshold')}
+              subLabel={vetoHelper}
             >
               <NumberInput
                 value={vetoGuard.vetoVotesThreshold.toString()}
@@ -150,7 +208,7 @@ function GuardDetails() {
         <InputBox>
           <LabelWrapper
             label={t('labelFreezeVotesThreshold')}
-            subLabel={t('helperFreezeVotesThreshold')}
+            subLabel={freezeHelper}
           >
             <NumberInput
               value={vetoGuard.freezeVotesThreshold.toString()}
@@ -176,7 +234,7 @@ function GuardDetails() {
               onChange={onFreezeProposalPeriodChange}
               min={1}
               precision={0}
-              data-testid="guardConfig-freezeProposalBlockDuration"
+              data-testid="guardConfig-freezeProposalDuration"
               onKeyDown={restrictChars}
             >
               <InputGroup>
@@ -202,7 +260,7 @@ function GuardDetails() {
               onChange={onFreezePeriodChange}
               min={1}
               precision={0}
-              data-testid="guardConfig-freezeBlockDuration"
+              data-testid="guardConfig-freezeDuration"
               onKeyDown={restrictChars}
             >
               <InputGroup>
