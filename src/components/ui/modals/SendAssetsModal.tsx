@@ -1,23 +1,10 @@
-import {
-  Box,
-  Divider,
-  Flex,
-  Select,
-  Spacer,
-  Switch,
-  Text,
-  Button,
-  Input,
-  NumberInput,
-  NumberInputField,
-} from '@chakra-ui/react';
+import { Box, Divider, Flex, Select, Spacer, Switch, Text, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { constants, BigNumber, utils } from 'ethers';
-import { useMemo, useState } from 'react';
+import { constants, BigNumber } from 'ethers';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
@@ -25,6 +12,7 @@ import {
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
+import { BigNumberInput, BigNumberValuePair } from '../BigNumberInput/BigNumberInput';
 
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
@@ -32,74 +20,52 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
 
-  const [selectedAssetIndex, setSelectedAssetIndex] = useState<number>(0);
+  const [selectedAsset, setSelectedAsset] = useState<SafeBalanceUsdResponse>(assetsFungible[0]);
   const [usdSelected, setUSDSelected] = useState<boolean>(false);
-  const [amountInput, setAmountInput] = useState<string>();
+  const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
   const [destination, setDestination] = useState<string>('');
-  const selectedAsset = assetsFungible[selectedAssetIndex];
 
-  const isEth = (asset: SafeBalanceUsdResponse) => {
-    return asset && !asset.token;
-  };
+  const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
 
   const calculateCoins = (fiatConversion: string, input: string, symbol?: string) => {
-    if (!input) input = '0';
     const amount = Number(input) / Number(fiatConversion);
     return amount + ' ' + (symbol ? symbol : 'ETH');
   };
 
   const convertedTotal = usdSelected
-    ? calculateCoins(selectedAsset.fiatConversion, amountInput || '0', selectedAsset?.token?.symbol)
-    : formatUSD(Number(amountInput || 0) * Number(selectedAsset.fiatConversion));
-
-  const transferAmount = useMemo(() => {
-    //the input is not validating the amountInput so this try catch is here for now to prevent a UI error
-    // TODO remove once we have proper validation on the input
-    try {
-      return utils.parseUnits(
-        usdSelected
-          ? (Number(amountInput || '0') / Number(selectedAsset.fiatConversion)).toString()
-          : amountInput || '0',
-        isEth(selectedAsset) ? 18 : selectedAsset.token.decimals
-      );
-    } catch {
-      return BigNumber.from('0');
-    }
-  }, [amountInput, selectedAsset, usdSelected]);
+    ? calculateCoins(
+        selectedAsset.fiatConversion,
+        inputAmount?.value || '0',
+        selectedAsset?.token?.symbol
+      )
+    : formatUSD(Number(inputAmount?.value || 0) * Number(selectedAsset.fiatConversion));
 
   const sendAssets = useSendAssets({
-    transferAmount: transferAmount,
+    transferAmount: inputAmount?.bigNumberValue || BigNumber.from('0'),
     asset: selectedAsset,
     destinationAddress: destination,
   });
 
-  const { limitDecimalsOnKeyDown } = useFormHelpers();
-
   const handleCoinChange = (value: string) => {
-    const index = Number(value);
-    if (Number(assetsFungible[index].fiatBalance) === 0) {
+    setSelectedAsset(assetsFungible[Number(value)]);
+    if (hasFiatBalance) {
       setUSDSelected(false);
     }
-    setSelectedAssetIndex(index);
   };
 
-  const { isValidAddress } = useAddress(destination);
+  const { isValidAddress } = useAddress(destination.toLowerCase());
   const destinationError =
     destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
   const overDraft = usdSelected
-    ? Number(amountInput) > Number(selectedAsset.fiatBalance)
-    : Number(amountInput) > formatCoinUnitsFromAsset(selectedAsset);
+    ? Number(inputAmount?.value || '0') > Number(selectedAsset.fiatBalance)
+    : Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled =
-    isEth(selectedAsset) || // remove this check once we are able to send ETH
-    !isValidAddress ||
-    !amountInput ||
-    overDraft;
+  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue.isZero() || overDraft;
 
   const onSubmit = () => {
     sendAssets();
-    close();
+    if (close) close();
   };
 
   return (
@@ -139,7 +105,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             <Spacer />
             <Text
               marginEnd="0.5rem"
-              color={Number(selectedAsset.fiatBalance) === 0 ? 'grayscale.800' : 'grayscale.500'}
+              color={!hasFiatBalance ? 'grayscale.800' : 'grayscale.500'}
             >
               USD
             </Text>
@@ -148,27 +114,19 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               borderRadius="28px"
               color="white"
               colorScheme="drab"
-              isDisabled={Number(selectedAsset.fiatBalance) === 0}
+              isDisabled //TODO: enable USD switch to change inputAmount from token to USD. currently disabled.
               size="md"
               isChecked={usdSelected}
               onChange={e => setUSDSelected(e.target.checked)}
             />
           </Flex>
 
-          <NumberInput
+          <BigNumberInput
+            value={inputAmount}
+            onChange={e => setInputAmount(e)}
+            decimalPlaces={selectedAsset?.token?.decimals}
             placeholder="0"
-            value={amountInput}
-            onChange={setAmountInput}
-            onKeyDown={e =>
-              limitDecimalsOnKeyDown(
-                e,
-                amountInput || '0',
-                isEth(selectedAsset) ? 18 : selectedAsset.token.decimals
-              )
-            }
-          >
-            <NumberInputField />
-          </NumberInput>
+          />
         </Box>
       </Flex>
       <Flex
@@ -182,7 +140,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           })}
         </Text>
         <Spacer />
-        {Number(selectedAsset.fiatBalance) > 0 && <Text>{convertedTotal}</Text>}
+        {hasFiatBalance && <Text>{convertedTotal}</Text>}
       </Flex>
       <Text
         textStyle="text-sm-sans-regular"

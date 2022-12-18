@@ -16,12 +16,13 @@ const useSendAssets = ({
   const { submitProposal } = useSubmitProposal();
 
   const successCallback = () => {
-    //TODO: need to add a toast and close modal
+    //TODO: need to figure out what toast / notification to add
   };
 
-  const tokenAddress = asset.tokenAddress ? asset.tokenAddress : constants.AddressZero;
-
   const sendAssets = useCallback(() => {
+    const isEth = !asset.tokenAddress;
+    const description = 'To:' + destinationAddress + ', amount:' + transferAmount.toString();
+
     const funcSignature = 'function transfer(address to, uint256 value)';
     const calldatas = [
       new ethers.utils.Interface([funcSignature]).encodeFunctionData('transfer', [
@@ -31,16 +32,16 @@ const useSendAssets = ({
     ];
 
     const proposalData: ProposalExecuteData = {
-      targets: [tokenAddress],
-      values: [BigNumber.from('0')],
-      calldatas: calldatas,
+      targets: [isEth ? destinationAddress : asset.tokenAddress],
+      values: [isEth ? transferAmount : BigNumber.from('0')],
+      calldatas: isEth ? ['0x'] : calldatas,
       title: 'Send Assets',
-      description: 'To:' + destinationAddress + ', amount:' + transferAmount.toString(),
+      description: description,
       documentationUrl: '',
     };
 
     submitProposal({ proposalData, successCallback });
-  }, [destinationAddress, transferAmount, submitProposal, tokenAddress]);
+  }, [destinationAddress, transferAmount, asset.tokenAddress, submitProposal]);
 
   return sendAssets;
 };
