@@ -11,12 +11,13 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
+import { GovernanceTypes } from '../../providers/Fractal/types';
 import ContentBanner from '../ui/ContentBanner';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions, GovernanceTypes } from './provider/types';
+import { CreatorProviderActions } from './provider/types';
 
 function GuardDetails() {
   const {
