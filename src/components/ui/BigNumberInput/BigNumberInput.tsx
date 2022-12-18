@@ -96,6 +96,7 @@ export function BigNumberInput({
       bigNumberValue: bigNumberValue,
     });
     setInputValue(newValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimalPlaces]);
 
   return (
