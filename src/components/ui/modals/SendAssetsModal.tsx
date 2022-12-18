@@ -46,8 +46,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     destinationAddress: destination,
   });
 
-  const handleCoinChange = (value: string) => {
-    setSelectedAsset(assetsFungible[Number(value)]);
+  const handleCoinChange = (index: string) => {
+    setSelectedAsset(assetsFungible[Number(index)]);
     if (hasFiatBalance) {
       setUSDSelected(false);
     }

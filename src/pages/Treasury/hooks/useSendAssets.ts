@@ -1,5 +1,5 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { BigNumber, constants, ethers } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../types';
