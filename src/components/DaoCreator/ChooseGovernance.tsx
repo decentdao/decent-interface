@@ -1,9 +1,10 @@
 import { Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { GovernanceTypes } from '../../providers/Fractal/types';
 import ContentBox from '../ui/ContentBox';
 import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
 import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions, GovernanceTypes } from './provider/types';
+import { CreatorProviderActions } from './provider/types';
 
 export function ChooseGovernance() {
   const {
