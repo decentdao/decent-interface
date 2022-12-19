@@ -1,5 +1,4 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityModule } from '../../../components/Activity/ActivityModule';
