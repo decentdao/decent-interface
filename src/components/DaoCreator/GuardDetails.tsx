@@ -71,9 +71,9 @@ function GuardDetails() {
     fieldUpdate(newFreezePeriod, 'freezePeriod');
   };
 
-  const { t } = useTranslation(['daoCreate']);
-  const votes = t('votes');
-  const seconds = t('seconds');
+  const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
+  const votes = t('votesTitle', { ns: 'proposal' });
+  const seconds = t('seconds', { ns: 'common' });
 
   useEffect(() => {
     if (!isInitialized) {

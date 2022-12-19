@@ -12,10 +12,12 @@ export function Governance() {
   const { t } = useTranslation(['common', 'proposal']);
   const {
     gnosis: { daoName },
-    governance,
+    governance: { type, governanceToken },
   } = useFractal();
+
   const delegate = useFractalModal(ModalType.DELEGATE);
-  const isUsul = governance.type === GovernanceTypes.GNOSIS_SAFE_USUL;
+  const showDelegate =
+    type === GovernanceTypes.GNOSIS_SAFE_USUL && governanceToken?.userBalance?.gt(0);
 
   return (
     <Box>
@@ -23,8 +25,8 @@ export function Governance() {
         title={t('pageTitle', { daoName, ns: 'proposal' })}
         titleTestId={'title-proposals'}
         buttonVariant="text"
-        buttonText={isUsul ? t('delegate') : undefined}
-        buttonClick={isUsul ? delegate : undefined}
+        buttonText={showDelegate ? t('delegate') : undefined}
+        buttonClick={showDelegate ? delegate : undefined}
         buttonTestId="link-delegate"
       >
         <Link to="new">
