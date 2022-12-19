@@ -41,7 +41,7 @@ export function Activities() {
         {(freezeData.isFrozen || withinFreezeProposalPeriod.withinPeriod) && (
           <ActivityFreeze
             freezeData={freezeData}
-            vetoContract={guardContracts}
+            vetoVotingContract={guardContracts.vetoVotingContract}
           />
         )}
         {isActivitiesLoading ? (

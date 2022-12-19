@@ -1,14 +1,11 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
+import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
 import useWithinFreezePeriod from '../../../hooks/utils/useWithinFreezePeriod';
-import {
-  DAOState,
-  IGnosisFreezeData,
-  IGnosisVetoContract,
-} from '../../../providers/Fractal/governance/types';
+import { DAOState, IGnosisFreezeData } from '../../../providers/Fractal/governance/types';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   const { t } = useTranslation('dashboard');
@@ -26,10 +23,10 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 
 export function ActivityFreeze({
   freezeData,
-  vetoContract,
+  vetoVotingContract,
 }: {
   freezeData: IGnosisFreezeData;
-  vetoContract: IGnosisVetoContract;
+  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }) {
   const { t } = useTranslation('dashboard');
   const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData);
@@ -80,11 +77,11 @@ export function ActivityFreeze({
               {daysLeft + t('freezeDaysLeft', { count: daysLeft })}
             </Text>
           )}
-          {!freezeData.isFrozen && vetoContract.vetoVotingContract && (
+          {!freezeData.isFrozen && vetoVotingContract && (
             <FreezeButton
               isFrozen={freezeData.isFrozen}
               userHasFreezeVoted={freezeData.userHasFreezeVoted}
-              vetoVotingContract={vetoContract.vetoVotingContract}
+              vetoVotingContract={vetoVotingContract}
             />
           )}
         </Flex>
