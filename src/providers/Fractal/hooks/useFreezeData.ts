@@ -36,7 +36,7 @@ export function useFreezeData(
           signerOrProvider
         );
         const owners = await gnosisSafeContract.getOwners();
-        userHasVotes = owners?.find(owner => owner === account) !== undefined;
+        userHasVotes = owners.find(owner => owner === account) !== undefined;
       } else if (vetoGuardContract.vetoVotingType === VetoVotingType.ERC20) {
         const votesTokenContract = VotesToken__factory.connect(
           await (vetoGuardContract.vetoVotingContract as VetoERC20Voting).votesToken(),

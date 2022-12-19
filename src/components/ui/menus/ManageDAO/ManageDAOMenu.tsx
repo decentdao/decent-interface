@@ -18,8 +18,8 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
       optionKey: 'optionCreateSubDAO',
       onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
+    console.log(freezeData);
     if (
-      guardContracts.vetoVotingContract &&
       freezeData &&
       !freezeData.isFrozen &&
       withinFreezeProposalPeriod &&
