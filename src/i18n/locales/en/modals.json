@@ -14,7 +14,7 @@
   "destinationLabel": "Where would you like to send this?",
   "destinationSublabel": "Ethereum wallet address or ENS only.",
   "sendAssetsSubmit": "Submit Proposal",
-  "sendAssetsPendingToastMessage": "Creating proposal to send assets.",
-  "sendAssetsSuccessToastMessage": "Send assets proposal successfully created.",
-  "sendAssetsFailureToastMessage": "Send assets proposal failed."
+  "sendAssetsPendingToastMessage": "Creating proposal to send assets",
+  "sendAssetsSuccessToastMessage": "Send assets proposal successfully created",
+  "sendAssetsFailureToastMessage": "Send assets proposal failed"
 }
