@@ -126,6 +126,11 @@ export enum TxProposalState {
   Module = 'stateModule',
 }
 
+export enum DAOState {
+  freezeInit = 'stateFreezeInit',
+  frozen = 'stateFrozen',
+}
+
 export type ProposalMetaData = {
   title?: string;
   description?: string;

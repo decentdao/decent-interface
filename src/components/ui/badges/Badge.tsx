@@ -1,14 +1,9 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { TxProposalState } from '../../../providers/Fractal/types';
+import { TxProposalState, DAOState } from '../../../providers/Fractal/types';
 
 type BadgeType = { [key: string]: { Icon?: any; bg: string; color: string } };
-
-export enum BadgeLabels {
-  STATE_FREEZE_INIT = 'stateFreezeInit',
-  STATE_FROZEN = 'stateFrozen',
-}
 
 const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Pending]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
@@ -22,9 +17,9 @@ const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Canceled]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.TimeLocked]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Uninitialized]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
-  [BadgeLabels.STATE_FREEZE_INIT]: { Icon: Check, bg: 'blue.400', color: 'grayscale.black' },
-  [BadgeLabels.STATE_FROZEN]: { Icon: DoubleCheck, bg: 'blue.400', color: 'grayscale.black' },
   [TxProposalState.Module]: { bg: 'sand.700', color: 'grayscale.black' },
+  [DAOState.freezeInit]: { Icon: Check, bg: 'blue.400', color: 'grayscale.black' },
+  [DAOState.frozen]: { Icon: DoubleCheck, bg: 'blue.400', color: 'grayscale.black' },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
@@ -35,7 +30,7 @@ const BADGE_SIZES: BadgeSize = {
 
 interface IBadge {
   size: 'sm' | 'base';
-  labelKey: TxProposalState | string;
+  labelKey: TxProposalState | DAOState;
 }
 
 export function Badge({ labelKey, size }: IBadge) {

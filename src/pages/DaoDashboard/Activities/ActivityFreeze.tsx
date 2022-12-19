@@ -5,6 +5,7 @@ import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
 import {
+  DAOState,
   IGnosisFreezeData,
   IGnosisVetoContract,
 } from '../../../providers/Fractal/governance/types';
@@ -61,7 +62,7 @@ export function ActivityFreeze({
     <ActivityCard
       Badge={
         <Badge
-          labelKey={freezeData.isFrozen ? 'stateFrozen' : 'stateFreezeInit'}
+          labelKey={freezeData.isFrozen ? DAOState.frozen : DAOState.freezeInit}
           size="base"
         />
       }
