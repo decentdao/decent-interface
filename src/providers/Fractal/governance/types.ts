@@ -1,7 +1,6 @@
 import {
   FractalModule,
   FractalUsul,
-  GnosisSafe,
   OZLinearVoting,
   UsulVetoGuard,
   VetoERC20Voting,
