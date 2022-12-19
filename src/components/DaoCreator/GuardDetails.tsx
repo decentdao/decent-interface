@@ -32,8 +32,6 @@ function GuardDetails() {
   } = useFractal();
 
   const { restrictChars } = useFormHelpers();
-  // used to set initial state dynamically, such as freeze / veto thresholds
-  const [isInitialized, setInitialized] = useState(false);
   const [totalParentVotes, setTotalParentVotes] = useState(0);
 
   const fieldUpdate = (value: any, field: string) => {
@@ -76,7 +74,7 @@ function GuardDetails() {
   const seconds = t('seconds', { ns: 'common' });
 
   useEffect(() => {
-    if (!isInitialized) {
+    if (totalParentVotes === 0) {
       if (governanceIsLoading || !safe || !governanceToken) return;
 
       let totalVotes: number;
@@ -100,17 +98,15 @@ function GuardDetails() {
           ['freezeVotesThreshold']: childThresholds,
         },
       });
-
-      setInitialized(true);
     }
   }, [
     dispatch,
     governance,
     governanceIsLoading,
     governanceToken,
-    isInitialized,
     safe,
     safe.threshold,
+    totalParentVotes,
     type,
   ]);
 
