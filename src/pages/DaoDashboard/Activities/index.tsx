@@ -21,7 +21,6 @@ export function Activities() {
 
   const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
   const { t } = useTranslation('dashboard');
-  const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData);
   return (
     <Box>
       <Flex
@@ -38,7 +37,7 @@ export function Activities() {
         flexDirection="column"
         gap="1rem"
       >
-        {(freezeData.isFrozen || withinFreezeProposalPeriod.withinPeriod) && (
+        {freezeData && (
           <ActivityFreeze
             freezeData={freezeData}
             vetoVotingContract={guardContracts.vetoVotingContract}

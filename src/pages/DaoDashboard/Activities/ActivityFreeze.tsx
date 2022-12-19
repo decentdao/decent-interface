@@ -1,5 +1,6 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
+import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
@@ -28,8 +29,21 @@ export function ActivityFreeze({
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }) {
   const { t } = useTranslation('dashboard');
-  const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData);
-  const withinFreezePeriod = useWithinFreezePeriod(freezeData, true);
+  const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData) as {
+    secondsLeft: BigNumber;
+    withinPeriod: boolean;
+  };
+  const withinFreezePeriod = useWithinFreezePeriod(freezeData, true) as {
+    secondsLeft: BigNumber;
+    withinPeriod: boolean;
+  };
+
+  if (
+    !freezeData.isFrozen ||
+    (withinFreezeProposalPeriod && !withinFreezeProposalPeriod.withinPeriod)
+  ) {
+    return null;
+  }
 
   const daysLeft = freezeData.isFrozen
     ? withinFreezePeriod.withinPeriod

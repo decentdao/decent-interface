@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { IGovernance, VetoVotingType } from '../governance/types';
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';
@@ -11,15 +10,7 @@ export const gnosisInitialState: IGnosis = {
     vetoVotingContract: undefined,
     vetoVotingType: VetoVotingType.UNKNOWN,
   },
-  freezeData: {
-    freezeVotesThreshold: BigNumber.from(0),
-    freezeProposalCreatedTime: BigNumber.from(0),
-    freezeProposalVoteCount: BigNumber.from(0),
-    freezeProposalPeriod: BigNumber.from(0),
-    freezePeriod: BigNumber.from(0),
-    userHasFreezeVoted: false,
-    isFrozen: false,
-  },
+  freezeData: undefined,
   transactions: {
     count: 0,
     next: undefined,

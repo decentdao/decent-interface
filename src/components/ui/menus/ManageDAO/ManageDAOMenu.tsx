@@ -20,7 +20,9 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
     };
     if (
       guardContracts.vetoVotingContract &&
+      freezeData &&
       !freezeData.isFrozen &&
+      withinFreezeProposalPeriod &&
       !withinFreezeProposalPeriod.withinPeriod
     ) {
       const freezeOption = {
@@ -31,13 +33,7 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
     } else {
       return [createSubDAOOption];
     }
-  }, [
-    safeAddress,
-    navigate,
-    guardContracts,
-    freezeData.isFrozen,
-    withinFreezeProposalPeriod.withinPeriod,
-  ]);
+  }, [safeAddress, navigate, guardContracts, freezeData, withinFreezeProposalPeriod]);
 
   return (
     <OptionMenu

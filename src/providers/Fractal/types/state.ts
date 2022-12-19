@@ -38,7 +38,7 @@ export interface IGnosis {
   safe: Partial<SafeInfoResponseWithGuard>;
   modules: IGnosisModuleData[];
   guardContracts: IGnosisVetoContract;
-  freezeData: IGnosisFreezeData;
+  freezeData: IGnosisFreezeData | undefined;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
   parentDAOAddress?: string;
