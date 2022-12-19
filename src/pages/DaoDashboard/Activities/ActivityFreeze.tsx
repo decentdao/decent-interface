@@ -91,7 +91,9 @@ export function ActivityFreeze({
             )}
           </Text>
           {daysLeft > 0 && (
-            <Text textStyle="text-base-sans-regular">{daysLeft + t('freezeDaysLeft')}</Text>
+            <Text textStyle="text-base-sans-regular">
+              {daysLeft + t('freezeDaysLeft', { count: daysLeft })}
+            </Text>
           )}
           {!freezeData.isFrozen && vetoContract.vetoVotingContract && (
             <FreezeButton
