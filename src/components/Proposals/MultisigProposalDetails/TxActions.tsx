@@ -27,7 +27,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
-  const isExecuted = proposal.state === TxProposalState.Executed;
+  const hasActions =
+    proposal.state === TxProposalState.Active ||
+    proposal.state === TxProposalState.Approved ||
+    proposal.state === TxProposalState.Queued;
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
   const confirmTransaction = async () => {
@@ -106,7 +109,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     }
   };
 
-  if (isExecuted) {
+  if (!hasActions) {
     return null;
   }
 
