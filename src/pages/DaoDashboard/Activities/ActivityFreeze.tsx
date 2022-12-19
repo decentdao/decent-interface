@@ -10,14 +10,13 @@ import { DAOState, IGnosisFreezeData } from '../../../providers/Fractal/governan
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   const { t } = useTranslation('dashboard');
   return (
-    <Flex
+    <Text
       color="grayscale.100"
       textStyle="text-lg-mono-semibold"
       gap="0.5rem"
-      flexWrap="wrap"
     >
-      <Text> {t(isFrozen ? 'frozenDescription' : 'freezeDescription')}</Text>
-    </Flex>
+      {t(isFrozen ? 'frozenDescription' : 'freezeDescription')}
+    </Text>
   );
 }
 
