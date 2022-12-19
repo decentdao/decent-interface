@@ -6,7 +6,6 @@ import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury'
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import useWithinFreezePeriod from '../../../hooks/utils/useWithinFreezePeriod';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
