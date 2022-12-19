@@ -1,4 +1,9 @@
-import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
+import {
+  GnosisSafe__factory,
+  VetoERC20Voting,
+  VetoMultisigVoting,
+  VotesToken__factory,
+} from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect } from 'react';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
@@ -15,8 +20,34 @@ export function useFreezeData(
 
   useEffect(() => {
     (async () => {
-      if (!vetoGuardContract || !vetoGuardContract.vetoVotingContract || !account) {
+      if (
+        !vetoGuardContract ||
+        !vetoGuardContract.vetoVotingContract ||
+        !account ||
+        !signerOrProvider
+      ) {
         return;
+      }
+
+      let userHasVotes: boolean = false;
+      if (vetoGuardContract.vetoVotingType === VetoVotingType.MULTISIG) {
+        const gnosisSafeContract = GnosisSafe__factory.connect(
+          await (vetoGuardContract.vetoVotingContract as VetoMultisigVoting).gnosisSafe(),
+          signerOrProvider
+        );
+        const owners = await gnosisSafeContract.getOwners();
+        userHasVotes = owners?.find(owner => owner === account) !== undefined;
+      } else if (vetoGuardContract.vetoVotingType === VetoVotingType.ERC20) {
+        const votesTokenContract = VotesToken__factory.connect(
+          await (vetoGuardContract.vetoVotingContract as VetoERC20Voting).votesToken(),
+          signerOrProvider
+        );
+        userHasVotes = (
+          await votesTokenContract.getPastVotes(
+            account,
+            await vetoGuardContract.vetoVotingContract.freezeProposalCreatedBlock()
+          )
+        ).gt(0);
       }
 
       const freeze: IGnosisFreezeData = {
@@ -32,6 +63,7 @@ export function useFreezeData(
           await vetoGuardContract.vetoVotingContract.freezeProposalCreatedBlock()
         ),
         isFrozen: await vetoGuardContract.vetoVotingContract.isFrozen(),
+        userHasVotes: userHasVotes,
       };
 
       gnosisDispatch({

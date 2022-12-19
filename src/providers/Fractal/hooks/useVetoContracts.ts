@@ -88,6 +88,7 @@ export function useVetoContracts(
           ? VetoMultisigVoting__factory
           : VetoERC20Voting__factory;
       const vetoVotingContract = vetoVotingType.connect(votingAddress, signerOrProvider);
+
       contracts = {
         vetoGuardContract: vetoGuardContract,
         vetoVotingContract: vetoVotingContract,
