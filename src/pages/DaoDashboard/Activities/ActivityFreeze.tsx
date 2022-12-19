@@ -37,11 +37,7 @@ export function ActivityFreeze({
     secondsLeft: BigNumber;
     withinPeriod: boolean;
   };
-
-  if (
-    !freezeData.isFrozen ||
-    (withinFreezeProposalPeriod && !withinFreezeProposalPeriod.withinPeriod)
-  ) {
+  if (!freezeData.isFrozen && !withinFreezeProposalPeriod.withinPeriod) {
     return null;
   }
 
