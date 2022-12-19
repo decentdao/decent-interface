@@ -54,7 +54,7 @@ function GovernanceDetails() {
   };
 
   const { t } = useTranslation(['daoCreate', 'common']);
-  const seconds = t('seconds');
+  const seconds = t('seconds', { ns: 'common' });
 
   return (
     <Box>
