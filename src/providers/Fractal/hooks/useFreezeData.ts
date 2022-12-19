@@ -43,10 +43,12 @@ export function useFreezeData(
           signerOrProvider
         );
         userHasVotes = (
-          await votesTokenContract.getPastVotes(
-            account,
-            await vetoGuardContract.vetoVotingContract.freezeProposalCreatedBlock()
-          )
+          (await vetoGuardContract.vetoVotingContract.freezeProposalCreatedBlock()).eq(0)
+            ? await votesTokenContract.getVotes(account)
+            : await votesTokenContract.getPastVotes(
+                account,
+                await vetoGuardContract.vetoVotingContract.freezeProposalCreatedBlock()
+              )
         ).gt(0);
       }
 
