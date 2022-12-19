@@ -1,9 +1,9 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
+import useWithinFreezePeriod from '../../../hooks/utils/useWithinFreezePeriod';
 import {
   DAOState,
   IGnosisFreezeData,
@@ -27,35 +27,20 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 export function ActivityFreeze({
   freezeData,
   vetoContract,
-  currentTime,
 }: {
   freezeData: IGnosisFreezeData;
   vetoContract: IGnosisVetoContract;
-  currentTime: BigNumber;
 }) {
   const { t } = useTranslation('dashboard');
+  const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData);
+  const withinFreezePeriod = useWithinFreezePeriod(freezeData, true);
 
   const daysLeft = freezeData.isFrozen
-    ? freezeData.freezeProposalCreatedTime.add(freezeData.freezePeriod).sub(currentTime).gt(0)
-      ? Math.round(
-          freezeData.freezeProposalCreatedTime
-            .add(freezeData.freezeProposalPeriod)
-            .sub(currentTime)
-            .div(86400)
-            .toNumber()
-        )
+    ? withinFreezePeriod.withinPeriod
+      ? Math.round(withinFreezePeriod.secondsLeft.div(86400).toNumber())
       : 0
-    : freezeData.freezeProposalCreatedTime
-        .add(freezeData.freezeProposalPeriod)
-        .sub(currentTime)
-        .gt(0)
-    ? Math.round(
-        freezeData.freezeProposalCreatedTime
-          .add(freezeData.freezeProposalPeriod)
-          .sub(currentTime)
-          .div(86400)
-          .toNumber()
-      )
+    : withinFreezeProposalPeriod.withinPeriod
+    ? Math.round(withinFreezeProposalPeriod.secondsLeft.div(86400).toNumber())
     : 0;
 
   return (

@@ -7,7 +7,7 @@ import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury'
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
-import useBlockTimestamp from '../../../hooks/utils/useBlockTimestamp';
+import useWithinFreezePeriod from '../../../hooks/utils/useWithinFreezePeriod';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
@@ -22,7 +22,7 @@ export function Activities() {
 
   const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
   const { t } = useTranslation('dashboard');
-  const currentTime = BigNumber.from(useBlockTimestamp());
+  const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData);
   return (
     <Box>
       <Flex
@@ -39,15 +39,10 @@ export function Activities() {
         flexDirection="column"
         gap="1rem"
       >
-        {(freezeData.isFrozen ||
-          freezeData.freezeProposalCreatedTime
-            .add(freezeData.freezeProposalPeriod)
-            .sub(currentTime)
-            .gt(0)) && (
+        {(freezeData.isFrozen || withinFreezeProposalPeriod.withinPeriod) && (
           <ActivityFreeze
             freezeData={freezeData}
             vetoContract={guardContracts}
-            currentTime={currentTime}
           />
         )}
         {isActivitiesLoading ? (
