@@ -15,10 +15,7 @@ export function FreezeButton({
 }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['dashboard']);
-  const castFreezeVote = useCastFreezeVote({
-    vetoVotingContract: vetoVotingContract,
-    setPending: setPending,
-  });
+  const castFreezeVote = useCastFreezeVote({ vetoVotingContract, setPending });
 
   const disabled = isFrozen || userHasFreezeVoted || pending;
 
