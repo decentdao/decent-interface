@@ -3,7 +3,7 @@ import { Calendar } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { ActivityBox } from '../ui/containers/ActivityBox';
 
-interface IAcitivityCard {
+interface IActivityCard {
   eventDate?: string;
   description: ReactNode;
   RightElement?: ReactNode;
@@ -17,7 +17,7 @@ export function ActivityCard({
   description,
   RightElement,
   boxBorderColor,
-}: IAcitivityCard) {
+}: IActivityCard) {
   return (
     <ActivityBox borderColor={boxBorderColor}>
       <Flex
