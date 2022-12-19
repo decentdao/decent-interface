@@ -34,15 +34,18 @@ export function InfoRow({
 
 export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation('proposal');
-  const signersRequired = `${proposal.confirmations.length}/${proposal.signersThreshold}`;
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <InfoRow
-          property={t('txDetailsSigners')}
-          value={signersRequired}
+          property={t('txDetailsSignersCurrent')}
+          value={proposal.confirmations.length.toString()}
+        />
+        <InfoRow
+          property={t('txDetailsSignersRequired')}
+          value={proposal.signersThreshold?.toString()}
         />
         <InfoRow
           property={t('created')}

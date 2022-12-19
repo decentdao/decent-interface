@@ -72,5 +72,7 @@
     "titleProposalSettings": "Proposal Settings",
     "labelDeploySubDAO": "Create sub-DAO Proposal",
     "titleAllocations": "Initial Token Allocations",
-    "titleTokenParams": "Token Metadata"
+    "titleTokenParams": "Token Metadata",
+    "titleAddress": "Address",
+    "titleAmount": "Amount"
 }
