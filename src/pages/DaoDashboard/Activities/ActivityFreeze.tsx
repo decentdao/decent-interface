@@ -38,6 +38,10 @@ export function ActivityFreeze({
     : withinFreezeProposalPeriod.withinPeriod
     ? Math.round(withinFreezeProposalPeriod.secondsLeft.div(86400).toNumber())
     : 0;
+  const voteToThreshold =
+    freezeData.freezeProposalVoteCount.toString() +
+    ' / ' +
+    freezeData.freezeVotesThreshold.toString();
 
   return (
     <ActivityCard
@@ -57,17 +61,10 @@ export function ActivityFreeze({
           <Text textStyle="text-base-sans-regular">
             {!freezeData.isFrozen && freezeData.freezeVotesThreshold.gt(0) && (
               <Tooltip
-                label={
-                  freezeData.freezeProposalVoteCount.toString() +
-                  ' / ' +
-                  freezeData.freezeVotesThreshold.toString() +
-                  t('tipFreeze')
-                }
+                label={voteToThreshold + t('tipFreeze')}
                 placement="bottom"
               >
-                {freezeData.freezeProposalVoteCount.toString() +
-                  ' / ' +
-                  freezeData.freezeVotesThreshold.toString()}
+                {voteToThreshold}
               </Tooltip>
             )}
           </Text>
