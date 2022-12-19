@@ -16,7 +16,7 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
       gap="0.5rem"
       flexWrap="wrap"
     >
-      <Text> {isFrozen ? t('frozenDescription') : t('freezeDescription')}</Text>
+      <Text> {t(isFrozen ? 'frozenDescription' : 'freezeDescription')}</Text>
     </Flex>
   );
 }
