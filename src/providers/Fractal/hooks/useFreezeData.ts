@@ -19,9 +19,7 @@ export function useFreezeData(
         return;
       }
 
-      let freeze: IGnosisFreezeData;
-
-      freeze = {
+      const freeze: IGnosisFreezeData = {
         freezeVotesThreshold: await vetoGuardContract.vetoVotingContract.freezeVotesThreshold(),
         freezeProposalCreatedTime:
           await vetoGuardContract.vetoVotingContract.freezeProposalCreatedTime(),
