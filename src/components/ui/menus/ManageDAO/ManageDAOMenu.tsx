@@ -1,7 +1,12 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
+import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useWithinFreezePeriod from '../../../../hooks/utils/useWithinFreezePeriod';
+import {
+  isWithinFreezePeriod,
+  isWithinFreezeProposalPeriod,
+} from '../../../../helpers/freezePeriodHelpers';
+import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../../../routes/constants';
 import { OptionMenu } from '../OptionMenu';
@@ -11,19 +16,17 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
   const {
     gnosis: { guardContracts, freezeData },
   } = useFractal();
-  const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData);
+  const currentTime = BigNumber.from(useBlockTimestamp());
 
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
       onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
-    console.log(freezeData);
     if (
       freezeData &&
-      !freezeData.isFrozen &&
-      withinFreezeProposalPeriod &&
-      !withinFreezeProposalPeriod.withinPeriod &&
+      !isWithinFreezeProposalPeriod(freezeData, currentTime) &&
+      !isWithinFreezePeriod(freezeData, currentTime) &&
       freezeData.userHasVotes
     ) {
       const freezeOption = {
@@ -34,7 +37,7 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
     } else {
       return [createSubDAOOption];
     }
-  }, [safeAddress, navigate, guardContracts, freezeData, withinFreezeProposalPeriod]);
+  }, [safeAddress, navigate, guardContracts, freezeData, currentTime]);
 
   return (
     <OptionMenu

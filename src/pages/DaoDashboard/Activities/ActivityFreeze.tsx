@@ -5,7 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
-import useWithinFreezePeriod from '../../../hooks/utils/useWithinFreezePeriod';
+import {
+  isWithinFreezePeriod,
+  isWithinFreezeProposalPeriod,
+  secondsLeftInFreezePeriod,
+  secondsLeftInFreezeProposalPeriod,
+} from '../../../helpers/freezePeriodHelpers';
+import useBlockTimestamp from '../../../hooks/utils/useBlockTimestamp';
 import { DAOState, IGnosisFreezeData } from '../../../providers/Fractal/governance/types';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
@@ -29,24 +35,21 @@ export function ActivityFreeze({
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }) {
   const { t } = useTranslation('dashboard');
-  const withinFreezeProposalPeriod = useWithinFreezePeriod(freezeData) as {
-    secondsLeft: BigNumber;
-    withinPeriod: boolean;
-  };
-  const withinFreezePeriod = useWithinFreezePeriod(freezeData, true) as {
-    secondsLeft: BigNumber;
-    withinPeriod: boolean;
-  };
-  if (!freezeData.isFrozen && !withinFreezeProposalPeriod.withinPeriod) {
+  const currentTime = BigNumber.from(useBlockTimestamp());
+
+  const withinFreezeProposalPeriod = isWithinFreezeProposalPeriod(freezeData, currentTime);
+  const withinFreezePeriod = isWithinFreezePeriod(freezeData, currentTime);
+
+  if (!withinFreezePeriod && !withinFreezeProposalPeriod) {
     return null;
   }
 
   const daysLeft = freezeData.isFrozen
-    ? withinFreezePeriod.withinPeriod
-      ? Math.round(withinFreezePeriod.secondsLeft.div(86400).toNumber())
+    ? withinFreezePeriod
+      ? Math.round(secondsLeftInFreezePeriod(freezeData, currentTime).div(86400).toNumber())
       : 0
-    : withinFreezeProposalPeriod.withinPeriod
-    ? Math.round(withinFreezeProposalPeriod.secondsLeft.div(86400).toNumber())
+    : withinFreezeProposalPeriod
+    ? Math.round(secondsLeftInFreezeProposalPeriod(freezeData, currentTime).div(86400).toNumber())
     : 0;
   const voteToThreshold =
     freezeData.freezeProposalVoteCount.toString() +
