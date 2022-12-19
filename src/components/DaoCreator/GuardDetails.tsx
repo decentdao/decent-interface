@@ -7,7 +7,6 @@ import {
   InputRightElement,
   Hide,
   Input,
-  EditableInput,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
