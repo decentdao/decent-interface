@@ -83,7 +83,7 @@ function GuardDetails() {
       switch (type) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
           totalVotes = parseInt(
-            ethers.utils.formatUnits(governanceToken.totalSupply!, governanceToken.decimals)
+            ethers.utils.formatUnits(governanceToken.totalSupply || '0', governanceToken.decimals)
           );
           break;
         case GovernanceTypes.GNOSIS_SAFE:
