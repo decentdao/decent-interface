@@ -14,7 +14,7 @@ export function FreezeButton({
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting;
 }) {
   const [pending, setPending] = useState<boolean>(false);
-  const { t } = useTranslation(['dashboard', 'common']);
+  const { t } = useTranslation(['dashboard']);
   const castFreezeVote = useCastFreezeVote({
     vetoVotingContract: vetoVotingContract,
     setPending: setPending,
