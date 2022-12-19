@@ -60,7 +60,7 @@
     "labelTokenName": "Token Name",
     "helperTokenName": "What will your governance token be called?",
     "labelTokenSymbol": "Token Symbol",
-    "helperTokenSymbol": "A 3-5 character symbol for your token.",    
+    "helperTokenSymbol": "A 3-5 character symbol for your token.",
     "labelTokenSupply": "Token Supply",
     "helperTokenSupply": "The total supply of tokens. Unallocated tokens will be placed in your DAO's treasury.",
     "labelMultisigGov": "Gnosis Safe",
@@ -74,5 +74,8 @@
     "titleAllocations": "Initial Token Allocations",
     "titleTokenParams": "Token Metadata",
     "titleAddress": "Address",
-    "titleAmount": "Amount"
+    "titleAmount": "Amount",
+    "createSubDAOPendingToastMessage": "Deploying your new sub-DAO.",
+    "createSubDAOSuccessToastMessage": "Sub-DAO deployed successfully.",
+    "createSubDAOFailureToastMessage": "Sub-DAO deployment failed."
 }

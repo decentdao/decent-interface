@@ -60,5 +60,8 @@
     "safeTXHash": "SafeTXHash",
     "pendingSign": "Use wallet to sign transaction",
     "failedSign": "Signing failed.",
-    "successSign": "Signing was successful"
+    "successSign": "Signing was successful",
+    "proposalCreatePendingToastMessage": "Creating new proposal.",
+    "proposalCreateSuccessToastMessage": "Proposal successfully created.",
+    "proposalCreateFailureToastMessage": "Proposal creation failed."
 }
