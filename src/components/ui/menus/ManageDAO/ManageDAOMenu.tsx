@@ -23,7 +23,8 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
       freezeData &&
       !freezeData.isFrozen &&
       withinFreezeProposalPeriod &&
-      !withinFreezeProposalPeriod.withinPeriod
+      !withinFreezeProposalPeriod.withinPeriod &&
+      freezeData.userHasVotes
     ) {
       const freezeOption = {
         optionKey: 'optionInitiateFreeze',

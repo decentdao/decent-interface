@@ -91,6 +91,7 @@ export function ActivityFreeze({
             <FreezeButton
               isFrozen={freezeData.isFrozen}
               userHasFreezeVoted={freezeData.userHasFreezeVoted}
+              userHasVotes={freezeData.userHasVotes}
               vetoVotingContract={vetoVotingContract}
             />
           )}

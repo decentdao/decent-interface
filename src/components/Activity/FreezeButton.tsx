@@ -7,10 +7,12 @@ import useCastFreezeVote from '../../hooks/DAO/useCastFreezeVote';
 export function FreezeButton({
   isFrozen,
   userHasFreezeVoted,
+  userHasVotes,
   vetoVotingContract,
 }: {
   isFrozen: boolean;
   userHasFreezeVoted: boolean;
+  userHasVotes: boolean;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting;
 }) {
   const [pending, setPending] = useState<boolean>(false);
@@ -29,7 +31,9 @@ export function FreezeButton({
       onClick={castFreezeVote}
       disabled={disabled}
     >
-      {userHasFreezeVoted ? t('freezeVotedButton') : t('freezeButton')}
+      {t(
+        !userHasVotes ? 'noVotesButton' : userHasFreezeVoted ? 'freezeVotedButton' : 'freezeButton'
+      )}
     </Button>
   );
 }
