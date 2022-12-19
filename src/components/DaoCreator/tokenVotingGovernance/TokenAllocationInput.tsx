@@ -182,6 +182,7 @@ function TokenAllocationInput({
           type="button"
           onClick={() => removeAllocation(index)}
           px="0px"
+          alignSelf="center"
           data-testid="tokenVoting-tokenAllocationRemoveButton"
         >
           {t('remove')}
