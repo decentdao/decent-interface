@@ -19,7 +19,7 @@ export function FreezeButton({
   const { t } = useTranslation(['dashboard']);
   const castFreezeVote = useCastFreezeVote({ vetoVotingContract, setPending });
 
-  const disabled = isFrozen || userHasFreezeVoted || pending;
+  const disabled = isFrozen || userHasFreezeVoted || pending || !userHasVotes;
 
   return (
     <Button
