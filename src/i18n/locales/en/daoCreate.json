@@ -72,5 +72,6 @@
     "titleAllocations": "Initial Token Allocations",
     "titleTokenParams": "Token Metadata",
     "titleAddress": "Address",
-    "titleAmount": "Amount"
+    "titleAmount": "Amount",
+    "helperAllocations": "Unallocated tokens will be placed in your DAO's treasury"
 }
