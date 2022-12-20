@@ -1,17 +1,10 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
-import {
-  isWithinFreezePeriod,
-  isWithinFreezeProposalPeriod,
-  secondsLeftInFreezePeriod,
-  secondsLeftInFreezeProposalPeriod,
-} from '../../../helpers/freezePeriodHelpers';
-import useBlockTimestamp from '../../../hooks/utils/useBlockTimestamp';
+import { formatDatesDiffReadable } from '../../../helpers/dateTime';
 import { DAOState, IGnosisFreezeData } from '../../../providers/Fractal/governance/types';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
@@ -35,22 +28,27 @@ export function ActivityFreeze({
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }) {
   const { t } = useTranslation('dashboard');
-  const currentTime = BigNumber.from(useBlockTimestamp());
+  const freezeProposalDeadlineDate = new Date(
+    freezeData.freezeProposalCreatedTime.add(freezeData.freezeProposalPeriod).mul(1000).toNumber()
+  );
+  const freezeDeadlineDate = new Date(
+    freezeData.freezeProposalCreatedTime.add(freezeData.freezePeriod).mul(1000).toNumber()
+  );
+  const now = new Date();
 
-  const withinFreezeProposalPeriod = isWithinFreezeProposalPeriod(freezeData, currentTime);
-  const withinFreezePeriod = isWithinFreezePeriod(freezeData, currentTime);
+  const freezeProposalPeriodDiffReadable = formatDatesDiffReadable(
+    freezeProposalDeadlineDate,
+    now,
+    t
+  );
+  const freezePeriodDiffReadable = formatDatesDiffReadable(freezeDeadlineDate, now, t);
+  const isFreezeProposalDeadlinePassed = now.getTime() > freezeProposalDeadlineDate.getTime();
+  const isFreezeDeadlinePassed = now.getTime() > freezeDeadlineDate.getTime();
 
-  if (!withinFreezePeriod && !withinFreezeProposalPeriod) {
+  if (isFreezeProposalDeadlinePassed && isFreezeDeadlinePassed) {
     return null;
   }
 
-  const daysLeft = freezeData.isFrozen
-    ? withinFreezePeriod
-      ? Math.round(secondsLeftInFreezePeriod(freezeData, currentTime).div(86400).toNumber())
-      : 0
-    : withinFreezeProposalPeriod
-    ? Math.round(secondsLeftInFreezeProposalPeriod(freezeData, currentTime).div(86400).toNumber())
-    : 0;
   const voteToThreshold =
     freezeData.freezeProposalVoteCount.toString() +
     ' / ' +
@@ -81,9 +79,9 @@ export function ActivityFreeze({
               </Tooltip>
             )}
           </Text>
-          {daysLeft > 0 && (
+          {!isFreezeProposalDeadlinePassed && !isFreezeDeadlinePassed && (
             <Text textStyle="text-base-sans-regular">
-              {daysLeft + t('freezeDaysLeft', { count: daysLeft })}
+              {freezeData.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
             </Text>
           )}
           {!freezeData.isFrozen && vetoVotingContract && (
