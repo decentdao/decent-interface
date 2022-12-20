@@ -13,11 +13,11 @@ import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import {
   GnosisDAO,
-  GovernanceTypes,
   SubDAO,
   TokenGovernanceDAO,
 } from '../../components/DaoCreator/provider/types/index';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
+import { GovernanceTypes } from '../../providers/Fractal/types';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { MetaTransaction } from '../../types/transaction';
 import useSafeContracts from '../safe/useSafeContracts';

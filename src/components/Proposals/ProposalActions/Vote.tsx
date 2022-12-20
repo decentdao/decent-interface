@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
   TxProposal,
   TxProposalState,
@@ -18,6 +19,9 @@ import Check from '../../ui/svg/Check';
 function Vote({ proposal }: { proposal: TxProposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation();
+  const {
+    governance: { governanceToken },
+  } = useFractal();
 
   const usulProposal = proposal as UsulProposal;
 
@@ -29,6 +33,11 @@ function Vote({ proposal }: { proposal: TxProposal }) {
     proposalNumber: BigNumber.from(proposal.proposalNumber),
     setPending: setPending,
   });
+
+  // if the user has no delegated tokens, don't show anything
+  if (governanceToken?.votingWeight?.eq(0)) {
+    return null;
+  }
 
   const disabled =
     pending ||

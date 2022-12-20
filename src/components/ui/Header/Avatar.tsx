@@ -26,10 +26,7 @@ function URLAvatar({ url, size }: { size: AvatarSize; url: string }) {
   });
 
   return (
-    <Box
-      h={avatarSizes[size]}
-      w={avatarSizes[size]}
-    >
+    <Box w={avatarSizes[size]}>
       <Image
         className="rounded-full"
         src={src}

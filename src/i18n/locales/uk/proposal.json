@@ -52,7 +52,7 @@
     "labelProposalSigners": "Підписанти",
     "support": "Підтримка",
     "signers": "Підписанти",
-    "txDetailsSigners": "Обов'язкова кількість підписів",
+    "txDetailsSignersRequired": "Обов'язкова кількість підписів",
     "created": "Створено",
     "transactionHash": "Хеш транзакції",
     "safeTXHash": "SafeTXHash",

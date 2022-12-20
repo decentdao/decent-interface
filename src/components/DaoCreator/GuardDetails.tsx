@@ -11,12 +11,13 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
+import { GovernanceTypes } from '../../providers/Fractal/types';
 import ContentBanner from '../ui/ContentBanner';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
 import InputBox from '../ui/forms/InputBox';
 import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions, GovernanceTypes } from './provider/types';
+import { CreatorProviderActions } from './provider/types';
 
 function GuardDetails() {
   const {
@@ -61,9 +62,9 @@ function GuardDetails() {
     fieldUpdate(newFreezePeriod, 'freezePeriod');
   };
 
-  const { t } = useTranslation(['daoCreate']);
-  const votes = t('votes');
-  const seconds = t('seconds');
+  const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
+  const votes = t('votesTitle', { ns: 'proposal' });
+  const seconds = t('seconds', { ns: 'common' });
   return (
     <Box>
       <ContentBox>
