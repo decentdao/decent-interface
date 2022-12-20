@@ -111,13 +111,12 @@ export default function useSubmitProposal() {
           if (successCallback) {
             successCallback(safe.address);
           }
-          toast.dismiss(toastId);
           toast(successToastMessage);
         } catch (e) {
-          toast.dismiss(toastId);
           toast(failedToastMessage);
           logError(e, 'Error during Multi-sig proposal creation');
         } finally {
+          toast.dismiss(toastId);
           setPendingCreateTx(false);
           return;
         }
@@ -144,6 +143,7 @@ export default function useSubmitProposal() {
             )
           ).wait();
           if (successCallback) {
+            toast.dismiss(toastId);
             successCallback(safe.address);
           }
         } catch (e) {
@@ -151,8 +151,6 @@ export default function useSubmitProposal() {
           toast(failedToastMessage);
           logError(e, 'Error during Usul proposal creation');
         } finally {
-          toast.dismiss(toastId);
-          toast(successToastMessage);
           setPendingCreateTx(false);
         }
       }

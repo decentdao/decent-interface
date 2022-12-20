@@ -75,7 +75,7 @@
     "titleTokenParams": "Token Metadata",
     "titleAddress": "Address",
     "titleAmount": "Amount",
-    "createSubDAOPendingToastMessage": "Deploying your sub-DAO",
-    "createSubDAOSuccessToastMessage": "Sub-DAO deployment successful",
-    "createSubDAOFailureToastMessage": "Sub-DAO deployment failed"
+    "createSubDAOPendingToastMessage": "Deploying your subDAO",
+    "createSubDAOSuccessToastMessage": "Deployment successful",
+    "createSubDAOFailureToastMessage": "Deployment failed"
 }
