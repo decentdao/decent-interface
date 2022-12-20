@@ -1,10 +1,16 @@
-import { IGovernance } from '../governance/types';
+import { IGovernance, VetoVotingType } from '../governance/types';
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';
 
 export const gnosisInitialState: IGnosis = {
   safeService: undefined,
   modules: [],
+  guardContracts: {
+    vetoGuardContract: undefined,
+    vetoVotingContract: undefined,
+    vetoVotingType: VetoVotingType.UNKNOWN,
+  },
+  freezeData: undefined,
   transactions: {
     count: 0,
     next: undefined,

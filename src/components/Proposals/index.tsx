@@ -76,12 +76,7 @@ export default function Proposals() {
                 justifyContent="flex-start"
                 onClick={() => setFilters(allStates)}
               >
-                <Text
-                  color="grayscale.100"
-                  fontStyle="text-sm-mono-regular"
-                >
-                  {t('selectAll', { ns: 'common' })}
-                </Text>
+                <Text color="grayscale.100">{t('selectAll', { ns: 'common' })}</Text>
               </Button>
               <Button
                 variant="text"
@@ -90,12 +85,7 @@ export default function Proposals() {
                 justifyContent="flex-end"
                 onClick={() => setFilters([])}
               >
-                <Text
-                  color="grayscale.100"
-                  fontStyle="text-sm-mono-regular"
-                >
-                  {t('clear', { ns: 'common' })}
-                </Text>
+                <Text color="grayscale.100">{t('clear', { ns: 'common' })}</Text>
               </Button>
             </Flex>
             <Divider
