@@ -97,6 +97,7 @@ export interface IGnosisFreezeData {
   freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
   userHasFreezeVoted: boolean;
   isFrozen: boolean;
+  userHasVotes: boolean;
 }
 
 export interface GnosisDAO extends DAODetails, GnosisConfig {}

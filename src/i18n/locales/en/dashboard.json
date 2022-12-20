@@ -18,6 +18,7 @@
     "frozenDescription": "DAO is Frozen",
     "freezeButton": "Freeze",
     "freezeVotedButton": "Freeze Vote Cast",
+    "noVotesButton": "User Has No Votes",
     "freezeDaysLeft": "{{count}} days left",
     "tipFreeze": " required freeze votes",
     "proposalOnChainRejection": "that rejects transaction {{proposalNumber}}",

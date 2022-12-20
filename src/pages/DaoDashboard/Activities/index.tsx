@@ -1,6 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ActivityGovernance } from '../../../components/Activity/ActivityGovernance';
 import { ActivityModule } from '../../../components/Activity/ActivityModule';
 import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury';
 import { Sort } from '../../../components/ui/Sort';
@@ -51,6 +52,12 @@ export function Activities() {
           >
             {sortedActivities.map((activity, i) => {
               if (activity.eventType === ActivityEventType.Governance) {
+                return (
+                  <ActivityGovernance
+                    key={i}
+                    activity={activity as TxProposal}
+                  />
+                );
               }
               if (activity.eventType === ActivityEventType.Module) {
                 return (
