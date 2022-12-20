@@ -7,11 +7,16 @@ import { ActivityTreasury } from '../../../components/Activity/ActivityTreasury'
 import { Sort } from '../../../components/ui/Sort';
 import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
 import { SortBy } from '../../../types';
+import { ActivityFreeze } from './ActivityFreeze';
 import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
+  const {
+    gnosis: { guardContracts, freezeData },
+  } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
 
   const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
@@ -28,41 +33,52 @@ export function Activities() {
           setSortBy={setSortBy}
         />
       </Flex>
-      {isActivitiesLoading ? (
-        <InfoBoxLoader />
-      ) : sortedActivities.length ? (
-        <Flex
-          flexDirection="column"
-          gap="1rem"
-        >
-          {sortedActivities.map((activity, i) => {
-            if (activity.eventType === ActivityEventType.Governance) {
+      <Flex
+        flexDirection="column"
+        gap="1rem"
+      >
+        {freezeData && (
+          <ActivityFreeze
+            freezeData={freezeData}
+            vetoVotingContract={guardContracts.vetoVotingContract}
+          />
+        )}
+        {isActivitiesLoading ? (
+          <InfoBoxLoader />
+        ) : sortedActivities.length ? (
+          <Flex
+            flexDirection="column"
+            gap="1rem"
+          >
+            {sortedActivities.map((activity, i) => {
+              if (activity.eventType === ActivityEventType.Governance) {
+                return (
+                  <ActivityGovernance
+                    key={i}
+                    activity={activity as TxProposal}
+                  />
+                );
+              }
+              if (activity.eventType === ActivityEventType.Module) {
+                return (
+                  <ActivityModule
+                    key={i}
+                    activity={activity as TxProposal}
+                  />
+                );
+              }
               return (
-                <ActivityGovernance
+                <ActivityTreasury
                   key={i}
-                  activity={activity as TxProposal}
+                  activity={activity as TreasuryActivity}
                 />
               );
-            }
-            if (activity.eventType === ActivityEventType.Module) {
-              return (
-                <ActivityModule
-                  key={i}
-                  activity={activity as TxProposal}
-                />
-              );
-            }
-            return (
-              <ActivityTreasury
-                key={i}
-                activity={activity as TreasuryActivity}
-              />
-            );
-          })}
-        </Flex>
-      ) : (
-        <EmptyBox emptyText={t('noActivity')} />
-      )}
+            })}
+          </Flex>
+        ) : (
+          <EmptyBox emptyText={t('noActivity')} />
+        )}
+      </Flex>
     </Box>
   );
 }

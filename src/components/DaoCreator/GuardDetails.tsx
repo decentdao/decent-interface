@@ -6,6 +6,7 @@ import {
   InputGroup,
   InputRightElement,
   Hide,
+  Input,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
@@ -152,18 +153,11 @@ function GuardDetails() {
             label={t('labelFreezeVotesThreshold')}
             subLabel={t('helperFreezeVotesThreshold')}
           >
-            <NumberInput
+            <Input
               value={vetoGuard.freezeVotesThreshold.toString()}
-              onChange={onFreezeVotesThresholdChange}
-              precision={0}
-              data-testid="guardConfig-freezeVotesThreshold"
+              onChange={e => onFreezeVotesThresholdChange(e.target.value)}
               onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement mr="4">{votes}</InputRightElement>
-              </InputGroup>
-            </NumberInput>
+            />
           </LabelWrapper>
         </InputBox>
         <InputBox>

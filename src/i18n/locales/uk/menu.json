@@ -17,6 +17,5 @@
     "goerli": "Goerli Test Network",
     "local": "Local Test Network",
     "titleManageDAO": "Керувати DAO",
-    "optionCreateSubDAO": "Додати вузол",
     "optionInitiateFreeze": "Ініціювати Замороження"
 }

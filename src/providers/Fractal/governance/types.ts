@@ -2,6 +2,10 @@ import {
   FractalModule,
   FractalUsul,
   OZLinearVoting,
+  UsulVetoGuard,
+  VetoERC20Voting,
+  VetoGuard,
+  VetoMultisigVoting,
   VotesToken,
 } from '@fractal-framework/fractal-contracts';
 import {
@@ -73,6 +77,29 @@ export interface GnosisConfig {
   signatureThreshold: string;
 }
 
+export enum VetoVotingType {
+  ERC20,
+  MULTISIG,
+  UNKNOWN,
+}
+
+export interface IGnosisVetoContract {
+  vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
+  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
+  vetoVotingType: VetoVotingType;
+}
+
+export interface IGnosisFreezeData {
+  freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
+  freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
+  freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
+  freezeProposalPeriod: BigNumber; // Number of blocks a freeze proposal has to succeed
+  freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  userHasFreezeVoted: boolean;
+  isFrozen: boolean;
+  userHasVotes: boolean;
+}
+
 export interface GnosisDAO extends DAODetails, GnosisConfig {}
 
 export interface GovernanceContracts {
@@ -98,6 +125,11 @@ export enum TxProposalState {
   Failed = 'stateFailed',
   Approved = 'ownerApproved',
   Module = 'stateModule',
+}
+
+export enum DAOState {
+  freezeInit = 'stateFreezeInit',
+  frozen = 'stateFrozen',
 }
 
 export type ProposalMetaData = {
