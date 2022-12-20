@@ -1,5 +1,5 @@
 {
-    "auditDisclaimer": "WARNING: this project is not audited, use at your own risk.",
+    "auditDisclaimer": "WARNING: This project is not audited. Use at your own risk.",
     "no": "No",
     "yes": "Yes",
     "skip": "Skip",
@@ -13,7 +13,7 @@
     "view": "View",
     "vote": "Vote",
     "send": "Send",
-    "transfer": "transfer",
+    "transfer": "Transfer",
     "received": "Received",
     "to": "To",
     "from": "From",
@@ -31,7 +31,7 @@
     "labelViewDAO": "View DAO",
     "labelDAOFound": "DAO Found!",
     "labelEtherscan": "View on Etherscan",
-    "errorInvalidAddress": "Invalid Eth address.",
+    "errorInvalidAddress": "Invalid ETH address",
     "errorSentryFallbackTitle": "Oops!",
     "errorSentryFallbackMessage": "An unexpected error occurred. Try reloading or <1>ask the devs to do something</1>.",
     "errorGeneral": "An unexpected error occurred. Please try again later.",
@@ -55,5 +55,5 @@
     "timeAgo": "{{time}} ago",
     "cancel": "Cancel",
     "example": "Example",
-    "titleNodes": "Nodes"
+    "titleNodes": "DAO Hierachy"
 }
