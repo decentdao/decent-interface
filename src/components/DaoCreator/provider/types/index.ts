@@ -141,6 +141,6 @@ export type DAODetails = {
   governance: GovernanceTypes;
 };
 
-export type TrustedAddress = { address: string; error: boolean };
+export type TrustedAddress = { address: string; isValidAddress: boolean; addressError?: string };
 
 export type DAOTrigger = (daoData: GnosisDAO) => void;

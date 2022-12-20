@@ -100,7 +100,7 @@ export function useNextDisabled(state: CreatorState) {
       case CreatorSteps.GNOSIS_GOVERNANCE:
       case CreatorSteps.PURE_GNOSIS: {
         const isTrustedAddressValid =
-          !trustedAddresses.some(trustee => trustee.error || !trustee.address.trim()) &&
+          !trustedAddresses.some(trustee => !trustee.isValidAddress || !trustee.address.trim()) &&
           !!trustedAddresses.length;
 
         const isSignatureThresholdValid =

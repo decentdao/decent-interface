@@ -62,7 +62,7 @@ export const initialState: CreatorState = {
     nftsToFund: [],
   },
   gnosis: {
-    trustedAddresses: [{ address: '', error: false }],
+    trustedAddresses: [{ address: '', isValidAddress: false }],
     signatureThreshold: '1',
   },
 };
