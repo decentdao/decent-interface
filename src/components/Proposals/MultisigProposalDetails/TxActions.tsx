@@ -117,7 +117,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const hasReachedThreshold = proposal.confirmations.length >= (safe.threshold || 1);
 
   const isOwner = safe.owners?.includes(account || '');
-  const isPending = asyncRequestPending || contractCallPending;
+  const isPending = asyncRequestPending || contractCallPending || hasSigned || !isOwner;
   const isExecutable =
     hasReachedThreshold && hasSigned && proposal.state === TxProposalState.Queued;
 
