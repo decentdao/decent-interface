@@ -10,11 +10,8 @@ import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   return (
-    <Grid
-      gap={4}
-      templateColumns="repeat(3, 1fr)"
-    >
-      <GridItem colSpan={2}>
+    <Grid gap={4}>
+      <GridItem>
         <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
           <ProposalInfo proposal={proposal} />
           <Box mt={4}>
@@ -23,7 +20,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
         </ContentBox>
         <ProposalVotes proposal={proposal} />
       </GridItem>
-      <GridItem colSpan={1}>
+      <GridItem>
         <ProposalSummary proposal={proposal} />
         <ProposalAction
           proposal={proposal}
