@@ -1,9 +1,10 @@
 import { Grid, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ethers } from 'ethers';
-import { getAddress, isAddress } from 'ethers/lib/utils';
+import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isSameAddress } from '../../../utils/crypto';
 import { useCreator } from '../provider/hooks/useCreator';
 import { TrustedAddress } from '../provider/types';
 
@@ -13,13 +14,6 @@ interface IGnosisSignatures {
   updateAddresses: (addresses: TrustedAddress[], index: number, error: boolean) => void;
   removeAddress: (index: number) => void;
 }
-
-const isSameAddress = (addr1: string, addr2: string) => {
-  if (!isAddress(addr1) || !isAddress(addr2)) {
-    return false;
-  }
-  return getAddress(addr1) === getAddress(addr2);
-};
 
 export function GnosisSignatures({
   trustee,
