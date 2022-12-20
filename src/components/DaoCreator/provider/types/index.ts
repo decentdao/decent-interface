@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
 import { NFTToFund, TokenToFund } from '../../SubsidiaryFunding/types/index';
 
@@ -24,11 +25,6 @@ export enum CreatorSteps {
   GOV_CONFIG,
   GUARD_CONFIG,
   FUNDING,
-}
-
-export enum GovernanceTypes {
-  GNOSIS_SAFE = 'safe',
-  GNOSIS_SAFE_USUL = 'usul safe',
 }
 
 export type CreatorProviderActionTypes =

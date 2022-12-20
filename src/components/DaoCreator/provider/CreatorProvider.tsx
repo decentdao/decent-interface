@@ -2,6 +2,7 @@ import { Box, Text } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { ReactNode, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GovernanceTypes } from '../../../providers/Fractal/types';
 import ConnectWalletToast from '../../ConnectWalletToast';
 import { StepButtons } from '../StepButtons';
 
@@ -14,7 +15,6 @@ import {
   CreatorState,
   CreatorSteps,
   DAOTrigger,
-  GovernanceTypes,
 } from './types';
 
 export const initialState: CreatorState = {

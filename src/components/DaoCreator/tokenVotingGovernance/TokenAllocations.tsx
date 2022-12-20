@@ -141,13 +141,13 @@ function TokenAllocations({
             textStyle="text-base-sans-bold"
             color="grayscale.500"
           >
-            Address
+            {t('titleAddress')}
           </Text>
           <Text
             textStyle="text-base-sans-bold"
             color="grayscale.500"
           >
-            Amount
+            {t('titleAmount')}
           </Text>
           <Box>{/* EMPTY */}</Box>
           {tokenAllocations &&

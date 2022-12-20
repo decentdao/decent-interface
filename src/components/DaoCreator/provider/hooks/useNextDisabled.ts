@@ -1,6 +1,7 @@
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
-import { CreatorState, CreatorSteps, GovernanceTypes } from './../types';
+import { GovernanceTypes } from '../../../../providers/Fractal/types';
+import { CreatorState, CreatorSteps } from './../types';
 
 /**
  * This hook updates the next page button's disable state for each form

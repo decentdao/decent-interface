@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { CreatorProviderActions, CreatorState, CreatorSteps, GovernanceTypes } from './../types';
+import { GovernanceTypes } from '../../../../providers/Fractal/types';
+import { CreatorProviderActions, CreatorState, CreatorSteps } from './../types';
 
 /**
  * handles tracking/setting of next/prev steps dependent on the current page
