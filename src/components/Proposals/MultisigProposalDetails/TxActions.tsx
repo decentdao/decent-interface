@@ -117,7 +117,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const hasReachedThreshold = proposal.confirmations.length >= (safe.threshold || 1);
 
   const isOwner = safe.owners?.includes(account || '');
-  const isPending = asyncRequestPending || contractCallPending || hasSigned || !isOwner;
+  const isPending = asyncRequestPending || contractCallPending;
   const isExecutable =
     hasReachedThreshold && hasSigned && proposal.state === TxProposalState.Queued;
 
@@ -127,6 +127,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const buttonAction = isExecutable ? executeTransaction : confirmTransaction;
   const buttonIcon = isExecutable ? undefined : <Check boxSize="1.5rem" />;
   const isButtonActive = isOwner && !isPending;
+
+  if (!isExecutable && (hasSigned || !isOwner)) {
+    return null;
+  }
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
