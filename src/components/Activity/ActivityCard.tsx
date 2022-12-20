@@ -4,15 +4,22 @@ import { ReactNode } from 'react';
 import { ActivityBox } from '../ui/containers/ActivityBox';
 
 interface IActivityCard {
-  eventDate: string;
+  eventDate?: string;
   description: ReactNode;
   RightElement?: ReactNode;
   Badge?: ReactNode;
+  boxBorderColor?: string;
 }
 
-export function ActivityCard({ Badge, eventDate, description, RightElement }: IActivityCard) {
+export function ActivityCard({
+  Badge,
+  eventDate,
+  description,
+  RightElement,
+  boxBorderColor,
+}: IActivityCard) {
   return (
-    <ActivityBox>
+    <ActivityBox borderColor={boxBorderColor}>
       <Flex
         justifyContent="space-between"
         alignItems="center"
@@ -25,13 +32,15 @@ export function ActivityCard({ Badge, eventDate, description, RightElement }: IA
             mb="1rem"
           >
             {Badge}
-            <Flex
-              alignItems="center"
-              gap="0.5rem"
-            >
-              <Calendar />
-              <Text textStyle="text-base-sans-regular">{eventDate}</Text>
-            </Flex>
+            {eventDate && (
+              <Flex
+                alignItems="center"
+                gap="0.5rem"
+              >
+                <Calendar />
+                <Text textStyle="text-base-sans-regular">{eventDate}</Text>
+              </Flex>
+            )}
           </Flex>
           <Box>{description}</Box>
         </Flex>

@@ -54,6 +54,5 @@
     "timeLeft": "{{time}} залишилось",
     "timeAgo": "{{time}} тому",
     "cancel": "Відмінити",
-    "example": "Приклад",
-    "titleNodes": "Вузли"
+    "example": "Приклад"
 }
