@@ -40,9 +40,11 @@ export function GnosisSignatures({
       const updatedAddress = [...snapshotTrustedAddresses].map((trustedAddress, i, prev) => {
         const isDuplicate = i !== index && isSameAddress(trustedAddress.address, address);
 
-        const duplicateAddresses = prev.filter(
+        const hasOtherDuplicates = prev.some(
           (prevAddr, dupIndex) =>
-            i !== dupIndex && isSameAddress(prevAddr.address, trustedAddress.address)
+            index != dupIndex &&
+            i !== dupIndex &&
+            isSameAddress(prevAddr.address, trustedAddress.address)
         );
 
         if (isDuplicate) {
@@ -50,14 +52,13 @@ export function GnosisSignatures({
           isValidAddress = false;
         }
 
+        const hasAddressError = isDuplicate || hasOtherDuplicates;
         return {
           ...trustedAddress,
-          isValidAddress:
-            (!isDuplicate && duplicateAddresses.length <= 1) || isAddress(trustedAddress.address),
-          addressError:
-            isDuplicate || duplicateAddresses.length > 1
-              ? t('errorDuplicateAddress', { ns: 'daoCreate' })
-              : undefined,
+          isValidAddress: hasAddressError || isAddress(trustedAddress.address),
+          addressError: hasAddressError
+            ? t('errorDuplicateAddress', { ns: 'daoCreate' })
+            : undefined,
         };
       });
 

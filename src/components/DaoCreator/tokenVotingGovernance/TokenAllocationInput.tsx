@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { TokenAllocation } from '../../../types/tokenAllocation';
+import { isSameAddress } from '../../../utils/crypto';
 import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 
 interface TokenAllocationProps {
@@ -42,39 +43,29 @@ function TokenAllocationInput({
       let isValidAddress = isAddress(address);
       let hasDuplicateAddresses = false;
 
-      const updatedTokenAllocations = snapShotTokenAllocations.map((allocated, i, arr) => {
-        // if a duplicate address is found updates the error on that input and invalidates the address.
-        const isDuplicateAddress =
-          isAddress(allocated.address) &&
-          isAddress(address) &&
-          allocated.address.toLowerCase() === address.toLowerCase() &&
-          i !== index;
-        if (isDuplicateAddress) {
+      const updatedTokenAllocations = snapShotTokenAllocations.map((allocated, i, prev) => {
+        const isDuplicate = i !== index && isSameAddress(allocated.address, address);
+
+        const hasOtherDuplicates = prev.some(
+          (prevAddr, dupIndex) =>
+            index != dupIndex &&
+            i !== dupIndex &&
+            isSameAddress(prevAddr.address, allocated.address)
+        );
+
+        if (isDuplicate) {
           hasDuplicateAddresses = true;
-          return {
-            ...allocated,
-            addressError: t('errorDuplicateAddress', { ns: 'daoCreate' }),
-            isValidAddress: false,
-          };
+          isValidAddress = false;
         }
 
-        // searches for prev duplicate, if duplicate was updated, error is reset on it.
-        const prevAllocationState = arr[index];
-        const isOldDuplicateAddress =
-          isAddress(allocated.address) &&
-          isAddress(prevAllocationState.address) &&
-          allocated.address.toLowerCase() === prevAllocationState.address.toLowerCase() &&
-          address.toLowerCase() !== allocated.address.toLowerCase() &&
-          i !== index;
-        if (isOldDuplicateAddress) {
-          // resets error on duplicate
-          return {
-            ...allocated,
-            addressError: undefined,
-            isValidAddress: true,
-          };
-        }
-        return allocated;
+        const hasAddressError = isDuplicate || hasOtherDuplicates;
+        return {
+          ...allocated,
+          isValidAddress: hasAddressError || isAddress(allocated.address),
+          addressError: hasAddressError
+            ? t('errorDuplicateAddress', { ns: 'daoCreate' })
+            : undefined,
+        };
       });
 
       const errorMsg = hasDuplicateAddresses
