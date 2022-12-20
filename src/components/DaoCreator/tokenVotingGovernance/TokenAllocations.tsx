@@ -174,6 +174,12 @@ function TokenAllocations({
         >
           {t('labelAddAllocation')}
         </Button>
+        <Text
+          color="grayscale.500"
+          textStyle="text-md-sans-regular"
+        >
+          {t('helperAllocations')}
+        </Text>
       </InputBox>
     </Box>
   );
