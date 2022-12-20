@@ -35,10 +35,10 @@ export function GnosisSignatures({
       let hasDuplicateAddresses = false;
 
       if (address.trim()) {
-        isValidAddress = isAddress(address);
+        isValidAddress = isAddress(address.trim());
       }
-      const updatedAddress = [...snapshotTrustedAddresses].map((trustedAddress, i, prev) => {
-        const isDuplicate = i !== index && isSameAddress(trustedAddress.address, address);
+      const updatedAddress = snapshotTrustedAddresses.map((trustedAddress, i, prev) => {
+        const isDuplicate = i !== index && isSameAddress(trustedAddress.address, address.trim());
 
         const hasOtherDuplicates = prev.some(
           (prevAddr, dupIndex) =>
