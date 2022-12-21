@@ -1,5 +1,4 @@
 import { Dispatch, useEffect } from 'react';
-import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { GovernanceTypes, IGnosis, IGovernance } from '../../types';
 import { GovernanceActions, GovernanceAction } from '../actions';
 import useGovernanceTokenData from './useGovernanceTokenData';
@@ -18,10 +17,6 @@ export const useGnosisGovernance = ({
   gnosis,
   governanceDispatch,
 }: IUseGnosisGovernance) => {
-  const {
-    state: { account },
-  } = useWeb3Provider();
-
   // load voting contracts
   useVotingContracts({ gnosis, governanceDispatch });
   // if voting contracts are loaded, load governance data
@@ -32,7 +27,7 @@ export const useGnosisGovernance = ({
   useSafeMultisigTxs({ governance, gnosis, governanceDispatch });
 
   useEffect(() => {
-    if (!account || !gnosis.safe || governance.contracts.contractsIsLoading) {
+    if (!gnosis.safe || governance.contracts.contractsIsLoading) {
       return;
     }
     const governanceType = !!governance.contracts.ozLinearVotingContract
@@ -51,7 +46,6 @@ export const useGnosisGovernance = ({
       },
     });
   }, [
-    account,
     gnosis.safe,
     governanceDispatch,
     governanceTokenData,

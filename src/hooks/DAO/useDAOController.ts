@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import useSearchDao from '../../hooks/DAO/useSearchDao';
 import { GnosisAction, TreasuryAction } from '../../providers/Fractal/constants/actions';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
 import { GovernanceAction } from './../../providers/Fractal/governance/actions';
+import { useSearchDao } from './useSearchDao';
 
 export default function useDAOController() {
   const {
@@ -18,22 +18,22 @@ export default function useDAOController() {
     state: { signerOrProvider, account, isProviderLoading },
   } = useWeb3Provider();
 
-  const { errorMessage, address, updateSearchString, loading } = useSearchDao();
+  const { errorMessage, address, isLoading, setSearchString } = useSearchDao();
   const navigate = useNavigate();
 
   /**
-   * Passes param address to updateSearchString
+   * Passes param address to setSearchString
    */
   const loadDAO = useCallback(() => {
     if (safe.address !== params.address && !isProviderLoading) {
-      updateSearchString(params.address!);
+      setSearchString(params.address!);
     }
-  }, [safe.address, params.address, updateSearchString, isProviderLoading]);
+  }, [safe.address, params.address, setSearchString, isProviderLoading]);
 
   useEffect(() => loadDAO(), [loadDAO]);
 
   useEffect(() => {
-    if (address && signerOrProvider && account && safeService) {
+    if (address && signerOrProvider && safeService) {
       (async () => {
         treasuryDispatch({
           type: TreasuryAction.RESET,
@@ -58,12 +58,12 @@ export default function useDAOController() {
   ]);
 
   useEffect(() => {
-    if (!loading) {
+    if (!isLoading) {
       if (!!errorMessage) {
         toast(errorMessage, { toastId: 'invalid-dao' });
         gnosisDispatch({ type: GnosisAction.INVALIDATE });
         navigate(BASE_ROUTES.landing);
       }
     }
-  }, [errorMessage, account, loading, isProviderLoading, gnosisDispatch, address, navigate]);
+  }, [errorMessage, isLoading, gnosisDispatch, navigate]);
 }
