@@ -83,9 +83,16 @@ export enum VetoVotingType {
   UNKNOWN,
 }
 
+export enum VetoGuardType {
+  MULTISIG,
+  USUL,
+  UNKNOWN,
+}
+
 export interface IGnosisVetoContract {
   vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
+  vetoGuardType: VetoGuardType;
   vetoVotingType: VetoVotingType;
 }
 
@@ -125,6 +132,7 @@ export enum TxProposalState {
   Failed = 'stateFailed',
   Approved = 'ownerApproved',
   Module = 'stateModule',
+  Expired = 'stateExpiered',
 }
 
 export enum DAOState {
@@ -168,7 +176,7 @@ export interface MultisigProposal extends GovernanceActivity {
 }
 
 export interface GovernanceActivity extends ActivityBase {
-  state: TxProposalState;
+  state: TxProposalState | null;
   proposalNumber: string;
   targets: string[];
   metaData?: ProposalMetaData;
