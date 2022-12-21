@@ -36,39 +36,39 @@ function GuardDetails() {
   const { restrictChars } = useFormHelpers();
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
-  const fieldUpdate = (value: any, field: string) => {
+  const fieldUpdate = (key: string, value: BigNumber) => {
     dispatch({
       type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
       payload: {
-        [field]: value,
+        [key]: value,
       },
     });
   };
   const onExecutionPeriodChange = (executionPeriod: string) => {
     const newExecutionPeriod = BigNumber.from(executionPeriod || 0);
-    fieldUpdate(newExecutionPeriod, 'executionPeriod');
+    fieldUpdate('executionPeriod', newExecutionPeriod);
   };
   const onTimelockPeriodChange = (timelockPeriod: string) => {
     const newTimelockPeriod = BigNumber.from(timelockPeriod || 0);
-    fieldUpdate(newTimelockPeriod, 'timelockPeriod');
+    fieldUpdate('timelockPeriod', newTimelockPeriod);
   };
   const onVetoVotesThresholdChange = (vetoVotesThreshold: string) => {
     const newVetoVotesThreshold = BigNumber.from(vetoVotesThreshold || 0);
-    fieldUpdate(newVetoVotesThreshold, 'vetoVotesThreshold');
+    fieldUpdate('vetoVotesThreshold', newVetoVotesThreshold);
   };
   const onFreezeVotesThresholdChange = (freezeVotesThreshold: string) => {
     const newFreezeVotesThreshold = BigNumber.from(freezeVotesThreshold || 0);
-    fieldUpdate(newFreezeVotesThreshold, 'freezeVotesThreshold');
+    fieldUpdate('freezeVotesThreshold', newFreezeVotesThreshold);
   };
 
   const onFreezeProposalPeriodChange = (freezeProposalPeriod: string) => {
     const newFreezePeriod = BigNumber.from(freezeProposalPeriod || 0);
-    fieldUpdate(newFreezePeriod, 'freezeProposalPeriod');
+    fieldUpdate('freezeProposalPeriod', newFreezePeriod);
   };
 
   const onFreezePeriodChange = (freezePeriod: string) => {
     const newFreezePeriod = BigNumber.from(freezePeriod || 0);
-    fieldUpdate(newFreezePeriod, 'freezePeriod');
+    fieldUpdate('freezePeriod', newFreezePeriod);
   };
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
