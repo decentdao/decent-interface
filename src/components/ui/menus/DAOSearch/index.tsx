@@ -8,30 +8,19 @@ import {
   InputLeftElement,
 } from '@chakra-ui/react';
 import { Search } from '@decent-org/fractal-ui';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSearchDao from '../../../../hooks/DAO/useSearchDao';
+import { useLocation } from 'react-router-dom';
+import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch() {
-  const [searchAddressInput, setSearchAddressInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation(['dashboard']);
 
-  const {
-    errorMessage,
-    loading,
-    address,
-    resetErrorState,
-    addressIsGnosisSafe,
-    updateSearchString,
-  } = useSearchDao();
+  const { errorMessage, isLoading, address, isSafe, setSearchString, searchString } =
+    useSearchDao();
 
-  const selectInput = () => {
-    if (inputRef.current) {
-      inputRef.current.select();
-    }
-  };
   const focusInput = () => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -46,17 +35,21 @@ export function DAOSearch() {
 
   const searchUpdate = useCallback(
     (inputAddress: string) => {
-      setSearchAddressInput(inputAddress);
-      updateSearchString(inputAddress);
+      setSearchString(inputAddress);
     },
-    [updateSearchString]
+    [setSearchString]
   );
 
+  const resetSearch = () => {
+    setSearchString('');
+    unFocusInput();
+  };
+
+  const location = useLocation();
   useEffect(() => {
-    return () => {
-      resetErrorState();
-    };
-  });
+    setSearchString('');
+    unFocusInput();
+  }, [location, setSearchString]);
 
   return (
     <Box
@@ -67,13 +60,8 @@ export function DAOSearch() {
       <Menu
         matchWidth
         isLazy
-        defaultIsOpen={true}
-        onOpen={selectInput}
-        onClose={() => {
-          setSearchAddressInput('');
-          updateSearchString('');
-          unFocusInput();
-        }}
+        onOpen={focusInput}
+        onClose={unFocusInput}
       >
         <MenuButton
           h="full"
@@ -91,8 +79,8 @@ export function DAOSearch() {
               ref={inputRef}
               size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
-              onChange={e => searchUpdate(e.target.value)}
-              value={searchAddressInput}
+              onChange={e => searchUpdate(e.target.value.trim())}
+              value={searchString}
             />
           </InputGroup>
         </MenuButton>
@@ -106,10 +94,11 @@ export function DAOSearch() {
         >
           <Box p="0.5rem 1rem">
             <SearchDisplay
-              loading={loading}
+              loading={isLoading}
               errorMessage={errorMessage}
-              validAddress={addressIsGnosisSafe}
+              validAddress={isSafe}
               address={address}
+              onClickView={resetSearch}
             />
           </Box>
         </MenuList>

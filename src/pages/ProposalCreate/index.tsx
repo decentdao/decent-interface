@@ -188,6 +188,9 @@ function ProposalCreate() {
                 onClick={() =>
                   submitProposal({
                     proposalData,
+                    pendingToastMessage: t('proposalCreatePendingToastMessage'),
+                    successToastMessage: t('proposalCreateSuccessToastMessage'),
+                    failedToastMessage: t('proposalCreateFailureToastMessage'),
                     successCallback,
                   })
                 }
