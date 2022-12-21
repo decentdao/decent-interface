@@ -40,7 +40,7 @@ export function DAOSearch() {
     [setSearchString]
   );
 
-  const onClickViewDAO = () => {
+  const resetSearch = () => {
     setSearchString('');
     unFocusInput();
   };
@@ -98,7 +98,7 @@ export function DAOSearch() {
               errorMessage={errorMessage}
               validAddress={isSafe}
               address={address}
-              onClickView={onClickViewDAO}
+              onClickView={resetSearch}
             />
           </Box>
         </MenuList>
