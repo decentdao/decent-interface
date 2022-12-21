@@ -47,9 +47,9 @@ export default function useSafeContracts() {
     useState<VetoGuard>();
   const [usulVetoGuardMasterCopyContract, setUsulVetoGuardMasterCopyContract] =
     useState<UsulVetoGuard>();
-  const [vetoMultisigVotingMasterCopyContract, setvetoMultisigVotingMasterCopyContract] =
+  const [vetoMultisigVotingMasterCopyContract, setVetoMultisigVotingMasterCopyContract] =
     useState<VetoMultisigVoting>();
-  const [vetoERC20VotingMasterCopyContract, setvetoERC20VotingMasterCopyContract] =
+  const [vetoERC20VotingMasterCopyContract, setVetoERC20VotingMasterCopyContract] =
     useState<VetoERC20Voting>();
   const [votesTokenMasterCopyContract, setVotesTokenMasterCopyContract] = useState<VotesToken>();
   const {
@@ -83,11 +83,11 @@ export default function useSafeContracts() {
       setGnosisSafeSingletonContract(undefined);
       setFractalModuleMasterCopyContract(undefined);
       setFractalNameRegistryContract(undefined);
-      setVotesTokenMasterCopyContract(undefined);
       setGnosisVetoGuardMasterCopyContract(undefined);
       setUsulVetoGuardMasterCopyContract(undefined);
-      setvetoMultisigVotingMasterCopyContract(undefined);
-      setvetoERC20VotingMasterCopyContract(undefined);
+      setVetoMultisigVotingMasterCopyContract(undefined);
+      setVetoERC20VotingMasterCopyContract(undefined);
+      setVotesTokenMasterCopyContract(undefined);
       return;
     }
 
@@ -121,13 +121,12 @@ export default function useSafeContracts() {
     setUsulVetoGuardMasterCopyContract(
       UsulVetoGuard__factory.connect(usulVetoGuardMasterCopy, signerOrProvider)
     );
-    setvetoMultisigVotingMasterCopyContract(
+    setVetoMultisigVotingMasterCopyContract(
       VetoMultisigVoting__factory.connect(vetoMultisigVotingMasterCopy, signerOrProvider)
     );
-    setvetoERC20VotingMasterCopyContract(
+    setVetoERC20VotingMasterCopyContract(
       VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy, signerOrProvider)
     );
-
     setVotesTokenMasterCopyContract(
       VotesToken__factory.connect(votesTokenMasterCopy, signerOrProvider)
     );
