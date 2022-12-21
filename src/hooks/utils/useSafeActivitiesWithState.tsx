@@ -82,46 +82,46 @@ export function useSafeActivitiesWithState(
       ).then(setActivitiesWithState);
     } else {
       // DAO does not have a VetoGuard
-      setActivitiesWithState(activities);
+      setActivitiesWithState(
+        activities.map((activity, _, activityArr) => {
+          if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
+            return activity;
+          }
 
-      activities.map((activity, _, activityArr) => {
-        if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
-          return activity;
-        }
+          const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
+          const isModuleTransaction = activity.transaction.txType === 'MODULE_TRANSACTION';
+          const multiSigTransaction =
+            activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
-        const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
-        const isModuleTransaction = activity.transaction.txType === 'MODULE_TRANSACTION';
-        const multiSigTransaction =
-          activity.transaction as SafeMultisigTransactionWithTransfersResponse;
+          const eventNonce = multiSigTransaction.nonce;
 
-        const eventNonce = multiSigTransaction.nonce;
+          const isRejected =
+            isMultiSigTransaction &&
+            activityArr.find(_activity => {
+              const multiSigTx =
+                _activity.transaction as SafeMultisigTransactionWithTransfersResponse;
+              return (
+                multiSigTx.nonce === eventNonce &&
+                multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
+                multiSigTx.isExecuted
+              );
+            });
 
-        const isRejected =
-          isMultiSigTransaction &&
-          activityArr.find(_activity => {
-            const multiSigTx =
-              _activity.transaction as SafeMultisigTransactionWithTransfersResponse;
-            return (
-              multiSigTx.nonce === eventNonce &&
-              multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
-              multiSigTx.isExecuted
-            );
-          });
-
-        let state;
-        if (isModuleTransaction) {
-          state = TxProposalState.Module;
-        } else if (isRejected) {
-          state = TxProposalState.Rejected;
-        } else if (multiSigTransaction.isExecuted) {
-          state = TxProposalState.Executed;
-        } else if (multiSigTransaction.isSuccessful) {
-          state = TxProposalState.Executing;
-        } else {
-          state = TxProposalState.Active;
-        }
-        return { ...activity, state };
-      });
+          let state;
+          if (isModuleTransaction) {
+            state = TxProposalState.Module;
+          } else if (isRejected) {
+            state = TxProposalState.Rejected;
+          } else if (multiSigTransaction.isExecuted) {
+            state = TxProposalState.Executed;
+          } else if (multiSigTransaction.isSuccessful) {
+            state = TxProposalState.Executing;
+          } else {
+            state = TxProposalState.Active;
+          }
+          return { ...activity, state };
+        })
+      );
     }
   }, [activities, vetoGuard]);
 
