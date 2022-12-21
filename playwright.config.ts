@@ -13,7 +13,7 @@ const config: PlaywrightTestConfig = {
   retries: 2,
   reporter: [
     /* List reporter for getting updates */
-    ['list'],
+    [process.env.CI ? 'github' : 'line'],
     /* HTML output - unzip(open) videos and images before referencing them on the html report */
     ['html', {
       /* Output HTML files to playwright-report folder */
