@@ -16,9 +16,11 @@ import { useAccount } from './hooks/account/useAccount';
 import { useLocalStorage } from './hooks/account/useLocalStorage';
 import useDispatchDAOName from './hooks/useDispatchDAOName';
 import { FractalContext } from './hooks/useFractal';
+import { useFreezeData } from './hooks/useFreezeData';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
 import { useGnosisModuleTypes } from './hooks/useGnosisModuleTypes';
 import useNodes from './hooks/useNodes';
+import { useVetoContracts } from './hooks/useVetoContracts';
 import { gnosisReducer, initializeGnosisState } from './reducers';
 import { connectedAccountReducer, initializeConnectedAccount } from './reducers/account';
 import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
@@ -65,8 +67,10 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
+  useVetoContracts(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
+  useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
 

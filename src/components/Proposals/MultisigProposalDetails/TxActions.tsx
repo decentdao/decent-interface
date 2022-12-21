@@ -128,6 +128,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const buttonIcon = isExecutable ? undefined : <Check boxSize="1.5rem" />;
   const isButtonActive = isOwner && !isPending;
 
+  if (!isExecutable && (hasSigned || !isOwner)) {
+    return null;
+  }
+
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
       <Text textStyle="text-lg-mono-medium">{pageTitle}</Text>
