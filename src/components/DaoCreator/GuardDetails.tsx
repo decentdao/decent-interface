@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
+import { formatBigNumberDisplay } from '../../utils/numberFormats';
 import ContentBanner from '../ui/ContentBanner';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
@@ -33,7 +34,7 @@ function GuardDetails() {
   } = useFractal();
 
   const { restrictChars } = useFormHelpers();
-  const [totalParentVotes, setTotalParentVotes] = useState(0);
+  const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -75,23 +76,27 @@ function GuardDetails() {
   const seconds = t('seconds', { ns: 'common' });
 
   useEffect(() => {
-    if (totalParentVotes === 0) {
+    if (totalParentVotes.eq(0)) {
       if (governanceIsLoading || !safe || !governanceToken) return;
 
-      let totalVotes: number;
+      let totalVotes: BigNumber;
       switch (type) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
-          totalVotes = parseInt(
-            ethers.utils.formatUnits(governanceToken.totalSupply || '0', governanceToken.decimals)
+          const normalized = ethers.utils.formatUnits(
+            governanceToken.totalSupply || '0',
+            governanceToken.decimals
           );
+          // ethers.utils.formatUnits returns a whole number string in the form `xxx.0`
+          // but BigNumber won't parse out the insignificant decimal, so we need to cut it
+          totalVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           break;
         case GovernanceTypes.GNOSIS_SAFE:
         default:
-          totalVotes = safe.owners?.length || 0;
+          totalVotes = BigNumber.from(safe.owners?.length || 0);
       }
       setTotalParentVotes(totalVotes);
 
-      const childThresholds = Math.ceil(totalVotes / 2);
+      const childThresholds = totalVotes.eq(1) ? totalVotes : totalVotes.div(2);
       dispatch({
         type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
         payload: {
@@ -111,8 +116,8 @@ function GuardDetails() {
     type,
   ]);
 
-  const showVetoFreezeHelpers = totalParentVotes > 0;
-  const formattedVotesTotal = totalParentVotes.toLocaleString();
+  const showVetoFreezeHelpers = totalParentVotes.gt(0);
+  const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);
   const vetoHelper = showVetoFreezeHelpers
     ? t('helperVetoVotesThreshold', { totalVotes: formattedVotesTotal })
     : null;
