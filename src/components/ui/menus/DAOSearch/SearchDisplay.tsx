@@ -9,9 +9,16 @@ interface ISearchDisplay {
   errorMessage?: string;
   validAddress?: boolean;
   address?: string;
+  onClickView: Function;
 }
 
-export function SearchDisplay({ loading, errorMessage, validAddress, address }: ISearchDisplay) {
+export function SearchDisplay({
+  loading,
+  errorMessage,
+  validAddress,
+  address,
+  onClickView,
+}: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const navigate = useNavigate();
 
@@ -37,7 +44,10 @@ export function SearchDisplay({ loading, errorMessage, validAddress, address }: 
         display="flex"
         flexDirection="column"
         alignItems="flex-start"
-        onClick={() => navigate(DAO_ROUTES.dao.relative(address))}
+        onClick={() => {
+          onClickView();
+          navigate(DAO_ROUTES.dao.relative(address));
+        }}
         cursor="default"
       >
         <Text
