@@ -32,7 +32,7 @@ function Transaction({
     try {
       return new utils.Interface([functionSignature]).encodeFunctionData(functionName, parameters);
     } catch (e) {
-      logError(e); //can we get this to not show in the console??
+      logError(e);
       return;
     }
   };
@@ -42,12 +42,14 @@ function Transaction({
       ? utils.isAddress(targetAddress.trim().toLowerCase())
       : undefined;
 
-    const transactionCopy = Object.assign({}, transaction);
-    transactionCopy.targetAddress = targetAddress.trim();
-    transactionCopy.addressError =
-      !isValidAddress && targetAddress.trim()
-        ? t('errorInvalidAddress', { ns: 'common' })
-        : undefined;
+    const transactionCopy = {
+      ...transaction,
+      targetAddress: targetAddress.trim(),
+      addressError:
+        !isValidAddress && targetAddress.trim()
+          ? t('errorInvalidAddress', { ns: 'common' })
+          : undefined,
+    };
     updateTransaction(transactionCopy, transactionNumber);
   };
 
@@ -56,9 +58,12 @@ function Transaction({
     encodedFunctionData: string | undefined,
     key: keyof TransactionData
   ) => {
-    const transactionCopy = { ...transaction, [key]: value };
-    transactionCopy.encodedFunctionData = encodedFunctionData;
-    transactionCopy.fragmentError = !encodeFunctionData ? t('errorInvalidFragments') : undefined;
+    const transactionCopy = {
+      ...transaction,
+      [key]: value,
+      encodedFunctionData: encodedFunctionData,
+      fragmentError: !encodeFunctionData ? t('errorInvalidFragments') : undefined,
+    };
     updateTransaction(transactionCopy, transactionNumber);
   };
 

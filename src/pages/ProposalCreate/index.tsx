@@ -72,8 +72,8 @@ function ProposalCreate() {
   };
 
   useEffect(() => {
-    let hasError: boolean = false;
-    transactions.forEach((transaction: TransactionData) => {
+    let hasError = false;
+    transactions.forEach(transaction => {
       if (transaction.addressError || transaction.fragmentError) {
         hasError = true;
       }
