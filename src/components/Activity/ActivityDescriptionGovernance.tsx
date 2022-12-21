@@ -73,7 +73,7 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
 
   const transactionDescription = t('proposalDescription', {
     ns: 'dashboard',
-    txCount: governanceActivity.targets.length,
+    count: governanceActivity.targets.length,
   });
 
   return (
