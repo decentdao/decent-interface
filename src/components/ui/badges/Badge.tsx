@@ -6,7 +6,7 @@ import { TxProposalState, DAOState } from '../../../providers/Fractal/types';
 type BadgeType = { [key: string]: { Icon?: any; bg: string; color: string } };
 
 const BADGE_MAPPING: BadgeType = {
-  [TxProposalState.Pending]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Queuable]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Active]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Executing]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Executed]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },

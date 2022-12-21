@@ -51,9 +51,9 @@ export const useSafeMultisigTxs = ({
       0
     );
 
-    const pendingProposals = multisigTxs.reduce(
+    const activeProposals = multisigTxs.reduce(
       (prev, proposal) =>
-        proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Pending
+        proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Executing
           ? prev + 1
           : prev,
       0
@@ -64,7 +64,7 @@ export const useSafeMultisigTxs = ({
       payload: {
         txProposals: multisigTxs,
         passed: passedProposals,
-        pending: pendingProposals,
+        active: activeProposals,
       },
     });
   }, [safeService, safe.address, type, parsedActivitiesWithState, governanceDispatch]);

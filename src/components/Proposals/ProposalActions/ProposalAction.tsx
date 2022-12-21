@@ -26,7 +26,7 @@ export function ProposalAction({
       case TxProposalState.Active:
         // Call Vote action - probably redirect to proposal details where CastVote component would handle proper vote casting
         break;
-      case TxProposalState.Pending:
+      case TxProposalState.Queuable:
         // Call proposal queueing action
         break;
       case TxProposalState.Executing:
@@ -44,7 +44,7 @@ export function ProposalAction({
     switch (proposal.state) {
       case TxProposalState.Active:
         return t('vote');
-      case TxProposalState.Pending:
+      case TxProposalState.Queuable:
         return t('queue');
       case TxProposalState.Executing:
         return t('execute');
@@ -70,7 +70,7 @@ export function ProposalAction({
     switch (proposal.state) {
       case TxProposalState.Active:
         return <CastVote proposal={proposal} />;
-      case TxProposalState.Pending:
+      case TxProposalState.Queuable:
         return <Queue proposal={proposal} />;
       case TxProposalState.Executing:
         return <Execute proposal={proposal} />;

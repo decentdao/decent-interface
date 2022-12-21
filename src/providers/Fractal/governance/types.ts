@@ -50,7 +50,7 @@ export type CreateProposalFunc = (proposal: {
 
 export interface TxProposalsInfo {
   txProposals: TxProposal[];
-  pending?: number; // active/queued (usul) | not executed (multisig)
+  active?: number; // active/queued (usul) | not executed (multisig)
   passed?: number; // executed (usul/multisig)
 }
 
@@ -125,14 +125,14 @@ export enum TxProposalState {
   Executed = 'stateExecuted',
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
-  Rejected = 'stateRejected',
-  // Safe-specific states
-  Pending = 'statePending',
-  Queued = 'stateQueued',
   Failed = 'stateFailed',
+  Queuable = 'stateQueuable',
+  // Safe-specific states
+  Queued = 'stateQueued', // Timelock for multisig starts when queued
   Approved = 'ownerApproved',
   Module = 'stateModule',
   Expired = 'stateExpiered',
+  Rejected = 'stateRejected',
 }
 
 export enum DAOState {

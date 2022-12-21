@@ -65,7 +65,7 @@ export function useSafeActivitiesWithState(
                 // Timelock has ended
                 if (currentTimestamp < queuedTimestamp + timelockPeriod + executionPeriod) {
                   // Within execution period
-                  state = TxProposalState.Pending;
+                  state = TxProposalState.Executing;
                 } else {
                   // Execution period has ended
                   state = TxProposalState.Expired;
@@ -116,7 +116,7 @@ export function useSafeActivitiesWithState(
         } else if (multiSigTransaction.isExecuted) {
           state = TxProposalState.Executed;
         } else if (multiSigTransaction.isSuccessful) {
-          state = TxProposalState.Pending;
+          state = TxProposalState.Executing;
         } else {
           state = TxProposalState.Active;
         }
