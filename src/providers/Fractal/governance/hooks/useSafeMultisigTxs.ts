@@ -1,5 +1,7 @@
+import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useCallback } from 'react';
 import { useParseSafeTxs } from '../../../../hooks/utils/useParseSafeTxs';
+import { useSafeActivitiesWithState } from '../../../../hooks/utils/useSafeActivitiesWithState';
 import { IGnosis } from '../../types';
 import { GovernanceAction, GovernanceActions } from '../actions';
 import {
@@ -8,6 +10,7 @@ import {
   GovernanceTypes,
   ActivityEventType,
   MultisigProposal,
+  VetoGuardType,
 } from './../types';
 interface IUseSafeMultisigTxs {
   governance: IGovernance;
@@ -17,20 +20,29 @@ interface IUseSafeMultisigTxs {
 
 export const useSafeMultisigTxs = ({
   governance: { type },
-  gnosis: { transactions, safeService, safe },
+  gnosis: {
+    transactions,
+    safeService,
+    safe,
+    guardContracts: { vetoGuardContract, vetoGuardType },
+  },
   governanceDispatch,
 }: IUseSafeMultisigTxs) => {
   const parsedActivities = useParseSafeTxs(transactions, safe);
+  const parsedActivitiesWithState = useSafeActivitiesWithState(
+    parsedActivities,
+    vetoGuardType === VetoGuardType.MULTISIG ? (vetoGuardContract as VetoGuard) : undefined
+  );
 
   const getMultisigTx = useCallback(async () => {
     if (!safeService || !safe.address || !type) {
       return;
     }
-    if (!parsedActivities.length) {
+    if (!parsedActivitiesWithState.length) {
       return;
     }
 
-    const multisigTxs = (parsedActivities as MultisigProposal[]).filter(
+    const multisigTxs = (parsedActivitiesWithState as MultisigProposal[]).filter(
       tx => tx.eventType === ActivityEventType.Governance
     );
 
@@ -55,7 +67,7 @@ export const useSafeMultisigTxs = ({
         pending: pendingProposals,
       },
     });
-  }, [safeService, safe.address, governanceDispatch, type, parsedActivities]);
+  }, [safeService, safe.address, type, parsedActivitiesWithState, governanceDispatch]);
 
   useEffect(() => {
     if (type === GovernanceTypes.GNOSIS_SAFE) {
