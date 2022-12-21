@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isAddress } from 'ethers/lib/utils';
 import { buildGnosisApiUrl } from '../providers/Fractal/utils';
 import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../types';
 
@@ -32,4 +33,11 @@ export const decodeTransactions = async (
       }
     })
   );
+};
+
+export const isSameAddress = (addr1: string, addr2: string) => {
+  if (!isAddress(addr1) || !isAddress(addr2)) {
+    return false;
+  }
+  return addr1.toLowerCase() === addr2.toLowerCase();
 };

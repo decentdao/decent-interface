@@ -33,7 +33,7 @@ export default function useDAOController() {
   useEffect(() => loadDAO(), [loadDAO]);
 
   useEffect(() => {
-    if (address && signerOrProvider && account && safeService) {
+    if (address && signerOrProvider && safeService) {
       (async () => {
         treasuryDispatch({
           type: TreasuryAction.RESET,
