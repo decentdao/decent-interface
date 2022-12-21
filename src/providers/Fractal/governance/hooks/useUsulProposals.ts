@@ -5,67 +5,34 @@ import {
 import {
   ProposalCreatedEvent,
   ProposalMetadataCreatedEvent,
-  ProposalExecutedEvent,
   ProposalCanceledEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
-import { BigNumber } from 'ethers';
 import { Dispatch, useCallback, useEffect } from 'react';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { IGovernance, TxProposalState, UsulProposal, VOTE_CHOICES } from '../../types';
-import {
-  mapProposalCreatedEventToProposal,
-  getProposalVotesSummary,
-  getTxProposalState,
-} from '../../utils';
+import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../utils';
 import { GovernanceActions, GovernanceAction } from '../actions';
+import useUpdateProposalState from './useUpdateProposalState';
 
 interface IUseUsulProposals {
   governance: IGovernance;
   governanceDispatch: Dispatch<GovernanceActions>;
 }
 
-export default function useUsulProposals({
-  governance: {
-    txProposalsInfo,
-    contracts: { usulContract, ozLinearVotingContract },
-  },
-  governanceDispatch,
-}: IUseUsulProposals) {
+export default function useUsulProposals({ governance, governanceDispatch }: IUseUsulProposals) {
   const {
     state: { signerOrProvider, provider, chainId },
   } = useWeb3Provider();
-
-  const updateProposalState = useCallback(
-    async (proposalNumber: BigNumber) => {
-      if (!usulContract || !signerOrProvider) {
-        return;
-      }
-      const proposals = await Promise.all(
-        (txProposalsInfo.txProposals as UsulProposal[]).map(async proposal => {
-          if (proposalNumber.eq(proposal.proposalNumber)) {
-            const updatedProposal = {
-              ...proposal,
-              state: await getTxProposalState(usulContract, proposalNumber, signerOrProvider),
-            };
-            return updatedProposal;
-          }
-          return proposal;
-        })
-      );
-
-      governanceDispatch({
-        type: GovernanceAction.UPDATE_PROPOSALS,
-        payload: {
-          txProposals: proposals,
-          passed: txProposalsInfo.passed,
-          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
-        },
-      });
-    },
-    [usulContract, signerOrProvider, governanceDispatch, txProposalsInfo]
-  );
+  const {
+    txProposalsInfo,
+    contracts: { usulContract, ozLinearVotingContract },
+  } = governance;
+  const updateProposalState = useUpdateProposalState({
+    governance,
+    governanceDispatch,
+  });
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
     async (...[strategyAddress, proposalNumber, proposer]) => {
@@ -181,13 +148,6 @@ export default function useUsulProposals({
     [updateProposalState]
   );
 
-  const proposalExecutedListener: TypedListener<ProposalExecutedEvent> = useCallback(
-    async (...[proposalNumber]) => {
-      await updateProposalState(proposalNumber);
-    },
-    [updateProposalState]
-  );
-
   const proposalCanceledListener: TypedListener<ProposalCanceledEvent> = useCallback(
     async (...[proposalNumber]) => {
       await updateProposalState(proposalNumber);
@@ -201,7 +161,6 @@ export default function useUsulProposals({
     }
     const proposalCreatedFilter = usulContract.filters.ProposalCreated();
     const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
-    const proposalExecutedFilter = usulContract.filters.ProposalExecuted();
     const proposalCanceledFilter = usulContract.filters.ProposalCanceled();
 
     const votedEvent = ozLinearVotingContract.filters.Voted();
@@ -209,7 +168,6 @@ export default function useUsulProposals({
 
     usulContract.on(proposalCreatedFilter, proposalCreatedListener);
     usulContract.on(proposalMetaDataCreatedFilter, proposalMetadataCreatedListener);
-    usulContract.on(proposalExecutedFilter, proposalExecutedListener);
     usulContract.on(proposalCanceledFilter, proposalCanceledListener);
 
     ozLinearVotingContract.on(votedEvent, proposalVotedEventListener);
@@ -218,7 +176,6 @@ export default function useUsulProposals({
     return () => {
       usulContract.off(proposalCreatedFilter, proposalCreatedListener);
       usulContract.off(proposalMetaDataCreatedFilter, proposalMetadataCreatedListener);
-      usulContract.off(proposalExecutedFilter, proposalExecutedListener);
       usulContract.off(proposalCanceledFilter, proposalCanceledListener);
 
       ozLinearVotingContract.off(votedEvent, proposalVotedEventListener);
@@ -232,7 +189,6 @@ export default function useUsulProposals({
     proposalMetadataCreatedListener,
     proposalVotedEventListener,
     proposalQueuedEventListener,
-    proposalExecutedListener,
     proposalCanceledListener,
   ]);
 
