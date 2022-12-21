@@ -21,7 +21,7 @@ export function useGnosisApiServices(
   gnosisDispatch: React.Dispatch<GnosisActions>
 ) {
   const {
-    state: { chainId, account },
+    state: { chainId },
   } = useWeb3Provider();
 
   const {
@@ -31,7 +31,7 @@ export function useGnosisApiServices(
   const { setMethodOnInterval } = useUpdateTimer(address);
 
   useEffect(() => {
-    if (!account || !signerOrProvider) {
+    if (!signerOrProvider) {
       return;
     }
     const ethAdapter = new EthersAdapter({
@@ -50,7 +50,7 @@ export function useGnosisApiServices(
         ethAdapter,
       }),
     });
-  }, [account, signerOrProvider, gnosisDispatch, chainId]);
+  }, [signerOrProvider, gnosisDispatch, chainId]);
 
   const getGnosisSafeFungibleAssets = useCallback(async () => {
     if (!address || !safeService) {
