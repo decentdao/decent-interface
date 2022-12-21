@@ -8,8 +8,9 @@ import {
   InputLeftElement,
 } from '@chakra-ui/react';
 import { Search } from '@decent-org/fractal-ui';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
@@ -44,6 +45,12 @@ export function DAOSearch() {
     unFocusInput();
   };
 
+  const location = useLocation();
+  useEffect(() => {
+    setSearchString('');
+    unFocusInput();
+  }, [location, setSearchString]);
+
   return (
     <Box
       width="full"
@@ -53,8 +60,8 @@ export function DAOSearch() {
       <Menu
         matchWidth
         isLazy
-        defaultIsOpen={true}
         onOpen={focusInput}
+        onClose={unFocusInput}
       >
         <MenuButton
           h="full"
