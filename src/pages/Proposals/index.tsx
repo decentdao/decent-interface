@@ -7,6 +7,7 @@ import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
+import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
 export function Governance() {
   const { t } = useTranslation(['common', 'proposal']);
@@ -14,6 +15,10 @@ export function Governance() {
     gnosis: { daoName },
     governance: { type, governanceToken },
   } = useFractal();
+
+  const {
+    state: { account },
+  } = useWeb3Provider();
 
   const delegate = useFractalModal(ModalType.DELEGATE);
   const showDelegate =
@@ -29,9 +34,11 @@ export function Governance() {
         buttonClick={showDelegate ? delegate : undefined}
         buttonTestId="link-delegate"
       >
-        <Link to="new">
-          <Button marginLeft={4}>{t('createProposal', { ns: 'proposal' })}</Button>
-        </Link>
+        {account && (
+          <Link to="new">
+            <Button marginLeft={4}>{t('createProposal', { ns: 'proposal' })}</Button>
+          </Link>
+        )}
       </PageHeader>
       <Proposals />
     </Box>
