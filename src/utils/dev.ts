@@ -69,24 +69,8 @@ export const useProposeStuff = (doSomething: Function) => {
       daoNameChange.parameters
     ) || '';
 
-  //Add Transfer LINK Token transaction
-  const transferLinkToken = {
-    targetAddress: '0x326C977E6efc84E512bB9C30f76E30c160eD06FB',
-    functionName: 'transfer',
-    functionSignature: 'address _to, uint256 _amount',
-    parameters: '0xC6eFD4C3ac07b359483CfC76b8953745123c4458, 100000000000000000',
-    isExpanded: true,
-    encodedFunctionData: '',
-  };
-  transferLinkToken.encodedFunctionData =
-    encodeFunctionData(
-      transferLinkToken.functionName,
-      transferLinkToken.functionSignature,
-      transferLinkToken.parameters
-    ) || '';
-
   return () => {
-    doSomething(shuffle([randomDuckNFT, daoNameChange, transferLinkToken]));
+    doSomething(shuffle([randomDuckNFT, daoNameChange]));
   };
 };
 
