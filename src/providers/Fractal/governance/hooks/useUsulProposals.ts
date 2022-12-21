@@ -1,10 +1,24 @@
-import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
+import {
+  VoteFinalizedEvent,
+  VotedEvent,
+} from '@fractal-framework/fractal-contracts/dist/typechain-types/@tokenwalk/seele/contracts/extensions/BaseTokenVoting';
+import {
+  ProposalCreatedEvent,
+  ProposalMetadataCreatedEvent,
+  ProposalExecutedEvent,
+  ProposalCanceledEvent,
+} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
+import { BigNumber } from 'ethers';
 import { Dispatch, useCallback, useEffect } from 'react';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
-import { IGovernance, TxProposalState } from '../../types';
-import { mapProposalCreatedEventToProposal } from '../../utils';
+import { IGovernance, TxProposalState, UsulProposal, VOTE_CHOICES } from '../../types';
+import {
+  mapProposalCreatedEventToProposal,
+  getProposalVotesSummary,
+  getTxProposalState,
+} from '../../utils';
 import { GovernanceActions, GovernanceAction } from '../actions';
 
 interface IUseUsulProposals {
@@ -15,13 +29,43 @@ interface IUseUsulProposals {
 export default function useUsulProposals({
   governance: {
     txProposalsInfo,
-    contracts: { usulContract },
+    contracts: { usulContract, ozLinearVotingContract },
   },
   governanceDispatch,
 }: IUseUsulProposals) {
   const {
     state: { signerOrProvider, provider, chainId },
   } = useWeb3Provider();
+
+  const updateProposalState = useCallback(
+    async (proposalNumber: BigNumber) => {
+      if (!usulContract || !signerOrProvider) {
+        return;
+      }
+      const proposals = await Promise.all(
+        (txProposalsInfo.txProposals as UsulProposal[]).map(async proposal => {
+          if (proposalNumber.eq(proposal.proposalNumber)) {
+            const updatedProposal = {
+              ...proposal,
+              state: await getTxProposalState(usulContract, proposalNumber, signerOrProvider),
+            };
+            return updatedProposal;
+          }
+          return proposal;
+        })
+      );
+
+      governanceDispatch({
+        type: GovernanceAction.UPDATE_PROPOSALS,
+        payload: {
+          txProposals: proposals,
+          passed: txProposalsInfo.passed,
+          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
+        },
+      });
+    },
+    [usulContract, signerOrProvider, governanceDispatch, txProposalsInfo]
+  );
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
     async (...[strategyAddress, proposalNumber, proposer]) => {
@@ -51,18 +95,146 @@ export default function useUsulProposals({
     [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo]
   );
 
+  const proposalMetadataCreatedListener: TypedListener<ProposalMetadataCreatedEvent> = useCallback(
+    async (...[proposalNumber, transactions, title, description, documentationUrl]) => {
+      if (!usulContract || !signerOrProvider || !provider) {
+        return;
+      }
+
+      const proposals = await Promise.all(
+        (txProposalsInfo.txProposals as UsulProposal[]).map(async proposal => {
+          if (proposalNumber.eq(proposal.proposalNumber)) {
+            return {
+              ...proposal,
+              metaData: {
+                decodedTransactions: await decodeTransactions(transactions, chainId),
+                transactions,
+                title,
+                description,
+                documentationUrl,
+              },
+            };
+          }
+          return proposal;
+        })
+      );
+
+      governanceDispatch({
+        type: GovernanceAction.UPDATE_PROPOSALS,
+        payload: {
+          txProposals: proposals,
+          passed: txProposalsInfo.passed,
+          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
+        },
+      });
+    },
+    [usulContract, signerOrProvider, provider, chainId, governanceDispatch, txProposalsInfo]
+  );
+
+  const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
+    async (...[voter, proposalNumber, support, weight]) => {
+      if (!ozLinearVotingContract || !usulContract || !signerOrProvider) {
+        return;
+      }
+
+      const proposals = await Promise.all(
+        (txProposalsInfo.txProposals as UsulProposal[]).map(async proposal => {
+          if (proposalNumber.eq(proposal.proposalNumber)) {
+            const updatedProposal = {
+              ...proposal,
+              votes: [
+                ...proposal.votes,
+                {
+                  voter,
+                  choice: VOTE_CHOICES[support],
+                  weight,
+                },
+              ],
+              votesSummary: await getProposalVotesSummary(
+                usulContract,
+                proposalNumber,
+                signerOrProvider
+              ),
+            };
+            return updatedProposal;
+          }
+          return proposal;
+        })
+      );
+
+      governanceDispatch({
+        type: GovernanceAction.UPDATE_PROPOSALS,
+        payload: {
+          txProposals: proposals,
+          passed: txProposalsInfo.passed,
+          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
+        },
+      });
+    },
+    [usulContract, ozLinearVotingContract, governanceDispatch, signerOrProvider, txProposalsInfo]
+  );
+
+  const proposalQueuedEventListener: TypedListener<VoteFinalizedEvent> = useCallback(
+    async (...[proposalNumber]) => {
+      await updateProposalState(proposalNumber);
+    },
+    [updateProposalState]
+  );
+
+  const proposalExecutedListener: TypedListener<ProposalExecutedEvent> = useCallback(
+    async (...[proposalNumber]) => {
+      await updateProposalState(proposalNumber);
+    },
+    [updateProposalState]
+  );
+
+  const proposalCanceledListener: TypedListener<ProposalCanceledEvent> = useCallback(
+    async (...[proposalNumber]) => {
+      await updateProposalState(proposalNumber);
+    },
+    [updateProposalState]
+  );
+
   useEffect(() => {
-    if (!usulContract || !signerOrProvider) {
+    if (!usulContract || !ozLinearVotingContract || !signerOrProvider) {
       return;
     }
-    const filter = usulContract.filters.ProposalCreated();
+    const proposalCreatedFilter = usulContract.filters.ProposalCreated();
+    const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
+    const proposalExecutedFilter = usulContract.filters.ProposalExecuted();
+    const proposalCanceledFilter = usulContract.filters.ProposalCanceled();
 
-    usulContract.on(filter, proposalCreatedListener);
+    const votedEvent = ozLinearVotingContract.filters.Voted();
+    const queuedEvent = ozLinearVotingContract.filters.VoteFinalized();
+
+    usulContract.on(proposalCreatedFilter, proposalCreatedListener);
+    usulContract.on(proposalMetaDataCreatedFilter, proposalMetadataCreatedListener);
+    usulContract.on(proposalExecutedFilter, proposalExecutedListener);
+    usulContract.on(proposalCanceledFilter, proposalCanceledListener);
+
+    ozLinearVotingContract.on(votedEvent, proposalVotedEventListener);
+    ozLinearVotingContract.on(queuedEvent, proposalQueuedEventListener);
 
     return () => {
-      usulContract.off(filter, proposalCreatedListener);
+      usulContract.off(proposalCreatedFilter, proposalCreatedListener);
+      usulContract.off(proposalMetaDataCreatedFilter, proposalMetadataCreatedListener);
+      usulContract.off(proposalExecutedFilter, proposalExecutedListener);
+      usulContract.off(proposalCanceledFilter, proposalCanceledListener);
+
+      ozLinearVotingContract.off(votedEvent, proposalVotedEventListener);
+      ozLinearVotingContract.off(queuedEvent, proposalQueuedEventListener);
     };
-  }, [usulContract, signerOrProvider, proposalCreatedListener]);
+  }, [
+    usulContract,
+    ozLinearVotingContract,
+    signerOrProvider,
+    proposalCreatedListener,
+    proposalMetadataCreatedListener,
+    proposalVotedEventListener,
+    proposalQueuedEventListener,
+    proposalExecutedListener,
+    proposalCanceledListener,
+  ]);
 
   useEffect(() => {
     if (!usulContract || !signerOrProvider || !provider) {
@@ -106,7 +278,6 @@ export default function useUsulProposals({
         (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
         0
       );
-      // @todo no queued?
       const pendingProposals = mappedProposals.reduce(
         (prev, proposal) =>
           proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Pending
