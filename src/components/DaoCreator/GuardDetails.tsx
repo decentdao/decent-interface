@@ -92,12 +92,16 @@ function GuardDetails() {
       setTotalParentVotes(totalVotes);
 
       const childThresholds = Math.ceil(totalVotes / 2);
-      fieldUpdate(childThresholds, 'vetoVotesThreshold');
-      fieldUpdate(childThresholds, 'freezeVotesThreshold');
+      dispatch({
+        type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
+        payload: {
+          ['vetoVotesThreshold']: childThresholds,
+          ['freezeVotesThreshold']: childThresholds,
+        },
+      });
     }
   }, [
     dispatch,
-    fieldUpdate,
     governance,
     governanceIsLoading,
     governanceToken,
