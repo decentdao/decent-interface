@@ -58,7 +58,7 @@
     "labelTokenName": "Token Name",
     "helperTokenName": "What is your governance token called?",
     "labelTokenSymbol": "Token Symbol",
-    "helperTokenSymbol": "The symbol for your token (3-5 chars)",    
+    "helperTokenSymbol": "The symbol for your token (3-5 chars)",
     "labelTokenSupply": "Token Supply",
     "helperTokenSupply": "Total available tokens",
     "labelMultisigGov": "Multisig",
@@ -73,5 +73,8 @@
     "titleTokenParams": "Token Metadata",
     "titleAddress": "Address",
     "titleAmount": "Amount",
+    "createSubDAOPendingToastMessage": "Deploying your subDAO",
+    "createSubDAOSuccessToastMessage": "Deployment successful",
+    "createSubDAOFailureToastMessage": "Deployment failed",
     "helperAllocations": "Unallocated tokens will be placed in your DAO's treasury"
 }
