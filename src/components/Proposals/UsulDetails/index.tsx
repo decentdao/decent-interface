@@ -6,9 +6,13 @@ import ContentBox from '../../../components/ui/ContentBox';
 import ProposalCreatedBy from '../../../components/ui/proposal/ProposalCreatedBy';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { UsulProposal } from '../../../providers/Fractal/types';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
+  const {
+    state: { account },
+  } = useWeb3Provider();
   return (
     <Grid gap={4}>
       <GridItem>
@@ -22,10 +26,12 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
       </GridItem>
       <GridItem>
         <ProposalSummary proposal={proposal} />
-        <ProposalAction
-          proposal={proposal}
-          expandedView
-        />
+        {account && (
+          <ProposalAction
+            proposal={proposal}
+            expandedView
+          />
+        )}
       </GridItem>
     </Grid>
   );
