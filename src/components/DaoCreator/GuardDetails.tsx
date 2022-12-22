@@ -73,7 +73,7 @@ function GuardDetails() {
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const votes = t('votesTitle', { ns: 'proposal' });
-  const seconds = t('seconds', { ns: 'common' });
+  const minutes = t('minutes', { ns: 'common' });
 
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
@@ -145,7 +145,7 @@ function GuardDetails() {
               >
                 <InputGroup>
                   <NumberInputField />
-                  <InputRightElement mr="4">{seconds}</InputRightElement>
+                  <InputRightElement mr="4">{minutes}</InputRightElement>
                 </InputGroup>
               </NumberInput>
             </LabelWrapper>
@@ -172,7 +172,7 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
+                <InputRightElement mr="4">{minutes}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
@@ -234,7 +234,7 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
+                <InputRightElement mr="4">{minutes}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
@@ -260,7 +260,7 @@ function GuardDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
+                <InputRightElement mr="4">{minutes}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
