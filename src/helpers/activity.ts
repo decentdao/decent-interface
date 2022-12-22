@@ -19,3 +19,11 @@ export const checkIsRejected = (
     })
   );
 };
+
+export const checkIsApproved = (
+  multiSigTransaction: SafeMultisigTransactionWithTransfersResponse
+) => {
+  return (
+    (multiSigTransaction.confirmations?.length || 0) >= multiSigTransaction.confirmationsRequired
+  );
+};

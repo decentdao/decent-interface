@@ -2,7 +2,7 @@ import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import { checkIsRejected } from '../../helpers/activity';
+import { checkIsRejected, checkIsApproved } from '../../helpers/activity';
 import { Activity, ActivityEventType, TxProposalState } from '../../providers/Fractal/types';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
@@ -50,9 +50,7 @@ export function useSafeActivitiesWithState(
               multiSigTransaction
             );
 
-            const isQueueable =
-              (multiSigTransaction.confirmations?.length || 0) >=
-              multiSigTransaction.confirmationsRequired;
+            const isApproved = checkIsApproved(multiSigTransaction);
 
             const abiCoder = new ethers.utils.AbiCoder();
             const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
@@ -97,7 +95,7 @@ export function useSafeActivitiesWithState(
               // Has not been queued
               if (isRejected) {
                 state = TxProposalState.Rejected;
-              } else if (isQueueable) {
+              } else if (isApproved) {
                 state = TxProposalState.Queueable;
               } else {
                 state = TxProposalState.Active;
@@ -155,9 +153,7 @@ export function useSafeActivitiesWithState(
             multiSigTransaction
           );
 
-          const isApproved = multiSigTransaction.confirmations
-            ? multiSigTransaction.confirmations?.length >= multiSigTransaction.confirmationsRequired
-            : false;
+          const isApproved = checkIsApproved(multiSigTransaction);
 
           let state;
           if (isRejected) {
