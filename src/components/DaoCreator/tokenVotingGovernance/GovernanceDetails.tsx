@@ -55,7 +55,7 @@ function GovernanceDetails() {
   };
 
   const { t } = useTranslation(['daoCreate', 'common']);
-  const seconds = t('seconds', { ns: 'common' });
+  const minutes = t('minutes', { ns: 'common' });
 
   return (
     <Box>
@@ -76,7 +76,7 @@ function GovernanceDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
+                <InputRightElement mr="4">{minutes}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
@@ -121,7 +121,7 @@ function GovernanceDetails() {
             >
               <InputGroup>
                 <NumberInputField />
-                <InputRightElement mr="4">{seconds}</InputRightElement>
+                <InputRightElement mr="4">{minutes}</InputRightElement>
               </InputGroup>
             </NumberInput>
           </LabelWrapper>
