@@ -4,7 +4,6 @@ import {
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/@tokenwalk/seele/contracts/extensions/BaseTokenVoting';
 import {
   ProposalCreatedEvent,
-  ProposalMetadataCreatedEvent,
   ProposalCanceledEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
 import { Dispatch, useCallback, useEffect } from 'react';
@@ -39,13 +38,28 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       if (!usulContract || !signerOrProvider || !provider) {
         return;
       }
+      const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
+      const proposalMetaDataCreatedEvents = await usulContract.queryFilter(
+        proposalMetaDataCreatedFilter
+      );
+      const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
+        event.args.proposalId.eq(proposalNumber)
+      );
+      let metaData;
+      if (metaDataEvent) {
+        metaData = {
+          transactions: metaDataEvent.args.transactions,
+          decodedTransactions: await decodeTransactions(metaDataEvent.args.transactions, chainId),
+        };
+      }
       const proposal = await mapProposalCreatedEventToProposal(
         strategyAddress,
         proposalNumber,
         proposer,
         usulContract,
         signerOrProvider,
-        provider
+        provider,
+        metaData
       );
 
       const proposals = [...txProposalsInfo.txProposals, proposal];
@@ -59,43 +73,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         },
       });
     },
-    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo]
-  );
-
-  const proposalMetadataCreatedListener: TypedListener<ProposalMetadataCreatedEvent> = useCallback(
-    async (...[proposalNumber, transactions, title, description, documentationUrl]) => {
-      if (!usulContract || !signerOrProvider || !provider) {
-        return;
-      }
-
-      const proposals = await Promise.all(
-        (txProposalsInfo.txProposals as UsulProposal[]).map(async proposal => {
-          if (proposalNumber.eq(proposal.proposalNumber)) {
-            return {
-              ...proposal,
-              metaData: {
-                decodedTransactions: await decodeTransactions(transactions, chainId),
-                transactions,
-                title,
-                description,
-                documentationUrl,
-              },
-            };
-          }
-          return proposal;
-        })
-      );
-
-      governanceDispatch({
-        type: GovernanceAction.UPDATE_PROPOSALS,
-        payload: {
-          txProposals: proposals,
-          passed: txProposalsInfo.passed,
-          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
-        },
-      });
-    },
-    [usulContract, signerOrProvider, provider, chainId, governanceDispatch, txProposalsInfo]
+    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo, chainId]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
@@ -160,14 +138,12 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       return;
     }
     const proposalCreatedFilter = usulContract.filters.ProposalCreated();
-    const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
     const proposalCanceledFilter = usulContract.filters.ProposalCanceled();
 
     const votedEvent = ozLinearVotingContract.filters.Voted();
     const queuedEvent = ozLinearVotingContract.filters.VoteFinalized();
 
     usulContract.on(proposalCreatedFilter, proposalCreatedListener);
-    usulContract.on(proposalMetaDataCreatedFilter, proposalMetadataCreatedListener);
     usulContract.on(proposalCanceledFilter, proposalCanceledListener);
 
     ozLinearVotingContract.on(votedEvent, proposalVotedEventListener);
@@ -175,7 +151,6 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
 
     return () => {
       usulContract.off(proposalCreatedFilter, proposalCreatedListener);
-      usulContract.off(proposalMetaDataCreatedFilter, proposalMetadataCreatedListener);
       usulContract.off(proposalCanceledFilter, proposalCanceledListener);
 
       ozLinearVotingContract.off(votedEvent, proposalVotedEventListener);
@@ -186,7 +161,6 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     ozLinearVotingContract,
     signerOrProvider,
     proposalCreatedListener,
-    proposalMetadataCreatedListener,
     proposalVotedEventListener,
     proposalQueuedEventListener,
     proposalCanceledListener,

@@ -1,18 +1,60 @@
 import { Grid, GridItem, Box } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
+import { useState, useEffect } from 'react';
 import { ProposalAction } from '../../../components/Proposals/ProposalActions/ProposalAction';
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
 import ContentBox from '../../../components/ui/ContentBox';
 import ProposalCreatedBy from '../../../components/ui/proposal/ProposalCreatedBy';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import { UsulProposal } from '../../../providers/Fractal/types';
+import useTokenData from '../../../providers/Fractal/governance/hooks/useGovernanceTokenData';
+import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
+  const [activeTimeout, setActiveTimeout] = useState<NodeJS.Timeout>();
+  const {
+    governance,
+    dispatches: { governanceDispatch },
+  } = useFractal();
+  const { timeLockPeriod } = useTokenData(governance.contracts);
+  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch });
+
   const {
     state: { account },
   } = useWeb3Provider();
+
+  useEffect(() => {
+    let timeout;
+    const now = new Date();
+    if (proposal.state === TxProposalState.Pending) {
+      timeout = proposal.deadline * 1000 - now.getTime();
+    } else if (proposal.state === TxProposalState.TimeLocked) {
+      const timeLockNumber = timeLockPeriod?.value?.toNumber();
+      timeout = new Date(now.getTime() + Number(timeLockNumber)).getTime();
+    }
+
+    if (timeout) {
+      setActiveTimeout(
+        setTimeout(() => updateProposalState(BigNumber.from(proposal.proposalNumber)), timeout)
+      );
+    }
+
+    return () => {
+      clearTimeout(activeTimeout);
+    };
+    // eslint-disable-next-line
+  }, [
+    timeLockPeriod,
+    proposal.state,
+    proposal.proposalNumber,
+    proposal.deadline,
+    updateProposalState,
+  ]);
+
   return (
     <Grid
       gap={4}
