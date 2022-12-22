@@ -33,15 +33,6 @@ export function TxActions({
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
-  // New states:
-  const hasActions =
-    proposal.state === TxProposalState.Active ||
-    proposal.state === TxProposalState.Approved ||
-    proposal.state === TxProposalState.Queued;
-
-  if (!hasActions) {
-    return null;
-  }
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
@@ -165,6 +156,15 @@ export function TxActions({
   const isOwner = safe.owners?.includes(account || '');
   const isPending = asyncRequestPending || contractCallPending;
 
+  if (
+    (proposal.state === TxProposalState.Active && (hasSigned || !isOwner)) ||
+    proposal.state === TxProposalState.Rejected ||
+    proposal.state === TxProposalState.Executed ||
+    proposal.state === TxProposalState.Expired
+  ) {
+    return null;
+  }
+
   type ButtonProps = {
     [state: string]: {
       action: () => Promise<any>;
@@ -202,14 +202,6 @@ export function TxActions({
   };
 
   const isButtonDisabled = isPending || proposal.state === TxProposalState.Queued;
-
-  if (
-    (proposal.state === TxProposalState.Active && (hasSigned || !isOwner)) ||
-    proposal.state === TxProposalState.Rejected ||
-    proposal.state === TxProposalState.Executed
-  ) {
-    return null;
-  }
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
