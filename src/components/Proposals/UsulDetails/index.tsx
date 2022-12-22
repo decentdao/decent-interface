@@ -38,7 +38,8 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
         new Date(proposal.deadline + Number(timeLockNumber) * 1000).getTime() - now.getTime();
     }
 
-    if (timeout > 0) {
+    // Prevent setting too large timer
+    if (timeout > 0 && timeout < 86400) {
       setActiveTimeout(
         setTimeout(
           () => updateProposalState(BigNumber.from(proposal.proposalNumber)),
