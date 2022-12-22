@@ -23,7 +23,7 @@
     "stateTimeLocked": "Time Locked",
     "stateFreezeInit": "Freeze Initiated",
     "stateFrozen": "Frozen",
-    "stateQueuable": "Queuable",
+    "stateQueueable": "Queueable",
     "stateExpired": "Expired",
     "showExecutableCode": "Show Executable Code",
     "noProposal": "No proposal found",

@@ -43,7 +43,7 @@ export function useSafeActivitiesWithState(
                   );
                 });
 
-              const isQueuable = multiSigTransaction.confirmations
+              const isQueueable = multiSigTransaction.confirmations
                 ? multiSigTransaction.confirmations?.length >=
                   multiSigTransaction.confirmationsRequired
                 : false;
@@ -79,8 +79,8 @@ export function useSafeActivitiesWithState(
                 // Has not been queued
                 if (isRejected) {
                   state = TxProposalState.Rejected;
-                } else if (isQueuable) {
-                  state = TxProposalState.Queuable;
+                } else if (isQueueable) {
+                  state = TxProposalState.Queueable;
                 } else {
                   state = TxProposalState.Active;
                 }

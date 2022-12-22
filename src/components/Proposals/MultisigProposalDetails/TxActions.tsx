@@ -187,7 +187,7 @@ export function TxActions({
       pageTitle: 'executeTitle',
       icon: <Check boxSize="1.5rem" />,
     },
-    [TxProposalState.Queuable]: {
+    [TxProposalState.Queueable]: {
       action: queueTransaction,
       text: 'queue',
       pageTitle: 'queueTitle',

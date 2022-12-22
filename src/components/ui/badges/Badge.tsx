@@ -13,7 +13,7 @@ const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Executing]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Uninitialized]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Failed]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Queuable]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Queueable]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Queued]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Approved]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Module]: { bg: 'sand.700', color: 'grayscale.black' },

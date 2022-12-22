@@ -126,7 +126,7 @@ export enum TxProposalState {
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
   Failed = 'stateFailed',
-  Queuable = 'stateQueuable',
+  Queueable = 'stateQueueable',
   // Safe-specific states
   Queued = 'stateQueued', // Timelock for multisig starts when queued
   Approved = 'ownerApproved',
