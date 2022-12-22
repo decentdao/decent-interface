@@ -24,11 +24,13 @@ function Treasury() {
   } = useWeb3Provider();
 
   const { t } = useTranslation('treasury');
+  const hasAssetBalance = assetsFungible.some(asset => parseFloat(asset.balance) > 0);
 
   const isOwnerOrDelegate =
-    type === GovernanceTypes.GNOSIS_SAFE
+    hasAssetBalance &&
+    (type === GovernanceTypes.GNOSIS_SAFE
       ? owners?.includes(account || '')
-      : governanceToken?.votingWeight && governanceToken.votingWeight.gt(0);
+      : governanceToken?.votingWeight?.gt(0));
 
   const showButton = isOwnerOrDelegate && assetsFungible.length > 0;
 

@@ -1,6 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../types';
 
@@ -14,10 +15,7 @@ const useSendAssets = ({
   destinationAddress: string;
 }) => {
   const { submitProposal } = useSubmitProposal();
-
-  const successCallback = () => {
-    //TODO: need to figure out what toast / notification to add
-  };
+  const { t } = useTranslation('modals');
 
   const sendAssets = useCallback(() => {
     const isEth = !asset.tokenAddress;
@@ -40,8 +38,13 @@ const useSendAssets = ({
       documentationUrl: '',
     };
 
-    submitProposal({ proposalData, successCallback });
-  }, [destinationAddress, transferAmount, asset.tokenAddress, submitProposal]);
+    submitProposal({
+      proposalData,
+      pendingToastMessage: t('sendAssetsPendingToastMessage'),
+      successToastMessage: t('sendAssetsSuccessToastMessage'),
+      failedToastMessage: t('sendAssetsFailureToastMessage'),
+    });
+  }, [destinationAddress, transferAmount, asset.tokenAddress, submitProposal, t]);
 
   return sendAssets;
 };
