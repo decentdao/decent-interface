@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
+import { BigNumberValuePair } from '../../../ui/BigNumberInput';
 import { NFTToFund, TokenToFund } from '../../SubsidiaryFunding/types/index';
 
 export enum CreatorProviderActions {
@@ -55,9 +56,9 @@ type DAOEssentials = {
 type DAOGovenorToken = {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: BigNumberInput;
+  tokenSupply: BigNumber | undefined;
   tokenAllocations: TokenAllocation[];
-  parentAllocationAmount?: BigNumberInput;
+  parentAllocationAmount?: BigNumber;
 };
 
 type DAOGovenorModuleConfig = {
@@ -98,11 +99,6 @@ export type ICreatorContext = {
   dispatch: React.Dispatch<any>;
 };
 
-export type BigNumberInput = {
-  value: string;
-  bigNumberValue: BigNumber | null;
-};
-
 export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
   timelockPeriod?: BigNumber;
   executionPeriod: BigNumber;
@@ -115,14 +111,14 @@ export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
 export interface TokenGovernanceDAO extends DAODetails {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: BigNumberInput;
+  tokenSupply: BigNumber;
   tokenAllocations: TokenAllocation[];
   quorumPercentage: BigNumber;
   timelock: BigNumber;
   votingPeriod: BigNumber;
   nftsToFund: NFTToFund[];
   tokensToFund: TokenToFund[];
-  parentAllocationAmount?: BigNumberInput;
+  parentAllocationAmount?: BigNumber;
 }
 
 export interface GnosisConfig {

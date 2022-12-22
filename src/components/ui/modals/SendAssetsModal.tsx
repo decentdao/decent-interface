@@ -1,7 +1,7 @@
 import { Box, Divider, Flex, Select, Spacer, Switch, Text, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { constants, BigNumber } from 'ethers';
+import { constants, BigNumber, ethers } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
@@ -12,7 +12,7 @@ import {
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
-import { BigNumberInput, BigNumberValuePair } from '../BigNumberInput/BigNumberInput';
+import { BigNumberInput, BigNumberValuePair } from '../BigNumberInput';
 
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
@@ -27,21 +27,21 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
 
-  const calculateCoins = (fiatConversion: string, input: string, symbol?: string) => {
-    const amount = Number(input) / Number(fiatConversion);
+  const calculateCoins = (fiatConversion: string, input: number, symbol?: string) => {
+    const amount = input / Number(fiatConversion);
     return amount + ' ' + (symbol ? symbol : 'ETH');
   };
 
   const convertedTotal = usdSelected
     ? calculateCoins(
         selectedAsset.fiatConversion,
-        inputAmount?.value || '0',
+        inputAmount?.value || 0,
         selectedAsset?.token?.symbol
       )
-    : formatUSD(Number(inputAmount?.value || 0) * Number(selectedAsset.fiatConversion));
+    : formatUSD(inputAmount?.value || 0 * Number(selectedAsset.fiatConversion));
 
   const sendAssets = useSendAssets({
-    transferAmount: inputAmount?.bigNumberValue || BigNumber.from('0'),
+    transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
     asset: selectedAsset,
     destinationAddress: destination,
   });
@@ -53,13 +53,17 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     }
   };
 
+  const onChangeAmount = (value: BigNumberValuePair) => {
+    setInputAmount(value);
+  };
+
   const { isValidAddress } = useAddress(destination.toLowerCase());
   const destinationError =
     destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
   const overDraft = usdSelected
-    ? Number(inputAmount?.value || '0') > Number(selectedAsset.fiatBalance)
-    : Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
+    ? (inputAmount?.value || 0) > Number(selectedAsset.fiatBalance)
+    : (inputAmount?.value || 0) > formatCoinUnitsFromAsset(selectedAsset);
 
   const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue.isZero() || overDraft;
 
@@ -67,7 +71,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     sendAssets();
     if (close) close();
   };
-
+  const value2 = 0;
   return (
     <Box>
       <Flex>
@@ -107,7 +111,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               marginEnd="0.5rem"
               color={!hasFiatBalance ? 'grayscale.800' : 'grayscale.500'}
             >
-              USD
+              {value2}
             </Text>
             <Switch
               bg="input.background"
@@ -122,8 +126,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           </Flex>
 
           <BigNumberInput
-            value={inputAmount}
-            onChange={e => setInputAmount(e)}
+            value={inputAmount?.bigNumberValue}
+            onChange={onChangeAmount}
             decimalPlaces={selectedAsset?.token?.decimals}
             placeholder="0"
           />

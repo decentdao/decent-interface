@@ -1,12 +1,10 @@
-import { Input, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
-import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';
 import TokenAllocations from './TokenAllocations';
@@ -17,8 +15,6 @@ function TokenDetails() {
     dispatch,
   } = useCreator();
 
-  const { limitDecimalsOnKeyDown } = useFormHelpers();
-
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
       type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN,
@@ -28,11 +24,8 @@ function TokenDetails() {
     });
   };
 
-  const onSupplyChange = (value: string) => {
-    fieldUpdate(
-      { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
-      'tokenSupply'
-    );
+  const onSupplyChange = (value: BigNumberValuePair) => {
+    fieldUpdate(value.bigNumberValue, 'tokenSupply');
   };
 
   const { t } = useTranslation('daoCreate');
@@ -70,21 +63,16 @@ function TokenDetails() {
           label={t('labelTokenSupply')}
           subLabel={t('helperTokenSupply')}
         >
-          <NumberInput
+          <BigNumberInput
             data-testid="tokenVoting-tokenSupplyInput"
-            value={govToken.tokenSupply.value}
-            onChange={tokenSupply => onSupplyChange(tokenSupply)}
-            onKeyDown={e =>
-              limitDecimalsOnKeyDown(e, govToken.tokenSupply.value, DEFAULT_TOKEN_DECIMALS)
-            }
-          >
-            <NumberInputField />
-          </NumberInput>
+            value={govToken.tokenSupply}
+            onChange={onSupplyChange}
+          />
         </LabelWrapper>
       </InputBox>
       <TokenAllocations
         tokenAllocations={govToken.tokenAllocations}
-        supply={govToken.tokenSupply.bigNumberValue}
+        supply={govToken.tokenSupply}
         parentAllocationAmount={govToken.parentAllocationAmount}
         // @todo parent allocations should be reenabled when code is implemented
         canReceiveParentAllocations={false}

@@ -191,7 +191,7 @@ export function SubsidiaryFunding() {
                 onKeyDown={e =>
                   limitDecimalsOnKeyDown(
                     e,
-                    tokenToFund.amount.value,
+                    tokenToFund.amount.value.toString(),
                     tokenToFund.asset.token.decimals
                   )
                 }

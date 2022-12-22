@@ -1,25 +1,30 @@
-import { Input, InputElementProps } from '@chakra-ui/react';
+import { FormControlOptions, Input, InputElementProps } from '@chakra-ui/react';
 import { utils, BigNumber, constants } from 'ethers';
 import { useState, useCallback, useEffect } from 'react';
 
 export interface BigNumberValuePair {
-  value: string;
+  value: number;
   bigNumberValue: BigNumber;
 }
 
-export interface BigNumberInputProps extends Omit<InputElementProps, 'value' | 'onChange'> {
-  value: BigNumberValuePair | undefined;
+export interface BigNumberInputProps
+  extends Omit<InputElementProps, 'value' | 'onChange'>,
+    FormControlOptions {
+  value: BigNumber | undefined;
   onChange: (value: BigNumberValuePair) => void;
   decimalPlaces?: number;
 }
 
+// the value property can be either a BigNumber or a BigNumberValuePair
+// choose if you need to use the value converted to a Number, then use the Pair, otherwise, just use a BigNumber
 export function BigNumberInput({
   value,
   onChange,
   decimalPlaces = 18,
   ...rest
 }: BigNumberInputProps) {
-  const [inputValue, setInputValue] = useState<string>('');
+  const initialValue = value ? utils.formatUnits(value, decimalPlaces) : '';
+  const [inputValue, setInputValue] = useState<string>(initialValue);
 
   // this will insure the caret in the input button does not shift to the end of the input when the value is changed
   const resetCaretPositionForInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +37,7 @@ export function BigNumberInput({
   };
 
   const removeOnlyDecimalPoint = (input: string) => {
-    return input === '.' ? '0' : input;
+    return Number(input === '.' ? '0' : input);
   };
 
   const truncateDecimalPlaces = useCallback(
@@ -61,7 +66,7 @@ export function BigNumberInput({
 
       const newValue = truncateDecimalPlaces(event.target.value);
       const bigNumberValue = utils.parseUnits(
-        newValue ? removeOnlyDecimalPoint(newValue) : '0',
+        (newValue ? removeOnlyDecimalPoint(newValue) : 0).toString(),
         decimalPlaces
       );
 
@@ -86,9 +91,10 @@ export function BigNumberInput({
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
+    console.log('run use effect', inputValue);
     const newValue = truncateDecimalPlaces(inputValue);
     const bigNumberValue = utils.parseUnits(
-      newValue ? removeOnlyDecimalPoint(newValue) : '0',
+      (newValue ? removeOnlyDecimalPoint(newValue) : 0).toString(),
       decimalPlaces
     );
     onChange({
@@ -96,6 +102,7 @@ export function BigNumberInput({
       bigNumberValue: bigNumberValue,
     });
     setInputValue(newValue);
+    console.log('set new value', newValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimalPlaces]);
 
