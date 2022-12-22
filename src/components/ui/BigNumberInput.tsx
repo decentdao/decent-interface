@@ -23,7 +23,7 @@ export function BigNumberInput({
   decimalPlaces = 18,
   ...rest
 }: BigNumberInputProps) {
-  const initialValue = value ? utils.formatUnits(value, decimalPlaces) : '';
+  const initialValue = value && !value.isZero() ? utils.formatUnits(value, decimalPlaces) : '';
   const [inputValue, setInputValue] = useState<string>(initialValue);
 
   // this will insure the caret in the input button does not shift to the end of the input when the value is changed
