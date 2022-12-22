@@ -2,12 +2,17 @@ import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { useEffect, useState } from 'react';
 import { Activity, ActivityEventType, TxProposalState } from '../../providers/Fractal/types';
+import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
 export function useSafeActivitiesWithState(
   activities: Activity[],
   vetoGuard: VetoGuard | undefined
 ) {
   const [activitiesWithState, setActivitiesWithState] = useState<Activity[]>([]);
+
+  const {
+    state: { provider },
+  } = useWeb3Provider();
 
   useEffect(() => {
     if (vetoGuard) {
@@ -36,44 +41,64 @@ export function useSafeActivitiesWithState(
               );
             });
 
+          const isQueuable = multiSigTransaction.confirmations
+            ? multiSigTransaction.confirmations?.length >= multiSigTransaction.confirmationsRequired
+            : false;
+
           // todo: move timelockPeriod and executionPeriod outside of array map
           const timelockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
           const executionPeriod = (await vetoGuard.executionPeriod()).toNumber();
+
+          // Get the txHash used by the VetoGuard since it is different than the one used by Gnosis Safe
+          const vetoGuardTransactionHash = await vetoGuard.getTransactionHash(
+            multiSigTransaction.to,
+            multiSigTransaction.value,
+            multiSigTransaction.data as string,
+            multiSigTransaction.operation,
+            multiSigTransaction.safeTxGas,
+            multiSigTransaction.baseGas,
+            multiSigTransaction.gasPrice,
+            multiSigTransaction.gasToken,
+            multiSigTransaction.refundReceiver as string
+          );
+
           const queuedTimestamp = (
-            await vetoGuard.getTransactionQueuedTimestamp(multiSigTransaction.safeTxHash)
+            await vetoGuard.getTransactionQueuedTimestamp(vetoGuardTransactionHash)
           ).toNumber();
-          const currentTimestamp = 0;
+
+          const lastBlockTimestamp = provider
+            ? (await provider.getBlock(await provider.getBlockNumber())).timestamp
+            : 0;
 
           let state: TxProposalState;
 
           if (isModuleTransaction) {
             state = TxProposalState.Module;
+          } else if (multiSigTransaction.isExecuted) {
+            state = TxProposalState.Executed;
           } else if (queuedTimestamp === 0) {
             // Has not been queued
             if (isRejected) {
               state = TxProposalState.Rejected;
+            } else if (isQueuable) {
+              state = TxProposalState.Queuable;
             } else {
               state = TxProposalState.Active;
             }
           } else {
             // Has been Queued
-            if (multiSigTransaction.isExecuted) {
-              state = TxProposalState.Executed;
-            } else {
-              // Not executed
-              if (currentTimestamp > queuedTimestamp + timelockPeriod) {
-                // Timelock has ended
-                if (currentTimestamp < queuedTimestamp + timelockPeriod + executionPeriod) {
-                  // Within execution period
-                  state = TxProposalState.Executing;
-                } else {
-                  // Execution period has ended
-                  state = TxProposalState.Expired;
-                }
+            if (lastBlockTimestamp > queuedTimestamp + timelockPeriod) {
+              // Timelock has ended
+              if (lastBlockTimestamp < queuedTimestamp + timelockPeriod + executionPeriod) {
+                // Within execution period
+                state = TxProposalState.Executing;
               } else {
-                // Within timelock period
-                state = TxProposalState.Queued;
+                // Execution period has ended
+                state = TxProposalState.Expired;
               }
+            } else {
+              // Within timelock period
+              state = TxProposalState.Queued;
             }
           }
 
@@ -107,6 +132,10 @@ export function useSafeActivitiesWithState(
               );
             });
 
+          const isApproved = multiSigTransaction.confirmations
+            ? multiSigTransaction.confirmations?.length >= multiSigTransaction.confirmationsRequired
+            : false;
+
           let state;
           if (isModuleTransaction) {
             state = TxProposalState.Module;
@@ -114,7 +143,7 @@ export function useSafeActivitiesWithState(
             state = TxProposalState.Rejected;
           } else if (multiSigTransaction.isExecuted) {
             state = TxProposalState.Executed;
-          } else if (multiSigTransaction.isSuccessful) {
+          } else if (isApproved) {
             state = TxProposalState.Executing;
           } else {
             state = TxProposalState.Active;
@@ -123,7 +152,7 @@ export function useSafeActivitiesWithState(
         })
       );
     }
-  }, [activities, vetoGuard]);
+  }, [activities, provider, vetoGuard]);
 
   return activitiesWithState;
 }
