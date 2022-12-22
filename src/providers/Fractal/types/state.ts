@@ -3,7 +3,12 @@ import SafeServiceClient, {
   AllTransactionsListResponse,
 } from '@safe-global/safe-service-client';
 import { GovernanceActions } from '../governance/actions';
-import { IGovernance, IGnosisModuleData } from '../governance/types';
+import {
+  IGovernance,
+  IGnosisModuleData,
+  IGnosisFreezeData,
+  IGnosisVetoContract,
+} from '../governance/types';
 import { GnosisActions, TreasuryActions } from './actions';
 import { ITreasury } from './treasury';
 
@@ -22,12 +27,18 @@ export interface IFractalContext {
   };
 }
 
+export type SafeInfoResponseWithGuard = SafeInfoResponse & {
+  guard?: string;
+};
+
 export interface IGnosis {
   providedSafeAddress?: string;
   daoName: string;
   safeService?: SafeServiceClient;
-  safe: Partial<SafeInfoResponse> & { guard?: string };
+  safe: Partial<SafeInfoResponseWithGuard>;
   modules: IGnosisModuleData[];
+  guardContracts: IGnosisVetoContract;
+  freezeData: IGnosisFreezeData | undefined;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
   parentDAOAddress?: string;

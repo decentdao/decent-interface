@@ -163,28 +163,30 @@ function ProposalVotes({
           </GridItem>
         </Grid>
       </ContentBox>
-      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-        <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
-        <Divider
-          color="chocolate.700"
-          marginTop={4}
-          marginBottom={4}
-        />
-        <Flex
-          flexWrap="wrap"
-          gap={4}
-        >
-          {votes.map(vote => (
-            <ProposalVoteItem
-              key={vote.voter}
-              vote={vote}
-              govTokenTotalSupply={governanceToken.totalSupply!}
-              govTokenDecimals={governanceToken.decimals!}
-              govTokenSymbol={governanceToken.symbol!}
-            />
-          ))}
-        </Flex>
-      </ContentBox>
+      {votes.length !== 0 && (
+        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+          <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
+          <Divider
+            color="chocolate.700"
+            marginTop={4}
+            marginBottom={4}
+          />
+          <Flex
+            flexWrap="wrap"
+            gap={4}
+          >
+            {votes.map(vote => (
+              <ProposalVoteItem
+                key={vote.voter}
+                vote={vote}
+                govTokenTotalSupply={governanceToken.totalSupply!}
+                govTokenDecimals={governanceToken.decimals!}
+                govTokenSymbol={governanceToken.symbol!}
+              />
+            ))}
+          </Flex>
+        </ContentBox>
+      )}
     </>
   );
 }

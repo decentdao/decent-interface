@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalExecuteData } from '../../types/proposal';
@@ -9,6 +10,7 @@ import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
   const { multiSendContract } = useSafeContracts();
+  const { t } = useTranslation('daoCreate');
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const [build] = useBuildDAOTx();
@@ -39,11 +41,17 @@ export const useCreateSubDAOProposal = () => {
           description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
           documentationUrl: '',
         };
-        submitProposal({ proposalData, successCallback });
+        submitProposal({
+          proposalData,
+          pendingToastMessage: t('createSubDAOPendingToastMessage'),
+          successToastMessage: t('createSubDAOSuccessToastMessage'),
+          failedToastMessage: t('createSubDAOFailureToastMessage'),
+          successCallback,
+        });
       };
       propose();
     },
-    [multiSendContract, build, safe.address, submitProposal, governanceToken?.address]
+    [multiSendContract, build, safe.address, submitProposal, governanceToken?.address, t]
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;

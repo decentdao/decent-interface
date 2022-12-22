@@ -3,8 +3,8 @@ import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer } from 'ethers';
 import { useCallback, useState } from 'react';
+import { toast } from 'react-toastify';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
-
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
@@ -28,19 +28,34 @@ export default function useSubmitProposal() {
   const submitProposal = useCallback(
     async ({
       proposalData,
+      pendingToastMessage,
+      failedToastMessage,
+      successToastMessage,
       successCallback,
     }: {
       proposalData: ProposalExecuteData | undefined;
-      successCallback: (daoAddress: string) => void;
+      pendingToastMessage: string;
+      failedToastMessage: string;
+      successToastMessage: string;
+      successCallback?: (daoAddress: string) => void;
     }) => {
       if (!proposalData) {
         return;
       }
 
+      const toastId = toast(pendingToastMessage, {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        closeButton: false,
+        progress: 1,
+      });
+
       if (!usulContract || !votingStrategiesAddresses || !safe.address) {
         // Submit a multisig proposal
 
         if (!safe.address || !signerOrProvider) {
+          toast.dismiss(toastId);
           return;
         }
 
@@ -48,7 +63,10 @@ export default function useSubmitProposal() {
 
         let to, data, operation;
         if (proposalData.targets.length > 1) {
-          if (!multiSendContract) return;
+          if (!multiSendContract) {
+            toast.dismiss(toastId);
+            return;
+          }
           // Need to wrap it in Multisend function call
           to = multiSendContract.address;
 
@@ -90,10 +108,15 @@ export default function useSubmitProposal() {
             )
           );
           await getGnosisSafeTransactions();
-          successCallback(safe.address);
+          if (successCallback) {
+            successCallback(safe.address);
+          }
+          toast(successToastMessage);
         } catch (e) {
+          toast(failedToastMessage);
           logError(e, 'Error during Multi-sig proposal creation');
         } finally {
+          toast.dismiss(toastId);
           setPendingCreateTx(false);
           return;
         }
@@ -119,8 +142,13 @@ export default function useSubmitProposal() {
               proposalData.documentationUrl
             )
           ).wait();
-          successCallback(safe.address);
+          if (successCallback) {
+            toast.dismiss(toastId);
+            successCallback(safe.address);
+          }
         } catch (e) {
+          toast.dismiss(toastId);
+          toast(failedToastMessage);
           logError(e, 'Error during Usul proposal creation');
         } finally {
           setPendingCreateTx(false);

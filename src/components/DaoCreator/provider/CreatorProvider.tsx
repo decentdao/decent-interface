@@ -40,12 +40,12 @@ export const initialState: CreatorState = {
   },
   govModule: {
     quorumPercentage: BigNumber.from(4),
-    timelock: BigNumber.from(172800),
+    timelock: BigNumber.from(86400),
     votingPeriod: BigNumber.from(604800),
   },
   vetoGuard: {
     executionPeriod: BigNumber.from(172800),
-    timelockPeriod: BigNumber.from(172800),
+    timelockPeriod: BigNumber.from(86400),
     vetoVotesThreshold: BigNumber.from(1),
     freezeVotesThreshold: BigNumber.from(1),
     freezeProposalPeriod: BigNumber.from(604800),

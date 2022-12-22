@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Select, Spacer, Switch, Text, Button, Input } from '@chakra-ui/react';
+import { Box, Divider, Flex, Select, HStack, Text, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { constants, BigNumber, ethers } from 'ethers';
@@ -20,8 +20,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
 
-  const [selectedAsset, setSelectedAsset] = useState<SafeBalanceUsdResponse>(assetsFungible[0]);
-  const [usdSelected, setUSDSelected] = useState<boolean>(false);
+  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
+
+  const [selectedAsset, setSelectedAsset] = useState<SafeBalanceUsdResponse>(
+    fungibleAssetsWithBalance[0]
+  );
   const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
   const [destination, setDestination] = useState<string>('');
 
@@ -47,10 +50,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   });
 
   const handleCoinChange = (index: string) => {
-    setSelectedAsset(assetsFungible[Number(index)]);
-    if (hasFiatBalance) {
-      setUSDSelected(false);
-    }
+    setSelectedAsset(fungibleAssetsWithBalance[Number(index)]);
   };
 
   const onChangeAmount = (value: BigNumberValuePair) => {
@@ -90,10 +90,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             onChange={e => handleCoinChange(e.target.value)}
             sx={{ '> option, > optgroup': { bg: 'input.background' } }} //TODO: This should be added to baseStyle of the theme?
           >
-            {assetsFungible.map(asset => (
+            {fungibleAssetsWithBalance.map((asset, index) => (
               <option
-                key={asset.token ? asset.token.symbol : 'eth'}
-                value={assetsFungible.indexOf(asset)}
+                key={index}
+                value={index}
               >
                 {asset.token ? asset.token.symbol : 'ETH'}
               </option>
@@ -106,25 +106,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             marginBottom="0.5rem"
           >
             <Text>{t('amountLabel')}</Text>
-            <Spacer />
-            <Text
-              marginEnd="0.5rem"
-              color={!hasFiatBalance ? 'grayscale.800' : 'grayscale.500'}
-            >
-              {value2}
-            </Text>
-            <Switch
-              bg="input.background"
-              borderRadius="28px"
-              color="white"
-              colorScheme="drab"
-              isDisabled //TODO: enable USD switch to change inputAmount from token to USD. currently disabled.
-              size="md"
-              isChecked={usdSelected}
-              onChange={e => setUSDSelected(e.target.checked)}
-            />
           </Flex>
-
           <BigNumberInput
             value={inputAmount?.bigNumberValue}
             onChange={onChangeAmount}
@@ -133,7 +115,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           />
         </Box>
       </Flex>
-      <Flex
+      <HStack
+        justify="space-between"
         textStyle="text-sm-sans-regular"
         color="grayscale.500"
         marginTop="0.75rem"
@@ -143,9 +126,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             balance: formatCoinFromAsset(selectedAsset, false),
           })}
         </Text>
-        <Spacer />
         {hasFiatBalance && <Text>{convertedTotal}</Text>}
-      </Flex>
+      </HStack>
       <Text
         textStyle="text-sm-sans-regular"
         color="grayscale.500"
