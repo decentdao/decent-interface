@@ -38,7 +38,7 @@ export function ActivityGovernance({ activity }: { activity: TxProposal }) {
           alignItems="center"
         >
           {usulProposal.deadline &&
-            usulProposal.deadline * 1000 > now.getMilliseconds() &&
+            usulProposal.deadline * 1000 > now.getTime() &&
             usulProposal.state === TxProposalState.Active && (
               <ProposalTime deadline={usulProposal.deadline} />
             )}

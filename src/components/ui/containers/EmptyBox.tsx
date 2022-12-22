@@ -1,18 +1,17 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { InfoBox } from './InfoBox';
+import { ActivityBox } from './ActivityBox';
 
 export function EmptyBox({
   emptyText,
   children,
-  ...rest
 }: {
   emptyText: string;
   children?: ReactNode;
   m?: string | number;
 }) {
   return (
-    <InfoBox {...rest}>
+    <ActivityBox>
       <Flex
         h="8rem"
         alignItems="center"
@@ -26,6 +25,6 @@ export function EmptyBox({
         </Text>
         {children}
       </Flex>
-    </InfoBox>
+    </ActivityBox>
   );
 }
