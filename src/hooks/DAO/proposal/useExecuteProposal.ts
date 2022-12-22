@@ -1,5 +1,8 @@
+import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
@@ -13,6 +16,11 @@ export default function useExecuteProposal() {
     state: { signerOrProvider },
   } = useWeb3Provider();
   const { usulContract } = useUsul();
+  const {
+    governance,
+    dispatches: { governanceDispatch },
+  } = useFractal();
+  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch });
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
@@ -51,9 +59,12 @@ export default function useExecuteProposal() {
         pendingMessage: t('pendingExecute'),
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
+        successCallback: () => {
+          updateProposalState(BigNumber.from(proposal.proposalNumber));
+        },
       });
     },
-    [contractCallExecuteProposal, signerOrProvider, t, usulContract]
+    [contractCallExecuteProposal, signerOrProvider, t, usulContract, updateProposalState]
   );
 
   return {
