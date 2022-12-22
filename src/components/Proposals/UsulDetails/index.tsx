@@ -28,18 +28,22 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   } = useWeb3Provider();
 
   useEffect(() => {
-    let timeout;
+    let timeout = 0;
     const now = new Date();
-    if (proposal.state === TxProposalState.Pending) {
+    if (proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Pending) {
       timeout = proposal.deadline * 1000 - now.getTime();
     } else if (proposal.state === TxProposalState.TimeLocked) {
       const timeLockNumber = timeLockPeriod?.value?.toNumber();
-      timeout = new Date(now.getTime() + Number(timeLockNumber)).getTime();
+      timeout =
+        new Date(proposal.deadline + Number(timeLockNumber) * 1000).getTime() - now.getTime();
     }
 
-    if (timeout) {
+    if (timeout > 0) {
       setActiveTimeout(
-        setTimeout(() => updateProposalState(BigNumber.from(proposal.proposalNumber)), timeout)
+        setTimeout(
+          () => updateProposalState(BigNumber.from(proposal.proposalNumber)),
+          timeout + 60000 // add extra 60 seconds to ensure that we woulnd't encounter issue while trying to update status in same minute as it supposed to change
+        )
       );
     }
 
