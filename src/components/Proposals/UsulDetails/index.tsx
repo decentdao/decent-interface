@@ -14,8 +14,11 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
     state: { account },
   } = useWeb3Provider();
   return (
-    <Grid gap={4}>
-      <GridItem>
+    <Grid
+      gap={4}
+      templateColumns="repeat(3, 1fr)"
+    >
+      <GridItem colSpan={2}>
         <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
           <ProposalInfo proposal={proposal} />
           <Box mt={4}>
@@ -24,7 +27,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
         </ContentBox>
         <ProposalVotes proposal={proposal} />
       </GridItem>
-      <GridItem>
+      <GridItem colSpan={1}>
         <ProposalSummary proposal={proposal} />
         {account && (
           <ProposalAction
