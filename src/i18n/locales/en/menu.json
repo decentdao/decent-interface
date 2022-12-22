@@ -17,6 +17,6 @@
     "goerli": "Goerli Test Network",
     "local": "Local Test Network",
     "titleManageDAO": "Manage DAO",
-    "optionCreateSubDAO": "Add a subDAO",
+    "optionCreateSubDAO": "Add a SubDAO",
     "optionInitiateFreeze": "Initiate a Freeze"
 }
