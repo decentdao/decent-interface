@@ -1,4 +1,4 @@
-import { Button, Input, Text } from '@chakra-ui/react';
+import { Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
@@ -6,7 +6,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { isSameAddress } from '../../../utils/crypto';
-import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
+import { BigNumberInput } from '../../ui/BigNumberInput';
 
 interface TokenAllocationProps {
   index: number;

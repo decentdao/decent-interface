@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { TokenAllocation } from '../../../../types/tokenAllocation';
-import { BigNumberValuePair } from '../../../ui/BigNumberInput';
 import { NFTToFund, TokenToFund } from '../../SubsidiaryFunding/types/index';
 
 export enum CreatorProviderActions {

@@ -1,7 +1,7 @@
 import { Box, Divider, Flex, Select, HStack, Text, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { constants, BigNumber, ethers } from 'ethers';
+import { constants, BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useAddress from '../../../hooks/utils/useAddress';
@@ -30,18 +30,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
 
-  const calculateCoins = (fiatConversion: string, input: number, symbol?: string) => {
-    const amount = input / Number(fiatConversion);
-    return amount + ' ' + (symbol ? symbol : 'ETH');
-  };
-
-  const convertedTotal = usdSelected
-    ? calculateCoins(
-        selectedAsset.fiatConversion,
-        inputAmount?.value || 0,
-        selectedAsset?.token?.symbol
-      )
-    : formatUSD(inputAmount?.value || 0 * Number(selectedAsset.fiatConversion));
+  const convertedTotal = formatUSD(inputAmount?.value || 0 * Number(selectedAsset.fiatConversion));
 
   const sendAssets = useSendAssets({
     transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
@@ -61,9 +50,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const destinationError =
     destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
-  const overDraft = usdSelected
-    ? (inputAmount?.value || 0) > Number(selectedAsset.fiatBalance)
-    : (inputAmount?.value || 0) > formatCoinUnitsFromAsset(selectedAsset);
+  const overDraft = (inputAmount?.value || 0) > formatCoinUnitsFromAsset(selectedAsset);
 
   const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue.isZero() || overDraft;
 
@@ -71,7 +58,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     sendAssets();
     if (close) close();
   };
-  const value2 = 0;
+
   return (
     <Box>
       <Flex>
