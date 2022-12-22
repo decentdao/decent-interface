@@ -184,6 +184,7 @@ export function SubsidiaryFunding() {
               <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
                 {tokenToFund.asset.fiatBalance}
               </div>
+              {/* TODO Swap this NumberInput out with <BigNumberInput /> verify if limitDecimalsOnKeyDown can be removed from the codebase */}
               <NumberInput
                 value={tokenToFund.amount.value}
                 onChange={tokenAmount => onTokenFundChange(tokenAmount, index)}

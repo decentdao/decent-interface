@@ -102,7 +102,7 @@ export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICre
       ..._initialState,
       govToken: {
         ..._initialState.govToken,
-        parentAllocationAmount: isSubDAO ? BigNumber.from('0') : undefined,
+        parentAllocationAmount: undefined,
       },
     };
   };
