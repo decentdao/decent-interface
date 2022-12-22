@@ -24,6 +24,8 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
       <Text
         textAlign="end"
         maxWidth="70%"
+        wordBreak="break-word"
+        ml="0.5rem"
       >
         {value}
       </Text>
