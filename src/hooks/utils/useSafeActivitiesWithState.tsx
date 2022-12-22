@@ -28,8 +28,15 @@ export function useSafeActivitiesWithState(
               return activity;
             }
 
+            if (activity.transaction.txType === 'MODULE_TRANSACTION') {
+              return {
+                ...activity,
+                state: TxProposalState.Module,
+              };
+            }
+
             const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
-            const isModuleTransaction = activity.transaction.txType === 'MODULE_TRANSACTION';
+
             const multiSigTransaction =
               activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
@@ -88,9 +95,7 @@ export function useSafeActivitiesWithState(
 
             let state: TxProposalState;
 
-            if (isModuleTransaction) {
-              state = TxProposalState.Module;
-            } else if (multiSigTransaction.isExecuted) {
+            if (multiSigTransaction.isExecuted) {
               state = TxProposalState.Executed;
             } else if (queuedTimestamp === 0) {
               // Has not been queued
@@ -133,8 +138,15 @@ export function useSafeActivitiesWithState(
             return activity;
           }
 
+          if (activity.transaction.txType === 'MODULE_TRANSACTION') {
+            return {
+              ...activity,
+              state: TxProposalState.Module,
+            };
+          }
+
           const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
-          const isModuleTransaction = activity.transaction.txType === 'MODULE_TRANSACTION';
+
           const multiSigTransaction =
             activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
@@ -157,9 +169,7 @@ export function useSafeActivitiesWithState(
             : false;
 
           let state;
-          if (isModuleTransaction) {
-            state = TxProposalState.Module;
-          } else if (isRejected) {
+          if (isRejected) {
             state = TxProposalState.Rejected;
           } else if (multiSigTransaction.isExecuted) {
             state = TxProposalState.Executed;
