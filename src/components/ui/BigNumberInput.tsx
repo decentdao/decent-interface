@@ -37,7 +37,7 @@ export function BigNumberInput({
   };
 
   const removeOnlyDecimalPoint = (input: string) => {
-    return Number(input === '.' ? '0' : input);
+    return !input || input === '.' ? '0' : input;
   };
 
   const truncateDecimalPlaces = useCallback(
@@ -65,10 +65,7 @@ export function BigNumberInput({
       }
 
       const newValue = truncateDecimalPlaces(event.target.value);
-      const bigNumberValue = utils.parseUnits(
-        (newValue ? removeOnlyDecimalPoint(newValue) : 0).toString(),
-        decimalPlaces
-      );
+      const bigNumberValue = utils.parseUnits(removeOnlyDecimalPoint(newValue), decimalPlaces);
 
       // check value is not greater than maxUint256
       if (constants.MaxUint256.lt(bigNumberValue)) {
@@ -78,7 +75,7 @@ export function BigNumberInput({
       }
 
       onChange({
-        value: removeOnlyDecimalPoint(newValue),
+        value: Number(removeOnlyDecimalPoint(newValue)),
         bigNumberValue: bigNumberValue,
       });
       if (newValue !== event.target.value) {
@@ -91,18 +88,13 @@ export function BigNumberInput({
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
-    console.log('run use effect', inputValue);
     const newValue = truncateDecimalPlaces(inputValue);
-    const bigNumberValue = utils.parseUnits(
-      (newValue ? removeOnlyDecimalPoint(newValue) : 0).toString(),
-      decimalPlaces
-    );
+    const bigNumberValue = utils.parseUnits(removeOnlyDecimalPoint(newValue), decimalPlaces);
     onChange({
-      value: removeOnlyDecimalPoint(newValue),
+      value: Number(removeOnlyDecimalPoint(newValue)),
       bigNumberValue: bigNumberValue,
     });
     setInputValue(newValue);
-    console.log('set new value', newValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimalPlaces]);
 

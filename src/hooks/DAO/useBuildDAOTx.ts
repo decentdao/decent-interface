@@ -918,7 +918,6 @@ const useBuildDAOTx = () => {
 
         return { predictedGnosisSafeAddress, createSafeTx, safeTx };
       };
-      console.log('transatoin', buildTx());
       return buildTx();
     },
     [
