@@ -36,8 +36,10 @@ export function TxActions({
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
+  if (!multisigTx) return null;
+
   const signTransaction = async () => {
-    if (!safeService || !signerOrProvider || !multisigTx || !safe.address) {
+    if (!safeService || !signerOrProvider || !safe.address) {
       return;
     }
     try {
@@ -67,7 +69,7 @@ export function TxActions({
 
   const queueTransaction = async () => {
     try {
-      if (!multisigTx || !multisigTx.confirmations) {
+      if (!multisigTx.confirmations) {
         return;
       }
       const safeTx = buildSafeTransaction({
@@ -107,13 +109,7 @@ export function TxActions({
 
   const executeTransaction = async () => {
     try {
-      if (
-        !safeService ||
-        !signerOrProvider ||
-        !multisigTx ||
-        !safe.address ||
-        !multisigTx.confirmations
-      ) {
+      if (!signerOrProvider || !safe.address || !multisigTx.confirmations) {
         return;
       }
       const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
