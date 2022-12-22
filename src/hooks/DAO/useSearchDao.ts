@@ -1,92 +1,44 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useIsGnosisSafe from '../safe/useIsSafe';
+import { useIsGnosisSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
 
-const useSearchDao = () => {
-  const [searchString, setSearchString] = useState<string>();
-  const [errorMessage, setErrorMessage] = useState<string>();
-  const [loading, setLoading] = useState<boolean>();
+export const useSearchDao = () => {
+  const [searchString, setSearchString] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { address, isValidAddress, isAddressLoading } = useAddress(searchString);
-  const [addressIsGnosisSafe, isGnosisSafeLoading] = useIsGnosisSafe(address);
+  const { isSafe, isSafeLoading } = useIsGnosisSafe(address);
   const { t } = useTranslation('dashboard');
 
-  /**
-   * refresh error state if one exists
-   *
-   */
-  const resetErrorState = useCallback(() => {
-    if (errorMessage) {
-      setErrorMessage(undefined);
-      setSearchString(undefined);
-    }
-  }, [errorMessage]);
-
-  /**
-   * updates search string when 'form' is submited
-   *
-   */
-  const updateSearchString = (searchStr: string) => {
-    setSearchString(searchStr);
-  };
-
-  /**
-   * handles loading state of search
-   */
   useEffect(() => {
-    if (isAddressLoading !== undefined) {
-      setLoading(isAddressLoading || isGnosisSafeLoading);
-    }
-  }, [isAddressLoading, isGnosisSafeLoading]);
+    setIsLoading(isAddressLoading !== false || isSafeLoading === true);
+  }, [isAddressLoading, isSafeLoading]);
 
-  /**
-   * handles errors
-   *
-   * @dev loading or addressIsDao are initialized as undefined to indicate these processses
-   * have not been ran yet.
-   */
   useEffect(() => {
-    if (loading !== false) {
-      return;
-    }
-    if (!address) {
-      resetErrorState();
+    if (!searchString || isLoading) {
+      setErrorMessage('');
       return;
     }
 
-    if (isValidAddress) {
-      return;
+    if (isSafe) {
+      setErrorMessage('');
+    } else {
+      if (isValidAddress) {
+        setErrorMessage(t('errorFailedSearch'));
+      } else {
+        setErrorMessage(t('errorInvalidSearch'));
+      }
     }
-
-    if (!isValidAddress) {
-      setErrorMessage(t('errorInvalidSearch'));
-      return;
-    }
-    if (!isGnosisSafeLoading && addressIsGnosisSafe === false) {
-      setErrorMessage(t('errorFailedSearch'));
-      return;
-    }
-  }, [
-    address,
-    isValidAddress,
-    searchString,
-    isGnosisSafeLoading,
-    addressIsGnosisSafe,
-    loading,
-    t,
-    resetErrorState,
-  ]);
+  }, [address, isValidAddress, searchString, isSafe, t, isLoading, errorMessage]);
 
   return {
     errorMessage,
-    loading,
+    isLoading,
     address,
-    isValidAddress,
-    updateSearchString,
-    resetErrorState,
-    addressIsGnosisSafe,
+    isSafe,
+    setSearchString,
+    searchString,
   };
 };
-
-export default useSearchDao;
