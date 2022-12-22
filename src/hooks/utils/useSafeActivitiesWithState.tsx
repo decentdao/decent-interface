@@ -1,5 +1,6 @@
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { Activity, ActivityEventType, TxProposalState } from '../../providers/Fractal/types';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
@@ -50,17 +51,35 @@ export function useSafeActivitiesWithState(
               (multiSigTransaction.confirmations?.length || 0) >=
               multiSigTransaction.confirmationsRequired;
 
-            // Get the txHash used by the VetoGuard since it is different than the one used by Gnosis Safe
-            const vetoGuardTransactionHash = await vetoGuard.getTransactionHash(
-              multiSigTransaction.to,
-              multiSigTransaction.value,
-              multiSigTransaction.data as string,
-              multiSigTransaction.operation,
-              multiSigTransaction.safeTxGas,
-              multiSigTransaction.baseGas,
-              multiSigTransaction.gasPrice,
-              multiSigTransaction.gasToken,
-              multiSigTransaction.refundReceiver as string
+            const abiCoder = new ethers.utils.AbiCoder();
+            const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
+              ['bytes'],
+              [
+                abiCoder.encode(
+                  [
+                    'address',
+                    'uint256',
+                    'bytes32',
+                    'uint256',
+                    'uint256',
+                    'uint256',
+                    'uint256',
+                    'address',
+                    'address',
+                  ],
+                  [
+                    multiSigTransaction.to,
+                    multiSigTransaction.value,
+                    ethers.utils.solidityKeccak256(['bytes'], [multiSigTransaction.data as string]),
+                    multiSigTransaction.operation,
+                    multiSigTransaction.safeTxGas,
+                    multiSigTransaction.baseGas,
+                    multiSigTransaction.gasPrice,
+                    multiSigTransaction.gasToken,
+                    multiSigTransaction.refundReceiver as string,
+                  ]
+                ),
+              ]
             );
 
             const queuedTimestamp = (
