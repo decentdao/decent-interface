@@ -2,6 +2,7 @@ import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import { checkIsRejected } from '../../helpers/activity';
 import { Activity, ActivityEventType, TxProposalState } from '../../providers/Fractal/types';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
@@ -42,17 +43,12 @@ export function useSafeActivitiesWithState(
 
             const eventNonce = multiSigTransaction.nonce;
 
-            const isRejected =
-              isMultiSigTransaction &&
-              activityArr.find(_activity => {
-                const multiSigTx =
-                  _activity.transaction as SafeMultisigTransactionWithTransfersResponse;
-                return (
-                  multiSigTx.nonce === eventNonce &&
-                  multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
-                  multiSigTx.isExecuted
-                );
-              });
+            const isRejected = checkIsRejected(
+              isMultiSigTransaction,
+              activityArr,
+              eventNonce,
+              multiSigTransaction
+            );
 
             const isQueueable =
               (multiSigTransaction.confirmations?.length || 0) >=
@@ -152,17 +148,12 @@ export function useSafeActivitiesWithState(
 
           const eventNonce = multiSigTransaction.nonce;
 
-          const isRejected =
-            isMultiSigTransaction &&
-            activityArr.find(_activity => {
-              const multiSigTx =
-                _activity.transaction as SafeMultisigTransactionWithTransfersResponse;
-              return (
-                multiSigTx.nonce === eventNonce &&
-                multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
-                multiSigTx.isExecuted
-              );
-            });
+          const isRejected = checkIsRejected(
+            isMultiSigTransaction,
+            activityArr,
+            eventNonce,
+            multiSigTransaction
+          );
 
           const isApproved = multiSigTransaction.confirmations
             ? multiSigTransaction.confirmations?.length >= multiSigTransaction.confirmationsRequired
