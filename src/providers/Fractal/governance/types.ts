@@ -131,7 +131,7 @@ export enum TxProposalState {
   Queued = 'stateQueued', // Timelock for multisig starts when queued
   Approved = 'ownerApproved',
   Module = 'stateModule',
-  Expired = 'stateExpiered',
+  Expired = 'stateExpired',
   Rejected = 'stateRejected',
 }
 
