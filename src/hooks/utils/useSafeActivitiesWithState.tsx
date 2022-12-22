@@ -43,10 +43,9 @@ export function useSafeActivitiesWithState(
                   );
                 });
 
-              const isQueueable = multiSigTransaction.confirmations
-                ? multiSigTransaction.confirmations?.length >=
-                  multiSigTransaction.confirmationsRequired
-                : false;
+              const isQueueable =
+                (multiSigTransaction.confirmations?.length || 0) >=
+                multiSigTransaction.confirmationsRequired;
 
               // Get the txHash used by the VetoGuard since it is different than the one used by Gnosis Safe
               const vetoGuardTransactionHash = await vetoGuard.getTransactionHash(
