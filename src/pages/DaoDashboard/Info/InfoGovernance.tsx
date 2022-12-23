@@ -5,7 +5,7 @@ import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 
 export function InfoGovernance() {
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation(['dashboard', 'daoCreate']);
   const {
     gnosis: { safe },
     governance: { type, governanceToken, governanceIsLoading },
@@ -44,7 +44,7 @@ export function InfoGovernance() {
         mb="0.25rem"
       >
         <Text color="chocolate.200">{t('titleType')}</Text>
-        <Text color="grayscale.100">{type}</Text>
+        <Text color="grayscale.100">{type ? t(type.toString(), { ns: 'daoCreate' }) : ''}</Text>
       </Flex>
 
       {governanceToken?.votingPeriod && (

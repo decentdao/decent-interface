@@ -33,7 +33,12 @@ export function GnosisConfig() {
 
   const handleSignersChanges = (numberStr: string) => {
     let numOfSigners = Number(numberStr);
-    if (numOfSigners > 999) return;
+    // greater than 100 signers is unreasonable for manual input here,
+    // we don't use an error message because we don't want to render
+    // 1000 input fields and lag the app
+    if (numOfSigners > 100) {
+      numOfSigners = 100;
+    }
     if (trustedAddresses.length !== numOfSigners) {
       const gnosisAddresses = [...trustedAddresses];
       const trustedAddressLength = trustedAddresses.length;

@@ -19,8 +19,8 @@ import { DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
-  GNOSIS_SAFE = 'Multisig',
-  GNOSIS_SAFE_USUL = 'Usul',
+  GNOSIS_SAFE = 'labelMultisigGov',
+  GNOSIS_SAFE_USUL = 'labelUsulGov',
 }
 
 export enum GnosisModuleType {
