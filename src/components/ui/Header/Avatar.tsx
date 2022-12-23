@@ -28,7 +28,7 @@ function URLAvatar({ url, size }: { size: AvatarSize; url: string }) {
   return (
     <Box w={avatarSizes[size]}>
       <Image
-        className="rounded-full"
+        borderRadius="full"
         src={src}
         alt="avatar"
       />
