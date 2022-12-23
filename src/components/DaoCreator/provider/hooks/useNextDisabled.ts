@@ -1,6 +1,5 @@
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
-import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { CreatorState, CreatorSteps } from './../types';
 
 /**
@@ -18,7 +17,6 @@ export function useNextDisabled(state: CreatorState) {
       essentials,
       gnosis: { trustedAddresses, signatureThreshold },
     } = state;
-    const isGnosisWithUsul = state.governance === GovernanceTypes.GNOSIS_SAFE_USUL;
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
         if (!!state.essentials.daoName.trim()) {

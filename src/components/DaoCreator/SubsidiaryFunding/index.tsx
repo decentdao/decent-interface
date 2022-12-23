@@ -1,5 +1,5 @@
 import { Button, InputGroup, InputRightElement } from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
