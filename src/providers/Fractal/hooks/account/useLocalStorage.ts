@@ -17,7 +17,7 @@ const CACHE_MAPPING = [
   },
   {
     key: CacheKeys.AUDIT,
-    defaultValue: false,
+    defaultValue: true, // TODO set audit prompt to hide by default. We may bring this back in the future...
   },
 ];
 

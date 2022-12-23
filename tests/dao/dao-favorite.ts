@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
-import { HomePage } from '../models/HomePage';
 import { DAOHome } from '../models/DAOHome';
+import { HomePage } from '../models/HomePage';
 
 test.describe.skip('DAO Creation', () => {
   let dao: DAOHome;
@@ -8,8 +8,7 @@ test.describe.skip('DAO Creation', () => {
   test.beforeEach(async ({ page }) => {
     const home = await new HomePage(page).visit();
     const create = await home
-      .dismissAuditMessage()
-      .then(() => home.connectToWallet())
+      .connectToWallet()
       .then(() => home.dismissConnectedMessage())
       .then(() => home.clickCreateAFractal());
     dao = await create.createTestDAO();

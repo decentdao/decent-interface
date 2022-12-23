@@ -11,7 +11,7 @@ export function ActivityDescriptionModule({ activity }: { activity: TxProposal }
       textStyle="text-lg-mono-semibold"
       gap="2"
     >
-      <Text>{t('moduleDescription', { ns: 'dashboard', txCount: activity.targets.length })}</Text>
+      <Text>{t('moduleDescription', { ns: 'dashboard', count: activity.targets.length })}</Text>
       {activity.targets.length > 2 ? (
         <Text>
           {t('addresses', {

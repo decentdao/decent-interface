@@ -160,7 +160,6 @@ export interface UsulProposal extends GovernanceActivity {
   votes: ProposalVote[];
   deadline: number;
   startBlock: BigNumber;
-  userVote?: ProposalVote;
 }
 
 export interface TreasuryActivity extends ActivityBase {

@@ -13,7 +13,8 @@
     "titlePassed": "Passed",
     "titleTreasury": "Treasury",
     "noActivity": "No Activity",
-    "proposalDescription": "Proposal to execute {{txCount}} transactions",
+    "proposalDescription_one": "Proposal to execute {{count}} transaction",
+    "proposalDescription_other": "Proposal to execute {{count}} transactions",
     "freezeDescription": "Freeze Initiated on DAO",
     "frozenDescription": "DAO is Frozen",
     "freezeButton": "Freeze",
@@ -27,5 +28,6 @@
     "timeRemaining": "{{time}} remaining",
     "labelUndoFreeze": "Undo Freeze",
     "labelDAOFrozen": "{{daoName}} Frozen",
-    "moduleDescription": "Module executed {{txCount}} transactions on"
+    "moduleDescription_one": "Module executed {{count}} transaction on",
+    "moduleDescription_other": "Module executed {{count}} transactions on"
 }

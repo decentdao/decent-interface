@@ -11,7 +11,6 @@
     "titlePassed": "Успішні",
     "titleTreasury": "Скарбниця",
     "noActivity": "Нема активності",
-    "proposalDescription": "Пропозиція виконати {{txCount}} транзакцій за",
     "proposalOnChainRejection": "що відхиляє транзакцію # {{proposalNumber}}",
     "proposalDescriptionCont": "що буде",
     "labelFreezeInitiated": "Замороження ініційовано",
