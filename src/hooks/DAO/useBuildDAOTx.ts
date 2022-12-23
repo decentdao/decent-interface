@@ -393,11 +393,11 @@ const useBuildDAOTx = () => {
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod.mul(TIMER_MULT),
+            executionPeriod: subDAOData.executionPeriod,
             parentDAOAddress: parentDAOAddress,
             vetoVotingAddress: vetoVotingAddress,
             safeAddress: safeContract.address,
-            timelockPeriod: subDAOData.timelockPeriod?.mul(TIMER_MULT),
+            timelockPeriod: subDAOData.timelockPeriod,
           });
           if (!deployVetoGuardTx) {
             return;
@@ -607,21 +607,16 @@ const useBuildDAOTx = () => {
           tokenAllocation => tokenAllocation.address
         );
         const tokenAllocationsValues = tokenGovernanceDaoData.tokenAllocations.map(
-          tokenAllocation => tokenAllocation.amount.bigNumberValue!
+          tokenAllocation => tokenAllocation.amount || BigNumber.from(0)
         );
 
-        const tokenAllocationSum: BigNumber = tokenAllocationsValues.reduce(
-          (accumulator, tokenAllocation) => {
-            return tokenAllocation!.add(accumulator);
-          },
-          BigNumber.from(0)
-        );
+        const tokenAllocationSum = tokenAllocationsValues.reduce((accumulator, tokenAllocation) => {
+          return tokenAllocation!.add(accumulator);
+        }, BigNumber.from(0));
 
-        if (tokenGovernanceDaoData.tokenSupply.bigNumberValue!.gt(tokenAllocationSum)) {
+        if (tokenGovernanceDaoData.tokenSupply.gt(tokenAllocationSum)) {
           tokenAllocationsOwners.push(predictedGnosisSafeAddress);
-          tokenAllocationsValues.push(
-            tokenGovernanceDaoData.tokenSupply.bigNumberValue!.sub(tokenAllocationSum)
-          );
+          tokenAllocationsValues.push(tokenGovernanceDaoData.tokenSupply.sub(tokenAllocationSum));
         }
 
         const encodedInitTokenData = defaultAbiCoder.encode(
@@ -749,7 +744,7 @@ const useBuildDAOTx = () => {
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod.mul(TIMER_MULT),
+            executionPeriod: subDAOData.executionPeriod,
             parentDAOAddress: parentDAOAddress,
             vetoVotingAddress: vetoVotingAddress,
             safeAddress: safeContract.address,
@@ -942,7 +937,6 @@ const useBuildDAOTx = () => {
 
         return { predictedGnosisSafeAddress, createSafeTx, safeTx };
       };
-
       return buildTx();
     },
     [

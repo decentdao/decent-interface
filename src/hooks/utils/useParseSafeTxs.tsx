@@ -6,7 +6,7 @@ import {
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
-import { ActivityEventType, TxProposalState, Activity } from '../../providers/Fractal/types';
+import { ActivityEventType, Activity } from '../../providers/Fractal/types';
 import { parseDecodedData, totalsReducer } from '../../providers/Fractal/utils';
 import { formatWeiToValue } from '../../utils';
 
@@ -31,7 +31,7 @@ export function useParseSafeTxs(
       );
 
       // @note it can be assumed that if there is no transfers it a receiving event
-      const isDeposit = transaction.transfers.length
+      const isDeposit: boolean = transaction.transfers.length
         ? transaction.transfers.every(t => t.to.toLowerCase() === safe.address!.toLowerCase())
         : false;
 
@@ -39,11 +39,13 @@ export function useParseSafeTxs(
       const transferAmountTotalsMap = transaction.transfers.reduce(totalsReducer, new Map());
 
       // formats totals array into readable string with Symbol ie 1 ETHER
-      const transferAmountTotals = Array.from(transferAmountTotalsMap.values()).map(token => {
-        const totalAmount = formatWeiToValue(token.bn, token.decimals);
-        const symbol = token.symbol;
-        return `${totalAmount} ${symbol}`;
-      });
+      const transferAmountTotals: string[] = Array.from(transferAmountTotalsMap.values()).map(
+        token => {
+          const totalAmount = formatWeiToValue(token.bn, token.decimals);
+          const symbol = token.symbol;
+          return `${totalAmount} ${symbol}`;
+        }
+      );
 
       // maps address for each transfer
       const transferAddresses = transaction.transfers.map(transfer =>
@@ -64,7 +66,7 @@ export function useParseSafeTxs(
 
       const eventSafeTxHash = multiSigTransaction.safeTxHash;
 
-      const eventType = isMultiSigTransaction
+      const eventType: any = isMultiSigTransaction
         ? ActivityEventType.Governance
         : isModuleTransaction
         ? ActivityEventType.Module
@@ -81,38 +83,12 @@ export function useParseSafeTxs(
         );
       });
 
-      const isMultisigRejectionTx =
+      const isMultisigRejectionTx: boolean | undefined =
         isMultiSigTransaction &&
         !multiSigTransaction.data &&
         multiSigTransaction.to === multiSigTransaction.safe &&
         noncePair &&
         BigNumber.from(multiSigTransaction.value).isZero();
-
-      const isRejected =
-        isMultiSigTransaction &&
-        transactionArr.find(tx => {
-          const multiSigTx = tx as SafeMultisigTransactionWithTransfersResponse;
-          return (
-            multiSigTx.nonce === eventNonce &&
-            multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash &&
-            multiSigTx.isExecuted
-          );
-        });
-
-      const isQueued =
-        multiSigTransaction.confirmations?.length || 0 >= multiSigTransaction.confirmationsRequired;
-
-      const state = isModuleTransaction
-        ? TxProposalState.Module
-        : isRejected
-        ? TxProposalState.Rejected
-        : multiSigTransaction.isSuccessful && multiSigTransaction.isExecuted
-        ? TxProposalState.Executed
-        : isQueued
-        ? TxProposalState.Queued
-        : !multiSigTransaction.isExecuted
-        ? TxProposalState.Active
-        : TxProposalState.Pending;
 
       const confirmations = multiSigTransaction.confirmations
         ? multiSigTransaction.confirmations
@@ -149,7 +125,7 @@ export function useParseSafeTxs(
         targets,
         transactionHash: multiSigTransaction.transactionHash,
         metaData,
-        state,
+        state: null,
       };
       return activity;
     });

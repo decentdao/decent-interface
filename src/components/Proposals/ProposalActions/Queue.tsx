@@ -10,7 +10,7 @@ export default function Queue({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
   const { queueProposal, pending } = useQueueProposal();
 
-  const disabled = pending || proposal.state !== TxProposalState.Pending;
+  const disabled = pending || proposal.state !== TxProposalState.Queueable;
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>

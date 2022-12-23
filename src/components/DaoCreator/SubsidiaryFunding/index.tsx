@@ -1,14 +1,8 @@
-import {
-  Button,
-  InputGroup,
-  InputRightElement,
-  NumberInput,
-  NumberInputField,
-} from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
+import { Button, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
 import { useState } from 'react';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import EtherscanLinkAddress from '../../ui/EtherscanLinkAddress';
@@ -28,8 +22,6 @@ export function SubsidiaryFunding() {
     dispatch,
   } = useCreator();
 
-  const { limitDecimalsOnKeyDown } = useFormHelpers();
-
   const [selectedTokenIndex, setSelectedTokenIndex] = useState<number>();
   const [selectedNFTIndex, setSelectedNFTIndex] = useState<number>();
   const {
@@ -45,15 +37,14 @@ export function SubsidiaryFunding() {
     });
   };
 
-  const onTokenFundChange = (value: string, changedTokenIndex: number) => {
+  const onTokenFundChange = (value: BigNumberValuePair, changedTokenIndex: number) => {
     const assets = funding.tokensToFund.map((tokenToFund, i) => {
       if (i === changedTokenIndex) {
         const tokenIndex = assetsFungible.findIndex(
           v => v.tokenAddress === tokenToFund.asset.tokenAddress
         );
         const token = assetsFungible[tokenIndex];
-        const valueBigNumber = utils.parseUnits(value, token.token.decimals);
-        if (valueBigNumber.gte(token.balance)) {
+        if (value.bigNumberValue.gte(token.balance)) {
           return {
             ...tokenToFund,
             amount: { value: token.fiatBalance, bigNumberValue: token.balance },
@@ -61,7 +52,7 @@ export function SubsidiaryFunding() {
         } else {
           return {
             ...tokenToFund,
-            amount: { value: value, bigNumberValue: valueBigNumber },
+            amount: { value: value, bigNumberValue: value.bigNumberValue.toString() },
           };
         }
       }
@@ -184,30 +175,22 @@ export function SubsidiaryFunding() {
               <div className="pr-4 text-gray-25 font-mono font-semibold tracking-wider text-right">
                 {tokenToFund.asset.fiatBalance}
               </div>
-              <NumberInput
-                value={tokenToFund.amount.value}
-                onChange={tokenAmount => onTokenFundChange(tokenAmount, index)}
-                max={Number(tokenToFund.asset.fiatBalance)}
-                onKeyDown={e =>
-                  limitDecimalsOnKeyDown(
-                    e,
-                    tokenToFund.amount.value,
-                    tokenToFund.asset.token.decimals
-                  )
-                }
-              >
-                <InputGroup>
-                  <NumberInputField placeholder="0.000000000000000000" />
-                  <InputRightElement>
-                    <Button
-                      variant="text"
-                      onClick={() => maxFundToken(index)}
-                    >
-                      Max
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </NumberInput>
+              <InputGroup>
+                <BigNumberInput
+                  value={tokenToFund.amount.bigNumberValue}
+                  onChange={tokenAmount => onTokenFundChange(tokenAmount, index)}
+                  decimalPlaces={tokenToFund.asset.token.decimals}
+                  placeholder="0.000000000000000000"
+                />
+                <InputRightElement>
+                  <Button
+                    variant="text"
+                    onClick={() => maxFundToken(index)}
+                  >
+                    Max
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
               <div onClick={() => removeTokenFund(index)}>
                 <Close />
               </div>

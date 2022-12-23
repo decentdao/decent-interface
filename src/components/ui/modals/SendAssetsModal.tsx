@@ -12,7 +12,7 @@ import {
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
-import { BigNumberInput, BigNumberValuePair } from '../BigNumberInput/BigNumberInput';
+import { BigNumberInput, BigNumberValuePair } from '../BigNumberInput';
 
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
@@ -35,7 +35,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   );
 
   const sendAssets = useSendAssets({
-    transferAmount: inputAmount?.bigNumberValue || BigNumber.from('0'),
+    transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
     asset: selectedAsset,
     destinationAddress: destination,
   });
@@ -44,13 +44,17 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     setSelectedAsset(fungibleAssetsWithBalance[Number(index)]);
   };
 
+  const onChangeAmount = (value: BigNumberValuePair) => {
+    setInputAmount(value);
+  };
+
   const { isValidAddress } = useAddress(destination.toLowerCase());
   const destinationError =
     destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
   const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue.isZero() || overDraft;
+  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue?.isZero() || overDraft;
 
   const onSubmit = () => {
     sendAssets();
@@ -93,8 +97,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             <Text>{t('amountLabel')}</Text>
           </Flex>
           <BigNumberInput
-            value={inputAmount}
-            onChange={e => setInputAmount(e)}
+            value={inputAmount?.bigNumberValue}
+            onChange={onChangeAmount}
             decimalPlaces={selectedAsset?.token?.decimals}
             placeholder="0"
           />

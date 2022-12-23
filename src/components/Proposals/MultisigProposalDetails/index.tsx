@@ -1,5 +1,7 @@
 import { Grid, GridItem, Box } from '@chakra-ui/react';
+import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';
@@ -11,6 +13,11 @@ import { TxDetails } from './TxDetails';
 
 export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) {
   const txProposal = proposal as MultisigProposal;
+  const {
+    gnosis: {
+      guardContracts: { vetoGuardContract },
+    },
+  } = useFractal();
   const {
     state: { account },
   } = useWeb3Provider();
@@ -30,7 +37,12 @@ export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) 
       </GridItem>
       <GridItem colSpan={1}>
         <TxDetails proposal={txProposal} />
-        {account && <TxActions proposal={txProposal} />}
+        {account && (
+          <TxActions
+            proposal={txProposal}
+            vetoGuard={vetoGuardContract as VetoGuard}
+          />
+        )}
       </GridItem>
     </Grid>
   );

@@ -1,13 +1,12 @@
-import { Button, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { ethers, utils } from 'ethers';
+import { BigNumber, ethers } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { isSameAddress } from '../../../utils/crypto';
-import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
+import { BigNumberInput } from '../../ui/BigNumberInput';
 
 interface TokenAllocationProps {
   index: number;
@@ -31,8 +30,6 @@ function TokenAllocationInput({
   removeTokenAllocation,
 }: TokenAllocationProps) {
   const { t } = useTranslation(['common', 'daoCreate']);
-
-  const { limitDecimalsOnKeyDown } = useFormHelpers();
 
   const updateAddress = useCallback(
     (
@@ -86,14 +83,14 @@ function TokenAllocationInput({
 
   const updateAmount = useCallback(
     (
-      value: string,
+      value: BigNumber,
       snapShotTokenAllocations: TokenAllocation[],
       snapShotTokenAllocation: TokenAllocation
     ) => {
       updateTokenAllocation(index, snapShotTokenAllocations, {
         address: snapShotTokenAllocation.address,
         isValidAddress: snapShotTokenAllocation.isValidAddress,
-        amount: { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
+        amount: value,
         addressError: snapShotTokenAllocation.addressError,
       });
     },
@@ -155,17 +152,18 @@ function TokenAllocationInput({
             : undefined
         }
       >
-        <NumberInput
-          value={tokenAllocation.amount.value}
-          onChange={tokenAmount => updateAmount(tokenAmount, tokenAllocations, tokenAllocation)}
-          isInvalid={hasAmountError}
-          data-testid="tokenVoting-tokenAllocationAmountInput"
-          onKeyDown={e =>
-            limitDecimalsOnKeyDown(e, tokenAllocation.amount.value, DEFAULT_TOKEN_DECIMALS)
+        <BigNumberInput
+          value={tokenAllocation.amount}
+          onChange={tokenAmount =>
+            updateAmount(
+              tokenAmount.bigNumberValue || BigNumber.from('0'),
+              tokenAllocations,
+              tokenAllocation
+            )
           }
-        >
-          <NumberInputField />
-        </NumberInput>
+          data-testid="tokenVoting-tokenAllocationAmountInput"
+          isInvalid={hasAmountError}
+        />
       </LabelWrapper>
       {tokenAllocations.length > 1 && (
         <Button

@@ -27,7 +27,7 @@ export default function useProposals({
 
   const sortedAndFilteredProposals = useMemo(() => {
     return [...txProposals]
-      .filter(proposal => filters.includes(proposal.state))
+      .filter(proposal => filters.includes(proposal.state!))
       .sort((a, b) => {
         const dataA = new Date(a.eventDate).getTime();
         const dataB = new Date(b.eventDate).getTime();
