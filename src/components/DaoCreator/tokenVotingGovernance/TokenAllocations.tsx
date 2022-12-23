@@ -14,7 +14,7 @@ interface TokenAllocationsProps {
   supply: BigNumber | undefined;
   parentAllocationAmount?: BigNumber;
   canReceiveParentAllocations: boolean;
-  fieldUpdate: (value: any, field: string) => void;
+  fieldUpdate: (key: string, value: any) => void;
 }
 
 function TokenAllocations({
@@ -34,7 +34,7 @@ function TokenAllocations({
     ) => {
       const newTokenAllocations = [...snapShotTokenAllocations];
       newTokenAllocations[index] = { ...tokenAllocation };
-      fieldUpdate(newTokenAllocations, 'tokenAllocations');
+      fieldUpdate('tokenAllocations', newTokenAllocations);
     },
     [fieldUpdate]
   );
@@ -47,20 +47,20 @@ function TokenAllocations({
     };
 
     if (tokenAllocations === undefined) {
-      fieldUpdate([newTokenAllocation], 'tokenAllocations');
+      fieldUpdate('tokenAllocations', [newTokenAllocation]);
       return;
     }
 
-    fieldUpdate([...tokenAllocations, newTokenAllocation], 'tokenAllocations');
+    fieldUpdate('tokenAllocations', [...tokenAllocations, newTokenAllocation]);
   };
 
   const removeTokenAllocation = (updatedTokenAllocations: TokenAllocation[]) => {
     if (tokenAllocations === undefined) return;
-    fieldUpdate(updatedTokenAllocations, 'tokenAllocations');
+    fieldUpdate('tokenAllocations', updatedTokenAllocations);
   };
 
   const onParentAllocationChange = (value: BigNumberValuePair) => {
-    fieldUpdate(value.bigNumberValue, 'parentAllocationAmount');
+    fieldUpdate('parentAllocationAmount', value.bigNumberValue);
   };
 
   useEffect(() => {

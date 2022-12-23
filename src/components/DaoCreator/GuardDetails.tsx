@@ -188,7 +188,6 @@ function GuardDetails() {
                 min="1"
                 data-testid="guardConfig-freezeProposalDuration"
               />
-
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
           </LabelWrapper>
