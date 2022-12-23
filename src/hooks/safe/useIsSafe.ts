@@ -21,13 +21,15 @@ export const useIsGnosisSafe = (address: string | undefined) => {
   } = useFractal();
 
   useEffect(() => {
+    setSafeLoading(true);
+    setIsSafe(undefined);
+
     if (!address || !isAddress(address) || !safeService) {
-      setIsSafe(undefined);
+      setIsSafe(false);
       setSafeLoading(false);
       return;
     }
 
-    setSafeLoading(true);
     safeService
       .getSafeCreationInfo(address)
       .then(() => setIsSafe(true))
