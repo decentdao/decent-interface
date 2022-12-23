@@ -1,6 +1,5 @@
 import { VStack, HStack, Text } from '@chakra-ui/react';
-import { ethers } from 'ethers';
-import { isAddress } from 'ethers/lib/utils';
+import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { TransactionData } from '../../types/transaction';
@@ -21,73 +20,78 @@ function Transaction({
 }: TransactionProps) {
   const { t } = useTranslation(['proposal', 'common']);
 
-  const validateFunctionData = (
+  const encodeFunctionData = (
     functionName: string,
-    functionSignature: string,
-    parameters: string
-  ): boolean => {
-    const functionSignatureStr = `function ${functionName}(${functionSignature})`;
-    const parametersArr = `[${parameters}]`;
+    dirtyfunctionSignature: string,
+    dirtyParameters: string
+  ): string | undefined => {
+    const functionSignature = `function ${functionName}(${dirtyfunctionSignature})`;
+    const parameters = !!dirtyParameters
+      ? dirtyParameters.split(',').map(p => (p = p.trim()))
+      : undefined;
     try {
-      new ethers.utils.Interface([functionSignatureStr]).encodeFunctionData(
-        functionName,
-        JSON.parse(parametersArr)
-      );
-      return true;
+      return new utils.Interface([functionSignature]).encodeFunctionData(functionName, parameters);
     } catch (e) {
       logError(e);
-      return false;
+      return;
     }
   };
 
   const updateTargetAddress = (targetAddress: string) => {
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.targetAddress = targetAddress;
-    let isValidAddress = false;
-    if (targetAddress.trim()) {
-      isValidAddress = isAddress(targetAddress);
-    }
-    newTransactionData.addressError =
-      !isValidAddress && targetAddress.trim()
-        ? t('errorInvalidAddress', { ns: 'common' })
-        : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    const isValidAddress = !!targetAddress
+      ? utils.isAddress(targetAddress.trim().toLowerCase())
+      : undefined;
+
+    const transactionCopy = {
+      ...transaction,
+      targetAddress: targetAddress.trim(),
+      addressError:
+        !isValidAddress && targetAddress.trim()
+          ? t('errorInvalidAddress', { ns: 'common' })
+          : undefined,
+    };
+    updateTransaction(transactionCopy, transactionNumber);
+  };
+
+  const updateTransactionValue = (
+    value: string,
+    encodedFunctionData: string | undefined,
+    key: keyof TransactionData
+  ) => {
+    const transactionCopy = {
+      ...transaction,
+      [key]: value,
+      encodedFunctionData: encodedFunctionData,
+      fragmentError: !encodeFunctionData ? t('errorInvalidFragments') : undefined,
+    };
+    updateTransaction(transactionCopy, transactionNumber);
   };
 
   const updateFunctionName = (functionName: string) => {
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.functionName = functionName;
-    const isValidFragment = validateFunctionData(
+    const encodedFunctionData = encodeFunctionData(
       functionName,
       transaction.functionSignature,
       transaction.parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    updateTransactionValue(functionName, encodedFunctionData, 'functionName');
   };
 
   const updateFunctionSignature = (functionSignature: string) => {
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.functionSignature = functionSignature;
-    const isValidFragment = validateFunctionData(
+    const encodedFunctionData = encodeFunctionData(
       transaction.functionName,
       functionSignature,
       transaction.parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    updateTransactionValue(functionSignature, encodedFunctionData, 'functionSignature');
   };
 
   const updateParameters = (parameters: string) => {
-    const newTransactionData = Object.assign({}, transaction);
-    newTransactionData.parameters = parameters;
-    const isValidFragment = validateFunctionData(
+    const encodedFunctionData = encodeFunctionData(
       transaction.functionName,
       transaction.functionSignature,
       parameters
     );
-    newTransactionData.fragmentError = !isValidFragment ? t('errorInvalidFragments') : undefined;
-    updateTransaction(newTransactionData, transactionNumber);
+    updateTransactionValue(parameters, encodedFunctionData, 'parameters');
   };
 
   const exampleLabelStyle = {
@@ -161,7 +165,7 @@ function Transaction({
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
             <Text {...exampleLabelStyle}>
-              {'"0xADC74eE329a23060d3CB431Be0AB313740c191E7", 1000000000'}
+              {'0xADC74eE329a23060d3CB431Be0AB313740c191E7, 1000000000'}
             </Text>
           </HStack>
         }

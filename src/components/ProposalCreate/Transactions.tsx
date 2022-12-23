@@ -14,15 +14,15 @@ import Transaction from './Transaction';
 
 interface TransactionsProps {
   transactions: TransactionData[];
-  pending: boolean;
   setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
+  pending: boolean;
   removeTransaction: (transactionNumber: number) => void;
 }
 
 function Transactions({
   transactions,
-  pending,
   setTransactions,
+  pending,
   removeTransaction,
 }: TransactionsProps) {
   const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
@@ -67,7 +67,7 @@ function Transactions({
                   {isExpanded ? <ArrowDown boxSize="1.5rem" /> : <ArrowRight fontSize="1.5rem" />}
                   {t('transaction')} {index + 1}
                 </AccordionButton>
-                {index !== 0 ? (
+                {index !== 0 || transactions.length !== 1 ? (
                   <IconButton
                     icon={<Trash boxSize="24px" />}
                     aria-label={t('removetransactionlabel')}
