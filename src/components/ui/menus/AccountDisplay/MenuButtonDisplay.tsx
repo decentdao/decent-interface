@@ -1,10 +1,10 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { ArrowDown } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
 import Avatar from '../../Header/Avatar';
+import DownArrow from '../../svg/DownArrow';
 
 export function NotConnected() {
   const { t } = useTranslation('menu');
@@ -13,8 +13,8 @@ export function NotConnected() {
       alignItems="center"
       gap="1"
     >
-      <Text textStyle="text-base-mono-bold">{t('connectWallet')}</Text>
-      <ArrowDown />
+      <Text textStyle="text-sm-mono-medium">{t('connectWallet')}</Text>
+      <DownArrow />
     </Flex>
   );
 }
@@ -43,7 +43,7 @@ export function Connected() {
         />
       </Box>
       <Text textStyle="text-sm-mono-semibold">{accountDisplayName}</Text>
-      <ArrowDown />
+      <DownArrow />
     </Flex>
   );
 }
