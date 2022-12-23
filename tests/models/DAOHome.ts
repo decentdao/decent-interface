@@ -14,7 +14,7 @@ export class DAOHome extends NavPage {
     return this;
   }
 
-  selectorDAOInfo = this.page.locator('data-testid=DAOInfo-name');
+  selectorDAOInfo = this.page.locator('[data-testid=DAOInfo-name]');
 
   async clickFavoriteStar() {
     await this.page.click('//div[@class="flex items-center"]//button//*[name()="svg"]');

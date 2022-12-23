@@ -8,8 +8,7 @@ let create: DAOCreate;
 test.beforeEach(async ({ page }) => {
   const home = await new HomePage(page).visit();
   create = await home
-    .dismissAuditMessage()
-    .then(() => home.connectToWallet())
+    .connectToWallet()
     .then(() => home.dismissConnectedMessage())
     .then(() => home.clickCreateAFractal());
 });

@@ -2,10 +2,20 @@ import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
 import { useFractal } from './../../providers/Fractal/hooks/useFractal';
 
-const useIsGnosisSafe = (address: string | undefined) => {
-  const [loading, setLoading] = useState<boolean>();
-  const [isSafe, setIsSafe] = useState<boolean>();
-
+/**
+ * A hook which determines whether the provided Ethereum address is a Gnosis
+ * Safe smart contract address on the currently connected chain (chainId).
+ *
+ * The state can be either true/false or undefined, if a network call is currently
+ * being performed to determine that status.
+ *
+ * @param address the address to check
+ * @returns isSafe: whether the address is a Safe,
+ *  isSafeLoading: true/false whether the isSafe status is still being determined
+ */
+export const useIsGnosisSafe = (address: string | undefined) => {
+  const [isSafeLoading, setSafeLoading] = useState<boolean>(false);
+  const [isSafe, setIsSafe] = useState<boolean | undefined>();
   const {
     gnosis: { safeService },
   } = useFractal();
@@ -13,19 +23,17 @@ const useIsGnosisSafe = (address: string | undefined) => {
   useEffect(() => {
     if (!address || !isAddress(address) || !safeService) {
       setIsSafe(undefined);
-      setLoading(false);
+      setSafeLoading(false);
       return;
     }
 
-    setLoading(true);
+    setSafeLoading(true);
     safeService
       .getSafeCreationInfo(address)
       .then(() => setIsSafe(true))
       .catch(() => setIsSafe(false))
-      .finally(() => setLoading(false));
+      .finally(() => setSafeLoading(false));
   }, [address, safeService]);
 
-  return [isSafe, loading] as const;
+  return { isSafe, isSafeLoading };
 };
-
-export default useIsGnosisSafe;

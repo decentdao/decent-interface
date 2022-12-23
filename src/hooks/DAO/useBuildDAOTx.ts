@@ -11,6 +11,8 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { CreatorProvider } from '../../components/DaoCreator/provider/CreatorProvider';
 import {
   GnosisDAO,
   SubDAO,
@@ -21,6 +23,23 @@ import { GovernanceTypes } from '../../providers/Fractal/types';
 import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { MetaTransaction } from '../../types/transaction';
 import useSafeContracts from '../safe/useSafeContracts';
+
+/**
+ * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
+ * However, from the UI/user's perspective, the input fields are denoted in MINUTES.
+ *
+ * Thus the data from the user inputs must be converted to seconds before passing into
+ * the transaction.  This applies to:
+ *
+ * votingPeriod
+ * executionPeriod
+ * timelockPeriod
+ * freezeProposalPeriod
+ * freezePeriod
+ *
+ * The UI defaults (in minutes) are defined in {@link CreatorProvider}.
+ */
+const TIMER_MULT = 60;
 
 const useBuildDAOTx = () => {
   const {
@@ -192,14 +211,14 @@ const useBuildDAOTx = () => {
                   vetoVotingAddress, // Veto Voting
                   strategyAddress, // Base Strategy
                   usulAddress, // USUL
-                  executionPeriod, // Execution Period
+                  executionPeriod.mul(TIMER_MULT), // Execution Period
                 ]
               )
             : ethers.utils.defaultAbiCoder.encode(
                 ['uint256', 'uint256', 'address', 'address', 'address'],
                 [
-                  timelockPeriod, // Timelock Period
-                  executionPeriod, // Execution Period
+                  timelockPeriod?.mul(TIMER_MULT), // Timelock Period
+                  executionPeriod.mul(TIMER_MULT), // Execution Period
                   parentDAOAddress, // Owner -- Parent DAO
                   vetoVotingAddress, // Veto Voting
                   safeAddress, // Gnosis Safe
@@ -374,11 +393,11 @@ const useBuildDAOTx = () => {
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod,
+            executionPeriod: subDAOData.executionPeriod.mul(TIMER_MULT),
             parentDAOAddress: parentDAOAddress,
             vetoVotingAddress: vetoVotingAddress,
             safeAddress: safeContract.address,
-            timelockPeriod: subDAOData.timelockPeriod,
+            timelockPeriod: subDAOData.timelockPeriod?.mul(TIMER_MULT),
           });
           if (!deployVetoGuardTx) {
             return;
@@ -426,8 +445,8 @@ const useBuildDAOTx = () => {
                     parentDAOAddress, // Owner -- Parent DAO
                     subDAOData.vetoVotesThreshold, // VetoVotesThreshold
                     subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
-                    subDAOData.freezeProposalPeriod, // FreezeProposalPeriod
-                    subDAOData.freezePeriod, // FreezeBlockPeriod
+                    subDAOData.freezeProposalPeriod.mul(TIMER_MULT), // FreezeProposalPeriod
+                    subDAOData.freezePeriod.mul(TIMER_MULT), // FreezePeriod
                     parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
                     predictedVetoModuleAddress, // VetoGuard
                   ]
@@ -640,9 +659,9 @@ const useBuildDAOTx = () => {
             predictedGnosisSafeAddress, // owner
             predictedTokenAddress,
             '0x0000000000000000000000000000000000000001',
-            tokenGovernanceDaoData.votingPeriod,
+            tokenGovernanceDaoData.votingPeriod.mul(TIMER_MULT),
             tokenGovernanceDaoData.quorumPercentage,
-            tokenGovernanceDaoData.timelock,
+            tokenGovernanceDaoData.timelock.mul(TIMER_MULT),
             'linearVoting',
           ]
         );
@@ -730,7 +749,7 @@ const useBuildDAOTx = () => {
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod,
+            executionPeriod: subDAOData.executionPeriod.mul(TIMER_MULT),
             parentDAOAddress: parentDAOAddress,
             vetoVotingAddress: vetoVotingAddress,
             safeAddress: safeContract.address,
@@ -786,8 +805,8 @@ const useBuildDAOTx = () => {
                     parentDAOAddress, // Owner -- Parent DAO
                     subDAOData.vetoVotesThreshold, // VetoVotesThreshold
                     subDAOData.freezeVotesThreshold, // FreezeVotesThreshold
-                    subDAOData.freezeProposalPeriod, // FreezeProposalPeriod
-                    subDAOData.freezePeriod, // FreezePeriod
+                    subDAOData.freezeProposalPeriod.mul(TIMER_MULT), // FreezeProposalPeriod
+                    subDAOData.freezePeriod.mul(TIMER_MULT), // FreezePeriod
                     parentTokenAddress ? parentTokenAddress : parentDAOAddress, // ParentGnosisSafe or Votes Token
                     predictedVetoModuleAddress, // VetoGuard
                   ]

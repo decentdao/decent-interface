@@ -11,6 +11,7 @@ import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
@@ -36,12 +37,18 @@ export function DAOInfoCard({
       favorites: { favoritesList, toggleFavorite },
     },
   } = useFractal();
+  const {
+    state: { account },
+  } = useWeb3Provider();
   const copyToClipboard = useCopyText();
   const { daoRegistryName } = useDAOName({
     address: address !== safeAddress ? safeAddress : undefined,
   });
   const { accountSubstring } = useDisplayName(safeAddress);
   const isFavorite = favoritesList.includes(safeAddress);
+
+  // @todo add viewable conditions
+  const canManageDAO = !!account;
   return (
     <Flex
       justifyContent="space-between"
@@ -123,8 +130,7 @@ export function DAOInfoCard({
         </Flex>
       </Flex>
       {/* Veritical Elipsis */}
-      {/* @todo add viewable conditions */}
-      <ManageDAOMenu safeAddress={safeAddress} />
+      {canManageDAO && <ManageDAOMenu safeAddress={safeAddress} />}
     </Flex>
   );
 }

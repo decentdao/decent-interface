@@ -114,6 +114,11 @@ function ProposalCreate() {
       return false;
     }
 
+    // if no target has been input OR no calldata (function name required)
+    if (!proposalData.targets[0] || !proposalData.calldatas[0]) {
+      return false;
+    }
+
     // if error in transactions
     const hasError = transactions.some(
       (transaction: TransactionData) => transaction.addressError || transaction.fragmentError
@@ -204,6 +209,9 @@ function ProposalCreate() {
                 onClick={() =>
                   submitProposal({
                     proposalData,
+                    pendingToastMessage: t('proposalCreatePendingToastMessage'),
+                    successToastMessage: t('proposalCreateSuccessToastMessage'),
+                    failedToastMessage: t('proposalCreateFailureToastMessage'),
                     successCallback,
                   })
                 }

@@ -64,3 +64,15 @@ export const formatCoin = (
 export const formatCoinFromAsset = (asset: SafeBalanceUsdResponse, truncate: boolean): string => {
   return formatCoin(asset.balance, truncate, asset?.token?.decimals, asset?.token?.symbol);
 };
+
+function getNumberSeparator(type: 'group' | 'decimal'): string {
+  return (
+    Intl.NumberFormat()
+      .formatToParts(1000.1)
+      .find(part => part.type === type)?.value || ','
+  );
+}
+
+export function formatBigNumberDisplay(num: BigNumber | string | number): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, getNumberSeparator('group'));
+}

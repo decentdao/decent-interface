@@ -8,10 +8,7 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 export function ProposalInfo({ proposal }: { proposal: TxProposal }) {
   const usulProposal = proposal as UsulProposal;
   return (
-    <Flex
-      alignItems="center"
-      flexWrap="wrap"
-    >
+    <Box>
       <Flex
         gap={4}
         alignItems="center"
@@ -19,13 +16,10 @@ export function ProposalInfo({ proposal }: { proposal: TxProposal }) {
         <ProposalStateBox state={proposal.state} />
         {usulProposal.deadline && <ProposalTime deadline={usulProposal.deadline} />}
       </Flex>
-      <Box
-        w="full"
-        mt={4}
-      >
+      <Box mt={4}>
         <ActivityDescription activity={proposal} />
         <ProposalExecutableCode proposal={proposal} />
       </Box>
-    </Flex>
+    </Box>
   );
 }

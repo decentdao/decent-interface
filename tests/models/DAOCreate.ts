@@ -8,15 +8,15 @@ export class DAOCreate extends NavPage {
   }
 
   async fillFractalName(text: string) {
-    await this.page.locator('data-testid=essentials-daoName').fill(text);
+    await this.page.locator('[data-testid=essentials-daoName]').fill(text);
   }
 
   async clickNextButton() {
-    await this.page.click('data-testid=create-nextButton');
+    await this.page.click('[data-testid=create-nextButton]');
   }
 
   async clickPureGnosisSafe() {
-    await this.page.locator('data-testid=choose-multisig').click();
+    await this.page.locator('[data-testid=choose-multisig]').click();
   }
 
   async fillWalletAddress(text: string) {
@@ -26,7 +26,7 @@ export class DAOCreate extends NavPage {
   }
 
   async clickDeployButton() {
-    await this.page.click('data-testid=create-deployDAO');
+    await this.page.click('[data-testid=create-deployDAO]');
   }
 
   /*

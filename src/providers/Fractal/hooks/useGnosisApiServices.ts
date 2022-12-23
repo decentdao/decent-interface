@@ -29,7 +29,7 @@ export function useGnosisApiServices(
   const { setMethodOnInterval } = useUpdateTimer(address);
 
   useEffect(() => {
-    if (!account || !signerOrProvider) {
+    if (!signerOrProvider) {
       return;
     }
     const ethAdapter = new EthersAdapter({

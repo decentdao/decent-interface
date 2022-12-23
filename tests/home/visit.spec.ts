@@ -5,7 +5,6 @@ let home: HomePage;
 
 test.beforeEach(async ({ page }) => {
   home = await new HomePage(page).visit();
-  await home.dismissAuditMessage();
 });
 
 test('home renders correctly, disconnected', async ({ page }) => {
