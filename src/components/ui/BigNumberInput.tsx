@@ -16,7 +16,17 @@ export interface BigNumberInputProps
   min?: string;
   max?: string;
 }
-
+/**
+ * This component will add a chakra Input component that accepts and sets a BigNumber
+ *
+ * @param value input value to the control as a BigNumber. If undefined is set then the component will be blank.
+ * @param onChange event is raised whenever the component changes. Sends back a value / BigNumber pair. The value sent back is a string represnetation of the BigNumber as a decimal number.
+ * @param decimalPlaces number of decimal places to be used to parse the value to set the BigNumber
+ * @param min Setting a minimum value will reset the Input value to min when the component looses focus. Can set decimal number for minimum, but must respect the decimalPlaces value.
+ * @param max Setting this will cause the value of the Input control to be reset to the maximum when a number larger than it is inputted.
+ * @parma ...rest component accepts all properties for Input and FormControl
+ * @returns
+ */
 export function BigNumberInput({
   value,
   onChange,
@@ -34,8 +44,12 @@ export function BigNumberInput({
     }
     return input;
   };
-  const initialValue = () =>
-    value && !value.isZero() ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces)) : '';
+  const initialValue = value
+    ? !value.isZero()
+      ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
+      : '0'
+    : '';
+
   const [inputValue, setInputValue] = useState<string>(initialValue);
 
   // this will insure the caret in the input button does not shift to the end of the input when the value is changed
@@ -48,9 +62,7 @@ export function BigNumberInput({
     });
   };
 
-  const removeOnlyDecimalPoint = (input: string) => {
-    return !input || input === '.' ? '0' : input;
-  };
+  const removeOnlyDecimalPoint = (input: string) => (!input || input === '.' ? '0' : input);
 
   const truncateDecimalPlaces = useCallback(
     (eventValue: string) => {
@@ -67,18 +79,23 @@ export function BigNumberInput({
     [decimalPlaces]
   );
 
-  const onChangeInput = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      //test input is a decimal number
+  const processValue = useCallback(
+    (event?: React.ChangeEvent<HTMLInputElement>, stringValue = '') => {
+      if (event) {
+        stringValue = event.target.value;
+      }
+
       const numberMask =
         decimalPlaces === 0 ? new RegExp('^\\d*$') : new RegExp('^\\d*(\\.\\d*)?$');
-      if (!numberMask.test(event.target.value)) {
-        resetCaretPositionForInput(event);
-        event.preventDefault();
+      if (!numberMask.test(stringValue)) {
+        if (event) {
+          resetCaretPositionForInput(event);
+          event.preventDefault();
+        }
         return;
       }
 
-      let newValue = truncateDecimalPlaces(event.target.value);
+      let newValue = truncateDecimalPlaces(stringValue);
       let bigNumberValue = utils.parseUnits(removeOnlyDecimalPoint(newValue), decimalPlaces);
 
       //set value to max if greater than max
@@ -92,7 +109,7 @@ export function BigNumberInput({
         value: removeOnlyDecimalPoint(newValue),
         bigNumberValue: bigNumberValue,
       });
-      if (newValue !== event.target.value) {
+      if (event && newValue !== event.target.value) {
         resetCaretPositionForInput(event);
       }
       setInputValue(newValue);
@@ -100,11 +117,19 @@ export function BigNumberInput({
     [decimalPlaces, max, onChange, truncateDecimalPlaces]
   );
 
+  const onChangeInput = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      processValue(event);
+    },
+    [processValue]
+  );
+
   //set value to min if less than min, when focus is lost
   const onBlur = useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
-      if (event.target.value) {
-        const bigNumberValue = utils.parseUnits(event.target.value, decimalPlaces);
+      const eventValue = event.target.value;
+      if (eventValue && eventValue !== '.') {
+        const bigNumberValue = utils.parseUnits(eventValue, decimalPlaces);
         const bigNumberMin = utils.parseUnits(min, decimalPlaces);
         if (bigNumberValue.lt(bigNumberMin)) {
           onChange({
@@ -120,13 +145,7 @@ export function BigNumberInput({
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
-    const newValue = truncateDecimalPlaces(inputValue);
-    const bigNumberValue = utils.parseUnits(removeOnlyDecimalPoint(newValue), decimalPlaces);
-    onChange({
-      value: removeOnlyDecimalPoint(newValue),
-      bigNumberValue: bigNumberValue,
-    });
-    setInputValue(newValue);
+    processValue(undefined, inputValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimalPlaces]);
 

@@ -54,7 +54,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue.isZero() || overDraft;
+  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue?.isZero() || overDraft;
 
   const onSubmit = () => {
     sendAssets();

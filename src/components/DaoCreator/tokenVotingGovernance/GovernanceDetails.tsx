@@ -15,11 +15,11 @@ function GovernanceDetails() {
     dispatch,
   } = useCreator();
 
-  const fieldUpdate = (value: any, field: string) => {
+  const fieldUpdate = (key: string, value: any) => {
     dispatch({
       type: CreatorProviderActions.UPDATE_GOV_CONFIG,
       payload: {
-        [field]: value,
+        [key]: value,
       },
     });
   };
@@ -39,7 +39,7 @@ function GovernanceDetails() {
             <InputGroup>
               <BigNumberInput
                 value={govModule.votingPeriod}
-                onChange={value => fieldUpdate(value.bigNumberValue, 'votingPeriod')}
+                onChange={value => fieldUpdate('votingPeriod', value.bigNumberValue)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="govConfig-votingPeriod"
@@ -62,7 +62,7 @@ function GovernanceDetails() {
             <InputGroup>
               <BigNumberInput
                 value={govModule.quorumPercentage}
-                onChange={value => fieldUpdate(value.bigNumberValue, 'quorumPercentage')}
+                onChange={value => fieldUpdate('quorumPercentage', value.bigNumberValue)}
                 max="100"
                 decimalPlaces={0}
                 data-testid="govConfig-quorumPercentage"
@@ -79,7 +79,7 @@ function GovernanceDetails() {
             <InputGroup>
               <BigNumberInput
                 value={govModule.timelock}
-                onChange={value => fieldUpdate(value.bigNumberValue, 'timelock')}
+                onChange={value => fieldUpdate('timelock', value.bigNumberValue)}
                 decimalPlaces={0}
                 data-testid="govConfig-timelock"
               />

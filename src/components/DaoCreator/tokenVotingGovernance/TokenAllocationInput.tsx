@@ -155,8 +155,13 @@ function TokenAllocationInput({
         <BigNumberInput
           value={tokenAllocation.amount}
           onChange={tokenAmount =>
-            updateAmount(tokenAmount.bigNumberValue, tokenAllocations, tokenAllocation)
+            updateAmount(
+              tokenAmount.bigNumberValue || BigNumber.from('0'),
+              tokenAllocations,
+              tokenAllocation
+            )
           }
+          decimalPlaces={0}
           data-testid="tokenVoting-tokenAllocationAmountInput"
           isInvalid={hasAmountError}
         />

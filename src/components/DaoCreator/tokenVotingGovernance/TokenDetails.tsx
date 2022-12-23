@@ -67,6 +67,7 @@ function TokenDetails() {
             data-testid="tokenVoting-tokenSupplyInput"
             value={govToken.tokenSupply}
             onChange={onSupplyChange}
+            decimalPlaces={0}
           />
         </LabelWrapper>
       </InputBox>

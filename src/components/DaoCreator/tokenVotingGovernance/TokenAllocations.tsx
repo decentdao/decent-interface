@@ -101,6 +101,7 @@ function TokenAllocations({
               data-testid="tokenVoting-parentTokenAllocationInput"
               value={parentAllocationAmount}
               onChange={onParentAllocationChange}
+              decimalPlaces={0}
               isInvalid={hasAmountError}
             />
           </LabelWrapper>
