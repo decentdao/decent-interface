@@ -393,11 +393,11 @@ const useBuildDAOTx = () => {
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod.mul(TIMER_MULT),
+            executionPeriod: subDAOData.executionPeriod,
             parentDAOAddress: parentDAOAddress,
             vetoVotingAddress: vetoVotingAddress,
             safeAddress: safeContract.address,
-            timelockPeriod: subDAOData.timelockPeriod?.mul(TIMER_MULT),
+            timelockPeriod: subDAOData.timelockPeriod,
           });
           if (!deployVetoGuardTx) {
             return;
@@ -744,7 +744,7 @@ const useBuildDAOTx = () => {
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod.mul(TIMER_MULT),
+            executionPeriod: subDAOData.executionPeriod,
             parentDAOAddress: parentDAOAddress,
             vetoVotingAddress: vetoVotingAddress,
             safeAddress: safeContract.address,

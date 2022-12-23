@@ -42,7 +42,7 @@ export const getTxProposalState = async (
       try {
         // This function never returns false, it either returns true or throws an error
         await strategy.isPassed(proposalId);
-        return TxProposalState.Pending;
+        return TxProposalState.Queueable;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
           return TxProposalState.Rejected;

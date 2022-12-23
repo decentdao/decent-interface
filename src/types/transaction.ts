@@ -36,6 +36,7 @@ export interface TransactionData {
   addressError?: string;
   fragmentError?: string;
   isExpanded: boolean;
+  encodedFunctionData: string | undefined;
 }
 
 export type DecodedTxParam = {

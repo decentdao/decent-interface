@@ -30,7 +30,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   useEffect(() => {
     let timeout = 0;
     const now = new Date();
-    if (proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Pending) {
+    if (proposal.state === TxProposalState.Active) {
       timeout = proposal.deadline * 1000 - now.getTime();
     } else if (proposal.state === TxProposalState.TimeLocked) {
       const timeLockNumber = timeLockPeriod?.value?.toNumber();

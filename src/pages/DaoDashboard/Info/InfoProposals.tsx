@@ -11,7 +11,7 @@ export function InfoProposals({}: IDAOGovernance) {
   const {
     gnosis: { safe },
     governance: {
-      txProposalsInfo: { passed, pending },
+      txProposalsInfo: { passed, active },
       governanceIsLoading,
     },
   } = useFractal();
@@ -60,7 +60,7 @@ export function InfoProposals({}: IDAOGovernance) {
           textStyle="text-base-sans-regular"
           color="grayscale.100"
         >
-          {pending}
+          {active}
         </Text>
       </Flex>
       <Flex
