@@ -1,10 +1,8 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { Proposals } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../../routes/constants';
 
 interface IDAOGovernance {}
 
@@ -32,11 +30,7 @@ export function InfoProposals({}: IDAOGovernance) {
   }
 
   return (
-    <Link
-      data-testid="dashboard-daoProposals"
-      to={DAO_ROUTES.proposals.relative(safe.address)}
-      aria-label="Proposals Info Link"
-    >
+    <Box data-testid="dashboard-daoProposals">
       <Flex
         alignItems="center"
         gap="0.5rem"
@@ -87,6 +81,6 @@ export function InfoProposals({}: IDAOGovernance) {
           {passed}
         </Text>
       </Flex>
-    </Link>
+    </Box>
   );
 }
