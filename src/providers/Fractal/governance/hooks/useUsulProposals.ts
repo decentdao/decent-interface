@@ -69,7 +69,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         payload: {
           txProposals: proposals,
           passed: txProposalsInfo.passed,
-          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
+          active: txProposalsInfo.active ? txProposalsInfo.active : 1,
         },
       });
     },
@@ -112,7 +112,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         payload: {
           txProposals: proposals,
           passed: txProposalsInfo.passed,
-          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
+          active: txProposalsInfo.active ? txProposalsInfo.active : 1,
         },
       });
     },
@@ -208,11 +208,9 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
         0
       );
-      const pendingProposals = mappedProposals.reduce(
-        (prev, proposal) =>
-          proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Pending
-            ? prev + 1
-            : prev,
+      // @todo no queued?
+      const activeProposals = mappedProposals.reduce(
+        (prev, proposal) => (proposal.state === TxProposalState.Active ? prev + 1 : prev),
         0
       );
       governanceDispatch({
@@ -220,7 +218,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         payload: {
           txProposals: mappedProposals,
           passed: passedProposals,
-          pending: pendingProposals,
+          active: activeProposals,
         },
       });
     };

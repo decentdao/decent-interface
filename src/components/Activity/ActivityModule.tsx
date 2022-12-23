@@ -14,10 +14,12 @@ export function ActivityModule({ activity }: { activity: TxProposal }) {
   return (
     <ActivityCard
       Badge={
-        <Badge
-          size="base"
-          labelKey={activity.state}
-        />
+        activity.state && (
+          <Badge
+            size="base"
+            labelKey={activity.state}
+          />
+        )
       }
       description={<ActivityDescriptionModule activity={activity} />}
       RightElement={
