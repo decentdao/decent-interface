@@ -10,7 +10,7 @@ const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Canceled]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.TimeLocked]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Executed]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Executing]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Executable]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Uninitialized]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Failed]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Queueable]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },

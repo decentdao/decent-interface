@@ -53,7 +53,7 @@ export const useSafeMultisigTxs = ({
 
     const activeProposals = multisigTxs.reduce(
       (prev, proposal) =>
-        proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Executing
+        proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Executable
           ? prev + 1
           : prev,
       0

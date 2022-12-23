@@ -123,7 +123,7 @@ export enum TxProposalState {
   Canceled = 'stateCanceled',
   TimeLocked = 'stateTimeLocked',
   Executed = 'stateExecuted',
-  Executing = 'stateExecuting',
+  Executable = 'stateExecutable',
   Uninitialized = 'stateUninitialized',
   Failed = 'stateFailed',
   Queueable = 'stateQueueable',

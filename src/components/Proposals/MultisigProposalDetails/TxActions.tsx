@@ -177,7 +177,7 @@ export function TxActions({
       pageTitle: 'signTitle',
       icon: undefined,
     },
-    [TxProposalState.Executing]: {
+    [TxProposalState.Executable]: {
       action: executeTransaction,
       text: 'execute',
       pageTitle: 'executeTitle',

@@ -109,7 +109,7 @@ export function useSafeActivitiesWithState(
                   queuedTimestamp + timelockPeriod.toNumber() + executionPeriod.toNumber()
                 ) {
                   // Within execution period
-                  state = TxProposalState.Executing;
+                  state = TxProposalState.Executable;
                 } else {
                   // Execution period has ended
                   state = TxProposalState.Expired;
@@ -161,7 +161,7 @@ export function useSafeActivitiesWithState(
           } else if (multiSigTransaction.isExecuted) {
             state = TxProposalState.Executed;
           } else if (isApproved) {
-            state = TxProposalState.Executing;
+            state = TxProposalState.Executable;
           } else {
             state = TxProposalState.Active;
           }

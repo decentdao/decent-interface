@@ -9,7 +9,7 @@ export function Execute({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
   const { executeProposal, pending } = useExecuteProposal();
 
-  const disabled = proposal.state !== TxProposalState.Executing || pending;
+  const disabled = proposal.state !== TxProposalState.Executable || pending;
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
