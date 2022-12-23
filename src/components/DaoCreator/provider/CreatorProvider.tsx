@@ -2,6 +2,8 @@ import { Box, Text } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { ReactNode, useMemo, useReducer } from 'react';
 import { useTranslation } from 'react-i18next';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import useBuildDAOTx from '../../../hooks/DAO/useBuildDAOTx';
 import { GovernanceTypes } from '../../../providers/Fractal/types';
 import ConnectWalletToast from '../../ConnectWalletToast';
 import { StepButtons } from '../StepButtons';
@@ -38,18 +40,25 @@ export const initialState: CreatorState = {
     ],
     parentAllocationAmount: undefined,
   },
+  /**
+   * Time periods in CreatorState are denoted in MINUTES in the UI,
+   * however they will be converted to SECONDS before submitting to
+   * the DAO creation transaction.
+   *
+   * See {@link useBuildDAOTx} for more info.
+   */
   govModule: {
     quorumPercentage: BigNumber.from(4),
-    timelock: BigNumber.from(86400),
-    votingPeriod: BigNumber.from(604800),
+    timelock: BigNumber.from(1440),
+    votingPeriod: BigNumber.from(10080),
   },
   vetoGuard: {
-    executionPeriod: BigNumber.from(172800),
-    timelockPeriod: BigNumber.from(86400),
+    executionPeriod: BigNumber.from(2880),
+    timelockPeriod: BigNumber.from(1440),
     vetoVotesThreshold: BigNumber.from(1),
     freezeVotesThreshold: BigNumber.from(1),
-    freezeProposalPeriod: BigNumber.from(604800),
-    freezePeriod: BigNumber.from(604800),
+    freezeProposalPeriod: BigNumber.from(10080),
+    freezePeriod: BigNumber.from(10080),
   },
   funding: {
     tokensToFund: [],
