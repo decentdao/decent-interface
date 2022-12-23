@@ -26,6 +26,6 @@ test('Create Pure Gnosis DAO', async ({ page }) => {
   await page.waitForURL(create.baseUrl + '/daos/*');
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
-  await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 5000 });
+  await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
   expect(daoNameEle).toContainText('Test Fractal');
 });
