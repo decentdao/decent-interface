@@ -20,7 +20,7 @@ export interface BigNumberInputProps
  * This component will add a chakra Input component that accepts and sets a BigNumber
  *
  * @param value input value to the control as a BigNumber. If undefined is set then the component will be blank.
- * @param onChange event is raised whenever the component changes. Sends back a value / BigNumber pair. The value sent back is a string represnetation of the BigNumber as a decimal number.
+ * @param onChange event is raised whenever the component changes. Sends back a value / BigNumber pair. The value sent back is a string representation of the BigNumber as a decimal number.
  * @param decimalPlaces number of decimal places to be used to parse the value to set the BigNumber
  * @param min Setting a minimum value will reset the Input value to min when the component looses focus. Can set decimal number for minimum, but must respect the decimalPlaces value.
  * @param max Setting this will cause the value of the Input control to be reset to the maximum when a number larger than it is inputted.
@@ -31,8 +31,8 @@ export function BigNumberInput({
   value,
   onChange,
   decimalPlaces = 18,
-  min = '0',
-  max = constants.MaxUint256.toString(),
+  min,
+  max,
   ...rest
 }: BigNumberInputProps) {
   const removeTrailingZeros = (input: string) => {
@@ -52,7 +52,7 @@ export function BigNumberInput({
 
   const [inputValue, setInputValue] = useState<string>(initialValue);
 
-  // this will insure the caret in the input button does not shift to the end of the input when the value is changed
+  // this will insure the caret in the input component does not shift to the end of the input when the value is changed
   const resetCaretPositionForInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const caret = event.target.selectionStart;
     const element = event.target;
@@ -99,10 +99,10 @@ export function BigNumberInput({
       let bigNumberValue = utils.parseUnits(removeOnlyDecimalPoint(newValue), decimalPlaces);
 
       //set value to max if greater than max
-      const bigNumberMax = utils.parseUnits(max, decimalPlaces);
-      if (bigNumberValue.gt(bigNumberMax)) {
-        newValue = max;
-        bigNumberValue = bigNumberMax;
+      const maxBigNumber = max ? utils.parseUnits(max, decimalPlaces) : constants.MaxUint256;
+      if (bigNumberValue.gt(maxBigNumber)) {
+        newValue = utils.formatUnits(maxBigNumber, decimalPlaces);
+        bigNumberValue = maxBigNumber;
       }
 
       onChange({
@@ -127,20 +127,22 @@ export function BigNumberInput({
   //set value to min if less than min, when focus is lost
   const onBlur = useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
-      const eventValue = event.target.value;
-      const hasValidValue = eventValue && eventValue !== '.';
-      const bigNumberValue = hasValidValue
-        ? utils.parseUnits(eventValue, decimalPlaces)
-        : BigNumber.from('0');
-      const bigNumberMin = hasValidValue
-        ? utils.parseUnits(min, decimalPlaces)
-        : BigNumber.from('0');
-      if (bigNumberValue.lte(bigNumberMin)) {
-        onChange({
-          value: min,
-          bigNumberValue: BigNumber.from(bigNumberMin),
-        });
-        setInputValue(min);
+      if (min) {
+        const eventValue = event.target.value;
+        const hasValidValue = eventValue && eventValue !== '.';
+        const bigNumberValue = hasValidValue
+          ? utils.parseUnits(eventValue, decimalPlaces)
+          : BigNumber.from('0');
+        const minBigNumber = hasValidValue
+          ? utils.parseUnits(min, decimalPlaces)
+          : BigNumber.from('0');
+        if (bigNumberValue.lte(minBigNumber)) {
+          onChange({
+            value: min,
+            bigNumberValue: BigNumber.from(minBigNumber),
+          });
+          setInputValue(min);
+        }
       }
     },
     [decimalPlaces, min, onChange]
