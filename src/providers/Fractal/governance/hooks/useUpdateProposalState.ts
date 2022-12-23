@@ -44,7 +44,7 @@ export default function useUpdateProposalState({
         payload: {
           txProposals: proposals,
           passed: txProposalsInfo.passed,
-          pending: txProposalsInfo.pending ? txProposalsInfo.pending : 1,
+          active: txProposalsInfo.active ? txProposalsInfo.active : 1,
         },
       });
     },

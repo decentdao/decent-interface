@@ -14,6 +14,7 @@ import {
   GnosisModuleType,
   IGnosisModuleData,
   IGnosisVetoContract,
+  VetoGuardType,
   VetoVotingType,
 } from '../types';
 
@@ -62,12 +63,14 @@ export function useVetoContracts(
     (async () => {
       let contracts: IGnosisVetoContract;
       let vetoGuardContract;
+      let vetoGuardType;
 
       if (
         guardAddress !== ethers.constants.AddressZero &&
         (await getMasterCopyAddress(guardAddress)) === gnosisVetoGuardMasterCopyContract.address
       ) {
         vetoGuardContract = VetoGuard__factory.connect(guardAddress, signerOrProvider);
+        vetoGuardType = VetoGuardType.MULTISIG;
       } else {
         const usulModule = modules?.find(module => module.moduleType === GnosisModuleType.USUL);
         if (
@@ -79,6 +82,7 @@ export function useVetoContracts(
         }
         const usulGuardAddress = await usulModule.moduleContract.getGuard();
         vetoGuardContract = UsulVetoGuard__factory.connect(usulGuardAddress, signerOrProvider);
+        vetoGuardType = VetoGuardType.USUL;
       }
 
       const votingAddress = await vetoGuardContract.vetoVoting();
@@ -96,6 +100,7 @@ export function useVetoContracts(
           vetoVotingType === VetoMultisigVoting__factory
             ? VetoVotingType.MULTISIG
             : VetoVotingType.ERC20,
+        vetoGuardType,
       };
 
       gnosisDispatch({

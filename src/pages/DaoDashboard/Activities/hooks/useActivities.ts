@@ -1,13 +1,23 @@
+import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useMemo, useState } from 'react';
 import { useParseSafeTxs } from '../../../../hooks/utils/useParseSafeTxs';
+import { useSafeActivitiesWithState } from '../../../../hooks/utils/useSafeActivitiesWithState';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { SortBy } from '../../../../types';
-import { Activity, ActivityEventType } from './../../../../providers/Fractal/governance/types';
+import {
+  Activity,
+  ActivityEventType,
+  VetoGuardType,
+} from './../../../../providers/Fractal/governance/types';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
-    gnosis: { transactions, safe },
+    gnosis: {
+      transactions,
+      safe,
+      guardContracts: { vetoGuardContract, vetoGuardType },
+    },
     governance: {
       type,
       txProposalsInfo: { txProposals },
@@ -17,6 +27,10 @@ export const useActivities = (sortBy: SortBy) => {
   const [isActivitiesLoading, setActivitiesLoading] = useState<boolean>(true);
 
   const parsedActivities = useParseSafeTxs(transactions, safe);
+  const parsedActivitiesWithState = useSafeActivitiesWithState(
+    parsedActivities,
+    vetoGuardType === VetoGuardType.MULTISIG ? (vetoGuardContract as VetoGuard) : undefined
+  );
 
   /**
    * filters out initial multisig transaction on USUL enabled safes
@@ -24,12 +38,14 @@ export const useActivities = (sortBy: SortBy) => {
   const filterActivities = useMemo(() => {
     if (type === GovernanceTypes.GNOSIS_SAFE_USUL) {
       return [
-        ...parsedActivities.filter(activity => activity.eventType !== ActivityEventType.Governance),
+        ...parsedActivitiesWithState.filter(
+          activity => activity.eventType !== ActivityEventType.Governance
+        ),
         ...txProposals,
       ];
     }
-    return [...parsedActivities];
-  }, [parsedActivities, type, txProposals]);
+    return [...parsedActivitiesWithState];
+  }, [type, parsedActivitiesWithState, txProposals]);
 
   /**
    * After data is parsed it is sorted based on execution data

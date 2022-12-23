@@ -6,18 +6,19 @@ import { TxProposalState, DAOState } from '../../../providers/Fractal/types';
 type BadgeType = { [key: string]: { Icon?: any; bg: string; color: string } };
 
 const BADGE_MAPPING: BadgeType = {
-  [TxProposalState.Pending]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Active]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Executing]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Executed]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Rejected]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Approved]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Queued]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
-  [TxProposalState.Failed]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Canceled]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.TimeLocked]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Executed]: { Icon: DoubleCheck, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Executing]: { Icon: Check, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Uninitialized]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Failed]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Queueable]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Queued]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Approved]: { Icon: ActiveTwo, bg: 'sand.700', color: 'grayscale.black' },
   [TxProposalState.Module]: { bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Expired]: { Icon: ClockTwo, bg: 'sand.700', color: 'grayscale.black' },
+  [TxProposalState.Rejected]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [DAOState.freezeInit]: { Icon: Check, bg: 'blue.400', color: 'grayscale.black' },
   [DAOState.frozen]: { Icon: DoubleCheck, bg: 'blue.400', color: 'grayscale.black' },
 };

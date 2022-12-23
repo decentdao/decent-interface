@@ -1,4 +1,4 @@
-import { IGovernance, VetoVotingType } from '../governance/types';
+import { IGovernance, VetoGuardType, VetoVotingType } from '../governance/types';
 import { IConnectedAccount, IGnosis } from '../types/state';
 import { ITreasury } from '../types/treasury';
 
@@ -9,6 +9,7 @@ export const gnosisInitialState: IGnosis = {
     vetoGuardContract: undefined,
     vetoVotingContract: undefined,
     vetoVotingType: VetoVotingType.UNKNOWN,
+    vetoGuardType: VetoGuardType.UNKNOWN,
   },
   freezeData: undefined,
   transactions: {
@@ -27,7 +28,7 @@ export const governanceInitialState: IGovernance = {
   type: null,
   txProposalsInfo: {
     txProposals: [],
-    pending: undefined,
+    active: undefined,
     passed: undefined,
   },
   governanceIsLoading: true,
