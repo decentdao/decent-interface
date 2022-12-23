@@ -1,16 +1,7 @@
-import {
-  Box,
-  Text,
-  NumberInput,
-  NumberInputField,
-  InputGroup,
-  InputRightElement,
-} from '@chakra-ui/react';
+import { Box, Text, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { GovernanceTypes } from '../../../providers/Fractal/types';
+import { BigNumberInput } from '../../ui/BigNumberInput';
 import ContentBanner from '../../ui/ContentBanner';
 import ContentBox from '../../ui/ContentBox';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
@@ -20,13 +11,9 @@ import { CreatorProviderActions } from '../provider/types';
 
 function GovernanceDetails() {
   const {
-    state: { govModule, governance },
+    state: { govModule },
     dispatch,
   } = useCreator();
-
-  const isSafeWithUsul = governance === GovernanceTypes.GNOSIS_SAFE_USUL;
-
-  const { restrictChars } = useFormHelpers();
 
   const fieldUpdate = (value: any, field: string) => {
     dispatch({
@@ -35,23 +22,6 @@ function GovernanceDetails() {
         [field]: value,
       },
     });
-  };
-
-  const onVotingPeriodChange = (votingPeriod: string) => {
-    const newVotingPeriod = BigNumber.from(votingPeriod || 0);
-
-    if (newVotingPeriod.gt(0)) {
-      fieldUpdate(newVotingPeriod, 'votingPeriod');
-    }
-  };
-
-  const onQuorumChange = (quorumPercentage: string) => {
-    const newQuorumNum = BigNumber.from(quorumPercentage || 0);
-    if (newQuorumNum.lte(100)) {
-      fieldUpdate(newQuorumNum, 'quorumPercentage');
-    } else {
-      fieldUpdate(BigNumber.from(100), 'quorumPercentage');
-    }
   };
 
   const { t } = useTranslation(['daoCreate', 'common']);
@@ -63,22 +33,19 @@ function GovernanceDetails() {
         <ContentBoxTitle>{t('titleProposalSettings', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('labelVotingPeriod')}
+            label={t('labelVotingPeriod  aa')}
             subLabel={t('helperVotingPeriod')}
           >
-            <NumberInput
-              value={govModule.votingPeriod.toString()}
-              onChange={onVotingPeriodChange}
-              min={isSafeWithUsul ? 2 : 1}
-              precision={0}
-              data-testid="govConfig-votingPeriod"
-              onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            </NumberInput>
+            <InputGroup>
+              <BigNumberInput
+                value={govModule.votingPeriod}
+                onChange={value => fieldUpdate(value.bigNumberValue, 'votingPeriod')}
+                decimalPlaces={0}
+                min="1"
+                data-testid="govConfig-votingPeriod"
+              />
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
           </LabelWrapper>
           <Text
             textStyle="text-sm-sans-regular"
@@ -92,18 +59,16 @@ function GovernanceDetails() {
             label={t('quorum', { ns: 'common' })}
             subLabel={t('helperQuorum')}
           >
-            <NumberInput
-              value={govModule.quorumPercentage.toString()}
-              onChange={onQuorumChange}
-              precision={0}
-              data-testid="govConfig-quorumPercentage"
-              onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement>%</InputRightElement>
-              </InputGroup>
-            </NumberInput>
+            <InputGroup>
+              <BigNumberInput
+                value={govModule.quorumPercentage}
+                onChange={value => fieldUpdate(value.bigNumberValue, 'quorumPercentage')}
+                max="100"
+                decimalPlaces={0}
+                data-testid="govConfig-quorumPercentage"
+              />
+              <InputRightElement>%</InputRightElement>
+            </InputGroup>
           </LabelWrapper>
         </InputBox>
         <InputBox>
@@ -111,19 +76,15 @@ function GovernanceDetails() {
             label={t('labelTimelockPeriod')}
             subLabel={t('helperTimelockPeriod')}
           >
-            <NumberInput
-              value={govModule.timelock.toString()}
-              onChange={timelock => fieldUpdate(BigNumber.from(timelock || 0), 'timelock')}
-              min={isSafeWithUsul ? 2 : 1}
-              precision={0}
-              data-testid="govConfig-timelock"
-              onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            </NumberInput>
+            <InputGroup>
+              <BigNumberInput
+                value={govModule.timelock}
+                onChange={value => fieldUpdate(value.bigNumberValue, 'timelock')}
+                decimalPlaces={0}
+                data-testid="govConfig-timelock"
+              />
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
           </LabelWrapper>
           <Text
             textStyle="text-sm-sans-regular"
