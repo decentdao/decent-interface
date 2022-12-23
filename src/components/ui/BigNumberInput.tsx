@@ -128,16 +128,19 @@ export function BigNumberInput({
   const onBlur = useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
       const eventValue = event.target.value;
-      if (eventValue && eventValue !== '.') {
-        const bigNumberValue = utils.parseUnits(eventValue, decimalPlaces);
-        const bigNumberMin = utils.parseUnits(min, decimalPlaces);
-        if (bigNumberValue.lt(bigNumberMin)) {
-          onChange({
-            value: min,
-            bigNumberValue: BigNumber.from(bigNumberMin),
-          });
-          setInputValue(min.toString());
-        }
+      const hasValidValue = eventValue && eventValue !== '.';
+      const bigNumberValue = hasValidValue
+        ? utils.parseUnits(eventValue, decimalPlaces)
+        : BigNumber.from('0');
+      const bigNumberMin = hasValidValue
+        ? utils.parseUnits(min, decimalPlaces)
+        : BigNumber.from('0');
+      if (bigNumberValue.lte(bigNumberMin)) {
+        onChange({
+          value: min,
+          bigNumberValue: BigNumber.from(bigNumberMin),
+        });
+        setInputValue(min);
       }
     },
     [decimalPlaces, min, onChange]
