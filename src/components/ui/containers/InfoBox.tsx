@@ -29,5 +29,5 @@ export function InfoBox({
       {children}
     </Box>
   );
-  return <>{!to ? content : <Link to={to}>{content}</Link>}</>;
+  return !to ? content : <Link to={to}>{content}</Link>;
 }
