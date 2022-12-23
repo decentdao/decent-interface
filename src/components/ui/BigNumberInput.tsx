@@ -22,7 +22,7 @@ export interface BigNumberInputProps
  * @param value input value to the control as a BigNumber. If undefined is set then the component will be blank.
  * @param onChange event is raised whenever the component changes. Sends back a value / BigNumber pair. The value sent back is a string representation of the BigNumber as a decimal number.
  * @param decimalPlaces number of decimal places to be used to parse the value to set the BigNumber
- * @param min Setting a minimum value will reset the Input value to min when the component looses focus. Can set decimal number for minimum, but must respect the decimalPlaces value.
+ * @param min Setting a minimum value will reset the Input value to min when the component's focus is lost. Can set decimal number for minimum, but must respect the decimalPlaces value.
  * @param max Setting this will cause the value of the Input control to be reset to the maximum when a number larger than it is inputted.
  * @parma ...rest component accepts all properties for Input and FormControl
  * @returns
