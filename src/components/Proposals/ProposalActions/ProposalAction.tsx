@@ -29,7 +29,7 @@ export function ProposalAction({
       case TxProposalState.Queueable:
         // Call proposal queueing action
         break;
-      case TxProposalState.Executable:
+      case TxProposalState.Executing:
         // Call proposal execution action
         break;
       default:
@@ -46,7 +46,7 @@ export function ProposalAction({
         return t('vote');
       case TxProposalState.Queueable:
         return t('queue');
-      case TxProposalState.Executable:
+      case TxProposalState.Executing:
         return t('execute');
     }
   }, [proposal, t]);
@@ -72,7 +72,7 @@ export function ProposalAction({
         return <CastVote proposal={proposal} />;
       case TxProposalState.Queueable:
         return <Queue proposal={proposal} />;
-      case TxProposalState.Executable:
+      case TxProposalState.Executing:
         return <Execute proposal={proposal} />;
     }
   }
