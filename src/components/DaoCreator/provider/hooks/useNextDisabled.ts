@@ -90,7 +90,7 @@ export function useNextDisabled(state: CreatorState) {
           govModule.quorumPercentage.gte(0) &&
           govModule.quorumPercentage.lte(100) &&
           govModule.timelock.gte(0) &&
-          govModule.votingPeriod.gt(isGnosisWithUsul ? 1 : 0);
+          govModule.votingPeriod.gt(0); //votingPeriod must be great than 1 second for Usul, votingPeriod is in minutes.
         setIsDisabled(!isEssentialsComplete || !isGovModuleComplete || !isGovTokenComplete);
         break;
       }

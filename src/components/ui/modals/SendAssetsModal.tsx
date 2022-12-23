@@ -30,7 +30,9 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
 
-  const convertedTotal = formatUSD(inputAmount?.value || 0 * Number(selectedAsset.fiatConversion));
+  const convertedTotal = formatUSD(
+    Number(inputAmount?.value || '0') * Number(selectedAsset.fiatConversion)
+  );
 
   const sendAssets = useSendAssets({
     transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
@@ -50,9 +52,9 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const destinationError =
     destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
-  const overDraft = (inputAmount?.value || 0) > formatCoinUnitsFromAsset(selectedAsset);
+  const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue.isZero() || overDraft;
+  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue?.isZero() || overDraft;
 
   const onSubmit = () => {
     sendAssets();
