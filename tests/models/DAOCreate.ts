@@ -15,15 +15,10 @@ export class DAOCreate extends NavPage {
     await this.page.click('data-testid=create-nextButton');
   }
 
-  async clickMVDGnosisSafe() {
-    await this.page.locator('data-testid=choose-gnosisSafeMVD').click();
-  }
-
   async clickPureGnosisSafe() {
-    await this.page.locator('data-testid=choose-gnosisSafePure').click();
+    await this.page.locator('data-testid=choose-multisig').click();
   }
 
-  // TODO there can be multiple addresses here, so support adding / removing / filling multiples
   async fillWalletAddress(text: string) {
     await this.page
       .locator('[placeholder="\\30 x0000000000000000000000000000000000000000"]')
@@ -44,7 +39,7 @@ export class DAOCreate extends NavPage {
       .then(() => this.clickNextButton())
       .then(() => this.fillWalletAddress('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'))
       .then(() => this.clickDeployButton());
-    await this.page.waitForURL(this.baseUrl + '/daos/0x*');
+    await this.page.waitForURL(this.baseUrl + '/daos/');
     const url = this.page.url();
     const address = url.substring(url.lastIndexOf('/') + 1);
     return new DAOHome(this.page, address);
