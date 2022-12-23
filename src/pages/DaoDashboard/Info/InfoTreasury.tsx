@@ -1,8 +1,10 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { Treasury } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { DAO_ROUTES } from '../../../routes/constants';
 import { useTreasuryTotalUSD } from '../../Treasury/hooks/useTreasuryTotalUSD';
 
 interface IDAOGovernance {}
@@ -30,7 +32,11 @@ export function InfoTreasury({}: IDAOGovernance) {
   }
 
   return (
-    <Box data-testid="dashboard-daoProposals">
+    <Link
+      data-testid="dashboard-daoTreasury"
+      to={DAO_ROUTES.treasury.relative(safe.address)}
+      aria-label="Treasury Info Link"
+    >
       <Flex
         alignItems="center"
         gap="0.5rem"
@@ -51,6 +57,6 @@ export function InfoTreasury({}: IDAOGovernance) {
       >
         {totalUSD}
       </Text>
-    </Box>
+    </Link>
   );
 }
