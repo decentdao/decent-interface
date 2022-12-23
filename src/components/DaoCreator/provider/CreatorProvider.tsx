@@ -29,19 +29,13 @@ export const initialState: CreatorState = {
   },
   govToken: {
     tokenName: '',
-    tokenSupply: {
-      value: '',
-      bigNumberValue: null,
-    },
+    tokenSupply: undefined,
     tokenSymbol: '',
     tokenAllocations: [
       {
         address: '',
         isValidAddress: false,
-        amount: {
-          value: '',
-          bigNumberValue: null,
-        },
+        amount: undefined,
       },
     ],
     parentAllocationAmount: undefined,
@@ -117,7 +111,7 @@ export function CreatorProvider({ deployDAO, pending, isSubDAO, children }: ICre
       ..._initialState,
       govToken: {
         ..._initialState.govToken,
-        parentAllocationAmount: isSubDAO ? { value: '', bigNumberValue: null } : undefined,
+        parentAllocationAmount: undefined,
       },
     };
   };

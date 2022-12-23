@@ -1,21 +1,12 @@
-import {
-  Box,
-  Text,
-  NumberInput,
-  NumberInputField,
-  InputGroup,
-  InputRightElement,
-  Hide,
-  Input,
-} from '@chakra-ui/react';
+import { Box, Text, InputGroup, InputRightElement, Hide } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { formatBigNumberDisplay } from '../../utils/numberFormats';
+import { BigNumberInput } from '../ui/BigNumberInput';
 import ContentBanner from '../ui/ContentBanner';
 import ContentBox from '../ui/ContentBox';
 import ContentBoxTitle from '../ui/ContentBoxTitle';
@@ -33,7 +24,6 @@ function GuardDetails() {
     governance: { type, governanceToken, governanceIsLoading },
   } = useFractal();
 
-  const { restrictChars } = useFormHelpers();
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
   const fieldUpdate = (key: string, value: BigNumber) => {
@@ -43,32 +33,6 @@ function GuardDetails() {
         [key]: value,
       },
     });
-  };
-  const onExecutionPeriodChange = (executionPeriod: string) => {
-    const newExecutionPeriod = BigNumber.from(executionPeriod || 0);
-    fieldUpdate('executionPeriod', newExecutionPeriod);
-  };
-  const onTimelockPeriodChange = (timelockPeriod: string) => {
-    const newTimelockPeriod = BigNumber.from(timelockPeriod || 0);
-    fieldUpdate('timelockPeriod', newTimelockPeriod);
-  };
-  const onVetoVotesThresholdChange = (vetoVotesThreshold: string) => {
-    const newVetoVotesThreshold = BigNumber.from(vetoVotesThreshold || 0);
-    fieldUpdate('vetoVotesThreshold', newVetoVotesThreshold);
-  };
-  const onFreezeVotesThresholdChange = (freezeVotesThreshold: string) => {
-    const newFreezeVotesThreshold = BigNumber.from(freezeVotesThreshold || 0);
-    fieldUpdate('freezeVotesThreshold', newFreezeVotesThreshold);
-  };
-
-  const onFreezeProposalPeriodChange = (freezeProposalPeriod: string) => {
-    const newFreezePeriod = BigNumber.from(freezeProposalPeriod || 0);
-    fieldUpdate('freezeProposalPeriod', newFreezePeriod);
-  };
-
-  const onFreezePeriodChange = (freezePeriod: string) => {
-    const newFreezePeriod = BigNumber.from(freezePeriod || 0);
-    fieldUpdate('freezePeriod', newFreezePeriod);
   };
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
@@ -135,19 +99,16 @@ function GuardDetails() {
               label={t('labelTimelockPeriod')}
               subLabel={t('helperTimelockPeriod')}
             >
-              <NumberInput
-                value={vetoGuard.timelockPeriod.toString()}
-                onChange={onTimelockPeriodChange}
-                min={1}
-                precision={0}
-                data-testid="guardConfig-executionDetails"
-                onKeyDown={restrictChars}
-              >
-                <InputGroup>
-                  <NumberInputField />
-                  <InputRightElement mr="4">{minutes}</InputRightElement>
-                </InputGroup>
-              </NumberInput>
+              <InputGroup>
+                <BigNumberInput
+                  value={vetoGuard.timelockPeriod}
+                  onChange={value => fieldUpdate('timelockPeriod', value.bigNumberValue)}
+                  decimalPlaces={0}
+                  min="1"
+                  data-testid="guardConfig-executionDetails"
+                />
+                <InputRightElement mr="4">{minutes}</InputRightElement>
+              </InputGroup>
             </LabelWrapper>
             <Text
               textStyle="text-sm-sans-regular"
@@ -162,19 +123,16 @@ function GuardDetails() {
             label={t('labelExecutionPeriod')}
             subLabel={t('helperExecutionPeriod')}
           >
-            <NumberInput
-              value={vetoGuard.executionPeriod.toString()}
-              onChange={onExecutionPeriodChange}
-              min={1}
-              precision={0}
-              data-testid="guardConfig-executionDetails"
-              onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            </NumberInput>
+            <InputGroup>
+              <BigNumberInput
+                value={vetoGuard.executionPeriod}
+                onChange={value => fieldUpdate('executionPeriod', value.bigNumberValue)}
+                decimalPlaces={0}
+                min="1"
+                data-testid="guardConfig-executionDetails"
+              />
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
           </LabelWrapper>
           <Text
             textStyle="text-sm-sans-regular"
@@ -190,19 +148,16 @@ function GuardDetails() {
               label={t('labelVetoVotesThreshold')}
               subLabel={vetoHelper}
             >
-              <NumberInput
-                value={vetoGuard.vetoVotesThreshold.toString()}
-                onChange={onVetoVotesThresholdChange}
-                min={1}
-                precision={0}
-                data-testid="guardConfig-vetoVotesThreshold"
-                onKeyDown={restrictChars}
-              >
-                <InputGroup>
-                  <NumberInputField />
-                  <InputRightElement mr="4">{votes}</InputRightElement>
-                </InputGroup>
-              </NumberInput>
+              <InputGroup>
+                <BigNumberInput
+                  value={vetoGuard.vetoVotesThreshold}
+                  onChange={value => fieldUpdate('vetoVotesThreshold', value.bigNumberValue)}
+                  decimalPlaces={0}
+                  min="1"
+                  data-testid="guardConfig-vetoVotesThreshold"
+                />
+                <InputRightElement mr="4">{votes}</InputRightElement>
+              </InputGroup>
             </LabelWrapper>
           </InputBox>
         </Hide>
@@ -212,10 +167,11 @@ function GuardDetails() {
             label={t('labelFreezeVotesThreshold')}
             subLabel={freezeHelper}
           >
-            <Input
-              value={vetoGuard.freezeVotesThreshold.toString()}
-              onChange={e => onFreezeVotesThresholdChange(e.target.value)}
-              onKeyDown={restrictChars}
+            <BigNumberInput
+              value={vetoGuard.freezeVotesThreshold}
+              onChange={value => fieldUpdate('freezeVotesThreshold', value.bigNumberValue)}
+              decimalPlaces={0}
+              data-testid="guardConfig-freezeVotesThreshold"
             />
           </LabelWrapper>
         </InputBox>
@@ -224,19 +180,16 @@ function GuardDetails() {
             label={t('labelFreezeProposalPeriod')}
             subLabel={t('helperFreezeProposalPeriod')}
           >
-            <NumberInput
-              value={vetoGuard.freezeProposalPeriod.toString()}
-              onChange={onFreezeProposalPeriodChange}
-              min={1}
-              precision={0}
-              data-testid="guardConfig-freezeProposalDuration"
-              onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            </NumberInput>
+            <InputGroup>
+              <BigNumberInput
+                value={vetoGuard.freezeProposalPeriod}
+                onChange={value => fieldUpdate('freezeProposalPeriod', value.bigNumberValue)}
+                decimalPlaces={0}
+                min="1"
+                data-testid="guardConfig-freezeProposalDuration"
+              />
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
           </LabelWrapper>
           <Text
             textStyle="text-sm-sans-regular"
@@ -250,19 +203,17 @@ function GuardDetails() {
             label={t('labelFreezePeriod')}
             subLabel={t('helperFreezePeriod')}
           >
-            <NumberInput
-              value={vetoGuard.freezePeriod.toString()}
-              onChange={onFreezePeriodChange}
-              min={1}
-              precision={0}
-              data-testid="guardConfig-freezeDuration"
-              onKeyDown={restrictChars}
-            >
-              <InputGroup>
-                <NumberInputField />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            </NumberInput>
+            <InputGroup>
+              <BigNumberInput
+                value={vetoGuard.freezePeriod}
+                onChange={value => fieldUpdate('freezePeriod', value.bigNumberValue)}
+                decimalPlaces={0}
+                min="1"
+                data-testid="guardConfig-freezeDuration"
+              />
+
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
           </LabelWrapper>
           <Text
             textStyle="text-sm-sans-regular"
