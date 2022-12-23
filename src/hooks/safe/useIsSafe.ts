@@ -1,30 +1,29 @@
-import axios from 'axios';
 import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
-import { buildGnosisApiUrl } from '../../providers/Fractal/utils/api';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
+import { useFractal } from './../../providers/Fractal/hooks/useFractal';
 
 const useIsGnosisSafe = (address: string | undefined) => {
   const [loading, setLoading] = useState<boolean>();
   const [isSafe, setIsSafe] = useState<boolean>();
+
   const {
-    state: { chainId },
-  } = useWeb3Provider();
+    gnosis: { safeService },
+  } = useFractal();
 
   useEffect(() => {
-    if (!address || !isAddress(address)) {
+    if (!address || !isAddress(address) || !safeService) {
       setIsSafe(undefined);
       setLoading(false);
       return;
     }
 
     setLoading(true);
-    axios
-      .get(buildGnosisApiUrl(chainId, `/safes/${address}`))
+    safeService
+      .getSafeCreationInfo(address)
       .then(() => setIsSafe(true))
       .catch(() => setIsSafe(false))
       .finally(() => setLoading(false));
-  }, [address, chainId]);
+  }, [address, safeService]);
 
   return [isSafe, loading] as const;
 };
