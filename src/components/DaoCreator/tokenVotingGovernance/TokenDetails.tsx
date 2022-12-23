@@ -15,17 +15,17 @@ function TokenDetails() {
     dispatch,
   } = useCreator();
 
-  const fieldUpdate = (value: any, field: string) => {
+  const fieldUpdate = (key: string, value: any) => {
     dispatch({
       type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN,
       payload: {
-        [field]: value,
+        [key]: value,
       },
     });
   };
 
   const onSupplyChange = (value: BigNumberValuePair) => {
-    fieldUpdate(value.bigNumberValue, 'tokenSupply');
+    fieldUpdate('tokenSupply', value.bigNumberValue);
   };
 
   const { t } = useTranslation('daoCreate');
@@ -41,7 +41,7 @@ function TokenDetails() {
           <Input
             data-testid="tokenVoting-tokenNameInput"
             value={govToken.tokenName}
-            onChange={e => fieldUpdate(e.target.value, 'tokenName')}
+            onChange={e => fieldUpdate('tokenName', e.target.value)}
             minWidth="50%"
           />
         </LabelWrapper>
@@ -54,7 +54,7 @@ function TokenDetails() {
           <Input
             data-testid="tokenVoting-tokenSymbolInput"
             value={govToken.tokenSymbol}
-            onChange={e => fieldUpdate(e.target.value, 'tokenSymbol')}
+            onChange={e => fieldUpdate('tokenSymbol', e.target.value)}
           />
         </LabelWrapper>
       </InputBox>
@@ -67,7 +67,6 @@ function TokenDetails() {
             data-testid="tokenVoting-tokenSupplyInput"
             value={govToken.tokenSupply}
             onChange={onSupplyChange}
-            decimalPlaces={0}
           />
         </LabelWrapper>
       </InputBox>

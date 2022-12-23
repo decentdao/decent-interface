@@ -161,7 +161,6 @@ function TokenAllocationInput({
               tokenAllocation
             )
           }
-          decimalPlaces={0}
           data-testid="tokenVoting-tokenAllocationAmountInput"
           isInvalid={hasAmountError}
         />

@@ -33,7 +33,7 @@ function GovernanceDetails() {
         <ContentBoxTitle>{t('titleProposalSettings', { ns: 'daoCreate' })}</ContentBoxTitle>
         <InputBox>
           <LabelWrapper
-            label={t('labelVotingPeriod  aa')}
+            label={t('labelVotingPeriod')}
             subLabel={t('helperVotingPeriod')}
           >
             <InputGroup>
