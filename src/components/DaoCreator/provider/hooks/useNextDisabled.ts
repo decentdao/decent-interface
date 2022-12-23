@@ -1,6 +1,5 @@
 import { BigNumber, utils } from 'ethers';
 import { useEffect, useState } from 'react';
-import { GovernanceTypes } from '../../../../providers/Fractal/types';
 import { CreatorState, CreatorSteps } from './../types';
 
 /**
@@ -18,7 +17,6 @@ export function useNextDisabled(state: CreatorState) {
       essentials,
       gnosis: { trustedAddresses, signatureThreshold },
     } = state;
-    const isGnosisWithUsul = state.governance === GovernanceTypes.GNOSIS_SAFE_USUL;
     switch (state.step) {
       case CreatorSteps.ESSENTIALS:
         if (!!state.essentials.daoName.trim()) {
@@ -40,11 +38,11 @@ export function useNextDisabled(state: CreatorState) {
             setIsDisabled(true);
             break;
           }
-          if (!govToken.tokenAllocations || !govToken.tokenSupply.bigNumberValue) {
+          if (!govToken.tokenAllocations || !govToken.tokenSupply) {
             setIsDisabled(true);
             break;
           }
-          if (govToken.tokenSupply.bigNumberValue && govToken.tokenSupply.bigNumberValue.isZero()) {
+          if (govToken.tokenSupply.isZero()) {
             setIsDisabled(true);
             break;
           }
@@ -58,43 +56,39 @@ export function useNextDisabled(state: CreatorState) {
           }
 
           const totalAllocations = govToken.tokenAllocations
-            .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
+            .map(tokenAllocation => tokenAllocation.amount || BigNumber.from(0))
             .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
 
-          const isTokenAmountsInvalid = govToken.tokenAllocations.some(
-            allocation =>
-              !allocation.amount.bigNumberValue || allocation.amount.bigNumberValue.isZero()
+          const isTokenAmountsInvalid = govToken.tokenAllocations.some(allocation =>
+            allocation.amount?.isZero()
           );
 
           const isAllocationsValid =
             !isTokenAmountsInvalid &&
-            !totalAllocations.isZero() &&
-            totalAllocations
-              .add(govToken.parentAllocationAmount?.bigNumberValue || 0)
-              .lte(govToken.tokenSupply.bigNumberValue!);
-
+            totalAllocations.add(govToken.parentAllocationAmount || 0).lte(govToken.tokenSupply);
           setIsDisabled(!isAllocationsValid);
           break;
         }
+
         setIsDisabled(true);
         break;
       case CreatorSteps.GOV_CONFIG: {
         const isEssentialsComplete = !!essentials.daoName.trim();
         const totalAllocations = govToken.tokenAllocations
-          .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
+          .map(tokenAllocation => tokenAllocation.amount || BigNumber.from(0))
           .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
         const isGovTokenComplete =
           !!govToken.tokenName.trim() &&
           !!govToken.tokenSymbol.trim() &&
-          state.govToken.tokenSupply.bigNumberValue!.gt(0) &&
+          state.govToken.tokenSupply?.gt(0) &&
           govToken.tokenAllocations.length &&
           !totalAllocations.isZero() &&
-          totalAllocations.lte(state.govToken.tokenSupply.bigNumberValue!);
+          totalAllocations.lte(state.govToken.tokenSupply || 0);
         const isGovModuleComplete =
           govModule.quorumPercentage.gte(0) &&
           govModule.quorumPercentage.lte(100) &&
           govModule.timelock.gte(0) &&
-          govModule.votingPeriod.gt(isGnosisWithUsul ? 1 : 0);
+          govModule.votingPeriod.gt(0); //votingPeriod must be great than 1 second for Usul, votingPeriod is in minutes.
         setIsDisabled(!isEssentialsComplete || !isGovModuleComplete || !isGovTokenComplete);
         break;
       }

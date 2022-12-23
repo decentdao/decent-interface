@@ -1,22 +1,20 @@
-import { Box, Grid, Text, Button, NumberInput, NumberInputField } from '@chakra-ui/react';
+import { Box, Grid, Text, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { TokenAllocation } from '../../../types/tokenAllocation';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
 import ContentBoxTitle from '../../ui/ContentBoxTitle';
 import InputBox from '../../ui/forms/InputBox';
-import { DEFAULT_TOKEN_DECIMALS } from '../provider/constants';
-import { BigNumberInput } from '../provider/types';
 import TokenAllocationInput from './TokenAllocationInput';
 
 interface TokenAllocationsProps {
   tokenAllocations: TokenAllocation[];
-  supply: BigNumber | null;
-  parentAllocationAmount?: BigNumberInput;
+  supply: BigNumber | undefined;
+  parentAllocationAmount?: BigNumber;
   canReceiveParentAllocations: boolean;
-  fieldUpdate: (value: any, field: string) => void;
+  fieldUpdate: (key: string, value: any) => void;
 }
 
 function TokenAllocations({
@@ -28,8 +26,6 @@ function TokenAllocations({
 }: TokenAllocationsProps) {
   const [hasAmountError, setAmountError] = useState(false);
 
-  const { limitDecimalsOnKeyDown } = useFormHelpers();
-
   const updateTokenAllocation = useCallback(
     (
       index: number,
@@ -38,65 +34,49 @@ function TokenAllocations({
     ) => {
       const newTokenAllocations = [...snapShotTokenAllocations];
       newTokenAllocations[index] = { ...tokenAllocation };
-      fieldUpdate(newTokenAllocations, 'tokenAllocations');
+      fieldUpdate('tokenAllocations', newTokenAllocations);
     },
     [fieldUpdate]
   );
 
   const addTokenAllocation = () => {
+    const newTokenAllocation: TokenAllocation = {
+      address: '',
+      isValidAddress: false,
+      amount: undefined,
+    };
+
     if (tokenAllocations === undefined) {
-      fieldUpdate([{ address: '', amount: { value: '', valueBN: null } }], 'tokenAllocations');
+      fieldUpdate('tokenAllocations', [newTokenAllocation]);
       return;
     }
-    fieldUpdate(
-      [
-        ...tokenAllocations,
-        {
-          address: '',
-          amount: BigNumber.from(0),
-        },
-      ],
-      'tokenAllocations'
-    );
+
+    fieldUpdate('tokenAllocations', [...tokenAllocations, newTokenAllocation]);
   };
 
   const removeTokenAllocation = (updatedTokenAllocations: TokenAllocation[]) => {
     if (tokenAllocations === undefined) return;
-    fieldUpdate(updatedTokenAllocations, 'tokenAllocations');
+    fieldUpdate('tokenAllocations', updatedTokenAllocations);
   };
 
-  const onParentAllocationChange = (value: string) => {
-    fieldUpdate(
-      { value, bigNumberValue: utils.parseUnits(value || '0', DEFAULT_TOKEN_DECIMALS) },
-      'parentAllocationAmount'
-    );
+  const onParentAllocationChange = (value: BigNumberValuePair) => {
+    fieldUpdate('parentAllocationAmount', value.bigNumberValue);
   };
 
   useEffect(() => {
     const totalAllocated = tokenAllocations
-      .map(tokenAllocation => tokenAllocation.amount.bigNumberValue || BigNumber.from(0))
+      .map(tokenAllocation => tokenAllocation.amount || BigNumber.from(0))
       .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
     if (supply && supply.gt(0)) {
       // no DAO token allocation with no parent allocations
-      if (
-        totalAllocated.gt(0) &&
-        (!parentAllocationAmount?.bigNumberValue || parentAllocationAmount.bigNumberValue.lte(0))
-      ) {
+      if (totalAllocated.gt(0) && !parentAllocationAmount?.lte(0)) {
         setAmountError(supply.lt(totalAllocated));
         // parent tokens allocated but no DAO token allocation
-      } else if (
-        parentAllocationAmount?.bigNumberValue &&
-        totalAllocated.lte(0) &&
-        parentAllocationAmount.bigNumberValue?.gt(0)
-      ) {
-        setAmountError(supply.lt(parentAllocationAmount.bigNumberValue));
+      } else if (parentAllocationAmount?.gt(0) && totalAllocated.lte(0)) {
+        setAmountError(supply.lt(parentAllocationAmount));
         // parent tokens allocated with DAO token allocation
-      } else if (
-        parentAllocationAmount?.bigNumberValue &&
-        totalAllocated.gt(0) &&
-        parentAllocationAmount.bigNumberValue?.gt(0)
-      ) {
-        setAmountError(supply.lt(totalAllocated.add(parentAllocationAmount.bigNumberValue)));
+      } else if (parentAllocationAmount?.gt(0) && totalAllocated.gt(0)) {
+        setAmountError(supply.lt(totalAllocated.add(parentAllocationAmount)));
       } else {
         // no allocation set amount error to false
         setAmountError(false);
@@ -117,17 +97,13 @@ function TokenAllocations({
             subLabel={t('helperParentAllocation')}
             errorMessage={hasAmountError ? t('errorOverallocated') : ''}
           >
-            <NumberInput
-              isInvalid={hasAmountError}
+            <BigNumberInput
               data-testid="tokenVoting-parentTokenAllocationInput"
-              value={parentAllocationAmount.value}
+              value={parentAllocationAmount}
               onChange={onParentAllocationChange}
-              onKeyDown={e =>
-                limitDecimalsOnKeyDown(e, parentAllocationAmount.value, DEFAULT_TOKEN_DECIMALS)
-              }
-            >
-              <NumberInputField />
-            </NumberInput>
+              decimalPlaces={0}
+              isInvalid={hasAmountError}
+            />
           </LabelWrapper>
         </InputBox>
       )}

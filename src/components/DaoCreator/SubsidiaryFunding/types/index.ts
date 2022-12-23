@@ -1,9 +1,9 @@
 import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
-import { BigNumberInput } from './../../provider/types/index';
+import { BigNumberValuePair } from '../../../ui/BigNumberInput';
 
 export type TokenToFund = {
   asset: SafeBalanceUsdResponse;
-  amount: BigNumberInput;
+  amount: BigNumberValuePair;
 };
 
 export type NFTToFund = {
