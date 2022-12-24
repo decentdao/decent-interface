@@ -118,21 +118,25 @@ export interface GovernanceContracts {
 
 // @note its important that the other of Usul-specific states matches whats on the contract
 export enum TxProposalState {
-  // Usul-specific states
-  Active = 'stateActive',
+  // Usul contract states https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L23
+  Active = 'stateActive', // also used as the first state of a Multisig proposal
   Canceled = 'stateCanceled',
   TimeLocked = 'stateTimeLocked',
   Executed = 'stateExecuted',
-  Executing = 'stateExecuting',
+  Executing = 'stateExecuting', // also used as the second state for a Multisig proposal
   Uninitialized = 'stateUninitialized',
   Failed = 'stateFailed',
-  Queueable = 'stateQueueable',
-  // Safe-specific states
-  Queued = 'stateQueued', // Timelock for multisig starts when queued
+  // End Usul contract states
+  // Multisig states
   Approved = 'ownerApproved',
-  Module = 'stateModule',
-  Expired = 'stateExpired',
   Rejected = 'stateRejected',
+  Module = 'stateModule',
+  // End Multisig states
+  // subDAO states (Usul / Multisig)
+  Queueable = 'stateQueueable',
+  Queued = 'stateQueued', // Timelock for multisig starts when queued
+  Expired = 'stateExpired',
+  // end subDAO states
 }
 
 export enum DAOState {
