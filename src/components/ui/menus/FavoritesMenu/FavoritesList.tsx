@@ -22,7 +22,7 @@ export function FavoritesList() {
     >
       <Box>
         {favoritesList.length === 0 ? (
-          <Box>{t('emptyFavorites')}</Box>
+          <Box p="1rem 1rem">{t('emptyFavorites')}</Box>
         ) : (
           <Box
             p="0.5rem 1rem"
