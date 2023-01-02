@@ -123,6 +123,8 @@ export enum TxProposalState {
   Canceled = 'stateCanceled',
   TimeLocked = 'stateTimeLocked',
   Executed = 'stateExecuted',
+  // @note Usul calls this state 'Executing', however from our UI we display it as 'Executable', to
+  // be more clear to the user that it is an actionable state.
   Executing = 'stateExecuting',
   Uninitialized = 'stateUninitialized',
   Failed = 'stateFailed',
