@@ -15,7 +15,7 @@
     "stateActive": "Active",
     "stateCanceled": "Canceled",
     "stateRejected": "Rejected",
-    "stateExecuting": "Executing",
+    "stateExecuting": "Executable",
     "stateUninitialized": "Uninitialized",
     "stateExecuted": "Executed",
     "stateFailed": "Failed",
