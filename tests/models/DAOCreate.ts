@@ -20,7 +20,7 @@ export class DAOCreate extends NavPage {
   }
 
   async fillWalletAddress(text: string) {
-    await this.page.locator('[placeholder=`"\\30 x1234"`]').fill(text);
+    await this.page.locator('[placeholder="0x0000...0000"]').fill(text);
   }
 
   async clickDeployButton() {
