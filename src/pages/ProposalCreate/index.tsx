@@ -127,6 +127,7 @@ function ProposalCreate() {
     <Grid
       gap={4}
       templateColumns="2fr 1fr"
+      gridTemplateRows={'5.1em 1fr'}
       templateAreas={`"header header"
                       "content details"`}
     >

@@ -10,6 +10,7 @@ import {
   Checkbox,
   Divider,
   MenuProps,
+  Tooltip,
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,6 +25,7 @@ export interface Option {
 interface IOptionMenu extends Omit<MenuProps, 'children'> {
   trigger: ReactNode;
   titleKey?: string;
+  tooltipKey?: string;
   options: Option[];
   namespace: string;
   buttonAs?: As;
@@ -38,6 +40,7 @@ interface IOptionMenu extends Omit<MenuProps, 'children'> {
 export function OptionMenu({
   trigger,
   titleKey,
+  tooltipKey,
   options,
   namespace,
   buttonAs,
@@ -55,13 +58,20 @@ export function OptionMenu({
       isLazy
       {...rest}
     >
-      <MenuButton
-        as={buttonAs}
-        h="fit-content"
-        {...buttonProps}
+      <Tooltip
+        closeDelay={0}
+        hasArrow
+        label={tooltipKey ? t(tooltipKey) : undefined}
+        placement="right"
       >
-        {trigger}
-      </MenuButton>
+        <MenuButton
+          as={buttonAs}
+          h="fit-content"
+          {...buttonProps}
+        >
+          {trigger}
+        </MenuButton>
+      </Tooltip>
       <MenuList
         rounded="lg"
         shadow="menu-gold"

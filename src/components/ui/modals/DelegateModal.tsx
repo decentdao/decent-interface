@@ -3,6 +3,7 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useAddress from '../../../hooks/utils/useAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -119,7 +120,7 @@ export function DelegateModal({ close }: { close: Function }) {
       >
         <Input
           data-testid="essentials-daoName"
-          placeholder={constants.AddressZero}
+          placeholder={ETH_ADDRESS_PLACEHOLDER}
           value={newDelegatee}
           onChange={e => setNewDelegatee(e.target.value)}
         />

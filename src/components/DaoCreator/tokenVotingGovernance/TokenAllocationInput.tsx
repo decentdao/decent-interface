@@ -1,9 +1,10 @@
 import { Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { isSameAddress } from '../../../utils/crypto';
 import { BigNumberInput } from '../../ui/BigNumberInput';
@@ -137,7 +138,7 @@ function TokenAllocationInput({
       >
         <Input
           value={tokenAllocation.address}
-          placeholder={ethers.constants.AddressZero}
+          placeholder={ETH_ADDRESS_PLACEHOLDER}
           onChange={event => updateAddress(event.target.value, tokenAllocations, tokenAllocation)}
           data-testid="tokenVoting-tokenAllocationAddressInput"
           isInvalid={!!tokenAllocation.addressError}

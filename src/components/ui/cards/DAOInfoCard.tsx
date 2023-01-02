@@ -6,12 +6,14 @@ import {
   Copy,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
+import { Link } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { DAO_ROUTES } from '../../../routes/constants';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
@@ -86,14 +88,16 @@ export function DAOInfoCard({
             alignItems="center"
             gap="1rem"
           >
-            <Text
-              as="h1"
-              textStyle="text-2xl-mono-regular"
-              color="grayscale.100"
-              data-testid="DAOInfo-name"
-            >
-              {daoRegistryName || daoName}
-            </Text>
+            <Link to={DAO_ROUTES.dao.relative(safeAddress)}>
+              <Text
+                as="h1"
+                textStyle="text-2xl-mono-regular"
+                color="grayscale.100"
+                data-testid="DAOInfo-name"
+              >
+                {daoRegistryName || daoName}
+              </Text>
+            </Link>
             <IconButton
               variant="ghost"
               minWidth="0px"
