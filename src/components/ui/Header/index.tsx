@@ -16,10 +16,7 @@ function Header() {
       px="0.5rem"
     >
       <DAOSearch />
-      <Flex
-        alignItems="center"
-        h="full"
-      >
+      <Flex>
         {!!account && <FavoritesMenu />}
         <AccountDisplay />
       </Flex>
