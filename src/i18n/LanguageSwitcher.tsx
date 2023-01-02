@@ -1,3 +1,4 @@
+import { Center } from '@chakra-ui/react';
 import { Globe } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { OptionMenu } from '../components/ui/menus/OptionMenu';
@@ -14,17 +15,20 @@ export function LanguageSwitcher() {
   });
 
   return (
-    <OptionMenu
-      offset={[16, 8]}
-      trigger={
-        <Globe
-          boxSize="1.5rem"
-          minWidth="auto"
-        />
-      }
-      options={supported}
-      namespace="languages"
-      showDividers
-    />
+    <Center>
+      <OptionMenu
+        offset={[16, 8]}
+        trigger={
+          <Globe
+            boxSize="1.5rem"
+            minWidth="auto"
+          />
+        }
+        options={supported}
+        namespace="languages"
+        tooltipKey="tooltipTitle"
+        showDividers
+      />
+    </Center>
   );
 }

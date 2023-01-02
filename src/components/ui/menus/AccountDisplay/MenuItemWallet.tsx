@@ -5,6 +5,7 @@ import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
+import EtherscanLinkAddress from '../../EtherscanLinkAddress';
 import Avatar from '../../Header/Avatar';
 
 /**
@@ -69,11 +70,13 @@ export function MenuItemWallet() {
             <Copy boxSize="1.5rem" />
           </MenuItem>
         </Flex>
-        <Avatar
-          size="lg"
-          address={account}
-          url={avatarURL}
-        />
+        <EtherscanLinkAddress address={account}>
+          <Avatar
+            size="lg"
+            address={account}
+            url={avatarURL}
+          />
+        </EtherscanLinkAddress>
       </Flex>
     </Box>
   );

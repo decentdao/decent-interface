@@ -16,7 +16,7 @@ export function InfoBox({
   to?: To;
   children: ReactNode;
 }) {
-  const content = (
+  return (
     <Box
       minWidth={minWidth}
       h="100%"
@@ -26,8 +26,7 @@ export function InfoBox({
       borderRadius="0.5rem"
       {...rest}
     >
-      {children}
+      {!to ? children : <Link to={to}>{children}</Link>}
     </Box>
   );
-  return !to ? content : <Link to={to}>{content}</Link>;
 }

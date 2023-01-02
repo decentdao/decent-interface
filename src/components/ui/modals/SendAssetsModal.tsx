@@ -1,9 +1,10 @@
 import { Box, Divider, Flex, Select, HStack, Text, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { constants, BigNumber } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -135,7 +136,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       >
         <Input
           type="text"
-          placeholder={constants.AddressZero}
+          placeholder={ETH_ADDRESS_PLACEHOLDER}
           value={destination}
           onChange={e => setDestination(e.target.value)}
         />

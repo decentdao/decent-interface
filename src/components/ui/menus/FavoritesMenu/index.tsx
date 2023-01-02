@@ -1,8 +1,7 @@
 import { Flex, Menu, MenuButton, Text } from '@chakra-ui/react';
-import { StarGoldSolid } from '@decent-org/fractal-ui';
+import { ArrowDown, StarGoldSolid } from '@decent-org/fractal-ui';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import DownArrow from '../../svg/DownArrow';
 import { FavoritesList } from './FavoritesList';
 
 export function FavoritesMenu() {
@@ -27,7 +26,7 @@ export function FavoritesMenu() {
             >
               {t('titleFavorites')}
             </Text>
-            <DownArrow />
+            <ArrowDown />
           </Flex>
         </MenuButton>
         <FavoritesList />

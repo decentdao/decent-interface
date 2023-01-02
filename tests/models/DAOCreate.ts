@@ -25,9 +25,7 @@ export class DAOCreate extends NavPage {
 
   // TODO there can be multiple addresses here, so support adding / removing / filling multiples
   async fillWalletAddress(text: string) {
-    await this.page
-      .locator('[placeholder="\\30 x0000000000000000000000000000000000000000"]')
-      .fill(text);
+    await this.page.locator('[placeholder=`"\\30 x1234"`]').fill(text);
   }
 
   async clickDeployButton() {
