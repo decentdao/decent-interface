@@ -26,6 +26,7 @@
     "stateQueueable": "Queueable",
     "stateExpired": "Expired",
     "showExecutableCode": "Show Executable Code",
+    "hideExecutableCode": "Hide Executable Code",
     "noProposal": "No proposal found",
     "emptyProposals": "No proposals found",
     "createProposal": "Create Proposal",

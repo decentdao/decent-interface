@@ -18,9 +18,7 @@ export class InputFields {
       'text=SignersHow many trusted users for Gnosis Safe >> input[type="text"]'
     );
     this.sigThreshold = page.locator('(//input[@id="form-field"])[2]');
-    this.trustedAddresses = page.locator(
-      '[placeholder="\\30 x0000000000000000000000000000000000000000"]'
-    );
+    this.trustedAddresses = page.locator('[placeholder="\\30 x1234"]');
   }
 
   async fillField(fieldName: any) {
