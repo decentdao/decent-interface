@@ -1,9 +1,11 @@
+import { localhostConfig } from '../../../../src/providers/NetworkConfig/networks/localhost';
+
 export const SINGLE_OWNER_MULTISIG_CREATION = {
   created: '2022-12-13T20:32:48Z',
   creator: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
   transactionHash: '0x932725fc8787f0694f4cda7cdf4913275d4a10792e7e93b24b84024df46e04a5',
-  factoryAddress: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
-  masterCopy: '0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552',
+  factoryAddress: localhostConfig.contracts.gnosisSafeFactory,
+  masterCopy: localhostConfig.contracts.gnosisSafe,
   setupData: '',
   dataDecoded: {
     method: 'setup',
@@ -58,7 +60,7 @@ export const createSafeInfo = (safeAddress: string, owners: string[]) => {
     nonce: 7,
     threshold: 1,
     owners: owners,
-    masterCopy: '0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552',
+    masterCopy: localhostConfig.contracts.gnosisSafe,
     modules: ['0x4Ff13453B22507Ce0bec862f2b26b33EdEB7DBe8'],
     fallbackHandler: '0x0000000000000000000000000000000000000000',
     guard: '0x0000000000000000000000000000000000000000',
