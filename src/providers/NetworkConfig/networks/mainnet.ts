@@ -1,4 +1,4 @@
-import { NetworkConfig } from '../NetworkConfigProvider';
+import { NetworkConfig } from '../types';
 
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',

@@ -1,4 +1,4 @@
-import { NetworkConfig } from '../NetworkConfigProvider';
+import { NetworkConfig } from '../types';
 
 export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
