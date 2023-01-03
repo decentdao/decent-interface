@@ -12,27 +12,26 @@ import { ProposalsList } from './ProposalsList';
 
 const FILTERS_USUL_BASE = [
   TxProposalState.Active,
-  TxProposalState.TimeLocked,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
-
-  TxProposalState.Failed,
-  TxProposalState.Canceled,
-  TxProposalState.Rejected,
-  TxProposalState.Module,
-];
-
-const FILTERS_USUL_CHILD = [
-  TxProposalState.Active,
+  TxProposalState.Queueable,
   TxProposalState.TimeLocked,
   TxProposalState.Executing,
   TxProposalState.Executed,
 
   TxProposalState.Failed,
   TxProposalState.Expired,
-  TxProposalState.Canceled,
   TxProposalState.Rejected,
-  TxProposalState.Module,
+];
+
+const FILTERS_USUL_CHILD = [
+  TxProposalState.Active,
+  TxProposalState.Queueable,
+  TxProposalState.TimeLocked,
+  TxProposalState.Executing,
+  TxProposalState.Executed,
+
+  TxProposalState.Failed,
+  TxProposalState.Expired,
+  TxProposalState.Rejected,
 ];
 
 const FILTERS_MULTISIG_BASE = [
@@ -41,7 +40,6 @@ const FILTERS_MULTISIG_BASE = [
   TxProposalState.Executed,
 
   TxProposalState.Rejected,
-  TxProposalState.Module,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
@@ -51,9 +49,8 @@ const FILTERS_MULTISIG_CHILD = [
   TxProposalState.Executing,
   TxProposalState.Executed,
 
-  TxProposalState.Expired,
   TxProposalState.Rejected,
-  TxProposalState.Module,
+  TxProposalState.Expired,
 ];
 
 export default function Proposals() {

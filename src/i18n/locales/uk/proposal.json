@@ -18,7 +18,7 @@
     "stateExecuted": "Виконано",
     "stateFailed": "Провалено",
     "stateQueued": "У черзі",
-    "stateTimeLocked": "Заблоковано (у черзі)",
+    "stateTimeLocked": "У черзі",
     "showExecutableCode": "Показати виконуваний код",
     "noProposal": "Пропозицію не знайдено",
     "emptyProposals": "Пропозицій не знайдено",

@@ -23,7 +23,7 @@ function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigPr
       <GridItem colSpan={1}>
         {ownerConfirmed && (
           <Badge
-            labelKey={TxProposalState.Approved}
+            labelKey={'ownerApproved'}
             size="sm"
           />
         )}
