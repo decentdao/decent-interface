@@ -1,7 +1,9 @@
 {
     "titleFavorites": "Вподобані",
     "emptyFavorites": "Нема вподобайок",
+    "errorInvalidSearch": "Будь ласка, використайте корректну адресу Fractal-y або Gnosis Safe-y, або ENS домен.",
     "errorFailedSearch": "Вибачте, ані Fractal ані Gnosis Safe не знайдено за даною адресою.",
+    "searchDAOPlaceholder": "Введіть адресу DAO або ENS ім'я",
     "titleGovernance": "Система Управління",
     "titleType": "Тип",
     "titleVotingPeriod": "Період голосування",
@@ -11,10 +13,21 @@
     "titlePassed": "Успішні",
     "titleTreasury": "Скарбниця",
     "noActivity": "Нема активності",
+    "proposalDescription_one": "Пропозиція виконати {{count}} транзакцію",
+    "proposalDescription_other": "Пропозиція виконати {{count}} транзакцій",
+    "freezeDescription": "Замороження ініційовано на DAO",
+    "frozenDescription": "DAO Заморожено",
+    "freezeButton": "Заморозити",
+    "freezeVotedButton": "Зарахувати голос щодо Замороження",
+    "noVotesButton": "Користувач на має голосів",
+    "freezeDaysLeft": "Залишилось {{count}} днів",
+    "tipFreeze": "необхідні голоси замороження",
     "proposalOnChainRejection": "що відхиляє транзакцію # {{proposalNumber}}",
     "proposalDescriptionCont": "що буде",
     "labelFreezeInitiated": "Замороження ініційовано",
     "timeRemaining": "{{time}} залишилось",
     "labelUndoFreeze": "Розморозити",
-    "labelDAOFrozen": "{{daoName}} Заморожено! Бррррр"
+    "labelDAOFrozen": "{{daoName}} Заморожено! Бррррр",
+    "moduleDescription_one": "Виконано {{count}} транзакцію через модуль за адресою",
+    "moduleDescription_other": "Виконано {{count}} транзакцій через модуль за адресою(ми)"
 }
