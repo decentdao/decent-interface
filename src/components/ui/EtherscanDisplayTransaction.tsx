@@ -3,7 +3,7 @@ import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import EtherscanTransactionLink from './EtherscanTransactionLink';
 
-function EtherscanDisplayNameLink({ address }: { address?: string }) {
+function EtherscanDisplayTransaction({ address }: { address?: string }) {
   const { displayName } = useDisplayName(address);
 
   if (!address) {
@@ -25,4 +25,4 @@ function EtherscanDisplayNameLink({ address }: { address?: string }) {
   );
 }
 
-export default EtherscanDisplayNameLink;
+export default EtherscanDisplayTransaction;

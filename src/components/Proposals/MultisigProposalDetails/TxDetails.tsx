@@ -6,7 +6,7 @@ import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { MultisigProposal } from '../../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/ContentBox';
-import EtherscanDisplayNameLink from '../../ui/EtherscanDisplayNameLink';
+import EtherscanDisplayTransaction from '../../ui/EtherscanDisplayTransaction';
 
 export function InfoRow({
   property,
@@ -28,7 +28,7 @@ export function InfoRow({
       >
         {property}
       </Text>
-      {address ? <EtherscanDisplayNameLink address={address} /> : <Text>{value}</Text>}
+      {address ? <EtherscanDisplayTransaction address={address} /> : <Text>{value}</Text>}
     </Flex>
   );
 }
