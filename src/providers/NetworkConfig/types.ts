@@ -10,7 +10,6 @@ export type NetworkConfig = {
     fractalModuleMasterCopy: string;
     fractalNameRegistry: string;
     votesTokenMasterCopy: string;
-    claimingFactory: string;
     claimingMasterCopy: string;
     gnosisVetoGuardMasterCopy: string;
     usulVetoGuardMasterCopy: string;

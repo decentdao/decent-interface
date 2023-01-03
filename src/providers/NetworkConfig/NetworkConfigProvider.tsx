@@ -15,7 +15,6 @@ export const defaultState = {
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',
-    claimingFactory: '',
     claimingMasterCopy: '',
     gnosisVetoGuardMasterCopy: '',
     usulVetoGuardMasterCopy: '',
