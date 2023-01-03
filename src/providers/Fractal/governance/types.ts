@@ -178,7 +178,7 @@ export enum TxProposalState {
    *
    * Usul / Multisig (all proposals).
    */
-  Executing = 'stateExecuting', // also used as the second state for a Multisig proposal
+  Executing = 'stateExecuting',
 
   /**
    * The proposal has been executed.
