@@ -67,7 +67,7 @@ export const buildSafeTransaction = (template: {
 }): SafeTransaction => {
   return {
     to: template.to,
-    value: template.value || 0,
+    value: template.value?.toString() || 0,
     data: template.data || '0x',
     operation: template.operation || 0,
     safeTxGas: template.safeTxGas || 0,
