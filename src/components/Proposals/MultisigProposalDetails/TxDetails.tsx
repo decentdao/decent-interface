@@ -2,6 +2,7 @@ import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { MultisigProposal } from '../../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/ContentBox';
@@ -40,6 +41,10 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <InfoRow
+          property={t('proposalId')}
+          value={createAccountSubstring(proposal.proposalNumber)}
+        />
+        <InfoRow
           property={t('txDetailsSignersCurrent')}
           value={proposal.confirmations.length.toString()}
         />
@@ -55,10 +60,6 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
           property={t('transactionHash')}
           value={proposal.transactionHash ? undefined : '-'}
           address={proposal.transactionHash}
-        />
-        <InfoRow
-          property={t('safeTXHash')}
-          address={proposal.proposalNumber}
         />
       </Box>
     </ContentBox>
