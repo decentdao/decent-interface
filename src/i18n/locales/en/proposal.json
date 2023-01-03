@@ -8,6 +8,8 @@
     "helperFunctionSignature": "The function of the smart contract (above) to be called if this proposal passes",
     "labelParameters": "Parameters",
     "helperParameters": "Values used to call the function (comma separated)",
+    "labelEthValue": "ETH Value",
+    "helperEthValue": "Amount of Ether to send with the transaction",
     "pageTitle": "{{daoName}} Proposals",
     "ownerApproved": "Approved",
     "statePending": "Pending",
