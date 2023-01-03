@@ -20,6 +20,7 @@
     "execute": "Виконати",
     "queue": "Надіслати до черги",
     "move": "Посунути",
+    "minutes": "Хвилини",
     "quorum": "Кворум",
     "deploy": "Створити",
     "abstain": "Утриматись",
@@ -53,5 +54,6 @@
     "timeLeft": "{{time}} залишилось",
     "timeAgo": "{{time}} тому",
     "cancel": "Відмінити",
-    "example": "Приклад"
+    "example": "Приклад",
+    "titleNodes": "Ієрархія DAO"
 }
