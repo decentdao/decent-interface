@@ -1,9 +1,9 @@
 import { Grid, Button, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { ethers } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import { isSameAddress } from '../../../utils/crypto';
 import { useCreator } from '../provider/hooks/useCreator';
 import { TrustedAddress } from '../provider/types';
@@ -86,7 +86,7 @@ export function GnosisSignatures({
       <LabelWrapper errorMessage={trustee.addressError}>
         <Input
           value={trustee.address}
-          placeholder={ethers.constants.AddressZero}
+          placeholder={ETH_ADDRESS_PLACEHOLDER}
           onChange={event => updateAndValidateAddress(event.target.value, trustedAddresses)}
         />
       </LabelWrapper>

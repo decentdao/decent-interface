@@ -90,7 +90,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: TxPropo
                   marginRight={3}
                   transform={`rotate(-${isExpanded ? '0' : '90'}deg)`}
                 />
-                {t('showExecutableCode')}
+                {t(isExpanded ? 'hideExecutableCode' : 'showExecutableCode')}
               </AccordionButton>
               <AccordionPanel paddingBottom={4}>
                 <Flex
