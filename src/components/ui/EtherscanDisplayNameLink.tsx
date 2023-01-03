@@ -1,7 +1,7 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import useDisplayName from '../../hooks/utils/useDisplayName';
-import EtherscanLinkAddress from './EtherscanLinkAddress';
+import EtherscanTransactionLink from './EtherscanTransactionLink';
 
 function EtherscanDisplayNameLink({ address }: { address?: string }) {
   const { displayName } = useDisplayName(address);
@@ -11,7 +11,7 @@ function EtherscanDisplayNameLink({ address }: { address?: string }) {
   }
 
   return (
-    <EtherscanLinkAddress address={address}>
+    <EtherscanTransactionLink txHash={address}>
       <Flex
         textStyle="text-base-sm-regular"
         color="gold.500"
@@ -21,7 +21,7 @@ function EtherscanDisplayNameLink({ address }: { address?: string }) {
         <Text>{displayName}</Text>
         <ArrowAngleUp />
       </Flex>
-    </EtherscanLinkAddress>
+    </EtherscanTransactionLink>
   );
 }
 
