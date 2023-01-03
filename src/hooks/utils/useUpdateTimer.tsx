@@ -16,7 +16,6 @@ export const useUpdateTimer = (safeAddress?: string) => {
   );
   useEffect(() => {
     if (!safeAddress || process.env.REACT_APP_TESTING_ENVIROMENT) {
-      console.log('HERE');
       timers.forEach(timer => clearInterval(timer));
     }
   }, [safeAddress, timers]);
