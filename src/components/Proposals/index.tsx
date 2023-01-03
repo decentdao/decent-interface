@@ -17,6 +17,9 @@ const FILTERS_USUL_BASE = [
   TxProposalState.Executed,
 
   TxProposalState.Failed,
+  TxProposalState.Canceled,
+  TxProposalState.Rejected,
+  TxProposalState.Module,
 ];
 
 const FILTERS_USUL_CHILD = [
@@ -27,6 +30,9 @@ const FILTERS_USUL_CHILD = [
 
   TxProposalState.Failed,
   TxProposalState.Expired,
+  TxProposalState.Canceled,
+  TxProposalState.Rejected,
+  TxProposalState.Module,
 ];
 
 const FILTERS_MULTISIG_BASE = [
@@ -35,6 +41,7 @@ const FILTERS_MULTISIG_BASE = [
   TxProposalState.Executed,
 
   TxProposalState.Rejected,
+  TxProposalState.Module,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
@@ -46,6 +53,7 @@ const FILTERS_MULTISIG_CHILD = [
 
   TxProposalState.Expired,
   TxProposalState.Rejected,
+  TxProposalState.Module,
 ];
 
 export default function Proposals() {
