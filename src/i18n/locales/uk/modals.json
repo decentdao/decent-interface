@@ -5,11 +5,16 @@
     "titleDelegatedTo": "Делеговано до",
     "linkSelfDelegate": "Делегувати собі",
     "labelDelegateInput": "Адреса, кому делеговано",
+    "sublabelDelegateInput": "Для того щоб голосувати - ви маєте делегувати ваші токени самому собі, або довіренній особі за власним россудом. (Тільки ETH гаманець!)",
     "buttonDelegate": "Делегувати токени голосування",
     "sendAssetsTitle": "Відправити Активи",
     "selectLabel": "Оберіть актив",
     "selectSublabel": "Поточний баланс - {{balance}}",
     "amountLabel": "Скільки?",
     "destinationLabel": "Куди б ви хотіли це надіслати?",
-    "sendAssetsSubmit": "Підтвердження"
+    "destinationSublabel": "Тільки адрема гаманця у мережі Ethereum",
+    "sendAssetsSubmit": "Підтвердження",
+    "sendAssetsPendingToastMessage": "Створення пропозиції для відправлення активів",
+    "sendAssetsSuccessToastMessage": "Пропозиція щодо надсилання активів створена успішно",
+    "sendAssetsFailureToastMessage": "Помилка при створенні пропозиціі щодо надсилання активів"
 }
