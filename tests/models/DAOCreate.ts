@@ -1,5 +1,6 @@
 import { DAOHome } from './DAOHome';
 import { NavPage } from './NavPage';
+import { accounts } from './mock/data/testSigners';
 
 export class DAOCreate extends NavPage {
   async visit() {
@@ -35,7 +36,7 @@ export class DAOCreate extends NavPage {
       .then(() => this.clickNextButton())
       .then(() => this.clickPureGnosisSafe())
       .then(() => this.clickNextButton())
-      .then(() => this.fillWalletAddress('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'))
+      .then(() => this.fillWalletAddress(accounts[0]))
       .then(() => this.clickDeployButton());
     await this.page.waitForURL(this.baseUrl + '/daos/');
     const url = this.page.url();

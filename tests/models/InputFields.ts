@@ -1,4 +1,5 @@
 import { Locator, Page } from '@playwright/test';
+import { accounts } from './mock/data/testSigners';
 
 export class InputFields {
   readonly page: Page;
@@ -33,7 +34,7 @@ export class InputFields {
         await this.sigThreshold.click();
         break;
       case 'Insert Local Node Wallet':
-        await this.trustedAddresses.fill('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266');
+        await this.trustedAddresses.fill(accounts[0]);
         break;
       default:
         throw new Error('This field can not be found...');
