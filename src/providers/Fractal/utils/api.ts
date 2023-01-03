@@ -6,7 +6,7 @@ import { getChainMetadataById } from '../../Web3Data/chains';
  * @param pathname gnosis path name for request
  * @param queryParams object for requests
  * @param version gnosis api version (default: v1)
- * @url https://safe-transaction.[network].safe.global/
+ * @url https://safe-transaction-[network].safe.global/
  * @returns
  */
 export const buildGnosisApiUrl = (
