@@ -188,7 +188,9 @@ export enum TxProposalState {
   Executed = 'stateExecuted',
 
   /**
+   * Quorum AND/OR less than 50% approval not reached within the voting period.
    *
+   * Usul only.
    */
   Failed = 'stateFailed',
 
