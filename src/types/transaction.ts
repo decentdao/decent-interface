@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers';
+import { BigNumberValuePair } from '../components/ui/BigNumberInput';
 
 export interface DecodedTransaction {
   target: string;
@@ -30,6 +31,7 @@ export interface SafeTransaction extends MetaTransaction {
 
 export interface TransactionData {
   targetAddress: string;
+  ethValue: BigNumberValuePair;
   functionName: string;
   functionSignature: string;
   parameters: string;
