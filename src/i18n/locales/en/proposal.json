@@ -20,7 +20,7 @@
     "stateExecuted": "Executed",
     "stateFailed": "Failed",
     "stateQueued": "Queued",
-    "stateTimeLocked": "Time Locked",
+    "stateTimeLocked": "Queued",
     "stateFreezeInit": "Freeze Initiated",
     "stateFrozen": "Frozen",
     "stateQueueable": "Queueable",

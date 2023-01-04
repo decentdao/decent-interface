@@ -20,7 +20,7 @@
     "stateExecuted": "Виконано",
     "stateFailed": "Провалено",
     "stateQueued": "У черзі",
-    "stateTimeLocked": "Заблоковано (у черзі)",
+    "stateTimeLocked": "У черзі",
     "stateFreezeInit": "Замороження Ініційовано",
     "stateFrozen": "Заморожено",
     "stateQueueable": "Готове до додавання у чергу",
