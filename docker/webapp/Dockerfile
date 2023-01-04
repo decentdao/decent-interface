@@ -1,4 +1,4 @@
-FROM node:16.13.2
+FROM node:18.12.1
 
 # Copies package-lock.json file to docker container
 # This file is are not included in the app's components COPY command below
