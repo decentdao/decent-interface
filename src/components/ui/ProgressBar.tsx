@@ -27,7 +27,7 @@ export default function ProgressBar({
           height="100%"
           position="absolute"
           top="0"
-          left={`calc(${Math.min(value - 5, 90)}% - 20px)`}
+          left={value > 50 ? `calc(${Math.min(value - 5, 90)}% - 20px)` : value / 2}
         >
           {Math.min(value, 100)}%
         </Text>
