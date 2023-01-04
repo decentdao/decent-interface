@@ -1,27 +1,7 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useWeb3Provider } from '../Web3Data/hooks/useWeb3Provider';
 import { goerliConfig } from './networks';
-
-export type NetworkConfig = {
-  safeBaseURL: string;
-  contracts: {
-    gnosisSafe: string;
-    gnosisSafeFactory: string;
-    zodiacModuleProxyFactory: string;
-    linearVotingMasterCopy: string;
-    gnosisMultisend: string;
-    fractalUsulMasterCopy: string;
-    fractalModuleMasterCopy: string;
-    fractalNameRegistry: string;
-    votesTokenMasterCopy: string;
-    claimingFactory: string;
-    claimingMasterCopy: string;
-    gnosisVetoGuardMasterCopy: string;
-    usulVetoGuardMasterCopy: string;
-    vetoMultisigVotingMasterCopy: string;
-    vetoERC20VotingMasterCopy: string;
-  };
-};
+import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',
@@ -35,7 +15,6 @@ export const defaultState = {
     fractalModuleMasterCopy: '',
     fractalNameRegistry: '',
     votesTokenMasterCopy: '',
-    claimingFactory: '',
     claimingMasterCopy: '',
     gnosisVetoGuardMasterCopy: '',
     usulVetoGuardMasterCopy: '',
