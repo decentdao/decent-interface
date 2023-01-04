@@ -62,7 +62,7 @@
     "txDetailsSignersRequired": "Signers Required",
     "created": "Created",
     "transactionHash": "Transaction Hash",
-    "safeTXHash": "SafeTXHash",
+    "proposalId": "Proposal Id",
     "pendingSign": "Use wallet to sign transaction",
     "failedSign": "Signing failed",
     "successSign": "Signing successful",
