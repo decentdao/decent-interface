@@ -16,15 +16,19 @@ export class HomePage extends NavPage {
     return new DAOCreate(this.page);
   }
 
-  clickFAQNewTab() {
-    return this.newTab(this.page.click('[data-testid=home-linkFAQ]'));
+  async clickFAQNewTab() {
+    await this.page.click('[data-testid=home-linkFAQ]');
+    return this.newTab();
   }
 
-  clickDiscordNewTab() {
-    return this.newTab(this.page.click('[data-testid=home-linkDiscord]'));
+  async clickDiscordNewTab() {
+    await this.page.click('[data-testid=home-linkDiscord]');
+    return this.newTab();
   }
 
-  clickDocsNewTab() {
-    return this.newTab(this.page.click('[data-testid=home-linkDocs]'));
+  async clickDocsNewTab() {
+    await this.page.click('[data-testid=home-linkDocs]');
+    const tab = await this.newTab();
+    return tab;
   }
 }

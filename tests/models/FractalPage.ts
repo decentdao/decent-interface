@@ -56,10 +56,10 @@ export abstract class FractalPage {
    * @param click the Promise created by clicking the link to open the tab.
    * @returns the Page object representing the new tab.
    */
-  protected async newTab(click: Promise<void>) {
-    await click;
-    const newTab = await this.page.context().waitForEvent('page');
-    await newTab.bringToFront();
-    return newTab;
+  async newTab() {
+    const newTab = this.page.context();
+    const page = await newTab.waitForEvent('page');
+    await page.bringToFront();
+    return page;
   }
 }

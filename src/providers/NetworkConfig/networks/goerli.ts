@@ -7,8 +7,8 @@ import VetoERC20Voting from '@fractal-framework/fractal-contracts/deployments/go
 import VetoGuard from '@fractal-framework/fractal-contracts/deployments/goerli/VetoGuard.json';
 import VetoMultisigVoting from '@fractal-framework/fractal-contracts/deployments/goerli/VetoMultisigVoting.json';
 import VotesToken from '@fractal-framework/fractal-contracts/deployments/goerli/VotesToken.json';
+import { NetworkConfig } from '../types';
 
-import { NetworkConfig } from '../NetworkConfigProvider';
 export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
   contracts: {
