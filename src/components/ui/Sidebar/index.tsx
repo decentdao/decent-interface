@@ -1,4 +1,4 @@
-import { Center, Divider, Flex, Tooltip } from '@chakra-ui/react';
+import { Center, ComponentWithAs, Divider, Flex, IconProps, Tooltip } from '@chakra-ui/react';
 import {
   Discord,
   Documents,
@@ -9,9 +9,9 @@ import {
   Treasury,
   Tree,
 } from '@decent-org/fractal-ui';
-import { Fragment, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../constants/url';
 import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -33,6 +33,51 @@ function SidebarTooltipWrapper({ label, children }: { label: string; children: J
   );
 }
 
+function SidebarNavLink({
+  to,
+  labelKey,
+  testId,
+  Icon,
+  routeKey,
+}: {
+  to: string;
+  labelKey: string;
+  testId: string;
+  routeKey: string;
+  Icon: ComponentWithAs<'svg', IconProps>;
+}) {
+  const { t } = useTranslation('sidebar');
+  const patternString =
+    routeKey === 'dao' ? 'daos/:address' : `daos/:address/${DAO_ROUTES[routeKey].path}/*`;
+  const match = useMatch(patternString);
+
+  const activeColors = useCallback(() => {
+    let isActive = !!match;
+    return {
+      color: isActive ? 'gold.500' : 'inherit',
+      _hover: {
+        color: isActive ? 'gold.500-hover' : 'inherit',
+      },
+    };
+  }, [match]);
+
+  return (
+    <SidebarTooltipWrapper label={t(labelKey)}>
+      <Link
+        data-testid={testId}
+        to={to}
+        aria-label={t(labelKey)}
+      >
+        <Icon
+          boxSize="1.5rem"
+          minWidth="auto"
+          {...activeColors()}
+        />
+      </Link>
+    </SidebarTooltipWrapper>
+  );
+}
+
 function Sidebar() {
   const { t } = useTranslation('sidebar');
   const {
@@ -41,19 +86,6 @@ function Sidebar() {
     },
   } = useFractal();
 
-  const { pathname } = useLocation();
-
-  const activeColors = useCallback(
-    (key: string) => {
-      return {
-        color: pathname === DAO_ROUTES[key].relative(address!) ? 'gold.500' : 'inherit',
-        _hover: {
-          color: pathname === DAO_ROUTES[key].relative(address!) ? 'gold.500-hover' : 'inherit',
-        },
-      };
-    },
-    [pathname, address]
-  );
   return (
     <Flex
       alignItems="center"
@@ -73,68 +105,42 @@ function Sidebar() {
         />
       </Link>
 
-      <Flex
-        alignItems="center"
-        direction="column"
-        gap="2rem"
-      >
-        {address && (
-          <Fragment>
-            <SidebarTooltipWrapper label={t('home')}>
-              <Link
-                data-testid="sidebar-daoHomeLink"
-                to={DAO_ROUTES.dao.relative(address)}
-                aria-label="DAO Dashboard Link"
-              >
-                <Home
-                  boxSize="1.5rem"
-                  minWidth="auto"
-                  {...activeColors('dao')}
-                />
-              </Link>
-            </SidebarTooltipWrapper>
-            <SidebarTooltipWrapper label={t('nodes')}>
-              <Link
-                data-testid="sidebar-nodes"
-                to={DAO_ROUTES.nodes.relative(address)}
-                aria-label="Nodes Link"
-              >
-                <Tree
-                  boxSize="1.5rem"
-                  minWidth="auto"
-                  {...activeColors('nodes')}
-                />
-              </Link>
-            </SidebarTooltipWrapper>
-            <SidebarTooltipWrapper label={t('proposals')}>
-              <Link
-                data-testid="sidebar-proposalsLink"
-                to={DAO_ROUTES.proposals.relative(address)}
-                aria-label="Proposals Link"
-              >
-                <Proposals
-                  boxSize="1.5rem"
-                  minWidth="auto"
-                  {...activeColors('proposals')}
-                />
-              </Link>
-            </SidebarTooltipWrapper>
-            <SidebarTooltipWrapper label={t('treasury')}>
-              <Link
-                data-testid="sidebar-treasuryLink"
-                to={DAO_ROUTES.treasury.relative(address)}
-                aria-label="Treasury Link"
-              >
-                <Treasury
-                  boxSize="1.5rem"
-                  minWidth="auto"
-                  {...activeColors('treasury')}
-                />
-              </Link>
-            </SidebarTooltipWrapper>
-          </Fragment>
-        )}
-      </Flex>
+      {address && (
+        <Flex
+          alignItems="center"
+          direction="column"
+          gap="2rem"
+        >
+          <SidebarNavLink
+            to={DAO_ROUTES.dao.relative(address)}
+            labelKey="home"
+            testId="sidebar-daoHomeLink"
+            routeKey="dao"
+            Icon={Home}
+          />
+          <SidebarNavLink
+            to={DAO_ROUTES.nodes.relative(address)}
+            labelKey="nodes"
+            testId="sidebar-nodes"
+            routeKey="nodes"
+            Icon={Tree}
+          />
+          <SidebarNavLink
+            to={DAO_ROUTES.proposals.relative(address)}
+            labelKey="proposals"
+            testId="sidebar-proposalsLink"
+            routeKey="proposals"
+            Icon={Proposals}
+          />
+          <SidebarNavLink
+            to={DAO_ROUTES.treasury.relative(address)}
+            labelKey="treasury"
+            testId="sidebar-treasuryLink"
+            routeKey="treasury"
+            Icon={Treasury}
+          />
+        </Flex>
+      )}
       <Flex
         alignSelf="normal"
         direction="column"
