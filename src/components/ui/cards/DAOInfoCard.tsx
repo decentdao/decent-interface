@@ -88,7 +88,8 @@ export function DAOInfoCard({
         >
           <Flex
             alignItems="center"
-            gap="1rem"
+            gap="0.5rem"
+            flexWrap="wrap"
           >
             <Link to={DAO_ROUTES.dao.relative(safeAddress)}>
               <Text
