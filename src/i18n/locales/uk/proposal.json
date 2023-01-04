@@ -62,7 +62,6 @@
     "txDetailsSignersRequired": "Обов'язкова кількість підписів",
     "created": "Створено",
     "transactionHash": "Хеш транзакції",
-    "safeTXHash": "SafeTXHash",
     "pendingSign": "Використайте крипто-гаманець для підписання транзакції",
     "failedSign": "Помилка при підписанні.",
     "successSign": "Підписання успішно виконане",
