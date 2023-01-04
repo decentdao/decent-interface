@@ -8,6 +8,7 @@ import {
   Alert,
   AlertTitle,
   Box,
+  Flex,
 } from '@chakra-ui/react';
 import { CloseX, Info } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
@@ -31,6 +32,12 @@ const defaultTransaction = {
   isExpanded: true,
   encodedFunctionData: undefined,
 };
+
+const templateAreaTwoCol = `"header header"
+"content details"`;
+const templateAreaSingleCol = `"header"
+"content"
+"details"`;
 
 function ProposalCreate() {
   const {
@@ -126,10 +133,9 @@ function ProposalCreate() {
   return (
     <Grid
       gap={4}
-      templateColumns="2fr 1fr"
+      templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
       gridTemplateRows={'5.1em 1fr'}
-      templateAreas={`"header header"
-                      "content details"`}
+      templateAreas={{ base: templateAreaSingleCol, lg: templateAreaTwoCol }}
     >
       <GridItem area="header">
         <VStack align="left">
@@ -153,9 +159,9 @@ function ProposalCreate() {
         </VStack>
       </GridItem>
       <GridItem area="content">
-        <VStack
+        <Flex
+          flexDirection="column"
           align="left"
-          spacing={6}
         >
           <Box
             rounded="lg"
@@ -184,9 +190,19 @@ function ProposalCreate() {
               >
                 {t('labelAddTransaction')}
               </Button>
-              <Alert status="info">
+              <Alert
+                status="info"
+                w="fit-content"
+              >
                 <Info boxSize="24px" />
-                <AlertTitle>{t('transactionExecutionAlertMessage')}</AlertTitle>
+                <AlertTitle>
+                  <Text
+                    textStyle="text-lg-mono-medium"
+                    whiteSpace="pre-wrap"
+                  >
+                    {t('transactionExecutionAlertMessage')}
+                  </Text>
+                </AlertTitle>
               </Alert>
               <Divider color="chocolate.700" />
               <Button
@@ -206,7 +222,7 @@ function ProposalCreate() {
               </Button>
             </VStack>
           </Box>
-        </VStack>
+        </Flex>
       </GridItem>
       <GridItem area="details">
         <ProposalDetails />
