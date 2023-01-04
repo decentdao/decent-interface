@@ -20,7 +20,7 @@ export abstract class NavPage extends FractalPage {
   }
 
   async clickHeaderMenuDropdown() {
-    await this.page.click('data-testid=header-accountMenu');
+    await this.page.click('[data-testid=header-accountMenu]');
   }
 
   async menuLocator(selector: MenuItems) {

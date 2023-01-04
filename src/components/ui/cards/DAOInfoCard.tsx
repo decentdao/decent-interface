@@ -93,6 +93,7 @@ export function DAOInfoCard({
                 as="h1"
                 textStyle="text-2xl-mono-regular"
                 color="grayscale.100"
+                data-testid="DAOInfo-name"
               >
                 {daoRegistryName || daoName}
               </Text>
