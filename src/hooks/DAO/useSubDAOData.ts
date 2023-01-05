@@ -21,7 +21,6 @@ export function useSubDAOData(safeAddress?: string) {
     }
     const modules = await lookupModules(safeInfo.modules);
     const vetoGuardContracts = await getVetoGuardContracts(safeInfo.guard, modules);
-    console.log('🚀 ~ file: useSubDAOData.ts:24 ~ vetoGuardContracts', vetoGuardContracts);
     if (!vetoGuardContracts) {
       return;
     }
