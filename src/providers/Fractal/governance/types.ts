@@ -116,25 +116,137 @@ export interface GovernanceContracts {
   contractsIsLoading: boolean;
 }
 
-// @note its important that the other of Usul-specific states matches whats on the contract
+/**
+ * The possible states of a DAO proposal, both Token Voting (Usul) and Multisignature
+ * governance.
+ *
+ * @note it is required that Usul-specific states match those on the Usul contracts:
+ * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L23
+ *
+ * Although in some cases (documented below), what we show to the user may be different.
+ */
 export enum TxProposalState {
-  // Usul-specific states
+  /**
+   * Proposal is created and can be voted on.  This is the initial state of all
+   * newly created proposals.
+   *
+   * Usul / Multisig (all proposals).
+   */
   Active = 'stateActive',
-  Canceled = 'stateCanceled',
-  TimeLocked = 'stateTimeLocked',
-  Executed = 'stateExecuted',
-  // @note Usul calls this state 'Executing', however from our UI we display it as 'Executable', to
-  // be more clear to the user that it is an actionable state.
-  Executing = 'stateExecuting',
-  Uninitialized = 'stateUninitialized',
-  Failed = 'stateFailed',
+
+  /**
+   * Quorum (or signers) is reached, the proposal can be queued for execution.
+   * Anyone can move the state from Queueable to Queued/TimeLocked via a transaction.
+   *
+   * Usul / Multisig subDAO only.
+   */
   Queueable = 'stateQueueable',
-  // Safe-specific states
-  Queued = 'stateQueued', // Timelock for multisig starts when queued
-  Approved = 'ownerApproved',
-  Module = 'stateModule',
+
+  /**
+   * The proposal is 'queued', during which the proposal cannot yet be executed.
+   * This period is intended to allow for the ability of the parent to freeze
+   * the DAO, to prevent a transaction from occurring, if they would like.
+   *
+   * Multisig subDAO Only.
+   */
+  Queued = 'stateQueued',
+
+  /**
+   * Similar to 'Queued' state for a multisig child, but applies to all Usul based
+   * DAOs.  The proposal cannot yet be executed, until the timelock period has elapsed.
+   *
+   * In addition to allowing for the possiblity to freeze, this state also allows token
+   * holders to exit their shares, if they would like to, before the execution of a transaction
+   * they disagree with.
+   *
+   * @note 'TimeLocked' is the state that Usul calls this period, however for consistency in
+   * the Fractal UI, we display this state as 'Queued', the same as multisig subDAOs.
+   *
+   * Usul only.
+   */
+  TimeLocked = 'stateTimeLocked',
+
+  /**
+   * The queue/timelock period has ended and the proposal is able to be executed.
+   * Once in this state, the execution period starts, after which if the proposal
+   * has not been executed, it will become Expired.
+   *
+   * @note Usul calls this state 'Executing', however from our UI we display it as 'Executable', to
+   * be more clear to the user that it is an actionable state.
+   *
+   * Anyone can execute an Executable proposal.
+   *
+   * Usul / Multisig (all proposals).
+   */
+  Executing = 'stateExecuting',
+
+  /**
+   * The proposal has been executed.
+   *
+   * Usul / Multisig (all proposals).
+   */
+  Executed = 'stateExecuted',
+
+  /**
+   * Quorum AND/OR less than 50% approval not reached within the voting period.
+   *
+   * Usul only.
+   */
+  Failed = 'stateFailed',
+
+  /**
+   * Proposal is not executed before the execution period ends following
+   * the Executing (e.g. executable) state.
+   *
+   * Usul (all) / multisig subDAO.
+   */
   Expired = 'stateExpired',
+
+  /**
+   * Proposal fails due to a proposal being executed with the same nonce.
+   * A multisig proposal is off-chain, and is signed with a specific nonce.
+   * If a proposal with the same nonce is executed, any proposal with the same
+   * nonce will be impossible to execute, reguardless of how many signers it has.
+   *
+   * Multisig only.
+   */
   Rejected = 'stateRejected',
+
+  /**
+   * Any Safe is able to have modules attached (e.g. Zodiac), which can act essentially as a backdoor,
+   * executing transactions without needing the required signers.
+   *
+   * Safe Module 'proposals' in this sense are single state proposals that are already executed.
+   *
+   * This is a rare case, as the Usul module is shown using Usul states, but other third party
+   * modules could potentially generate this state so we allow for badges to properly label
+   * this case in the UI.
+   *
+   * Third party Safe module transactions only.
+   */
+  Module = 'stateModule',
+
+  /**
+   * This state occurs when a proposal does not have a voting strategy associated with it:
+   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L362
+   *
+   * @note It is technically possible to achieve this state if a Usul mod is attached without a voting
+   * strategy outside our own UI, so we allow for the proper badge to be shown in this case.
+   *
+   * Usul only.
+   */
+  Uninitialized = 'stateUninitialized',
+
+  /**
+   * This state occurs when the 'cancelProposals' function is called on the Usul contract:
+   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L237
+   *
+   * @note We do not support this function in the UI and it is difficult to achieve this state
+   * given our current setup, but still possible, so we allow for the proper badge to be shown.
+   *
+   * Usul only.
+   */
+  Canceled = 'stateCanceled',
 }
 
 export enum DAOState {
