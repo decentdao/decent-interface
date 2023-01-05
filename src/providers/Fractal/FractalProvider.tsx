@@ -52,16 +52,15 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     initializeConnectedAccount
   );
 
-  // @todo update to handle new contracts
-  // const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
-
   useLocalStorage();
+
   const { getGnosisSafeTransactions } = useGnosisApiServices(
     gnosis,
     treasuryDispatch,
     gnosisDispatch
   );
   useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
+
   useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
@@ -73,7 +72,6 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
-
   useEffect(() => {
     // Resets Fractal state when not viewing DAO
     if (!isViewingDAO) {
