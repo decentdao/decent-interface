@@ -1,4 +1,4 @@
-import { NetworkConfig } from '../NetworkConfigProvider';
+import { NetworkConfig } from '../types';
 
 export const localhostConfig: NetworkConfig = {
   // @note localhost config should be 1:1 with goerli configurations for testing.

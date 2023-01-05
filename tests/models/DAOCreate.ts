@@ -1,5 +1,6 @@
 import { DAOHome } from './DAOHome';
 import { NavPage } from './NavPage';
+import { accounts } from './mock/data/testSigners';
 
 export class DAOCreate extends NavPage {
   async visit() {
@@ -8,28 +9,23 @@ export class DAOCreate extends NavPage {
   }
 
   async fillFractalName(text: string) {
-    await this.page.locator('data-testid=essentials-daoName').fill(text);
+    await this.page.locator('[data-testid=essentials-daoName]').fill(text);
   }
 
   async clickNextButton() {
-    await this.page.click('data-testid=create-nextButton');
-  }
-
-  async clickMVDGnosisSafe() {
-    await this.page.locator('data-testid=choose-gnosisSafeMVD').click();
+    await this.page.click('[data-testid=create-nextButton]');
   }
 
   async clickPureGnosisSafe() {
-    await this.page.locator('data-testid=choose-gnosisSafePure').click();
+    await this.page.locator('[data-testid=choose-multisig]').click();
   }
 
-  // TODO there can be multiple addresses here, so support adding / removing / filling multiples
   async fillWalletAddress(text: string) {
-    await this.page.locator('[placeholder=`"\\30 x1234"`]').fill(text);
+    await this.page.locator('[placeholder="0x0000...0000"]').fill(text);
   }
 
   async clickDeployButton() {
-    await this.page.click('data-testid=create-deployDAO');
+    await this.page.click('[data-testid=create-deployDAO]');
   }
 
   /*
@@ -40,9 +36,9 @@ export class DAOCreate extends NavPage {
       .then(() => this.clickNextButton())
       .then(() => this.clickPureGnosisSafe())
       .then(() => this.clickNextButton())
-      .then(() => this.fillWalletAddress('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'))
+      .then(() => this.fillWalletAddress(accounts[0]))
       .then(() => this.clickDeployButton());
-    await this.page.waitForURL(this.baseUrl + '/daos/0x*');
+    await this.page.waitForURL(this.baseUrl + '/daos/');
     const url = this.page.url();
     const address = url.substring(url.lastIndexOf('/') + 1);
     return new DAOHome(this.page, address);

@@ -2,12 +2,12 @@ import EthersAdapter from '@safe-global/safe-ethers-lib';
 import SafeServiceClient from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useCallback, useEffect } from 'react';
-import { CHAIN_DATA_LIST } from 'web3modal';
 import { logError } from '../../../helpers/errorLogging';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
 import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
+import { useNetworkConfg } from './../../NetworkConfig/NetworkConfigProvider';
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information
@@ -21,12 +21,10 @@ export function useGnosisApiServices(
   gnosisDispatch: React.Dispatch<GnosisActions>
 ) {
   const {
-    state: { chainId },
+    state: { chainId, account, signerOrProvider },
   } = useWeb3Provider();
 
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const { safeBaseURL } = useNetworkConfg();
 
   const { setMethodOnInterval } = useUpdateTimer(address);
 
@@ -39,18 +37,14 @@ export function useGnosisApiServices(
       signerOrProvider,
     });
 
-    const network =
-      process.env.REACT_APP_LOCAL_CHAIN_ID === chainId.toString()
-        ? 'goerli'
-        : CHAIN_DATA_LIST[chainId].network;
     gnosisDispatch({
       type: GnosisAction.SET_SAFE_SERVICE_CLIENT,
       payload: new SafeServiceClient({
-        txServiceUrl: `https://safe-transaction-${network}.safe.global`,
+        txServiceUrl: safeBaseURL,
         ethAdapter,
       }),
     });
-  }, [signerOrProvider, gnosisDispatch, chainId]);
+  }, [account, signerOrProvider, gnosisDispatch, chainId, safeBaseURL]);
 
   const getGnosisSafeFungibleAssets = useCallback(async () => {
     if (!address || !safeService) {

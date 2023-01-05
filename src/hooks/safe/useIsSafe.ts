@@ -1,8 +1,6 @@
-import axios from 'axios';
 import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
-import { buildGnosisApiUrl } from '../../providers/Fractal/utils/api';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
+import { useFractal } from './../../providers/Fractal/hooks/useFractal';
 
 /**
  * A hook which determines whether the provided Ethereum address is a Gnosis
@@ -19,25 +17,25 @@ export const useIsGnosisSafe = (address: string | undefined) => {
   const [isSafeLoading, setSafeLoading] = useState<boolean>(false);
   const [isSafe, setIsSafe] = useState<boolean | undefined>();
   const {
-    state: { chainId },
-  } = useWeb3Provider();
+    gnosis: { safeService },
+  } = useFractal();
 
   useEffect(() => {
     setSafeLoading(true);
     setIsSafe(undefined);
 
-    if (!address || !isAddress(address)) {
+    if (!address || !isAddress(address) || !safeService) {
       setIsSafe(false);
       setSafeLoading(false);
       return;
     }
 
-    axios
-      .get(buildGnosisApiUrl(chainId, `/safes/${address}`))
+    safeService
+      .getSafeCreationInfo(address)
       .then(() => setIsSafe(true))
       .catch(() => setIsSafe(false))
       .finally(() => setSafeLoading(false));
-  }, [address, chainId]);
+  }, [address, safeService]);
 
   return { isSafe, isSafeLoading };
 };
