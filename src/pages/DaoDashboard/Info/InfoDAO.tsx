@@ -5,7 +5,7 @@ import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 
 export function InfoDAO() {
   const {
-    gnosis: { safe },
+    gnosis: { safe, freezeData, guardContracts },
   } = useFractal();
 
   // @todo replace mocked values
@@ -28,6 +28,8 @@ export function InfoDAO() {
     <DAOInfoCard
       safeAddress={safe.address}
       numberOfChildrenDAO={subDAOsWithPermissions.length}
+      freezeData={freezeData}
+      guardContracts={guardContracts}
     />
   );
 }
