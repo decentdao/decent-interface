@@ -59,17 +59,22 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     treasuryDispatch,
     gnosisDispatch
   );
-  useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
+  const { lookupModules } = useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
 
   useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
-  useVetoContracts(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
+  const { getVetoGuardContracts } = useVetoContracts(
+    gnosisDispatch,
+    gnosis.safe.guard,
+    gnosis.modules
+  );
+
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
-  useFreezeData(gnosis.guardContracts, gnosisDispatch);
+  const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
   useEffect(() => {
@@ -94,9 +99,21 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       },
       actions: {
         getGnosisSafeTransactions,
+        lookupModules,
+        getVetoGuardContracts,
+        lookupFreezeData,
       },
     }),
-    [gnosis, governance, treasury, account, getGnosisSafeTransactions]
+    [
+      gnosis,
+      governance,
+      treasury,
+      account,
+      getGnosisSafeTransactions,
+      lookupModules,
+      getVetoGuardContracts,
+      lookupFreezeData,
+    ]
   );
 
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
