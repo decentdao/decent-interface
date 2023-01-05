@@ -163,6 +163,7 @@ export const parseDecodedData = (
         valueDecoded.forEach(value => {
           const decodedTransaction = {
             target: value.to,
+            value: value.value, // This is the ETH value
             function: value.dataDecoded?.method,
             parameterTypes:
               !!value.dataDecoded && value.dataDecoded.parameters
@@ -188,6 +189,7 @@ export const parseDecodedData = (
   if (dataDecoded && isMultiSigTransaction) {
     const decodedTransaction = {
       target: multiSigTransaction.to,
+      value: multiSigTransaction.value,
       function: dataDecoded.method,
       parameterTypes: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
       parameterValues: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.value) : [],
