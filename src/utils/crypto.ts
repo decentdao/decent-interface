@@ -19,6 +19,7 @@ export const decodeTransactions = async (
         ).data;
         return {
           target: tx.to,
+          value: tx.value.toString(),
           function: decodedData.method,
           parameterTypes: decodedData.parameters.map((param: DecodedTxParam) => param.type),
           parameterValues: decodedData.parameters.map((param: DecodedTxParam) => param.value),
@@ -26,6 +27,7 @@ export const decodeTransactions = async (
       } catch (e) {
         return {
           target: tx.to,
+          value: tx.value.toString(),
           function: 'unkown',
           parameterTypes: [],
           parameterValues: [],
