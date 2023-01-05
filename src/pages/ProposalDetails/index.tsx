@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { MultisigProposalDetails } from '../../components/Proposals/MultisigProposalDetails';
 import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
+import PageHeader from '../../components/ui/Header/PageHeader';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 
@@ -16,6 +17,7 @@ function ProposalDetails() {
   const params = useParams();
 
   const {
+    gnosis: { daoName },
     governance: {
       txProposalsInfo: { txProposals },
     },
@@ -27,7 +29,7 @@ function ProposalDetails() {
   const usulProposal = proposal as UsulProposal;
 
   useEffect(() => {
-    if (!txProposals || !params.proposalNumber) {
+    if (!txProposals || !txProposals.length || !params.proposalNumber) {
       setProposal(undefined);
       return;
     }
@@ -44,6 +46,10 @@ function ProposalDetails() {
 
   return (
     <Box>
+      <PageHeader
+        title={t('pageTitle', { daoName, ns: 'proposal' })}
+        titleTestId={'title-proposal-details'}
+      />
       <Link to={DAO_ROUTES.proposals.relative(params.address)}>
         <Button
           paddingLeft={0}
