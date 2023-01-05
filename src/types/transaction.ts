@@ -3,6 +3,7 @@ import { BigNumberValuePair } from '../components/ui/BigNumberInput';
 
 export interface DecodedTransaction {
   target: string;
+  value: string;
   function: string;
   parameterTypes: string[];
   parameterValues: string[];
