@@ -62,7 +62,12 @@ export function SearchDisplay({
           width="full"
         >
           <Text textStyle="text-base-sans-medium">{displayName}</Text>
-          <Button as="div">{t('labelViewDAO')}</Button>
+          <Button
+            as="div"
+            cursor="pointer"
+          >
+            {t('labelViewDAO')}
+          </Button>
         </Flex>
       </MenuItem>
     );
