@@ -27,6 +27,7 @@ import { notProd, useProposeStuff } from '../../utils/dev';
 
 const defaultTransaction = {
   targetAddress: '',
+  ethValue: { value: '0', bigNumberValue: BigNumber.from('0') },
   functionName: '',
   functionSignature: '',
   parameters: '',
@@ -91,7 +92,7 @@ function ProposalCreate() {
     }
     const proposal = {
       targets: transactions.map(transaction => transaction.targetAddress),
-      values: transactions.map(() => BigNumber.from('0')),
+      values: transactions.map(transaction => transaction.ethValue.bigNumberValue),
       calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
       title: '',
       description: proposalDescription,

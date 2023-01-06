@@ -7,7 +7,6 @@
     "labelFunctionSignature": "Сигнатура функціі",
     "helperFunctionSignature": "Сигнатура параметрів функціі, зазначеної вище",
     "labelParameters": "Параметри",
-    "helperParameters": "Значення параметрів, що будуть використанні при виконанні функції",
     "pageTitle": "Пропозиції {{daoName}}",
     "ownerApproved": "Затвердженно",
     "statePending": "В очікуванні",
