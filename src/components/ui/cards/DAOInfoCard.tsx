@@ -60,8 +60,10 @@ export function DAOInfoCard({
       justifyContent="space-between"
       w="full"
     >
-      <Flex alignItems="center">
-        {/* CARET */}
+      <Flex
+        alignItems="center"
+        flexWrap="wrap"
+      >
         {!!toggleExpansion && (
           <IconButton
             variant="ghost"
@@ -164,7 +166,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
 
   return (
     <Box
-      h="6.75rem"
+      minH="6.75rem"
       bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"

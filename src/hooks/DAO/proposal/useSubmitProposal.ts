@@ -61,7 +61,7 @@ export default function useSubmitProposal() {
 
         setPendingCreateTx(true);
 
-        let to, data, operation;
+        let to, value, data, operation;
         if (proposalData.targets.length > 1) {
           if (!multiSendContract) {
             toast.dismiss(toastId);
@@ -87,6 +87,7 @@ export default function useSubmitProposal() {
         } else {
           // Single transaction to post
           to = proposalData.targets[0];
+          value = BigNumber.from(proposalData.values[0]);
           data = proposalData.calldatas[0];
           operation = 0;
         }
@@ -101,6 +102,7 @@ export default function useSubmitProposal() {
               chainId,
               {
                 to,
+                value,
                 data,
                 operation,
                 nonce: (await gnosisContract.nonce()).toNumber(),

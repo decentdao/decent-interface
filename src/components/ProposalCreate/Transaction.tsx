@@ -3,7 +3,8 @@ import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { TransactionData } from '../../types/transaction';
-import { InputComponent, TextareaComponent } from './InputComponent';
+import { BigNumberValuePair } from '../ui/BigNumberInput';
+import { BigNumberComponent, InputComponent, TextareaComponent } from './InputComponent';
 
 interface TransactionProps {
   transaction: TransactionData;
@@ -49,6 +50,14 @@ function Transaction({
         !isValidAddress && targetAddress.trim()
           ? t('errorInvalidAddress', { ns: 'common' })
           : undefined,
+    };
+    updateTransaction(transactionCopy, transactionNumber);
+  };
+
+  const updateEthValue = (ethValue: BigNumberValuePair) => {
+    const transactionCopy = {
+      ...transaction,
+      ethValue,
     };
     updateTransaction(transactionCopy, transactionNumber);
   };
@@ -170,6 +179,22 @@ function Transaction({
           </HStack>
         }
         errorMessage={transaction.fragmentError}
+      />
+      <BigNumberComponent
+        label={t('labelEthValue')}
+        helper={t('helperEthValue')}
+        isRequired={false}
+        disabled={pending}
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>{'1.2'}</Text>
+          </HStack>
+        }
+        errorMessage={transaction.fragmentError}
+        value={transaction.ethValue.bigNumberValue}
+        onChange={updateEthValue}
+        decimalPlaces={18}
       />
     </VStack>
   );

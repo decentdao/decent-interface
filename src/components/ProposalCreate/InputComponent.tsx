@@ -1,5 +1,6 @@
 import { Input, HStack, Text, Textarea, Grid, GridItem } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
+import { BigNumberInput, BigNumberInputProps } from '../ui/BigNumberInput';
 
 interface BaseProps {
   label: string;
@@ -19,13 +20,16 @@ interface InputProps extends Omit<BaseProps, 'children'> {
 interface TextareaProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
 }
+interface BigNumberProps
+  extends Omit<BaseProps, 'children' | 'value'>,
+    Omit<BigNumberInputProps, 'isRequired'> {}
 
 function BaseComponent(props: BaseProps) {
   const { label, helper, isRequired, subLabel, errorMessage, children } = props;
   return (
     <Grid
       columnGap={3}
-      templateColumns="1fr 2fr"
+      templateColumns={{ base: '1fr', md: '1fr 2fr' }}
       fontSize="14px"
       alignItems="start"
     >
@@ -71,6 +75,23 @@ export function TextareaComponent(props: TextareaProps) {
         value={value}
         disabled={disabled}
       ></Textarea>
+    </BaseComponent>
+  );
+}
+
+export function BigNumberComponent(props: BigNumberProps) {
+  const { value, onChange, decimalPlaces } = props;
+  return (
+    <BaseComponent
+      {...props}
+      value={''}
+    >
+      <BigNumberInput
+        value={value}
+        onChange={onChange}
+        decimalPlaces={decimalPlaces}
+        placeholder="0"
+      ></BigNumberInput>
     </BaseComponent>
   );
 }

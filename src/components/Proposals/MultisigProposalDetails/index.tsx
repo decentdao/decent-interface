@@ -1,10 +1,11 @@
-import { Grid, GridItem, Box } from '@chakra-ui/react';
+import { GridItem, Box } from '@chakra-ui/react';
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';
+import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import ProposalCreatedBy from '../../ui/proposal/ProposalCreatedBy';
 import { ProposalInfo } from '../ProposalInfo';
 import { SignerDetails } from './SignerDetails';
@@ -22,10 +23,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) 
     state: { account },
   } = useWeb3Provider();
   return (
-    <Grid
-      gap={4}
-      templateColumns="repeat(3, 1fr)"
-    >
+    <ProposalDetailsGrid>
       <GridItem colSpan={2}>
         <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
           <ProposalInfo proposal={proposal} />
@@ -44,6 +42,6 @@ export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) 
           />
         )}
       </GridItem>
-    </Grid>
+    </ProposalDetailsGrid>
   );
 }

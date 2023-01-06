@@ -55,8 +55,12 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
         value={transaction.parameterTypes.join(', ')}
       />
       <TransactionRow
-        paramKey="parameter values"
+        paramKey="parameter inputs"
         value={transaction.parameterValues.join(', ')}
+      />
+      <TransactionRow
+        paramKey="transaction value"
+        value={transaction.value}
       />
     </Flex>
   );
