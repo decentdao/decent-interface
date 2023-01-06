@@ -9,7 +9,7 @@
     "labelParameters": "Parameters",
     "helperParameters": "Parameters used to call the function (comma separated)",
     "labelEthValue": "ETH Value",
-    "helperEthValue": "Amount of Ether to send with the transaction",
+    "helperEthValue": "Amount of ETH to send with the transaction (from your treasury)",
     "pageTitle": "{{daoName}} Proposals",
     "ownerApproved": "Approved",
     "statePending": "Pending",
