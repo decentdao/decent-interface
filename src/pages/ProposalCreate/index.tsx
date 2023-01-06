@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import Transactions from '../../components/ProposalCreate/Transactions';
+import PageHeader from '../../components/ui/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -41,7 +42,7 @@ const templateAreaSingleCol = `"header"
 
 function ProposalCreate() {
   const {
-    gnosis: { safe },
+    gnosis: { safe, daoName },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
 
@@ -131,103 +132,110 @@ function ProposalCreate() {
   }, [pendingCreateTx, isValidProposal, canUserCreateProposal]);
 
   return (
-    <Grid
-      gap={4}
-      templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
-      gridTemplateRows={'5.1em 1fr'}
-      templateAreas={{ base: templateAreaSingleCol, lg: templateAreaTwoCol }}
-    >
-      <GridItem area="header">
-        <VStack align="left">
-          <Button
-            paddingLeft={0}
-            width="fit-content"
-            variant="text"
-            leftIcon={<CloseX />}
-            onClick={() =>
-              safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
-            }
-          >
-            {t('cancel', { ns: 'common' })}
-          </Button>
-          <Text
-            onClick={notProd() ? testPropose : undefined}
-            textStyle="text-2xl-mono-regular"
-          >
-            {t('createProposal')}
-          </Text>
-        </VStack>
-      </GridItem>
-      <GridItem area="content">
-        <Flex
-          flexDirection="column"
-          align="left"
+    <Box>
+      <PageHeader
+        title={t('pageTitle', { daoName })}
+        titleTestId={'title-proposal-details'}
+      >
+        <Button
+          paddingLeft={0}
+          width="fit-content"
+          variant="text"
+          leftIcon={<CloseX />}
+          onClick={() =>
+            safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
+          }
         >
-          <Box
-            rounded="lg"
-            p="1rem"
-            bg={BACKGROUND_SEMI_TRANSPARENT}
-          >
-            <form onSubmit={e => e.preventDefault()}>
-              <Transactions
-                transactions={transactions}
-                setTransactions={setTransactions}
-                removeTransaction={removeTransaction}
-                pending={pendingCreateTx}
-              />
-            </form>
-            <VStack
-              align="left"
-              spacing={6}
-              pt={2}
+          {t('cancel', { ns: 'common' })}
+        </Button>
+      </PageHeader>
+      <Grid
+        gap={4}
+        templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
+        gridTemplateRows={'5.1em 1fr'}
+        templateAreas={{ base: templateAreaSingleCol, lg: templateAreaTwoCol }}
+      >
+        <GridItem area="header">
+          <VStack align="left">
+            <Text
+              onClick={notProd() ? testPropose : undefined}
+              textStyle="text-2xl-mono-regular"
             >
-              <Button
-                variant="text"
-                onClick={addTransaction}
-                disabled={pendingCreateTx}
-                w="fit-content"
-                pl={0}
+              {t('createProposal')}
+            </Text>
+          </VStack>
+        </GridItem>
+        <GridItem area="content">
+          <Flex
+            flexDirection="column"
+            align="left"
+          >
+            <Box
+              rounded="lg"
+              p="1rem"
+              bg={BACKGROUND_SEMI_TRANSPARENT}
+            >
+              <form onSubmit={e => e.preventDefault()}>
+                <Transactions
+                  transactions={transactions}
+                  setTransactions={setTransactions}
+                  removeTransaction={removeTransaction}
+                  pending={pendingCreateTx}
+                />
+              </form>
+              <VStack
+                align="left"
+                spacing={6}
+                pt={2}
               >
-                {t('labelAddTransaction')}
-              </Button>
-              <Alert
-                status="info"
-                w="fit-content"
-              >
-                <Info boxSize="24px" />
-                <AlertTitle>
-                  <Text
-                    textStyle="text-lg-mono-medium"
-                    whiteSpace="pre-wrap"
-                  >
-                    {t('transactionExecutionAlertMessage')}
-                  </Text>
-                </AlertTitle>
-              </Alert>
-              <Divider color="chocolate.700" />
-              <Button
-                w="100%"
-                onClick={() =>
-                  submitProposal({
-                    proposalData,
-                    pendingToastMessage: t('proposalCreatePendingToastMessage'),
-                    successToastMessage: t('proposalCreateSuccessToastMessage'),
-                    failedToastMessage: t('proposalCreateFailureToastMessage'),
-                    successCallback,
-                  })
-                }
-                disabled={isCreateDisabled}
-              >
-                {t('createProposal')}
-              </Button>
-            </VStack>
-          </Box>
-        </Flex>
-      </GridItem>
-      <GridItem area="details">
-        <ProposalDetails />
-      </GridItem>
-    </Grid>
+                <Button
+                  variant="text"
+                  onClick={addTransaction}
+                  disabled={pendingCreateTx}
+                  w="fit-content"
+                  pl={0}
+                >
+                  {t('labelAddTransaction')}
+                </Button>
+                <Alert
+                  status="info"
+                  w="fit-content"
+                >
+                  <Info boxSize="24px" />
+                  <AlertTitle>
+                    <Text
+                      textStyle="text-lg-mono-medium"
+                      whiteSpace="pre-wrap"
+                    >
+                      {t('transactionExecutionAlertMessage')}
+                    </Text>
+                  </AlertTitle>
+                </Alert>
+                <Divider color="chocolate.700" />
+                <Button
+                  w="100%"
+                  onClick={() =>
+                    submitProposal({
+                      proposalData,
+                      pendingToastMessage: t('proposalCreatePendingToastMessage'),
+                      successToastMessage: t('proposalCreateSuccessToastMessage'),
+                      failedToastMessage: t('proposalCreateFailureToastMessage'),
+                      successCallback,
+                    })
+                  }
+                  disabled={isCreateDisabled}
+                >
+                  {t('createProposal')}
+                </Button>
+              </VStack>
+            </Box>
+          </Flex>
+        </GridItem>
+        <GridItem area="details">
+          <ProposalDetails />
+        </GridItem>
+      </Grid>
+    </Box>
   );
 }
 

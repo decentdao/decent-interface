@@ -67,7 +67,5 @@ test('Discord button works', async () => {
 
 test('Docs button works', async () => {
   const tab = await home.clickDocsNewTab();
-  await expect(tab).toHaveURL(
-    'https://docs.fractalframework.xyz/welcome-to-fractal/the-core-framework/developer-overview'
-  );
+  await expect(tab).toHaveURL('https://docs.fractalframework.xyz/welcome-to-fractal');
 });

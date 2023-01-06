@@ -146,6 +146,40 @@ export const mapProposalCreatedEventToProposal = async (
   return proposal;
 };
 
+export const parseMultiSendTransactions = (
+  eventTransactionMap: Map<number, any>,
+  parameters?: Parameter[]
+) => {
+  if (!parameters || !parameters.length) {
+    return;
+  }
+  parameters.forEach((param: Parameter) => {
+    const valueDecoded = param.valueDecoded;
+    if (Array.isArray(valueDecoded)) {
+      valueDecoded.forEach(value => {
+        const decodedTransaction = {
+          target: value.to,
+          function: value.dataDecoded?.method,
+          parameterTypes:
+            !!value.dataDecoded && value.dataDecoded.parameters
+              ? value.dataDecoded.parameters.map(p => p.type)
+              : [],
+          parameterValues:
+            !!value.dataDecoded && value.dataDecoded.parameters
+              ? value.dataDecoded.parameters.map(p => p.value)
+              : [],
+        };
+        eventTransactionMap.set(eventTransactionMap.size, {
+          ...decodedTransaction,
+        });
+        if (value.dataDecoded?.parameters && value.dataDecoded?.parameters?.length) {
+          return parseMultiSendTransactions(eventTransactionMap, value.dataDecoded.parameters);
+        }
+      });
+    }
+  });
+};
+
 export const parseDecodedData = (
   multiSigTransaction:
     | SafeMultisigTransactionWithTransfersResponse
@@ -153,36 +187,6 @@ export const parseDecodedData = (
   isMultiSigTransaction: boolean
 ) => {
   const eventTransactionMap = new Map<number, any>();
-  const parseTransactions = (parameters?: Parameter[]) => {
-    if (!parameters || !parameters.length) {
-      return;
-    }
-    parameters.forEach((param: Parameter) => {
-      const valueDecoded = param.valueDecoded;
-      if (Array.isArray(valueDecoded)) {
-        valueDecoded.forEach(value => {
-          const decodedTransaction = {
-            target: value.to,
-            function: value.dataDecoded?.method,
-            parameterTypes:
-              !!value.dataDecoded && value.dataDecoded.parameters
-                ? value.dataDecoded.parameters.map(p => p.type)
-                : [],
-            parameterValues:
-              !!value.dataDecoded && value.dataDecoded.parameters
-                ? value.dataDecoded.parameters.map(p => p.value)
-                : [],
-          };
-          eventTransactionMap.set(eventTransactionMap.size, {
-            ...decodedTransaction,
-          });
-          if (value.dataDecoded?.parameters && value.dataDecoded?.parameters?.length) {
-            return parseTransactions(value.dataDecoded.parameters);
-          }
-        });
-      }
-    });
-  };
 
   const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;
   if (dataDecoded && isMultiSigTransaction) {
@@ -195,7 +199,7 @@ export const parseDecodedData = (
     eventTransactionMap.set(eventTransactionMap.size, {
       ...decodedTransaction,
     });
-    parseTransactions(dataDecoded.parameters);
+    parseMultiSendTransactions(eventTransactionMap, dataDecoded.parameters);
   }
   return Array.from(eventTransactionMap.values());
 };
