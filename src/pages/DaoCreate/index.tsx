@@ -12,6 +12,9 @@ function DaoCreate() {
   const { requestWithRetries } = useAsyncRetry();
   const {
     gnosis: { safeService },
+    account: {
+      favorites: { toggleFavorite },
+    },
   } = useFractal();
 
   const successCallback = useCallback(
@@ -23,10 +26,11 @@ function DaoCreate() {
         5
       );
       if (daoFound) {
+        toggleFavorite(daoAddress);
         navigate(DAO_ROUTES.dao.relative(daoAddress));
       }
     },
-    [safeService, navigate, requestWithRetries]
+    [safeService, requestWithRetries, toggleFavorite, navigate]
   );
 
   const [deploy, pending] = useDeployDAO();

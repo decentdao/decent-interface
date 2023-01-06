@@ -24,6 +24,7 @@ export function DAOSearch() {
   const focusInput = () => {
     if (inputRef.current) {
       inputRef.current.focus();
+      inputRef.current.select();
     }
   };
 
