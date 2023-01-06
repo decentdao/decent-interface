@@ -20,6 +20,7 @@ const BADGE_MAPPING: BadgeType = {
   [TxProposalState.Rejected]: { Icon: CloseX, bg: 'sand.700', color: 'grayscale.black' },
   [DAOState.freezeInit]: { Icon: Check, bg: 'blue.400', color: 'grayscale.black' },
   [DAOState.frozen]: { Icon: DoubleCheck, bg: 'blue.400', color: 'grayscale.black' },
+  ownerApproved: { bg: 'sand.700', color: 'grayscale.black' },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
