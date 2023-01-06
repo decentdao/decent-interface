@@ -25,7 +25,7 @@ function BaseComponent(props: BaseProps) {
   return (
     <Grid
       columnGap={3}
-      templateColumns="1fr 2fr"
+      templateColumns={{ base: '1fr', md: '1fr 2fr' }}
       fontSize="14px"
       alignItems="start"
     >

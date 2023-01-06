@@ -1,4 +1,4 @@
-import { Grid, GridItem, Box } from '@chakra-ui/react';
+import { GridItem, Box } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
 import { ProposalAction } from '../../../components/Proposals/ProposalActions/ProposalAction';
@@ -12,6 +12,7 @@ import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
@@ -61,10 +62,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   ]);
 
   return (
-    <Grid
-      gap={4}
-      templateColumns="repeat(3, 1fr)"
-    >
+    <ProposalDetailsGrid>
       <GridItem colSpan={2}>
         <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
           <ProposalInfo proposal={proposal} />
@@ -74,7 +72,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
         </ContentBox>
         <ProposalVotes proposal={proposal} />
       </GridItem>
-      <GridItem colSpan={1}>
+      <GridItem>
         <ProposalSummary proposal={proposal} />
         {account && (
           <ProposalAction
@@ -83,6 +81,6 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
           />
         )}
       </GridItem>
-    </Grid>
+    </ProposalDetailsGrid>
   );
 }
