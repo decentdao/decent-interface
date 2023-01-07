@@ -23,7 +23,7 @@ export interface IFractalContext {
     gnosisDispatch: React.Dispatch<GnosisActions>;
   };
   actions: {
-    getGnosisSafeTransactions: () => Promise<void>;
+    refreshGnosisTransactions: () => Promise<void>;
     lookupModules: (_moduleAddresses: string[]) => Promise<IGnosisModuleData[] | undefined>;
     getVetoGuardContracts: (
       _guardAddress: string,

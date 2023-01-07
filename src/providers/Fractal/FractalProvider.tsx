@@ -98,7 +98,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         gnosisDispatch,
       },
       actions: {
-        getGnosisSafeTransactions,
+        refreshGnosisTransactions: getGnosisSafeTransactions,
         lookupModules,
         getVetoGuardContracts,
         lookupFreezeData,
