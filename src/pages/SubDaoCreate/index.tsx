@@ -8,6 +8,7 @@ function SubDaoCreate() {
   const navigate = useNavigate();
 
   const successCallback = (daoAddress: string) => {
+    // @todo should navigate to proposals
     navigate(DAO_ROUTES.dao.relative(daoAddress));
   };
 

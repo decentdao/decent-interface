@@ -73,7 +73,8 @@
     "titleTokenParams": "Token Metadata",
     "titleAddress": "Address",
     "titleAmount": "Amount",
-    "createSubDAOPendingToastMessage": "Deploying your subDAO",
+    "Create SubDAO": "Create SubDAO",
+    "createSubDAO": "Creating your SubDAO Proposal",
     "createSubDAOSuccessToastMessage": "Deployment successful",
     "createSubDAOFailureToastMessage": "Deployment failed",
     "helperAllocations": "Unallocated tokens will be placed in your DAO's treasury"
