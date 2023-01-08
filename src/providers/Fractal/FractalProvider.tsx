@@ -54,7 +54,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
 
   useLocalStorage();
 
-  const { getGnosisSafeTransactions } = useGnosisApiServices(
+  const { getGnosisSafeTransactions, getGnosisSafeInfo } = useGnosisApiServices(
     gnosis,
     treasuryDispatch,
     gnosisDispatch
@@ -98,7 +98,10 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         gnosisDispatch,
       },
       actions: {
-        refreshGnosisTransactions: getGnosisSafeTransactions,
+        refreshSafeData: async () => {
+          await getGnosisSafeTransactions();
+          await getGnosisSafeInfo();
+        },
         lookupModules,
         getVetoGuardContracts,
         lookupFreezeData,
@@ -110,6 +113,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       treasury,
       account,
       getGnosisSafeTransactions,
+      getGnosisSafeInfo,
       lookupModules,
       getVetoGuardContracts,
       lookupFreezeData,
