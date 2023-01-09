@@ -1,25 +1,16 @@
-import {
-  Button,
-  Text,
-  Grid,
-  GridItem,
-  VStack,
-  Divider,
-  Alert,
-  AlertTitle,
-  Box,
-  Flex,
-} from '@chakra-ui/react';
-import { CloseX, Info } from '@decent-org/fractal-ui';
+import { Button, Text, Grid, GridItem, VStack, Box, Flex } from '@chakra-ui/react';
+import { CloseX } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
-import Transactions from '../../components/ProposalCreate/Transactions';
+import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
+import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import useUsul from '../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
@@ -46,6 +37,8 @@ function ProposalCreate() {
     gnosis: { safe, daoName },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
+  const { usulContract } = useUsul();
+  const [isUsul, setIsUsul] = useState<boolean>();
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -55,6 +48,21 @@ function ProposalCreate() {
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const testPropose = useProposeStuff(setTransactions);
+  const [showTransactionsAndSubmit, setShowTransactionsAndSubmit] = useState<boolean>();
+  const [inputtedMetadata, setInputtedMetadata] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!usulContract) {
+      setIsUsul(false);
+    } else {
+      setIsUsul(true);
+    }
+  }, [usulContract]);
+
+  useEffect(() => {
+    if (isUsul === undefined) return;
+    setShowTransactionsAndSubmit(!isUsul || inputtedMetadata ? true : false);
+  }, [inputtedMetadata, isUsul]);
 
   /**
    * adds new transaction form
@@ -176,59 +184,22 @@ function ProposalCreate() {
               p="1rem"
               bg={BACKGROUND_SEMI_TRANSPARENT}
             >
-              <form onSubmit={e => e.preventDefault()}>
-                <Transactions
-                  transactions={transactions}
-                  setTransactions={setTransactions}
-                  removeTransaction={removeTransaction}
-                  pending={pendingCreateTx}
-                />
-              </form>
-              <VStack
-                align="left"
-                spacing={6}
-                pt={2}
-              >
-                <Button
-                  variant="text"
-                  onClick={addTransaction}
-                  disabled={pendingCreateTx}
-                  w="fit-content"
-                  pl={0}
-                >
-                  {t('labelAddTransaction')}
-                </Button>
-                <Alert
-                  status="info"
-                  w="fit-content"
-                >
-                  <Info boxSize="24px" />
-                  <AlertTitle>
-                    <Text
-                      textStyle="text-lg-mono-medium"
-                      whiteSpace="pre-wrap"
-                    >
-                      {t('transactionExecutionAlertMessage')}
-                    </Text>
-                  </AlertTitle>
-                </Alert>
-                <Divider color="chocolate.700" />
-                <Button
-                  w="100%"
-                  onClick={() =>
-                    submitProposal({
-                      proposalData,
-                      pendingToastMessage: t('proposalCreatePendingToastMessage'),
-                      successToastMessage: t('proposalCreateSuccessToastMessage'),
-                      failedToastMessage: t('proposalCreateFailureToastMessage'),
-                      successCallback,
-                    })
-                  }
-                  disabled={isCreateDisabled}
-                >
-                  {t('createProposal')}
-                </Button>
-              </VStack>
+              <UsulMetadata
+                show={!showTransactionsAndSubmit}
+                setInputtedMetadata={setInputtedMetadata}
+              />
+              <TransactionsAndSubmit
+                show={showTransactionsAndSubmit}
+                addTransaction={addTransaction}
+                pendingCreateTx={pendingCreateTx}
+                submitProposal={submitProposal}
+                proposalData={proposalData}
+                successCallback={successCallback}
+                isCreateDisabled={isCreateDisabled}
+                transactions={transactions}
+                setTransactions={setTransactions}
+                removeTransaction={removeTransaction}
+              />
             </Box>
           </Flex>
         </GridItem>
