@@ -1,8 +1,8 @@
 import { VetoGuard__factory } from '@fractal-framework/fractal-contracts';
 import { SafeInfoResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect } from 'react';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
+import { Dispatch, useEffect, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import { GnosisAction } from '../constants';
 import { IGnosis, GnosisActions } from '../types';
 
@@ -14,9 +14,10 @@ export default function useNodes({
   gnosis: IGnosis;
   gnosisDispatch: Dispatch<GnosisActions>;
 }) {
-  const {
-    state: { chainId, signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data } = useSigner();
+  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
+
   const { modules, safe, safeService } = gnosis;
   useEffect(() => {
     const loadDaoParent = async () => {
@@ -63,5 +64,5 @@ export default function useNodes({
 
     loadDaoParent();
     loadDaoNodes();
-  }, [chainId, safe, modules, gnosisDispatch, signerOrProvider, safeService]);
+  }, [safe, modules, gnosisDispatch, signerOrProvider, safeService]);
 }

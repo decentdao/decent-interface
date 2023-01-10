@@ -59,6 +59,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     treasuryDispatch,
     gnosisDispatch
   );
+
   const { lookupModules } = useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
 
   useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
@@ -120,5 +121,5 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     ]
   );
 
-  return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
+  return <FractalContext.Provider value={value as any}>{children}</FractalContext.Provider>;
 }

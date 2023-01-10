@@ -6,10 +6,10 @@ import {
   ProposalCreatedEvent,
   ProposalCanceledEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
-import { Dispatch, useCallback, useEffect } from 'react';
+import { Dispatch, useCallback, useEffect, useMemo } from 'react';
+import { useNetwork, useProvider, useSigner } from 'wagmi';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
 import { decodeTransactions } from '../../../../utils/crypto';
-import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { IGovernance, TxProposalState, UsulProposal, VOTE_CHOICES } from '../../types';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../utils';
 import { GovernanceActions, GovernanceAction } from '../actions';
@@ -21,9 +21,11 @@ interface IUseUsulProposals {
 }
 
 export default function useUsulProposals({ governance, governanceDispatch }: IUseUsulProposals) {
-  const {
-    state: { signerOrProvider, provider, chainId },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data } = useSigner();
+  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
+
+  const { chain } = useNetwork();
   const {
     txProposalsInfo,
     contracts: { usulContract, ozLinearVotingContract },
@@ -49,7 +51,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       if (metaDataEvent) {
         metaData = {
           transactions: metaDataEvent.args.transactions,
-          decodedTransactions: await decodeTransactions(metaDataEvent.args.transactions, chainId),
+          decodedTransactions: await decodeTransactions(metaDataEvent.args.transactions, chain!.id),
         };
       }
       const proposal = await mapProposalCreatedEventToProposal(
@@ -73,7 +75,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         },
       });
     },
-    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo, chainId]
+    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo, chain]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
@@ -189,7 +191,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
               transactions: metaDataEvent.args.transactions,
               decodedTransactions: await decodeTransactions(
                 metaDataEvent.args.transactions,
-                chainId
+                chain!.id
               ),
             };
           }
@@ -224,5 +226,5 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     };
 
     loadProposals();
-  }, [usulContract, signerOrProvider, governanceDispatch, provider, chainId]);
+  }, [usulContract, signerOrProvider, governanceDispatch, provider, chain]);
 }

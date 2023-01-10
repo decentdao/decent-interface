@@ -24,10 +24,10 @@ import {
   FractalUsul,
   FractalUsul__factory,
 } from '@fractal-framework/fractal-contracts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import { MultiSend, MultiSend__factory } from '../../assets/typechain-types/usul';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
 export default function useSafeContracts() {
   const [multiSendContract, setMultisendContract] = useState<MultiSend>();
@@ -52,9 +52,10 @@ export default function useSafeContracts() {
   const [vetoERC20VotingMasterCopyContract, setVetoERC20VotingMasterCopyContract] =
     useState<VetoERC20Voting>();
   const [votesTokenMasterCopyContract, setVotesTokenMasterCopyContract] = useState<VotesToken>();
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+
+  const provider = useProvider();
+  const { data } = useSigner();
+  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
 
   const {
     contracts: {

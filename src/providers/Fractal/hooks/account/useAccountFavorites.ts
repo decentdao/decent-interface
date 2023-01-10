@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
+import { useNetwork } from 'wagmi';
 import { AccountAction } from '../../constants/actions';
 import { CacheKeys } from './useLocalStorage';
 
@@ -14,10 +14,7 @@ interface IUseFavorites {
  */
 export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavorites) => {
   const [favoritesList, setFavorites] = useState<string[]>([]);
-
-  const {
-    state: { chainId },
-  } = useWeb3Provider();
+  const { chain } = useNetwork();
 
   /**
    * @returns favorited status of loaded safe
@@ -44,30 +41,30 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavori
           updatedFavorites = favoritesList.filter(favorite => favorite !== normalizedAddress);
           const newValue = JSON.stringify({
             ...parsedFavorites,
-            [chainId]: updatedFavorites,
+            [chain!.id]: updatedFavorites,
           });
           localStorage.setItem(CacheKeys.FAVORITES, newValue);
         } else {
           updatedFavorites = [...favoritesList, normalizedAddress];
           const newValue = JSON.stringify({
             ...parsedFavorites,
-            [chainId]: updatedFavorites,
+            [chain!.id]: updatedFavorites,
           });
           localStorage.setItem(CacheKeys.FAVORITES, newValue);
         }
       }
       setFavorites(updatedFavorites);
     },
-    [favoritesList, chainId]
+    [favoritesList, chain]
   );
 
   const loadFavorites = useCallback(() => {
     const rawFavorites = localStorage.getItem(CacheKeys.FAVORITES);
     if (rawFavorites) {
-      const parsedFavorites = JSON.parse(rawFavorites)[chainId];
+      const parsedFavorites = JSON.parse(rawFavorites)[chain!.id];
       setFavorites(parsedFavorites || []);
     }
-  }, [chainId]);
+  }, [chain]);
 
   useEffect(() => {
     loadFavorites();
