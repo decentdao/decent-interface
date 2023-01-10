@@ -50,6 +50,11 @@ function ProposalCreate() {
   const testPropose = useProposeStuff(setTransactions);
   const [showTransactionsAndSubmit, setShowTransactionsAndSubmit] = useState<boolean>();
   const [inputtedMetadata, setInputtedMetadata] = useState<boolean>(false);
+  const [metadata, setMetadata] = useState<{
+    title: string;
+    description: string;
+    documentationUrl: string;
+  }>({ title: '', description: '', documentationUrl: '' });
 
   useEffect(() => {
     if (!usulContract) {
@@ -102,12 +107,18 @@ function ProposalCreate() {
       targets: transactions.map(transaction => transaction.targetAddress),
       values: transactions.map(transaction => transaction.ethValue.bigNumberValue),
       calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
-      title: '',
-      description: proposalDescription,
-      documentationUrl: '',
+      title: metadata.title,
+      description: metadata.description,
+      documentationUrl: metadata.documentationUrl,
     };
     setProposalData(proposal);
-  }, [transactions, proposalDescription]);
+  }, [
+    transactions,
+    proposalDescription,
+    metadata.title,
+    metadata.description,
+    metadata.documentationUrl,
+  ]);
 
   const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist
@@ -187,6 +198,8 @@ function ProposalCreate() {
               <UsulMetadata
                 show={!showTransactionsAndSubmit}
                 setInputtedMetadata={setInputtedMetadata}
+                metadata={metadata}
+                setMetadata={setMetadata}
               />
               <TransactionsAndSubmit
                 show={showTransactionsAndSubmit}

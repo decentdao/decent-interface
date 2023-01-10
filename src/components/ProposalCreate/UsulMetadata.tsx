@@ -1,18 +1,52 @@
 import { Button, VStack } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import ContentBox from '../ui/ContentBox';
 import { InputComponent } from './InputComponent';
 
 function UsulMetadata({
   show,
   setInputtedMetadata,
+  metadata,
+  setMetadata,
 }: {
   show: boolean;
   setInputtedMetadata: Dispatch<SetStateAction<boolean>>;
+  metadata: {
+    title: string;
+    description: string;
+    documentationUrl: string;
+  };
+  setMetadata: Dispatch<
+    SetStateAction<{
+      title: string;
+      description: string;
+      documentationUrl: string;
+    }>
+  >;
 }) {
-  const [title, setTitle] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [link, setLink] = useState<string>('');
+  const updateTitle = (title: string) => {
+    const metadataCopy = {
+      ...metadata,
+      title,
+    };
+    setMetadata(metadataCopy);
+  };
+
+  const updateDescription = (description: string) => {
+    const metadataCopy = {
+      ...metadata,
+      description,
+    };
+    setMetadata(metadataCopy);
+  };
+
+  const updateDocumentationUrl = (documentationUrl: string) => {
+    const metadataCopy = {
+      ...metadata,
+      documentationUrl,
+    };
+    setMetadata(metadataCopy);
+  };
 
   if (!show) return null;
 
@@ -27,24 +61,24 @@ function UsulMetadata({
           label={'Proposal Title'}
           helper={'A short title for this proposal.'}
           isRequired={false}
-          value={title}
-          onChange={e => setTitle(e.target.value)}
+          value={metadata.title}
+          onChange={e => updateTitle(e.target.value)}
           disabled={false}
         />
         <InputComponent
           label={'Description'}
           helper={'Add a brief description.'}
           isRequired={false}
-          value={description}
-          onChange={e => setDescription(e.target.value)}
+          value={metadata.description}
+          onChange={e => updateDescription(e.target.value)}
           disabled={false}
         />
         <InputComponent
           label={'Additional Resources'}
           helper={'A link to any discussion or formal documentation.'}
           isRequired={false}
-          value={link}
-          onChange={e => setLink(e.target.value)}
+          value={metadata.documentationUrl}
+          onChange={e => updateDocumentationUrl(e.target.value)}
           disabled={false}
         />
       </VStack>
