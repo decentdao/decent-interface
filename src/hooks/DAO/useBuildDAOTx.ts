@@ -254,7 +254,7 @@ const useBuildDAOTx = () => {
     ]
   );
   const buildDeploySafeTx = useCallback(
-    (daoData: GnosisDAO, hasUsul?: boolean, parentDAOAddress?: string) => {
+    (daoData: GnosisDAO, hasUsul?: boolean) => {
       const buildTx = async () => {
         if (
           !account ||
@@ -274,9 +274,6 @@ const useBuildDAOTx = () => {
               ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
               multiSendContract.address,
             ];
-        if (parentDAOAddress) {
-          signers.push(parentDAOAddress);
-        }
 
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
           'setup',
@@ -356,7 +353,7 @@ const useBuildDAOTx = () => {
           return;
         }
         const gnosisDaoData = daoData as GnosisDAO;
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, false, parentDAOAddress);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, false);
 
         if (!deploySafeTx) {
           return;
@@ -595,7 +592,7 @@ const useBuildDAOTx = () => {
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true, parentDAOAddress);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
 
         if (!deploySafeTx) {
           return;
