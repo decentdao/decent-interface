@@ -1,9 +1,9 @@
 {
     "titleFavorites": "Favorites",
     "emptyFavorites": "No favorites",
-    "errorInvalidSearch": "Please use a valid Fractal or Gnosis Safe address, or ENS domain",
+    "errorInvalidSearch": "Please use a valid Fractal address",
     "errorFailedSearch": "Sorry, neither a Fractal nor a Gnosis Safe exists at this address",
-    "searchDAOPlaceholder": "Enter a DAO address or ENS",
+    "searchDAOPlaceholder": "Enter a Fractal DAO address",
     "titleGovernance": "Governance",
     "titleType": "Type",
     "titleVotingPeriod": "Voting Period",
