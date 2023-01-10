@@ -117,13 +117,13 @@ export function GnosisConfig() {
           </NumberInput>
         </LabelWrapper>
       </InputBox>
-      <ContentBoxTitle>{t('titleTrustedAddresses')}</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleSignerAddresses')}</ContentBoxTitle>
       <Text
         textStyle="text-sm-sans-medium"
         my="0.25rem"
         color="chocolate.100"
       >
-        {t('subTitleTrustedAddresses')}
+        {t('subTitleSignerAddresses')}
       </Text>
       <InputBox data-testid="gnosisConfig-signatureList">
         {trustedAddresses.map((trustee, i) => (
