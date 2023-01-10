@@ -7,7 +7,7 @@ import {
   ProposalCanceledEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
 import { Dispatch, useCallback, useEffect, useMemo } from 'react';
-import { useNetwork, useProvider, useSigner } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { IGovernance, TxProposalState, UsulProposal, VOTE_CHOICES } from '../../types';
@@ -25,7 +25,6 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
-  const { chain } = useNetwork();
   const {
     txProposalsInfo,
     contracts: { usulContract, ozLinearVotingContract },
@@ -51,7 +50,10 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       if (metaDataEvent) {
         metaData = {
           transactions: metaDataEvent.args.transactions,
-          decodedTransactions: await decodeTransactions(metaDataEvent.args.transactions, chain!.id),
+          decodedTransactions: await decodeTransactions(
+            metaDataEvent.args.transactions,
+            provider._network.chainId
+          ),
         };
       }
       const proposal = await mapProposalCreatedEventToProposal(
@@ -75,7 +77,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         },
       });
     },
-    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo, chain]
+    [usulContract, signerOrProvider, provider, governanceDispatch, txProposalsInfo]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
@@ -191,7 +193,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
               transactions: metaDataEvent.args.transactions,
               decodedTransactions: await decodeTransactions(
                 metaDataEvent.args.transactions,
-                chain!.id
+                provider._network.chainId
               ),
             };
           }
@@ -226,5 +228,5 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     };
 
     loadProposals();
-  }, [usulContract, signerOrProvider, governanceDispatch, provider, chain]);
+  }, [usulContract, signerOrProvider, governanceDispatch, provider]);
 }

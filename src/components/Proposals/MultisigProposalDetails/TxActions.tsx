@@ -6,7 +6,7 @@ import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-
 import { Signer } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -31,7 +31,6 @@ export function TxActions({
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { address: account } = useAccount();
-  const { chain } = useNetwork();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
@@ -53,7 +52,7 @@ export function TxActions({
       asyncRequest({
         asyncFunc: () =>
           (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
-            { verifyingContract: safe.address, chainId: chain!.id },
+            { verifyingContract: safe.address, chainId: provider._network.chainId },
             EIP712_SAFE_TX_TYPE,
             safeTx
           ),
