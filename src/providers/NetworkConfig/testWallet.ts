@@ -21,7 +21,6 @@ export const testWallet = ({ chains }: MyWalletOptions): Wallet => ({
         },
       },
     });
-    console.log('🚀 ~ file: testWallet.ts:14 ~ connector', connector);
     return {
       connector,
     };

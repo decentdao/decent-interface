@@ -9,20 +9,25 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 import { testWallet } from './testWallet';
 export const chainsArr = [goerli];
+
+console.log(
+  '🚀 ~ file: rainbow-kit.config.ts:15 ~ process.env.REACT_APP_TESTING_ENVIROMENT',
+  process.env.REACT_APP_TESTING_ENVIROMENT
+);
 // allows connection to localhost only in development mode.
-if (process.env.NODE_ENV === 'development') {
+if (process.env.REACT_APP_TESTING_ENVIROMENT) {
   chainsArr.unshift(hardhat);
 }
 
 export const { chains, provider } = configureChains(chainsArr, [
-  infuraProvider({ priority: 0, apiKey: process.env.REACT_APP_INFURA_ID! }),
-  alchemyProvider({ priority: 1, apiKey: process.env.REACT_APP_ALCHEMY_ID! }),
+  infuraProvider({ priority: 0, apiKey: process.env.REACT_APP_INFURA_API_KEY! }),
+  alchemyProvider({ priority: 1, apiKey: process.env.REACT_APP_ALCHEMY_API_KEY! }),
   publicProvider({ priority: 2 }),
 ]);
 
 const defaultWallets = [injectedWallet({ chains }), walletConnectWallet({ chains })];
 // allows connection to localhost only in development mode.
-if (process.env.NODE_ENV === 'development') {
+if (process.env.REACT_APP_TESTING_ENVIROMENT) {
   defaultWallets.unshift(testWallet({ chains }));
 }
 
