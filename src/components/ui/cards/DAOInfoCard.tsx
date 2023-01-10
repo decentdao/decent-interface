@@ -151,15 +151,15 @@ export function DAONodeCard(props: IDAOInfoCard) {
   const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
 
   return (
-    <Box
+    <Flex
       minH="6.75rem"
       bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
-      w="full"
+      flex={1}
       {...border}
     >
       <DAOInfoCard {...props} />
-    </Box>
+    </Flex>
   );
 }
