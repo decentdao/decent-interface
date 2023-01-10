@@ -15,8 +15,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export const { chains, provider } = configureChains(chainsArr, [
-  alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_ID! }),
   infuraProvider({ apiKey: process.env.REACT_APP_INFURA_ID! }),
+  alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_ID! }),
   publicProvider(),
 ]);
 

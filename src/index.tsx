@@ -18,7 +18,7 @@ import { ModalProvider } from './components/ui/modals/ModalProvider';
 import { FractalErrorBoundary, initErrorLogging } from './helpers/errorLogging';
 import { FractalProvider } from './providers/Fractal/FractalProvider';
 import { NetworkConfigProvider } from './providers/NetworkConfig/NetworkConfigProvider';
-import { chains, wagmiClient } from './providers/NetworkConfig/networks/rainbow-kit.config';
+import { chains, wagmiClient } from './providers/NetworkConfig/rainbow-kit.config';
 import reportWebVitals from './reportWebVitals';
 
 const container = document.getElementById('root');
