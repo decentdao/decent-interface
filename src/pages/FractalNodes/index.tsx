@@ -24,7 +24,7 @@ export function FractalNodes() {
     );
   }
 
-  const daoPermissionList: string[] = childNodes ?? [];
+  const daoPermissionList: string[] = childNodes?.map(node => node.address) ?? [];
 
   const parentExpansionToggle = () => {
     setIsParentExpended(v => !v);
