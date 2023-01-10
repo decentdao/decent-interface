@@ -1,7 +1,8 @@
 import { VetoGuard__factory } from '@fractal-framework/fractal-contracts';
 import { SafeInfoResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect } from 'react';
+import { Dispatch, useEffect, useCallback } from 'react';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
 import { IGnosis, GnosisActions } from '../types';
@@ -17,7 +18,23 @@ export default function useNodes({
   const {
     state: { chainId, signerOrProvider },
   } = useWeb3Provider();
+  const { fractalRegistryContract } = useSafeContracts();
   const { modules, safe, safeService } = gnosis;
+
+  const fetchSubDAOs = useCallback(
+    async (parentDAOAddress: string) => {
+      if (!fractalRegistryContract) {
+        return;
+      }
+      const filter = fractalRegistryContract.filters.FractalSubDAODeclared(parentDAOAddress);
+      const events = await fractalRegistryContract.queryFilter(filter);
+      const subDAOsAddresses = events.map(({ args }) => args.subDAOAddress);
+
+      return subDAOsAddresses;
+    },
+    [fractalRegistryContract]
+  );
+
   useEffect(() => {
     const loadDaoParent = async () => {
       if (safe && safe.guard && signerOrProvider) {
@@ -36,13 +53,18 @@ export default function useNodes({
 
     const loadDaoNodes = async () => {
       if (safe.address && signerOrProvider && safeService) {
-        const ownedSafesResponse = await safeService.getSafesByOwner(safe.address);
-        const ownedSafes = ownedSafesResponse.safes;
+        const declaredSubDAOs = await fetchSubDAOs(safe.address);
+
+        if (!declaredSubDAOs) {
+          return;
+        }
+
         const controlledSafes: string[] = [];
 
-        for (const safeAddress of ownedSafes) {
-          // Fairly bad solution if DAO has dozens of SubDAOs. But there could be the case when guard is changed, but signer is not.
-          // Then the DAO is actually "lost" - but it will be up to child DAO to create proper proposal to replace old DAO from signers list with new parent DAO.
+        for (const safeAddress of declaredSubDAOs) {
+          // Fairly bad solution if DAO has dozens of SubDAOs and it goes deeper.
+          // But we cannot "trust" completely to the SubDAODeclared event as anyone can declare any DAO as it's subDAO
+          // So we need to verify guard to be sure.
           const safeInfo = (await safeService.getSafeInfo(safeAddress)) as SafeInfoWithGuard;
           if (safeInfo.guard === ethers.constants.AddressZero) {
             // Guard is not attached - seems like just gap in Safe API Service indexisng.
@@ -63,5 +85,5 @@ export default function useNodes({
 
     loadDaoParent();
     loadDaoNodes();
-  }, [chainId, safe, modules, gnosisDispatch, signerOrProvider, safeService]);
+  }, [chainId, safe, modules, gnosisDispatch, signerOrProvider, safeService, fetchSubDAOs]);
 }

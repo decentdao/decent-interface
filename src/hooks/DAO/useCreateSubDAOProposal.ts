@@ -9,7 +9,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
-  const { multiSendContract } = useSafeContracts();
+  const { multiSendContract, fractalRegistryContract } = useSafeContracts();
   const { t } = useTranslation('daoCreate');
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -22,7 +22,7 @@ export const useCreateSubDAOProposal = () => {
   const proposeDao = useCallback(
     (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
       const propose = async () => {
-        if (!multiSendContract) {
+        if (!multiSendContract || !fractalRegistryContract) {
           return;
         }
 
@@ -31,12 +31,17 @@ export const useCreateSubDAOProposal = () => {
           return;
         }
 
-        const { safeTx } = builtSafeTx;
+        const { safeTx, predictedGnosisSafeAddress } = builtSafeTx;
 
         const proposalData: ProposalExecuteData = {
-          targets: [multiSendContract.address],
-          values: [BigNumber.from('0')],
-          calldatas: [multiSendContract.interface.encodeFunctionData('multiSend', [safeTx])],
+          targets: [multiSendContract.address, fractalRegistryContract.address],
+          values: [BigNumber.from('0'), BigNumber.from('0')],
+          calldatas: [
+            multiSendContract.interface.encodeFunctionData('multiSend', [safeTx]),
+            fractalRegistryContract.interface.encodeFunctionData('declareSubDAO', [
+              predictedGnosisSafeAddress,
+            ]),
+          ],
           title: 'Create SubDAO',
           description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
           documentationUrl: '',
@@ -51,7 +56,15 @@ export const useCreateSubDAOProposal = () => {
       };
       propose();
     },
-    [multiSendContract, build, safe.address, submitProposal, governanceToken?.address, t]
+    [
+      multiSendContract,
+      fractalRegistryContract,
+      build,
+      safe.address,
+      submitProposal,
+      governanceToken?.address,
+      t,
+    ]
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;
