@@ -1,5 +1,5 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useWeb3Provider } from '../Web3Data/hooks/useWeb3Provider';
+import { useNetwork } from 'wagmi';
 import { goerliConfig } from './networks';
 import { NetworkConfig } from './types';
 
@@ -41,14 +41,12 @@ const getNetworkConfig = (chainId: number) => {
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
-  const {
-    state: { chainId },
-  } = useWeb3Provider();
-  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(chainId));
+  const { chain } = useNetwork();
+  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(chain!.id));
 
   useEffect(() => {
-    setConfig(getNetworkConfig(chainId));
-  }, [chainId]);
+    setConfig(getNetworkConfig(chain!.id));
+  }, [chain]);
 
   return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
 }
