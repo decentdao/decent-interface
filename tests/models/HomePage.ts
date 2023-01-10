@@ -27,7 +27,7 @@ export class HomePage extends NavPage {
   }
 
   async clickDocsNewTab() {
-    await this.clickTestId('home-linkDiscord');
+    await this.clickTestId('home-linkDocs');
     const tab = await this.newTab();
     return tab;
   }
