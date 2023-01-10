@@ -10,10 +10,6 @@ import { publicProvider } from 'wagmi/providers/public';
 import { testWallet } from './testWallet';
 export const chainsArr = [goerli];
 
-console.log(
-  '🚀 ~ file: rainbow-kit.config.ts:15 ~ process.env.REACT_APP_TESTING_ENVIROMENT',
-  process.env.REACT_APP_TESTING_ENVIROMENT
-);
 // allows connection to localhost only in development mode.
 if (process.env.REACT_APP_TESTING_ENVIROMENT) {
   chainsArr.unshift(hardhat);
