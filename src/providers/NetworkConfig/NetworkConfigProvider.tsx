@@ -42,6 +42,10 @@ const getNetworkConfig = (chainId: number) => {
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const provider = useProvider();
+  console.log(
+    '🚀 ~ file: NetworkConfigProvider.tsx:46 ~ provider._network.chainId',
+    provider._network.chainId
+  );
   const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider._network.chainId));
 
   useEffect(() => {
