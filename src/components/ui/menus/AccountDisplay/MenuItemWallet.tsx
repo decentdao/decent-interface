@@ -13,13 +13,13 @@ import Avatar from '../../Header/Avatar';
  * Allows for copying of address
  */
 export function MenuItemWallet() {
-  const { address } = useAccount();
-  const { displayName: accountDisplayName } = useDisplayName(address);
-  const avatarURL = useAvatar(address || null);
+  const { address: account } = useAccount();
+  const { displayName: accountDisplayName } = useDisplayName(account);
+  const avatarURL = useAvatar(account || null);
   const copyTextToClipboard = useCopyText();
   const { t } = useTranslation('menu');
 
-  if (!address) {
+  if (!account) {
     return null;
   }
   return (
@@ -51,7 +51,7 @@ export function MenuItemWallet() {
             gap="2"
             aria-label="copy address"
             data-testid="walletmenu-copyAddress"
-            onClick={() => copyTextToClipboard(address)}
+            onClick={() => copyTextToClipboard(account)}
             cursor="pointer"
           >
             <Text
@@ -68,10 +68,10 @@ export function MenuItemWallet() {
             <Copy boxSize="1.5rem" />
           </MenuItem>
         </Flex>
-        <EtherscanLinkAddress address={address}>
+        <EtherscanLinkAddress address={account}>
           <Avatar
             size="lg"
-            address={address}
+            address={account}
             url={avatarURL}
           />
         </EtherscanLinkAddress>

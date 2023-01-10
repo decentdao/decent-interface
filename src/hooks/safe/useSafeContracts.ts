@@ -54,8 +54,8 @@ export default function useSafeContracts() {
   const [votesTokenMasterCopyContract, setVotesTokenMasterCopyContract] = useState<VotesToken>();
 
   const provider = useProvider();
-  const { data } = useSigner();
-  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const {
     contracts: {

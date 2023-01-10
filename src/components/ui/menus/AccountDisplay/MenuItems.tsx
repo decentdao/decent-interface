@@ -8,7 +8,7 @@ import { MenuItemNetwork } from './MenuItemNetwork';
 import { MenuItemWallet } from './MenuItemWallet';
 
 export function MenuItems() {
-  const { address } = useAccount();
+  const { address: account } = useAccount();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
   const { t } = useTranslation('menu');
@@ -30,9 +30,9 @@ export function MenuItems() {
         },
       }}
     >
-      {address && <MenuItemWallet />}
+      {account && <MenuItemWallet />}
       <MenuItemNetwork />
-      {!address && (
+      {!account && (
         <MenuItemButton
           testId="accountMenu-connect"
           label={t('connect')}
@@ -40,7 +40,7 @@ export function MenuItems() {
           onClick={openConnectModal}
         />
       )}
-      {address && (
+      {account && (
         <MenuItemButton
           testId="accountMenu-disconnect"
           label={t('disconnect')}

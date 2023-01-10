@@ -26,9 +26,9 @@ function ToastContent({ label }: { label: string }) {
 }
 
 function ConnectWalletToast({ label }: { label: string }) {
-  const { address } = useAccount();
+  const { address: account } = useAccount();
   useEffect(() => {
-    if (address) {
+    if (account) {
       return;
     }
 
@@ -40,7 +40,7 @@ function ConnectWalletToast({ label }: { label: string }) {
     });
 
     return () => toast.dismiss(toastId);
-  }, [address, label]);
+  }, [account, label]);
 
   return null;
 }

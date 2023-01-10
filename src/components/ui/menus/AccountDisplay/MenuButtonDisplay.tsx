@@ -20,11 +20,11 @@ export function NotConnected() {
 }
 
 export function Connected() {
-  const { address } = useAccount();
-  const { displayName: accountDisplayName } = useDisplayName(address);
-  const avatarURL = useAvatar(address || null);
+  const { address: account } = useAccount();
+  const { displayName: accountDisplayName } = useDisplayName(account);
+  const avatarURL = useAvatar(account || null);
 
-  if (!address) {
+  if (!account) {
     return null;
   }
 
@@ -36,7 +36,7 @@ export function Connected() {
     >
       <Box mt="0.125rem">
         <Avatar
-          address={address}
+          address={account}
           url={avatarURL}
         />
       </Box>
@@ -47,9 +47,9 @@ export function Connected() {
 }
 
 export function MenuButtonDisplay() {
-  const { address } = useAccount();
+  const { address: account } = useAccount();
 
-  if (!address) {
+  if (!account) {
     return <NotConnected />;
   }
   return <Connected />;

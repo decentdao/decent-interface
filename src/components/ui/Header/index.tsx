@@ -5,7 +5,7 @@ import { DAOSearch } from '../menus/DAOSearch';
 import { FavoritesMenu } from '../menus/FavoritesMenu';
 
 function Header() {
-  const { address } = useAccount();
+  const { address: account } = useAccount();
   return (
     <Flex
       h="full"
@@ -15,7 +15,7 @@ function Header() {
     >
       <DAOSearch />
       <Flex>
-        {!!address && <FavoritesMenu />}
+        {!!account && <FavoritesMenu />}
         <AccountDisplay />
       </Flex>
     </Flex>

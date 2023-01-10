@@ -25,7 +25,7 @@ function Vote({ proposal }: { proposal: TxProposal }) {
 
   const usulProposal = proposal as UsulProposal;
 
-  const { address } = useAccount();
+  const { address: account } = useAccount();
 
   const castVote = useCastVote({
     proposalNumber: BigNumber.from(proposal.proposalNumber),
@@ -40,7 +40,7 @@ function Vote({ proposal }: { proposal: TxProposal }) {
   const disabled =
     pending ||
     proposal.state !== TxProposalState.Active ||
-    !!usulProposal.votes.find(vote => vote.voter === address);
+    !!usulProposal.votes.find(vote => vote.voter === account);
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>

@@ -131,7 +131,7 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
 
 const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContracts) => {
   const provider = useProvider();
-  const { address } = useAccount();
+  const { address: account } = useAccount();
 
   const { getTimeDuration } = useTimeHelpers();
 
@@ -209,13 +209,13 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
   }, [tokenContract]);
 
   const getTokenAccount = useCallback(async () => {
-    if (!tokenContract || !address) {
+    if (!tokenContract || !account) {
       return;
     }
 
-    const tokenBalance = await tokenContract.balanceOf(address);
-    const tokenDelegatee = await tokenContract.delegates(address);
-    const tokenVotingWeight = await tokenContract.getVotes(address);
+    const tokenBalance = await tokenContract.balanceOf(account);
+    const tokenDelegatee = await tokenContract.delegates(account);
+    const tokenVotingWeight = await tokenContract.getVotes(account);
 
     const isDelegatesSet = !!(
       await tokenContract.queryFilter(tokenContract.filters.DelegateChanged())
@@ -232,7 +232,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
         isDelegatesSet,
       },
     });
-  }, [tokenContract, address, state.decimals, state.symbol]);
+  }, [tokenContract, account, state.decimals, state.symbol]);
 
   // get token account data
   useEffect(() => {
@@ -241,12 +241,12 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
 
   // Setup token transfer events listener
   useEffect(() => {
-    if (tokenContract === undefined || !address) {
+    if (tokenContract === undefined || !account) {
       return;
     }
 
-    const filterTransferTo = tokenContract.filters.Transfer(null, address);
-    const filterTransferFrom = tokenContract.filters.Transfer(address, null);
+    const filterTransferTo = tokenContract.filters.Transfer(null, account);
+    const filterTransferFrom = tokenContract.filters.Transfer(account, null);
 
     const listenerCallback: TransferListener = () => {
       getTokenAccount();
@@ -259,15 +259,15 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       tokenContract.off(filterTransferTo, listenerCallback);
       tokenContract.off(filterTransferFrom, listenerCallback);
     };
-  }, [address, getTokenAccount, tokenContract]);
+  }, [account, getTokenAccount, tokenContract]);
 
   // Setup token delegate changed events listener
   useEffect(() => {
-    if (tokenContract === undefined || !address) {
+    if (tokenContract === undefined || !account) {
       return;
     }
 
-    const filter = tokenContract.filters.DelegateChanged(address);
+    const filter = tokenContract.filters.DelegateChanged(account);
 
     const listenerCallback: DelegateChangedListener = (
       _delegator: string,
@@ -285,15 +285,15 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     return () => {
       tokenContract.off(filter, listenerCallback);
     };
-  }, [address, getTokenAccount, tokenContract]);
+  }, [account, getTokenAccount, tokenContract]);
 
   // Setup listeners for when voting weight increases or decreases
   useEffect(() => {
-    if (!tokenContract || !address) {
+    if (!tokenContract || !account) {
       return;
     }
 
-    const filter = tokenContract.filters.DelegateVotesChanged(address);
+    const filter = tokenContract.filters.DelegateVotesChanged(account);
 
     const callback: DelegateVotesChangedListener = (
       _delegate: string,
@@ -314,7 +314,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     return () => {
       tokenContract.off(filter, callback);
     };
-  }, [address, state.decimals, state.symbol, tokenContract]);
+  }, [account, state.decimals, state.symbol, tokenContract]);
 
   const data = useMemo(() => state, [state]);
   return data;

@@ -22,8 +22,8 @@ interface IUseUsulProposals {
 
 export default function useUsulProposals({ governance, governanceDispatch }: IUseUsulProposals) {
   const provider = useProvider();
-  const { data } = useSigner();
-  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const { chain } = useNetwork();
   const {

@@ -43,8 +43,8 @@ const TIMER_MULT = 60;
 
 const useBuildDAOTx = () => {
   const provider = useProvider();
-  const { data } = useSigner();
-  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const { address: account } = useAccount();
 

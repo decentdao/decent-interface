@@ -15,8 +15,8 @@ export default function useDAOController() {
   } = useFractal();
   const params = useParams();
   const provider = useProvider();
-  const { data, isLoading: isProviderLoading } = useSigner();
-  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
+  const { data: signer, isLoading: isProviderLoading } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const { address: account } = useAccount();
 
