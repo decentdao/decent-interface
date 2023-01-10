@@ -20,7 +20,6 @@ export const { chains, provider } = configureChains(chainsArr, [
   publicProvider({ priority: 2 }),
 ]);
 
-console.log('🚀 ~ file: rainbow-kit.config.ts:18 ~ chains', chains);
 const { connectors } = getDefaultWallets({
   appName: 'Fractal',
   chains,
