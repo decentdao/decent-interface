@@ -5,7 +5,7 @@ import { MenuItems } from './MenuItems';
 
 export function AccountDisplay() {
   return (
-    <Menu>
+    <Menu isLazy>
       <Fragment>
         <MenuButton
           data-testid="header-accountMenu"

@@ -1,17 +1,16 @@
 import { MenuList } from '@chakra-ui/react';
 import { Connect, Disconnect } from '@decent-org/fractal-ui';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useAccount, useDisconnect } from 'wagmi';
 import { MenuItemButton } from './MenuItemButton';
 import { MenuItemNetwork } from './MenuItemNetwork';
 import { MenuItemWallet } from './MenuItemWallet';
 
 export function MenuItems() {
-  const {
-    connect,
-    disconnect,
-    state: { account },
-  } = useWeb3Provider();
+  const { address } = useAccount();
+  const { disconnect } = useDisconnect();
+  const { openConnectModal } = useConnectModal();
   const { t } = useTranslation('menu');
   return (
     <MenuList
@@ -31,17 +30,17 @@ export function MenuItems() {
         },
       }}
     >
-      {account && <MenuItemWallet />}
+      {address && <MenuItemWallet />}
       <MenuItemNetwork />
-      {!account && (
+      {!address && (
         <MenuItemButton
           testId="accountMenu-connect"
           label={t('connect')}
           Icon={Connect}
-          onClick={connect}
+          onClick={openConnectModal}
         />
       )}
-      {account && (
+      {address && (
         <MenuItemButton
           testId="accountMenu-disconnect"
           label={t('disconnect')}

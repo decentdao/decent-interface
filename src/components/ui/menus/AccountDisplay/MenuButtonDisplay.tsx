@@ -1,9 +1,9 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
 import Avatar from '../../Header/Avatar';
 
 export function NotConnected() {
@@ -20,13 +20,11 @@ export function NotConnected() {
 }
 
 export function Connected() {
-  const {
-    state: { account },
-  } = useWeb3Provider();
-  const { displayName: accountDisplayName } = useDisplayName(account);
-  const avatarURL = useAvatar(account);
+  const { address } = useAccount();
+  const { displayName: accountDisplayName } = useDisplayName(address);
+  const avatarURL = useAvatar(address || null);
 
-  if (!account) {
+  if (!address) {
     return null;
   }
 
@@ -38,7 +36,7 @@ export function Connected() {
     >
       <Box mt="0.125rem">
         <Avatar
-          address={account}
+          address={address}
           url={avatarURL}
         />
       </Box>
@@ -49,11 +47,9 @@ export function Connected() {
 }
 
 export function MenuButtonDisplay() {
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address } = useAccount();
 
-  if (!account) {
+  if (!address) {
     return <NotConnected />;
   }
   return <Connected />;

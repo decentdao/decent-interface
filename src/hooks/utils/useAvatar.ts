@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useProvider } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import useENSName from './useENSName';
 
 const useAvatar = (account: string | null) => {
-  const {
-    state: { provider },
-  } = useWeb3Provider();
+  const provider = useProvider();
   const ensName = useENSName(account);
 
   const [avatarURL, setAvatarURL] = useState<string | null>(null);

@@ -1,10 +1,10 @@
 import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { Copy } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
 import EtherscanLinkAddress from '../../EtherscanLinkAddress';
 import Avatar from '../../Header/Avatar';
 
@@ -13,15 +13,13 @@ import Avatar from '../../Header/Avatar';
  * Allows for copying of address
  */
 export function MenuItemWallet() {
-  const {
-    state: { account },
-  } = useWeb3Provider();
-  const { displayName: accountDisplayName } = useDisplayName(account);
-  const avatarURL = useAvatar(account);
+  const { address } = useAccount();
+  const { displayName: accountDisplayName } = useDisplayName(address);
+  const avatarURL = useAvatar(address || null);
   const copyTextToClipboard = useCopyText();
   const { t } = useTranslation('menu');
 
-  if (!account) {
+  if (!address) {
     return null;
   }
   return (
@@ -53,7 +51,7 @@ export function MenuItemWallet() {
             gap="2"
             aria-label="copy address"
             data-testid="walletmenu-copyAddress"
-            onClick={() => copyTextToClipboard(account)}
+            onClick={() => copyTextToClipboard(address)}
             cursor="pointer"
           >
             <Text
@@ -70,10 +68,10 @@ export function MenuItemWallet() {
             <Copy boxSize="1.5rem" />
           </MenuItem>
         </Flex>
-        <EtherscanLinkAddress address={account}>
+        <EtherscanLinkAddress address={address}>
           <Avatar
             size="lg"
-            address={account}
+            address={address}
             url={avatarURL}
           />
         </EtherscanLinkAddress>

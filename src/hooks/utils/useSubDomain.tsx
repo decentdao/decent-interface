@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
+import { useNetwork } from 'wagmi';
 
 function useSubDomain() {
-  let {
-    state: { network },
-  } = useWeb3Provider();
+  const { chain } = useNetwork();
   const [subdomain, setSubdomain] = useState('');
 
   useEffect(() => {
-    if (!network || ['localhost', 'homestead'].includes(network)) {
+    if (!chain || ['localhost', 'homestead'].includes(chain.network)) {
       setSubdomain('');
       return;
     }
 
-    setSubdomain(`${network}.`);
-  }, [network]);
+    setSubdomain(`${chain.network}.`);
+  }, [chain]);
 
   return subdomain;
 }

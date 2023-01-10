@@ -14,7 +14,7 @@ export function MenuItemButton({
   testId: string;
   label: string;
   Icon: any;
-  onClick: () => void;
+  onClick?: () => void;
 }) {
   return (
     <Fragment>
