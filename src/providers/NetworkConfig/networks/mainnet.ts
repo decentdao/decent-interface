@@ -10,7 +10,7 @@ export const mainnetConfig: NetworkConfig = {
     gnosisMultisend: '',
     fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
-    fractalNameRegistry: '',
+    fractalRegistry: '',
     votesTokenMasterCopy: '',
     claimingMasterCopy: '',
     gnosisVetoGuardMasterCopy: '',

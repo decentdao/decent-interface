@@ -13,7 +13,7 @@ export const defaultState = {
     gnosisMultisend: '',
     fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
-    fractalNameRegistry: '',
+    fractalRegistry: '',
     votesTokenMasterCopy: '',
     claimingMasterCopy: '',
     gnosisVetoGuardMasterCopy: '',

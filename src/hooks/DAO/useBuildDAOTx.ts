@@ -53,7 +53,7 @@ const useBuildDAOTx = () => {
     linearVotingMasterCopyContract,
     fractalUsulMasterCopyContract,
     zodiacModuleProxyFactoryContract,
-    fractalNameRegistryContract,
+    fractalRegistryContract,
     fractalModuleMasterCopyContract,
     gnosisVetoGuardMasterCopyContract,
     usulVetoGuardMasterCopyContract,
@@ -345,7 +345,7 @@ const useBuildDAOTx = () => {
       const buildTx = async () => {
         if (
           !multiSendContract ||
-          !fractalNameRegistryContract ||
+          !fractalRegistryContract ||
           !signerOrProvider ||
           !zodiacModuleProxyFactoryContract ||
           !fractalModuleMasterCopyContract ||
@@ -406,7 +406,7 @@ const useBuildDAOTx = () => {
           internaltTxs = [
             // Name Registry
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -482,7 +482,7 @@ const useBuildDAOTx = () => {
           internaltTxs = [
             // Name Registry
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -551,7 +551,7 @@ const useBuildDAOTx = () => {
     },
     [
       multiSendContract,
-      fractalNameRegistryContract,
+      fractalRegistryContract,
       signerOrProvider,
       buildDeploySafeTx,
       buildFractalModuleData,
@@ -581,7 +581,7 @@ const useBuildDAOTx = () => {
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMasterCopyContract ||
           !multiSendContract ||
-          !fractalNameRegistryContract ||
+          !fractalRegistryContract ||
           !fractalModuleMasterCopyContract ||
           !vetoMultisigVotingMasterCopyContract ||
           !signerOrProvider ||
@@ -757,7 +757,7 @@ const useBuildDAOTx = () => {
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
           internaltTxs = [
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -842,7 +842,7 @@ const useBuildDAOTx = () => {
         } else {
           internaltTxs = [
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -947,7 +947,7 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       linearVotingMasterCopyContract,
       multiSendContract,
-      fractalNameRegistryContract,
+      fractalRegistryContract,
       fractalModuleMasterCopyContract,
       usulVetoGuardMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
