@@ -3,6 +3,7 @@ import { CloseX } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -12,7 +13,6 @@ import {
   UsulProposal,
   UsulVoteChoice,
 } from '../../../providers/Fractal/types';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';
 import Check from '../../ui/svg/Check';
 
@@ -25,9 +25,7 @@ function Vote({ proposal }: { proposal: TxProposal }) {
 
   const usulProposal = proposal as UsulProposal;
 
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address } = useAccount();
 
   const castVote = useCastVote({
     proposalNumber: BigNumber.from(proposal.proposalNumber),
@@ -42,7 +40,7 @@ function Vote({ proposal }: { proposal: TxProposal }) {
   const disabled =
     pending ||
     proposal.state !== TxProposalState.Active ||
-    !!usulProposal.votes.find(vote => vote.voter === account);
+    !!usulProposal.votes.find(vote => vote.voter === address);
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>

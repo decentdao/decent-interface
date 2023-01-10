@@ -2,13 +2,13 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer } from 'ethers';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useProvider, useSigner, useNetwork } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { MetaTransaction, ProposalExecuteData } from '../../../types';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useUsul from './useUsul';
@@ -22,9 +22,10 @@ export default function useSubmitProposal() {
     actions: { refreshSafeData },
     gnosis: { safe },
   } = useFractal();
-  const {
-    state: { signerOrProvider, chainId },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const { chain } = useNetwork();
   const submitProposal = useCallback(
     async ({
       proposalData,
@@ -95,11 +96,11 @@ export default function useSubmitProposal() {
         try {
           const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
           await axios.post(
-            buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
+            buildGnosisApiUrl(chain!.id, `/safes/${safe.address}/multisig-transactions/`),
             await buildSafeAPIPost(
               gnosisContract,
               signerOrProvider as Signer & TypedDataSigner,
-              chainId,
+              chain!.id,
               {
                 to,
                 value,
@@ -163,7 +164,7 @@ export default function useSubmitProposal() {
       safe.address,
       signerOrProvider,
       multiSendContract,
-      chainId,
+      chain,
       refreshSafeData,
     ]
   );

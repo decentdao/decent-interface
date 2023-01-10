@@ -4,14 +4,15 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { GnosisSafe__factory, VetoGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAccount, useNetwork, useProvider, useSigner } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import ContentBox from '../../ui/ContentBox';
 
@@ -26,9 +27,11 @@ export function TxActions({
     gnosis: { safe, safeService },
     actions: { refreshSafeData },
   } = useFractal();
-  const {
-    state: { account, signerOrProvider, chainId },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data } = useSigner();
+  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
+  const { address: account } = useAccount();
+  const { chain } = useNetwork();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
@@ -50,7 +53,7 @@ export function TxActions({
       asyncRequest({
         asyncFunc: () =>
           (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
-            { verifyingContract: safe.address, chainId },
+            { verifyingContract: safe.address, chainId: chain!.id },
             EIP712_SAFE_TX_TYPE,
             safeTx
           ),

@@ -1,8 +1,8 @@
 import { OZLinearVoting__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useProvider, useSigner } from 'wagmi';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import useUsul from './useUsul';
 
@@ -14,9 +14,9 @@ const useCastVote = ({
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { votingStrategiesAddresses } = useUsul();
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data } = useSigner();
+  const signerOrProvider = useMemo(() => data || provider, [data, provider]);
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
 

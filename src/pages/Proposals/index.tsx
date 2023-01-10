@@ -1,13 +1,13 @@
 import { Box, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 import Proposals from '../../components/Proposals';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
 export function Governance() {
   const { t } = useTranslation(['common', 'proposal']);
@@ -16,9 +16,7 @@ export function Governance() {
     governance: { type, governanceToken },
   } = useFractal();
 
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
 
   const delegate = useFractalModal(ModalType.DELEGATE);
   const showDelegate =
