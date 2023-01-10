@@ -65,6 +65,7 @@ export function SearchDisplay({
           <Button
             as="div"
             cursor="pointer"
+            data-testid="search-viewDAO"
           >
             {t('labelViewDAO')}
           </Button>
