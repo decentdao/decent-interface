@@ -1,5 +1,7 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useProvider } from 'wagmi';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerliConfig } from './networks';
 import { NetworkConfig } from './types';
 
@@ -42,11 +44,26 @@ const getNetworkConfig = (chainId: number) => {
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const provider = useProvider();
+  const { chain } = useNetwork();
+  const { t } = useTranslation('menu');
+  const { disconnect } = useDisconnect();
   const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider._network.chainId));
 
   useEffect(() => {
     setConfig(getNetworkConfig(provider._network.chainId));
   }, [provider]);
+
+  useEffect(() => {
+    const supportedChainIds =
+      process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
+
+    if (!!chain && !supportedChainIds.includes(chain.id)) {
+      toast(t('toastSwitchChain', { chainNames: supportedChainIds }), {
+        toastId: 'switchChain',
+      });
+      disconnect();
+    }
+  }, [chain, disconnect, t]);
 
   return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
 }
