@@ -10,7 +10,7 @@ import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
   const { multiSendContract } = useSafeContracts();
-  const { t } = useTranslation(['daoCreate', 'proposal']);
+  const { t } = useTranslation(['daoCreate', 'proposal', 'proposalMetadata']);
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const [build] = useBuildDAOTx();
@@ -37,7 +37,7 @@ export const useCreateSubDAOProposal = () => {
           targets: [multiSendContract.address],
           values: [BigNumber.from('0')],
           calldatas: [multiSendContract.interface.encodeFunctionData('multiSend', [safeTx])],
-          title: t('createSubDAO'),
+          title: t('Create a proposal', { ns: 'proposalMetadata' }),
           description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
           documentationUrl: '',
         };
