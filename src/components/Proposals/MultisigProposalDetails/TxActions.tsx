@@ -24,7 +24,7 @@ export function TxActions({
 }) {
   const {
     gnosis: { safe, safeService },
-    actions: { refreshGnosisTransactions },
+    actions: { refreshSafeData },
   } = useFractal();
   const {
     state: { account, signerOrProvider, chainId },
@@ -59,7 +59,7 @@ export function TxActions({
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
           await safeService.confirmTransaction(proposal.proposalNumber, signature);
-          setTimeout(() => Promise.resolve(refreshGnosisTransactions()), 500);
+          setTimeout(() => Promise.resolve(refreshSafeData()), 500);
         },
       });
     } catch (e) {
@@ -99,7 +99,7 @@ export function TxActions({
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
-          setTimeout(() => Promise.resolve(refreshGnosisTransactions()), 1000);
+          setTimeout(() => Promise.resolve(refreshSafeData()), 1000);
         },
       });
     } catch (e) {
@@ -140,7 +140,7 @@ export function TxActions({
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
-          setTimeout(() => Promise.resolve(refreshGnosisTransactions()), 1000);
+          setTimeout(() => Promise.resolve(refreshSafeData()), 1000);
         },
       });
     } catch (e) {

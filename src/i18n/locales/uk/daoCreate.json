@@ -73,8 +73,5 @@
     "titleTokenParams": "Метадані токену",
     "titleAddress": "Адреса",
     "titleAmount": "Кількість",
-    "createSubDAOPendingToastMessage": "Створюємо ваше subDAO",
-    "createSubDAOSuccessToastMessage": "Створення subDAO пройшло успішно",
-    "createSubDAOFailureToastMessage": "Помилка при створенні subDAO",
     "helperAllocations": "Неросподілені токени будуть надіслани до скарбниці вашого DAO"
 }
