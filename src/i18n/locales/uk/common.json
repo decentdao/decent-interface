@@ -41,8 +41,6 @@
     "filter": "Фільтрувати",
     "selectAll": "Обрати усі",
     "clear": "Очистити",
-    "timeLeft": "{{time}} залишилось",
-    "timeAgo": "{{time}} тому",
     "cancel": "Відмінити",
     "example": "Приклад",
     "titleNodes": "Ієрархія DAO"
