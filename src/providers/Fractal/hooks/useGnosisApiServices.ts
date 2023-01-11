@@ -102,30 +102,34 @@ export function useGnosisApiServices(
     }
   }, [address, safeService, gnosisDispatch]);
 
-  useEffect(() => {
+  const getGnosisSafeInfo = useCallback(async () => {
     if (!providedSafeAddress || !safeService || !isGnosisLoading) {
       return;
     }
-    (async () => {
+    try {
       gnosisDispatch({
         type: GnosisAction.SET_SAFE,
         payload: await safeService.getSafeInfo(providedSafeAddress),
       });
-    })();
+    } catch (e) {
+      logError(e);
+    }
   }, [providedSafeAddress, safeService, gnosisDispatch, isGnosisLoading]);
 
   useEffect(() => {
+    setMethodOnInterval(getGnosisSafeInfo);
     setMethodOnInterval(getGnosisSafeFungibleAssets);
     setMethodOnInterval(getGnosisSafeNonFungibleAssets);
     setMethodOnInterval(getGnosisSafeTransfers);
     setMethodOnInterval(getGnosisSafeTransactions);
   }, [
     setMethodOnInterval,
+    getGnosisSafeInfo,
     getGnosisSafeFungibleAssets,
     getGnosisSafeNonFungibleAssets,
     getGnosisSafeTransfers,
     getGnosisSafeTransactions,
   ]);
 
-  return { getGnosisSafeTransactions };
+  return { getGnosisSafeTransactions, getGnosisSafeInfo };
 }

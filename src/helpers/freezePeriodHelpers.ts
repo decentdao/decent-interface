@@ -1,42 +1,49 @@
 import { BigNumber } from 'ethers';
-import { IGnosisFreezeData } from '../providers/Fractal/types';
 
 export const secondsLeftInFreezePeriod = (
-  freezeData: IGnosisFreezeData,
+  freezeProposalCreatedTime: BigNumber,
+  freezePeriod: BigNumber,
   currentTime: BigNumber
 ): BigNumber => {
-  const secondsLeft = freezeData.freezeProposalCreatedTime
-    .add(freezeData.freezePeriod)
-    .sub(currentTime);
+  const secondsLeft = freezeProposalCreatedTime.add(freezePeriod).sub(currentTime);
 
   return secondsLeft;
 };
 
 export const secondsLeftInFreezeProposalPeriod = (
-  freezeData: IGnosisFreezeData,
+  freezeProposalCreatedTime: BigNumber,
+  freezeProposalPeriod: BigNumber,
   currentTime: BigNumber
 ): BigNumber => {
-  const secondsLeft = freezeData.freezeProposalCreatedTime
-    .add(freezeData.freezeProposalPeriod)
-    .sub(currentTime);
+  const secondsLeft = freezeProposalCreatedTime.add(freezeProposalPeriod).sub(currentTime);
 
   return secondsLeft;
 };
 
 export const isWithinFreezePeriod = (
-  freezeData: IGnosisFreezeData,
+  freezeProposalCreatedTime: BigNumber,
+  freezePeriod: BigNumber,
   currentTime: BigNumber
 ): boolean => {
-  const secondsLeft = secondsLeftInFreezePeriod(freezeData, currentTime);
+  const secondsLeft = secondsLeftInFreezePeriod(
+    freezeProposalCreatedTime,
+    freezePeriod,
+    currentTime
+  );
 
   return secondsLeft.gt(0);
 };
 
 export const isWithinFreezeProposalPeriod = (
-  freezeData: IGnosisFreezeData,
+  freezeProposalCreatedTime: BigNumber,
+  freezeProposalPeriod: BigNumber,
   currentTime: BigNumber
 ): boolean => {
-  const secondsLeft = secondsLeftInFreezeProposalPeriod(freezeData, currentTime);
+  const secondsLeft = secondsLeftInFreezeProposalPeriod(
+    freezeProposalCreatedTime,
+    freezeProposalPeriod,
+    currentTime
+  );
 
   return secondsLeft.gt(0);
 };
