@@ -48,6 +48,9 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       let metaData;
       if (metaDataEvent) {
         metaData = {
+          title: metaDataEvent.args.title,
+          description: metaDataEvent.args.description,
+          documentationUrl: metaDataEvent.args.documentationUrl,
           transactions: metaDataEvent.args.transactions,
           decodedTransactions: await decodeTransactions(metaDataEvent.args.transactions, chainId),
         };
@@ -186,6 +189,9 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
           let metaData;
           if (metaDataEvent) {
             metaData = {
+              title: metaDataEvent.args.title,
+              description: metaDataEvent.args.description,
+              documentationUrl: metaDataEvent.args.documentationUrl,
               transactions: metaDataEvent.args.transactions,
               decodedTransactions: await decodeTransactions(
                 metaDataEvent.args.transactions,
