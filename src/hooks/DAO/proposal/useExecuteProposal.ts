@@ -5,7 +5,7 @@ import { useProvider, useSigner } from 'wagmi';
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
-import { useTransaction } from '../../../providers/Web3Data/transactions';
+import { useTransaction } from '../../utils/useTransaction';
 import { MetaTransaction } from '../../../types';
 import useUsul from './useUsul';
 
