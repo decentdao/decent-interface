@@ -4,21 +4,24 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
+import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { UsulProposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/ContentBox';
+import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
 import { ExtendedProgressBar } from '../ui/ProgressBar';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votesSummary, deadline },
+  proposal: { startBlock, votesSummary, deadline, proposer },
 }: {
   proposal: UsulProposal;
 }) {
   const {
     governance: { governanceToken },
   } = useFractal();
+  const { displayName: proposerDisplayName } = useDisplayName(proposer);
   const { t } = useTranslation(['proposal', 'common', 'sidebar']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const getVotesPercentage = (voteTotal: BigNumber): number => {
@@ -72,6 +75,21 @@ export default function ProposalSummary({
             {t('proposalSummaryEndDate')}
           </Text>
           <Text>{format(deadline * 1000, DEFAULT_DATE_TIME_FORMAT)}</Text>
+        </Flex>
+        <Flex
+          marginTop={4}
+          marginBottom={4}
+          justifyContent="space-between"
+        >
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {t('proposedBy')}
+          </Text>
+          <EtherscanLinkAddress address={proposer}>
+            <Text color="gold.500">{proposerDisplayName}</Text>
+          </EtherscanLinkAddress>
         </Flex>
         <Divider color="chocolate.700" />
       </Box>
