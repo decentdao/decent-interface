@@ -16,43 +16,36 @@ import { useTranslation } from 'react-i18next';
  */
 export function useDateTimeDisplay(referenceDate: Date) {
   const now = new Date();
-  const { t } = useTranslation();
-
-  // Just for readability purpose - transform to minutes instead of milliseconds
-  const diffInMinutes = Math.abs(differenceInMinutes(referenceDate, now));
-  const diffInDays = Math.abs(differenceInDays(referenceDate, now));
-  const diffInMonths = Math.abs(differenceInMonths(referenceDate, now));
 
   // if this is a future date, the display will be a countdown, e.g. "{time} left",
   // otherwise it will display as "{time} ago"
   const isCountdown = referenceDate.getTime() > now.getTime();
 
-  let formattedString = '';
+  const diffInMinutes = Math.abs(differenceInMinutes(referenceDate, now));
+  const diffInMonths = Math.abs(differenceInMonths(referenceDate, now));
+
+  const { t } = useTranslation();
   if (diffInMinutes < 5) {
-    formattedString = t(isCountdown ? 'labelNowishLeft' : 'labelNowishAgo', { ns: 'common' });
+    return t(isCountdown ? 'labelNowishLeft' : 'labelNowishAgo');
   } else if (diffInMinutes < 60) {
-    formattedString = t(isCountdown ? 'labelMinutesLeft' : 'labelMinutesAgo', {
+    return t(isCountdown ? 'labelMinutesLeft' : 'labelMinutesAgo', {
       count: Math.floor(diffInMinutes),
     });
   } else if (diffInMinutes < 60 * 24) {
-    const diffInHours = Math.abs(differenceInHours(referenceDate, now));
-    formattedString = t(isCountdown ? 'labelHoursLeft' : 'labelHoursAgo', {
-      count: diffInHours,
+    return t(isCountdown ? 'labelHoursLeft' : 'labelHoursAgo', {
+      count: Math.abs(differenceInHours(referenceDate, now)),
     });
   } else if (diffInMonths < 1) {
-    formattedString = t(isCountdown ? 'labelDaysLeft' : 'labelDaysAgo', {
-      count: diffInDays,
+    return t(isCountdown ? 'labelDaysLeft' : 'labelDaysAgo', {
+      count: Math.abs(differenceInDays(referenceDate, now)),
     });
   } else if (diffInMonths < 12) {
-    formattedString = t(isCountdown ? 'labelMonthsLeft' : 'labelMonthsAgo', {
+    return t(isCountdown ? 'labelMonthsLeft' : 'labelMonthsAgo', {
       count: diffInMonths,
     });
   } else {
-    const diffInYears = Math.abs(differenceInYears(referenceDate, now));
-    formattedString = t(isCountdown ? 'labelYearsLeft' : 'labelYearsAgo', {
-      count: diffInYears,
+    return t(isCountdown ? 'labelYearsLeft' : 'labelYearsAgo', {
+      count: Math.abs(differenceInYears(referenceDate, now)),
     });
   }
-
-  return formattedString;
 }
