@@ -19,8 +19,8 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
     governance: { type },
   } = useFractal();
 
-  const shoeCreateButton =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
+  const showCreateButton =
+    type === GovernanceTypes.GNOSIS_SAFE_USUL ?? owners?.includes(account || '');
 
   const { t } = useTranslation('proposal');
   return (
@@ -44,7 +44,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
           emptyText={t('emptyProposals')}
           m="2rem 0 0 0"
         >
-          {shoeCreateButton && (
+          {showCreateButton && (
             <Link to="new">
               <Button
                 variant="text"
