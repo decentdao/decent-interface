@@ -105,6 +105,7 @@ export function DAOInfoCard({
               variant="ghost"
               minWidth="0px"
               aria-label="Favorite Toggle"
+              data-testid="DAOInfo-favorite"
               icon={
                 isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />
               }

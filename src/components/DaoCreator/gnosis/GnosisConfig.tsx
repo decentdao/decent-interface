@@ -94,10 +94,9 @@ export function GnosisConfig() {
           <NumberInput
             value={numberOfSigners}
             onChange={handleSignersChanges}
-            data-testid="gnosisConfig-numberOfSignerInput"
             onKeyDown={restrictChars}
           >
-            <NumberInputField />
+            <NumberInputField data-testid="gnosisConfig-numberOfSignerInput" />
           </NumberInput>
         </LabelWrapper>
       </InputBox>
@@ -110,10 +109,9 @@ export function GnosisConfig() {
           <NumberInput
             value={signatureThreshold}
             onChange={updateThreshold}
-            data-testid="gnosisConfig-thresholdInput"
             onKeyDown={restrictChars}
           >
-            <NumberInputField />
+            <NumberInputField data-testid="gnosisConfig-thresholdInput" />
           </NumberInput>
         </LabelWrapper>
       </InputBox>
