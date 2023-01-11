@@ -10,6 +10,7 @@ import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
   const { address: account } = useAccount();
+
   const {
     gnosis: {
       safe: { owners },
