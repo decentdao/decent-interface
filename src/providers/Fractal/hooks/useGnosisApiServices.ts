@@ -1,13 +1,28 @@
 import EthersAdapter from '@safe-global/safe-ethers-lib';
-import SafeServiceClient from '@safe-global/safe-service-client';
+import SafeServiceClient, { TransferResponse } from '@safe-global/safe-service-client';
+import axios, { AxiosResponse } from 'axios';
 import { ethers } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
+import { buildGnosisApiUrl } from '../utils';
 import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
 import { useNetworkConfg } from './../../NetworkConfig/NetworkConfigProvider';
+
+/**
+ * We generally use SafeServiceClient to make requests to the Safe API, however it does not
+ * support the /transfers/ endpoint, so we do that via a normal get request instead.
+ *
+ * This API is paginated, but for our current usage we take the first page, and in
+ * the Treasury page have a component to link to Etherscan in the event they want
+ * to see more than the first page of assets.
+ */
+export interface AllTransfersListResponse {
+  next: any;
+  results: TransferResponse[];
+}
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information
@@ -75,18 +90,21 @@ export function useGnosisApiServices(
   }, [safeService, address, treasuryDispatch]);
 
   const getGnosisSafeTransfers = useCallback(async () => {
-    if (!address || !safeService) {
+    if (!address) {
       return;
     }
     try {
+      const response: AxiosResponse<AllTransfersListResponse> = await axios.get(
+        buildGnosisApiUrl(chainId, `/safes/${address}/transfers/`)
+      );
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS,
-        payload: await safeService.getIncomingTransactions(address),
+        payload: response.data,
       });
     } catch (e) {
       logError(e);
     }
-  }, [address, treasuryDispatch, safeService]);
+  }, [address, chainId, treasuryDispatch]);
 
   const getGnosisSafeTransactions = useCallback(async () => {
     if (!address || !safeService) {
