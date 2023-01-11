@@ -27,7 +27,7 @@ export function Governance() {
     type === GovernanceTypes.GNOSIS_SAFE_USUL && governanceToken?.userBalance?.gt(0);
 
   const showCreateButton =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL ?? owners?.includes(account || '');
+    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
 
   return (
     <Box>
