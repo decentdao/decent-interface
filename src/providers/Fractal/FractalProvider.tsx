@@ -121,5 +121,5 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     ]
   );
 
-  return <FractalContext.Provider value={value as any}>{children}</FractalContext.Provider>;
+  return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;
 }
