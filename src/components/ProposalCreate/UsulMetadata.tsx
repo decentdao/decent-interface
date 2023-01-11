@@ -1,5 +1,6 @@
 import { Button, VStack } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import ContentBox from '../ui/ContentBox';
 import { InputComponent } from './InputComponent';
 
@@ -24,6 +25,8 @@ function UsulMetadata({
     }>
   >;
 }) {
+  const { t } = useTranslation(['proposal', 'common']);
+
   const updateTitle = (title: string) => {
     const metadataCopy = {
       ...metadata,
@@ -58,24 +61,24 @@ function UsulMetadata({
         mt={6}
       >
         <InputComponent
-          label={'Proposal Title'}
-          helper={'A short title for this proposal.'}
+          label={t('proposalTitle')}
+          helper={t('proposalTitleHelper')}
           isRequired={false}
           value={metadata.title}
           onChange={e => updateTitle(e.target.value)}
           disabled={false}
         />
         <InputComponent
-          label={'Description'}
-          helper={'Add a brief description.'}
+          label={t('proposalDescription')}
+          helper={t('proposalDescriptionHelper')}
           isRequired={false}
           value={metadata.description}
           onChange={e => updateDescription(e.target.value)}
           disabled={false}
         />
         <InputComponent
-          label={'Additional Resources'}
-          helper={'A link to any discussion or formal documentation.'}
+          label={t('proposalAdditionalResources')}
+          helper={t('proposalAdditionalResourcesHelper')}
           isRequired={false}
           value={metadata.documentationUrl}
           onChange={e => updateDocumentationUrl(e.target.value)}
@@ -86,6 +89,7 @@ function UsulMetadata({
         w="100%"
         onClick={() => setInputtedMetadata(true)}
         disabled={false}
+        mt={8}
       >
         Next
       </Button>
