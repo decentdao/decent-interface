@@ -20,6 +20,7 @@ export function Favorite({ address }: IFavorite) {
       width="full"
       px="0px"
       onClick={() => navigate(DAO_ROUTES.dao.relative(address))}
+      data-testid={'favorites-' + daoRegistryName}
     >
       <StarGoldSolid />
       <Text

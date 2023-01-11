@@ -94,10 +94,9 @@ export function GnosisConfig() {
           <NumberInput
             value={numberOfSigners}
             onChange={handleSignersChanges}
-            data-testid="gnosisConfig-numberOfSignerInput"
             onKeyDown={restrictChars}
           >
-            <NumberInputField />
+            <NumberInputField data-testid="gnosisConfig-numberOfSignerInput" />
           </NumberInput>
         </LabelWrapper>
       </InputBox>
@@ -110,20 +109,19 @@ export function GnosisConfig() {
           <NumberInput
             value={signatureThreshold}
             onChange={updateThreshold}
-            data-testid="gnosisConfig-thresholdInput"
             onKeyDown={restrictChars}
           >
-            <NumberInputField />
+            <NumberInputField data-testid="gnosisConfig-thresholdInput" />
           </NumberInput>
         </LabelWrapper>
       </InputBox>
-      <ContentBoxTitle>{t('titleTrustedAddresses')}</ContentBoxTitle>
+      <ContentBoxTitle>{t('titleSignerAddresses')}</ContentBoxTitle>
       <Text
         textStyle="text-sm-sans-medium"
         my="0.25rem"
         color="chocolate.100"
       >
-        {t('subTitleTrustedAddresses')}
+        {t('subTitleSignerAddresses')}
       </Text>
       <InputBox data-testid="gnosisConfig-signatureList">
         {trustedAddresses.map((trustee, i) => (

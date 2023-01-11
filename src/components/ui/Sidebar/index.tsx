@@ -121,7 +121,7 @@ function Sidebar() {
           <SidebarNavLink
             to={DAO_ROUTES.nodes.relative(address)}
             labelKey="nodes"
-            testId="sidebar-nodes"
+            testId="sidebar-hierarchy"
             routeKey="nodes"
             Icon={Tree}
           />
@@ -191,7 +191,7 @@ function Sidebar() {
           </a>
         </SidebarTooltipWrapper>
         <Divider color="chocolate.700" />
-        <LanguageSwitcher />
+        <LanguageSwitcher data-testid="sidebar-language" />
       </Flex>
     </Flex>
   );
