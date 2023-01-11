@@ -176,6 +176,17 @@ function ProposalCreate() {
         templateAreas={{ base: templateAreaSingleCol, lg: templateAreaTwoCol }}
       >
         <GridItem area="header">
+          {inputtedMetadata && (
+            <Text
+              textStyle="text-md-mono-regular"
+              color="gold.500"
+              cursor="pointer"
+              onClick={() => setInputtedMetadata(false)}
+              mb={4}
+            >
+              {'< Back'}
+            </Text>
+          )}
           <VStack align="left">
             <Text
               onClick={notProd() ? testPropose : undefined}
