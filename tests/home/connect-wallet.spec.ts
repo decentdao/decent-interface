@@ -8,7 +8,7 @@ test('network connected to local node', async ({ page }) => {
   await home.clickHeaderMenuDropdown();
 
   const networkItem = await home.menuLocator(MenuItems.Network);
-  await expect(networkItem!).toContainText('Local Test Network');
+  await expect(networkItem!).toContainText('Goerli Test Network');
 });
 
 test('wallet should auto connect', async ({ page }) => {

@@ -1,5 +1,6 @@
 export type NetworkConfig = {
   safeBaseURL: string;
+  chainId: number;
   contracts: {
     gnosisSafe: string;
     gnosisSafeFactory: string;

@@ -15,7 +15,6 @@
     "wallet": "Крипто-гаманець",
     "mainnet": "Mainnet",
     "goerli": "Goerli Test Network",
-    "local": "Local Test Network",
     "titleManageDAO": "Керувати DAO",
     "optionCreateSubDAO": "Створити subDAO",
     "optionInitiateFreeze": "Ініціювати Замороження"

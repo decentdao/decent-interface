@@ -9,6 +9,7 @@ import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData } from '../../../types';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useUsul from './useUsul';
@@ -25,6 +26,7 @@ export default function useSubmitProposal() {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const { chainId } = useNetworkConfg();
   const submitProposal = useCallback(
     async ({
       proposalData,
@@ -95,14 +97,11 @@ export default function useSubmitProposal() {
         try {
           const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
           await axios.post(
-            buildGnosisApiUrl(
-              provider._network.chainId,
-              `/safes/${safe.address}/multisig-transactions/`
-            ),
+            buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
             await buildSafeAPIPost(
               gnosisContract,
               signerOrProvider as Signer & TypedDataSigner,
-              provider._network.chainId,
+              chainId,
               {
                 to,
                 value,
@@ -167,7 +166,7 @@ export default function useSubmitProposal() {
       signerOrProvider,
       multiSendContract,
       refreshSafeData,
-      provider,
+      chainId,
     ]
   );
 

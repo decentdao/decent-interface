@@ -7,6 +7,7 @@ import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',
+  chainId: 0,
   contracts: {
     gnosisSafe: '',
     gnosisSafeFactory: '',
@@ -57,7 +58,11 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
     const supportedChainIds =
       process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
 
-    if (!!chain && !supportedChainIds.includes(chain.id)) {
+    if (
+      !!chain &&
+      !supportedChainIds.includes(chain.id) &&
+      !process.env.REACT_APP_TESTING_ENVIROMENT
+    ) {
       toast(t('toastSwitchChain', { chainNames: supportedChainIds }), {
         toastId: 'switchChain',
       });

@@ -11,6 +11,7 @@ import { NetworkConfig } from '../types';
 
 export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
+  chainId: 5,
   contracts: {
     fractalUsulMasterCopy: FractalUsul.address,
     fractalModuleMasterCopy: FractalModule.address,

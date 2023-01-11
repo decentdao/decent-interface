@@ -13,6 +13,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import ContentBox from '../../ui/ContentBox';
 
@@ -31,6 +32,8 @@ export function TxActions({
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { address: account } = useAccount();
+
+  const { chainId } = useNetworkConfg();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
@@ -52,7 +55,7 @@ export function TxActions({
       asyncRequest({
         asyncFunc: () =>
           (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
-            { verifyingContract: safe.address, chainId: provider._network.chainId },
+            { verifyingContract: safe.address, chainId: chainId },
             EIP712_SAFE_TX_TYPE,
             safeTx
           ),

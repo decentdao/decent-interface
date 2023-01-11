@@ -8,6 +8,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('home renders correctly, connected', async ({ page }) => {
+  await page.waitForSelector('[data-testid=home-pageSubtitleConnected]');
   await expect(page.locator('[data-testid=home-pageSubtitleConnected]')).toBeVisible();
   await expect(page.locator('[data-testid=home-linkCreate]')).toBeVisible();
   await expect(page.locator('[data-testid=home-linkFAQ]')).toBeVisible();
@@ -41,5 +42,6 @@ test('Discord button works', async ({ page }) => {
 test('Docs button works', async ({ page }) => {
   await page.waitForSelector('[data-testid=home-pageSubtitleConnected]');
   const tab = await home.clickDocsNewTab();
+  await tab.waitForTimeout(1000);
   await expect(tab).toHaveURL('https://docs.fractalframework.xyz/welcome-to-fractal/');
 });
