@@ -37,7 +37,7 @@ export const useCreateSubDAOProposal = () => {
           targets: [multiSendContract.address],
           values: [BigNumber.from('0')],
           calldatas: [multiSendContract.interface.encodeFunctionData('multiSend', [safeTx])],
-          title: t('Create a proposal', { ns: 'proposalMetadata' }),
+          title: t('Create a SubDAO proposal', { ns: 'proposalMetadata' }),
           description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
           documentationUrl: '',
         };
