@@ -17,6 +17,7 @@ export default function useExecuteProposal() {
   } = useWeb3Provider();
   const { usulContract } = useUsul();
   const {
+    actions: { refreshSafeData },
     governance,
     dispatches: { governanceDispatch },
   } = useFractal();
@@ -60,11 +61,19 @@ export default function useExecuteProposal() {
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
         successCallback: () => {
+          refreshSafeData();
           updateProposalState(BigNumber.from(proposal.proposalNumber));
         },
       });
     },
-    [contractCallExecuteProposal, signerOrProvider, t, usulContract, updateProposalState]
+    [
+      contractCallExecuteProposal,
+      signerOrProvider,
+      t,
+      usulContract,
+      updateProposalState,
+      refreshSafeData,
+    ]
   );
 
   return {

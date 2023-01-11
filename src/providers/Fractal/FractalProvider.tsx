@@ -52,28 +52,31 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     initializeConnectedAccount
   );
 
-  // @todo update to handle new contracts
-  // const daoLegacy: IDaoLegacy = useDAOLegacy(dao.daoAddress);
-
   useLocalStorage();
-  const { getGnosisSafeTransactions } = useGnosisApiServices(
+
+  const { getGnosisSafeTransactions, getGnosisSafeInfo } = useGnosisApiServices(
     gnosis,
     treasuryDispatch,
     gnosisDispatch
   );
-  useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
+  const { lookupModules } = useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
+
   useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
-  useVetoContracts(gnosisDispatch, gnosis.safe.guard, gnosis.modules);
+  const { getVetoGuardContracts } = useVetoContracts(
+    gnosisDispatch,
+    gnosis.safe.guard,
+    gnosis.modules
+  );
+
   useGnosisGovernance({ governance, gnosis, governanceDispatch });
   useNodes({ gnosis, gnosisDispatch });
-  useFreezeData(gnosis.guardContracts, gnosisDispatch);
+  const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
-
   useEffect(() => {
     // Resets Fractal state when not viewing DAO
     if (!isViewingDAO) {
@@ -95,10 +98,26 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         gnosisDispatch,
       },
       actions: {
-        getGnosisSafeTransactions,
+        refreshSafeData: async () => {
+          await getGnosisSafeTransactions();
+          await getGnosisSafeInfo();
+        },
+        lookupModules,
+        getVetoGuardContracts,
+        lookupFreezeData,
       },
     }),
-    [gnosis, governance, treasury, account, getGnosisSafeTransactions]
+    [
+      gnosis,
+      governance,
+      treasury,
+      account,
+      getGnosisSafeTransactions,
+      getGnosisSafeInfo,
+      lookupModules,
+      getVetoGuardContracts,
+      lookupFreezeData,
+    ]
   );
 
   return <FractalContext.Provider value={value}>{children}</FractalContext.Provider>;

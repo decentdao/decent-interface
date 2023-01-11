@@ -75,6 +75,7 @@ export function MenuItemWallet() {
             size="lg"
             address={account}
             url={avatarURL}
+            data-testid="walletMenu-avatar"
           />
         </EtherscanLinkAddress>
       </Flex>

@@ -1,5 +1,5 @@
 import { FractalModule__factory, FractalUsul__factory } from '@fractal-framework/fractal-contracts';
-import { Dispatch, useEffect } from 'react';
+import { Dispatch, useEffect, useCallback } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
@@ -19,31 +19,30 @@ export function useGnosisModuleTypes(
     fractalModuleMasterCopyContract,
   } = useSafeContracts();
 
-  useEffect(() => {
-    if (
-      !zodiacModuleProxyFactoryContract ||
-      !fractalUsulMasterCopyContract ||
-      !fractalModuleMasterCopyContract ||
-      !moduleAddresses ||
-      !signerOrProvider
-    ) {
-      return;
-    }
+  const lookupModules = useCallback(
+    async (_moduleAddresses: string[]) => {
+      if (
+        !zodiacModuleProxyFactoryContract ||
+        !fractalUsulMasterCopyContract ||
+        !fractalModuleMasterCopyContract ||
+        !signerOrProvider
+      ) {
+        return;
+      }
 
-    const getMasterCopyAddress = (proxyAddress: string): Promise<string> => {
-      const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
-        proxyAddress,
-        null
-      );
+      const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
+        const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
+          proxyAddress,
+          null
+        );
 
-      return zodiacModuleProxyFactoryContract.queryFilter(filter).then(proxiesCreated => {
-        return proxiesCreated[0].args.masterCopy;
-      });
-    };
+        return zodiacModuleProxyFactoryContract.queryFilter(filter).then(proxiesCreated => {
+          return proxiesCreated[0].args.masterCopy;
+        });
+      };
 
-    (async () => {
-      await Promise.all(
-        moduleAddresses.map(async moduleAddress => {
+      const modules = await Promise.all(
+        _moduleAddresses.map(async moduleAddress => {
           const masterCopyAddress = await getMasterCopyAddress(moduleAddress);
 
           let module: IGnosisModuleData;
@@ -70,19 +69,29 @@ export function useGnosisModuleTypes(
 
           return module;
         })
-      ).then(modules => {
+      );
+      return modules;
+    },
+    [
+      zodiacModuleProxyFactoryContract,
+      fractalUsulMasterCopyContract,
+      fractalModuleMasterCopyContract,
+      signerOrProvider,
+    ]
+  );
+
+  useEffect(() => {
+    if (!moduleAddresses) {
+      return;
+    }
+    lookupModules(moduleAddresses).then(modules => {
+      if (!!modules)
         gnosisDispatch({
           type: GnosisAction.SET_MODULES,
           payload: modules,
         });
-      });
-    })();
-  }, [
-    zodiacModuleProxyFactoryContract,
-    fractalUsulMasterCopyContract,
-    fractalModuleMasterCopyContract,
-    moduleAddresses,
-    gnosisDispatch,
-    signerOrProvider,
-  ]);
+    });
+  }, [gnosisDispatch, lookupModules, moduleAddresses]);
+
+  return { lookupModules };
 }

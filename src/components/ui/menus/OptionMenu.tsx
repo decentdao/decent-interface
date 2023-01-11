@@ -102,6 +102,7 @@ export function OptionMenu({
               paddingEnd="0rem"
               gap={2}
               closeOnSelect={closeOnSelect}
+              data-testid={'optionMenu-' + option.optionKey}
             >
               {showOptionSelected ? (
                 <Flex flex="1">

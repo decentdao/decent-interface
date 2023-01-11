@@ -19,7 +19,7 @@ export default function useSubmitProposal() {
   const { multiSendContract } = useSafeContracts();
   const { usulContract, votingStrategiesAddresses } = useUsul();
   const {
-    actions: { getGnosisSafeTransactions },
+    actions: { refreshSafeData },
     gnosis: { safe },
   } = useFractal();
   const {
@@ -109,7 +109,7 @@ export default function useSubmitProposal() {
               }
             )
           );
-          await getGnosisSafeTransactions();
+          await refreshSafeData();
           if (successCallback) {
             successCallback(safe.address);
           }
@@ -164,7 +164,7 @@ export default function useSubmitProposal() {
       signerOrProvider,
       multiSendContract,
       chainId,
-      getGnosisSafeTransactions,
+      refreshSafeData,
     ]
   );
 

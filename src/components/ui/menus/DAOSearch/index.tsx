@@ -82,6 +82,7 @@ export function DAOSearch() {
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => searchUpdate(e.target.value.trim())}
               value={searchString}
+              data-testid="search-input"
             />
           </InputGroup>
         </MenuButton>
