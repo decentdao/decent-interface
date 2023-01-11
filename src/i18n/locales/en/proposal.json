@@ -82,5 +82,10 @@
     "successSign": "Signing successful",
     "proposalCreatePendingToastMessage": "Creating new proposal",
     "proposalCreateSuccessToastMessage": "Proposal successfully created",
-    "proposalCreateFailureToastMessage": "Proposal creation failed"
+    "proposalCreateFailureToastMessage": "Proposal creation failed",
+    "paramTarget": "target",
+    "paramFunction": "function",
+    "paramTypes": "parameter types",
+    "paramInputs": "parameter inputs",
+    "paramValue": "transaction value"
 }
