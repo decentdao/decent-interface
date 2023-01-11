@@ -10,8 +10,6 @@
     "helperSigners": "Кількість довіренних користувачів для цього Multisig",
     "labelSigThreshold": "Поріг підписів",
     "helperSigThreshold": "Кількість необхідних підписів для схвалення пропозиції",
-    "titleTrustedAddresses": "Довіренні адреси",
-    "subTitleTrustedAddresses": "Наступні користувачі мають право створювати та схвалювати пропозиції",
     "titleEssentials": "Створити Основне",
     "titleChooseGovernance": "Оберіть систему управління",
     "titleGnosis": "Конфігурація \"обгорнутого\" Gnosis",

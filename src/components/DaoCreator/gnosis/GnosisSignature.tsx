@@ -81,12 +81,12 @@ export function GnosisSignatures({
       templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
       alignItems="center"
       my="1rem"
-      data-testid={`gnosisConfig-signer-${index}`}
     >
       <LabelWrapper errorMessage={trustee.addressError}>
         <Input
           value={trustee.address}
           placeholder={ETH_ADDRESS_PLACEHOLDER}
+          data-testid={'gnosisConfig-signer-' + index}
           onChange={event => updateAndValidateAddress(event.target.value, trustedAddresses)}
         />
       </LabelWrapper>

@@ -2,13 +2,24 @@ import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { TxProposal } from '../../providers/Fractal/types';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes, TxProposal } from '../../providers/Fractal/types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
   const { address: account } = useAccount();
+  const {
+    gnosis: {
+      safe: { owners },
+    },
+    governance: { type },
+  } = useFractal();
+
+  const showCreateButton =
+    type === GovernanceTypes.GNOSIS_SAFE_USUL ?? owners?.includes(account || '');
+
   const { t } = useTranslation('proposal');
   return (
     <Flex
@@ -31,7 +42,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
           emptyText={t('emptyProposals')}
           m="2rem 0 0 0"
         >
-          {account && (
+          {showCreateButton && (
             <Link to="new">
               <Button
                 variant="text"

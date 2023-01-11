@@ -70,7 +70,7 @@
     ]
   },
   "devDependencies": {
-    "@playwright/test": "^1.26.0",
+    "@playwright/test": "^1.29.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
@@ -82,7 +82,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "playwright": "^1.26.0",
+    "playwright": "^1.29.0",
     "prettier": "^2.7.1",
     "typescript": "^4.8.0"
   }

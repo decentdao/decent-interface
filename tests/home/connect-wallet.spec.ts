@@ -1,21 +1,20 @@
 import { expect, test } from '@playwright/test';
 import { HomePage } from '../models/HomePage';
-import { MenuItems } from '../models/NavPage';
 
-test('network connected to local node', async ({ page }) => {
+test('network should appear as Goerli', async ({ page }) => {
   const home = await new HomePage(page).visit();
 
-  await home.clickHeaderMenuDropdown();
-
-  const networkItem = await home.menuLocator(MenuItems.Network);
-  await expect(networkItem!).toContainText('Goerli Test Network');
+  await home.clickAccountMenu();
+  await expect(page.locator('[data-testid=accountMenu-network]')).toContainText(
+    'Goerli Test Network'
+  );
 });
 
 test('wallet should auto connect', async ({ page }) => {
   const home = await new HomePage(page).visit();
 
   /* Assert defined wallet address is present ("0xf39F...2266") */
-  await home.clickHeaderMenuDropdown();
+  await home.clickAccountMenu();
   await expect(page.locator('[data-testid="walletMenu-accountDisplay"]')).toContainText(
     '0xf39F...2266'
   );
@@ -24,8 +23,8 @@ test('wallet should auto connect', async ({ page }) => {
 test('disconnect wallet', async ({ page }) => {
   const home = await new HomePage(page).visit();
 
-  await home.clickHeaderMenuDropdown();
-  await home.clickMenuDisconnect();
+  await home.clickAccountMenu();
+  await home.clickAccountDisconnect();
 
   await expect(page.locator('[data-testid=header-accountMenu]')).toContainText('Connect Wallet');
 });

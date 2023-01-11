@@ -1,47 +1,74 @@
 import { Page } from '@playwright/test';
-
-export enum Notification {
-  Audit,
-  Deploying,
-  DAOCreated,
-}
+import { BASE_URL } from '../testUtils';
 
 export abstract class FractalPage {
-  readonly baseUrl = 'http://localhost:3000/#';
-
-  readonly page: Page;
+  private readonly page: Page;
 
   constructor(page: Page) {
     this.page = page;
   }
 
+  pageContext(): Page {
+    return this.page;
+  }
+
+  abstract visit(): any;
+
+  /**
+   * The current URL of the underlying Page. This is not necessarily the URL
+   * of the page model, as the user's interactions may have changed it to a
+   * different page altogether.
+   */
+  url() {
+    return this.page.url();
+  }
+
   async visitPath(path: string) {
-    await this.page.goto(this.baseUrl + path, { waitUntil: 'networkidle' });
+    await this.page.goto(BASE_URL + path, { waitUntil: 'networkidle' });
   }
 
   async clickBrowserBackButton() {
-    await this.page.goBack();
+    await this.page.goBack({ waitUntil: 'networkidle' });
   }
 
   async clickBrowserReload() {
-    await this.page.reload();
+    await this.page.reload({ waitUntil: 'networkidle' });
   }
 
-  notificationLocator(notif: Notification) {
-    switch (notif) {
-      case Notification.Audit:
-        return this.page.locator('[data-testid=toast-audit] button');
-      case Notification.Deploying:
-        return this.page.locator('#root div:has-text("Deploying Fractal...")').nth(2);
-      case Notification.DAOCreated:
-        return this.page.locator('#root div:has-text("Gnosis Safe Created")').nth(2);
-      default:
-        throw new Error('Missing Notification case!');
-    }
+  async waitForURLPath(path: string) {
+    await this.page.waitForURL(BASE_URL + path);
+  }
+
+  async waitForIdle() {
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  async click(selector: string) {
+    const locator = this.page.locator(selector);
+    await locator.scrollIntoViewIfNeeded();
+    await locator.click();
+  }
+
+  async clickTestId(testId: string) {
+    await this.click('[data-testid=' + testId + ']');
+  }
+
+  async fillText(selector: string, text: string) {
+    const locator = this.page.locator(selector);
+    await locator.scrollIntoViewIfNeeded();
+    await locator.fill(text);
+  }
+
+  async fillTextByTestId(testId: string, text: string) {
+    await this.fillText('[data-testid=' + testId + ']', text);
+  }
+
+  async dismissConnectedMessage() {
+    await this.click('#connected');
   }
 
   async dismissAuditMessage() {
-    await this.notificationLocator(Notification.Audit).click();
+    await this.clickTestId('toast-audit');
   }
 
   /**
@@ -49,7 +76,7 @@ export abstract class FractalPage {
    * @param click the Promise created by clicking the link to open the tab.
    * @returns the Page object representing the new tab.
    */
-  async newTab() {
+  async newTab(): Promise<Page> {
     const newTab = this.page.context();
     const page = await newTab.waitForEvent('page');
     await page.bringToFront();

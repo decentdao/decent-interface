@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { HomePage } from '../models/HomePage';
+import { BASE_URL } from '../testUtils';
 
 let home: HomePage;
 
@@ -22,7 +23,7 @@ test('home renders correctly, connected', async ({ page }) => {
 
 test('home create button works', async ({ page }) => {
   await home.clickCreateAFractal();
-  await expect(page).toHaveURL(home.baseUrl + '/create');
+  await expect(page).toHaveURL(BASE_URL + '/create');
 });
 
 test('FAQ button works', async ({ page }) => {
