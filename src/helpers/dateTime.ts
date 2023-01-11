@@ -5,40 +5,45 @@ import differenceInMonths from 'date-fns/differenceInMonths';
 import differenceInYears from 'date-fns/differenceInYears';
 import { TFunction } from 'react-i18next';
 
-export function formatDatesDiffReadable(
-  dateStart: Date,
-  dateEnd: Date,
-  t: TFunction<'translation', undefined>
-) {
-  // Just for readability purpose - transform to minutes instead of miliseconds
-  const diffInMinutes = Math.abs(differenceInMinutes(dateStart, dateEnd));
-  const diffInDays = Math.abs(differenceInDays(dateStart, dateEnd));
-  const diffInMonths = Math.abs(differenceInMonths(dateStart, dateEnd));
+export function dateTimeDisplay(referenceDate: Date, t: TFunction<'translation', undefined>) {
+  const now = new Date();
+
+  // Just for readability purpose - transform to minutes instead of milliseconds
+  const diffInMinutes = Math.abs(differenceInMinutes(referenceDate, now));
+  const diffInDays = Math.abs(differenceInDays(referenceDate, now));
+  const diffInMonths = Math.abs(differenceInMonths(referenceDate, now));
+
+  // if this is a future date, the display will be a countdown, e.g. "{time} left",
+  // otherwise it will display as "{time} ago"
+  const isCountdown = referenceDate.getTime() > now.getTime();
 
   let formattedString = '';
   if (diffInMinutes < 5) {
-    formattedString = t('labelDateJustNow', { ns: 'common' });
+    formattedString = t(isCountdown ? 'labelNowishLeft' : 'labelNowishAgo', { ns: 'common' });
   } else if (diffInMinutes < 60) {
-    formattedString = t('labelDateMinutes', { ns: 'common', count: Math.floor(diffInMinutes) });
+    formattedString = t(isCountdown ? 'labelMinutesLeft' : 'labelMinutesAgo', {
+      ns: 'common',
+      count: Math.floor(diffInMinutes),
+    });
   } else if (diffInMinutes < 60 * 24) {
-    const diffInHours = Math.abs(differenceInHours(dateStart, dateEnd));
-    formattedString = t('labelDateHour', {
+    const diffInHours = Math.abs(differenceInHours(referenceDate, now));
+    formattedString = t(isCountdown ? 'labelHoursLeft' : 'labelHoursAgo', {
       count: diffInHours,
       ns: 'common',
     });
   } else if (diffInMonths < 1) {
-    formattedString = t('labelDateDay', {
+    formattedString = t(isCountdown ? 'labelDaysLeft' : 'labelDaysAgo', {
       count: diffInDays,
       ns: 'common',
     });
   } else if (diffInMonths < 12) {
-    formattedString = t('labelDateMonth', {
+    formattedString = t(isCountdown ? 'labelMonthsLeft' : 'labelMonthsAgo', {
       count: diffInMonths,
       ns: 'common',
     });
   } else {
-    const diffInYears = Math.abs(differenceInYears(dateStart, dateEnd));
-    formattedString = t('labelDateYear', {
+    const diffInYears = Math.abs(differenceInYears(referenceDate, now));
+    formattedString = t(isCountdown ? 'labelYearsLeft' : 'labelYearsAgo', {
       count: diffInYears,
       ns: 'common',
     });

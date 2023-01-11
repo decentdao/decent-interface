@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
-import { formatDatesDiffReadable } from '../../../helpers/dateTime';
+import { dateTimeDisplay } from '../../../helpers/dateTime';
 import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/Fractal/types';
 import { formatCoin } from '../../../utils/numberFormats';
 
@@ -30,7 +30,6 @@ export function useFormatTransfers(
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
   const { t } = useTranslation('common');
-  const now = new Date();
 
   for (let i = 0; i < transfers.length; i++) {
     let transfer = transfers[i];
@@ -51,9 +50,7 @@ export function useFormatTransfers(
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
-      dateTimeDisplay: t('timeAgo', {
-        time: formatDatesDiffReadable(new Date(transfer.executionDate), now, t),
-      }),
+      dateTimeDisplay: dateTimeDisplay(new Date(transfer.executionDate), t),
       image: imageSrc,
       assetDisplay:
         transfer.type === TransferType.ERC721_TRANSFER
