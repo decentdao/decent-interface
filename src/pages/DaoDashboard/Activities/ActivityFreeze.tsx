@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
-import { dateTimeDisplay } from '../../../helpers/dateTime';
+import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { DAOState, IGnosisFreezeData } from '../../../providers/Fractal/governance/types';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
@@ -36,8 +36,8 @@ export function ActivityFreeze({
   );
   const now = new Date();
 
-  const freezeProposalPeriodDiffReadable = dateTimeDisplay(freezeProposalDeadlineDate, t);
-  const freezePeriodDiffReadable = dateTimeDisplay(freezeDeadlineDate, t);
+  const freezeProposalPeriodDiffReadable = useDateTimeDisplay(freezeProposalDeadlineDate);
+  const freezePeriodDiffReadable = useDateTimeDisplay(freezeDeadlineDate);
   const isFreezeProposalDeadlinePassed = now.getTime() > freezeProposalDeadlineDate.getTime();
   const isFreezeDeadlinePassed = now.getTime() > freezeDeadlineDate.getTime();
 

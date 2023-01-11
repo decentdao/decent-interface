@@ -2,8 +2,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { Calendar } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
 
-import { useTranslation } from 'react-i18next';
-import { dateTimeDisplay } from '../../../helpers/dateTime';
+import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { DEFAULT_DATE_FORMAT } from '../../../utils/numberFormats';
 import Clock from '../svg/Clock';
 
@@ -15,9 +14,8 @@ type ProposalTimeProps = {
 };
 
 function ProposalTime({ deadline, submissionDate, icon = 'clock', isRejected }: ProposalTimeProps) {
-  const { t } = useTranslation('common');
   const deadlineDate = new Date(deadline * 1000);
-  const diffReadable = dateTimeDisplay(deadlineDate, t);
+  const diffReadable = useDateTimeDisplay(deadlineDate);
 
   return (
     <Flex
