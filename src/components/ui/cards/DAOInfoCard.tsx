@@ -9,9 +9,11 @@ import {
 import { Link } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
+import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { IGnosisFreezeData, IGnosisVetoContract } from '../../../providers/Fractal/types';
 import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { DAO_ROUTES } from '../../../routes/constants';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
@@ -29,7 +31,9 @@ export function DAOInfoCard({
   toggleExpansion,
   expanded,
   numberOfChildrenDAO,
-}: IDAOInfoCard) {
+  freezeData,
+  guardContracts,
+}: IDAOInfoCard & { freezeData?: IGnosisFreezeData; guardContracts: IGnosisVetoContract }) {
   const {
     gnosis: {
       safe: { address },
@@ -105,6 +109,7 @@ export function DAOInfoCard({
               variant="ghost"
               minWidth="0px"
               aria-label="Favorite Toggle"
+              data-testid="DAOInfo-favorite"
               icon={
                 isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />
               }
@@ -137,21 +142,32 @@ export function DAOInfoCard({
         </Flex>
       </Flex>
       {/* Veritical Elipsis */}
-      {canManageDAO && <ManageDAOMenu safeAddress={safeAddress} />}
+      {canManageDAO && (
+        <ManageDAOMenu
+          safeAddress={safeAddress}
+          freezeData={freezeData}
+          guardContracts={guardContracts}
+        />
+      )}
     </Flex>
   );
 }
 
 export function DAONodeCard(props: IDAOInfoCard) {
   const {
-    gnosis: { safe },
+    gnosis: { safe, guardContracts, freezeData },
   } = useFractal();
-
   const isCurrentDAO = props.safeAddress === safe.address;
+  const { subDAOData } = useSubDAOData(!isCurrentDAO ? props.safeAddress : undefined);
   const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
+
+  const nodeGuardContracts =
+    !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
+  const nodeFreezeData = !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : freezeData;
 
   return (
     <Box
+      mt="1rem"
       minH="6.75rem"
       bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
@@ -159,7 +175,11 @@ export function DAONodeCard(props: IDAOInfoCard) {
       w="full"
       {...border}
     >
-      <DAOInfoCard {...props} />
+      <DAOInfoCard
+        {...props}
+        guardContracts={nodeGuardContracts}
+        freezeData={nodeFreezeData}
+      />
     </Box>
   );
 }

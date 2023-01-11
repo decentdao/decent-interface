@@ -37,6 +37,13 @@ export const useGnosisGovernance = ({
       ? GovernanceTypes.GNOSIS_SAFE
       : null;
 
+    if (!governanceType) {
+      return;
+    }
+    if (governanceType === GovernanceTypes.GNOSIS_SAFE_USUL && !governanceTokenData.address) {
+      return;
+    }
+
     governanceDispatch({
       type: GovernanceAction.SET_GOVERNANCE,
       payload: {

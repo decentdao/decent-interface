@@ -14,8 +14,10 @@ export function Governance() {
   const {
     gnosis: { daoName },
     governance: { type, governanceToken },
+    gnosis: {
+      safe: { owners },
+    },
   } = useFractal();
-
   const {
     state: { account },
   } = useWeb3Provider();
@@ -23,6 +25,9 @@ export function Governance() {
   const delegate = useFractalModal(ModalType.DELEGATE);
   const showDelegate =
     type === GovernanceTypes.GNOSIS_SAFE_USUL && governanceToken?.userBalance?.gt(0);
+
+  const showCreateButton =
+    type === GovernanceTypes.GNOSIS_SAFE_USUL ?? owners?.includes(account || '');
 
   return (
     <Box>
@@ -34,7 +39,7 @@ export function Governance() {
         buttonClick={showDelegate ? delegate : undefined}
         buttonTestId="link-delegate"
       >
-        {account && (
+        {showCreateButton && (
           <Link to="new">
             <Button marginLeft={4}>{t('createProposal', { ns: 'proposal' })}</Button>
           </Link>

@@ -13,6 +13,7 @@ import { TxProposal } from '../../../providers/Fractal/types';
 import { DecodedTransaction } from '../../../types';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {
+  const { t } = useTranslation('proposal');
   return (
     <Flex
       width="full"
@@ -20,7 +21,7 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
       color="grayscale.100"
       justifyContent="space-between"
     >
-      <Text whiteSpace="nowrap">{paramKey}</Text>
+      <Text whiteSpace="nowrap">{t(paramKey)}</Text>
       <Text
         textAlign="end"
         maxWidth="70%"
@@ -43,23 +44,23 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
       rowGap={2}
     >
       <TransactionRow
-        paramKey="target"
+        paramKey="paramTarget"
         value={transaction.target}
       />
       <TransactionRow
-        paramKey="function"
+        paramKey="paramFunction"
         value={transaction.function}
       />
       <TransactionRow
-        paramKey="parameter types"
+        paramKey="paramTypes"
         value={transaction.parameterTypes.join(', ')}
       />
       <TransactionRow
-        paramKey="parameter inputs"
+        paramKey="paramInputs"
         value={transaction.parameterValues.join(', ')}
       />
       <TransactionRow
-        paramKey="transaction value"
+        paramKey="paramValue"
         value={transaction.value}
       />
     </Flex>

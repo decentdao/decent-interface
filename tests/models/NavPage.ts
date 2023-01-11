@@ -1,84 +1,104 @@
 import { FractalPage } from './FractalPage';
 
-export enum MenuItems {
-  Network,
-  Wallet,
-}
-
+/**
+ * A Fractal page that contains the standard left and top navigation menus, which
+ * could include context dependent buttons such as Home, DAO Hierarchy, Proposals,
+ * and Treasury.
+ */
 export abstract class NavPage extends FractalPage {
   /*
-   * Utility method for connecting to the default wallet.
+   * Utility method for connecting to the local node wallet.
    */
   async connectToWallet() {
-    await this.clickHeaderMenuDropdown()
-      .then(() => this.clickMenuConnect())
-      .then(() => this.clickWalletLocalNode());
+    await this.clickAccountMenu()
+      .then(() => this.clickAccountConnect())
+      .then(() =>
+        this.click('#WEB3_CONNECT_MODAL_ID div.web3modal-provider-name:has-text("Local Node")')
+      );
   }
+
+  //
+  // Top menu options
+  //
 
   async clickFractalLogo() {
-    await this.page.click('a[href="#/"]');
+    await this.click('a[href="#/"]');
   }
 
-  async clickHeaderMenuDropdown() {
-    await this.page.click('[data-testid=header-accountMenu]');
+  async enterSearchTerm(term: string) {
+    await this.fillTextByTestId('search-input', term);
+    await this.waitForIdle();
   }
 
-  async menuLocator(selector: MenuItems) {
-    switch (selector) {
-      case MenuItems.Network:
-        return this.page.locator('[data-testid=accountMenu-network]');
-      default:
-        return undefined;
-    }
+  async clickSearchViewDAO() {
+    await this.click('search-viewDAO');
   }
 
-  async clickMenuConnect() {
-    await this.page.click('[data-testid=accountMenu-connect]');
+  async clickFavoritesMenu() {
+    await this.clickTestId('header-favoritesLink');
   }
 
-  async clickMenuDisconnect() {
-    await this.page.click('[data-testid=accountMenu-disconnect]');
+  async clickFavoriteMenuFavorite(displayName: string) {
+    await this.clickTestId('favorites-' + displayName);
   }
 
-  async clickMenuCopyWalletAddress() {
-    await this.page.click('[data-testid=walletMenu-accountDisplay]');
+  async clickAccountMenu() {
+    await this.clickTestId('header-accountMenu');
   }
 
-  async clickHeaderFavorites() {
-    await this.page.click('[data-testid=header-favoritesLink]');
+  async clickAccountCopyAddress() {
+    await this.clickTestId('walletMenu-accountDisplay');
   }
 
-  async clickLeftMenuHome() {
-    await this.page.click('[data-testid=sidebar-daoHomeLink"]');
+  async clickAccountAvatar() {
+    await this.clickTestId('walletMenu-avatar');
   }
 
-  async clickLeftMenuProposals() {
-    await this.page.click('[data-testid=sidebar-proposalsLink"]');
+  async clickAccountConnect() {
+    await this.clickTestId('accountMenu-connect');
   }
 
-  async clickLeftMenuActivity() {
-    await this.page.click('[data-testid=sidebar-activityLink"]');
+  async clickAccountDisconnect() {
+    await this.clickTestId('accountMenu-disconnect');
   }
 
-  async clickLeftMenuTreasury() {
-    await this.page.click('[data-testid=sidebar-treasuryLink"]');
+  //
+  // Left menu options
+  //
+
+  async clickNavHome() {
+    await this.clickTestId('sidebar-daoHomeLink');
   }
 
-  async clickLeftMenuSupport() {
-    await this.page.click('[data-testid=sidebarExternal-faq"]');
+  async clickNavDAOHierarchy() {
+    await this.clickTestId('sidebar-hierarchy');
   }
 
-  async clickLeftMenuDiscord() {
-    await this.page.click('[data-testid=sidebarExternal-discord"]');
+  async clickNavProposals() {
+    await this.clickTestId('sidebar-proposalsLink');
   }
 
-  async clickLeftMenuDocs() {
-    await this.page.click('[data-testid=sidebarExternal-documentation"]');
+  async clickNavTreasury() {
+    await this.clickTestId('sidebar-treasuryLink');
   }
 
-  async clickWalletLocalNode() {
-    await this.page
-      .locator('#WEB3_CONNECT_MODAL_ID div.web3modal-provider-name:has-text("Local Node")')
-      .click();
+  async clickNavFAQ() {
+    await this.clickTestId('sidebar-treasuryLink');
+  }
+
+  async clickNavDiscord() {
+    await this.clickTestId('sidebarExternal-discord');
+  }
+
+  async clickNavDocs() {
+    await this.clickTestId('sidebarExternal-documentation');
+  }
+
+  async clickNavLanguage() {
+    await this.clickTestId('sidebar-language');
+  }
+
+  async clickNavLanguageOption(language: string) {
+    await this.clickTestId('optionMenu-' + language);
   }
 }

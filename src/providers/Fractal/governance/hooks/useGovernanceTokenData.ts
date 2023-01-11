@@ -55,7 +55,6 @@ const initialState = {
   votingWeight: undefined,
   votingWeightString: undefined,
   isDelegatesSet: undefined,
-  votingContract: undefined,
   tokenContract: undefined,
   votingPeriod: undefined,
   quorumPercentage: undefined,

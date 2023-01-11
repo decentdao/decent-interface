@@ -5,7 +5,7 @@ import {
   VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect } from 'react';
+import { Dispatch, useEffect, useCallback } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
@@ -35,44 +35,43 @@ export function useVetoContracts(
     gnosisVetoGuardMasterCopyContract,
   } = useSafeContracts();
 
-  useEffect(() => {
-    if (
-      !zodiacModuleProxyFactoryContract ||
-      !guardAddress ||
-      !signerOrProvider ||
-      !account ||
-      !gnosisVetoGuardMasterCopyContract ||
-      !usulVetoGuardMasterCopyContract ||
-      !vetoMultisigVotingMasterCopyContract ||
-      !vetoERC20VotingMasterCopyContract
-    ) {
-      return;
-    }
+  const getVetoGuardContracts = useCallback(
+    async (_guardAddress: string, _modules?: IGnosisModuleData[]) => {
+      if (
+        !zodiacModuleProxyFactoryContract ||
+        !signerOrProvider ||
+        !account ||
+        !gnosisVetoGuardMasterCopyContract ||
+        !usulVetoGuardMasterCopyContract ||
+        !vetoMultisigVotingMasterCopyContract ||
+        !vetoERC20VotingMasterCopyContract
+      ) {
+        return;
+      }
 
-    const getMasterCopyAddress = (proxyAddress: string): Promise<string> => {
-      const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
-        proxyAddress,
-        null
-      );
+      const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
+        const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
+          proxyAddress,
+          null
+        );
 
-      return zodiacModuleProxyFactoryContract.queryFilter(filter).then(proxiesCreated => {
-        return proxiesCreated[0].args.masterCopy;
-      });
-    };
+        return zodiacModuleProxyFactoryContract.queryFilter(filter).then(proxiesCreated => {
+          return proxiesCreated[0].args.masterCopy;
+        });
+      };
 
-    (async () => {
       let contracts: IGnosisVetoContract;
       let vetoGuardContract;
       let vetoGuardType;
 
       if (
-        guardAddress !== ethers.constants.AddressZero &&
-        (await getMasterCopyAddress(guardAddress)) === gnosisVetoGuardMasterCopyContract.address
+        _guardAddress !== ethers.constants.AddressZero &&
+        (await getMasterCopyAddress(_guardAddress)) === gnosisVetoGuardMasterCopyContract.address
       ) {
-        vetoGuardContract = VetoGuard__factory.connect(guardAddress, signerOrProvider);
+        vetoGuardContract = VetoGuard__factory.connect(_guardAddress, signerOrProvider);
         vetoGuardType = VetoGuardType.MULTISIG;
       } else {
-        const usulModule = modules?.find(module => module.moduleType === GnosisModuleType.USUL);
+        const usulModule = _modules?.find(module => module.moduleType === GnosisModuleType.USUL);
         if (
           !usulModule ||
           !usulModule.moduleContract ||
@@ -103,21 +102,33 @@ export function useVetoContracts(
         vetoGuardType,
       };
 
-      gnosisDispatch({
-        type: GnosisAction.SET_GUARD_CONTRACTS,
-        payload: contracts,
-      });
-    })();
-  }, [
-    zodiacModuleProxyFactoryContract,
-    gnosisVetoGuardMasterCopyContract,
-    usulVetoGuardMasterCopyContract,
-    vetoERC20VotingMasterCopyContract,
-    vetoMultisigVotingMasterCopyContract,
-    guardAddress,
-    modules,
-    gnosisDispatch,
-    signerOrProvider,
-    account,
-  ]);
+      return contracts;
+    },
+    [
+      zodiacModuleProxyFactoryContract,
+      gnosisVetoGuardMasterCopyContract,
+      usulVetoGuardMasterCopyContract,
+      vetoERC20VotingMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
+      signerOrProvider,
+      account,
+    ]
+  );
+
+  useEffect(() => {
+    if (!guardAddress) {
+      return;
+    }
+
+    getVetoGuardContracts(guardAddress, modules).then(contracts => {
+      if (!!contracts) {
+        gnosisDispatch({
+          type: GnosisAction.SET_GUARD_CONTRACTS,
+          payload: contracts,
+        });
+      }
+    });
+  }, [guardAddress, modules, gnosisDispatch, getVetoGuardContracts]);
+
+  return { getVetoGuardContracts };
 }
