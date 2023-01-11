@@ -2,7 +2,6 @@ import { Page } from '@playwright/test';
 
 export enum Notification {
   Audit,
-  Connected,
   Deploying,
   DAOCreated,
 }
@@ -32,8 +31,6 @@ export abstract class FractalPage {
     switch (notif) {
       case Notification.Audit:
         return this.page.locator('[data-testid=toast-audit] button');
-      case Notification.Connected:
-        return this.page.locator('#connected');
       case Notification.Deploying:
         return this.page.locator('#root div:has-text("Deploying Fractal...")').nth(2);
       case Notification.DAOCreated:
@@ -41,10 +38,6 @@ export abstract class FractalPage {
       default:
         throw new Error('Missing Notification case!');
     }
-  }
-
-  async dismissConnectedMessage() {
-    await this.notificationLocator(Notification.Connected).click();
   }
 
   async dismissAuditMessage() {

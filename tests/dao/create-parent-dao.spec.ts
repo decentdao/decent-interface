@@ -7,10 +7,7 @@ let create: DAOCreate;
 
 test.beforeEach(async ({ page }) => {
   const home = await new HomePage(page).visit();
-  create = await home
-    .connectToWallet()
-    .then(() => home.dismissConnectedMessage())
-    .then(() => home.clickCreateAFractal());
+  create = await home.clickCreateAFractal();
 });
 
 test('Create Pure Gnosis DAO', async ({ page }) => {

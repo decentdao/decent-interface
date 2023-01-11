@@ -7,10 +7,7 @@ test.describe.skip('DAO Creation', () => {
 
   test.beforeEach(async ({ page }) => {
     const home = await new HomePage(page).visit();
-    const create = await home
-      .connectToWallet()
-      .then(() => home.dismissConnectedMessage())
-      .then(() => home.clickCreateAFractal());
+    const create = await home.clickCreateAFractal();
     dao = await create.createTestDAO();
   });
 

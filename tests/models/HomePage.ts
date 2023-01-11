@@ -28,7 +28,6 @@ export class HomePage extends NavPage {
 
   async clickDocsNewTab() {
     await this.page.click('[data-testid=home-linkDocs]');
-    const tab = await this.newTab();
-    return tab;
+    return this.newTab();
   }
 }

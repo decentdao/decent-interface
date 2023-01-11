@@ -16,9 +16,6 @@ export const testWallet = ({ chains }: MyWalletOptions): Wallet => ({
       chains,
       options: {
         signer: new providers.JsonRpcProvider().getSigner(),
-        flags: {
-          isAuthorized: true,
-        },
       },
     });
     return {

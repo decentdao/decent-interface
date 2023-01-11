@@ -3,8 +3,6 @@ import { expect, Locator, Page } from '@playwright/test';
 export class Notifications {
   readonly page: Page;
 
-  readonly toasterMessage: Locator;
-
   readonly auditMessage: Locator;
 
   readonly deployMessage: Locator;
@@ -13,15 +11,9 @@ export class Notifications {
 
   constructor(page: Page) {
     this.page = page;
-    this.toasterMessage = page.locator('#connected');
     this.auditMessage = page.locator('div[role="alert"] button:has-text("* * *Accept")');
     this.deployMessage = page.locator('#root div:has-text("Deploying Fractal...")').nth(2);
     this.doaCreated = page.locator('#root div:has-text("DAO Created") >> nth=2');
-  }
-
-  async assertConnected() {
-    await expect(this.toasterMessage).toBeVisible();
-    await expect(this.toasterMessage).toContainText('Connected');
   }
 
   async assertDeployed() {
