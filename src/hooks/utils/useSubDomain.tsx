@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useNetwork } from 'wagmi';
+import { useProvider } from 'wagmi';
 
 function useSubDomain() {
-  const { chain } = useNetwork();
+  const provider = useProvider();
   const [subdomain, setSubdomain] = useState('');
 
   useEffect(() => {
-    if (!chain || ['localhost', 'homestead'].includes(chain.network)) {
+    if (!['localhost', 'homestead'].includes(provider._network.name)) {
       setSubdomain('');
       return;
     }
 
-    setSubdomain(`${chain.network}.`);
-  }, [chain]);
+    setSubdomain(`${provider._network.name}.`);
+  }, [provider]);
 
   return subdomain;
 }
