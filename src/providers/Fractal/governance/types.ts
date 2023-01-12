@@ -135,21 +135,15 @@ export enum TxProposalState {
   Active = 'stateActive',
 
   /**
-   * Quorum (or signers) is reached, the proposal can be queued for execution.
-   * Anyone can move the state from Queueable to Queued/TimeLocked via a transaction.
+   * This state occurs when the 'cancelProposals' function is called on the Usul contract:
+   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L237
    *
-   * Usul / Multisig subDAO only.
-   */
-  Queueable = 'stateQueueable',
-
-  /**
-   * The proposal is 'queued', during which the proposal cannot yet be executed.
-   * This period is intended to allow for the ability of the parent to freeze
-   * the DAO, to prevent a transaction from occurring, if they would like.
+   * @note We do not support this function in the UI and it is difficult to achieve this state
+   * given our current setup, but still possible, so we allow for the proper badge to be shown.
    *
-   * Multisig subDAO Only.
+   * Usul only.
    */
-  Queued = 'stateQueued',
+  Canceled = 'stateCanceled',
 
   /**
    * Similar to 'Queued' state for a multisig child, but applies to all Usul based
@@ -167,6 +161,13 @@ export enum TxProposalState {
   TimeLocked = 'stateTimeLocked',
 
   /**
+   * The proposal has been executed.
+   *
+   * Usul / Multisig (all proposals).
+   */
+  Executed = 'stateExecuted',
+
+  /**
    * The queue/timelock period has ended and the proposal is able to be executed.
    * Once in this state, the execution period starts, after which if the proposal
    * has not been executed, it will become Expired.
@@ -181,11 +182,32 @@ export enum TxProposalState {
   Executing = 'stateExecuting',
 
   /**
-   * The proposal has been executed.
+   * This state occurs when a proposal does not have a voting strategy associated with it:
+   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L362
    *
-   * Usul / Multisig (all proposals).
+   * @note It is technically possible to achieve this state if a Usul mod is attached without a voting
+   * strategy outside our own UI, so we allow for the proper badge to be shown in this case.
+   *
+   * Usul only.
    */
-  Executed = 'stateExecuted',
+  Uninitialized = 'stateUninitialized',
+
+  /**
+   * Quorum (or signers) is reached, the proposal can be queued for execution.
+   * Anyone can move the state from Queueable to Queued/TimeLocked via a transaction.
+   *
+   * Usul / Multisig subDAO only.
+   */
+  Queueable = 'stateQueueable',
+
+  /**
+   * The proposal is 'queued', during which the proposal cannot yet be executed.
+   * This period is intended to allow for the ability of the parent to freeze
+   * the DAO, to prevent a transaction from occurring, if they would like.
+   *
+   * Multisig subDAO Only.
+   */
+  Queued = 'stateQueued',
 
   /**
    * Quorum AND/OR less than 50% approval not reached within the voting period.
@@ -225,28 +247,6 @@ export enum TxProposalState {
    * Third party Safe module transactions only.
    */
   Module = 'stateModule',
-
-  /**
-   * This state occurs when a proposal does not have a voting strategy associated with it:
-   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L362
-   *
-   * @note It is technically possible to achieve this state if a Usul mod is attached without a voting
-   * strategy outside our own UI, so we allow for the proper badge to be shown in this case.
-   *
-   * Usul only.
-   */
-  Uninitialized = 'stateUninitialized',
-
-  /**
-   * This state occurs when the 'cancelProposals' function is called on the Usul contract:
-   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L237
-   *
-   * @note We do not support this function in the UI and it is difficult to achieve this state
-   * given our current setup, but still possible, so we allow for the proper badge to be shown.
-   *
-   * Usul only.
-   */
-  Canceled = 'stateCanceled',
 }
 
 export enum DAOState {

@@ -39,6 +39,11 @@ export type SafeInfoResponseWithGuard = SafeInfoResponse & {
   guard?: string;
 };
 
+export type ChildNode = {
+  address: string;
+  childNodes: ChildNode[];
+};
+
 export interface IGnosis {
   providedSafeAddress?: string;
   daoName: string;
@@ -50,7 +55,7 @@ export interface IGnosis {
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
   parentDAOAddress?: string;
-  childNodes?: string[];
+  childNodes?: ChildNode[];
 }
 export interface IConnectedAccount {
   favorites: IFavorites;

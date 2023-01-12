@@ -1,12 +1,11 @@
 import { VetoGuard__factory } from '@fractal-framework/fractal-contracts';
-import { SafeInfoResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect } from 'react';
+import { Dispatch, useEffect, useCallback } from 'react';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
-import { IGnosis, GnosisActions } from '../types';
+import { IGnosis, GnosisActions, SafeInfoResponseWithGuard, ChildNode } from '../types';
 
-type SafeInfoWithGuard = { guard: string } & SafeInfoResponse; // safeService misses typing for guard :(
 export default function useNodes({
   gnosis,
   gnosisDispatch,
@@ -17,16 +16,82 @@ export default function useNodes({
   const {
     state: { chainId, signerOrProvider },
   } = useWeb3Provider();
+  const { fractalRegistryContract } = useSafeContracts();
   const { modules, safe, safeService } = gnosis;
+
+  const fetchSubDAOs = useCallback(
+    async (parentDAOAddress: string) => {
+      const filter = fractalRegistryContract!.filters.FractalSubDAODeclared(parentDAOAddress);
+      const events = await fractalRegistryContract!.queryFilter(filter);
+      const subDAOsAddresses = events.map(({ args }) => args.subDAOAddress);
+
+      return subDAOsAddresses;
+    },
+    [fractalRegistryContract]
+  );
+
+  const getDAOOwner = useCallback(
+    async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
+      if (safeInfo && safeInfo.guard && signerOrProvider) {
+        if (safeInfo.guard !== ethers.constants.AddressZero) {
+          const guard = VetoGuard__factory.connect(safeInfo.guard, signerOrProvider);
+          const guardOwner = await guard.owner();
+          if (guardOwner !== safeInfo.address) {
+            return guardOwner;
+          }
+        }
+      }
+      return undefined;
+    },
+    [signerOrProvider]
+  );
+
+  const mapSubDAOsToOwnedSubDAOs = useCallback(
+    async (subDAOsAddresses: string[], parentDAOAddress: string): Promise<ChildNode[]> => {
+      const controlledNodes: ChildNode[] = [];
+
+      for (const safeAddress of subDAOsAddresses) {
+        const safeInfo = (await safeService!.getSafeInfo(safeAddress)) as SafeInfoResponseWithGuard;
+
+        if (safeInfo.guard) {
+          if (safeInfo.guard === ethers.constants.AddressZero) {
+            // Guard is not attached - seems like just gap in Safe API Service indexisng.
+            // Still, need to cover this case
+            const node: ChildNode = {
+              address: safeAddress,
+              childNodes: await mapSubDAOsToOwnedSubDAOs(
+                (await fetchSubDAOs(safeAddress)) || [],
+                safeAddress
+              ),
+            };
+            controlledNodes.push(node);
+          } else {
+            const owner = await getDAOOwner(safeInfo);
+            if (owner && owner === parentDAOAddress) {
+              const node: ChildNode = {
+                address: safeAddress,
+                childNodes: await mapSubDAOsToOwnedSubDAOs(
+                  (await fetchSubDAOs(safeAddress)) || [],
+                  safeAddress
+                ),
+              };
+              controlledNodes.push(node);
+            }
+          }
+        }
+      }
+
+      return controlledNodes;
+    },
+    [safeService, fetchSubDAOs, getDAOOwner]
+  );
+
   useEffect(() => {
     const loadDaoParent = async () => {
       if (safe && safe.guard && signerOrProvider) {
-        if (safe.guard !== ethers.constants.AddressZero) {
-          const guard = VetoGuard__factory.connect(safe.guard, signerOrProvider);
-          const guardOwner = await guard.owner();
-          if (guardOwner !== safe.address) {
-            gnosisDispatch({ type: GnosisAction.SET_DAO_PARENT, payload: guardOwner });
-          }
+        const owner = await getDAOOwner(safe);
+        if (owner) {
+          gnosisDispatch({ type: GnosisAction.SET_DAO_PARENT, payload: owner });
         }
       } else {
         // Clearing the state
@@ -35,33 +100,26 @@ export default function useNodes({
     };
 
     const loadDaoNodes = async () => {
-      if (safe.address && signerOrProvider && safeService) {
-        const ownedSafesResponse = await safeService.getSafesByOwner(safe.address);
-        const ownedSafes = ownedSafesResponse.safes;
-        const controlledSafes: string[] = [];
+      if (safe.address && signerOrProvider && safeService && fractalRegistryContract) {
+        const declaredSubDAOs = await fetchSubDAOs(safe.address);
+        const controlledNodes = await mapSubDAOsToOwnedSubDAOs(declaredSubDAOs, safe.address);
 
-        for (const safeAddress of ownedSafes) {
-          // Fairly bad solution if DAO has dozens of SubDAOs. But there could be the case when guard is changed, but signer is not.
-          // Then the DAO is actually "lost" - but it will be up to child DAO to create proper proposal to replace old DAO from signers list with new parent DAO.
-          const safeInfo = (await safeService.getSafeInfo(safeAddress)) as SafeInfoWithGuard;
-          if (safeInfo.guard === ethers.constants.AddressZero) {
-            // Guard is not attached - seems like just gap in Safe API Service indexisng.
-            // Still, need to cover this case
-            controlledSafes.push(safeAddress);
-          } else {
-            const guard = VetoGuard__factory.connect(safeInfo.guard, signerOrProvider);
-            const guardOwner = await guard.owner();
-            if (guardOwner === safe.address) {
-              controlledSafes.push(safeAddress);
-            }
-          }
-        }
-
-        gnosisDispatch({ type: GnosisAction.SET_DAO_CHILDREN, payload: controlledSafes });
+        gnosisDispatch({ type: GnosisAction.SET_DAO_CHILDREN, payload: controlledNodes });
       }
     };
 
     loadDaoParent();
     loadDaoNodes();
-  }, [chainId, safe, modules, gnosisDispatch, signerOrProvider, safeService]);
+  }, [
+    chainId,
+    safe,
+    modules,
+    gnosisDispatch,
+    signerOrProvider,
+    safeService,
+    fetchSubDAOs,
+    getDAOOwner,
+    mapSubDAOsToOwnedSubDAOs,
+    fractalRegistryContract,
+  ]);
 }
