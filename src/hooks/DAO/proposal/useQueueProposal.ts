@@ -1,17 +1,17 @@
 import { OZLinearVoting__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useProvider, useSigner } from 'wagmi';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import useUsul from './useUsul';
 
 export default function useQueueProposal() {
   const { t } = useTranslation('transaction');
 
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { votingStrategiesAddresses } = useUsul();
   const [contractCallQueueProposal, contractCallPending] = useTransaction();
 

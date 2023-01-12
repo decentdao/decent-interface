@@ -5,7 +5,6 @@
     "faq": "FAQ",
     "discord": "Discord",
     "docs": "Доки",
-    "toastSwitchChain": "Переключіться на підтримувану ланку: {{chainNames}}",
     "toastChainChanged": "Ланку змінено: {{chainName}}",
     "toastAccountRevoked": "Доступ до акаунту відізвано.",
     "toastAccountChanged": "Акаунт змінено.",
@@ -15,7 +14,6 @@
     "wallet": "Крипто-гаманець",
     "mainnet": "Mainnet",
     "goerli": "Goerli Test Network",
-    "local": "Local Test Network",
     "titleManageDAO": "Керувати DAO",
     "optionCreateSubDAO": "Створити subDAO",
     "optionInitiateFreeze": "Ініціювати Замороження"

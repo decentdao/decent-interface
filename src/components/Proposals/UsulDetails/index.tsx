@@ -1,6 +1,7 @@
 import { GridItem, Box } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import { ProposalAction } from '../../../components/Proposals/ProposalActions/ProposalAction';
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
@@ -11,7 +12,6 @@ import useTokenData from '../../../providers/Fractal/governance/hooks/useGoverna
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { ProposalInfo } from '../ProposalInfo';
 
@@ -24,9 +24,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   const { timeLockPeriod } = useTokenData(governance.contracts);
   const updateProposalState = useUpdateProposalState({ governance, governanceDispatch });
 
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
 
   useEffect(() => {
     let timeout = 0;
