@@ -109,6 +109,7 @@ export default function useSubmitProposal() {
               }
             )
           );
+          await new Promise(resolve => setTimeout(resolve, 1000));
           await refreshSafeData();
           if (successCallback) {
             successCallback(safe.address);
