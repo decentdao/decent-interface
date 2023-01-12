@@ -11,7 +11,7 @@ import useENSName from '../utils/useENSName';
  * 3. Truncated Eth address in the form 0xbFC4...7551
  */
 export default function useDAOName({ address }: { address?: string }) {
-  const { fractalNameRegistryContract } = useSafeContracts();
+  const { fractalRegistryContract } = useSafeContracts();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
   const ensName = useENSName(address);
 
@@ -26,13 +26,13 @@ export default function useDAOName({ address }: { address?: string }) {
       return;
     }
 
-    if (!fractalNameRegistryContract) {
+    if (!fractalRegistryContract) {
       setDAORegistryName(createAccountSubstring(address));
       return;
     }
 
-    const events = await fractalNameRegistryContract.queryFilter(
-      fractalNameRegistryContract.filters.FractalNameUpdated(address)
+    const events = await fractalRegistryContract.queryFilter(
+      fractalRegistryContract.filters.FractalNameUpdated(address)
     );
 
     const latestEvent = events[0];
@@ -43,7 +43,7 @@ export default function useDAOName({ address }: { address?: string }) {
 
     const { daoName } = latestEvent.args;
     setDAORegistryName(daoName);
-  }, [fractalNameRegistryContract, address, ensName]);
+  }, [fractalRegistryContract, address, ensName]);
 
   useEffect(() => {
     (async () => {
