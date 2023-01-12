@@ -9,7 +9,7 @@ export type NetworkConfig = {
     gnosisMultisend: string;
     fractalUsulMasterCopy: string;
     fractalModuleMasterCopy: string;
-    fractalNameRegistry: string;
+    fractalRegistry: string;
     votesTokenMasterCopy: string;
     claimingMasterCopy: string;
     gnosisVetoGuardMasterCopy: string;

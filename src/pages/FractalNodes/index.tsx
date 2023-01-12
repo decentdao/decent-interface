@@ -6,7 +6,54 @@ import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
 import { HEADER_HEIGHT } from '../../constants/common';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { ChildNode } from '../../providers/Fractal/types';
 import { NodeLines } from './NodeLines';
+
+function DAOChildNodes({
+  childNodes,
+  parentDAOAddress,
+}: {
+  childNodes?: ChildNode[];
+  parentDAOAddress?: string;
+}) {
+  if (!childNodes) {
+    return null;
+  }
+  return (
+    <Flex
+      flexWrap="wrap"
+      w="full"
+    >
+      {childNodes.map((node, i, arr) => {
+        const isFirstChild = i === 0;
+        const hasMore = !!node.childNodes?.length || i + 1 < arr.length;
+        return (
+          <Flex
+            key={node.address}
+            mt={isFirstChild ? '1rem' : undefined}
+            width="100%"
+            flexWrap="wrap"
+          >
+            <NodeLines
+              hasMore={hasMore}
+              isFirstChild={isFirstChild}
+              extendHeight={hasMore}
+              indentFactor={!!parentDAOAddress ? 4 : 1}
+            />
+            <DAONodeCard
+              safeAddress={node.address}
+              expanded={false}
+            />
+            <DAOChildNodes
+              parentDAOAddress={node.address}
+              childNodes={node.childNodes}
+            />
+          </Flex>
+        );
+      })}
+    </Flex>
+  );
+}
 
 export function FractalNodes() {
   const {
@@ -23,8 +70,6 @@ export function FractalNodes() {
       </Center>
     );
   }
-
-  const daoPermissionList: string[] = childNodes ?? [];
 
   const parentExpansionToggle = () => {
     setIsParentExpended(v => !v);
@@ -53,42 +98,26 @@ export function FractalNodes() {
           <NodeLines
             isCurrentDAO
             isFirstChild
-            hasMore={!!daoPermissionList.length && isChildrenExpanded}
-            extendHeight={!!daoPermissionList.length}
+            hasMore={!!childNodes?.length && isChildrenExpanded}
+            extendHeight={!!childNodes?.length}
           />
         )}
         {isParentExpanded && (
           <DAONodeCard
             safeAddress={safe.address}
-            toggleExpansion={!!daoPermissionList.length ? childrenExpansionToggle : undefined}
+            toggleExpansion={!!childNodes?.length ? childrenExpansionToggle : undefined}
             expanded={isChildrenExpanded}
-            numberOfChildrenDAO={daoPermissionList.length}
+            numberOfChildrenDAO={childNodes?.length}
           />
         )}
       </Flex>
 
-      {isChildrenExpanded &&
-        daoPermissionList.map((safeAddress, i, arr) => {
-          const isFirstChild = i === 0 && !parentDAOAddress;
-          const hasMore = i + 1 < arr.length;
-          return (
-            <Flex
-              key={safeAddress + i}
-              mt={isFirstChild ? '1rem' : undefined}
-            >
-              <NodeLines
-                hasMore={hasMore}
-                isFirstChild={isFirstChild}
-                extendHeight={hasMore}
-                indentFactor={!!parentDAOAddress ? 4 : 1}
-              />
-              <DAONodeCard
-                safeAddress={safeAddress}
-                expanded={false}
-              />
-            </Flex>
-          );
-        })}
+      {isChildrenExpanded && (
+        <DAOChildNodes
+          parentDAOAddress={parentDAOAddress}
+          childNodes={childNodes}
+        />
+      )}
     </Box>
   );
 }

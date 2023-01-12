@@ -5,7 +5,7 @@
     "faq": "FAQ",
     "discord": "Discord",
     "docs": "Docs",
-    "toastSwitchChain": "Switch to a supported chain: {{chainNames}}",
+    "toastSwitchChain": "Switch your wallet to a supported chain: {{chainNames}}",
     "toastChainChanged": "Chain changed: {{chainName}}",
     "toastAccountRevoked": "Account access revoked",
     "toastAccountChanged": "Account changed",
