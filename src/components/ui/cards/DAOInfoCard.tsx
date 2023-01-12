@@ -164,13 +164,13 @@ export function DAONodeCard(props: IDAOInfoCard) {
   const nodeFreezeData = !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : freezeData;
 
   return (
-    <Box
+    <Flex
       mt="1rem"
       minH="6.75rem"
       bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
-      w="full"
+      flex={1}
       {...border}
     >
       <DAOInfoCard
@@ -178,6 +178,6 @@ export function DAONodeCard(props: IDAOInfoCard) {
         guardContracts={nodeGuardContracts}
         freezeData={nodeFreezeData}
       />
-    </Box>
+    </Flex>
   );
 }

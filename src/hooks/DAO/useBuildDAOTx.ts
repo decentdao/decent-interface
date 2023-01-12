@@ -55,7 +55,7 @@ const useBuildDAOTx = () => {
     linearVotingMasterCopyContract,
     fractalUsulMasterCopyContract,
     zodiacModuleProxyFactoryContract,
-    fractalNameRegistryContract,
+    fractalRegistryContract,
     fractalModuleMasterCopyContract,
     gnosisVetoGuardMasterCopyContract,
     usulVetoGuardMasterCopyContract,
@@ -256,7 +256,7 @@ const useBuildDAOTx = () => {
     ]
   );
   const buildDeploySafeTx = useCallback(
-    (daoData: GnosisDAO, hasUsul?: boolean, parentDAOAddress?: string) => {
+    (daoData: GnosisDAO, hasUsul?: boolean) => {
       const buildTx = async () => {
         if (
           !account ||
@@ -276,9 +276,6 @@ const useBuildDAOTx = () => {
               ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
               multiSendContract.address,
             ];
-        if (parentDAOAddress) {
-          signers.push(parentDAOAddress);
-        }
 
         const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData(
           'setup',
@@ -347,7 +344,7 @@ const useBuildDAOTx = () => {
       const buildTx = async () => {
         if (
           !multiSendContract ||
-          !fractalNameRegistryContract ||
+          !fractalRegistryContract ||
           !signerOrProvider ||
           !zodiacModuleProxyFactoryContract ||
           !fractalModuleMasterCopyContract ||
@@ -358,7 +355,7 @@ const useBuildDAOTx = () => {
           return;
         }
         const gnosisDaoData = daoData as GnosisDAO;
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, false, parentDAOAddress);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, false);
 
         if (!deploySafeTx) {
           return;
@@ -408,7 +405,7 @@ const useBuildDAOTx = () => {
           internaltTxs = [
             // Name Registry
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -484,7 +481,7 @@ const useBuildDAOTx = () => {
           internaltTxs = [
             // Name Registry
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -553,7 +550,7 @@ const useBuildDAOTx = () => {
     },
     [
       multiSendContract,
-      fractalNameRegistryContract,
+      fractalRegistryContract,
       signerOrProvider,
       buildDeploySafeTx,
       buildFractalModuleData,
@@ -583,7 +580,7 @@ const useBuildDAOTx = () => {
           !zodiacModuleProxyFactoryContract ||
           !linearVotingMasterCopyContract ||
           !multiSendContract ||
-          !fractalNameRegistryContract ||
+          !fractalRegistryContract ||
           !fractalModuleMasterCopyContract ||
           !vetoMultisigVotingMasterCopyContract ||
           !signerOrProvider ||
@@ -597,7 +594,7 @@ const useBuildDAOTx = () => {
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true, parentDAOAddress);
+        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
 
         if (!deploySafeTx) {
           return;
@@ -759,7 +756,7 @@ const useBuildDAOTx = () => {
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
           internaltTxs = [
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -844,7 +841,7 @@ const useBuildDAOTx = () => {
         } else {
           internaltTxs = [
             buildContractCall(
-              fractalNameRegistryContract,
+              fractalRegistryContract,
               'updateDAOName',
               [gnosisDaoData.daoName],
               0,
@@ -949,7 +946,7 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       linearVotingMasterCopyContract,
       multiSendContract,
-      fractalNameRegistryContract,
+      fractalRegistryContract,
       fractalModuleMasterCopyContract,
       usulVetoGuardMasterCopyContract,
       vetoERC20VotingMasterCopyContract,

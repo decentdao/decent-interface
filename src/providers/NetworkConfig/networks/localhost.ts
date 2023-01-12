@@ -12,7 +12,7 @@ export const localhostConfig: NetworkConfig = {
     gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
     fractalUsulMasterCopy: '0xCdea1582a57Ca4A678070Fa645aaf3a40c2164C1',
     fractalModuleMasterCopy: '0x260BcebDb25fa17f63972010E7b4EfC5C1D0fE0f',
-    fractalNameRegistry: '0x14d56CE23F76921203b1a092744A067D7d8963c2',
+    fractalRegistry: '0x14d56CE23F76921203b1a092744A067D7d8963c2',
     votesTokenMasterCopy: '0x0697DCa73151da93D18CDdF5DB52f9A8363c9Ba9',
     claimingMasterCopy: '0x15b099e0Ad85c0d10efba09c05C9e8dB1cDa61a8',
     gnosisVetoGuardMasterCopy: '',

@@ -19,7 +19,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
   } = useFractal();
 
   const showCreateButton =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL ?? owners?.includes(account || '');
+    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
 
   const { t } = useTranslation('proposal');
   return (
