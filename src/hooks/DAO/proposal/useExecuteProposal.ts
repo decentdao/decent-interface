@@ -1,10 +1,10 @@
 import { BigNumber } from 'ethers';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useProvider, useSigner } from 'wagmi';
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { useTransaction } from '../../../providers/Web3Data/transactions';
 import { MetaTransaction } from '../../../types';
 import useUsul from './useUsul';
@@ -12,9 +12,9 @@ import useUsul from './useUsul';
 export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { usulContract } = useUsul();
   const {
     actions: { refreshSafeData },

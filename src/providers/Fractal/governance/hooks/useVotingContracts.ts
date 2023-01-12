@@ -7,8 +7,8 @@ import {
   FractalUsul__factory,
 } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useMemo, useCallback } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
-import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import { GovernanceAction, GovernanceActions } from '../actions';
 import { GnosisModuleType } from '../types';
 import { IGnosis } from './../../types/state';
@@ -22,9 +22,9 @@ export const useVotingContracts = ({
   gnosis: { modules, isGnosisLoading },
   governanceDispatch,
 }: IUseVotingContracts) => {
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const { zodiacModuleProxyFactoryContract, linearVotingMasterCopyContract } = useSafeContracts();
 

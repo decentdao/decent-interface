@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
+import { useProvider } from 'wagmi';
 
 const useCurrentBlockNumber = () => {
   const [blockNumber, setBlockNumber] = useState<number>();
-  const {
-    state: { provider },
-  } = useWeb3Provider();
+  const provider = useProvider();
 
   useEffect(() => {
     if (!provider) {

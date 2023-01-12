@@ -1,9 +1,9 @@
 import EthersAdapter from '@safe-global/safe-ethers-lib';
 import SafeServiceClient from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction, TreasuryAction } from '../constants/actions';
 import { GnosisActions, IGnosis, TreasuryActions } from '../types';
 import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
@@ -20,9 +20,9 @@ export function useGnosisApiServices(
   treasuryDispatch: React.Dispatch<TreasuryActions>,
   gnosisDispatch: React.Dispatch<GnosisActions>
 ) {
-  const {
-    state: { chainId, account, signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const { safeBaseURL } = useNetworkConfg();
 
@@ -44,7 +44,7 @@ export function useGnosisApiServices(
         ethAdapter,
       }),
     });
-  }, [account, signerOrProvider, gnosisDispatch, chainId, safeBaseURL]);
+  }, [signerOrProvider, gnosisDispatch, safeBaseURL]);
 
   const getGnosisSafeFungibleAssets = useCallback(async () => {
     if (!address || !safeService) {

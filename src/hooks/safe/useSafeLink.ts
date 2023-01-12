@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
+import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 const GNOSIS_CHAINS: { [key: string]: string } = {
   '1': 'eth',
@@ -8,13 +8,11 @@ const GNOSIS_CHAINS: { [key: string]: string } = {
 };
 
 function useGnosisSafeLink(address: string | undefined) {
-  let {
-    state: { chainId },
-  } = useWeb3Provider();
+  const { chainId } = useNetworkConfg();
   const [gnosisSafeLink, setGnosisSafeLink] = useState<string>();
 
   useEffect(() => {
-    if (!chainId || !address) {
+    if (!address) {
       setGnosisSafeLink(undefined);
       return;
     }

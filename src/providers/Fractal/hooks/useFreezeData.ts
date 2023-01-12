@@ -5,12 +5,12 @@ import {
   VotesToken__factory,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { Dispatch, useEffect, useCallback } from 'react';
+import { Dispatch, useEffect, useCallback, useMemo } from 'react';
+import { useAccount, useProvider, useSigner } from 'wagmi';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../helpers/freezePeriodHelpers';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
 import { GnosisActions, IGnosisFreezeData, IGnosisVetoContract, VetoVotingType } from '../types';
 import { FreezeVoteCastedListener } from '../types/vetoVotingEvent';
@@ -19,9 +19,10 @@ export function useFreezeData(
   vetoGuardContract: IGnosisVetoContract,
   gnosisDispatch: Dispatch<GnosisActions>
 ) {
-  const {
-    state: { account, signerOrProvider, provider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const { address: account } = useAccount();
 
   const lookupFreezeData = useCallback(
     async ({ vetoVotingType, vetoVotingContract }: IGnosisVetoContract) => {

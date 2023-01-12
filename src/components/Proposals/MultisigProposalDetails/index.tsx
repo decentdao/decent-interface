@@ -1,9 +1,9 @@
 import { GridItem, Box } from '@chakra-ui/react';
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
+import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposal } from '../../../providers/Fractal/types';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import ContentBox from '../../ui/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import ProposalCreatedBy from '../../ui/proposal/ProposalCreatedBy';
@@ -19,9 +19,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) 
       guardContracts: { vetoGuardContract },
     },
   } = useFractal();
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>

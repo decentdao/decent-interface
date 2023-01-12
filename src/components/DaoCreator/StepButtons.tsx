@@ -1,7 +1,7 @@
 import { Flex, Button } from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
+import { useAccount } from 'wagmi';
 import { useCreator } from './provider/hooks/useCreator';
 import { useNextDisabled } from './provider/hooks/useNextDisabled';
 import { CreatorProviderActions, CreatorSteps, DAOTrigger } from './provider/types';
@@ -47,9 +47,7 @@ function ForwardButton({
   pending?: boolean;
 }) {
   const { state, dispatch } = useCreator();
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
   const { t } = useTranslation(['common', 'daoCreate']);
   const isNextDisabled = useNextDisabled(state);
   const deployLabel = isSubDAO ? t('labelDeploySubDAO', { ns: 'daoCreate' }) : t('deploy');
