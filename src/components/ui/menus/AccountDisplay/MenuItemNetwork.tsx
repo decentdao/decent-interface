@@ -1,16 +1,13 @@
 import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useChainData } from '../../../../hooks/utils/useChainData';
-import { useWeb3Provider } from '../../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 /**
  * Network display for menu
  */
 export function MenuItemNetwork() {
-  const {
-    state: { chainId },
-  } = useWeb3Provider();
-
+  const { chainId } = useNetworkConfg();
   const { nameKey, color } = useChainData(chainId);
   const { t } = useTranslation('menu');
   return (

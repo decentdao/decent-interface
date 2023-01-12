@@ -10,7 +10,8 @@ import {
   UsulVetoGuard__factory,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useProvider, useSigner, useAccount } from 'wagmi';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { CreatorProvider } from '../../components/DaoCreator/provider/CreatorProvider';
 import {
@@ -20,7 +21,6 @@ import {
 } from '../../components/DaoCreator/provider/types/index';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
 import { GovernanceTypes } from '../../providers/Fractal/types';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { MetaTransaction } from '../../types/transaction';
 import useSafeContracts from '../safe/useSafeContracts';
 
@@ -42,9 +42,11 @@ import useSafeContracts from '../safe/useSafeContracts';
 const TIMER_MULT = 60;
 
 const useBuildDAOTx = () => {
-  const {
-    state: { account, signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+
+  const { address: account } = useAccount();
 
   const {
     multiSendContract,

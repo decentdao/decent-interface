@@ -1,13 +1,11 @@
 import { Flex } from '@chakra-ui/react';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useAccount } from 'wagmi';
 import { AccountDisplay } from '../menus/AccountDisplay';
 import { DAOSearch } from '../menus/DAOSearch';
 import { FavoritesMenu } from '../menus/FavoritesMenu';
 
 function Header() {
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
   return (
     <Flex
       h="full"

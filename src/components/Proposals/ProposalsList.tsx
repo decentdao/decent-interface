@@ -1,17 +1,16 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes, TxProposal } from '../../providers/Fractal/types';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
+
   const {
     gnosis: {
       safe: { owners },
@@ -20,7 +19,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
   } = useFractal();
 
   const showCreateButton =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL ?? owners?.includes(account || '');
+    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
 
   const { t } = useTranslation('proposal');
   return (

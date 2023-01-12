@@ -1,9 +1,9 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useReducer, useMemo, useEffect, useCallback } from 'react';
+import { useAccount, useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { formatCoin } from '../../../../utils/numberFormats';
-import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
 import {
   TransferListener,
   DelegateChangedListener,
@@ -130,9 +130,9 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
 };
 
 const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContracts) => {
-  const {
-    state: { account, provider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { address: account } = useAccount();
+
   const { getTimeDuration } = useTimeHelpers();
 
   const [state, dispatch] = useReducer(reducer, initialState);

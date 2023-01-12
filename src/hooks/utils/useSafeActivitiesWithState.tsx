@@ -2,9 +2,9 @@ import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import { useProvider } from 'wagmi';
 import { checkIsRejected, checkIsApproved } from '../../helpers/activity';
 import { Activity, ActivityEventType, TxProposalState } from '../../providers/Fractal/types';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
 export function useSafeActivitiesWithState(
   activities: Activity[],
@@ -12,9 +12,7 @@ export function useSafeActivitiesWithState(
 ) {
   const [activitiesWithState, setActivitiesWithState] = useState<Activity[]>([]);
 
-  const {
-    state: { provider },
-  } = useWeb3Provider();
+  const provider = useProvider();
 
   useEffect(() => {
     if (vetoGuard && provider) {

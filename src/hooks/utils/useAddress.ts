@@ -1,12 +1,10 @@
 import { constants, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import { useProvider } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
 const useAddress = (addressInput: string | undefined) => {
-  const {
-    state: { provider },
-  } = useWeb3Provider();
+  const provider = useProvider();
 
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();

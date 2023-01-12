@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
+import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
 import { AccountAction } from '../../constants/actions';
 import { CacheKeys } from './useLocalStorage';
 
@@ -14,10 +14,7 @@ interface IUseFavorites {
  */
 export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavorites) => {
   const [favoritesList, setFavorites] = useState<string[]>([]);
-
-  const {
-    state: { chainId },
-  } = useWeb3Provider();
+  const { chainId } = useNetworkConfg();
 
   /**
    * @returns favorited status of loaded safe

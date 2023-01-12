@@ -6,21 +6,6 @@ import { FractalPage } from './FractalPage';
  * and Treasury.
  */
 export abstract class NavPage extends FractalPage {
-  /*
-   * Utility method for connecting to the local node wallet.
-   */
-  async connectToWallet() {
-    await this.clickAccountMenu()
-      .then(() => this.clickAccountConnect())
-      .then(() =>
-        this.click('#WEB3_CONNECT_MODAL_ID div.web3modal-provider-name:has-text("Local Node")')
-      );
-  }
-
-  //
-  // Top menu options
-  //
-
   async clickFractalLogo() {
     await this.click('a[href="#/"]');
   }

@@ -1,11 +1,12 @@
 import { Box, Center, Flex, HStack, Image, Text, Link, Button } from '@chakra-ui/react';
 import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 import logo from '../../assets/images/fractal-text-logo.svg';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants/url';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
 
 interface IconWithTextProps {
@@ -83,10 +84,8 @@ function InfoLinks() {
 
 function Home() {
   const { t } = useTranslation('daoCreate');
-  const {
-    state: { account },
-    connect,
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const navigate = useNavigate();
   const createDAO = () => {
     navigate(BASE_ROUTES.create);
@@ -120,7 +119,7 @@ function Home() {
           {t(account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
         </Text>
         <Button
-          onClick={account ? createDAO : connect}
+          onClick={account ? createDAO : openConnectModal}
           data-testid={account ? 'home-linkCreate' : 'home-linkConnect'}
           size="lg"
           marginBottom="3.25rem"
