@@ -10,13 +10,11 @@ export class DAOHome extends NavPage {
   }
 
   async visit() {
-    await super.visitPath('/daos/' + this.address);
+    await this.visitPath('/daos/' + this.address);
     return this;
   }
 
-  selectorDAOInfo = this.page.locator('[data-testid=DAOInfo-name]');
-
   async clickFavoriteStar() {
-    await this.page.click('//div[@class="flex items-center"]//button//*[name()="svg"]');
+    await this.clickTestId('DAOInfo-favorite');
   }
 }

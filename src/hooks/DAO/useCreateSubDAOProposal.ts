@@ -10,7 +10,7 @@ import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
   const { multiSendContract, fractalRegistryContract } = useSafeContracts();
-  const { t } = useTranslation('daoCreate');
+  const { t } = useTranslation(['daoCreate', 'proposal', 'proposalMetadata']);
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const [build] = useBuildDAOTx();
@@ -49,8 +49,8 @@ export const useCreateSubDAOProposal = () => {
         submitProposal({
           proposalData,
           pendingToastMessage: t('createSubDAOPendingToastMessage'),
-          successToastMessage: t('createSubDAOSuccessToastMessage'),
-          failedToastMessage: t('createSubDAOFailureToastMessage'),
+          successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+          failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
           successCallback,
         });
       };

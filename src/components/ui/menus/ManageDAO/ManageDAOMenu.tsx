@@ -7,15 +7,20 @@ import {
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../../../routes/constants';
 import { OptionMenu } from '../OptionMenu';
 
-export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
+export function ManageDAOMenu({
+  safeAddress,
+  freezeData,
+  guardContracts,
+}: {
+  safeAddress: string;
+  freezeData?: IGnosisFreezeData;
+  guardContracts: IGnosisVetoContract;
+}) {
   const navigate = useNavigate();
-  const {
-    gnosis: { guardContracts, freezeData },
-  } = useFractal();
   const currentTime = BigNumber.from(useBlockTimestamp());
 
   const options = useMemo(() => {
@@ -25,8 +30,16 @@ export function ManageDAOMenu({ safeAddress }: { safeAddress: string }) {
     };
     if (
       freezeData &&
-      !isWithinFreezeProposalPeriod(freezeData, currentTime) &&
-      !isWithinFreezePeriod(freezeData, currentTime) &&
+      !isWithinFreezeProposalPeriod(
+        freezeData.freezeProposalCreatedTime,
+        freezeData.freezeProposalPeriod,
+        currentTime
+      ) &&
+      !isWithinFreezePeriod(
+        freezeData.freezeProposalCreatedTime,
+        freezeData.freezePeriod,
+        currentTime
+      ) &&
       freezeData.userHasVotes
     ) {
       const freezeOption = {
