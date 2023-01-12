@@ -1,9 +1,7 @@
 {
     "titleFavorites": "Вподобані",
     "emptyFavorites": "Нема вподобайок",
-    "errorInvalidSearch": "Будь ласка, використайте корректну адресу Fractal-y або Gnosis Safe-y, або ENS домен.",
     "errorFailedSearch": "Вибачте, ані Fractal ані Gnosis Safe не знайдено за даною адресою.",
-    "searchDAOPlaceholder": "Введіть адресу DAO або ENS ім'я",
     "titleGovernance": "Система Управління",
     "titleType": "Тип",
     "titleVotingPeriod": "Період голосування",
