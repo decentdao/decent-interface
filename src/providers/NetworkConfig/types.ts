@@ -1,5 +1,6 @@
 export type NetworkConfig = {
   safeBaseURL: string;
+  chainId: number;
   contracts: {
     gnosisSafe: string;
     gnosisSafeFactory: string;
@@ -8,7 +9,7 @@ export type NetworkConfig = {
     gnosisMultisend: string;
     fractalUsulMasterCopy: string;
     fractalModuleMasterCopy: string;
-    fractalNameRegistry: string;
+    fractalRegistry: string;
     votesTokenMasterCopy: string;
     claimingMasterCopy: string;
     gnosisVetoGuardMasterCopy: string;

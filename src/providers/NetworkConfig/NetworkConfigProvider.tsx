@@ -1,10 +1,13 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useWeb3Provider } from '../Web3Data/hooks/useWeb3Provider';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerliConfig } from './networks';
 import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',
+  chainId: 0,
   contracts: {
     gnosisSafe: '',
     gnosisSafeFactory: '',
@@ -13,7 +16,7 @@ export const defaultState = {
     gnosisMultisend: '',
     fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
-    fractalNameRegistry: '',
+    fractalRegistry: '',
     votesTokenMasterCopy: '',
     claimingMasterCopy: '',
     gnosisVetoGuardMasterCopy: '',
@@ -41,14 +44,31 @@ const getNetworkConfig = (chainId: number) => {
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
-  const {
-    state: { chainId },
-  } = useWeb3Provider();
-  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(chainId));
+  const provider = useProvider();
+  const { chain } = useNetwork();
+  const { t } = useTranslation('menu');
+  const { disconnect } = useDisconnect();
+  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider._network.chainId));
 
   useEffect(() => {
-    setConfig(getNetworkConfig(chainId));
-  }, [chainId]);
+    setConfig(getNetworkConfig(provider._network.chainId));
+  }, [provider]);
+
+  useEffect(() => {
+    const supportedChainIds =
+      process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
+
+    if (
+      !!chain &&
+      !supportedChainIds.includes(chain.id) &&
+      !process.env.REACT_APP_TESTING_ENVIROMENT
+    ) {
+      toast(t('toastSwitchChain', { chainNames: supportedChainIds }), {
+        toastId: 'switchChain',
+      });
+      disconnect();
+    }
+  }, [chain, disconnect, t]);
 
   return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
 }

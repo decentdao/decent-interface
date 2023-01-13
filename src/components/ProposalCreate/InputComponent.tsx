@@ -74,13 +74,13 @@ export function TextareaComponent(props: TextareaProps) {
         onChange={onChange}
         value={value}
         disabled={disabled}
-      ></Textarea>
+      />
     </BaseComponent>
   );
 }
 
 export function BigNumberComponent(props: BigNumberProps) {
-  const { value, onChange, decimalPlaces } = props;
+  const { value, disabled, onChange, decimalPlaces } = props;
   return (
     <BaseComponent
       {...props}
@@ -91,7 +91,8 @@ export function BigNumberComponent(props: BigNumberProps) {
         onChange={onChange}
         decimalPlaces={decimalPlaces}
         placeholder="0"
-      ></BigNumberInput>
+        isDisabled={disabled}
+      />
     </BaseComponent>
   );
 }

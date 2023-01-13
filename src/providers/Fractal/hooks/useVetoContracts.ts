@@ -5,9 +5,9 @@ import {
   VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect, useCallback } from 'react';
+import { Dispatch, useEffect, useCallback, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
 import {
   GnosisActions,
@@ -23,9 +23,9 @@ export function useVetoContracts(
   guardAddress?: string,
   modules?: IGnosisModuleData[]
 ) {
-  const {
-    state: { signerOrProvider, account },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const {
     zodiacModuleProxyFactoryContract,
@@ -40,7 +40,6 @@ export function useVetoContracts(
       if (
         !zodiacModuleProxyFactoryContract ||
         !signerOrProvider ||
-        !account ||
         !gnosisVetoGuardMasterCopyContract ||
         !usulVetoGuardMasterCopyContract ||
         !vetoMultisigVotingMasterCopyContract ||
@@ -111,7 +110,6 @@ export function useVetoContracts(
       vetoERC20VotingMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
       signerOrProvider,
-      account,
     ]
   );
 

@@ -2,13 +2,14 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer } from 'ethers';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useProvider, useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData } from '../../../types';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useUsul from './useUsul';
@@ -22,9 +23,10 @@ export default function useSubmitProposal() {
     actions: { refreshSafeData },
     gnosis: { safe },
   } = useFractal();
-  const {
-    state: { signerOrProvider, chainId },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const { chainId } = useNetworkConfg();
   const submitProposal = useCallback(
     async ({
       proposalData,
@@ -163,8 +165,8 @@ export default function useSubmitProposal() {
       safe.address,
       signerOrProvider,
       multiSendContract,
-      chainId,
       refreshSafeData,
+      chainId,
     ]
   );
 

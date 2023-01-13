@@ -7,6 +7,7 @@ import {
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
 import { Link } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
@@ -14,7 +15,6 @@ import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { IGnosisFreezeData, IGnosisVetoContract } from '../../../providers/Fractal/types';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import { DAO_ROUTES } from '../../../routes/constants';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
@@ -43,9 +43,7 @@ export function DAOInfoCard({
       favorites: { favoritesList, toggleFavorite },
     },
   } = useFractal();
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
   const copyToClipboard = useCopyText();
   const { daoRegistryName } = useDAOName({
     address: address !== safeAddress ? safeAddress : undefined,
@@ -166,13 +164,13 @@ export function DAONodeCard(props: IDAOInfoCard) {
   const nodeFreezeData = !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : freezeData;
 
   return (
-    <Box
+    <Flex
       mt="1rem"
       minH="6.75rem"
       bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
-      w="full"
+      flex={1}
       {...border}
     >
       <DAOInfoCard
@@ -180,6 +178,6 @@ export function DAONodeCard(props: IDAOInfoCard) {
         guardContracts={nodeGuardContracts}
         freezeData={nodeFreezeData}
       />
-    </Box>
+    </Flex>
   );
 }

@@ -1,16 +1,16 @@
 import { FractalUsul__factory, FractalUsul } from '@fractal-framework/fractal-contracts';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { GnosisModuleType } from '../../../providers/Fractal/types';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 
 export default function useUsul() {
   const [usulContract, setUsulContract] = useState<FractalUsul>();
   const [votingStrategiesAddresses, setVotingStrategiesAddresses] = useState<string[]>([]);
 
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const {
     gnosis: { modules },

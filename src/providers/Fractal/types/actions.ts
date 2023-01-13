@@ -3,12 +3,12 @@ import SafeServiceClient, {
   AllTransactionsListResponse,
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
-  TransferListResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
 import { IGnosisModuleData, IGnosisFreezeData, IGnosisVetoContract } from '../governance/types';
-import { IFavorites, IAudit } from './state';
+import { AllTransfersListResponse } from '../hooks/useGnosisApiServices';
+import { IFavorites, IAudit, ChildNode } from './state';
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE_SERVICE_CLIENT; payload: SafeServiceClient }
@@ -28,7 +28,7 @@ export type GnosisActions =
     }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.SET_DAO_PARENT; payload: string }
-  | { type: GnosisAction.SET_DAO_CHILDREN; payload: string[] }
+  | { type: GnosisAction.SET_DAO_CHILDREN; payload: ChildNode[] }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
 
@@ -43,7 +43,7 @@ export type TreasuryActions =
     }
   | {
       type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS;
-      payload: TransferListResponse;
+      payload: AllTransfersListResponse;
     }
   | { type: TreasuryAction.RESET };
 

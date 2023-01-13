@@ -2,6 +2,7 @@ import { NetworkConfig } from '../types';
 
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
+  chainId: 1,
   contracts: {
     gnosisSafe: '',
     gnosisSafeFactory: '',
@@ -10,7 +11,7 @@ export const mainnetConfig: NetworkConfig = {
     gnosisMultisend: '',
     fractalUsulMasterCopy: '',
     fractalModuleMasterCopy: '',
-    fractalNameRegistry: '',
+    fractalRegistry: '',
     votesTokenMasterCopy: '',
     claimingMasterCopy: '',
     gnosisVetoGuardMasterCopy: '',

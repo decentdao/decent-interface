@@ -1,5 +1,5 @@
 import FractalModule from '@fractal-framework/fractal-contracts/deployments/goerli/FractalModule.json';
-import FractalNameRegistry from '@fractal-framework/fractal-contracts/deployments/goerli/FractalNameRegistry.json';
+import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/goerli/FractalRegistry.json';
 import FractalUsul from '@fractal-framework/fractal-contracts/deployments/goerli/FractalUsul.json';
 import TokenClaim from '@fractal-framework/fractal-contracts/deployments/goerli/TokenClaim.json';
 import UsulVetoGuard from '@fractal-framework/fractal-contracts/deployments/goerli/UsulVetoGuard.json';
@@ -11,10 +11,11 @@ import { NetworkConfig } from '../types';
 
 export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
+  chainId: 5,
   contracts: {
     fractalUsulMasterCopy: FractalUsul.address,
     fractalModuleMasterCopy: FractalModule.address,
-    fractalNameRegistry: FractalNameRegistry.address,
+    fractalRegistry: FractalRegistry.address,
     votesTokenMasterCopy: VotesToken.address,
     claimingMasterCopy: TokenClaim.address,
     usulVetoGuardMasterCopy: UsulVetoGuard.address,

@@ -7,7 +7,7 @@ import { FavoritesList } from './FavoritesList';
 export function FavoritesMenu() {
   const { t } = useTranslation('dashboard');
   return (
-    <Menu>
+    <Menu isLazy>
       <Fragment>
         <MenuButton
           data-testid="header-favoritesMenuButton"

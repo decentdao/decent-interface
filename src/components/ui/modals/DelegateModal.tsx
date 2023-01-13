@@ -3,12 +3,12 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useAddress from '../../../hooks/utils/useAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { useWeb3Provider } from '../../../providers/Web3Data/hooks/useWeb3Provider';
 import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {
@@ -22,9 +22,7 @@ export function DelegateModal({ close }: { close: Function }) {
       contracts: { tokenContract },
     },
   } = useFractal();
-  const {
-    state: { account },
-  } = useWeb3Provider();
+  const { address: account } = useAccount();
 
   const { isValidAddress } = useAddress(newDelegatee);
   const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);

@@ -1,7 +1,7 @@
 import { FractalModule__factory, FractalUsul__factory } from '@fractal-framework/fractal-contracts';
-import { Dispatch, useEffect, useCallback } from 'react';
+import { Dispatch, useEffect, useCallback, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { useWeb3Provider } from '../../Web3Data/hooks/useWeb3Provider';
 import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 
@@ -9,9 +9,9 @@ export function useGnosisModuleTypes(
   gnosisDispatch: Dispatch<GnosisActions>,
   moduleAddresses?: string[]
 ) {
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const {
     zodiacModuleProxyFactoryContract,
