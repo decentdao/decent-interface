@@ -80,6 +80,8 @@ export function TextareaComponent(props: TextareaProps) {
         disabled={disabled}
         rows={rows}
         placeholder={placeholder}
+        size="md"
+        p="0.5rem 1rem"
       />
     </BaseComponent>
   );
