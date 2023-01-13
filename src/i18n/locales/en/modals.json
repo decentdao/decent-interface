@@ -16,5 +16,9 @@
   "sendAssetsSubmit": "Submit Proposal",
   "sendAssetsPendingToastMessage": "Creating proposal to send assets",
   "sendAssetsSuccessToastMessage": "Send assets proposal successfully created",
-  "sendAssetsFailureToastMessage": "Send assets proposal failed"
+  "sendAssetsFailureToastMessage": "Send assets proposal failed",
+  "confirmUrlTitle": "This link will take you to",
+  "confirmUrlSubtitle": "Do you want to continue?",
+  "modalContinue": "Continue",
+  "modalCancel": "Cancel"
 }

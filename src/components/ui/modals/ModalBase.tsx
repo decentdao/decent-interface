@@ -1,10 +1,20 @@
-import { Divider, Flex, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
-import { CloseX } from '@decent-org/fractal-ui';
+import {
+  Divider,
+  Flex,
+  HStack,
+  Modal,
+  ModalContent,
+  ModalOverlay,
+  Spacer,
+  Text,
+} from '@chakra-ui/react';
+import { Alert, CloseX } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 interface ModuleBaseProps {
   title: string;
+  warn?: boolean;
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
@@ -17,7 +27,7 @@ export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size="xl"
+      size="md"
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
@@ -28,12 +38,20 @@ export function ModalBase(props: ModuleBaseProps) {
         shadow="menu-gold"
       >
         <Flex marginBottom="1rem">
-          <Text
-            color="grayscale.100"
-            textStyle="text-lg-mono-medium"
-          >
-            {props.title}
-          </Text>
+          <HStack>
+            {props.warn && (
+              <Alert
+                w="1.25rem"
+                h="1.25rem"
+              />
+            )}
+            <Text
+              color="grayscale.100"
+              textStyle="text-lg-mono-medium"
+            >
+              {props.title}
+            </Text>
+          </HStack>
           <Spacer />
           <CloseX onClick={props.onClose} />
         </Flex>
