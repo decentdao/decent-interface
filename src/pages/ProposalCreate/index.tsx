@@ -57,16 +57,12 @@ function ProposalCreate() {
   }>({ title: '', description: '', documentationUrl: '' });
 
   useEffect(() => {
-    if (!usulContract) {
-      setIsUsul(false);
-    } else {
-      setIsUsul(true);
-    }
+    setIsUsul(!!usulContract);
   }, [usulContract]);
 
   useEffect(() => {
     if (isUsul === undefined) return;
-    setShowTransactionsAndSubmit(!isUsul || inputtedMetadata ? true : false);
+    setShowTransactionsAndSubmit(!isUsul || inputtedMetadata);
   }, [inputtedMetadata, isUsul]);
 
   /**
