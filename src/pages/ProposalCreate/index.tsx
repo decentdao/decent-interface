@@ -1,25 +1,16 @@
-import {
-  Button,
-  Text,
-  Grid,
-  GridItem,
-  VStack,
-  Divider,
-  Alert,
-  AlertTitle,
-  Box,
-  Flex,
-} from '@chakra-ui/react';
-import { CloseX, Info } from '@decent-org/fractal-ui';
+import { Button, Text, Grid, GridItem, VStack, Box, Flex } from '@chakra-ui/react';
+import { CloseX } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
-import Transactions from '../../components/ProposalCreate/Transactions';
+import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
+import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
 import PageHeader from '../../components/ui/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import useUsul from '../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
@@ -46,6 +37,8 @@ function ProposalCreate() {
     gnosis: { safe, daoName },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
+  const { usulContract } = useUsul();
+  const [isUsul, setIsUsul] = useState<boolean>();
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -55,6 +48,22 @@ function ProposalCreate() {
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const testPropose = useProposeStuff(setTransactions);
+  const [showTransactionsAndSubmit, setShowTransactionsAndSubmit] = useState<boolean>();
+  const [inputtedMetadata, setInputtedMetadata] = useState<boolean>(false);
+  const [metadata, setMetadata] = useState<{
+    title: string;
+    description: string;
+    documentationUrl: string;
+  }>({ title: '', description: '', documentationUrl: '' });
+
+  useEffect(() => {
+    setIsUsul(!!usulContract);
+  }, [usulContract]);
+
+  useEffect(() => {
+    if (isUsul === undefined) return;
+    setShowTransactionsAndSubmit(!isUsul || inputtedMetadata);
+  }, [inputtedMetadata, isUsul]);
 
   /**
    * adds new transaction form
@@ -94,12 +103,18 @@ function ProposalCreate() {
       targets: transactions.map(transaction => transaction.targetAddress),
       values: transactions.map(transaction => transaction.ethValue.bigNumberValue),
       calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
-      title: '',
-      description: proposalDescription,
-      documentationUrl: '',
+      title: metadata.title,
+      description: metadata.description,
+      documentationUrl: metadata.documentationUrl,
     };
     setProposalData(proposal);
-  }, [transactions, proposalDescription]);
+  }, [
+    transactions,
+    proposalDescription,
+    metadata.title,
+    metadata.description,
+    metadata.documentationUrl,
+  ]);
 
   const isValidProposal = useMemo(() => {
     // if proposalData doesn't exist
@@ -154,9 +169,23 @@ function ProposalCreate() {
         gap={4}
         templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
         gridTemplateRows={'5.1em 1fr'}
-        templateAreas={{ base: templateAreaSingleCol, lg: templateAreaTwoCol }}
+        templateAreas={{
+          base: templateAreaSingleCol,
+          lg: templateAreaTwoCol,
+        }}
       >
         <GridItem area="header">
+          {inputtedMetadata && (
+            <Text
+              textStyle="text-md-mono-regular"
+              color="gold.500"
+              cursor="pointer"
+              onClick={() => setInputtedMetadata(false)}
+              mb={4}
+            >
+              {`< ${t('proposalBack')}`}
+            </Text>
+          )}
           <VStack align="left">
             <Text
               onClick={notProd() ? testPropose : undefined}
@@ -176,59 +205,32 @@ function ProposalCreate() {
               p="1rem"
               bg={BACKGROUND_SEMI_TRANSPARENT}
             >
-              <form onSubmit={e => e.preventDefault()}>
-                <Transactions
-                  transactions={transactions}
-                  setTransactions={setTransactions}
-                  removeTransaction={removeTransaction}
-                  pending={pendingCreateTx}
-                />
-              </form>
-              <VStack
-                align="left"
-                spacing={6}
-                pt={2}
-              >
-                <Button
-                  variant="text"
-                  onClick={addTransaction}
-                  disabled={pendingCreateTx}
-                  w="fit-content"
-                  pl={0}
+              {inputtedMetadata && metadata.title && (
+                <Text
+                  textStyle="text-xl-mono-medium"
+                  mb={4}
                 >
-                  {t('labelAddTransaction')}
-                </Button>
-                <Alert
-                  status="info"
-                  w="fit-content"
-                >
-                  <Info boxSize="24px" />
-                  <AlertTitle>
-                    <Text
-                      textStyle="text-lg-mono-medium"
-                      whiteSpace="pre-wrap"
-                    >
-                      {t('transactionExecutionAlertMessage')}
-                    </Text>
-                  </AlertTitle>
-                </Alert>
-                <Divider color="chocolate.700" />
-                <Button
-                  w="100%"
-                  onClick={() =>
-                    submitProposal({
-                      proposalData,
-                      pendingToastMessage: t('proposalCreatePendingToastMessage'),
-                      successToastMessage: t('proposalCreateSuccessToastMessage'),
-                      failedToastMessage: t('proposalCreateFailureToastMessage'),
-                      successCallback,
-                    })
-                  }
-                  disabled={isCreateDisabled}
-                >
-                  {t('createProposal')}
-                </Button>
-              </VStack>
+                  {metadata.title}
+                </Text>
+              )}
+              <UsulMetadata
+                show={!showTransactionsAndSubmit}
+                setInputtedMetadata={setInputtedMetadata}
+                metadata={metadata}
+                setMetadata={setMetadata}
+              />
+              <TransactionsAndSubmit
+                show={showTransactionsAndSubmit}
+                addTransaction={addTransaction}
+                pendingCreateTx={pendingCreateTx}
+                submitProposal={submitProposal}
+                proposalData={proposalData}
+                successCallback={successCallback}
+                isCreateDisabled={isCreateDisabled}
+                transactions={transactions}
+                setTransactions={setTransactions}
+                removeTransaction={removeTransaction}
+              />
             </Box>
           </Flex>
         </GridItem>

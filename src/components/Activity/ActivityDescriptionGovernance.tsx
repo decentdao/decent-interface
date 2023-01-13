@@ -6,6 +6,7 @@ import {
   GovernanceActivity,
   MultisigProposal,
   TreasuryActivity,
+  UsulProposal,
 } from '../../providers/Fractal/types';
 import { createProposalNumberSubstring } from '../../utils/string';
 import { ActivityAddress } from './ActivityAddress';
@@ -75,6 +76,17 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
     ns: 'dashboard',
     count: governanceActivity.targets.length,
   });
+
+  const usulProposalMetaDataTitle = (activity as UsulProposal).metaData?.title;
+
+  if (!!usulProposalMetaDataTitle) {
+    return (
+      <>
+        <ActivityProposalNumber proposalNumber={governanceActivity.proposalNumber} />
+        <Text>{usulProposalMetaDataTitle}</Text>
+      </>
+    );
+  }
 
   return (
     <>

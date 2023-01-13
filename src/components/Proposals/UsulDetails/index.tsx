@@ -1,4 +1,4 @@
-import { GridItem, Box } from '@chakra-ui/react';
+import { GridItem } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
@@ -6,7 +6,6 @@ import { ProposalAction } from '../../../components/Proposals/ProposalActions/Pr
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
 import ContentBox from '../../../components/ui/ContentBox';
-import ProposalCreatedBy from '../../../components/ui/proposal/ProposalCreatedBy';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useTokenData from '../../../providers/Fractal/governance/hooks/useGovernanceTokenData';
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
@@ -64,9 +63,6 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
       <GridItem colSpan={2}>
         <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
           <ProposalInfo proposal={proposal} />
-          <Box mt={4}>
-            <ProposalCreatedBy proposalProposer={proposal.proposer} />
-          </Box>
         </ContentBox>
         <ProposalVotes proposal={proposal} />
       </GridItem>

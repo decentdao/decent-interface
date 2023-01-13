@@ -43,7 +43,7 @@ export const useCreateSubDAOProposal = () => {
             ]),
           ],
           title: 'Create SubDAO',
-          description: 'to:' + multiSendContract.address + '_ txs:' + safeTx,
+          description: '',
           documentationUrl: '',
         };
         submitProposal({
