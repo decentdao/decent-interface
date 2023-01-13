@@ -180,7 +180,7 @@ function ProposalCreate() {
               onClick={() => setInputtedMetadata(false)}
               mb={4}
             >
-              {'< Back'}
+              {`< ${t('proposalBack')}`}
             </Text>
           )}
           <VStack align="left">

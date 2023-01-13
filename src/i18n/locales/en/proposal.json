@@ -64,6 +64,7 @@
     "proposalAdditionalResources": "Additional Resources",
     "proposalAdditionalResourcesHelper": "A link to any discussion or formal documentation",
     "proposalAdditionalResourcesPlaceholder": "https://",
+    "proposalBack": "Back",
     "votesTitle": "Votes",
     "signTitle": "Sign Transaction",
     "queueTitle": "Queue Transaction",
