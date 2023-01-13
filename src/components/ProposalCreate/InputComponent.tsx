@@ -15,6 +15,7 @@ interface BaseProps {
 
 interface InputProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  placeholder?: string;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {
@@ -53,13 +54,14 @@ function BaseComponent(props: BaseProps) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { value, disabled, onChange } = props;
+  const { value, disabled, onChange, placeholder } = props;
   return (
     <BaseComponent {...props}>
       <Input
         value={value}
         onChange={onChange}
         disabled={disabled}
+        placeholder={placeholder}
       />
     </BaseComponent>
   );

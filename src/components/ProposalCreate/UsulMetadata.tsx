@@ -66,6 +66,7 @@ function UsulMetadata({
           value={metadata.title}
           onChange={e => updateTitle(e.target.value)}
           disabled={false}
+          placeholder={t('proposalTitlePlaceholder')}
         />
         <InputComponent
           label={t('proposalDescription')}
@@ -74,6 +75,7 @@ function UsulMetadata({
           value={metadata.description}
           onChange={e => updateDescription(e.target.value)}
           disabled={false}
+          placeholder={t('proposalDescriptionPlaceholder')}
         />
         <InputComponent
           label={t('proposalAdditionalResources')}
@@ -82,6 +84,7 @@ function UsulMetadata({
           value={metadata.documentationUrl}
           onChange={e => updateDocumentationUrl(e.target.value)}
           disabled={false}
+          placeholder={t('proposalAdditionalResourcesPlaceholder')}
         />
       </VStack>
       <Divider
