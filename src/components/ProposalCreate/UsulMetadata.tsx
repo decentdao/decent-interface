@@ -1,7 +1,7 @@
 import { Button, Divider, VStack } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { InputComponent } from './InputComponent';
+import { InputComponent, TextareaComponent } from './InputComponent';
 
 function UsulMetadata({
   show,
@@ -68,14 +68,13 @@ function UsulMetadata({
           disabled={false}
           placeholder={t('proposalTitlePlaceholder')}
         />
-        <InputComponent
+        <TextareaComponent
           label={t('proposalDescription')}
           helper={t('proposalDescriptionHelper')}
           isRequired={false}
           value={metadata.description}
           onChange={e => updateDescription(e.target.value)}
           disabled={false}
-          placeholder={t('proposalDescriptionPlaceholder')}
         />
         <InputComponent
           label={t('proposalAdditionalResources')}
