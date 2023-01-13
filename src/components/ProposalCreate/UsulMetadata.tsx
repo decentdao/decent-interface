@@ -3,12 +3,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputComponent, TextareaComponent } from './InputComponent';
 
-function UsulMetadata({
-  show,
-  setInputtedMetadata,
-  metadata,
-  setMetadata,
-}: {
+export interface UsulMetadataProps {
   show: boolean;
   setInputtedMetadata: Dispatch<SetStateAction<boolean>>;
   metadata: {
@@ -23,23 +18,21 @@ function UsulMetadata({
       documentationUrl: string;
     }>
   >;
-}) {
+}
+
+function UsulMetadata(props: UsulMetadataProps) {
+  const { show, setInputtedMetadata, metadata, setMetadata } = props;
   const { t } = useTranslation(['proposal', 'common']);
   const [urlErrorMessage, setUrlErrorMessage] = useState<string>();
 
   const isValidUrl = (url: string) => {
     if (!url) return true;
 
-    let pattern = new RegExp(
-      '^(https?:\\/\\/)?' + // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-        '(\\#[-a-z\\d_]*)?$',
-      'i'
-    ); // fragment locator
-    return !!pattern.test(url);
+    try {
+      return Boolean(new URL(url));
+    } catch (e) {
+      return false;
+    }
   };
 
   const updateTitle = (title: string) => {
@@ -92,6 +85,8 @@ function UsulMetadata({
           value={metadata.description}
           onChange={e => updateDescription(e.target.value)}
           disabled={false}
+          placeholder={t('proposalDescriptionPlaceholder')}
+          rows={3}
         />
         <InputComponent
           label={t('proposalAdditionalResources')}

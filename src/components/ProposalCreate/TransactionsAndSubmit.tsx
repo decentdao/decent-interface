@@ -6,18 +6,7 @@ import Transactions from '../../components/ProposalCreate/Transactions';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
 
-function TransactionsAndSubmit({
-  show,
-  addTransaction,
-  pendingCreateTx,
-  submitProposal,
-  proposalData,
-  successCallback,
-  isCreateDisabled,
-  transactions,
-  setTransactions,
-  removeTransaction,
-}: {
+export interface TransactionsAndSubmitProps {
   show: boolean | undefined;
   addTransaction: () => void;
   pendingCreateTx: boolean;
@@ -40,7 +29,21 @@ function TransactionsAndSubmit({
   transactions: TransactionData[];
   setTransactions: Dispatch<SetStateAction<TransactionData[]>>;
   removeTransaction: (transactionNumber: number) => void;
-}) {
+}
+
+function TransactionsAndSubmit(props: TransactionsAndSubmitProps) {
+  const {
+    show,
+    addTransaction,
+    pendingCreateTx,
+    submitProposal,
+    proposalData,
+    successCallback,
+    isCreateDisabled,
+    transactions,
+    setTransactions,
+    removeTransaction,
+  } = props;
   const { t } = useTranslation(['proposal', 'common']);
 
   if (!show) return null;

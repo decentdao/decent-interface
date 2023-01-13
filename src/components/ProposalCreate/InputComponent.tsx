@@ -20,6 +20,8 @@ interface InputProps extends Omit<BaseProps, 'children'> {
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
+  placeholder?: string;
+  rows?: number;
 }
 interface BigNumberProps
   extends Omit<BaseProps, 'children' | 'value'>,
@@ -68,7 +70,7 @@ export function InputComponent(props: InputProps) {
 }
 
 export function TextareaComponent(props: TextareaProps) {
-  const { value, disabled, onChange } = props;
+  const { value, disabled, onChange, rows, placeholder } = props;
   return (
     <BaseComponent {...props}>
       <Textarea
@@ -76,6 +78,10 @@ export function TextareaComponent(props: TextareaProps) {
         onChange={onChange}
         value={value}
         disabled={disabled}
+        rows={rows}
+        placeholder={placeholder}
+        size="base"
+        p="0.5rem 1rem"
       />
     </BaseComponent>
   );
