@@ -9,7 +9,7 @@ import {
   IGnosisFreezeData,
   IGnosisVetoContract,
 } from '../governance/types';
-import { GnosisActions, TreasuryActions } from './actions';
+import { TreasuryActions, GnosisActions } from './actions';
 import { ITreasury } from './treasury';
 
 export interface IFractalContext {
