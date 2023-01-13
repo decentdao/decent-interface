@@ -1,5 +1,5 @@
 import { Button, Divider, VStack } from '@chakra-ui/react';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputComponent, TextareaComponent } from './InputComponent';
 
@@ -25,6 +25,22 @@ function UsulMetadata({
   >;
 }) {
   const { t } = useTranslation(['proposal', 'common']);
+  const [urlErrorMessage, setUrlErrorMessage] = useState<string>();
+
+  const isValidUrl = (url: string) => {
+    if (!url) return true;
+
+    let pattern = new RegExp(
+      '^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$',
+      'i'
+    ); // fragment locator
+    return !!pattern.test(url);
+  };
 
   const updateTitle = (title: string) => {
     const metadataCopy = {
@@ -43,6 +59,7 @@ function UsulMetadata({
   };
 
   const updateDocumentationUrl = (documentationUrl: string) => {
+    setUrlErrorMessage(isValidUrl(documentationUrl) ? undefined : 'Invalid URL');
     const metadataCopy = {
       ...metadata,
       documentationUrl,
@@ -84,6 +101,7 @@ function UsulMetadata({
           onChange={e => updateDocumentationUrl(e.target.value)}
           disabled={false}
           placeholder={t('proposalAdditionalResourcesPlaceholder')}
+          errorMessage={urlErrorMessage}
         />
       </VStack>
       <Divider
@@ -94,7 +112,7 @@ function UsulMetadata({
       <Button
         w="100%"
         onClick={() => setInputtedMetadata(true)}
-        disabled={false}
+        disabled={!!urlErrorMessage}
       >
         Next
       </Button>
