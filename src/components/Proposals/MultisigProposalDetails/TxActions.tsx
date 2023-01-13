@@ -11,10 +11,10 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
+import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useTransaction } from '../../../providers/Web3Data/transactions';
 import ContentBox from '../../ui/ContentBox';
 
 export function TxActions({

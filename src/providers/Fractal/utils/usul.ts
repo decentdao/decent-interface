@@ -10,7 +10,6 @@ import {
 import { BigNumber, Signer } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { Providers } from '../../Web3Data/types';
 import { strategyTxProposalStates } from '../governance/constants';
 import {
   Parameter,
@@ -24,6 +23,7 @@ import {
   UsulProposal,
   VOTE_CHOICES,
 } from '../types';
+import { Providers } from '../types/ethers';
 
 export const getTxProposalState = async (
   usulContract: FractalUsul,

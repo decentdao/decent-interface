@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useTransaction } from '../../Web3Data/transactions';
+import { useTransaction } from '../../../hooks/utils/useTransaction';
 
 import { DeployDAOSuccessCallback, GnosisDAO, GovernanceTypes } from '../types';
 
