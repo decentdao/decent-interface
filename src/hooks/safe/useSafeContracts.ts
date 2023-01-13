@@ -1,8 +1,8 @@
 import {
   FractalModule,
   FractalModule__factory,
-  FractalNameRegistry,
-  FractalNameRegistry__factory,
+  FractalRegistry,
+  FractalRegistry__factory,
   UsulVetoGuard,
   UsulVetoGuard__factory,
   VetoERC20Voting,
@@ -24,10 +24,10 @@ import {
   FractalUsul,
   FractalUsul__factory,
 } from '@fractal-framework/fractal-contracts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import { MultiSend, MultiSend__factory } from '../../assets/typechain-types/usul';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 
 export default function useSafeContracts() {
   const [multiSendContract, setMultisendContract] = useState<MultiSend>();
@@ -41,8 +41,7 @@ export default function useSafeContracts() {
     useState<OZLinearVoting>(); // 1:1 Token Voting contract
   const [fractalModuleMasterCopyContract, setFractalModuleMasterCopyContract] =
     useState<FractalModule>();
-  const [fractalNameRegistryContract, setFractalNameRegistryContract] =
-    useState<FractalNameRegistry>();
+  const [fractalRegistryContract, setFractalRegistryContract] = useState<FractalRegistry>();
   const [gnosisVetoGuardMasterCopyContract, setGnosisVetoGuardMasterCopyContract] =
     useState<VetoGuard>();
   const [usulVetoGuardMasterCopyContract, setUsulVetoGuardMasterCopyContract] =
@@ -52,9 +51,10 @@ export default function useSafeContracts() {
   const [vetoERC20VotingMasterCopyContract, setVetoERC20VotingMasterCopyContract] =
     useState<VetoERC20Voting>();
   const [votesTokenMasterCopyContract, setVotesTokenMasterCopyContract] = useState<VotesToken>();
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const {
     contracts: {
@@ -65,7 +65,7 @@ export default function useSafeContracts() {
       gnosisMultisend,
       fractalUsulMasterCopy,
       fractalModuleMasterCopy,
-      fractalNameRegistry,
+      fractalRegistry,
       gnosisVetoGuardMasterCopy,
       usulVetoGuardMasterCopy,
       vetoMultisigVotingMasterCopy,
@@ -82,7 +82,7 @@ export default function useSafeContracts() {
       setLinearVotingMasterCopyContract(undefined);
       setGnosisSafeSingletonContract(undefined);
       setFractalModuleMasterCopyContract(undefined);
-      setFractalNameRegistryContract(undefined);
+      setFractalRegistryContract(undefined);
       setGnosisVetoGuardMasterCopyContract(undefined);
       setUsulVetoGuardMasterCopyContract(undefined);
       setVetoMultisigVotingMasterCopyContract(undefined);
@@ -112,9 +112,7 @@ export default function useSafeContracts() {
       FractalModule__factory.connect(fractalModuleMasterCopy, signerOrProvider)
     );
 
-    setFractalNameRegistryContract(
-      FractalNameRegistry__factory.connect(fractalNameRegistry, signerOrProvider)
-    );
+    setFractalRegistryContract(FractalRegistry__factory.connect(fractalRegistry, signerOrProvider));
     setGnosisVetoGuardMasterCopyContract(
       VetoGuard__factory.connect(gnosisVetoGuardMasterCopy, signerOrProvider)
     );
@@ -139,7 +137,7 @@ export default function useSafeContracts() {
     signerOrProvider,
     gnosisMultisend,
     fractalModuleMasterCopy,
-    fractalNameRegistry,
+    fractalRegistry,
     gnosisVetoGuardMasterCopy,
     usulVetoGuardMasterCopy,
     vetoMultisigVotingMasterCopy,
@@ -155,7 +153,7 @@ export default function useSafeContracts() {
     linearVotingMasterCopyContract,
     multiSendContract,
     fractalModuleMasterCopyContract,
-    fractalNameRegistryContract,
+    fractalRegistryContract,
     gnosisVetoGuardMasterCopyContract,
     usulVetoGuardMasterCopyContract,
     vetoMultisigVotingMasterCopyContract,

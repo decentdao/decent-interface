@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
-import { useCallback, Dispatch } from 'react';
-import { useWeb3Provider } from '../../../Web3Data/hooks/useWeb3Provider';
+import { useCallback, Dispatch, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import { getTxProposalState } from '../../utils';
 import { GovernanceAction, GovernanceActions } from '../actions';
 import { UsulProposal, IGovernance } from '../types';
@@ -17,9 +17,9 @@ export default function useUpdateProposalState({
   },
   governanceDispatch,
 }: IUseUpdateProposalState) {
-  const {
-    state: { signerOrProvider },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const updateProposalState = useCallback(
     async (proposalNumber: BigNumber) => {

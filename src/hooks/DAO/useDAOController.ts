@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useProvider, useSigner, useAccount } from 'wagmi';
 import { GnosisAction, TreasuryAction } from '../../providers/Fractal/constants/actions';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { useWeb3Provider } from '../../providers/Web3Data/hooks/useWeb3Provider';
 import { BASE_ROUTES } from '../../routes/constants';
 import { GovernanceAction } from './../../providers/Fractal/governance/actions';
 import { useSearchDao } from './useSearchDao';
@@ -14,9 +14,11 @@ export default function useDAOController() {
     dispatches: { gnosisDispatch, governanceDispatch, treasuryDispatch },
   } = useFractal();
   const params = useParams();
-  const {
-    state: { signerOrProvider, account, isProviderLoading },
-  } = useWeb3Provider();
+  const provider = useProvider();
+  const { data: signer, isLoading: isProviderLoading } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+
+  const { address: account } = useAccount();
 
   const { errorMessage, address, isLoading, setSearchString } = useSearchDao();
   const navigate = useNavigate();
