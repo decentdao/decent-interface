@@ -92,6 +92,7 @@ function UsulMetadata({
           value={metadata.description}
           onChange={e => updateDescription(e.target.value)}
           disabled={false}
+          rows={3}
         />
         <InputComponent
           label={t('proposalAdditionalResources')}
