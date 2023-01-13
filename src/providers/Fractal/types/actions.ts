@@ -3,11 +3,11 @@ import SafeServiceClient, {
   AllTransactionsListResponse,
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
-  TransferListResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
 import { IGnosisModuleData, IGnosisFreezeData, IGnosisVetoContract } from '../governance/types';
+import { AllTransfersListResponse } from '../hooks/useGnosisApiServices';
 import { IFavorites, IAudit, ChildNode } from './state';
 
 export type GnosisActions =
@@ -43,7 +43,7 @@ export type TreasuryActions =
     }
   | {
       type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS;
-      payload: TransferListResponse;
+      payload: AllTransfersListResponse;
     }
   | { type: TreasuryAction.RESET };
 
