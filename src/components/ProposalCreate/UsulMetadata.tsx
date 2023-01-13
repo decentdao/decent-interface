@@ -3,12 +3,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputComponent, TextareaComponent } from './InputComponent';
 
-function UsulMetadata({
-  show,
-  setInputtedMetadata,
-  metadata,
-  setMetadata,
-}: {
+export interface UsulMetadataProps {
   show: boolean;
   setInputtedMetadata: Dispatch<SetStateAction<boolean>>;
   metadata: {
@@ -23,7 +18,10 @@ function UsulMetadata({
       documentationUrl: string;
     }>
   >;
-}) {
+}
+
+function UsulMetadata(props: UsulMetadataProps) {
+  const { show, setInputtedMetadata, metadata, setMetadata } = props;
   const { t } = useTranslation(['proposal', 'common']);
   const [urlErrorMessage, setUrlErrorMessage] = useState<string>();
 
