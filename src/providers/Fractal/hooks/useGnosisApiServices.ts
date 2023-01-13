@@ -38,6 +38,7 @@ export function useGnosisApiServices(
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const { chainId } = useNetworkConfg();
 
   const { safeBaseURL } = useNetworkConfg();
 
