@@ -92,6 +92,7 @@ function UsulMetadata({
           value={metadata.description}
           onChange={e => updateDescription(e.target.value)}
           disabled={false}
+          placeholder={t('proposalDescriptionPlaceholder')}
           rows={3}
         />
         <InputComponent
