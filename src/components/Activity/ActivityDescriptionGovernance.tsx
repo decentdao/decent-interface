@@ -80,7 +80,12 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
   const usulProposalMetaDataTitle = (activity as UsulProposal).metaData?.title;
 
   if (!!usulProposalMetaDataTitle) {
-    return <Text>{usulProposalMetaDataTitle}</Text>;
+    return (
+      <>
+        <ActivityProposalNumber proposalNumber={governanceActivity.proposalNumber} />
+        <Text>{usulProposalMetaDataTitle}</Text>
+      </>
+    );
   }
 
   return (
