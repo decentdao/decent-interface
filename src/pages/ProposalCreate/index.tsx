@@ -169,7 +169,10 @@ function ProposalCreate() {
         gap={4}
         templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
         gridTemplateRows={'5.1em 1fr'}
-        templateAreas={{ base: templateAreaSingleCol, lg: templateAreaTwoCol }}
+        templateAreas={{
+          base: templateAreaSingleCol,
+          lg: templateAreaTwoCol,
+        }}
       >
         <GridItem area="header">
           {inputtedMetadata && (
@@ -202,6 +205,14 @@ function ProposalCreate() {
               p="1rem"
               bg={BACKGROUND_SEMI_TRANSPARENT}
             >
+              {inputtedMetadata && metadata.title && (
+                <Text
+                  textStyle="text-xl-mono-medium"
+                  mb={4}
+                >
+                  {metadata.title}
+                </Text>
+              )}
               <UsulMetadata
                 show={!showTransactionsAndSubmit}
                 setInputtedMetadata={setInputtedMetadata}
