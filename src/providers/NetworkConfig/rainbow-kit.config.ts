@@ -1,7 +1,7 @@
 import '@rainbow-me/rainbowkit/styles.css';
 
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
-import { injectedWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import { metaMaskWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createClient, createStorage, goerli } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -21,7 +21,7 @@ export const { chains, provider } = configureChains(chainsArr, [
   publicProvider({ priority: 2 }),
 ]);
 
-const defaultWallets = [injectedWallet({ chains }), walletConnectWallet({ chains })];
+const defaultWallets = [metaMaskWallet({ chains }), walletConnectWallet({ chains })];
 // allows connection to localhost only in development mode.
 if (process.env.REACT_APP_TESTING_ENVIROMENT) {
   defaultWallets.unshift(testWallet({ chains }));
