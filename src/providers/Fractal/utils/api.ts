@@ -1,4 +1,29 @@
-import { getChainMetadataById } from '../../Web3Data/chains';
+type ChainMetadata = {
+  name: string;
+  id: number;
+};
+
+/* We might use something https://github.com/ethereum-lists/chains
+ * if number of supported chains would grew up, this should remain sync with SUPPORTED_CHAIN_IDS of both dev site and prod
+ */
+const CHAINS: ChainMetadata[] = [
+  {
+    name: 'Mainnet',
+    id: 1,
+  },
+  {
+    name: 'Goerli',
+    id: 5,
+  },
+  {
+    name: 'Local Dev Chain',
+    id: Number(process.env.REACT_APP_LOCAL_CHAIN_ID) || 0,
+  },
+];
+
+export const getChainMetadataById = (id: number): ChainMetadata | undefined => {
+  return CHAINS.find(chain => chain.id === id);
+};
 
 /**
  * builds url for gnosis api requests

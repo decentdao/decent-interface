@@ -1,12 +1,12 @@
 import {
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
-  TransferListResponse,
   TransferResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { EthAddress } from '../../../types';
 import { ContractEvent } from '../../../types/contract';
+import { AllTransfersListResponse } from '../hooks/useGnosisApiServices';
 
 export enum TokenEventType {
   DEPOSIT = 'DEPOSIT',
@@ -47,7 +47,7 @@ export interface ITreasury {
   transactions: Transaction[];
   assetsFungible: SafeBalanceUsdResponse[];
   assetsNonFungible: SafeCollectibleResponse[];
-  transfers?: TransferListResponse;
+  transfers?: AllTransfersListResponse;
   treasuryIsLoading: boolean;
 }
 

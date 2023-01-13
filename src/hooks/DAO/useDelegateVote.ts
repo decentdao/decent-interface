@@ -1,7 +1,7 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTransaction } from '../../providers/Web3Data/transactions';
+import { useTransaction } from '../utils/useTransaction';
 
 const useDelegateVote = ({
   delegatee,

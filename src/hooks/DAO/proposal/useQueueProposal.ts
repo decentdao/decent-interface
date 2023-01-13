@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
-import { useTransaction } from '../../../providers/Web3Data/transactions';
+import { useTransaction } from '../../utils/useTransaction';
 import useUsul from './useUsul';
 
 export default function useQueueProposal() {
