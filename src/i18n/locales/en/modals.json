@@ -19,5 +19,6 @@
   "sendAssetsFailureToastMessage": "Send assets proposal failed",
   "confirmUrlTitle": "This link will take you to",
   "confirmUrlSubtitle": "Do you want to continue?",
-  "confirmUrlSubmit": "Continue"
+  "modalContinue": "Continue",
+  "modalCancel": "Cancel"
 }

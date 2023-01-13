@@ -27,7 +27,7 @@ export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size="xl"
+      size="md"
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
@@ -39,7 +39,12 @@ export function ModalBase(props: ModuleBaseProps) {
       >
         <Flex marginBottom="1rem">
           <HStack>
-            {props.warn && <Alert />}
+            {props.warn && (
+              <Alert
+                w="1.25rem"
+                h="1.25rem"
+              />
+            )}
             <Text
               color="grayscale.100"
               textStyle="text-lg-mono-medium"

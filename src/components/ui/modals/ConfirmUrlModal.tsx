@@ -1,4 +1,4 @@
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 
 export function ConfirmUrlModal({ url, close }: { url: string; close: () => void }) {
@@ -6,25 +6,36 @@ export function ConfirmUrlModal({ url, close }: { url: string; close: () => void
   return (
     <Box>
       <Text
-        paddingBottom="1rem"
+        marginBottom="1rem"
         color="chocolate.200"
       >
         {url}
       </Text>
-      <Text>{t('confirmUrlSubtitle')}</Text>
+      <Divider
+        color="chocolate.700"
+        marginBottom="1rem"
+      />
+      <Text marginBottom="1rem">{t('confirmUrlSubtitle')}</Text>
       <a
         href={url}
         target="_blank"
         rel="noreferrer"
       >
         <Button
-          marginTop="2rem"
           width="100%"
           onClick={close}
         >
-          {t('confirmUrlSubmit')}
+          {t('modalContinue')}
         </Button>
       </a>
+      <Button
+        marginTop="0.5rem"
+        width="100%"
+        variant="tertiary"
+        onClick={close}
+      >
+        {t('modalCancel')}
+      </Button>
     </Box>
   );
 }
