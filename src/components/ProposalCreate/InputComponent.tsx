@@ -70,7 +70,7 @@ export function InputComponent(props: InputProps) {
 }
 
 export function TextareaComponent(props: TextareaProps) {
-  const { value, disabled, onChange } = props;
+  const { value, disabled, onChange, rows, placeholder } = props;
   return (
     <BaseComponent {...props}>
       <Textarea
@@ -78,8 +78,8 @@ export function TextareaComponent(props: TextareaProps) {
         onChange={onChange}
         value={value}
         disabled={disabled}
-        rows={props.rows}
-        placeholder={props.placeholder}
+        rows={rows}
+        placeholder={placeholder}
       />
     </BaseComponent>
   );
