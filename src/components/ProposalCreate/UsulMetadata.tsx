@@ -1,7 +1,6 @@
-import { Button, VStack } from '@chakra-ui/react';
+import { Button, Divider, VStack } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import ContentBox from '../ui/ContentBox';
 import { InputComponent } from './InputComponent';
 
 function UsulMetadata({
@@ -54,11 +53,11 @@ function UsulMetadata({
   if (!show) return null;
 
   return (
-    <ContentBox>
+    <>
       <VStack
         align="left"
         spacing={4}
-        mt={6}
+        mt={4}
       >
         <InputComponent
           label={t('proposalTitle')}
@@ -85,15 +84,19 @@ function UsulMetadata({
           disabled={false}
         />
       </VStack>
+      <Divider
+        color="chocolate.700"
+        mt={8}
+        mb={6}
+      />
       <Button
         w="100%"
         onClick={() => setInputtedMetadata(true)}
         disabled={false}
-        mt={8}
       >
         Next
       </Button>
-    </ContentBox>
+    </>
   );
 }
 
