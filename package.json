@@ -40,7 +40,7 @@
     "stream-browserify": "^3.0.0",
     "wagmi": "^0.9.6",
     "web-vitals": "^2.1.4"
-    },
+  },
   "scripts": {
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
