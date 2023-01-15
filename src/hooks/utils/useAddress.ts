@@ -1,7 +1,6 @@
-import { constants, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
-import { logError } from '../../helpers/errorLogging';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useProvider();
@@ -12,21 +11,7 @@ const useAddress = (addressInput: string | undefined) => {
 
   useEffect(() => {
     setIsAddressLoading(true);
-    if (addressInput === undefined) {
-      setAddress(addressInput);
-      setIsValidAddress(false);
-      setIsAddressLoading(false);
-      return;
-    }
-
-    if (!provider || addressInput.trim() === '') {
-      setAddress(addressInput);
-      setIsValidAddress(undefined);
-      setIsAddressLoading(undefined);
-      return;
-    }
-
-    if (addressInput === constants.AddressZero) {
+    if (!addressInput || addressInput.trim() === '') {
       setAddress(addressInput);
       setIsValidAddress(false);
       setIsAddressLoading(false);
@@ -40,6 +25,20 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
+    if (!addressInput.includes('.')) {
+      setAddress(addressInput);
+      setIsValidAddress(false);
+      setIsAddressLoading(false);
+      return;
+    }
+
+    if (!provider) {
+      setAddress(addressInput);
+      setIsValidAddress(undefined);
+      setIsAddressLoading(false);
+      return;
+    }
+
     provider
       .resolveName(addressInput)
       .then(resolvedAddress => {
@@ -48,10 +47,11 @@ const useAddress = (addressInput: string | undefined) => {
           setIsValidAddress(false);
           setIsAddressLoading(false);
           return;
+        } else {
+          setAddress(resolvedAddress);
+          setIsValidAddress(true);
+          setIsAddressLoading(false);
         }
-        setAddress(resolvedAddress);
-        setIsValidAddress(true);
-        setIsAddressLoading(false);
       })
       .catch(() => {
         setAddress(addressInput);
@@ -61,33 +61,6 @@ const useAddress = (addressInput: string | undefined) => {
   }, [provider, addressInput]);
 
   return { address, isValidAddress, isAddressLoading };
-};
-
-export const checkAddress = async (provider: any, addressInput?: string): Promise<boolean> => {
-  if (!addressInput || !addressInput.trim()) {
-    return false;
-  }
-
-  if (addressInput === constants.AddressZero) {
-    return false;
-  }
-
-  if (ethers.utils.isAddress(addressInput)) {
-    return true;
-  }
-
-  // check if it's a registered ENS name (e.g. blah.eth)
-  // note that if provider is undefined here, we don't actually know, but will return false
-  try {
-    const resolvedAddress = await provider.resolveName(addressInput);
-    if (!resolvedAddress) {
-      return false;
-    }
-    return true;
-  } catch (e) {
-    logError(e);
-    return false;
-  }
 };
 
 export default useAddress;
