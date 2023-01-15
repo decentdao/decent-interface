@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text, Input } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
