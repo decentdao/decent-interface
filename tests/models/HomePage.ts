@@ -17,14 +17,17 @@ export class HomePage extends NavPage {
   }
 
   async clickFAQNewTab() {
-    return this.newTab(this.clickTestId('home-linkFAQ'));
+    const tab = this.newTab(this.clickTestId('home-linkFAQ'));
+    return tab;
   }
 
   async clickDiscordNewTab() {
-    return this.newTab(this.clickTestId('home-linkDiscord'));
+    const tab = this.newTab(this.clickTestId('home-linkDiscord'));
+    return tab;
   }
 
   async clickDocsNewTab() {
-    return this.newTab(this.clickTestId('home-linkDocs'));
+    const tab = await this.newTab(this.clickTestId('home-linkDocs'));
+    return tab;
   }
 }
