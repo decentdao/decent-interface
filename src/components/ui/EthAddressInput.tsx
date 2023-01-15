@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import useAddress from '../../hooks/utils/useAddress';
 
 export interface EthAddressInputProps
-  extends Omit<InputElementProps, 'value' | 'onChange'>,
+  extends Omit<InputElementProps, 'value' | 'onChange' | 'placeholder' | 'type'>,
     FormControlOptions {
   value?: string;
   onAddress: (address: string, isValid: boolean) => void;
@@ -20,6 +20,7 @@ export function EthAddressInput({ value, onAddress, ...rest }: EthAddressInputPr
   return (
     <Input
       value={inputValue}
+      placeholder="0x0000...0000"
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(event.target.value);
       }}

@@ -4,7 +4,6 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
@@ -135,7 +134,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         errorMessage={destinationError}
       >
         <EthAddressInput
-          placeholder={ETH_ADDRESS_PLACEHOLDER}
           onAddress={function (address: string, isValid: boolean): void {
             setIsValidAddress(isValid);
             setDestination(address);
