@@ -1,13 +1,13 @@
-import { Button, Input } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { isSameAddress } from '../../../utils/crypto';
 import { BigNumberInput } from '../../ui/BigNumberInput';
+import { EthAddressInput } from '../../ui/EthAddressInput';
 
 interface TokenAllocationProps {
   index: number;
@@ -35,10 +35,10 @@ function TokenAllocationInput({
   const updateAddress = useCallback(
     (
       address: string,
+      isValidAddress: boolean,
       snapShotTokenAllocations: TokenAllocation[],
       snapShotTokenAllocation: TokenAllocation
     ) => {
-      let isValidAddress = isAddress(address);
       let hasDuplicateAddresses = false;
 
       const updatedTokenAllocations = snapShotTokenAllocations.map((allocated, i, prev) => {
@@ -136,12 +136,13 @@ function TokenAllocationInput({
             : undefined
         }
       >
-        <Input
+        <EthAddressInput
           value={tokenAllocation.address}
-          placeholder={ETH_ADDRESS_PLACEHOLDER}
-          onChange={event => updateAddress(event.target.value, tokenAllocations, tokenAllocation)}
           data-testid="tokenVoting-tokenAllocationAddressInput"
           isInvalid={!!tokenAllocation.addressError}
+          onAddress={function (address: string, isValid: boolean): void {
+            updateAddress(address, isValid, tokenAllocations, tokenAllocation);
+          }}
         />
       </LabelWrapper>
       <LabelWrapper

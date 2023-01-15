@@ -4,11 +4,10 @@ import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
-import useAddress from '../../../hooks/utils/useAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { EthAddressInput } from '../EthAddressInput';
 import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {
@@ -24,7 +23,7 @@ export function DelegateModal({ close }: { close: Function }) {
   } = useFractal();
   const { address: account } = useAccount();
 
-  const { isValidAddress } = useAddress(newDelegatee);
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
@@ -116,11 +115,13 @@ export function DelegateModal({ close }: { close: Function }) {
         subLabel={t('sublabelDelegateInput')}
         errorMessage={errorMessage}
       >
-        <Input
+        <EthAddressInput
           data-testid="essentials-daoName"
-          placeholder={ETH_ADDRESS_PLACEHOLDER}
           value={newDelegatee}
-          onChange={e => setNewDelegatee(e.target.value)}
+          onAddress={function (address: string, isValid: boolean): void {
+            setNewDelegatee(address);
+            setIsValidAddress(isValid);
+          }}
         />
       </LabelWrapper>
       <Button
