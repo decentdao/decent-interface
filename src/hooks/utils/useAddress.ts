@@ -7,34 +7,39 @@ const useAddress = (addressInput: string | undefined) => {
 
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
-  const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
+  const [isAddressLoading, setIsAddressLoading] = useState<boolean>();
 
   useEffect(() => {
+    setIsAddressLoading(true);
+
     if (!addressInput || addressInput.trim() === '') {
       setAddress(addressInput);
       setIsValidAddress(false);
+      setIsAddressLoading(false);
       return;
     }
 
     if (ethers.utils.isAddress(addressInput)) {
       setAddress(ethers.utils.getAddress(addressInput));
       setIsValidAddress(true);
+      setIsAddressLoading(false);
       return;
     }
 
-    if (!addressInput.includes('.')) {
+    if (!addressInput.includes('.') || addressInput.length - addressInput.indexOf('.') === 2) {
       setAddress(addressInput);
       setIsValidAddress(false);
+      setIsAddressLoading(false);
       return;
     }
 
     if (!provider) {
       setAddress(addressInput);
       setIsValidAddress(undefined);
+      setIsAddressLoading(false);
       return;
     }
 
-    setIsAddressLoading(true);
     provider
       .resolveName(addressInput)
       .then(resolvedAddress => {

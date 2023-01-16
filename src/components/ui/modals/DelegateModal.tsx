@@ -11,6 +11,11 @@ import { EthAddressInput } from '../EthAddressInput';
 import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {
+  // the state of the Eth address input, which can be different
+  // from the actual address being submitted (in the case of ENS)
+  const [inputValue, setInputValue] = useState<string>('');
+  // the ETH address being delegated to. Not necessarily the state
+  // of the address input
   const [newDelegatee, setNewDelegatee] = useState<string>('');
   const { t } = useTranslation(['modals', 'common']);
   const [pending, setPending] = useState<boolean>(false);
@@ -32,7 +37,7 @@ export function DelegateModal({ close }: { close: Function }) {
   });
 
   const delegateSelf = () => {
-    if (account) setNewDelegatee(account);
+    if (account) setInputValue(account);
   };
 
   const onDelegateClick = () => {
@@ -41,7 +46,9 @@ export function DelegateModal({ close }: { close: Function }) {
   };
 
   const errorMessage =
-    isValidAddress === false ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
+    inputValue != '' && isValidAddress === false
+      ? t('errorInvalidAddress', { ns: 'common' })
+      : undefined;
 
   if (!governanceToken) return null;
 
@@ -117,6 +124,8 @@ export function DelegateModal({ close }: { close: Function }) {
       >
         <EthAddressInput
           data-testid="essentials-daoName"
+          value={inputValue}
+          setValue={setInputValue}
           onAddress={function (address: string, isValid: boolean): void {
             setNewDelegatee(address);
             setIsValidAddress(isValid);
