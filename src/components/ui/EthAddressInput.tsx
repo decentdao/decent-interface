@@ -13,9 +13,7 @@ export function EthAddressInput({ onAddress, ...rest }: EthAddressInputProps) {
   const { address, isValidAddress } = useAddress(inputValue.toLowerCase());
 
   useEffect(() => {
-    if (address?.toLowerCase() === inputValue.toLowerCase()) {
-      onAddress(address || '', isValidAddress || false);
-    }
+    onAddress(address || '', isValidAddress || false);
   }, [address, inputValue, isValidAddress, onAddress]);
 
   return (
