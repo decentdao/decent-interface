@@ -3,19 +3,20 @@ import { useEffect, useState } from 'react';
 import useAddress from '../../hooks/utils/useAddress';
 
 export interface EthAddressInputProps
-  extends Omit<InputElementProps, 'value' | 'onChange' | 'placeholder' | 'type'>,
+  extends Omit<InputElementProps, 'onChange' | 'placeholder' | 'type'>,
     FormControlOptions {
-  value?: string;
   onAddress: (address: string, isValid: boolean) => void;
 }
 
-export function EthAddressInput({ value, onAddress, ...rest }: EthAddressInputProps) {
-  const [inputValue, setInputValue] = useState<string>(value ? value : '');
-  const { address, isValidAddress } = useAddress(inputValue);
+export function EthAddressInput({ onAddress, ...rest }: EthAddressInputProps) {
+  const [inputValue, setInputValue] = useState<string>('');
+  const { address, isValidAddress } = useAddress(inputValue.toLowerCase());
 
   useEffect(() => {
-    onAddress(address || '', isValidAddress || false);
-  }, [address, isValidAddress, onAddress]);
+    if (address?.toLowerCase() === inputValue.toLowerCase()) {
+      onAddress(address || '', isValidAddress || false);
+    }
+  }, [address, inputValue, isValidAddress, onAddress]);
 
   return (
     <Input

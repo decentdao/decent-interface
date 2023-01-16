@@ -29,7 +29,7 @@ export function GnosisSignatures({
 
   const { t } = useTranslation(['common', 'daoCreate']);
 
-  const updateAndValidateAddress = useCallback(
+  const updateAddress = useCallback(
     (address: string, isValidAddress: boolean, snapshotTrustedAddresses: TrustedAddress[]) => {
       let hasDuplicateAddresses = false;
 
@@ -80,10 +80,9 @@ export function GnosisSignatures({
     >
       <LabelWrapper errorMessage={trustee.addressError}>
         <EthAddressInput
-          value={trustee.address}
           data-testid={'gnosisConfig-signer-' + index}
           onAddress={function (address: string, isValid: boolean): void {
-            updateAndValidateAddress(address, isValid, trustedAddresses);
+            updateAddress(address, isValid, trustedAddresses);
           }}
         />
       </LabelWrapper>

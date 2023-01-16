@@ -117,7 +117,6 @@ export function DelegateModal({ close }: { close: Function }) {
       >
         <EthAddressInput
           data-testid="essentials-daoName"
-          value={newDelegatee}
           onAddress={function (address: string, isValid: boolean): void {
             setNewDelegatee(address);
             setIsValidAddress(isValid);

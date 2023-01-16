@@ -137,7 +137,6 @@ function TokenAllocationInput({
         }
       >
         <EthAddressInput
-          value={tokenAllocation.address}
           data-testid="tokenVoting-tokenAllocationAddressInput"
           isInvalid={!!tokenAllocation.addressError}
           onAddress={function (address: string, isValid: boolean): void {
