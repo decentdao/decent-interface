@@ -38,6 +38,7 @@ export const decodeTransactions = async (
           function: 'unknown',
           parameterTypes: [],
           parameterValues: [],
+          decodingFailed: true,
         };
       }
     })
