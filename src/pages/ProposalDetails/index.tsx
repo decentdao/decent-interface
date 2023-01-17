@@ -55,6 +55,7 @@ function ProposalDetails() {
           paddingLeft={0}
           size="lg"
           variant="text"
+          display="inline-flex"
         >
           <LeftArrow />
           {t('proposals', { ns: 'sidebar' })}
