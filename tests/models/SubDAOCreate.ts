@@ -11,7 +11,7 @@ export class SubDAOCreate extends DAOCreate {
       this.address = address;
     } else {
       const url = this.url();
-      const addressStart = url.lastIndexOf('daos/0x') + 5;
+      const addressStart = url.indexOf('daos/0x') + 5;
       this.address = url.substring(addressStart, addressStart + 64);
     }
   }
