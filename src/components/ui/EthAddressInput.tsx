@@ -37,7 +37,11 @@ export function EthAddressInput({
       placeholder="0x0000...0000"
       isDisabled={rest.isDisabled || isAddressLoading}
       onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-        setActualInputValue(event.target.value);
+        const val = event.target.value;
+        if (val.trim().includes(' ') || val.indexOf('.') !== val.lastIndexOf('.')) {
+          return;
+        }
+        setActualInputValue(event.target.value.trim());
       }}
       {...rest}
     />
