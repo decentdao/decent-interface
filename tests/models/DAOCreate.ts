@@ -8,27 +8,39 @@ export class DAOCreate extends NavPage {
     return this;
   }
 
+  async clickNextButton() {
+    await this.clickTestId('create-nextSkipButton');
+  }
+
+  async clickSkipButton() {
+    await this.clickTestId('create-skipButton');
+  }
+
+  async clickPrevButton() {
+    await this.clickTestId('create-prevButton');
+  }
+
   async fillName(text: string) {
     await this.fillTextByTestId('essentials-daoName', text);
   }
 
-  async clickNextButton() {
-    await this.clickTestId('create-nextButton');
-  }
-
-  async clickPureGnosisSafe() {
+  async clickMultisig() {
     await this.clickTestId('choose-multisig');
   }
 
-  async fillTotalSigners(text: string) {
-    await this.fillTextByTestId('gnosisConfig-numberOfSignerInput', text);
+  async clickTokenVoting() {
+    await this.clickTestId('choose-usul');
   }
 
-  async fillThreshold(text: string) {
-    await this.fillTextByTestId('gnosisConfig-thresholdInput', text);
+  async fillTotalSigners(total: string) {
+    await this.fillTextByTestId('gnosisConfig-numberOfSignerInput', total);
   }
 
-  async fillWalletAddress(index: number, address: string) {
+  async fillThreshold(threshold: string) {
+    await this.fillTextByTestId('gnosisConfig-thresholdInput', threshold);
+  }
+
+  async fillMultisigSigner(index: number, address: string) {
     await this.fillTextByTestId('gnosisConfig-signer-' + index, address);
   }
 
@@ -42,15 +54,11 @@ export class DAOCreate extends NavPage {
   async createTestDAO() {
     await this.fillName('Test Fractal')
       .then(() => this.clickNextButton())
-      .then(() => this.clickPureGnosisSafe())
+      .then(() => this.clickMultisig())
       .then(() => this.clickNextButton())
-      .then(() => this.fillWalletAddress(0, accounts[0]))
+      .then(() => this.fillMultisigSigner(0, accounts[0]))
       .then(() => this.clickDeployButton());
     await this.waitForURLPath('/daos/');
-    const url = this.url();
-    const address = url.substring(url.lastIndexOf('/') + 1);
-    return new DAOHome(this.pageContext(), address);
+    return new DAOHome(this.pageContext());
   }
-
-  // TODO the rest of the fields / buttons in DAO creation paths
 }
