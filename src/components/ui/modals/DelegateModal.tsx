@@ -126,7 +126,7 @@ export function DelegateModal({ close }: { close: Function }) {
           data-testid="essentials-daoName"
           value={inputValue}
           setValue={setInputValue}
-          onAddress={function (address: string, isValid: boolean): void {
+          onAddressChange={function (address: string, isValid: boolean): void {
             setNewDelegatee(address);
             setIsValidAddress(isValid);
           }}

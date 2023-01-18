@@ -134,7 +134,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         errorMessage={destinationError}
       >
         <EthAddressInput
-          onAddress={function (address: string, isValid: boolean): void {
+          onAddressChange={function (address: string, isValid: boolean): void {
             setIsValidAddress(isValid);
             setDestination(address);
           }}

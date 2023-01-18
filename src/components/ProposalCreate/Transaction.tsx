@@ -126,7 +126,7 @@ function Transaction({
           </HStack>
         }
         errorMessage={transaction.addressError}
-        onAddress={function (address: string, isValid: boolean): void {
+        onAddressChange={function (address: string, isValid: boolean): void {
           updateTargetAddress(address, isValid);
         }}
       />

@@ -81,7 +81,7 @@ export function GnosisSignatures({
       <LabelWrapper errorMessage={trustee.addressError}>
         <EthAddressInput
           data-testid={'gnosisConfig-signer-' + index}
-          onAddress={function (address: string, isValid: boolean): void {
+          onAddressChange={function (address: string, isValid: boolean): void {
             updateAddress(address, isValid, trustedAddresses);
           }}
         />

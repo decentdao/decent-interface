@@ -20,7 +20,7 @@ interface InputProps extends Omit<BaseProps, 'children'> {
 }
 
 interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
-  onAddress: (address: string, isValid: boolean) => void;
+  onAddressChange: (address: string, isValid: boolean) => void;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {
@@ -75,7 +75,7 @@ export function InputComponent(props: InputProps) {
 }
 
 export function EthAddressComponent(props: EthAddressProps) {
-  const { disabled, onAddress } = props;
+  const { disabled, onAddressChange } = props;
   return (
     <BaseComponent
       value={''} // unused but required here
@@ -83,7 +83,7 @@ export function EthAddressComponent(props: EthAddressProps) {
     >
       <EthAddressInput
         isDisabled={disabled}
-        onAddress={onAddress}
+        onAddressChange={onAddressChange}
       />
     </BaseComponent>
   );
