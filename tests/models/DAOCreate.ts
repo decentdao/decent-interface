@@ -9,7 +9,7 @@ export class DAOCreate extends NavPage {
   }
 
   async clickNext() {
-    await this.clickTestId('create-nextSkipButton');
+    await this.clickTestId('create-nextButton');
   }
 
   async clickSkip() {
