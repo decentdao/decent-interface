@@ -35,7 +35,7 @@
     "labelExecutionPeriod": "Execution Period",
     "helperExecutionPeriod": "The length of time (in minutes) a successful proposal must be executed within",
     "exampleExecutionPeriod": "2,880 minutes = 2 days",
-    "labelTimelockPeriod": "Timelock Period",
+    "labelTimelockPeriod": "Queue Period",
     "helperTimelockPeriod": "The length of time (in minutes) a passed proposal must wait to be executed on the blockchain",
     "exampleTimelockPeriod": "1,440 minutes = 1 day",
     "labelVetoVotesThreshold": "Veto Votes Threshold",
