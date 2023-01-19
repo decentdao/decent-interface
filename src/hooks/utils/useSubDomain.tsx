@@ -6,12 +6,12 @@ function useSubDomain() {
   const [subdomain, setSubdomain] = useState('');
 
   useEffect(() => {
-    if (!['localhost', 'homestead'].includes(provider._network.name)) {
+    if (['localhost', 'homestead', 'mainnet'].includes(provider.network.name)) {
       setSubdomain('');
       return;
     }
 
-    setSubdomain(`${provider._network.name}.`);
+    setSubdomain(`${provider.network.name}.`);
   }, [provider]);
 
   return subdomain;
