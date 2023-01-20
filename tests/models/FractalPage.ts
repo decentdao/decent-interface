@@ -63,14 +63,6 @@ export abstract class FractalPage {
     await this.fillText('[data-testid=' + testId + ']', text);
   }
 
-  async dismissConnectedMessage() {
-    await this.click('#connected');
-  }
-
-  async dismissAuditMessage() {
-    await this.clickTestId('toast-audit');
-  }
-
   /**
    * Handles clicking a link / button which navigates to a new browser tab.
    * @param click the Promise created by clicking the link to open the tab.

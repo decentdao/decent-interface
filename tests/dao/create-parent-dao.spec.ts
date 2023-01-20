@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { DAOCreate } from '../models/DAOCreate';
 import { HomePage } from '../models/HomePage';
 import { CreateMultisigMocker } from '../models/mock/CreateMultisigMocker';
+import { CreateTokenVotingMocker } from '../models/mock/CreateTokenVotingMocker';
 import { accounts } from '../models/mock/data/testSigners';
 import { BASE_URL } from '../testUtils';
 
@@ -32,6 +33,7 @@ test('Create Multisig DAO', async ({ page }) => {
 });
 
 test('Create Token Voting DAO', async ({ page }) => {
+  new CreateTokenVotingMocker(page);
   await create
     .fillName('Test Token Voting')
     .then(() => create.clickNext())
