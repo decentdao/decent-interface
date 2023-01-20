@@ -7,10 +7,19 @@ const useAddress = (addressInput: string | undefined) => {
 
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
-  const [isAddressLoading, setIsAddressLoading] = useState<boolean>();
+  const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setIsAddressLoading(true);
+
+    // handles the initial state of usages of useAddress,
+    // which could be undefined until the intended address
+    // is determined
+    if (addressInput === undefined) {
+      setAddress(undefined);
+      setIsValidAddress(undefined);
+      return;
+    }
 
     if (!addressInput || addressInput.trim() === '') {
       setAddress(addressInput);
