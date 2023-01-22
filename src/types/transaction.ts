@@ -7,6 +7,7 @@ export interface DecodedTransaction {
   function: string;
   parameterTypes: string[];
   parameterValues: string[];
+  decodingFailed?: boolean;
 }
 export interface MetaTransaction {
   to: string;
