@@ -65,7 +65,7 @@ function ForwardButton({
       state.funding.nftsToFund?.length + state.funding.tokensToFund?.length === 0;
     return (
       <Button
-        data-testid={canSkip ? 'create-skipButton' : 'create-nextButton'}
+        data-testid="create-skipNextButton"
         size="lg"
         onClick={() =>
           dispatch({
