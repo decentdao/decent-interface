@@ -52,7 +52,6 @@
     "transactionExecutionAlertMessage": "Транзакції виконуються у порядку, у якому вони додаються",
     "labelProposalVotingPeriod": "Період голосування",
     "labelProposalQuorum": "Кворум",
-    "labelProposalTimelock": "Час блокування",
     "labelProposalSigners": "Підписанти",
     "support": "Підтримка",
     "signers": "Підписанти",

@@ -33,7 +33,6 @@
     "labelExecutionPeriod": "Період виконання",
     "helperExecutionPeriod": "Тривалість часу (у хвилинах) коли успішна пропозиція має бути виконана",
     "exampleExecutionPeriod": "2880 хвилин = 2 дні",
-    "labelTimelockPeriod": "Період блокування",
     "helperTimelockPeriod": "Тривалість часу (у хвилинах) скільки успішна пропозиція має знаходитись у очікуванні перед тим як виконати иї у блокчейни",
     "exampleTimelockPeriod": "1440 хвилин = 1 доба",
     "labelVetoVotesThreshold": "Поріг голосів ветування",
