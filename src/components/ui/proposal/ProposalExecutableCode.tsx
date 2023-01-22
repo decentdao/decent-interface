@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertTitle,
   Accordion,
   AccordionButton,
   AccordionIcon,
@@ -8,6 +10,7 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
+import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { TxProposal } from '../../../providers/Fractal/types';
 import { DecodedTransaction } from '../../../types';
@@ -34,6 +37,7 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
   );
 }
 function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) {
+  const { t } = useTranslation('proposal');
   return (
     <Flex
       width="full"
@@ -63,6 +67,15 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
         paramKey="paramValue"
         value={transaction.value}
       />
+      {transaction.decodingFailed && (
+        <Alert
+          status="info"
+          mt={2}
+        >
+          <Info boxSize="24px" />
+          <AlertTitle>{t('decodingFailedMessage')}</AlertTitle>
+        </Alert>
+      )}
     </Flex>
   );
 }

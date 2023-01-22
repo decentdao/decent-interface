@@ -97,5 +97,6 @@
     "paramFunction": "function",
     "paramTypes": "parameter types",
     "paramInputs": "parameter inputs",
-    "paramValue": "transaction value"
+    "paramValue": "transaction value",
+    "decodingFailedMessage": "Unable to decode transaction's data."
 }
