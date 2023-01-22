@@ -161,6 +161,7 @@ function ProposalCreate() {
           onClick={() =>
             safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
           }
+          disabled={pendingCreateTx}
         >
           {t('cancel', { ns: 'common' })}
         </Button>
