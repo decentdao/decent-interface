@@ -1,8 +1,8 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
 import { GnosisDAO } from '../../components/DaoCreator/provider/types';
 import { useCreateSubDAOProposal } from '../../hooks/DAO/useCreateSubDAOProposal';
+import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../routes/constants';
 
@@ -12,7 +12,7 @@ function SubDaoCreate() {
     actions: { refreshSafeData },
   } = useFractal();
 
-  const [nonce, setNonce] = useState<number>();
+  const nonce = useDefaultNonce();
 
   const successCallback = async (daoAddress: string) => {
     await refreshSafeData();

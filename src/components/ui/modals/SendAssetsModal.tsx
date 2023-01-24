@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
+import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import useAddress from '../../../hooks/utils/useAddress';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -20,7 +21,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const [nonce, setNonce] = useState<number>();
+  const nonce = useDefaultNonce();
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 

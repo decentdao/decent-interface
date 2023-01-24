@@ -1,9 +1,7 @@
 import { Flex, Text, Input } from '@chakra-ui/react';
-import { GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
-import { Dispatch, SetStateAction, useEffect, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 import useUsul from '../../hooks/DAO/proposal/useUsul';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 
 export function CustomNonceInput({
   nonce,
@@ -12,24 +10,12 @@ export function CustomNonceInput({
   nonce: number | undefined;
   setNonce: Dispatch<SetStateAction<number | undefined>>;
 }) {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const {
-    gnosis: { safe },
-  } = useFractal();
   const { usulContract } = useUsul();
+  const defaultNonce = useDefaultNonce();
 
   useEffect(() => {
-    if (!safe.address) {
-      setNonce(undefined);
-      return;
-    }
-
-    const gnosisSafeContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
-
-    gnosisSafeContract.nonce().then(_nonce => setNonce(_nonce.toNumber()));
-  }, [safe.address, setNonce, signerOrProvider]);
+    setNonce(defaultNonce);
+  }, [defaultNonce, setNonce]);
 
   if (!!usulContract) return null;
 
