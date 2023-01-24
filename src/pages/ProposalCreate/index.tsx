@@ -1,9 +1,10 @@
-import { Button, Text, Grid, GridItem, VStack, Box, Flex } from '@chakra-ui/react';
+import { Button, Text, Grid, GridItem, VStack, Box, Flex, HStack } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { CustomNonceInput } from '../../components/ProposalCreate/CustomNonceInput';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
 import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
@@ -45,6 +46,7 @@ function ProposalCreate() {
     Object.assign({}, defaultTransaction),
   ]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
+  const [nonce, setNonce] = useState<number>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const testPropose = useProposeStuff(setTransactions);
@@ -206,6 +208,18 @@ function ProposalCreate() {
               p="1rem"
               bg={BACKGROUND_SEMI_TRANSPARENT}
             >
+              <HStack justifyContent="space-between">
+                <Text
+                  textStyle="text-xl-mono-medium"
+                  mb={4}
+                >
+                  {'Proposal'}
+                </Text>
+                <CustomNonceInput
+                  nonce={nonce}
+                  setNonce={setNonce}
+                />
+              </HStack>
               {inputtedMetadata && metadata.title && (
                 <Text
                   textStyle="text-xl-mono-medium"
@@ -226,6 +240,7 @@ function ProposalCreate() {
                 pendingCreateTx={pendingCreateTx}
                 submitProposal={submitProposal}
                 proposalData={proposalData}
+                nonce={nonce}
                 successCallback={successCallback}
                 isCreateDisabled={isCreateDisabled}
                 transactions={transactions}
