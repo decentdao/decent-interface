@@ -140,7 +140,7 @@ function TokenAllocationInput({
           value={tokenAllocation.address}
           placeholder={ETH_ADDRESS_PLACEHOLDER}
           onChange={event => updateAddress(event.target.value, tokenAllocations, tokenAllocation)}
-          data-testid="tokenVoting-tokenAllocationAddressInput"
+          data-testid={'tokenVoting-tokenAllocationAddressInput-' + index}
           isInvalid={!!tokenAllocation.addressError}
         />
       </LabelWrapper>
@@ -162,7 +162,7 @@ function TokenAllocationInput({
               tokenAllocation
             )
           }
-          data-testid="tokenVoting-tokenAllocationAmountInput"
+          data-testid={'tokenVoting-tokenAllocationAmountInput-' + index}
           isInvalid={hasAmountError}
         />
       </LabelWrapper>
@@ -173,7 +173,7 @@ function TokenAllocationInput({
           onClick={() => removeAllocation(index)}
           px="0px"
           alignSelf="center"
-          data-testid="tokenVoting-tokenAllocationRemoveButton"
+          data-testid={'tokenVoting-tokenAllocationRemoveButton-' + index}
         >
           {t('remove')}
         </Button>
