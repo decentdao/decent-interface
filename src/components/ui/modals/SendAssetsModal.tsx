@@ -20,6 +20,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
+  const [nonce, setNonce] = useState<number>();
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
@@ -39,6 +40,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
     asset: selectedAsset,
     destinationAddress: destination,
+    nonce,
   });
 
   const handleCoinChange = (index: string) => {
