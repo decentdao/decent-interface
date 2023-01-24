@@ -62,7 +62,7 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
           address={proposal.transactionHash}
         />
         <InfoRow
-          property={'Nonce'}
+          property={t('nonce')}
           value={proposal.nonce?.toString()}
         />
       </Box>

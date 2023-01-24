@@ -1,5 +1,6 @@
 import { HStack, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CustomNonceInput } from './CustomNonceInput';
 
 export function ProposalHeader({
@@ -15,6 +16,8 @@ export function ProposalHeader({
   nonce: number | undefined;
   setNonce: Dispatch<SetStateAction<number | undefined>>;
 }) {
+  const { t } = useTranslation(['proposal']);
+
   if (inputtedMetadata && metadataTitle) {
     return (
       <Text
@@ -32,7 +35,7 @@ export function ProposalHeader({
         textStyle="text-xl-mono-medium"
         mb={4}
       >
-        {'Proposal'}
+        {t('proposal', { ns: 'proposal' })}
       </Text>
       {!isUsul && (
         <CustomNonceInput

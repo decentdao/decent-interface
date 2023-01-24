@@ -1,6 +1,7 @@
 import { Flex, Text, Input, Tooltip } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
 import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import useUsul from '../../hooks/DAO/proposal/useUsul';
 import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 
@@ -13,6 +14,7 @@ export function CustomNonceInput({
 }) {
   const { usulContract } = useUsul();
   const defaultNonce = useDefaultNonce();
+  const { t } = useTranslation(['proposal']);
 
   useEffect(() => {
     setNonce(defaultNonce);
@@ -27,10 +29,10 @@ export function CustomNonceInput({
         whiteSpace="nowrap"
         mt="1"
       >
-        Custom Nonce
+        {t('customNonce', { ns: 'proposal' })}
       </Text>
       <Tooltip
-        label="Set a custom proposal nonce if necessary to prevent nonce collisions"
+        label={t('customNonceTooltip', { ns: 'proposal' })}
         maxW="18rem"
         placement="top"
       >
