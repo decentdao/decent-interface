@@ -20,7 +20,11 @@ export const useCreateSubDAOProposal = () => {
   } = useFractal();
 
   const proposeDao = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
+    (
+      daoData: TokenGovernanceDAO | GnosisDAO,
+      nonce: number | undefined,
+      successCallback: (daoAddress: string) => void
+    ) => {
       const propose = async () => {
         if (!multiSendContract || !fractalRegistryContract) {
           return;
@@ -48,6 +52,7 @@ export const useCreateSubDAOProposal = () => {
         };
         submitProposal({
           proposalData,
+          nonce,
           pendingToastMessage: t('createSubDAOPendingToastMessage'),
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
