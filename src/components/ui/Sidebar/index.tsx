@@ -84,11 +84,11 @@ function Sidebar() {
     gnosis: {
       safe: { address },
       safeService,
-      providedSafeAddress,
+      isGnosisLoading,
     },
   } = useFractal();
 
-  const showSideBar = providedSafeAddress && address && safeService;
+  const showSideBar = address && safeService && !isGnosisLoading;
 
   return (
     <Flex
