@@ -137,7 +137,7 @@ function TokenAllocationInput({
         }
       >
         <EthAddressInput
-          data-testid="tokenVoting-tokenAllocationAddressInput"
+          data-testid={'tokenVoting-tokenAllocationAddressInput-' + index}
           isInvalid={!!tokenAllocation.addressError}
           onAddressChange={function (address: string, isValid: boolean): void {
             updateAddress(address, isValid, tokenAllocations, tokenAllocation);
@@ -162,7 +162,7 @@ function TokenAllocationInput({
               tokenAllocation
             )
           }
-          data-testid="tokenVoting-tokenAllocationAmountInput"
+          data-testid={'tokenVoting-tokenAllocationAmountInput-' + index}
           isInvalid={hasAmountError}
         />
       </LabelWrapper>
@@ -173,7 +173,7 @@ function TokenAllocationInput({
           onClick={() => removeAllocation(index)}
           px="0px"
           alignSelf="center"
-          data-testid="tokenVoting-tokenAllocationRemoveButton"
+          data-testid={'tokenVoting-tokenAllocationRemoveButton-' + index}
         >
           {t('remove')}
         </Button>
