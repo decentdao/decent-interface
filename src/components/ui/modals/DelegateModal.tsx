@@ -1,17 +1,21 @@
-import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text, Input } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
-import useAddress from '../../../hooks/utils/useAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { EthAddressInput } from '../EthAddressInput';
 import EtherscanLinkAddress from '../EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {
+  // the state of the Eth address input, which can be different
+  // from the actual address being submitted (in the case of ENS)
+  const [inputValue, setInputValue] = useState<string>('');
+  // the ETH address being delegated to. Not necessarily the state
+  // of the address input
   const [newDelegatee, setNewDelegatee] = useState<string>('');
   const { t } = useTranslation(['modals', 'common']);
   const [pending, setPending] = useState<boolean>(false);
@@ -24,7 +28,7 @@ export function DelegateModal({ close }: { close: Function }) {
   } = useFractal();
   const { address: account } = useAccount();
 
-  const { isValidAddress } = useAddress(newDelegatee);
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
@@ -33,7 +37,7 @@ export function DelegateModal({ close }: { close: Function }) {
   });
 
   const delegateSelf = () => {
-    if (account) setNewDelegatee(account);
+    if (account) setInputValue(account);
   };
 
   const onDelegateClick = () => {
@@ -42,7 +46,9 @@ export function DelegateModal({ close }: { close: Function }) {
   };
 
   const errorMessage =
-    isValidAddress === false ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
+    inputValue != '' && isValidAddress === false
+      ? t('errorInvalidAddress', { ns: 'common' })
+      : undefined;
 
   if (!governanceToken) return null;
 
@@ -116,11 +122,14 @@ export function DelegateModal({ close }: { close: Function }) {
         subLabel={t('sublabelDelegateInput')}
         errorMessage={errorMessage}
       >
-        <Input
+        <EthAddressInput
           data-testid="essentials-daoName"
-          placeholder={ETH_ADDRESS_PLACEHOLDER}
-          value={newDelegatee}
-          onChange={e => setNewDelegatee(e.target.value)}
+          value={inputValue}
+          setValue={setInputValue}
+          onAddressChange={function (address: string, isValid: boolean): void {
+            setNewDelegatee(address);
+            setIsValidAddress(isValid);
+          }}
         />
       </LabelWrapper>
       <Button

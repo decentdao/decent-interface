@@ -1,7 +1,6 @@
 import { Button, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
-import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
 import ContentBox from '../../ui/ContentBox';
@@ -181,7 +180,6 @@ export function SubsidiaryFunding() {
                   value={tokenToFund.amount.bigNumberValue}
                   onChange={tokenAmount => onTokenFundChange(tokenAmount, index)}
                   decimalPlaces={tokenToFund.asset.token.decimals}
-                  placeholder={ETH_ADDRESS_PLACEHOLDER}
                 />
                 <InputRightElement>
                   <Button

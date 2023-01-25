@@ -1,12 +1,10 @@
-import { Box, Divider, Flex, Select, HStack, Text, Button, Input } from '@chakra-ui/react';
+import { Box, Divider, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
-import useAddress from '../../../hooks/utils/useAddress';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
@@ -15,6 +13,7 @@ import {
   formatUSD,
 } from '../../../utils/numberFormats';
 import { BigNumberInput, BigNumberValuePair } from '../BigNumberInput';
+import { EthAddressInput } from '../EthAddressInput';
 
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
@@ -52,7 +51,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     setInputAmount(value);
   };
 
-  const { isValidAddress } = useAddress(destination.toLowerCase());
+  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const destinationError =
     destination && !isValidAddress ? t('errorInvalidAddress', { ns: 'common' }) : undefined;
 
@@ -137,11 +136,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         subLabel={t('destinationSublabel')}
         errorMessage={destinationError}
       >
-        <Input
-          type="text"
-          placeholder={ETH_ADDRESS_PLACEHOLDER}
-          value={destination}
-          onChange={e => setDestination(e.target.value)}
+        <EthAddressInput
+          onAddressChange={function (address: string, isValid: boolean): void {
+            setIsValidAddress(isValid);
+            setDestination(address);
+          }}
         />
       </LabelWrapper>
       <Button

@@ -83,8 +83,12 @@ function Sidebar() {
   const {
     gnosis: {
       safe: { address },
+      safeService,
+      isGnosisLoading,
     },
   } = useFractal();
+
+  const showSideBar = address && safeService && !isGnosisLoading;
 
   return (
     <Flex
@@ -105,7 +109,7 @@ function Sidebar() {
         />
       </Link>
 
-      {address && (
+      {showSideBar && (
         <Flex
           alignItems="center"
           direction="column"
