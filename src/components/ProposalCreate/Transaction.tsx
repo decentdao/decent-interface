@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { TransactionData } from '../../types/transaction';
 import { BigNumberValuePair } from '../ui/BigNumberInput';
-import { BigNumberComponent, InputComponent, TextareaComponent } from './InputComponent';
+import { BigNumberComponent, EthAddressComponent, TextareaComponent } from './InputComponent';
 
 interface TransactionProps {
   transaction: TransactionData;
@@ -38,11 +38,7 @@ function Transaction({
     }
   };
 
-  const updateTargetAddress = (targetAddress: string) => {
-    const isValidAddress = !!targetAddress
-      ? utils.isAddress(targetAddress.trim().toLowerCase())
-      : undefined;
-
+  const updateTargetAddress = (targetAddress: string, isValidAddress: boolean) => {
     const transactionCopy = {
       ...transaction,
       targetAddress: targetAddress.trim(),
@@ -118,12 +114,10 @@ function Transaction({
       spacing={4}
       mt={6}
     >
-      <InputComponent
+      <EthAddressComponent
         label={t('labelTargetAddress')}
         helper={t('helperTargetAddress')}
         isRequired={true}
-        value={transaction.targetAddress}
-        onChange={e => updateTargetAddress(e.target.value)}
         disabled={pending}
         subLabel={
           <HStack>
@@ -132,6 +126,9 @@ function Transaction({
           </HStack>
         }
         errorMessage={transaction.addressError}
+        onAddressChange={function (address: string, isValid: boolean): void {
+          updateTargetAddress(address, isValid);
+        }}
       />
       <TextareaComponent
         label={t('labelFunctionName')}

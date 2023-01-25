@@ -1,6 +1,7 @@
 import { Input, HStack, Text, Textarea, Grid, GridItem } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumberInput, BigNumberInputProps } from '../ui/BigNumberInput';
+import { EthAddressInput } from '../ui/EthAddressInput';
 
 interface BaseProps {
   label: string;
@@ -16,6 +17,10 @@ interface BaseProps {
 interface InputProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
+}
+
+interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
+  onAddressChange: (address: string, isValid: boolean) => void;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {
@@ -64,6 +69,21 @@ export function InputComponent(props: InputProps) {
         onChange={onChange}
         disabled={disabled}
         placeholder={placeholder}
+      />
+    </BaseComponent>
+  );
+}
+
+export function EthAddressComponent(props: EthAddressProps) {
+  const { disabled, onAddressChange } = props;
+  return (
+    <BaseComponent
+      value={''} // unused but required here
+      {...props}
+    >
+      <EthAddressInput
+        isDisabled={disabled}
+        onAddressChange={onAddressChange}
       />
     </BaseComponent>
   );

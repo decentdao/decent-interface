@@ -1,10 +1,10 @@
-import { Grid, Button, Input } from '@chakra-ui/react';
+import { Grid, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ETH_ADDRESS_PLACEHOLDER } from '../../../constants/common';
 import { isSameAddress } from '../../../utils/crypto';
+import { EthAddressInput } from '../../ui/EthAddressInput';
 import { useCreator } from '../provider/hooks/useCreator';
 import { TrustedAddress } from '../provider/types';
 
@@ -29,14 +29,10 @@ export function GnosisSignatures({
 
   const { t } = useTranslation(['common', 'daoCreate']);
 
-  const updateAndValidateAddress = useCallback(
-    (address: string, snapshotTrustedAddresses: TrustedAddress[]) => {
-      let isValidAddress = false;
+  const updateAddress = useCallback(
+    (address: string, isValidAddress: boolean, snapshotTrustedAddresses: TrustedAddress[]) => {
       let hasDuplicateAddresses = false;
 
-      if (address.trim()) {
-        isValidAddress = isAddress(address.trim());
-      }
       const updatedAddress = snapshotTrustedAddresses.map((trustedAddress, i, prev) => {
         const isDuplicate = i !== index && isSameAddress(trustedAddress.address, address.trim());
 
@@ -83,11 +79,11 @@ export function GnosisSignatures({
       my="1rem"
     >
       <LabelWrapper errorMessage={trustee.addressError}>
-        <Input
-          value={trustee.address}
-          placeholder={ETH_ADDRESS_PLACEHOLDER}
+        <EthAddressInput
           data-testid={'gnosisConfig-signer-' + index}
-          onChange={event => updateAndValidateAddress(event.target.value, trustedAddresses)}
+          onAddressChange={function (address: string, isValid: boolean): void {
+            updateAddress(address, isValid, trustedAddresses);
+          }}
         />
       </LabelWrapper>
       {trustedAddresses.length > 1 && (

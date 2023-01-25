@@ -4,7 +4,7 @@ import { useIsGnosisSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
 
 export const useSearchDao = () => {
-  const [searchString, setSearchString] = useState<string>('');
+  const [searchString, setSearchString] = useState<string | undefined>(undefined);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -13,7 +13,7 @@ export const useSearchDao = () => {
   const { t } = useTranslation('dashboard');
 
   useEffect(() => {
-    setIsLoading(isAddressLoading !== false || isSafeLoading === true);
+    setIsLoading(isAddressLoading === true || isSafeLoading === true);
   }, [isAddressLoading, isSafeLoading]);
 
   useEffect(() => {
