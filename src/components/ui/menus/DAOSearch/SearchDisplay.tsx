@@ -1,4 +1,4 @@
-import { Box, Flex, MenuItem, Text, Button } from '@chakra-ui/react';
+import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
@@ -39,7 +39,7 @@ export function SearchDisplay({
   }
   if (validAddress && address && !loading) {
     return (
-      <MenuItem
+      <Box
         p="0px"
         display="flex"
         flexDirection="column"
@@ -70,7 +70,7 @@ export function SearchDisplay({
             {t('labelViewDAO')}
           </Button>
         </Flex>
-      </MenuItem>
+      </Box>
     );
   }
   return null;

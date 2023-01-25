@@ -1,38 +1,22 @@
 import {
   Box,
-  Menu,
-  MenuButton,
-  MenuList,
   Input,
   InputGroup,
   InputLeftElement,
+  Popover,
+  PopoverTrigger,
 } from '@chakra-ui/react';
 import { Search } from '@decent-org/fractal-ui';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch() {
-  const inputRef = useRef<HTMLInputElement>(null);
   const { t } = useTranslation(['dashboard']);
 
   const { errorMessage, isLoading, address, isSafe, setSearchString, searchString } =
     useSearchDao();
-
-  const focusInput = () => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-      inputRef.current.select();
-    }
-  };
-
-  const unFocusInput = () => {
-    if (inputRef.current) {
-      inputRef.current.blur();
-    }
-  };
 
   const searchUpdate = useCallback(
     (inputAddress: string) => {
@@ -43,14 +27,7 @@ export function DAOSearch() {
 
   const resetSearch = () => {
     setSearchString('');
-    unFocusInput();
   };
-
-  const location = useLocation();
-  useEffect(() => {
-    setSearchString('');
-    unFocusInput();
-  }, [location, setSearchString]);
 
   return (
     <Box
@@ -58,26 +35,23 @@ export function DAOSearch() {
       maxW="31.125rem"
       height="full"
     >
-      <Menu
+      <Popover
         matchWidth
         isLazy
-        onOpen={focusInput}
-        onClose={unFocusInput}
       >
-        <MenuButton
-          h="full"
-          w="full"
-          data-testid="header-searchMenuButton"
-        >
-          <InputGroup>
-            <InputLeftElement>
+        <PopoverTrigger data-testid="header-searchMenuButton">
+          <InputGroup
+            h="full"
+            flexDirection="column"
+            justifyContent="center"
+          >
+            <InputLeftElement mt="3">
               <Search
                 boxSize="1.5rem"
                 color="grayscale.300"
               />
             </InputLeftElement>
             <Input
-              ref={inputRef}
               size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => searchUpdate(e.target.value.trim())}
@@ -85,9 +59,8 @@ export function DAOSearch() {
               data-testid="search-input"
             />
           </InputGroup>
-        </MenuButton>
-        <MenuList
-          onFocus={focusInput}
+        </PopoverTrigger>
+        <Box
           border="none"
           rounded="lg"
           shadow="menu-gold"
@@ -103,8 +76,8 @@ export function DAOSearch() {
               onClickView={resetSearch}
             />
           </Box>
-        </MenuList>
-      </Menu>
+        </Box>
+      </Popover>
     </Box>
   );
 }
