@@ -7,23 +7,19 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 import { Search } from '@decent-org/fractal-ui';
-import { useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch() {
   const { t } = useTranslation(['dashboard']);
+  const [localInput, setLocalInput] = useState('');
+  const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
 
-  const { errorMessage, isLoading, address, isSafe, setSearchString, searchString } =
-    useSearchDao();
-
-  const searchUpdate = useCallback(
-    (inputAddress: string) => {
-      setSearchString(inputAddress);
-    },
-    [setSearchString]
-  );
+  useEffect(() => {
+    setSearchString(localInput);
+  }, [localInput, setSearchString]);
 
   const resetSearch = () => {
     setSearchString('');
@@ -54,8 +50,8 @@ export function DAOSearch() {
             <Input
               size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
-              onChange={e => searchUpdate(e.target.value.trim())}
-              value={searchString}
+              onChange={e => setLocalInput(e.target.value.trim())}
+              value={localInput}
               data-testid="search-input"
             />
           </InputGroup>
