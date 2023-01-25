@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
-import { NavPage } from './NavPage';
+import { DAOCreate } from './DAOCreate';
 
-export class DAOHome extends NavPage {
+export class SubDAOCreate extends DAOCreate {
   readonly address: string;
 
   constructor(page: Page);
@@ -11,16 +11,15 @@ export class DAOHome extends NavPage {
       this.address = address;
     } else {
       const url = this.url();
-      this.address = url.substring(url.lastIndexOf('/') + 1);
+      const addressStart = url.indexOf('daos/0x') + 5;
+      this.address = url.substring(addressStart, addressStart + 64);
     }
   }
 
   async visit() {
-    await this.visitPath('/daos/' + this.address);
+    await this.visitPath('/daos/' + this.address + '/new');
     return this;
   }
 
-  async clickFavoriteStar() {
-    await this.clickTestId('DAOInfo-favorite');
-  }
+  // TODO subDAO creation buttons
 }

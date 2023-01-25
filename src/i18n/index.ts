@@ -1,3 +1,4 @@
+import { enUS, uk } from 'date-fns/locale';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
@@ -85,3 +86,18 @@ i18n
   });
 
 export default i18n;
+
+/**
+ * @returns the date-fns Locale corresponding to the current i18n language setting
+ */
+export const useDateFNSLocale = () => {
+  let locale = undefined;
+  switch (i18n.language) {
+    case 'uk':
+      locale = uk;
+      break;
+    default:
+      locale = enUS;
+  }
+  return locale;
+};
