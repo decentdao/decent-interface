@@ -8,7 +8,7 @@ test.describe.skip('DAO Creation', () => {
   test.beforeEach(async ({ page }) => {
     const home = await new HomePage(page).visit();
     const create = await home.clickCreateAFractal();
-    dao = await create.createTestDAO();
+    dao = await create.createTestMultisig();
   });
 
   test('Click favorite and confirm in favorites list', async ({}) => {
