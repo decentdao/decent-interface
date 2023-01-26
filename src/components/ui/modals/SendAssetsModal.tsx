@@ -4,6 +4,7 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
@@ -19,6 +20,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
+  const nonce = useDefaultNonce();
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
@@ -38,6 +40,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
     asset: selectedAsset,
     destinationAddress: destination,
+    nonce,
   });
 
   const handleCoinChange = (index: string) => {

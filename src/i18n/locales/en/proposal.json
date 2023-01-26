@@ -98,5 +98,8 @@
     "paramTypes": "parameter types",
     "paramInputs": "parameter inputs",
     "paramValue": "transaction value",
-    "decodingFailedMessage": "Unable to decode transaction's data."
+    "decodingFailedMessage": "Unable to decode transaction's data.",
+    "customNonce": "Custom Nonce",
+    "customNonceTooltip": "Set a custom proposal nonce if necessary to prevent nonce collisions",
+    "nonce": "Nonce"
 }
