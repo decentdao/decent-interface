@@ -13,6 +13,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import useUsul from '../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { DAO_ROUTES } from '../../routes/constants';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
 import { notProd, useProposeStuff } from '../../utils/dev';
@@ -153,6 +154,10 @@ function ProposalCreate() {
     <Box>
       <PageHeader
         breadcrumbs={[
+          {
+            title: t('proposals', { ns: 'breadcrumbs' }),
+            path: DAO_ROUTES.proposals.relative(safe.address),
+          },
           {
             title: t('proposalNew', { ns: 'breadcrumbs' }),
             path: '',
