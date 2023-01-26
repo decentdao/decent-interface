@@ -12,18 +12,21 @@ export interface TransactionsAndSubmitProps {
   pendingCreateTx: boolean;
   submitProposal: ({
     proposalData,
+    nonce,
     pendingToastMessage,
     failedToastMessage,
     successToastMessage,
     successCallback,
   }: {
     proposalData: ProposalExecuteData | undefined;
+    nonce: number | undefined;
     pendingToastMessage: string;
     failedToastMessage: string;
     successToastMessage: string;
     successCallback?: ((daoAddress: string) => void) | undefined;
   }) => Promise<void>;
   proposalData: ProposalExecuteData | undefined;
+  nonce: number | undefined;
   successCallback: () => void;
   isCreateDisabled: boolean;
   transactions: TransactionData[];
@@ -38,6 +41,7 @@ function TransactionsAndSubmit(props: TransactionsAndSubmitProps) {
     pendingCreateTx,
     submitProposal,
     proposalData,
+    nonce,
     successCallback,
     isCreateDisabled,
     transactions,
@@ -92,6 +96,7 @@ function TransactionsAndSubmit(props: TransactionsAndSubmitProps) {
           onClick={() =>
             submitProposal({
               proposalData,
+              nonce,
               pendingToastMessage: t('proposalCreatePendingToastMessage'),
               successToastMessage: t('proposalCreateSuccessToastMessage'),
               failedToastMessage: t('proposalCreateFailureToastMessage'),

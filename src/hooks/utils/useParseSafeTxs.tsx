@@ -126,6 +126,7 @@ export function useParseSafeTxs(
         transactionHash: multiSigTransaction.transactionHash,
         metaData,
         state: null,
+        nonce: eventNonce,
       };
       return activity;
     });
