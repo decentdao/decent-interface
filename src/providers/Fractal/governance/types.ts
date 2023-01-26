@@ -286,6 +286,7 @@ export interface MultisigProposal extends GovernanceActivity {
   confirmations: SafeMultisigConfirmationResponse[];
   signersThreshold?: number;
   multisigRejectedProposalNumber?: string;
+  nonce?: number;
 }
 
 export interface GovernanceActivity extends ActivityBase {
