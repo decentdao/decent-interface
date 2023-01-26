@@ -35,6 +35,10 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
             >
               {icon}
               <Text
+                maxWidth="250px"
+                overflow="hidden"
+                whiteSpace="nowrap"
+                textOverflow="ellipsis"
                 textStyle="text-base-mono-regular"
                 color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
               >

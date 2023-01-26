@@ -25,9 +25,14 @@ function ProposalDetails() {
   } = useFractal();
 
   const [proposal, setProposal] = useState<TxProposal | null>();
-  const { t } = useTranslation(['proposal', 'sidebar', 'breadcrumbs']);
+  const { t } = useTranslation(['proposal', 'sidebar', 'breadcrumbs', 'dashboard']);
 
   const usulProposal = proposal as UsulProposal;
+
+  const transactionDescription = t('proposalDescription', {
+    ns: 'dashboard',
+    count: proposal?.targets.length,
+  });
 
   useEffect(() => {
     if (!txProposals || !txProposals.length || !params.proposalNumber) {
@@ -57,7 +62,7 @@ function ProposalDetails() {
             title: t('proposal', {
               ns: 'breadcrumbs',
               proposalNumber: params.proposalNumber,
-              proposalTitle: proposal?.metaData?.title,
+              proposalTitle: proposal?.metaData?.title || transactionDescription,
             }),
             path: '',
           },
