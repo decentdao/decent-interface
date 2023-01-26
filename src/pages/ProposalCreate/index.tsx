@@ -1,5 +1,5 @@
-import { Button, Text, Grid, GridItem, VStack, Box, Flex } from '@chakra-ui/react';
-import { CloseX } from '@decent-org/fractal-ui';
+import { Button, Text, Grid, GridItem, Box, Flex } from '@chakra-ui/react';
+import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -156,20 +156,7 @@ function ProposalCreate() {
             path: '',
           },
         ]}
-      >
-        <Button
-          paddingLeft={0}
-          width="fit-content"
-          variant="text"
-          leftIcon={<CloseX />}
-          onClick={() =>
-            safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
-          }
-          disabled={pendingCreateTx}
-        >
-          {t('cancel', { ns: 'common' })}
-        </Button>
-      </PageHeader>
+      />
       <Grid
         gap={4}
         templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
@@ -191,14 +178,27 @@ function ProposalCreate() {
               {`< ${t('proposalBack')}`}
             </Text>
           )}
-          <VStack align="left">
+          <Flex justifyContent="space-between">
             <Text
               onClick={notProd() ? testPropose : undefined}
               textStyle="text-2xl-mono-regular"
             >
               {t('createProposal')}
             </Text>
-          </VStack>
+            <Button
+              minWidth="auto"
+              py={1.5}
+              px={4}
+              width="fit-content"
+              variant="secondary"
+              onClick={() =>
+                safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
+              }
+              disabled={pendingCreateTx}
+            >
+              <Trash color="gold.500" />
+            </Button>
+          </Flex>
         </GridItem>
         <GridItem area="content">
           <Flex
