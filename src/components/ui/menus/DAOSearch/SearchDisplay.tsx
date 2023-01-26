@@ -1,4 +1,4 @@
-import { Box, Flex, MenuItem, Text, Button } from '@chakra-ui/react';
+import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
@@ -39,38 +39,31 @@ export function SearchDisplay({
   }
   if (validAddress && address && !loading) {
     return (
-      <MenuItem
-        p="0px"
-        display="flex"
-        flexDirection="column"
-        alignItems="flex-start"
+      <Flex
+        py={2}
         onClick={() => {
           onClickView();
           navigate(DAO_ROUTES.dao.relative(address));
         }}
         cursor="default"
+        justifyContent="space-between"
       >
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="chocolate.100"
-        >
-          {t('labelDAOFound')}
-        </Text>
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          width="full"
         >
-          <Text textStyle="text-base-sans-medium">{displayName}</Text>
-          <Button
-            as="div"
-            cursor="pointer"
-            data-testid="search-viewDAO"
-          >
-            {t('labelViewDAO')}
-          </Button>
+          <Flex flexDirection="column">
+            <Text
+              textStyle="text-sm-sans-regular"
+              color="chocolate.100"
+            >
+              {t('labelDAOFound')}
+            </Text>
+            <Text textStyle="text-base-sans-medium">{displayName}</Text>
+          </Flex>
         </Flex>
-      </MenuItem>
+        <Button data-testid="search-viewDAO">{t('labelViewDAO')}</Button>
+      </Flex>
     );
   }
   return null;
