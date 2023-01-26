@@ -34,9 +34,9 @@ const templateAreaSingleCol = `"header"
 
 function ProposalCreate() {
   const {
-    gnosis: { safe, daoName },
+    gnosis: { safe },
   } = useFractal();
-  const { t } = useTranslation(['proposal', 'common']);
+  const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
   const { usulContract } = useUsul();
   const [isUsul, setIsUsul] = useState<boolean>();
 
@@ -150,8 +150,12 @@ function ProposalCreate() {
   return (
     <Box>
       <PageHeader
-        title={t('pageTitle', { daoName })}
-        titleTestId={'title-proposal-details'}
+        breadcrumbs={[
+          {
+            title: t('proposalNew', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
       >
         <Button
           paddingLeft={0}

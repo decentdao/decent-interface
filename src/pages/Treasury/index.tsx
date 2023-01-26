@@ -13,7 +13,6 @@ import { Transactions } from './components/Transactions';
 function Treasury() {
   const {
     gnosis: {
-      daoName,
       safe: { owners },
     },
     governance: { type, governanceToken },
@@ -34,8 +33,12 @@ function Treasury() {
   return (
     <Box>
       <PageHeader
-        title={t('titleTreasury', { daoName: daoName })}
-        titleTestId={'title-treasury'}
+        breadcrumbs={[
+          {
+            title: t('treasury', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
         buttonText={showButton ? t('buttonSendAssets') : undefined}
         buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
         buttonTestId="link-send-assets"

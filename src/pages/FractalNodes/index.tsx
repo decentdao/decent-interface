@@ -1,9 +1,9 @@
 import { Box, Center, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { HEADER_HEIGHT } from '../../constants/common';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ChildNode } from '../../providers/Fractal/types';
@@ -59,9 +59,9 @@ export function FractalNodes() {
   const {
     gnosis: { safe, parentDAOAddress, childNodes },
   } = useFractal();
-  const { t } = useTranslation();
   const [isParentExpanded, setIsParentExpended] = useState(true);
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(true);
+  const { t } = useTranslation(['breadcrubms']);
 
   if (!safe.address) {
     return (
@@ -81,8 +81,12 @@ export function FractalNodes() {
   return (
     <Box>
       <PageHeader
-        title={t('titleNodes')}
-        titleTestId="nodes-title"
+        breadcrumbs={[
+          {
+            title: t('nodes', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
       />
       {parentDAOAddress && (
         <DAONodeCard

@@ -1,14 +1,13 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { MultisigProposalDetails } from '../../components/Proposals/MultisigProposalDetails';
 import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
-import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 
-import LeftArrow from '../../components/ui/svg/LeftArrow';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
@@ -17,14 +16,16 @@ function ProposalDetails() {
   const params = useParams();
 
   const {
-    gnosis: { daoName },
+    gnosis: {
+      safe: { address },
+    },
     governance: {
       txProposalsInfo: { txProposals },
     },
   } = useFractal();
 
   const [proposal, setProposal] = useState<TxProposal | null>();
-  const { t } = useTranslation(['proposal', 'sidebar']);
+  const { t } = useTranslation(['proposal', 'sidebar', 'breadcrumbs']);
 
   const usulProposal = proposal as UsulProposal;
 
@@ -47,20 +48,21 @@ function ProposalDetails() {
   return (
     <Box>
       <PageHeader
-        title={t('pageTitle', { daoName, ns: 'proposal' })}
-        titleTestId={'title-proposal-details'}
+        breadcrumbs={[
+          {
+            title: t('proposals', { ns: 'breadcrumbs' }),
+            path: DAO_ROUTES.proposals.relative(address),
+          },
+          {
+            title: t('proposal', {
+              ns: 'breadcrumbs',
+              proposalNumber: params.proposalNumber,
+              proposalTitle: proposal?.metaData?.title,
+            }),
+            path: '',
+          },
+        ]}
       />
-      <Link to={DAO_ROUTES.proposals.relative(params.address)}>
-        <Button
-          paddingLeft={0}
-          size="lg"
-          variant="text"
-          display="inline-flex"
-        >
-          <LeftArrow />
-          {t('proposals', { ns: 'sidebar' })}
-        </Button>
-      </Link>
       {proposal === undefined ? (
         <Box mt={7}>
           <InfoBoxLoader />

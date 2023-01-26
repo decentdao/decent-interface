@@ -1,0 +1,7 @@
+{
+    "proposals": "Proposals",
+    "proposalNew": "New Proposal",
+    "nodes": "DAO Hierarchy",
+    "treasury": "Treasury",
+    "proposal": "#{{proposalNumber}} {{proposalTitle}}"
+}
