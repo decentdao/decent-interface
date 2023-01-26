@@ -30,12 +30,14 @@ export default function useSubmitProposal() {
   const submitProposal = useCallback(
     async ({
       proposalData,
+      nonce,
       pendingToastMessage,
       failedToastMessage,
       successToastMessage,
       successCallback,
     }: {
       proposalData: ProposalExecuteData | undefined;
+      nonce: number | undefined;
       pendingToastMessage: string;
       failedToastMessage: string;
       successToastMessage: string;
@@ -56,7 +58,7 @@ export default function useSubmitProposal() {
       if (!usulContract || !votingStrategiesAddresses || !safe.address) {
         // Submit a multisig proposal
 
-        if (!safe.address || !signerOrProvider) {
+        if (!safe.address || !signerOrProvider || !nonce) {
           toast.dismiss(toastId);
           return;
         }
@@ -107,7 +109,7 @@ export default function useSubmitProposal() {
                 value,
                 data,
                 operation,
-                nonce: (await gnosisContract.nonce()).toNumber(),
+                nonce,
               }
             )
           );

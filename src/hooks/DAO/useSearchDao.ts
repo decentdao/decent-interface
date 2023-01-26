@@ -4,7 +4,7 @@ import { useIsGnosisSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
 
 export const useSearchDao = () => {
-  const [searchString, setSearchString] = useState<string | undefined>(undefined);
+  const [searchString, setSearchString] = useState<string | undefined>();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 

@@ -9,10 +9,12 @@ const useSendAssets = ({
   transferAmount,
   asset,
   destinationAddress,
+  nonce,
 }: {
   transferAmount: BigNumber;
   asset: SafeBalanceUsdResponse;
   destinationAddress: string;
+  nonce: number | undefined;
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('modals');
@@ -40,11 +42,12 @@ const useSendAssets = ({
 
     submitProposal({
       proposalData,
+      nonce,
       pendingToastMessage: t('sendAssetsPendingToastMessage'),
       successToastMessage: t('sendAssetsSuccessToastMessage'),
       failedToastMessage: t('sendAssetsFailureToastMessage'),
     });
-  }, [destinationAddress, transferAmount, asset.tokenAddress, submitProposal, t]);
+  }, [asset.tokenAddress, destinationAddress, transferAmount, submitProposal, nonce, t]);
 
   return sendAssets;
 };
