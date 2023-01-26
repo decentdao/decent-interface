@@ -1,9 +1,9 @@
 import { Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
-import ContentBox from '../../ui/ContentBox';
-import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import ContentBox from '../../ui/containers/ContentBox';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';

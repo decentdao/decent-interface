@@ -3,7 +3,7 @@ import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { TransactionData } from '../../types/transaction';
-import { BigNumberValuePair } from '../ui/BigNumberInput';
+import { BigNumberValuePair } from '../ui/forms/BigNumberInput';
 import { BigNumberComponent, EthAddressComponent, TextareaComponent } from './InputComponent';
 
 interface TransactionProps {

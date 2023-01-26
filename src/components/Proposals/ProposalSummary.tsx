@@ -8,10 +8,10 @@ import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { UsulProposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
-import ContentBox from '../ui/ContentBox';
-import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
-import { ExtendedProgressBar } from '../ui/ProgressBar';
+import ContentBox from '../ui/containers/ContentBox';
+import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
+import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 
 export default function ProposalSummary({
   proposal: { startBlock, votesSummary, deadline, proposer },

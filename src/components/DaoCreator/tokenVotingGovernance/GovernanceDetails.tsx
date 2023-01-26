@@ -1,10 +1,10 @@
 import { Box, Text, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { BigNumberInput } from '../../ui/BigNumberInput';
-import ContentBanner from '../../ui/ContentBanner';
-import ContentBox from '../../ui/ContentBox';
-import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import ContentBanner from '../../ui/containers/ContentBanner';
+import ContentBox from '../../ui/containers/ContentBox';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import InputBox from '../../ui/forms/InputBox';
 import { useCreator } from '../provider/hooks/useCreator';
 import { CreatorProviderActions } from '../provider/types';

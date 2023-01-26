@@ -12,10 +12,10 @@ import {
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatch } from 'react-router-dom';
-import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../constants/url';
-import { LanguageSwitcher } from '../../../i18n/LanguageSwitcher';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES, DAO_ROUTES } from '../../../routes/constants';
+import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../../constants/url';
+import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { BASE_ROUTES, DAO_ROUTES } from '../../../../routes/constants';
 
 function SidebarTooltipWrapper({ label, children }: { label: string; children: JSX.Element }) {
   return (

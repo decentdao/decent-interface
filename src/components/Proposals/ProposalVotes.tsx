@@ -15,10 +15,10 @@ import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
-import ContentBox from '../ui/ContentBox';
-import ProgressBar from '../ui/ProgressBar';
 import StatusBox from '../ui/badges/StatusBox';
+import ContentBox from '../ui/containers/ContentBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
+import ProgressBar from '../ui/utils/ProgressBar';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (

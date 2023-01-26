@@ -1,7 +1,7 @@
 import { Box, Center, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import PageHeader from '../../components/ui/Header/PageHeader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
 import { HEADER_HEIGHT } from '../../constants/common';

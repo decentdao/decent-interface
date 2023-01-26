@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
 import { MultisigProposalDetails } from '../../components/Proposals/MultisigProposalDetails';
 import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
-import PageHeader from '../../components/ui/Header/PageHeader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 

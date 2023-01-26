@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import useBuildDAOTx from '../../../hooks/DAO/useBuildDAOTx';
 import { GovernanceTypes } from '../../../providers/Fractal/types';
-import ConnectWalletToast from '../../ConnectWalletToast';
+import ConnectWalletToast from '../../ui/utils/ConnectWalletToast';
 import { StepButtons } from '../StepButtons';
 
 import { CreatorContext } from './hooks/useCreator';

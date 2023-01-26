@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import Proposals from '../../components/Proposals';
-import PageHeader from '../../components/ui/Header/PageHeader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';

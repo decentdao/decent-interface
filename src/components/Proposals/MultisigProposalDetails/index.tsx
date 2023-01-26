@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposal } from '../../../providers/Fractal/types';
-import ContentBox from '../../ui/ContentBox';
+import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import ProposalCreatedBy from '../../ui/proposal/ProposalCreatedBy';
 import { ProposalInfo } from '../ProposalInfo';

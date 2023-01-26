@@ -5,8 +5,8 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { MultisigProposal } from '../../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
-import ContentBox from '../../ui/ContentBox';
-import EtherscanDisplayTransaction from '../../ui/EtherscanDisplayTransaction';
+import ContentBox from '../../ui/containers/ContentBox';
+import EtherscanDisplayTransaction from '../../ui/links/EtherscanDisplayTransaction';
 
 export function InfoRow({
   property,

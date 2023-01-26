@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
 import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
-import PageHeader from '../../components/ui/Header/PageHeader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import useUsul from '../../hooks/DAO/proposal/useUsul';
