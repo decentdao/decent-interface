@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
 import { TransactionData } from '../../types/transaction';
 import { BigNumberValuePair } from '../ui/BigNumberInput';
-import { BigNumberComponent, EthAddressComponent, TextareaComponent } from './InputComponent';
+import { BigNumberComponent, EthAddressComponent, InputComponent } from './InputComponent';
 
 interface TransactionProps {
   transaction: TransactionData;
@@ -130,7 +130,7 @@ function Transaction({
           updateTargetAddress(address, isValid);
         }}
       />
-      <TextareaComponent
+      <InputComponent
         label={t('labelFunctionName')}
         helper={t('helperFunctionName')}
         isRequired={true}
@@ -145,7 +145,7 @@ function Transaction({
         }
         errorMessage={transaction.fragmentError}
       />
-      <TextareaComponent
+      <InputComponent
         label={t('labelFunctionSignature')}
         helper={t('helperFunctionSignature')}
         isRequired={false}
@@ -160,7 +160,7 @@ function Transaction({
         }
         errorMessage={transaction.fragmentError}
       />
-      <TextareaComponent
+      <InputComponent
         label={t('labelParameters')}
         helper={t('helperParameters')}
         isRequired={false}
