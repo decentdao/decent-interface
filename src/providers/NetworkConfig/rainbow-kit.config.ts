@@ -2,13 +2,14 @@ import '@rainbow-me/rainbowkit/styles.css';
 
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import { metaMaskWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createClient, createStorage, goerli } from 'wagmi';
-import { hardhat } from 'wagmi/chains';
+import { configureChains, createClient, createStorage } from 'wagmi';
+import { hardhat, goerli, polygon } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 import { testWallet } from './testWallet';
-export const chainsArr = [goerli];
+
+export const chainsArr = [goerli, polygon];
 
 // allows connection to localhost only in development mode.
 if (process.env.REACT_APP_TESTING_ENVIROMENT) {
@@ -16,9 +17,9 @@ if (process.env.REACT_APP_TESTING_ENVIROMENT) {
 }
 
 export const { chains, provider } = configureChains(chainsArr, [
-  infuraProvider({ priority: 0, apiKey: process.env.REACT_APP_INFURA_API_KEY! }),
-  alchemyProvider({ priority: 1, apiKey: process.env.REACT_APP_ALCHEMY_API_KEY! }),
-  publicProvider({ priority: 2 }),
+  alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY! }),
+  infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY! }),
+  publicProvider(),
 ]);
 
 const defaultWallets = [metaMaskWallet({ chains }), walletConnectWallet({ chains })];
