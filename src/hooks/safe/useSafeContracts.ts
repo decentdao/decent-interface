@@ -1,60 +1,28 @@
 import {
-  FractalModule,
   FractalModule__factory,
-  FractalRegistry,
   FractalRegistry__factory,
-  UsulVetoGuard,
   UsulVetoGuard__factory,
-  VetoERC20Voting,
   VetoERC20Voting__factory,
-  VetoGuard,
   VetoGuard__factory,
-  VetoMultisigVoting,
   VetoMultisigVoting__factory,
-  VotesToken,
   VotesToken__factory,
-  GnosisSafe,
-  GnosisSafeProxyFactory,
   GnosisSafeProxyFactory__factory,
   GnosisSafe__factory,
-  ModuleProxyFactory,
   ModuleProxyFactory__factory,
-  OZLinearVoting,
   OZLinearVoting__factory,
-  FractalUsul,
   FractalUsul__factory,
 } from '@fractal-framework/fractal-contracts';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useProvider, useSigner } from 'wagmi';
-import { MultiSend, MultiSend__factory } from '../../assets/typechain-types/usul';
+import { MultiSend__factory } from '../../assets/typechain-types/usul';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { DAOContracts } from '../../types';
 
 export default function useSafeContracts() {
-  const [multiSendContract, setMultisendContract] = useState<MultiSend>();
-  const [gnosisSafeFactoryContract, setGnosisSafeFactoryContract] =
-    useState<GnosisSafeProxyFactory>();
-  const [gnosisSafeSingletonContract, setGnosisSafeSingletonContract] = useState<GnosisSafe>();
-  const [zodiacModuleProxyFactoryContract, setZodiacModuleProxyFactoryContract] =
-    useState<ModuleProxyFactory>();
-  const [fractalUsulMasterCopyContract, setFractalUsulMasterCopyContract] = useState<FractalUsul>();
-  const [linearVotingMasterCopyContract, setLinearVotingMasterCopyContract] =
-    useState<OZLinearVoting>(); // 1:1 Token Voting contract
-  const [fractalModuleMasterCopyContract, setFractalModuleMasterCopyContract] =
-    useState<FractalModule>();
-  const [fractalRegistryContract, setFractalRegistryContract] = useState<FractalRegistry>();
-  const [gnosisVetoGuardMasterCopyContract, setGnosisVetoGuardMasterCopyContract] =
-    useState<VetoGuard>();
-  const [usulVetoGuardMasterCopyContract, setUsulVetoGuardMasterCopyContract] =
-    useState<UsulVetoGuard>();
-  const [vetoMultisigVotingMasterCopyContract, setVetoMultisigVotingMasterCopyContract] =
-    useState<VetoMultisigVoting>();
-  const [vetoERC20VotingMasterCopyContract, setVetoERC20VotingMasterCopyContract] =
-    useState<VetoERC20Voting>();
-  const [votesTokenMasterCopyContract, setVotesTokenMasterCopyContract] = useState<VotesToken>();
+  const [daoContracts, setDAOContracts] = useState<Partial<DAOContracts>>({});
 
   const provider = useProvider();
   const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const {
     contracts: {
@@ -75,66 +43,97 @@ export default function useSafeContracts() {
   } = useNetworkConfg();
 
   useEffect(() => {
+    const signerOrProvider = signer || provider;
     if (!signerOrProvider) {
-      setGnosisSafeFactoryContract(undefined);
-      setZodiacModuleProxyFactoryContract(undefined);
-      setFractalUsulMasterCopyContract(undefined);
-      setLinearVotingMasterCopyContract(undefined);
-      setGnosisSafeSingletonContract(undefined);
-      setFractalModuleMasterCopyContract(undefined);
-      setFractalRegistryContract(undefined);
-      setGnosisVetoGuardMasterCopyContract(undefined);
-      setUsulVetoGuardMasterCopyContract(undefined);
-      setVetoMultisigVotingMasterCopyContract(undefined);
-      setVetoERC20VotingMasterCopyContract(undefined);
-      setVotesTokenMasterCopyContract(undefined);
+      setDAOContracts({});
       return;
     }
+    const multiSendContract = {
+      asSigner: MultiSend__factory.connect(gnosisMultisend, signerOrProvider),
+      asProvider: MultiSend__factory.connect(gnosisMultisend, provider),
+    };
 
-    setMultisendContract(MultiSend__factory.connect(gnosisMultisend, signerOrProvider));
-    setGnosisSafeFactoryContract(
-      GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, signerOrProvider)
-    );
+    const gnosisSafeFactoryContract = {
+      asSigner: GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, signerOrProvider),
+      asProvider: GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, provider),
+    };
 
-    setFractalUsulMasterCopyContract(
-      FractalUsul__factory.connect(fractalUsulMasterCopy, signerOrProvider)
-    );
-    setLinearVotingMasterCopyContract(
-      OZLinearVoting__factory.connect(linearVotingMasterCopy, signerOrProvider)
-    );
-    setGnosisSafeSingletonContract(GnosisSafe__factory.connect(gnosisSafe, signerOrProvider));
+    const fractalUsulMasterCopyContract = {
+      asSigner: FractalUsul__factory.connect(fractalUsulMasterCopy, signerOrProvider),
+      asProvider: FractalUsul__factory.connect(fractalUsulMasterCopy, provider),
+    };
 
-    setZodiacModuleProxyFactoryContract(
-      ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory, signerOrProvider)
-    );
+    const linearVotingMasterCopyContract = {
+      asSigner: OZLinearVoting__factory.connect(linearVotingMasterCopy, signerOrProvider),
+      asProvider: OZLinearVoting__factory.connect(linearVotingMasterCopy, provider),
+    };
 
-    setFractalModuleMasterCopyContract(
-      FractalModule__factory.connect(fractalModuleMasterCopy, signerOrProvider)
-    );
+    const gnosisSafeSingletonContract = {
+      asSigner: GnosisSafe__factory.connect(gnosisSafe, signerOrProvider),
+      asProvider: GnosisSafe__factory.connect(gnosisSafe, provider),
+    };
 
-    setFractalRegistryContract(FractalRegistry__factory.connect(fractalRegistry, signerOrProvider));
-    setGnosisVetoGuardMasterCopyContract(
-      VetoGuard__factory.connect(gnosisVetoGuardMasterCopy, signerOrProvider)
-    );
-    setUsulVetoGuardMasterCopyContract(
-      UsulVetoGuard__factory.connect(usulVetoGuardMasterCopy, signerOrProvider)
-    );
-    setVetoMultisigVotingMasterCopyContract(
-      VetoMultisigVoting__factory.connect(vetoMultisigVotingMasterCopy, signerOrProvider)
-    );
-    setVetoERC20VotingMasterCopyContract(
-      VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy, signerOrProvider)
-    );
-    setVotesTokenMasterCopyContract(
-      VotesToken__factory.connect(votesTokenMasterCopy, signerOrProvider)
-    );
+    const zodiacModuleProxyFactoryContract = {
+      asSigner: ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory, signerOrProvider),
+      asProvider: ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory, provider),
+    };
+
+    const fractalModuleMasterCopyContract = {
+      asSigner: FractalModule__factory.connect(fractalModuleMasterCopy, signerOrProvider),
+      asProvider: FractalModule__factory.connect(fractalModuleMasterCopy, provider),
+    };
+
+    const fractalRegistryContract = {
+      asSigner: FractalRegistry__factory.connect(fractalRegistry, signerOrProvider),
+      asProvider: FractalRegistry__factory.connect(fractalRegistry, provider),
+    };
+
+    const gnosisVetoGuardMasterCopyContract = {
+      asSigner: VetoGuard__factory.connect(gnosisVetoGuardMasterCopy, signerOrProvider),
+      asProvider: VetoGuard__factory.connect(gnosisVetoGuardMasterCopy, provider),
+    };
+
+    const usulVetoGuardMasterCopyContract = {
+      asSigner: UsulVetoGuard__factory.connect(usulVetoGuardMasterCopy, signerOrProvider),
+      asProvider: UsulVetoGuard__factory.connect(usulVetoGuardMasterCopy, provider),
+    };
+
+    const vetoMultisigVotingMasterCopyContract = {
+      asSigner: VetoMultisigVoting__factory.connect(vetoMultisigVotingMasterCopy, signerOrProvider),
+      asProvider: VetoMultisigVoting__factory.connect(vetoMultisigVotingMasterCopy, provider),
+    };
+
+    const vetoERC20VotingMasterCopyContract = {
+      asSigner: VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy, signerOrProvider),
+      asProvider: VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy, provider),
+    };
+
+    const votesTokenMasterCopyContract = {
+      asSigner: VotesToken__factory.connect(votesTokenMasterCopy, signerOrProvider),
+      asProvider: VotesToken__factory.connect(votesTokenMasterCopy, provider),
+    };
+
+    setDAOContracts({
+      multiSendContract,
+      gnosisSafeFactoryContract,
+      fractalUsulMasterCopyContract,
+      linearVotingMasterCopyContract,
+      gnosisSafeSingletonContract,
+      zodiacModuleProxyFactoryContract,
+      fractalModuleMasterCopyContract,
+      fractalRegistryContract,
+      gnosisVetoGuardMasterCopyContract,
+      usulVetoGuardMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
+      vetoERC20VotingMasterCopyContract,
+      votesTokenMasterCopyContract,
+    });
   }, [
     gnosisSafeFactory,
     gnosisSafe,
     zodiacModuleProxyFactory,
     linearVotingMasterCopy,
     fractalUsulMasterCopy,
-    signerOrProvider,
     gnosisMultisend,
     fractalModuleMasterCopy,
     fractalRegistry,
@@ -143,21 +142,11 @@ export default function useSafeContracts() {
     vetoMultisigVotingMasterCopy,
     vetoERC20VotingMasterCopy,
     votesTokenMasterCopy,
+    provider,
+    signer,
   ]);
 
   return {
-    gnosisSafeFactoryContract,
-    gnosisSafeSingletonContract,
-    zodiacModuleProxyFactoryContract,
-    fractalUsulMasterCopyContract,
-    linearVotingMasterCopyContract,
-    multiSendContract,
-    fractalModuleMasterCopyContract,
-    fractalRegistryContract,
-    gnosisVetoGuardMasterCopyContract,
-    usulVetoGuardMasterCopyContract,
-    vetoMultisigVotingMasterCopyContract,
-    vetoERC20VotingMasterCopyContract,
-    votesTokenMasterCopyContract,
+    ...daoContracts,
   };
 }

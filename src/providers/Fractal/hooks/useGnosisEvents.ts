@@ -2,21 +2,23 @@ import { GnosisSafe } from '@fractal-framework/fractal-contracts';
 import { TypedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { useProvider } from 'wagmi';
 import { TokenDepositEvent, TokenEventType, TokenWithdrawEvent } from '../types';
 
 const useGnosisEvents = (gnosisSafe?: GnosisSafe) => {
   const [depositEvents, setDepositEvents] = useState<TokenDepositEvent[]>([]);
   const [withdrawEvents, setWithdrawEvents] = useState<TokenWithdrawEvent[]>([]);
-
+  const provider = useProvider();
   const getPastEvents = useCallback(
     async (filter: any) => {
-      if (gnosisSafe) {
-        const events = await gnosisSafe.queryFilter(filter);
+      if (gnosisSafe && provider) {
+        const providerContract = gnosisSafe.connect(provider);
+        const events = await providerContract.queryFilter(filter);
         return events;
       }
       return [];
     },
-    [gnosisSafe]
+    [gnosisSafe, provider]
   );
 
   const depositListener = async (

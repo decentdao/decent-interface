@@ -1,6 +1,6 @@
 import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
-import { useFractal } from './../../providers/Fractal/hooks/useFractal';
+import useSafeContracts from './useSafeContracts';
 
 /**
  * A hook which determines whether the provided Ethereum address is a Gnosis
@@ -16,26 +16,24 @@ import { useFractal } from './../../providers/Fractal/hooks/useFractal';
 export const useIsGnosisSafe = (address: string | undefined) => {
   const [isSafeLoading, setSafeLoading] = useState<boolean>(false);
   const [isSafe, setIsSafe] = useState<boolean | undefined>();
-  const {
-    gnosis: { safeService },
-  } = useFractal();
-
+  const { gnosisSafeSingletonContract } = useSafeContracts();
   useEffect(() => {
     setSafeLoading(true);
     setIsSafe(undefined);
 
-    if (!address || !isAddress(address) || !safeService) {
+    if (!address || !isAddress(address) || !gnosisSafeSingletonContract) {
       setIsSafe(false);
       setSafeLoading(false);
       return;
     }
 
-    safeService
-      .getSafeCreationInfo(address)
+    gnosisSafeSingletonContract.asSigner
+      .attach(address)
+      .getThreshold()
       .then(() => setIsSafe(true))
       .catch(() => setIsSafe(false))
       .finally(() => setSafeLoading(false));
-  }, [address, safeService]);
+  }, [address, gnosisSafeSingletonContract]);
 
   return { isSafe, isSafeLoading };
 };

@@ -6,8 +6,8 @@ import {
   ProposalCreatedEvent,
   ProposalCanceledEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
-import { Dispatch, useCallback, useEffect, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { Dispatch, useCallback, useEffect } from 'react';
+import { useProvider } from 'wagmi';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
@@ -23,9 +23,6 @@ interface IUseUsulProposals {
 
 export default function useUsulProposals({ governance, governanceDispatch }: IUseUsulProposals) {
   const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-
   const { chainId } = useNetworkConfg();
 
   const {
@@ -39,11 +36,12 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
     async (...[strategyAddress, proposalNumber, proposer]) => {
-      if (!usulContract || !signerOrProvider || !provider) {
+      if (!usulContract || !ozLinearVotingContract) {
         return;
       }
-      const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
-      const proposalMetaDataCreatedEvents = await usulContract.queryFilter(
+      const proposalMetaDataCreatedFilter =
+        usulContract.asProvider.filters.ProposalMetadataCreated();
+      const proposalMetaDataCreatedEvents = await usulContract.asProvider.queryFilter(
         proposalMetaDataCreatedFilter
       );
       const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
@@ -64,7 +62,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         proposalNumber,
         proposer,
         usulContract,
-        signerOrProvider,
+        ozLinearVotingContract,
         provider,
         metaData
       );
@@ -80,12 +78,12 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         },
       });
     },
-    [usulContract, signerOrProvider, provider, chainId, governanceDispatch, txProposalsInfo]
+    [usulContract, ozLinearVotingContract, provider, chainId, governanceDispatch, txProposalsInfo]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
     async (...[voter, proposalNumber, support, weight]) => {
-      if (!ozLinearVotingContract || !usulContract || !signerOrProvider) {
+      if (!ozLinearVotingContract || !usulContract) {
         return;
       }
 
@@ -103,9 +101,9 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
                 },
               ],
               votesSummary: await getProposalVotesSummary(
-                usulContract,
-                proposalNumber,
-                signerOrProvider
+                usulContract.asSigner,
+                ozLinearVotingContract.asSigner,
+                proposalNumber
               ),
             };
             return updatedProposal;
@@ -123,7 +121,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         },
       });
     },
-    [usulContract, ozLinearVotingContract, governanceDispatch, signerOrProvider, txProposalsInfo]
+    [usulContract, ozLinearVotingContract, governanceDispatch, txProposalsInfo]
   );
 
   const proposalQueuedEventListener: TypedListener<VoteFinalizedEvent> = useCallback(
@@ -141,32 +139,31 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
   );
 
   useEffect(() => {
-    if (!usulContract || !ozLinearVotingContract || !signerOrProvider) {
+    if (!usulContract || !ozLinearVotingContract) {
       return;
     }
-    const proposalCreatedFilter = usulContract.filters.ProposalCreated();
-    const proposalCanceledFilter = usulContract.filters.ProposalCanceled();
+    const proposalCreatedFilter = usulContract.asSigner.filters.ProposalCreated();
+    const proposalCanceledFilter = usulContract.asSigner.filters.ProposalCanceled();
 
-    const votedEvent = ozLinearVotingContract.filters.Voted();
-    const queuedEvent = ozLinearVotingContract.filters.VoteFinalized();
+    const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
+    const queuedEvent = ozLinearVotingContract.asSigner.filters.VoteFinalized();
 
-    usulContract.on(proposalCreatedFilter, proposalCreatedListener);
-    usulContract.on(proposalCanceledFilter, proposalCanceledListener);
+    usulContract.asSigner.on(proposalCreatedFilter, proposalCreatedListener);
+    usulContract.asSigner.on(proposalCanceledFilter, proposalCanceledListener);
 
-    ozLinearVotingContract.on(votedEvent, proposalVotedEventListener);
-    ozLinearVotingContract.on(queuedEvent, proposalQueuedEventListener);
+    ozLinearVotingContract.asSigner.on(votedEvent, proposalVotedEventListener);
+    ozLinearVotingContract.asSigner.on(queuedEvent, proposalQueuedEventListener);
 
     return () => {
-      usulContract.off(proposalCreatedFilter, proposalCreatedListener);
-      usulContract.off(proposalCanceledFilter, proposalCanceledListener);
+      usulContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
+      usulContract.asSigner.off(proposalCanceledFilter, proposalCanceledListener);
 
-      ozLinearVotingContract.off(votedEvent, proposalVotedEventListener);
-      ozLinearVotingContract.off(queuedEvent, proposalQueuedEventListener);
+      ozLinearVotingContract.asSigner.off(votedEvent, proposalVotedEventListener);
+      ozLinearVotingContract.asSigner.off(queuedEvent, proposalQueuedEventListener);
     };
   }, [
     usulContract,
     ozLinearVotingContract,
-    signerOrProvider,
     proposalCreatedListener,
     proposalVotedEventListener,
     proposalQueuedEventListener,
@@ -174,14 +171,17 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
   ]);
 
   useEffect(() => {
-    if (!usulContract || !signerOrProvider || !provider) {
+    if (!usulContract || !ozLinearVotingContract) {
       return;
     }
     const loadProposals = async () => {
-      const proposalCreatedFilter = usulContract.filters.ProposalCreated();
-      const proposalMetaDataCreatedFilter = usulContract.filters.ProposalMetadataCreated();
-      const proposalCreatedEvents = await usulContract.queryFilter(proposalCreatedFilter);
-      const proposalMetaDataCreatedEvents = await usulContract.queryFilter(
+      const proposalCreatedFilter = usulContract.asProvider.filters.ProposalCreated();
+      const proposalMetaDataCreatedFilter =
+        usulContract.asProvider.filters.ProposalMetadataCreated();
+      const proposalCreatedEvents = await usulContract.asProvider.queryFilter(
+        proposalCreatedFilter
+      );
+      const proposalMetaDataCreatedEvents = await usulContract.asProvider.queryFilter(
         proposalMetaDataCreatedFilter
       );
 
@@ -208,7 +208,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
             args[1],
             args[2],
             usulContract,
-            signerOrProvider,
+            ozLinearVotingContract,
             provider,
             metaData
           );
@@ -234,5 +234,5 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     };
 
     loadProposals();
-  }, [usulContract, signerOrProvider, governanceDispatch, provider, chainId]);
+  }, [usulContract, ozLinearVotingContract, governanceDispatch, provider, chainId]);
 }

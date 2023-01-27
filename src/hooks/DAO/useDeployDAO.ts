@@ -28,7 +28,7 @@ const useDeployDAO = () => {
         const { predictedGnosisSafeAddress, safeTx } = builtSafeTx;
 
         contractCallDeploy({
-          contractFn: () => multiSendContract.multiSend(safeTx),
+          contractFn: () => multiSendContract.asSigner.multiSend(safeTx),
           pendingMessage: t('pendingDeployGnosis'),
           failedMessage: t('failedDeployGnosis'),
           successMessage: t('successDeployGnosis'),

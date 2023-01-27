@@ -19,6 +19,11 @@ const chainsMetaData: EVMChainMetaData = {
     chainId: 5,
     color: 'gold.300',
   },
+  137: {
+    nameKey: 'polygon',
+    chainId: 137,
+    color: '#562FB0',
+  },
   [parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID || '31337', 10)]: {
     nameKey: 'local',
     chainId: parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID || '31337', 10),
