@@ -17,8 +17,8 @@ if (process.env.REACT_APP_TESTING_ENVIROMENT) {
 }
 
 export const { chains, provider } = configureChains(chainsArr, [
-  alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY! }),
   infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY! }),
+  alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY! }),
   publicProvider(),
 ]);
 
