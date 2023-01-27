@@ -1,12 +1,10 @@
-import { Address, useEnsAvatar, useProvider } from 'wagmi';
-import { chainsArr } from '../../providers/NetworkConfig/rainbow-kit.config';
+import { Address, useEnsAvatar } from 'wagmi';
+import { useSupportedENS } from './useChainData';
 
 const useAvatar = (account: string | null) => {
-  const provider = useProvider();
-  const networkId = provider.network.chainId;
   const { data: avatarURL } = useEnsAvatar({
     address: account as Address,
-    chainId: [137].includes(networkId) ? chainsArr[0].id : networkId,
+    chainId: useSupportedENS(),
   });
 
   return avatarURL;

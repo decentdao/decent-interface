@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Address, useEnsName, useProvider } from 'wagmi';
+import { Address, useEnsName } from 'wagmi';
 import useSafeContracts from '../safe/useSafeContracts';
+import { useSupportedENS } from '../utils/useChainData';
 import { createAccountSubstring } from '../utils/useDisplayName';
-import { chainsArr } from './../../providers/NetworkConfig/rainbow-kit.config';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:
@@ -15,12 +15,9 @@ export default function useDAOName({ address }: { address?: string }) {
   const { fractalRegistryContract } = useSafeContracts();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
 
-  const provider = useProvider();
-  const networkId = provider.network.chainId;
-
   const { data: ensName } = useEnsName({
     address: address as Address,
-    chainId: [137].includes(networkId) ? chainsArr[0].id : networkId,
+    chainId: useSupportedENS(),
   });
 
   const getDaoName = useCallback(async () => {

@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { useProvider } from 'wagmi';
+import { chainsArr } from '../../providers/NetworkConfig/rainbow-kit.config';
 
 type EVMChainMetaData = {
   [chainId: number]: {
@@ -35,6 +37,12 @@ const chainsMetaData: EVMChainMetaData = {
     color: '',
   },
 };
+
+export function useSupportedENS() {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+  return [137].includes(networkId) ? chainsArr[0].id : networkId;
+}
 
 export function useChainData(chainId: number) {
   const chainMetaData = useMemo(() => chainsMetaData[chainId], [chainId]);
