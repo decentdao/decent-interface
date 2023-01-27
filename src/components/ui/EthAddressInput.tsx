@@ -36,7 +36,7 @@ export function EthAddressInput({
       // preface id with "search" to prevent showing 1password
       // https://1password.community/discussion/comment/606453/#Comment_606453
       id="searchButActuallyEthAddress"
-      autocomplete="off"
+      autoComplete="off"
       value={actualInputValue}
       placeholder="0x0000...0000"
       isDisabled={rest.isDisabled || isAddressLoading}
