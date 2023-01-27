@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Address, useEnsName } from 'wagmi';
 import useSafeContracts from '../safe/useSafeContracts';
+import { useSupportedENS } from '../utils/useChainData';
 import { createAccountSubstring } from '../utils/useDisplayName';
-import useENSName from '../utils/useENSName';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:
@@ -13,7 +14,11 @@ import useENSName from '../utils/useENSName';
 export default function useDAOName({ address }: { address?: string }) {
   const { fractalRegistryContract } = useSafeContracts();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
-  const ensName = useENSName(address);
+
+  const { data: ensName } = useEnsName({
+    address: address as Address,
+    chainId: useSupportedENS(),
+  });
 
   const getDaoName = useCallback(async () => {
     if (!address) {
@@ -30,9 +35,8 @@ export default function useDAOName({ address }: { address?: string }) {
       setDAORegistryName(createAccountSubstring(address));
       return;
     }
-
-    const events = await fractalRegistryContract.queryFilter(
-      fractalRegistryContract.filters.FractalNameUpdated(address)
+    const events = await fractalRegistryContract.asProvider.queryFilter(
+      fractalRegistryContract.asProvider.filters.FractalNameUpdated(address)
     );
 
     const latestEvent = events[0];

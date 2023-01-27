@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Address, useEnsName, useProvider } from 'wagmi';
-import { chainsArr } from '../../providers/NetworkConfig/rainbow-kit.config';
+import { Address, useEnsName } from 'wagmi';
+import { useSupportedENS } from './useChainData';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
@@ -15,12 +15,9 @@ export const createAccountSubstring = (account: string) => {
  * display name for a Fractal DAO, use the useDAOName hook instead.
  */
 const useDisplayName = (account?: string | null) => {
-  const provider = useProvider();
-
-  const networkId = provider.network.chainId;
   const { data: ensName } = useEnsName({
     address: account as Address,
-    chainId: [137].includes(networkId) ? chainsArr[0].id : networkId,
+    chainId: useSupportedENS(),
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();
