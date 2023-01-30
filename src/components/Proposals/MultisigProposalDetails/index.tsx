@@ -36,7 +36,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) 
         {account && (
           <TxActions
             proposal={txProposal}
-            vetoGuard={vetoGuardContract!.asSigner as VetoGuard}
+            vetoGuard={vetoGuardContract?.asSigner as VetoGuard}
           />
         )}
       </GridItem>
