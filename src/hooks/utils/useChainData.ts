@@ -48,3 +48,14 @@ export function useChainData(chainId: number) {
   const chainMetaData = useMemo(() => chainsMetaData[chainId], [chainId]);
   return chainMetaData;
 }
+
+export function useNativeSymbol() {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+  switch (networkId) {
+    case 137:
+      return 'MATIC';
+    default:
+      return 'ETH';
+  }
+}

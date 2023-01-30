@@ -1,6 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
+import { useNativeSymbol } from '../../../hooks/utils/useChainData';
 import { formatCoin, formatUSD } from '../../../utils/numberFormats';
 
 export interface TokenDisplayData {
@@ -15,26 +16,23 @@ export interface TokenDisplayData {
 }
 
 export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
+  const nativeSymbol = useNativeSymbol();
+
   let totalFiatValue = 0;
   let displayData: TokenDisplayData[] = [];
   for (let i = 0; i < assets.length; i++) {
     let asset = assets[i];
     if (asset.balance === '0') continue;
     totalFiatValue += Number(asset.fiatBalance);
-    let symbol = asset.token === null ? 'ETH' : asset.token.symbol;
+    let symbol = asset.token === null ? nativeSymbol : asset.token.symbol;
     const formatted: TokenDisplayData = {
       iconUri: asset.token === null ? ethDefault : asset.token.logoUri,
       address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
-      truncatedCoinTotal: formatCoin(
-        asset.balance,
-        true,
-        asset?.token?.decimals,
-        asset?.token?.symbol
-      ),
+      truncatedCoinTotal: formatCoin(asset.balance, true, asset?.token?.decimals, symbol),
       fiatValue: Number(asset.fiatBalance),
       symbol: symbol,
       fiatConversion: `1 ${symbol} = ${formatUSD(Number(asset.fiatConversion))}`,
-      fullCoinTotal: formatCoin(asset.balance, false, asset?.token?.decimals, asset?.token?.symbol),
+      fullCoinTotal: formatCoin(asset.balance, false, asset?.token?.decimals, symbol),
       fiatDisplayValue: formatUSD(Number(asset.fiatBalance)),
     };
     displayData.push(formatted);
