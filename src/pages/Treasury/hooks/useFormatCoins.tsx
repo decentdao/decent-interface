@@ -1,7 +1,6 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import ethDefault from '../../../assets/images/coin-icon-eth.svg';
-import { useNativeSymbol } from '../../../hooks/utils/useChainData';
+import { useNativeIcon, useNativeSymbol } from '../../../hooks/utils/useChainData';
 import { formatCoin, formatUSD } from '../../../utils/numberFormats';
 
 export interface TokenDisplayData {
@@ -17,7 +16,7 @@ export interface TokenDisplayData {
 
 export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
   const nativeSymbol = useNativeSymbol();
-
+  const naviveIcon = useNativeIcon();
   let totalFiatValue = 0;
   let displayData: TokenDisplayData[] = [];
   for (let i = 0; i < assets.length; i++) {
@@ -26,7 +25,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
     totalFiatValue += Number(asset.fiatBalance);
     let symbol = asset.token === null ? nativeSymbol : asset.token.symbol;
     const formatted: TokenDisplayData = {
-      iconUri: asset.token === null ? ethDefault : asset.token.logoUri,
+      iconUri: asset.token === null ? naviveIcon : asset.token.logoUri,
       address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
       truncatedCoinTotal: formatCoin(asset.balance, true, asset?.token?.decimals, symbol),
       fiatValue: Number(asset.fiatBalance),

@@ -1,6 +1,5 @@
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
-import ethDefault from '../../../assets/images/coin-icon-eth.svg';
-import { useNativeSymbol } from '../../../hooks/utils/useChainData';
+import { useNativeIcon, useNativeSymbol } from '../../../hooks/utils/useChainData';
 import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/Fractal/types';
 import { formatCoin } from '../../../utils/numberFormats';
 
@@ -29,6 +28,8 @@ export function useFormatTransfers(
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
   const nativeSymbol = useNativeSymbol();
+  const naviveIcon = useNativeIcon();
+
   for (let i = 0; i < transfers.length; i++) {
     let transfer = transfers[i];
 
@@ -39,7 +40,7 @@ export function useFormatTransfers(
         imageSrc = transfer.tokenInfo?.logoUri;
         break;
       case TransferType.ETHER_TRANSFER:
-        imageSrc = ethDefault;
+        imageSrc = naviveIcon;
         break;
       default:
         imageSrc = coinDefault;
