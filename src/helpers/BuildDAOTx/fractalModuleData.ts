@@ -6,30 +6,33 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { getRandomBytes } from '../crypto';
 
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;
-  setModuleCalldata: string;
+  fractalModuleCalldata: string;
 }
 
 export const fractalModuleData = (
   fractalModuleMasterCopyContract: FractalModule,
   zodiacModuleProxyFactoryContract: ModuleProxyFactory,
   safeContract: GnosisSafe,
+  saltNum: string,
   parentDAOAddress?: string
 ): FractalModuleData => {
-  const setModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData('setUp', [
-    ethers.utils.defaultAbiCoder.encode(
-      ['address', 'address', 'address', 'address[]'],
-      [
-        parentDAOAddress || safeContract.address, // Owner -- Parent DAO or safe contract
-        safeContract.address, // Avatar
-        safeContract.address, // Target
-        [], // Authorized Controllers
-      ]
-    ),
-  ]);
+  const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
+    'setUp',
+    [
+      ethers.utils.defaultAbiCoder.encode(
+        ['address', 'address', 'address', 'address[]'],
+        [
+          parentDAOAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
+          safeContract.address, // Avatar
+          safeContract.address, // Target
+          [], // Authorized Controllers
+        ]
+      ),
+    ]
+  );
 
   const fractalByteCodeLinear =
     '0x602d8060093d393df3363d3d373d3d3d363d73' +
@@ -38,7 +41,7 @@ export const fractalModuleData = (
 
   const fractalSalt = solidityKeccak256(
     ['bytes32', 'uint256'],
-    [solidityKeccak256(['bytes'], [setModuleCalldata]), getRandomBytes()]
+    [solidityKeccak256(['bytes'], [fractalModuleCalldata]), saltNum]
   );
 
   return {
@@ -47,6 +50,6 @@ export const fractalModuleData = (
       fractalSalt,
       solidityKeccak256(['bytes'], [fractalByteCodeLinear])
     ),
-    setModuleCalldata,
+    fractalModuleCalldata,
   };
 };
