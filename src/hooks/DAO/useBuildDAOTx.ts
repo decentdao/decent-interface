@@ -876,7 +876,6 @@ const useBuildDAOTx = () => {
       saltNum,
       signerOrProvider,
       buildDeploySafeTx,
-      fractalModuleData,
       buildVetoGuardData,
       buildVetoVotesContractData,
       defaultAbiCoder,
