@@ -2,40 +2,34 @@ import {
   FractalModule,
   FractalModule__factory,
   GnosisSafe,
-  ModuleProxyFactory
-} from "@fractal-framework/fractal-contracts";
-import { ethers } from "ethers";
-import { getCreate2Address, solidityKeccak256 } from "ethers/lib/utils";
-import { getRandomBytes } from "../crypto";
+  ModuleProxyFactory,
+} from '@fractal-framework/fractal-contracts';
+import { ethers } from 'ethers';
+import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { getRandomBytes } from '../crypto';
 
 export interface FractalModuleData {
-  predictedFractalModuleAddress: string,
-  setModuleCalldata: string
+  predictedFractalModuleAddress: string;
+  setModuleCalldata: string;
 }
 
 export const fractalModuleData = (
   fractalModuleMasterCopyContract: FractalModule,
   zodiacModuleProxyFactoryContract: ModuleProxyFactory,
   safeContract: GnosisSafe,
-  parentDAOAddress?: string,
+  parentDAOAddress?: string
 ): FractalModuleData => {
-
-  const setModuleCalldata =
-    FractalModule__factory
-      .createInterface()
-      .encodeFunctionData(
-        'setUp',
-        [
-          ethers.utils.defaultAbiCoder.encode(
-            ['address', 'address', 'address', 'address[]'],
-            [
-              parentDAOAddress || safeContract.address, // Owner -- Parent DAO or safe contract
-              safeContract.address, // Avatar
-              safeContract.address, // Target
-              [], // Authorized Controllers
-            ]
-          ),
-        ]);
+  const setModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData('setUp', [
+    ethers.utils.defaultAbiCoder.encode(
+      ['address', 'address', 'address', 'address[]'],
+      [
+        parentDAOAddress || safeContract.address, // Owner -- Parent DAO or safe contract
+        safeContract.address, // Avatar
+        safeContract.address, // Target
+        [], // Authorized Controllers
+      ]
+    ),
+  ]);
 
   const fractalByteCodeLinear =
     '0x602d8060093d393df3363d3d373d3d3d363d73' +
@@ -55,4 +49,4 @@ export const fractalModuleData = (
     ),
     setModuleCalldata,
   };
-}
+};

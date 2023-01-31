@@ -1,12 +1,10 @@
 import {
-  FractalModule__factory,
   OZLinearVoting__factory,
   FractalUsul__factory,
   VetoERC20Voting__factory,
   VetoGuard__factory,
   VetoMultisigVoting__factory,
   GnosisSafe__factory,
-  GnosisSafe,
   UsulVetoGuard__factory,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber, ethers } from 'ethers';
@@ -20,10 +18,10 @@ import {
   TokenGovernanceDAO,
 } from '../../components/DaoCreator/provider/types/index';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
+import { FractalModuleData, fractalModuleData } from '../../helpers/BuildDAOTx/fractalModuleData';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { MetaTransaction } from '../../types/transaction';
 import useSafeContracts from '../safe/useSafeContracts';
-import { FractalModuleData, fractalModuleData } from "../../helpers/BuildDAOTx/fractalModuleData";
 
 /**
  * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
@@ -645,12 +643,13 @@ const useBuildDAOTx = () => {
         );
 
         // Fractal Module
-        const { predictedFractalModuleAddress, setModuleCalldata }: FractalModuleData = fractalModuleData(
-          fractalModuleMasterCopyContract,
-          zodiacModuleProxyFactoryContract,
-          safeContract,
-          parentDAOAddress,
-        );
+        const { predictedFractalModuleAddress, setModuleCalldata }: FractalModuleData =
+          fractalModuleData(
+            fractalModuleMasterCopyContract,
+            zodiacModuleProxyFactoryContract,
+            safeContract,
+            parentDAOAddress
+          );
 
         let internaltTxs: MetaTransaction[];
         if (parentDAOAddress) {
