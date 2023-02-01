@@ -13,6 +13,7 @@ import { NetworkConfig } from '../types';
 
 export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
+  etherscanBaseURL: 'https://polygonscan.com',
   chainId: 137,
   contracts: {
     fractalUsulMasterCopy: FractalUsul.address,

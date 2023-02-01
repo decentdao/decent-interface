@@ -1,11 +1,11 @@
 import { ethers } from 'ethers';
-import useSubDomain from '../../hooks/utils/useSubDomain';
+import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanLinkToken({ address, children }: { address: string; children: React.ReactNode }) {
-  const subdomain = useSubDomain();
+  const { etherscanBaseURL } = useNetworkConfg();
   return (
     <a
-      href={`https://${subdomain}etherscan.io/${
+      href={`${etherscanBaseURL}/${
         address === ethers.constants.AddressZero ? '' : 'token/'
       }${address}`}
       target="_blank"

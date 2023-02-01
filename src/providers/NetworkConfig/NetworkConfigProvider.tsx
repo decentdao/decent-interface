@@ -8,6 +8,7 @@ import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',
+  etherscanBaseURL: '',
   chainId: 0,
   contracts: {
     gnosisSafe: '',

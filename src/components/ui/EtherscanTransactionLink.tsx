@@ -1,4 +1,4 @@
-import useSubDomain from '../../hooks/utils/useSubDomain';
+import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanTransactionLink({
   txHash,
@@ -7,10 +7,10 @@ function EtherscanTransactionLink({
   txHash: string | undefined;
   children: React.ReactNode;
 }) {
-  const subdomain = useSubDomain();
+  const { etherscanBaseURL } = useNetworkConfg();
   return (
     <a
-      href={`https://${subdomain}etherscan.io/tx/${txHash}`}
+      href={`${etherscanBaseURL}/tx/${txHash}`}
       target="_blank"
       rel="noreferrer"
     >
