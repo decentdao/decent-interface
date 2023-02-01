@@ -35,7 +35,7 @@ export default function useDAOName({ address }: { address?: string }) {
       fractalRegistryContract.filters.FractalNameUpdated(address)
     );
 
-    const latestEvent = events[0];
+    const latestEvent = events.pop();
     if (!latestEvent) {
       setDAORegistryName(createAccountSubstring(address));
       return;
