@@ -48,7 +48,7 @@ test('FAQ button works', async () => {
 
 test('Discord button works', async () => {
   const tab = await home.clickDiscordNewTab();
-  await expect(tab).toHaveURL('https://discord.gg/Zh2emKspVF');
+  await expect(tab).toHaveURL('https://discord.com/invite/Zh2emKspVF');
 });
 
 test('Docs button works', async () => {
