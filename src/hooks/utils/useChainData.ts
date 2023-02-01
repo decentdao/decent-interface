@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useProvider } from 'wagmi';
 import ethDefault from '../../assets/images/coin-icon-eth.svg';
 import polygonDefault from '../../assets/images/coin-icon-polygon.svg';
@@ -74,4 +74,24 @@ export function useNativeIcon() {
     default:
       return ethDefault;
   }
+}
+
+export function useEtherscanDomain() {
+  const provider = useProvider();
+  const [url, setUrl] = useState('');
+
+  useEffect(() => {
+    switch (provider.network.name) {
+      case 'goerli':
+        setUrl('https://goerli.etherscan.io');
+        break;
+      case 'matic':
+        setUrl('https://polygonscan.com');
+        break;
+      default:
+        setUrl('https://etherscan.io');
+    }
+  }, [provider]);
+
+  return url;
 }

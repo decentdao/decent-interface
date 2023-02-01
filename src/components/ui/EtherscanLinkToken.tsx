@@ -1,13 +1,11 @@
 import { ethers } from 'ethers';
-import useSubDomain from '../../hooks/utils/useSubDomain';
+import { useEtherscanDomain } from '../../hooks/utils/useChainData';
 
 function EtherscanLinkToken({ address, children }: { address: string; children: React.ReactNode }) {
-  const subdomain = useSubDomain();
+  const domain = useEtherscanDomain();
   return (
     <a
-      href={`https://${subdomain}etherscan.io/${
-        address === ethers.constants.AddressZero ? '' : 'token/'
-      }${address}`}
+      href={`${domain}/${address === ethers.constants.AddressZero ? '' : 'token/'}${address}`}
       target="_blank"
       rel="noreferrer"
     >
