@@ -19,6 +19,7 @@ function Treasury() {
     governance: { type, governanceToken },
     treasury: { assetsFungible },
   } = useFractal();
+
   const { address: account } = useAccount();
   const { t } = useTranslation('treasury');
   const hasAssetBalance = assetsFungible.some(asset => parseFloat(asset.balance) > 0);
