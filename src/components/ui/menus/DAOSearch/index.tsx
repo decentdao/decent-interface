@@ -57,21 +57,21 @@ export function DAOSearch() {
           </InputGroup>
         </PopoverTrigger>
         <Box
+          marginTop="0.5rem"
+          padding="1rem 1rem"
           border="none"
           rounded="lg"
           shadow="menu-gold"
           bg="grayscale.black"
           hidden={!errorMessage && !address}
         >
-          <Box p="0.5rem 1rem">
-            <SearchDisplay
-              loading={isLoading}
-              errorMessage={errorMessage}
-              validAddress={isSafe}
-              address={address}
-              onClickView={resetSearch}
-            />
-          </Box>
+          <SearchDisplay
+            loading={isLoading}
+            errorMessage={errorMessage}
+            validAddress={isSafe}
+            address={address}
+            onClickView={resetSearch}
+          />
         </Box>
       </Popover>
     </Box>
