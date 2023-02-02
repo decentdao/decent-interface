@@ -3,17 +3,25 @@ import {
   SafeInfoResponse,
   SafeMultisigTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
+  TransferWithTokenInfoResponse,
 } from '@safe-global/safe-service-client';
-import { BigNumber } from 'ethers';
+import { BigNumber, constants } from 'ethers';
 import { useMemo } from 'react';
-import { ActivityEventType, Activity } from '../../providers/Fractal/types';
-import { parseDecodedData, totalsReducer } from '../../providers/Fractal/utils';
+import {
+  ActivityEventType,
+  Activity,
+  AssetTotals,
+  GnosisTransferType,
+} from '../../providers/Fractal/types';
+import { parseDecodedData } from '../../providers/Fractal/utils';
 import { formatWeiToValue } from '../../utils';
+import { useNativeSymbol } from './useChainData';
 
 export function useParseSafeTxs(
   transactions: AllTransactionsListResponse,
   safe: Partial<SafeInfoResponse>
 ) {
+  const nativeSymbol = useNativeSymbol();
   const parsedActivities = useMemo(() => {
     if (!transactions.results.length || !safe.address) {
       return [];
@@ -36,9 +44,52 @@ export function useParseSafeTxs(
         : false;
 
       // returns mapping of Asset -> Asset Total Value by getting the total of each asset transfered
-      const transferAmountTotalsMap = transaction.transfers.reduce(totalsReducer, new Map());
+      const transferAmountTotalsMap = transaction.transfers.reduce(
+        (prev: Map<string, AssetTotals>, cur: TransferWithTokenInfoResponse) => {
+          if (cur.type === GnosisTransferType.ETHER && cur.value) {
+            const prevValue = prev.get(constants.AddressZero)!;
+            if (prevValue) {
+              prev.set(constants.AddressZero, {
+                bn: prevValue.bn.add(BigNumber.from(cur.value)),
+                symbol: nativeSymbol,
+                decimals: 18,
+              });
+            }
+            prev.set(constants.AddressZero, {
+              bn: BigNumber.from(cur.value),
+              symbol: nativeSymbol,
+              decimals: 18,
+            });
+          }
+          if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+            prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
+              bn: BigNumber.from(1),
+              symbol: cur.tokenInfo.symbol,
+              decimals: 0,
+            });
+          }
+          if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+            const prevValue = prev.get(cur.tokenInfo.address);
+            if (prevValue) {
+              prev.set(cur.tokenInfo.address, {
+                ...prevValue,
+                bn: prevValue.bn.add(BigNumber.from(cur.value)),
+              });
+            } else {
+              prev.set(cur.tokenAddress!, {
+                bn: BigNumber.from(cur.value),
+                symbol: cur.tokenInfo.symbol,
+                decimals: cur.tokenInfo.decimals,
+              });
+            }
+          }
 
-      // formats totals array into readable string with Symbol ie 1 ETHER
+          return prev;
+        },
+        new Map()
+      );
+
+      // formats totals array into readable string with Symbol ie 1 [NativeSymbol]
       const transferAmountTotals: string[] = Array.from(transferAmountTotalsMap.values()).map(
         token => {
           const totalAmount = formatWeiToValue(token.bn, token.decimals);
@@ -60,7 +111,9 @@ export function useParseSafeTxs(
         !BigNumber.from(multiSigTransaction.value).isZero();
 
       if (isEthSend) {
-        transferAmountTotals.push(`${formatWeiToValue(multiSigTransaction.value, 18)} ETHER`);
+        transferAmountTotals.push(
+          `${formatWeiToValue(multiSigTransaction.value, 18)} ${nativeSymbol}`
+        );
         transferAddresses.push(multiSigTransaction.to);
       }
 
@@ -130,7 +183,7 @@ export function useParseSafeTxs(
       };
       return activity;
     });
-  }, [safe.address, transactions]);
+  }, [safe.address, transactions, nativeSymbol]);
 
   return parsedActivities;
 }

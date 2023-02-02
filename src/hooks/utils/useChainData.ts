@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { useProvider } from 'wagmi';
+import ethDefault from '../../assets/images/coin-icon-eth.svg';
+import polygonDefault from '../../assets/images/coin-icon-polygon.svg';
 import { chainsArr } from '../../providers/NetworkConfig/rainbow-kit.config';
-
 type EVMChainMetaData = {
   [chainId: number]: {
     chainId: number;
@@ -47,4 +48,30 @@ export function useSupportedENS() {
 export function useChainData(chainId: number) {
   const chainMetaData = useMemo(() => chainsMetaData[chainId], [chainId]);
   return chainMetaData;
+}
+
+export function useNativeSymbol() {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+  switch (networkId) {
+    case 137:
+      return 'MATIC';
+    case 1:
+    case 5:
+    default:
+      return 'ETH';
+  }
+}
+
+export function useNativeIcon() {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+  switch (networkId) {
+    case 137:
+      return polygonDefault;
+    case 1:
+    case 5:
+    default:
+      return ethDefault;
+  }
 }

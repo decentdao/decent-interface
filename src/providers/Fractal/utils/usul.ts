@@ -1,15 +1,12 @@
-import {
-  FractalUsul,
-  OZLinearVoting__factory,
-  OZLinearVoting,
-} from '@fractal-framework/fractal-contracts';
+import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
 import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeMultisigTransactionResponse,
 } from '@safe-global/safe-service-client';
-import { BigNumber, Signer } from 'ethers';
+import { BigNumber } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { ContractConnection } from '../../../types';
 import { strategyTxProposalStates } from '../governance/constants';
 import {
   Parameter,
@@ -26,15 +23,15 @@ import {
 import { Providers } from '../types/ethers';
 
 export const getTxProposalState = async (
-  usulContract: FractalUsul,
-  proposalId: BigNumber,
-  signerOrProvider: Signer | Providers
+  usulContract: ContractConnection<FractalUsul>,
+  linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>,
+  proposalId: BigNumber
 ): Promise<TxProposalState> => {
-  const state = await usulContract.state(proposalId);
+  const state = await usulContract.asSigner.state(proposalId);
   if (state === 0) {
     // Usul says proposal is active, but we need to get more info in this case
-    const { strategy: strategyAddress } = await usulContract.proposals(proposalId);
-    const strategy = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
+    const { strategy: strategyAddress } = await usulContract.asSigner.proposals(proposalId);
+    const strategy = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
     const { deadline } = await strategy.proposals(proposalId);
     if (Number(deadline.toString()) * 1000 < new Date().getTime()) {
       // Deadline has passed: we have to determine if proposal is passed or failed
@@ -61,11 +58,11 @@ export const getTxProposalState = async (
 
 export const getProposalVotesSummary = async (
   usulContract: FractalUsul,
-  proposalNumber: BigNumber,
-  signerOrProvider: Signer | Providers
+  strategyContract: OZLinearVoting,
+  proposalNumber: BigNumber
 ): Promise<ProposalVotesSummary> => {
   const { strategy: strategyAddress } = await usulContract.proposals(proposalNumber);
-  const strategy = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
+  const strategy = strategyContract.attach(strategyAddress);
   const { yesVotes, noVotes, abstainVotes, startBlock } = await strategy.proposals(proposalNumber);
 
   let quorum;
@@ -108,20 +105,26 @@ export const mapProposalCreatedEventToProposal = async (
   strategyAddress: string,
   proposalNumber: BigNumber,
   proposer: string,
-  usulContract: FractalUsul,
-  signerOrProvider: Signer | Providers,
+  usulContract: ContractConnection<FractalUsul>,
+  linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>,
   provider: Providers,
   metaData?: ProposalMetaData
 ) => {
-  const strategyContract = OZLinearVoting__factory.connect(strategyAddress, signerOrProvider);
+  const strategyContract = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
+  const strategyContractProvider =
+    linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
-  const state = await getTxProposalState(usulContract, proposalNumber, signerOrProvider);
-  const votes = await getProposalVotes(strategyContract, proposalNumber);
+  const state = await getTxProposalState(
+    usulContract,
+    linearVotingMasterCopyContract,
+    proposalNumber
+  );
+  const votes = await getProposalVotes(strategyContractProvider, proposalNumber);
   const block = await provider.getBlock(startBlock.toNumber());
   const votesSummary = await getProposalVotesSummary(
-    usulContract,
-    proposalNumber,
-    signerOrProvider
+    usulContract.asSigner,
+    linearVotingMasterCopyContract.asSigner,
+    proposalNumber
   );
 
   const targets = metaData

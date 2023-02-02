@@ -72,7 +72,7 @@ export default function useSubmitProposal() {
             return;
           }
           // Need to wrap it in Multisend function call
-          to = multiSendContract.address;
+          to = multiSendContract.asSigner.address;
 
           const tempData = proposalData.targets.map((target, index) => {
             return {
@@ -83,7 +83,7 @@ export default function useSubmitProposal() {
             } as MetaTransaction;
           });
 
-          data = multiSendContract.interface.encodeFunctionData('multiSend', [
+          data = multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [
             encodeMultiSend(tempData),
           ]);
 

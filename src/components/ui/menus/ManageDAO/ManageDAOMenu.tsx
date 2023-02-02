@@ -44,7 +44,7 @@ export function ManageDAOMenu({
     ) {
       const freezeOption = {
         optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.vetoVotingContract?.castFreezeVote(),
+        onClick: () => guardContracts.vetoVotingContract!.asSigner.castFreezeVote(),
       };
       return [createSubDAOOption, freezeOption];
     } else {

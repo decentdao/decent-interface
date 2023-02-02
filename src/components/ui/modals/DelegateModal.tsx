@@ -32,7 +32,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
-    votingTokenContract: tokenContract,
+    votingTokenContract: tokenContract?.asSigner,
     setPending: setPending,
   });
 
