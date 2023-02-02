@@ -53,7 +53,16 @@ const useSendAssets = ({
       successToastMessage: t('sendAssetsSuccessToastMessage'),
       failedToastMessage: t('sendAssetsFailureToastMessage'),
     });
-  }, [asset.tokenAddress, destinationAddress, transferAmount, submitProposal, nonce, t]);
+  }, [
+    asset.tokenAddress,
+    asset?.token?.decimals,
+    asset?.token?.symbol,
+    transferAmount,
+    destinationAddress,
+    t,
+    submitProposal,
+    nonce,
+  ]);
 
   return sendAssets;
 };
