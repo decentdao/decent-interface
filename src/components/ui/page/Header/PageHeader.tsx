@@ -1,5 +1,4 @@
 import { Box, Divider, Flex, Spacer, Button } from '@chakra-ui/react';
-import { Proposals } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
@@ -39,12 +38,6 @@ function PageHeader({
     {
       title: daoRegistryName || daoName,
       path: DAO_ROUTES.dao.relative(address),
-      icon: (
-        <Proposals
-          marginRight={2.5}
-          color="gold.500"
-        />
-      ),
     },
     ...breadcrumbs,
   ];

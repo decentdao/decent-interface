@@ -13,7 +13,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import useUsul from '../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../routes/constants';
+import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
 import { notProd, useProposeStuff } from '../../utils/dev';
@@ -174,17 +174,6 @@ function ProposalCreate() {
         }}
       >
         <GridItem area="header">
-          {inputtedMetadata && (
-            <Text
-              textStyle="text-md-mono-regular"
-              color="gold.500"
-              cursor="pointer"
-              onClick={() => setInputtedMetadata(false)}
-              mb={4}
-            >
-              {`< ${t('proposalBack')}`}
-            </Text>
-          )}
           <Flex justifyContent="space-between">
             <Text
               onClick={notProd() ? testPropose : undefined}
@@ -199,7 +188,7 @@ function ProposalCreate() {
               width="fit-content"
               variant="secondary"
               onClick={() =>
-                safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
+                navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
               }
               disabled={pendingCreateTx}
             >
@@ -232,6 +221,8 @@ function ProposalCreate() {
               />
               <TransactionsAndSubmit
                 show={showTransactionsAndSubmit}
+                showBackButton={!!inputtedMetadata}
+                onGoBack={() => setInputtedMetadata(false)}
                 addTransaction={addTransaction}
                 pendingCreateTx={pendingCreateTx}
                 submitProposal={submitProposal}

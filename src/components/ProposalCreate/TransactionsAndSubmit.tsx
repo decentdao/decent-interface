@@ -1,4 +1,4 @@
-import { Button, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-ui/react';
+import { Button, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,8 @@ import { TransactionData } from '../../types/transaction';
 
 export interface TransactionsAndSubmitProps {
   show: boolean | undefined;
+  showBackButton: boolean;
+  onGoBack: () => void;
   addTransaction: () => void;
   pendingCreateTx: boolean;
   submitProposal: ({
@@ -34,20 +36,21 @@ export interface TransactionsAndSubmitProps {
   removeTransaction: (transactionNumber: number) => void;
 }
 
-function TransactionsAndSubmit(props: TransactionsAndSubmitProps) {
-  const {
-    show,
-    addTransaction,
-    pendingCreateTx,
-    submitProposal,
-    proposalData,
-    nonce,
-    successCallback,
-    isCreateDisabled,
-    transactions,
-    setTransactions,
-    removeTransaction,
-  } = props;
+function TransactionsAndSubmit({
+  show,
+  showBackButton,
+  onGoBack,
+  addTransaction,
+  pendingCreateTx,
+  submitProposal,
+  proposalData,
+  nonce,
+  successCallback,
+  isCreateDisabled,
+  transactions,
+  setTransactions,
+  removeTransaction,
+}: TransactionsAndSubmitProps) {
   const { t } = useTranslation(['proposal', 'common']);
 
   if (!show) return null;
@@ -91,22 +94,36 @@ function TransactionsAndSubmit(props: TransactionsAndSubmitProps) {
           </AlertTitle>
         </Alert>
         <Divider color="chocolate.700" />
-        <Button
-          w="100%"
-          onClick={() =>
-            submitProposal({
-              proposalData,
-              nonce,
-              pendingToastMessage: t('proposalCreatePendingToastMessage'),
-              successToastMessage: t('proposalCreateSuccessToastMessage'),
-              failedToastMessage: t('proposalCreateFailureToastMessage'),
-              successCallback,
-            })
-          }
-          disabled={isCreateDisabled}
-        >
-          {t('createProposal')}
-        </Button>
+        <Flex>
+          {showBackButton && (
+            <Button
+              variant="text"
+              textStyle="text-md-mono-regular"
+              color="gold.500"
+              cursor="pointer"
+              onClick={onGoBack}
+              mb={4}
+            >
+              {`< ${t('proposalBack')}`}
+            </Button>
+          )}
+          <Button
+            w="100%"
+            onClick={() =>
+              submitProposal({
+                proposalData,
+                nonce,
+                pendingToastMessage: t('proposalCreatePendingToastMessage'),
+                successToastMessage: t('proposalCreateSuccessToastMessage'),
+                failedToastMessage: t('proposalCreateFailureToastMessage'),
+                successCallback,
+              })
+            }
+            disabled={isCreateDisabled}
+          >
+            {t('createProposal')}
+          </Button>
+        </Flex>
       </VStack>
     </>
   );
