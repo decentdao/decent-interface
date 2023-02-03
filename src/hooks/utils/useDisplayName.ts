@@ -19,7 +19,6 @@ const useDisplayName = (account?: string | null) => {
   const { data: ensName } = useEnsName({
     address: account as Address,
     chainId: networkId,
-    onError: () => {},
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();
