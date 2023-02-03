@@ -13,7 +13,7 @@ The steps to add support for additional EVM networks include:
 
 1. Deploy the [Fractal contracts](https://github.com/decent-dao/fractal-contracts) to the new EVM chain and publish the contract addresses to our NPM package.  An example for our [Polygon deployment is here](https://github.com/decent-dao/fractal-contracts/pull/26).
 2. Update to the new NPM package version in the [Fractal Interface](https://github.com/decent-dao/fractal-interface)'s package.json file.
-3. Add the network's network id to `REACT_APP_SUPPORTED_CHAIN_IDS` in `.env`.
+3. Add the network's id to `REACT_APP_SUPPORTED_CHAIN_IDS` in `.env` and update `REACT_APP_SUPPORTED_CHAIN_IDS` in that app's Github and Netlify 'secrets' as well.
 4. Add support for the new network in `src/hooks/utils/useChainData.ts`, including in `EVMChainMetaData`, `useNativeSymbol`, and `useNativeIcon`.
 5. Add the network's English name for frontend display in `src/i18n/locales/en/menu.json`.
 6. Add a `NetworkConfig` file under `src/providers/NetworkConfig/networks/{your new network}.ts`
