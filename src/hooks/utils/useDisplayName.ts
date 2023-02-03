@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Address, useEnsName } from 'wagmi';
-import { useSupportedENS } from './useChainData';
+import { Address, useEnsName, useProvider } from 'wagmi';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
@@ -15,9 +14,12 @@ export const createAccountSubstring = (account: string) => {
  * display name for a Fractal DAO, use the useDAOName hook instead.
  */
 const useDisplayName = (account?: string | null) => {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
   const { data: ensName } = useEnsName({
     address: account as Address,
-    chainId: useSupportedENS(),
+    chainId: networkId,
+    onError: () => {},
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();

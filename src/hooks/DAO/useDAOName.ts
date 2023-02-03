@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Address, useEnsName } from 'wagmi';
+import { Address, useEnsName, useProvider } from 'wagmi';
 import useSafeContracts from '../safe/useSafeContracts';
-import { useSupportedENS } from '../utils/useChainData';
 import { createAccountSubstring } from '../utils/useDisplayName';
 
 /**
@@ -14,10 +13,11 @@ import { createAccountSubstring } from '../utils/useDisplayName';
 export default function useDAOName({ address }: { address?: string }) {
   const { fractalRegistryContract } = useSafeContracts();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
-
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
   const { data: ensName } = useEnsName({
     address: address as Address,
-    chainId: useSupportedENS(),
+    chainId: networkId,
   });
 
   const getDaoName = useCallback(async () => {
