@@ -39,7 +39,6 @@ root.render(
             <FractalErrorBoundary fallback={<ErrorFallback />}>
               <WagmiConfig client={wagmiClient}>
                 <RainbowKitProvider
-                  initialChain={chains[0]}
                   chains={chains}
                   modalSize="compact"
                   theme={midnightTheme()}
