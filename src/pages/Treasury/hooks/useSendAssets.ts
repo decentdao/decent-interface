@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../types';
+import { formatCoin } from '../../../utils/numberFormats';
 
 const useSendAssets = ({
   transferAmount,
@@ -17,11 +18,16 @@ const useSendAssets = ({
   nonce: number | undefined;
 }) => {
   const { submitProposal } = useSubmitProposal();
-  const { t } = useTranslation('modals');
+  const { t } = useTranslation(['modals', 'proposalMetadata']);
 
   const sendAssets = useCallback(() => {
     const isEth = !asset.tokenAddress;
-    const description = 'To:' + destinationAddress + ', amount:' + transferAmount.toString();
+    const description = formatCoin(
+      transferAmount,
+      false,
+      asset?.token?.decimals,
+      asset?.token?.symbol
+    );
 
     const funcSignature = 'function transfer(address to, uint256 value)';
     const calldatas = [
@@ -35,7 +41,7 @@ const useSendAssets = ({
       targets: [isEth ? destinationAddress : asset.tokenAddress],
       values: [isEth ? transferAmount : BigNumber.from('0')],
       calldatas: isEth ? ['0x'] : calldatas,
-      title: 'Send Assets',
+      title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),
       description: description,
       documentationUrl: '',
     };
@@ -47,7 +53,16 @@ const useSendAssets = ({
       successToastMessage: t('sendAssetsSuccessToastMessage'),
       failedToastMessage: t('sendAssetsFailureToastMessage'),
     });
-  }, [asset.tokenAddress, destinationAddress, transferAmount, submitProposal, nonce, t]);
+  }, [
+    asset.tokenAddress,
+    asset?.token?.decimals,
+    asset?.token?.symbol,
+    transferAmount,
+    destinationAddress,
+    t,
+    submitProposal,
+    nonce,
+  ]);
 
   return sendAssets;
 };

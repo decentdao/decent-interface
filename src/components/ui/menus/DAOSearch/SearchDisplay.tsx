@@ -62,7 +62,12 @@ export function SearchDisplay({
             <Text textStyle="text-base-sans-medium">{displayName}</Text>
           </Flex>
         </Flex>
-        <Button data-testid="search-viewDAO">{t('labelViewDAO')}</Button>
+        <Button
+          alignSelf="center"
+          data-testid="search-viewDAO"
+        >
+          {t('labelViewDAO')}
+        </Button>
       </Flex>
     );
   }

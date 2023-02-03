@@ -5,9 +5,11 @@ import {
   InputLeftElement,
   Popover,
   PopoverTrigger,
+  useDisclosure,
+  useOutsideClick,
 } from '@chakra-ui/react';
 import { Search } from '@decent-org/fractal-ui';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
@@ -16,17 +18,27 @@ export function DAOSearch() {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState('');
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
+  const { onClose } = useDisclosure(); // popover close function
+  const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
 
   useEffect(() => {
     setSearchString(localInput);
   }, [localInput, setSearchString]);
 
   const resetSearch = () => {
+    onClose();
+    setLocalInput('');
     setSearchString('');
   };
 
+  useOutsideClick({
+    ref: ref,
+    handler: () => resetSearch(),
+  });
+
   return (
     <Box
+      ref={ref}
       width="full"
       maxW="31.125rem"
       height="full"
@@ -57,21 +69,21 @@ export function DAOSearch() {
           </InputGroup>
         </PopoverTrigger>
         <Box
+          marginTop="0.5rem"
+          padding="1rem 1rem"
           border="none"
           rounded="lg"
           shadow="menu-gold"
           bg="grayscale.black"
           hidden={!errorMessage && !address}
         >
-          <Box p="0.5rem 1rem">
-            <SearchDisplay
-              loading={isLoading}
-              errorMessage={errorMessage}
-              validAddress={isSafe}
-              address={address}
-              onClickView={resetSearch}
-            />
-          </Box>
+          <SearchDisplay
+            loading={isLoading}
+            errorMessage={errorMessage}
+            validAddress={isSafe}
+            address={address}
+            onClickView={resetSearch}
+          />
         </Box>
       </Popover>
     </Box>
