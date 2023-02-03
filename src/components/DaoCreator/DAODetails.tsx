@@ -2,7 +2,7 @@ import { Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import ContentBox from '../ui/ContentBox';
+import ContentBox from '../ui/containers/ContentBox';
 import InputBox from '../ui/forms/InputBox';
 import { useCreator } from './provider/hooks/useCreator';
 import { CreatorProviderActions } from './provider/types';

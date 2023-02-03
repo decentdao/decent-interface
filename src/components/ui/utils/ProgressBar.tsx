@@ -1,5 +1,5 @@
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
-import ProgressBarDelimiter from './svg/ProgressBarDelimiter';
+import ProgressBarDelimiter from '../svg/ProgressBarDelimiter';
 
 export default function ProgressBar({
   value,

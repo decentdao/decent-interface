@@ -1,8 +1,8 @@
 import { Flex } from '@chakra-ui/react';
 import { useAccount } from 'wagmi';
-import { AccountDisplay } from '../menus/AccountDisplay';
-import { DAOSearch } from '../menus/DAOSearch';
-import { FavoritesMenu } from '../menus/FavoritesMenu';
+import { AccountDisplay } from '../../menus/AccountDisplay';
+import { DAOSearch } from '../../menus/DAOSearch';
+import { FavoritesMenu } from '../../menus/FavoritesMenu';
 
 function Header() {
   const { address: account } = useAccount();

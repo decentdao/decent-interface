@@ -6,8 +6,8 @@ import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal } from '../../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import { ActivityAddress } from '../../Activity/ActivityAddress';
-import ContentBox from '../../ui/ContentBox';
 import { Badge } from '../../ui/badges/Badge';
+import ContentBox from '../../ui/containers/ContentBox';
 
 function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigProposal }) {
   const ownerConfirmed = proposal.confirmations.find(confirmInfo => confirmInfo.owner === owner);

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useExecuteProposal from '../../../hooks/DAO/proposal/useExecuteProposal';
 import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
-import ContentBox from '../../ui/ContentBox';
+import ContentBox from '../../ui/containers/ContentBox';
 
 export function Execute({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);

@@ -7,8 +7,8 @@ import { useAccount } from 'wagmi';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { EthAddressInput } from '../EthAddressInput';
-import EtherscanLinkAddress from '../EtherscanLinkAddress';
+import { EthAddressInput } from '../forms/EthAddressInput';
+import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {
   // the state of the Eth address input, which can be different

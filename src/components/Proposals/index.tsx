@@ -6,8 +6,8 @@ import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes, TxProposalState } from '../../providers/Fractal/types';
 import { SortBy } from '../../types';
-import { Sort } from '../ui/Sort';
 import { OptionMenu } from '../ui/menus/OptionMenu';
+import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
 const FILTERS_USUL_BASE = [

@@ -1,6 +1,6 @@
 type RouteInfo = { relative: (...args: any) => string; path: string };
 type RouteIndex = { [key: string]: RouteInfo };
-interface DAORoutes extends RouteIndex {
+export interface DAORoutes extends RouteIndex {
   dao: RouteInfo;
   daos: RouteInfo;
   newSubDao: RouteInfo;

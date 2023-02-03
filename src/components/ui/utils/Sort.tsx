@@ -2,7 +2,7 @@ import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/rea
 import { ArrowDownSm } from '@decent-org/fractal-ui';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SortBy } from '../../types';
+import { SortBy } from '../../../types';
 
 function SortMenuItem({
   labelKey,

@@ -1,7 +1,7 @@
 import { Input, HStack, Text, Textarea, Grid, GridItem } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumberInput, BigNumberInputProps } from '../ui/BigNumberInput';
-import { EthAddressInput } from '../ui/EthAddressInput';
+import { BigNumberInput, BigNumberInputProps } from '../ui/forms/BigNumberInput';
+import { EthAddressInput } from '../ui/forms/EthAddressInput';
 
 interface BaseProps {
   label: string;

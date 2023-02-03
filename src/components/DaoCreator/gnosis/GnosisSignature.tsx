@@ -4,7 +4,7 @@ import { isAddress } from 'ethers/lib/utils';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isSameAddress } from '../../../utils/crypto';
-import { EthAddressInput } from '../../ui/EthAddressInput';
+import { EthAddressInput } from '../../ui/forms/EthAddressInput';
 import { useCreator } from '../provider/hooks/useCreator';
 import { TrustedAddress } from '../provider/types';
 

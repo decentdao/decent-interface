@@ -15,7 +15,7 @@ import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import ContentBox from '../../ui/ContentBox';
+import ContentBox from '../../ui/containers/ContentBox';
 
 export function TxActions({
   proposal,
