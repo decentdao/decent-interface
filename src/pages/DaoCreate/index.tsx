@@ -19,7 +19,6 @@ function DaoCreate() {
 
   const successCallback = useCallback(
     async (daoAddress: string) => {
-      console.log('🚀 ~ file: index.tsx:22 ~ daoAddress', daoAddress);
       if (!safeService) return;
 
       const daoFound = await requestWithRetries(
