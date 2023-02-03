@@ -28,7 +28,7 @@ export function useFormatTransfers(
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
   const nativeSymbol = useNativeSymbol();
-  const naviveIcon = useNativeIcon();
+  const nativeIcon = useNativeIcon();
 
   for (let i = 0; i < transfers.length; i++) {
     let transfer = transfers[i];
@@ -40,7 +40,7 @@ export function useFormatTransfers(
         imageSrc = transfer.tokenInfo?.logoUri;
         break;
       case TransferType.ETHER_TRANSFER:
-        imageSrc = naviveIcon;
+        imageSrc = nativeIcon;
         break;
       default:
         imageSrc = coinDefault;
