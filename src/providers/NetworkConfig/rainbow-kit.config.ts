@@ -1,9 +1,13 @@
 import '@rainbow-me/rainbowkit/styles.css';
 
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
-import { metaMaskWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import {
+  coinbaseWallet,
+  metaMaskWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import { configureChains, createClient, createStorage } from 'wagmi';
-import { hardhat, goerli, polygon } from 'wagmi/chains';
+import { goerli, hardhat, polygon } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
@@ -22,7 +26,11 @@ export const { chains, provider } = configureChains(chainsArr, [
   publicProvider(),
 ]);
 
-const defaultWallets = [metaMaskWallet({ chains }), walletConnectWallet({ chains })];
+const defaultWallets = [
+  metaMaskWallet({ chains }),
+  coinbaseWallet({ appName: 'Fractal', chains }),
+  walletConnectWallet({ chains }),
+];
 // allows connection to localhost only in development mode.
 if (process.env.REACT_APP_TESTING_ENVIROMENT) {
   defaultWallets.unshift(testWallet({ chains }));

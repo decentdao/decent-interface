@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { BASE_URL } from '../testUtils';
 
 export abstract class FractalPage {
@@ -68,10 +68,15 @@ export abstract class FractalPage {
    * @param click the Promise created by clicking the link to open the tab.
    * @returns the Page object representing the new tab.
    */
-  protected async newTab(click: Promise<void>) {
-    await click;
-    const newTab = await this.page.context().waitForEvent('page');
-    await newTab.bringToFront();
-    return newTab;
+  protected async newTab(testId: string) {
+    const popupPromise = this.page.waitForEvent('popup');
+    await this.click('[data-testid=' + testId + ']');
+    const popup = await popupPromise;
+    await popup.waitForLoadState();
+    return popup;
+  }
+
+  expectId(testId: string) {
+    return expect(this.page.locator('[data-testid=' + testId + ']'));
   }
 }
