@@ -50,8 +50,9 @@ export function useNativeSymbol() {
   switch (networkId) {
     case 137:
       return 'MATIC';
-    case 1:
     case 5:
+      return 'GoerliETH';
+    case 1:
     default:
       return 'ETH';
   }
