@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanLinkToken({ address, children }: { address: string; children: React.ReactNode }) {
   const { etherscanBaseURL } = useNetworkConfg();

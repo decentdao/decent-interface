@@ -13,7 +13,7 @@ import {
   UsulProposal,
   UsulVoteChoice,
 } from '../../../providers/Fractal/types';
-import ContentBox from '../../ui/ContentBox';
+import ContentBox from '../../ui/containers/ContentBox';
 import Check from '../../ui/svg/Check';
 
 function Vote({ proposal }: { proposal: TxProposal }) {

@@ -1,5 +1,5 @@
-import { Button, Text, Grid, GridItem, VStack, Box, Flex } from '@chakra-ui/react';
-import { CloseX } from '@decent-org/fractal-ui';
+import { Button, Text, Grid, GridItem, Box, Flex } from '@chakra-ui/react';
+import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,11 +8,12 @@ import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails
 import { ProposalHeader } from '../../components/ProposalCreate/ProposalHeader';
 import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
 import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
-import PageHeader from '../../components/ui/Header/PageHeader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import useUsul from '../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
 import { notProd, useProposeStuff } from '../../utils/dev';
@@ -35,9 +36,9 @@ const templateAreaSingleCol = `"header"
 
 function ProposalCreate() {
   const {
-    gnosis: { safe, daoName },
+    gnosis: { safe },
   } = useFractal();
-  const { t } = useTranslation(['proposal', 'common']);
+  const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
   const { usulContract } = useUsul();
   const [isUsul, setIsUsul] = useState<boolean>();
 
@@ -152,22 +153,17 @@ function ProposalCreate() {
   return (
     <Box>
       <PageHeader
-        title={t('pageTitle', { daoName })}
-        titleTestId={'title-proposal-details'}
-      >
-        <Button
-          paddingLeft={0}
-          width="fit-content"
-          variant="text"
-          leftIcon={<CloseX />}
-          onClick={() =>
-            safe.address ? navigate(`/daos/${safe.address}/proposals`) : navigate('/daos/')
-          }
-          disabled={pendingCreateTx}
-        >
-          {t('cancel', { ns: 'common' })}
-        </Button>
-      </PageHeader>
+        breadcrumbs={[
+          {
+            title: t('proposals', { ns: 'breadcrumbs' }),
+            path: DAO_ROUTES.proposals.relative(safe.address),
+          },
+          {
+            title: t('proposalNew', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
+      />
       <Grid
         gap={4}
         templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
@@ -178,25 +174,27 @@ function ProposalCreate() {
         }}
       >
         <GridItem area="header">
-          {inputtedMetadata && (
-            <Text
-              textStyle="text-md-mono-regular"
-              color="gold.500"
-              cursor="pointer"
-              onClick={() => setInputtedMetadata(false)}
-              mb={4}
-            >
-              {`< ${t('proposalBack')}`}
-            </Text>
-          )}
-          <VStack align="left">
+          <Flex justifyContent="space-between">
             <Text
               onClick={notProd() ? testPropose : undefined}
               textStyle="text-2xl-mono-regular"
             >
               {t('createProposal')}
             </Text>
-          </VStack>
+            <Button
+              minWidth="auto"
+              py={1.5}
+              px={4}
+              width="fit-content"
+              variant="secondary"
+              onClick={() =>
+                navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
+              }
+              disabled={pendingCreateTx}
+            >
+              <Trash color="gold.500" />
+            </Button>
+          </Flex>
         </GridItem>
         <GridItem area="content">
           <Flex
@@ -223,6 +221,8 @@ function ProposalCreate() {
               />
               <TransactionsAndSubmit
                 show={showTransactionsAndSubmit}
+                showBackButton={!!inputtedMetadata}
+                onGoBack={() => setInputtedMetadata(false)}
                 addTransaction={addTransaction}
                 pendingCreateTx={pendingCreateTx}
                 submitProposal={submitProposal}

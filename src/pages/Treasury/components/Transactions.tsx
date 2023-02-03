@@ -3,9 +3,9 @@ import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui
 import { useTranslation } from 'react-i18next';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
 import nftDefault from '../../../assets/images/nft-image-default.svg';
-import EtherscanLinkAddress from '../../../components/ui/EtherscanLinkAddress';
-import EtherscanTransactionLink from '../../../components/ui/EtherscanTransactionLink';
-import { ShortenedAddressLink } from '../../../components/ui/ShortenedAddressLink';
+import EtherscanLinkAddress from '../../../components/ui/links/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../../../components/ui/links/EtherscanTransactionLink';
+import { ShortenedAddressLink } from '../../../components/ui/links/ShortenedAddressLink';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { AssetTransfer, TransferType } from '../../../providers/Fractal/types/treasury';

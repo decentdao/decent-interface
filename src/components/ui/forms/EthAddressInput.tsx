@@ -1,6 +1,6 @@
 import { InputElementProps, FormControlOptions, Input } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import useAddress from '../../hooks/utils/useAddress';
+import useAddress from '../../../hooks/utils/useAddress';
 
 export interface EthAddressInputProps
   extends Omit<InputElementProps, 'onChange' | 'placeholder' | 'type'>,

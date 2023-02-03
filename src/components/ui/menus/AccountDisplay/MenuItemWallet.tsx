@@ -5,8 +5,8 @@ import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import EtherscanLinkAddress from '../../EtherscanLinkAddress';
-import Avatar from '../../Header/Avatar';
+import EtherscanLinkAddress from '../../links/EtherscanLinkAddress';
+import Avatar from '../../page/Header/Avatar';
 
 /**
  * Display to show a users connected wallet information

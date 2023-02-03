@@ -1,4 +1,4 @@
-import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanTransactionLink({
   txHash,

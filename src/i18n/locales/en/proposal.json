@@ -45,7 +45,7 @@
     "emptyProposals": "No proposals found",
     "createProposal": "Create Proposal",
     "labelAddTransaction": "+ Add Transaction",
-    "buttonDelegate": "Delegate",
+    "buttonDelegate": "Delegate tokens",
     "errorInvalidFragments": "Invalid function signature",
     "proposalSummaryTitle": "Proposal Details",
     "proposalSummaryStartDate": "Start Date",

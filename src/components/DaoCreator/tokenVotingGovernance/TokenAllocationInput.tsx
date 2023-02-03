@@ -6,8 +6,8 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TokenAllocation } from '../../../types/tokenAllocation';
 import { isSameAddress } from '../../../utils/crypto';
-import { BigNumberInput } from '../../ui/BigNumberInput';
-import { EthAddressInput } from '../../ui/EthAddressInput';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { EthAddressInput } from '../../ui/forms/EthAddressInput';
 
 interface TokenAllocationProps {
   index: number;

@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
-import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import EtherscanTransactionLink from './EtherscanTransactionLink';
 
 function EtherscanDisplayTransaction({ address }: { address?: string }) {

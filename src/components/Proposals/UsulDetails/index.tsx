@@ -5,12 +5,12 @@ import { useAccount } from 'wagmi';
 import { ProposalAction } from '../../../components/Proposals/ProposalActions/ProposalAction';
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
-import ContentBox from '../../../components/ui/ContentBox';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useTokenData from '../../../providers/Fractal/governance/hooks/useGovernanceTokenData';
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
+import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { ProposalInfo } from '../ProposalInfo';
 

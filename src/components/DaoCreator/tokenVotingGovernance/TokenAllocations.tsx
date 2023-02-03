@@ -4,8 +4,8 @@ import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TokenAllocation } from '../../../types/tokenAllocation';
-import { BigNumberInput, BigNumberValuePair } from '../../ui/BigNumberInput';
-import ContentBoxTitle from '../../ui/ContentBoxTitle';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
 import InputBox from '../../ui/forms/InputBox';
 import TokenAllocationInput from './TokenAllocationInput';
 

@@ -1,10 +1,10 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import PageHeader from '../../components/ui/Header/PageHeader';
 import { TitledInfoBox } from '../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { GovernanceTypes } from '../../providers/Fractal/governance/types';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { Assets } from './components/Assets';
@@ -13,7 +13,6 @@ import { Transactions } from './components/Transactions';
 function Treasury() {
   const {
     gnosis: {
-      daoName,
       safe: { owners },
     },
     governance: { type, governanceToken },
@@ -35,8 +34,12 @@ function Treasury() {
   return (
     <Box>
       <PageHeader
-        title={t('titleTreasury', { daoName: daoName })}
-        titleTestId={'title-treasury'}
+        breadcrumbs={[
+          {
+            title: t('treasury', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
         buttonText={showButton ? t('buttonSendAssets') : undefined}
         buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
         buttonTestId="link-send-assets"

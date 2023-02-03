@@ -1,5 +1,5 @@
 import { Link } from '@chakra-ui/react';
-import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanLinkNFT({
   address,
