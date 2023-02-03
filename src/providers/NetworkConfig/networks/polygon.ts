@@ -9,12 +9,17 @@ import VetoERC20Voting from '@fractal-framework/fractal-contracts/deployments/po
 import VetoGuard from '@fractal-framework/fractal-contracts/deployments/polygon/VetoGuard.json';
 import VetoMultisigVoting from '@fractal-framework/fractal-contracts/deployments/polygon/VetoMultisigVoting.json';
 import VotesToken from '@fractal-framework/fractal-contracts/deployments/polygon/VotesToken.json';
+import polygonDefault from '../../assets/images/coin-icon-polygon.svg';
 import { NetworkConfig } from '../types';
 
 export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
   chainId: 137,
+  nameKey: 'polygon',
+  color: '#562FB0',
+  nativeTokenSymbol: 'MATIC',
+  nativeTokenIcon: polygonDefault,
   contracts: {
     fractalUsulMasterCopy: FractalUsul.address,
     fractalModuleMasterCopy: FractalModule.address,

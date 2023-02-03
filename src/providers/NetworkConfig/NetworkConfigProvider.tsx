@@ -4,12 +4,17 @@ import { toast } from 'react-toastify';
 import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerliConfig } from './networks';
 import { polygonConfig } from './networks/polygon';
+import { supportedChains } from './rainbow-kit.config';
 import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',
   etherscanBaseURL: '',
   chainId: 0,
+  nameKey: '',
+  color: '',
+  nativeTokenSymbol: '',
+  nativeTokenIcon: '',
   contracts: {
     gnosisSafe: '',
     gnosisSafeFactory: '',
@@ -58,8 +63,7 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   }, [provider]);
 
   useEffect(() => {
-    const supportedChainIds =
-      process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
+    const supportedChainIds = supportedChains.map(c => c.id) || [];
 
     if (
       !!chain &&

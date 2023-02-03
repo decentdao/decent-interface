@@ -13,14 +13,14 @@ import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
 import { testWallet } from './testWallet';
 
-export const chainsArr = [goerli, polygon];
+export const supportedChains = [goerli, polygon];
 
 // allows connection to localhost only in development mode.
 if (process.env.REACT_APP_TESTING_ENVIROMENT) {
-  chainsArr.unshift(hardhat);
+  supportedChains.unshift(hardhat);
 }
 
-export const { chains, provider } = configureChains(chainsArr, [
+export const { chains, provider } = configureChains(supportedChains, [
   infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY! }),
   alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY! }),
   publicProvider(),

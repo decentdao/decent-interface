@@ -5,9 +5,9 @@ import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../types';
 
 export const decodeTransactions = async (
   transactions: MetaTransaction[],
-  chainId: number
+  baseUrl: string
 ): Promise<DecodedTransaction[]> => {
-  const apiUrl = buildGnosisApiUrl(chainId, '/data-decoder/');
+  const apiUrl = buildGnosisApiUrl(baseUrl, '/data-decoder/');
   const decodedTransactions = await Promise.all(
     transactions.map(async tx => {
       try {

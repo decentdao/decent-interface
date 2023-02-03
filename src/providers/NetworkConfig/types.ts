@@ -2,6 +2,10 @@ export type NetworkConfig = {
   safeBaseURL: string;
   etherscanBaseURL: string;
   chainId: number;
+  nameKey: string;
+  color: string;
+  nativeTokenSymbol: string;
+  nativeTokenIcon: string;
   contracts: {
     gnosisSafe: string;
     gnosisSafeFactory: string;
