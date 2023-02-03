@@ -1,4 +1,13 @@
-import { Box, Divider, Flex, Spacer, Button } from '@chakra-ui/react';
+import {
+  ComponentWithAs,
+  IconProps,
+  IconButton,
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Spacer,
+} from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
@@ -6,7 +15,9 @@ import { DAO_ROUTES } from '../../../../routes/constants';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
   breadcrumbs: Crumb[];
+  hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
+  ButtonIcon?: ComponentWithAs<'svg', IconProps>;
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
@@ -18,7 +29,9 @@ interface IPageHeader {
  */
 function PageHeader({
   breadcrumbs,
+  hasDAOLink = true,
   buttonVariant,
+  ButtonIcon,
   buttonText,
   buttonClick,
   buttonTestId,
@@ -42,6 +55,10 @@ function PageHeader({
     ...breadcrumbs,
   ];
 
+  if (!hasDAOLink) {
+    links.shift();
+  }
+
   return (
     <Box
       marginTop="3rem"
@@ -62,6 +79,20 @@ function PageHeader({
           >
             {buttonText}
           </Button>
+        )}
+        {ButtonIcon && (
+          <IconButton
+            aria-label="navigate"
+            icon={<ButtonIcon boxSize="1.5rem" />}
+            onClick={buttonClick}
+            minWidth="0"
+            px="1rem"
+            data-testid={buttonTestId}
+            size="base"
+            variant={buttonVariant}
+          >
+            {buttonText}
+          </IconButton>
         )}
         {children}
       </Flex>
