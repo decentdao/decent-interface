@@ -168,8 +168,9 @@ export default function useSubmitProposal() {
       safe.address,
       signerOrProvider,
       multiSendContract,
-      refreshSafeData,
+      safeBaseURL,
       chainId,
+      refreshSafeData,
     ]
   );
 
