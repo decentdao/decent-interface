@@ -1,4 +1,4 @@
-import ethDefault from '../../assets/images/coin-icon-eth.svg';
+import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { NetworkConfig } from '../types';
 
 export const localhostConfig: NetworkConfig = {
