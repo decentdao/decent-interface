@@ -17,7 +17,7 @@ export const goerliConfig: NetworkConfig = {
   chainId: 5,
   name: goerli.name,
   color: 'gold.300',
-  nativeTokenSymbol: 'GoerliETH',
+  nativeTokenSymbol: goerli.nativeCurrency.symbol,
   nativeTokenIcon: ethDefault,
   wagmiChain: goerli,
   contracts: {
