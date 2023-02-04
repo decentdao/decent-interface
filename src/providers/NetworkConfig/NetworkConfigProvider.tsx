@@ -42,6 +42,7 @@ export const useNetworkConfg = (): NetworkConfig =>
 export const supportedChains = [goerliConfig, polygonConfig];
 
 const getNetworkConfig = (chainId: number) => {
+  if (chainId === 31337) return goerliConfig;
   return supportedChains.find(chain => chain.chainId === chainId) || defaultState;
 };
 
