@@ -6,7 +6,7 @@ import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConf
  * Network display for menu
  */
 export function MenuItemNetwork() {
-  const { nameKey, color } = useNetworkConfg();
+  const { name, color } = useNetworkConfg();
   const { t } = useTranslation('menu');
   return (
     <Box
@@ -38,7 +38,7 @@ export function MenuItemNetwork() {
             data-testid="accountMenu-network"
             textStyle="text-base-mono-medium"
           >
-            {t(nameKey)}
+            {name}
           </Text>
         </MenuItem>
       </Flex>

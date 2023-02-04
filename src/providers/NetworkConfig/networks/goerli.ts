@@ -7,6 +7,7 @@ import VetoERC20Voting from '@fractal-framework/fractal-contracts/deployments/go
 import VetoGuard from '@fractal-framework/fractal-contracts/deployments/goerli/VetoGuard.json';
 import VetoMultisigVoting from '@fractal-framework/fractal-contracts/deployments/goerli/VetoMultisigVoting.json';
 import VotesToken from '@fractal-framework/fractal-contracts/deployments/goerli/VotesToken.json';
+import { goerli } from 'wagmi/chains';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { NetworkConfig } from '../types';
 
@@ -14,10 +15,11 @@ export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
   etherscanBaseURL: 'https://goerli.etherscan.io',
   chainId: 5,
-  nameKey: 'goerli',
+  name: goerli.name,
   color: 'gold.300',
   nativeTokenSymbol: 'GoerliETH',
   nativeTokenIcon: ethDefault,
+  wagmiChain: goerli,
   contracts: {
     fractalUsulMasterCopy: FractalUsul.address,
     fractalModuleMasterCopy: FractalModule.address,

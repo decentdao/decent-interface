@@ -1,3 +1,4 @@
+import { goerli } from 'wagmi/chains';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { NetworkConfig } from '../types';
 
@@ -6,10 +7,11 @@ export const localhostConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
   etherscanBaseURL: 'https://goerli.etherscan.io',
   chainId: 5,
-  nameKey: 'local',
+  name: 'Local',
   color: 'grayscale.400',
-  nativeTokenSymbol: 'GoerliETH',
+  nativeTokenSymbol: goerli.nativeCurrency.symbol,
   nativeTokenIcon: ethDefault,
+  wagmiChain: goerli,
   contracts: {
     gnosisSafe: '0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552',
     gnosisSafeFactory: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',

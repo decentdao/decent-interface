@@ -12,8 +12,6 @@
     "toastDisconnected": "Аккаунт від'єднано.",
     "network": "Мережа",
     "wallet": "Крипто-гаманець",
-    "mainnet": "Mainnet",
-    "goerli": "Goerli Test Network",
     "titleManageDAO": "Керувати DAO",
     "optionCreateSubDAO": "Створити subDAO",
     "optionInitiateFreeze": "Ініціювати Замороження"
