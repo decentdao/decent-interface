@@ -7,10 +7,12 @@ import {
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { generateContractByteCodeLinear, generateSalt } from "./utils";
+import { buildContractCall } from "../crypto";
+import { SafeTransaction } from "../../types";
 
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;
-  fractalModuleCalldata: string;
+  deployFractalModuleTx: SafeTransaction;
 }
 
 export const fractalModuleData = (
@@ -40,6 +42,13 @@ export const fractalModuleData = (
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
+  const deployFractalModuleTx = buildContractCall(
+    zodiacModuleProxyFactoryContract,
+    'deployModule',
+    [fractalModuleMasterCopyContract.address, fractalModuleCalldata, saltNum],
+    0,
+    false
+  );
 
   return {
     predictedFractalModuleAddress: getCreate2Address(
@@ -47,6 +56,6 @@ export const fractalModuleData = (
       fractalSalt,
       solidityKeccak256(['bytes'], [fractalByteCodeLinear])
     ),
-    fractalModuleCalldata,
+    deployFractalModuleTx,
   };
 };
