@@ -1,12 +1,6 @@
-import {
-  UsulVetoGuard__factory,
-  VetoERC20Voting__factory,
-  VetoGuard__factory,
-  VetoMultisigVoting__factory,
-} from '@fractal-framework/fractal-contracts';
+import { UsulVetoGuard, VetoGuard } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect, useCallback, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { Dispatch, useEffect, useCallback } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import {
@@ -17,16 +11,13 @@ import {
   VetoGuardType,
   VetoVotingType,
 } from '../types';
+import { ContractConnection } from './../../../types/contract';
 
 export function useVetoContracts(
   gnosisDispatch: Dispatch<GnosisActions>,
   guardAddress?: string,
   modules?: IGnosisModuleData[]
 ) {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-
   const {
     zodiacModuleProxyFactoryContract,
     vetoERC20VotingMasterCopyContract,
@@ -39,7 +30,6 @@ export function useVetoContracts(
     async (_guardAddress: string, _modules?: IGnosisModuleData[]) => {
       if (
         !zodiacModuleProxyFactoryContract ||
-        !signerOrProvider ||
         !gnosisVetoGuardMasterCopyContract ||
         !usulVetoGuardMasterCopyContract ||
         !vetoMultisigVotingMasterCopyContract ||
@@ -49,25 +39,30 @@ export function useVetoContracts(
       }
 
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
+        const filter = zodiacModuleProxyFactoryContract.asProvider.filters.ModuleProxyCreation(
           proxyAddress,
           null
         );
-
-        return zodiacModuleProxyFactoryContract.queryFilter(filter).then(proxiesCreated => {
-          return proxiesCreated[0].args.masterCopy;
-        });
+        return zodiacModuleProxyFactoryContract.asProvider
+          .queryFilter(filter)
+          .then(proxiesCreated => {
+            return proxiesCreated[0].args.masterCopy;
+          });
       };
 
       let contracts: IGnosisVetoContract;
-      let vetoGuardContract;
+      let vetoGuardContract: ContractConnection<UsulVetoGuard | VetoGuard> | undefined;
       let vetoGuardType;
 
       if (
         _guardAddress !== ethers.constants.AddressZero &&
-        (await getMasterCopyAddress(_guardAddress)) === gnosisVetoGuardMasterCopyContract.address
+        (await getMasterCopyAddress(_guardAddress)) ===
+          gnosisVetoGuardMasterCopyContract.asSigner.address
       ) {
-        vetoGuardContract = VetoGuard__factory.connect(_guardAddress, signerOrProvider);
+        vetoGuardContract = {
+          asSigner: gnosisVetoGuardMasterCopyContract.asSigner.attach(_guardAddress),
+          asProvider: gnosisVetoGuardMasterCopyContract.asProvider.attach(_guardAddress),
+        };
         vetoGuardType = VetoGuardType.MULTISIG;
       } else {
         const usulModule = _modules?.find(module => module.moduleType === GnosisModuleType.USUL);
@@ -79,25 +74,35 @@ export function useVetoContracts(
           return;
         }
         const usulGuardAddress = await usulModule.moduleContract.getGuard();
-        vetoGuardContract = UsulVetoGuard__factory.connect(usulGuardAddress, signerOrProvider);
+        vetoGuardContract = {
+          asSigner: usulVetoGuardMasterCopyContract.asSigner.attach(usulGuardAddress),
+          asProvider: usulVetoGuardMasterCopyContract.asProvider.attach(usulGuardAddress),
+        };
         vetoGuardType = VetoGuardType.USUL;
       }
 
-      const votingAddress = await vetoGuardContract.vetoVoting();
+      const votingAddress = await vetoGuardContract.asSigner.vetoVoting();
       const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
       const vetoVotingType =
-        votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.address
-          ? VetoMultisigVoting__factory
-          : VetoERC20Voting__factory;
-      const vetoVotingContract = vetoVotingType.connect(votingAddress, signerOrProvider);
+        votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.asSigner.address
+          ? VetoVotingType.MULTISIG
+          : VetoVotingType.ERC20;
+
+      const vetoVotingContract =
+        vetoVotingType === VetoVotingType.MULTISIG
+          ? {
+              asSigner: vetoMultisigVotingMasterCopyContract.asSigner.attach(votingAddress),
+              asProvider: vetoMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
+            }
+          : {
+              asSigner: vetoERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
+              asProvider: vetoERC20VotingMasterCopyContract.asProvider.attach(votingAddress),
+            };
 
       contracts = {
         vetoGuardContract: vetoGuardContract,
         vetoVotingContract: vetoVotingContract,
-        vetoVotingType:
-          vetoVotingType === VetoMultisigVoting__factory
-            ? VetoVotingType.MULTISIG
-            : VetoVotingType.ERC20,
+        vetoVotingType,
         vetoGuardType,
       };
 
@@ -109,7 +114,6 @@ export function useVetoContracts(
       usulVetoGuardMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
-      signerOrProvider,
     ]
   );
 

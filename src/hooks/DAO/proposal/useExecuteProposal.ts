@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider, useSigner } from 'wagmi';
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
@@ -12,9 +11,6 @@ import useUsul from './useUsul';
 export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { usulContract } = useUsul();
   const {
     actions: { refreshSafeData },
@@ -27,12 +23,7 @@ export default function useExecuteProposal() {
   const executeProposal = useCallback(
     (proposal: TxProposal) => {
       const usulProposal = proposal as UsulProposal;
-      if (
-        !usulContract ||
-        !signerOrProvider ||
-        !usulProposal.metaData ||
-        !usulProposal.metaData.transactions
-      ) {
+      if (!usulContract || !usulProposal.metaData || !usulProposal.metaData.transactions) {
         return;
       }
 
@@ -66,14 +57,7 @@ export default function useExecuteProposal() {
         },
       });
     },
-    [
-      contractCallExecuteProposal,
-      signerOrProvider,
-      t,
-      usulContract,
-      updateProposalState,
-      refreshSafeData,
-    ]
+    [contractCallExecuteProposal, t, usulContract, updateProposalState, refreshSafeData]
   );
 
   return {

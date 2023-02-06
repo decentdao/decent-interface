@@ -1,21 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useProvider } from 'wagmi';
-import { logError } from '../../helpers/errorLogging';
-import useENSName from './useENSName';
+import { Address, useEnsAvatar, useProvider } from 'wagmi';
 
 const useAvatar = (account: string | null) => {
   const provider = useProvider();
-  const ensName = useENSName(account);
-
-  const [avatarURL, setAvatarURL] = useState<string | null>(null);
-  useEffect(() => {
-    if (!provider || !ensName) {
-      setAvatarURL(null);
-      return;
-    }
-
-    provider.getAvatar(ensName).then(setAvatarURL).catch(logError);
-  }, [ensName, provider]);
+  const networkId = provider.network.chainId;
+  const { data: avatarURL } = useEnsAvatar({
+    address: account as Address,
+    chainId: networkId,
+  });
 
   return avatarURL;
 };

@@ -1,5 +1,6 @@
 export type NetworkConfig = {
   safeBaseURL: string;
+  etherscanBaseURL: string;
   chainId: number;
   contracts: {
     gnosisSafe: string;

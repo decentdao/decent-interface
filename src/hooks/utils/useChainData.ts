@@ -1,4 +1,7 @@
 import { useMemo } from 'react';
+import { useProvider } from 'wagmi';
+import ethDefault from '../../assets/images/coin-icon-eth.svg';
+import polygonDefault from '../../assets/images/coin-icon-polygon.svg';
 
 type EVMChainMetaData = {
   [chainId: number]: {
@@ -19,6 +22,11 @@ const chainsMetaData: EVMChainMetaData = {
     chainId: 5,
     color: 'gold.300',
   },
+  137: {
+    nameKey: 'polygon',
+    chainId: 137,
+    color: '#562FB0',
+  },
   [parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID || '31337', 10)]: {
     nameKey: 'local',
     chainId: parseInt(process.env.REACT_APP_LOCAL_CHAIN_ID || '31337', 10),
@@ -34,4 +42,31 @@ const chainsMetaData: EVMChainMetaData = {
 export function useChainData(chainId: number) {
   const chainMetaData = useMemo(() => chainsMetaData[chainId], [chainId]);
   return chainMetaData;
+}
+
+export function useNativeSymbol() {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+  switch (networkId) {
+    case 137:
+      return 'MATIC';
+    case 5:
+      return 'GoerliETH';
+    case 1:
+    default:
+      return 'ETH';
+  }
+}
+
+export function useNativeIcon() {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+  switch (networkId) {
+    case 137:
+      return polygonDefault;
+    case 1:
+    case 5:
+    default:
+      return ethDefault;
+  }
 }

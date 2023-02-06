@@ -1,5 +1,5 @@
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
-import ethDefault from '../../../assets/images/coin-icon-eth.svg';
+import { useNativeIcon, useNativeSymbol } from '../../../hooks/utils/useChainData';
 import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/Fractal/types';
 import { formatCoin } from '../../../utils/numberFormats';
 
@@ -27,6 +27,8 @@ export function useFormatTransfers(
   safeAddress: string
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
+  const nativeSymbol = useNativeSymbol();
+  const nativeIcon = useNativeIcon();
 
   for (let i = 0; i < transfers.length; i++) {
     let transfer = transfers[i];
@@ -38,12 +40,12 @@ export function useFormatTransfers(
         imageSrc = transfer.tokenInfo?.logoUri;
         break;
       case TransferType.ETHER_TRANSFER:
-        imageSrc = ethDefault;
+        imageSrc = nativeIcon;
         break;
       default:
         imageSrc = coinDefault;
     }
-
+    let symbol = transfer.tokenInfo === null ? nativeSymbol : transfer.tokenInfo.symbol;
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
@@ -52,21 +54,11 @@ export function useFormatTransfers(
       assetDisplay:
         transfer.type === TransferType.ERC721_TRANSFER
           ? transfer.tokenInfo.name + ' #' + transfer.tokenId
-          : formatCoin(
-              transfer.value,
-              true,
-              transfer?.tokenInfo?.decimals,
-              transfer?.tokenInfo?.symbol
-            ),
+          : formatCoin(transfer.value, true, transfer?.tokenInfo?.decimals, symbol),
       fullCoinTotal:
         transfer.type === TransferType.ERC721_TRANSFER
           ? undefined
-          : formatCoin(
-              transfer.value,
-              false,
-              transfer?.tokenInfo?.decimals,
-              transfer?.tokenInfo?.symbol
-            ),
+          : formatCoin(transfer.value, false, transfer?.tokenInfo?.decimals, symbol),
       transferAddress: safeAddress === transfer.from ? transfer.to : transfer.from,
       isLast: transfers[transfers.length - 1] === transfer,
       transactionHash: transfer.transactionHash,

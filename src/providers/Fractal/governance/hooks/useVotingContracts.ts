@@ -1,14 +1,7 @@
-import {
-  VotesToken,
-  VotesToken__factory,
-  OZLinearVoting,
-  OZLinearVoting__factory,
-  FractalUsul,
-  FractalUsul__factory,
-} from '@fractal-framework/fractal-contracts';
+import { VotesToken, OZLinearVoting, FractalUsul } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useMemo, useCallback } from 'react';
-import { useProvider, useSigner } from 'wagmi';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
+import { ContractConnection } from '../../../../types';
 import { GovernanceAction, GovernanceActions } from '../actions';
 import { GnosisModuleType } from '../types';
 import { IGnosis } from './../../types/state';
@@ -22,11 +15,12 @@ export const useVotingContracts = ({
   gnosis: { modules, isGnosisLoading },
   governanceDispatch,
 }: IUseVotingContracts) => {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-
-  const { zodiacModuleProxyFactoryContract, linearVotingMasterCopyContract } = useSafeContracts();
+  const {
+    zodiacModuleProxyFactoryContract,
+    linearVotingMasterCopyContract,
+    votesTokenMasterCopyContract,
+    fractalUsulMasterCopyContract,
+  } = useSafeContracts();
 
   const usulModule = useMemo(
     () => modules.find(module => module.moduleType === GnosisModuleType.USUL)?.moduleContract,
@@ -35,9 +29,10 @@ export const useVotingContracts = ({
 
   const loadUsulContracts = useCallback(async () => {
     if (
-      !signerOrProvider ||
       !zodiacModuleProxyFactoryContract ||
       !linearVotingMasterCopyContract ||
+      !votesTokenMasterCopyContract ||
+      !fractalUsulMasterCopyContract ||
       isGnosisLoading
     ) {
       return;
@@ -50,35 +45,41 @@ export const useVotingContracts = ({
       return;
     }
 
-    const usulContract = FractalUsul__factory.connect(usulModule.address, signerOrProvider);
-    let ozLinearContract: OZLinearVoting | undefined;
-    let tokenContract: VotesToken | undefined;
+    const usulContract = {
+      asProvider: fractalUsulMasterCopyContract.asProvider.attach(usulModule.address),
+      asSigner: fractalUsulMasterCopyContract.asSigner.attach(usulModule.address),
+    };
+    let ozLinearContract: ContractConnection<OZLinearVoting> | undefined;
+    let tokenContract: ContractConnection<VotesToken> | undefined;
 
-    const votingContractAddress = await usulContract
+    const votingContractAddress = await usulContract.asProvider
       .queryFilter(usulModule.filters.EnabledStrategy())
       .then(strategiesEnabled => {
         return strategiesEnabled[0].args.strategy;
       });
 
-    const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
+    const filter = zodiacModuleProxyFactoryContract.asProvider.filters.ModuleProxyCreation(
       votingContractAddress,
       null
     );
-
-    const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract
+    const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract.asProvider
       .queryFilter(filter)
       .then(proxiesCreated => {
         return proxiesCreated[0].args.masterCopy;
       });
 
-    if (votingContractMasterCopyAddress === linearVotingMasterCopyContract.address) {
-      ozLinearContract = OZLinearVoting__factory.connect(votingContractAddress, signerOrProvider);
+    if (votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address) {
+      ozLinearContract = {
+        asSigner: linearVotingMasterCopyContract.asSigner.attach(votingContractAddress),
+        asProvider: linearVotingMasterCopyContract.asProvider.attach(votingContractAddress),
+      };
     }
     if (ozLinearContract) {
-      tokenContract = VotesToken__factory.connect(
-        await ozLinearContract.governanceToken(),
-        signerOrProvider
-      );
+      const govTokenAddress = await ozLinearContract.asSigner.governanceToken();
+      tokenContract = {
+        asSigner: votesTokenMasterCopyContract.asSigner.attach(govTokenAddress),
+        asProvider: votesTokenMasterCopyContract.asProvider.attach(govTokenAddress),
+      };
     }
     governanceDispatch({
       type: GovernanceAction.SET_USUL_CONTRACTS,
@@ -90,7 +91,8 @@ export const useVotingContracts = ({
       },
     });
   }, [
-    signerOrProvider,
+    fractalUsulMasterCopyContract,
+    votesTokenMasterCopyContract,
     governanceDispatch,
     zodiacModuleProxyFactoryContract,
     linearVotingMasterCopyContract,

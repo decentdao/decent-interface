@@ -148,9 +148,9 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
 
     (async () => {
       // @todo handle errors
-      const votingPeriod = await ozLinearVotingContract.votingPeriod();
-      const quorumPercentage = await ozLinearVotingContract.quorumNumerator();
-      const timeLockPeriod = await ozLinearVotingContract.timeLockPeriod();
+      const votingPeriod = await ozLinearVotingContract.asSigner.votingPeriod();
+      const quorumPercentage = await ozLinearVotingContract.asSigner.quorumNumerator();
+      const timeLockPeriod = await ozLinearVotingContract.asSigner.timeLockPeriod();
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
         payload: {
@@ -171,18 +171,6 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     })();
   }, [ozLinearVotingContract, provider, getTimeDuration]);
 
-  // dispatch token contract
-  useEffect(() => {
-    if (!tokenContract) {
-      return;
-    }
-
-    dispatch({
-      type: TokenActions.UPDATE_TOKEN_CONTRACT,
-      payload: tokenContract,
-    });
-  }, [tokenContract]);
-
   // get token data
   useEffect(() => {
     if (!tokenContract) {
@@ -190,11 +178,11 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     }
 
     (async () => {
-      const tokenName = await tokenContract.name();
-      const tokenSymbol = await tokenContract.symbol();
-      const tokenDecimals = await tokenContract.decimals();
-      const tokenAddress = tokenContract.address;
-      const totalSupply = await tokenContract.totalSupply();
+      const tokenName = await tokenContract.asSigner.name();
+      const tokenSymbol = await tokenContract.asSigner.symbol();
+      const tokenDecimals = await tokenContract.asSigner.decimals();
+      const tokenAddress = tokenContract.asSigner.address;
+      const totalSupply = await tokenContract.asSigner.totalSupply();
       dispatch({
         type: TokenActions.UPDATE_TOKEN,
         payload: {
@@ -213,12 +201,12 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       return;
     }
 
-    const tokenBalance = await tokenContract.balanceOf(account);
-    const tokenDelegatee = await tokenContract.delegates(account);
-    const tokenVotingWeight = await tokenContract.getVotes(account);
-
+    const tokenBalance = await tokenContract.asSigner.balanceOf(account);
+    const tokenDelegatee = await tokenContract.asSigner.delegates(account);
+    const tokenVotingWeight = await tokenContract.asSigner.getVotes(account);
+    const providerContract = tokenContract.asSigner.connect(provider);
     const isDelegatesSet = !!(
-      await tokenContract.queryFilter(tokenContract.filters.DelegateChanged())
+      await providerContract.queryFilter(providerContract.filters.DelegateChanged())
     ).length;
 
     dispatch({
@@ -232,7 +220,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
         isDelegatesSet,
       },
     });
-  }, [tokenContract, account, state.decimals, state.symbol]);
+  }, [tokenContract, account, state.decimals, state.symbol, provider]);
 
   // get token account data
   useEffect(() => {
@@ -245,19 +233,19 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       return;
     }
 
-    const filterTransferTo = tokenContract.filters.Transfer(null, account);
-    const filterTransferFrom = tokenContract.filters.Transfer(account, null);
+    const filterTransferTo = tokenContract.asSigner.filters.Transfer(null, account);
+    const filterTransferFrom = tokenContract.asSigner.filters.Transfer(account, null);
 
     const listenerCallback: TransferListener = () => {
       getTokenAccount();
     };
 
-    tokenContract.on(filterTransferTo, listenerCallback);
-    tokenContract.on(filterTransferFrom, listenerCallback);
+    tokenContract.asSigner.on(filterTransferTo, listenerCallback);
+    tokenContract.asSigner.on(filterTransferFrom, listenerCallback);
 
     return () => {
-      tokenContract.off(filterTransferTo, listenerCallback);
-      tokenContract.off(filterTransferFrom, listenerCallback);
+      tokenContract.asSigner.off(filterTransferTo, listenerCallback);
+      tokenContract.asSigner.off(filterTransferFrom, listenerCallback);
     };
   }, [account, getTokenAccount, tokenContract]);
 
@@ -267,7 +255,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       return;
     }
 
-    const filter = tokenContract.filters.DelegateChanged(account);
+    const filter = tokenContract.asSigner.filters.DelegateChanged(account);
 
     const listenerCallback: DelegateChangedListener = (
       _delegator: string,
@@ -280,10 +268,10 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       });
     };
 
-    tokenContract.on(filter, listenerCallback);
+    tokenContract.asSigner.on(filter, listenerCallback);
 
     return () => {
-      tokenContract.off(filter, listenerCallback);
+      tokenContract.asSigner.off(filter, listenerCallback);
     };
   }, [account, getTokenAccount, tokenContract]);
 
@@ -293,7 +281,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       return;
     }
 
-    const filter = tokenContract.filters.DelegateVotesChanged(account);
+    const filter = tokenContract.asSigner.filters.DelegateVotesChanged(account);
 
     const callback: DelegateVotesChangedListener = (
       _delegate: string,
@@ -309,10 +297,10 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       });
     };
 
-    tokenContract.on(filter, callback);
+    tokenContract.asSigner.on(filter, callback);
 
     return () => {
-      tokenContract.off(filter, callback);
+      tokenContract.asSigner.off(filter, callback);
     };
   }, [account, state.decimals, state.symbol, tokenContract]);
 

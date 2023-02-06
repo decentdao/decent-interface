@@ -1,16 +1,12 @@
-import {
-  GnosisSafe__factory,
-  VetoERC20Voting,
-  VetoMultisigVoting,
-  VotesToken__factory,
-} from '@fractal-framework/fractal-contracts';
+import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { Dispatch, useEffect, useCallback, useMemo } from 'react';
-import { useAccount, useProvider, useSigner } from 'wagmi';
+import { Dispatch, useEffect, useCallback } from 'react';
+import { useAccount, useProvider } from 'wagmi';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../helpers/freezePeriodHelpers';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import { GnosisActions, IGnosisFreezeData, IGnosisVetoContract, VetoVotingType } from '../types';
 import { FreezeVoteCastedListener } from '../types/vetoVotingEvent';
@@ -20,41 +16,38 @@ export function useFreezeData(
   gnosisDispatch: Dispatch<GnosisActions>
 ) {
   const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const { gnosisSafeSingletonContract, votesTokenMasterCopyContract } = useSafeContracts();
   const { address: account } = useAccount();
 
   const lookupFreezeData = useCallback(
     async ({ vetoVotingType, vetoVotingContract }: IGnosisVetoContract) => {
       let userHasVotes: boolean = false;
       const freezeCreatedBlock = await (
-        vetoVotingContract as VetoERC20Voting
+        vetoVotingContract!.asSigner as VetoERC20Voting
       ).freezeProposalCreatedBlock();
 
       const freezeData = {
-        freezeVotesThreshold: await vetoVotingContract!.freezeVotesThreshold(),
-        freezeProposalCreatedTime: await vetoVotingContract!.freezeProposalCreatedTime(),
-        freezeProposalVoteCount: await vetoVotingContract!.freezeProposalVoteCount(),
-        freezeProposalPeriod: await vetoVotingContract!.freezeProposalPeriod(),
-        freezePeriod: await vetoVotingContract!.freezePeriod(),
-        userHasFreezeVoted: await vetoVotingContract!.userHasFreezeVoted(
+        freezeVotesThreshold: await vetoVotingContract!.asSigner.freezeVotesThreshold(),
+        freezeProposalCreatedTime: await vetoVotingContract!.asSigner.freezeProposalCreatedTime(),
+        freezeProposalVoteCount: await vetoVotingContract!.asSigner.freezeProposalVoteCount(),
+        freezeProposalPeriod: await vetoVotingContract!.asSigner.freezeProposalPeriod(),
+        freezePeriod: await vetoVotingContract!.asSigner.freezePeriod(),
+        userHasFreezeVoted: await vetoVotingContract!.asSigner.userHasFreezeVoted(
           account || '',
           freezeCreatedBlock
         ),
-        isFrozen: await vetoVotingContract!.isFrozen(),
+        isFrozen: await vetoVotingContract!.asSigner.isFrozen(),
       };
 
       if (vetoVotingType === VetoVotingType.MULTISIG) {
-        const gnosisSafeContract = GnosisSafe__factory.connect(
-          await (vetoVotingContract as VetoMultisigVoting).gnosisSafe(),
-          signerOrProvider!
+        const gnosisSafeContract = gnosisSafeSingletonContract!.asSigner.attach(
+          await (vetoVotingContract!.asSigner as VetoMultisigVoting).gnosisSafe()
         );
         const owners = await gnosisSafeContract.getOwners();
         userHasVotes = owners.find(owner => owner === account) !== undefined;
       } else if (vetoVotingType === VetoVotingType.ERC20) {
-        const votesTokenContract = VotesToken__factory.connect(
-          await (vetoVotingContract as VetoERC20Voting).votesToken(),
-          signerOrProvider!
+        const votesTokenContract = votesTokenMasterCopyContract!.asSigner.attach(
+          await (vetoVotingContract!.asSigner as VetoERC20Voting).votesToken()
         );
         const currentBlockNumber = await provider!.getBlockNumber();
         const currentTimestamp = (await provider!.getBlock(currentBlockNumber)).timestamp;
@@ -84,7 +77,7 @@ export function useFreezeData(
       };
       return freeze;
     },
-    [signerOrProvider, provider, account]
+    [provider, account, gnosisSafeSingletonContract, votesTokenMasterCopyContract]
   );
 
   useEffect(() => {
@@ -100,7 +93,7 @@ export function useFreezeData(
         });
       });
     })();
-  }, [gnosisDispatch, vetoGuardContract, lookupFreezeData]);
+  }, [gnosisDispatch, , vetoGuardContract, lookupFreezeData]);
 
   useEffect(() => {
     if (
@@ -111,7 +104,7 @@ export function useFreezeData(
       return;
     }
 
-    const vetoVotingContract = vetoGuardContract.vetoVotingContract as VetoMultisigVoting;
+    const vetoVotingContract = vetoGuardContract.vetoVotingContract.asSigner as VetoMultisigVoting;
 
     const filter = vetoVotingContract.filters.FreezeVoteCast();
 
@@ -142,7 +135,7 @@ export function useFreezeData(
       return;
     }
 
-    const vetoVotingContract = vetoGuardContract.vetoVotingContract as VetoERC20Voting;
+    const vetoVotingContract = vetoGuardContract.vetoVotingContract.asSigner as VetoERC20Voting;
 
     const filter = vetoVotingContract.filters.FreezeVoteCast();
 

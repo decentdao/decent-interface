@@ -16,6 +16,10 @@ const CHAINS: ChainMetadata[] = [
     id: 5,
   },
   {
+    name: 'Polygon',
+    id: 137,
+  },
+  {
     name: 'Local Dev Chain',
     id: Number(process.env.REACT_APP_LOCAL_CHAIN_ID) || 0,
   },

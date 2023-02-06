@@ -29,7 +29,9 @@ export const useActivities = (sortBy: SortBy) => {
   const parsedActivities = useParseSafeTxs(transactions, safe);
   const parsedActivitiesWithState = useSafeActivitiesWithState(
     parsedActivities,
-    vetoGuardType === VetoGuardType.MULTISIG ? (vetoGuardContract as VetoGuard) : undefined
+    vetoGuardType === VetoGuardType.MULTISIG
+      ? (vetoGuardContract?.asSigner as VetoGuard)
+      : undefined
   );
 
   /**

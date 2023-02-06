@@ -43,7 +43,7 @@ function Avatar({
 }: {
   size?: AvatarSize;
   address: string;
-  url: string | null;
+  url?: string | null;
 }) {
   if (!url) {
     return (

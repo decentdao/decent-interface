@@ -1,6 +1,5 @@
 import { BigNumber } from 'ethers';
-import { useCallback, Dispatch, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useCallback, Dispatch } from 'react';
 import { getTxProposalState } from '../../utils';
 import { GovernanceAction, GovernanceActions } from '../actions';
 import { UsulProposal, IGovernance } from '../types';
@@ -13,17 +12,13 @@ interface IUseUpdateProposalState {
 export default function useUpdateProposalState({
   governance: {
     txProposalsInfo,
-    contracts: { usulContract },
+    contracts: { usulContract, ozLinearVotingContract },
   },
   governanceDispatch,
 }: IUseUpdateProposalState) {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-
   const updateProposalState = useCallback(
     async (proposalNumber: BigNumber) => {
-      if (!usulContract || !signerOrProvider) {
+      if (!usulContract || !ozLinearVotingContract) {
         return;
       }
       const proposals = await Promise.all(
@@ -31,7 +26,7 @@ export default function useUpdateProposalState({
           if (proposalNumber.eq(proposal.proposalNumber)) {
             const updatedProposal = {
               ...proposal,
-              state: await getTxProposalState(usulContract, proposalNumber, signerOrProvider),
+              state: await getTxProposalState(usulContract, ozLinearVotingContract, proposalNumber),
             };
             return updatedProposal;
           }
@@ -48,7 +43,7 @@ export default function useUpdateProposalState({
         },
       });
     },
-    [signerOrProvider, usulContract, governanceDispatch, txProposalsInfo]
+    [usulContract, ozLinearVotingContract, governanceDispatch, txProposalsInfo]
   );
 
   return updateProposalState;

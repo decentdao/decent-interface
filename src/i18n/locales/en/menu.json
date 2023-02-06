@@ -14,6 +14,7 @@
     "network": "Network",
     "wallet": "Wallet",
     "mainnet": "Mainnet",
+    "polygon": "Polygon Mainnet",
     "goerli": "Goerli Test Network",
     "local": "Local Test Network",
     "titleManageDAO": "Manage DAO",

@@ -2,6 +2,7 @@ import { NetworkConfig } from '../types';
 
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
+  etherscanBaseURL: 'https://etherscan.io',
   chainId: 1,
   contracts: {
     gnosisSafe: '',
