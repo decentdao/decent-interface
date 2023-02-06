@@ -21,6 +21,7 @@ import { GovernanceTypes } from '../../providers/Fractal/types';
 import { MetaTransaction } from '../../types';
 import useSafeContracts from '../safe/useSafeContracts';
 import { generateContractByteCodeLinear, generateSalt } from "../../helpers/BuildDAOTx/utils";
+import { vetoVotesContractData } from "../../helpers/BuildDAOTx/vetoVotesContractData";
 
 /**
  * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
@@ -324,7 +325,12 @@ const useBuildDAOTx = () => {
         if (parentDAOAddress) {
           const subDAOData = daoData as SubDAO;
           // Veto Votes
-          const deployVetoVotesTx = await buildVetoVotesContractData(parentTokenAddress);
+          const deployVetoVotesTx = await vetoVotesContractData(
+            parentTokenAddress
+          );
+
+
+
           if (!deployVetoVotesTx) {
             return;
           }
