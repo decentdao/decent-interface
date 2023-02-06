@@ -26,7 +26,6 @@ jobs:
           npm install
           npm run build
         env:
-          REACT_APP_FALLBACK_CHAIN_ID: ${{ secrets.REACT_APP_FALLBACK_CHAIN_ID }}
           REACT_APP_SUPPORTED_CHAIN_IDS: ${{ secrets.REACT_APP_SUPPORTED_CHAIN_IDS }}
           REACT_APP_INFURA_API_KEY: ${{ secrets.REACT_APP_INFURA_API_KEY }}
           REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
