@@ -6,6 +6,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { generateContractByteCodeLinear, generateSalt } from "./utils";
 
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;
@@ -34,15 +35,11 @@ export const fractalModuleData = (
     ]
   );
 
-  const fractalByteCodeLinear =
-    '0x602d8060093d393df3363d3d373d3d3d363d73' +
-    fractalModuleMasterCopyContract.address.slice(2) +
-    '5af43d82803e903d91602b57fd5bf3';
-
-  const fractalSalt = solidityKeccak256(
-    ['bytes32', 'uint256'],
-    [solidityKeccak256(['bytes'], [fractalModuleCalldata]), saltNum]
+  const fractalByteCodeLinear = generateContractByteCodeLinear(
+    fractalModuleMasterCopyContract.address.slice(2)
   );
+
+  const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
 
   return {
     predictedFractalModuleAddress: getCreate2Address(

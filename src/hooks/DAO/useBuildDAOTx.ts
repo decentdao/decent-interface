@@ -20,6 +20,7 @@ import { FractalModuleData, fractalModuleData } from '../../helpers/BuildDAOTx/f
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { MetaTransaction } from '../../types';
 import useSafeContracts from '../safe/useSafeContracts';
+import { generateContractByteCodeLinear, generateSalt } from "../../helpers/BuildDAOTx/utils";
 
 /**
  * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
@@ -88,21 +89,19 @@ const useBuildDAOTx = () => {
           : VetoMultisigVoting__factory;
 
         const setVetoVotingCalldata = vetoVotesType.createInterface().encodeFunctionData('owner');
-        const vetoVotingByteCodeLinear =
-          '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          vetoVotesMasterCopyContract.asSigner.address.slice(2) +
-          '5af43d82803e903d91602b57fd5bf3';
-        const vetoVotingSalt = solidityKeccak256(
-          ['bytes32', 'uint256'],
-          [solidityKeccak256(['bytes'], [setVetoVotingCalldata]), saltNum]
+        const vetoVotingByteCodeLinear = generateContractByteCodeLinear(
+          vetoVotesMasterCopyContract.asSigner.address.slice(2)
         );
+
+        const vetoVotingSalt = generateSalt(setVetoVotingCalldata, saltNum);
+
         return {
           vetoVotingAddress: getCreate2Address(
             zodiacModuleProxyFactoryContract.asSigner.address,
             vetoVotingSalt,
             solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
           ),
-          setVetoVotingCalldata: setVetoVotingCalldata,
+          setVetoVotingCalldata,
           vetoVotesType,
         };
       };
