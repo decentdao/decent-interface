@@ -322,8 +322,21 @@ const useBuildDAOTx = () => {
         );
 
         let internalTxs: MetaTransaction[];
+
+        // Fractal Module (only applied to childDAOs)
+        const { predictedFractalModuleAddress, deployFractalModuleTx }: FractalModuleData =
+          fractalModuleData(
+            fractalModuleMasterCopyContract.asSigner,
+            zodiacModuleProxyFactoryContract.asSigner,
+            safeContract,
+            saltNum,
+            parentDAOAddress
+          );
+
         if (parentDAOAddress) {
+          // childDAO
           const subDAOData = daoData as SubDAO;
+
           // Veto Votes
           const deployVetoVotesTx = await buildVetoVotesContractData(parentTokenAddress);
           if (!deployVetoVotesTx) {
@@ -343,12 +356,21 @@ const useBuildDAOTx = () => {
             return;
           }
           const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
+
           internalTxs = [
             // Name Registry
             buildContractCall(
               fractalRegistryContract.asSigner,
               'updateDAOName',
               [gnosisDaoData.daoName],
+              0,
+              false
+            ),
+            // Enable Fractal Module b/c this DAO has a parent
+            buildContractCall(
+              safeContract,
+              'enableModule',
+              [predictedFractalModuleAddress],
               0,
               false
             ),
@@ -411,6 +433,7 @@ const useBuildDAOTx = () => {
             ),
           ];
         } else {
+          // rootDAO
           internalTxs = [
             // Name Registry
             buildContractCall(
@@ -456,6 +479,12 @@ const useBuildDAOTx = () => {
         );
 
         const txs: MetaTransaction[] = [createSafeTx, execInternalSafeTx];
+
+        // If childDAO, deploy Fractal Module
+        if (parentDAOAddress) {
+          txs.splice(1, 0, deployFractalModuleTx);
+        }
+
         const safeTx = encodeMultiSend(txs);
 
         return { predictedGnosisSafeAddress, createSafeTx, safeTx };
@@ -639,7 +668,7 @@ const useBuildDAOTx = () => {
         );
 
         // Fractal Module
-        const { predictedFractalModuleAddress, fractalModuleCalldata }: FractalModuleData =
+        const { predictedFractalModuleAddress, deployFractalModuleTx }: FractalModuleData =
           fractalModuleData(
             fractalModuleMasterCopyContract.asSigner,
             zodiacModuleProxyFactoryContract.asSigner,
@@ -757,6 +786,7 @@ const useBuildDAOTx = () => {
             ),
           ];
         } else {
+          // rootDAO
           internalTxs = [
             buildContractCall(
               fractalRegistryContract.asSigner,
@@ -767,14 +797,6 @@ const useBuildDAOTx = () => {
             ),
             buildContractCall(linearVotingContract, 'setUsul', [usulContract.address], 0, false),
             buildContractCall(safeContract, 'enableModule', [usulContract.address], 0, false),
-            // Enable Fractal Module
-            buildContractCall(
-              safeContract,
-              'enableModule',
-              [predictedFractalModuleAddress],
-              0,
-              false
-            ),
             buildContractCall(
               safeContract,
               'addOwnerWithThreshold',
@@ -819,14 +841,6 @@ const useBuildDAOTx = () => {
           0,
           false
         );
-        // Deploy Fractal Module
-        const deployFractalModuleTx = buildContractCall(
-          zodiacModuleProxyFactoryContract.asSigner,
-          'deployModule',
-          [fractalModuleMasterCopyContract.asSigner.address, fractalModuleCalldata, saltNum],
-          0,
-          false
-        );
         const execInternalSafeTx = buildContractCall(
           safeContract,
           'execTransaction',
@@ -851,9 +865,14 @@ const useBuildDAOTx = () => {
           createTokenTx,
           deployStrategyTx,
           deployUsulTx,
-          deployFractalModuleTx,
           execInternalSafeTx,
         ];
+
+        // If childDAO, deploy Fractal Module (after deployUsulTx)
+        if (parentDAOAddress) {
+          txs.splice(4, 0, deployFractalModuleTx);
+        }
+
         const safeTx = encodeMultiSend(txs);
 
         return { predictedGnosisSafeAddress, createSafeTx, safeTx };
