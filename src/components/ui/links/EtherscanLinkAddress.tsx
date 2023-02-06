@@ -1,5 +1,5 @@
 import { Link } from '@chakra-ui/react';
-import useSubDomain from '../../hooks/utils/useSubDomain';
+import useSubDomain from '../../../hooks/utils/useSubDomain';
 
 function EtherscanLinkAddress({
   path = 'address',

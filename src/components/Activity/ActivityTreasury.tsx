@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { TreasuryActivity } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
-import EtherscanLinkAddress from '../ui/EtherscanLinkAddress';
+import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 

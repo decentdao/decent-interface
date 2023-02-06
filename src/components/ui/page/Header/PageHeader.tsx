@@ -1,10 +1,12 @@
-import { Box, Divider, Flex, Spacer, Text, Button } from '@chakra-ui/react';
+import { Box, Divider, Flex, Spacer, Button } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-
+import useDAOName from '../../../../hooks/DAO/useDAOName';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { DAO_ROUTES } from '../../../../routes/constants';
+import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
-  title: string;
-  titleTestId: string;
-  buttonVariant?: 'text';
+  breadcrumbs: Crumb[];
+  buttonVariant?: 'text' | 'secondary';
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
@@ -15,14 +17,31 @@ interface IPageHeader {
  * Intended to be used as the main title for a page.
  */
 function PageHeader({
-  title,
-  titleTestId,
+  breadcrumbs,
   buttonVariant,
   buttonText,
   buttonClick,
   buttonTestId,
   children,
 }: IPageHeader) {
+  const {
+    gnosis: {
+      safe: { address },
+      daoName,
+    },
+  } = useFractal();
+  const { daoRegistryName } = useDAOName({
+    address,
+  });
+
+  const links = [
+    {
+      title: daoRegistryName || daoName,
+      path: DAO_ROUTES.dao.relative(address),
+    },
+    ...breadcrumbs,
+  ];
+
   return (
     <Box
       marginTop="3rem"
@@ -32,13 +51,7 @@ function PageHeader({
         w="full"
         align="center"
       >
-        <Text
-          data-testid={titleTestId}
-          textStyle="text-2xl-mono-regular"
-          color="grayscale.100"
-        >
-          {title}
-        </Text>
+        <Breadcrumbs links={links} />
         <Spacer />
         {buttonText && (
           <Button

@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { BigNumberValuePair } from '../components/ui/BigNumberInput';
+import { BigNumberValuePair } from '../components/ui/forms/BigNumberInput';
 
 export interface DecodedTransaction {
   target: string;

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import Avatar from '../../Header/Avatar';
+import Avatar from '../../page/Header/Avatar';
 
 export function NotConnected() {
   const { t } = useTranslation('menu');

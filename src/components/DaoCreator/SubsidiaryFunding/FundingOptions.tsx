@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import ContentBox from '../../ui/ContentBox';
+import ContentBox from '../../ui/containers/ContentBox';
 import { NFTToFund, TokenToFund } from './types';
 interface IFundingOptions {
   selectedTokenIndex?: number;

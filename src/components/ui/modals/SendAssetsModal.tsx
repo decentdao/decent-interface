@@ -12,8 +12,8 @@ import {
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
-import { BigNumberInput, BigNumberValuePair } from '../BigNumberInput';
-import { EthAddressInput } from '../EthAddressInput';
+import { BigNumberInput, BigNumberValuePair } from '../forms/BigNumberInput';
+import { EthAddressInput } from '../forms/EthAddressInput';
 
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useQueueProposal from '../../../hooks/DAO/proposal/useQueueProposal';
 import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
-import ContentBox from '../../ui/ContentBox';
+import ContentBox from '../../ui/containers/ContentBox';
 
 export default function Queue({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
