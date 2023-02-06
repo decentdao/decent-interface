@@ -1,5 +1,5 @@
 import { Link } from '@chakra-ui/react';
-import useSubDomain from '../../../hooks/utils/useSubDomain';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanLinkAddress({
   path = 'address',
@@ -10,8 +10,8 @@ function EtherscanLinkAddress({
   address?: string;
   children: React.ReactNode;
 }) {
-  const subdomain = useSubDomain();
-  const href = address ? `https://${subdomain}etherscan.io/${path}/${address}` : undefined;
+  const { etherscanBaseURL } = useNetworkConfg();
+  const href = address ? `${etherscanBaseURL}/${path}/${address}` : undefined;
 
   return (
     <Link

@@ -3,6 +3,7 @@ import { NetworkConfig } from '../types';
 export const localhostConfig: NetworkConfig = {
   // @note localhost config should be 1:1 with goerli configurations for testing.
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
+  etherscanBaseURL: 'https://goerli.etherscan.io',
   chainId: 5,
   contracts: {
     gnosisSafe: '0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552',

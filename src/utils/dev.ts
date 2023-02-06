@@ -55,7 +55,7 @@ export const useProposeStuff = (doSomething: Function) => {
   //Add Change DAO name transaction
   const today = new Date().toLocaleString('default', { weekday: 'long' });
   const daoNameChange = {
-    targetAddress: fractalRegistryContract?.address,
+    targetAddress: fractalRegistryContract?.asSigner.address,
     functionName: 'updateDAOName',
     functionSignature: 'string _name',
     parameters: `${today} DAO`,

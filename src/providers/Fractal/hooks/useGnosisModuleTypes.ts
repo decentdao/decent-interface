@@ -1,6 +1,4 @@
-import { FractalModule__factory, FractalUsul__factory } from '@fractal-framework/fractal-contracts';
-import { Dispatch, useEffect, useCallback, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { Dispatch, useEffect, useCallback } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
@@ -9,10 +7,6 @@ export function useGnosisModuleTypes(
   gnosisDispatch: Dispatch<GnosisActions>,
   moduleAddresses?: string[]
 ) {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-
   const {
     zodiacModuleProxyFactoryContract,
     fractalUsulMasterCopyContract,
@@ -24,21 +18,21 @@ export function useGnosisModuleTypes(
       if (
         !zodiacModuleProxyFactoryContract ||
         !fractalUsulMasterCopyContract ||
-        !fractalModuleMasterCopyContract ||
-        !signerOrProvider
+        !fractalModuleMasterCopyContract
       ) {
         return;
       }
 
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const filter = zodiacModuleProxyFactoryContract.filters.ModuleProxyCreation(
+        const filter = zodiacModuleProxyFactoryContract.asProvider.filters.ModuleProxyCreation(
           proxyAddress,
           null
         );
-
-        return zodiacModuleProxyFactoryContract.queryFilter(filter).then(proxiesCreated => {
-          return proxiesCreated[0].args.masterCopy;
-        });
+        return zodiacModuleProxyFactoryContract.asProvider
+          .queryFilter(filter)
+          .then(proxiesCreated => {
+            return proxiesCreated[0].args.masterCopy;
+          });
       };
 
       const modules = await Promise.all(
@@ -47,15 +41,15 @@ export function useGnosisModuleTypes(
 
           let module: IGnosisModuleData;
 
-          if (masterCopyAddress === fractalUsulMasterCopyContract.address) {
+          if (masterCopyAddress === fractalUsulMasterCopyContract.asSigner.address) {
             module = {
-              moduleContract: FractalUsul__factory.connect(moduleAddress, signerOrProvider),
+              moduleContract: fractalUsulMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: GnosisModuleType.USUL,
             };
-          } else if (masterCopyAddress === fractalModuleMasterCopyContract.address) {
+          } else if (masterCopyAddress === fractalModuleMasterCopyContract.asSigner.address) {
             module = {
-              moduleContract: FractalModule__factory.connect(moduleAddress, signerOrProvider),
+              moduleContract: fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: GnosisModuleType.FRACTAL,
             };
@@ -76,7 +70,6 @@ export function useGnosisModuleTypes(
       zodiacModuleProxyFactoryContract,
       fractalUsulMasterCopyContract,
       fractalModuleMasterCopyContract,
-      signerOrProvider,
     ]
   );
 

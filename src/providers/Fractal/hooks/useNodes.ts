@@ -1,7 +1,5 @@
-import { VetoGuard__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect, useCallback, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { Dispatch, useEffect, useCallback } from 'react';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import { IGnosis, GnosisActions, SafeInfoResponseWithGuard, ChildNode } from '../types';
@@ -13,17 +11,15 @@ export default function useNodes({
   gnosis: IGnosis;
   gnosisDispatch: Dispatch<GnosisActions>;
 }) {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { fractalRegistryContract } = useSafeContracts();
+  const { fractalRegistryContract, gnosisVetoGuardMasterCopyContract } = useSafeContracts();
 
   const { modules, safe, safeService } = gnosis;
 
   const fetchSubDAOs = useCallback(
     async (parentDAOAddress: string) => {
-      const filter = fractalRegistryContract!.filters.FractalSubDAODeclared(parentDAOAddress);
-      const events = await fractalRegistryContract!.queryFilter(filter);
+      const filter =
+        fractalRegistryContract!.asProvider.filters.FractalSubDAODeclared(parentDAOAddress);
+      const events = await fractalRegistryContract!.asProvider.queryFilter(filter);
       const subDAOsAddresses = events.map(({ args }) => args.subDAOAddress);
 
       return subDAOsAddresses;
@@ -33,9 +29,9 @@ export default function useNodes({
 
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
-      if (safeInfo && safeInfo.guard && signerOrProvider) {
+      if (safeInfo && safeInfo.guard && gnosisVetoGuardMasterCopyContract) {
         if (safeInfo.guard !== ethers.constants.AddressZero) {
-          const guard = VetoGuard__factory.connect(safeInfo.guard, signerOrProvider);
+          const guard = gnosisVetoGuardMasterCopyContract.asSigner.attach(safeInfo.guard);
           const guardOwner = await guard.owner();
           if (guardOwner !== safeInfo.address) {
             return guardOwner;
@@ -44,7 +40,7 @@ export default function useNodes({
       }
       return undefined;
     },
-    [signerOrProvider]
+    [gnosisVetoGuardMasterCopyContract]
   );
 
   const mapSubDAOsToOwnedSubDAOs = useCallback(
@@ -89,7 +85,7 @@ export default function useNodes({
 
   useEffect(() => {
     const loadDaoParent = async () => {
-      if (safe && safe.guard && signerOrProvider) {
+      if (safe && safe.guard) {
         const owner = await getDAOOwner(safe);
         if (owner) {
           gnosisDispatch({ type: GnosisAction.SET_DAO_PARENT, payload: owner });
@@ -101,7 +97,7 @@ export default function useNodes({
     };
 
     const loadDaoNodes = async () => {
-      if (safe.address && signerOrProvider && safeService && fractalRegistryContract) {
+      if (safe.address && safeService && fractalRegistryContract) {
         const declaredSubDAOs = await fetchSubDAOs(safe.address);
         const controlledNodes = await mapSubDAOsToOwnedSubDAOs(declaredSubDAOs, safe.address);
 
@@ -115,7 +111,6 @@ export default function useNodes({
     safe,
     modules,
     gnosisDispatch,
-    signerOrProvider,
     safeService,
     fetchSubDAOs,
     getDAOOwner,

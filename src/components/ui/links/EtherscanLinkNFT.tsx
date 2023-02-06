@@ -1,5 +1,5 @@
 import { Link } from '@chakra-ui/react';
-import useSubDomain from '../../../hooks/utils/useSubDomain';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanLinkNFT({
   address,
@@ -10,10 +10,10 @@ function EtherscanLinkNFT({
   tokenId: string;
   children: React.ReactNode;
 }) {
-  const subdomain = useSubDomain();
+  const { etherscanBaseURL } = useNetworkConfg();
   return (
     <Link
-      href={`https://${subdomain}etherscan.io/nft/${address}/${tokenId}`}
+      href={`${etherscanBaseURL}/${address}/${tokenId}`}
       isExternal
     >
       {children}

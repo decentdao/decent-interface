@@ -15,7 +15,7 @@ import {
   EthereumTxWithTransfersResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { DecodedTransaction, MetaTransaction } from '../../../types';
+import { ContractConnection, DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
 export enum GovernanceTypes {
@@ -90,8 +90,8 @@ export enum VetoGuardType {
 }
 
 export interface IGnosisVetoContract {
-  vetoGuardContract: VetoGuard | UsulVetoGuard | undefined;
-  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
+  vetoGuardContract: ContractConnection<VetoGuard | UsulVetoGuard> | undefined;
+  vetoVotingContract: ContractConnection<VetoERC20Voting | VetoMultisigVoting> | undefined;
   vetoGuardType: VetoGuardType;
   vetoVotingType: VetoVotingType;
 }
@@ -110,9 +110,9 @@ export interface IGnosisFreezeData {
 export interface GnosisDAO extends DAODetails, GnosisConfig {}
 
 export interface GovernanceContracts {
-  ozLinearVotingContract?: OZLinearVoting;
-  usulContract?: FractalUsul;
-  tokenContract?: VotesToken;
+  ozLinearVotingContract?: ContractConnection<OZLinearVoting>;
+  usulContract?: ContractConnection<FractalUsul>;
+  tokenContract?: ContractConnection<VotesToken>;
   contractsIsLoading: boolean;
 }
 

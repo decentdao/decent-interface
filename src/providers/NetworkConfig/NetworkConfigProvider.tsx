@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerliConfig } from './networks';
+import { polygonConfig } from './networks/polygon';
 import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',
+  etherscanBaseURL: '',
   chainId: 0,
   contracts: {
     gnosisSafe: '',
@@ -36,7 +38,8 @@ const getNetworkConfig = (chainId: number) => {
     case 5:
     case 31337:
       return goerliConfig;
-    // @todo create config file for mainnet
+    case 137:
+      return polygonConfig;
     case 1:
     default:
       return defaultState;
@@ -48,10 +51,10 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const { chain } = useNetwork();
   const { t } = useTranslation('menu');
   const { disconnect } = useDisconnect();
-  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider._network.chainId));
+  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider.network.chainId));
 
   useEffect(() => {
-    setConfig(getNetworkConfig(provider._network.chainId));
+    setConfig(getNetworkConfig(provider.network.chainId));
   }, [provider]);
 
   useEffect(() => {
