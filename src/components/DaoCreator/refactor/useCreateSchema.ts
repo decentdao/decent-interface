@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { useValidationAddress } from './useValidationAddress';
 
 export const useCreateSchema = () => {
-  const { addressArrValidationTest, inputValidation } = useValidationAddress();
+  const { addressArrValidationTest, addressValidationMap } = useValidationAddress();
 
   const createDAOValidation = useMemo(
     () =>
@@ -22,5 +22,5 @@ export const useCreateSchema = () => {
       }),
     [addressArrValidationTest]
   );
-  return { createDAOValidation, inputValidation };
+  return { createDAOValidation, addressValidationMap };
 };

@@ -1,26 +1,23 @@
 import { utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useProvider } from 'wagmi';
+import { AddressValidationMap } from '../provider/types';
 
 export const useValidationAddress = () => {
   const provider = useProvider();
-  const inputValidation = useRef<
-    Map<
-      string,
-      { address: string; index: number; errorMessage: string | null; isValidAddress: boolean }
-    >
-  >(new Map());
+  const addressValidationMap = useRef<AddressValidationMap>(new Map());
 
   const addressArrValidationTest = useMemo(() => {
     return {
       test: async (addressArr: string[] | undefined) => {
         if (!addressArr || !addressArr.length) return false;
+        addressValidationMap.current.clear();
         const validationArray = await Promise.all(
           addressArr.map(async (inputValue, index) => {
             if (!!inputValue && inputValue.trim() && inputValue.endsWith('.eth')) {
               const resolvedAddress = await provider.resolveName(inputValue).catch();
               if (resolvedAddress) {
-                inputValidation.current.set(inputValue, {
+                addressValidationMap.current.set(inputValue, {
                   address: resolvedAddress,
                   index,
                   isValidAddress: true,
@@ -28,7 +25,7 @@ export const useValidationAddress = () => {
                 });
                 return true;
               } else {
-                inputValidation.current.set(inputValue, {
+                addressValidationMap.current.set(inputValue, {
                   address: '',
                   index,
                   isValidAddress: false,
@@ -39,7 +36,7 @@ export const useValidationAddress = () => {
             }
             const isValidAddress = utils.isAddress(inputValue);
             if (isValidAddress) {
-              inputValidation.current.set(inputValue, {
+              addressValidationMap.current.set(inputValue, {
                 address: inputValue,
                 index,
                 isValidAddress: true,
@@ -47,8 +44,8 @@ export const useValidationAddress = () => {
               });
               return true;
             } else {
-              inputValidation.current.set(inputValue, {
-                address: inputValue,
+              addressValidationMap.current.set(inputValue, {
+                address: '',
                 index,
                 isValidAddress: false,
                 errorMessage: 'Invalid address',
@@ -66,10 +63,11 @@ export const useValidationAddress = () => {
     return {
       test: async (inputValue: string | undefined) => {
         if (!inputValue) return false;
+        addressValidationMap.current.clear();
         if (!!inputValue && inputValue.trim() && inputValue.endsWith('.eth')) {
           const resolvedAddress = await provider.resolveName(inputValue).catch();
           if (resolvedAddress) {
-            inputValidation.current.set(inputValue, {
+            addressValidationMap.current.set(inputValue, {
               address: resolvedAddress,
               index: 0,
               isValidAddress: true,
@@ -77,7 +75,7 @@ export const useValidationAddress = () => {
             });
             return true;
           } else {
-            inputValidation.current.set(inputValue, {
+            addressValidationMap.current.set(inputValue, {
               address: '',
               index: 0,
               isValidAddress: false,
@@ -89,16 +87,23 @@ export const useValidationAddress = () => {
 
         const isValidAddress = utils.isAddress(inputValue);
         if (isValidAddress) {
-          inputValidation.current.set(inputValue, {
+          addressValidationMap.current.set(inputValue, {
             address: inputValue,
             index: 0,
             isValidAddress: true,
             errorMessage: null,
+          });
+        } else {
+          addressValidationMap.current.set(inputValue, {
+            address: '',
+            index: 0,
+            isValidAddress: false,
+            errorMessage: 'Invalid Address',
           });
         }
       },
     };
   }, [provider]);
 
-  return { addressArrValidationTest, addressValidationTest, inputValidation };
+  return { addressArrValidationTest, addressValidationTest, addressValidationMap };
 };

@@ -1,7 +1,11 @@
-import StepController from './DisplayStepController';
+import { Box } from '@chakra-ui/react';
+import { Formik } from 'formik';
+import { GovernanceTypes } from '../../providers/Fractal/types';
+import { initialState } from './provider/constants';
 
-import { CreatorProvider } from './provider/CreatorProvider';
-import { DAOTrigger } from './provider/types';
+import { CreatorFormState, DAOTrigger } from './provider/types';
+import StepController from './refactor/StepController';
+import { useCreateSchema } from './refactor/useCreateSchema';
 
 function DaoCreator({
   pending,
@@ -12,16 +16,38 @@ function DaoCreator({
   deployDAO: DAOTrigger;
   isSubDAO?: boolean;
 }) {
+  const { createDAOValidation, addressValidationMap } = useCreateSchema();
+
   return (
-    <CreatorProvider
-      deployDAO={deployDAO}
-      pending={pending}
-      isSubDAO={isSubDAO}
-    >
-      <form onSubmit={e => e.preventDefault()}>
-        <StepController />
-      </form>
-    </CreatorProvider>
+    <Box>
+      <Formik<CreatorFormState>
+        initialValues={initialState}
+        validationSchema={createDAOValidation}
+        initialStatus={addressValidationMap}
+        onSubmit={values => {
+          const choosenGovernance = values.essentials.governance;
+          switch (choosenGovernance) {
+            case GovernanceTypes.GNOSIS_SAFE: {
+              const trustedAddresses = values.gnosis.trustedAddresses.map(
+                address => addressValidationMap.current.get(address)!.address
+              );
+              deployDAO({ ...values.essentials, ...values.gnosis, trustedAddresses });
+              return;
+            }
+            case GovernanceTypes.GNOSIS_SAFE_USUL: {
+              return;
+            }
+          }
+        }}
+        validateOnMount
+      >
+        {({ handleSubmit, ...rest }) => (
+          <form onSubmit={handleSubmit}>
+            <StepController {...rest} />
+          </form>
+        )}
+      </Formik>
+    </Box>
   );
 }
 
