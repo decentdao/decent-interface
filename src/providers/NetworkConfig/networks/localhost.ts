@@ -1,4 +1,4 @@
-import { goerli } from 'wagmi/chains';
+import { goerli } from 'wagmi/dist/chains.js';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { NetworkConfig } from '../types';
 
