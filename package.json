@@ -50,6 +50,7 @@
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
     "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
     "eject": "react-app-rewired eject",
+    "prepare": "husky install",
     "tests": "playwright test"
   },
   "engines": {
