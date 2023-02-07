@@ -62,58 +62,7 @@ const useBuildDAOTx = () => {
   const { AddressZero, HashZero } = ethers.constants;
   const { solidityKeccak256, getCreate2Address, defaultAbiCoder } = ethers.utils;
   const saltNum = getRandomBytes();
-
-  const buildVetoVotesContractData = useCallback(
-    (parentTokenAddress?: string) => {
-      const buildVetoVotes = async () => {
-        if (
-          !vetoERC20VotingMasterCopyContract ||
-          !vetoMultisigVotingMasterCopyContract ||
-          !zodiacModuleProxyFactoryContract ||
-          !signerOrProvider
-        ) {
-          return;
-        }
-
-        // VETO Voting Contract
-        // If parent DAO is a token voting DAO, then we must utilize the veto ERC20 Voting
-        const vetoVotesMasterCopyContract = parentTokenAddress
-          ? vetoERC20VotingMasterCopyContract
-          : vetoMultisigVotingMasterCopyContract;
-
-        const vetoVotesType = parentTokenAddress
-          ? VetoERC20Voting__factory
-          : VetoMultisigVoting__factory;
-
-        const setVetoVotingCalldata = vetoVotesType.createInterface().encodeFunctionData('owner');
-        const vetoVotingByteCodeLinear = generateContractByteCodeLinear(
-          vetoVotesMasterCopyContract.asSigner.address.slice(2)
-        );
-
-        const vetoVotingSalt = generateSalt(setVetoVotingCalldata, saltNum);
-
-        return {
-          vetoVotingAddress: getCreate2Address(
-            zodiacModuleProxyFactoryContract.asSigner.address,
-            vetoVotingSalt,
-            solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
-          ),
-          setVetoVotingCalldata,
-          vetoVotesType,
-        };
-      };
-      return buildVetoVotes();
-    },
-    [
-      getCreate2Address,
-      saltNum,
-      solidityKeccak256,
-      zodiacModuleProxyFactoryContract,
-      signerOrProvider,
-      vetoERC20VotingMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-    ]
-  );
+  
   const buildVetoGuardData = useCallback(
     ({
       executionPeriod,
@@ -334,18 +283,13 @@ const useBuildDAOTx = () => {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
-          const deployVetoVotesTx = await vetoVotesContractData(
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = await vetoVotesContractData(
             vetoERC20VotingMasterCopyContract.asSigner,
             vetoMultisigVotingMasterCopyContract.asSigner,
             zodiacModuleProxyFactoryContract.asSigner,
             saltNum,
             parentTokenAddress
           );
-
-          if (!deployVetoVotesTx) {
-            return;
-          }
-          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = deployVetoVotesTx;
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
@@ -501,7 +445,6 @@ const useBuildDAOTx = () => {
       signerOrProvider,
       buildDeploySafeTx,
       buildVetoGuardData,
-      buildVetoVotesContractData,
       vetoERC20VotingMasterCopyContract,
       AddressZero,
       zodiacModuleProxyFactoryContract,
@@ -685,11 +628,13 @@ const useBuildDAOTx = () => {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
-          const deployVetoVotesTx = await buildVetoVotesContractData(parentTokenAddress);
-          if (!deployVetoVotesTx) {
-            return;
-          }
-          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = deployVetoVotesTx;
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = await vetoVotesContractData(
+            vetoERC20VotingMasterCopyContract.asSigner,
+            vetoMultisigVotingMasterCopyContract.asSigner,
+            zodiacModuleProxyFactoryContract.asSigner,
+            saltNum,
+            parentTokenAddress
+          );
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
@@ -899,7 +844,6 @@ const useBuildDAOTx = () => {
       signerOrProvider,
       buildDeploySafeTx,
       buildVetoGuardData,
-      buildVetoVotesContractData,
       defaultAbiCoder,
       getCreate2Address,
       solidityKeccak256,
