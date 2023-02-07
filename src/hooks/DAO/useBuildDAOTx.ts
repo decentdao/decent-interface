@@ -339,10 +339,12 @@ const useBuildDAOTx = () => {
 
           // Veto Votes
           const deployVetoVotesTx = await vetoVotesContractData(
+            vetoERC20VotingMasterCopyContract.asSigner,
+            vetoMultisigVotingMasterCopyContract.asSigner,
+            zodiacModuleProxyFactoryContract.asSigner,
+            saltNum,
             parentTokenAddress
           );
-
-
 
           if (!deployVetoVotesTx) {
             return;

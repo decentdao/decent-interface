@@ -1,6 +1,6 @@
 import { VetoERC20Voting__factory, VetoMultisigVoting__factory } from "@fractal-framework/fractal-contracts";
 import { generateContractByteCodeLinear, generateSalt } from "./utils";
-
+import { getCreate2Address, solidityKeccak256 } from "ethers/lib/utils";
 
 export interface VetoVotesContractData {
   vetoVotingAddress: string;
@@ -11,6 +11,8 @@ export interface VetoVotesContractData {
 export const vetoVotesContractData = (
   vetoERC20VotingMasterCopyContract: any,
   vetoMultisigVotingMasterCopyContract: any,
+  zodiacModuleProxyFactoryContract: any,
+  saltNum: string,
   parentTokenAddress?: string,
 ): VetoVotesContractData => {
   // VETO Voting Contract
