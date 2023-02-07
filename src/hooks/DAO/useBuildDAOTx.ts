@@ -10,11 +10,7 @@ import {
 import { BigNumber, ethers } from 'ethers';
 import { useCallback, useMemo } from 'react';
 import { useProvider, useSigner, useAccount } from 'wagmi';
-import {
-  GnosisDAO,
-  SubDAO,
-  TokenGovernanceDAO,
-} from '../../components/DaoCreator/provider/types';
+import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
 import { FractalModuleData, fractalModuleData } from '../../helpers/BuildDAOTx/fractalModuleData';
 import { GovernanceTypes } from '../../providers/Fractal/types';
