@@ -1,5 +1,26 @@
 // Prefix and postfix strings come from Zodiac contracts
-import { solidityKeccak256 } from 'ethers/lib/utils';
+import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { SafeTransaction } from "../../types";
+import { buildContractCall } from "../crypto";
+import { Contract } from "ethers";
+import { ModuleProxyFactory } from "@fractal-framework/fractal-contracts";
+
+/**
+ * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
+ * However, from the UI/user's perspective, the input fields are denoted in MINUTES.
+ *
+ * Thus the data from the user inputs must be converted to seconds before passing into
+ * the transaction.  This applies to:
+ *
+ * votingPeriod
+ * executionPeriod
+ * timelockPeriod
+ * freezeProposalPeriod
+ * freezePeriod
+ *
+ * The UI defaults (in minutes) are defined in {@link CreatorProvider}.
+ */
+export const TIMER_MULT = 60;
 
 export const generateContractByteCodeLinear = (contractAddress: string): string => {
   return (
@@ -13,3 +34,24 @@ export const generateSalt = (calldata: string, saltNum: string): string => {
     [solidityKeccak256(['bytes'], [calldata]), saltNum]
   );
 };
+
+export const generatePredictedModuleAddress = (zodiacProxyAddress: string, salt: string, byteCode: string): string => {
+  return getCreate2Address(
+    zodiacProxyAddress,
+    salt,
+    solidityKeccak256(['bytes'], [byteCode])
+  )
+};
+
+export const buildDeployZodiacModuleTx = (
+  zodiacProxyFactoryContract: ModuleProxyFactory,
+  params: string[]
+): SafeTransaction => {
+  return buildContractCall(
+    zodiacProxyFactoryContract,
+    'deployModule',
+    params,
+    0,
+    false
+  );
+}

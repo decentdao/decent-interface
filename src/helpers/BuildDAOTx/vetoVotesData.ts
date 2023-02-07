@@ -5,19 +5,19 @@ import {
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { generateContractByteCodeLinear, generateSalt } from './utils';
 
-export interface VetoVotesContractData {
+export interface VetoVotesData {
   vetoVotingAddress: string;
   setVetoVotingCalldata: string;
   vetoVotesType: any;
 }
 
-export const vetoVotesContractData = (
+export const vetoVotesData = (
   vetoERC20VotingMasterCopyContract: any,
   vetoMultisigVotingMasterCopyContract: any,
   zodiacModuleProxyFactoryContract: any,
   saltNum: string,
   parentTokenAddress?: string
-): VetoVotesContractData => {
+): VetoVotesData => {
   // VETO Voting Contract
   // If parent DAO is a token voting DAO, then we must utilize the veto ERC20 Voting
   const vetoVotesMasterCopyContract = parentTokenAddress

@@ -12,27 +12,13 @@ import { useProvider, useSigner, useAccount } from 'wagmi';
 import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
 import { FractalModuleData, fractalModuleData } from '../../helpers/BuildDAOTx/fractalModuleData';
-import { vetoVotesContractData } from '../../helpers/BuildDAOTx/vetoVotesContractData';
+import { vetoVotesData } from '../../helpers/BuildDAOTx/vetoVotesData';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { MetaTransaction } from '../../types';
 import useSafeContracts from '../safe/useSafeContracts';
+import { TIMER_MULT } from "../../helpers/BuildDAOTx/utils";
+import { vetoGuardDataMultisig, vetoGuardDataUsul } from "../../helpers/BuildDAOTx/vetoGuardData";
 
-/**
- * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
- * However, from the UI/user's perspective, the input fields are denoted in MINUTES.
- *
- * Thus the data from the user inputs must be converted to seconds before passing into
- * the transaction.  This applies to:
- *
- * votingPeriod
- * executionPeriod
- * timelockPeriod
- * freezeProposalPeriod
- * freezePeriod
- *
- * The UI defaults (in minutes) are defined in {@link CreatorProvider}.
- */
-const TIMER_MULT = 60;
 
 const useBuildDAOTx = () => {
   const provider = useProvider();
@@ -61,92 +47,6 @@ const useBuildDAOTx = () => {
   const { solidityKeccak256, getCreate2Address, defaultAbiCoder } = ethers.utils;
   const saltNum = getRandomBytes();
 
-  const buildVetoGuardData = useCallback(
-    ({
-      executionPeriod,
-      parentDAOAddress,
-      vetoVotingAddress,
-      safeAddress,
-      usulAddress,
-      strategyAddress,
-      timelockPeriod,
-    }: {
-      executionPeriod: BigNumber;
-      parentDAOAddress: string;
-      vetoVotingAddress: string;
-      safeAddress: string;
-      usulAddress?: string;
-      strategyAddress?: string;
-      timelockPeriod?: BigNumber;
-    }) => {
-      const buildVetoGuard = async () => {
-        if (
-          !gnosisVetoGuardMasterCopyContract ||
-          !usulVetoGuardMasterCopyContract ||
-          !zodiacModuleProxyFactoryContract
-        ) {
-          return;
-        }
-
-        // VETO GUARD Contract
-        // If dao config is a usul dao, then we must utilize the usulVetoGuard
-        const vetoGuardMasterCopyContract = usulAddress
-          ? usulVetoGuardMasterCopyContract
-          : gnosisVetoGuardMasterCopyContract;
-
-        const vetoGuardType = usulAddress ? UsulVetoGuard__factory : VetoGuard__factory;
-
-        const setVetoGuardCalldata = vetoGuardType.createInterface().encodeFunctionData('setUp', [
-          usulAddress
-            ? ethers.utils.defaultAbiCoder.encode(
-                ['address', 'address', 'address', 'address', 'uint256'],
-                [
-                  parentDAOAddress, // Owner -- Parent DAO
-                  vetoVotingAddress, // Veto Voting
-                  strategyAddress, // Base Strategy
-                  usulAddress, // USUL
-                  executionPeriod.mul(TIMER_MULT), // Execution Period
-                ]
-              )
-            : ethers.utils.defaultAbiCoder.encode(
-                ['uint256', 'uint256', 'address', 'address', 'address'],
-                [
-                  timelockPeriod?.mul(TIMER_MULT), // Timelock Period
-                  executionPeriod.mul(TIMER_MULT), // Execution Period
-                  parentDAOAddress, // Owner -- Parent DAO
-                  vetoVotingAddress, // Veto Voting
-                  safeAddress, // Gnosis Safe
-                ]
-              ),
-        ]);
-        const vetoGuardByteCodeLinear =
-          '0x602d8060093d393df3363d3d373d3d3d363d73' +
-          vetoGuardMasterCopyContract.asSigner.address.slice(2) +
-          '5af43d82803e903d91602b57fd5bf3';
-        const vetoGuardSalt = solidityKeccak256(
-          ['bytes32', 'uint256'],
-          [solidityKeccak256(['bytes'], [setVetoGuardCalldata]), saltNum]
-        );
-        return {
-          predictedVetoModuleAddress: getCreate2Address(
-            zodiacModuleProxyFactoryContract.asSigner.address,
-            vetoGuardSalt,
-            solidityKeccak256(['bytes'], [vetoGuardByteCodeLinear])
-          ),
-          setVetoGuardCalldata: setVetoGuardCalldata,
-        };
-      };
-      return buildVetoGuard();
-    },
-    [
-      getCreate2Address,
-      gnosisVetoGuardMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
-      saltNum,
-      solidityKeccak256,
-      zodiacModuleProxyFactoryContract,
-    ]
-  );
   const buildDeploySafeTx = useCallback(
     (daoData: GnosisDAO, hasUsul?: boolean) => {
       const buildTx = async () => {
@@ -282,7 +182,7 @@ const useBuildDAOTx = () => {
 
           // Veto Votes
           const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
-            await vetoVotesContractData(
+            await vetoVotesData(
               vetoERC20VotingMasterCopyContract.asSigner,
               vetoMultisigVotingMasterCopyContract.asSigner,
               zodiacModuleProxyFactoryContract.asSigner,
@@ -291,17 +191,16 @@ const useBuildDAOTx = () => {
             );
 
           // Veto Guard
-          const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod,
-            parentDAOAddress: parentDAOAddress,
-            vetoVotingAddress: vetoVotingAddress,
-            safeAddress: safeContract.address,
-            timelockPeriod: subDAOData.timelockPeriod,
-          });
-          if (!deployVetoGuardTx) {
-            return;
-          }
-          const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
+          const { predictedVetoModuleAddress, deployVetoGuardTx } = vetoGuardDataMultisig(
+            gnosisVetoGuardMasterCopyContract.asSigner,
+            zodiacModuleProxyFactoryContract.asSigner,
+            subDAOData.executionPeriod,
+            parentDAOAddress,
+            vetoVotingAddress,
+            safeContract.address,
+            saltNum,
+            subDAOData.timelockPeriod
+          );
 
           internalTxs = [
             // Name Registry
@@ -356,13 +255,7 @@ const useBuildDAOTx = () => {
               false
             ),
             // Deploy Veto Guard
-            buildContractCall(
-              zodiacModuleProxyFactoryContract.asSigner,
-              'deployModule',
-              [gnosisVetoGuardMasterCopyContract.asSigner.address, setVetoGuardCalldata, saltNum],
-              0,
-              false
-            ),
+            deployVetoGuardTx,
             // Enable Veto Guard
             buildContractCall(safeContract, 'setGuard', [predictedVetoModuleAddress], 0, false),
             // Remove Multisend Contract
@@ -443,7 +336,6 @@ const useBuildDAOTx = () => {
       fractalRegistryContract,
       signerOrProvider,
       buildDeploySafeTx,
-      buildVetoGuardData,
       vetoERC20VotingMasterCopyContract,
       AddressZero,
       zodiacModuleProxyFactoryContract,
@@ -628,7 +520,7 @@ const useBuildDAOTx = () => {
 
           // Veto Votes
           const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
-            await vetoVotesContractData(
+            await vetoVotesData(
               vetoERC20VotingMasterCopyContract.asSigner,
               vetoMultisigVotingMasterCopyContract.asSigner,
               zodiacModuleProxyFactoryContract.asSigner,
@@ -637,18 +529,18 @@ const useBuildDAOTx = () => {
             );
 
           // Veto Guard
-          const deployVetoGuardTx = await buildVetoGuardData({
-            executionPeriod: subDAOData.executionPeriod,
-            parentDAOAddress: parentDAOAddress,
-            vetoVotingAddress: vetoVotingAddress,
-            safeAddress: safeContract.address,
-            usulAddress: predictedUsulAddress,
-            strategyAddress: predictedStrategyAddress,
-          });
-          if (!deployVetoGuardTx) {
-            return;
-          }
-          const { predictedVetoModuleAddress, setVetoGuardCalldata } = deployVetoGuardTx;
+          const { predictedVetoModuleAddress, deployVetoGuardTx } = vetoGuardDataUsul(
+            usulVetoGuardMasterCopyContract.asSigner,
+            zodiacModuleProxyFactoryContract.asSigner,
+            subDAOData.executionPeriod,
+            parentDAOAddress,
+            vetoVotingAddress,
+            safeContract.address,
+            saltNum,
+            predictedUsulAddress,
+            predictedStrategyAddress,
+          );
+
           internalTxs = [
             buildContractCall(
               fractalRegistryContract.asSigner,
@@ -706,13 +598,7 @@ const useBuildDAOTx = () => {
             ),
 
             // Deploy Veto Guard
-            buildContractCall(
-              zodiacModuleProxyFactoryContract.asSigner,
-              'deployModule',
-              [usulVetoGuardMasterCopyContract.asSigner.address, setVetoGuardCalldata, saltNum],
-              0,
-              false
-            ),
+            deployVetoGuardTx,
             // Enable Veto Guard
             buildContractCall(usulContract, 'setGuard', [predictedVetoModuleAddress], 0, false),
 
@@ -843,7 +729,6 @@ const useBuildDAOTx = () => {
       saltNum,
       signerOrProvider,
       buildDeploySafeTx,
-      buildVetoGuardData,
       defaultAbiCoder,
       getCreate2Address,
       solidityKeccak256,
