@@ -10,6 +10,7 @@ import { useProvider, useSigner, useAccount } from 'wagmi';
 import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
 import { FractalModuleData, fractalModuleData } from '../../helpers/BuildDAOTx/fractalModuleData';
+import { gnosisSafeData } from '../../helpers/BuildDAOTx/gnosisSafeData';
 import { TIMER_MULT } from '../../helpers/BuildDAOTx/utils';
 import { vetoGuardDataMultisig, vetoGuardDataUsul } from '../../helpers/BuildDAOTx/vetoGuardData';
 import { vetoVotesData } from '../../helpers/BuildDAOTx/vetoVotesData';
@@ -40,88 +41,10 @@ const useBuildDAOTx = () => {
     votesTokenMasterCopyContract,
   } = useSafeContracts();
 
-  const { AddressZero, HashZero } = ethers.constants;
+  const { AddressZero } = ethers.constants;
   const { solidityKeccak256, getCreate2Address, defaultAbiCoder } = ethers.utils;
   const saltNum = getRandomBytes();
 
-  const buildDeploySafeTx = useCallback(
-    (daoData: GnosisDAO, hasUsul?: boolean) => {
-      const buildTx = async () => {
-        if (
-          !account ||
-          !gnosisSafeFactoryContract ||
-          !gnosisSafeSingletonContract ||
-          !multiSendContract ||
-          !signerOrProvider
-        ) {
-          return;
-        }
-
-        const gnosisDaoData = daoData as GnosisDAO;
-
-        const signers = hasUsul
-          ? [multiSendContract.asSigner.address]
-          : [
-              ...gnosisDaoData.trustedAddresses.map(trustedAddess => trustedAddess.address),
-              multiSendContract.asSigner.address,
-            ];
-
-        const createGnosisCalldata =
-          gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData('setup', [
-            signers,
-            1, // Threshold
-            AddressZero,
-            HashZero,
-            AddressZero,
-            AddressZero,
-            0,
-            AddressZero,
-          ]);
-
-        const predictedGnosisSafeAddress = getCreate2Address(
-          gnosisSafeFactoryContract.asSigner.address,
-          solidityKeccak256(
-            ['bytes', 'uint256'],
-            [solidityKeccak256(['bytes'], [createGnosisCalldata]), saltNum]
-          ),
-          solidityKeccak256(
-            ['bytes', 'uint256'],
-            [
-              await gnosisSafeFactoryContract.asSigner.proxyCreationCode(),
-              gnosisSafeSingletonContract.asSigner.address,
-            ]
-          )
-        );
-
-        const createSafeTx = buildContractCall(
-          gnosisSafeFactoryContract.asSigner,
-          'createProxyWithNonce',
-          [gnosisSafeSingletonContract.asSigner.address, createGnosisCalldata, saltNum],
-          0,
-          false
-        );
-
-        return {
-          predictedGnosisSafeAddress,
-          createSafeTx,
-        };
-      };
-
-      return buildTx();
-    },
-    [
-      account,
-      gnosisSafeFactoryContract,
-      gnosisSafeSingletonContract,
-      multiSendContract,
-      signerOrProvider,
-      AddressZero,
-      HashZero,
-      getCreate2Address,
-      solidityKeccak256,
-      saltNum,
-    ]
-  );
   const buildMultisigTx = useCallback(
     (
       daoData: GnosisDAO | TokenGovernanceDAO,
@@ -137,18 +60,20 @@ const useBuildDAOTx = () => {
           !fractalModuleMasterCopyContract ||
           !gnosisVetoGuardMasterCopyContract ||
           !vetoMultisigVotingMasterCopyContract ||
-          !vetoERC20VotingMasterCopyContract
+          !vetoERC20VotingMasterCopyContract ||
+          !gnosisSafeFactoryContract ||
+          !gnosisSafeSingletonContract
         ) {
           return;
         }
         const gnosisDaoData = daoData as GnosisDAO;
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, false);
-
-        if (!deploySafeTx) {
-          return;
-        }
-
-        const { predictedGnosisSafeAddress, createSafeTx } = deploySafeTx;
+        const { predictedGnosisSafeAddress, createSafeTx } = await gnosisSafeData(
+          multiSendContract.asSigner,
+          gnosisSafeFactoryContract.asSigner,
+          gnosisSafeSingletonContract.asSigner,
+          gnosisDaoData,
+          saltNum
+        );
 
         const signatures =
           '0x000000000000000000000000' +
@@ -331,7 +256,6 @@ const useBuildDAOTx = () => {
       multiSendContract,
       fractalRegistryContract,
       signerOrProvider,
-      buildDeploySafeTx,
       vetoERC20VotingMasterCopyContract,
       AddressZero,
       zodiacModuleProxyFactoryContract,
@@ -339,6 +263,8 @@ const useBuildDAOTx = () => {
       saltNum,
       gnosisVetoGuardMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
+      gnosisSafeFactoryContract,
+      gnosisSafeSingletonContract,
     ]
   );
   const buildUsulTx = useCallback(
@@ -370,13 +296,14 @@ const useBuildDAOTx = () => {
         const gnosisDaoData = daoData as GnosisDAO;
         const tokenGovernanceDaoData = daoData as TokenGovernanceDAO;
 
-        const deploySafeTx = await buildDeploySafeTx(gnosisDaoData, true);
-
-        if (!deploySafeTx) {
-          return;
-        }
-
-        const { predictedGnosisSafeAddress, createSafeTx } = deploySafeTx;
+        const { predictedGnosisSafeAddress, createSafeTx } = await gnosisSafeData(
+          multiSendContract.asSigner,
+          gnosisSafeFactoryContract.asSigner,
+          gnosisSafeSingletonContract.asSigner,
+          gnosisDaoData,
+          saltNum,
+          true
+        );
 
         const tokenAllocationsOwners = tokenGovernanceDaoData.tokenAllocations.map(
           tokenAllocation => tokenAllocation.address
@@ -515,7 +442,7 @@ const useBuildDAOTx = () => {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
-          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = await vetoVotesData(
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = vetoVotesData(
             vetoERC20VotingMasterCopyContract.asSigner,
             vetoMultisigVotingMasterCopyContract.asSigner,
             zodiacModuleProxyFactoryContract.asSigner,
@@ -723,7 +650,6 @@ const useBuildDAOTx = () => {
       vetoMultisigVotingMasterCopyContract,
       saltNum,
       signerOrProvider,
-      buildDeploySafeTx,
       defaultAbiCoder,
       getCreate2Address,
       solidityKeccak256,

@@ -1,5 +1,8 @@
 import {
+  ModuleProxyFactory,
+  VetoERC20Voting,
   VetoERC20Voting__factory,
+  VetoMultisigVoting,
   VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
@@ -12,9 +15,9 @@ export interface VetoVotesData {
 }
 
 export const vetoVotesData = (
-  vetoERC20VotingMasterCopyContract: any,
-  vetoMultisigVotingMasterCopyContract: any,
-  zodiacModuleProxyFactoryContract: any,
+  vetoERC20VotingMasterCopyContract: VetoERC20Voting,
+  vetoMultisigVotingMasterCopyContract: VetoMultisigVoting,
+  zodiacModuleProxyFactoryContract: ModuleProxyFactory,
   saltNum: string,
   parentTokenAddress?: string
 ): VetoVotesData => {
@@ -28,14 +31,14 @@ export const vetoVotesData = (
 
   const setVetoVotingCalldata = vetoVotesType.createInterface().encodeFunctionData('owner');
   const vetoVotingByteCodeLinear = generateContractByteCodeLinear(
-    vetoVotesMasterCopyContract.asSigner.address.slice(2)
+    vetoVotesMasterCopyContract.address.slice(2)
   );
 
   const vetoVotingSalt = generateSalt(setVetoVotingCalldata, saltNum);
 
   return {
     vetoVotingAddress: getCreate2Address(
-      zodiacModuleProxyFactoryContract.asSigner.address,
+      zodiacModuleProxyFactoryContract.address,
       vetoVotingSalt,
       solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
     ),

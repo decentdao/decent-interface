@@ -5,10 +5,13 @@ import {
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { SafeTransaction } from '../../types';
-import { buildContractCall } from '../crypto';
-import { generateContractByteCodeLinear, generateSalt } from './utils';
+import {
+  buildDeployZodiacModuleTx,
+  generateContractByteCodeLinear,
+  generatePredictedModuleAddress,
+  generateSalt,
+} from './utils';
 
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;
@@ -42,19 +45,17 @@ export const fractalModuleData = (
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
-  const deployFractalModuleTx = buildContractCall(
-    zodiacModuleProxyFactoryContract,
-    'deployModule',
-    [fractalModuleMasterCopyContract.address, fractalModuleCalldata, saltNum],
-    0,
-    false
-  );
+  const deployFractalModuleTx = buildDeployZodiacModuleTx(zodiacModuleProxyFactoryContract, [
+    fractalModuleMasterCopyContract.address,
+    fractalModuleCalldata,
+    saltNum,
+  ]);
 
   return {
-    predictedFractalModuleAddress: getCreate2Address(
+    predictedFractalModuleAddress: generatePredictedModuleAddress(
       zodiacModuleProxyFactoryContract.address,
       fractalSalt,
-      solidityKeccak256(['bytes'], [fractalByteCodeLinear])
+      fractalByteCodeLinear
     ),
     deployFractalModuleTx,
   };
