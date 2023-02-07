@@ -1,9 +1,8 @@
 // Prefix and postfix strings come from Zodiac contracts
+import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { SafeTransaction } from "../../types";
-import { buildContractCall } from "../crypto";
-import { Contract } from "ethers";
-import { ModuleProxyFactory } from "@fractal-framework/fractal-contracts";
+import { SafeTransaction } from '../../types';
+import { buildContractCall } from '../crypto';
 
 /**
  * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
@@ -35,23 +34,17 @@ export const generateSalt = (calldata: string, saltNum: string): string => {
   );
 };
 
-export const generatePredictedModuleAddress = (zodiacProxyAddress: string, salt: string, byteCode: string): string => {
-  return getCreate2Address(
-    zodiacProxyAddress,
-    salt,
-    solidityKeccak256(['bytes'], [byteCode])
-  )
+export const generatePredictedModuleAddress = (
+  zodiacProxyAddress: string,
+  salt: string,
+  byteCode: string
+): string => {
+  return getCreate2Address(zodiacProxyAddress, salt, solidityKeccak256(['bytes'], [byteCode]));
 };
 
 export const buildDeployZodiacModuleTx = (
   zodiacProxyFactoryContract: ModuleProxyFactory,
   params: string[]
 ): SafeTransaction => {
-  return buildContractCall(
-    zodiacProxyFactoryContract,
-    'deployModule',
-    params,
-    0,
-    false
-  );
-}
+  return buildContractCall(zodiacProxyFactoryContract, 'deployModule', params, 0, false);
+};
