@@ -6,9 +6,9 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { generateContractByteCodeLinear, generateSalt } from "./utils";
-import { buildContractCall } from "../crypto";
-import { SafeTransaction } from "../../types";
+import { SafeTransaction } from '../../types';
+import { buildContractCall } from '../crypto';
+import { generateContractByteCodeLinear, generateSalt } from './utils';
 
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;

@@ -1,6 +1,9 @@
-import { VetoERC20Voting__factory, VetoMultisigVoting__factory } from "@fractal-framework/fractal-contracts";
-import { generateContractByteCodeLinear, generateSalt } from "./utils";
-import { getCreate2Address, solidityKeccak256 } from "ethers/lib/utils";
+import {
+  VetoERC20Voting__factory,
+  VetoMultisigVoting__factory,
+} from '@fractal-framework/fractal-contracts';
+import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { generateContractByteCodeLinear, generateSalt } from './utils';
 
 export interface VetoVotesContractData {
   vetoVotingAddress: string;
@@ -13,7 +16,7 @@ export const vetoVotesContractData = (
   vetoMultisigVotingMasterCopyContract: any,
   zodiacModuleProxyFactoryContract: any,
   saltNum: string,
-  parentTokenAddress?: string,
+  parentTokenAddress?: string
 ): VetoVotesContractData => {
   // VETO Voting Contract
   // If parent DAO is a token voting DAO, then we must utilize the veto ERC20 Voting
@@ -21,9 +24,7 @@ export const vetoVotesContractData = (
     ? vetoERC20VotingMasterCopyContract
     : vetoMultisigVotingMasterCopyContract;
 
-  const vetoVotesType = parentTokenAddress
-    ? VetoERC20Voting__factory
-    : VetoMultisigVoting__factory;
+  const vetoVotesType = parentTokenAddress ? VetoERC20Voting__factory : VetoMultisigVoting__factory;
 
   const setVetoVotingCalldata = vetoVotesType.createInterface().encodeFunctionData('owner');
   const vetoVotingByteCodeLinear = generateContractByteCodeLinear(
@@ -41,4 +42,4 @@ export const vetoVotesContractData = (
     setVetoVotingCalldata,
     vetoVotesType,
   };
-}
+};

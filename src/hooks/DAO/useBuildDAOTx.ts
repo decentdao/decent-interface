@@ -3,7 +3,6 @@ import {
   FractalUsul__factory,
   VetoERC20Voting__factory,
   VetoGuard__factory,
-  VetoMultisigVoting__factory,
   GnosisSafe__factory,
   UsulVetoGuard__factory,
 } from '@fractal-framework/fractal-contracts';
@@ -13,11 +12,10 @@ import { useProvider, useSigner, useAccount } from 'wagmi';
 import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types';
 import { buildContractCall, encodeMultiSend, getRandomBytes } from '../../helpers';
 import { FractalModuleData, fractalModuleData } from '../../helpers/BuildDAOTx/fractalModuleData';
+import { vetoVotesContractData } from '../../helpers/BuildDAOTx/vetoVotesContractData';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { MetaTransaction } from '../../types';
 import useSafeContracts from '../safe/useSafeContracts';
-import { generateContractByteCodeLinear, generateSalt } from "../../helpers/BuildDAOTx/utils";
-import { vetoVotesContractData } from "../../helpers/BuildDAOTx/vetoVotesContractData";
 
 /**
  * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
@@ -62,7 +60,7 @@ const useBuildDAOTx = () => {
   const { AddressZero, HashZero } = ethers.constants;
   const { solidityKeccak256, getCreate2Address, defaultAbiCoder } = ethers.utils;
   const saltNum = getRandomBytes();
-  
+
   const buildVetoGuardData = useCallback(
     ({
       executionPeriod,
@@ -283,13 +281,14 @@ const useBuildDAOTx = () => {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
-          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = await vetoVotesContractData(
-            vetoERC20VotingMasterCopyContract.asSigner,
-            vetoMultisigVotingMasterCopyContract.asSigner,
-            zodiacModuleProxyFactoryContract.asSigner,
-            saltNum,
-            parentTokenAddress
-          );
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
+            await vetoVotesContractData(
+              vetoERC20VotingMasterCopyContract.asSigner,
+              vetoMultisigVotingMasterCopyContract.asSigner,
+              zodiacModuleProxyFactoryContract.asSigner,
+              saltNum,
+              parentTokenAddress
+            );
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
@@ -628,13 +627,14 @@ const useBuildDAOTx = () => {
           const subDAOData = daoData as SubDAO;
 
           // Veto Votes
-          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } = await vetoVotesContractData(
-            vetoERC20VotingMasterCopyContract.asSigner,
-            vetoMultisigVotingMasterCopyContract.asSigner,
-            zodiacModuleProxyFactoryContract.asSigner,
-            saltNum,
-            parentTokenAddress
-          );
+          const { vetoVotingAddress, setVetoVotingCalldata, vetoVotesType } =
+            await vetoVotesContractData(
+              vetoERC20VotingMasterCopyContract.asSigner,
+              vetoMultisigVotingMasterCopyContract.asSigner,
+              zodiacModuleProxyFactoryContract.asSigner,
+              saltNum,
+              parentTokenAddress
+            );
 
           // Veto Guard
           const deployVetoGuardTx = await buildVetoGuardData({
