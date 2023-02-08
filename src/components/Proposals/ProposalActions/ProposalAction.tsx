@@ -61,6 +61,7 @@ export function ProposalAction({
       case TxProposalState.Queueable:
         return <Queue proposal={proposal} />;
       case TxProposalState.Executing:
+      case TxProposalState.TimeLocked:
         return <Execute proposal={proposal} />;
     }
   }
