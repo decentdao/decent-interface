@@ -128,7 +128,7 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
     Icon = ICONS_MAP[iconName];
   }
 
-  if (!countdown || !showCountdown) {
+  if (!countdown || countdown < 0 || !showCountdown) {
     return null;
   }
 
