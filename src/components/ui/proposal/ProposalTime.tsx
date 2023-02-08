@@ -1,10 +1,8 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
+import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
 import useTokenData from '../../../providers/Fractal/governance/hooks/useGovernanceTokenData';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
@@ -16,9 +14,6 @@ import {
 import Execute from '../svg/Execute';
 import Lock from '../svg/Lock';
 import Vote from '../svg/Vote';
-type ProposalTimeProps = {
-  proposal: TxProposal;
-};
 
 const ICONS_MAP = {
   vote: Vote,
@@ -26,7 +21,7 @@ const ICONS_MAP = {
   execute: Execute,
 };
 
-function ProposalTime({ proposal }: ProposalTimeProps) {
+function ProposalTime({ proposal }: { proposal: TxProposal }) {
   const [countdown, setCountdown] = useState<number>();
   const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timer>();
   const { t } = useTranslation('proposal');
@@ -67,43 +62,7 @@ function ProposalTime({ proposal }: ProposalTimeProps) {
         }, 1000);
         setCountdownInterval(interval);
       } else if (isQueued && vetoGuard) {
-        const abiCoder = new ethers.utils.AbiCoder();
-
-        const multiSigTransaction =
-          proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
-
-        const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
-          ['bytes'],
-          [
-            abiCoder.encode(
-              [
-                'address',
-                'uint256',
-                'bytes32',
-                'uint256',
-                'uint256',
-                'uint256',
-                'uint256',
-                'address',
-                'address',
-              ],
-              [
-                multiSigTransaction.to,
-                multiSigTransaction.value,
-                ethers.utils.solidityKeccak256(['bytes'], [multiSigTransaction.data as string]),
-                multiSigTransaction.operation,
-                multiSigTransaction.safeTxGas,
-                multiSigTransaction.baseGas,
-                multiSigTransaction.gasPrice,
-                multiSigTransaction.gasToken,
-                multiSigTransaction.refundReceiver as string,
-              ]
-            ),
-          ]
-        );
-        const queuedTimestamp = (
-          await vetoGuard.getTransactionQueuedTimestamp(vetoGuardTransactionHash)
-        ).toNumber();
+        const queuedTimestamp = await getTxQueuedTimestamp(proposal, vetoGuard);
         const guardTimeLockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
         const interval = setInterval(() => {
           const now = new Date();
@@ -111,43 +70,7 @@ function ProposalTime({ proposal }: ProposalTimeProps) {
         }, 1000);
         setCountdownInterval(interval);
       } else if (isExecutable && vetoGuard) {
-        const abiCoder = new ethers.utils.AbiCoder();
-
-        const multiSigTransaction =
-          proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
-
-        const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
-          ['bytes'],
-          [
-            abiCoder.encode(
-              [
-                'address',
-                'uint256',
-                'bytes32',
-                'uint256',
-                'uint256',
-                'uint256',
-                'uint256',
-                'address',
-                'address',
-              ],
-              [
-                multiSigTransaction.to,
-                multiSigTransaction.value,
-                ethers.utils.solidityKeccak256(['bytes'], [multiSigTransaction.data as string]),
-                multiSigTransaction.operation,
-                multiSigTransaction.safeTxGas,
-                multiSigTransaction.baseGas,
-                multiSigTransaction.gasPrice,
-                multiSigTransaction.gasToken,
-                multiSigTransaction.refundReceiver as string,
-              ]
-            ),
-          ]
-        );
-        const queuedTimestamp = (
-          await vetoGuard.getTransactionQueuedTimestamp(vetoGuardTransactionHash)
-        ).toNumber();
+        const queuedTimestamp = await getTxQueuedTimestamp(proposal, vetoGuard);
         const guardTimeLockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
         const guardExecutionPeriod = (await vetoGuard.executionPeriod()).toNumber();
 
@@ -168,6 +91,7 @@ function ProposalTime({ proposal }: ProposalTimeProps) {
         clearInterval(countdownInterval);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     usulProposal.deadline,
     isActive,
@@ -178,6 +102,7 @@ function ProposalTime({ proposal }: ProposalTimeProps) {
     timeLockPeriod,
     vetoGuardContract,
     vetoGuardType,
+    proposal,
   ]);
 
   const tooltipLabel = t(
