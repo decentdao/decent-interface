@@ -13,7 +13,6 @@ export function ActivityGovernance({ activity }: { activity: TxProposal }) {
   const {
     gnosis: { safe },
   } = useFractal();
-
   const { t } = useTranslation();
 
   const eventDateLabel = t(
@@ -23,6 +22,7 @@ export function ActivityGovernance({ activity }: { activity: TxProposal }) {
         : 'sent'
       : 'created'
   );
+
   return (
     <ActivityCard
       Badge={
