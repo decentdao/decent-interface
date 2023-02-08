@@ -6,6 +6,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { SafeTransaction } from '../../types';
+import { buildContractCall } from '../crypto';
 import {
   buildDeployZodiacModuleTx,
   generateContractByteCodeLinear,
@@ -16,6 +17,7 @@ import {
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;
   deployFractalModuleTx: SafeTransaction;
+  enableFractalModuleTx: SafeTransaction;
 }
 
 export const fractalModuleData = (
@@ -50,13 +52,23 @@ export const fractalModuleData = (
     fractalModuleCalldata,
     saltNum,
   ]);
+  const predictedFractalModuleAddress = generatePredictedModuleAddress(
+    zodiacModuleProxyFactoryContract.address,
+    fractalSalt,
+    fractalByteCodeLinear
+  );
+
+  const enableFractalModuleTx = buildContractCall(
+    safeContract,
+    'enableModule',
+    [predictedFractalModuleAddress],
+    0,
+    false
+  );
 
   return {
-    predictedFractalModuleAddress: generatePredictedModuleAddress(
-      zodiacModuleProxyFactoryContract.address,
-      fractalSalt,
-      fractalByteCodeLinear
-    ),
+    predictedFractalModuleAddress,
     deployFractalModuleTx,
+    enableFractalModuleTx,
   };
 };
