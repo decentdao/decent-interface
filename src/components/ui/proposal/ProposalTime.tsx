@@ -52,10 +52,6 @@ function ProposalTime({ proposal }: ProposalTimeProps) {
           ? (vetoGuardContract?.asSigner as VetoGuard)
           : undefined;
 
-      if (countdownInterval) {
-        clearInterval(countdownInterval);
-      }
-
       if (isActive && usulProposal.deadline) {
         const interval = setInterval(() => {
           const now = new Date();
@@ -65,7 +61,9 @@ function ProposalTime({ proposal }: ProposalTimeProps) {
       } else if (isTimeLocked && usulProposal.deadline && timeLockPeriod) {
         const interval = setInterval(() => {
           const now = new Date();
-          setCountdown((usulProposal.deadline + Number(timeLockPeriod)) * 1000 - now.getTime());
+          setCountdown(
+            (usulProposal.deadline + Number(timeLockPeriod.value)) * 1000 - now.getTime()
+          );
         }, 1000);
         setCountdownInterval(interval);
       } else if (isQueued && vetoGuard) {
@@ -176,7 +174,6 @@ function ProposalTime({ proposal }: ProposalTimeProps) {
     isTimeLocked,
     isQueued,
     isExecutable,
-    countdownInterval,
     proposal.transaction,
     timeLockPeriod,
     vetoGuardContract,
