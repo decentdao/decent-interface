@@ -1,8 +1,10 @@
 import { Button } from '@chakra-ui/react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { TxProposal, TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
+import { DAO_ROUTES } from '../../../routes/constants';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';
@@ -11,54 +13,40 @@ export function ProposalAction({
   proposal,
   expandedView,
 }: {
-  proposal: UsulProposal;
+  proposal: TxProposal;
   expandedView?: boolean;
 }) {
-  const [pending, setPending] = useState(false);
+  const {
+    gnosis: { safe },
+  } = useFractal();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
+
+  const canExecuteAction =
+    proposal.state === TxProposalState.Active ||
+    proposal.state === TxProposalState.Executing ||
+    proposal.state === TxProposalState.Queueable;
 
   const handleClick = () => {
-    // @todo - call proper contract func based on proposal state and user permission
-    setPending(true);
-
-    switch (proposal.state) {
-      case TxProposalState.Active:
-        // Call Vote action - probably redirect to proposal details where CastVote component would handle proper vote casting
-        break;
-      case TxProposalState.Queueable:
-        // Call proposal queueing action
-        break;
-      case TxProposalState.Executing:
-        // Call proposal execution action
-        break;
-      default:
-        navigate(proposal.proposalNumber);
-        break;
-    }
-
-    setPending(false);
+    navigate(DAO_ROUTES.proposal.relative(safe.address, proposal.proposalNumber));
   };
 
   const label = useMemo(() => {
-    switch (proposal.state) {
-      case TxProposalState.Active:
-        return t('vote');
-      case TxProposalState.Queueable:
-        return t('queue');
-      case TxProposalState.Executing:
-        return t('execute');
+    if (proposal.state === TxProposalState.Active) {
+      return t(isUsulProposal ? 'vote' : 'sign');
     }
-  }, [proposal, t]);
+    return t('details');
+  }, [proposal, t, isUsulProposal]);
 
-  if (!label) {
+  if (!canExecuteAction) {
     if (!expandedView) {
       return (
         <Button
           variant="secondary"
           onClick={handleClick}
         >
-          {t('view')}
+          {t('details')}
         </Button>
       );
     }
@@ -80,7 +68,7 @@ export function ProposalAction({
   return (
     <Button
       onClick={handleClick}
-      disabled={pending}
+      variant={canExecuteAction ? 'primary' : 'secondary'}
     >
       {label}
     </Button>

@@ -1,38 +1,62 @@
-import { Flex, Text } from '@chakra-ui/react';
-import { Calendar } from '@decent-org/fractal-ui';
+import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
 
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { DEFAULT_DATE_FORMAT } from '../../../utils/numberFormats';
 import Clock from '../svg/Clock';
+import Execute from '../svg/Execute';
+import Lock from '../svg/Lock';
+import Vote from '../svg/Vote';
 
 type ProposalTimeProps = {
   deadline: number;
-  icon?: 'clock' | 'calendar';
+  icon?: 'clock' | 'vote' | 'lock' | 'execute';
   isRejected?: boolean;
   submissionDate?: string;
+  tooltipLabel?: string;
 };
 
-function ProposalTime({ deadline, submissionDate, icon = 'clock', isRejected }: ProposalTimeProps) {
+const ICONS_MAP = {
+  clock: Clock,
+  vote: Vote,
+  lock: Lock,
+  execute: Execute,
+};
+
+function ProposalTime({
+  deadline,
+  submissionDate,
+  icon = 'clock',
+  isRejected,
+  tooltipLabel,
+}: ProposalTimeProps) {
   const deadlineDate = new Date(deadline * 1000);
   const diffReadable = useDateTimeDisplay(deadlineDate);
+  const Icon = ICONS_MAP[icon];
 
   return (
-    <Flex
-      className="flex"
-      justifyContent="flex-end"
-      alignItems="center"
+    <Tooltip
+      label={tooltipLabel}
+      placement="top"
     >
-      {icon === 'clock' ? <Clock fill="sand.700" /> : <Calendar color="sand.700" />}
       <Flex
-        px={2}
-        gap={1}
+        className="flex"
+        justifyContent="flex-end"
+        alignItems="center"
       >
-        <Text color="sand.700">
-          {isRejected ? format(deadlineDate, DEFAULT_DATE_FORMAT) : submissionDate || diffReadable}
-        </Text>
+        <Icon />
+        <Flex
+          px={2}
+          gap={1}
+        >
+          <Text color="chocolate.200">
+            {isRejected
+              ? format(deadlineDate, DEFAULT_DATE_FORMAT)
+              : submissionDate || diffReadable}
+          </Text>
+        </Flex>
       </Flex>
-    </Flex>
+    </Tooltip>
   );
 }
 
