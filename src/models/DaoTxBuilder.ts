@@ -241,7 +241,7 @@ export class DaoTxBuilder {
         predictedStrategyAddress
       );
 
-      this.internalTxs.concat([
+      this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module
         this.enableFractalModuleTx!,
         // Deploy Veto Voting
@@ -287,7 +287,7 @@ export class DaoTxBuilder {
       ]);
     }
 
-    this.internalTxs.concat([
+    this.internalTxs = this.internalTxs.concat([
       // Add Usul Contract as the Safe owner
       buildContractCall(
         this.safeContract!,
@@ -377,7 +377,7 @@ export class DaoTxBuilder {
     if (this.parentDAOAddress) {
       const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
 
-      this.internalTxs.concat([
+      this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this DAO has a parent
         this.enableFractalModuleTx!,
         vetoGuardTxBuilder.buildDeployZodiacModuleTx(),
@@ -387,7 +387,6 @@ export class DaoTxBuilder {
       ]);
     }
 
-    // Remove Multisend Contract as owner
     this.internalTxs.push(multisigTxBuilder.buildRemoveMultiSendOwnerTx());
 
     const txs: SafeTransaction[] = [
@@ -395,7 +394,7 @@ export class DaoTxBuilder {
       this.buildExecInternalSafeTx(multisigTxBuilder.signatures())
     ];
 
-    // If childDAO, deploy Fractal Module
+    // If childDAO, deploy Fractal Module after safe creation
     if (this.parentDAOAddress) {
       txs.splice(1, 0, this.deployFractalModuleTx!);
     }
