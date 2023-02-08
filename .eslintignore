@@ -4,4 +4,5 @@ src/assets/typechain-types
 config-overrides.js
 /docker
 playwright.config.ts
-/tests-examples/* 
+/tests-examples/*
+src/models/DaoTxBuilder.ts
