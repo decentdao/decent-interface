@@ -1,109 +1,122 @@
 import { utils } from 'ethers';
 import { useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
+import { AnyObject } from 'yup/lib/types';
+import { Providers } from '../../../providers/Fractal/types/ethers';
 import { AddressValidationMap } from '../provider/types';
 
-export const useValidationAddress = () => {
-  const provider = useProvider();
-  const addressValidationMap = useRef<AddressValidationMap>(new Map());
-
-  const addressArrValidationTest = useMemo(() => {
+export async function validateAddress({
+  provider,
+  address,
+}: {
+  provider: Providers;
+  address: string;
+}) {
+  if (!!address && address.trim() && address.endsWith('.eth')) {
+    const resolvedAddress = await provider.resolveName(address).catch();
+    if (resolvedAddress) {
+      return {
+        validation: {
+          address: resolvedAddress,
+          isValidAddress: true,
+        },
+        isValid: false,
+      };
+    } else {
+      return {
+        validation: {
+          address: '',
+          isValidAddress: false,
+        },
+        isValid: false,
+      };
+    }
+  }
+  const isValidAddress = utils.isAddress(address);
+  if (isValidAddress) {
     return {
-      test: async (addressArr: string[] | undefined) => {
-        if (!addressArr || !addressArr.length) return false;
-        addressValidationMap.current.clear();
-        const validationArray = await Promise.all(
-          addressArr.map(async (inputValue, index) => {
-            if (!!inputValue && inputValue.trim() && inputValue.endsWith('.eth')) {
-              const resolvedAddress = await provider.resolveName(inputValue).catch();
-              if (resolvedAddress) {
-                addressValidationMap.current.set(inputValue, {
-                  address: resolvedAddress,
-                  index,
-                  isValidAddress: true,
-                  errorMessage: null,
-                });
-                return true;
-              } else {
-                addressValidationMap.current.set(inputValue, {
-                  address: '',
-                  index,
-                  isValidAddress: false,
-                  errorMessage: 'Invalid ENS Address',
-                });
-                return false;
-              }
-            }
-            const isValidAddress = utils.isAddress(inputValue);
-            if (isValidAddress) {
-              addressValidationMap.current.set(inputValue, {
-                address: inputValue,
-                index,
-                isValidAddress: true,
-                errorMessage: null,
-              });
-              return true;
-            } else {
-              addressValidationMap.current.set(inputValue, {
-                address: '',
-                index,
-                isValidAddress: false,
-                errorMessage: 'Invalid address',
-              });
-            }
-            return false;
-          })
-        );
-        return validationArray.every(bool => bool);
+      validation: {
+        address: address,
+        isValidAddress: true,
       },
+      isValid: true,
     };
-  }, [provider]);
+  } else {
+    return {
+      validation: {
+        address: '',
+        isValidAddress: false,
+      },
+      isValid: false,
+    };
+  }
+}
+
+export const useValidationAddress = () => {
+  /**
+   * addressValidationMap
+   * @description holds ENS resolved addresses
+   * @dev updated via the `addressValidation`
+   * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
+   */
+  const addressValidationMap = useRef<AddressValidationMap>(new Map());
+  const provider = useProvider();
+  const { t } = useTranslation(['daoCreate', 'common']);
 
   const addressValidationTest = useMemo(() => {
     return {
-      test: async (inputValue: string | undefined) => {
-        if (!inputValue) return false;
-        addressValidationMap.current.clear();
-        if (!!inputValue && inputValue.trim() && inputValue.endsWith('.eth')) {
-          const resolvedAddress = await provider.resolveName(inputValue).catch();
-          if (resolvedAddress) {
-            addressValidationMap.current.set(inputValue, {
-              address: resolvedAddress,
-              index: 0,
-              isValidAddress: true,
-              errorMessage: null,
-            });
-            return true;
-          } else {
-            addressValidationMap.current.set(inputValue, {
-              address: '',
-              index: 0,
-              isValidAddress: false,
-              errorMessage: 'Invalid ENS Address',
-            });
-            return false;
-          }
+      name: 'Address Validation',
+      message: t('errorInvalidENSAddress', { ns: 'common' }),
+      test: async function (address: string | undefined) {
+        if (!address) return false;
+        const { validation } = await validateAddress({ provider, address });
+        if (validation.isValidAddress) {
+          addressValidationMap.current.set(address, validation);
         }
-
-        const isValidAddress = utils.isAddress(inputValue);
-        if (isValidAddress) {
-          addressValidationMap.current.set(inputValue, {
-            address: inputValue,
-            index: 0,
-            isValidAddress: true,
-            errorMessage: null,
-          });
-        } else {
-          addressValidationMap.current.set(inputValue, {
-            address: '',
-            index: 0,
-            isValidAddress: false,
-            errorMessage: 'Invalid Address',
-          });
-        }
+        return validation.isValidAddress;
       },
     };
-  }, [provider]);
+  }, [provider, addressValidationMap, t]);
 
-  return { addressArrValidationTest, addressValidationTest, addressValidationMap };
+  const uniqueAddressValidationTest = useMemo(() => {
+    return {
+      name: 'Unique Addresses',
+      message: t('errorDuplicateAddress'),
+      test: async function (value: string | undefined, context: AnyObject) {
+        // retreive parent array
+        const parentAddressArray = context.parent;
+        // looks up tested value
+        const inputValidation = addressValidationMap.current.get(value || '');
+
+        // converts all inputs to addresses to compare
+        // uses addressValidationMap to save on requests
+        const resolvedAddresses: string[] = await Promise.all(
+          parentAddressArray.map(async (address: string) => {
+            // look up validated values
+            const addressValidation = addressValidationMap.current.get(address);
+            if (addressValidation && addressValidation.isValidAddress) {
+              return addressValidation.address;
+            }
+            // because mapping is not 'state', this catches values that may not be resolved yet
+            if (address && address.endsWith('.eth')) {
+              const { validation } = await validateAddress({ provider, address });
+              return validation.address;
+            }
+            return address;
+          })
+        );
+
+        const uniqueFilter = resolvedAddresses.filter(
+          address => address === value || address === inputValidation?.address
+        );
+        return uniqueFilter.length === 1;
+      },
+    };
+  }, [provider, t]);
+
+  return {
+    addressValidationTest,
+    uniqueAddressValidationTest,
+  };
 };

@@ -3,7 +3,7 @@ import * as Yup from 'yup';
 import { useValidationAddress } from './useValidationAddress';
 
 export const useCreateSchema = () => {
-  const { addressArrValidationTest, addressValidationMap } = useValidationAddress();
+  const { addressValidationTest, uniqueAddressValidationTest } = useValidationAddress();
 
   const createDAOValidation = useMemo(
     () =>
@@ -13,14 +13,19 @@ export const useCreateSchema = () => {
           governance: Yup.string().required(),
         }),
         gnosis: Yup.object().shape({
-          // @todo add test for add least one valid address
-          // @todo add test for all addresses must be valid
-          trustedAddresses: Yup.array().required().test(addressArrValidationTest),
+          trustedAddresses: Yup.array()
+            .min(1)
+            .ensure()
+            .of(Yup.string().test(addressValidationTest))
+            .when({
+              is: (array: string[]) => array && array.length > 1,
+              then: Yup.array().of(Yup.string().test(uniqueAddressValidationTest)),
+            }),
           signatureThreshold: Yup.number().min(1).required(),
           numOfSigners: Yup.number().min(1),
         }),
       }),
-    [addressArrValidationTest]
+    [addressValidationTest, uniqueAddressValidationTest]
   );
-  return { createDAOValidation, addressValidationMap };
+  return { createDAOValidation };
 };
