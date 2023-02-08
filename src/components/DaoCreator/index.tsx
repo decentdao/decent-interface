@@ -16,22 +16,21 @@ function DaoCreator({
   deployDAO: DAOTrigger;
   isSubDAO?: boolean;
 }) {
-  const { createDAOValidation, addressValidationMap } = useCreateSchema();
+  const { createDAOValidation } = useCreateSchema();
 
   return (
     <Box>
       <Formik<CreatorFormState>
         initialValues={initialState}
         validationSchema={createDAOValidation}
-        initialStatus={addressValidationMap}
-        onSubmit={values => {
+        onSubmit={async values => {
           const choosenGovernance = values.essentials.governance;
           switch (choosenGovernance) {
             case GovernanceTypes.GNOSIS_SAFE: {
-              const trustedAddresses = values.gnosis.trustedAddresses.map(
-                address => addressValidationMap.current.get(address)!.address
-              );
-              deployDAO({ ...values.essentials, ...values.gnosis, trustedAddresses });
+              // const trustedAddresses = values.gnosis.trustedAddresses.map(
+              //   address => addressValidationMap.current.get(address)!.address
+              // );
+              // deployDAO({ ...values.essentials, ...values.gnosis, trustedAddresses });
               return;
             }
             case GovernanceTypes.GNOSIS_SAFE_USUL: {
