@@ -26,7 +26,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
   private predictedUsulAddress: string | undefined;
 
   public usulContract: FractalUsul | undefined;
-  private linearVotingContract: OZLinearVoting | undefined;
+  public linearVotingContract: OZLinearVoting | undefined;
 
   private tokenNonce: string;
   private strategyNonce: string;

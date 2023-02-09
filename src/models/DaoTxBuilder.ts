@@ -69,7 +69,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     // subDAO case, add veto guard
     if (this.parentDAOAddress) {
-      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
+      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder(
+        usulTxBuilder.usulContract!.address,
+        usulTxBuilder.linearVotingContract!.address
+      );
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
