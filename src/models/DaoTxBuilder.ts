@@ -17,8 +17,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   // Gnosis Safe Data
   private predictedGnosisSafeAddress: string;
-  private createSafeTx: SafeTransaction;
-  private safeContract: GnosisSafe;
+  private readonly createSafeTx: SafeTransaction;
+  private readonly safeContract: GnosisSafe;
 
   // Fractal Module Txs
   private enableFractalModuleTx: SafeTransaction | undefined;
@@ -67,6 +67,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       usulTxBuilder.buildEnableUsulModuleTx(),
     ];
 
+    // subDAO case, add veto guard
     if (this.parentDAOAddress) {
       const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
 
@@ -107,6 +108,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
 
+    // subDAO case, add veto guard
     if (this.parentDAOAddress) {
       const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
 
