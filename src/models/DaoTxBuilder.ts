@@ -96,7 +96,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       usulTxBuilder.buildDeployUsulTx(),
     ];
 
-    // If childDAO, deploy Fractal Module
+    // If subDAO, deploy Fractal Module
     if (this.parentDAOAddress) {
       txs.push(this.deployFractalModuleTx!);
     }
@@ -132,7 +132,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.buildExecInternalSafeTx(multisigTxBuilder.signatures()),
     ];
 
-    // If childDAO, deploy Fractal Module after safe creation
+    // If subDAO, deploy Fractal Module.
     if (this.parentDAOAddress) {
       txs.splice(1, 0, this.deployFractalModuleTx!);
     }
