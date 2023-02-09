@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { GnosisDAO } from '../../components/DaoCreator/provider/types';
-import { buildContractCall } from '../crypto';
+import { buildContractCall } from '../../helpers/crypto';
 const { AddressZero, HashZero } = ethers.constants;
 
 export const gnosisSafeData = async (

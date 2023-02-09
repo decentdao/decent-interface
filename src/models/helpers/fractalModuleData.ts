@@ -5,8 +5,8 @@ import {
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
+import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
-import { buildContractCall } from '../crypto';
 import {
   buildDeployZodiacModuleTx,
   generateContractByteCodeLinear,

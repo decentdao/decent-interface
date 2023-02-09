@@ -1,8 +1,8 @@
 // Prefix and postfix strings come from Zodiac contracts
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
-import { buildContractCall } from '../crypto';
 
 /**
  * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.

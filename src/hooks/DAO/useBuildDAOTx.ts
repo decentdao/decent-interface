@@ -93,9 +93,7 @@ const useBuildDAOTx = () => {
       );
 
       await txBuilderFactory.setupGnosisSafeData();
-
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
-      daoTxBuilder.setupFractalModuleData();
 
       // Build Tx bundle based on governance type (Usul or Multisig)
       const safeTx =

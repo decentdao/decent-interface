@@ -5,4 +5,3 @@ config-overrides.js
 /docker
 playwright.config.ts
 /tests-examples/*
-src/models/DaoTxBuilder.ts

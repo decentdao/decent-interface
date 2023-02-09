@@ -1,5 +1,7 @@
 import {
+  FractalUsul,
   GnosisSafe,
+  UsulVetoGuard__factory,
   VetoERC20Voting__factory,
   VetoGuard__factory,
   VetoMultisigVoting__factory,
@@ -8,25 +10,18 @@ import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { SubDAO } from '../components/DaoCreator/provider/types';
 import { buildContractCall } from '../helpers';
+import { SafeTransaction } from '../types';
+import { BaseTxBuilder } from './BaseTxBuilder';
 import {
   buildDeployZodiacModuleTx,
   generateContractByteCodeLinear,
   generatePredictedModuleAddress,
   generateSalt,
   TIMER_MULT,
-} from '../helpers/BuildDAOTx/utils';
-import { SafeTransaction } from '../types';
-import { BaseContracts } from './types/contracts';
+} from './helpers/utils';
+import { BaseContracts, UsulContracts } from './types/contracts';
 
-export class VetoGuardTxBuilder {
-  private baseContracts: BaseContracts;
-
-  private readonly daoData: SubDAO;
-
-  private readonly parentDAOAddress: string;
-
-  private readonly parentTokenAddress?: string;
-
+export class VetoGuardTxBuilder extends BaseTxBuilder {
   // Salt used to generate transactions
   private readonly saltNum;
 
@@ -35,30 +30,42 @@ export class VetoGuardTxBuilder {
 
   // Veto Voting Data
   private vetoVotingType: any;
-
   private vetoVotingCallData: string | undefined;
-
   private vetoVotingAddress: string | undefined;
 
   // Veto Guard Data
   private vetoGuardCallData: string | undefined;
-
   private vetoGuardAddress: string | undefined;
 
+  // Usul Data
+  private usulAddress: string | undefined;
+  private strategyAddress: string | undefined;
+
   constructor(
+    signerOrProvider: any,
     baseContracts: BaseContracts,
     daoData: SubDAO,
     safeContract: GnosisSafe,
     saltNum: string,
     parentDAOAddress: string,
-    parentTokenAddress?: string
+    parentTokenAddress?: string,
+    usulContracts?: UsulContracts,
+    usulAddress?: string,
+    strategyAddress?: string
   ) {
-    this.baseContracts = baseContracts;
-    this.daoData = daoData;
-    this.parentDAOAddress = parentDAOAddress;
+    super(
+      signerOrProvider,
+      baseContracts,
+      usulContracts,
+      daoData,
+      parentDAOAddress,
+      parentTokenAddress
+    );
+
     this.safeContract = safeContract;
-    this.parentTokenAddress = parentTokenAddress;
     this.saltNum = saltNum;
+    this.usulAddress = usulAddress;
+    this.strategyAddress = strategyAddress;
 
     this.initVetoVotesData();
   }
@@ -66,7 +73,7 @@ export class VetoGuardTxBuilder {
   initVetoVotesData() {
     this.setVetoVotingTypeAndCallData();
     this.setVetoVotingAddress();
-    this.setVetoGuardCallDataMultisig();
+    this.setVetoGuardData();
     this.setVetoGuardAddress();
   }
 
@@ -86,19 +93,21 @@ export class VetoGuardTxBuilder {
     );
   }
 
-  public buildVetoVotingSetupTx(signerOrProvider: any): SafeTransaction {
+  public buildVetoVotingSetupTx(): SafeTransaction {
+    const subDaoData = this.daoData as SubDAO;
+
     return buildContractCall(
-      this.vetoVotingType.connect(this.vetoVotingAddress, signerOrProvider),
+      this.vetoVotingType.connect(this.vetoVotingAddress, this.signerOrProvider),
       'setUp',
       [
         ethers.utils.defaultAbiCoder.encode(
           ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
           [
             this.parentDAOAddress, // Owner -- Parent DAO
-            this.daoData.vetoVotesThreshold, // VetoVotesThreshold
-            this.daoData.freezeVotesThreshold, // FreezeVotesThreshold
-            this.daoData.freezeProposalPeriod.mul(TIMER_MULT), // FreezeProposalPeriod
-            this.daoData.freezePeriod.mul(TIMER_MULT), // FreezePeriod
+            subDaoData.vetoVotesThreshold, // VetoVotesThreshold
+            subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
+            subDaoData.freezeProposalPeriod.mul(TIMER_MULT), // FreezeProposalPeriod
+            subDaoData.freezePeriod.mul(TIMER_MULT), // FreezePeriod
             this.parentTokenAddress ?? this.parentDAOAddress, // ParentGnosisSafe or Votes Token
             this.vetoGuardAddress, // VetoGuard
           ]
@@ -109,13 +118,13 @@ export class VetoGuardTxBuilder {
     );
   }
 
-  public buildSetGuardTx(): SafeTransaction {
-    return buildContractCall(this.safeContract!, 'setGuard', [this.vetoGuardAddress], 0, false);
+  public buildSetGuardTx(contract: GnosisSafe | FractalUsul): SafeTransaction {
+    return buildContractCall(contract, 'setGuard', [this.vetoGuardAddress], 0, false);
   }
 
   public buildDeployVetoGuardTx() {
     return buildDeployZodiacModuleTx(this.baseContracts.zodiacModuleProxyFactoryContract, [
-      this.baseContracts.gnosisVetoGuardMasterCopyContract.address,
+      this.getGuardMasterCopyAddress(),
       this.vetoGuardCallData!,
       this.saltNum,
     ]);
@@ -151,8 +160,9 @@ export class VetoGuardTxBuilder {
   }
 
   private setVetoGuardAddress() {
-    const guardAddress = this.baseContracts.gnosisVetoGuardMasterCopyContract.address;
-    const vetoGuardByteCodeLinear = generateContractByteCodeLinear(guardAddress.slice(2));
+    const vetoGuardByteCodeLinear = generateContractByteCodeLinear(
+      this.getGuardMasterCopyAddress().slice(2)
+    );
     const vetoGuardSalt = generateSalt(this.vetoGuardCallData!, this.saltNum);
 
     this.vetoGuardAddress = generatePredictedModuleAddress(
@@ -162,18 +172,51 @@ export class VetoGuardTxBuilder {
     );
   }
 
+  private setVetoGuardData() {
+    if (this.usulAddress) {
+      this.setVetoGuardCallDataUsul();
+    } else {
+      this.setVetoGuardCallDataMultisig();
+    }
+  }
+
   private setVetoGuardCallDataMultisig() {
+    const subDaoData = this.daoData as SubDAO;
+
     this.vetoGuardCallData = VetoGuard__factory.createInterface().encodeFunctionData('setUp', [
       ethers.utils.defaultAbiCoder.encode(
         ['uint256', 'uint256', 'address', 'address', 'address'],
         [
-          this.daoData.timelockPeriod?.mul(TIMER_MULT), // Timelock Period
-          this.daoData.executionPeriod.mul(TIMER_MULT), // Execution Period
+          subDaoData.timelockPeriod?.mul(TIMER_MULT), // Timelock Period
+          subDaoData.executionPeriod.mul(TIMER_MULT), // Execution Period
           this.parentDAOAddress, // Owner -- Parent DAO
           this.vetoVotingAddress, // Veto Voting
           this.safeContract.address, // Gnosis Safe
         ]
       ),
     ]);
+  }
+
+  private setVetoGuardCallDataUsul() {
+    const subDaoData = this.daoData as SubDAO;
+
+    this.vetoGuardCallData = UsulVetoGuard__factory.createInterface().encodeFunctionData('setUp', [
+      ethers.utils.defaultAbiCoder.encode(
+        ['address', 'address', 'address', 'address', 'uint256'],
+        [
+          this.parentDAOAddress, // Owner -- Parent DAO
+          this.vetoVotingAddress, // Veto Voting
+          this.strategyAddress, // Base Strategy
+          this.usulAddress, // USUL
+          subDaoData.executionPeriod.mul(TIMER_MULT), // Execution Period
+        ]
+      ),
+    ]);
+  }
+
+  private getGuardMasterCopyAddress(): string {
+    return this.usulContracts
+      ? this.usulContracts.usulVetoGuardMasterCopyContract.address
+      : this.baseContracts.gnosisVetoGuardMasterCopyContract.address;
   }
 }

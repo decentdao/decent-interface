@@ -2,33 +2,21 @@ import { GnosisSafe, GnosisSafe__factory } from '@fractal-framework/fractal-cont
 import { ethers } from 'ethers';
 import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../components/DaoCreator/provider/types';
 import { getRandomBytes } from '../helpers';
-import { gnosisSafeData } from '../helpers/BuildDAOTx/gnosisSafeData';
 import { SafeTransaction } from '../types';
+import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
 import { MultisigTxBuilder } from './MultisigTxBuilder';
+import { UsulTxBuilder } from './UsulTxBuilder';
 import { VetoGuardTxBuilder } from './VetoGuardTxBuilder';
+import { gnosisSafeData } from './helpers/gnosisSafeData';
 import { BaseContracts, UsulContracts } from './types/contracts';
 
-export class TxBuilderFactory {
-  private baseContracts: BaseContracts;
-
-  private readonly usulContracts: UsulContracts | undefined;
-
-  private readonly daoData: GnosisDAO | TokenGovernanceDAO | SubDAO;
-
-  private readonly signerOrProvider: ethers.Signer | any;
-
-  private readonly parentDAOAddress?: string;
-
-  private readonly parentTokenAddress?: string;
-
-  private readonly saltNum;
+export class TxBuilderFactory extends BaseTxBuilder {
+  private readonly saltNum: string;
 
   // Gnosis Safe Data
   public predictedGnosisSafeAddress: string | undefined;
-
   public createSafeTx: SafeTransaction | undefined;
-
   private safeContract: GnosisSafe | undefined;
 
   constructor(
@@ -39,12 +27,14 @@ export class TxBuilderFactory {
     parentDAOAddress?: string,
     parentTokenAddress?: string
   ) {
-    this.signerOrProvider = signerOrProvider;
-    this.baseContracts = baseContracts;
-    this.daoData = daoData;
-    this.usulContracts = usulContracts;
-    this.parentDAOAddress = parentDAOAddress;
-    this.parentTokenAddress = parentTokenAddress;
+    super(
+      signerOrProvider,
+      baseContracts,
+      usulContracts,
+      daoData,
+      parentDAOAddress,
+      parentTokenAddress
+    );
 
     this.saltNum = getRandomBytes();
   }
@@ -85,18 +75,35 @@ export class TxBuilderFactory {
     );
   }
 
-  public createVetoGuardTxBuilder(): VetoGuardTxBuilder {
+  public createVetoGuardTxBuilder(
+    usulAddress?: string,
+    strategyAddress?: string
+  ): VetoGuardTxBuilder {
     return new VetoGuardTxBuilder(
+      this.signerOrProvider,
       this.baseContracts,
       this.daoData as SubDAO,
       this.safeContract!,
       this.saltNum,
       this.parentDAOAddress!,
-      this.parentTokenAddress
+      this.parentTokenAddress,
+      this.usulContracts,
+      usulAddress,
+      strategyAddress
     );
   }
 
   public createMultiSigTxBuilder(): MultisigTxBuilder {
     return new MultisigTxBuilder(this.baseContracts, this.daoData as GnosisDAO, this.safeContract!);
+  }
+
+  public createUsulTxBuilder(): UsulTxBuilder {
+    return new UsulTxBuilder(
+      this.signerOrProvider,
+      this.baseContracts,
+      this.usulContracts!,
+      this.daoData as GnosisDAO,
+      this.safeContract!
+    );
   }
 }

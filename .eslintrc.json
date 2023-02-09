@@ -87,6 +87,6 @@
         "@typescript-eslint/no-use-before-define": "error",
         "@typescript-eslint/no-unused-vars": "warn",
         // class rules
-        "lines-between-class-members": "off"
+        "@typescript-eslint/lines-between-class-members": "off"
     }
 }

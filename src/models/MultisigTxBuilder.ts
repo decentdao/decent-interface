@@ -6,9 +6,7 @@ import { BaseContracts } from './types/contracts';
 
 export class MultisigTxBuilder {
   private baseContracts: BaseContracts;
-
   private readonly daoData: GnosisDAO;
-
   private readonly safeContract: GnosisSafe;
 
   constructor(baseContracts: BaseContracts, daoData: GnosisDAO, safeContract: GnosisSafe) {
