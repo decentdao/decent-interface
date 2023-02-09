@@ -22,21 +22,8 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
         dispatch({
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
-            nextStep: CreatorSteps.CHOOSE_GOVERNANCE,
+            nextStep: null,
             prevStep: null,
-          },
-        });
-        break;
-      case CreatorSteps.CHOOSE_GOVERNANCE:
-        dispatch({
-          type: CreatorProviderActions.UPDATE_STEP,
-          payload: {
-            nextStep: showFunding
-              ? CreatorSteps.FUNDING
-              : isPureGnosis
-              ? CreatorSteps.PURE_GNOSIS
-              : CreatorSteps.GNOSIS_WITH_USUL,
-            prevStep: CreatorSteps.ESSENTIALS,
           },
         });
         break;
@@ -45,7 +32,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: CreatorSteps.GOV_CONFIG,
-            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
+            prevStep: null,
           },
         });
         break;
@@ -54,7 +41,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: CreatorSteps.GUARD_CONFIG,
-            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
+            prevStep: null,
           },
         });
         break;
@@ -63,7 +50,7 @@ export function useSteps(state: CreatorState, dispatch: React.Dispatch<any>, isS
           type: CreatorProviderActions.UPDATE_STEP,
           payload: {
             nextStep: isPureGnosis ? CreatorSteps.PURE_GNOSIS : CreatorSteps.GNOSIS_WITH_USUL,
-            prevStep: CreatorSteps.CHOOSE_GOVERNANCE,
+            prevStep: null,
           },
         });
         break;
