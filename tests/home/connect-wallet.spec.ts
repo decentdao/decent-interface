@@ -5,9 +5,7 @@ test('network should appear as Goerli', async ({ page }) => {
   const home = await new HomePage(page).visit();
 
   await home.clickAccountMenu();
-  await expect(page.locator('[data-testid=accountMenu-network]')).toContainText(
-    'Goerli Test Network'
-  );
+  await expect(page.locator('[data-testid=accountMenu-network]')).toContainText('Goerli');
 });
 
 test('wallet should auto connect', async ({ page }) => {

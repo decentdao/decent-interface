@@ -26,7 +26,7 @@ export default function useSubmitProposal() {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { chainId } = useNetworkConfg();
+  const { chainId, safeBaseURL } = useNetworkConfg();
   const submitProposal = useCallback(
     async ({
       proposalData,
@@ -99,7 +99,7 @@ export default function useSubmitProposal() {
         try {
           const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
           await axios.post(
-            buildGnosisApiUrl(chainId, `/safes/${safe.address}/multisig-transactions/`),
+            buildGnosisApiUrl(safeBaseURL, `/safes/${safe.address}/multisig-transactions/`),
             await buildSafeAPIPost(
               gnosisContract,
               signerOrProvider as Signer & TypedDataSigner,
@@ -168,8 +168,9 @@ export default function useSubmitProposal() {
       safe.address,
       signerOrProvider,
       multiSendContract,
-      refreshSafeData,
+      safeBaseURL,
       chainId,
+      refreshSafeData,
     ]
   );
 

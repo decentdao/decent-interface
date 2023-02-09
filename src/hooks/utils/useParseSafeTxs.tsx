@@ -14,14 +14,14 @@ import {
   GnosisTransferType,
 } from '../../providers/Fractal/types';
 import { parseDecodedData } from '../../providers/Fractal/utils';
+import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatWeiToValue } from '../../utils';
-import { useNativeSymbol } from './useChainData';
 
 export function useParseSafeTxs(
   transactions: AllTransactionsListResponse,
   safe: Partial<SafeInfoResponse>
 ) {
-  const nativeSymbol = useNativeSymbol();
+  const { nativeTokenSymbol } = useNetworkConfg();
   const parsedActivities = useMemo(() => {
     if (!transactions.results.length || !safe.address) {
       return [];
@@ -51,13 +51,13 @@ export function useParseSafeTxs(
             if (prevValue) {
               prev.set(constants.AddressZero, {
                 bn: prevValue.bn.add(BigNumber.from(cur.value)),
-                symbol: nativeSymbol,
+                symbol: nativeTokenSymbol,
                 decimals: 18,
               });
             }
             prev.set(constants.AddressZero, {
               bn: BigNumber.from(cur.value),
-              symbol: nativeSymbol,
+              symbol: nativeTokenSymbol,
               decimals: 18,
             });
           }
@@ -112,7 +112,7 @@ export function useParseSafeTxs(
 
       if (isEthSend) {
         transferAmountTotals.push(
-          `${formatWeiToValue(multiSigTransaction.value, 18)} ${nativeSymbol}`
+          `${formatWeiToValue(multiSigTransaction.value, 18)} ${nativeTokenSymbol}`
         );
         transferAddresses.push(multiSigTransaction.to);
       }
@@ -183,7 +183,7 @@ export function useParseSafeTxs(
       };
       return activity;
     });
-  }, [safe.address, transactions, nativeSymbol]);
+  }, [safe.address, transactions, nativeTokenSymbol]);
 
   return parsedActivities;
 }

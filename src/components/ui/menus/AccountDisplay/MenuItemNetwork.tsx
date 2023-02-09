@@ -1,14 +1,12 @@
 import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useChainData } from '../../../../hooks/utils/useChainData';
 import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 /**
  * Network display for menu
  */
 export function MenuItemNetwork() {
-  const { chainId } = useNetworkConfg();
-  const { nameKey, color } = useChainData(chainId);
+  const { name, color } = useNetworkConfg();
   const { t } = useTranslation('menu');
   return (
     <Box
@@ -40,7 +38,7 @@ export function MenuItemNetwork() {
             data-testid="accountMenu-network"
             textStyle="text-base-mono-medium"
           >
-            {t(nameKey)}
+            {name}
           </Text>
         </MenuItem>
       </Flex>
