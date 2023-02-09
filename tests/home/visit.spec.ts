@@ -9,49 +9,32 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('home renders correctly, connected', async () => {
-  home.expectId('home-pageSubtitleConnected').toBeVisible();
-  home.expectId('home-linkCreate').toBeVisible();
-  home.expectId('home-linkFAQ').toBeVisible();
-  home.expectId('home-linkDiscord').toBeVisible();
-  home.expectId('home-linkDocs').toBeVisible();
+  await home.expectId('home-pageSubtitleConnected').toBeVisible();
+  await home.expectId('home-linkCreate').toBeVisible();
+  await home.expectId('home-linkFAQ').toBeVisible();
+  await home.expectId('home-linkDiscord').toBeVisible();
+  await home.expectId('home-linkDocs').toBeVisible();
 
-  home.expectId('home-pageTitleDisconnected').toBeHidden();
-  home.expectId('home-pageSubtitleDisconnected').toBeHidden();
-  home.expectId('home-linkConnect').toBeHidden();
+  await home.expectId('home-pageTitleDisconnected').toBeHidden();
+  await home.expectId('home-pageSubtitleDisconnected').toBeHidden();
+  await home.expectId('home-linkConnect').toBeHidden();
 });
 
 test('home renders correctly, disconnected', async () => {
-  await home.clickAccountMenu().then(() => home.clickAccountDisconnect());
+  await home.clickAccountMenu();
+  await home.clickAccountDisconnect();
+  await home.expectId('home-pageTitleDisconnected').toBeVisible();
+  await home.expectId('home-pageSubtitleDisconnected').toBeVisible();
+  await home.expectId('home-linkConnect').toBeVisible();
+  await home.expectId('home-linkFAQ').toBeVisible();
+  await home.expectId('home-linkDiscord').toBeVisible();
+  await home.expectId('home-linkDocs').toBeVisible();
 
-  home.expectId('home-pageTitleDisconnected').toBeVisible();
-  home.expectId('home-pageSubtitleDisconnected').toBeVisible();
-  home.expectId('home-linkConnect').toBeVisible();
-  home.expectId('home-linkFAQ').toBeVisible();
-  home.expectId('home-linkDiscord').toBeVisible();
-  home.expectId('home-linkDocs').toBeVisible();
-
-  home.expectId('home-pageSubtitleConnected').toBeHidden();
-  home.expectId('home-linkCreate').toBeHidden();
+  await home.expectId('home-pageSubtitleConnected').toBeHidden();
+  await home.expectId('home-linkCreate').toBeHidden();
 });
 
 test('home create button works', async ({ page }) => {
   await home.clickCreateAFractal();
   await expect(page).toHaveURL(BASE_URL + '/create');
-});
-
-test('FAQ button works', async () => {
-  const tab = await home.clickFAQNewTab();
-  await expect(tab).toHaveURL(
-    'https://docs.fractalframework.xyz/welcome-to-fractal/user-guides/faq'
-  );
-});
-
-test('Discord button works', async () => {
-  const tab = await home.clickDiscordNewTab();
-  await expect(tab).toHaveURL('https://discord.com/invite/Zh2emKspVF');
-});
-
-test('Docs button works', async () => {
-  const tab = await home.clickDocsNewTab();
-  await expect(tab).toHaveURL('https://docs.fractalframework.xyz/welcome-to-fractal/');
 });

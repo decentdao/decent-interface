@@ -1,6 +1,6 @@
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
-import { useNativeIcon, useNativeSymbol } from '../../../hooks/utils/useChainData';
 import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/Fractal/types';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export enum TokenEventType {
@@ -27,8 +27,7 @@ export function useFormatTransfers(
   safeAddress: string
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
-  const nativeSymbol = useNativeSymbol();
-  const nativeIcon = useNativeIcon();
+  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfg();
 
   for (let i = 0; i < transfers.length; i++) {
     let transfer = transfers[i];
@@ -40,12 +39,12 @@ export function useFormatTransfers(
         imageSrc = transfer.tokenInfo?.logoUri;
         break;
       case TransferType.ETHER_TRANSFER:
-        imageSrc = nativeIcon;
+        imageSrc = nativeTokenIcon;
         break;
       default:
         imageSrc = coinDefault;
     }
-    let symbol = transfer.tokenInfo === null ? nativeSymbol : transfer.tokenInfo.symbol;
+    let symbol = transfer.tokenInfo === null ? nativeTokenSymbol : transfer.tokenInfo.symbol;
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
