@@ -1,9 +1,10 @@
-import { Text, Button } from '@chakra-ui/react';
+import { Text, Button, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useExecuteProposal from '../../../hooks/DAO/proposal/useExecuteProposal';
 import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/containers/ContentBox';
+import ProposalTime from '../../ui/proposal/ProposalTime';
 
 export function Execute({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
@@ -13,7 +14,10 @@ export function Execute({ proposal }: { proposal: TxProposal }) {
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-      <Text textStyle="text-lg-mono-medium">{t('executeTitle')}</Text>
+      <Flex justifyContent="space-between">
+        <Text textStyle="text-lg-mono-medium">{t('executeTitle')}</Text>
+        <ProposalTime proposal={proposal} />
+      </Flex>
       <Button
         onClick={() => executeProposal(proposal)}
         width="full"
