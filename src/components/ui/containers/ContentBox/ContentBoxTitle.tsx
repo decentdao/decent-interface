@@ -4,8 +4,8 @@ import { ReactNode } from 'react';
 function ContentBoxTitle({ children }: { children: ReactNode }) {
   return (
     <Text
-      textStyle="text-base-sans-semibold"
-      color="grayscale.500"
+      textStyle="text-lg-mono-medium"
+      color="grayscale.100"
     >
       {children}
     </Text>
