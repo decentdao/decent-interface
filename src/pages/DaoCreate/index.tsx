@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
-import { GnosisDAO } from '../../components/DaoCreator/provider/types';
+import { GnosisDAO } from '../../components/DaoCreator/types';
 import useDeployDAO from '../../hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../hooks/utils/useAsyncRetry';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
