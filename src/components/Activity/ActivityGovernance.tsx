@@ -38,7 +38,7 @@ export function ActivityGovernance({ activity }: { activity: TxProposal }) {
       description={<ActivityDescription activity={activity} />}
       RightElement={
         <Flex
-          gap={4}
+          gap={14}
           alignItems="center"
         >
           <ProposalTime proposal={activity} />

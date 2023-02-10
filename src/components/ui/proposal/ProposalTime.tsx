@@ -154,7 +154,10 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
           px={2}
           gap={1}
         >
-          <Text color="chocolate.200">
+          <Text
+            color="chocolate.200"
+            textStyle="text-base-mono-semibold"
+          >
             {zeroPad(hoursLeft, 2)}:{zeroPad(minutesLeft, 2)}:{zeroPad(secondsLeft, 2)}
           </Text>
         </Flex>
