@@ -1,13 +1,13 @@
 import { BigNumber } from 'ethers';
-import { GovernanceTypes } from '../../../../providers/Fractal/types';
-import { TokenAllocation } from '../../../../types/tokenAllocation';
-import { NFTToFund, TokenToFund } from '../../SubsidiaryFunding/types/index';
+import { FormikProps } from 'formik';
+import { GovernanceTypes } from '../../providers/Fractal/types';
+import { TokenAllocation } from '../../types/tokenAllocation';
+import { NFTToFund, TokenToFund } from './SubsidiaryFunding/types/index';
 
 export enum CreatorProviderActions {
   SET_STEP,
   UPDATE_ESSENTIALS,
   UPDATE_TREASURY_GOV_TOKEN,
-  UPDATE_GOVERNANCE,
   UPDATE_GNOSIS_CONFIG,
   UPDATE_GOV_CONFIG,
   UPDATE_GUARD_CONFIG,
@@ -17,7 +17,6 @@ export enum CreatorProviderActions {
 }
 
 export enum CreatorSteps {
-  CHOOSE_GOVERNANCE,
   ESSENTIALS,
   PURE_GNOSIS,
   GNOSIS_GOVERNANCE,
@@ -27,12 +26,16 @@ export enum CreatorSteps {
   FUNDING,
 }
 
+export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {
+  step: CreatorSteps;
+  updateStep: (newStep: CreatorSteps) => void;
+}
+
 export type CreatorProviderActionTypes =
   | {
       type: CreatorProviderActions.UPDATE_ESSENTIALS;
       payload: DAOEssentials;
     }
-  | { type: CreatorProviderActions.UPDATE_GOVERNANCE; payload: GovernanceTypes }
   | { type: CreatorProviderActions.UPDATE_TREASURY_GOV_TOKEN; payload: DAOGovenorToken }
   | { type: CreatorProviderActions.UPDATE_GOV_CONFIG; payload: DAOGovenorModuleConfig }
   | { type: CreatorProviderActions.UPDATE_GUARD_CONFIG; payload: DAOVetoGuardConfig }
@@ -55,7 +58,7 @@ type DAOEssentials = {
 type DAOGovenorToken = {
   tokenName: string;
   tokenSymbol: string;
-  tokenSupply: BigNumber | undefined;
+  tokenSupply: string;
   tokenAllocations: TokenAllocation[];
   parentAllocationAmount?: BigNumber;
 };
@@ -67,12 +70,12 @@ type DAOGovenorModuleConfig = {
 };
 
 type DAOVetoGuardConfig = {
-  executionPeriod: BigNumber;
-  timelockPeriod: BigNumber;
-  vetoVotesThreshold: BigNumber;
-  freezeVotesThreshold: BigNumber;
-  freezeProposalPeriod: BigNumber;
-  freezePeriod: BigNumber;
+  executionPeriod: string;
+  timelockPeriod: string;
+  vetoVotesThreshold: string;
+  freezeVotesThreshold: string;
+  freezeProposalPeriod: string;
+  freezePeriod: string;
 };
 
 type DAOFunding = {
@@ -92,19 +95,33 @@ export interface CreatorState {
   vetoGuard: DAOVetoGuardConfig;
   funding: DAOFunding;
 }
+export interface CreatorFormState {
+  essentials: DAOEssentials & { governance: GovernanceTypes };
+  gnosis: GnosisConfiguration;
+  govToken: DAOGovenorToken;
+  govModule: DAOGovenorModuleConfig;
+  vetoGuard: DAOVetoGuardConfig;
+  funding: DAOFunding;
+}
+
+export interface GnosisConfiguration {
+  trustedAddresses: string[];
+  signatureThreshold: number;
+  numOfSigners: number;
+}
 
 export type ICreatorContext = {
   state: CreatorState;
   dispatch: React.Dispatch<any>;
 };
 
-export interface SubDAO extends GnosisConfig, TokenGovernanceDAO {
-  timelockPeriod?: BigNumber;
-  executionPeriod: BigNumber;
-  vetoVotesThreshold: BigNumber;
-  freezeVotesThreshold: BigNumber;
-  freezeProposalPeriod: BigNumber;
-  freezePeriod: BigNumber;
+export interface SubDAO extends GnosisConfiguration, TokenGovernanceDAO {
+  timelockPeriod?: string;
+  executionPeriod: string;
+  vetoVotesThreshold: string;
+  freezeVotesThreshold: string;
+  freezeProposalPeriod: string;
+  freezePeriod: string;
 }
 
 export interface TokenGovernanceDAO extends DAODetails {
@@ -119,19 +136,30 @@ export interface TokenGovernanceDAO extends DAODetails {
   tokensToFund: TokenToFund[];
   parentAllocationAmount?: BigNumber;
 }
-
 export interface GnosisConfig {
   trustedAddresses: TrustedAddress[];
   signatureThreshold: string;
 }
 
-export interface GnosisDAO extends DAODetails, GnosisConfig {}
+export interface GnosisDAO extends DAODetails, GnosisConfiguration {}
 
 export type DAODetails = {
   daoName: string;
   governance: GovernanceTypes;
 };
 
-export type TrustedAddress = { address: string; isValidAddress: boolean; addressError?: string };
+export type TrustedAddress = {
+  value: string;
+  address: string | undefined;
+  isValidAddress: boolean;
+  addressError?: string;
+};
 
 export type DAOTrigger = (daoData: GnosisDAO) => void;
+
+export type AddressValidationMap = Map<string, AddressValidation>;
+
+export type AddressValidation = {
+  address: string;
+  isValidAddress: boolean;
+};
