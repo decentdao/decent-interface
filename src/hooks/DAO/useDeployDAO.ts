@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
+import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
 import useSafeContracts from '../safe/useSafeContracts';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
