@@ -3,7 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { AnyObject } from 'yup';
-import { AddressValidationMap } from '../../../components/DaoCreator/provider/types';
+import { AddressValidationMap } from '../../../components/DaoCreator/types';
 import { TokenAllocation } from '../../../types';
 import { validateAddress } from '../common/useValidationAddress';
 

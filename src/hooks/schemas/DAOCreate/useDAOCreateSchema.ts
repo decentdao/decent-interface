@@ -1,8 +1,6 @@
-import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../common/useValidationAddress';
-import { TokenAllocation } from './../../../types/tokenAllocation';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
 /**
