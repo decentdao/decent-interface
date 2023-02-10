@@ -2,9 +2,9 @@ import { utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
-import { AnyObject } from 'yup/lib/types';
+import { AnyObject } from 'yup';
+import { AddressValidationMap } from '../../../components/DaoCreator/provider/types';
 import { Providers } from '../../../providers/Fractal/types/ethers';
-import { AddressValidationMap } from '../provider/types';
 
 export async function validateAddress({
   provider,
@@ -84,11 +84,15 @@ export const useValidationAddress = () => {
       name: 'Unique Addresses',
       message: t('errorDuplicateAddress'),
       test: async function (value: string | undefined, context: AnyObject) {
+        if (!value) return false;
         // retreive parent array
         const parentAddressArray = context.parent;
-        // looks up tested value
-        const inputValidation = addressValidationMap.current.get(value || '');
 
+        // looks up tested value
+        let inputValidation = addressValidationMap.current.get(value);
+        if (!!value && !inputValidation) {
+          inputValidation = (await validateAddress({ provider, address: value })).validation;
+        }
         // converts all inputs to addresses to compare
         // uses addressValidationMap to save on requests
         const resolvedAddresses: string[] = await Promise.all(
@@ -110,6 +114,7 @@ export const useValidationAddress = () => {
         const uniqueFilter = resolvedAddresses.filter(
           address => address === value || address === inputValidation?.address
         );
+
         return uniqueFilter.length === 1;
       },
     };
