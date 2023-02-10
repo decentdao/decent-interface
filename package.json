@@ -41,7 +41,7 @@
     "stream-browserify": "^3.0.0",
     "wagmi": "^0.9.6",
     "web-vitals": "^2.1.4",
-    "yup": "^0.32.11"
+    "yup": "^1"
   },
   "scripts": {
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
