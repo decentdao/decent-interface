@@ -2,6 +2,7 @@ import { Context, createContext, ReactNode, useContext, useEffect, useState } fr
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useDisconnect, useNetwork, useProvider } from 'wagmi';
+import { goerli } from 'wagmi/chains';
 import { goerliConfig } from './networks';
 import { polygonConfig } from './networks/polygon';
 import { NetworkConfig } from './types';
@@ -10,6 +11,11 @@ export const defaultState = {
   safeBaseURL: '',
   etherscanBaseURL: '',
   chainId: 0,
+  name: '',
+  color: '',
+  nativeTokenSymbol: '',
+  nativeTokenIcon: '',
+  wagmiChain: goerli,
   contracts: {
     gnosisSafe: '',
     gnosisSafeFactory: '',
@@ -33,17 +39,11 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfg = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
+export const supportedChains = [goerliConfig, polygonConfig];
+
 const getNetworkConfig = (chainId: number) => {
-  switch (chainId) {
-    case 5:
-    case 31337:
-      return goerliConfig;
-    case 137:
-      return polygonConfig;
-    case 1:
-    default:
-      return defaultState;
-  }
+  if (chainId === 31337) return goerliConfig;
+  return supportedChains.find(chain => chain.chainId === chainId) || defaultState;
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
@@ -58,8 +58,7 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   }, [provider]);
 
   useEffect(() => {
-    const supportedChainIds =
-      process.env.REACT_APP_SUPPORTED_CHAIN_IDS?.split(',').map(id => parseInt(id)) || [];
+    const supportedChainIds = supportedChains.map(c => c.chainId) || [];
 
     if (
       !!chain &&

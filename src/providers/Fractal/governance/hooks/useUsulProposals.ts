@@ -23,7 +23,7 @@ interface IUseUsulProposals {
 
 export default function useUsulProposals({ governance, governanceDispatch }: IUseUsulProposals) {
   const provider = useProvider();
-  const { chainId } = useNetworkConfg();
+  const { safeBaseURL } = useNetworkConfg();
 
   const {
     txProposalsInfo,
@@ -54,7 +54,10 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
           description: metaDataEvent.args.description,
           documentationUrl: metaDataEvent.args.documentationUrl,
           transactions: metaDataEvent.args.transactions,
-          decodedTransactions: await decodeTransactions(metaDataEvent.args.transactions, chainId),
+          decodedTransactions: await decodeTransactions(
+            metaDataEvent.args.transactions,
+            safeBaseURL
+          ),
         };
       }
       const proposal = await mapProposalCreatedEventToProposal(
@@ -78,7 +81,14 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         },
       });
     },
-    [usulContract, ozLinearVotingContract, provider, chainId, governanceDispatch, txProposalsInfo]
+    [
+      usulContract,
+      ozLinearVotingContract,
+      provider,
+      safeBaseURL,
+      governanceDispatch,
+      txProposalsInfo,
+    ]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
@@ -199,7 +209,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
               transactions: metaDataEvent.args.transactions,
               decodedTransactions: await decodeTransactions(
                 metaDataEvent.args.transactions,
-                chainId
+                safeBaseURL
               ),
             };
           }
@@ -234,5 +244,5 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     };
 
     loadProposals();
-  }, [usulContract, ozLinearVotingContract, governanceDispatch, provider, chainId]);
+  }, [usulContract, ozLinearVotingContract, governanceDispatch, provider, safeBaseURL]);
 }

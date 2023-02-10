@@ -50,6 +50,7 @@
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
     "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
     "eject": "react-app-rewired eject",
+    "prepare": "husky install",
     "tests": "playwright test"
   },
   "engines": {
@@ -81,6 +82,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.0",
     "playwright": "^1.29.0",
     "prettier": "^2.7.1",
     "typescript": "^4.8.0"
