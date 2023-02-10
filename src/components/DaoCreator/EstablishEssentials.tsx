@@ -1,9 +1,10 @@
 import { Box, Button, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { GovernanceTypes } from '../../../providers/Fractal/types';
-import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
-import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
-import { CreatorSteps, ICreationStepProps } from '../provider/types';
+import { GovernanceTypes } from '../../providers/Fractal/types';
+import { InputComponent, LabelComponent } from '../ProposalCreate/InputComponent';
+import { RadioWithText } from '../ui/forms/Radio/RadioWithText';
+import { StepWrapper } from './StepWrapper';
+import { ICreationStepProps, CreatorSteps } from './types';
 
 export function EstablishEssentials({
   values,
@@ -15,7 +16,7 @@ export function EstablishEssentials({
 
   // @todo update labels for subDAOs
   return (
-    <Box>
+    <StepWrapper titleKey="titleEssentials">
       <InputComponent
         label={t('labelFractalName')}
         helper={t('helperFractalName')}
@@ -67,18 +68,15 @@ export function EstablishEssentials({
         w="full"
         disabled={!!errors.essentials}
         onClick={() =>
-          updateStep({
-            current:
-              values.essentials.governance === GovernanceTypes.GNOSIS_SAFE
-                ? CreatorSteps.GNOSIS_GOVERNANCE
-                : CreatorSteps.GNOSIS_WITH_USUL,
-            prev: CreatorSteps.ESSENTIALS,
-            next: null,
-          })
+          updateStep(
+            values.essentials.governance === GovernanceTypes.GNOSIS_SAFE
+              ? CreatorSteps.GNOSIS_GOVERNANCE
+              : CreatorSteps.GNOSIS_WITH_USUL
+          )
         }
       >
         {t('next', { ns: 'common' })}
       </Button>
-    </Box>
+    </StepWrapper>
   );
 }

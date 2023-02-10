@@ -11,17 +11,12 @@ import {
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldArray, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { LabelComponent } from '../../ProposalCreate/InputComponent';
-import { CreatorSteps, ICreationStepProps } from '../provider/types';
+import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
+import { LabelComponent } from '../ProposalCreate/InputComponent';
+import { StepWrapper } from './StepWrapper';
+import { CreatorSteps, ICreationStepProps } from './types';
 
-export function GnosisMultisig({
-  values,
-  errors,
-  setFieldValue,
-  step,
-  updateStep,
-}: ICreationStepProps) {
+export function GnosisMultisig({ values, errors, setFieldValue, updateStep }: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
   const { restrictChars } = useFormHelpers();
 
@@ -49,7 +44,7 @@ export function GnosisMultisig({
     setFieldValue('gnosis.numOfSigners', numOfSigners);
   };
   return (
-    <Box>
+    <StepWrapper titleKey="titleSafeConfig">
       <Flex
         flexDirection="column"
         gap={4}
@@ -137,13 +132,7 @@ export function GnosisMultisig({
       <Flex alignItems="center">
         <Button
           variant="text"
-          onClick={() =>
-            updateStep({
-              current: step.prev ? step.prev : CreatorSteps.ESSENTIALS,
-              prev: null,
-              next: null,
-            })
-          }
+          onClick={() => updateStep(CreatorSteps.ESSENTIALS)}
         >
           {t('prev', { ns: 'common' })}
         </Button>
@@ -155,6 +144,6 @@ export function GnosisMultisig({
           {t('deploy', { ns: 'common' })}
         </Button>
       </Flex>
-    </Box>
+    </StepWrapper>
   );
 }

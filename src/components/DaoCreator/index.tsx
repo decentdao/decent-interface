@@ -1,22 +1,15 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
+import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
 import { GovernanceTypes } from '../../providers/Fractal/types';
-import { initialState } from './provider/constants';
+import StepController from './StepController';
+import { initialState } from './constants';
 
-import { CreatorFormState, DAOTrigger } from './provider/types';
-import StepController from './refactor/StepController';
-import { useCreateSchema } from './refactor/useCreateSchema';
+import { CreatorFormState, DAOTrigger } from './types';
 
-function DaoCreator({
-  pending,
-  deployDAO,
-  isSubDAO,
-}: {
-  pending?: boolean;
-  deployDAO: DAOTrigger;
-  isSubDAO?: boolean;
-}) {
-  const { createDAOValidation } = useCreateSchema();
+function DaoCreator(props: { pending?: boolean; deployDAO: DAOTrigger; isSubDAO?: boolean }) {
+  console.log('🚀 ~ file: index.tsx:11 ~ props', props);
+  const { createDAOValidation } = useDAOCreateSchema();
 
   return (
     <Box>

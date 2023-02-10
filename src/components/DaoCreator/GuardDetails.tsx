@@ -1,39 +1,24 @@
-import { Box, Text, InputGroup, InputRightElement, Hide } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
+import { Text, InputGroup, InputRightElement, Hide, Flex } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { formatBigNumberDisplay } from '../../utils/numberFormats';
+import { LabelComponent } from '../ProposalCreate/InputComponent';
 import ContentBanner from '../ui/containers/ContentBanner';
-import ContentBox from '../ui/containers/ContentBox';
 import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../ui/forms/BigNumberInput';
-import InputBox from '../ui/forms/InputBox';
-import { useCreator } from './provider/hooks/useCreator';
-import { CreatorProviderActions } from './provider/types';
+import { StepWrapper } from './StepWrapper';
+import { BigNumberInput } from './refactor/BigNumberInput';
+import { ICreationStepProps } from './types';
 
-function GuardDetails() {
-  const {
-    state: { vetoGuard, governance },
-    dispatch,
-  } = useCreator();
+function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
   const {
     gnosis: { safe },
     governance: { type, governanceToken, governanceIsLoading },
   } = useFractal();
 
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
-
-  const fieldUpdate = (key: string, value: BigNumber) => {
-    dispatch({
-      type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
-      payload: {
-        [key]: value,
-      },
-    });
-  };
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const votes = t('votesTitle', { ns: 'proposal' });
@@ -61,17 +46,18 @@ function GuardDetails() {
       setTotalParentVotes(totalVotes);
 
       const childThresholds = totalVotes.eq(1) ? totalVotes : totalVotes.div(2);
-      dispatch({
-        type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
-        payload: {
-          ['vetoVotesThreshold']: childThresholds,
-          ['freezeVotesThreshold']: childThresholds,
-        },
-      });
+      console.log('🚀 ~ file: GuardDetails.tsx:49 ~ childThresholds', childThresholds);
+      // dispatch({
+      //   type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
+      //   payload: {
+      //     ['vetoVotesThreshold']: childThresholds,
+      //     ['freezeVotesThreshold']: childThresholds,
+      //   },
+      // });
     }
   }, [
-    dispatch,
-    governance,
+    // dispatch,
+    // governance,
     governanceIsLoading,
     governanceToken,
     safe,
@@ -90,141 +76,138 @@ function GuardDetails() {
     : null;
 
   return (
-    <Box>
-      <ContentBox>
+    <StepWrapper titleKey="titleGuardConfig">
+      <Flex
+        flexDirection="column"
+        gap={8}
+      >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governance === GovernanceTypes.GNOSIS_SAFE && (
-          <InputBox>
-            <LabelWrapper
-              label={t('labelTimelockPeriod')}
-              subLabel={t('helperTimelockPeriod')}
-            >
-              <InputGroup>
-                <BigNumberInput
-                  value={vetoGuard.timelockPeriod}
-                  onChange={value => fieldUpdate('timelockPeriod', value.bigNumberValue)}
-                  decimalPlaces={0}
-                  min="1"
-                  data-testid="guardConfig-executionDetails"
-                />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            </LabelWrapper>
-            <Text
-              textStyle="text-sm-sans-regular"
-              color="gold.400"
-            >
-              {t('exampleTimelockPeriod')}
-            </Text>
-          </InputBox>
-        )}
-        <InputBox>
-          <LabelWrapper
-            label={t('labelExecutionPeriod')}
-            subLabel={t('helperExecutionPeriod')}
+        {values.essentials.governance === GovernanceTypes.GNOSIS_SAFE && (
+          <LabelComponent
+            label={t('labelTimelockPeriod')}
+            helper={t('helperTimelockPeriod')}
+            isRequired
           >
             <InputGroup>
               <BigNumberInput
-                value={vetoGuard.executionPeriod}
-                onChange={value => fieldUpdate('executionPeriod', value.bigNumberValue)}
+                value={values.vetoGuard.timelockPeriod}
+                onChange={value => setFieldValue('vetoGuard.timelockPeriod', value)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="guardConfig-executionDetails"
               />
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
-          </LabelWrapper>
+            <Text
+              textStyle="text-sm-sans-regular"
+              color="gold.400"
+            >
+              {t('exampleTimelockPeriod')}
+            </Text>
+          </LabelComponent>
+        )}
+        <LabelComponent
+          label={t('labelExecutionPeriod')}
+          helper={t('helperExecutionPeriod')}
+          isRequired
+        >
+          <InputGroup>
+            <BigNumberInput
+              value={values.vetoGuard.executionPeriod}
+              onChange={value => setFieldValue('vetoGuard.executionPeriod', value)}
+              decimalPlaces={0}
+              min="1"
+              data-testid="guardConfig-executionDetails"
+            />
+            <InputRightElement mr="4">{minutes}</InputRightElement>
+          </InputGroup>
           <Text
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
             {t('exampleExecutionPeriod')}
           </Text>
-        </InputBox>
+        </LabelComponent>
         {/** TODO hiding Veto Threshold for now, since it's not implemented in the frontend */}
         <Hide>
-          <InputBox>
-            <LabelWrapper
-              label={t('labelVetoVotesThreshold')}
-              subLabel={vetoHelper}
-            >
-              <InputGroup>
-                <BigNumberInput
-                  value={vetoGuard.vetoVotesThreshold}
-                  onChange={value => fieldUpdate('vetoVotesThreshold', value.bigNumberValue)}
-                  decimalPlaces={0}
-                  min="1"
-                  data-testid="guardConfig-vetoVotesThreshold"
-                />
-                <InputRightElement mr="4">{votes}</InputRightElement>
-              </InputGroup>
-            </LabelWrapper>
-          </InputBox>
-        </Hide>
-        <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
-        <InputBox>
-          <LabelWrapper
-            label={t('labelFreezeVotesThreshold')}
-            subLabel={freezeHelper}
-          >
-            <BigNumberInput
-              value={vetoGuard.freezeVotesThreshold}
-              onChange={value => fieldUpdate('freezeVotesThreshold', value.bigNumberValue)}
-              decimalPlaces={0}
-              data-testid="guardConfig-freezeVotesThreshold"
-            />
-          </LabelWrapper>
-        </InputBox>
-        <InputBox>
-          <LabelWrapper
-            label={t('labelFreezeProposalPeriod')}
-            subLabel={t('helperFreezeProposalPeriod')}
+          <LabelComponent
+            label={t('labelVetoVotesThreshold')}
+            helper={vetoHelper || ''}
+            isRequired={false}
           >
             <InputGroup>
               <BigNumberInput
-                value={vetoGuard.freezeProposalPeriod}
-                onChange={value => fieldUpdate('freezeProposalPeriod', value.bigNumberValue)}
+                value={values.vetoGuard.vetoVotesThreshold}
+                onChange={value => setFieldValue('vetoGuard.vetoVotesThreshold', value)}
                 decimalPlaces={0}
                 min="1"
-                data-testid="guardConfig-freezeProposalDuration"
+                data-testid="guardConfig-vetoVotesThreshold"
               />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
+              <InputRightElement mr="4">{votes}</InputRightElement>
             </InputGroup>
-          </LabelWrapper>
+          </LabelComponent>
+        </Hide>
+        <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
+        <LabelComponent
+          label={t('labelFreezeVotesThreshold')}
+          helper={freezeHelper || ''}
+          isRequired
+        >
+          <BigNumberInput
+            value={values.vetoGuard.freezeVotesThreshold}
+            onChange={value => setFieldValue('vetoGuard.freezeVotesThreshold', value)}
+            decimalPlaces={0}
+            data-testid="guardConfig-freezeVotesThreshold"
+          />
+        </LabelComponent>
+        <LabelComponent
+          label={t('labelFreezeProposalPeriod')}
+          helper={t('helperFreezeProposalPeriod')}
+          isRequired
+        >
+          <InputGroup>
+            <BigNumberInput
+              value={values.vetoGuard.freezeProposalPeriod}
+              onChange={value => setFieldValue('vetoGuard.freezeProposalPeriod', value)}
+              decimalPlaces={0}
+              min="1"
+              data-testid="guardConfig-freezeProposalDuration"
+            />
+            <InputRightElement mr="4">{minutes}</InputRightElement>
+          </InputGroup>
           <Text
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
             {t('exampleFreezeProposalPeriod')}
           </Text>
-        </InputBox>
-        <InputBox>
-          <LabelWrapper
-            label={t('labelFreezePeriod')}
-            subLabel={t('helperFreezePeriod')}
-          >
-            <InputGroup>
-              <BigNumberInput
-                value={vetoGuard.freezePeriod}
-                onChange={value => fieldUpdate('freezePeriod', value.bigNumberValue)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="guardConfig-freezeDuration"
-              />
+        </LabelComponent>
+        <LabelComponent
+          label={t('labelFreezePeriod')}
+          helper={t('helperFreezePeriod')}
+          isRequired
+        >
+          <InputGroup>
+            <BigNumberInput
+              value={values.vetoGuard.freezePeriod}
+              onChange={value => setFieldValue('vetoGuard.freezePeriod', value)}
+              decimalPlaces={0}
+              min="1"
+              data-testid="guardConfig-freezeDuration"
+            />
 
-              <InputRightElement mr="4">{minutes}</InputRightElement>
-            </InputGroup>
-          </LabelWrapper>
+            <InputRightElement mr="4">{minutes}</InputRightElement>
+          </InputGroup>
           <Text
             textStyle="text-sm-sans-regular"
             color="gold.400"
           >
             {t('exampleFreezePeriod')}
           </Text>
-        </InputBox>
-      </ContentBox>
-      <ContentBanner description={t('vetoGuardDescription')} />
-    </Box>
+        </LabelComponent>
+        <ContentBanner description={t('vetoGuardDescription')} />
+      </Flex>
+    </StepWrapper>
   );
 }
 
