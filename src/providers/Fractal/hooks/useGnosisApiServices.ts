@@ -38,8 +38,6 @@ export function useGnosisApiServices(
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { chainId } = useNetworkConfg();
-
   const { safeBaseURL } = useNetworkConfg();
 
   const { setMethodOnInterval } = useUpdateTimer(address);
@@ -96,7 +94,7 @@ export function useGnosisApiServices(
     }
     try {
       const response: AxiosResponse<AllTransfersListResponse> = await axios.get(
-        buildGnosisApiUrl(chainId, `/safes/${address}/transfers/`)
+        buildGnosisApiUrl(safeBaseURL, `/safes/${address}/transfers/`)
       );
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS,
@@ -105,7 +103,7 @@ export function useGnosisApiServices(
     } catch (e) {
       logError(e);
     }
-  }, [address, chainId, treasuryDispatch]);
+  }, [address, safeBaseURL, treasuryDispatch]);
 
   const getGnosisSafeTransactions = useCallback(async () => {
     if (!address || !safeService) {

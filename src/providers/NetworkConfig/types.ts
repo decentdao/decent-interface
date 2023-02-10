@@ -1,7 +1,14 @@
+import { Chain } from 'wagmi';
+
 export type NetworkConfig = {
   safeBaseURL: string;
   etherscanBaseURL: string;
   chainId: number;
+  name: string;
+  color: string;
+  nativeTokenSymbol: string;
+  nativeTokenIcon: string;
+  wagmiChain: Chain;
   contracts: {
     gnosisSafe: string;
     gnosisSafeFactory: string;
