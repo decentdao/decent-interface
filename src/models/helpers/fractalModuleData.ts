@@ -5,13 +5,19 @@ import {
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
-import { buildContractCall } from '../crypto';
+import {
+  buildDeployZodiacModuleTx,
+  generateContractByteCodeLinear,
+  generatePredictedModuleAddress,
+  generateSalt,
+} from './utils';
 
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;
   deployFractalModuleTx: SafeTransaction;
+  enableFractalModuleTx: SafeTransaction;
 }
 
 export const fractalModuleData = (
@@ -36,30 +42,33 @@ export const fractalModuleData = (
     ]
   );
 
-  const fractalByteCodeLinear =
-    '0x602d8060093d393df3363d3d373d3d3d363d73' +
-    fractalModuleMasterCopyContract.address.slice(2) +
-    '5af43d82803e903d91602b57fd5bf3';
-
-  const fractalSalt = solidityKeccak256(
-    ['bytes32', 'uint256'],
-    [solidityKeccak256(['bytes'], [fractalModuleCalldata]), saltNum]
+  const fractalByteCodeLinear = generateContractByteCodeLinear(
+    fractalModuleMasterCopyContract.address.slice(2)
   );
 
-  const deployFractalModuleTx = buildContractCall(
-    zodiacModuleProxyFactoryContract,
-    'deployModule',
-    [fractalModuleMasterCopyContract.address, fractalModuleCalldata, saltNum],
+  const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
+  const deployFractalModuleTx = buildDeployZodiacModuleTx(zodiacModuleProxyFactoryContract, [
+    fractalModuleMasterCopyContract.address,
+    fractalModuleCalldata,
+    saltNum,
+  ]);
+  const predictedFractalModuleAddress = generatePredictedModuleAddress(
+    zodiacModuleProxyFactoryContract.address,
+    fractalSalt,
+    fractalByteCodeLinear
+  );
+
+  const enableFractalModuleTx = buildContractCall(
+    safeContract,
+    'enableModule',
+    [predictedFractalModuleAddress],
     0,
     false
   );
 
   return {
-    predictedFractalModuleAddress: getCreate2Address(
-      zodiacModuleProxyFactoryContract.address,
-      fractalSalt,
-      solidityKeccak256(['bytes'], [fractalByteCodeLinear])
-    ),
+    predictedFractalModuleAddress,
     deployFractalModuleTx,
+    enableFractalModuleTx,
   };
 };
