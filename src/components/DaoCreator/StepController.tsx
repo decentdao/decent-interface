@@ -7,7 +7,7 @@ import { UsulTokenDetails } from './UsulTokenDetails';
 import { ICreationStepProps, CreatorSteps } from './types';
 
 function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) {
-  const [step, setStepState] = useState<CreatorSteps>(CreatorSteps.GUARD_CONFIG);
+  const [step, setStepState] = useState<CreatorSteps>(CreatorSteps.ESSENTIALS);
   const updateStep = (newStep: CreatorSteps) => {
     setStepState(newStep);
   };

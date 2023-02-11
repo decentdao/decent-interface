@@ -16,7 +16,14 @@ import { LabelComponent } from '../ProposalCreate/InputComponent';
 import { StepWrapper } from './StepWrapper';
 import { CreatorSteps, ICreationStepProps } from './types';
 
-export function GnosisMultisig({ values, errors, setFieldValue, updateStep }: ICreationStepProps) {
+export function GnosisMultisig({
+  values,
+  errors,
+  transactionPending,
+  isSubmitting,
+  setFieldValue,
+  updateStep,
+}: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
   const { restrictChars } = useFormHelpers();
 
@@ -139,7 +146,7 @@ export function GnosisMultisig({ values, errors, setFieldValue, updateStep }: IC
         <Button
           w="full"
           type="submit"
-          disabled={!!errors.gnosis}
+          disabled={transactionPending || isSubmitting || !!errors.gnosis}
         >
           {t('deploy', { ns: 'common' })}
         </Button>

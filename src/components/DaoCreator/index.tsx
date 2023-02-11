@@ -5,12 +5,20 @@ import { GovernanceTypes } from '../../providers/Fractal/types';
 import StepController from './StepController';
 import { initialState } from './constants';
 
+import { usePrepareFormData } from './prepare/usePrepareFormData';
 import { CreatorFormState, DAOTrigger } from './types';
 
-function DaoCreator(props: { pending?: boolean; deployDAO: DAOTrigger; isSubDAO?: boolean }) {
-  console.log('🚀 ~ file: index.tsx:11 ~ props', props);
-  const { createDAOValidation } = useDAOCreateSchema();
-
+function DaoCreator({
+  deployDAO,
+  pending,
+  isSubDAO,
+}: {
+  pending?: boolean;
+  deployDAO: DAOTrigger;
+  isSubDAO?: boolean;
+}) {
+  const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
+  const { prepareMultisigFormData } = usePrepareFormData();
   return (
     <Box>
       <Formik<CreatorFormState>
@@ -20,10 +28,11 @@ function DaoCreator(props: { pending?: boolean; deployDAO: DAOTrigger; isSubDAO?
           const choosenGovernance = values.essentials.governance;
           switch (choosenGovernance) {
             case GovernanceTypes.GNOSIS_SAFE: {
-              // const trustedAddresses = values.gnosis.trustedAddresses.map(
-              //   address => addressValidationMap.current.get(address)!.address
-              // );
-              // deployDAO({ ...values.essentials, ...values.gnosis, trustedAddresses });
+              const data = await prepareMultisigFormData({
+                ...values.essentials,
+                ...values.gnosis,
+              });
+              deployDAO(data);
               return;
             }
             case GovernanceTypes.GNOSIS_SAFE_USUL: {
@@ -35,7 +44,10 @@ function DaoCreator(props: { pending?: boolean; deployDAO: DAOTrigger; isSubDAO?
       >
         {({ handleSubmit, ...rest }) => (
           <form onSubmit={handleSubmit}>
-            <StepController {...rest} />
+            <StepController
+              transactionPending={pending}
+              {...rest}
+            />
           </form>
         )}
       </Formik>
