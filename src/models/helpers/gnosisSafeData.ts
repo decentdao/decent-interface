@@ -2,7 +2,7 @@ import { GnosisSafe, GnosisSafeProxyFactory } from '@fractal-framework/fractal-c
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { MultiSend } from '../../assets/typechain-types/usul';
-import { GnosisDAO } from '../../components/DaoCreator/provider/types';
+import { GnosisDAO } from '../../components/DaoCreator/types';
 import { buildContractCall } from '../../helpers/crypto';
 const { AddressZero, HashZero } = ethers.constants;
 
@@ -19,7 +19,7 @@ export const gnosisSafeData = async (
   const signers = hasUsul
     ? [multiSendContract.address]
     : [
-        ...gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress.address),
+        ...gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress),
         multiSendContract.address,
       ];
 

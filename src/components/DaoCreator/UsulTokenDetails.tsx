@@ -55,8 +55,8 @@ export function UsulTokenDetails(props: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.govToken.tokenSupply}
-            onChange={value => setFieldValue('govToken.tokenSupply', value)}
+            value={values.govToken.tokenSupply.value}
+            onChange={valuePair => setFieldValue('govToken.tokenSupply', valuePair)}
             data-testid="tokenVoting-tokenSupplyInput"
             onKeyDown={restrictChars}
           />

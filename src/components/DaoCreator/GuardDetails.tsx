@@ -1,4 +1,4 @@
-import { Text, InputGroup, InputRightElement, Hide, Flex } from '@chakra-ui/react';
+import { Text, InputGroup, InputRightElement, Flex } from '@chakra-ui/react';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -90,8 +90,8 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
           >
             <InputGroup>
               <BigNumberInput
-                value={values.vetoGuard.timelockPeriod}
-                onChange={value => setFieldValue('vetoGuard.timelockPeriod', value)}
+                value={values.vetoGuard.timelockPeriod.value}
+                onChange={valuePair => setFieldValue('vetoGuard.timelockPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="guardConfig-executionDetails"
@@ -113,8 +113,8 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.executionPeriod}
-              onChange={value => setFieldValue('vetoGuard.executionPeriod', value)}
+              value={values.vetoGuard.executionPeriod.value}
+              onChange={valuePair => setFieldValue('vetoGuard.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-executionDetails"
@@ -128,25 +128,7 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
             {t('exampleExecutionPeriod')}
           </Text>
         </LabelComponent>
-        {/** TODO hiding Veto Threshold for now, since it's not implemented in the frontend */}
-        <Hide>
-          <LabelComponent
-            label={t('labelVetoVotesThreshold')}
-            helper={vetoHelper || ''}
-            isRequired={false}
-          >
-            <InputGroup>
-              <BigNumberInput
-                value={values.vetoGuard.vetoVotesThreshold}
-                onChange={value => setFieldValue('vetoGuard.vetoVotesThreshold', value)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="guardConfig-vetoVotesThreshold"
-              />
-              <InputRightElement mr="4">{votes}</InputRightElement>
-            </InputGroup>
-          </LabelComponent>
-        </Hide>
+
         <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
         <LabelComponent
           label={t('labelFreezeVotesThreshold')}
@@ -154,8 +136,8 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.vetoGuard.freezeVotesThreshold}
-            onChange={value => setFieldValue('vetoGuard.freezeVotesThreshold', value)}
+            value={values.vetoGuard.freezeVotesThreshold.value}
+            onChange={valuePair => setFieldValue('vetoGuard.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
           />
@@ -167,8 +149,8 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezeProposalPeriod}
-              onChange={value => setFieldValue('vetoGuard.freezeProposalPeriod', value)}
+              value={values.vetoGuard.freezeProposalPeriod.value}
+              onChange={valuePair => setFieldValue('vetoGuard.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeProposalDuration"
@@ -189,8 +171,8 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezePeriod}
-              onChange={value => setFieldValue('vetoGuard.freezePeriod', value)}
+              value={values.vetoGuard.freezePeriod.value}
+              onChange={valuePair => setFieldValue('vetoGuard.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeDuration"

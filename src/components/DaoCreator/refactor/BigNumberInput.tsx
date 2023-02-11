@@ -1,12 +1,13 @@
 import { FormControlOptions, Input, InputElementProps } from '@chakra-ui/react';
 import { utils, BigNumber, constants } from 'ethers';
 import { useState, useCallback, useEffect } from 'react';
+import { BigNumberValuePair } from '../types';
 
 export interface BigNumberInputProps
   extends Omit<InputElementProps, 'value' | 'onChange'>,
     FormControlOptions {
   value: string;
-  onChange: (value: string) => void;
+  onChange: (valuePair: BigNumberValuePair) => void;
   decimalPlaces?: number;
   min?: string;
   max?: string;
@@ -99,7 +100,10 @@ export function BigNumberInput({
         newValue = utils.formatUnits(maxBigNumber, decimalPlaces);
       }
 
-      onChange(removeOnlyDecimalPoint(newValue));
+      onChange({
+        value: removeOnlyDecimalPoint(newValue),
+        bigNumberValue: bigNumberValue,
+      });
       if (event && newValue !== event.target.value) {
         resetCaretPositionForInput(event);
       }
@@ -128,7 +132,10 @@ export function BigNumberInput({
           ? utils.parseUnits(min, decimalPlaces)
           : BigNumber.from('0');
         if (bigNumberValue.lte(minBigNumber)) {
-          onChange(min);
+          onChange({
+            value: min,
+            bigNumberValue: BigNumber.from(minBigNumber),
+          });
           setInputValue(min);
         }
       }

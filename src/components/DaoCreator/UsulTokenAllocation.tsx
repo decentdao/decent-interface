@@ -4,10 +4,10 @@ import { Field, FieldAttributes, FormikErrors } from 'formik';
 import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
 import { TokenAllocation } from '../../types';
 import { BigNumberInput } from './refactor/BigNumberInput';
-import { ICreationStepProps } from './types';
+import { BigNumberValuePair, ICreationStepProps } from './types';
 
 interface ITokenAllocations extends ICreationStepProps {
-  tokenAllocation: TokenAllocation;
+  tokenAllocation: TokenAllocation<BigNumberValuePair>;
   index: number;
   remove: <T>(index: number) => T | undefined;
 }
@@ -50,8 +50,10 @@ export function UsulTokenAllocation({
       </LabelWrapper>
       <LabelWrapper errorMessage={amountErrorMessage}>
         <BigNumberInput
-          value={values.govToken.tokenAllocations[index].amount}
-          onChange={value => setFieldValue(`govToken.tokenAllocations.${index}.amount`, value)}
+          value={values.govToken.tokenAllocations[index].amount.value}
+          onChange={valuePair =>
+            setFieldValue(`govToken.tokenAllocations.${index}.amount`, valuePair)
+          }
           data-testid={'tokenVoting-tokenAllocationAmountInput-' + index}
           onKeyDown={restrictChars}
         />

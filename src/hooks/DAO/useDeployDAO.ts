@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
@@ -14,7 +15,10 @@ const useDeployDAO = () => {
   const { t } = useTranslation('transaction');
 
   const deployDao = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
+    (
+      daoData: GnosisDAO | TokenGovernanceDAO,
+      successCallback: (daoAddress: string) => void
+    ) => {
       const deploy = async () => {
         if (!multiSendContract) {
           return;

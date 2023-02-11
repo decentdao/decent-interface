@@ -1,5 +1,6 @@
+import { BigNumber } from 'ethers';
 import { EthAddress } from '.';
 
-export type TokenAllocation = {
-  amount: string;
+export type TokenAllocation<T = BigNumber> = {
+  amount: T;
 } & EthAddress;
