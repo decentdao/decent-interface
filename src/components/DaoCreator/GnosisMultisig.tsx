@@ -64,6 +64,7 @@ export function GnosisMultisig({
         >
           <NumberInput
             value={values.gnosis.numOfSigners}
+            min={1}
             onChange={handleSignersChanges}
             onKeyDown={restrictChars}
           >
@@ -121,7 +122,10 @@ export function GnosisMultisig({
                         {values.gnosis.trustedAddresses.length > 1 && (
                           <Button
                             variant="text"
-                            onClick={() => remove(i)}
+                            onClick={() => {
+                              setFieldValue('gnosis.numOfSigners', --values.gnosis.numOfSigners);
+                              remove(i);
+                            }}
                           >
                             {t('remove')}
                           </Button>
