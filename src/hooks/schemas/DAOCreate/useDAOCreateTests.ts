@@ -3,7 +3,11 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { AnyObject } from 'yup';
-import { AddressValidationMap } from '../../../components/DaoCreator/types';
+import {
+  AddressValidationMap,
+  BigNumberValuePair,
+  CreatorFormState,
+} from '../../../components/DaoCreator/types';
 import { TokenAllocation } from '../../../types';
 import { validateAddress } from '../common/useValidationAddress';
 
@@ -83,20 +87,17 @@ export function useDAOCreateTests() {
       message: t('errorOverallocated'),
       test: function (value: string | undefined, context: AnyObject) {
         if (!value) return false;
-        // `from` value doesn't show on typing, last index in array is root
-        const formData = context.from.reverse()[0].value;
-        const tokenSupplyString = formData.govToken.tokenSupply as string;
-        const tokenAllocations = formData.govToken.tokenAllocations as TokenAllocation[];
-        const parentAllocationAmountString = formData.govToken.parentAllocationAmount as string;
 
-        const parentAllocationAmount = BigNumber.from(parentAllocationAmountString || 0);
-
-        const tokenSupply = BigNumber.from(tokenSupplyString || 0);
+        const formData: CreatorFormState<BigNumberValuePair> = context.from.reverse()[0].value;
+        const tokenSupply = formData.govToken.tokenSupply.bigNumberValue as BigNumber;
+        const tokenAllocations = formData.govToken.tokenAllocations;
+        const parentAllocationAmount =
+          formData.govToken.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
 
         const filteredAllocations = tokenAllocations.filter(allocation => !!allocation.amount);
 
         const allocationSum = filteredAllocations.reduce(
-          (prev, cur) => prev.add(BigNumber.from(cur.amount)),
+          (prev, cur) => prev.add(BigNumber.from(cur.amount.bigNumberValue)),
           BigNumber.from(0)
         );
 

@@ -45,7 +45,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               tokenName: Yup.string().required(),
               tokenSymbol: Yup.string().required().max(5, 'Limited to 5 chars'),
               tokenSupply: Yup.object().shape({ value: Yup.string().required() }),
-              parentAllocationAmount: Yup.string().notRequired(),
+              parentAllocationAmount: Yup.object().shape({ value: Yup.string().required() }),
               tokenAllocations: Yup.array()
                 .min(1)
                 .of(
@@ -53,9 +53,11 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     address: Yup.string()
                       .test(allocationValidationTest)
                       .test(uniqueAllocationValidationTest),
-                    amount: Yup.object().shape({
-                      value: Yup.string().required().test(maxAllocationValidation),
-                    }),
+                    amount: Yup.object()
+                      .required()
+                      .shape({
+                        value: Yup.string().test(maxAllocationValidation),
+                      }),
                   })
                 ),
             }),
