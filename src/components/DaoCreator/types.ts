@@ -80,7 +80,7 @@ export interface TokenGovernanceDAO<T = BigNumber>
 
 export interface GnosisDAO extends DAOEssentials, GnosisConfiguration {}
 
-export type DAOTrigger = (daoData: GnosisDAO) => void;
+export type DAOTrigger = (daoData: GnosisDAO | TokenGovernanceDAO) => void;
 
 export type AddressValidationMap = Map<string, AddressValidation>;
 

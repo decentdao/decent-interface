@@ -12,7 +12,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
-import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { LabelComponent } from '../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
@@ -21,7 +20,14 @@ import { BigNumberInput } from './refactor/BigNumberInput';
 import { ICreationStepProps, CreatorSteps } from './types';
 
 // @todo finish and deploy baby
-export function UsulGovernance({ errors, updateStep }: ICreationStepProps) {
+export function UsulGovernance({
+  values,
+  setFieldValue,
+  errors,
+  updateStep,
+  transactionPending,
+  isSubmitting,
+}: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
   return (
@@ -36,19 +42,16 @@ export function UsulGovernance({ errors, updateStep }: ICreationStepProps) {
           helper={t('helperVotingPeriod')}
           isRequired
         >
-          <Field name="govModule.votingPeriod">
-            {({ field }: FieldAttributes<any>) => (
-              <InputGroup>
-                <BigNumberInput
-                  {...field}
-                  decimalPlaces={0}
-                  min="1"
-                  data-testid="govConfig-votingPeriod"
-                />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            )}
-          </Field>
+          <InputGroup>
+            <BigNumberInput
+              value={values.govModule.votingPeriod.value}
+              onChange={valuePair => setFieldValue('govModule.votingPeriod', valuePair)}
+              decimalPlaces={0}
+              min="1"
+              data-testid="govConfig-votingPeriod"
+            />
+            <InputRightElement mr="4">{minutes}</InputRightElement>
+          </InputGroup>
           <Text
             textStyle="text-md-sans-regular"
             color="grayscale.500"
@@ -62,37 +65,31 @@ export function UsulGovernance({ errors, updateStep }: ICreationStepProps) {
           helper={t('helperQuorum')}
           isRequired
         >
-          <Field name="govModule.quorumPercentage">
-            {({ field }: FieldAttributes<any>) => (
-              <InputGroup>
-                <BigNumberInput
-                  {...field}
-                  max="100"
-                  decimalPlaces={0}
-                  data-testid="govConfig-quorumPercentage"
-                />
-                <InputRightElement>%</InputRightElement>
-              </InputGroup>
-            )}
-          </Field>
+          <InputGroup>
+            <BigNumberInput
+              value={values.govModule.quorumPercentage.value}
+              onChange={valuePair => setFieldValue('govModule.quorumPercentage', valuePair)}
+              max="100"
+              decimalPlaces={0}
+              data-testid="govConfig-quorumPercentage"
+            />
+            <InputRightElement>%</InputRightElement>
+          </InputGroup>
         </LabelComponent>
         <LabelComponent
           label={t('labelTimelockPeriod')}
           helper={t('helperTimelockPeriod')}
           isRequired
         >
-          <Field name="govModule.timelock">
-            {({ field }: FieldAttributes<any>) => (
-              <InputGroup>
-                <BigNumberInput
-                  {...field}
-                  decimalPlaces={0}
-                  data-testid="govConfig-timelock"
-                />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-            )}
-          </Field>
+          <InputGroup>
+            <BigNumberInput
+              value={values.govModule.timelock.value}
+              onChange={valuePair => setFieldValue('govModule.timelock', valuePair)}
+              decimalPlaces={0}
+              data-testid="govConfig-timelock"
+            />
+            <InputRightElement mr="4">{minutes}</InputRightElement>
+          </InputGroup>
           <Text
             textStyle="text-md-sans-regular"
             color="grayscale.500"
@@ -122,10 +119,10 @@ export function UsulGovernance({ errors, updateStep }: ICreationStepProps) {
           </Button>
           <Button
             w="full"
-            disabled={!!errors.govModule}
-            onClick={() => updateStep(CreatorSteps.GOV_CONFIG)}
+            type="submit"
+            disabled={transactionPending || isSubmitting || !!errors.govModule}
           >
-            {t('next', { ns: 'common' })}
+            {t('deploy', { ns: 'common' })}
           </Button>
         </Flex>
       </Flex>

@@ -22,15 +22,18 @@ export function UsulTokenAllocation({
 }: ITokenAllocations) {
   const { restrictChars } = useFormHelpers();
   const indexedTokenAllocationError = (
-    errors?.govToken?.tokenAllocations as FormikErrors<TokenAllocation[] | undefined>
+    errors?.govToken?.tokenAllocations as FormikErrors<
+      TokenAllocation<BigNumberValuePair>[] | undefined
+    >
   )?.[index];
+
   const addressErrorMessage =
     indexedTokenAllocationError?.address && tokenAllocation.address.length
       ? indexedTokenAllocationError.address
       : null;
   const amountErrorMessage =
-    indexedTokenAllocationError?.amount && Number(tokenAllocation.amount) > 0
-      ? indexedTokenAllocationError.amount
+    indexedTokenAllocationError?.amount?.value && !tokenAllocation.amount.bigNumberValue.isZero()
+      ? indexedTokenAllocationError.amount.value
       : null;
   return (
     <>

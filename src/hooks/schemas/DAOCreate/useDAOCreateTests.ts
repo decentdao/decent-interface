@@ -94,18 +94,16 @@ export function useDAOCreateTests() {
         const parentAllocationAmount =
           formData.govToken.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
 
-        const filteredAllocations = tokenAllocations.filter(allocation => !!allocation.amount);
+        const filteredAllocations = tokenAllocations.filter(
+          allocation => !allocation.amount.bigNumberValue.isZero()
+        );
 
         const allocationSum = filteredAllocations.reduce(
-          (prev, cur) => prev.add(BigNumber.from(cur.amount.bigNumberValue)),
+          (prev, cur) => prev.add(cur.amount.bigNumberValue),
           BigNumber.from(0)
         );
 
-        if (
-          !filteredAllocations.length ||
-          allocationSum.isZero() ||
-          allocationSum.add(parentAllocationAmount).gt(tokenSupply)
-        ) {
+        if (allocationSum.isZero() || allocationSum.add(parentAllocationAmount).gt(tokenSupply)) {
           return false;
         }
         return true;
