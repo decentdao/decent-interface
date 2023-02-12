@@ -1,5 +1,5 @@
-import { BigNumber, ethers } from 'ethers';
-import { TokenGovernanceDAO, SubDAO, GnosisDAO } from '../components/DaoCreator/types';
+import { ethers } from 'ethers';
+import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
 import { BaseContracts, UsulContracts } from './types/contracts';
 
 export class BaseTxBuilder {

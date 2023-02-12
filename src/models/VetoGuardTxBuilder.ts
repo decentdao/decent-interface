@@ -6,7 +6,7 @@ import {
   VetoGuard__factory,
   VetoMultisigVoting__factory,
 } from '@fractal-framework/fractal-contracts';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { SubDAO } from '../components/DaoCreator/types';
 import { buildContractCall } from '../helpers';
