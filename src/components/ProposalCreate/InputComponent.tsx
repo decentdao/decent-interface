@@ -74,7 +74,7 @@ export function InputComponent(props: InputProps) {
         value={value}
         onChange={onChange}
         disabled={disabled}
-        data-testId={testId}
+        data-testid={testId}
         placeholder={placeholder}
       />
     </LabelComponent>
