@@ -1,5 +1,5 @@
 import { Box, Divider, Flex, Spacer, Button } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../../../routes/constants';
@@ -34,13 +34,16 @@ function PageHeader({
     address,
   });
 
-  const links = [
-    {
-      title: daoRegistryName || daoName,
-      path: DAO_ROUTES.dao.relative(address),
-    },
-    ...breadcrumbs,
-  ];
+  const links = useMemo(
+    () => [
+      {
+        title: daoRegistryName || daoName,
+        path: DAO_ROUTES.dao.relative(address),
+      },
+      ...breadcrumbs,
+    ],
+    [address, daoRegistryName, daoName, breadcrumbs]
+  );
 
   return (
     <Box

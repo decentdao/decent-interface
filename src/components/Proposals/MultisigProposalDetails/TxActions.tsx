@@ -1,4 +1,4 @@
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { GnosisSafe__factory, VetoGuard } from '@fractal-framework/fractal-contracts';
@@ -16,6 +16,7 @@ import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import ContentBox from '../../ui/containers/ContentBox';
+import ProposalTime from '../../ui/proposal/ProposalTime';
 
 export function TxActions({
   proposal,
@@ -206,7 +207,10 @@ export function TxActions({
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-      <Text textStyle="text-lg-mono-medium">{t(buttonProps[proposal.state!].pageTitle)}</Text>
+      <Flex justifyContent="space-between">
+        <Text textStyle="text-lg-mono-medium">{t(buttonProps[proposal.state!].pageTitle)}</Text>
+        <ProposalTime proposal={proposal} />
+      </Flex>
       <Box marginTop={4}>
         <Button
           w="full"
