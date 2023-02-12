@@ -1,8 +1,8 @@
+import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { TokenAllocation } from '../../types/tokenAllocation';
-import { NFTToFund, TokenToFund } from './SubsidiaryFunding/types/index';
 
 export enum CreatorSteps {
   ESSENTIALS,
@@ -94,3 +94,12 @@ export interface BigNumberValuePair {
   value: string;
   bigNumberValue: BigNumber;
 }
+
+export type TokenToFund = {
+  asset: SafeBalanceUsdResponse;
+  amount: BigNumberValuePair;
+};
+
+export type NFTToFund = {
+  asset: SafeCollectibleResponse;
+};
