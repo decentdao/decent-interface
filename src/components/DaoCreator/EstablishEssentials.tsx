@@ -26,7 +26,7 @@ export function EstablishEssentials({
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
         disabled={false}
         placeholder={t('daoNamePlaceholder')}
-        data-testid="essentials-daoName"
+        testId="essentials-daoName"
       />
       <Box my={8}>
         <LabelComponent
@@ -74,6 +74,7 @@ export function EstablishEssentials({
               : CreatorSteps.GNOSIS_WITH_USUL
           )
         }
+        data-testid="create-skipNextButton"
       >
         {t('next', { ns: 'common' })}
       </Button>

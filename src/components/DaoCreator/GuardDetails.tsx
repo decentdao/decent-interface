@@ -27,7 +27,6 @@ function GuardDetails({
   updateStep,
   transactionPending,
   isSubmitting,
-  isSubDAO,
   setFieldValue,
 }: ICreationStepProps) {
   const {
@@ -226,6 +225,7 @@ function GuardDetails({
         <Divider color="chocolate.700" />
         <Flex alignItems="center">
           <Button
+            data-testid="create-prevButton"
             variant="text"
             onClick={() =>
               updateStep(
@@ -239,11 +239,11 @@ function GuardDetails({
           </Button>
           <Button
             w="full"
-            type={!isSubDAO ? 'button' : 'submit'}
-            onClick={() => (!isSubDAO ? {} : updateStep(CreatorSteps.GUARD_CONFIG))}
+            type="submit"
             disabled={transactionPending || isSubmitting || !!errors.vetoGuard}
+            data-testid="create-deployDAO"
           >
-            {t(!isSubDAO ? 'next' : 'deploy', { ns: 'common' })}
+            {t('deploy', { ns: 'common' })}
           </Button>
         </Flex>
       </Flex>

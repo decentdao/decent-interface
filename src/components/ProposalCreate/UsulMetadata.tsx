@@ -77,6 +77,7 @@ function UsulMetadata(props: UsulMetadataProps) {
           onChange={e => updateTitle(e.target.value)}
           disabled={false}
           placeholder={t('proposalTitlePlaceholder')}
+          testId="metadata.title"
         />
         <TextareaComponent
           label={t('proposalDescription')}
@@ -97,6 +98,7 @@ function UsulMetadata(props: UsulMetadataProps) {
           disabled={false}
           placeholder={t('proposalAdditionalResourcesPlaceholder')}
           errorMessage={urlErrorMessage}
+          testId="metadata.documentationUrl"
         />
       </VStack>
       <Divider

@@ -46,7 +46,7 @@ export function UsulTokenAllocation({
             <Input
               {...field}
               placeholder="0x0000...0000"
-              data-testid={'gnosisConfig-signer-' + index}
+              data-testid={'tokenVoting-tokenAllocationAddressInput-' + index}
             />
           )}
         </Field>

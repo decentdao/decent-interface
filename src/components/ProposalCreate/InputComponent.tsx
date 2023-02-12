@@ -18,6 +18,7 @@ interface BaseProps {
 interface InputProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
+  testId: string;
 }
 
 interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
@@ -65,7 +66,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value' | 'disabled'>) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { id, value, disabled, onChange, placeholder } = props;
+  const { id, value, disabled, onChange, placeholder, testId } = props;
   return (
     <LabelComponent {...props}>
       <Input
@@ -73,6 +74,7 @@ export function InputComponent(props: InputProps) {
         value={value}
         onChange={onChange}
         disabled={disabled}
+        data-testId={testId}
         placeholder={placeholder}
       />
     </LabelComponent>

@@ -143,6 +143,7 @@ export function GnosisMultisig({
       <Divider color="chocolate.700" />
       <Flex alignItems="center">
         <Button
+          data-testid="create-prevButton"
           variant="text"
           onClick={() => updateStep(CreatorSteps.ESSENTIALS)}
         >
@@ -153,6 +154,7 @@ export function GnosisMultisig({
           type={!isSubDAO ? 'submit' : 'button'}
           onClick={() => (!isSubDAO ? {} : updateStep(CreatorSteps.GUARD_CONFIG))}
           disabled={transactionPending || isSubmitting || !!errors.gnosis}
+          data-testid="create-deployDAO"
         >
           {t(!isSubDAO ? 'deploy' : 'next', { ns: 'common' })}
         </Button>

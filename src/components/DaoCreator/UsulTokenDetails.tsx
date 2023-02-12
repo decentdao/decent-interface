@@ -65,6 +65,7 @@ export function UsulTokenDetails(props: ICreationStepProps) {
         <Divider color="chocolate.700" />
         <Flex alignItems="center">
           <Button
+            data-testid="create-prevButton"
             variant="text"
             onClick={() => updateStep(CreatorSteps.ESSENTIALS)}
           >
@@ -74,6 +75,7 @@ export function UsulTokenDetails(props: ICreationStepProps) {
             w="full"
             disabled={!!errors.govToken}
             onClick={() => updateStep(CreatorSteps.GOV_CONFIG)}
+            data-testid="create-skipNextButton"
           >
             {t('next', { ns: 'common' })}
           </Button>
