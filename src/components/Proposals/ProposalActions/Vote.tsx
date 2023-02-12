@@ -1,4 +1,4 @@
-import { Text, Button } from '@chakra-ui/react';
+import { Text, Button, Flex } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ import {
   UsulVoteChoice,
 } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/containers/ContentBox';
+import ProposalTime from '../../ui/proposal/ProposalTime';
 import Check from '../../ui/svg/Check';
 
 function Vote({ proposal }: { proposal: TxProposal }) {
@@ -44,7 +45,10 @@ function Vote({ proposal }: { proposal: TxProposal }) {
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-      <Text textStyle="text-lg-mono-medium">{t('vote')}</Text>
+      <Flex justifyContent="space-between">
+        <Text textStyle="text-lg-mono-medium">{t('vote')}</Text>
+        <ProposalTime proposal={proposal} />
+      </Flex>
       <Button
         width="full"
         disabled={disabled}

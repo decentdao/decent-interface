@@ -33,7 +33,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
     } else if (proposal.state === TxProposalState.TimeLocked) {
       const timeLockNumber = timeLockPeriod?.value?.toNumber();
       timeout =
-        new Date(proposal.deadline + Number(timeLockNumber) * 1000).getTime() - now.getTime();
+        new Date((proposal.deadline + Number(timeLockNumber)) * 1000).getTime() - now.getTime();
     }
 
     // Prevent setting too large timer

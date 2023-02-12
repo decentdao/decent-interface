@@ -6,6 +6,47 @@ import { useProvider } from 'wagmi';
 import { checkIsRejected, checkIsApproved } from '../../helpers/activity';
 import { Activity, ActivityEventType, TxProposalState } from '../../providers/Fractal/types';
 
+export async function getTxQueuedTimestamp(activity: Activity, vetoGuard: VetoGuard) {
+  const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
+
+  const abiCoder = new ethers.utils.AbiCoder();
+  const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
+    ['bytes'],
+    [
+      abiCoder.encode(
+        [
+          'address',
+          'uint256',
+          'bytes32',
+          'uint256',
+          'uint256',
+          'uint256',
+          'uint256',
+          'address',
+          'address',
+        ],
+        [
+          multiSigTransaction.to,
+          multiSigTransaction.value,
+          ethers.utils.solidityKeccak256(['bytes'], [multiSigTransaction.data as string]),
+          multiSigTransaction.operation,
+          multiSigTransaction.safeTxGas,
+          multiSigTransaction.baseGas,
+          multiSigTransaction.gasPrice,
+          multiSigTransaction.gasToken,
+          multiSigTransaction.refundReceiver as string,
+        ]
+      ),
+    ]
+  );
+
+  const queuedTimestamp = (
+    await vetoGuard.getTransactionQueuedTimestamp(vetoGuardTransactionHash)
+  ).toNumber();
+
+  return queuedTimestamp;
+}
+
 export function useSafeActivitiesWithState(
   activities: Activity[],
   vetoGuard: VetoGuard | undefined
@@ -49,41 +90,7 @@ export function useSafeActivitiesWithState(
             );
 
             const isApproved = checkIsApproved(multiSigTransaction);
-
-            const abiCoder = new ethers.utils.AbiCoder();
-            const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
-              ['bytes'],
-              [
-                abiCoder.encode(
-                  [
-                    'address',
-                    'uint256',
-                    'bytes32',
-                    'uint256',
-                    'uint256',
-                    'uint256',
-                    'uint256',
-                    'address',
-                    'address',
-                  ],
-                  [
-                    multiSigTransaction.to,
-                    multiSigTransaction.value,
-                    ethers.utils.solidityKeccak256(['bytes'], [multiSigTransaction.data as string]),
-                    multiSigTransaction.operation,
-                    multiSigTransaction.safeTxGas,
-                    multiSigTransaction.baseGas,
-                    multiSigTransaction.gasPrice,
-                    multiSigTransaction.gasToken,
-                    multiSigTransaction.refundReceiver as string,
-                  ]
-                ),
-              ]
-            );
-
-            const queuedTimestamp = (
-              await vetoGuard.getTransactionQueuedTimestamp(vetoGuardTransactionHash)
-            ).toNumber();
+            const queuedTimestamp = await getTxQueuedTimestamp(activity, vetoGuard);
 
             let state: TxProposalState;
 

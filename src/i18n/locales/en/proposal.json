@@ -101,5 +101,10 @@
     "decodingFailedMessage": "Unable to decode transaction's data.",
     "customNonce": "Custom Nonce",
     "customNonceTooltip": "Set a custom proposal nonce if necessary to prevent nonce collisions",
-    "nonce": "Nonce"
+    "nonce": "Nonce",
+    "votingTooltip": "Time remaining to cast your vote.",
+    "timeLockedTooltip": "This proposal is queued. Execution will be possible once queueing period will be passed.",
+    "executableTooltip": "Time remaining to execute this proposal",
+    "learnMore": "Learn More"
+
 }

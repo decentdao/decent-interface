@@ -6,7 +6,6 @@ import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
-import ProposalTime from '../ui/proposal/ProposalTime';
 
 export function ProposalInfo({ proposal }: { proposal: TxProposal }) {
   const usulProposal = proposal as UsulProposal;
@@ -21,7 +20,6 @@ export function ProposalInfo({ proposal }: { proposal: TxProposal }) {
         alignItems="center"
       >
         <ProposalStateBox state={proposal.state} />
-        {usulProposal.deadline && <ProposalTime deadline={usulProposal.deadline} />}
       </Flex>
       <Box mt={4}>
         <ActivityDescription activity={proposal} />

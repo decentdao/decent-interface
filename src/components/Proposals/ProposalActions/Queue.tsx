@@ -1,10 +1,11 @@
-import { Text, Button } from '@chakra-ui/react';
+import { Text, Button, Flex } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useQueueProposal from '../../../hooks/DAO/proposal/useQueueProposal';
 import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/containers/ContentBox';
+import ProposalTime from '../../ui/proposal/ProposalTime';
 
 export default function Queue({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
@@ -14,7 +15,10 @@ export default function Queue({ proposal }: { proposal: TxProposal }) {
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-      <Text textStyle="text-lg-mono-medium">{t('queueTitle')}</Text>
+      <Flex justifyContent="space-between">
+        <Text textStyle="text-lg-mono-medium">{t('queueTitle')}</Text>
+        <ProposalTime proposal={proposal} />
+      </Flex>
       <Button
         width="full"
         disabled={disabled}
