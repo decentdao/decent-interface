@@ -1,12 +1,16 @@
 import { useCallback } from 'react';
 import { useSigner } from 'wagmi';
-import { BigNumberValuePair, GnosisDAO, TokenGovernanceDAO } from '../types';
+import { BigNumberValuePair, DAOVetoGuardConfig, GnosisDAO, TokenGovernanceDAO } from '../types';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
 
   const prepareMultisigFormData = useCallback(
-    async ({ trustedAddresses, ...rest }: GnosisDAO) => {
+    async ({
+      trustedAddresses,
+      vetoGuard,
+      ...rest
+    }: GnosisDAO & { vetoGuard?: DAOVetoGuardConfig<BigNumberValuePair> }) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
           if (inputValue.endsWith('.eth')) {
@@ -16,8 +20,20 @@ export function usePrepareFormData() {
           return inputValue;
         })
       );
+      let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
+      if (vetoGuard) {
+        vetoGuardData = {
+          executionPeriod: vetoGuard.executionPeriod.bigNumberValue,
+          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue,
+          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue,
+          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue,
+          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue,
+          freezePeriod: vetoGuard.freezePeriod.bigNumberValue,
+        };
+      }
       return {
         trustedAddresses: resolvedAddresses,
+        ...vetoGuardData,
         ...rest,
       };
     },
@@ -32,8 +48,11 @@ export function usePrepareFormData() {
       quorumPercentage,
       timelock,
       votingPeriod,
+      vetoGuard,
       ...rest
-    }: TokenGovernanceDAO<BigNumberValuePair>): Promise<TokenGovernanceDAO> => {
+    }: TokenGovernanceDAO<BigNumberValuePair> & {
+      vetoGuard?: DAOVetoGuardConfig<BigNumberValuePair>;
+    }): Promise<TokenGovernanceDAO> => {
       const resolvedTokenAllocations = await Promise.all(
         tokenAllocations.map(async allocation => {
           let address = allocation.address;
@@ -43,6 +62,17 @@ export function usePrepareFormData() {
           return { amount: allocation.amount.bigNumberValue, address: address };
         })
       );
+      let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
+      if (vetoGuard) {
+        vetoGuardData = {
+          executionPeriod: vetoGuard.executionPeriod.bigNumberValue,
+          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue,
+          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue,
+          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue,
+          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue,
+          freezePeriod: vetoGuard.freezePeriod.bigNumberValue,
+        };
+      }
       return {
         tokenSupply: tokenSupply.bigNumberValue,
         parentAllocationAmount: parentAllocationAmount?.bigNumberValue,
@@ -50,6 +80,7 @@ export function usePrepareFormData() {
         timelock: timelock.bigNumberValue,
         votingPeriod: votingPeriod.bigNumberValue,
         tokenAllocations: resolvedTokenAllocations,
+        ...vetoGuardData,
         ...rest,
       };
     },

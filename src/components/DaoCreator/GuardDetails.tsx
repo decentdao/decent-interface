@@ -1,4 +1,14 @@
-import { Text, InputGroup, InputRightElement, Flex } from '@chakra-ui/react';
+import {
+  Text,
+  InputGroup,
+  InputRightElement,
+  Flex,
+  Button,
+  Divider,
+  Alert,
+  AlertTitle,
+} from '@chakra-ui/react';
+import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,13 +16,20 @@ import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { formatBigNumberDisplay } from '../../utils/numberFormats';
 import { LabelComponent } from '../ProposalCreate/InputComponent';
-import ContentBanner from '../ui/containers/ContentBanner';
 import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
 import { StepWrapper } from './StepWrapper';
 import { BigNumberInput } from './refactor/BigNumberInput';
-import { ICreationStepProps } from './types';
+import { BigNumberValuePair, CreatorSteps, ICreationStepProps } from './types';
 
-function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
+function GuardDetails({
+  values,
+  errors,
+  updateStep,
+  transactionPending,
+  isSubmitting,
+  isSubDAO,
+  setFieldValue,
+}: ICreationStepProps) {
   const {
     gnosis: { safe },
     governance: { type, governanceToken, governanceIsLoading },
@@ -21,14 +38,13 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
-  const votes = t('votesTitle', { ns: 'proposal' });
   const minutes = t('minutes', { ns: 'common' });
-
+  const governance = values.essentials.governance;
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
       if (governanceIsLoading || !safe || !governanceToken) return;
 
-      let totalVotes: BigNumber;
+      let totalVotes: BigNumberValuePair;
       switch (type) {
         case GovernanceTypes.GNOSIS_SAFE_USUL:
           const normalized = ethers.utils.formatUnits(
@@ -37,40 +53,45 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
           );
           // ethers.utils.formatUnits returns a whole number string in the form `xxx.0`
           // but BigNumber won't parse out the insignificant decimal, so we need to cut it
-          totalVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
+          totalVotes = {
+            value: safe.owners?.length.toString() || '',
+            bigNumberValue: BigNumber.from(normalized.substring(0, normalized.indexOf('.'))),
+          };
           break;
         case GovernanceTypes.GNOSIS_SAFE:
         default:
-          totalVotes = BigNumber.from(safe.owners?.length || 0);
+          totalVotes = {
+            value: safe.owners?.length.toString() || '',
+            bigNumberValue: BigNumber.from(safe.owners?.length || 0),
+          };
       }
-      setTotalParentVotes(totalVotes);
+      setTotalParentVotes(totalVotes.bigNumberValue);
 
-      const childThresholds = totalVotes.eq(1) ? totalVotes : totalVotes.div(2);
-      console.log('🚀 ~ file: GuardDetails.tsx:49 ~ childThresholds', childThresholds);
-      // dispatch({
-      //   type: CreatorProviderActions.UPDATE_GUARD_CONFIG,
-      //   payload: {
-      //     ['vetoVotesThreshold']: childThresholds,
-      //     ['freezeVotesThreshold']: childThresholds,
-      //   },
-      // });
+      const childThresholds = totalVotes.bigNumberValue.eq(1)
+        ? totalVotes
+        : {
+            value: ethers.utils.formatUnits(
+              totalVotes.bigNumberValue.div(2),
+              governanceToken.decimals
+            ),
+            bigNumberValue: totalVotes.bigNumberValue.div(2),
+          };
+      setFieldValue('vetoGuard.vetoVotesThreshold', childThresholds);
+      setFieldValue('vetoGuard.freezeVotesThreshold', childThresholds);
     }
   }, [
-    // dispatch,
-    // governance,
     governanceIsLoading,
     governanceToken,
     safe,
     safe.threshold,
     totalParentVotes,
     type,
+    setFieldValue,
   ]);
 
   const showVetoFreezeHelpers = totalParentVotes.gt(0);
   const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);
-  const vetoHelper = showVetoFreezeHelpers
-    ? t('helperVetoVotesThreshold', { totalVotes: formattedVotesTotal })
-    : null;
+
   const freezeHelper = showVetoFreezeHelpers
     ? t('helperFreezeVotesThreshold', { totalVotes: formattedVotesTotal })
     : null;
@@ -82,7 +103,7 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {values.essentials.governance === GovernanceTypes.GNOSIS_SAFE && (
+        {governance === GovernanceTypes.GNOSIS_SAFE && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -99,8 +120,9 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
               <InputRightElement mr="4">{minutes}</InputRightElement>
             </InputGroup>
             <Text
-              textStyle="text-sm-sans-regular"
-              color="gold.400"
+              textStyle="text-md-sans-regular"
+              color="grayscale.500"
+              mt={2}
             >
               {t('exampleTimelockPeriod')}
             </Text>
@@ -122,8 +144,9 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
             <InputRightElement mr="4">{minutes}</InputRightElement>
           </InputGroup>
           <Text
-            textStyle="text-sm-sans-regular"
-            color="gold.400"
+            textStyle="text-md-sans-regular"
+            color="grayscale.500"
+            mt={2}
           >
             {t('exampleExecutionPeriod')}
           </Text>
@@ -158,8 +181,9 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
             <InputRightElement mr="4">{minutes}</InputRightElement>
           </InputGroup>
           <Text
-            textStyle="text-sm-sans-regular"
-            color="gold.400"
+            textStyle="text-md-sans-regular"
+            color="grayscale.500"
+            mt={2}
           >
             {t('exampleFreezeProposalPeriod')}
           </Text>
@@ -181,13 +205,47 @@ function GuardDetails({ values, setFieldValue }: ICreationStepProps) {
             <InputRightElement mr="4">{minutes}</InputRightElement>
           </InputGroup>
           <Text
-            textStyle="text-sm-sans-regular"
-            color="gold.400"
+            textStyle="text-md-sans-regular"
+            color="grayscale.500"
+            mt={2}
           >
             {t('exampleFreezePeriod')}
           </Text>
         </LabelComponent>
-        <ContentBanner description={t('vetoGuardDescription')} />
+        <Alert status="info">
+          <Info boxSize="24px" />
+          <AlertTitle>
+            <Text
+              textStyle="text-lg-mono-medium"
+              whiteSpace="pre-wrap"
+            >
+              {t('vetoGuardDescription')}
+            </Text>
+          </AlertTitle>
+        </Alert>
+        <Divider color="chocolate.700" />
+        <Flex alignItems="center">
+          <Button
+            variant="text"
+            onClick={() =>
+              updateStep(
+                governance === GovernanceTypes.GNOSIS_SAFE
+                  ? CreatorSteps.GOV_CONFIG
+                  : CreatorSteps.GNOSIS_GOVERNANCE
+              )
+            }
+          >
+            {t('prev', { ns: 'common' })}
+          </Button>
+          <Button
+            w="full"
+            type={!isSubDAO ? 'button' : 'submit'}
+            onClick={() => (!isSubDAO ? {} : updateStep(CreatorSteps.GUARD_CONFIG))}
+            disabled={transactionPending || isSubmitting || !!errors.vetoGuard}
+          >
+            {t(!isSubDAO ? 'next' : 'deploy', { ns: 'common' })}
+          </Button>
+        </Flex>
       </Flex>
     </StepWrapper>
   );

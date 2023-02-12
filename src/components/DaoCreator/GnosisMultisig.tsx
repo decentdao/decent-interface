@@ -22,6 +22,7 @@ export function GnosisMultisig({
   transactionPending,
   isSubmitting,
   setFieldValue,
+  isSubDAO,
   updateStep,
 }: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
@@ -149,10 +150,11 @@ export function GnosisMultisig({
         </Button>
         <Button
           w="full"
-          type="submit"
+          type={!isSubDAO ? 'submit' : 'button'}
+          onClick={() => (!isSubDAO ? {} : updateStep(CreatorSteps.GUARD_CONFIG))}
           disabled={transactionPending || isSubmitting || !!errors.gnosis}
         >
-          {t('deploy', { ns: 'common' })}
+          {t(!isSubDAO ? 'deploy' : 'next', { ns: 'common' })}
         </Button>
       </Flex>
     </StepWrapper>

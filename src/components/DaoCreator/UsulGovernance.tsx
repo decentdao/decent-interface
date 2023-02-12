@@ -27,6 +27,7 @@ export function UsulGovernance({
   updateStep,
   transactionPending,
   isSubmitting,
+  isSubDAO,
 }: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
@@ -119,10 +120,11 @@ export function UsulGovernance({
           </Button>
           <Button
             w="full"
-            type="submit"
+            type={!isSubDAO ? 'submit' : 'button'}
+            onClick={() => (!isSubDAO ? {} : updateStep(CreatorSteps.GUARD_CONFIG))}
             disabled={transactionPending || isSubmitting || !!errors.govModule}
           >
-            {t('deploy', { ns: 'common' })}
+            {t(!isSubDAO ? 'deploy' : 'next', { ns: 'common' })}
           </Button>
         </Flex>
       </Flex>

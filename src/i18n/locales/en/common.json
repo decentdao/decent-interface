@@ -20,7 +20,7 @@
     "execute": "Execute",
     "queue": "Queue",
     "move": "Move",
-    "minutes": "Minutes",
+    "minutes": "Min",
     "quorum": "Quorum",
     "deploy": "Deploy",
     "abstain": "Abstain",

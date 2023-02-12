@@ -26,11 +26,13 @@ function DaoCreator({
         validationSchema={createDAOValidation}
         onSubmit={async values => {
           const choosenGovernance = values.essentials.governance;
+          const vetoGuard = isSubDAO ? values.vetoGuard : undefined;
           switch (choosenGovernance) {
             case GovernanceTypes.GNOSIS_SAFE: {
               const data = await prepareMultisigFormData({
                 ...values.essentials,
                 ...values.gnosis,
+                vetoGuard,
               });
               deployDAO(data);
               return;
@@ -40,6 +42,7 @@ function DaoCreator({
                 ...values.essentials,
                 ...values.govModule,
                 ...values.govToken,
+                vetoGuard,
               });
               deployDAO(data);
               return;
@@ -52,6 +55,7 @@ function DaoCreator({
           <form onSubmit={handleSubmit}>
             <StepController
               transactionPending={pending}
+              isSubDAO={isSubDAO}
               {...rest}
             />
           </form>

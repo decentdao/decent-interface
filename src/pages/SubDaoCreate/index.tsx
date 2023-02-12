@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
-import { GnosisDAO } from '../../components/DaoCreator/types';
+import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
 import { useCreateSubDAOProposal } from '../../hooks/DAO/useCreateSubDAOProposal';
 import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -21,7 +21,7 @@ function SubDaoCreate() {
 
   const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();
 
-  const proposeSubDAO = (daoData: GnosisDAO) => {
+  const proposeSubDAO = (daoData: GnosisDAO | TokenGovernanceDAO) => {
     proposeDao(daoData, nonce, successCallback);
   };
 
