@@ -1,10 +1,10 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { Calendar } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { ActivityBox } from '../ui/containers/ActivityBox';
 
 interface IActivityCard {
   eventDate?: string;
+  eventDateLabel?: string;
   description: ReactNode;
   RightElement?: ReactNode;
   Badge?: ReactNode;
@@ -14,6 +14,7 @@ interface IActivityCard {
 export function ActivityCard({
   Badge,
   eventDate,
+  eventDateLabel,
   description,
   RightElement,
   boxBorderColor,
@@ -32,17 +33,21 @@ export function ActivityCard({
             mb="1rem"
           >
             {Badge}
-            {eventDate && (
-              <Flex
-                alignItems="center"
-                gap="0.5rem"
-              >
-                <Calendar />
-                <Text textStyle="text-base-sans-regular">{eventDate}</Text>
-              </Flex>
-            )}
           </Flex>
           <Box>{description}</Box>
+          {eventDate && (
+            <Flex
+              alignItems="center"
+              gap="0.5rem"
+            >
+              <Text
+                textStyle="text-base-sans-regular"
+                color="chocolate.300"
+              >
+                {eventDateLabel} {eventDate}
+              </Text>
+            </Flex>
+          )}
         </Flex>
         {RightElement}
       </Flex>

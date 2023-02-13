@@ -2,7 +2,8 @@ import { Button } from '@chakra-ui/react';
 import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { TreasuryActivity } from '../../providers/Fractal/types';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { TreasuryActivity, ActivityEventType } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
 import { ActivityCard } from './ActivityCard';
@@ -10,6 +11,17 @@ import { ActivityDescription } from './ActivityDescription';
 
 export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
   const { t } = useTranslation();
+  const {
+    gnosis: { safe },
+  } = useFractal();
+  const eventDateLabel = t(
+    activity.eventType === ActivityEventType.Treasury
+      ? activity.transaction?.to === safe.address
+        ? 'received'
+        : 'sent'
+      : 'created'
+  );
+
   return (
     <ActivityCard
       Badge={
@@ -38,6 +50,7 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
         ) : undefined
       }
       eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
+      eventDateLabel={eventDateLabel}
     />
   );
 }

@@ -12,9 +12,10 @@ import ContentBox from '../ui/containers/ContentBox';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
+import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votesSummary, deadline, proposer },
+  proposal: { startBlock, votesSummary, deadline, proposer, eventDate },
 }: {
   proposal: UsulProposal;
 }) {
@@ -51,31 +52,18 @@ export default function ProposalSummary({
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
-        <Flex
-          marginTop={4}
-          justifyContent="space-between"
-        >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('proposalSummaryStartDate')}
-          </Text>
-          <Text>{format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}</Text>
-        </Flex>
-        <Flex
-          marginTop={4}
-          marginBottom={4}
-          justifyContent="space-between"
-        >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('proposalSummaryEndDate')}
-          </Text>
-          <Text>{format(deadline * 1000, DEFAULT_DATE_TIME_FORMAT)}</Text>
-        </Flex>
+        <InfoRow
+          property={t('created')}
+          value={format(new Date(eventDate), DEFAULT_DATE_TIME_FORMAT)}
+        />
+        <InfoRow
+          property={t('proposalSummaryStartDate')}
+          value={format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}
+        />
+        <InfoRow
+          property={t('proposalSummaryEndDate')}
+          value={format(deadline * 1000, DEFAULT_DATE_TIME_FORMAT)}
+        />
         <Flex
           marginTop={4}
           marginBottom={4}
