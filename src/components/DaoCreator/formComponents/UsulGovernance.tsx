@@ -1,34 +1,19 @@
 // @todo Governance details
 // @todo refactor form object into 2 parts gnosis | usul
 
-import {
-  Alert,
-  AlertTitle,
-  Button,
-  Divider,
-  Flex,
-  InputGroup,
-  InputRightElement,
-  Text,
-} from '@chakra-ui/react';
+import { Alert, AlertTitle, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { BigNumberInput } from '../refactor/BigNumberInput';
 import { ICreationStepProps, CreatorSteps } from '../types';
 
 // @todo finish and deploy baby
-export function UsulGovernance({
-  values,
-  setFieldValue,
-  errors,
-  updateStep,
-  transactionPending,
-  isSubmitting,
-  isSubDAO,
-}: ICreationStepProps) {
+export function UsulGovernance(props: ICreationStepProps) {
+  const { values, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
   return (
@@ -110,25 +95,12 @@ export function UsulGovernance({
             </Text>
           </AlertTitle>
         </Alert>
-        <Divider color="chocolate.700" />
-        <Flex alignItems="center">
-          <Button
-            data-testid="create-prevButton"
-            variant="text"
-            onClick={() => updateStep(CreatorSteps.ESSENTIALS)}
-          >
-            {t('prev', { ns: 'common' })}
-          </Button>
-          <Button
-            w="full"
-            type={!isSubDAO ? 'submit' : 'button'}
-            onClick={() => (!isSubDAO ? {} : updateStep(CreatorSteps.GUARD_CONFIG))}
-            disabled={transactionPending || isSubmitting || !!errors.govModule}
-            data-testid="create-deployDAO"
-          >
-            {t(!isSubDAO ? 'deploy' : 'next', { ns: 'common' })}
-          </Button>
-        </Flex>
+        <StepButtons
+          {...props}
+          prevStep={CreatorSteps.ESSENTIALS}
+          nextStep={CreatorSteps.GUARD_CONFIG}
+          isLastStep={!isSubDAO}
+        />
       </Flex>
     </StepWrapper>
   );

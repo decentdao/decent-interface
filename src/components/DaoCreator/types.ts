@@ -4,14 +4,14 @@ import { FormikProps } from 'formik';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { TokenAllocation } from '../../types/tokenAllocation';
 
+//
 export enum CreatorSteps {
-  ESSENTIALS,
-  PURE_GNOSIS,
-  GNOSIS_GOVERNANCE,
-  GNOSIS_WITH_USUL,
-  GOV_CONFIG,
-  GUARD_CONFIG,
-  FUNDING,
+  ESSENTIALS = 'essentials',
+  GNOSIS_GOVERNANCE = 'gnosis',
+  GNOSIS_WITH_USUL = 'govToken',
+  GOV_CONFIG = 'govModule',
+  GUARD_CONFIG = 'vetoGuard',
+  FUNDING = 'funding',
 }
 
 export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {

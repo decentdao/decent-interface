@@ -1,16 +1,17 @@
-import { Button, Divider, Flex, Input } from '@chakra-ui/react';
+import { Flex, Input } from '@chakra-ui/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { BigNumberInput } from '../refactor/BigNumberInput';
 import { ICreationStepProps, CreatorSteps } from '../types';
 import { UsulTokenAllocations } from './UsulTokenAllocations';
 
 export function UsulTokenDetails(props: ICreationStepProps) {
-  const { values, errors, setFieldValue, updateStep } = props;
+  const { values, setFieldValue } = props;
   const { t } = useTranslation('daoCreate');
   const { restrictChars } = useFormHelpers();
   return (
@@ -62,24 +63,11 @@ export function UsulTokenDetails(props: ICreationStepProps) {
           />
         </LabelComponent>
         <UsulTokenAllocations {...props} />
-        <Divider color="chocolate.700" />
-        <Flex alignItems="center">
-          <Button
-            data-testid="create-prevButton"
-            variant="text"
-            onClick={() => updateStep(CreatorSteps.ESSENTIALS)}
-          >
-            {t('prev', { ns: 'common' })}
-          </Button>
-          <Button
-            w="full"
-            disabled={!!errors.govToken}
-            onClick={() => updateStep(CreatorSteps.GOV_CONFIG)}
-            data-testid="create-skipNextButton"
-          >
-            {t('next', { ns: 'common' })}
-          </Button>
-        </Flex>
+        <StepButtons
+          {...props}
+          prevStep={CreatorSteps.ESSENTIALS}
+          nextStep={CreatorSteps.GOV_CONFIG}
+        />
       </Flex>
     </StepWrapper>
   );

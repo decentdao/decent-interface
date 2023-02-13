@@ -1,19 +1,15 @@
-import { Box, Button, Divider, RadioGroup } from '@chakra-ui/react';
+import { Box, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { GovernanceTypes } from '../../../providers/Fractal/types';
 import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
+import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { ICreationStepProps, CreatorSteps } from '../types';
 
-export function EstablishEssentials({
-  values,
-  errors,
-  setFieldValue,
-  updateStep,
-}: ICreationStepProps) {
+export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-
+  const { values, setFieldValue } = props;
   // @todo update labels for subDAOs
   return (
     <StepWrapper titleKey="titleEssentials">
@@ -63,21 +59,14 @@ export function EstablishEssentials({
           </RadioGroup>
         </LabelComponent>
       </Box>
-      <Divider color="chocolate.700" />
-      <Button
-        w="full"
-        disabled={!!errors.essentials}
-        onClick={() =>
-          updateStep(
-            values.essentials.governance === GovernanceTypes.GNOSIS_SAFE
-              ? CreatorSteps.GNOSIS_GOVERNANCE
-              : CreatorSteps.GNOSIS_WITH_USUL
-          )
+      <StepButtons
+        {...props}
+        nextStep={
+          values.essentials.governance === GovernanceTypes.GNOSIS_SAFE
+            ? CreatorSteps.GNOSIS_GOVERNANCE
+            : CreatorSteps.GNOSIS_WITH_USUL
         }
-        data-testid="create-skipNextButton"
-      >
-        {t('next', { ns: 'common' })}
-      </Button>
+      />
     </StepWrapper>
   );
 }

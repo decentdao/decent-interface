@@ -1,13 +1,4 @@
-import {
-  Text,
-  InputGroup,
-  InputRightElement,
-  Flex,
-  Button,
-  Divider,
-  Alert,
-  AlertTitle,
-} from '@chakra-ui/react';
+import { Text, InputGroup, InputRightElement, Flex, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -17,23 +8,17 @@ import { GovernanceTypes } from '../../../providers/Fractal/types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { BigNumberInput } from '../refactor/BigNumberInput';
 import { BigNumberValuePair, CreatorSteps, ICreationStepProps } from '../types';
 
-function GuardDetails({
-  values,
-  errors,
-  updateStep,
-  transactionPending,
-  isSubmitting,
-  setFieldValue,
-}: ICreationStepProps) {
+function GuardDetails(props: ICreationStepProps) {
   const {
     gnosis: { safe },
     governance: { type, governanceToken, governanceIsLoading },
   } = useFractal();
-
+  const { values, setFieldValue } = props;
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
@@ -222,30 +207,15 @@ function GuardDetails({
             </Text>
           </AlertTitle>
         </Alert>
-        <Divider color="chocolate.700" />
-        <Flex alignItems="center">
-          <Button
-            data-testid="create-prevButton"
-            variant="text"
-            onClick={() =>
-              updateStep(
-                governance === GovernanceTypes.GNOSIS_SAFE
-                  ? CreatorSteps.GOV_CONFIG
-                  : CreatorSteps.GNOSIS_GOVERNANCE
-              )
-            }
-          >
-            {t('prev', { ns: 'common' })}
-          </Button>
-          <Button
-            w="full"
-            type="submit"
-            disabled={transactionPending || isSubmitting || !!errors.vetoGuard}
-            data-testid="create-deployDAO"
-          >
-            {t('deploy', { ns: 'common' })}
-          </Button>
-        </Flex>
+        <StepButtons
+          {...props}
+          prevStep={
+            governance === GovernanceTypes.GNOSIS_SAFE
+              ? CreatorSteps.GOV_CONFIG
+              : CreatorSteps.GNOSIS_GOVERNANCE
+          }
+          isLastStep
+        />
       </Flex>
     </StepWrapper>
   );

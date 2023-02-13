@@ -1,31 +1,16 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  Grid,
-  Input,
-  NumberInput,
-  NumberInputField,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldArray, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { CreatorSteps, ICreationStepProps } from '../types';
 
-export function GnosisMultisig({
-  values,
-  errors,
-  transactionPending,
-  isSubmitting,
-  setFieldValue,
-  isSubDAO,
-  updateStep,
-}: ICreationStepProps) {
+export function GnosisMultisig(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
+  const { values, errors, setFieldValue, isSubDAO } = props;
   const { restrictChars } = useFormHelpers();
 
   const handleSignersChanges = (numberStr: string) => {
@@ -140,25 +125,12 @@ export function GnosisMultisig({
           </LabelComponent>
         </Box>
       </Flex>
-      <Divider color="chocolate.700" />
-      <Flex alignItems="center">
-        <Button
-          data-testid="create-prevButton"
-          variant="text"
-          onClick={() => updateStep(CreatorSteps.ESSENTIALS)}
-        >
-          {t('prev', { ns: 'common' })}
-        </Button>
-        <Button
-          w="full"
-          type={!isSubDAO ? 'submit' : 'button'}
-          onClick={() => (!isSubDAO ? {} : updateStep(CreatorSteps.GUARD_CONFIG))}
-          disabled={transactionPending || isSubmitting || !!errors.gnosis}
-          data-testid="create-deployDAO"
-        >
-          {t(!isSubDAO ? 'deploy' : 'next', { ns: 'common' })}
-        </Button>
-      </Flex>
+      <StepButtons
+        {...props}
+        nextStep={CreatorSteps.GUARD_CONFIG}
+        prevStep={CreatorSteps.ESSENTIALS}
+        isLastStep={!isSubDAO}
+      />
     </StepWrapper>
   );
 }
