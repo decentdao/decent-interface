@@ -1,10 +1,10 @@
 import { Input, IconButton } from '@chakra-ui/react';
 import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, FormikErrors } from 'formik';
-import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
-import { TokenAllocation } from '../../types';
-import { BigNumberInput } from './refactor/BigNumberInput';
-import { BigNumberValuePair, ICreationStepProps } from './types';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
+import { TokenAllocation } from '../../../types';
+import { BigNumberInput } from '../refactor/BigNumberInput';
+import { BigNumberValuePair, ICreationStepProps } from '../types';
 
 interface ITokenAllocations extends ICreationStepProps {
   tokenAllocation: TokenAllocation<BigNumberValuePair>;

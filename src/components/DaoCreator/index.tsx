@@ -5,7 +5,7 @@ import { GovernanceTypes } from '../../providers/Fractal/types';
 import StepController from './StepController';
 import { initialState } from './constants';
 
-import { usePrepareFormData } from './prepare/usePrepareFormData';
+import { usePrepareFormData } from './hooks/usePrepareFormData';
 import { CreatorFormState, DAOTrigger } from './types';
 
 function DaoCreator({

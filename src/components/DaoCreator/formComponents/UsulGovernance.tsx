@@ -13,11 +13,11 @@ import {
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { LabelComponent } from '../ProposalCreate/InputComponent';
-import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
-import { StepWrapper } from './StepWrapper';
-import { BigNumberInput } from './refactor/BigNumberInput';
-import { ICreationStepProps, CreatorSteps } from './types';
+import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { StepWrapper } from '../StepWrapper';
+import { BigNumberInput } from '../refactor/BigNumberInput';
+import { ICreationStepProps, CreatorSteps } from '../types';
 
 // @todo finish and deploy baby
 export function UsulGovernance({

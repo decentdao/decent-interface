@@ -11,10 +11,10 @@ import {
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldArray, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
-import { LabelComponent } from '../ProposalCreate/InputComponent';
-import { StepWrapper } from './StepWrapper';
-import { CreatorSteps, ICreationStepProps } from './types';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
+import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import { StepWrapper } from '../StepWrapper';
+import { CreatorSteps, ICreationStepProps } from '../types';
 
 export function GnosisMultisig({
   values,

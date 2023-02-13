@@ -2,9 +2,9 @@ import { Box, Grid, Text, Button } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { FieldArray } from 'formik';
 import { useTranslation } from 'react-i18next';
-import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { ICreationStepProps } from '../types';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
-import { ICreationStepProps } from './types';
 
 export function UsulTokenAllocations({ values, errors, ...rest }: ICreationStepProps) {
   // @todo add parentTokenAllocation back

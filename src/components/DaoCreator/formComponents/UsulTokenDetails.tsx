@@ -1,13 +1,13 @@
 import { Button, Divider, Flex, Input } from '@chakra-ui/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../hooks/utils/useFormHelpers';
-import { LabelComponent } from '../ProposalCreate/InputComponent';
-import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
-import { StepWrapper } from './StepWrapper';
+import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
+import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { StepWrapper } from '../StepWrapper';
+import { BigNumberInput } from '../refactor/BigNumberInput';
+import { ICreationStepProps, CreatorSteps } from '../types';
 import { UsulTokenAllocations } from './UsulTokenAllocations';
-import { BigNumberInput } from './refactor/BigNumberInput';
-import { ICreationStepProps, CreatorSteps } from './types';
 
 export function UsulTokenDetails(props: ICreationStepProps) {
   const { values, errors, setFieldValue, updateStep } = props;

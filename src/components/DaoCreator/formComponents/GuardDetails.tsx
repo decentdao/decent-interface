@@ -12,14 +12,14 @@ import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../providers/Fractal/types';
-import { formatBigNumberDisplay } from '../../utils/numberFormats';
-import { LabelComponent } from '../ProposalCreate/InputComponent';
-import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
-import { StepWrapper } from './StepWrapper';
-import { BigNumberInput } from './refactor/BigNumberInput';
-import { BigNumberValuePair, CreatorSteps, ICreationStepProps } from './types';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../../providers/Fractal/types';
+import { formatBigNumberDisplay } from '../../../utils/numberFormats';
+import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { StepWrapper } from '../StepWrapper';
+import { BigNumberInput } from '../refactor/BigNumberInput';
+import { BigNumberValuePair, CreatorSteps, ICreationStepProps } from '../types';
 
 function GuardDetails({
   values,
