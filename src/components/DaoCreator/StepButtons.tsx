@@ -39,7 +39,7 @@ export function StepButtons({
           type={buttonType}
           disabled={transactionPending || isSubmitting || !!errors[step]}
           onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
-          data-testid="create-skipNextButton"
+          data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
         >
           {forwardButtonTest}
         </Button>
