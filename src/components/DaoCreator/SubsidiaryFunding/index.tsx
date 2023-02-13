@@ -1,4 +1,5 @@
 import { Button, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { CloseSolid } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -8,7 +9,6 @@ import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInpu
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../ui/links/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../ui/links/EtherscanLinkToken';
-import { Close } from '../../ui/svg/Close';
 import { TableRow } from '../../ui/table';
 import { TableBodyRowItem } from '../../ui/table/TableBodyRow';
 import { FundingTableHeader, NFTFundingTableHeader } from '../../ui/table/TableHeaders';
@@ -191,7 +191,7 @@ export function SubsidiaryFunding() {
                 </InputRightElement>
               </InputGroup>
               <div onClick={() => removeTokenFund(index)}>
-                <Close />
+                <CloseSolid />
               </div>
             </TableRow>
           ))}
@@ -230,7 +230,7 @@ export function SubsidiaryFunding() {
                 </EtherscanLinkNFT>
               </div>
               <div onClick={() => removeNFTFund(index)}>
-                <Close />
+                <CloseSolid />
               </div>
             </TableRow>
           ))}

@@ -1,9 +1,9 @@
 import { Box, Button, Center, Flex, Link, Text } from '@chakra-ui/react';
+import { Alert } from '@decent-org/fractal-ui';
 import { Trans, useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
 import { InfoBox } from '../containers/InfoBox';
-import Alert from '../svg/Alert';
 
 export function ErrorFallback() {
   const { t } = useTranslation();

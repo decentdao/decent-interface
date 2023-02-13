@@ -1,4 +1,5 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Vote, Execute, Lock } from '@decent-org/fractal-ui';
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,9 +12,6 @@ import {
   TxProposalState,
   VetoGuardType,
 } from '../../../providers/Fractal/types';
-import Execute from '../svg/Execute';
-import Lock from '../svg/Lock';
-import Vote from '../svg/Vote';
 
 const ICONS_MAP = {
   vote: Vote,
