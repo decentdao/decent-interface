@@ -2,7 +2,12 @@ import { FractalUsul__factory, FractalUsul } from '@fractal-framework/fractal-co
 import { useState, useEffect, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { GnosisModuleType } from '../../../providers/Fractal/types';
+import { GnosisModuleType, IGnosisModuleData } from '../../../providers/Fractal/types';
+
+export function getUsulModuleFromModules(modules: IGnosisModuleData[]) {
+  const usulModule = modules.find(module => module.moduleType === GnosisModuleType.USUL);
+  return usulModule;
+}
 
 export default function useUsul() {
   const [usulContract, setUsulContract] = useState<FractalUsul>();
@@ -22,7 +27,7 @@ export default function useUsul() {
         return;
       }
 
-      const usulModule = modules.find(module => module.moduleType === GnosisModuleType.USUL);
+      const usulModule = getUsulModuleFromModules(modules);
 
       if (!usulModule) {
         return;
