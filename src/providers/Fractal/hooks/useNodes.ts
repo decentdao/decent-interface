@@ -17,7 +17,11 @@ export default function useNodes({
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { fractalRegistryContract, gnosisVetoGuardMasterCopyContract } = useSafeContracts();
+  const {
+    fractalRegistryContract,
+    gnosisVetoGuardMasterCopyContract,
+    usulVetoGuardMasterCopyContract,
+  } = useSafeContracts();
 
   const { modules, safe, safeService } = gnosis;
 
@@ -44,12 +48,12 @@ export default function useNodes({
           }
         } else {
           const usulModule = getUsulModuleFromModules(modules);
-          if (usulModule) {
+          if (usulModule && usulVetoGuardMasterCopyContract) {
             const usulContract = FractalUsul__factory.connect(
               usulModule.moduleAddress,
               signerOrProvider
             );
-            const guard = gnosisVetoGuardMasterCopyContract.asSigner.attach(
+            const guard = usulVetoGuardMasterCopyContract.asSigner.attach(
               await usulContract.getGuard()
             );
             const guardOwner = await guard.owner();
@@ -61,7 +65,7 @@ export default function useNodes({
       }
       return undefined;
     },
-    [gnosisVetoGuardMasterCopyContract, modules, signerOrProvider]
+    [gnosisVetoGuardMasterCopyContract, usulVetoGuardMasterCopyContract, modules, signerOrProvider]
   );
 
   const mapSubDAOsToOwnedSubDAOs = useCallback(
