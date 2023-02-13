@@ -1,5 +1,8 @@
+import { FractalUsul__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { Dispatch, useEffect, useCallback } from 'react';
+import { Dispatch, useEffect, useCallback, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
+import { getUsulModuleFromModules } from '../../../hooks/DAO/proposal/useUsul';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import { IGnosis, GnosisActions, SafeInfoResponseWithGuard, ChildNode } from '../types';
@@ -11,7 +14,14 @@ export default function useNodes({
   gnosis: IGnosis;
   gnosisDispatch: Dispatch<GnosisActions>;
 }) {
-  const { fractalRegistryContract, gnosisVetoGuardMasterCopyContract } = useSafeContracts();
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const {
+    fractalRegistryContract,
+    gnosisVetoGuardMasterCopyContract,
+    usulVetoGuardMasterCopyContract,
+  } = useSafeContracts();
 
   const { modules, safe, safeService } = gnosis;
 
@@ -36,11 +46,26 @@ export default function useNodes({
           if (guardOwner !== safeInfo.address) {
             return guardOwner;
           }
+        } else {
+          const usulModule = getUsulModuleFromModules(modules);
+          if (usulModule && usulVetoGuardMasterCopyContract) {
+            const usulContract = FractalUsul__factory.connect(
+              usulModule.moduleAddress,
+              signerOrProvider
+            );
+            const guard = usulVetoGuardMasterCopyContract.asSigner.attach(
+              await usulContract.getGuard()
+            );
+            const guardOwner = await guard.owner();
+            if (guardOwner !== safeInfo.address) {
+              return guardOwner;
+            }
+          }
         }
       }
       return undefined;
     },
-    [gnosisVetoGuardMasterCopyContract]
+    [gnosisVetoGuardMasterCopyContract, usulVetoGuardMasterCopyContract, modules, signerOrProvider]
   );
 
   const mapSubDAOsToOwnedSubDAOs = useCallback(
