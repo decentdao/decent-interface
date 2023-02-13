@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
 import {
   AddressValidationMap,
@@ -23,6 +23,8 @@ export function useDAOCreateTests() {
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
   const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = signer || provider;
   const { t } = useTranslation(['daoCreate', 'common']);
 
   const allocationValidationTest = useMemo(() => {
@@ -31,14 +33,14 @@ export function useDAOCreateTests() {
       message: t('errorInvalidENSAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
         if (!address) return false;
-        const { validation } = await validateAddress({ provider, address });
+        const { validation } = await validateAddress({ signerOrProvider, address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
         return validation.isValidAddress;
       },
     };
-  }, [provider, addressValidationMap, t]);
+  }, [signerOrProvider, addressValidationMap, t]);
 
   const uniqueAllocationValidationTest = useMemo(() => {
     return {
@@ -54,7 +56,8 @@ export function useDAOCreateTests() {
         // looks up tested value
         let inputValidation = addressValidationMap.current.get(value);
         if (!!value && !inputValidation) {
-          inputValidation = (await validateAddress({ provider, address: value })).validation;
+          inputValidation = (await validateAddress({ signerOrProvider, address: value }))
+            .validation;
         }
         // converts all inputs to addresses to compare
         // uses addressValidationMap to save on requests
@@ -67,7 +70,7 @@ export function useDAOCreateTests() {
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
             if (address && address.endsWith('.eth')) {
-              const { validation } = await validateAddress({ provider, address });
+              const { validation } = await validateAddress({ signerOrProvider, address });
               return validation.address;
             }
             return address;
@@ -80,7 +83,7 @@ export function useDAOCreateTests() {
         return uniqueFilter.length === 1;
       },
     };
-  }, [provider, t]);
+  }, [signerOrProvider, t]);
   const maxAllocationValidation = useMemo(() => {
     return {
       name: 'Token Supply validation',

@@ -1,20 +1,20 @@
-import { utils } from 'ethers';
+import { Signer, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
 import { AddressValidationMap } from '../../../components/DaoCreator/types';
 import { Providers } from '../../../providers/Fractal/types/ethers';
 
 export async function validateAddress({
-  provider,
+  signerOrProvider,
   address,
 }: {
-  provider: Providers;
+  signerOrProvider: Signer | Providers;
   address: string;
 }) {
   if (!!address && address.trim() && address.endsWith('.eth')) {
-    const resolvedAddress = await provider.resolveName(address).catch();
+    const resolvedAddress = await signerOrProvider.resolveName(address).catch();
     if (resolvedAddress) {
       return {
         validation: {
@@ -62,6 +62,8 @@ export const useValidationAddress = () => {
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
   const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = signer || provider;
   const { t } = useTranslation(['daoCreate', 'common']);
 
   const addressValidationTest = useMemo(() => {
@@ -70,14 +72,14 @@ export const useValidationAddress = () => {
       message: t('errorInvalidENSAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
         if (!address) return false;
-        const { validation } = await validateAddress({ provider, address });
+        const { validation } = await validateAddress({ signerOrProvider, address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
         return validation.isValidAddress;
       },
     };
-  }, [provider, addressValidationMap, t]);
+  }, [signerOrProvider, addressValidationMap, t]);
 
   const uniqueAddressValidationTest = useMemo(() => {
     return {
@@ -91,7 +93,8 @@ export const useValidationAddress = () => {
         // looks up tested value
         let inputValidation = addressValidationMap.current.get(value);
         if (!!value && !inputValidation) {
-          inputValidation = (await validateAddress({ provider, address: value })).validation;
+          inputValidation = (await validateAddress({ signerOrProvider, address: value }))
+            .validation;
         }
         // converts all inputs to addresses to compare
         // uses addressValidationMap to save on requests
@@ -104,7 +107,7 @@ export const useValidationAddress = () => {
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
             if (address && address.endsWith('.eth')) {
-              const { validation } = await validateAddress({ provider, address });
+              const { validation } = await validateAddress({ signerOrProvider, address });
               return validation.address;
             }
             return address;
@@ -118,7 +121,7 @@ export const useValidationAddress = () => {
         return uniqueFilter.length === 1;
       },
     };
-  }, [provider, t]);
+  }, [signerOrProvider, t]);
 
   return {
     addressValidationTest,
