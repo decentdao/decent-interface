@@ -4,7 +4,6 @@ import { BigNumberValuePair, CreatorFormState, CreatorSteps } from './types';
 
 export const CREATOR_STEP_TITLE_KEYS = {
   [CreatorSteps.ESSENTIALS]: 'titleEssentials',
-  [CreatorSteps.PURE_GNOSIS]: 'titleSafeConfig',
   [CreatorSteps.GNOSIS_WITH_USUL]: 'titleUsulConfig',
   [CreatorSteps.GNOSIS_GOVERNANCE]: 'titleGnosis',
   [CreatorSteps.GOV_CONFIG]: 'titleGovConfig',
