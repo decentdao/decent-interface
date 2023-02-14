@@ -3,11 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
-import {
-  AddressValidationMap,
-  BigNumberValuePair,
-  CreatorFormState,
-} from '../../../components/DaoCreator/types';
+import { AddressValidationMap, CreatorFormState } from '../../../components/DaoCreator/types';
 import { TokenAllocation } from '../../../types';
 import { validateAddress } from '../common/useValidationAddress';
 
@@ -91,18 +87,19 @@ export function useDAOCreateTests() {
       test: function (value: string | undefined, context: AnyObject) {
         if (!value) return false;
 
-        const formData: CreatorFormState<BigNumberValuePair> = context.from.reverse()[0].value;
+        const formData: CreatorFormState = context.from.reverse()[0].value;
         const tokenSupply = formData.govToken.tokenSupply.bigNumberValue as BigNumber;
         const tokenAllocations = formData.govToken.tokenAllocations;
         const parentAllocationAmount =
           formData.govToken.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
 
         const filteredAllocations = tokenAllocations.filter(
-          allocation => !allocation.amount.bigNumberValue.isZero()
+          allocation =>
+            allocation.amount.bigNumberValue && !allocation.amount.bigNumberValue.isZero()
         );
 
         const allocationSum = filteredAllocations.reduce(
-          (prev, cur) => prev.add(cur.amount.bigNumberValue),
+          (prev, cur) => prev.add(cur.amount.bigNumberValue!),
           BigNumber.from(0)
         );
 

@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { TokenAllocation } from '../../types/tokenAllocation';
+import { BigNumberValuePair } from '../ui/forms/BigNumberInput';
 
 //
 export enum CreatorSteps {
@@ -89,11 +90,6 @@ export type AddressValidation = {
   address: string;
   isValidAddress: boolean;
 };
-
-export interface BigNumberValuePair {
-  value: string;
-  bigNumberValue: BigNumber;
-}
 
 export type TokenToFund = {
   asset: SafeBalanceUsdResponse;

@@ -11,9 +11,9 @@ import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { BigNumberInput } from '../refactor/BigNumberInput';
 import { ICreationStepProps, CreatorSteps } from '../types';
 
 export function UsulGovernance(props: ICreationStepProps) {
@@ -34,7 +34,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.votingPeriod.value}
+              value={values.govModule.votingPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.votingPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -57,7 +57,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.quorumPercentage.value}
+              value={values.govModule.quorumPercentage.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.quorumPercentage', valuePair)}
               max="100"
               decimalPlaces={0}
@@ -73,7 +73,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.timelock.value}
+              value={values.govModule.timelock.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.timelock', valuePair)}
               decimalPlaces={0}
               data-testid="govConfig-timelock"

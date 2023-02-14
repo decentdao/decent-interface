@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useSigner } from 'wagmi';
-import { BigNumberValuePair, DAOVetoGuardConfig, GnosisDAO, TokenGovernanceDAO } from '../types';
+import { BigNumberValuePair } from '../../ui/forms/BigNumberInput';
+import { DAOVetoGuardConfig, GnosisDAO, TokenGovernanceDAO } from '../types';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
@@ -23,12 +24,12 @@ export function usePrepareFormData() {
       let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
       if (vetoGuard) {
         vetoGuardData = {
-          executionPeriod: vetoGuard.executionPeriod.bigNumberValue,
-          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue,
-          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue,
-          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue,
-          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue,
-          freezePeriod: vetoGuard.freezePeriod.bigNumberValue,
+          executionPeriod: vetoGuard.executionPeriod.bigNumberValue!,
+          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue!,
+          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue!,
+          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue!,
+          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue!,
+          freezePeriod: vetoGuard.freezePeriod.bigNumberValue!,
         };
       }
       return {
@@ -59,26 +60,26 @@ export function usePrepareFormData() {
           if (address.endsWith('.eth')) {
             address = await signer!.resolveName(allocation.address);
           }
-          return { amount: allocation.amount.bigNumberValue, address: address };
+          return { amount: allocation.amount.bigNumberValue!, address: address };
         })
       );
       let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
       if (vetoGuard) {
         vetoGuardData = {
-          executionPeriod: vetoGuard.executionPeriod.bigNumberValue,
-          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue,
-          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue,
-          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue,
-          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue,
-          freezePeriod: vetoGuard.freezePeriod.bigNumberValue,
+          executionPeriod: vetoGuard.executionPeriod.bigNumberValue!,
+          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue!,
+          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue!,
+          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue!,
+          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue!,
+          freezePeriod: vetoGuard.freezePeriod.bigNumberValue!,
         };
       }
       return {
-        tokenSupply: tokenSupply.bigNumberValue,
-        parentAllocationAmount: parentAllocationAmount?.bigNumberValue,
-        quorumPercentage: quorumPercentage.bigNumberValue,
-        timelock: timelock.bigNumberValue,
-        votingPeriod: votingPeriod.bigNumberValue,
+        tokenSupply: tokenSupply.bigNumberValue!,
+        parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
+        quorumPercentage: quorumPercentage.bigNumberValue!,
+        timelock: timelock.bigNumberValue!,
+        votingPeriod: votingPeriod.bigNumberValue!,
         tokenAllocations: resolvedTokenAllocations,
         ...vetoGuardData,
         ...rest,

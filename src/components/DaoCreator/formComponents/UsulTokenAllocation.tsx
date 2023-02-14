@@ -3,8 +3,8 @@ import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, FormikErrors } from 'formik';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { TokenAllocation } from '../../../types';
-import { BigNumberInput } from '../refactor/BigNumberInput';
-import { BigNumberValuePair, ICreationStepProps } from '../types';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
+import { ICreationStepProps } from '../types';
 
 interface ITokenAllocations extends ICreationStepProps {
   tokenAllocation: TokenAllocation<BigNumberValuePair>;
@@ -32,7 +32,7 @@ export function UsulTokenAllocation({
       ? indexedTokenAllocationError.address
       : null;
   const amountErrorMessage =
-    indexedTokenAllocationError?.amount?.value && !tokenAllocation.amount.bigNumberValue.isZero()
+    indexedTokenAllocationError?.amount?.value && !tokenAllocation.amount.bigNumberValue?.isZero()
       ? indexedTokenAllocationError.amount.value
       : null;
   return (
@@ -53,7 +53,7 @@ export function UsulTokenAllocation({
       </LabelWrapper>
       <LabelWrapper errorMessage={amountErrorMessage}>
         <BigNumberInput
-          value={values.govToken.tokenAllocations[index].amount.value}
+          value={values.govToken.tokenAllocations[index].amount.bigNumberValue}
           onChange={valuePair =>
             setFieldValue(`govToken.tokenAllocations.${index}.amount`, valuePair)
           }
