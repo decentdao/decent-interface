@@ -26,10 +26,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
       />
       <Box my={8}>
         <LabelComponent
-          label="Choose Governance"
-          helper="Short description around governance 
-        and a link to learn more"
-          isRequired={true}
+          label={'labelChooseGovernance'}
+          helper={'helperChooseGovernance'}
+          isRequired
         >
           <RadioGroup
             bg="black.900-semi-transparent"

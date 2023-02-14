@@ -24,6 +24,8 @@
     "labelSelectToken": "Select Token",
     "labelSelectNFT": "Select NFT",
     "labelVotingPeriod": "Voting Period",
+    "labelChooseGovernance": "Choose Governance",
+    "helperChooseGovernance": "What type of governance would you like?",
     "exampleVotingPeriod": "10,080 minutes = 1 week",
     "helperVotingPeriod": "The length of time (in minutes) voting is allowed after proposal creation",
     "helperQuorum": "The percentage of total possible token votes required to pass a proposal",
