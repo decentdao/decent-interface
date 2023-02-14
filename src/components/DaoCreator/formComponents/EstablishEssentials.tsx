@@ -18,7 +18,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
         helper={t('helperFractalName')}
         isRequired={true}
         value={values.essentials.daoName}
-        id="essentials-daoName"
+        id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
         disabled={false}
         placeholder={t('daoNamePlaceholder')}
