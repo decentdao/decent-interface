@@ -1,57 +1,36 @@
-import { Box, Grid, Text, Button } from '@chakra-ui/react';
+import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Button,
+  Grid,
+  Text,
+} from '@chakra-ui/react';
+import { Gear } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { FieldArray } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput } from '../refactor/BigNumberInput';
 import { ICreationStepProps } from '../types';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
 
-export function UsulTokenAllocations({ values, errors, ...rest }: ICreationStepProps) {
-  // @todo add parentTokenAllocation back
-
-  // useEffect(() => {
-  //   const totalAllocated = tokenAllocations
-  //     .map(tokenAllocation => tokenAllocation.amount || BigNumber.from(0))
-  //     .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
-  //   if (supply && supply.gt(0)) {
-  //     // no DAO token allocation with no parent allocations
-  //     if (totalAllocated.gt(0) && !parentAllocationAmount?.lte(0)) {
-  //       setAmountError(supply.lt(totalAllocated));
-  //       // parent tokens allocated but no DAO token allocation
-  //     } else if (parentAllocationAmount?.gt(0) && totalAllocated.lte(0)) {
-  //       setAmountError(supply.lt(parentAllocationAmount));
-  //       // parent tokens allocated with DAO token allocation
-  //     } else if (parentAllocationAmount?.gt(0) && totalAllocated.gt(0)) {
-  //       setAmountError(supply.lt(totalAllocated.add(parentAllocationAmount)));
-  //     } else {
-  //       // no allocation set amount error to false
-  //       setAmountError(false);
-  //     }
-  //   }
-  // }, [tokenAllocations, supply, parentAllocationAmount]);
-
+export function UsulTokenAllocations(props: ICreationStepProps) {
+  const { values, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation('daoCreate');
+  const {
+    governance: { governanceToken },
+  } = useFractal();
 
+  const canReceiveParentAllocations = isSubDAO && governanceToken?.address;
   return (
     <Box>
       <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
-      {/* {canReceiveParentAllocations && !!parentAllocationAmount && (
-        <InputBox>
-          <LabelWrapper
-            label={t('labelParentAllocation')}
-            subLabel={t('helperParentAllocation')}
-            errorMessage={hasAmountError ? t('errorOverallocated') : ''}
-          >
-            <BigNumberInput
-              data-testid="tokenVoting-parentTokenAllocationInput"
-              value={parentAllocationAmount}
-              onChange={onParentAllocationChange}
-              decimalPlaces={0}
-              isInvalid={hasAmountError}
-            />
-          </LabelWrapper>
-        </InputBox>
-      )} */}
+
       <FieldArray name="govToken.tokenAllocations">
         {({ remove, push }) => (
           <Box my={4}>
@@ -81,11 +60,9 @@ export function UsulTokenAllocations({ values, errors, ...rest }: ICreationStepP
                 <UsulTokenAllocation
                   key={index}
                   index={index}
-                  values={values}
-                  errors={errors}
                   remove={remove}
-                  {...rest}
                   tokenAllocation={tokenAllocation}
+                  {...props}
                 />
               ))}
             </Grid>
@@ -95,6 +72,50 @@ export function UsulTokenAllocations({ values, errors, ...rest }: ICreationStepP
             >
               {t('helperAllocations')}
             </Text>
+            {canReceiveParentAllocations && (
+              <Accordion allowToggle>
+                <AccordionItem
+                  borderTop="none"
+                  borderBottom="none"
+                  bg="black.900-semi-transparent"
+                  my={8}
+                  py={4}
+                  rounded="lg"
+                >
+                  {({ isExpanded }) => (
+                    <>
+                      <AccordionButton
+                        textStyle="text-button-md-semibold"
+                        color="grayscale.100"
+                      >
+                        <Gear
+                          marginRight={3}
+                          transform={`rotate(-${isExpanded ? '0' : '90'}deg)`}
+                        />
+                        {t('advanced', { ns: 'common' })}
+                      </AccordionButton>
+                      <AccordionPanel paddingBottom={4}>
+                        <LabelComponent
+                          label={t('labelParentAllocation')}
+                          helper={t('helperParentAllocation')}
+                          isRequired={false}
+                        >
+                          <BigNumberInput
+                            data-testid="tokenVoting-parentTokenAllocationInput"
+                            value={values.govToken.parentAllocationAmount?.value || ''}
+                            onChange={valuePair =>
+                              setFieldValue('govToken.parentAllocationAmount', valuePair)
+                            }
+                            decimalPlaces={0}
+                            isInvalid={false}
+                          />
+                        </LabelComponent>
+                      </AccordionPanel>
+                    </>
+                  )}
+                </AccordionItem>
+              </Accordion>
+            )}
             <Button
               size="base"
               maxWidth="fit-content"
