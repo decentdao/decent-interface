@@ -1,5 +1,5 @@
 import { Text, Button, Flex } from '@chakra-ui/react';
-import { CloseX } from '@decent-org/fractal-ui';
+import { CloseX, Check } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,6 @@ import {
 } from '../../../providers/Fractal/types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
-import Check from '../../ui/svg/Check';
 
 function Vote({ proposal }: { proposal: TxProposal }) {
   const [pending, setPending] = useState<boolean>(false);
