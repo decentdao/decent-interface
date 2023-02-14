@@ -1,4 +1,4 @@
-import { Box, RadioGroup } from '@chakra-ui/react';
+import { Box, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { GovernanceTypes } from '../../../providers/Fractal/types';
 import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
@@ -58,6 +58,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           </RadioGroup>
         </LabelComponent>
       </Box>
+      <Divider color="chocolate.700" />
       <StepButtons
         {...props}
         nextStep={

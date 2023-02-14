@@ -1,4 +1,12 @@
-import { Text, InputGroup, InputRightElement, Flex, Alert, AlertTitle } from '@chakra-ui/react';
+import {
+  Text,
+  InputGroup,
+  InputRightElement,
+  Flex,
+  Alert,
+  AlertTitle,
+  Divider,
+} from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -207,6 +215,7 @@ function GuardDetails(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
+        <Divider color="chocolate.700" />
         <StepButtons
           {...props}
           prevStep={

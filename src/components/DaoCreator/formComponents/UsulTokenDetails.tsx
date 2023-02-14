@@ -1,4 +1,4 @@
-import { Flex, Input } from '@chakra-ui/react';
+import { Divider, Flex, Input } from '@chakra-ui/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -62,7 +62,9 @@ export function UsulTokenDetails(props: ICreationStepProps) {
             onKeyDown={restrictChars}
           />
         </LabelComponent>
+        <Divider color="chocolate.700" />
         <UsulTokenAllocations {...props} />
+        <Divider color="chocolate.700" />
         <StepButtons
           {...props}
           prevStep={CreatorSteps.ESSENTIALS}

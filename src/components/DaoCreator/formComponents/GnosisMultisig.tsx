@@ -1,4 +1,13 @@
-import { Box, Button, Flex, Grid, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  Grid,
+  Input,
+  NumberInput,
+  NumberInputField,
+} from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldArray, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -125,6 +134,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
           </LabelComponent>
         </Box>
       </Flex>
+      <Divider color="chocolate.700" />
       <StepButtons
         {...props}
         nextStep={CreatorSteps.GUARD_CONFIG}

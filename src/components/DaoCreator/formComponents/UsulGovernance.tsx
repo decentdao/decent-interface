@@ -1,7 +1,12 @@
-// @todo Governance details
-// @todo refactor form object into 2 parts gnosis | usul
-
-import { Alert, AlertTitle, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertTitle,
+  Divider,
+  Flex,
+  InputGroup,
+  InputRightElement,
+  Text,
+} from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
@@ -11,7 +16,6 @@ import { StepWrapper } from '../StepWrapper';
 import { BigNumberInput } from '../refactor/BigNumberInput';
 import { ICreationStepProps, CreatorSteps } from '../types';
 
-// @todo finish and deploy baby
 export function UsulGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation(['daoCreate', 'common']);
@@ -95,6 +99,7 @@ export function UsulGovernance(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
+        <Divider color="chocolate.700" />
         <StepButtons
           {...props}
           prevStep={CreatorSteps.ESSENTIALS}

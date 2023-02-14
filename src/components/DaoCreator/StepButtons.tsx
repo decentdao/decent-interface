@@ -1,4 +1,4 @@
-import { Divider, Flex, Button } from '@chakra-ui/react';
+import { Flex, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { CreatorSteps, ICreationStepProps } from './types';
 interface IStepButtons extends ICreationStepProps {
@@ -22,28 +22,25 @@ export function StepButtons({
   const forwardButtonTest = t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
   const buttonType = isLastStep ? 'submit' : 'button';
   return (
-    <>
-      <Divider color="chocolate.700" />
-      <Flex alignItems="center">
-        {prevStep && (
-          <Button
-            data-testid="create-prevButton"
-            variant="text"
-            onClick={() => updateStep(prevStep)}
-          >
-            {t('prev', { ns: 'common' })}
-          </Button>
-        )}
+    <Flex alignItems="center">
+      {prevStep && (
         <Button
-          w="full"
-          type={buttonType}
-          disabled={transactionPending || isSubmitting || !!errors[step]}
-          onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
-          data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
+          data-testid="create-prevButton"
+          variant="text"
+          onClick={() => updateStep(prevStep)}
         >
-          {forwardButtonTest}
+          {t('prev', { ns: 'common' })}
         </Button>
-      </Flex>
-    </>
+      )}
+      <Button
+        w="full"
+        type={buttonType}
+        disabled={transactionPending || isSubmitting || !!errors[step]}
+        onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
+        data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
+      >
+        {forwardButtonTest}
+      </Button>
+    </Flex>
   );
 }
