@@ -1,14 +1,14 @@
 import {
   Box,
-  Button,
   Divider,
   Flex,
   Grid,
+  IconButton,
   Input,
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
+import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldArray, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -117,15 +117,23 @@ export function GnosisMultisig(props: ICreationStepProps) {
                           </Field>
                         </LabelWrapper>
                         {values.gnosis.trustedAddresses.length > 1 && (
-                          <Button
-                            variant="text"
+                          <IconButton
+                            aria-label="remove allocation"
+                            variant="unstyled"
+                            minW={16}
+                            icon={
+                              <Trash
+                                color="gold.500"
+                                boxSize="1.5rem"
+                              />
+                            }
+                            type="button"
                             onClick={() => {
                               setFieldValue('gnosis.numOfSigners', --values.gnosis.numOfSigners);
                               remove(i);
                             }}
-                          >
-                            {t('remove')}
-                          </Button>
+                            data-testid={'gnosis.numOfSigners-' + i}
+                          />
                         )}
                       </Grid>
                     );
