@@ -41,6 +41,7 @@ function DAOChildNodes({
               indentFactor={!!parentDAOAddress ? 4 : 1}
             />
             <DAONodeCard
+              parentSafeAddress={parentDAOAddress}
               safeAddress={node.address}
               expanded={false}
             />
@@ -108,6 +109,7 @@ export function FractalNodes() {
         )}
         {isParentExpanded && (
           <DAONodeCard
+            parentSafeAddress={parentDAOAddress}
             safeAddress={safe.address}
             toggleExpansion={!!childNodes?.length ? childrenExpansionToggle : undefined}
             expanded={isChildrenExpanded}

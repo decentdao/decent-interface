@@ -19,6 +19,7 @@ import { DAO_ROUTES } from '../../../routes/constants';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
+  parentSafeAddress?: string;
   safeAddress: string;
   toggleExpansion?: () => void;
   expanded?: boolean;
@@ -27,6 +28,7 @@ interface IDAOInfoCard {
 }
 
 export function DAOInfoCard({
+  parentSafeAddress,
   safeAddress,
   toggleExpansion,
   expanded,
@@ -142,6 +144,7 @@ export function DAOInfoCard({
       {/* Veritical Elipsis */}
       {canManageDAO && (
         <ManageDAOMenu
+          parentSafeAddress={parentSafeAddress}
           safeAddress={safeAddress}
           freezeData={freezeData}
           guardContracts={guardContracts}

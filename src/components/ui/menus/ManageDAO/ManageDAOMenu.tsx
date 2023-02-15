@@ -6,22 +6,31 @@ import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
+import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../../../routes/constants';
 import { OptionMenu } from '../OptionMenu';
 
-export function ManageDAOMenu({
-  safeAddress,
-  freezeData,
-  guardContracts,
-}: {
+interface IManageDAOMenu {
+  parentSafeAddress?: string;
   safeAddress: string;
   freezeData?: IGnosisFreezeData;
   guardContracts: IGnosisVetoContract;
-}) {
+}
+
+export function ManageDAOMenu({
+  parentSafeAddress,
+  safeAddress,
+  freezeData,
+  guardContracts,
+}: IManageDAOMenu) {
   const navigate = useNavigate();
   const currentTime = BigNumber.from(useBlockTimestamp());
+  const { handleClawBack } = useClawBack({
+    parentSafeAddress,
+    childSafeAddress: safeAddress,
+  });
 
   const options = useMemo(() => {
     const createSubDAOOption = {
@@ -54,17 +63,23 @@ export function ManageDAOMenu({
         freezeData.freezePeriod,
         currentTime
       ) &&
+      !isWithinFreezeProposalPeriod(
+        freezeData.freezeProposalCreatedTime,
+        freezeData.freezeProposalPeriod,
+        currentTime
+      ) &&
       freezeData.userHasVotes
     ) {
-      const clawbackOption = {
+      const clawBackOption = {
         optionKey: 'optionInitiateClawback',
-        onClick: () => null,
+        onClick: handleClawBack,
       };
-      return [clawbackOption];
+
+      return [clawBackOption];
     } else {
       return [createSubDAOOption];
     }
-  }, [safeAddress, navigate, guardContracts, freezeData, currentTime]);
+  }, [safeAddress, navigate, guardContracts, handleClawBack, freezeData, currentTime]);
 
   return (
     <OptionMenu

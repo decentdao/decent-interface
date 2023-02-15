@@ -105,6 +105,9 @@
     "votingTooltip": "Time remaining to cast your vote.",
     "timeLockedTooltip": "This proposal is queued. Execution will be possible once queueing period will be passed.",
     "executableTooltip": "Time remaining to execute this proposal",
-    "learnMore": "Learn More"
+    "learnMore": "Learn More",
+    "clawBackPendingToastMessage": "Creating Clawback proposal...",
+    "clawBackSuccessToastMessage": "Clawback proposal successfully created!",
+    "clawBackFailedToastMessage": "Error while creating Clawback proposal."
 
 }
