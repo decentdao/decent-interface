@@ -22,7 +22,10 @@ export function GnosisMultisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubDAO } = props;
   const { restrictChars } = useFormHelpers();
 
-  const handleSignersChanges = (numberStr: string) => {
+  const handleSignersChanges = (_: string, numberStr: number) => {
+    if (numberStr === 0 || !numberStr) {
+      return;
+    }
     let numOfSigners = Number(numberStr);
     // greater than 100 signers is unreasonable for manual input here,
     // we don't use an error message because we don't want to render
@@ -69,18 +72,18 @@ export function GnosisMultisig(props: ICreationStepProps) {
         <LabelComponent
           label={t('labelSigThreshold')}
           helper={t('helperSigThreshold')}
+          errorMessage={
+            values.gnosis.signatureThreshold ? errors.gnosis?.signatureThreshold : undefined
+          }
           isRequired
         >
-          <Field name="gnosis.signatureThreshold">
-            {({ field }: FieldAttributes<any>) => (
-              <NumberInput
-                {...field}
-                onKeyDown={restrictChars}
-              >
-                <NumberInputField data-testid="gnosisConfig-thresholdInput" />
-              </NumberInput>
-            )}
-          </Field>
+          <NumberInput
+            value={values.gnosis.signatureThreshold}
+            onKeyDown={restrictChars}
+            onChange={value => setFieldValue('gnosis.signatureThreshold', value)}
+          >
+            <NumberInputField data-testid="gnosisConfig-thresholdInput" />
+          </NumberInput>
         </LabelComponent>
         <Box my={8}>
           <LabelComponent

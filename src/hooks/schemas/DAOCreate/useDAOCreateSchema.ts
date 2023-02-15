@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { DAOEssentials } from '../../../components/DaoCreator/types';
 import { useValidationAddress } from '../common/useValidationAddress';
@@ -13,6 +14,9 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
   const { addressValidationTest, uniqueAddressValidationTest } = useValidationAddress();
   const { maxAllocationValidation, allocationValidationTest, uniqueAllocationValidationTest } =
     useDAOCreateTests();
+
+  const { t } = useTranslation(['daoCreate']);
+
   const createDAOValidation = useMemo(
     () =>
       Yup.object().shape({
@@ -34,7 +38,10 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     ),
                   otherwise: schema => schema.of(Yup.string().test(addressValidationTest)),
                 }),
-              signatureThreshold: Yup.number().min(1).required(),
+              signatureThreshold: Yup.number()
+                .min(1, t('errorLowSignerThreshold'))
+                .max(Yup.ref('numOfSigners'), t('errorHighSignerThreshold'))
+                .required(),
               numOfSigners: Yup.number().min(1),
             }),
         }),
@@ -87,6 +94,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         funding: Yup.object().shape({}),
       }),
     [
+      t,
       addressValidationTest,
       uniqueAddressValidationTest,
       maxAllocationValidation,
