@@ -93,9 +93,9 @@ export function GnosisMultisig(props: ICreationStepProps) {
             <FieldArray name="gnosis.trustedAddresses">
               {({ remove }) => (
                 <>
-                  {values.gnosis.trustedAddresses.map((trusteeAddress, i) => {
+                  {values.gnosis.trustedAddresses.map((trustedAddress, i) => {
                     const errorMessage =
-                      errors?.gnosis?.trustedAddresses?.[i] && trusteeAddress.length
+                      errors?.gnosis?.trustedAddresses?.[i] && trustedAddress.length
                         ? errors?.gnosis?.trustedAddresses?.[i]
                         : null;
 
