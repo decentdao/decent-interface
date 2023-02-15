@@ -99,7 +99,10 @@ export function UsulGovernance(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
-        <Divider color="chocolate.700" />
+        <Divider
+          color="chocolate.700"
+          mb={4}
+        />
         <StepButtons
           {...props}
           prevStep={CreatorSteps.ESSENTIALS}

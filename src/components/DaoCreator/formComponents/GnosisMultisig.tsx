@@ -53,7 +53,6 @@ export function GnosisMultisig(props: ICreationStepProps) {
       <Flex
         flexDirection="column"
         gap={4}
-        mb={8}
       >
         <LabelComponent
           label={t('labelSigners')}
@@ -85,7 +84,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
             <NumberInputField data-testid="gnosisConfig-thresholdInput" />
           </NumberInput>
         </LabelComponent>
-        <Box my={8}>
+        <Box my={4}>
           <LabelComponent
             label={t('titleSignerAddresses')}
             helper={t('subTitleSignerAddresses')}
@@ -137,7 +136,10 @@ export function GnosisMultisig(props: ICreationStepProps) {
           </LabelComponent>
         </Box>
       </Flex>
-      <Divider color="chocolate.700" />
+      <Divider
+        color="chocolate.700"
+        mb={4}
+      />
       <StepButtons
         {...props}
         nextStep={CreatorSteps.GUARD_CONFIG}

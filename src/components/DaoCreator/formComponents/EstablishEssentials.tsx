@@ -58,7 +58,10 @@ export function EstablishEssentials(props: ICreationStepProps) {
           </RadioGroup>
         </LabelComponent>
       </Box>
-      <Divider color="chocolate.700" />
+      <Divider
+        color="chocolate.700"
+        mb={4}
+      />
       <StepButtons
         {...props}
         nextStep={
