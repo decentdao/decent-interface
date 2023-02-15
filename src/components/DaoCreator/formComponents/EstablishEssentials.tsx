@@ -16,7 +16,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <InputComponent
         label={t('labelFractalName')}
         helper={t('helperFractalName')}
-        isRequired={true}
+        isRequired
         value={values.essentials.daoName}
         id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
