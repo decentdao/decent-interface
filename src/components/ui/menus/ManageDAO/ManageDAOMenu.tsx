@@ -47,6 +47,20 @@ export function ManageDAOMenu({
         onClick: () => guardContracts.vetoVotingContract?.asSigner.castFreezeVote(),
       };
       return [createSubDAOOption, freezeOption];
+    } else if (
+      freezeData &&
+      isWithinFreezePeriod(
+        freezeData.freezeProposalCreatedTime,
+        freezeData.freezePeriod,
+        currentTime
+      ) &&
+      freezeData.userHasVotes
+    ) {
+      const clawbackOption = {
+        optionKey: 'optionInitiateClawback',
+        onClick: () => null,
+      };
+      return [clawbackOption];
     } else {
       return [createSubDAOOption];
     }
