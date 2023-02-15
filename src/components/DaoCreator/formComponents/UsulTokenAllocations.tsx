@@ -1,57 +1,20 @@
 import { Box, Grid, Text, Button } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-import { FieldArray } from 'formik';
+import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { TokenAllocation } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberValuePair } from '../../ui/forms/BigNumberInput';
 import { ICreationStepProps } from '../types';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
 
-export function UsulTokenAllocations({ values, errors, ...rest }: ICreationStepProps) {
-  // @todo add parentTokenAllocation back
-
-  // useEffect(() => {
-  //   const totalAllocated = tokenAllocations
-  //     .map(tokenAllocation => tokenAllocation.amount || BigNumber.from(0))
-  //     .reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
-  //   if (supply && supply.gt(0)) {
-  //     // no DAO token allocation with no parent allocations
-  //     if (totalAllocated.gt(0) && !parentAllocationAmount?.lte(0)) {
-  //       setAmountError(supply.lt(totalAllocated));
-  //       // parent tokens allocated but no DAO token allocation
-  //     } else if (parentAllocationAmount?.gt(0) && totalAllocated.lte(0)) {
-  //       setAmountError(supply.lt(parentAllocationAmount));
-  //       // parent tokens allocated with DAO token allocation
-  //     } else if (parentAllocationAmount?.gt(0) && totalAllocated.gt(0)) {
-  //       setAmountError(supply.lt(totalAllocated.add(parentAllocationAmount)));
-  //     } else {
-  //       // no allocation set amount error to false
-  //       setAmountError(false);
-  //     }
-  //   }
-  // }, [tokenAllocations, supply, parentAllocationAmount]);
-
+export function UsulTokenAllocations(props: ICreationStepProps) {
+  const { values, errors } = props;
   const { t } = useTranslation('daoCreate');
 
   return (
     <Box>
       <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
-      {/* {canReceiveParentAllocations && !!parentAllocationAmount && (
-        <InputBox>
-          <LabelWrapper
-            label={t('labelParentAllocation')}
-            subLabel={t('helperParentAllocation')}
-            errorMessage={hasAmountError ? t('errorOverallocated') : ''}
-          >
-            <BigNumberInput
-              data-testid="tokenVoting-parentTokenAllocationInput"
-              value={parentAllocationAmount}
-              onChange={onParentAllocationChange}
-              decimalPlaces={0}
-              isInvalid={hasAmountError}
-            />
-          </LabelWrapper>
-        </InputBox>
-      )} */}
       <FieldArray name="govToken.tokenAllocations">
         {({ remove, push }) => (
           <Box my={4}>
@@ -77,17 +40,36 @@ export function UsulTokenAllocations({ values, errors, ...rest }: ICreationStepP
               </Text>
               {values.govToken.tokenAllocations.length > 1 && <Box>{/* EMPTY */}</Box>}
 
-              {values.govToken.tokenAllocations.map((tokenAllocation, index) => (
-                <UsulTokenAllocation
-                  key={index}
-                  index={index}
-                  values={values}
-                  errors={errors}
-                  remove={remove}
-                  {...rest}
-                  tokenAllocation={tokenAllocation}
-                />
-              ))}
+              {values.govToken.tokenAllocations.map((tokenAllocation, index) => {
+                const tokenAllocationError = (
+                  errors?.govToken?.tokenAllocations as FormikErrors<
+                    TokenAllocation<BigNumberValuePair>[] | undefined
+                  >
+                )?.[index];
+
+                const addressErrorMessage =
+                  tokenAllocationError?.address && tokenAllocation.address.length
+                    ? tokenAllocationError.address
+                    : null;
+                const amountErrorMessage =
+                  tokenAllocationError?.amount?.value &&
+                  !tokenAllocation.amount.bigNumberValue?.isZero()
+                    ? tokenAllocationError.amount.value
+                    : null;
+
+                return (
+                  <UsulTokenAllocation
+                    key={index}
+                    index={index}
+                    remove={remove}
+                    addressErrorMessage={addressErrorMessage}
+                    amountErrorMessage={amountErrorMessage}
+                    amountInputValue={values.govToken.tokenAllocations[index].amount.bigNumberValue}
+                    allocationLength={values.govToken.tokenAllocations.length}
+                    {...props}
+                  />
+                );
+              })}
             </Grid>
             <Text
               color="grayscale.500"
