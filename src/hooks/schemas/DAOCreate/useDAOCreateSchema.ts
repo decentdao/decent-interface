@@ -50,7 +50,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           then: _schema =>
             _schema.shape({
               tokenName: Yup.string().required(),
-              tokenSymbol: Yup.string().required().max(5, 'Limited to 5 chars'),
+              tokenSymbol: Yup.string().required().min(2),
               tokenSupply: Yup.object().shape({ value: Yup.string().required() }),
               parentAllocationAmount: Yup.object().notRequired().shape({ value: Yup.string() }),
               tokenAllocations: Yup.array()

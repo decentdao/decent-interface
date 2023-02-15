@@ -59,7 +59,7 @@
     "labelTokenName": "Token Name",
     "helperTokenName": "What is your governance token called?",
     "labelTokenSymbol": "Token Symbol",
-    "helperTokenSymbol": "The symbol for your token (3-5 chars)",
+    "helperTokenSymbol": "The symbol for your token (2-6 chars)",
     "labelTokenSupply": "Token Supply",
     "helperTokenSupply": "Total available tokens",
     "labelMultisigGov": "Multisig",

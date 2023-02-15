@@ -45,6 +45,7 @@ export function UsulTokenDetails(props: ICreationStepProps) {
             {({ field }: FieldAttributes<any>) => (
               <Input
                 {...field}
+                max={6}
                 data-testid="tokenVoting-tokenSymbolInput"
               />
             )}
