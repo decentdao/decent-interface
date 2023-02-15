@@ -12,7 +12,6 @@ export enum CreatorSteps {
   GNOSIS_WITH_USUL = 'govToken',
   GOV_CONFIG = 'govModule',
   GUARD_CONFIG = 'vetoGuard',
-  FUNDING = 'funding',
 }
 
 export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {
@@ -28,7 +27,6 @@ export interface CreatorFormState<T = BigNumberValuePair> {
   govToken: DAOGovenorToken<T>;
   govModule: DAOGovenorModuleConfig<T>;
   vetoGuard: DAOVetoGuardConfig<T>;
-  funding: DAOFunding;
 }
 
 export type DAOEssentials = {
@@ -57,11 +55,6 @@ export type DAOVetoGuardConfig<T = BigNumber> = {
   freezeVotesThreshold: T;
   freezeProposalPeriod: T;
   freezePeriod: T;
-};
-
-type DAOFunding = {
-  tokensToFund: TokenToFund[];
-  nftsToFund: NFTToFund[];
 };
 
 export interface GnosisConfiguration {

@@ -8,7 +8,6 @@ export const CREATOR_STEP_TITLE_KEYS = {
   [CreatorSteps.GNOSIS_GOVERNANCE]: 'titleGnosis',
   [CreatorSteps.GOV_CONFIG]: 'titleGovConfig',
   [CreatorSteps.GUARD_CONFIG]: 'titleGuardConfig',
-  [CreatorSteps.FUNDING]: 'titleFunding',
 };
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
@@ -80,10 +79,6 @@ export const initialState: CreatorFormState = {
       value: '10080',
       bigNumberValue: BigNumber.from(10080),
     },
-  },
-  funding: {
-    tokensToFund: [],
-    nftsToFund: [],
   },
   gnosis: {
     trustedAddresses: [''],

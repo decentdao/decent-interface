@@ -90,8 +90,6 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               freezePeriod: Yup.object().shape({ value: Yup.string().required() }),
             }),
         }),
-        // @todo add funding validation
-        funding: Yup.object().shape({}),
       }),
     [
       t,
