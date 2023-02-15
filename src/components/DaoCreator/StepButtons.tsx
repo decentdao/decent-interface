@@ -19,7 +19,7 @@ export function StepButtons({
 }: IStepButtons) {
   const { t } = useTranslation(['daoCreate', 'common']);
 
-  const forwardButtonTest = t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
+  const forwardButtonText = t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
   const buttonType = isLastStep ? 'submit' : 'button';
   return (
     <Flex alignItems="center">
@@ -39,7 +39,7 @@ export function StepButtons({
         onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
       >
-        {forwardButtonTest}
+        {forwardButtonText}
       </Button>
     </Flex>
   );

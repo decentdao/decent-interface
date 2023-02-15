@@ -79,8 +79,8 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
             <Button
               size="base"
               maxWidth="fit-content"
-              px="0px"
-              mx="0px"
+              px={0}
+              mx={0}
               variant="text"
               onClick={() => push({ address: '', amount: { value: '' } })}
               data-testid="tokenVoting-addAllocation"
