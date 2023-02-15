@@ -53,15 +53,15 @@ export function UsulTokenAllocation({
           aria-label="remove allocation"
           variant="unstyled"
           minW="0"
+          mt={2}
           icon={
             <Trash
-              color="alert-red.normal"
+              color="gold.500"
               boxSize="1.5rem"
             />
           }
           type="button"
           onClick={() => remove(index)}
-          alignSelf="center"
           data-testid={'tokenVoting-tokenAllocationRemoveButton-' + index}
         />
       )}

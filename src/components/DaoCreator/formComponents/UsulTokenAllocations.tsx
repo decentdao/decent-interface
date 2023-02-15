@@ -1,5 +1,4 @@
 import { Box, Grid, Text, Button } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { TokenAllocation } from '../../../types';
@@ -83,9 +82,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
               px="0px"
               mx="0px"
               variant="text"
-              onClick={() =>
-                push({ address: '', amount: { value: '', bigNumberValue: BigNumber.from(0) } })
-              }
+              onClick={() => push({ address: '', amount: { value: '' } })}
               data-testid="tokenVoting-addAllocation"
             >
               {t('labelAddAllocation')}
