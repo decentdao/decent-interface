@@ -19,7 +19,7 @@ import { CreatorSteps, ICreationStepProps } from '../types';
 
 export function GnosisMultisig(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
-  const { values, errors, setFieldValue, isSubDAO } = props;
+  const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   const { restrictChars } = useFormHelpers();
 
   const handleSignersChanges = (_: string, numberStr: number) => {
@@ -49,7 +49,11 @@ export function GnosisMultisig(props: ICreationStepProps) {
     setFieldValue('gnosis.numOfSigners', numOfSigners);
   };
   return (
-    <StepWrapper titleKey="titleSafeConfig">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleSafeConfig"
+    >
       <Flex
         flexDirection="column"
         gap={4}

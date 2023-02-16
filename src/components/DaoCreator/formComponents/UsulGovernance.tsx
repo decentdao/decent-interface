@@ -17,11 +17,15 @@ import { StepWrapper } from '../StepWrapper';
 import { ICreationStepProps, CreatorSteps } from '../types';
 
 export function UsulGovernance(props: ICreationStepProps) {
-  const { values, setFieldValue, isSubDAO } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
   return (
-    <StepWrapper titleKey="titleGovConfig">
+    <StepWrapper
+      titleKey="titleGovConfig"
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+    >
       <Flex
         flexDirection="column"
         gap={8}

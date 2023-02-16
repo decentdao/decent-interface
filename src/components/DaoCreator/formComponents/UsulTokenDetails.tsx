@@ -11,11 +11,15 @@ import { ICreationStepProps, CreatorSteps } from '../types';
 import { UsulTokenAllocations } from './UsulTokenAllocations';
 
 export function UsulTokenDetails(props: ICreationStepProps) {
-  const { values, setFieldValue } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
   const { t } = useTranslation('daoCreate');
   const { restrictChars } = useFormHelpers();
   return (
-    <StepWrapper titleKey="titleUsulConfig">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleUsulConfig"
+    >
       <Flex
         flexDirection="column"
         gap={8}

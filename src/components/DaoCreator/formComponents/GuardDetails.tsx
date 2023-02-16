@@ -26,7 +26,7 @@ function GuardDetails(props: ICreationStepProps) {
     gnosis: { safe },
     governance: { type, governanceToken, governanceIsLoading },
   } = useFractal();
-  const { values, setFieldValue } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
@@ -89,7 +89,11 @@ function GuardDetails(props: ICreationStepProps) {
     : null;
 
   return (
-    <StepWrapper titleKey="titleGuardConfig">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleGuardConfig"
+    >
       <Flex
         flexDirection="column"
         gap={8}

@@ -9,10 +9,14 @@ import { ICreationStepProps, CreatorSteps } from '../types';
 
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-  const { values, setFieldValue } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   // @todo update labels for subDAOs
   return (
-    <StepWrapper titleKey="titleEssentials">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleEssentials"
+    >
       <InputComponent
         label={t('labelFractalName')}
         helper={t('helperFractalName')}
