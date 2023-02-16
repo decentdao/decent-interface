@@ -12,6 +12,7 @@ export function StepButtons({
   transactionPending,
   isSubmitting,
   step,
+  isSubDAO,
   updateStep,
   nextStep,
   prevStep,
@@ -19,7 +20,10 @@ export function StepButtons({
 }: IStepButtons) {
   const { t } = useTranslation(['daoCreate', 'common']);
 
-  const forwardButtonText = t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
+  const forwardButtonText =
+    isLastStep && isSubDAO
+      ? t('labelDeploySubDAO')
+      : t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
   const buttonType = isLastStep ? 'submit' : 'button';
   return (
     <Flex alignItems="center">
