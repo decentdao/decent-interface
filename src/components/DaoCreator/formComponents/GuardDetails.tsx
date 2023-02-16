@@ -1,4 +1,12 @@
-import { Text, InputGroup, InputRightElement, Flex, Alert, AlertTitle } from '@chakra-ui/react';
+import {
+  Text,
+  InputGroup,
+  InputRightElement,
+  Flex,
+  Alert,
+  AlertTitle,
+  Divider,
+} from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
@@ -8,17 +16,17 @@ import { GovernanceTypes } from '../../../providers/Fractal/types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { BigNumberInput } from '../refactor/BigNumberInput';
-import { BigNumberValuePair, CreatorSteps, ICreationStepProps } from '../types';
+import { CreatorSteps, ICreationStepProps } from '../types';
 
 function GuardDetails(props: ICreationStepProps) {
   const {
     gnosis: { safe },
     governance: { type, governanceToken, governanceIsLoading },
   } = useFractal();
-  const { values, setFieldValue } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
@@ -49,16 +57,16 @@ function GuardDetails(props: ICreationStepProps) {
             bigNumberValue: BigNumber.from(safe.owners?.length || 0),
           };
       }
-      setTotalParentVotes(totalVotes.bigNumberValue);
+      setTotalParentVotes(totalVotes.bigNumberValue!);
 
-      const childThresholds = totalVotes.bigNumberValue.eq(1)
+      const childThresholds = totalVotes.bigNumberValue!.eq(1)
         ? totalVotes
         : {
             value: ethers.utils.formatUnits(
-              totalVotes.bigNumberValue.div(2),
+              totalVotes.bigNumberValue!.div(2),
               governanceToken.decimals
             ),
-            bigNumberValue: totalVotes.bigNumberValue.div(2),
+            bigNumberValue: totalVotes.bigNumberValue!.div(2),
           };
       setFieldValue('vetoGuard.vetoVotesThreshold', childThresholds);
       setFieldValue('vetoGuard.freezeVotesThreshold', childThresholds);
@@ -81,7 +89,11 @@ function GuardDetails(props: ICreationStepProps) {
     : null;
 
   return (
-    <StepWrapper titleKey="titleGuardConfig">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleGuardConfig"
+    >
       <Flex
         flexDirection="column"
         gap={8}
@@ -95,7 +107,7 @@ function GuardDetails(props: ICreationStepProps) {
           >
             <InputGroup>
               <BigNumberInput
-                value={values.vetoGuard.timelockPeriod.value}
+                value={values.vetoGuard.timelockPeriod.bigNumberValue}
                 onChange={valuePair => setFieldValue('vetoGuard.timelockPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
@@ -119,7 +131,7 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.executionPeriod.value}
+              value={values.vetoGuard.executionPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('vetoGuard.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -143,7 +155,7 @@ function GuardDetails(props: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.vetoGuard.freezeVotesThreshold.value}
+            value={values.vetoGuard.freezeVotesThreshold.bigNumberValue}
             onChange={valuePair => setFieldValue('vetoGuard.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
@@ -156,7 +168,7 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezeProposalPeriod.value}
+              value={values.vetoGuard.freezeProposalPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('vetoGuard.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -179,7 +191,7 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezePeriod.value}
+              value={values.vetoGuard.freezePeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('vetoGuard.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -207,12 +219,16 @@ function GuardDetails(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
+        <Divider
+          color="chocolate.700"
+          mb={4}
+        />
         <StepButtons
           {...props}
           prevStep={
             governance === GovernanceTypes.GNOSIS_SAFE
-              ? CreatorSteps.GOV_CONFIG
-              : CreatorSteps.GNOSIS_GOVERNANCE
+              ? CreatorSteps.GNOSIS_GOVERNANCE
+              : CreatorSteps.GOV_CONFIG
           }
           isLastStep
         />

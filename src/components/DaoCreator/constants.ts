@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 import { GovernanceTypes } from '../../providers/Fractal/types';
-import { BigNumberValuePair, CreatorFormState, CreatorSteps } from './types';
+import { CreatorFormState, CreatorSteps } from './types';
 
 export const CREATOR_STEP_TITLE_KEYS = {
   [CreatorSteps.ESSENTIALS]: 'titleEssentials',
@@ -8,12 +8,11 @@ export const CREATOR_STEP_TITLE_KEYS = {
   [CreatorSteps.GNOSIS_GOVERNANCE]: 'titleGnosis',
   [CreatorSteps.GOV_CONFIG]: 'titleGovConfig',
   [CreatorSteps.GUARD_CONFIG]: 'titleGuardConfig',
-  [CreatorSteps.FUNDING]: 'titleFunding',
 };
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
-export const initialState: CreatorFormState<BigNumberValuePair> = {
+export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
     governance: GovernanceTypes.GNOSIS_SAFE,
@@ -22,7 +21,6 @@ export const initialState: CreatorFormState<BigNumberValuePair> = {
     tokenName: '',
     tokenSupply: {
       value: '',
-      bigNumberValue: BigNumber.from(0),
     },
     tokenSymbol: '',
     tokenAllocations: [
@@ -30,7 +28,6 @@ export const initialState: CreatorFormState<BigNumberValuePair> = {
         address: '',
         amount: {
           value: '',
-          bigNumberValue: BigNumber.from(0),
         },
       },
     ],
@@ -82,10 +79,6 @@ export const initialState: CreatorFormState<BigNumberValuePair> = {
       value: '10080',
       bigNumberValue: BigNumber.from(10080),
     },
-  },
-  funding: {
-    tokensToFund: [],
-    nftsToFund: [],
   },
   gnosis: {
     trustedAddresses: [''],

@@ -1,21 +1,25 @@
-import { Flex, Input } from '@chakra-ui/react';
+import { Divider, Flex, Input } from '@chakra-ui/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { BigNumberInput } from '../refactor/BigNumberInput';
 import { ICreationStepProps, CreatorSteps } from '../types';
 import { UsulTokenAllocations } from './UsulTokenAllocations';
 
 export function UsulTokenDetails(props: ICreationStepProps) {
-  const { values, setFieldValue } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
   const { t } = useTranslation('daoCreate');
   const { restrictChars } = useFormHelpers();
   return (
-    <StepWrapper titleKey="titleUsulConfig">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleUsulConfig"
+    >
       <Flex
         flexDirection="column"
         gap={8}
@@ -45,6 +49,7 @@ export function UsulTokenDetails(props: ICreationStepProps) {
             {({ field }: FieldAttributes<any>) => (
               <Input
                 {...field}
+                max={6}
                 data-testid="tokenVoting-tokenSymbolInput"
               />
             )}
@@ -56,13 +61,18 @@ export function UsulTokenDetails(props: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.govToken.tokenSupply.value}
+            value={values.govToken.tokenSupply.bigNumberValue}
             onChange={valuePair => setFieldValue('govToken.tokenSupply', valuePair)}
             data-testid="tokenVoting-tokenSupplyInput"
             onKeyDown={restrictChars}
           />
         </LabelComponent>
+        <Divider color="chocolate.700" />
         <UsulTokenAllocations {...props} />
+        <Divider
+          color="chocolate.700"
+          mb={4}
+        />
         <StepButtons
           {...props}
           prevStep={CreatorSteps.ESSENTIALS}

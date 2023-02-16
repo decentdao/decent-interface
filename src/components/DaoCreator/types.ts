@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { GovernanceTypes } from '../../providers/Fractal/types';
 import { TokenAllocation } from '../../types/tokenAllocation';
+import { BigNumberValuePair } from '../ui/forms/BigNumberInput';
 
 //
 export enum CreatorSteps {
@@ -11,7 +12,6 @@ export enum CreatorSteps {
   GNOSIS_WITH_USUL = 'govToken',
   GOV_CONFIG = 'govModule',
   GUARD_CONFIG = 'vetoGuard',
-  FUNDING = 'funding',
 }
 
 export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {
@@ -27,7 +27,6 @@ export interface CreatorFormState<T = BigNumberValuePair> {
   govToken: DAOGovenorToken<T>;
   govModule: DAOGovenorModuleConfig<T>;
   vetoGuard: DAOVetoGuardConfig<T>;
-  funding: DAOFunding;
 }
 
 export type DAOEssentials = {
@@ -58,11 +57,6 @@ export type DAOVetoGuardConfig<T = BigNumber> = {
   freezePeriod: T;
 };
 
-type DAOFunding = {
-  tokensToFund: TokenToFund[];
-  nftsToFund: NFTToFund[];
-};
-
 export interface GnosisConfiguration {
   trustedAddresses: string[];
   signatureThreshold: number;
@@ -89,11 +83,6 @@ export type AddressValidation = {
   address: string;
   isValidAddress: boolean;
 };
-
-export interface BigNumberValuePair {
-  value: string;
-  bigNumberValue: BigNumber;
-}
 
 export type TokenToFund = {
   asset: SafeBalanceUsdResponse;

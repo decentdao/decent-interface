@@ -28,9 +28,6 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
           updateStep={updateStep}
         />
       );
-    // case CreatorSteps.FUNDING: {
-    //   return <SubsidiaryFunding />;
-    // }
     case CreatorSteps.GNOSIS_WITH_USUL:
       return (
         <UsulTokenDetails

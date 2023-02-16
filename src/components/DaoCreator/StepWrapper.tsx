@@ -3,30 +3,41 @@ import { Trash } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { BASE_ROUTES } from '../../routes/constants';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import PageHeader from '../ui/page/Header/PageHeader';
 
 interface IStepWrapper {
   titleKey: string;
+  isSubDAO?: boolean;
+  isFormSubmitting?: boolean;
   children: ReactNode;
 }
 
-export function StepWrapper({ titleKey, children }: IStepWrapper) {
+export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: IStepWrapper) {
+  const {
+    gnosis: {
+      safe: { address },
+    },
+  } = useFractal();
   const { t } = useTranslation(['daoCreate']);
   const navigate = useNavigate();
   return (
     <Box>
       <PageHeader
-        hasDAOLink={false}
+        hasDAOLink={isSubDAO}
         breadcrumbs={[
           {
-            title: t('homeButtonCreate'),
+            title: t(!isSubDAO ? 'homeButtonCreate' : 'labelCreateSubDAOProposal'),
             path: '',
           },
         ]}
         ButtonIcon={Trash}
         buttonVariant="secondary"
-        buttonClick={() => navigate(BASE_ROUTES.landing)}
+        isButtonDisabled={isFormSubmitting}
+        buttonClick={() =>
+          navigate(!isSubDAO ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(address))
+        }
       />
       <Text
         textStyle="text-2xl-mono-regular"

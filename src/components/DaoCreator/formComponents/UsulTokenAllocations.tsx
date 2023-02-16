@@ -9,18 +9,18 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Gear } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
-import { FieldArray } from 'formik';
+import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { TokenAllocation } from '../../../types';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../refactor/BigNumberInput';
+import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
 import { ICreationStepProps } from '../types';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
 
 export function UsulTokenAllocations(props: ICreationStepProps) {
-  const { values, setFieldValue, isSubDAO } = props;
+  const { values, errors, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation('daoCreate');
   const {
     governance: { governanceToken },
@@ -30,7 +30,6 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
   return (
     <Box>
       <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
-
       <FieldArray name="govToken.tokenAllocations">
         {({ remove, push }) => (
           <Box my={4}>
@@ -56,15 +55,36 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
               </Text>
               {values.govToken.tokenAllocations.length > 1 && <Box>{/* EMPTY */}</Box>}
 
-              {values.govToken.tokenAllocations.map((tokenAllocation, index) => (
-                <UsulTokenAllocation
-                  key={index}
-                  index={index}
-                  remove={remove}
-                  tokenAllocation={tokenAllocation}
-                  {...props}
-                />
-              ))}
+              {values.govToken.tokenAllocations.map((tokenAllocation, index) => {
+                const tokenAllocationError = (
+                  errors?.govToken?.tokenAllocations as FormikErrors<
+                    TokenAllocation<BigNumberValuePair>[] | undefined
+                  >
+                )?.[index];
+
+                const addressErrorMessage =
+                  tokenAllocationError?.address && tokenAllocation.address.length
+                    ? tokenAllocationError.address
+                    : null;
+                const amountErrorMessage =
+                  tokenAllocationError?.amount?.value &&
+                  !tokenAllocation.amount.bigNumberValue?.isZero()
+                    ? tokenAllocationError.amount.value
+                    : null;
+
+                return (
+                  <UsulTokenAllocation
+                    key={index}
+                    index={index}
+                    remove={remove}
+                    addressErrorMessage={addressErrorMessage}
+                    amountErrorMessage={amountErrorMessage}
+                    amountInputValue={values.govToken.tokenAllocations[index].amount.bigNumberValue}
+                    allocationLength={values.govToken.tokenAllocations.length}
+                    {...props}
+                  />
+                );
+              })}
             </Grid>
             <Text
               color="grayscale.500"
@@ -102,7 +122,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
                         >
                           <BigNumberInput
                             data-testid="tokenVoting-parentTokenAllocationInput"
-                            value={values.govToken.parentAllocationAmount?.value || ''}
+                            value={values.govToken.parentAllocationAmount?.bigNumberValue}
                             onChange={valuePair =>
                               setFieldValue('govToken.parentAllocationAmount', valuePair)
                             }
@@ -119,12 +139,10 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
             <Button
               size="base"
               maxWidth="fit-content"
-              px="0px"
-              mx="0px"
+              px={0}
+              mx={0}
               variant="text"
-              onClick={() =>
-                push({ address: '', amount: { value: '', bigNumberValue: BigNumber.from(0) } })
-              }
+              onClick={() => push({ address: '', amount: { value: '' } })}
               data-testid="tokenVoting-addAllocation"
             >
               {t('labelAddAllocation')}

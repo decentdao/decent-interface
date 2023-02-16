@@ -1,23 +1,31 @@
-// @todo Governance details
-// @todo refactor form object into 2 parts gnosis | usul
-
-import { Alert, AlertTitle, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertTitle,
+  Divider,
+  Flex,
+  InputGroup,
+  InputRightElement,
+  Text,
+} from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { BigNumberInput } from '../refactor/BigNumberInput';
 import { ICreationStepProps, CreatorSteps } from '../types';
 
-// @todo finish and deploy baby
 export function UsulGovernance(props: ICreationStepProps) {
-  const { values, setFieldValue, isSubDAO } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
   return (
-    <StepWrapper titleKey="titleGovConfig">
+    <StepWrapper
+      titleKey="titleGovConfig"
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+    >
       <Flex
         flexDirection="column"
         gap={8}
@@ -30,7 +38,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.votingPeriod.value}
+              value={values.govModule.votingPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.votingPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -53,7 +61,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.quorumPercentage.value}
+              value={values.govModule.quorumPercentage.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.quorumPercentage', valuePair)}
               max="100"
               decimalPlaces={0}
@@ -69,7 +77,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.timelock.value}
+              value={values.govModule.timelock.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.timelock', valuePair)}
               decimalPlaces={0}
               data-testid="govConfig-timelock"
@@ -95,6 +103,10 @@ export function UsulGovernance(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
+        <Divider
+          color="chocolate.700"
+          mb={4}
+        />
         <StepButtons
           {...props}
           prevStep={CreatorSteps.ESSENTIALS}

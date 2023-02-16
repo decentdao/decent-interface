@@ -1,4 +1,4 @@
-import { Box, RadioGroup } from '@chakra-ui/react';
+import { Box, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { GovernanceTypes } from '../../../providers/Fractal/types';
 import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
@@ -9,16 +9,20 @@ import { ICreationStepProps, CreatorSteps } from '../types';
 
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-  const { values, setFieldValue } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   // @todo update labels for subDAOs
   return (
-    <StepWrapper titleKey="titleEssentials">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleEssentials"
+    >
       <InputComponent
         label={t('labelFractalName')}
         helper={t('helperFractalName')}
-        isRequired={true}
+        isRequired
         value={values.essentials.daoName}
-        id="essentials-daoName"
+        id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
         disabled={false}
         placeholder={t('daoNamePlaceholder')}
@@ -26,10 +30,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
       />
       <Box my={8}>
         <LabelComponent
-          label="Choose Governance"
-          helper="Short description around governance 
-        and a link to learn more"
-          isRequired={true}
+          label={'labelChooseGovernance'}
+          helper={'helperChooseGovernance'}
+          isRequired
         >
           <RadioGroup
             bg="black.900-semi-transparent"
@@ -59,6 +62,10 @@ export function EstablishEssentials(props: ICreationStepProps) {
           </RadioGroup>
         </LabelComponent>
       </Box>
+      <Divider
+        color="chocolate.700"
+        mb={4}
+      />
       <StepButtons
         {...props}
         nextStep={

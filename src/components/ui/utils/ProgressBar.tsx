@@ -1,5 +1,5 @@
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
-import ProgressBarDelimiter from '../svg/ProgressBarDelimiter';
+import { ProgressBarDelimited } from '@decent-org/fractal-ui';
 
 export default function ProgressBar({
   value,
@@ -38,7 +38,7 @@ export default function ProgressBar({
           top="-10px"
           left={`${requiredValue}%`}
         >
-          <ProgressBarDelimiter />
+          <ProgressBarDelimited />
         </Box>
       )}
     </Box>

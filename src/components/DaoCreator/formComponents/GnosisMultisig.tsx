@@ -1,5 +1,14 @@
-import { Box, Button, Flex, Grid, Input, NumberInput, NumberInputField } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
+import {
+  Box,
+  Divider,
+  Flex,
+  Grid,
+  IconButton,
+  Input,
+  NumberInput,
+  NumberInputField,
+} from '@chakra-ui/react';
+import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldArray, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -10,10 +19,13 @@ import { CreatorSteps, ICreationStepProps } from '../types';
 
 export function GnosisMultisig(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
-  const { values, errors, setFieldValue, isSubDAO } = props;
+  const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   const { restrictChars } = useFormHelpers();
 
-  const handleSignersChanges = (numberStr: string) => {
+  const handleSignersChanges = (_: string, numberStr: number) => {
+    if (numberStr === 0 || !numberStr) {
+      return;
+    }
     let numOfSigners = Number(numberStr);
     // greater than 100 signers is unreasonable for manual input here,
     // we don't use an error message because we don't want to render
@@ -37,11 +49,14 @@ export function GnosisMultisig(props: ICreationStepProps) {
     setFieldValue('gnosis.numOfSigners', numOfSigners);
   };
   return (
-    <StepWrapper titleKey="titleSafeConfig">
+    <StepWrapper
+      isSubDAO={isSubDAO}
+      isFormSubmitting={!!isSubmitting || transactionPending}
+      titleKey="titleSafeConfig"
+    >
       <Flex
         flexDirection="column"
         gap={4}
-        mb={8}
       >
         <LabelComponent
           label={t('labelSigners')}
@@ -60,20 +75,20 @@ export function GnosisMultisig(props: ICreationStepProps) {
         <LabelComponent
           label={t('labelSigThreshold')}
           helper={t('helperSigThreshold')}
+          errorMessage={
+            values.gnosis.signatureThreshold ? errors.gnosis?.signatureThreshold : undefined
+          }
           isRequired
         >
-          <Field name="gnosis.signatureThreshold">
-            {({ field }: FieldAttributes<any>) => (
-              <NumberInput
-                {...field}
-                onKeyDown={restrictChars}
-              >
-                <NumberInputField data-testid="gnosisConfig-thresholdInput" />
-              </NumberInput>
-            )}
-          </Field>
+          <NumberInput
+            value={values.gnosis.signatureThreshold}
+            onKeyDown={restrictChars}
+            onChange={value => setFieldValue('gnosis.signatureThreshold', value)}
+          >
+            <NumberInputField data-testid="gnosisConfig-thresholdInput" />
+          </NumberInput>
         </LabelComponent>
-        <Box my={8}>
+        <Box my={4}>
           <LabelComponent
             label={t('titleSignerAddresses')}
             helper={t('subTitleSignerAddresses')}
@@ -82,9 +97,9 @@ export function GnosisMultisig(props: ICreationStepProps) {
             <FieldArray name="gnosis.trustedAddresses">
               {({ remove }) => (
                 <>
-                  {values.gnosis.trustedAddresses.map((trusteeAddress, i) => {
+                  {values.gnosis.trustedAddresses.map((trustedAddress, i) => {
                     const errorMessage =
-                      errors?.gnosis?.trustedAddresses?.[i] && trusteeAddress.length
+                      errors?.gnosis?.trustedAddresses?.[i] && trustedAddress.length
                         ? errors?.gnosis?.trustedAddresses?.[i]
                         : null;
 
@@ -106,15 +121,23 @@ export function GnosisMultisig(props: ICreationStepProps) {
                           </Field>
                         </LabelWrapper>
                         {values.gnosis.trustedAddresses.length > 1 && (
-                          <Button
-                            variant="text"
+                          <IconButton
+                            aria-label="remove allocation"
+                            variant="unstyled"
+                            minW={16}
+                            icon={
+                              <Trash
+                                color="gold.500"
+                                boxSize="1.5rem"
+                              />
+                            }
+                            type="button"
                             onClick={() => {
                               setFieldValue('gnosis.numOfSigners', --values.gnosis.numOfSigners);
                               remove(i);
                             }}
-                          >
-                            {t('remove')}
-                          </Button>
+                            data-testid={'gnosis.numOfSigners-' + i}
+                          />
                         )}
                       </Grid>
                     );
@@ -125,6 +148,10 @@ export function GnosisMultisig(props: ICreationStepProps) {
           </LabelComponent>
         </Box>
       </Flex>
+      <Divider
+        color="chocolate.700"
+        mb={4}
+      />
       <StepButtons
         {...props}
         nextStep={CreatorSteps.GUARD_CONFIG}

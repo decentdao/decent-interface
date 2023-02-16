@@ -21,6 +21,7 @@ interface IPageHeader {
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
+  isButtonDisabled?: boolean;
   children?: ReactNode;
 }
 /**
@@ -35,6 +36,7 @@ function PageHeader({
   buttonText,
   buttonClick,
   buttonTestId,
+  isButtonDisabled,
   children,
 }: IPageHeader) {
   const {
@@ -79,6 +81,7 @@ function PageHeader({
             data-testid={buttonTestId}
             size="base"
             variant={buttonVariant}
+            disabled={isButtonDisabled}
           >
             {buttonText}
           </Button>
@@ -93,6 +96,7 @@ function PageHeader({
             data-testid={buttonTestId}
             size="base"
             variant={buttonVariant}
+            disabled={isButtonDisabled}
           >
             {buttonText}
           </IconButton>
