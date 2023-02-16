@@ -18,4 +18,4 @@ In order to view the IPFS hosted version of the app you will need an IPFS node r
 - [IPFS Desktop app](https://docs.ipfs.tech/install/ipfs-desktop/) - for running a node
 - [IPFS Browser plugin](https://chrome.google.com/webstore/detail/ipfs-companion/nibjojkomfdiaoajekhjakgkdhaomnch) - Chrome plugin (other browsers also supported)
 
-Now, when navigating to e.g. https://app.dev.fractalframework.xyz/ you should see the URL redirect to https://app.dev.fractalframework.xyz.ipns.localhost:8080/, and you are now viewing the IPFS hosted version. This make take some time on first viewing the site, as the files are all downloaded to your IPFS node.
+Now, when navigating to e.g. https://app.dev.fractalframework.xyz/ you should see the URL redirect to https://app.dev.fractalframework.xyz.ipns.localhost:8080/, and you are now viewing the IPFS hosted version. This may take some time on first viewing the site, as the files are all downloaded to your local IPFS node.
