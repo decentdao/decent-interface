@@ -36,7 +36,7 @@ jobs:
         uses: adamgall/ipfs-pinata-deploy-action@v2.0.1
         id: upload
         with:
-          pin-name: ${{ secrets.PINATA_PIN_NAME }}
+          pin-name: 'app.dev.fractalframework.xyz'
           path: './build'
           pinata-api-key: ${{ secrets.PINATA_API_KEY }}
           pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
