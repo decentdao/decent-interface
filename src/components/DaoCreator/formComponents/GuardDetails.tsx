@@ -227,8 +227,8 @@ function GuardDetails(props: ICreationStepProps) {
           {...props}
           prevStep={
             governance === GovernanceTypes.GNOSIS_SAFE
-              ? CreatorSteps.GOV_CONFIG
-              : CreatorSteps.GNOSIS_GOVERNANCE
+              ? CreatorSteps.GNOSIS_GOVERNANCE
+              : CreatorSteps.GOV_CONFIG
           }
           isLastStep
         />
