@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { DAOEssentials } from '../../../components/DaoCreator/types';
 import { useValidationAddress } from '../common/useValidationAddress';
+import { BigNumberValuePair } from './../../../components/ui/forms/BigNumberInput';
 import { GovernanceTypes } from './../../../providers/Fractal/governance/types';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
@@ -52,7 +53,14 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               tokenName: Yup.string().required(),
               tokenSymbol: Yup.string().required().min(2),
               tokenSupply: Yup.object().shape({ value: Yup.string().required() }),
-              parentAllocationAmount: Yup.object().notRequired().shape({ value: Yup.string() }),
+              parentAllocationAmount: Yup.object().when({
+                is: (value?: BigNumberValuePair) =>
+                  !!value?.bigNumberValue && !value.bigNumberValue.isZero(),
+                then: schema =>
+                  schema.shape({
+                    value: Yup.string().test(maxAllocationValidation),
+                  }),
+              }),
               tokenAllocations: Yup.array()
                 .min(1)
                 .of(

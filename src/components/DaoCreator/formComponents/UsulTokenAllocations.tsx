@@ -8,7 +8,7 @@ import {
   Grid,
   Text,
 } from '@chakra-ui/react';
-import { Gear } from '@decent-org/fractal-ui';
+import { Gear, LabelWrapper } from '@decent-org/fractal-ui';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -27,6 +27,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
   } = useFractal();
 
   const canReceiveParentAllocations = isSubDAO && governanceToken?.address;
+
   return (
     <Box>
       <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
@@ -120,15 +121,24 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
                           helper={t('helperParentAllocation')}
                           isRequired={false}
                         >
-                          <BigNumberInput
-                            data-testid="tokenVoting-parentTokenAllocationInput"
-                            value={values.govToken.parentAllocationAmount?.bigNumberValue}
-                            onChange={valuePair =>
-                              setFieldValue('govToken.parentAllocationAmount', valuePair)
+                          <LabelWrapper
+                            errorMessage={
+                              (
+                                values.govToken.parentAllocationAmount?.bigNumberValue &&
+                                (errors.govToken?.parentAllocationAmount as any)
+                              )?.value
                             }
-                            decimalPlaces={0}
-                            isInvalid={false}
-                          />
+                          >
+                            <BigNumberInput
+                              data-testid="tokenVoting-parentTokenAllocationInput"
+                              value={values.govToken.parentAllocationAmount?.bigNumberValue}
+                              onChange={valuePair =>
+                                setFieldValue('govToken.parentAllocationAmount', valuePair)
+                              }
+                              decimalPlaces={0}
+                              isInvalid={false}
+                            />
+                          </LabelWrapper>
                         </LabelComponent>
                       </AccordionPanel>
                     </>
