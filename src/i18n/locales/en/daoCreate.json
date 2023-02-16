@@ -4,6 +4,7 @@
     "homeSubTitleConnected": "Find a Fractal above or create a new one",
     "homeButtonConnect": "Connect your wallet",
     "homeButtonCreate": "Create a Fractal",
+    "labelCreateSubDAOProposal": "Create a SubDAO",
     "errorLowSignerThreshold": "Threshold must be greater than 0",
     "errorHighSignerThreshold": "Threshold is too high",
     "labelSigners": "Total Signers",
