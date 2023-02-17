@@ -25,7 +25,7 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
   return (
     <Box>
       <PageHeader
-        hasDAOLink={isSubDAO}
+        hasDAOLink={!!isSubDAO}
         breadcrumbs={[
           {
             title: t(!isSubDAO ? 'homeButtonCreate' : 'labelCreateSubDAOProposal'),

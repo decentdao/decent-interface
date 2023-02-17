@@ -8,7 +8,7 @@ import {
   IconProps,
   Spacer,
 } from '@chakra-ui/react';
-import { ReactNode, useMemo } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../../../routes/constants';
@@ -49,20 +49,19 @@ function PageHeader({
     address,
   });
 
-  const links = useMemo(
-    () => [
-      {
-        title: daoRegistryName || daoName,
-        path: DAO_ROUTES.dao.relative(address),
-      },
-      ...breadcrumbs,
-    ],
-    [address, daoRegistryName, daoName, breadcrumbs]
-  );
+  const [links, setLinks] = useState([...breadcrumbs]);
 
-  if (!hasDAOLink) {
-    links.shift();
-  }
+  useEffect(() => {
+    if (hasDAOLink) {
+      setLinks([
+        {
+          title: daoRegistryName || daoName,
+          path: DAO_ROUTES.dao.relative(address),
+        },
+        ...breadcrumbs,
+      ]);
+    }
+  }, [hasDAOLink, address, daoName, daoRegistryName, breadcrumbs]);
 
   return (
     <Box
