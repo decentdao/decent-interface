@@ -33,7 +33,7 @@ jobs:
           REACT_APP_REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_REACT_APP_SENTRY_DSN }}
 
       - name: IPFS Pinata deploy GitHub action
-        uses: adamgall/ipfs-pinata-deploy-action@v2.0.1
+        uses: decent-dao/ipfs-pinata-deploy-action@v2.0.1
         id: upload
         with:
           pin-name: 'app.dev.fractalframework.xyz'
@@ -43,7 +43,7 @@ jobs:
 
       - name: Convert CIDv0 to CIDv1
         id: convert_cidv0
-        uses: adamgall/convert-cidv0-cidv1@v1.0.0
+        uses: decent-dao/convert-cidv0-cidv1@v1.0.0
         with:
           cidv0: ${{ steps.upload.outputs.hash }}
 
