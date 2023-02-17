@@ -67,12 +67,15 @@ export class DaoTxBuilder extends BaseTxBuilder {
       usulTxBuilder.buildEnableUsulModuleTx(),
     ];
 
-    // subDAO case, add veto guard
     if (this.parentDAOAddress) {
       const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder(
         usulTxBuilder.usulContract!.address,
         usulTxBuilder.linearVotingContract!.address
       );
+      const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
+      if (this.parentTokenAddress && parentAllocation) {
+        this.internalTxs.concat([usulTxBuilder.buildTokenClaimData()]);
+      }
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
