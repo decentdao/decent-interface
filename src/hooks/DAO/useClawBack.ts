@@ -58,7 +58,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
             );
             return {
               target: fractalModuleContract.address,
-              value: asset.balance,
+              value: 0,
               calldata: fractalModuleCalldata,
             };
           } else {
