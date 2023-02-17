@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GnosisModuleType } from '../../providers/Fractal/types';
+import { GnosisModuleType, SafeInfoResponseWithGuard } from '../../providers/Fractal/types';
 import useSubmitProposal from './proposal/useSubmitProposal';
 import useDefaultNonce from './useDefaultNonce';
 
@@ -15,30 +15,34 @@ interface IUseClawBack {
 }
 
 export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUseClawBack) {
+  const [childSafeInfo, setChildSafeInfo] = useState<SafeInfoResponseWithGuard>();
   const [childSafeBalance, setChildSafeBalance] = useState<SafeBalanceResponse[]>([]);
 
   const { t } = useTranslation('proposal');
   const provider = useProvider();
   const {
-    gnosis: { safeService, modules },
+    gnosis: { safeService },
+    actions: { lookupModules },
   } = useFractal();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
   const nonce = useDefaultNonce();
   const abiCoder = new ethers.utils.AbiCoder();
 
   useEffect(() => {
-    const loadBalance = async () => {
+    const loadData = async () => {
       if (safeService) {
+        setChildSafeInfo(await safeService.getSafeInfo(childSafeAddress));
         setChildSafeBalance(await safeService.getBalances(childSafeAddress));
       }
     };
 
-    loadBalance();
+    loadData();
   }, [childSafeAddress, safeService]);
 
   const handleClawBack = async () => {
-    if (canUserCreateProposal && parentSafeAddress) {
-      const fractalModule = modules.find(module => module.moduleType === GnosisModuleType.FRACTAL);
+    if (canUserCreateProposal && parentSafeAddress && childSafeInfo) {
+      const modules = await lookupModules(childSafeInfo.modules);
+      const fractalModule = modules!.find(module => module.moduleType === GnosisModuleType.FRACTAL);
       const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
       if (fractalModule) {
         const transactions = childSafeBalance.map(asset => {
@@ -85,6 +89,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
           pendingToastMessage: t('clawBackPendingToastMessage'),
           failedToastMessage: t('clawBackFailedToastMessage'),
           successToastMessage: t('clawBackSuccessToastMessage'),
+          safeAddress: parentSafeAddress,
         });
       }
     }

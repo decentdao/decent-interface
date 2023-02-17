@@ -120,7 +120,7 @@ export function FractalNodes() {
 
       {isChildrenExpanded && (
         <DAOChildNodes
-          parentDAOAddress={parentDAOAddress}
+          parentDAOAddress={safe.address}
           childNodes={childNodes}
         />
       )}
