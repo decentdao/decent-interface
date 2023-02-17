@@ -48,10 +48,18 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
         const transactions = childSafeBalance.map(asset => {
           if (!asset.tokenAddress) {
             // Seems like we're operating with native coin i.e ETH
+            const txData = abiCoder.encode(
+              ['address', 'uint256', 'bytes', 'uint8'],
+              [parentSafeAddress, asset.balance, '0x', 0]
+            );
+            const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
+              'execTx',
+              [txData]
+            );
             return {
-              target: parentSafeAddress,
+              target: fractalModuleContract.address,
               value: asset.balance,
-              calldata: '0x',
+              calldata: fractalModuleCalldata,
             };
           } else {
             const tokenContract = ERC20__factory.connect(asset.tokenAddress, provider);
