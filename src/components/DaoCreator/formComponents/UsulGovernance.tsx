@@ -109,7 +109,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         />
         <StepButtons
           {...props}
-          prevStep={CreatorSteps.ESSENTIALS}
+          prevStep={CreatorSteps.GNOSIS_WITH_USUL}
           nextStep={CreatorSteps.GUARD_CONFIG}
           isLastStep={!isSubDAO}
         />

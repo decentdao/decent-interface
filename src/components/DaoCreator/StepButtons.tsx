@@ -31,6 +31,7 @@ export function StepButtons({
         <Button
           data-testid="create-prevButton"
           variant="text"
+          disabled={transactionPending || isSubmitting}
           onClick={() => updateStep(prevStep)}
         >
           {t('prev', { ns: 'common' })}
