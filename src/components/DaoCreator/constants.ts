@@ -31,7 +31,9 @@ export const initialState: CreatorFormState = {
         },
       },
     ],
-    parentAllocationAmount: undefined,
+    parentAllocationAmount: {
+      value: '',
+    },
   },
   /**
    * Time periods in CreatorState are denoted in MINUTES in the UI,

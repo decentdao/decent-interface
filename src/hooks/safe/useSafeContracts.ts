@@ -11,6 +11,7 @@ import {
   ModuleProxyFactory__factory,
   OZLinearVoting__factory,
   FractalUsul__factory,
+  TokenClaim__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import { useProvider, useSigner } from 'wagmi';
@@ -39,6 +40,7 @@ export default function useSafeContracts() {
       vetoMultisigVotingMasterCopy,
       vetoERC20VotingMasterCopy,
       votesTokenMasterCopy,
+      claimingMasterCopy,
     },
   } = useNetworkConfg();
 
@@ -113,6 +115,11 @@ export default function useSafeContracts() {
       asProvider: VotesToken__factory.connect(votesTokenMasterCopy, provider),
     };
 
+    const claimingMasterCopyContract = {
+      asSigner: TokenClaim__factory.connect(claimingMasterCopy, signerOrProvider),
+      asProvider: TokenClaim__factory.connect(claimingMasterCopy, provider),
+    };
+
     setDAOContracts({
       multiSendContract,
       gnosisSafeFactoryContract,
@@ -127,6 +134,7 @@ export default function useSafeContracts() {
       vetoMultisigVotingMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
+      claimingMasterCopyContract,
     });
   }, [
     gnosisSafeFactory,
@@ -142,6 +150,7 @@ export default function useSafeContracts() {
     vetoMultisigVotingMasterCopy,
     vetoERC20VotingMasterCopy,
     votesTokenMasterCopy,
+    claimingMasterCopy,
     provider,
     signer,
   ]);

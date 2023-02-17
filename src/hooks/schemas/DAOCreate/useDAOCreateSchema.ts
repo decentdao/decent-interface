@@ -54,8 +54,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               tokenSymbol: Yup.string().required().min(2),
               tokenSupply: Yup.object().shape({ value: Yup.string().required() }),
               parentAllocationAmount: Yup.object().when({
-                is: (value?: BigNumberValuePair) =>
-                  !!value?.bigNumberValue && !value.bigNumberValue.isZero(),
+                is: (value: BigNumberValuePair) => !!value.value,
                 then: schema =>
                   schema.shape({
                     value: Yup.string().test(maxAllocationValidation),
