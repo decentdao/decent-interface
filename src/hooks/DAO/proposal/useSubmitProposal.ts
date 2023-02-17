@@ -194,10 +194,10 @@ export default function useSubmitProposal() {
           )
         ).wait();
         if (successCallback) {
-          toast.dismiss(toastId);
           successCallback(safeAddress!);
-          toast(successToastMessage);
         }
+        toast.dismiss(toastId);
+        toast(successToastMessage);
       } catch (e) {
         toast.dismiss(toastId);
         toast(failedToastMessage);
