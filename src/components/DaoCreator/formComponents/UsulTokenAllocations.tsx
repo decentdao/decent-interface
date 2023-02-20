@@ -135,7 +135,6 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
                               onChange={valuePair =>
                                 setFieldValue('govToken.parentAllocationAmount', valuePair)
                               }
-                              decimalPlaces={0}
                               isInvalid={false}
                             />
                           </LabelWrapper>
