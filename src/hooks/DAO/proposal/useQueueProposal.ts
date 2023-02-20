@@ -1,10 +1,11 @@
-import { OZLinearVoting__factory } from '@fractal-framework/fractal-contracts';
+import { UsulVetoGuard } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { VetoGuardType } from '../../../providers/Fractal/types';
 import { useTransaction } from '../../utils/useTransaction';
-import useUsul from './useUsul';
 
 export default function useQueueProposal() {
   const { t } = useTranslation('transaction');
@@ -12,27 +13,42 @@ export default function useQueueProposal() {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { votingStrategiesAddresses } = useUsul();
   const [contractCallQueueProposal, contractCallPending] = useTransaction();
+  const {
+    gnosis: {
+      guardContracts: { vetoGuardContract, vetoGuardType },
+    },
+    governance: {
+      contracts: { ozLinearVotingContract },
+    },
+  } = useFractal();
 
   const queueProposal = useCallback(
     (proposalNumber: BigNumber) => {
       if (!signerOrProvider) {
         return;
       }
-      const votingStrategyContract = OZLinearVoting__factory.connect(
-        votingStrategiesAddresses[0],
-        signerOrProvider
-      );
+
+      const contractFunc =
+        vetoGuardContract && vetoGuardType === VetoGuardType.USUL
+          ? (vetoGuardContract.asSigner as UsulVetoGuard).queueProposal
+          : ozLinearVotingContract!.asSigner.finalizeStrategy;
 
       contractCallQueueProposal({
-        contractFn: () => votingStrategyContract.finalizeStrategy(proposalNumber),
+        contractFn: () => contractFunc(proposalNumber),
         pendingMessage: t('pendingQueue'),
         failedMessage: t('failedQueue'),
         successMessage: t('successQueue'),
       });
     },
-    [contractCallQueueProposal, signerOrProvider, t, votingStrategiesAddresses]
+    [
+      contractCallQueueProposal,
+      signerOrProvider,
+      t,
+      ozLinearVotingContract,
+      vetoGuardContract,
+      vetoGuardType,
+    ]
   );
 
   return {
