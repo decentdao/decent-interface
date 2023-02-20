@@ -53,6 +53,12 @@ const useAddress = (addressInput: string | undefined) => {
       setAddress(cachedResolvedAddress);
       setIsValidAddress(true);
       setIsAddressLoading(false);
+      return;
+    } else if (cachedResolvedAddress === undefined) {
+      // a previous lookup did not resolve
+      setAddress(addressInput);
+      setIsValidAddress(false);
+      return;
     }
 
     if (!provider) {
@@ -66,8 +72,8 @@ const useAddress = (addressInput: string | undefined) => {
       .resolveName(addressInput)
       .then(resolvedAddress => {
         if (!resolvedAddress) {
-          // cache an unresolved address for 20 minutes
-          setValue(CacheKeys.ENS_RESOLVE + addressInput, resolvedAddress, 20);
+          // cache an unresolved address as undefined for 20 minutes
+          setValue(CacheKeys.ENS_RESOLVE + addressInput, undefined, 20);
           setAddress(addressInput);
           setIsValidAddress(false);
         } else {
