@@ -1,5 +1,5 @@
 import { GnosisSafe } from '@fractal-framework/fractal-contracts';
-import { GnosisDAO } from '../components/DaoCreator/provider/types';
+import { GnosisDAO } from '../components/DaoCreator/types';
 import { buildContractCall } from '../helpers';
 import { SafeTransaction } from '../types';
 import { BaseContracts } from './types/contracts';
@@ -29,7 +29,7 @@ export class MultisigTxBuilder {
       this.safeContract!,
       'removeOwner',
       [
-        this.daoData.trustedAddresses[this.daoData.trustedAddresses.length - 1].address,
+        this.daoData.trustedAddresses[this.daoData.trustedAddresses.length - 1],
         this.baseContracts.multiSendContract.address,
         this.daoData.signatureThreshold,
       ],

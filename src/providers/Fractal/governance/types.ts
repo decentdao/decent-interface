@@ -15,6 +15,7 @@ import {
   EthereumTxWithTransfersResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
+import { GnosisDAO } from '../../../components/DaoCreator/types';
 import { ContractConnection, DecodedTransaction, MetaTransaction } from '../../../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
@@ -35,7 +36,6 @@ export interface IGnosisModuleData {
   moduleType: GnosisModuleType;
 }
 
-export type TrustedAddress = { address: string; error: boolean };
 export type CreateDAOFunc = (daoData: GnosisDAO, successCallback: DeployDAOSuccessCallback) => void;
 export type DeployDAOSuccessCallback = (daoAddress: string) => void;
 export type DAODetails = {
@@ -72,11 +72,6 @@ export interface IGovernance {
   governanceIsLoading: boolean;
 }
 
-export interface GnosisConfig {
-  trustedAddresses: TrustedAddress[];
-  signatureThreshold: string;
-}
-
 export enum VetoVotingType {
   ERC20,
   MULTISIG,
@@ -106,8 +101,6 @@ export interface IGnosisFreezeData {
   isFrozen: boolean;
   userHasVotes: boolean;
 }
-
-export interface GnosisDAO extends DAODetails, GnosisConfig {}
 
 export interface GovernanceContracts {
   ozLinearVotingContract?: ContractConnection<OZLinearVoting>;

@@ -104,7 +104,7 @@ function ProposalCreate() {
     }
     const proposal = {
       targets: transactions.map(transaction => transaction.targetAddress),
-      values: transactions.map(transaction => transaction.ethValue.bigNumberValue),
+      values: transactions.map(transaction => transaction.ethValue.bigNumberValue!),
       calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
       title: metadata.title,
       description: metadata.description,
