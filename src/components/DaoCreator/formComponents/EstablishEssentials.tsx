@@ -30,8 +30,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
       />
       <Box my={8}>
         <LabelComponent
-          label={'labelChooseGovernance'}
-          helper={'helperChooseGovernance'}
+          label={t('labelChooseGovernance')}
+          helper={t('helperChooseGovernance')}
           isRequired
         >
           <RadioGroup
