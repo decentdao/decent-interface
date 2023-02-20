@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
 import { AccountAction } from '../../constants/actions';
-import { CacheKeys } from './useLocalStorage';
+import { CacheKeys, useLocalStorage } from './useLocalStorage';
 
 interface IUseFavorites {
   safeAddress?: string;
@@ -15,6 +15,7 @@ interface IUseFavorites {
 export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavorites) => {
   const [favoritesList, setFavorites] = useState<string[]>([]);
   const { chainId } = useNetworkConfg();
+  const { setValue, getValue } = useLocalStorage();
 
   /**
    * @returns favorited status of loaded safe
@@ -32,7 +33,7 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavori
   const toggleFavorite = useCallback(
     (address: string) => {
       const normalizedAddress = ethers.utils.getAddress(address);
-      const rawFavorites = localStorage.getItem(CacheKeys.FAVORITES);
+      const rawFavorites = getValue(CacheKeys.FAVORITES);
 
       let updatedFavorites = [] as string[];
       if (rawFavorites) {
@@ -43,28 +44,28 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavori
             ...parsedFavorites,
             [chainId]: updatedFavorites,
           });
-          localStorage.setItem(CacheKeys.FAVORITES, newValue);
+          setValue(CacheKeys.FAVORITES, newValue);
         } else {
           updatedFavorites = [...favoritesList, normalizedAddress];
           const newValue = JSON.stringify({
             ...parsedFavorites,
             [chainId]: updatedFavorites,
           });
-          localStorage.setItem(CacheKeys.FAVORITES, newValue);
+          setValue(CacheKeys.FAVORITES, newValue);
         }
       }
       setFavorites(updatedFavorites);
     },
-    [favoritesList, chainId]
+    [getValue, favoritesList, chainId, setValue]
   );
 
   const loadFavorites = useCallback(() => {
-    const rawFavorites = localStorage.getItem(CacheKeys.FAVORITES);
+    const rawFavorites = getValue(CacheKeys.FAVORITES);
     if (rawFavorites) {
       const parsedFavorites = JSON.parse(rawFavorites)[chainId];
       setFavorites(parsedFavorites || []);
     }
-  }, [chainId]);
+  }, [chainId, getValue]);
 
   useEffect(() => {
     loadFavorites();

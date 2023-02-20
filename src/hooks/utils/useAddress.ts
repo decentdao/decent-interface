@@ -1,10 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
-import {
-  CacheKeys,
-  useFractalStorage,
-} from '../../providers/Fractal/hooks/account/useLocalStorage';
+import { CacheKeys, useLocalStorage } from '../../providers/Fractal/hooks/account/useLocalStorage';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useProvider();
@@ -12,7 +9,7 @@ const useAddress = (addressInput: string | undefined) => {
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
-  const { setValue, getValue } = useFractalStorage();
+  const { setValue, getValue } = useLocalStorage();
 
   useEffect(() => {
     setIsAddressLoading(true);
@@ -54,7 +51,7 @@ const useAddress = (addressInput: string | undefined) => {
       setIsValidAddress(true);
       setIsAddressLoading(false);
       return;
-    } else if (cachedResolvedAddress === 'none') {
+    } else if (cachedResolvedAddress === undefined) {
       // a previous lookup did not resolve
       setAddress(addressInput);
       setIsValidAddress(false);
@@ -72,8 +69,8 @@ const useAddress = (addressInput: string | undefined) => {
       .resolveName(addressInput)
       .then(resolvedAddress => {
         if (!resolvedAddress) {
-          // cache an unresolved address as 'none' for 20 minutes
-          setValue(CacheKeys.ENS_RESOLVE + addressInput, 'none', 20);
+          // cache an unresolved address as 'undefined' for 20 minutes
+          setValue(CacheKeys.ENS_RESOLVE + addressInput, undefined, 20);
           setAddress(addressInput);
           setIsValidAddress(false);
         } else {

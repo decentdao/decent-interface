@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { AccountAction } from '../../constants/actions';
-import { CacheKeys } from './useLocalStorage';
+import { CacheKeys, useLocalStorage } from './useLocalStorage';
 
 interface IUseAccountAudit {
   safeAddress?: string;
@@ -9,21 +9,22 @@ interface IUseAccountAudit {
 
 export const useAccountAudit = ({ accountDispatch }: IUseAccountAudit) => {
   const [hasAccepted, setAcceptedAudit] = useState<boolean>();
+  const { setValue, getValue } = useLocalStorage();
 
   const acceptAudit = useCallback(() => {
-    localStorage.setItem(CacheKeys.AUDIT, JSON.stringify(true));
+    setValue(CacheKeys.AUDIT, JSON.stringify(true));
     setAcceptedAudit(true);
-  }, []);
+  }, [setValue]);
 
   useEffect(() => {
-    const cachedValue = localStorage.getItem(CacheKeys.AUDIT);
+    const cachedValue = getValue(CacheKeys.AUDIT);
     let updatedAudit = false;
     if (cachedValue) {
       const parseValue = JSON.parse(cachedValue);
       updatedAudit = parseValue;
     }
     setAcceptedAudit(updatedAudit);
-  }, []);
+  }, [getValue]);
 
   useEffect(() => {
     accountDispatch({

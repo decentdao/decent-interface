@@ -15,7 +15,7 @@ export enum CacheKeys {
  * @dev update this array to create a new cached item
  * these items are automatically mapped through and added to a user's localstorage on first vist
  */
-const CACHE_MAPPING = [
+const CACHE_DEFAULTS = [
   {
     key: CacheKeys.FAVORITES,
     defaultValue: {},
@@ -26,31 +26,29 @@ const CACHE_MAPPING = [
   },
 ];
 
+interface IStorageValue {
+  value: any;
+  expiration?: number;
+}
+
 export const useLocalStorage = () => {
+  const { chainId } = useNetworkConfg();
+
   /**
-   * adds empty objects for setting up caching
+   * Sets cache default values, if we have not already done so.
    */
   useEffect(() => {
-    CACHE_MAPPING.forEach(({ key, defaultValue }) => {
+    CACHE_DEFAULTS.forEach(({ key, defaultValue }) => {
       if (!localStorage.getItem(key)) {
         localStorage.setItem(key, JSON.stringify(defaultValue));
       }
     });
     return;
   }, []);
-};
-
-interface FractalVal {
-  value: any;
-  expiration?: number;
-}
-
-export const useFractalStorage = () => {
-  const { chainId } = useNetworkConfg();
 
   const setValue = useCallback(
     (key: string, value: any, expirationMinutes?: number) => {
-      const val: FractalVal = {
+      const val: IStorageValue = {
         value: value,
         expiration: expirationMinutes ? Date.now() + expirationMinutes * 60000 : undefined,
       };
@@ -63,7 +61,7 @@ export const useFractalStorage = () => {
     (key: string) => {
       const rawVal = localStorage.getItem('fractal_' + chainId + '_' + key);
       if (rawVal) {
-        const parsed: FractalVal = JSON.parse(rawVal);
+        const parsed: IStorageValue = JSON.parse(rawVal);
         if (parsed.expiration) {
           if (parsed.expiration < Date.now()) {
             localStorage.removeItem('fractal_' + chainId + '_' + key);
