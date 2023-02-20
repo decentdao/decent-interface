@@ -1,6 +1,6 @@
 import { GnosisSafe, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../components/DaoCreator/provider/types';
+import { TokenGovernanceDAO, SubDAO, GnosisDAO } from '../components/DaoCreator/types';
 import { getRandomBytes } from '../helpers';
 import { SafeTransaction } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';

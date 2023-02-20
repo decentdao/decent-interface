@@ -123,7 +123,7 @@ export function DelegateModal({ close }: { close: Function }) {
         errorMessage={errorMessage}
       >
         <EthAddressInput
-          data-testid="essentials-daoName"
+          data-testid="delegate-addressInput"
           value={inputValue}
           setValue={setInputValue}
           onAddressChange={function (address: string, isValid: boolean): void {

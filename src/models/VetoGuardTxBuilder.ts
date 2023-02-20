@@ -8,7 +8,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { SubDAO } from '../components/DaoCreator/provider/types';
+import { SubDAO } from '../components/DaoCreator/types';
 import { buildContractCall } from '../helpers';
 import { SafeTransaction } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';

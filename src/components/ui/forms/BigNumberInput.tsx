@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 
 export interface BigNumberValuePair {
   value: string;
-  bigNumberValue: BigNumber;
+  bigNumberValue?: BigNumber;
 }
 
 export interface BigNumberInputProps
@@ -84,6 +84,14 @@ export function BigNumberInput({
       if (event) {
         stringValue = event.target.value;
       }
+      if (stringValue === '' || stringValue === undefined) {
+        onChange({
+          value: stringValue,
+          bigNumberValue: BigNumber.from(0),
+        });
+        setInputValue('');
+        return;
+      }
 
       const numberMask =
         decimalPlaces === 0 ? new RegExp('^\\d*$') : new RegExp('^\\d*(\\.\\d*)?$');
@@ -107,7 +115,7 @@ export function BigNumberInput({
 
       onChange({
         value: removeOnlyDecimalPoint(newValue),
-        bigNumberValue: bigNumberValue,
+        bigNumberValue,
       });
       if (event && newValue !== event.target.value) {
         resetCaretPositionForInput(event);
