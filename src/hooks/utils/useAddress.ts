@@ -78,11 +78,11 @@ const useAddress = (addressInput: string | undefined) => {
           setAddress(addressInput);
           setIsValidAddress(false);
         } else {
-          // cache a resolved address for a day
+          // cache a resolved address for a week
           setValue(
             CacheKeys.ENS_RESOLVE_PREFIX + addressInput,
             resolvedAddress,
-            CacheExpiry.ONE_DAY
+            CacheExpiry.ONE_WEEK
           );
           setAddress(resolvedAddress);
           setIsValidAddress(true);

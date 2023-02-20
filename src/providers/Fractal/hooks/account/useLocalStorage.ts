@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
 
 /**
@@ -34,18 +34,10 @@ export enum CacheExpiry {
  * note than without one the cache will return null until
  * a value is set.
  */
-const CACHE_DEFAULTS = [
-  {
-    key: CacheKeys.FAVORITES,
-    defaultValue: Array<string>(),
-    expiration: CacheExpiry.NEVER,
-  },
-  {
-    key: CacheKeys.AUDIT_WARNING_SHOWN,
-    defaultValue: true, // TODO never show, we may bring this back in the future...
-    expiration: CacheExpiry.NEVER,
-  },
-];
+const CACHE_DEFAULTS = {
+  [CacheKeys.FAVORITES.toString()]: Array<string>(),
+  [CacheKeys.AUDIT_WARNING_SHOWN.toString()]: true,
+};
 
 interface IStorageValue {
   value: any;
@@ -100,23 +92,14 @@ export const useLocalStorage = () => {
             return parsed.value;
           }
         }
+      } else if (CACHE_DEFAULTS[key]) {
+        return CACHE_DEFAULTS[key];
       } else {
         return null;
       }
     },
     [chainId]
   );
-
-  /**
-   * Sets cache default values, if we have not already done so.
-   */
-  useEffect(() => {
-    CACHE_DEFAULTS.forEach(({ key, defaultValue, expiration }) => {
-      if (getValue(key) === null) {
-        setValue(key, defaultValue, expiration);
-      }
-    });
-  }, [chainId, getValue, setValue]);
 
   return { setValue, getValue };
 };
