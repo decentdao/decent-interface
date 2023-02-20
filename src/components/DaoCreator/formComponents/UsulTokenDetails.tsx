@@ -11,7 +11,7 @@ import { ICreationStepProps, CreatorSteps } from '../types';
 import { UsulTokenAllocations } from './UsulTokenAllocations';
 
 export function UsulTokenDetails(props: ICreationStepProps) {
-  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
+  const { values, isSubmitting, transactionPending, handleChange, isSubDAO, setFieldValue } = props;
   const { t } = useTranslation('daoCreate');
   const { restrictChars } = useFormHelpers();
   return (
@@ -45,15 +45,13 @@ export function UsulTokenDetails(props: ICreationStepProps) {
           helper={t('helperTokenSymbol')}
           isRequired
         >
-          <Field name="govToken.tokenSymbol">
-            {({ field }: FieldAttributes<any>) => (
-              <Input
-                {...field}
-                max={6}
-                data-testid="tokenVoting-tokenSymbolInput"
-              />
-            )}
-          </Field>
+          <Input
+            name="govToken.tokenSymbol"
+            value={values.govToken.tokenSymbol}
+            onChange={handleChange}
+            maxLength={6}
+            data-testid="tokenVoting-tokenSymbolInput"
+          />
         </LabelComponent>
         <LabelComponent
           label={t('labelTokenSupply')}
