@@ -3,7 +3,7 @@ import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
 
 export enum CacheKeys {
   FAVORITES = 'favorites',
-  AUDIT = 'not_audited_acceptance',
+  AUDIT_WARNING_SHOWN = 'audit_warning_shown',
   // name.eth -> 0x0 caching
   ENS_RESOLVE = 'ens_resolve_',
   // 0x0 -> name.eth caching
@@ -21,8 +21,8 @@ const CACHE_DEFAULTS = [
     defaultValue: {},
   },
   {
-    key: CacheKeys.AUDIT,
-    defaultValue: true, // TODO set audit prompt to hide by default. We may bring this back in the future...
+    key: CacheKeys.AUDIT_WARNING_SHOWN,
+    defaultValue: true, // TODO never show, we may bring this back in the future...
   },
 ];
 
@@ -41,6 +41,8 @@ export enum CacheExpiry {
   ONE_WEEK = ONE_DAY * 7,
 }
 
+const KEY_PREFIX = 'fractal_';
+
 export const useLocalStorage = () => {
   const { chainId } = useNetworkConfg();
 
@@ -49,12 +51,12 @@ export const useLocalStorage = () => {
    */
   useEffect(() => {
     CACHE_DEFAULTS.forEach(({ key, defaultValue }) => {
-      if (!localStorage.getItem(key)) {
-        localStorage.setItem(key, JSON.stringify(defaultValue));
+      if (!localStorage.getItem(KEY_PREFIX + chainId + '_' + key)) {
+        localStorage.setItem(KEY_PREFIX + chainId + '_' + key, JSON.stringify(defaultValue));
       }
     });
     return;
-  }, []);
+  }, [chainId]);
 
   const setValue = useCallback(
     (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
@@ -65,14 +67,14 @@ export const useLocalStorage = () => {
             ? CacheExpiry.NEVER
             : Date.now() + expirationMinutes * 60000,
       };
-      localStorage.setItem('fractal_' + chainId + '_' + key, JSON.stringify(val));
+      localStorage.setItem(KEY_PREFIX + chainId + '_' + key, JSON.stringify(val));
     },
     [chainId]
   );
 
   const getValue = useCallback(
     (key: string) => {
-      const rawVal = localStorage.getItem('fractal_' + chainId + '_' + key);
+      const rawVal = localStorage.getItem(KEY_PREFIX + chainId + '_' + key);
       if (rawVal) {
         const parsed: IStorageValue = JSON.parse(rawVal);
         if (parsed.expiration === CacheExpiry.NEVER) {

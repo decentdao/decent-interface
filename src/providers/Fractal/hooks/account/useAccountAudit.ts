@@ -8,31 +8,23 @@ interface IUseAccountAudit {
 }
 
 export const useAccountAudit = ({ accountDispatch }: IUseAccountAudit) => {
-  const [hasAccepted, setAcceptedAudit] = useState<boolean>();
   const { setValue, getValue } = useLocalStorage();
+  const [hasAccepted, setAcceptedAudit] = useState<boolean>(
+    getValue(CacheKeys.AUDIT_WARNING_SHOWN)
+  );
 
-  const acceptAudit = useCallback(() => {
-    setValue(CacheKeys.AUDIT, JSON.stringify(true), CacheExpiry.NEVER);
+  const acceptAuditWarning = useCallback(() => {
+    setValue(CacheKeys.AUDIT_WARNING_SHOWN, true, CacheExpiry.NEVER);
     setAcceptedAudit(true);
   }, [setValue]);
-
-  useEffect(() => {
-    const cachedValue = getValue(CacheKeys.AUDIT);
-    let updatedAudit = false;
-    if (cachedValue) {
-      const parseValue = JSON.parse(cachedValue);
-      updatedAudit = parseValue;
-    }
-    setAcceptedAudit(updatedAudit);
-  }, [getValue]);
 
   useEffect(() => {
     accountDispatch({
       type: AccountAction.UPDATE_AUDIT_MESSAGE,
       payload: {
         hasAccepted,
-        acceptAudit,
+        acceptAuditWarning,
       },
     });
-  }, [hasAccepted, acceptAudit, accountDispatch]);
+  }, [hasAccepted, acceptAuditWarning, accountDispatch]);
 };

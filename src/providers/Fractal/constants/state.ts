@@ -48,7 +48,7 @@ export const treasuryInitialState: ITreasury = {
 
 export const connectedAccountInitialState: IConnectedAccount = {
   audit: {
-    acceptAudit: () => {},
+    acceptAuditWarning: () => {},
     hasAccepted: undefined,
   },
   favorites: {
