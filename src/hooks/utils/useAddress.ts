@@ -12,7 +12,7 @@ const useAddress = (addressInput: string | undefined) => {
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
-  const [setValue, getValue] = useFractalStorage();
+  const { setValue, getValue } = useFractalStorage();
 
   useEffect(() => {
     setIsAddressLoading(true);

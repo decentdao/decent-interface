@@ -81,5 +81,5 @@ export const useFractalStorage = () => {
     [chainId]
   );
 
-  return [setValue, getValue];
+  return { setValue, getValue };
 };
