@@ -72,10 +72,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
         usulTxBuilder.usulContract!.address,
         usulTxBuilder.linearVotingContract!.address
       );
-      const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
-      if (this.parentTokenAddress && parentAllocation) {
-        this.internalTxs.concat([usulTxBuilder.buildTokenClaimData()]);
-      }
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
@@ -98,6 +94,14 @@ export class DaoTxBuilder extends BaseTxBuilder {
       usulTxBuilder.buildDeployStrategyTx(),
       usulTxBuilder.buildDeployUsulTx(),
     ];
+    // If subDAO and parentAllocation, deploy claim module
+    const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
+    if (this.parentTokenAddress && !parentAllocation.isZero()) {
+      const tokenClaimTx = usulTxBuilder.buildDeployTokenClaim();
+      const tokenApprovalTx = usulTxBuilder.buildApproveClaimAllocation();
+      txs.push(tokenApprovalTx);
+      txs.push(tokenClaimTx);
+    }
 
     // If subDAO, deploy Fractal Module
     if (this.parentDAOAddress) {

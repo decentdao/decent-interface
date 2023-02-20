@@ -4,8 +4,8 @@ import {
   GnosisSafe,
   OZLinearVoting,
   OZLinearVoting__factory,
-  TokenClaim__factory,
-  TokenClaim,
+  VotesToken,
+  VotesToken__factory,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
@@ -24,6 +24,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
   private encodedStrategySetupData: string | undefined;
   private encodedSetupUsulData: string | undefined;
   private encodedSetupTokenClaimData: string | undefined;
+  private encodedSetupTokenApprovalData: string | undefined;
 
   private predictedTokenAddress: string | undefined;
   private predictedStrategyAddress: string | undefined;
@@ -32,7 +33,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
 
   public usulContract: FractalUsul | undefined;
   public linearVotingContract: OZLinearVoting | undefined;
-  public tokenClaimContract: TokenClaim | undefined;
+  public votesTokenContract: VotesToken | undefined;
 
   private tokenNonce: string;
   private strategyNonce: string;
@@ -67,11 +68,15 @@ export class UsulTxBuilder extends BaseTxBuilder {
 
     this.setEncodedSetupTokenData();
     this.setPredictedTokenAddress();
-    this.setEncodedSetupTokenClaimData();
-    this.setPredictedTokenClaimAddress();
     this.setPredictedStrategyAddress();
     this.setPredictedUsulAddress();
     this.setContracts();
+
+    const data = daoData as TokenGovernanceDAO;
+    if (parentTokenAddress && !data.parentAllocationAmount.isZero()) {
+      this.setEncodedSetupTokenClaimData();
+      this.setPredictedTokenClaimAddress();
+    }
   }
 
   public buildLinearVotingContractSetupTx(): SafeTransaction {
@@ -156,7 +161,12 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
   }
 
-  public buildTokenClaimData() {
+  public buildDeployTokenClaim() {
+    console.log('🚀 ~ file: UsulTxBuilder.ts:165 ~ buildDeployTokenClaim', {
+      masterCopy: this.usulContracts!.claimingMasterCopyContract.address,
+      encodedData: this.encodedSetupTokenClaimData,
+      nonce: this.claimNonce,
+    });
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
@@ -165,6 +175,17 @@ export class UsulTxBuilder extends BaseTxBuilder {
         this.encodedSetupTokenClaimData,
         this.claimNonce,
       ],
+      0,
+      false
+    );
+  }
+
+  public buildApproveClaimAllocation() {
+    const tokenGovernanceDaoData = this.daoData as TokenGovernanceDAO;
+    return buildContractCall(
+      this.votesTokenContract!,
+      'approve',
+      [this.predictedTokenClaimAddress, tokenGovernanceDaoData.parentAllocationAmount],
       0,
       false
     );
@@ -179,38 +200,6 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
   };
 
-  private setEncodedSetupTokenClaimData() {
-    const tokenGovernanceDaoData = this.daoData as TokenGovernanceDAO;
-
-    const encodedInitTokenData = defaultAbiCoder.encode(
-      ['address', 'address', 'address', 'uint256'],
-      [
-        this.predictedGnosisSafeAddress,
-        this.parentTokenAddress,
-        this.predictedTokenAddress,
-        tokenGovernanceDaoData.parentAllocationAmount,
-      ]
-    );
-    this.encodedSetupTokenClaimData =
-      this.usulContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
-        encodedInitTokenData,
-      ]);
-  }
-
-  private setPredictedTokenClaimAddress() {
-    const tokenByteCodeLinear = generateContractByteCodeLinear(
-      this.usulContracts!.claimingMasterCopyContract.address.slice(2)
-    );
-
-    const tokenSalt = generateSalt(this.encodedSetupTokenClaimData!, this.claimNonce);
-
-    this.predictedTokenClaimAddress = getCreate2Address(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      tokenSalt,
-      solidityKeccak256(['bytes'], [tokenByteCodeLinear])
-    );
-  }
-
   private calculateTokenAllocations(
     tokenGovernanceDaoData: TokenGovernanceDAO
   ): [string[], BigNumber[]] {
@@ -224,10 +213,6 @@ export class UsulTxBuilder extends BaseTxBuilder {
       return tokenAllocation!.add(accumulator);
     }, BigNumber.from(0));
 
-    const parentAllocation = tokenGovernanceDaoData.parentAllocationAmount;
-    if (parentAllocation) {
-      tokenAllocationSum.add(parentAllocation);
-    }
     // Send any un-allocated tokens to the Safe Treasury
     if (tokenGovernanceDaoData.tokenSupply.gt(tokenAllocationSum)) {
       // TODO -- verify this doesn't need to be the predicted safe address (that they are the same)
@@ -267,6 +252,43 @@ export class UsulTxBuilder extends BaseTxBuilder {
     const tokenSalt = generateSalt(this.encodedSetupTokenData!, this.tokenNonce);
 
     this.predictedTokenAddress = getCreate2Address(
+      this.baseContracts.zodiacModuleProxyFactoryContract.address,
+      tokenSalt,
+      solidityKeccak256(['bytes'], [tokenByteCodeLinear])
+    );
+  }
+
+  private setEncodedSetupTokenClaimData() {
+    const tokenGovernanceDaoData = this.daoData as TokenGovernanceDAO;
+    console.log('🚀 ~ file: UsulTxBuilder.ts:262 ~ setEncodedSetupTokenClaimData', {
+      formData: tokenGovernanceDaoData.parentAllocationAmount,
+      predictedSafeAddress: this.safeContract.address,
+      parentToken: this.parentTokenAddress,
+      predictedChildToken: this.predictedTokenAddress,
+    });
+    const encodedInitTokenData = defaultAbiCoder.encode(
+      ['address', 'address', 'address', 'uint256'],
+      [
+        this.safeContract.address,
+        this.parentTokenAddress,
+        this.predictedTokenAddress,
+        tokenGovernanceDaoData.parentAllocationAmount,
+      ]
+    );
+    this.encodedSetupTokenClaimData =
+      this.usulContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
+        encodedInitTokenData,
+      ]);
+  }
+
+  private setPredictedTokenClaimAddress() {
+    const tokenByteCodeLinear = generateContractByteCodeLinear(
+      this.usulContracts!.claimingMasterCopyContract.address.slice(2)
+    );
+
+    const tokenSalt = generateSalt(this.encodedSetupTokenClaimData!, this.claimNonce);
+
+    this.predictedTokenClaimAddress = getCreate2Address(
       this.baseContracts.zodiacModuleProxyFactoryContract.address,
       tokenSalt,
       solidityKeccak256(['bytes'], [tokenByteCodeLinear])
@@ -352,8 +374,8 @@ export class UsulTxBuilder extends BaseTxBuilder {
       this.predictedStrategyAddress!,
       this.signerOrProvider
     );
-    this.tokenClaimContract = TokenClaim__factory.connect(
-      this.predictedTokenClaimAddress!,
+    this.votesTokenContract = VotesToken__factory.connect(
+      this.predictedTokenAddress!,
       this.signerOrProvider
     );
   }
