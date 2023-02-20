@@ -7,7 +7,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/provider/types';
+import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import { SafeTransaction } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';

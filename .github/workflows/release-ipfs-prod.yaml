@@ -37,7 +37,7 @@ jobs:
         uses: decent-dao/ipfs-pinata-deploy-action@v2.0.1
         id: upload
         with:
-          pin-name: ${{ secrets.PINATA_PIN_NAME }}
+          pin-name: 'app.fractalframework.xyz'
           path: './build'
           pinata-api-key: ${{ secrets.PINATA_API_KEY }}
           pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}

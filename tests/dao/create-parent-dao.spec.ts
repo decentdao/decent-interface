@@ -17,7 +17,6 @@ test('Create Multisig DAO', async ({ page }) => {
   new CreateMultisigMocker(page);
   await create
     .fillName('Test Multisig')
-    .then(() => create.clickNext())
     .then(() => create.clickMultisig())
     .then(() => create.clickNext())
     .then(() => create.fillTotalSigners('1'))
@@ -36,7 +35,6 @@ test('Create Token Voting DAO', async ({ page }) => {
   new CreateTokenVotingMocker(page);
   await create
     .fillName('Test Token Voting')
-    .then(() => create.clickNext())
     .then(() => create.clickTokenVoting())
     .then(() => create.clickNext())
     .then(() => create.fillTokenName('Test Token'))
