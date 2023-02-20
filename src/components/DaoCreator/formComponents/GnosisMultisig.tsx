@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes } from 'formik';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
@@ -19,7 +20,16 @@ import { CreatorSteps, ICreationStepProps } from '../types';
 
 export function GnosisMultisig(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
-  const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
+  const {
+    values,
+    errors,
+    setFieldValue,
+    isSubmitting,
+    transactionPending,
+    isSubDAO,
+    validateForm,
+    setErrors,
+  } = props;
   const { restrictChars } = useFormHelpers();
 
   const handleSignersChanges = (inputValue: string, numberStr: number) => {
@@ -47,6 +57,14 @@ export function GnosisMultisig(props: ICreationStepProps) {
     }
     setFieldValue('gnosis.numOfSigners', inputValue);
   };
+
+  useEffect(() => {
+    if (values.gnosis.numOfSigners !== values.gnosis.trustedAddresses.length) {
+      (async () => {
+        setErrors(await validateForm(values));
+      })();
+    }
+  }, [values, validateForm, setErrors]);
   return (
     <StepWrapper
       isSubDAO={isSubDAO}
