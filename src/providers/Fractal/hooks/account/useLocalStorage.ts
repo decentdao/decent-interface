@@ -7,7 +7,7 @@ export enum CacheKeys {
   // name.eth -> 0x0 caching
   ENS_RESOLVE = 'ens_resolve_',
   // 0x0 -> name.eth caching
-  ENS_LOOKUP = 'ens_resolve_',
+  ENS_LOOKUP = 'ens_lookup_',
 }
 
 /**
