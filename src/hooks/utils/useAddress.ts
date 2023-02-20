@@ -74,12 +74,16 @@ const useAddress = (addressInput: string | undefined) => {
       .then(resolvedAddress => {
         if (!resolvedAddress) {
           // cache an unresolved address as 'undefined' for 20 minutes
-          setValue(CacheKeys.ENS_RESOLVE + addressInput, undefined, 20);
+          setValue(CacheKeys.ENS_RESOLVE_PREFIX + addressInput, undefined, 20);
           setAddress(addressInput);
           setIsValidAddress(false);
         } else {
           // cache a resolved address for a day
-          setValue(CacheKeys.ENS_RESOLVE + addressInput, resolvedAddress, CacheExpiry.ONE_DAY);
+          setValue(
+            CacheKeys.ENS_RESOLVE_PREFIX + addressInput,
+            resolvedAddress,
+            CacheExpiry.ONE_DAY
+          );
           setAddress(resolvedAddress);
           setIsValidAddress(true);
         }
