@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { AccountAction } from '../../constants/actions';
-import { CacheKeys, useLocalStorage } from './useLocalStorage';
+import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
 
 interface IUseAccountAudit {
   safeAddress?: string;
@@ -12,7 +12,7 @@ export const useAccountAudit = ({ accountDispatch }: IUseAccountAudit) => {
   const { setValue, getValue } = useLocalStorage();
 
   const acceptAudit = useCallback(() => {
-    setValue(CacheKeys.AUDIT, JSON.stringify(true));
+    setValue(CacheKeys.AUDIT, JSON.stringify(true), CacheExpiry.NEVER);
     setAcceptedAudit(true);
   }, [setValue]);
 

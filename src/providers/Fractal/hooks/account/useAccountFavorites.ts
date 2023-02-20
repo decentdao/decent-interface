@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
 import { AccountAction } from '../../constants/actions';
-import { CacheKeys, useLocalStorage } from './useLocalStorage';
+import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
 
 interface IUseFavorites {
   safeAddress?: string;
@@ -44,14 +44,14 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavori
             ...parsedFavorites,
             [chainId]: updatedFavorites,
           });
-          setValue(CacheKeys.FAVORITES, newValue);
+          setValue(CacheKeys.FAVORITES, newValue, CacheExpiry.NEVER);
         } else {
           updatedFavorites = [...favoritesList, normalizedAddress];
           const newValue = JSON.stringify({
             ...parsedFavorites,
             [chainId]: updatedFavorites,
           });
-          setValue(CacheKeys.FAVORITES, newValue);
+          setValue(CacheKeys.FAVORITES, newValue, CacheExpiry.NEVER);
         }
       }
       setFavorites(updatedFavorites);

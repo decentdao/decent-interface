@@ -28,7 +28,17 @@ const CACHE_DEFAULTS = [
 
 interface IStorageValue {
   value: any;
-  expiration?: number;
+  expiration: number;
+}
+
+/**
+ * Useful defaults for cache expiration minutes.
+ */
+export enum CacheExpiry {
+  NEVER = -1,
+  ONE_HOUR = 60,
+  ONE_DAY = ONE_HOUR * 24,
+  ONE_WEEK = ONE_DAY * 7,
 }
 
 export const useLocalStorage = () => {
@@ -47,10 +57,13 @@ export const useLocalStorage = () => {
   }, []);
 
   const setValue = useCallback(
-    (key: string, value: any, expirationMinutes?: number) => {
+    (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
       const val: IStorageValue = {
         value: value,
-        expiration: expirationMinutes ? Date.now() + expirationMinutes * 60000 : undefined,
+        expiration:
+          expirationMinutes === CacheExpiry.NEVER
+            ? CacheExpiry.NEVER
+            : Date.now() + expirationMinutes * 60000,
       };
       localStorage.setItem('fractal_' + chainId + '_' + key, JSON.stringify(val));
     },
@@ -62,15 +75,15 @@ export const useLocalStorage = () => {
       const rawVal = localStorage.getItem('fractal_' + chainId + '_' + key);
       if (rawVal) {
         const parsed: IStorageValue = JSON.parse(rawVal);
-        if (parsed.expiration) {
+        if (parsed.expiration === CacheExpiry.NEVER) {
+          return parsed.value;
+        } else {
           if (parsed.expiration < Date.now()) {
             localStorage.removeItem('fractal_' + chainId + '_' + key);
             return null;
           } else {
             return parsed.value;
           }
-        } else {
-          return parsed.value;
         }
       } else {
         return null;
