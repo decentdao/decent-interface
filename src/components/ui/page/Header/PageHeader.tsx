@@ -1,15 +1,27 @@
-import { Box, Divider, Flex, Spacer, Button } from '@chakra-ui/react';
-import { ReactNode, useMemo } from 'react';
+import {
+  Box,
+  Button,
+  ComponentWithAs,
+  Divider,
+  Flex,
+  IconButton,
+  IconProps,
+  Spacer,
+} from '@chakra-ui/react';
+import { ReactNode, useEffect, useState } from 'react';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../../../routes/constants';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
   breadcrumbs: Crumb[];
+  hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
+  ButtonIcon?: ComponentWithAs<'svg', IconProps>;
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
+  isButtonDisabled?: boolean;
   children?: ReactNode;
 }
 /**
@@ -18,10 +30,13 @@ interface IPageHeader {
  */
 function PageHeader({
   breadcrumbs,
+  hasDAOLink = true,
   buttonVariant,
+  ButtonIcon,
   buttonText,
   buttonClick,
   buttonTestId,
+  isButtonDisabled,
   children,
 }: IPageHeader) {
   const {
@@ -34,16 +49,19 @@ function PageHeader({
     address,
   });
 
-  const links = useMemo(
-    () => [
-      {
-        title: daoRegistryName || daoName,
-        path: DAO_ROUTES.dao.relative(address),
-      },
-      ...breadcrumbs,
-    ],
-    [address, daoRegistryName, daoName, breadcrumbs]
-  );
+  const [links, setLinks] = useState([...breadcrumbs]);
+
+  useEffect(() => {
+    if (hasDAOLink) {
+      setLinks([
+        {
+          title: daoRegistryName || daoName,
+          path: DAO_ROUTES.dao.relative(address),
+        },
+        ...breadcrumbs,
+      ]);
+    }
+  }, [hasDAOLink, address, daoName, daoRegistryName, breadcrumbs]);
 
   return (
     <Box
@@ -62,9 +80,25 @@ function PageHeader({
             data-testid={buttonTestId}
             size="base"
             variant={buttonVariant}
+            disabled={isButtonDisabled}
           >
             {buttonText}
           </Button>
+        )}
+        {ButtonIcon && (
+          <IconButton
+            aria-label="navigate"
+            icon={<ButtonIcon boxSize="1.5rem" />}
+            onClick={buttonClick}
+            minWidth="0"
+            px="1rem"
+            data-testid={buttonTestId}
+            size="base"
+            variant={buttonVariant}
+            disabled={isButtonDisabled}
+          >
+            {buttonText}
+          </IconButton>
         )}
         {children}
       </Flex>

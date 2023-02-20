@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
+import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { ProposalExecuteData } from '../../types/proposal';
 import useSafeContracts from '../safe/useSafeContracts';

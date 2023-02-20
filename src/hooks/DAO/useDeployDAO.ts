@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/provider/types/index';
+import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
 import useSafeContracts from '../safe/useSafeContracts';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
@@ -14,7 +14,7 @@ const useDeployDAO = () => {
   const { t } = useTranslation('transaction');
 
   const deployDao = useCallback(
-    (daoData: TokenGovernanceDAO | GnosisDAO, successCallback: (daoAddress: string) => void) => {
+    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: (daoAddress: string) => void) => {
       const deploy = async () => {
         if (!multiSendContract) {
           return;
