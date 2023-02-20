@@ -11,27 +11,6 @@ export enum CacheKeys {
 }
 
 /**
- * Maps Cached Values
- * @dev update this array to create a new cached item
- * these items are automatically mapped through and added to a user's localstorage on first vist
- */
-const CACHE_DEFAULTS = [
-  {
-    key: CacheKeys.FAVORITES,
-    defaultValue: {},
-  },
-  {
-    key: CacheKeys.AUDIT_WARNING_SHOWN,
-    defaultValue: true, // TODO never show, we may bring this back in the future...
-  },
-];
-
-interface IStorageValue {
-  value: any;
-  expiration: number;
-}
-
-/**
  * Useful defaults for cache expiration minutes.
  */
 export enum CacheExpiry {
@@ -41,22 +20,33 @@ export enum CacheExpiry {
   ONE_WEEK = ONE_DAY * 7,
 }
 
+/**
+ * Maps Cached Values
+ * @dev update this array to create a new cached item
+ * these items are automatically mapped through and added to a user's localstorage on first vist
+ */
+const CACHE_DEFAULTS = [
+  {
+    key: CacheKeys.FAVORITES,
+    defaultValue: Array<string>(),
+    expiration: CacheExpiry.NEVER,
+  },
+  {
+    key: CacheKeys.AUDIT_WARNING_SHOWN,
+    defaultValue: true, // TODO never show, we may bring this back in the future...
+    expiration: CacheExpiry.NEVER,
+  },
+];
+
+interface IStorageValue {
+  value: any;
+  expiration: number;
+}
+
 const KEY_PREFIX = 'fractal_';
 
 export const useLocalStorage = () => {
   const { chainId } = useNetworkConfg();
-
-  /**
-   * Sets cache default values, if we have not already done so.
-   */
-  useEffect(() => {
-    CACHE_DEFAULTS.forEach(({ key, defaultValue }) => {
-      if (!localStorage.getItem(KEY_PREFIX + chainId + '_' + key)) {
-        localStorage.setItem(KEY_PREFIX + chainId + '_' + key, JSON.stringify(defaultValue));
-      }
-    });
-    return;
-  }, [chainId]);
 
   const setValue = useCallback(
     (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
@@ -81,7 +71,7 @@ export const useLocalStorage = () => {
           return parsed.value;
         } else {
           if (parsed.expiration < Date.now()) {
-            localStorage.removeItem('fractal_' + chainId + '_' + key);
+            localStorage.removeItem(KEY_PREFIX + chainId + '_' + key);
             return null;
           } else {
             return parsed.value;
@@ -93,6 +83,17 @@ export const useLocalStorage = () => {
     },
     [chainId]
   );
+
+  /**
+   * Sets cache default values, if we have not already done so.
+   */
+  useEffect(() => {
+    CACHE_DEFAULTS.forEach(({ key, defaultValue, expiration }) => {
+      if (getValue(key) === null) {
+        setValue(key, defaultValue, expiration);
+      }
+    });
+  }, [chainId, getValue, setValue]);
 
   return { setValue, getValue };
 };
