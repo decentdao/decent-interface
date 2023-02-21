@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerli } from 'wagmi/chains';
 import { goerliConfig } from './networks';
-import { polygonConfig } from './networks/polygon';
 import { NetworkConfig } from './types';
 
 export const defaultState = {
@@ -39,7 +38,7 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfg = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
-export const supportedChains = [goerliConfig, polygonConfig];
+export const supportedChains = [goerliConfig];
 
 const getNetworkConfig = (chainId: number) => {
   if (chainId === 31337) return goerliConfig;
