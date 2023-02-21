@@ -81,7 +81,7 @@ function TransactionsAndSubmit({
         </Button>
         <Alert
           status="info"
-          w="fit-content"
+          w="fit-full"
         >
           <Info boxSize="24px" />
           <AlertTitle>

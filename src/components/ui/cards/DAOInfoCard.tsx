@@ -161,7 +161,8 @@ export function DAONodeCard(props: IDAOInfoCard) {
 
   const nodeGuardContracts =
     !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
-  const nodeFreezeData = !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : freezeData;
+  const nodeFreezeData =
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : !isCurrentDAO ? undefined : freezeData;
 
   return (
     <Flex
