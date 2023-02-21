@@ -6,9 +6,10 @@ import {
   ProposalCreatedEvent,
   ProposalCanceledEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
-import { Dispatch, useCallback, useEffect } from 'react';
+import { Dispatch, useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
+import { DecodedTransaction } from '../../../../types';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
 import { IGovernance, TxProposalState, UsulProposal, VOTE_CHOICES } from '../../types';
@@ -24,6 +25,7 @@ interface IUseUsulProposals {
 export default function useUsulProposals({ governance, governanceDispatch }: IUseUsulProposals) {
   const provider = useProvider();
   const { safeBaseURL } = useNetworkConfg();
+  const metaDataMapping = useRef<Map<string, DecodedTransaction[]>>(new Map());
 
   const {
     txProposalsInfo,
@@ -184,13 +186,10 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       return;
     }
     const loadProposals = async () => {
-      const proposalCreatedFilter = usulContract.asProvider.filters.ProposalCreated();
-      const proposalMetaDataCreatedFilter =
-        usulContract.asProvider.filters.ProposalMetadataCreated();
-      const proposalCreatedEvents = await usulContract.asProvider.queryFilter(
-        proposalCreatedFilter
-      );
-      const proposalMetaDataCreatedEvents = await usulContract.asProvider.queryFilter(
+      const proposalCreatedFilter = usulContract.asSigner.filters.ProposalCreated();
+      const proposalMetaDataCreatedFilter = usulContract.asSigner.filters.ProposalMetadataCreated();
+      const proposalCreatedEvents = await usulContract.asSigner.queryFilter(proposalCreatedFilter);
+      const proposalMetaDataCreatedEvents = await usulContract.asSigner.queryFilter(
         proposalMetaDataCreatedFilter
       );
 
@@ -201,15 +200,20 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
           );
           let metaData;
           if (metaDataEvent) {
+            let decodedTransactions = metaDataMapping.current.get(args.proposalNumber.toString());
+            if (!decodedTransactions) {
+              decodedTransactions = await decodeTransactions(
+                metaDataEvent.args.transactions,
+                safeBaseURL
+              );
+              metaDataMapping.current.set(args.proposalNumber.toString(), decodedTransactions);
+            }
             metaData = {
               title: metaDataEvent.args.title,
               description: metaDataEvent.args.description,
               documentationUrl: metaDataEvent.args.documentationUrl,
               transactions: metaDataEvent.args.transactions,
-              decodedTransactions: await decodeTransactions(
-                metaDataEvent.args.transactions,
-                safeBaseURL
-              ),
+              decodedTransactions,
             };
           }
           return mapProposalCreatedEventToProposal(
