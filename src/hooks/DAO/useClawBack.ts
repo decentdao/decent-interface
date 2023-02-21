@@ -1,13 +1,12 @@
 import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contracts';
 import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GnosisModuleType, SafeInfoResponseWithGuard } from '../../providers/Fractal/types';
 import useSubmitProposal from './proposal/useSubmitProposal';
-import useDefaultNonce from './useDefaultNonce';
 
 interface IUseClawBack {
   childSafeAddress: string;
@@ -16,6 +15,7 @@ interface IUseClawBack {
 
 export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUseClawBack) {
   const [childSafeInfo, setChildSafeInfo] = useState<SafeInfoResponseWithGuard>();
+  const [parentSafeInfo, setParentSafeInfo] = useState<SafeInfoResponseWithGuard>();
   const [childSafeBalance, setChildSafeBalance] = useState<SafeBalanceResponse[]>([]);
 
   const { t } = useTranslation(['proposal', 'proposalMetadata']);
@@ -25,22 +25,24 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
     actions: { lookupModules },
   } = useFractal();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
-  const nonce = useDefaultNonce();
-  const abiCoder = new ethers.utils.AbiCoder();
 
   useEffect(() => {
     const loadData = async () => {
       if (safeService) {
         setChildSafeInfo(await safeService.getSafeInfo(childSafeAddress));
         setChildSafeBalance(await safeService.getBalances(childSafeAddress));
+        if (parentSafeAddress) {
+          setParentSafeInfo(await safeService.getSafeInfo(parentSafeAddress));
+        }
       }
     };
 
     loadData();
-  }, [childSafeAddress, safeService]);
+  }, [childSafeAddress, safeService, parentSafeAddress]);
 
-  const handleClawBack = async () => {
-    if (canUserCreateProposal && parentSafeAddress && childSafeInfo) {
+  const handleClawBack = useCallback(async () => {
+    if (canUserCreateProposal && parentSafeAddress && childSafeInfo && parentSafeInfo) {
+      const abiCoder = new ethers.utils.AbiCoder();
       const modules = await lookupModules(childSafeInfo.modules);
       const fractalModule = modules!.find(module => module.moduleType === GnosisModuleType.FRACTAL);
       const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
@@ -95,7 +97,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
             values: transactions.map(tx => tx.value),
             calldatas: transactions.map(tx => tx.calldata),
           },
-          nonce,
+          nonce: parentSafeInfo.nonce,
           pendingToastMessage: t('clawBackPendingToastMessage'),
           failedToastMessage: t('clawBackFailedToastMessage'),
           successToastMessage: t('clawBackSuccessToastMessage'),
@@ -103,7 +105,17 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
         });
       }
     }
-  };
+  }, [
+    canUserCreateProposal,
+    childSafeInfo,
+    childSafeBalance,
+    lookupModules,
+    parentSafeAddress,
+    parentSafeInfo,
+    provider,
+    submitProposal,
+    t,
+  ]);
 
   return { handleClawBack };
 }
