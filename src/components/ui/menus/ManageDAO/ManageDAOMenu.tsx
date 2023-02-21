@@ -63,11 +63,7 @@ export function ManageDAOMenu({
         freezeData.freezePeriod,
         currentTime
       ) &&
-      !isWithinFreezeProposalPeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezeProposalPeriod,
-        currentTime
-      ) &&
+      freezeData.isFrozen &&
       freezeData.userHasVotes
     ) {
       const clawBackOption = {
