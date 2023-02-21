@@ -36,8 +36,12 @@ function App() {
 
   return (
     <Grid
-      templateAreas={`"nav header"
-      "nav main"`}
+      templateAreas={{
+        base: `"nav header"
+        "main main"`,
+        md: `"nav header"
+        "nav main"`,
+      }}
       gridTemplateColumns={'4.25rem 1fr'}
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
@@ -77,7 +81,7 @@ function App() {
         bg="chocolate.900"
         position="fixed"
         w="4.25rem"
-        minHeight="100vh"
+        minHeight={{ base: 'fit-content', md: '100vh' }}
       >
         <Sidebar />
       </GridItem>
