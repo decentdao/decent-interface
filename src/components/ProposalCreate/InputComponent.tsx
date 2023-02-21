@@ -5,6 +5,7 @@ import { EthAddressInput } from '../ui/forms/EthAddressInput';
 
 interface BaseProps {
   label: string;
+  id?: string;
   helper: string;
   isRequired: boolean;
   value: string;
@@ -17,6 +18,7 @@ interface BaseProps {
 interface InputProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
+  testId: string;
 }
 
 interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
@@ -32,7 +34,7 @@ interface BigNumberProps
   extends Omit<BaseProps, 'children' | 'value'>,
     Omit<BigNumberInputProps, 'isRequired'> {}
 
-function BaseComponent(props: BaseProps) {
+export function LabelComponent(props: Omit<BaseProps, 'value' | 'disabled'>) {
   const { label, helper, isRequired, subLabel, errorMessage, children } = props;
   return (
     <Grid
@@ -42,8 +44,11 @@ function BaseComponent(props: BaseProps) {
       alignItems="start"
     >
       <GridItem>
-        <HStack pb={1}>
-          <Text>{label}</Text>
+        <HStack
+          pb={1}
+          textStyle="text-md-sans-regular"
+        >
+          <Text color="grayscale.100">{label}</Text>
           {isRequired && <Text color="gold.500">*</Text>}
         </HStack>
         <Text color="grayscale.500">{helper}</Text>
@@ -61,39 +66,40 @@ function BaseComponent(props: BaseProps) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { value, disabled, onChange, placeholder } = props;
+  const { id, value, disabled, onChange, placeholder, testId } = props;
   return (
-    <BaseComponent {...props}>
+    <LabelComponent {...props}>
       <Input
+        id={id}
         value={value}
         onChange={onChange}
         disabled={disabled}
+        data-testid={testId}
         placeholder={placeholder}
       />
-    </BaseComponent>
+    </LabelComponent>
   );
 }
 
 export function EthAddressComponent(props: EthAddressProps) {
-  const { disabled, onAddressChange } = props;
+  const { id, disabled, onAddressChange } = props;
   return (
-    <BaseComponent
-      value={''} // unused but required here
-      {...props}
-    >
+    <LabelComponent {...props}>
       <EthAddressInput
+        id={id}
         isDisabled={disabled}
         onAddressChange={onAddressChange}
       />
-    </BaseComponent>
+    </LabelComponent>
   );
 }
 
 export function TextareaComponent(props: TextareaProps) {
-  const { value, disabled, onChange, rows, placeholder } = props;
+  const { id, value, disabled, onChange, rows, placeholder } = props;
   return (
-    <BaseComponent {...props}>
+    <LabelComponent {...props}>
       <Textarea
+        id={id}
         resize="none"
         onChange={onChange}
         value={value}
@@ -103,24 +109,22 @@ export function TextareaComponent(props: TextareaProps) {
         size="base"
         p="0.5rem 1rem"
       />
-    </BaseComponent>
+    </LabelComponent>
   );
 }
 
 export function BigNumberComponent(props: BigNumberProps) {
-  const { value, disabled, onChange, decimalPlaces } = props;
+  const { id, value, disabled, onChange, decimalPlaces } = props;
   return (
-    <BaseComponent
-      {...props}
-      value={''}
-    >
+    <LabelComponent {...props}>
       <BigNumberInput
         value={value}
+        id={id}
         onChange={onChange}
         decimalPlaces={decimalPlaces}
         placeholder="0"
         isDisabled={disabled}
       />
-    </BaseComponent>
+    </LabelComponent>
   );
 }

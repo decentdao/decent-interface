@@ -16,6 +16,8 @@ export function RadioWithText({ testId, description, label, disabled, value }: I
       type="radio"
       disabled={disabled}
       colorScheme="gold"
+      borderColor="gold.500"
+      size="lg"
       value={value}
     >
       <Box
@@ -23,14 +25,14 @@ export function RadioWithText({ testId, description, label, disabled, value }: I
         p="0.5rem 1rem"
       >
         <Text
-          textStyle="text-xl-mono-semibold"
-          color={disabled ? 'grayscale.300' : 'grayscale.white'}
+          textStyle="text-base-sans-regular"
+          color={disabled ? 'grayscale.400' : 'grayscale.100'}
         >
           {label}
         </Text>
         <Text
-          textStyle="text-base-sans-regular"
-          color={disabled ? 'grayscale.300' : 'grayscale.400'}
+          textStyle="text-md-sans-regular"
+          color={disabled ? 'grayscale.400' : 'grayscale.500'}
         >
           {description}
         </Text>

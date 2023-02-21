@@ -1,8 +1,6 @@
 import { BigNumber } from 'ethers';
 import { EthAddress } from '.';
 
-export type TokenAllocation = {
-  isValidAddress: boolean;
-  amount: BigNumber | undefined;
-  addressError?: string;
+export type TokenAllocation<T = BigNumber> = {
+  amount: T;
 } & EthAddress;

@@ -144,6 +144,7 @@ function Transaction({
           </HStack>
         }
         errorMessage={transaction.fragmentError}
+        testId="transaction.functionName"
       />
       <InputComponent
         label={t('labelFunctionSignature')}
@@ -158,6 +159,7 @@ function Transaction({
             <Text {...exampleLabelStyle}>address to, uint256 amount</Text>
           </HStack>
         }
+        testId="transaction.functionSignature"
         errorMessage={transaction.fragmentError}
       />
       <InputComponent
@@ -175,6 +177,7 @@ function Transaction({
             </Text>
           </HStack>
         }
+        testId="transaction.parameters"
         errorMessage={transaction.fragmentError}
       />
       <BigNumberComponent
