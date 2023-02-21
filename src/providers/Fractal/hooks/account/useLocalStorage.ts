@@ -40,8 +40,10 @@ const CACHE_DEFAULTS = {
 };
 
 interface IStorageValue {
-  value: any;
-  expiration: number;
+  // the value to store, 1 character to total reduce cache size
+  v: any;
+  // the expiration, as a UTC timestamp
+  e: number;
 }
 
 function keyInternal(chainId: number, key: string): string {
@@ -66,8 +68,8 @@ export const useLocalStorage = () => {
   const setValue = useCallback(
     (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
       const val: IStorageValue = {
-        value: value,
-        expiration:
+        v: value,
+        e:
           expirationMinutes === CacheExpiry.NEVER
             ? CacheExpiry.NEVER
             : Date.now() + expirationMinutes * 60000,
@@ -82,14 +84,14 @@ export const useLocalStorage = () => {
       const rawVal = localStorage.getItem(keyInternal(chainId, key));
       if (rawVal) {
         const parsed: IStorageValue = JSON.parse(rawVal);
-        if (parsed.expiration === CacheExpiry.NEVER) {
-          return parsed.value;
+        if (parsed.e === CacheExpiry.NEVER) {
+          return parsed.v;
         } else {
-          if (parsed.expiration < Date.now()) {
+          if (parsed.e < Date.now()) {
             localStorage.removeItem(keyInternal(chainId, key));
             return null;
           } else {
-            return parsed.value;
+            return parsed.v;
           }
         }
       } else if (CACHE_DEFAULTS[key]) {
