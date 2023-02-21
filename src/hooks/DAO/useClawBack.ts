@@ -18,7 +18,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
   const [childSafeInfo, setChildSafeInfo] = useState<SafeInfoResponseWithGuard>();
   const [childSafeBalance, setChildSafeBalance] = useState<SafeBalanceResponse[]>([]);
 
-  const { t } = useTranslation('proposal');
+  const { t } = useTranslation(['proposal', 'proposalMetadata']);
   const provider = useProvider();
   const {
     gnosis: { safeService },
@@ -86,8 +86,10 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
 
         submitProposal({
           proposalData: {
-            title: 'Clawback Proposal',
-            description: 'This proposal returns all the funds from subDAO to the parentDAO.',
+            title: t('Clawback Proposal', { ns: 'proposalMetadata' }),
+            description: t('Transfer all funds from the targeted subDAO to our own treasury.', {
+              ns: 'proposalMetadata',
+            }),
             documentationUrl: '',
             targets: transactions.map(tx => tx.target),
             values: transactions.map(tx => tx.value),
