@@ -13,7 +13,6 @@ import { GovernanceAction } from './governance/actions';
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
-import { useLocalStorage } from './hooks/account/useLocalStorage';
 import useDispatchDAOName from './hooks/useDispatchDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useFreezeData } from './hooks/useFreezeData';
@@ -51,8 +50,6 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     connectedAccountInitialState,
     initializeConnectedAccount
   );
-
-  useLocalStorage();
 
   const { getGnosisSafeTransactions, getGnosisSafeInfo } = useGnosisApiServices(
     gnosis,

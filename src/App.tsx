@@ -19,7 +19,7 @@ function localDevConfigs() {
 function App() {
   const {
     account: {
-      audit: { hasAccepted, acceptAudit },
+      audit: { hasAccepted, acceptAuditWarning },
     },
   } = useFractal();
 
@@ -29,7 +29,7 @@ function App() {
     isVisible: hasAccepted !== undefined && !hasAccepted,
     titleTranslationKey: 'auditDisclaimer',
     buttonTranslationKey: 'accept',
-    buttonOnClick: acceptAudit,
+    buttonOnClick: acceptAuditWarning,
   });
 
   localDevConfigs();

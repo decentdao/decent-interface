@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { AccountAction } from '../../constants/actions';
-import { CacheKeys } from './useLocalStorage';
+import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
 
 interface IUseAccountAudit {
   safeAddress?: string;
@@ -8,30 +8,23 @@ interface IUseAccountAudit {
 }
 
 export const useAccountAudit = ({ accountDispatch }: IUseAccountAudit) => {
-  const [hasAccepted, setAcceptedAudit] = useState<boolean>();
+  const { setValue, getValue } = useLocalStorage();
+  const [hasAccepted, setAcceptedAudit] = useState<boolean>(
+    getValue(CacheKeys.AUDIT_WARNING_SHOWN)
+  );
 
-  const acceptAudit = useCallback(() => {
-    localStorage.setItem(CacheKeys.AUDIT, JSON.stringify(true));
+  const acceptAuditWarning = useCallback(() => {
+    setValue(CacheKeys.AUDIT_WARNING_SHOWN, true, CacheExpiry.NEVER);
     setAcceptedAudit(true);
-  }, []);
-
-  useEffect(() => {
-    const cachedValue = localStorage.getItem(CacheKeys.AUDIT);
-    let updatedAudit = false;
-    if (cachedValue) {
-      const parseValue = JSON.parse(cachedValue);
-      updatedAudit = parseValue;
-    }
-    setAcceptedAudit(updatedAudit);
-  }, []);
+  }, [setValue]);
 
   useEffect(() => {
     accountDispatch({
       type: AccountAction.UPDATE_AUDIT_MESSAGE,
       payload: {
         hasAccepted,
-        acceptAudit,
+        acceptAuditWarning,
       },
     });
-  }, [hasAccepted, acceptAudit, accountDispatch]);
+  }, [hasAccepted, acceptAuditWarning, accountDispatch]);
 };

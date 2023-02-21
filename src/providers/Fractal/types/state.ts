@@ -64,7 +64,7 @@ export interface IConnectedAccount {
 
 export interface IAudit {
   hasAccepted?: boolean;
-  acceptAudit: () => void;
+  acceptAuditWarning: () => void;
 }
 
 export interface IFavorites {
