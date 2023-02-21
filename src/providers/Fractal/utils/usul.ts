@@ -111,8 +111,7 @@ export const mapProposalCreatedEventToProposal = async (
   metaData?: ProposalMetaData
 ) => {
   const strategyContract = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
-  const strategyContractProvider =
-    linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
+  const strategyContractProvider = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getTxProposalState(
     usulContract,
