@@ -40,7 +40,7 @@ const CACHE_DEFAULTS = {
 };
 
 interface IStorageValue {
-  // the value to store, 1 character to total reduce cache size
+  // the value to store, 1 character to minimize cache size
   v: any;
   // the expiration, as a UTC timestamp
   e: number;
