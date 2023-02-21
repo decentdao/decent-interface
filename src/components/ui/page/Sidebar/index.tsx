@@ -1,4 +1,4 @@
-import { Center, ComponentWithAs, Divider, Flex, IconProps, Tooltip } from '@chakra-ui/react';
+import { Center, ComponentWithAs, Divider, Flex, IconProps, Show, Tooltip } from '@chakra-ui/react';
 import {
   Discord,
   Documents,
@@ -104,99 +104,99 @@ function Sidebar() {
       >
         <FractalBrand
           aria-hidden
-          boxSize="4.4rem"
-          minWidth="auto"
+          boxSize="4rem"
         />
       </Link>
-
-      {showSideBar && (
+      <Show above="md">
+        {showSideBar && (
+          <Flex
+            alignItems="center"
+            direction="column"
+            gap="2rem"
+          >
+            <SidebarNavLink
+              to={DAO_ROUTES.dao.relative(address)}
+              labelKey="home"
+              testId="sidebar-daoHomeLink"
+              routeKey="dao"
+              Icon={Home}
+            />
+            <SidebarNavLink
+              to={DAO_ROUTES.nodes.relative(address)}
+              labelKey="nodes"
+              testId="sidebar-hierarchy"
+              routeKey="nodes"
+              Icon={Tree}
+            />
+            <SidebarNavLink
+              to={DAO_ROUTES.proposals.relative(address)}
+              labelKey="proposals"
+              testId="sidebar-proposalsLink"
+              routeKey="proposals"
+              Icon={Proposals}
+            />
+            <SidebarNavLink
+              to={DAO_ROUTES.treasury.relative(address)}
+              labelKey="treasury"
+              testId="sidebar-treasuryLink"
+              routeKey="treasury"
+              Icon={Treasury}
+            />
+          </Flex>
+        )}
         <Flex
-          alignItems="center"
+          alignSelf="normal"
           direction="column"
           gap="2rem"
+          mb="8"
         >
-          <SidebarNavLink
-            to={DAO_ROUTES.dao.relative(address)}
-            labelKey="home"
-            testId="sidebar-daoHomeLink"
-            routeKey="dao"
-            Icon={Home}
-          />
-          <SidebarNavLink
-            to={DAO_ROUTES.nodes.relative(address)}
-            labelKey="nodes"
-            testId="sidebar-hierarchy"
-            routeKey="nodes"
-            Icon={Tree}
-          />
-          <SidebarNavLink
-            to={DAO_ROUTES.proposals.relative(address)}
-            labelKey="proposals"
-            testId="sidebar-proposalsLink"
-            routeKey="proposals"
-            Icon={Proposals}
-          />
-          <SidebarNavLink
-            to={DAO_ROUTES.treasury.relative(address)}
-            labelKey="treasury"
-            testId="sidebar-treasuryLink"
-            routeKey="treasury"
-            Icon={Treasury}
-          />
+          <Divider color="chocolate.700" />
+          <SidebarTooltipWrapper label={t('faq')}>
+            <a
+              data-testid="sidebarExternal-faq"
+              href={URL_FAQ}
+              rel="noreferrer noopener"
+              target="_blank"
+              aria-label={t('ariaLabelFAQ')}
+            >
+              <SupportQuestion
+                boxSize="1.5rem"
+                minWidth="auto"
+              />
+            </a>
+          </SidebarTooltipWrapper>
+          <SidebarTooltipWrapper label="Discord">
+            <a
+              data-testid="sidebarExternal-discord"
+              href={URL_DISCORD}
+              rel="noreferrer noopener"
+              target="_blank"
+              aria-label={t('ariaLabelDiscord')}
+            >
+              <Discord
+                boxSize="1.5rem"
+                minWidth="auto"
+              />
+            </a>
+          </SidebarTooltipWrapper>
+          <SidebarTooltipWrapper label={t('documentation')}>
+            <a
+              data-testid="sidebarExternal-documentation"
+              href={URL_DOCS}
+              rel="noreferrer noopener"
+              target="_blank"
+              aria-label={t('ariaLabelDocumentation')}
+            >
+              <Documents
+                boxSize="1.5rem"
+                minWidth="auto"
+              />
+            </a>
+          </SidebarTooltipWrapper>
+          <Divider color="chocolate.700" />
+          <LanguageSwitcher data-testid="sidebar-language" />
         </Flex>
-      )}
-      <Flex
-        alignSelf="normal"
-        direction="column"
-        gap="2rem"
-        mb="8"
-      >
-        <Divider color="chocolate.700" />
-        <SidebarTooltipWrapper label={t('faq')}>
-          <a
-            data-testid="sidebarExternal-faq"
-            href={URL_FAQ}
-            rel="noreferrer noopener"
-            target="_blank"
-            aria-label={t('ariaLabelFAQ')}
-          >
-            <SupportQuestion
-              boxSize="1.5rem"
-              minWidth="auto"
-            />
-          </a>
-        </SidebarTooltipWrapper>
-        <SidebarTooltipWrapper label="Discord">
-          <a
-            data-testid="sidebarExternal-discord"
-            href={URL_DISCORD}
-            rel="noreferrer noopener"
-            target="_blank"
-            aria-label={t('ariaLabelDiscord')}
-          >
-            <Discord
-              boxSize="1.5rem"
-              minWidth="auto"
-            />
-          </a>
-        </SidebarTooltipWrapper>
-        <SidebarTooltipWrapper label={t('documentation')}>
-          <a
-            data-testid="sidebarExternal-documentation"
-            href={URL_DOCS}
-            rel="noreferrer noopener"
-            target="_blank"
-            aria-label={t('ariaLabelDocumentation')}
-          >
-            <Documents
-              boxSize="1.5rem"
-              minWidth="auto"
-            />
-          </a>
-        </SidebarTooltipWrapper>
-        <Divider color="chocolate.700" />
-        <LanguageSwitcher data-testid="sidebar-language" />
-      </Flex>
+      </Show>
     </Flex>
   );
 }
