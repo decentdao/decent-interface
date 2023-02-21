@@ -15,5 +15,6 @@
     "wallet": "Wallet",
     "titleManageDAO": "Manage DAO",
     "optionCreateSubDAO": "Add a subDAO",
-    "optionInitiateFreeze": "Initiate a Freeze"
+    "optionInitiateFreeze": "Initiate a Freeze",
+    "optionInitiateClawback": "Initiate Clawback"
 }

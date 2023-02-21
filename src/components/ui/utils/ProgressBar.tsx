@@ -38,7 +38,10 @@ export default function ProgressBar({
           top="-10px"
           left={`${requiredValue}%`}
         >
-          <ProgressBarDelimited />
+          <ProgressBarDelimited
+            width="6px"
+            height="45px"
+          />
         </Box>
       )}
     </Box>

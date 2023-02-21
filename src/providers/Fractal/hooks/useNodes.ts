@@ -53,12 +53,13 @@ export default function useNodes({
               usulModule.moduleAddress,
               signerOrProvider
             );
-            const guard = usulVetoGuardMasterCopyContract.asSigner.attach(
-              await usulContract.getGuard()
-            );
-            const guardOwner = await guard.owner();
-            if (guardOwner !== safeInfo.address) {
-              return guardOwner;
+            const usulGuardAddress = await usulContract.getGuard();
+            if (usulGuardAddress !== ethers.constants.AddressZero) {
+              const guard = usulVetoGuardMasterCopyContract.asSigner.attach(usulGuardAddress);
+              const guardOwner = await guard.owner();
+              if (guardOwner !== safeInfo.address) {
+                return guardOwner;
+              }
             }
           }
         }
