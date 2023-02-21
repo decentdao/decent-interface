@@ -59,6 +59,7 @@ const useAddress = (addressInput: string | undefined) => {
       // a previous lookup did not resolve
       setAddress(addressInput);
       setIsValidAddress(false);
+      setIsAddressLoading(false);
       return;
     }
 
