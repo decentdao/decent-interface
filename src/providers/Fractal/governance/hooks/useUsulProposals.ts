@@ -201,13 +201,13 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
           );
           let metaData;
           if (metaDataEvent) {
-            let decodedTransactions = metaDataMapping.current.get(metaDataEvent.data);
+            let decodedTransactions = metaDataMapping.current.get(args.proposalNumber.toString());
             if (!decodedTransactions) {
               decodedTransactions = await decodeTransactions(
                 metaDataEvent.args.transactions,
                 safeBaseURL
               );
-              metaDataMapping.current.set(metaDataEvent.data, decodedTransactions);
+              metaDataMapping.current.set(args.proposalNumber.toString(), decodedTransactions);
             }
             metaData = {
               title: metaDataEvent.args.title,
