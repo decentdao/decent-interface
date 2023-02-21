@@ -1,6 +1,11 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
+import {
+  CacheExpiry,
+  CacheKeys,
+  useLocalStorage,
+} from '../../providers/Fractal/hooks/account/useLocalStorage';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useProvider();
@@ -8,6 +13,7 @@ const useAddress = (addressInput: string | undefined) => {
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
+  const { setValue, getValue } = useLocalStorage();
 
   useEffect(() => {
     setIsAddressLoading(true);
@@ -42,6 +48,21 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
+    // check our cache for a potential resolved address (name.eth -> 0x0)
+    const cachedResolvedAddress = getValue(addressInput);
+    if (cachedResolvedAddress) {
+      setAddress(cachedResolvedAddress);
+      setIsValidAddress(true);
+      setIsAddressLoading(false);
+      return;
+    } else if (cachedResolvedAddress === undefined) {
+      // a previous lookup did not resolve
+      setAddress(addressInput);
+      setIsValidAddress(false);
+      setIsAddressLoading(false);
+      return;
+    }
+
     if (!provider) {
       setAddress(addressInput);
       setIsValidAddress(undefined);
@@ -53,9 +74,17 @@ const useAddress = (addressInput: string | undefined) => {
       .resolveName(addressInput)
       .then(resolvedAddress => {
         if (!resolvedAddress) {
+          // cache an unresolved address as 'undefined' for 20 minutes
+          setValue(CacheKeys.ENS_RESOLVE_PREFIX + addressInput, undefined, 20);
           setAddress(addressInput);
           setIsValidAddress(false);
         } else {
+          // cache a resolved address for a week
+          setValue(
+            CacheKeys.ENS_RESOLVE_PREFIX + addressInput,
+            resolvedAddress,
+            CacheExpiry.ONE_WEEK
+          );
           setAddress(resolvedAddress);
           setIsValidAddress(true);
         }
@@ -67,7 +96,7 @@ const useAddress = (addressInput: string | undefined) => {
       .finally(() => {
         setIsAddressLoading(false);
       });
-  }, [provider, addressInput]);
+  }, [provider, addressInput, getValue, setValue]);
 
   return { address, isValidAddress, isAddressLoading };
 };
