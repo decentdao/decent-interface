@@ -17,7 +17,7 @@ import { BASE_ROUTES } from '../../../../routes/constants';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { NavigationLinks } from './NavigationLinks';
 
-function Sidebar() {
+function Navigation() {
   const { t } = useTranslation('navigation');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef<HTMLButtonElement | null>(null);
@@ -114,4 +114,4 @@ function Sidebar() {
   );
 }
 
-export default Sidebar;
+export default Navigation;

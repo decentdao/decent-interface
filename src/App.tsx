@@ -1,7 +1,7 @@
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import './i18n';
 import Header from './components/ui/page/Header';
-import Sidebar from './components/ui/page/Navigation';
+import Navigation from './components/ui/page/Navigation';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
 import { useFractal } from './providers/Fractal/hooks/useFractal';
@@ -83,7 +83,7 @@ function App() {
         w="4.25rem"
         minHeight={{ base: '4rem', md: '100vh' }}
       >
-        <Sidebar />
+        <Navigation />
       </GridItem>
     </Grid>
   );
