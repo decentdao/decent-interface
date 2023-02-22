@@ -40,7 +40,7 @@ export function DAOSearch() {
     <Box
       ref={ref}
       width="full"
-      maxW="31.125rem"
+      maxW={{ base: 'full', md: '31.125rem' }}
       height="full"
     >
       <Popover
@@ -76,6 +76,8 @@ export function DAOSearch() {
           shadow="menu-gold"
           bg="grayscale.black"
           hidden={!errorMessage && !address}
+          position="relative"
+          zIndex="modal"
         >
           <SearchDisplay
             loading={isLoading}

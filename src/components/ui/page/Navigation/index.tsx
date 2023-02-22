@@ -12,6 +12,7 @@ import { FractalBrandBurger, FractalBrand } from '@decent-org/fractal-ui';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { BASE_ROUTES } from '../../../../routes/constants';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { NavigationLinks } from './NavigationLinks';
@@ -20,6 +21,16 @@ function Sidebar() {
   const { t } = useTranslation('sidebar');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef<HTMLButtonElement | null>(null);
+
+  const {
+    gnosis: {
+      safe: { address },
+      safeService,
+      isGnosisLoading,
+    },
+  } = useFractal();
+
+  const showDAOLinks = !!address && !!safeService && !isGnosisLoading;
   return (
     <Flex
       alignItems="center"
@@ -69,10 +80,10 @@ function Sidebar() {
               <Flex
                 alignItems="center"
                 direction="column"
-                justifyContent="space-around"
+                justifyContent={showDAOLinks ? 'space-evenly' : 'flex-start'}
                 flexGrow={1}
               >
-                <NavigationLinks />
+                <NavigationLinks showDAOLinks={showDAOLinks} />
               </Flex>
             </DrawerContent>
           </Drawer>
@@ -91,7 +102,7 @@ function Sidebar() {
         </Link>
       </Hide>
       <Show above="md">
-        <NavigationLinks />
+        <NavigationLinks showDAOLinks={showDAOLinks} />
       </Show>
     </Flex>
   );

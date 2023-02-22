@@ -1,4 +1,5 @@
 import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
+import { constants } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatch } from 'react-router-dom';
@@ -28,7 +29,7 @@ export function NavigationLink({
 
   const { t } = useTranslation('sidebar');
   const patternString = !routeKey
-    ? ''
+    ? constants.AddressZero
     : routeKey === 'dao'
     ? 'daos/:address'
     : `daos/:address/${DAO_ROUTES[routeKey].path}/*`;
