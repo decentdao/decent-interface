@@ -47,7 +47,7 @@ interface IStorageValue {
 }
 
 function keyInternal(chainId: number, key: string): string {
-  return 'fractal_' + chainId + '_' + key;
+  return 'fract_' + chainId + '_' + key;
 }
 
 /**

@@ -1,4 +1,4 @@
-import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
@@ -23,7 +23,7 @@ export function MenuItemNetwork() {
         >
           {t('network')}
         </Text>
-        <MenuItem
+        <Flex
           padding={0}
           alignItems="center"
           gap="2"
@@ -40,7 +40,7 @@ export function MenuItemNetwork() {
           >
             {name}
           </Text>
-        </MenuItem>
+        </Flex>
       </Flex>
     </Box>
   );

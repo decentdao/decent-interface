@@ -1,7 +1,6 @@
 {
     "homeTitleDisconnected": "Ласкаво просимо до Fractal. Слава Україні!",
     "homeSubTitleDisconnected": "Вам потрібно законнектити гаманець, щоб розпочати",
-    "homeSubTitleConnected": "Знайдіть існуючий Fractal, або створіть новий",
     "homeButtonConnect": "Законнектіть ваш гаманець",
     "homeButtonCreate": "Створити Fractal",
     "errorLowSignerThreshold": "Поріг голосів має бути більше ніж 0",
@@ -11,7 +10,6 @@
     "labelSigThreshold": "Поріг підписів",
     "helperSigThreshold": "Кількість необхідних підписів для схвалення пропозиції",
     "titleEssentials": "Створити Основне",
-    "titleGnosis": "Конфігурація \"обгорнутого\" Gnosis",
     "titleUsulConfig": "Конфігурація голосувальних токенів",
     "titleSafeConfig": "Конфігурація Multisig",
     "titleSignerConfig": "Параметри підписантів",
@@ -59,7 +57,6 @@
     "labelMultisigGov": "Мультипідпис (Multisig)",
     "descMultisigGov": "Мульти-підписне DAO з системою управління, базованою на контракті Safe.",
     "labelUsulGov": "Usul з токенами голосування",
-    "descUsulGov": "Система управління, заснована на токенах голосування стандарту ERC-20, що працює на модулі Usul.",
     "labelFractalName": "Ім'я Fractal-у",
     "helperFractalName": "Як буде називатись ваше DAO",
     "titleProposalSettings": "Налаштування пропозицій",

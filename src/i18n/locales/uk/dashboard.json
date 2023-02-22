@@ -1,7 +1,6 @@
 {
     "titleFavorites": "Вподобані",
     "emptyFavorites": "Нема вподобайок",
-    "errorFailedSearch": "Вибачте, ані Fractal ані Gnosis Safe не знайдено за даною адресою.",
     "titleGovernance": "Система Управління",
     "titleType": "Тип",
     "titleVotingPeriod": "Період голосування",
@@ -19,7 +18,7 @@
     "freezeVotedButton": "Зарахувати голос щодо Замороження",
     "noVotesButton": "Користувач на має голосів",
     "freezeDaysLeft": "Залишилось {{count}} днів",
-    "tipFreeze": "необхідні голоси замороження",
+    "tipFreeze": "{{amount}} необхідні голоси замороження",
     "proposalOnChainRejection": "що відхиляє транзакцію # {{proposalNumber}}",
     "proposalDescriptionCont": "що буде",
     "labelFreezeInitiated": "Замороження ініційовано",
