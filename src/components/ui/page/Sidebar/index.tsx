@@ -2,7 +2,6 @@ import { Center, ComponentWithAs, Divider, Flex, IconProps, Show, Tooltip } from
 import {
   Discord,
   Documents,
-  FractalBrand,
   Home,
   Proposals,
   SupportQuestion,
@@ -15,7 +14,8 @@ import { Link, useMatch } from 'react-router-dom';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../../../constants/url';
 import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES, DAO_ROUTES } from '../../../../routes/constants';
+import { DAO_ROUTES } from '../../../../routes/constants';
+import { BrandButton } from './BrandButton';
 
 function SidebarTooltipWrapper({ label, children }: { label: string; children: JSX.Element }) {
   return (
@@ -97,16 +97,7 @@ function Sidebar() {
       flexGrow="1"
       justifyContent="space-between"
     >
-      <Link
-        data-testid="sidebarLogo-homeLink"
-        to={BASE_ROUTES.landing}
-        aria-label={t('ariaLabelFractalBrand')}
-      >
-        <FractalBrand
-          aria-hidden
-          boxSize="4rem"
-        />
-      </Link>
+      <BrandButton />
       <Show above="md">
         {showSideBar && (
           <Flex
