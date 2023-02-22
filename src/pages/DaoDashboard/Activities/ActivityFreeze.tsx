@@ -68,7 +68,7 @@ export function ActivityFreeze({
           <Text textStyle="text-base-sans-regular">
             {!freezeData.isFrozen && freezeData.freezeVotesThreshold.gt(0) && (
               <Tooltip
-                label={voteToThreshold + t('tipFreeze')}
+                label={t('tipFreeze', { amount: voteToThreshold })}
                 placement="bottom"
               >
                 {voteToThreshold}
