@@ -97,13 +97,14 @@ export const useVotingContracts = ({
       },
     });
   }, [
-    fractalUsulMasterCopyContract,
-    votesTokenMasterCopyContract,
-    governanceDispatch,
     zodiacModuleProxyFactoryContract,
     linearVotingMasterCopyContract,
-    usulModule,
+    votesTokenMasterCopyContract,
+    fractalUsulMasterCopyContract,
     isGnosisLoading,
+    usulModule,
+    chainId,
+    governanceDispatch,
   ]);
 
   useEffect(() => {

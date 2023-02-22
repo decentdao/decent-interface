@@ -69,7 +69,8 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         usulContract,
         ozLinearVotingContract,
         provider,
-        provider.network.chainId
+        provider.network.chainId,
+        metaData
       );
 
       const proposals = [...txProposalsInfo.txProposals, proposal];

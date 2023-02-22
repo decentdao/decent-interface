@@ -69,6 +69,7 @@ export function useGnosisModuleTypes(
       zodiacModuleProxyFactoryContract,
       fractalUsulMasterCopyContract,
       fractalModuleMasterCopyContract,
+      chainId,
     ]
   );
 
