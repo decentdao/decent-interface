@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Address, useEnsName, useProvider } from 'wagmi';
+import { CacheKeys, useLocalStorage } from '../../providers/Fractal/hooks/account/useLocalStorage';
 import useSafeContracts from '../safe/useSafeContracts';
 import { createAccountSubstring } from '../utils/useDisplayName';
 
@@ -18,7 +19,9 @@ export default function useDAOName({ address }: { address?: string }) {
   const { data: ensName } = useEnsName({
     address: address as Address,
     chainId: networkId,
+    cacheTime: 1000 * 60 * 30, // 30 min
   });
+  const { setValue, getValue } = useLocalStorage();
 
   const getDaoName = useCallback(async () => {
     if (!address) {
@@ -31,6 +34,11 @@ export default function useDAOName({ address }: { address?: string }) {
       return;
     }
 
+    const cachedName = getValue(CacheKeys.DAO_NAME_PREFIX + address);
+    if (cachedName) {
+      setDAORegistryName(cachedName);
+      return;
+    }
     if (!fractalRegistryContract) {
       setDAORegistryName(createAccountSubstring(address));
       return;
@@ -46,8 +54,9 @@ export default function useDAOName({ address }: { address?: string }) {
     }
 
     const { daoName } = latestEvent.args;
+    setValue(CacheKeys.DAO_NAME_PREFIX + address, daoName, 60);
     setDAORegistryName(daoName);
-  }, [fractalRegistryContract, address, ensName]);
+  }, [address, ensName, fractalRegistryContract, getValue, setValue]);
 
   useEffect(() => {
     (async () => {
