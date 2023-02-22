@@ -37,7 +37,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
   }
   displayData.sort((a, b) => b.fiatValue - a.fiatValue); // sort by USD value
   return {
-    totalFiatValue: totalFiatValue,
-    displayData: displayData,
+    totalFiatValue,
+    displayData,
   };
 }
