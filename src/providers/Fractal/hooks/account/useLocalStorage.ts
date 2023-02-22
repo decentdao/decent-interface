@@ -13,8 +13,7 @@ export enum CacheKeys {
   AUDIT_WARNING_SHOWN = 'audit_warning_shown',
   // name.eth -> 0x0 caching
   ENS_RESOLVE_PREFIX = 'ens_resolve_',
-  // 0x0 -> name.eth caching
-  ENS_LOOKUP_PREFIX = 'ens_lookup_',
+  DAO_NAME_PREFIX = 'dao_name_',
 }
 
 /**
