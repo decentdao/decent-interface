@@ -15,6 +15,7 @@ interface INavigationLink {
   Icon: ComponentWithAs<'svg', IconProps>;
   target?: string;
   rel?: string;
+  closeDrawer?: () => void;
 }
 
 export function NavigationLink({
@@ -23,6 +24,7 @@ export function NavigationLink({
   Icon,
   routeKey,
   tooltipKey,
+  closeDrawer,
   ...rest
 }: INavigationLink) {
   const tooltipTranslationKey = tooltipKey || labelKey;
@@ -51,6 +53,7 @@ export function NavigationLink({
         data-testid={testId}
         aria-label={t(tooltipTranslationKey)}
         {...rest}
+        onClick={closeDrawer}
       >
         <Box
           display={{ base: 'flex', md: undefined }}

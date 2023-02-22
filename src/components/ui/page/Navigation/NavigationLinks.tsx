@@ -16,9 +16,11 @@ import { NavigationLink } from './NavigationLink';
 export function NavigationLinks({
   address,
   showDAOLinks,
+  closeDrawer,
 }: {
   showDAOLinks: boolean;
   address?: string;
+  closeDrawer?: () => void;
 }) {
   return (
     <>
@@ -37,6 +39,7 @@ export function NavigationLinks({
               testId="navigation-daoHomeLink"
               routeKey="dao"
               Icon={Home}
+              closeDrawer={closeDrawer}
             />
             <NavigationLink
               to={DAO_ROUTES.nodes.relative(address)}
@@ -44,6 +47,7 @@ export function NavigationLinks({
               testId="navigation-hierarchy"
               routeKey="nodes"
               Icon={Tree}
+              closeDrawer={closeDrawer}
             />
             <NavigationLink
               to={DAO_ROUTES.proposals.relative(address)}
@@ -51,6 +55,7 @@ export function NavigationLinks({
               testId="navigation-proposalsLink"
               routeKey="proposals"
               Icon={Proposals}
+              closeDrawer={closeDrawer}
             />
             <NavigationLink
               to={DAO_ROUTES.treasury.relative(address)}
@@ -58,6 +63,7 @@ export function NavigationLinks({
               testId="navigation-treasuryLink"
               routeKey="treasury"
               Icon={Treasury}
+              closeDrawer={closeDrawer}
             />
           </Flex>
           <Divider color="chocolate.700" />
@@ -79,6 +85,7 @@ export function NavigationLinks({
           testId="navigationExternal-faq"
           Icon={SupportQuestion}
           rel="noreferrer noopener"
+          closeDrawer={closeDrawer}
         />
         <NavigationLink
           to={URL_DISCORD}
@@ -87,6 +94,7 @@ export function NavigationLinks({
           testId="navigationExternal-discord"
           Icon={Discord}
           rel="noreferrer noopener"
+          closeDrawer={closeDrawer}
         />
         <NavigationLink
           to={URL_DOCS}
@@ -95,6 +103,7 @@ export function NavigationLinks({
           testId="navigationExternal-documentation"
           Icon={Documents}
           rel="noreferrer noopener"
+          closeDrawer={closeDrawer}
         />
 
         <Divider color="chocolate.700" />

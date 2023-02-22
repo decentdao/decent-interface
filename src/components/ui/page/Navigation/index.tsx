@@ -63,7 +63,6 @@ function Navigation() {
             placement="left"
             isOpen={isOpen}
             onClose={onClose}
-            finalFocusRef={btnRef}
             size="full"
             isFullHeight
           >
@@ -76,6 +75,7 @@ function Navigation() {
                 size="lg"
                 zIndex="banner"
               />
+
               <Box
                 mt={12}
                 px={8}
@@ -95,6 +95,7 @@ function Navigation() {
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}
                   address={address}
+                  closeDrawer={onClose}
                 />
               </Flex>
             </DrawerContent>
