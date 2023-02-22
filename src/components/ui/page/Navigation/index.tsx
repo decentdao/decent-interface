@@ -18,7 +18,7 @@ import { DAOSearch } from '../../menus/DAOSearch';
 import { NavigationLinks } from './NavigationLinks';
 
 function Sidebar() {
-  const { t } = useTranslation('sidebar');
+  const { t } = useTranslation('nagivation');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef<HTMLButtonElement | null>(null);
 
@@ -91,7 +91,7 @@ function Sidebar() {
       </Hide>
       <Hide below="md">
         <Link
-          data-testid="sidebarLogo-homeLink"
+          data-testid="navigationLogo-homeLink"
           to={BASE_ROUTES.landing}
           aria-label={t('ariaLabelFractalBrand')}
         >

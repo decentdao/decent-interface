@@ -25,7 +25,7 @@ function ProposalDetails() {
   } = useFractal();
 
   const [proposal, setProposal] = useState<TxProposal | null>();
-  const { t } = useTranslation(['proposal', 'sidebar', 'breadcrumbs', 'dashboard']);
+  const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
   const usulProposal = proposal as UsulProposal;
 

@@ -23,7 +23,7 @@ export default function ProposalSummary({
     governance: { governanceToken },
   } = useFractal();
   const { displayName: proposerDisplayName } = useDisplayName(proposer);
-  const { t } = useTranslation(['proposal', 'common', 'sidebar']);
+  const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const getVotesPercentage = (voteTotal: BigNumber): number => {
     if (!governanceToken || !governanceToken.totalSupply || governanceToken.totalSupply.eq(0)) {

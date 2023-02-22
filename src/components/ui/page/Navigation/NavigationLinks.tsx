@@ -33,28 +33,28 @@ export function NavigationLinks({
             <NavigationLink
               to={DAO_ROUTES.dao.relative(address)}
               labelKey="home"
-              testId="sidebar-daoHomeLink"
+              testId="navigation-daoHomeLink"
               routeKey="dao"
               Icon={Home}
             />
             <NavigationLink
               to={DAO_ROUTES.nodes.relative(address)}
               labelKey="nodes"
-              testId="sidebar-hierarchy"
+              testId="navigation-hierarchy"
               routeKey="nodes"
               Icon={Tree}
             />
             <NavigationLink
               to={DAO_ROUTES.proposals.relative(address)}
               labelKey="proposals"
-              testId="sidebar-proposalsLink"
+              testId="navigation-proposalsLink"
               routeKey="proposals"
               Icon={Proposals}
             />
             <NavigationLink
               to={DAO_ROUTES.treasury.relative(address)}
               labelKey="treasury"
-              testId="sidebar-treasuryLink"
+              testId="navigation-treasuryLink"
               routeKey="treasury"
               Icon={Treasury}
             />
@@ -74,7 +74,7 @@ export function NavigationLinks({
           to={URL_FAQ}
           tooltipKey="ariaLabelFAQ"
           labelKey="faq"
-          testId="sidebarExternal-faq"
+          testId="navigationExternal-faq"
           Icon={SupportQuestion}
           rel="noreferrer noopener"
         />
@@ -82,7 +82,7 @@ export function NavigationLinks({
           to={URL_DISCORD}
           tooltipKey="ariaLabelDiscord"
           labelKey="discord"
-          testId="sidebarExternal-discord"
+          testId="navigationExternal-discord"
           Icon={Discord}
           rel="noreferrer noopener"
         />
@@ -90,13 +90,13 @@ export function NavigationLinks({
           to={URL_DOCS}
           labelKey="documentation"
           tooltipKey="ariaLabelDocumentation"
-          testId="sidebarExternal-documentation"
+          testId="navigationExternal-documentation"
           Icon={Documents}
           rel="noreferrer noopener"
         />
 
         <Divider color="chocolate.700" />
-        <LanguageSwitcher data-testid="sidebar-language" />
+        <LanguageSwitcher data-testid="navigation-language" />
       </Flex>
     </>
   );
