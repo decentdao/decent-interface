@@ -16,16 +16,16 @@ function Header() {
     >
       <Show above="md">
         <DAOSearch />
-        <Flex
-          h="full"
-          w="full"
-          justifyContent="flex-end"
-          alignItems="center"
-        >
-          {!!account && <FavoritesMenu />}
-          <AccountDisplay />
-        </Flex>
       </Show>
+      <Flex
+        h="full"
+        w="full"
+        justifyContent="flex-end"
+        alignItems="center"
+      >
+        {!!account && <FavoritesMenu />}
+        <AccountDisplay />
+      </Flex>
     </Flex>
   );
 }
