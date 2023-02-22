@@ -39,11 +39,11 @@ export function useVetoContracts(
       }
 
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const filter = zodiacModuleProxyFactoryContract.asProvider.filters.ModuleProxyCreation(
+        const filter = zodiacModuleProxyFactoryContract.asSigner.filters.ModuleProxyCreation(
           proxyAddress,
           null
         );
-        return zodiacModuleProxyFactoryContract.asProvider
+        return zodiacModuleProxyFactoryContract.asSigner
           .queryFilter(filter)
           .then(proxiesCreated => {
             return proxiesCreated[0].args.masterCopy;
