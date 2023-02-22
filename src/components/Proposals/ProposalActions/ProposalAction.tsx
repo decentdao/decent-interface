@@ -33,7 +33,9 @@ export function ProposalAction({
   const canExecuteAction =
     proposal.state === TxProposalState.Active ||
     proposal.state === TxProposalState.Executing ||
-    proposal.state === TxProposalState.Queueable;
+    proposal.state === TxProposalState.Queueable ||
+    proposal.state === TxProposalState.TimeLocked ||
+    proposal.state === TxProposalState.Queued;
 
   const handleClick = () => {
     navigate(DAO_ROUTES.proposal.relative(safe.address, proposal.proposalNumber));
@@ -82,6 +84,7 @@ export function ProposalAction({
         return <Queue proposal={proposal} />;
       case TxProposalState.Executing:
       case TxProposalState.TimeLocked:
+      case TxProposalState.Queued:
         return <Execute proposal={proposal} />;
     }
   }

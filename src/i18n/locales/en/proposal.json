@@ -108,6 +108,6 @@
     "learnMore": "Learn More",
     "clawBackPendingToastMessage": "Creating clawback proposal",
     "clawBackSuccessToastMessage": "Clawback proposal successfully created",
-    "clawBackFailedToastMessage": "Error creating clawback proposal"
-
+    "clawBackFailedToastMessage": "Error creating clawback proposal",
+    "proposalStartBlockNotFinalized": "You can't vote right now as proposal's start block not yet finalized."
 }
