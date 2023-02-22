@@ -1,4 +1,4 @@
-import { Box, ComponentWithAs, Hide, IconProps, Show, Text } from '@chakra-ui/react';
+import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatch } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { NavigationTooltip } from './NavigationTooltip';
 interface INavigationLink {
   to: string;
   labelKey: string;
+  tooltipKey?: string;
   testId: string;
   routeKey?: string;
   Icon: ComponentWithAs<'svg', IconProps>;
@@ -15,7 +16,16 @@ interface INavigationLink {
   rel?: string;
 }
 
-export function NavigationLink({ labelKey, testId, Icon, routeKey, ...rest }: INavigationLink) {
+export function NavigationLink({
+  labelKey,
+  testId,
+  Icon,
+  routeKey,
+  tooltipKey,
+  ...rest
+}: INavigationLink) {
+  const tooltipTranslationKey = tooltipKey || labelKey;
+
   const { t } = useTranslation('sidebar');
   const patternString = !routeKey
     ? ''
@@ -35,10 +45,10 @@ export function NavigationLink({ labelKey, testId, Icon, routeKey, ...rest }: IN
   }, [match]);
 
   return (
-    <NavigationTooltip label={t(labelKey)}>
+    <NavigationTooltip label={t(tooltipTranslationKey)}>
       <Link
         data-testid={testId}
-        aria-label={t(labelKey)}
+        aria-label={t(tooltipTranslationKey)}
         {...rest}
       >
         <Box

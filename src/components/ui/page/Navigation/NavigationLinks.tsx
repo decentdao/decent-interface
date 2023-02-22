@@ -73,21 +73,24 @@ export function NavigationLinks() {
         <Divider color="chocolate.700" />
         <NavigationLink
           to={URL_FAQ}
-          labelKey="ariaLabelFAQ"
+          tooltipKey="ariaLabelFAQ"
+          labelKey="faq"
           testId="sidebarExternal-faq"
           Icon={SupportQuestion}
           rel="noreferrer noopener"
         />
         <NavigationLink
           to={URL_DISCORD}
-          labelKey="ariaLabelDiscord"
+          tooltipKey="ariaLabelDiscord"
+          labelKey="discord"
           testId="sidebarExternal-discord"
           Icon={Discord}
           rel="noreferrer noopener"
         />
         <NavigationLink
           to={URL_DOCS}
-          labelKey="ariaLabelDocumentation"
+          labelKey="documentation"
+          tooltipKey="ariaLabelDocumentation"
           testId="sidebarExternal-documentation"
           Icon={Documents}
           rel="noreferrer noopener"

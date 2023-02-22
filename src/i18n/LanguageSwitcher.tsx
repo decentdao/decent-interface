@@ -25,7 +25,7 @@ export function LanguageSwitcher() {
             alignItems="center"
           >
             <Globe
-              boxSize="1.5rem"
+              boxSize={{ base: '2.5rem', md: '1.5rem' }}
               minWidth="auto"
             />
             <Hide above="md">
