@@ -83,7 +83,10 @@ function Sidebar() {
                 justifyContent={showDAOLinks ? 'space-evenly' : 'flex-start'}
                 flexGrow={1}
               >
-                <NavigationLinks showDAOLinks={showDAOLinks} />
+                <NavigationLinks
+                  showDAOLinks={showDAOLinks}
+                  address={address}
+                />
               </Flex>
             </DrawerContent>
           </Drawer>
@@ -102,7 +105,10 @@ function Sidebar() {
         </Link>
       </Hide>
       <Show above="md">
-        <NavigationLinks showDAOLinks={showDAOLinks} />
+        <NavigationLinks
+          showDAOLinks={showDAOLinks}
+          address={address}
+        />
       </Show>
     </Flex>
   );
