@@ -27,7 +27,7 @@ export function NavigationLink({
 }: INavigationLink) {
   const tooltipTranslationKey = tooltipKey || labelKey;
 
-  const { t } = useTranslation('nagivation');
+  const { t } = useTranslation('navigation');
   const patternString = !routeKey
     ? constants.AddressZero
     : routeKey === 'dao'

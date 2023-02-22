@@ -18,7 +18,7 @@ import { DAOSearch } from '../../menus/DAOSearch';
 import { NavigationLinks } from './NavigationLinks';
 
 function Sidebar() {
-  const { t } = useTranslation('nagivation');
+  const { t } = useTranslation('navigation');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef<HTMLButtonElement | null>(null);
 
