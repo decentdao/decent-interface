@@ -46,7 +46,7 @@ export const useCreateSubDAOProposal = () => {
               predictedGnosisSafeAddress,
             ]),
           ],
-          title: 'Create SubDAO',
+          title: t('Create a subDAO', { ns: 'proposalMetadata' }),
           description: '',
           documentationUrl: '',
         };
