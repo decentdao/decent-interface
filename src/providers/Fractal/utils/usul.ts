@@ -4,7 +4,7 @@ import {
   SafeMultisigTransactionResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { asProper } from '../../../helpers';
+import { eventRPC } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { ContractConnection } from '../../../types';
@@ -113,7 +113,7 @@ export const mapProposalCreatedEventToProposal = async (
   metaData?: ProposalMetaData
 ) => {
   const strategyContract = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
-  const strategyContractProvider = asProper<OZLinearVoting>(
+  const strategyContractProvider = eventRPC<OZLinearVoting>(
     linearVotingMasterCopyContract,
     chainId
   ).attach(strategyAddress);

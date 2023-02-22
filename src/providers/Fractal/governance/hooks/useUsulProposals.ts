@@ -10,7 +10,7 @@ import {
 import { Dispatch, useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
-import { asProper } from '../../../../helpers';
+import { eventRPC } from '../../../../helpers';
 import { DecodedTransaction } from '../../../../types';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
@@ -43,9 +43,9 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       if (!usulContract || !ozLinearVotingContract) {
         return;
       }
-      const proper = asProper<FractalUsul>(usulContract, provider.network.chainId);
-      const proposalMetaDataCreatedFilter = proper.filters.ProposalMetadataCreated();
-      const proposalMetaDataCreatedEvents = await proper.queryFilter(proposalMetaDataCreatedFilter);
+      const rpc = eventRPC<FractalUsul>(usulContract, provider.network.chainId);
+      const proposalMetaDataCreatedFilter = rpc.filters.ProposalMetadataCreated();
+      const proposalMetaDataCreatedEvents = await rpc.queryFilter(proposalMetaDataCreatedFilter);
       const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
         event.args.proposalId.eq(proposalNumber)
       );

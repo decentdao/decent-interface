@@ -1,7 +1,7 @@
 import { ModuleProxyFactory, UsulVetoGuard, VetoGuard } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { Dispatch, useEffect, useCallback } from 'react';
-import { asProper } from '../../../helpers';
+import { eventRPC } from '../../../helpers';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import {
@@ -41,11 +41,11 @@ export function useVetoContracts(
       }
 
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const filter = asProper<ModuleProxyFactory>(
+        const filter = eventRPC<ModuleProxyFactory>(
           zodiacModuleProxyFactoryContract,
           chainId
         ).filters.ModuleProxyCreation(proxyAddress, null);
-        return asProper<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId)
+        return eventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId)
           .queryFilter(filter)
           .then(proxiesCreated => {
             return proxiesCreated[0].args.masterCopy;
