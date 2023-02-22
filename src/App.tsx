@@ -42,7 +42,7 @@ function App() {
         md: `"nav header"
         "nav main"`,
       }}
-      gridTemplateColumns={'4.25rem 1fr'}
+      gridTemplateColumns="4.25rem 1fr"
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
