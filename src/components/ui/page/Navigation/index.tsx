@@ -90,7 +90,7 @@ function Navigation() {
                 flexGrow={1}
                 overflow="scroll"
                 px={8}
-                pt={16}
+                pt={32}
               >
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}
