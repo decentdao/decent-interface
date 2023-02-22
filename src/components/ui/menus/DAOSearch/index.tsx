@@ -41,7 +41,7 @@ export function DAOSearch() {
       ref={ref}
       width="full"
       maxW={{ base: 'full', md: '31.125rem' }}
-      height="full"
+      height="4rem"
     >
       <Popover
         matchWidth

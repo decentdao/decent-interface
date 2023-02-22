@@ -81,7 +81,7 @@ function App() {
         bg="chocolate.900"
         position="fixed"
         w="4.25rem"
-        minHeight={{ base: '4rem', md: '100vh' }}
+        minHeight={{ base: undefined, md: '100vh' }}
       >
         <Navigation />
       </GridItem>

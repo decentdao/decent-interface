@@ -1,7 +1,9 @@
 import {
+  Box,
   Drawer,
   DrawerCloseButton,
   DrawerContent,
+  DrawerOverlay,
   Flex,
   Hide,
   IconButton,
@@ -63,25 +65,32 @@ function Navigation() {
             onClose={onClose}
             finalFocusRef={btnRef}
             size="full"
+            isFullHeight
           >
+            <DrawerOverlay />
             <DrawerContent
               bg="chocolate.900"
               border="none"
-              p={8}
             >
-              <DrawerCloseButton size="lg" />
-              <Flex
-                mt={8}
-                h="4rem"
-                justifyContent="center"
+              <DrawerCloseButton
+                size="lg"
+                zIndex="banner"
+              />
+              <Box
+                mt={12}
+                px={8}
+                position="relative"
               >
                 <DAOSearch />
-              </Flex>
+              </Box>
               <Flex
                 alignItems="center"
                 direction="column"
                 justifyContent={showDAOLinks ? 'space-evenly' : 'flex-start'}
                 flexGrow={1}
+                overflow="scroll"
+                px={8}
+                pt={16}
               >
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}

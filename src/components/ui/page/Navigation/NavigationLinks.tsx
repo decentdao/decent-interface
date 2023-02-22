@@ -29,6 +29,7 @@ export function NavigationLinks({
             direction="column"
             gap="2rem"
             w="full"
+            my={8}
           >
             <NavigationLink
               to={DAO_ROUTES.dao.relative(address)}
@@ -67,7 +68,8 @@ export function NavigationLinks({
         direction="column"
         gap="2rem"
         w="full"
-        my="8"
+        my={8}
+        mb={16}
         justifyContent={{ base: 'flex-start' }}
       >
         <NavigationLink
