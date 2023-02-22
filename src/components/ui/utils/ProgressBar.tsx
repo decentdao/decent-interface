@@ -36,7 +36,7 @@ export default function ProgressBar({
         <Box
           position="absolute"
           top="-10px"
-          left={`${requiredValue}%`}
+          left={`${requiredValue - 0.9}%`}
         >
           <ProgressBarDelimiter
             width="6px"
