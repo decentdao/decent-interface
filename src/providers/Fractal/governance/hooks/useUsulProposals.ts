@@ -41,9 +41,8 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       if (!usulContract || !ozLinearVotingContract) {
         return;
       }
-      const proposalMetaDataCreatedFilter =
-        usulContract.asProvider.filters.ProposalMetadataCreated();
-      const proposalMetaDataCreatedEvents = await usulContract.asProvider.queryFilter(
+      const proposalMetaDataCreatedFilter = usulContract.asSigner.filters.ProposalMetadataCreated();
+      const proposalMetaDataCreatedEvents = await usulContract.asSigner.queryFilter(
         proposalMetaDataCreatedFilter
       );
       const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>

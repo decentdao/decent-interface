@@ -202,7 +202,6 @@ export function Assets() {
   const coinDisplay = useFormatCoins(assetsFungible);
   return (
     <Box>
-      {' '}
       <Text
         textStyle="text-sm-sans-regular"
         color="chocolate.200"

@@ -52,17 +52,17 @@ export const useVotingContracts = ({
     let ozLinearContract: ContractConnection<OZLinearVoting> | undefined;
     let tokenContract: ContractConnection<VotesToken> | undefined;
 
-    const votingContractAddress = await usulContract.asProvider
+    const votingContractAddress = await usulContract.asSigner
       .queryFilter(usulModule.filters.EnabledStrategy())
       .then(strategiesEnabled => {
         return strategiesEnabled[0].args.strategy;
       });
 
-    const filter = zodiacModuleProxyFactoryContract.asProvider.filters.ModuleProxyCreation(
+    const filter = zodiacModuleProxyFactoryContract.asSigner.filters.ModuleProxyCreation(
       votingContractAddress,
       null
     );
-    const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract.asProvider
+    const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract.asSigner
       .queryFilter(filter)
       .then(proxiesCreated => {
         return proxiesCreated[0].args.masterCopy;
