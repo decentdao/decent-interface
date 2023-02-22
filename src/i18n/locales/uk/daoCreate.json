@@ -1,7 +1,6 @@
 {
     "homeTitleDisconnected": "Ласкаво просимо до Fractal. Слава Україні!",
     "homeSubTitleDisconnected": "Вам потрібно законнектити гаманець, щоб розпочати",
-    "homeSubTitleConnected": "Знайдіть існуючий Fractal, або створіть новий",
     "homeButtonConnect": "Законнектіть ваш гаманець",
     "homeButtonCreate": "Створити Fractal",
     "errorLowSignerThreshold": "Поріг голосів має бути більше ніж 0",

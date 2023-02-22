@@ -1,7 +1,7 @@
 {
     "homeTitleDisconnected": "Welcome to Fractal",
     "homeSubTitleDisconnected": "Connect your wallet to get started",
-    "homeSubTitleConnected": "Find a Fractal above or create a new one",
+    "homeSubTitleConnected": "Find your Fractal or create a new one",
     "homeButtonConnect": "Connect your wallet",
     "homeButtonCreate": "Create a Fractal",
     "labelCreateSubDAOProposal": "Create a SubDAO",
