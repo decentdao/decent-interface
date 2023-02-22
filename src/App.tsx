@@ -1,7 +1,7 @@
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import './i18n';
 import Header from './components/ui/page/Header';
-import Sidebar from './components/ui/page/Sidebar';
+import Sidebar from './components/ui/page/Navigation';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
 import { useFractal } from './providers/Fractal/hooks/useFractal';
