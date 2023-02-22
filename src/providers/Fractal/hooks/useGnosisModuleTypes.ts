@@ -1,10 +1,13 @@
+import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useCallback } from 'react';
+import { asProper } from '../../../helpers';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 
 export function useGnosisModuleTypes(
   gnosisDispatch: Dispatch<GnosisActions>,
+  chainId: number,
   moduleAddresses?: string[]
 ) {
   const {
@@ -23,16 +26,12 @@ export function useGnosisModuleTypes(
         return;
       }
 
+      const proper = asProper<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const filter = zodiacModuleProxyFactoryContract.asSigner.filters.ModuleProxyCreation(
-          proxyAddress,
-          null
-        );
-        return zodiacModuleProxyFactoryContract.asSigner
-          .queryFilter(filter)
-          .then(proxiesCreated => {
-            return proxiesCreated[0].args.masterCopy;
-          });
+        const filter = proper.filters.ModuleProxyCreation(proxyAddress, null);
+        return proper.queryFilter(filter).then(proxiesCreated => {
+          return proxiesCreated[0].args.masterCopy;
+        });
       };
 
       const modules = await Promise.all(

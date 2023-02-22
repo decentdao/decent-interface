@@ -1,5 +1,7 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { BigNumber, Contract, constants, utils, BigNumberish, Signer } from 'ethers';
+import { polygon } from 'wagmi/chains';
+import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
 export interface SafeSignature {
@@ -188,3 +190,15 @@ export const buildMultiSendSafeTx = (
 ): SafeTransaction => {
   return buildContractCall(multiSend, 'multiSend', [encodeMultiSend(txs)], nonce, true, overrides);
 };
+
+/**
+ * TODO explain why exactly we're doing this...
+ */
+export function asProper<T>(connection: ContractConnection<T>, chainId: number): T {
+  switch (chainId) {
+    case polygon.id:
+      return connection.asProvider;
+    default:
+      return connection.asSigner;
+  }
+}

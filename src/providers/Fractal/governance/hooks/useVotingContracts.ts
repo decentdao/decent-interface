@@ -1,5 +1,11 @@
-import { VotesToken, OZLinearVoting, FractalUsul } from '@fractal-framework/fractal-contracts';
+import {
+  VotesToken,
+  OZLinearVoting,
+  FractalUsul,
+  ModuleProxyFactory,
+} from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useMemo, useCallback } from 'react';
+import { asProper } from '../../../../helpers';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { ContractConnection } from '../../../../types';
 import { GovernanceAction, GovernanceActions } from '../actions';
@@ -9,11 +15,13 @@ import { IGnosis } from './../../types/state';
 interface IUseVotingContracts {
   gnosis: IGnosis;
   governanceDispatch: Dispatch<GovernanceActions>;
+  chainId: number;
 }
 
 export const useVotingContracts = ({
   gnosis: { modules, isGnosisLoading },
   governanceDispatch,
+  chainId,
 }: IUseVotingContracts) => {
   const {
     zodiacModuleProxyFactoryContract,
@@ -52,17 +60,15 @@ export const useVotingContracts = ({
     let ozLinearContract: ContractConnection<OZLinearVoting> | undefined;
     let tokenContract: ContractConnection<VotesToken> | undefined;
 
-    const votingContractAddress = await usulContract.asSigner
+    const votingContractAddress = await asProper<FractalUsul>(usulContract, chainId)
       .queryFilter(usulModule.filters.EnabledStrategy())
       .then(strategiesEnabled => {
         return strategiesEnabled[0].args.strategy;
       });
 
-    const filter = zodiacModuleProxyFactoryContract.asSigner.filters.ModuleProxyCreation(
-      votingContractAddress,
-      null
-    );
-    const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract.asSigner
+    const proper = asProper<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
+    const filter = proper.filters.ModuleProxyCreation(votingContractAddress, null);
+    const votingContractMasterCopyAddress = await proper
       .queryFilter(filter)
       .then(proxiesCreated => {
         return proxiesCreated[0].args.masterCopy;

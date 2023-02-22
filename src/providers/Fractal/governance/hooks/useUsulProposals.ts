@@ -5,10 +5,12 @@ import {
 import {
   ProposalCreatedEvent,
   ProposalCanceledEvent,
+  FractalUsul,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
 import { Dispatch, useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
+import { asProper } from '../../../../helpers';
 import { DecodedTransaction } from '../../../../types';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
@@ -41,10 +43,9 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       if (!usulContract || !ozLinearVotingContract) {
         return;
       }
-      const proposalMetaDataCreatedFilter = usulContract.asSigner.filters.ProposalMetadataCreated();
-      const proposalMetaDataCreatedEvents = await usulContract.asSigner.queryFilter(
-        proposalMetaDataCreatedFilter
-      );
+      const proper = asProper<FractalUsul>(usulContract, provider.network.chainId);
+      const proposalMetaDataCreatedFilter = proper.filters.ProposalMetadataCreated();
+      const proposalMetaDataCreatedEvents = await proper.queryFilter(proposalMetaDataCreatedFilter);
       const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
         event.args.proposalId.eq(proposalNumber)
       );
@@ -68,7 +69,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         usulContract,
         ozLinearVotingContract,
         provider,
-        metaData
+        provider.network.chainId
       );
 
       const proposals = [...txProposalsInfo.txProposals, proposal];
@@ -86,9 +87,11 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       usulContract,
       ozLinearVotingContract,
       provider,
-      safeBaseURL,
+      txProposalsInfo.txProposals,
+      txProposalsInfo.passed,
+      txProposalsInfo.active,
       governanceDispatch,
-      txProposalsInfo,
+      safeBaseURL,
     ]
   );
 
@@ -223,6 +226,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
             usulContract,
             ozLinearVotingContract,
             provider,
+            provider.network.chainId,
             metaData
           );
         })
