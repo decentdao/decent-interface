@@ -1,4 +1,4 @@
-import { ComponentWithAs, IconProps } from '@chakra-ui/react';
+import { Box, ComponentWithAs, Hide, IconProps, Show, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatch } from 'react-router-dom';
@@ -41,11 +41,20 @@ export function NavigationLink({ labelKey, testId, Icon, routeKey, ...rest }: IN
         aria-label={t(labelKey)}
         {...rest}
       >
-        <Icon
-          boxSize="1.5rem"
-          minWidth="auto"
-          {...activeColors()}
-        />
+        <Box
+          display={{ base: 'flex', md: undefined }}
+          gap={8}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Icon
+            boxSize={{ base: '2.5rem', md: '1.5rem' }}
+            {...activeColors()}
+          />
+          <Hide above="md">
+            <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
+          </Hide>
+        </Box>
       </Link>
     </NavigationTooltip>
   );

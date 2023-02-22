@@ -28,9 +28,10 @@ export function NavigationLinks() {
     <>
       {showSideBar && (
         <Flex
-          alignItems="center"
+          alignItems={{ base: 'flex-start', md: 'center' }}
           direction="column"
           gap="2rem"
+          w="full"
         >
           <NavigationLink
             to={DAO_ROUTES.dao.relative(address)}
@@ -63,9 +64,10 @@ export function NavigationLinks() {
         </Flex>
       )}
       <Flex
-        alignSelf="normal"
+        alignItems={{ base: 'flex-start', md: 'center' }}
         direction="column"
         gap="2rem"
+        w="full"
         mb="8"
       >
         <Divider color="chocolate.700" />
