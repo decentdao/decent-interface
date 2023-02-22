@@ -46,11 +46,13 @@
   "scripts": {
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "start": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD` HTTPS=true react-app-rewired start",
+    "set:env": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD`",
+    "start": "npm run set:env & react-app-rewired start",
+    "start:https": "npm run set:env & HTTPS=true react-app-rewired start",
     "start:windows": "set \"GENERATE_SOURCEMAP=false\" && for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired start",
     "build": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired build",
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
-    "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
+    "test": "npm run set:env & react-app-rewired test",
     "eject": "react-app-rewired eject",
     "prepare": "husky install",
     "tests": "playwright test"
