@@ -10,6 +10,7 @@ export function ActivityDescriptionModule({ activity }: { activity: TxProposal }
       color="grayscale.100"
       textStyle="text-lg-mono-semibold"
       gap="2"
+      flexWrap="wrap"
     >
       <Text>{t('moduleDescription', { ns: 'dashboard', count: activity.targets.length })}</Text>
       {activity.targets.length > 2 ? (
