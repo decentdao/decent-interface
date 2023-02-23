@@ -11,6 +11,7 @@ import {
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
 import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
 import { DAO_ROUTES } from '../../../../routes/constants';
+import { NavigationExternalLink } from './NavigationExternalLink';
 import { NavigationLink } from './NavigationLink';
 
 export function NavigationLinks({
@@ -77,8 +78,8 @@ export function NavigationLinks({
         justifyContent={{ base: 'flex-start' }}
       >
         <Divider color="chocolate.700" />
-        <NavigationLink
-          to={URL_FAQ}
+        <NavigationExternalLink
+          href={URL_FAQ}
           tooltipKey="ariaLabelFAQ"
           labelKey="faq"
           testId="navigationExternal-faq"
@@ -86,8 +87,8 @@ export function NavigationLinks({
           rel="noreferrer noopener"
           closeDrawer={closeDrawer}
         />
-        <NavigationLink
-          to={URL_DISCORD}
+        <NavigationExternalLink
+          href={URL_DISCORD}
           tooltipKey="ariaLabelDiscord"
           labelKey="discord"
           testId="navigationExternal-discord"
@@ -95,8 +96,8 @@ export function NavigationLinks({
           rel="noreferrer noopener"
           closeDrawer={closeDrawer}
         />
-        <NavigationLink
-          to={URL_DOCS}
+        <NavigationExternalLink
+          href={URL_DOCS}
           labelKey="documentation"
           tooltipKey="ariaLabelDocumentation"
           testId="navigationExternal-documentation"
