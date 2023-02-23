@@ -88,7 +88,7 @@ function Navigation() {
                 direction="column"
                 justifyContent={showDAOLinks ? 'space-evenly' : 'flex-start'}
                 flexGrow={1}
-                overflow="scroll"
+                overflowY="auto"
                 px={8}
                 pt={16}
               >
