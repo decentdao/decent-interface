@@ -70,7 +70,7 @@ function PageHeader({
     >
       <Flex
         w="full"
-        align="center"
+        alignItems="center"
       >
         <Breadcrumbs links={links} />
         <Spacer />
@@ -78,7 +78,6 @@ function PageHeader({
           <Button
             onClick={buttonClick}
             data-testid={buttonTestId}
-            size="base"
             variant={buttonVariant}
             disabled={isButtonDisabled}
           >
