@@ -43,6 +43,7 @@
     "hideExecutableCode": "Hide Executable Code",
     "noProposal": "No proposal found",
     "emptyProposals": "No proposals found",
+    "createProposal": "Create Proposal",
     "labelAddTransaction": "+ Add Transaction",
     "buttonDelegate": "Delegate tokens",
     "errorInvalidFragments": "Invalid function signature",

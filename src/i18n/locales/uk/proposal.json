@@ -27,6 +27,7 @@
     "hideExecutableCode": "Сховати виконуваний код",
     "noProposal": "Пропозицію не знайдено",
     "emptyProposals": "Пропозицій не знайдено",
+    "createProposal": "Створити пропозицію",
     "labelAddTransaction": "+ Додати транзакцію",
     "buttonDelegate": "Делегувати токени",
     "errorInvalidFragments": "Некорректа сигнатура функції",
