@@ -5,7 +5,7 @@ import { OptionMenu } from '../components/ui/menus/OptionMenu';
 import { supportedLanguages } from '.';
 
 export function LanguageSwitcher() {
-  const { i18n, t } = useTranslation();
+  const { i18n, t } = useTranslation('languages');
 
   const supported = Object.keys(supportedLanguages).map(function (languageCode) {
     return {
@@ -29,7 +29,7 @@ export function LanguageSwitcher() {
               minWidth="auto"
             />
             <Hide above="md">
-              <Text textStyle="text-md-mono-medium">{t(i18n.language)}</Text>
+              <Text textStyle="text-md-mono-medium">{t(i18n.language.slice(0, 2))}</Text>
             </Hide>
           </Box>
         }
