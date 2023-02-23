@@ -1,6 +1,6 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useCallback } from 'react';
-import { eventRPC } from '../../../helpers';
+import { getEventRPC } from '../../../helpers';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
@@ -26,7 +26,7 @@ export function useGnosisModuleTypes(
         return;
       }
 
-      const rpc = eventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
+      const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
         const filter = rpc.filters.ModuleProxyCreation(proxyAddress, null);
         return rpc.queryFilter(filter).then(proxiesCreated => {

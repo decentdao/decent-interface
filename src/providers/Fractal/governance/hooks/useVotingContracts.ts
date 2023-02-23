@@ -5,7 +5,7 @@ import {
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useMemo, useCallback } from 'react';
-import { eventRPC } from '../../../../helpers';
+import { getEventRPC } from '../../../../helpers';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { ContractConnection } from '../../../../types';
 import { GovernanceAction, GovernanceActions } from '../actions';
@@ -60,13 +60,13 @@ export const useVotingContracts = ({
     let ozLinearContract: ContractConnection<OZLinearVoting> | undefined;
     let tokenContract: ContractConnection<VotesToken> | undefined;
 
-    const votingContractAddress = await eventRPC<FractalUsul>(usulContract, chainId)
+    const votingContractAddress = await getEventRPC<FractalUsul>(usulContract, chainId)
       .queryFilter(usulModule.filters.EnabledStrategy())
       .then(strategiesEnabled => {
         return strategiesEnabled[0].args.strategy;
       });
 
-    const rpc = eventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
+    const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
     const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
     const votingContractMasterCopyAddress = await rpc.queryFilter(filter).then(proxiesCreated => {
       return proxiesCreated[0].args.masterCopy;

@@ -194,7 +194,7 @@ export const buildMultiSendSafeTx = (
 /**
  * TODO explain why exactly we're doing this...
  */
-export function eventRPC<T>(connection: ContractConnection<T>, chainId: number): T {
+export function getEventRPC<T>(connection: ContractConnection<T>, chainId: number): T {
   switch (chainId) {
     case polygon.id:
       return connection.asProvider;

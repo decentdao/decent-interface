@@ -1,7 +1,7 @@
 import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, useEnsName, useProvider } from 'wagmi';
-import { eventRPC } from '../../helpers';
+import { getEventRPC } from '../../helpers';
 import useSafeContracts from '../safe/useSafeContracts';
 import { createAccountSubstring } from '../utils/useDisplayName';
 
@@ -37,7 +37,7 @@ export default function useDAOName({ address }: { address?: string }) {
       setDAORegistryName(createAccountSubstring(address));
       return;
     }
-    const rpc = eventRPC<FractalRegistry>(fractalRegistryContract, networkId);
+    const rpc = getEventRPC<FractalRegistry>(fractalRegistryContract, networkId);
     const events = await rpc.queryFilter(rpc.filters.FractalNameUpdated(address));
 
     const latestEvent = events.pop();
