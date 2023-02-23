@@ -46,7 +46,7 @@ export function Governance() {
           <Link to="new">
             <Button>
               <AddPlus />
-              <Show above="md">{t('createProposal', { ns: 'proposal' })}</Show>
+              <Show above="md">{t('create')}</Show>
             </Button>
           </Link>
         )}
