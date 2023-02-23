@@ -9,8 +9,6 @@ interface INavigationLink {
   testId: string;
   routeKey?: string;
   Icon: ComponentWithAs<'svg', IconProps>;
-  target?: string;
-  rel?: string;
   closeDrawer?: () => void;
 }
 
@@ -34,6 +32,8 @@ export function NavigationExternalLink({
         aria-label={t(tooltipTranslationKey)}
         {...rest}
         onClick={closeDrawer}
+        target="_blank"
+        rel="noreferrer noopener"
       >
         <Box
           display={{ base: 'flex', md: undefined }}

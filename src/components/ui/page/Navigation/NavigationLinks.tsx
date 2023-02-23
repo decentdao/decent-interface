@@ -84,7 +84,6 @@ export function NavigationLinks({
           labelKey="faq"
           testId="navigationExternal-faq"
           Icon={SupportQuestion}
-          rel="noreferrer noopener"
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
@@ -93,7 +92,6 @@ export function NavigationLinks({
           labelKey="discord"
           testId="navigationExternal-discord"
           Icon={Discord}
-          rel="noreferrer noopener"
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
@@ -102,7 +100,6 @@ export function NavigationLinks({
           tooltipKey="ariaLabelDocumentation"
           testId="navigationExternal-documentation"
           Icon={Documents}
-          rel="noreferrer noopener"
           closeDrawer={closeDrawer}
         />
 
