@@ -17,10 +17,16 @@ import {
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 
-function Vote({ proposal }: { proposal: TxProposal }) {
+function Vote({
+  proposal,
+  currentUserHasVoted,
+}: {
+  proposal: TxProposal;
+  currentUserHasVoted: boolean;
+}) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
-  const currentBlockNumber = useCurrentBlockNumber();
+  const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
   const {
     governance: { governanceToken },
   } = useFractal();
@@ -44,7 +50,7 @@ function Vote({ proposal }: { proposal: TxProposal }) {
   // This gives a weird behavior when casting vote fails due to requirement under OZLinearVoting contract that current block number
   // Shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
   const proposalStartBlockNotFinalized = Boolean(
-    currentBlockNumber && usulProposal.startBlock?.eq(currentBlockNumber)
+    isCurrentBlockLoaded && currentBlockNumber && usulProposal.startBlock.gte(currentBlockNumber)
   );
 
   const disabled =
@@ -59,6 +65,8 @@ function Vote({ proposal }: { proposal: TxProposal }) {
       title={
         proposalStartBlockNotFinalized
           ? t('proposalStartBlockNotFinalized', { ns: 'proposal' })
+          : currentUserHasVoted
+          ? t('currentUserAlreadyVoted', { ns: 'proposal' })
           : undefined
       }
     >

@@ -108,5 +108,6 @@
     "clawBackPendingToastMessage": "Creating clawback proposal",
     "clawBackSuccessToastMessage": "Clawback proposal successfully created",
     "clawBackFailedToastMessage": "Error creating clawback proposal",
-    "proposalStartBlockNotFinalized": "You can't vote right now as proposal's start block not yet finalized."
+    "proposalStartBlockNotFinalized": "You can't vote right now as proposal's start block not yet finalized.",
+    "currentUserAlreadyVoted": "Seems like you already casted your vote. Check the votes summary"
 }
