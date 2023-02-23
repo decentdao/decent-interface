@@ -10,11 +10,9 @@ import {
 } from '@chakra-ui/react';
 import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes } from 'formik';
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useUsul from '../../../hooks/DAO/proposal/useUsul';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { CustomNonceInput } from '../../ProposalCreate/CustomNonceInput';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
@@ -33,9 +31,6 @@ export function GnosisMultisig(props: ICreationStepProps) {
     setErrors,
   } = props;
   const { restrictChars } = useFormHelpers();
-  const [showCustomNonce, setShowCustomNonce] = useState(false);
-
-  const { usulContract, isLoaded: isUsulLoaded } = useUsul();
 
   const handleSignersChanges = (inputValue: string, numberStr: number) => {
     let numOfSigners = Number(numberStr || 0);
@@ -63,13 +58,6 @@ export function GnosisMultisig(props: ICreationStepProps) {
     setFieldValue('gnosis.numOfSigners', inputValue);
   };
 
-  const handleNonceChange = useCallback(
-    (nonce?: number) => {
-      setFieldValue('gnosis.customNonce', nonce);
-    },
-    [setFieldValue]
-  );
-
   useEffect(() => {
     if (values.gnosis.numOfSigners !== values.gnosis.trustedAddresses.length) {
       (async () => {
@@ -77,11 +65,6 @@ export function GnosisMultisig(props: ICreationStepProps) {
       })();
     }
   }, [values, validateForm, setErrors]);
-
-  useEffect(() => {
-    const isParentUsul = !!usulContract;
-    setShowCustomNonce(Boolean(isSubDAO && !isParentUsul && isUsulLoaded));
-  }, [isSubDAO, usulContract, isUsulLoaded]);
 
   return (
     <StepWrapper
@@ -180,18 +163,6 @@ export function GnosisMultisig(props: ICreationStepProps) {
         color="chocolate.700"
         mb={4}
       />
-      {showCustomNonce && (
-        <>
-          <CustomNonceInput
-            nonce={values.gnosis.customNonce}
-            onChange={handleNonceChange}
-          />
-          <Divider
-            color="chocolate.700"
-            my={4}
-          />
-        </>
-      )}
       <StepButtons
         {...props}
         nextStep={CreatorSteps.GUARD_CONFIG}

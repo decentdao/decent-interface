@@ -49,6 +49,7 @@ export function CustomNonceInput({
         type="number"
         px="4"
         ml="4"
+        width="auto"
       />
     </Flex>
   );

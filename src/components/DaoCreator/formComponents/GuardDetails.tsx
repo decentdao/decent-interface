@@ -9,11 +9,13 @@ import {
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import useUsul from '../../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../providers/Fractal/types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
+import { CustomNonceInput } from '../../ProposalCreate/CustomNonceInput';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
@@ -22,16 +24,31 @@ import { StepWrapper } from '../StepWrapper';
 import { CreatorSteps, ICreationStepProps } from '../types';
 
 function GuardDetails(props: ICreationStepProps) {
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
   const {
     gnosis: { safe },
     governance: { type, governanceToken, governanceIsLoading },
   } = useFractal();
-  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
+  const { usulContract, isLoaded: isUsulLoaded } = useUsul();
+  const [showCustomNonce, setShowCustomNonce] = useState(false);
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
 
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
   const governance = values.essentials.governance;
+
+  const handleNonceChange = useCallback(
+    (nonce?: number) => {
+      setFieldValue('gnosis.customNonce', nonce);
+    },
+    [setFieldValue]
+  );
+
+  useEffect(() => {
+    const isParentUsul = !!usulContract;
+    setShowCustomNonce(Boolean(isSubDAO && !isParentUsul && isUsulLoaded));
+  }, [isSubDAO, usulContract, isUsulLoaded]);
+
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
       if (governanceIsLoading || !safe || !governanceToken) return;
@@ -223,6 +240,18 @@ function GuardDetails(props: ICreationStepProps) {
           color="chocolate.700"
           mb={4}
         />
+        {showCustomNonce && (
+          <>
+            <CustomNonceInput
+              nonce={values.gnosis.customNonce}
+              onChange={handleNonceChange}
+            />
+            <Divider
+              color="chocolate.700"
+              my={4}
+            />
+          </>
+        )}
         <StepButtons
           {...props}
           prevStep={
