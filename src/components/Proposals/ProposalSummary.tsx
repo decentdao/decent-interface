@@ -43,7 +43,6 @@ export default function ProposalSummary({
 
   const yesVotesPercentage = getVotesPercentage(votesSummary.yes);
   const noVotesPercentage = getVotesPercentage(votesSummary.no);
-  const abstainVotesPercentage = getVotesPercentage(votesSummary.abstain);
   const quorum = votesSummary.quorum.div(governanceToken.totalSupply.div(100)).toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
@@ -87,12 +86,6 @@ export default function ProposalSummary({
           helperText={t('proposalSupportSummaryHelper', { count: requiredVotesToPass })}
           percentage={yesVotesPercentage}
           requiredPercentage={requiredVotesToPass}
-        />
-        <ExtendedProgressBar
-          label={t('quorum', { ns: 'common' })}
-          helperText={t('proposalQuorumSummaryHelper', { count: quorum })}
-          percentage={yesVotesPercentage + noVotesPercentage + abstainVotesPercentage}
-          requiredPercentage={quorum}
         />
       </Box>
     </ContentBox>
