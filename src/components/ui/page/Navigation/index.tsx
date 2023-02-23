@@ -112,7 +112,7 @@ function Navigation() {
         >
           <FractalBrand
             aria-hidden
-            boxSize="4rem"
+            boxSize="4.25rem"
           />
         </Link>
         <NavigationLinks
