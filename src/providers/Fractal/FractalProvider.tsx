@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 import { useMatch } from 'react-router-dom';
 import { DAO_ROUTES } from '../../routes/constants';
+import { useNetworkConfg } from '../NetworkConfig/NetworkConfigProvider';
 import {
   gnosisInitialState,
   governanceInitialState,
@@ -27,6 +28,8 @@ import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
  * Uses Context API to provider DAO information to app
  */
 export function FractalProvider({ children }: { children: ReactNode }) {
+  const { chainId } = useNetworkConfg();
+
   const [gnosis, gnosisDispatch] = useReducer(
     gnosisReducer,
     gnosisInitialState,
@@ -57,20 +60,22 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     gnosisDispatch
   );
 
-  const { lookupModules } = useGnosisModuleTypes(gnosisDispatch, gnosis.safe.modules);
+  const { lookupModules } = useGnosisModuleTypes(gnosisDispatch, chainId, gnosis.safe.modules);
 
   useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
     safeAddress: gnosis.safe.address,
     accountDispatch,
   });
+
   const { getVetoGuardContracts } = useVetoContracts(
     gnosisDispatch,
+    chainId,
     gnosis.safe.guard,
     gnosis.modules
   );
 
-  useGnosisGovernance({ governance, gnosis, governanceDispatch });
+  useGnosisGovernance({ governance, gnosis, governanceDispatch, chainId });
   useNodes({ gnosis, gnosisDispatch });
   const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 

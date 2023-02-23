@@ -19,6 +19,7 @@ const useDisplayName = (account?: string | null) => {
   const { data: ensName } = useEnsName({
     address: account as Address,
     chainId: networkId,
+    cacheTime: 1000 * 60 * 30, // 30 min
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();

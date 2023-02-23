@@ -143,7 +143,6 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
       placement="top"
     >
       <Flex
-        className="flex"
         justifyContent="flex-end"
         alignItems="center"
       >
