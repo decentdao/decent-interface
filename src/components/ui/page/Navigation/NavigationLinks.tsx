@@ -66,7 +66,6 @@ export function NavigationLinks({
               closeDrawer={closeDrawer}
             />
           </Flex>
-          <Divider color="chocolate.700" />
         </>
       )}
       <Flex
@@ -74,10 +73,10 @@ export function NavigationLinks({
         direction="column"
         gap="2rem"
         w="full"
-        my={8}
-        mb={16}
+        mb={8}
         justifyContent={{ base: 'flex-start' }}
       >
+        <Divider color="chocolate.700" />
         <NavigationLink
           to={URL_FAQ}
           tooltipKey="ariaLabelFAQ"
