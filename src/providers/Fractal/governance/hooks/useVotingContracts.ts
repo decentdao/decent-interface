@@ -1,11 +1,5 @@
-import {
-  VotesToken,
-  OZLinearVoting,
-  FractalUsul,
-  ModuleProxyFactory,
-} from '@fractal-framework/fractal-contracts';
+import { VotesToken, OZLinearVoting, FractalUsul } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useMemo, useCallback } from 'react';
-import { getEventRPC } from '../../../../helpers';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { ContractConnection } from '../../../../types';
 import { GovernanceAction, GovernanceActions } from '../actions';
@@ -15,13 +9,11 @@ import { IGnosis } from './../../types/state';
 interface IUseVotingContracts {
   gnosis: IGnosis;
   governanceDispatch: Dispatch<GovernanceActions>;
-  chainId: number;
 }
 
 export const useVotingContracts = ({
   gnosis: { modules, isGnosisLoading },
   governanceDispatch,
-  chainId,
 }: IUseVotingContracts) => {
   const {
     zodiacModuleProxyFactoryContract,
@@ -60,17 +52,21 @@ export const useVotingContracts = ({
     let ozLinearContract: ContractConnection<OZLinearVoting> | undefined;
     let tokenContract: ContractConnection<VotesToken> | undefined;
 
-    const votingContractAddress = await getEventRPC<FractalUsul>(usulContract, chainId)
+    const votingContractAddress = await usulContract.asSigner
       .queryFilter(usulModule.filters.EnabledStrategy())
       .then(strategiesEnabled => {
         return strategiesEnabled[0].args.strategy;
       });
 
-    const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
-    const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
-    const votingContractMasterCopyAddress = await rpc.queryFilter(filter).then(proxiesCreated => {
-      return proxiesCreated[0].args.masterCopy;
-    });
+    const filter = zodiacModuleProxyFactoryContract.asSigner.filters.ModuleProxyCreation(
+      votingContractAddress,
+      null
+    );
+    const votingContractMasterCopyAddress = await zodiacModuleProxyFactoryContract.asSigner
+      .queryFilter(filter)
+      .then(proxiesCreated => {
+        return proxiesCreated[0].args.masterCopy;
+      });
 
     if (votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address) {
       ozLinearContract = {
@@ -95,14 +91,13 @@ export const useVotingContracts = ({
       },
     });
   }, [
+    fractalUsulMasterCopyContract,
+    votesTokenMasterCopyContract,
+    governanceDispatch,
     zodiacModuleProxyFactoryContract,
     linearVotingMasterCopyContract,
-    votesTokenMasterCopyContract,
-    fractalUsulMasterCopyContract,
-    isGnosisLoading,
     usulModule,
-    chainId,
-    governanceDispatch,
+    isGnosisLoading,
   ]);
 
   useEffect(() => {

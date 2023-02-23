@@ -4,7 +4,6 @@ import {
   SafeMultisigTransactionResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { getEventRPC } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { ContractConnection } from '../../../types';
@@ -109,14 +108,10 @@ export const mapProposalCreatedEventToProposal = async (
   usulContract: ContractConnection<FractalUsul>,
   linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>,
   provider: Providers,
-  chainId: number,
   metaData?: ProposalMetaData
 ) => {
   const strategyContract = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
-  const strategyContractProvider = getEventRPC<OZLinearVoting>(
-    linearVotingMasterCopyContract,
-    chainId
-  ).attach(strategyAddress);
+  const strategyContractProvider = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getTxProposalState(
     usulContract,

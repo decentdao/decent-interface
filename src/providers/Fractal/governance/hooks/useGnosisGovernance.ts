@@ -10,17 +10,15 @@ interface IUseGnosisGovernance {
   governance: IGovernance;
   gnosis: IGnosis;
   governanceDispatch: Dispatch<GovernanceActions>;
-  chainId: number;
 }
 
 export const useGnosisGovernance = ({
   governance,
   gnosis,
   governanceDispatch,
-  chainId,
 }: IUseGnosisGovernance) => {
   // load voting contracts
-  useVotingContracts({ gnosis, governanceDispatch, chainId });
+  useVotingContracts({ gnosis, governanceDispatch });
   // if voting contracts are loaded, load governance data
   const governanceTokenData = useGovernanceTokenData(governance.contracts);
 
