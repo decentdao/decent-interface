@@ -23,6 +23,9 @@ jobs:
       run:  | 
         echo REACT_APP_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env 
         echo REACT_APP_INFURA_API_KEY=${{ secrets.TESTING_INFURA_API_KEY }} >> .env
+        echo REACT_APP_TESTING_ENVIROMENT=true >> .env
+        echo REACT_APP_LOCAL_CHAIN_ID=31337 >> .env
+        echo REACT_APP_LOCAL_PROVIDER_URL=http://127.0.0.1:8545 >> .env
     - name: Start containers
       run: docker-compose up -d --build
     - name: Install playwright
