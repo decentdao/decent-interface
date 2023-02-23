@@ -82,7 +82,7 @@ function Navigation() {
                 px={8}
                 position="relative"
               >
-                <DAOSearch />
+                <DAOSearch closeDrawer={onClose} />
               </Box>
               <Flex
                 alignItems="center"
