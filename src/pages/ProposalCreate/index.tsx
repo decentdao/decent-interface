@@ -237,9 +237,7 @@ function ProposalCreate() {
             </Box>
           </Flex>
         </GridItem>
-        <GridItem area="details">
-          <ProposalDetails />
-        </GridItem>
+        <GridItem area="details">{/* <ProposalDetails /> */}</GridItem>
       </Grid>
     </Box>
   );
