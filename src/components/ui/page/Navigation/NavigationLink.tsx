@@ -62,7 +62,7 @@ export function NavigationLink({
           alignItems="center"
         >
           <Icon
-            boxSize={{ base: '2.5rem', md: '1.5rem' }}
+            boxSize="1.5rem"
             {...activeColors()}
           />
           <Hide above="md">

@@ -1,5 +1,6 @@
 import {
   Box,
+  Divider,
   Drawer,
   DrawerCloseButton,
   DrawerContent,
@@ -88,10 +89,11 @@ function Navigation() {
                 direction="column"
                 justifyContent={showDAOLinks ? 'space-evenly' : 'flex-start'}
                 flexGrow={1}
-                overflow="scroll"
+                overflowY="auto"
                 px={8}
-                pt={32}
+                pt={8}
               >
+                <Divider color="chocolate.700" />
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}
                   address={address}
@@ -102,7 +104,7 @@ function Navigation() {
           </Drawer>
         </>
       </Hide>
-      <Hide below="md">
+      <Show above="md">
         <Link
           data-testid="navigationLogo-homeLink"
           to={BASE_ROUTES.landing}
@@ -113,8 +115,6 @@ function Navigation() {
             boxSize="4rem"
           />
         </Link>
-      </Hide>
-      <Show above="md">
         <NavigationLinks
           showDAOLinks={showDAOLinks}
           address={address}
