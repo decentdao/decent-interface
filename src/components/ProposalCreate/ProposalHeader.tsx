@@ -40,7 +40,7 @@ export function ProposalHeader({
       {!isUsul && (
         <CustomNonceInput
           nonce={nonce}
-          setNonce={setNonce}
+          onChange={setNonce}
         />
       )}
     </HStack>

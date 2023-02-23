@@ -4,6 +4,7 @@ import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types
 import { useCreateSubDAOProposal } from '../../hooks/DAO/useCreateSubDAOProposal';
 import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
 
 function SubDaoCreate() {
@@ -22,7 +23,12 @@ function SubDaoCreate() {
   const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();
 
   const proposeSubDAO = (daoData: GnosisDAO | TokenGovernanceDAO) => {
-    proposeDao(daoData, nonce, successCallback);
+    if (daoData.governance === GovernanceTypes.GNOSIS_SAFE) {
+      const gnosisDaoData = daoData as GnosisDAO;
+      proposeDao(daoData, gnosisDaoData.customNonce || nonce, successCallback);
+    } else {
+      proposeDao(daoData, nonce, successCallback);
+    }
   };
 
   return (

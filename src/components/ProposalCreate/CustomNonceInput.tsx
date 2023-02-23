@@ -1,29 +1,29 @@
 import { Flex, Text, Input, Tooltip } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useUsul from '../../hooks/DAO/proposal/useUsul';
 import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 
 export function CustomNonceInput({
   nonce,
-  setNonce,
+  onChange,
 }: {
   nonce: number | undefined;
-  setNonce: Dispatch<SetStateAction<number | undefined>>;
+  onChange: (nonce?: number) => void;
 }) {
   const { usulContract } = useUsul();
   const defaultNonce = useDefaultNonce();
   const { t } = useTranslation(['proposal']);
 
   useEffect(() => {
-    setNonce(defaultNonce);
-  }, [defaultNonce, setNonce]);
+    onChange(defaultNonce);
+  }, [defaultNonce, onChange]);
 
   if (!!usulContract) return null;
 
   return (
-    <Flex>
+    <Flex display="inline-flex">
       <Text
         textStyle="text-md-mono-regular"
         whiteSpace="nowrap"
@@ -45,7 +45,7 @@ export function CustomNonceInput({
       </Tooltip>
       <Input
         value={nonce}
-        onChange={e => setNonce(Number(e.target.value))}
+        onChange={e => onChange(Number(e.target.value))}
         type="number"
         px="4"
         ml="4"
