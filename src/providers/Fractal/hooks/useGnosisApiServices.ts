@@ -1,6 +1,12 @@
 import EthersAdapter from '@safe-global/safe-ethers-lib';
-import SafeServiceClient, { TransferResponse } from '@safe-global/safe-service-client';
-import axios, { AxiosResponse } from 'axios';
+import SafeServiceClient, {
+  AllTransactionsListResponse,
+  SafeBalanceUsdResponse,
+  SafeCollectibleResponse,
+  SafeInfoResponse,
+  TransferResponse,
+} from '@safe-global/safe-service-client';
+import axios from 'axios';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
@@ -10,6 +16,7 @@ import { GnosisActions, IGnosis, TreasuryActions } from '../types';
 import { buildGnosisApiUrl } from '../utils';
 import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
 import { useNetworkConfg } from './../../NetworkConfig/NetworkConfigProvider';
+import { CacheKeys, useLocalStorage } from './account/useLocalStorage';
 
 /**
  * We generally use SafeServiceClient to make requests to the Safe API, however it does not
@@ -22,6 +29,23 @@ import { useNetworkConfg } from './../../NetworkConfig/NetworkConfigProvider';
 export interface AllTransfersListResponse {
   next: any;
   results: TransferResponse[];
+}
+
+const SAFE_API_CACHE_MINUTES = 1; // TODO what should this be?
+
+async function getCachedGnosis<T>(
+  cacheKey: string,
+  address: string,
+  setCache: (key: string, value: any, expirationMinutes?: number) => void,
+  getCache: (key: string) => any,
+  networkRequest: () => Promise<T>
+) {
+  let cache: T = getCache(cacheKey + address);
+  if (!cache) {
+    cache = await networkRequest();
+    setCache(cacheKey + address, cache, SAFE_API_CACHE_MINUTES);
+  }
+  return cache;
 }
 
 /**
@@ -39,8 +63,8 @@ export function useGnosisApiServices(
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { safeBaseURL } = useNetworkConfg();
-
   const { setMethodOnInterval } = useUpdateTimer(address);
+  const { setValue, getValue } = useLocalStorage();
 
   useEffect(() => {
     if (!signerOrProvider) {
@@ -67,12 +91,20 @@ export function useGnosisApiServices(
     try {
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS,
-        payload: await safeService.getUsdBalances(address),
+        payload: await getCachedGnosis<SafeBalanceUsdResponse[]>(
+          CacheKeys.USD_BALANCES_PREFIX,
+          address,
+          setValue,
+          getValue,
+          () => {
+            return safeService.getUsdBalances(address);
+          }
+        ),
       });
     } catch (e) {
       logError(e);
     }
-  }, [safeService, address, treasuryDispatch]);
+  }, [address, safeService, treasuryDispatch, getValue, setValue]);
 
   const getGnosisSafeNonFungibleAssets = useCallback(async () => {
     if (!address || !safeService) {
@@ -81,29 +113,42 @@ export function useGnosisApiServices(
     try {
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,
-        payload: await safeService.getCollectibles(address),
+        payload: await getCachedGnosis<SafeCollectibleResponse[]>(
+          CacheKeys.COLLECTIBLES_PREFIX,
+          address,
+          setValue,
+          getValue,
+          () => {
+            return safeService.getCollectibles(address);
+          }
+        ),
       });
     } catch (e) {
       logError(e);
     }
-  }, [safeService, address, treasuryDispatch]);
+  }, [address, safeService, treasuryDispatch, setValue, getValue]);
 
   const getGnosisSafeTransfers = useCallback(async () => {
     if (!address) {
       return;
     }
     try {
-      const response: AxiosResponse<AllTransfersListResponse> = await axios.get(
-        buildGnosisApiUrl(safeBaseURL, `/safes/${address}/transfers/`)
-      );
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS,
-        payload: response.data,
+        payload: await getCachedGnosis<AllTransfersListResponse>(
+          CacheKeys.ALL_TRANSFERS_PREFIX,
+          address,
+          setValue,
+          getValue,
+          () => {
+            return axios.get(buildGnosisApiUrl(safeBaseURL, `/safes/${address}/transfers/`));
+          }
+        ),
       });
     } catch (e) {
       logError(e);
     }
-  }, [address, safeBaseURL, treasuryDispatch]);
+  }, [address, getValue, safeBaseURL, setValue, treasuryDispatch]);
 
   const getGnosisSafeTransactions = useCallback(async () => {
     if (!address || !safeService) {
@@ -112,12 +157,20 @@ export function useGnosisApiServices(
     try {
       gnosisDispatch({
         type: GnosisAction.SET_SAFE_TRANSACTIONS,
-        payload: await safeService.getAllTransactions(address),
+        payload: await getCachedGnosis<AllTransactionsListResponse>(
+          CacheKeys.ALL_TRANSACTIONS_PREFIX,
+          address,
+          setValue,
+          getValue,
+          () => {
+            return safeService.getAllTransactions(address);
+          }
+        ),
       });
     } catch (e) {
       logError(e);
     }
-  }, [address, safeService, gnosisDispatch]);
+  }, [address, safeService, gnosisDispatch, setValue, getValue]);
 
   const getGnosisSafeInfo = useCallback(async () => {
     if (!providedSafeAddress || !safeService || !isGnosisLoading) {
@@ -126,12 +179,20 @@ export function useGnosisApiServices(
     try {
       gnosisDispatch({
         type: GnosisAction.SET_SAFE,
-        payload: await safeService.getSafeInfo(providedSafeAddress),
+        payload: await getCachedGnosis<SafeInfoResponse>(
+          CacheKeys.SAFE_INFO_PREFIX,
+          providedSafeAddress,
+          setValue,
+          getValue,
+          () => {
+            return safeService.getSafeInfo(providedSafeAddress);
+          }
+        ),
       });
     } catch (e) {
       logError(e);
     }
-  }, [providedSafeAddress, safeService, gnosisDispatch, isGnosisLoading]);
+  }, [providedSafeAddress, safeService, isGnosisLoading, gnosisDispatch, setValue, getValue]);
 
   useEffect(() => {
     setMethodOnInterval(getGnosisSafeInfo);

@@ -14,6 +14,7 @@ import { GovernanceAction } from './governance/actions';
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
+import { useLocalStorage } from './hooks/account/useLocalStorage';
 import useDispatchDAOName from './hooks/useDispatchDAOName';
 import { FractalContext } from './hooks/useFractal';
 import { useFreezeData } from './hooks/useFreezeData';
@@ -88,6 +89,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       governanceDispatch({ type: GovernanceAction.RESET });
     }
   }, [gnosisDispatch, treasuryDispatch, governanceDispatch, isViewingDAO]);
+  const { clearSafeCache } = useLocalStorage();
 
   const value = useMemo(
     () => ({
@@ -102,6 +104,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       },
       actions: {
         refreshSafeData: async () => {
+          clearSafeCache(gnosis.safe.address);
           await getGnosisSafeTransactions();
           await getGnosisSafeInfo();
         },
@@ -112,14 +115,15 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     }),
     [
       gnosis,
-      governance,
       treasury,
+      governance,
       account,
-      getGnosisSafeTransactions,
-      getGnosisSafeInfo,
       lookupModules,
       getVetoGuardContracts,
       lookupFreezeData,
+      clearSafeCache,
+      getGnosisSafeTransactions,
+      getGnosisSafeInfo,
     ]
   );
 
