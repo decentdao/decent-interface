@@ -1,5 +1,6 @@
 import {
   Box,
+  Divider,
   Drawer,
   DrawerCloseButton,
   DrawerContent,
@@ -90,8 +91,9 @@ function Navigation() {
                 flexGrow={1}
                 overflowY="auto"
                 px={8}
-                pt={16}
+                pt={8}
               >
+                <Divider color="chocolate.700" />
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}
                   address={address}
