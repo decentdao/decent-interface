@@ -70,13 +70,13 @@ function PageHeader({
     >
       <Flex
         alignItems="center"
-        w={{ base: 'fit-content', sm: 'full' }}
+        gap={{ base: 1, sm: 4 }}
+        w="full"
       >
         <Breadcrumbs links={links} />
         <Spacer />
         {buttonText && (
           <Button
-            mr={4}
             onClick={buttonClick}
             data-testid={buttonTestId}
             variant={buttonVariant}

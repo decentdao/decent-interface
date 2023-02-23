@@ -46,7 +46,7 @@ export function Governance() {
           <Link to="new">
             <Button minW={0}>
               <AddPlus />
-              <Show above="md">{t('create')}</Show>
+              <Show above="sm">{t('create')}</Show>
             </Button>
           </Link>
         )}

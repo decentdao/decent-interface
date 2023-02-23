@@ -16,6 +16,7 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
       height="36px"
       display="flex"
       alignItems="center"
+      w={{ base: 'min-content', sm: 'initial' }}
     >
       {links.map(({ title, path }, i) => {
         const isCurrentPage = i === links.length - 1;
