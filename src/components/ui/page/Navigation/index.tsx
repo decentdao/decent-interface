@@ -104,7 +104,7 @@ function Navigation() {
           </Drawer>
         </>
       </Hide>
-      <Hide below="md">
+      <Show above="md">
         <Link
           data-testid="navigationLogo-homeLink"
           to={BASE_ROUTES.landing}
@@ -115,8 +115,6 @@ function Navigation() {
             boxSize="4rem"
           />
         </Link>
-      </Hide>
-      <Show above="md">
         <NavigationLinks
           showDAOLinks={showDAOLinks}
           address={address}
