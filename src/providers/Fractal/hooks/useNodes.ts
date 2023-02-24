@@ -1,7 +1,8 @@
-import { FractalUsul__factory } from '@fractal-framework/fractal-contracts';
+import { FractalRegistry, FractalUsul__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { Dispatch, useEffect, useCallback, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
+import { getEventRPC } from '../../../helpers';
 import { getUsulModuleFromModules } from '../../../hooks/DAO/proposal/useUsul';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { GnosisAction } from '../constants';
@@ -10,9 +11,11 @@ import { IGnosis, GnosisActions, SafeInfoResponseWithGuard, ChildNode } from '..
 export default function useNodes({
   gnosis,
   gnosisDispatch,
+  chainId,
 }: {
   gnosis: IGnosis;
   gnosisDispatch: Dispatch<GnosisActions>;
+  chainId: number;
 }) {
   const provider = useProvider();
   const { data: signer } = useSigner();
@@ -27,14 +30,14 @@ export default function useNodes({
 
   const fetchSubDAOs = useCallback(
     async (parentDAOAddress: string) => {
-      const filter =
-        fractalRegistryContract!.asProvider.filters.FractalSubDAODeclared(parentDAOAddress);
-      const events = await fractalRegistryContract!.asProvider.queryFilter(filter);
+      const eventRPC = getEventRPC<FractalRegistry>(fractalRegistryContract!, chainId);
+      const filter = eventRPC.filters.FractalSubDAODeclared(parentDAOAddress);
+      const events = await eventRPC.queryFilter(filter);
       const subDAOsAddresses = events.map(({ args }) => args.subDAOAddress);
 
       return subDAOsAddresses;
     },
-    [fractalRegistryContract]
+    [chainId, fractalRegistryContract]
   );
 
   const getDAOOwner = useCallback(
