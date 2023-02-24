@@ -4,6 +4,7 @@ import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../components/ProposalCreate/ProposalHeader';
 import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
 import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
@@ -236,7 +237,9 @@ function ProposalCreate() {
             </Box>
           </Flex>
         </GridItem>
-        <GridItem area="details">{/* <ProposalDetails /> */}</GridItem>
+        <GridItem area="details">
+          <ProposalDetails />
+        </GridItem>
       </Grid>
     </Box>
   );
