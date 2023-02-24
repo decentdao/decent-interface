@@ -35,7 +35,7 @@ export const useCreateProposalSchema = () => {
         proposalData: Yup.object().shape({
           title: Yup.string(),
           description: Yup.string(),
-          documentationUrul: Yup.string(),
+          documentationUrl: Yup.string(),
         }),
         nonce: Yup.number(),
       }),

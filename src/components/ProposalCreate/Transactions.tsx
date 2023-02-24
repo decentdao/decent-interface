@@ -8,23 +8,26 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { ArrowDown, ArrowRight, Trash } from '@decent-org/fractal-ui';
+import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { ProposalFormState } from '../../types';
 import { TransactionData } from '../../types/transaction';
 import Transaction from './Transaction';
 
-interface TransactionsProps {
-  transactions: TransactionData[];
+interface TransactionsProps extends Omit<FormikProps<ProposalFormState>, 'handleSubmit'> {
   setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
   pending: boolean;
-  removeTransaction: (transactionNumber: number) => void;
+  // removeTransaction: (transactionNumber: number) => void;
 }
 
 function Transactions({
-  transactions,
+  values,
+  errors,
+  setFieldValue,
   setTransactions,
   pending,
-  removeTransaction,
 }: TransactionsProps) {
+  const { transactions } = values;
   const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
     const transactionsArr = [...transactions];
     transactionsArr[transactionNumber] = { ...transactionData };
@@ -72,7 +75,7 @@ function Transactions({
                     icon={<Trash boxSize="24px" />}
                     aria-label={t('removetransactionlabel')}
                     variant="unstyled"
-                    onClick={() => removeTransaction(index)}
+                    // onClick={() => removeTransaction(index)}
                     minWidth="auto"
                     _hover={{ color: 'gold.500' }}
                     _disabled={{ opacity: 0.4, cursor: 'default' }}

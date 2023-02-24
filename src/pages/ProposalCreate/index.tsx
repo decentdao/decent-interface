@@ -27,6 +27,17 @@ const defaultTransaction = {
   encodedFunctionData: undefined,
 };
 
+const defaultProposal = {
+  proposalDescription: '',
+  transactions: [defaultTransaction],
+  proposalData: {
+    title: '',
+    description: '',
+    documentationUrul: '',
+  },
+  nonce: undefined,
+};
+
 const templateAreaTwoCol = `"header header"
 "content details"`;
 const templateAreaSingleCol = `"header"
@@ -62,19 +73,19 @@ function ProposalCreate() {
     setShowTransactionsAndSubmit(type !== GovernanceTypes.GNOSIS_SAFE_USUL || inputtedMetadata);
   }, [inputtedMetadata, type]);
 
-  /**
-   * adds new transaction form
-   */
-  const addTransaction = () => {
-    const newTransactionData = Object.assign({}, defaultTransaction);
-    transactions[transactions.length - 1].isExpanded = false; // this makes sure the previous transaction is colapsed when adding a new transaction
-    setTransactions([...transactions, newTransactionData]);
-  };
+  // /**
+  //  * adds new transaction form
+  //  */
+  // const addTransaction = () => {
+  //   const newTransactionData = Object.assign({}, defaultTransaction);
+  //   transactions[transactions.length - 1].isExpanded = false; // this makes sure the previous transaction is colapsed when adding a new transaction
+  //   setTransactions([...transactions, newTransactionData]);
+  // };
 
-  const removeTransaction = (transactionNumber: number) => {
-    const filteredTransactions = transactions.filter((_, i) => i !== transactionNumber);
-    setTransactions(filteredTransactions);
-  };
+  // const removeTransaction = (transactionNumber: number) => {
+  //   const filteredTransactions = transactions.filter((_, i) => i !== transactionNumber);
+  //   setTransactions(filteredTransactions);
+  // };
 
   const successCallback = () => {
     setProposalDescription('');
@@ -86,63 +97,63 @@ function ProposalCreate() {
     }
   };
 
-  useEffect(() => {
-    let hasError = false;
-    transactions.forEach(transaction => {
-      if (transaction.addressError || transaction.fragmentError) {
-        hasError = true;
-      }
-    });
-    if (hasError) {
-      return;
-    }
-    const proposal = {
-      targets: transactions.map(transaction => transaction.targetAddress),
-      values: transactions.map(transaction => transaction.ethValue.bigNumberValue!),
-      calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
-      title: metadata.title,
-      description: metadata.description,
-      documentationUrl: metadata.documentationUrl,
-    };
-    setProposalData(proposal);
-  }, [
-    transactions,
-    proposalDescription,
-    metadata.title,
-    metadata.description,
-    metadata.documentationUrl,
-  ]);
+  // useEffect(() => {
+  //   let hasError = false;
+  //   transactions.forEach(transaction => {
+  //     if (transaction.addressError || transaction.fragmentError) {
+  //       hasError = true;
+  //     }
+  //   });
+  //   if (hasError) {
+  //     return;
+  //   }
+  //   const proposal = {
+  //     targets: transactions.map(transaction => transaction.targetAddress),
+  //     values: transactions.map(transaction => transaction.ethValue.bigNumberValue!),
+  //     calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
+  //     title: metadata.title,
+  //     description: metadata.description,
+  //     documentationUrl: metadata.documentationUrl,
+  //   };
+  //   setProposalData(proposal);
+  // }, [
+  //   transactions,
+  //   proposalDescription,
+  //   metadata.title,
+  //   metadata.description,
+  //   metadata.documentationUrl,
+  // ]);
 
-  const isValidProposal = useMemo(() => {
-    // if proposalData doesn't exist
-    if (!proposalData) {
-      return false;
-    }
+  // const isValidProposal = useMemo(() => {
+  //   // if proposalData doesn't exist
+  //   if (!proposalData) {
+  //     return false;
+  //   }
 
-    // if no target has been input OR no calldata (function name required)
-    if (!proposalData.targets[0] || !proposalData.calldatas[0]) {
-      return false;
-    }
+  //   // if no target has been input OR no calldata (function name required)
+  //   if (!proposalData.targets[0] || !proposalData.calldatas[0]) {
+  //     return false;
+  //   }
 
-    // if error in transactions
-    const hasError = transactions.some(
-      (transaction: TransactionData) => transaction.addressError || transaction.fragmentError
-    );
-    if (hasError) {
-      return false;
-    }
-    // proposal data has length of 1 for each data set
-    let hasProposalData: boolean = !!proposalData.calldatas.length && !!proposalData.targets.length;
-    if (!hasProposalData) {
-      return false;
-    }
-    // validations pass
-    return true;
-  }, [proposalData, transactions]);
+  //   // if error in transactions
+  //   const hasError = transactions.some(
+  //     (transaction: TransactionData) => transaction.addressError || transaction.fragmentError
+  //   );
+  //   if (hasError) {
+  //     return false;
+  //   }
+  //   // proposal data has length of 1 for each data set
+  //   let hasProposalData: boolean = !!proposalData.calldatas.length && !!proposalData.targets.length;
+  //   if (!hasProposalData) {
+  //     return false;
+  //   }
+  //   // validations pass
+  //   return true;
+  // }, [proposalData, transactions]);
 
-  const isCreateDisabled = useMemo(() => {
-    return !canUserCreateProposal || !isValidProposal || pendingCreateTx;
-  }, [pendingCreateTx, isValidProposal, canUserCreateProposal]);
+  // const isCreateDisabled = useMemo(() => {
+  //   return !canUserCreateProposal || !isValidProposal || pendingCreateTx;
+  // }, [pendingCreateTx, isValidProposal, canUserCreateProposal]);
 
   return (
     <Box>
@@ -208,25 +219,24 @@ function ProposalCreate() {
                 setNonce={setNonce}
               />
               <UsulMetadata
-                show={!showTransactionsAndSubmit}
+                show={!!showTransactionsAndSubmit}
                 setInputtedMetadata={setInputtedMetadata}
                 metadata={metadata}
                 setMetadata={setMetadata}
               />
               <TransactionsAndSubmit
-                show={showTransactionsAndSubmit}
+                show={!showTransactionsAndSubmit}
                 showBackButton={!!inputtedMetadata}
                 onGoBack={() => setInputtedMetadata(false)}
-                addTransaction={addTransaction}
+                // addTransaction={addTransaction}
                 pendingCreateTx={pendingCreateTx}
                 submitProposal={submitProposal}
                 proposalData={proposalData}
                 nonce={nonce}
                 successCallback={successCallback}
-                isCreateDisabled={isCreateDisabled}
-                transactions={transactions}
+                // isCreateDisabled={isCreateDisabled}
                 setTransactions={setTransactions}
-                removeTransaction={removeTransaction}
+                // removeTransaction={removeTransaction}
               />
             </Box>
           </Flex>

@@ -114,7 +114,7 @@ function Transaction({
       spacing={4}
       mt={6}
     >
-      <EthAddressComponent
+      {/* <EthAddressComponent
         label={t('labelTargetAddress')}
         helper={t('helperTargetAddress')}
         isRequired={true}
@@ -129,7 +129,33 @@ function Transaction({
         onAddressChange={function (address: string, isValid: boolean): void {
           updateTargetAddress(address, isValid);
         }}
+      /> */}
+
+      <InputComponent
+        label={t('labelTargetAddress')}
+        helper={t('helperTargetAddress')}
+        isRequired={true}
+        disabled={pending}
+        subLabel={
+          <HStack>
+            <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+            <Text {...exampleLabelStyle}>0x4168592...</Text>
+          </HStack>
+        }
+        errorMessage={transaction.addressError}
+        onChange={{}}
       />
+      {/* <LabelWrapper errorMessage={errorMessage}>
+        <Field name={`gnosis.trustedAddresses.${i}`}>
+          {({ field }: FieldAttributes<any>) => (
+            <Input
+              {...field}
+              placeholder="0x0000...0000"
+              data-testid={'gnosisConfig-signer-' + i}
+            />
+          )}
+        </Field>
+      </LabelWrapper> */}
       <InputComponent
         label={t('labelFunctionName')}
         helper={t('helperFunctionName')}
