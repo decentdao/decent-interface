@@ -16,5 +16,9 @@
     "sendAssetsSubmit": "Підтвердження",
     "sendAssetsPendingToastMessage": "Створення пропозиції для відправлення активів",
     "sendAssetsSuccessToastMessage": "Пропозиція щодо надсилання активів створена успішно",
-    "sendAssetsFailureToastMessage": "Помилка при створенні пропозиціі щодо надсилання активів"
+    "sendAssetsFailureToastMessage": "Помилка при створенні пропозиціі щодо надсилання активів",
+    "confirmUrlTitle": "Це посилання переведе вас до",
+    "confirmUrlSubtitle": "Хочете продовжити?",
+    "modalContinue": "Продовжити",
+    "modalCancel": "Відмінити"
 }
