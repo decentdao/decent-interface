@@ -6,7 +6,7 @@ import SafeServiceClient, {
   SafeInfoResponse,
   TransferResponse,
 } from '@safe-global/safe-service-client';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
@@ -33,6 +33,11 @@ export interface AllTransfersListResponse {
 
 const SAFE_API_CACHE_MINUTES = 1; // TODO what should this be?
 
+/**
+ * First checks the cache for the given request and returns that, if it exists.
+ * Else makes the request, caches it for SAFE_API_CACHE_MINUTES, and returns
+ * the value.
+ */
 async function getCachedGnosis<T>(
   cacheKey: string,
   address: string,
@@ -46,6 +51,23 @@ async function getCachedGnosis<T>(
     setCache(cacheKey + address, cache, SAFE_API_CACHE_MINUTES);
   }
   return cache;
+}
+
+/**
+ * A method identical to the above, but specific to axios
+ * network requests, rather than the Safe SDK, as a workaround
+ * for AllTransfersListResponse (See above).
+ */
+async function getCachedGnosisAxios<T>(
+  cacheKey: string,
+  address: string,
+  setCache: (key: string, value: any, expirationMinutes?: number) => void,
+  getCache: (key: string) => any,
+  axiosRequest: () => Promise<AxiosResponse<any, any>>
+) {
+  return getCachedGnosis<T>(cacheKey, address, setCache, getCache, async () => {
+    return (await axiosRequest()).data;
+  });
 }
 
 /**
@@ -135,7 +157,7 @@ export function useGnosisApiServices(
     try {
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS,
-        payload: await getCachedGnosis<AllTransfersListResponse>(
+        payload: await getCachedGnosisAxios<Promise<AllTransfersListResponse>>(
           CacheKeys.ALL_TRANSFERS_PREFIX,
           address,
           setValue,
