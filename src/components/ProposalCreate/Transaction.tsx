@@ -172,7 +172,10 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>
+            <Text
+              {...exampleLabelStyle}
+              wordBreak="break-all"
+            >
               {'0xADC74eE329a23060d3CB431Be0AB313740c191E7, 1000000000'}
             </Text>
           </HStack>
