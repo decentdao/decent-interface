@@ -10,6 +10,7 @@ interface ISearchDisplay {
   validAddress?: boolean;
   address?: string;
   onClickView: Function;
+  closeDrawer?: () => void;
 }
 
 export function SearchDisplay({
@@ -18,6 +19,7 @@ export function SearchDisplay({
   validAddress,
   address,
   onClickView,
+  closeDrawer,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const navigate = useNavigate();
@@ -43,6 +45,7 @@ export function SearchDisplay({
         py={2}
         onClick={() => {
           onClickView();
+          if (closeDrawer) closeDrawer();
           navigate(DAO_ROUTES.dao.relative(address));
         }}
         cursor="default"

@@ -51,7 +51,6 @@
     "proposalSummaryStartDate": "Start Date",
     "proposalSummaryEndDate": "End Date",
     "proposalSupportSummaryHelper": "Minimum {{count}}% support required",
-    "proposalQuorumSummaryHelper": "Minimum {{count}}% required",
     "proposedBy": "Proposed by",
     "proposalTitle_one": "Proposal to execute {{count}} transaction on {{target}}",
     "proposalTitle_other": "Proposal to execute {{count}} transactions on {{target}}",
@@ -108,6 +107,7 @@
     "learnMore": "Learn More",
     "clawBackPendingToastMessage": "Creating clawback proposal",
     "clawBackSuccessToastMessage": "Clawback proposal successfully created",
-    "clawBackFailedToastMessage": "Error creating clawback proposal"
-
+    "clawBackFailedToastMessage": "Error creating clawback proposal",
+    "proposalStartBlockNotFinalized": "You can't vote right now as proposal's start block not yet finalized.",
+    "currentUserAlreadyVoted": "Seems like you already casted your vote. Check the votes summary"
 }
