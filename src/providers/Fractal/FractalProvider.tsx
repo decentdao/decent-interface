@@ -76,7 +76,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   );
 
   useGnosisGovernance({ governance, gnosis, governanceDispatch, chainId });
-  useNodes({ gnosis, gnosisDispatch });
+  useNodes({ gnosis, gnosisDispatch, chainId });
   const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
