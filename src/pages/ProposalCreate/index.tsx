@@ -10,8 +10,8 @@ import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
 import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
-import useUsul from '../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../providers/Fractal/types';
 import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
@@ -36,10 +36,9 @@ const templateAreaSingleCol = `"header"
 function ProposalCreate() {
   const {
     gnosis: { safe },
+    governance: { type },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
-  const { usulContract } = useUsul();
-  const [isUsul, setIsUsul] = useState<boolean>();
 
   const [proposalDescription, setProposalDescription] = useState<string>('');
   const [transactions, setTransactions] = useState<TransactionData[]>([
@@ -59,13 +58,9 @@ function ProposalCreate() {
   }>({ title: '', description: '', documentationUrl: '' });
 
   useEffect(() => {
-    setIsUsul(!!usulContract);
-  }, [usulContract]);
-
-  useEffect(() => {
-    if (isUsul === undefined) return;
-    setShowTransactionsAndSubmit(!isUsul || inputtedMetadata);
-  }, [inputtedMetadata, isUsul]);
+    if (!type) return;
+    setShowTransactionsAndSubmit(type !== GovernanceTypes.GNOSIS_SAFE_USUL || inputtedMetadata);
+  }, [inputtedMetadata, type]);
 
   /**
    * adds new transaction form
@@ -206,7 +201,7 @@ function ProposalCreate() {
               bg={BACKGROUND_SEMI_TRANSPARENT}
             >
               <ProposalHeader
-                isUsul={isUsul}
+                isUsul={type === GovernanceTypes.GNOSIS_SAFE_USUL}
                 inputtedMetadata={inputtedMetadata}
                 metadataTitle={metadata.title}
                 nonce={nonce}

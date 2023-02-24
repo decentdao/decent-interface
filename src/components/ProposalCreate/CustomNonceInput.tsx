@@ -2,8 +2,9 @@ import { Flex, Text, Input, Tooltip } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useUsul from '../../hooks/DAO/proposal/useUsul';
 import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../providers/Fractal/types';
 
 export function CustomNonceInput({
   nonce,
@@ -12,7 +13,9 @@ export function CustomNonceInput({
   nonce: number | undefined;
   setNonce: Dispatch<SetStateAction<number | undefined>>;
 }) {
-  const { usulContract } = useUsul();
+  const {
+    governance: { type },
+  } = useFractal();
   const defaultNonce = useDefaultNonce();
   const { t } = useTranslation(['proposal']);
 
@@ -20,7 +23,7 @@ export function CustomNonceInput({
     setNonce(defaultNonce);
   }, [defaultNonce, setNonce]);
 
-  if (!!usulContract) return null;
+  if (type !== GovernanceTypes.GNOSIS_SAFE_USUL) return null;
 
   return (
     <Flex>
