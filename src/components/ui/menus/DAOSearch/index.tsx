@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
-export function DAOSearch() {
+export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState('');
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
@@ -85,6 +85,7 @@ export function DAOSearch() {
             validAddress={isSafe}
             address={address}
             onClickView={resetSearch}
+            closeDrawer={closeDrawer}
           />
         </Box>
       </Popover>

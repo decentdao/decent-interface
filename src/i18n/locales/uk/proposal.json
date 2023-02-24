@@ -35,7 +35,6 @@
     "proposalSummaryStartDate": "Початкова Дата",
     "proposalSummaryEndDate": "Кінцева Дата",
     "proposalSupportSummaryHelper": "Мінімальна обов'язкова підтримка - {{count}}% ",
-    "proposalQuorumSummaryHelper": "Мінімальний обов'язковий кворум - {{count}}%",
     "proposedBy": "Запропоновано від",
     "proposalTitle_one": "Пропозиція виконати {{count}} транзакцію за адресою гаманцю: {{target}}.",
     "proposalTitle_other": "Пропозиція виконати {{count}} транзакцій за адресою гаманцю(-ів): {{target}}.",

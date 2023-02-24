@@ -1,28 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useProvider } from 'wagmi';
 
 const useCurrentBlockNumber = () => {
-  const [blockNumber, setBlockNumber] = useState<number>();
+  const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
+  const [isLoaded, setIsLoaded] = useState(false);
   const provider = useProvider();
+
+  const updateBlockNumber = useCallback(
+    (block: number) => {
+      setCurrentBlockNumber(block);
+      if (!isLoaded) {
+        setIsLoaded(true);
+      }
+    },
+    [isLoaded]
+  );
 
   useEffect(() => {
     if (!provider) {
-      setBlockNumber(undefined);
+      setCurrentBlockNumber(undefined);
       return;
     }
-
-    const updateBlockNumber = (block: number) => {
-      setBlockNumber(block);
-    };
 
     provider.on('block', updateBlockNumber);
 
     return () => {
       provider.off('block', updateBlockNumber);
     };
-  }, [provider]);
+  }, [provider, updateBlockNumber]);
 
-  return blockNumber;
+  return { currentBlockNumber, isLoaded };
 };
 
 export default useCurrentBlockNumber;
