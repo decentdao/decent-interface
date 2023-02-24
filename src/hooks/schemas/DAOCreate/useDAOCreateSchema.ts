@@ -43,6 +43,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                 .max(Yup.ref('numOfSigners'), t('errorHighSignerThreshold'))
                 .required(),
               numOfSigners: Yup.number().min(1),
+              customNonce: Yup.number().min(1),
             }),
         }),
         govToken: Yup.object().when('essentials', {
