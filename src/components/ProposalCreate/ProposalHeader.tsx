@@ -1,7 +1,7 @@
 import { HStack, Text } from '@chakra-ui/react';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CustomNonceInput } from './CustomNonceInput';
+import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 
 export function ProposalHeader({
   isUsul,
@@ -40,7 +40,7 @@ export function ProposalHeader({
       {!isUsul && (
         <CustomNonceInput
           nonce={nonce}
-          setNonce={setNonce}
+          onChange={setNonce}
         />
       )}
     </HStack>

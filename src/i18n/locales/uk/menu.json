@@ -5,6 +5,7 @@
     "faq": "FAQ",
     "discord": "Discord",
     "docs": "Доки",
+    "toastSwitchChain": "Перемкніть ваш гаманець на одну з підтримуваних ланок: {{chainNames}}",
     "toastChainChanged": "Ланку змінено: {{chainName}}",
     "toastAccountRevoked": "Доступ до акаунту відізвано.",
     "toastAccountChanged": "Акаунт змінено.",
@@ -14,5 +15,6 @@
     "wallet": "Крипто-гаманець",
     "titleManageDAO": "Керувати DAO",
     "optionCreateSubDAO": "Створити subDAO",
-    "optionInitiateFreeze": "Ініціювати Замороження"
+    "optionInitiateFreeze": "Ініціювати Замороження",
+    "optionInitiateClawback": "Ініціювати Повернення Коштів"
 }

@@ -65,6 +65,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
       })();
     }
   }, [values, validateForm, setErrors]);
+
   return (
     <StepWrapper
       isSubDAO={isSubDAO}
