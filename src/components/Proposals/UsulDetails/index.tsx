@@ -6,7 +6,6 @@ import { ProposalAction } from '../../../components/Proposals/ProposalActions/Pr
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import useTokenData from '../../../providers/Fractal/governance/hooks/useGovernanceTokenData';
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
@@ -21,13 +20,16 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
     governance,
     dispatches: { governanceDispatch },
   } = useFractal();
-  const { timeLockPeriod } = useTokenData(governance.contracts);
   const { chainId } = useNetworkConfg();
   const updateProposalState = useUpdateProposalState({ governance, governanceDispatch, chainId });
 
   const { address: account } = useAccount();
 
   useEffect(() => {
+    const timeLockPeriod = governance.governanceToken?.timeLockPeriod;
+    if (!timeLockPeriod) {
+      return;
+    }
     let timeout = 0;
     const now = new Date();
     if (proposal.state === TxProposalState.Active) {
@@ -53,7 +55,6 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
     };
     // eslint-disable-next-line
   }, [
-    timeLockPeriod,
     proposal.state,
     proposal.proposalNumber,
     proposal.deadline,
