@@ -3,6 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { connectorsForWallets } from '@rainbow-me/rainbowkit';
 import {
   coinbaseWallet,
+  injectedWallet,
   metaMaskWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
@@ -28,6 +29,7 @@ export const { chains, provider } = configureChains(supportedWagmiChains, [
 ]);
 
 const defaultWallets = [
+  injectedWallet({ chains }),
   metaMaskWallet({ chains }),
   coinbaseWallet({ appName: 'Fractal', chains }),
   walletConnectWallet({ chains }),
