@@ -7,6 +7,7 @@ import { UsulProposal, IGovernance } from '../types';
 interface IUseUpdateProposalState {
   governance: IGovernance;
   governanceDispatch: Dispatch<GovernanceActions>;
+  chainId: number;
 }
 
 export default function useUpdateProposalState({
@@ -15,6 +16,7 @@ export default function useUpdateProposalState({
     contracts: { usulContract, ozLinearVotingContract },
   },
   governanceDispatch,
+  chainId,
 }: IUseUpdateProposalState) {
   const updateProposalState = useCallback(
     async (proposalNumber: BigNumber) => {
@@ -26,7 +28,12 @@ export default function useUpdateProposalState({
           if (proposalNumber.eq(proposal.proposalNumber)) {
             const updatedProposal = {
               ...proposal,
-              state: await getTxProposalState(usulContract, ozLinearVotingContract, proposalNumber),
+              state: await getTxProposalState(
+                usulContract,
+                ozLinearVotingContract,
+                proposalNumber,
+                chainId
+              ),
             };
             return updatedProposal;
           }
@@ -43,7 +50,15 @@ export default function useUpdateProposalState({
         },
       });
     },
-    [usulContract, ozLinearVotingContract, governanceDispatch, txProposalsInfo]
+    [
+      usulContract,
+      ozLinearVotingContract,
+      txProposalsInfo.txProposals,
+      txProposalsInfo.passed,
+      txProposalsInfo.active,
+      governanceDispatch,
+      chainId,
+    ]
   );
 
   return updateProposalState;
