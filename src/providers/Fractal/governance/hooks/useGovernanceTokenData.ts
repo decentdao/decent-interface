@@ -1,6 +1,7 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
+import { addMinutes } from 'date-fns';
 import { BigNumber } from 'ethers';
-import { useReducer, useMemo, useEffect, useCallback } from 'react';
+import { useReducer, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -10,6 +11,9 @@ import {
   DelegateVotesChangedListener,
   GovernanceContracts,
 } from '../../types';
+
+const TOKEN_DATA_EXPIRATION = 5; // in minutes
+const USER_ACCOUNT_EXPIRATION = 1; // in minutes
 
 interface ITokenData {
   name: string | undefined;
@@ -75,11 +79,13 @@ enum TokenActions {
   UPDATE_TOKEN_CONTRACT,
   RESET,
 }
+
+type TokenAccountRaw = Omit<ITokenAccount, 'userBalanceString' | 'votingWeightString'>;
 type TokenAction =
   | { type: TokenActions.UPDATE_TOKEN; payload: ITokenData }
   | {
       type: TokenActions.UPDATE_ACCOUNT;
-      payload: Omit<ITokenAccount, 'userBalanceString' | 'votingWeightString'>;
+      payload: TokenAccountRaw;
     }
   | { type: TokenActions.UPDATE_DELEGATEE; payload: string }
   | {
@@ -158,6 +164,14 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
   const provider = useProvider();
   const { address: account } = useAccount();
 
+  // key: contract address
+  // value: ITokenData, ITokenAccount, VotingTokenConfig
+  const tokenDataCache = useRef<Map<string, GovernanceTokenCache<ITokenData>>>(new Map());
+  const tokenAccountCache = useRef<Map<string, GovernanceTokenCache<TokenAccountRaw>>>(new Map());
+  const votingTokenConfigCache = useRef<
+    Map<string, GovernanceTokenCache<VotingTokenConfig<BigNumber>>>
+  >(new Map());
+
   const { getTimeDuration } = useTimeHelpers();
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -172,24 +186,39 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     }
 
     (async () => {
-      // @todo handle errors
-      const votingPeriod = await ozLinearVotingContract.asSigner.votingPeriod();
-      const quorumPercentage = await ozLinearVotingContract.asSigner.quorumNumerator();
-      const timeLockPeriod = await ozLinearVotingContract.asSigner.timeLockPeriod();
+      const ozVotingContractAddress = ozLinearVotingContract.asSigner.address;
+      const votingCache = votingTokenConfigCache.current.get(ozVotingContractAddress);
+      let votingData = votingCache?.data;
+      if (
+        !votingCache ||
+        !votingCache.expires ||
+        votingCache.expires > addMinutes(votingCache.expires, TOKEN_DATA_EXPIRATION)
+      ) {
+        const [votingPeriod, quorumPercentage, timeLockPeriod] = await Promise.all([
+          ozLinearVotingContract.asSigner.votingPeriod(),
+          ozLinearVotingContract.asSigner.quorumNumerator(),
+          ozLinearVotingContract.asSigner.timeLockPeriod(),
+        ]);
+        votingData = { votingPeriod, quorumPercentage, timeLockPeriod };
+        votingTokenConfigCache.current.set(ozVotingContractAddress, {
+          data: votingData,
+          expires: addMinutes(new Date(), TOKEN_DATA_EXPIRATION),
+        });
+      }
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
         payload: {
           votingPeriod: {
-            value: votingPeriod,
-            formatted: getTimeDuration(votingPeriod.toString()),
+            value: votingData!.votingPeriod!,
+            formatted: getTimeDuration(votingData!.votingPeriod!.toString()),
           },
           quorumPercentage: {
-            value: quorumPercentage,
-            formatted: quorumPercentage.toString() + '%',
+            value: votingData!.quorumPercentage!,
+            formatted: votingData!.quorumPercentage!.toString() + '%',
           },
           timeLockPeriod: {
-            value: timeLockPeriod,
-            formatted: getTimeDuration(timeLockPeriod.toString()),
+            value: votingData!.timeLockPeriod!,
+            formatted: getTimeDuration(votingData!.timeLockPeriod!.toString()),
           },
         },
       });
@@ -201,47 +230,76 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     if (!tokenContract) {
       return;
     }
-
     (async () => {
-      const tokenName = await tokenContract.asSigner.name();
-      const tokenSymbol = await tokenContract.asSigner.symbol();
-      const tokenDecimals = await tokenContract.asSigner.decimals();
       const tokenAddress = tokenContract.asSigner.address;
-      const totalSupply = await tokenContract.asSigner.totalSupply();
-      dispatch({
-        type: TokenActions.UPDATE_TOKEN,
-        payload: {
+      const tokenCache = tokenDataCache.current.get(tokenContract.asSigner.address);
+      let tokenData = tokenCache?.data;
+      if (
+        !tokenCache ||
+        !tokenCache.expires ||
+        tokenCache.expires > addMinutes(tokenCache.expires, TOKEN_DATA_EXPIRATION)
+      ) {
+        const [tokenName, tokenSymbol, tokenDecimals, totalSupply] = await Promise.all([
+          tokenContract.asSigner.name(),
+          tokenContract.asSigner.symbol(),
+          tokenContract.asSigner.decimals(),
+          tokenContract.asSigner.totalSupply(),
+        ]);
+        tokenData = {
           name: tokenName,
           symbol: tokenSymbol,
           decimals: tokenDecimals,
           address: tokenAddress,
           totalSupply,
-        },
+        };
+        tokenDataCache.current.set(tokenAddress, {
+          data: tokenData,
+          expires: addMinutes(new Date(), TOKEN_DATA_EXPIRATION),
+        });
+      }
+
+      dispatch({
+        type: TokenActions.UPDATE_TOKEN,
+        payload: tokenData!,
       });
     })();
-  }, [tokenContract]);
+  }, [tokenContract, tokenDataCache]);
 
   const getTokenAccount = useCallback(async () => {
     if (!tokenContract || !account) {
       return;
     }
-
-    const tokenBalance = await tokenContract.asSigner.balanceOf(account);
-    const tokenDelegatee = await tokenContract.asSigner.delegates(account);
-    const tokenVotingWeight = await tokenContract.asSigner.getVotes(account);
-    const providerContract = tokenContract.asSigner.connect(provider);
-    const isDelegatesSet = !!(
-      await providerContract.queryFilter(providerContract.filters.DelegateChanged())
-    ).length;
-
-    dispatch({
-      type: TokenActions.UPDATE_ACCOUNT,
-      payload: {
+    const tokenAddress = tokenContract.asSigner.address;
+    const accountCache = tokenAccountCache.current.get(tokenAddress);
+    let tokenAccountData = accountCache?.data;
+    if (
+      !accountCache ||
+      !accountCache.expires ||
+      accountCache.expires > addMinutes(accountCache.expires, USER_ACCOUNT_EXPIRATION)
+    ) {
+      const providerContract = tokenContract.asSigner.connect(provider);
+      const [tokenBalance, tokenDelegatee, tokenVotingWeight, delegateChangeEvents] =
+        await Promise.all([
+          tokenContract.asSigner.balanceOf(account),
+          tokenContract.asSigner.delegates(account),
+          tokenContract.asSigner.getVotes(account),
+          providerContract.queryFilter(providerContract.filters.DelegateChanged()),
+        ]);
+      tokenAccountData = {
         userBalance: tokenBalance,
         delegatee: tokenDelegatee,
         votingWeight: tokenVotingWeight,
-        isDelegatesSet,
-      },
+        isDelegatesSet: !!delegateChangeEvents.length,
+      };
+      tokenAccountCache.current.set(tokenAddress, {
+        data: tokenAccountData,
+        expires: addMinutes(new Date(), USER_ACCOUNT_EXPIRATION),
+      });
+    }
+
+    dispatch({
+      type: TokenActions.UPDATE_ACCOUNT,
+      payload: tokenAccountData!,
     });
   }, [tokenContract, account, provider]);
 
