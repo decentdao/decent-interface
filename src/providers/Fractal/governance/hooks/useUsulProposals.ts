@@ -28,6 +28,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
   const provider = useProvider();
   const { safeBaseURL } = useNetworkConfg();
   const metaDataMapping = useRef<Map<string, DecodedTransaction[]>>(new Map());
+  const { chainId } = useNetworkConfg();
 
   const {
     txProposalsInfo,
@@ -36,6 +37,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
   const updateProposalState = useUpdateProposalState({
     governance,
     governanceDispatch,
+    chainId,
   });
 
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(

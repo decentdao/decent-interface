@@ -14,6 +14,7 @@ export enum CacheKeys {
   // name.eth -> 0x0 caching
   ENS_RESOLVE_PREFIX = 'ens_resolve_',
   DAO_NAME_PREFIX = 'dao_name_',
+  PROPOSAL_STATE_PREFIX = 'prop_state_',
 }
 
 /**
@@ -49,6 +50,43 @@ function keyInternal(chainId: number, key: string): string {
   return 'fract_' + chainId + '_' + key;
 }
 
+export const setValue = (
+  key: string,
+  value: any,
+  chainId: number,
+  expirationMinutes: number = CacheExpiry.ONE_WEEK
+): void => {
+  const val: IStorageValue = {
+    v: value,
+    e:
+      expirationMinutes === CacheExpiry.NEVER
+        ? CacheExpiry.NEVER
+        : Date.now() + expirationMinutes * 60000,
+  };
+  localStorage.setItem(keyInternal(chainId, key), JSON.stringify(val));
+};
+
+export const getValue = (key: string, chainId: number): any => {
+  const rawVal = localStorage.getItem(keyInternal(chainId, key));
+  if (rawVal) {
+    const parsed: IStorageValue = JSON.parse(rawVal);
+    if (parsed.e === CacheExpiry.NEVER) {
+      return parsed.v;
+    } else {
+      if (parsed.e < Date.now()) {
+        localStorage.removeItem(keyInternal(chainId, key));
+        return null;
+      } else {
+        return parsed.v;
+      }
+    }
+  } else if (CACHE_DEFAULTS[key]) {
+    return CACHE_DEFAULTS[key];
+  } else {
+    return null;
+  }
+};
+
 /**
  * A hook which returns a getter and setter for local storage cache,
  * with an optional expiration (in minutes) param.
@@ -64,43 +102,19 @@ function keyInternal(chainId: number, key: string): string {
 export const useLocalStorage = () => {
   const { chainId } = useNetworkConfg();
 
-  const setValue = useCallback(
+  const set = useCallback(
     (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
-      const val: IStorageValue = {
-        v: value,
-        e:
-          expirationMinutes === CacheExpiry.NEVER
-            ? CacheExpiry.NEVER
-            : Date.now() + expirationMinutes * 60000,
-      };
-      localStorage.setItem(keyInternal(chainId, key), JSON.stringify(val));
+      setValue(key, value, chainId, expirationMinutes);
     },
     [chainId]
   );
 
-  const getValue = useCallback(
+  const get = useCallback(
     (key: string) => {
-      const rawVal = localStorage.getItem(keyInternal(chainId, key));
-      if (rawVal) {
-        const parsed: IStorageValue = JSON.parse(rawVal);
-        if (parsed.e === CacheExpiry.NEVER) {
-          return parsed.v;
-        } else {
-          if (parsed.e < Date.now()) {
-            localStorage.removeItem(keyInternal(chainId, key));
-            return null;
-          } else {
-            return parsed.v;
-          }
-        }
-      } else if (CACHE_DEFAULTS[key]) {
-        return CACHE_DEFAULTS[key];
-      } else {
-        return null;
-      }
+      return getValue(key, chainId);
     },
     [chainId]
   );
 
-  return { setValue, getValue };
+  return { setValue: set, getValue: get };
 };

@@ -9,6 +9,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { ContractConnection } from '../../../types';
 import { strategyTxProposalStates } from '../governance/constants';
+import { CacheExpiry, CacheKeys, getValue, setValue } from '../hooks/account/useLocalStorage';
 import {
   Parameter,
   DataDecoded,
@@ -26,8 +27,16 @@ import { Providers } from '../types/ethers';
 export const getTxProposalState = async (
   usulContract: ContractConnection<FractalUsul>,
   linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>,
-  proposalId: BigNumber
+  proposalId: BigNumber,
+  chainId: number
 ): Promise<TxProposalState> => {
+  const cache: TxProposalState = getValue(
+    CacheKeys.PROPOSAL_STATE_PREFIX + linearVotingMasterCopyContract.asSigner.address + proposalId,
+    chainId
+  );
+  if (cache) {
+    return cache;
+  }
   const state = await usulContract.asSigner.state(proposalId);
   if (state === 0) {
     // Usul says proposal is active, but we need to get more info in this case
@@ -43,8 +52,24 @@ export const getTxProposalState = async (
         return TxProposalState.Queueable;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
+          setValue(
+            CacheKeys.PROPOSAL_STATE_PREFIX +
+              linearVotingMasterCopyContract.asSigner.address +
+              proposalId,
+            TxProposalState.Rejected,
+            chainId,
+            CacheExpiry.NEVER
+          );
           return TxProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
+          setValue(
+            CacheKeys.PROPOSAL_STATE_PREFIX +
+              linearVotingMasterCopyContract.asSigner.address +
+              proposalId,
+            TxProposalState.Failed,
+            chainId,
+            CacheExpiry.NEVER
+          );
           return TxProposalState.Failed;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
           return TxProposalState.Active;
@@ -121,7 +146,8 @@ export const mapProposalCreatedEventToProposal = async (
   const state = await getTxProposalState(
     usulContract,
     linearVotingMasterCopyContract,
-    proposalNumber
+    proposalNumber,
+    chainId
   );
   const votes = await getProposalVotes(strategyContractProvider, proposalNumber);
   const block = await provider.getBlock(startBlock.toNumber());
