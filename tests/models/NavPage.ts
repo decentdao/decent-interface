@@ -52,35 +52,35 @@ export abstract class NavPage extends FractalPage {
   //
 
   async clickNavHome() {
-    await this.clickTestId('sidebar-daoHomeLink');
+    await this.clickTestId('navigation-daoHomeLink');
   }
 
   async clickNavDAOHierarchy() {
-    await this.clickTestId('sidebar-hierarchy');
+    await this.clickTestId('navigation-hierarchy');
   }
 
   async clickNavProposals() {
-    await this.clickTestId('sidebar-proposalsLink');
+    await this.clickTestId('navigation-proposalsLink');
   }
 
   async clickNavTreasury() {
-    await this.clickTestId('sidebar-treasuryLink');
+    await this.clickTestId('navigation-treasuryLink');
   }
 
   async clickNavFAQ() {
-    await this.clickTestId('sidebar-treasuryLink');
+    await this.clickTestId('navigation-treasuryLink');
   }
 
   async clickNavDiscord() {
-    await this.clickTestId('sidebarExternal-discord');
+    await this.clickTestId('navigationExternal-discord');
   }
 
   async clickNavDocs() {
-    await this.clickTestId('sidebarExternal-documentation');
+    await this.clickTestId('navigationExternal-documentation');
   }
 
   async clickNavLanguage() {
-    await this.clickTestId('sidebar-language');
+    await this.clickTestId('navigation-language');
   }
 
   async clickNavLanguageOption(language: string) {

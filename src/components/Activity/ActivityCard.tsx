@@ -24,6 +24,8 @@ export function ActivityCard({
       <Flex
         justifyContent="space-between"
         alignItems="center"
+        flexWrap="wrap"
+        gap={4}
       >
         <Flex flexDirection="column">
           <Flex

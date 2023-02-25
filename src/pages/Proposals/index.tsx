@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Show } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -44,9 +44,9 @@ export function Governance() {
       >
         {showCreateButton && (
           <Link to="new">
-            <Button marginLeft={4}>
+            <Button minW={0}>
               <AddPlus />
-              {t('createProposal', { ns: 'proposal' })}
+              <Show above="sm">{t('create')}</Show>
             </Button>
           </Link>
         )}

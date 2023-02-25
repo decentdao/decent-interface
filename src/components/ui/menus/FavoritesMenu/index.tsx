@@ -1,4 +1,4 @@
-import { Flex, Menu, MenuButton, Text } from '@chakra-ui/react';
+import { Flex, Menu, MenuButton, Show, Text } from '@chakra-ui/react';
 import { ArrowDown, StarGoldSolid } from '@decent-org/fractal-ui';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,14 +19,16 @@ export function FavoritesMenu() {
           }}
         >
           <Flex alignItems="center">
-            <StarGoldSolid />
-            <Text
-              mx="0.5rem"
-              textStyle="text-sm-mono-medium"
-            >
-              {t('titleFavorites')}
-            </Text>
-            <ArrowDown />
+            <StarGoldSolid boxSize="1.5rem" />
+            <Show above="md">
+              <Text
+                mx="0.5rem"
+                textStyle="text-sm-mono-medium"
+              >
+                {t('titleFavorites')}
+              </Text>
+              <ArrowDown />
+            </Show>
           </Flex>
         </MenuButton>
         <FavoritesList />

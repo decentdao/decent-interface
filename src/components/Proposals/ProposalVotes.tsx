@@ -116,10 +116,14 @@ function ProposalVotes({
       <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
         <Grid
-          templateColumns="repeat(5, 1fr)"
+          templateColumns={{ base: 'repeat(2, 1ft)', md: 'repeat(5, 1fr)' }}
           gap={7}
         >
-          <GridItem colSpan={1}>
+          <GridItem
+            colSpan={{ base: 4, md: 1 }}
+            justifyContent="center"
+            mx="auto"
+          >
             <CircularProgress
               color="drab.900"
               trackColor="drab.700"
