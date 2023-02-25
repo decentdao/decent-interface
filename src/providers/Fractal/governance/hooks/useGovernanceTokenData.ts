@@ -37,10 +37,15 @@ interface BNFormattedPair {
   formatted?: string;
 }
 
-export interface VotingTokenConfig {
-  votingPeriod?: BNFormattedPair;
-  quorumPercentage?: BNFormattedPair;
-  timeLockPeriod?: BNFormattedPair;
+export interface VotingTokenConfig<Type = BNFormattedPair> {
+  votingPeriod?: Type;
+  quorumPercentage?: Type;
+  timeLockPeriod?: Type;
+}
+
+export interface GovernanceTokenCache<DataType> {
+  data: DataType;
+  expires?: Date;
 }
 
 const initialState = {
@@ -72,11 +77,14 @@ enum TokenActions {
 }
 type TokenAction =
   | { type: TokenActions.UPDATE_TOKEN; payload: ITokenData }
-  | { type: TokenActions.UPDATE_ACCOUNT; payload: ITokenAccount }
+  | {
+      type: TokenActions.UPDATE_ACCOUNT;
+      payload: Omit<ITokenAccount, 'userBalanceString' | 'votingWeightString'>;
+    }
   | { type: TokenActions.UPDATE_DELEGATEE; payload: string }
   | {
       type: TokenActions.UPDATE_VOTING_WEIGHTS;
-      payload: { votingWeight: BigNumber; votingWeightString: string };
+      payload: { votingWeight: BigNumber };
     }
   | {
       type: TokenActions.UPDATE_VOTING_CONTRACT;
@@ -94,34 +102,51 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
     case TokenActions.UPDATE_TOKEN:
       const { name, symbol, decimals, address, totalSupply } = action.payload;
       return { ...state, name, symbol, decimals, address, totalSupply };
-    case TokenActions.UPDATE_ACCOUNT:
-      const {
-        userBalance,
-        userBalanceString,
-        delegatee,
-        votingWeight,
-        votingWeightString,
-        isDelegatesSet,
-      } = action.payload;
+    case TokenActions.UPDATE_ACCOUNT: {
+      let userBalanceString: string | undefined;
+      let votingWeightString: string | undefined;
+      if (state.decimals) {
+        userBalanceString = formatCoin(
+          action.payload.userBalance!,
+          false,
+          state.decimals,
+          state.symbol
+        );
+        votingWeightString = formatCoin(
+          action.payload.votingWeight!,
+          false,
+          state.decimals,
+          state.symbol
+        );
+      }
+
       return {
         ...state,
-        userBalance,
+        ...action.payload,
         userBalanceString,
-        delegatee,
-        votingWeight,
         votingWeightString,
-        isDelegatesSet,
       };
+    }
     case TokenActions.UPDATE_DELEGATEE:
       return { ...state, delegatee: action.payload };
     case TokenActions.UPDATE_VOTING_WEIGHTS:
+      let votingWeightString: string | undefined;
+      if (state.decimals) {
+        votingWeightString = formatCoin(
+          action.payload.votingWeight!,
+          false,
+          state.decimals,
+          state.symbol
+        );
+      }
       return {
         ...state,
         votingWeight: action.payload.votingWeight,
-        votingWeightString: action.payload.votingWeightString,
+        votingWeightString,
       };
-    case TokenActions.UPDATE_VOTING_CONTRACT:
+    case TokenActions.UPDATE_VOTING_CONTRACT: {
       return { ...state, ...action.payload, isLoading: false };
+    }
     case TokenActions.UPDATE_TOKEN_CONTRACT:
       return { ...state, tokenContract: action.payload, isLoading: false };
     case TokenActions.RESET:
@@ -213,14 +238,12 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
       type: TokenActions.UPDATE_ACCOUNT,
       payload: {
         userBalance: tokenBalance,
-        userBalanceString: formatCoin(tokenBalance, false, state.decimals, state.symbol),
         delegatee: tokenDelegatee,
         votingWeight: tokenVotingWeight,
-        votingWeightString: formatCoin(tokenVotingWeight, false, state.decimals, state.symbol),
         isDelegatesSet,
       },
     });
-  }, [tokenContract, account, state.decimals, state.symbol, provider]);
+  }, [tokenContract, account, provider]);
 
   // get token account data
   useEffect(() => {
@@ -292,7 +315,6 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
         type: TokenActions.UPDATE_VOTING_WEIGHTS,
         payload: {
           votingWeight: currentBalance,
-          votingWeightString: formatCoin(currentBalance, true, state.decimals, state.symbol),
         },
       });
     };
@@ -302,7 +324,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     return () => {
       tokenContract.asSigner.off(filter, callback);
     };
-  }, [account, state.decimals, state.symbol, tokenContract]);
+  }, [account, tokenContract]);
 
   const data = useMemo(() => state, [state]);
   return data;
