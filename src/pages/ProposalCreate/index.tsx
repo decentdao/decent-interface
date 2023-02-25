@@ -1,4 +1,4 @@
-import { Button, Text, Grid, GridItem, Box, Flex } from '@chakra-ui/react';
+import { Button, Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -10,7 +10,7 @@ import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsA
 import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
 import PageHeader from '../../components/ui/page/Header/PageHeader';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
+import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../providers/Fractal/types';
@@ -148,14 +148,9 @@ function ProposalCreate() {
 
   if (!type) {
     return (
-      <Flex
-        minHeight="8.5rem"
-        width="100%"
-        alignItems="center"
-        justifyContent="center"
-      >
+      <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
-      </Flex>
+      </Center>
     );
   }
 
