@@ -9,9 +9,9 @@ export const useDocTitle = () => {
     },
   } = useFractal();
   const { daoRegistryName } = useDAOName({
-    address: address ? address : undefined,
+    address: address,
   });
   useEffect(() => {
-    document.title = daoRegistryName ? daoRegistryName + ' | Fractal' : 'Fractal';
+    document.title = daoRegistryName ? `${daoRegistryName} | Fractal` : 'Fractal';
   }, [daoRegistryName]);
 };
