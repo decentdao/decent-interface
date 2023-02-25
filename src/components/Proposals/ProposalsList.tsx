@@ -39,10 +39,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
           />
         ))
       ) : (
-        <EmptyBox
-          emptyText={t('emptyProposals')}
-          m="2rem 0 0 0"
-        >
+        <EmptyBox emptyText={t('emptyProposals')}>
           {showCreateButton && (
             <Link to="new">
               <Button
