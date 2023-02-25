@@ -10,6 +10,7 @@ import useTokenData from '../../../providers/Fractal/governance/hooks/useGoverna
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposalState, UsulProposal } from '../../../providers/Fractal/types';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { ProposalInfo } from '../ProposalInfo';
@@ -21,7 +22,8 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
     dispatches: { governanceDispatch },
   } = useFractal();
   const { timeLockPeriod } = useTokenData(governance.contracts);
-  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch });
+  const { chainId } = useNetworkConfg();
+  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch, chainId });
 
   const { address: account } = useAccount();
 

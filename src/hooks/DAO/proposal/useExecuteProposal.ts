@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
+import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 import useUsul from './useUsul';
@@ -17,7 +18,8 @@ export default function useExecuteProposal() {
     governance,
     dispatches: { governanceDispatch },
   } = useFractal();
-  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch });
+  const { chainId } = useNetworkConfg();
+  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch, chainId });
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
