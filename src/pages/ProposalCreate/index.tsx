@@ -1,4 +1,4 @@
-import { Button, Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
+import { Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
@@ -17,7 +17,6 @@ import { GovernanceTypes } from '../../providers/Fractal/types';
 import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
-import { notProd, useProposeStuff } from '../../utils/dev';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -29,10 +28,8 @@ const defaultTransaction = {
   encodedFunctionData: undefined,
 };
 
-const templateAreaTwoCol = `"header header"
-"content details"`;
-const templateAreaSingleCol = `"header"
-"content"
+const templateAreaTwoCol = '"content details"';
+const templateAreaSingleCol = `"content"
 "details"`;
 
 function ProposalCreate() {
@@ -50,7 +47,6 @@ function ProposalCreate() {
   const [nonce, setNonce] = useState<number>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
-  const testPropose = useProposeStuff(setTransactions);
   const [showTransactionsAndSubmit, setShowTransactionsAndSubmit] = useState<boolean>();
   const [inputtedMetadata, setInputtedMetadata] = useState<boolean>(false);
   const [metadata, setMetadata] = useState<{
@@ -167,8 +163,21 @@ function ProposalCreate() {
             path: '',
           },
         ]}
+        ButtonIcon={Trash}
+        buttonVariant="secondary"
+        buttonClick={() =>
+          navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
+        }
+        isButtonDisabled={pendingCreateTx}
       />
+      <Text
+        textStyle="text-2xl-mono-regular"
+        color="grayscale.100"
+      >
+        {t('createProposal')}
+      </Text>
       <Grid
+        mt={8}
         gap={4}
         templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
         gridTemplateRows={'5.1em 1fr'}
@@ -177,29 +186,6 @@ function ProposalCreate() {
           lg: templateAreaTwoCol,
         }}
       >
-        <GridItem area="header">
-          <Flex justifyContent="space-between">
-            <Text
-              onClick={notProd() ? testPropose : undefined}
-              textStyle="text-2xl-mono-regular"
-            >
-              {t('createProposal')}
-            </Text>
-            <Button
-              minWidth="auto"
-              py={1.5}
-              px={4}
-              width="fit-content"
-              variant="secondary"
-              onClick={() =>
-                navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
-              }
-              disabled={pendingCreateTx}
-            >
-              <Trash color="gold.500" />
-            </Button>
-          </Flex>
-        </GridItem>
         <GridItem area="content">
           <Flex
             flexDirection="column"
