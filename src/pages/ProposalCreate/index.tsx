@@ -167,6 +167,12 @@ function ProposalCreate() {
             path: '',
           },
         ]}
+        ButtonIcon={Trash}
+        buttonVariant="secondary"
+        buttonClick={() =>
+          navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
+        }
+        isButtonDisabled={pendingCreateTx}
       />
       <Grid
         gap={4}
@@ -178,27 +184,12 @@ function ProposalCreate() {
         }}
       >
         <GridItem area="header">
-          <Flex justifyContent="space-between">
-            <Text
-              onClick={notProd() ? testPropose : undefined}
-              textStyle="text-2xl-mono-regular"
-            >
-              {t('createProposal')}
-            </Text>
-            <Button
-              minWidth="auto"
-              py={1.5}
-              px={4}
-              width="fit-content"
-              variant="secondary"
-              onClick={() =>
-                navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
-              }
-              disabled={pendingCreateTx}
-            >
-              <Trash color="gold.500" />
-            </Button>
-          </Flex>
+          <Text
+            onClick={notProd() ? testPropose : undefined}
+            textStyle="text-2xl-mono-regular"
+          >
+            {t('createProposal')}
+          </Text>
         </GridItem>
         <GridItem area="content">
           <Flex
