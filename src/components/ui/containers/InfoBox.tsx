@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { Link, To } from 'react-router-dom';
+import { To, useNavigate } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 export function InfoBox({
@@ -16,8 +16,17 @@ export function InfoBox({
   to?: To;
   children: ReactNode;
 }) {
+  const navigate = useNavigate();
   return (
     <Box
+      cursor="pointer"
+      onClick={
+        to
+          ? () => {
+              navigate(to);
+            }
+          : undefined
+      }
       minWidth={minWidth}
       h="100%"
       minHeight={minHeight}
@@ -26,7 +35,7 @@ export function InfoBox({
       borderRadius="0.5rem"
       {...rest}
     >
-      {!to ? children : <Link to={to}>{children}</Link>}
+      {children}
     </Box>
   );
 }
