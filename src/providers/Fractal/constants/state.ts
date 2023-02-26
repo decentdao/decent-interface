@@ -20,6 +20,7 @@ export const gnosisInitialState: IGnosis = {
   },
   safe: {},
   isGnosisLoading: true,
+  isNodesLoaded: false,
   daoName: '',
 };
 

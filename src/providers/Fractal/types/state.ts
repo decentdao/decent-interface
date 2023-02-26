@@ -54,6 +54,7 @@ export interface IGnosis {
   freezeData: IGnosisFreezeData | undefined;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
+  isNodesLoaded: boolean;
   parentDAOAddress?: string;
   childNodes?: ChildNode[];
 }
