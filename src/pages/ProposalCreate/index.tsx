@@ -28,10 +28,8 @@ const defaultTransaction = {
   encodedFunctionData: undefined,
 };
 
-const templateAreaTwoCol = `"header header"
-"content details"`;
-const templateAreaSingleCol = `"header"
-"content"
+const templateAreaTwoCol = '"content details"';
+const templateAreaSingleCol = `"content"
 "details"`;
 
 function ProposalCreate() {
@@ -172,7 +170,14 @@ function ProposalCreate() {
         }
         isButtonDisabled={pendingCreateTx}
       />
+      <Text
+        textStyle="text-2xl-mono-regular"
+        color="grayscale.100"
+      >
+        {t('createProposal')}
+      </Text>
       <Grid
+        mt={8}
         gap={4}
         templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
         gridTemplateRows={'5.1em 1fr'}
@@ -181,9 +186,6 @@ function ProposalCreate() {
           lg: templateAreaTwoCol,
         }}
       >
-        <GridItem area="header">
-          <Text textStyle="text-2xl-mono-regular">{t('createProposal')}</Text>
-        </GridItem>
         <GridItem area="content">
           <Flex
             flexDirection="column"

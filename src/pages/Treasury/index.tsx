@@ -45,6 +45,7 @@ function Treasury() {
         buttonTestId="link-send-assets"
       />
       <Flex
+        mt="3rem"
         align="start"
         gap="1rem"
         flexWrap="wrap"
