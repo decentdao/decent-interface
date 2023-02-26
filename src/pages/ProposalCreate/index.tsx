@@ -1,4 +1,4 @@
-import { Button, Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
+import { Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
