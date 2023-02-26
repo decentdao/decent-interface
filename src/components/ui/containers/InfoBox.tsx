@@ -19,7 +19,7 @@ export function InfoBox({
   const navigate = useNavigate();
   return (
     <Box
-      cursor="pointer"
+      cursor={to ? 'pointer' : undefined}
       onClick={
         to
           ? () => {
