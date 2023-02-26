@@ -17,7 +17,6 @@ import { GovernanceTypes } from '../../providers/Fractal/types';
 import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import { ProposalExecuteData } from '../../types/proposal';
 import { TransactionData } from '../../types/transaction';
-import { notProd, useProposeStuff } from '../../utils/dev';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -50,7 +49,6 @@ function ProposalCreate() {
   const [nonce, setNonce] = useState<number>();
   const navigate = useNavigate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
-  const testPropose = useProposeStuff(setTransactions);
   const [showTransactionsAndSubmit, setShowTransactionsAndSubmit] = useState<boolean>();
   const [inputtedMetadata, setInputtedMetadata] = useState<boolean>(false);
   const [metadata, setMetadata] = useState<{
@@ -184,12 +182,7 @@ function ProposalCreate() {
         }}
       >
         <GridItem area="header">
-          <Text
-            onClick={notProd() ? testPropose : undefined}
-            textStyle="text-2xl-mono-regular"
-          >
-            {t('createProposal')}
-          </Text>
+          <Text textStyle="text-2xl-mono-regular">{t('createProposal')}</Text>
         </GridItem>
         <GridItem area="content">
           <Flex
