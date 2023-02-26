@@ -56,7 +56,10 @@ export function DAOInfoCard({
   // @todo add viewable conditions
   const canManageDAO = !!account;
   return (
-    <Flex justifyContent="space-between">
+    <Flex
+      justifyContent="space-between"
+      flexGrow={1}
+    >
       <Flex
         alignItems="center"
         flexWrap="wrap"
