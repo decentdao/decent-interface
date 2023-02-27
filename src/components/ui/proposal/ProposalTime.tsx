@@ -4,7 +4,6 @@ import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
-import useTokenData from '../../../providers/Fractal/governance/hooks/useGovernanceTokenData';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import {
   TxProposal,
@@ -24,12 +23,12 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
   const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timer>();
   const { t } = useTranslation('proposal');
   const {
-    governance: { contracts },
+    governance,
     gnosis: {
       guardContracts: { vetoGuardContract, vetoGuardType },
     },
   } = useFractal();
-  const { timeLockPeriod } = useTokenData(contracts);
+
   const isActive = proposal.state === TxProposalState.Active;
   const isTimeLocked = proposal.state === TxProposalState.TimeLocked;
   const isQueued = proposal.state === TxProposalState.Queued;
@@ -39,6 +38,11 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
   const usulProposal = proposal as UsulProposal;
 
   useEffect(() => {
+    const timeLockPeriod = governance.governanceToken?.timeLockPeriod;
+    if (!timeLockPeriod) {
+      return;
+    }
+
     async function getCountdown() {
       const vetoGuard =
         vetoGuardType === VetoGuardType.MULTISIG
@@ -97,7 +101,6 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
     isQueued,
     isExecutable,
     proposal.transaction,
-    timeLockPeriod,
     vetoGuardContract,
     vetoGuardType,
     proposal,
@@ -143,7 +146,6 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
       placement="top"
     >
       <Flex
-        className="flex"
         justifyContent="flex-end"
         alignItems="center"
       >

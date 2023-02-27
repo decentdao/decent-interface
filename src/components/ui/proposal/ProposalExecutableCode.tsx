@@ -23,13 +23,18 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
       textStyle="text-base-mono-regular"
       color="grayscale.100"
       justifyContent="space-between"
+      maxH={{ base: '12.5rem', md: 'initial' }}
+      h={{ base: 'fit-content', md: 'initial' }}
+      overflowY={{ base: 'auto', md: 'initial' }}
+      flexWrap={{ base: 'wrap', md: 'nowrap' }}
+      gap={2}
     >
       <Text whiteSpace="nowrap">{t(paramKey)}</Text>
       <Text
         textAlign="end"
-        maxWidth="70%"
         wordBreak="break-word"
-        ml="0.5rem"
+        ml={{ base: 0, md: '0.5rem' }}
+        maxW={{ base: '100%', md: '70%' }}
       >
         {value}
       </Text>
@@ -113,7 +118,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: TxPropo
               <AccordionPanel paddingBottom={4}>
                 <Flex
                   gap={2}
-                  flexWrap="wrap"
+                  flexDirection="column"
                 >
                   {proposal.metaData?.decodedTransactions.map((tx, i) => (
                     <TransactionBlock

@@ -20,6 +20,7 @@ export const gnosisInitialState: IGnosis = {
   },
   safe: {},
   isGnosisLoading: true,
+  isNodesLoaded: false,
   daoName: '',
 };
 
@@ -48,7 +49,7 @@ export const treasuryInitialState: ITreasury = {
 
 export const connectedAccountInitialState: IConnectedAccount = {
   audit: {
-    acceptAudit: () => {},
+    acceptAuditWarning: () => {},
     hasAccepted: undefined,
   },
   favorites: {

@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "2.3.4",
-    "@decent-org/fractal-ui": "^0.1.11",
+    "@decent-org/fractal-ui": "^0.1.15",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@ethersproject/abstract-signer": "^5.7.0",
@@ -46,11 +46,13 @@
   "scripts": {
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
-    "start": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired start",
+    "set:env": "GENERATE_SOURCEMAP=false REACT_APP_GIT_HASH=`git rev-parse HEAD`",
+    "start": "npm run set:env & react-app-rewired start",
+    "start:https": "npm run set:env & HTTPS=true react-app-rewired start",
     "start:windows": "set \"GENERATE_SOURCEMAP=false\" && for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired start",
     "build": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired build",
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"REACT_APP_GIT_HASH=%I\" && react-app-rewired build",
-    "test": "REACT_APP_GIT_HASH=`git rev-parse HEAD` react-app-rewired test",
+    "test": "npm run set:env & react-app-rewired test",
     "eject": "react-app-rewired eject",
     "prepare": "husky install",
     "tests": "playwright test"
@@ -78,15 +80,21 @@
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "eslint": "^8.22.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "https-browserify": "^1.0.0",
     "husky": "^8.0.0",
+    "os-browserify": "^0.3.0",
     "playwright": "^1.29.0",
     "prettier": "^2.7.1",
-    "typescript": "^4.8.0"
+    "stream-http": "^3.2.0",
+    "typescript": "^4.8.0",
+    "url": "^0.11.0"
   }
 }

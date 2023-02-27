@@ -73,7 +73,7 @@ export function useFreezeData(
 
       const freeze: IGnosisFreezeData = {
         ...freezeData,
-        userHasVotes: userHasVotes,
+        userHasVotes,
       };
       return freeze;
     },

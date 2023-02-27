@@ -19,6 +19,7 @@ import { DAO_ROUTES } from '../../../routes/constants';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
+  parentSafeAddress?: string;
   safeAddress: string;
   toggleExpansion?: () => void;
   expanded?: boolean;
@@ -27,6 +28,7 @@ interface IDAOInfoCard {
 }
 
 export function DAOInfoCard({
+  parentSafeAddress,
   safeAddress,
   toggleExpansion,
   expanded,
@@ -56,7 +58,7 @@ export function DAOInfoCard({
   return (
     <Flex
       justifyContent="space-between"
-      w="full"
+      flexGrow={1}
     >
       <Flex
         alignItems="center"
@@ -114,13 +116,15 @@ export function DAOInfoCard({
               onClick={() => toggleFavorite(safeAddress)}
             />
             {!!numberOfChildrenDAO && (
-              <Box
-                bg="chocolate.500"
-                borderRadius="4px"
-                p="0.25rem 0.5rem"
-              >
-                <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
-              </Box>
+              <Link to={DAO_ROUTES.nodes.relative(safeAddress)}>
+                <Box
+                  bg="chocolate.500"
+                  borderRadius="4px"
+                  p="0.25rem 0.5rem"
+                >
+                  <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
+                </Box>
+              </Link>
             )}
           </Flex>
           <Flex
@@ -142,6 +146,7 @@ export function DAOInfoCard({
       {/* Veritical Elipsis */}
       {canManageDAO && (
         <ManageDAOMenu
+          parentSafeAddress={parentSafeAddress}
           safeAddress={safeAddress}
           freezeData={freezeData}
           guardContracts={guardContracts}
@@ -161,7 +166,8 @@ export function DAONodeCard(props: IDAOInfoCard) {
 
   const nodeGuardContracts =
     !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
-  const nodeFreezeData = !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : freezeData;
+  const nodeFreezeData =
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : !isCurrentDAO ? undefined : freezeData;
 
   return (
     <Flex

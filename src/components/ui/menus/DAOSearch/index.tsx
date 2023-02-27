@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
-export function DAOSearch() {
+export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState('');
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
@@ -40,8 +40,8 @@ export function DAOSearch() {
     <Box
       ref={ref}
       width="full"
-      maxW="31.125rem"
-      height="full"
+      maxW={{ base: 'full', md: '31.125rem' }}
+      height="4rem"
     >
       <Popover
         matchWidth
@@ -76,6 +76,8 @@ export function DAOSearch() {
           shadow="menu-gold"
           bg="grayscale.black"
           hidden={!errorMessage && !address}
+          position="relative"
+          zIndex="modal"
         >
           <SearchDisplay
             loading={isLoading}
@@ -83,6 +85,7 @@ export function DAOSearch() {
             validAddress={isSafe}
             address={address}
             onClickView={resetSearch}
+            closeDrawer={closeDrawer}
           />
         </Box>
       </Popover>

@@ -54,6 +54,7 @@ export interface IGnosis {
   freezeData: IGnosisFreezeData | undefined;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
+  isNodesLoaded: boolean;
   parentDAOAddress?: string;
   childNodes?: ChildNode[];
 }
@@ -64,7 +65,7 @@ export interface IConnectedAccount {
 
 export interface IAudit {
   hasAccepted?: boolean;
-  acceptAudit: () => void;
+  acceptAuditWarning: () => void;
 }
 
 export interface IFavorites {

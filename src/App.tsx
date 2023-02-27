@@ -1,9 +1,10 @@
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import './i18n';
 import Header from './components/ui/page/Header';
-import Sidebar from './components/ui/page/Sidebar';
+import Navigation from './components/ui/page/Navigation';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
+import { useDocTitle } from './hooks/utils/useDocTitle';
 import { useFractal } from './providers/Fractal/hooks/useFractal';
 import FractalRoutes from './routes/FractalRoutes';
 import { notProd, testErrorBoundary } from './utils/dev';
@@ -19,7 +20,7 @@ function localDevConfigs() {
 function App() {
   const {
     account: {
-      audit: { hasAccepted, acceptAudit },
+      audit: { hasAccepted, acceptAuditWarning },
     },
   } = useFractal();
 
@@ -29,16 +30,21 @@ function App() {
     isVisible: hasAccepted !== undefined && !hasAccepted,
     titleTranslationKey: 'auditDisclaimer',
     buttonTranslationKey: 'accept',
-    buttonOnClick: acceptAudit,
+    buttonOnClick: acceptAuditWarning,
   });
 
+  useDocTitle();
   localDevConfigs();
 
   return (
     <Grid
-      templateAreas={`"nav header"
-      "nav main"`}
-      gridTemplateColumns={'4.25rem 1fr'}
+      templateAreas={{
+        base: `"nav header"
+        "main main"`,
+        md: `"nav header"
+        "nav main"`,
+      }}
+      gridTemplateColumns="4.25rem 1fr"
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
@@ -77,9 +83,9 @@ function App() {
         bg="chocolate.900"
         position="fixed"
         w="4.25rem"
-        minHeight="100vh"
+        minHeight={{ base: undefined, md: '100vh' }}
       >
-        <Sidebar />
+        <Navigation />
       </GridItem>
     </Grid>
   );

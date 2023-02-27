@@ -16,6 +16,7 @@ export function EmptyBox({
         h="8rem"
         alignItems="center"
         justifyContent="center"
+        flexWrap="wrap"
       >
         <Text
           textStyle="text-xl-mono-bold"

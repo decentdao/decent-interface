@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
+import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { HEADER_HEIGHT } from '../../constants/common';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -41,6 +42,7 @@ function DAOChildNodes({
               indentFactor={!!parentDAOAddress ? 4 : 1}
             />
             <DAONodeCard
+              parentSafeAddress={parentDAOAddress}
               safeAddress={node.address}
               expanded={false}
             />
@@ -57,7 +59,7 @@ function DAOChildNodes({
 
 export function FractalNodes() {
   const {
-    gnosis: { safe, parentDAOAddress, childNodes },
+    gnosis: { safe, parentDAOAddress, childNodes, isNodesLoaded },
   } = useFractal();
   const [isParentExpanded, setIsParentExpended] = useState(true);
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(true);
@@ -88,39 +90,46 @@ export function FractalNodes() {
           },
         ]}
       />
-      {parentDAOAddress && (
-        <DAONodeCard
-          safeAddress={parentDAOAddress}
-          toggleExpansion={parentExpansionToggle}
-          expanded={isParentExpanded}
-          numberOfChildrenDAO={1}
-        />
-      )}
-
-      <Flex mt="1rem">
-        {parentDAOAddress && isParentExpanded && (
-          <NodeLines
-            isCurrentDAO
-            isFirstChild
-            hasMore={!!childNodes?.length && isChildrenExpanded}
-            extendHeight={!!childNodes?.length}
-          />
-        )}
-        {isParentExpanded && (
-          <DAONodeCard
-            safeAddress={safe.address}
-            toggleExpansion={!!childNodes?.length ? childrenExpansionToggle : undefined}
-            expanded={isChildrenExpanded}
-            numberOfChildrenDAO={childNodes?.length}
-          />
-        )}
-      </Flex>
-
-      {isChildrenExpanded && (
-        <DAOChildNodes
-          parentDAOAddress={parentDAOAddress}
-          childNodes={childNodes}
-        />
+      {isNodesLoaded ? (
+        <>
+          {parentDAOAddress && (
+            <DAONodeCard
+              safeAddress={parentDAOAddress}
+              toggleExpansion={parentExpansionToggle}
+              expanded={isParentExpanded}
+              numberOfChildrenDAO={1}
+            />
+          )}
+          <Flex mt="1rem">
+            {parentDAOAddress && isParentExpanded && (
+              <NodeLines
+                isCurrentDAO
+                isFirstChild
+                hasMore={!!childNodes?.length && isChildrenExpanded}
+                extendHeight={!!childNodes?.length}
+              />
+            )}
+            {isParentExpanded && (
+              <DAONodeCard
+                parentSafeAddress={parentDAOAddress}
+                safeAddress={safe.address}
+                toggleExpansion={!!childNodes?.length ? childrenExpansionToggle : undefined}
+                expanded={isChildrenExpanded}
+                numberOfChildrenDAO={childNodes?.length}
+              />
+            )}
+          </Flex>
+          {isChildrenExpanded && (
+            <DAOChildNodes
+              parentDAOAddress={safe.address}
+              childNodes={childNodes}
+            />
+          )}
+        </>
+      ) : (
+        <Box mt="1rem">
+          <InfoBoxLoader />
+        </Box>
       )}
     </Box>
   );

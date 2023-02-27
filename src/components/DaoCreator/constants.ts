@@ -1,14 +1,6 @@
 import { BigNumber } from 'ethers';
 import { GovernanceTypes } from '../../providers/Fractal/types';
-import { CreatorFormState, CreatorSteps } from './types';
-
-export const CREATOR_STEP_TITLE_KEYS = {
-  [CreatorSteps.ESSENTIALS]: 'titleEssentials',
-  [CreatorSteps.GNOSIS_WITH_USUL]: 'titleUsulConfig',
-  [CreatorSteps.GNOSIS_GOVERNANCE]: 'titleGnosis',
-  [CreatorSteps.GOV_CONFIG]: 'titleGovConfig',
-  [CreatorSteps.GUARD_CONFIG]: 'titleGuardConfig',
-};
+import { CreatorFormState } from './types';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 

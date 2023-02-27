@@ -32,7 +32,7 @@ export function Info() {
         </InfoBox>
         <InfoBox
           to={DAO_ROUTES.proposals.relative(address)}
-          minWidth={{ base: '100%', lg: '32%', xl: '21%', '2xl': '10rem' }}
+          minWidth={{ base: '100%', lg: '30%', xl: '21%', '2xl': '10rem' }}
         >
           <InfoProposals />
         </InfoBox>

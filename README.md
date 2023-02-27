@@ -75,7 +75,7 @@ So at any given time, there are effectively four builds out there, and they are 
     - url: https://app.dev.fractalframework.xyz
     - env vars
       - netlify: https://app.netlify.com/sites/fractal-framework-interface-dev/settings/deploys#environment
-1. dev site via IPFS
+1. dev [site via IPFS](./IPFS_HOSTING.md)
     - url: http://app.dev.fractalframework.xyz.ipns.localhost:8080/
     - env vars
       - github: https://github.com/decent-dao/fractal-interface/settings/environments/486034480/edit
@@ -84,7 +84,7 @@ So at any given time, there are effectively four builds out there, and they are 
     - url: https://app.fractalframework.xyz
     - env vars
       - netlify: https://app.netlify.com/sites/fractal-framework-interface/settings/deploys#environment
-1. prod site via IPFS
+1. prod [site via IPFS](./IPFS_HOSTING.md)
     - url: http://app.fractalframework.xyz.ipns.localhost:8080/
     - env vars
       - github: https://github.com/decent-dao/fractal-interface/settings/environments/503834178/edit

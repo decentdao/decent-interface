@@ -69,8 +69,9 @@ function PageHeader({
       marginBottom="2rem"
     >
       <Flex
+        alignItems="center"
+        gap={{ base: 1, sm: 4 }}
         w="full"
-        align="center"
       >
         <Breadcrumbs links={links} />
         <Spacer />
@@ -78,7 +79,6 @@ function PageHeader({
           <Button
             onClick={buttonClick}
             data-testid={buttonTestId}
-            size="base"
             variant={buttonVariant}
             disabled={isButtonDisabled}
           >
