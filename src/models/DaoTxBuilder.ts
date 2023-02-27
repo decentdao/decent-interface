@@ -61,6 +61,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   public async buildUsulTx(): Promise<string> {
     const usulTxBuilder = this.txBuilderFactory.createUsulTxBuilder();
 
+    // transactions that must be called by safe
     this.internalTxs = [
       this.buildUpdateDAONameTx(),
       usulTxBuilder.buildLinearVotingContractSetupTx(),
@@ -94,13 +95,14 @@ export class DaoTxBuilder extends BaseTxBuilder {
       usulTxBuilder.buildDeployStrategyTx(),
       usulTxBuilder.buildDeployUsulTx(),
     ];
+
     // If subDAO and parentAllocation, deploy claim module
+    let tokenClaimTx: SafeTransaction | undefined;
     const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
     if (this.parentTokenAddress && !parentAllocation.isZero()) {
-      const tokenClaimTx = usulTxBuilder.buildDeployTokenClaim();
+      tokenClaimTx = usulTxBuilder.buildDeployTokenClaim();
       const tokenApprovalTx = usulTxBuilder.buildApproveClaimAllocation();
-      txs.push(tokenApprovalTx);
-      txs.push(tokenClaimTx);
+      this.internalTxs.push(tokenApprovalTx);
     }
 
     // If subDAO, deploy Fractal Module
@@ -110,6 +112,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     txs.push(this.buildExecInternalSafeTx(usulTxBuilder.signatures()));
 
+    // token claim deployment tx is pushed at the end to ensure approval is executed first
+    if (tokenClaimTx) {
+      txs.push(tokenClaimTx);
+    }
     return encodeMultiSend(txs);
   }
 

@@ -162,11 +162,6 @@ export class UsulTxBuilder extends BaseTxBuilder {
   }
 
   public buildDeployTokenClaim() {
-    console.log('🚀 ~ file: UsulTxBuilder.ts:165 ~ buildDeployTokenClaim', {
-      masterCopy: this.usulContracts!.claimingMasterCopyContract.address,
-      encodedData: this.encodedSetupTokenClaimData,
-      nonce: this.claimNonce,
-    });
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
@@ -260,12 +255,6 @@ export class UsulTxBuilder extends BaseTxBuilder {
 
   private setEncodedSetupTokenClaimData() {
     const tokenGovernanceDaoData = this.daoData as TokenGovernanceDAO;
-    console.log('🚀 ~ file: UsulTxBuilder.ts:262 ~ setEncodedSetupTokenClaimData', {
-      formData: tokenGovernanceDaoData.parentAllocationAmount,
-      predictedSafeAddress: this.safeContract.address,
-      parentToken: this.parentTokenAddress,
-      predictedChildToken: this.predictedTokenAddress,
-    });
     const encodedInitTokenData = defaultAbiCoder.encode(
       ['address', 'address', 'address', 'uint256'],
       [
