@@ -187,72 +187,75 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     proposalCanceledListener,
   ]);
 
-  useEffect(() => {
+  const loadProposals = useCallback(async () => {
     if (!usulContract || !ozLinearVotingContract) {
       return;
     }
-    const loadProposals = async () => {
-      const proposalCreatedFilter = usulContract.asSigner.filters.ProposalCreated();
-      const proposalMetaDataCreatedFilter = usulContract.asSigner.filters.ProposalMetadataCreated();
-      const proposalCreatedEvents = await usulContract.asSigner.queryFilter(proposalCreatedFilter);
-      const proposalMetaDataCreatedEvents = await usulContract.asSigner.queryFilter(
-        proposalMetaDataCreatedFilter
-      );
+    const proposalCreatedFilter = usulContract.asSigner.filters.ProposalCreated();
+    const proposalMetaDataCreatedFilter = usulContract.asSigner.filters.ProposalMetadataCreated();
+    const proposalCreatedEvents = await usulContract.asSigner.queryFilter(proposalCreatedFilter);
+    const proposalMetaDataCreatedEvents = await usulContract.asSigner.queryFilter(
+      proposalMetaDataCreatedFilter
+    );
 
-      const mappedProposals = await Promise.all(
-        proposalCreatedEvents.map(async ({ args }) => {
-          const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
-            event.args.proposalId.eq(args.proposalNumber)
-          );
-          let metaData;
-          if (metaDataEvent) {
-            let decodedTransactions = metaDataMapping.current.get(args.proposalNumber.toString());
-            if (!decodedTransactions) {
-              decodedTransactions = await decodeTransactions(
-                metaDataEvent.args.transactions,
-                safeBaseURL
-              );
-              metaDataMapping.current.set(args.proposalNumber.toString(), decodedTransactions);
-            }
-            metaData = {
-              title: metaDataEvent.args.title,
-              description: metaDataEvent.args.description,
-              documentationUrl: metaDataEvent.args.documentationUrl,
-              transactions: metaDataEvent.args.transactions,
-              decodedTransactions,
-            };
+    const mappedProposals = await Promise.all(
+      proposalCreatedEvents.map(async ({ args }) => {
+        const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
+          event.args.proposalId.eq(args.proposalNumber)
+        );
+        let metaData;
+        if (metaDataEvent) {
+          let decodedTransactions = metaDataMapping.current.get(args.proposalNumber.toString());
+          if (!decodedTransactions) {
+            decodedTransactions = await decodeTransactions(
+              metaDataEvent.args.transactions,
+              safeBaseURL
+            );
+            metaDataMapping.current.set(args.proposalNumber.toString(), decodedTransactions);
           }
-          return mapProposalCreatedEventToProposal(
-            args[0],
-            args[1],
-            args[2],
-            usulContract,
-            ozLinearVotingContract,
-            provider,
-            provider.network.chainId,
-            metaData
-          );
-        })
-      );
-      const passedProposals = mappedProposals.reduce(
-        (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
-        0
-      );
-      // @todo no queued?
-      const activeProposals = mappedProposals.reduce(
-        (prev, proposal) => (proposal.state === TxProposalState.Active ? prev + 1 : prev),
-        0
-      );
-      governanceDispatch({
-        type: GovernanceAction.UPDATE_PROPOSALS,
-        payload: {
-          txProposals: mappedProposals,
-          passed: passedProposals,
-          active: activeProposals,
-        },
-      });
-    };
+          metaData = {
+            title: metaDataEvent.args.title,
+            description: metaDataEvent.args.description,
+            documentationUrl: metaDataEvent.args.documentationUrl,
+            transactions: metaDataEvent.args.transactions,
+            decodedTransactions,
+          };
+        }
+        return mapProposalCreatedEventToProposal(
+          args[0],
+          args[1],
+          args[2],
+          usulContract,
+          ozLinearVotingContract,
+          provider,
+          provider.network.chainId,
+          metaData
+        );
+      })
+    );
+    const passedProposals = mappedProposals.reduce(
+      (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
+      0
+    );
+    // @todo no queued?
+    const activeProposals = mappedProposals.reduce(
+      (prev, proposal) => (proposal.state === TxProposalState.Active ? prev + 1 : prev),
+      0
+    );
 
-    loadProposals();
+    governanceDispatch({
+      type: GovernanceAction.UPDATE_PROPOSALS,
+      payload: {
+        txProposals: mappedProposals,
+        passed: passedProposals,
+        active: activeProposals,
+      },
+    });
   }, [usulContract, ozLinearVotingContract, governanceDispatch, provider, safeBaseURL]);
+
+  useEffect(() => {
+    loadProposals();
+  }, [loadProposals]);
+
+  return { loadProposals };
 }

@@ -30,12 +30,15 @@ export function ProposalAction({
   const { t } = useTranslation();
   const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
 
-  const showActionButton =
-    proposal.state === TxProposalState.Active ||
-    proposal.state === TxProposalState.Executing ||
-    proposal.state === TxProposalState.Queueable ||
-    proposal.state === TxProposalState.TimeLocked ||
-    proposal.state === TxProposalState.Queued;
+  const showActionButton = useMemo(
+    () =>
+      proposal.state === TxProposalState.Active ||
+      proposal.state === TxProposalState.Executing ||
+      proposal.state === TxProposalState.Queueable ||
+      proposal.state === TxProposalState.TimeLocked ||
+      proposal.state === TxProposalState.Queued,
+    [proposal]
+  );
 
   const handleClick = () => {
     navigate(DAO_ROUTES.proposal.relative(safe.address, proposal.proposalNumber));

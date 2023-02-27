@@ -75,7 +75,12 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     gnosis.modules
   );
 
-  useGnosisGovernance({ governance, gnosis, governanceDispatch, chainId });
+  const { loadProposals } = useGnosisGovernance({
+    governance,
+    gnosis,
+    governanceDispatch,
+    chainId,
+  });
   useNodes({ gnosis, gnosisDispatch, chainId });
   const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
@@ -104,6 +109,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         refreshSafeData: async () => {
           await getGnosisSafeTransactions();
           await getGnosisSafeInfo();
+          await loadProposals();
         },
         lookupModules,
         getVetoGuardContracts,
@@ -118,6 +124,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       getGnosisSafeTransactions,
       getGnosisSafeInfo,
       lookupModules,
+      loadProposals,
       getVetoGuardContracts,
       lookupFreezeData,
     ]

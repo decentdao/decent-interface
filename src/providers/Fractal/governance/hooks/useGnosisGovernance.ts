@@ -25,7 +25,7 @@ export const useGnosisGovernance = ({
   const governanceTokenData = useGovernanceTokenData(governance.contracts);
 
   // loads transactions (multisig) or proposals (usul)
-  useUsulProposals({ governance, governanceDispatch });
+  const { loadProposals } = useUsulProposals({ governance, governanceDispatch });
   useSafeMultisigTxs({ governance, gnosis, governanceDispatch });
 
   useEffect(() => {
@@ -61,4 +61,6 @@ export const useGnosisGovernance = ({
     governance.contracts.ozLinearVotingContract,
     governance.contracts.contractsIsLoading,
   ]);
+
+  return { loadProposals };
 };
