@@ -6,4 +6,14 @@ const countDecimals = (value: number) => {
   return decimals?.length || 0;
 };
 
+export const removeTrailingZeros = (input: string) => {
+  if (input.includes('.')) {
+    const [leftDigits, rightDigits] = input.split('.');
+    if (Number(rightDigits) === 0) {
+      return input.slice(0, leftDigits.length);
+    }
+  }
+  return input;
+};
+
 export default countDecimals;

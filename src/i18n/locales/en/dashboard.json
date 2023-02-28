@@ -29,5 +29,10 @@
     "labelUndoFreeze": "Undo Freeze",
     "labelDAOFrozen": "{{daoName}} Frozen",
     "moduleDescription_one": "Module executed {{count}} transaction on",
-    "moduleDescription_other": "Module executed {{count}} transactions on"
+    "moduleDescription_other": "Module executed {{count}} transactions on",
+    "alertTokenClaim": "You have {{amount}} {{symbol}} tokens to claim!",
+    "pendingTokenClaim": "Claiming {{ symbol }}",
+    "failedTokenClaim": "Failed to claim {{ symbol }}",
+    "successTokenClaim": "You have successfully claimed {{ amount }} {{ symbol }}",
+    "claim": "Claim"
 }
