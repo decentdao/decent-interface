@@ -58,6 +58,7 @@ export function TokenClaim() {
       display="flex"
       justifyContent="space-between"
       alignItems="center"
+      mb={8}
     >
       <Flex
         justifyContent="space-between"
