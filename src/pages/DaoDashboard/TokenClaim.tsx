@@ -24,9 +24,7 @@ export function TokenClaim() {
       return;
     }
     const claimableAmount = await tokenClaimContract.getClaimAmount(account);
-    if (!claimableAmount.isZero()) {
-      setUserClaimable(claimableAmount);
-    }
+    setUserClaimable(claimableAmount);
   }, [tokenClaimContract, governanceToken, account]);
 
   useEffect(() => {
