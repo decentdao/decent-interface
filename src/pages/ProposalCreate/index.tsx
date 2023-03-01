@@ -30,7 +30,7 @@ const defaultTransaction = {
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
-"details"`;
+  "details"`;
 
 function ProposalCreate() {
   const {
@@ -180,7 +180,7 @@ function ProposalCreate() {
         mt={8}
         gap={4}
         templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
-        gridTemplateRows={'5.1em 1fr'}
+        gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
         templateAreas={{
           base: templateAreaSingleCol,
           lg: templateAreaTwoCol,
@@ -227,7 +227,10 @@ function ProposalCreate() {
             </Box>
           </Flex>
         </GridItem>
-        <GridItem area="details">
+        <GridItem
+          area="details"
+          w="100%"
+        >
           <ProposalDetails />
         </GridItem>
       </Grid>
