@@ -1,7 +1,7 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { Vote, Execute, Lock } from '@decent-org/fractal-ui';
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
@@ -29,11 +29,14 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
     },
   } = useFractal();
 
-  const isActive = proposal.state === TxProposalState.Active;
-  const isTimeLocked = proposal.state === TxProposalState.TimeLocked;
-  const isQueued = proposal.state === TxProposalState.Queued;
-  const isExecutable = proposal.state === TxProposalState.Executing;
-  const showCountdown = isActive || isTimeLocked || isExecutable || isQueued;
+  const isActive = useMemo(() => proposal.state === TxProposalState.Active, [proposal]);
+  const isTimeLocked = useMemo(() => proposal.state === TxProposalState.TimeLocked, [proposal]);
+  const isQueued = useMemo(() => proposal.state === TxProposalState.Queued, [proposal]);
+  const isExecutable = useMemo(() => proposal.state === TxProposalState.Executing, [proposal]);
+  const showCountdown = useMemo(
+    () => isActive || isTimeLocked || isExecutable || isQueued,
+    [isActive, isTimeLocked, isExecutable, isQueued]
+  );
 
   const usulProposal = proposal as UsulProposal;
 
@@ -51,24 +54,19 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
 
       if (isActive && usulProposal.deadline) {
         const interval = setInterval(() => {
-          const now = new Date();
-          setCountdown(usulProposal.deadline * 1000 - now.getTime());
+          setCountdown(usulProposal.deadline * 1000 - Date.now());
         }, 1000);
         setCountdownInterval(interval);
       } else if (isTimeLocked && usulProposal.deadline && timeLockPeriod) {
         const interval = setInterval(() => {
-          const now = new Date();
-          setCountdown(
-            (usulProposal.deadline + Number(timeLockPeriod.value)) * 1000 - now.getTime()
-          );
+          setCountdown((usulProposal.deadline + Number(timeLockPeriod.value)) * 1000 - Date.now());
         }, 1000);
         setCountdownInterval(interval);
       } else if (isQueued && vetoGuard) {
         const queuedTimestamp = await getTxQueuedTimestamp(proposal, vetoGuard);
         const guardTimeLockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
         const interval = setInterval(() => {
-          const now = new Date();
-          setCountdown(queuedTimestamp + guardTimeLockPeriod - now.getTime());
+          setCountdown(queuedTimestamp + guardTimeLockPeriod - Date.now());
         }, 1000);
         setCountdownInterval(interval);
       } else if (isExecutable && vetoGuard) {
@@ -77,10 +75,7 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
         const guardExecutionPeriod = (await vetoGuard.executionPeriod()).toNumber();
 
         const interval = setInterval(() => {
-          const now = new Date();
-          setCountdown(
-            queuedTimestamp + guardTimeLockPeriod + guardExecutionPeriod - now.getTime()
-          );
+          setCountdown(queuedTimestamp + guardTimeLockPeriod + guardExecutionPeriod - Date.now());
         }, 1000);
         setCountdownInterval(interval);
       }
