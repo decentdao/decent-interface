@@ -1,59 +1,65 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 
-export function NodeLines({
-  isCurrentDAO,
-  hasMore,
-  isFirstChild,
-  extendHeight,
-  indentFactor = 1,
-}: {
+interface INodeLine {
   isCurrentDAO?: boolean;
-  hasMore?: boolean;
+  trueDepth?: number;
   isFirstChild?: boolean;
-  extendHeight?: boolean;
-  indentFactor?: number;
-}) {
-  const width = (1.5 * indentFactor).toString() + 'rem';
+}
+
+export function NodeLineVertical({ trueDepth = 0 }: INodeLine) {
   return (
-    <Box>
+    <>
       <Box
-        ml="1.75rem"
-        mr="1rem"
-        width={width}
-        h="3.375rem"
-        borderLeft="1px solid"
-        borderBottom="1px solid"
-        borderColor="chocolate.400"
-        position="relative"
+        position="absolute"
+        h="100%"
+        w="100%"
+        zIndex={-1 - trueDepth}
+        top={0}
+        overflow="hidden"
       >
-        {isFirstChild && (
+        <Box
+          position="relative"
+          height="100%"
+        >
           <Box
-            borderRadius="100%"
-            boxSize="8px"
             position="absolute"
-            top="-4.5156245px"
-            left="-4.5156245px"
+            bottom={0}
+            height="100%"
             bg="chocolate.400"
+            mb="3.3rem"
+            w="1px"
+            ml={8}
           />
-        )}
-        <Box
-          borderRadius="100%"
-          boxSize="8px"
-          position="absolute"
-          bottom="-4.5156245px"
-          right="-4.5156245px"
-          bg={isCurrentDAO ? 'gold.500' : 'chocolate.400'}
-        />
+        </Box>
       </Box>
-      {hasMore && (
-        <Box
-          ml="1.75rem"
-          width="1.5rem"
-          h={extendHeight ? '4.375rem' : '3.375rem'}
-          borderLeft="1px solid"
-          borderColor="chocolate.400"
-        />
-      )}
-    </Box>
+    </>
+  );
+}
+
+export function NodeLineHorizontal({ isCurrentDAO, isFirstChild }: INodeLine) {
+  if (isFirstChild) {
+    return null;
+  }
+  return (
+    <Flex
+      w="50px"
+      h="full"
+      alignItems="center"
+      position="absolute"
+      justifyContent="center"
+      left={-16}
+      mt={-4}
+    >
+      <Box
+        height="1px"
+        bg={isCurrentDAO ? 'gold.500' : 'chocolate.400'}
+        w="calc(100% - 6px)"
+      />
+      <Box
+        borderRadius="100%"
+        boxSize="6px"
+        bg={isCurrentDAO ? 'gold.500' : 'chocolate.400'}
+      />
+    </Flex>
   );
 }
