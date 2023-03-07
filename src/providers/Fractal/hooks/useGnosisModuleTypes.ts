@@ -6,9 +6,9 @@ import { GnosisAction } from '../constants';
 import { GnosisActions, GnosisModuleType, IGnosisModuleData } from '../types';
 
 export function useGnosisModuleTypes(
-  gnosisDispatch: Dispatch<GnosisActions>,
   chainId: number,
-  moduleAddresses?: string[]
+  moduleAddresses?: string[],
+  gnosisDispatch?: Dispatch<GnosisActions>
 ) {
   const {
     zodiacModuleProxyFactoryContract,
@@ -78,11 +78,12 @@ export function useGnosisModuleTypes(
       return;
     }
     lookupModules(moduleAddresses).then(modules => {
-      if (!!modules)
+      if (!!modules && gnosisDispatch) {
         gnosisDispatch({
           type: GnosisAction.SET_MODULES,
           payload: modules,
         });
+      }
     });
   }, [gnosisDispatch, lookupModules, moduleAddresses]);
 
