@@ -6,7 +6,6 @@ import { getEventRPC } from '../../helpers';
 import { getUsulModuleFromModules } from '../../hooks/DAO/proposal/useUsul';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { useGnosisModuleTypes } from '../../providers/Fractal/hooks/useGnosisModuleTypes';
 import { SafeInfoResponseWithGuard } from '../../providers/Fractal/types';
 
 export function useFetchNodes(address?: string) {
@@ -21,9 +20,8 @@ export function useFetchNodes(address?: string) {
 
   const {
     gnosis: { safeService },
+    actions: { lookupModules },
   } = useFractal();
-
-  const { lookupModules } = useGnosisModuleTypes(provider.network.chainId);
 
   const fetchSubDAOAddresses = useCallback(
     async (parentDAOAddress: string) => {
