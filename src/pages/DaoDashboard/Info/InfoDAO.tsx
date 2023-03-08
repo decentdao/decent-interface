@@ -2,12 +2,13 @@ import { Flex } from '@chakra-ui/react';
 import { DAOInfoCard } from '../../../components/ui/cards/DAOInfoCard';
 import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFetchNodes } from '../../FractalNodes/useFetchNodes';
 
 export function InfoDAO() {
   const {
-    gnosis: { safe, freezeData, guardContracts, childNodes, parentDAOAddress },
+    gnosis: { safe, freezeData, guardContracts, parentDAOAddress },
   } = useFractal();
-
+  const { childNodes } = useFetchNodes(safe.address);
   if (!safe.address) {
     return (
       <Flex
