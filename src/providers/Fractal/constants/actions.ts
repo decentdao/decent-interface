@@ -9,7 +9,6 @@ export enum GnosisAction {
   FREEZE_VOTE_EVENT,
   SET_DAO_NAME,
   SET_DAO_PARENT,
-  SET_DAO_CHILDREN,
   INVALIDATE,
   RESET,
 }

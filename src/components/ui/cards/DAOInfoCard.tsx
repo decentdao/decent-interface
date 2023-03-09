@@ -8,23 +8,29 @@ import {
 } from '@decent-org/fractal-ui';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { NodeLineHorizontal } from '../../../pages/FractalNodes/NodeLines';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { IGnosisFreezeData, IGnosisVetoContract } from '../../../providers/Fractal/types';
+import {
+  IGnosisFreezeData,
+  IGnosisVetoContract,
+  SafeInfoResponseWithGuard,
+} from '../../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../../routes/constants';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
   parentSafeAddress?: string;
+  subDAOSafeInfo?: SafeInfoResponseWithGuard;
   safeAddress: string;
   toggleExpansion?: () => void;
   expanded?: boolean;
   numberOfChildrenDAO?: number;
   viewChildren?: boolean;
+  depth?: number;
 }
 
 export function DAOInfoCard({
@@ -162,23 +168,28 @@ export function DAONodeCard(props: IDAOInfoCard) {
   } = useFractal();
   const isCurrentDAO = props.safeAddress === safe.address;
   const { subDAOData } = useSubDAOData(!isCurrentDAO ? props.safeAddress : undefined);
-  const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
 
   const nodeGuardContracts =
     !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
   const nodeFreezeData =
     !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : !isCurrentDAO ? undefined : freezeData;
+  const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
 
   return (
     <Flex
       mt="1rem"
       minH="6.75rem"
-      bg={BACKGROUND_SEMI_TRANSPARENT}
+      bg="black.900"
       p="1rem"
       borderRadius="0.5rem"
       flex={1}
+      position="relative"
       {...border}
     >
+      <NodeLineHorizontal
+        isCurrentDAO={isCurrentDAO}
+        isFirstChild={props.depth === 0 && props.parentSafeAddress !== safe.address}
+      />
       <DAOInfoCard
         {...props}
         guardContracts={nodeGuardContracts}
