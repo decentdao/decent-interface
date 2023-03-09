@@ -127,6 +127,18 @@ function Home() {
           {account ? t('homeButtonCreate') : t('homeButtonConnect')}
         </Button>
         <InfoLinks />
+        <Link
+          marginTop="2rem"
+          href="https://www.netlify.com/"
+          isExternal
+        >
+          <Text
+            textStyle="text-md-mono-semibold"
+            color="gold.500"
+          >
+            Deployed by Netlify
+          </Text>
+        </Link>
       </Flex>
     </Center>
   );
