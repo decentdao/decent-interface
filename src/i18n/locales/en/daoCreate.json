@@ -54,7 +54,7 @@
     "errorDuplicateAddress": "Duplicate Address",
     "errorOverallocated": "Allocated more than supply",
     "labelParentAllocation": "Parent token holder claiming",
-    "helperParentAllocation": "The total number of tokens claimable by all {{parentName}} token holders",
+    "helperParentAllocation": "The total number of tokens claimable by all parent token holders",
     "labelAddAllocation": "+ Add Allocation",
     "labelTokenName": "Token Name",
     "helperTokenName": "What is your governance token called?",
