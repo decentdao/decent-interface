@@ -15,7 +15,7 @@ export function TokenClaim() {
     governance: { tokenClaimContract, governanceToken },
   } = useFractal();
 
-  const { t } = useTranslation('dashboard');
+  const { t } = useTranslation(['dashboard', 'transaction']);
   const [contractCall, pending] = useTransaction();
 
   const loadClaim = useCallback(async () => {
@@ -37,15 +37,14 @@ export function TokenClaim() {
     const claimableString = formatCoin(userClaimable, false, governanceToken.decimals);
     contractCall({
       contractFn: () => tokenClaimContract?.claimToken(account),
-      pendingMessage: t('pendingTokenClaim', { symbol: governanceToken.symbol }),
-      failedMessage: t('failedTokenClaim', { symbol: governanceToken.symbol }),
+      pendingMessage: t('pendingTokenClaim', { symbol: governanceToken.symbol, ns: 'transaction' }),
+      failedMessage: t('failedTokenClaim', { symbol: governanceToken.symbol, ns: 'transaction' }),
       successMessage: t('successTokenClaim', {
         amount: claimableString,
         symbol: governanceToken.symbol,
+        ns: 'transaction',
       }),
-      successCallback: async () => {
-        await loadClaim();
-      },
+      successCallback: loadClaim,
     });
   };
 
