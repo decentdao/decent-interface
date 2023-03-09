@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, Button, Flex, Text } from '@chakra-ui/react';
-import { Info } from '@decent-org/fractal-ui';
+import { Alert as AlertIcon } from '@decent-org/fractal-ui';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -62,7 +62,7 @@ export function TokenClaim() {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Info boxSize="24px" />
+        <AlertIcon boxSize="24px" />
         <AlertTitle>
           <Text
             textStyle="text-lg-mono-medium"
