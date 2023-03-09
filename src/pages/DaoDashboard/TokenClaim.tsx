@@ -5,9 +5,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { useTransaction } from '../../hooks/utils/useTransaction';
-
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { removeTrailingZeros } from '../../utils/countDecimals';
+import { formatCoin } from '../../utils/numberFormats';
 
 export function TokenClaim() {
   const [userClaimable, setUserClaimable] = useState(BigNumber.from(0));
@@ -35,7 +34,7 @@ export function TokenClaim() {
     if (!tokenClaimContract || !governanceToken || !account) {
       return;
     }
-    const claimableString = utils.formatUnits(userClaimable, governanceToken.decimals);
+    const claimableString = formatCoin(userClaimable, false, governanceToken.decimals);
     contractCall({
       contractFn: () => tokenClaimContract?.claimToken(account),
       pendingMessage: t('pendingTokenClaim', { symbol: governanceToken.symbol }),
@@ -71,7 +70,7 @@ export function TokenClaim() {
             whiteSpace="pre-wrap"
           >
             {t('alertTokenClaim', {
-              amount: removeTrailingZeros(claimableString),
+              amount: claimableString,
               symbol: governanceToken.symbol,
             })}
           </Text>
