@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export const useUpdateTimer = (safeAddress?: string) => {
-  const [timers, setTimers] = useState<{ methodName: string; timerId: NodeJS.Timer }[]>([]);
+  const [timers, setTimers] = useState<{ method: string; timerId: NodeJS.Timer }[]>([]);
   const twentySeconds = 20000; // in milliseconds
 
   const setMethodOnInterval = useCallback(
@@ -9,7 +9,7 @@ export const useUpdateTimer = (safeAddress?: string) => {
       Promise.resolve(getMethod());
       setTimers(prevState => {
         const filteredTimers = prevState.filter(timer => {
-          const isAlreadySet = timer.methodName === getMethod.toString();
+          const isAlreadySet = timer.method === getMethod.toString();
           if (isAlreadySet) {
             clearInterval(timer.timerId);
           }
@@ -19,7 +19,7 @@ export const useUpdateTimer = (safeAddress?: string) => {
         const intervalId = setInterval(() => {
           Promise.resolve(getMethod());
         }, milliseconds);
-        return [...filteredTimers, { methodName: getMethod.toString(), timerId: intervalId }];
+        return [...filteredTimers, { method: getMethod.toString(), timerId: intervalId }];
       });
     },
     []
