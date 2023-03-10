@@ -15,7 +15,7 @@ import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votesSummary, deadline, proposer, eventDate },
+  proposal: { startBlock, votesSummary, deadline, proposer, eventDate, transactionHash },
 }: {
   proposal: UsulProposal;
 }) {
@@ -78,6 +78,23 @@ export default function ProposalSummary({
             <Text color="gold.500">{proposerDisplayName}</Text>
           </EtherscanLinkAddress>
         </Flex>
+        {transactionHash && (
+          <Flex
+            marginTop={4}
+            marginBottom={4}
+            justifyContent="space-between"
+          >
+            <Text
+              textStyle="text-base-sans-regular"
+              color="chocolate.200"
+            >
+              {t('transactionHash')}
+            </Text>
+            <EtherscanLinkAddress address={transactionHash}>
+              <Text color="gold.500">{transactionHash}</Text>
+            </EtherscanLinkAddress>
+          </Flex>
+        )}
         <Divider color="chocolate.700" />
       </Box>
       <Box marginTop={4}>
