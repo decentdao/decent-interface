@@ -56,7 +56,6 @@ export interface IGnosis {
   isGnosisLoading: boolean;
   isNodesLoaded: boolean;
   parentDAOAddress?: string;
-  childNodes?: ChildNode[];
 }
 export interface IConnectedAccount {
   favorites: IFavorites;
