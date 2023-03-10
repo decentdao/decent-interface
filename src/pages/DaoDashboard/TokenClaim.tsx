@@ -1,6 +1,6 @@
 import { Alert, AlertTitle, Button, Flex, Text } from '@chakra-ui/react';
 import { Alert as AlertIcon } from '@decent-org/fractal-ui';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -34,7 +34,12 @@ export function TokenClaim() {
     if (!tokenClaimContract || !governanceToken || !account) {
       return;
     }
-    const claimableString = formatCoin(userClaimable, false, governanceToken.decimals);
+    const claimableString = formatCoin(
+      userClaimable,
+      false,
+      governanceToken.decimals,
+      governanceToken.symbol
+    );
     contractCall({
       contractFn: () => tokenClaimContract?.claimToken(account),
       pendingMessage: t('pendingTokenClaim', { symbol: governanceToken.symbol, ns: 'transaction' }),
@@ -49,7 +54,12 @@ export function TokenClaim() {
   };
 
   if (!governanceToken || userClaimable.isZero()) return null;
-  const claimableString = utils.formatUnits(userClaimable, governanceToken.decimals);
+  const claimableString = formatCoin(
+    userClaimable,
+    false,
+    governanceToken.decimals,
+    governanceToken.symbol
+  );
   return (
     <Alert
       status="info"
@@ -70,7 +80,6 @@ export function TokenClaim() {
           >
             {t('alertTokenClaim', {
               amount: claimableString,
-              symbol: governanceToken.symbol,
             })}
           </Text>
         </AlertTitle>
