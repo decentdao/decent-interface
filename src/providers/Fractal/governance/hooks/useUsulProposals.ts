@@ -11,12 +11,18 @@ import { Dispatch, useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
 import { TypedListener } from '../../../../assets/typechain-types/usul/common';
 import { getEventRPC } from '../../../../helpers';
-import { DecodedTransaction } from '../../../../types';
+import {
+  DecodedTransaction,
+  GovernanceAction,
+  GovernanceActions,
+  IGovernance,
+  TxProposalState,
+  UsulProposal,
+  VOTE_CHOICES,
+} from '../../../../types';
 import { decodeTransactions } from '../../../../utils/crypto';
 import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
-import { IGovernance, TxProposalState, UsulProposal, VOTE_CHOICES } from '../../types';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../utils';
-import { GovernanceActions, GovernanceAction } from '../actions';
 import useUpdateProposalState from './useUpdateProposalState';
 
 interface IUseUsulProposals {

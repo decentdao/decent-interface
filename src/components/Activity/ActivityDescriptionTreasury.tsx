@@ -1,6 +1,6 @@
 import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Activity, TreasuryActivity, ActivityEventType } from '../../providers/Fractal/types';
+import { Activity, TreasuryActivity, ActivityEventType } from '../../types';
 import { ActivityAddress } from './ActivityAddress';
 
 export function ActivityDescriptionTreasury({ activity }: { activity: Activity }) {

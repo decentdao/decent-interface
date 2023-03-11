@@ -1,5 +1,5 @@
 import { Context, createContext, useContext } from 'react';
-import { IFractalContext } from '../types';
+import { IFractalContext } from '../../../types';
 
 export const FractalContext = createContext<IFractalContext | null>(null);
 

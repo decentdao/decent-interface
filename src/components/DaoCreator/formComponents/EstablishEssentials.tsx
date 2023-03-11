@@ -1,11 +1,10 @@
 import { Box, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { GovernanceTypes } from '../../../providers/Fractal/types';
+import { ICreationStepProps, GovernanceTypes, CreatorSteps } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { ICreationStepProps, CreatorSteps } from '../types';
 
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);

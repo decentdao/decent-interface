@@ -9,8 +9,8 @@ import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../components/ui/page/Header/PageHeader';
 
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../routes/constants';
+import { TxProposal, UsulProposal } from '../../types';
 
 function ProposalDetails() {
   const params = useParams();

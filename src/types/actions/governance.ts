@@ -1,5 +1,15 @@
-import { GovernanceContracts, GovernanceTypes, TxProposalsInfo } from '../types';
-import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
+import { GovernanceTypes } from '../daoGovernance';
+import { TxProposalsInfo } from '../daoProposal';
+import { GovernanceContracts } from '../fractal';
+import { IGoveranceTokenData } from '../votingFungibleToken';
+
+export enum GovernanceAction {
+  SET_GOVERNANCE,
+  SET_USUL_CONTRACTS,
+  UPDATE_PROPOSALS,
+  CONTRACTS_LOADED,
+  RESET,
+}
 
 export type GovernanceActions =
   | { type: GovernanceAction.SET_USUL_CONTRACTS; payload: GovernanceContracts }
@@ -14,11 +24,3 @@ export type GovernanceActions =
       };
     }
   | { type: GovernanceAction.RESET };
-
-export enum GovernanceAction {
-  SET_GOVERNANCE,
-  SET_USUL_CONTRACTS,
-  UPDATE_PROPOSALS,
-  CONTRACTS_LOADED,
-  RESET,
-}

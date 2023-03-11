@@ -1,11 +1,9 @@
 import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
-import { GovernanceTypes } from '../../providers/Fractal/types';
-import { TokenAllocation } from '../../types/tokenAllocation';
-import { BigNumberValuePair } from '../ui/forms/BigNumberInput';
-
-//
+import { BigNumberValuePair } from './common';
+import { GovernanceTypes } from './daoGovernance';
+import { EthAddress } from './utils';
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
   GNOSIS_GOVERNANCE = 'gnosis',
@@ -92,4 +90,15 @@ export type TokenToFund = {
 
 export type NFTToFund = {
   asset: SafeCollectibleResponse;
+};
+
+export type TokenAllocation<T = BigNumber> = {
+  amount: T;
+} & EthAddress;
+
+export type CreateDAOFunc = (daoData: GnosisDAO, successCallback: DeployDAOSuccessCallback) => void;
+export type DeployDAOSuccessCallback = (daoAddress: string) => void;
+export type DAODetails = {
+  daoName: string;
+  governance: GovernanceTypes;
 };

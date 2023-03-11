@@ -38,3 +38,15 @@ export interface DAOContracts {
   vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;
 }
+
+export interface BaseContracts {
+  fractalModuleMasterCopyContract: FractalModule;
+  fractalRegistryContract: FractalRegistry;
+  gnosisSafeFactoryContract: GnosisSafeProxyFactory;
+  gnosisSafeSingletonContract: GnosisSafe;
+  gnosisVetoGuardMasterCopyContract: VetoGuard;
+  multiSendContract: MultiSend;
+  vetoERC20VotingMasterCopyContract: VetoERC20Voting;
+  vetoMultisigVotingMasterCopyContract: VetoMultisigVoting;
+  zodiacModuleProxyFactoryContract: ModuleProxyFactory;
+}

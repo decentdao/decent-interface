@@ -1,6 +1,6 @@
 import { Box, Flex, Link, Text, Image } from '@chakra-ui/react';
 import externalLink from '../../assets/images/external-link.svg';
-import { TxProposal, UsulProposal } from '../../providers/Fractal/types';
+import { TxProposal, UsulProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';

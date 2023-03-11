@@ -1,6 +1,6 @@
 import { mainnet } from 'wagmi/chains';
 import ethDefault from '../../../assets/images/coin-icon-eth.svg';
-import { NetworkConfig } from '../types';
+import { NetworkConfig } from '../../../types/network';
 
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',

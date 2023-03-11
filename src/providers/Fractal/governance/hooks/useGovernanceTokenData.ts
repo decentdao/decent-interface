@@ -1,51 +1,24 @@
-import { VotesToken } from '@fractal-framework/fractal-contracts';
 import { addMinutes } from 'date-fns';
 import { BigNumber } from 'ethers';
 import { useReducer, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
-import { formatCoin } from '../../../../utils/numberFormats';
 import {
+  IGoveranceTokenData,
+  TokenAction,
+  TokenActions,
+  GovernanceContracts,
+  ITokenData,
+  TokenAccountRaw,
+  VotingTokenConfig,
   TransferListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
-  GovernanceContracts,
-} from '../../types';
+} from '../../../../types';
+import { formatCoin } from '../../../../utils/numberFormats';
 
 const TOKEN_DATA_EXPIRATION = 5; // in minutes
 const USER_ACCOUNT_EXPIRATION = 1; // in minutes
-
-interface ITokenData {
-  name: string | undefined;
-  symbol: string | undefined;
-  decimals: number | undefined;
-  address: string | undefined;
-  totalSupply: BigNumber | undefined;
-}
-
-interface ITokenAccount {
-  userBalance: BigNumber | undefined;
-  userBalanceString: string | undefined;
-  delegatee: string | undefined;
-  votingWeight: BigNumber | undefined;
-  votingWeightString: string | undefined;
-  isDelegatesSet: boolean | undefined;
-}
-
-export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
-  isLoading?: boolean;
-}
-
-interface BNFormattedPair {
-  value: BigNumber;
-  formatted?: string;
-}
-
-export interface VotingTokenConfig<Type = BNFormattedPair> {
-  votingPeriod?: Type;
-  quorumPercentage?: Type;
-  timeLockPeriod?: Type;
-}
 
 export interface GovernanceTokenCache<DataType> {
   data: DataType;
@@ -69,39 +42,6 @@ const initialState = {
   quorumPercentage: undefined,
   timeLockPeriod: undefined,
 };
-
-enum TokenActions {
-  UPDATE_TOKEN,
-  UPDATE_DELEGATEE,
-  UPDATE_VOTING_WEIGHTS,
-  UPDATE_ACCOUNT,
-  UPDATE_VOTING_CONTRACT,
-  UPDATE_TOKEN_CONTRACT,
-  RESET,
-}
-
-type TokenAccountRaw = Omit<ITokenAccount, 'userBalanceString' | 'votingWeightString'>;
-type TokenAction =
-  | { type: TokenActions.UPDATE_TOKEN; payload: ITokenData }
-  | {
-      type: TokenActions.UPDATE_ACCOUNT;
-      payload: TokenAccountRaw;
-    }
-  | { type: TokenActions.UPDATE_DELEGATEE; payload: string }
-  | {
-      type: TokenActions.UPDATE_VOTING_WEIGHTS;
-      payload: { votingWeight: BigNumber };
-    }
-  | {
-      type: TokenActions.UPDATE_VOTING_CONTRACT;
-      payload: {
-        votingPeriod: BNFormattedPair;
-        quorumPercentage: BNFormattedPair;
-        timeLockPeriod: BNFormattedPair;
-      };
-    }
-  | { type: TokenActions.UPDATE_TOKEN_CONTRACT; payload: VotesToken }
-  | { type: TokenActions.RESET };
 
 const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
   switch (action.type) {

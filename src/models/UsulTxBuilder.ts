@@ -7,12 +7,16 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
 import { buildContractCall, getRandomBytes } from '../helpers';
-import { SafeTransaction } from '../types';
+import {
+  BaseContracts,
+  GnosisDAO,
+  SafeTransaction,
+  TokenGovernanceDAO,
+  UsulContracts,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt, TIMER_MULT } from './helpers/utils';
-import { BaseContracts, UsulContracts } from './types/contracts';
 
 export class UsulTxBuilder extends BaseTxBuilder {
   private readonly safeContract: GnosisSafe;

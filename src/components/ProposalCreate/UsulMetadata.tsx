@@ -1,24 +1,8 @@
 import { Button, Divider, VStack } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { UsulMetadataProps } from '../../types';
 import { InputComponent, TextareaComponent } from './InputComponent';
-
-export interface UsulMetadataProps {
-  show: boolean;
-  setInputtedMetadata: Dispatch<SetStateAction<boolean>>;
-  metadata: {
-    title: string;
-    description: string;
-    documentationUrl: string;
-  };
-  setMetadata: Dispatch<
-    SetStateAction<{
-      title: string;
-      description: string;
-      documentationUrl: string;
-    }>
-  >;
-}
 
 function UsulMetadata(props: UsulMetadataProps) {
   const { show, setInputtedMetadata, metadata, setMetadata } = props;

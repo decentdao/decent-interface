@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { DAOEssentials } from '../../../components/DaoCreator/types';
+import { DAOEssentials, GovernanceTypes } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
-import { GovernanceTypes } from './../../../providers/Fractal/governance/types';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
 /**

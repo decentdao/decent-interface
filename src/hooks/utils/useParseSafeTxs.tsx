@@ -7,14 +7,10 @@ import {
 } from '@safe-global/safe-service-client';
 import { BigNumber, constants } from 'ethers';
 import { useMemo } from 'react';
-import {
-  ActivityEventType,
-  Activity,
-  AssetTotals,
-  GnosisTransferType,
-} from '../../providers/Fractal/types';
+
 import { parseDecodedData } from '../../providers/Fractal/utils';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { AssetTotals, GnosisTransferType, ActivityEventType, Activity } from '../../types';
 import { formatWeiToValue } from '../../utils';
 
 export function useParseSafeTxs(

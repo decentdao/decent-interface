@@ -1,5 +1,4 @@
-import { AccountAction } from '../constants';
-import { AccountActions, IConnectedAccount } from '../types';
+import { IConnectedAccount, AccountActions, AccountAction } from '../../../types';
 
 export const initializeConnectedAccount = (_initialState: IConnectedAccount) => {
   return _initialState;

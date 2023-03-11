@@ -1,9 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useProvider, useSigner, useAccount } from 'wagmi';
-import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
-import { BaseContracts, UsulContracts } from '../../models/types/contracts';
-import { GovernanceTypes } from '../../providers/Fractal/types';
+import {
+  TokenGovernanceDAO,
+  GnosisDAO,
+  GovernanceTypes,
+  UsulContracts,
+  BaseContracts,
+} from '../../types';
 import useSafeContracts from '../safe/useSafeContracts';
 
 const useBuildDAOTx = () => {

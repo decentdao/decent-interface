@@ -1,10 +1,8 @@
 import { Box, Grid, Text, Button } from '@chakra-ui/react';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { TokenAllocation } from '../../../types';
+import { BigNumberValuePair, ICreationStepProps, TokenAllocation } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberValuePair } from '../../ui/forms/BigNumberInput';
-import { ICreationStepProps } from '../types';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
 
 export function UsulTokenAllocations(props: ICreationStepProps) {

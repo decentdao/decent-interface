@@ -1,6 +1,11 @@
 import { Dispatch, useEffect } from 'react';
-import { GovernanceTypes, IGnosis, IGovernance } from '../../types';
-import { GovernanceActions, GovernanceAction } from '../actions';
+import {
+  IGovernance,
+  IGnosis,
+  GovernanceActions,
+  GovernanceTypes,
+  GovernanceAction,
+} from '../../../../types';
 import useGovernanceTokenData from './useGovernanceTokenData';
 import { useSafeMultisigTxs } from './useSafeMultisigTxs';
 import useUsulProposals from './useUsulProposals';

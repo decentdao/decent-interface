@@ -1,7 +1,11 @@
 import { useCallback } from 'react';
 import { useSigner } from 'wagmi';
-import { BigNumberValuePair } from '../../ui/forms/BigNumberInput';
-import { DAOVetoGuardConfig, GnosisDAO, TokenGovernanceDAO } from '../types';
+import {
+  GnosisDAO,
+  DAOVetoGuardConfig,
+  BigNumberValuePair,
+  TokenGovernanceDAO,
+} from '../../../types';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();

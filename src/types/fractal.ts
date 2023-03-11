@@ -1,28 +1,32 @@
 import {
-  FractalModule,
   FractalUsul,
+  FractalModule,
   OZLinearVoting,
-  UsulVetoGuard,
-  VetoERC20Voting,
-  VetoGuard,
-  VetoMultisigVoting,
   VotesToken,
 } from '@fractal-framework/fractal-contracts';
-import {
-  SafeMultisigConfirmationResponse,
+import SafeServiceClient, {
+  AllTransactionsListResponse,
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { GnosisDAO } from '../../../components/DaoCreator/types';
-import { ContractConnection, DecodedTransaction, MetaTransaction } from '../../../types';
-import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
-
-export enum GovernanceTypes {
-  GNOSIS_SAFE = 'labelMultisigGov',
-  GNOSIS_SAFE_USUL = 'labelUsulGov',
-}
+import { IConnectedAccount } from './account';
+import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
+import { ContractConnection } from './contract';
+import { CreateDAOFunc } from './createDAO';
+import { GovernanceTypes } from './daoGovernance';
+import { IGnosisVetoContract } from './daoGuard';
+import {
+  CreateProposalFunc,
+  TxProposalsInfo,
+  ProposalMetaData,
+  MultisigProposal,
+  UsulProposal,
+} from './daoProposal';
+import { ITreasury, TreasuryActivity } from './daoTreasury';
+import { SafeInfoResponseWithGuard } from './safeGlobal';
+import { IGoveranceTokenData } from './votingFungibleToken';
 
 export enum GnosisModuleType {
   USUL,
@@ -30,28 +34,41 @@ export enum GnosisModuleType {
   UNKNOWN,
 }
 
-export interface IGnosisModuleData {
-  moduleContract: FractalUsul | FractalModule | undefined;
-  moduleAddress: string;
-  moduleType: GnosisModuleType;
+export interface IFractalContext {
+  gnosis: IGnosis;
+  treasury: ITreasury;
+  governance: IGovernance;
+  account: IConnectedAccount;
+  dispatches: {
+    treasuryDispatch: React.Dispatch<TreasuryActions>;
+    governanceDispatch: React.Dispatch<GovernanceActions>;
+    gnosisDispatch: React.Dispatch<GnosisActions>;
+  };
+  actions: {
+    refreshSafeData: () => Promise<void>;
+    lookupModules: (_moduleAddresses: string[]) => Promise<IGnosisModuleData[] | undefined>;
+    getVetoGuardContracts: (
+      _guardAddress: string,
+      _modules?: IGnosisModuleData[] | undefined
+    ) => Promise<IGnosisVetoContract | undefined>;
+    lookupFreezeData: (
+      _vetoGuardContracts: IGnosisVetoContract
+    ) => Promise<IGnosisFreezeData | undefined>;
+  };
 }
 
-export type CreateDAOFunc = (daoData: GnosisDAO, successCallback: DeployDAOSuccessCallback) => void;
-export type DeployDAOSuccessCallback = (daoAddress: string) => void;
-export type DAODetails = {
+export interface IGnosis {
+  providedSafeAddress?: string;
   daoName: string;
-  governance: GovernanceTypes;
-};
-
-export type CreateProposalFunc = (proposal: {
-  proposalData: {};
-  successCallback: () => void;
-}) => void;
-
-export interface TxProposalsInfo {
-  txProposals: TxProposal[];
-  active?: number; // active/queued (usul) | not executed (multisig)
-  passed?: number; // executed (usul/multisig)
+  safeService?: SafeServiceClient;
+  safe: Partial<SafeInfoResponseWithGuard>;
+  modules: IGnosisModuleData[];
+  guardContracts: IGnosisVetoContract;
+  freezeData: IGnosisFreezeData | undefined;
+  transactions: AllTransactionsListResponse;
+  isGnosisLoading: boolean;
+  isNodesLoaded: boolean;
+  parentDAOAddress?: string;
 }
 
 export interface IGovernance {
@@ -72,34 +89,10 @@ export interface IGovernance {
   governanceIsLoading: boolean;
 }
 
-export enum VetoVotingType {
-  ERC20,
-  MULTISIG,
-  UNKNOWN,
-}
-
-export enum VetoGuardType {
-  MULTISIG,
-  USUL,
-  UNKNOWN,
-}
-
-export interface IGnosisVetoContract {
-  vetoGuardContract: ContractConnection<VetoGuard | UsulVetoGuard> | undefined;
-  vetoVotingContract: ContractConnection<VetoERC20Voting | VetoMultisigVoting> | undefined;
-  vetoGuardType: VetoGuardType;
-  vetoVotingType: VetoVotingType;
-}
-
-export interface IGnosisFreezeData {
-  freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
-  freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
-  freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
-  freezeProposalPeriod: BigNumber; // Number of blocks a freeze proposal has to succeed
-  freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
-  userHasFreezeVoted: boolean;
-  isFrozen: boolean;
-  userHasVotes: boolean;
+export interface IGnosisModuleData {
+  moduleContract: FractalUsul | FractalModule | undefined;
+  moduleAddress: string;
+  moduleType: GnosisModuleType;
 }
 
 export interface GovernanceContracts {
@@ -242,44 +235,15 @@ export enum TxProposalState {
   Module = 'stateModule',
 }
 
-export enum DAOState {
-  freezeInit = 'stateFreezeInit',
-  frozen = 'stateFrozen',
-}
-
-export type ProposalMetaData = {
-  title?: string;
-  description?: string;
-  documentationUrl?: string;
-  transactions?: MetaTransaction[];
-  decodedTransactions: DecodedTransaction[];
-};
-
-export enum TreasuryActivityTypes {
-  DEPOSIT,
-  WITHDRAW,
-}
-
-export interface UsulProposal extends GovernanceActivity {
-  proposer: string;
-  govTokenAddress: string | null;
-  votesSummary: ProposalVotesSummary;
-  votes: ProposalVote[];
-  deadline: number;
-  startBlock: BigNumber;
-}
-
-export interface TreasuryActivity extends ActivityBase {
-  transferAddresses: string[];
-  transferAmountTotals: string[];
-  isDeposit: boolean;
-}
-
-export interface MultisigProposal extends GovernanceActivity {
-  confirmations: SafeMultisigConfirmationResponse[];
-  signersThreshold?: number;
-  multisigRejectedProposalNumber?: string;
-  nonce?: number;
+export interface IGnosisFreezeData {
+  freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
+  freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
+  freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
+  freezeProposalPeriod: BigNumber; // Number of blocks a freeze proposal has to succeed
+  freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  userHasFreezeVoted: boolean;
+  isFrozen: boolean;
+  userHasVotes: boolean;
 }
 
 export interface GovernanceActivity extends ActivityBase {
@@ -314,31 +278,11 @@ export enum GnosisTransferType {
   ETHER = 'ETHER_TRANSFER',
 }
 
-export type ProposalVotesSummary = {
-  yes: BigNumber;
-  no: BigNumber;
-  abstain: BigNumber;
-  quorum: BigNumber;
-};
-
-export type ProposalVote = {
-  voter: string;
-  choice: typeof VOTE_CHOICES[number];
-  weight: BigNumber;
-};
-
-export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
-
-export enum UsulVoteChoice {
-  No,
-  Yes,
-  Abstain,
+export interface ITokenAccount {
+  userBalance: BigNumber | undefined;
+  userBalanceString: string | undefined;
+  delegatee: string | undefined;
+  votingWeight: BigNumber | undefined;
+  votingWeightString: string | undefined;
+  isDelegatesSet: boolean | undefined;
 }
-
-export enum ProposalIsPassedError {
-  MAJORITY_YES_VOTES_NOT_REACHED = 'majority yesVotes not reached',
-  QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
-  PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
-}
-
-export type TxProposal = UsulProposal | MultisigProposal;
