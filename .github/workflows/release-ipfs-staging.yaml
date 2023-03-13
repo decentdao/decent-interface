@@ -1,8 +1,8 @@
-name: Release IPFS Dev
+name: Release IPFS Staging
 on:
   push:
     branches:
-      - develop
+      - staging
 
 jobs:
   create_release:
@@ -10,7 +10,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    environment: dev
+    environment: staging
 
     steps:
       - name: Checkout
@@ -35,7 +35,7 @@ jobs:
         uses: decent-dao/ipfs-pinata-deploy-action@v2.0.1
         id: upload
         with:
-          pin-name: 'app.dev.fractalframework.xyz'
+          pin-name: 'app.staging.fractalframework.xyz'
           path: './build'
           pinata-api-key: ${{ secrets.PINATA_API_KEY }}
           pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
@@ -53,5 +53,5 @@ jobs:
         env:
           CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
           RECORD_DOMAIN: 'fractalframework.xyz'
-          RECORD_NAME: '_dnslink.app.dev'
+          RECORD_NAME: '_dnslink.app.staging'
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
