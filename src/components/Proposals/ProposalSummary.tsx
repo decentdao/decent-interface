@@ -4,12 +4,13 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
-import useDisplayName from '../../hooks/utils/useDisplayName';
+import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { UsulProposal } from '../../providers/Fractal/types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../ui/links/EtherscanTransactionLink';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
@@ -90,9 +91,9 @@ export default function ProposalSummary({
             >
               {t('transactionHash')}
             </Text>
-            <EtherscanLinkAddress address={transactionHash}>
-              <Text color="gold.500">{transactionHash}</Text>
-            </EtherscanLinkAddress>
+            <EtherscanTransactionLink txHash={transactionHash}>
+              <Text color="gold.500">{createAccountSubstring(transactionHash)}</Text>
+            </EtherscanTransactionLink>
           </Flex>
         )}
         <Divider color="chocolate.700" />

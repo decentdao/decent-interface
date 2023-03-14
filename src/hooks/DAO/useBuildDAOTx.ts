@@ -27,6 +27,7 @@ const useBuildDAOTx = () => {
     vetoMultisigVotingMasterCopyContract,
     vetoERC20VotingMasterCopyContract,
     votesTokenMasterCopyContract,
+    claimingMasterCopyContract,
   } = useSafeContracts();
 
   const buildDao = useCallback(
@@ -48,7 +49,8 @@ const useBuildDAOTx = () => {
         !vetoMultisigVotingMasterCopyContract ||
         !vetoERC20VotingMasterCopyContract ||
         !gnosisSafeFactoryContract ||
-        !gnosisSafeSingletonContract
+        !gnosisSafeSingletonContract ||
+        !claimingMasterCopyContract
       ) {
         return;
       }
@@ -58,7 +60,8 @@ const useBuildDAOTx = () => {
           !fractalUsulMasterCopyContract ||
           !linearVotingMasterCopyContract ||
           !votesTokenMasterCopyContract ||
-          !usulVetoGuardMasterCopyContract
+          !usulVetoGuardMasterCopyContract ||
+          !claimingMasterCopyContract
         ) {
           return;
         }
@@ -68,6 +71,7 @@ const useBuildDAOTx = () => {
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
           usulVetoGuardMasterCopyContract: usulVetoGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
+          claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
         } as UsulContracts;
       }
 
@@ -123,6 +127,7 @@ const useBuildDAOTx = () => {
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       usulVetoGuardMasterCopyContract,
+      claimingMasterCopyContract,
     ]
   );
 

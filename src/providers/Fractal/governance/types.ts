@@ -2,6 +2,7 @@ import {
   FractalModule,
   FractalUsul,
   OZLinearVoting,
+  TokenClaim,
   UsulVetoGuard,
   VetoERC20Voting,
   VetoGuard,
@@ -68,6 +69,7 @@ export interface IGovernance {
   type: GovernanceTypes | null;
   txProposalsInfo: TxProposalsInfo;
   governanceToken?: IGoveranceTokenData;
+  tokenClaimContract?: TokenClaim;
   contracts: GovernanceContracts;
   governanceIsLoading: boolean;
 }
