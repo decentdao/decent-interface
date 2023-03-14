@@ -21,6 +21,10 @@ import { SafeTransaction } from '../../types';
  */
 export const TIMER_MULT = 60;
 
+/**
+ * These hardcoded values were taken from
+ * @link https://github.com/gnosis/module-factory/blob/master/contracts/ModuleProxyFactory.sol
+ */
 export const generateContractByteCodeLinear = (contractAddress: string): string => {
   return (
     '0x602d8060093d393df3363d3d373d3d3d363d73' + contractAddress + '5af43d82803e903d91602b57fd5bf3'

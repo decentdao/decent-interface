@@ -6,6 +6,7 @@ import {
   GnosisSafeProxyFactory,
   ModuleProxyFactory,
   OZLinearVoting,
+  TokenClaim,
   UsulVetoGuard,
   VetoERC20Voting,
   VetoGuard,
@@ -31,4 +32,5 @@ export interface UsulContracts {
   linearVotingMasterCopyContract: OZLinearVoting;
   usulVetoGuardMasterCopyContract: UsulVetoGuard;
   votesTokenMasterCopyContract: VotesToken;
+  claimingMasterCopyContract: TokenClaim;
 }

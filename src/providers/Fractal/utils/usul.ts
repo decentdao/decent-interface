@@ -161,6 +161,14 @@ export const mapProposalCreatedEventToProposal = async (
     ? metaData.decodedTransactions.map(tx => createAccountSubstring(tx.target))
     : [];
 
+  let transactionHash: string | undefined;
+  if (state === TxProposalState.Executed) {
+    const proposalExecutedFilter = usulContract.asSigner.filters.TransactionExecuted();
+    const proposalExecutedEvents = await usulContract.asSigner.queryFilter(proposalExecutedFilter);
+    const executedEvent = proposalExecutedEvents.find(event => event.args[0].eq(proposalNumber));
+    transactionHash = executedEvent?.transactionHash;
+  }
+
   const proposal: UsulProposal = {
     eventType: ActivityEventType.Governance,
     eventDate: new Date(block.timestamp * 1000),
@@ -168,6 +176,7 @@ export const mapProposalCreatedEventToProposal = async (
     targets,
     proposer,
     startBlock,
+    transactionHash,
     deadline: deadline.toNumber(),
     state,
     govTokenAddress: await strategyContract.governanceToken(),

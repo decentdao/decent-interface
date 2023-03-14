@@ -1,3 +1,4 @@
+import { TokenClaim } from '@fractal-framework/fractal-contracts';
 import { GovernanceContracts, GovernanceTypes, TxProposalsInfo } from '../types';
 import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
 
@@ -13,6 +14,7 @@ export type GovernanceActions =
         governanceIsLoading: boolean;
       };
     }
+  | { type: GovernanceAction.SET_CLAIMING_CONTRACT; payload: TokenClaim }
   | { type: GovernanceAction.RESET };
 
 export enum GovernanceAction {
@@ -20,5 +22,6 @@ export enum GovernanceAction {
   SET_USUL_CONTRACTS,
   UPDATE_PROPOSALS,
   CONTRACTS_LOADED,
+  SET_CLAIMING_CONTRACT,
   RESET,
 }

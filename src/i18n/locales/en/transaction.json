@@ -18,5 +18,8 @@
     "pendingDeployGnosis": "Deploying your DAO",
     "failedDeployGnosis": "Deployment failed",
     "successDeployGnosis": "Deployment successful",
-    "errorUserDeniedTransaction": "User rejected the transaction"
+    "errorUserDeniedTransaction": "User rejected the transaction",
+    "pendingTokenClaim": "Claiming {{ symbol }}",
+    "failedTokenClaim": "Failed to claim {{ symbol }}",
+    "successTokenClaim": "You have successfully claimed {{ amount }} {{ symbol }}"
 }
