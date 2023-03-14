@@ -1,0 +1,20 @@
+{
+    "connect": "Законнектити",
+    "connectWallet": "Законнектити гаманець",
+    "disconnect": "Розконектити",
+    "faq": "FAQ",
+    "discord": "Discord",
+    "docs": "Доки",
+    "toastSwitchChain": "Перемкніть ваш гаманець на одну з підтримуваних ланок: {{chainNames}}",
+    "toastChainChanged": "Ланку змінено: {{chainName}}",
+    "toastAccountRevoked": "Доступ до акаунту відізвано.",
+    "toastAccountChanged": "Акаунт змінено.",
+    "toastConnected": "Акаунт законнектився.",
+    "toastDisconnected": "Аккаунт від'єднано.",
+    "network": "Мережа",
+    "wallet": "Крипто-гаманець",
+    "titleManageDAO": "Керувати DAO",
+    "optionCreateSubDAO": "Створити subDAO",
+    "optionInitiateFreeze": "Ініціювати Замороження",
+    "optionInitiateClawback": "Ініціювати Повернення Коштів"
+}

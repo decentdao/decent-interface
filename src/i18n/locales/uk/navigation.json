@@ -1,0 +1,15 @@
+{
+    "proposals": "Пропозиції",
+    "nodes": "Ієрархія DAO",
+    "treasury": "Скарбниця",
+    "faq": "FAQ",
+    "documentation": "Документація",
+    "ariaLabelFractalBrand": "Перейти до Головної",
+    "ariaLabelHome": "Перейти до сторінки DAO",
+    "ariaLabelProposals": "Перейти до пропозицій DAO",
+    "ariaLabelActivities": "Перейти до історії активності DAO",
+    "ariaLabelTreasury": "Перейти до скарбниці DAO",
+    "ariaLabelFAQ": "Посилання на FAQ",
+    "ariaLabelDiscord": "Посилання на Discord",
+    "ariaLabelDocumentation": "Посилання на документацію"
+}

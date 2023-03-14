@@ -1,0 +1,200 @@
+import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
+import {
+  ArrowDownSm,
+  StarGoldSolid,
+  StarOutline,
+  Copy,
+  ArrowRightSm,
+} from '@decent-org/fractal-ui';
+import { Link } from 'react-router-dom';
+import { useAccount } from 'wagmi';
+import useDAOName from '../../../hooks/DAO/useDAOName';
+import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
+import { useCopyText } from '../../../hooks/utils/useCopyText';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { NodeLineHorizontal } from '../../../pages/FractalNodes/NodeLines';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import {
+  IGnosisFreezeData,
+  IGnosisVetoContract,
+  SafeInfoResponseWithGuard,
+} from '../../../providers/Fractal/types';
+import { DAO_ROUTES } from '../../../routes/constants';
+import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
+
+interface IDAOInfoCard {
+  parentSafeAddress?: string;
+  subDAOSafeInfo?: SafeInfoResponseWithGuard;
+  safeAddress: string;
+  toggleExpansion?: () => void;
+  expanded?: boolean;
+  numberOfChildrenDAO?: number;
+  viewChildren?: boolean;
+  depth?: number;
+}
+
+export function DAOInfoCard({
+  parentSafeAddress,
+  safeAddress,
+  toggleExpansion,
+  expanded,
+  numberOfChildrenDAO,
+  freezeData,
+  guardContracts,
+}: IDAOInfoCard & { freezeData?: IGnosisFreezeData; guardContracts: IGnosisVetoContract }) {
+  const {
+    gnosis: {
+      safe: { address },
+      daoName,
+    },
+    account: {
+      favorites: { favoritesList, toggleFavorite },
+    },
+  } = useFractal();
+  const { address: account } = useAccount();
+  const copyToClipboard = useCopyText();
+  const { daoRegistryName } = useDAOName({
+    address: address !== safeAddress ? safeAddress : undefined,
+  });
+  const { accountSubstring } = useDisplayName(safeAddress);
+  const isFavorite = favoritesList.includes(safeAddress);
+
+  // @todo add viewable conditions
+  const canManageDAO = !!account;
+  return (
+    <Flex
+      justifyContent="space-between"
+      flexGrow={1}
+    >
+      <Flex
+        alignItems="center"
+        flexWrap="wrap"
+      >
+        {!!toggleExpansion && (
+          <IconButton
+            variant="ghost"
+            minWidth="0px"
+            aria-label="Favorite Toggle"
+            icon={
+              expanded ? (
+                <ArrowDownSm
+                  boxSize="1.5rem"
+                  mr="1.5rem"
+                />
+              ) : (
+                <ArrowRightSm
+                  boxSize="1.5rem"
+                  mr="1.5rem"
+                />
+              )
+            }
+            onClick={toggleExpansion}
+          />
+        )}
+        {/* DAO NAME AND INFO */}
+        <Flex
+          flexDirection="column"
+          gap="0.5rem"
+        >
+          <Flex
+            alignItems="center"
+            gap="0.5rem"
+            flexWrap="wrap"
+          >
+            <Link to={DAO_ROUTES.dao.relative(safeAddress)}>
+              <Text
+                as="h1"
+                textStyle="text-2xl-mono-regular"
+                color="grayscale.100"
+                data-testid="DAOInfo-name"
+              >
+                {daoRegistryName || daoName}
+              </Text>
+            </Link>
+            <IconButton
+              variant="ghost"
+              minWidth="0px"
+              aria-label="Favorite Toggle"
+              data-testid="DAOInfo-favorite"
+              icon={
+                isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />
+              }
+              onClick={() => toggleFavorite(safeAddress)}
+            />
+            {!!numberOfChildrenDAO && (
+              <Link to={DAO_ROUTES.nodes.relative(safeAddress)}>
+                <Box
+                  bg="chocolate.500"
+                  borderRadius="4px"
+                  p="0.25rem 0.5rem"
+                >
+                  <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
+                </Box>
+              </Link>
+            )}
+          </Flex>
+          <Flex
+            alignItems="center"
+            onClick={() => copyToClipboard(safeAddress)}
+            gap="0.5rem"
+            cursor="pointer"
+          >
+            <Text
+              textStyle="text-base-mono-regular"
+              color="grayscale.100"
+            >
+              {accountSubstring}
+            </Text>
+            <Copy boxSize="1.5rem" />
+          </Flex>
+        </Flex>
+      </Flex>
+      {/* Veritical Elipsis */}
+      {canManageDAO && (
+        <ManageDAOMenu
+          parentSafeAddress={parentSafeAddress}
+          safeAddress={safeAddress}
+          freezeData={freezeData}
+          guardContracts={guardContracts}
+        />
+      )}
+    </Flex>
+  );
+}
+
+export function DAONodeCard(props: IDAOInfoCard) {
+  const {
+    gnosis: { safe, guardContracts, freezeData },
+  } = useFractal();
+  const isCurrentDAO = props.safeAddress === safe.address;
+  const { subDAOData } = useSubDAOData(!isCurrentDAO ? props.safeAddress : undefined);
+
+  const nodeGuardContracts =
+    !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
+  const nodeFreezeData =
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : !isCurrentDAO ? undefined : freezeData;
+  const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
+
+  return (
+    <Flex
+      mt="1rem"
+      minH="6.75rem"
+      bg="black.900"
+      p="1rem"
+      borderRadius="0.5rem"
+      flex={1}
+      position="relative"
+      {...border}
+    >
+      <NodeLineHorizontal
+        isCurrentDAO={isCurrentDAO}
+        isFirstChild={props.depth === 0 && props.parentSafeAddress !== safe.address}
+      />
+      <DAOInfoCard
+        {...props}
+        guardContracts={nodeGuardContracts}
+        freezeData={nodeFreezeData}
+      />
+    </Flex>
+  );
+}

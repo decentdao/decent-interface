@@ -1,0 +1,16 @@
+{
+    "titleTreasury": "{{daoName}} Treasury",
+    "buttonSendAssets": "Send Assets",
+    "titleTransactions": "Transactions",
+    "titleAssets": "Assets",
+    "subtitleCoinBalance": "Total Coin Balance",
+    "columnCoins": "Coins",
+    "columnValue": "Value",
+    "columnAllocation": "Allocation",
+    "columnNFTs": "NFTs",
+    "labelSent": "Sent",
+    "labelReceived": "Received",
+    "textEmptyTransactions": "No transfers yet",
+    "textMoreTransactions": "View more",
+    "addresses": "{{numOfAddresses}} addresses"
+}

@@ -1,0 +1,10 @@
+{
+  "name": "hardhat-docker",
+  "scripts": {
+    "start": "npx hardhat node"
+  },
+  "devDependencies": {
+    "hardhat": "^2.6.4",
+    "dotenv": "16.0.2"
+  }
+}

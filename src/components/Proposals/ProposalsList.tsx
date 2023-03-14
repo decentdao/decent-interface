@@ -1,28 +1,57 @@
-import { useDAOData } from "../../contexts/daoData";
-import ProposalCard from "./ProposalCard";
+import { Button, Box, Flex } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { useAccount } from 'wagmi';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes, TxProposal } from '../../providers/Fractal/types';
+import { ActivityGovernance } from '../Activity/ActivityGovernance';
+import { EmptyBox } from '../ui/containers/EmptyBox';
+import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
-function ProposalsList() {
-  const [{ proposals }] = useDAOData();
+export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
+  const { address: account } = useAccount();
 
-  if (proposals === undefined) {
-    return (
-      <div className="text-white">Proposals loading...</div>
-    )
-  }
+  const {
+    gnosis: {
+      safe: { owners },
+    },
+    governance: { type },
+  } = useFractal();
 
-  if (proposals.length === 0) {
-    return (
-      <div className="text-white">No proposals</div>
-    )
-  }
+  const showCreateButton =
+    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
 
+  const { t } = useTranslation('proposal');
   return (
-    <div className="flex flex-col -my-2">
-      {[...proposals].reverse().map((proposal) => (
-        <ProposalCard key={proposal.number} proposal={proposal} />
-      ))}
-    </div>
+    <Flex
+      flexDirection="column"
+      gap="1rem"
+    >
+      {proposals === undefined ? (
+        <Box mt={7}>
+          <InfoBoxLoader />
+        </Box>
+      ) : proposals.length > 0 ? (
+        proposals.map(proposal => (
+          <ActivityGovernance
+            key={proposal.proposalNumber}
+            activity={proposal}
+          />
+        ))
+      ) : (
+        <EmptyBox emptyText={t('emptyProposals')}>
+          {showCreateButton && (
+            <Link to="new">
+              <Button
+                variant="text"
+                textStyle="text-xl-mono-bold"
+              >
+                {t('createProposal')}
+              </Button>
+            </Link>
+          )}
+        </EmptyBox>
+      )}
+    </Flex>
   );
 }
-
-export default ProposalsList;

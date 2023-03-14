@@ -1,0 +1,7 @@
+// files to ignore
+node_modules
+src/assets/typechain-types
+config-overrides.js
+/docker
+playwright.config.ts
+/tests-examples/*

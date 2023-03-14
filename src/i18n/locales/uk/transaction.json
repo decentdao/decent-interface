@@ -1,0 +1,22 @@
+{
+    "pendingCastVote": "Зарахування голосу.",
+    "failedCastVote": "Помилка при зарахуванні голосу!",
+    "successCastVote": "Ваш голос зараховано!",
+    "pendingCastFreezeVote": "Виконуємо замороження голосування.",
+    "failedCastFreezeVote": "Помилка при замороженні голосування.",
+    "successCastFreezeVote": "Замороження голосування успішне!",
+    "pendingDelegateVote": "Делегування голосу.",
+    "failedDelegateVote": "Помилка при делегуванні голосу.",
+    "successDelegateVote": "Голос успішно делеговано!",
+    "pendingQueue": "Додаємо транзакцію до черги.",
+    "failedQueue": "Помилка при додаванні транзакціі до черги!",
+    "successQueue": "Транзакцію успішно додано до черги.",
+    "pendingExecute": "Виконання транзакції.",
+    "failedExecute": "Помилка при виконанні транзакції!",
+    "successExecute": "Транзакція успішно виконана!",
+    "errorTransactionUnknown": "Трясця! Невідома халепка спричинила бавовнятко. Будь ласка, спробуйте пізніше.",
+    "pendingDeployGnosis": "Створуємо ваше нове \"DAO\" у блокчейні (виконується деплоймент).",
+    "failedDeployGnosis": "Помилка при створенні \"DAO\".",
+    "successDeployGnosis": "\"DAO\" успішно створено.",
+    "errorUserDeniedTransaction": "Здається, ви відхилили транзакцію."
+}

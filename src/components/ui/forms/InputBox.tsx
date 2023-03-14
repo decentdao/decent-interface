@@ -1,11 +1,17 @@
-import { ReactNode } from "react";
+import { Box } from '@chakra-ui/react';
+import { ReactNode } from 'react';
 
-const InputBox = ({ children }: { children: ReactNode }) => {
+function InputBox({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-gray-500 rounded-lg my-4">
-      <div className="px-4 py-4">{children}</div>
-    </div>
+    <Box
+      bg="black.500"
+      rounded="lg"
+      my="4"
+      p="1.5rem"
+    >
+      {children}
+    </Box>
   );
-};
+}
 
 export default InputBox;

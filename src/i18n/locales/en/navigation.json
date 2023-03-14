@@ -1,0 +1,17 @@
+{
+  "home": "DAO Home",
+  "proposals": "Proposals",
+  "nodes": "DAO Hierarchy",
+  "treasury": "Treasury",
+  "faq": "FAQ",
+  "discord": "Discord",
+  "documentation": "Documentation",
+  "ariaLabelFractalBrand": "Navigate Fractal Home",
+  "ariaLabelHome": "Navigate DAO Home",
+  "ariaLabelProposals": "Navigate DAO Proposals",
+  "ariaLabelActivities": "Navigate DAO Activities",
+  "ariaLabelTreasury": "Navigate DAO Treasury",
+  "ariaLabelFAQ": "Link to FAQ",
+  "ariaLabelDiscord": "Link to Discord",
+  "ariaLabelDocumentation": "Link to documentation"
+}

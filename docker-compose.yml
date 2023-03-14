@@ -1,0 +1,19 @@
+version: "3"
+services:
+  blockchain:
+    build: docker/blockchain
+    ports:
+      - "8545:8545"
+    env_file:
+      - ./docker/.env.tests.local
+
+  webapp:
+    build:
+      context: ./
+      dockerfile: ./docker/webapp/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_TESTING_ENVIROMENT=true
+      - REACT_APP_LOCAL_CHAIN_ID=31337
+      - REACT_APP_LOCAL_PROVIDER_URL=http://127.0.0.1:8545

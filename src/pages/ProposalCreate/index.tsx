@@ -1,103 +1,131 @@
-import { useCallback, useEffect, useState } from "react";
-import { BigNumber, ethers } from "ethers";
-import Essentials from "../../components/ProposalCreate/Essentials";
-import Transactions from "../../components/ProposalCreate/Transactions";
-import { TextButton, PrimaryButton, SecondaryButton } from "../../components/ui/forms/Button";
-import H1 from "../../components/ui/H1";
-import LeftArrow from "../../components/ui/svg/LeftArrow";
-import { useDAOData } from "../../contexts/daoData";
-import useCreateProposal from "../../hooks/useCreateProposal";
-import { TransactionData } from "../../types/transaction";
-import { ProposalData } from "../../types/proposal";
+import { Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
+import { Trash } from '@decent-org/fractal-ui';
+import { BigNumber } from 'ethers';
+import { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
+import { ProposalHeader } from '../../components/ProposalCreate/ProposalHeader';
+import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
+import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
+import { BarLoader } from '../../components/ui/loaders/BarLoader';
+import PageHeader from '../../components/ui/page/Header/PageHeader';
+import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../constants/common';
+import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../providers/Fractal/types';
+import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
+import { ProposalExecuteData } from '../../types/proposal';
+import { TransactionData } from '../../types/transaction';
 
 const defaultTransaction = {
-  targetAddress: "",
-  functionName: "",
-  functionSignature: "",
-  parameters: "",
+  targetAddress: '',
+  ethValue: { value: '0', bigNumberValue: BigNumber.from('0') },
+  functionName: '',
+  functionSignature: '',
+  parameters: '',
+  isExpanded: true,
+  encodedFunctionData: undefined,
 };
 
-const ProposalCreate = () => {
-  const [{ daoAddress }] = useDAOData();
-  const [step, setStep] = useState<number>(0);
-  const [proposalDescription, setProposalDescription] = useState<string>("");
-  const [transactions, setTransactions] = useState<TransactionData[]>([defaultTransaction]);
-  const [pending, setPending] = useState<boolean>(false);
-  const [proposalData, setProposalData] = useState<ProposalData>();
+const templateAreaTwoCol = '"content details"';
+const templateAreaSingleCol = `"content"
+  "details"`;
+
+function ProposalCreate() {
+  const {
+    gnosis: { safe },
+    governance: { type },
+  } = useFractal();
+  const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
+
+  const [proposalDescription, setProposalDescription] = useState<string>('');
+  const [transactions, setTransactions] = useState<TransactionData[]>([
+    Object.assign({}, defaultTransaction),
+  ]);
+  const [proposalData, setProposalData] = useState<ProposalExecuteData>();
+  const [nonce, setNonce] = useState<number>();
+  const navigate = useNavigate();
+  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+  const [showTransactionsAndSubmit, setShowTransactionsAndSubmit] = useState<boolean>();
+  const [inputtedMetadata, setInputtedMetadata] = useState<boolean>(false);
+  const [metadata, setMetadata] = useState<{
+    title: string;
+    description: string;
+    documentationUrl: string;
+  }>({ title: '', description: '', documentationUrl: '' });
+
+  useEffect(() => {
+    if (!type) return;
+    setShowTransactionsAndSubmit(type !== GovernanceTypes.GNOSIS_SAFE_USUL || inputtedMetadata);
+  }, [inputtedMetadata, type]);
 
   /**
    * adds new transaction form
    */
   const addTransaction = () => {
-    setTransactions([...transactions, defaultTransaction]);
+    const newTransactionData = Object.assign({}, defaultTransaction);
+    transactions[transactions.length - 1].isExpanded = false; // this makes sure the previous transaction is colapsed when adding a new transaction
+    setTransactions([...transactions, newTransactionData]);
   };
 
   const removeTransaction = (transactionNumber: number) => {
-    const _transactions = transactions.filter((_, i) => i !== transactionNumber);
-    setTransactions(_transactions);
+    const filteredTransactions = transactions.filter((_, i) => i !== transactionNumber);
+    setTransactions(filteredTransactions);
   };
 
-  const decrementStep = () => {
-    setStep((currentStep) => currentStep - 1);
-  };
-
-  const incrementStep = () => {
-    setStep((currentStep) => currentStep + 1);
-  };
-
-  const clearState = () => {
-    setProposalDescription("");
+  const successCallback = () => {
+    setProposalDescription('');
     setTransactions([]);
-    setProposalData(undefined)
-  }
+    setProposalData(undefined);
+
+    if (safe) {
+      navigate(`/daos/${safe.address}/proposals`);
+    }
+  };
 
   useEffect(() => {
-    try {
-      let hasError: boolean = false;
-      transactions.forEach((transaction: TransactionData) => {
-        if (transaction.addressError || transaction.fragmentError) {
-          hasError = true;
-        }
-      });
-      if (hasError) {
-        return;
-      }
-      const proposal = {
-        targets: transactions.map((transaction) => transaction.targetAddress),
-        values: transactions.map(() => BigNumber.from("0")),
-        calldatas: transactions.map((transaction) => {
-          const _functionSignature = `function ${transaction.functionName}(${transaction.functionSignature})`;
-          const _parameters = `[${transaction.parameters}]`;
-          return new ethers.utils.Interface([_functionSignature]).encodeFunctionData(transaction.functionName, JSON.parse(_parameters));
-        }),
-        description: proposalDescription,
-      };
-      setProposalData(proposal);
-    } catch {
-      // catches errors related to `ethers.utils.Interface` and the `encodeFunctionData` these errors are handled in the onChange of the inputs
-      // these errors are handled in the onChange of the inputs in transactions
-    }
-  }, [transactions, proposalDescription]);
-
-  const createProposal = useCreateProposal({
-    daoAddress,
-    proposalData,
-    setPending,
-    clearState,
-  });
-
-  const isValidProposalValid = useCallback(() => {
-    // if proposalData doesn't exist
-    if (!proposalData) {
-      return false;
-    }
-    // if error in transactions
-    let hasError: boolean = false;
-    transactions.forEach((transaction: TransactionData) => {
+    let hasError = false;
+    transactions.forEach(transaction => {
       if (transaction.addressError || transaction.fragmentError) {
         hasError = true;
       }
     });
+    if (hasError) {
+      return;
+    }
+    const proposal = {
+      targets: transactions.map(transaction => transaction.targetAddress),
+      values: transactions.map(transaction => transaction.ethValue.bigNumberValue!),
+      calldatas: transactions.map(transaction => transaction.encodedFunctionData || ''),
+      title: metadata.title,
+      description: metadata.description,
+      documentationUrl: metadata.documentationUrl,
+    };
+    setProposalData(proposal);
+  }, [
+    transactions,
+    proposalDescription,
+    metadata.title,
+    metadata.description,
+    metadata.documentationUrl,
+  ]);
+
+  const isValidProposal = useMemo(() => {
+    // if proposalData doesn't exist
+    if (!proposalData) {
+      return false;
+    }
+
+    // if no target has been input OR no calldata (function name required)
+    if (!proposalData.targets[0] || !proposalData.calldatas[0]) {
+      return false;
+    }
+
+    // if error in transactions
+    const hasError = transactions.some(
+      (transaction: TransactionData) => transaction.addressError || transaction.fragmentError
+    );
     if (hasError) {
       return false;
     }
@@ -110,27 +138,104 @@ const ProposalCreate = () => {
     return true;
   }, [proposalData, transactions]);
 
+  const isCreateDisabled = useMemo(() => {
+    return !canUserCreateProposal || !isValidProposal || pendingCreateTx;
+  }, [pendingCreateTx, isValidProposal, canUserCreateProposal]);
+
+  if (!type) {
+    return (
+      <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
+        <BarLoader />
+      </Center>
+    );
+  }
+
   return (
-    <div>
-      <div>
-        <H1>Create Proposal</H1>
-        <form onSubmit={(e) => e.preventDefault()}>
-          {step === 0 && <Essentials proposalDescription={proposalDescription} setProposalDescription={setProposalDescription} />}
-          {step === 1 && <Transactions transactions={transactions} setTransactions={setTransactions} removeTransaction={removeTransaction} pending={pending} />}
-        </form>
-        {step === 1 && (
-          <div className="flex items-center justify-center border-b border-gray-300 py-4 mb-8">
-            <TextButton onClick={addTransaction} disabled={pending} label="+ Add another transaction" />
-          </div>
-        )}
-        <div className="flex items-center justify-center mt-4 space-x-4">
-          {step === 1 && <TextButton type="button" onClick={decrementStep} disabled={pending} icon={<LeftArrow />} label="Prev" />}
-          {step === 1 && <PrimaryButton type="button" onClick={createProposal} disabled={!isValidProposalValid() || pending} label="Create Proposal" isLarge />}
-          {step === 0 && <SecondaryButton type="button" onClick={incrementStep} disabled={!proposalDescription.trim().length} label="Next: Add Transactions" />}
-        </div>
-      </div>
-    </div>
+    <Box>
+      <PageHeader
+        breadcrumbs={[
+          {
+            title: t('proposals', { ns: 'breadcrumbs' }),
+            path: DAO_ROUTES.proposals.relative(safe.address),
+          },
+          {
+            title: t('proposalNew', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
+        ButtonIcon={Trash}
+        buttonVariant="secondary"
+        buttonClick={() =>
+          navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
+        }
+        isButtonDisabled={pendingCreateTx}
+      />
+      <Text
+        textStyle="text-2xl-mono-regular"
+        color="grayscale.100"
+      >
+        {t('createProposal')}
+      </Text>
+      <Grid
+        mt={8}
+        gap={4}
+        templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
+        gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
+        templateAreas={{
+          base: templateAreaSingleCol,
+          lg: templateAreaTwoCol,
+        }}
+      >
+        <GridItem area="content">
+          <Flex
+            flexDirection="column"
+            align="left"
+          >
+            <Box
+              rounded="lg"
+              p="1rem"
+              bg={BACKGROUND_SEMI_TRANSPARENT}
+            >
+              <ProposalHeader
+                isUsul={type === GovernanceTypes.GNOSIS_SAFE_USUL}
+                inputtedMetadata={inputtedMetadata}
+                metadataTitle={metadata.title}
+                nonce={nonce}
+                setNonce={setNonce}
+              />
+              <UsulMetadata
+                show={!showTransactionsAndSubmit}
+                setInputtedMetadata={setInputtedMetadata}
+                metadata={metadata}
+                setMetadata={setMetadata}
+              />
+              <TransactionsAndSubmit
+                show={showTransactionsAndSubmit}
+                showBackButton={!!inputtedMetadata}
+                onGoBack={() => setInputtedMetadata(false)}
+                addTransaction={addTransaction}
+                pendingCreateTx={pendingCreateTx}
+                submitProposal={submitProposal}
+                proposalData={proposalData}
+                nonce={nonce}
+                successCallback={successCallback}
+                isCreateDisabled={isCreateDisabled}
+                transactions={transactions}
+                setTransactions={setTransactions}
+                removeTransaction={removeTransaction}
+              />
+            </Box>
+          </Flex>
+        </GridItem>
+        <GridItem
+          area="details"
+          w="100%"
+        >
+          <ProposalDetails />
+        </GridItem>
+      </Grid>
+    </Box>
   );
-};
+}
 
 export default ProposalCreate;

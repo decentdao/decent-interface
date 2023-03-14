@@ -1,8 +1,7 @@
-import { BigNumber } from "ethers";
+import { ExecuteData } from './execute';
 
-export interface ProposalData {
-  targets: string[];
-  values: BigNumber[];
-  calldatas: string[];
+export interface ProposalExecuteData extends ExecuteData {
+  title: string;
   description: string;
-};
+  documentationUrl: string;
+}
