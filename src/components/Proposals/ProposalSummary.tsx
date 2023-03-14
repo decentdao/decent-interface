@@ -4,18 +4,19 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
-import useDisplayName from '../../hooks/utils/useDisplayName';
+import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { UsulProposal } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../ui/links/EtherscanTransactionLink';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votesSummary, deadline, proposer, eventDate },
+  proposal: { startBlock, votesSummary, deadline, proposer, eventDate, transactionHash },
 }: {
   proposal: UsulProposal;
 }) {
@@ -78,6 +79,23 @@ export default function ProposalSummary({
             <Text color="gold.500">{proposerDisplayName}</Text>
           </EtherscanLinkAddress>
         </Flex>
+        {transactionHash && (
+          <Flex
+            marginTop={4}
+            marginBottom={4}
+            justifyContent="space-between"
+          >
+            <Text
+              textStyle="text-base-sans-regular"
+              color="chocolate.200"
+            >
+              {t('transactionHash')}
+            </Text>
+            <EtherscanTransactionLink txHash={transactionHash}>
+              <Text color="gold.500">{createAccountSubstring(transactionHash)}</Text>
+            </EtherscanTransactionLink>
+          </Flex>
+        )}
         <Divider color="chocolate.700" />
       </Box>
       <Box marginTop={4}>

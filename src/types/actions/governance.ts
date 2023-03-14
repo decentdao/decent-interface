@@ -1,15 +1,8 @@
+import { TokenClaim } from '@fractal-framework/fractal-contracts';
 import { GovernanceTypes } from '../daoGovernance';
 import { TxProposalsInfo } from '../daoProposal';
 import { GovernanceContracts } from '../fractal';
 import { IGoveranceTokenData } from '../votingFungibleToken';
-
-export enum GovernanceAction {
-  SET_GOVERNANCE,
-  SET_USUL_CONTRACTS,
-  UPDATE_PROPOSALS,
-  CONTRACTS_LOADED,
-  RESET,
-}
 
 export type GovernanceActions =
   | { type: GovernanceAction.SET_USUL_CONTRACTS; payload: GovernanceContracts }
@@ -23,4 +16,14 @@ export type GovernanceActions =
         governanceIsLoading: boolean;
       };
     }
+  | { type: GovernanceAction.SET_CLAIMING_CONTRACT; payload: TokenClaim }
   | { type: GovernanceAction.RESET };
+
+export enum GovernanceAction {
+  SET_GOVERNANCE,
+  SET_USUL_CONTRACTS,
+  UPDATE_PROPOSALS,
+  CONTRACTS_LOADED,
+  SET_CLAIMING_CONTRACT,
+  RESET,
+}

@@ -3,6 +3,7 @@ import {
   OZLinearVoting,
   UsulVetoGuard,
   VotesToken,
+  TokenClaim,
 } from '@fractal-framework/fractal-contracts';
 
 export interface UsulContracts {
@@ -10,4 +11,5 @@ export interface UsulContracts {
   linearVotingMasterCopyContract: OZLinearVoting;
   usulVetoGuardMasterCopyContract: UsulVetoGuard;
   votesTokenMasterCopyContract: VotesToken;
+  claimingMasterCopyContract: TokenClaim;
 }

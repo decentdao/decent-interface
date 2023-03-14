@@ -6,6 +6,7 @@ import {
   GovernanceTypes,
   GovernanceAction,
 } from '../../../../types';
+import { useTokenClaim } from '../../hooks/useTokenClaim';
 import useGovernanceTokenData from './useGovernanceTokenData';
 import { useSafeMultisigTxs } from './useSafeMultisigTxs';
 import useUsulProposals from './useUsulProposals';
@@ -28,7 +29,7 @@ export const useGnosisGovernance = ({
   useVotingContracts({ gnosis, governanceDispatch, chainId });
   // if voting contracts are loaded, load governance data
   const governanceTokenData = useGovernanceTokenData(governance.contracts);
-
+  useTokenClaim({ tokenContract: governance.contracts.tokenContract, governanceDispatch });
   // loads transactions (multisig) or proposals (usul)
   useUsulProposals({ governance, governanceDispatch });
   useSafeMultisigTxs({ governance, gnosis, governanceDispatch });

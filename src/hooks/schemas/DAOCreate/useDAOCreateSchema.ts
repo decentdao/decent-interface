@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { DAOEssentials, GovernanceTypes } from '../../../types';
+import { DAOEssentials, GovernanceTypes, BigNumberValuePair } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
@@ -52,7 +52,13 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               tokenName: Yup.string().required(),
               tokenSymbol: Yup.string().required().min(2),
               tokenSupply: Yup.object().shape({ value: Yup.string().required() }),
-              parentAllocationAmount: Yup.object().notRequired().shape({ value: Yup.string() }),
+              parentAllocationAmount: Yup.object().when({
+                is: (value: BigNumberValuePair) => !!value.value,
+                then: schema =>
+                  schema.shape({
+                    value: Yup.string().test(maxAllocationValidation),
+                  }),
+              }),
               tokenAllocations: Yup.array()
                 .min(1)
                 .of(

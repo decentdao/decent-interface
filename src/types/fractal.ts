@@ -2,6 +2,7 @@ import {
   FractalUsul,
   FractalModule,
   OZLinearVoting,
+  TokenClaim,
   VotesToken,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
@@ -85,6 +86,7 @@ export interface IGovernance {
   type: GovernanceTypes | null;
   txProposalsInfo: TxProposalsInfo;
   governanceToken?: IGoveranceTokenData;
+  tokenClaimContract?: TokenClaim;
   contracts: GovernanceContracts;
   governanceIsLoading: boolean;
 }

@@ -4,6 +4,8 @@ import {
   GnosisSafe,
   OZLinearVoting,
   OZLinearVoting__factory,
+  VotesToken,
+  VotesToken__factory,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
@@ -20,33 +22,51 @@ import { generateContractByteCodeLinear, generateSalt, TIMER_MULT } from './help
 
 export class UsulTxBuilder extends BaseTxBuilder {
   private readonly safeContract: GnosisSafe;
+  private readonly predictedGnosisSafeAddress: string;
 
   private encodedSetupTokenData: string | undefined;
   private encodedStrategySetupData: string | undefined;
   private encodedSetupUsulData: string | undefined;
+  private encodedSetupTokenClaimData: string | undefined;
+  private encodedSetupTokenApprovalData: string | undefined;
 
   private predictedTokenAddress: string | undefined;
   private predictedStrategyAddress: string | undefined;
   private predictedUsulAddress: string | undefined;
+  private predictedTokenClaimAddress: string | undefined;
 
   public usulContract: FractalUsul | undefined;
   public linearVotingContract: OZLinearVoting | undefined;
+  public votesTokenContract: VotesToken | undefined;
 
   private tokenNonce: string;
   private strategyNonce: string;
   private usulNonce: string;
+  private claimNonce: string;
 
   constructor(
     signerOrProvider: any,
     baseContracts: BaseContracts,
     usulContracts: UsulContracts,
     daoData: GnosisDAO | TokenGovernanceDAO,
-    safeContract: GnosisSafe
+    safeContract: GnosisSafe,
+    predictedGnosisSafeAddress: string,
+    parentDAOAddress?: string,
+    parentTokenAddress?: string
   ) {
-    super(signerOrProvider, baseContracts, usulContracts, daoData);
+    super(
+      signerOrProvider,
+      baseContracts,
+      usulContracts,
+      daoData,
+      parentDAOAddress,
+      parentTokenAddress
+    );
 
     this.safeContract = safeContract;
+    this.predictedGnosisSafeAddress = predictedGnosisSafeAddress;
     this.tokenNonce = getRandomBytes();
+    this.claimNonce = getRandomBytes();
     this.strategyNonce = getRandomBytes();
     this.usulNonce = getRandomBytes();
 
@@ -55,6 +75,12 @@ export class UsulTxBuilder extends BaseTxBuilder {
     this.setPredictedStrategyAddress();
     this.setPredictedUsulAddress();
     this.setContracts();
+
+    const data = daoData as TokenGovernanceDAO;
+    if (parentTokenAddress && !data.parentAllocationAmount.isZero()) {
+      this.setEncodedSetupTokenClaimData();
+      this.setPredictedTokenClaimAddress();
+    }
   }
 
   public buildLinearVotingContractSetupTx(): SafeTransaction {
@@ -139,6 +165,31 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
   }
 
+  public buildDeployTokenClaim() {
+    return buildContractCall(
+      this.baseContracts.zodiacModuleProxyFactoryContract,
+      'deployModule',
+      [
+        this.usulContracts!.claimingMasterCopyContract.address,
+        this.encodedSetupTokenClaimData,
+        this.claimNonce,
+      ],
+      0,
+      false
+    );
+  }
+
+  public buildApproveClaimAllocation() {
+    const tokenGovernanceDaoData = this.daoData as TokenGovernanceDAO;
+    return buildContractCall(
+      this.votesTokenContract!,
+      'approve',
+      [this.predictedTokenClaimAddress, tokenGovernanceDaoData.parentAllocationAmount],
+      0,
+      false
+    );
+  }
+
   public signatures = (): string => {
     return (
       '0x000000000000000000000000' +
@@ -206,6 +257,37 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
   }
 
+  private setEncodedSetupTokenClaimData() {
+    const tokenGovernanceDaoData = this.daoData as TokenGovernanceDAO;
+    const encodedInitTokenData = defaultAbiCoder.encode(
+      ['address', 'address', 'address', 'uint256'],
+      [
+        this.safeContract.address,
+        this.parentTokenAddress,
+        this.predictedTokenAddress,
+        tokenGovernanceDaoData.parentAllocationAmount,
+      ]
+    );
+    this.encodedSetupTokenClaimData =
+      this.usulContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
+        encodedInitTokenData,
+      ]);
+  }
+
+  private setPredictedTokenClaimAddress() {
+    const tokenByteCodeLinear = generateContractByteCodeLinear(
+      this.usulContracts!.claimingMasterCopyContract.address.slice(2)
+    );
+
+    const tokenSalt = generateSalt(this.encodedSetupTokenClaimData!, this.claimNonce);
+
+    this.predictedTokenClaimAddress = getCreate2Address(
+      this.baseContracts.zodiacModuleProxyFactoryContract.address,
+      tokenSalt,
+      solidityKeccak256(['bytes'], [tokenByteCodeLinear])
+    );
+  }
+
   private setPredictedStrategyAddress() {
     const tokenGovernanceDaoData = this.daoData as TokenGovernanceDAO;
 
@@ -228,10 +310,9 @@ export class UsulTxBuilder extends BaseTxBuilder {
         encodedStrategyInitParams,
       ]);
 
-    const strategyByteCodeLinear =
-      '0x602d8060093d393df3363d3d373d3d3d363d73' +
-      this.usulContracts!.linearVotingMasterCopyContract.address.slice(2) +
-      '5af43d82803e903d91602b57fd5bf3';
+    const strategyByteCodeLinear = generateContractByteCodeLinear(
+      this.usulContracts!.linearVotingMasterCopyContract.address.slice(2)
+    );
 
     const strategySalt = solidityKeccak256(
       ['bytes32', 'uint256'],
@@ -284,6 +365,10 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
     this.linearVotingContract = OZLinearVoting__factory.connect(
       this.predictedStrategyAddress!,
+      this.signerOrProvider
+    );
+    this.votesTokenContract = VotesToken__factory.connect(
+      this.predictedTokenAddress!,
       this.signerOrProvider
     );
   }

@@ -201,6 +201,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       const proposalCreatedFilter = usulContract.asSigner.filters.ProposalCreated();
       const proposalMetaDataCreatedFilter = usulContract.asSigner.filters.ProposalMetadataCreated();
       const proposalCreatedEvents = await usulContract.asSigner.queryFilter(proposalCreatedFilter);
+
       const proposalMetaDataCreatedEvents = await usulContract.asSigner.queryFilter(
         proposalMetaDataCreatedFilter
       );
@@ -210,6 +211,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
           const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
             event.args.proposalId.eq(args.proposalNumber)
           );
+
           let metaData;
           if (metaDataEvent) {
             let decodedTransactions = metaDataMapping.current.get(args.proposalNumber.toString());
@@ -240,6 +242,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
           );
         })
       );
+
       const passedProposals = mappedProposals.reduce(
         (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
         0

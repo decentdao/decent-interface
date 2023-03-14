@@ -37,7 +37,7 @@ export type DAOGovenorToken<T = BigNumber> = {
   tokenSymbol: string;
   tokenSupply: T;
   tokenAllocations: TokenAllocation<T>[];
-  parentAllocationAmount?: T;
+  parentAllocationAmount: T;
 };
 
 export type DAOGovenorModuleConfig<T = BigNumber> = {
