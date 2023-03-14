@@ -103,7 +103,9 @@ export function useDAOCreateTests() {
           BigNumber.from(0)
         );
 
-        if (allocationSum.isZero() || allocationSum.add(parentAllocationAmount).gt(tokenSupply)) {
+        const totalAllocation = allocationSum.add(parentAllocationAmount);
+
+        if (totalAllocation.isZero() || totalAllocation.gt(tokenSupply)) {
           return false;
         }
         return true;

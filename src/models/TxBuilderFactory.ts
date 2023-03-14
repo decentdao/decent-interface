@@ -103,7 +103,10 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts,
       this.usulContracts!,
       this.daoData as GnosisDAO,
-      this.safeContract!
+      this.safeContract!,
+      this.predictedGnosisSafeAddress!,
+      this.parentDAOAddress,
+      this.parentTokenAddress
     );
   }
 }
