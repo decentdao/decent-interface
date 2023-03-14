@@ -11,6 +11,7 @@ import {
   VetoMultisigVoting,
   VetoERC20Voting,
   VotesToken,
+  TokenClaim,
 } from '@fractal-framework/fractal-contracts';
 import { MultiSend } from '../assets/typechain-types/usul';
 
@@ -37,4 +38,5 @@ export interface DAOContracts {
   vetoMultisigVotingMasterCopyContract: ContractConnection<VetoMultisigVoting>;
   vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;
+  claimingMasterCopyContract: ContractConnection<TokenClaim>;
 }

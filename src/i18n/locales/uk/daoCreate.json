@@ -53,8 +53,6 @@
     "errorConnectWallet": "Законнектити гаманець, щоб перевірити",
     "errorDuplicateAddress": "Така адреса вже додана",
     "errorOverallocated": "Розподілено більше, ніж загальний випуск токенів.",
-    "labelParentAllocation": "Батьківска кількість розподілення",
-    "helperParentAllocation": "Кількість токенів, що буде розподілена до батьківскього DAO",
     "labelAddAllocation": "+ Додати Розподілення",
     "labelTokenName": "Ім'я токену",
     "helperTokenName": "Як ваш токен голосування буде називатись?",
