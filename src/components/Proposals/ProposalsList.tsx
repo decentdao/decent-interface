@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes, TxProposal } from '../../providers/Fractal/types';
+import { TxProposal, GovernanceTypes } from '../../types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';

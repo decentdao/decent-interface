@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { SafeInfoResponseWithGuard } from '../../providers/Fractal/types';
-import { SubDAOData } from '../../types/dao';
+import { SafeInfoResponseWithGuard } from '../../types';
+import { SubDAOData } from '../../types/daoGeneral';
 import { useFractal } from './../../providers/Fractal/hooks/useFractal';
 
 export function useSubDAOData(safeAddress?: string) {

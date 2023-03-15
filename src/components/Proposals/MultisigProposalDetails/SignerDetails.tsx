@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { MultisigProposal } from '../../../providers/Fractal/types';
+import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import { ActivityAddress } from '../../Activity/ActivityAddress';
 import { Badge } from '../../ui/badges/Badge';

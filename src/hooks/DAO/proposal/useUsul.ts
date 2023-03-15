@@ -2,7 +2,7 @@ import { FractalUsul__factory, FractalUsul } from '@fractal-framework/fractal-co
 import { useState, useEffect, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { GnosisModuleType, IGnosisModuleData } from '../../../providers/Fractal/types';
+import { IGnosisModuleData, GnosisModuleType } from '../../../types';
 
 export function getUsulModuleFromModules(modules: IGnosisModuleData[]) {
   const usulModule = modules.find(module => module.moduleType === GnosisModuleType.USUL);

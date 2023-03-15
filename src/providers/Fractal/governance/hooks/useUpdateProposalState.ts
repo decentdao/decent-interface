@@ -1,8 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useCallback, Dispatch } from 'react';
+import { IGovernance, GovernanceActions, UsulProposal, GovernanceAction } from '../../../../types';
 import { getTxProposalState } from '../../utils';
-import { GovernanceAction, GovernanceActions } from '../actions';
-import { UsulProposal, IGovernance } from '../types';
 
 interface IUseUpdateProposalState {
   governance: IGovernance;

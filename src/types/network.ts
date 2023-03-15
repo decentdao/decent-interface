@@ -1,4 +1,10 @@
+import { ethers } from 'ethers';
 import { Chain } from 'wagmi';
+
+export type Providers =
+  | ethers.providers.Web3Provider
+  | ethers.providers.JsonRpcProvider
+  | ethers.providers.BaseProvider;
 
 export type NetworkConfig = {
   safeBaseURL: string;

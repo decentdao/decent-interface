@@ -7,13 +7,11 @@ import { BigNumber } from 'ethers';
 import { getEventRPC } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { ContractConnection } from '../../../types';
-import { strategyTxProposalStates } from '../governance/constants';
-import { CacheExpiry, CacheKeys, getValue, setValue } from '../hooks/account/useLocalStorage';
 import {
-  Parameter,
-  DataDecoded,
   ActivityEventType,
+  ContractConnection,
+  DataDecoded,
+  Parameter,
   ProposalIsPassedError,
   ProposalMetaData,
   ProposalVote,
@@ -21,8 +19,10 @@ import {
   TxProposalState,
   UsulProposal,
   VOTE_CHOICES,
-} from '../types';
-import { Providers } from '../types/ethers';
+} from '../../../types';
+import { Providers } from '../../../types/network';
+import { strategyTxProposalStates } from '../governance/constants';
+import { CacheExpiry, CacheKeys, getValue, setValue } from '../hooks/account/useLocalStorage';
 
 export const getTxProposalState = async (
   usulContract: ContractConnection<FractalUsul>,

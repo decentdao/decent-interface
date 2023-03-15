@@ -1,6 +1,5 @@
 import { BigNumber } from 'ethers';
-import { GovernanceTypes } from '../../providers/Fractal/types';
-import { CreatorFormState } from './types';
+import { CreatorFormState, GovernanceTypes } from '../../types';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 

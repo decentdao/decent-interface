@@ -13,15 +13,19 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useUsul from '../../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../../providers/Fractal/types';
+import {
+  ICreationStepProps,
+  BigNumberValuePair,
+  GovernanceTypes,
+  CreatorSteps,
+} from '../../../types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { CreatorSteps, ICreationStepProps } from '../types';
 
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;

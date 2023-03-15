@@ -1,3 +1,3 @@
-import { TxProposalState } from './types';
+import { TxProposalState } from '../../../types';
 
 export const strategyTxProposalStates = Object.values(TxProposalState);

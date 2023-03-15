@@ -8,7 +8,7 @@ import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../providers/Fractal/types';
+import { GovernanceTypes } from '../../types';
 
 export function Governance() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);

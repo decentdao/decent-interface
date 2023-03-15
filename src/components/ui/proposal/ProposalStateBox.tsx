@@ -1,4 +1,4 @@
-import { TxProposalState } from '../../../providers/Fractal/types';
+import { TxProposalState } from '../../../types';
 import { Badge } from '../badges/Badge';
 
 interface ProposalStateBoxProps {

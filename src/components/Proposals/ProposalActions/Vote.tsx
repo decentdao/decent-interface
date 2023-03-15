@@ -8,12 +8,8 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import {
-  TxProposal,
-  TxProposalState,
-  UsulProposal,
-  UsulVoteChoice,
-} from '../../../providers/Fractal/types';
+import { TxProposal, UsulProposal, TxProposalState, UsulVoteChoice } from '../../../types';
+
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 

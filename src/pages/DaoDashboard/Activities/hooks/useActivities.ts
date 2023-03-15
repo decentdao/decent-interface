@@ -3,13 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParseSafeTxs } from '../../../../hooks/utils/useParseSafeTxs';
 import { useSafeActivitiesWithState } from '../../../../hooks/utils/useSafeActivitiesWithState';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../../../providers/Fractal/types';
-import { SortBy } from '../../../../types';
 import {
   Activity,
   ActivityEventType,
+  GovernanceTypes,
+  SortBy,
   VetoGuardType,
-} from './../../../../providers/Fractal/governance/types';
+} from '../../../../types';
 
 export const useActivities = (sortBy: SortBy) => {
   const {

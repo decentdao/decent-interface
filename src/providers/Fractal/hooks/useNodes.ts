@@ -5,8 +5,7 @@ import { useProvider, useSigner } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import { getUsulModuleFromModules } from '../../../hooks/DAO/proposal/useUsul';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { GnosisAction } from '../constants';
-import { IGnosis, GnosisActions, SafeInfoResponseWithGuard } from '../types';
+import { IGnosis, GnosisActions, SafeInfoResponseWithGuard, GnosisAction } from '../../../types';
 
 export default function useNodes({
   gnosis,
