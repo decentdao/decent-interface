@@ -2,12 +2,13 @@ import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import {
   Activity,
-  ActivityEventType,
   GovernanceActivity,
   MultisigProposal,
+  ActivityEventType,
   TreasuryActivity,
   UsulProposal,
-} from '../../providers/Fractal/types';
+} from '../../types';
+
 import { createProposalNumberSubstring } from '../../utils/string';
 import { ActivityAddress } from './ActivityAddress';
 

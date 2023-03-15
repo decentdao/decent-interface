@@ -1,9 +1,13 @@
 import { useCallback, useMemo } from 'react';
 import { useProvider, useSigner, useAccount } from 'wagmi';
-import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
-import { BaseContracts, UsulContracts } from '../../models/types/contracts';
-import { GovernanceTypes } from '../../providers/Fractal/types';
+import {
+  TokenGovernanceDAO,
+  GnosisDAO,
+  GovernanceTypes,
+  UsulContracts,
+  BaseContracts,
+} from '../../types';
 import useSafeContracts from '../safe/useSafeContracts';
 
 const useBuildDAOTx = () => {
@@ -27,6 +31,7 @@ const useBuildDAOTx = () => {
     vetoMultisigVotingMasterCopyContract,
     vetoERC20VotingMasterCopyContract,
     votesTokenMasterCopyContract,
+    claimingMasterCopyContract,
   } = useSafeContracts();
 
   const buildDao = useCallback(
@@ -48,7 +53,8 @@ const useBuildDAOTx = () => {
         !vetoMultisigVotingMasterCopyContract ||
         !vetoERC20VotingMasterCopyContract ||
         !gnosisSafeFactoryContract ||
-        !gnosisSafeSingletonContract
+        !gnosisSafeSingletonContract ||
+        !claimingMasterCopyContract
       ) {
         return;
       }
@@ -58,7 +64,8 @@ const useBuildDAOTx = () => {
           !fractalUsulMasterCopyContract ||
           !linearVotingMasterCopyContract ||
           !votesTokenMasterCopyContract ||
-          !usulVetoGuardMasterCopyContract
+          !usulVetoGuardMasterCopyContract ||
+          !claimingMasterCopyContract
         ) {
           return;
         }
@@ -68,6 +75,7 @@ const useBuildDAOTx = () => {
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
           usulVetoGuardMasterCopyContract: usulVetoGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
+          claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
         } as UsulContracts;
       }
 
@@ -123,6 +131,7 @@ const useBuildDAOTx = () => {
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       usulVetoGuardMasterCopyContract,
+      claimingMasterCopyContract,
     ]
   );
 

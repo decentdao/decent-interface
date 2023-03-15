@@ -1,6 +1,6 @@
 import { Flex, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { CreatorSteps, ICreationStepProps } from './types';
+import { ICreationStepProps, CreatorSteps } from '../../types';
 interface IStepButtons extends ICreationStepProps {
   nextStep?: CreatorSteps;
   prevStep?: CreatorSteps;

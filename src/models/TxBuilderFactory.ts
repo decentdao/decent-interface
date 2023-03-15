@@ -1,15 +1,20 @@
 import { GnosisSafe, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { TokenGovernanceDAO, SubDAO, GnosisDAO } from '../components/DaoCreator/types';
 import { getRandomBytes } from '../helpers';
-import { SafeTransaction } from '../types';
+import {
+  BaseContracts,
+  GnosisDAO,
+  SafeTransaction,
+  SubDAO,
+  TokenGovernanceDAO,
+  UsulContracts,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
 import { MultisigTxBuilder } from './MultisigTxBuilder';
 import { UsulTxBuilder } from './UsulTxBuilder';
 import { VetoGuardTxBuilder } from './VetoGuardTxBuilder';
 import { gnosisSafeData } from './helpers/gnosisSafeData';
-import { BaseContracts, UsulContracts } from './types/contracts';
 
 export class TxBuilderFactory extends BaseTxBuilder {
   private readonly saltNum: string;
@@ -103,7 +108,10 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts,
       this.usulContracts!,
       this.daoData as GnosisDAO,
-      this.safeContract!
+      this.safeContract!,
+      this.predictedGnosisSafeAddress!,
+      this.parentDAOAddress,
+      this.parentTokenAddress
     );
   }
 }

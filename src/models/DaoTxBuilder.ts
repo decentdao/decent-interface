@@ -1,12 +1,16 @@
 import { GnosisSafe } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
 import { buildContractCall, encodeMultiSend } from '../helpers';
-import { SafeTransaction } from '../types';
+import {
+  BaseContracts,
+  GnosisDAO,
+  SafeTransaction,
+  TokenGovernanceDAO,
+  UsulContracts,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
-import { BaseContracts, UsulContracts } from './types/contracts';
 
 const { AddressZero } = ethers.constants;
 
@@ -61,13 +65,13 @@ export class DaoTxBuilder extends BaseTxBuilder {
   public async buildUsulTx(): Promise<string> {
     const usulTxBuilder = this.txBuilderFactory.createUsulTxBuilder();
 
+    // transactions that must be called by safe
     this.internalTxs = [
       this.buildUpdateDAONameTx(),
       usulTxBuilder.buildLinearVotingContractSetupTx(),
       usulTxBuilder.buildEnableUsulModuleTx(),
     ];
 
-    // subDAO case, add veto guard
     if (this.parentDAOAddress) {
       const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder(
         usulTxBuilder.usulContract!.address,
@@ -96,6 +100,15 @@ export class DaoTxBuilder extends BaseTxBuilder {
       usulTxBuilder.buildDeployUsulTx(),
     ];
 
+    // If subDAO and parentAllocation, deploy claim module
+    let tokenClaimTx: SafeTransaction | undefined;
+    const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
+    if (this.parentTokenAddress && !parentAllocation.isZero()) {
+      tokenClaimTx = usulTxBuilder.buildDeployTokenClaim();
+      const tokenApprovalTx = usulTxBuilder.buildApproveClaimAllocation();
+      this.internalTxs.push(tokenApprovalTx);
+    }
+
     // If subDAO, deploy Fractal Module
     if (this.parentDAOAddress) {
       txs.push(this.deployFractalModuleTx!);
@@ -103,6 +116,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     txs.push(this.buildExecInternalSafeTx(usulTxBuilder.signatures()));
 
+    // token claim deployment tx is pushed at the end to ensure approval is executed first
+    if (tokenClaimTx) {
+      txs.push(tokenClaimTx);
+    }
     return encodeMultiSend(txs);
   }
 

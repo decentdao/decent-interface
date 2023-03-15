@@ -2,7 +2,7 @@ import { Text, Button, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useExecuteProposal from '../../../hooks/DAO/proposal/useExecuteProposal';
-import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
+import { TxProposal, TxProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 

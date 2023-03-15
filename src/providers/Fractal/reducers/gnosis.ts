@@ -1,5 +1,5 @@
-import { GnosisAction, gnosisInitialState } from '../constants';
-import { GnosisActions, IGnosis } from '../types';
+import { IGnosis, GnosisActions, GnosisAction } from '../../../types';
+import { gnosisInitialState } from '../constants';
 
 export const initializeGnosisState = (_initialState: IGnosis) => {
   return _initialState;
@@ -55,8 +55,7 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
       return { ...state, daoName: action.payload };
     case GnosisAction.SET_DAO_PARENT:
       return { ...state, parentDAOAddress: action.payload };
-    case GnosisAction.SET_DAO_CHILDREN:
-      return { ...state, childNodes: action.payload };
+
     // resets DAO
     case GnosisAction.INVALIDATE:
     case GnosisAction.RESET:

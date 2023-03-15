@@ -4,9 +4,10 @@ import {
   TransferResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { EthAddress } from '../../../types';
-import { ContractEvent } from '../../../types/contract';
-import { AllTransfersListResponse } from '../hooks/useGnosisApiServices';
+import { ContractEvent } from './contract';
+import { ActivityBase } from './fractal';
+import { AllTransfersListResponse } from './safeGlobal';
+import { EthAddress } from './utils';
 
 export enum TokenEventType {
   DEPOSIT = 'DEPOSIT',
@@ -73,4 +74,21 @@ export interface TokenInfo {
 
 export interface AssetTransfer extends TransferResponse {
   tokenInfo: TokenInfo;
+}
+
+export type AssetTotals = {
+  bn: BigNumber;
+  symbol: string;
+  decimals: number;
+};
+
+export enum TreasuryActivityTypes {
+  DEPOSIT,
+  WITHDRAW,
+}
+
+export interface TreasuryActivity extends ActivityBase {
+  transferAddresses: string[];
+  transferAmountTotals: string[];
+  isDeposit: boolean;
 }

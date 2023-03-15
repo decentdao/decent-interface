@@ -3,8 +3,8 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
-import { AddressValidationMap } from '../../../components/DaoCreator/types';
-import { Providers } from '../../../providers/Fractal/types/ethers';
+import { AddressValidationMap } from '../../../types';
+import { Providers } from '../../../types/network';
 
 export async function validateAddress({
   signerOrProvider,

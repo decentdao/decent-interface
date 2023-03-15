@@ -28,7 +28,6 @@ jobs:
         env:
           REACT_APP_INFURA_API_KEY: ${{ secrets.REACT_APP_INFURA_API_KEY }}
           REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
-          REACT_APP_ETHERSCAN_API_KEY: ${{ secrets.REACT_APP_ETHERSCAN_API_KEY }}
           REACT_APP_SITE_URL: ${{ secrets.REACT_APP_SITE_URL }}
           REACT_APP_REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_REACT_APP_SENTRY_DSN }}
 
@@ -53,6 +52,6 @@ jobs:
           cid: ${{ steps.convert_cidv0.outputs.cidv1 }}
         env:
           CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
-          RECORD_DOMAIN: ${{ secrets.CLOUDFLARE_DOMAIN_NAME }}
-          RECORD_NAME: ${{ secrets.CLOUDFLARE_RECORD_NAME }}
+          RECORD_DOMAIN: 'fractalframework.xyz'
+          RECORD_NAME: '_dnslink.app.dev'
           CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}

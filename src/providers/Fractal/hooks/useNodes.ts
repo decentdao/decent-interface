@@ -1,18 +1,20 @@
-import { FractalUsul__factory } from '@fractal-framework/fractal-contracts';
+import { FractalRegistry, FractalUsul__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { Dispatch, useEffect, useCallback, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
+import { getEventRPC } from '../../../helpers';
 import { getUsulModuleFromModules } from '../../../hooks/DAO/proposal/useUsul';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { GnosisAction } from '../constants';
-import { IGnosis, GnosisActions, SafeInfoResponseWithGuard, ChildNode } from '../types';
+import { IGnosis, GnosisActions, SafeInfoResponseWithGuard, GnosisAction } from '../../../types';
 
 export default function useNodes({
   gnosis,
   gnosisDispatch,
+  chainId,
 }: {
   gnosis: IGnosis;
   gnosisDispatch: Dispatch<GnosisActions>;
+  chainId: number;
 }) {
   const provider = useProvider();
   const { data: signer } = useSigner();
@@ -27,14 +29,14 @@ export default function useNodes({
 
   const fetchSubDAOs = useCallback(
     async (parentDAOAddress: string) => {
-      const filter =
-        fractalRegistryContract!.asProvider.filters.FractalSubDAODeclared(parentDAOAddress);
-      const events = await fractalRegistryContract!.asProvider.queryFilter(filter);
+      const eventRPC = getEventRPC<FractalRegistry>(fractalRegistryContract!, chainId);
+      const filter = eventRPC.filters.FractalSubDAODeclared(parentDAOAddress);
+      const events = await eventRPC.queryFilter(filter);
       const subDAOsAddresses = events.map(({ args }) => args.subDAOAddress);
 
       return subDAOsAddresses;
     },
-    [fractalRegistryContract]
+    [chainId, fractalRegistryContract]
   );
 
   const getDAOOwner = useCallback(
@@ -69,46 +71,6 @@ export default function useNodes({
     [gnosisVetoGuardMasterCopyContract, usulVetoGuardMasterCopyContract, modules, signerOrProvider]
   );
 
-  const mapSubDAOsToOwnedSubDAOs = useCallback(
-    async (subDAOsAddresses: string[], parentDAOAddress: string): Promise<ChildNode[]> => {
-      const controlledNodes: ChildNode[] = [];
-
-      for (const safeAddress of subDAOsAddresses) {
-        const safeInfo = (await safeService!.getSafeInfo(safeAddress)) as SafeInfoResponseWithGuard;
-
-        if (safeInfo.guard) {
-          if (safeInfo.guard === ethers.constants.AddressZero) {
-            // Guard is not attached - seems like just gap in Safe API Service indexisng.
-            // Still, need to cover this case
-            const node: ChildNode = {
-              address: safeAddress,
-              childNodes: await mapSubDAOsToOwnedSubDAOs(
-                (await fetchSubDAOs(safeAddress)) || [],
-                safeAddress
-              ),
-            };
-            controlledNodes.push(node);
-          } else {
-            const owner = await getDAOOwner(safeInfo);
-            if (owner && owner === parentDAOAddress) {
-              const node: ChildNode = {
-                address: safeAddress,
-                childNodes: await mapSubDAOsToOwnedSubDAOs(
-                  (await fetchSubDAOs(safeAddress)) || [],
-                  safeAddress
-                ),
-              };
-              controlledNodes.push(node);
-            }
-          }
-        }
-      }
-
-      return controlledNodes;
-    },
-    [safeService, fetchSubDAOs, getDAOOwner]
-  );
-
   useEffect(() => {
     const loadDaoParent = async () => {
       if (safe && safe.guard) {
@@ -122,17 +84,7 @@ export default function useNodes({
       }
     };
 
-    const loadDaoNodes = async () => {
-      if (safe.address && safeService && fractalRegistryContract) {
-        const declaredSubDAOs = await fetchSubDAOs(safe.address);
-        const controlledNodes = await mapSubDAOsToOwnedSubDAOs(declaredSubDAOs, safe.address);
-
-        gnosisDispatch({ type: GnosisAction.SET_DAO_CHILDREN, payload: controlledNodes });
-      }
-    };
-
     loadDaoParent();
-    loadDaoNodes();
   }, [
     safe,
     modules,
@@ -140,7 +92,6 @@ export default function useNodes({
     safeService,
     fetchSubDAOs,
     getDAOOwner,
-    mapSubDAOsToOwnedSubDAOs,
     fractalRegistryContract,
   ]);
 }

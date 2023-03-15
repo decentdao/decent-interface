@@ -14,6 +14,7 @@ import PROPOSAL_EN from './locales/en/proposal.json';
 import PROPOSAL_METADATA_EN from './locales/en/proposalMetadata.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
+import BREADCRUMBS_UK from './locales/uk/breadcrumbs.json';
 import COMMON_UK from './locales/uk/common.json';
 import DAOCREATE_UK from './locales/uk/daoCreate.json';
 import DASHBOARD_UK from './locales/uk/dashboard.json';
@@ -22,6 +23,7 @@ import MENU_UK from './locales/uk/menu.json';
 import MODALS_UK from './locales/uk/modals.json';
 import NAVIGATION_UK from './locales/uk/navigation.json';
 import PROPOSAL_UK from './locales/uk/proposal.json';
+import PROPOSAL_METADATA_UK from './locales/uk/proposalMetadata.json';
 import TRANSACTION_UK from './locales/uk/transaction.json';
 import TREASURY_UK from './locales/uk/treasury.json';
 /**
@@ -62,11 +64,13 @@ export const supportedLanguages = {
     languages: LANGUAGES_EN,
   },
   uk: {
+    breadcrumbs: BREADCRUMBS_UK,
     common: COMMON_UK,
     daoCreate: DAOCREATE_UK,
     menu: MENU_UK,
     dashboard: DASHBOARD_UK,
     proposal: PROPOSAL_UK,
+    proposalMetadata: PROPOSAL_METADATA_UK,
     transaction: TRANSACTION_UK,
     treasury: TREASURY_UK,
     navigation: NAVIGATION_UK,

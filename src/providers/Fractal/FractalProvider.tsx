@@ -1,16 +1,15 @@
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 import { useMatch } from 'react-router-dom';
 import { DAO_ROUTES } from '../../routes/constants';
+import { GnosisAction, TreasuryAction, GovernanceAction } from '../../types';
 import { useNetworkConfg } from '../NetworkConfig/NetworkConfigProvider';
 import {
   gnosisInitialState,
-  governanceInitialState,
   treasuryInitialState,
+  governanceInitialState,
   connectedAccountInitialState,
-  GnosisAction,
-  TreasuryAction,
 } from './constants';
-import { GovernanceAction } from './governance/actions';
+
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
@@ -60,7 +59,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     gnosisDispatch
   );
 
-  const { lookupModules } = useGnosisModuleTypes(gnosisDispatch, chainId, gnosis.safe.modules);
+  const { lookupModules } = useGnosisModuleTypes(chainId, gnosis.safe.modules, gnosisDispatch);
 
   useDispatchDAOName({ address: gnosis.safe.address, gnosisDispatch });
   useAccount({
@@ -76,7 +75,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   );
 
   useGnosisGovernance({ governance, gnosis, governanceDispatch, chainId });
-  useNodes({ gnosis, gnosisDispatch });
+  useNodes({ gnosis, gnosisDispatch, chainId });
   const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const isViewingDAO = useMatch(DAO_ROUTES.daos.path);

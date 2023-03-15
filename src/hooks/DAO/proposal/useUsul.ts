@@ -2,7 +2,7 @@ import { FractalUsul__factory, FractalUsul } from '@fractal-framework/fractal-co
 import { useState, useEffect, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { GnosisModuleType, IGnosisModuleData } from '../../../providers/Fractal/types';
+import { IGnosisModuleData, GnosisModuleType } from '../../../types';
 
 export function getUsulModuleFromModules(modules: IGnosisModuleData[]) {
   const usulModule = modules.find(module => module.moduleType === GnosisModuleType.USUL);
@@ -12,6 +12,7 @@ export function getUsulModuleFromModules(modules: IGnosisModuleData[]) {
 export default function useUsul() {
   const [usulContract, setUsulContract] = useState<FractalUsul>();
   const [votingStrategiesAddresses, setVotingStrategiesAddresses] = useState<string[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const provider = useProvider();
   const { data: signer } = useSigner();
@@ -30,6 +31,7 @@ export default function useUsul() {
       const usulModule = getUsulModuleFromModules(modules);
 
       if (!usulModule) {
+        setIsLoaded(true);
         return;
       }
 
@@ -48,6 +50,8 @@ export default function useUsul() {
       } catch (e) {
         console.error(e);
       }
+
+      setIsLoaded(true);
     };
     init();
   }, [modules, signerOrProvider]);
@@ -55,5 +59,6 @@ export default function useUsul() {
   return {
     usulContract,
     votingStrategiesAddresses,
+    isLoaded,
   };
 }

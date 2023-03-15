@@ -1,14 +1,26 @@
 import SafeServiceClient, {
   SafeInfoResponse,
   AllTransactionsListResponse,
-  SafeBalanceUsdResponse,
-  SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { AccountAction, GnosisAction, TreasuryAction } from '../constants';
-import { IGnosisModuleData, IGnosisFreezeData, IGnosisVetoContract } from '../governance/types';
-import { AllTransfersListResponse } from '../hooks/useGnosisApiServices';
-import { IFavorites, IAudit, ChildNode } from './state';
+import { IGnosisVetoContract } from '../daoGuard';
+import { IGnosisModuleData, IGnosisFreezeData } from '../fractal';
+
+// @todo Rename to NodeActions and NodeAction
+export enum GnosisAction {
+  SET_SAFE_SERVICE_CLIENT,
+  SET_SAFE,
+  SET_SAFE_ADDRESS,
+  SET_SAFE_TRANSACTIONS,
+  SET_MODULES,
+  SET_GUARD_CONTRACTS,
+  SET_FREEZE_DATA,
+  FREEZE_VOTE_EVENT,
+  SET_DAO_NAME,
+  SET_DAO_PARENT,
+  INVALIDATE,
+  RESET,
+}
 
 export type GnosisActions =
   | { type: GnosisAction.SET_SAFE_SERVICE_CLIENT; payload: SafeServiceClient }
@@ -28,25 +40,5 @@ export type GnosisActions =
     }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.SET_DAO_PARENT; payload: string }
-  | { type: GnosisAction.SET_DAO_CHILDREN; payload: ChildNode[] }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
-
-export type TreasuryActions =
-  | {
-      type: TreasuryAction.UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS;
-      payload: SafeBalanceUsdResponse[];
-    }
-  | {
-      type: TreasuryAction.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS;
-      payload: SafeCollectibleResponse[];
-    }
-  | {
-      type: TreasuryAction.UPDATE_GNOSIS_SAFE_TRANSFERS;
-      payload: AllTransfersListResponse;
-    }
-  | { type: TreasuryAction.RESET };
-
-export type AccountActions =
-  | { type: AccountAction.UPDATE_DAO_FAVORITES; payload: IFavorites }
-  | { type: AccountAction.UPDATE_AUDIT_MESSAGE; payload: IAudit };

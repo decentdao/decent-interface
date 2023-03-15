@@ -1,6 +1,6 @@
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
-import { TransferType, TokenInfo, AssetTransfer } from '../../../providers/Fractal/types';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { TransferType, TokenInfo, AssetTransfer } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export enum TokenEventType {

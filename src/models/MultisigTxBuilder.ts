@@ -1,8 +1,6 @@
 import { GnosisSafe } from '@fractal-framework/fractal-contracts';
-import { GnosisDAO } from '../components/DaoCreator/types';
 import { buildContractCall } from '../helpers';
-import { SafeTransaction } from '../types';
-import { BaseContracts } from './types/contracts';
+import { BaseContracts, GnosisDAO, SafeTransaction } from '../types';
 
 export class MultisigTxBuilder {
   private baseContracts: BaseContracts;

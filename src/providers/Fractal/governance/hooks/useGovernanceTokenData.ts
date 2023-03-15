@@ -1,46 +1,28 @@
-import { VotesToken } from '@fractal-framework/fractal-contracts';
+import { addMinutes } from 'date-fns';
 import { BigNumber } from 'ethers';
-import { useReducer, useMemo, useEffect, useCallback } from 'react';
+import { useReducer, useMemo, useEffect, useCallback, useRef } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
-import { formatCoin } from '../../../../utils/numberFormats';
 import {
+  IGoveranceTokenData,
+  TokenAction,
+  TokenActions,
+  GovernanceContracts,
+  ITokenData,
+  TokenAccountRaw,
+  VotingTokenConfig,
   TransferListener,
   DelegateChangedListener,
   DelegateVotesChangedListener,
-  GovernanceContracts,
-} from '../../types';
+} from '../../../../types';
+import { formatCoin } from '../../../../utils/numberFormats';
 
-interface ITokenData {
-  name: string | undefined;
-  symbol: string | undefined;
-  decimals: number | undefined;
-  address: string | undefined;
-  totalSupply: BigNumber | undefined;
-}
+const TOKEN_DATA_EXPIRATION = 5; // in minutes
+const USER_ACCOUNT_EXPIRATION = 1; // in minutes
 
-interface ITokenAccount {
-  userBalance: BigNumber | undefined;
-  userBalanceString: string | undefined;
-  delegatee: string | undefined;
-  votingWeight: BigNumber | undefined;
-  votingWeightString: string | undefined;
-  isDelegatesSet: boolean | undefined;
-}
-
-export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
-  isLoading?: boolean;
-}
-
-interface BNFormattedPair {
-  value: BigNumber;
-  formatted?: string;
-}
-
-export interface VotingTokenConfig {
-  votingPeriod?: BNFormattedPair;
-  quorumPercentage?: BNFormattedPair;
-  timeLockPeriod?: BNFormattedPair;
+export interface GovernanceTokenCache<DataType> {
+  data: DataType;
+  expires?: Date;
 }
 
 const initialState = {
@@ -55,73 +37,61 @@ const initialState = {
   votingWeight: undefined,
   votingWeightString: undefined,
   isDelegatesSet: undefined,
-  tokenContract: undefined,
   votingPeriod: undefined,
   quorumPercentage: undefined,
   timeLockPeriod: undefined,
 };
-
-enum TokenActions {
-  UPDATE_TOKEN,
-  UPDATE_DELEGATEE,
-  UPDATE_VOTING_WEIGHTS,
-  UPDATE_ACCOUNT,
-  UPDATE_VOTING_CONTRACT,
-  UPDATE_TOKEN_CONTRACT,
-  RESET,
-}
-type TokenAction =
-  | { type: TokenActions.UPDATE_TOKEN; payload: ITokenData }
-  | { type: TokenActions.UPDATE_ACCOUNT; payload: ITokenAccount }
-  | { type: TokenActions.UPDATE_DELEGATEE; payload: string }
-  | {
-      type: TokenActions.UPDATE_VOTING_WEIGHTS;
-      payload: { votingWeight: BigNumber; votingWeightString: string };
-    }
-  | {
-      type: TokenActions.UPDATE_VOTING_CONTRACT;
-      payload: {
-        votingPeriod: BNFormattedPair;
-        quorumPercentage: BNFormattedPair;
-        timeLockPeriod: BNFormattedPair;
-      };
-    }
-  | { type: TokenActions.UPDATE_TOKEN_CONTRACT; payload: VotesToken }
-  | { type: TokenActions.RESET };
 
 const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
   switch (action.type) {
     case TokenActions.UPDATE_TOKEN:
       const { name, symbol, decimals, address, totalSupply } = action.payload;
       return { ...state, name, symbol, decimals, address, totalSupply };
-    case TokenActions.UPDATE_ACCOUNT:
-      const {
-        userBalance,
-        userBalanceString,
-        delegatee,
-        votingWeight,
-        votingWeightString,
-        isDelegatesSet,
-      } = action.payload;
+    case TokenActions.UPDATE_ACCOUNT: {
+      let userBalanceString: string | undefined;
+      let votingWeightString: string | undefined;
+      if (state.decimals) {
+        userBalanceString = formatCoin(
+          action.payload.userBalance!,
+          false,
+          state.decimals,
+          state.symbol
+        );
+        votingWeightString = formatCoin(
+          action.payload.votingWeight!,
+          false,
+          state.decimals,
+          state.symbol
+        );
+      }
+
       return {
         ...state,
-        userBalance,
+        ...action.payload,
         userBalanceString,
-        delegatee,
-        votingWeight,
         votingWeightString,
-        isDelegatesSet,
       };
+    }
     case TokenActions.UPDATE_DELEGATEE:
       return { ...state, delegatee: action.payload };
     case TokenActions.UPDATE_VOTING_WEIGHTS:
+      let votingWeightString: string | undefined;
+      if (state.decimals) {
+        votingWeightString = formatCoin(
+          action.payload.votingWeight!,
+          false,
+          state.decimals,
+          state.symbol
+        );
+      }
       return {
         ...state,
         votingWeight: action.payload.votingWeight,
-        votingWeightString: action.payload.votingWeightString,
+        votingWeightString,
       };
-    case TokenActions.UPDATE_VOTING_CONTRACT:
+    case TokenActions.UPDATE_VOTING_CONTRACT: {
       return { ...state, ...action.payload, isLoading: false };
+    }
     case TokenActions.UPDATE_TOKEN_CONTRACT:
       return { ...state, tokenContract: action.payload, isLoading: false };
     case TokenActions.RESET:
@@ -132,6 +102,14 @@ const reducer = (state: IGoveranceTokenData, action: TokenAction) => {
 const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContracts) => {
   const provider = useProvider();
   const { address: account } = useAccount();
+
+  // key: contract address
+  // value: ITokenData, ITokenAccount, VotingTokenConfig
+  const tokenDataCache = useRef<Map<string, GovernanceTokenCache<ITokenData>>>(new Map());
+  const tokenAccountCache = useRef<Map<string, GovernanceTokenCache<TokenAccountRaw>>>(new Map());
+  const votingTokenConfigCache = useRef<
+    Map<string, GovernanceTokenCache<VotingTokenConfig<BigNumber>>>
+  >(new Map());
 
   const { getTimeDuration } = useTimeHelpers();
 
@@ -147,24 +125,39 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     }
 
     (async () => {
-      // @todo handle errors
-      const votingPeriod = await ozLinearVotingContract.asSigner.votingPeriod();
-      const quorumPercentage = await ozLinearVotingContract.asSigner.quorumNumerator();
-      const timeLockPeriod = await ozLinearVotingContract.asSigner.timeLockPeriod();
+      const ozVotingContractAddress = ozLinearVotingContract.asSigner.address;
+      const votingCache = votingTokenConfigCache.current.get(ozVotingContractAddress);
+      let votingData = votingCache?.data;
+      if (
+        !votingCache ||
+        !votingCache.expires ||
+        votingCache.expires > addMinutes(votingCache.expires, TOKEN_DATA_EXPIRATION)
+      ) {
+        const [votingPeriod, quorumPercentage, timeLockPeriod] = await Promise.all([
+          ozLinearVotingContract.asSigner.votingPeriod(),
+          ozLinearVotingContract.asSigner.quorumNumerator(),
+          ozLinearVotingContract.asSigner.timeLockPeriod(),
+        ]);
+        votingData = { votingPeriod, quorumPercentage, timeLockPeriod };
+        votingTokenConfigCache.current.set(ozVotingContractAddress, {
+          data: votingData,
+          expires: addMinutes(new Date(), TOKEN_DATA_EXPIRATION),
+        });
+      }
       dispatch({
         type: TokenActions.UPDATE_VOTING_CONTRACT,
         payload: {
           votingPeriod: {
-            value: votingPeriod,
-            formatted: getTimeDuration(votingPeriod.toString()),
+            value: votingData!.votingPeriod!,
+            formatted: getTimeDuration(votingData!.votingPeriod!.toString()),
           },
           quorumPercentage: {
-            value: quorumPercentage,
-            formatted: quorumPercentage.toString() + '%',
+            value: votingData!.quorumPercentage!,
+            formatted: votingData!.quorumPercentage!.toString() + '%',
           },
           timeLockPeriod: {
-            value: timeLockPeriod,
-            formatted: getTimeDuration(timeLockPeriod.toString()),
+            value: votingData!.timeLockPeriod!,
+            formatted: getTimeDuration(votingData!.timeLockPeriod!.toString()),
           },
         },
       });
@@ -176,51 +169,78 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     if (!tokenContract) {
       return;
     }
-
     (async () => {
-      const tokenName = await tokenContract.asSigner.name();
-      const tokenSymbol = await tokenContract.asSigner.symbol();
-      const tokenDecimals = await tokenContract.asSigner.decimals();
       const tokenAddress = tokenContract.asSigner.address;
-      const totalSupply = await tokenContract.asSigner.totalSupply();
-      dispatch({
-        type: TokenActions.UPDATE_TOKEN,
-        payload: {
+      const tokenCache = tokenDataCache.current.get(tokenContract.asSigner.address);
+      let tokenData = tokenCache?.data;
+      if (
+        !tokenCache ||
+        !tokenCache.expires ||
+        tokenCache.expires > addMinutes(tokenCache.expires, TOKEN_DATA_EXPIRATION)
+      ) {
+        const [tokenName, tokenSymbol, tokenDecimals, totalSupply] = await Promise.all([
+          tokenContract.asSigner.name(),
+          tokenContract.asSigner.symbol(),
+          tokenContract.asSigner.decimals(),
+          tokenContract.asSigner.totalSupply(),
+        ]);
+        tokenData = {
           name: tokenName,
           symbol: tokenSymbol,
           decimals: tokenDecimals,
           address: tokenAddress,
           totalSupply,
-        },
+        };
+        tokenDataCache.current.set(tokenAddress, {
+          data: tokenData,
+          expires: addMinutes(new Date(), TOKEN_DATA_EXPIRATION),
+        });
+      }
+
+      dispatch({
+        type: TokenActions.UPDATE_TOKEN,
+        payload: tokenData!,
       });
     })();
-  }, [tokenContract]);
+  }, [tokenContract, tokenDataCache]);
 
   const getTokenAccount = useCallback(async () => {
     if (!tokenContract || !account) {
       return;
     }
-
-    const tokenBalance = await tokenContract.asSigner.balanceOf(account);
-    const tokenDelegatee = await tokenContract.asSigner.delegates(account);
-    const tokenVotingWeight = await tokenContract.asSigner.getVotes(account);
-    const providerContract = tokenContract.asSigner.connect(provider);
-    const isDelegatesSet = !!(
-      await providerContract.queryFilter(providerContract.filters.DelegateChanged())
-    ).length;
+    const tokenAddress = tokenContract.asSigner.address;
+    const accountCache = tokenAccountCache.current.get(tokenAddress);
+    let tokenAccountData = accountCache?.data;
+    if (
+      !accountCache ||
+      !accountCache.expires ||
+      accountCache.expires > addMinutes(accountCache.expires, USER_ACCOUNT_EXPIRATION)
+    ) {
+      const providerContract = tokenContract.asSigner.connect(provider);
+      const [tokenBalance, tokenDelegatee, tokenVotingWeight, delegateChangeEvents] =
+        await Promise.all([
+          tokenContract.asSigner.balanceOf(account),
+          tokenContract.asSigner.delegates(account),
+          tokenContract.asSigner.getVotes(account),
+          providerContract.queryFilter(providerContract.filters.DelegateChanged()),
+        ]);
+      tokenAccountData = {
+        userBalance: tokenBalance,
+        delegatee: tokenDelegatee,
+        votingWeight: tokenVotingWeight,
+        isDelegatesSet: !!delegateChangeEvents.length,
+      };
+      tokenAccountCache.current.set(tokenAddress, {
+        data: tokenAccountData,
+        expires: addMinutes(new Date(), USER_ACCOUNT_EXPIRATION),
+      });
+    }
 
     dispatch({
       type: TokenActions.UPDATE_ACCOUNT,
-      payload: {
-        userBalance: tokenBalance,
-        userBalanceString: formatCoin(tokenBalance, false, state.decimals, state.symbol),
-        delegatee: tokenDelegatee,
-        votingWeight: tokenVotingWeight,
-        votingWeightString: formatCoin(tokenVotingWeight, false, state.decimals, state.symbol),
-        isDelegatesSet,
-      },
+      payload: tokenAccountData!,
     });
-  }, [tokenContract, account, state.decimals, state.symbol, provider]);
+  }, [tokenContract, account, provider]);
 
   // get token account data
   useEffect(() => {
@@ -292,7 +312,6 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
         type: TokenActions.UPDATE_VOTING_WEIGHTS,
         payload: {
           votingWeight: currentBalance,
-          votingWeightString: formatCoin(currentBalance, true, state.decimals, state.symbol),
         },
       });
     };
@@ -302,7 +321,7 @@ const useTokenData = ({ ozLinearVotingContract, tokenContract }: GovernanceContr
     return () => {
       tokenContract.asSigner.off(filter, callback);
     };
-  }, [account, state.decimals, state.symbol, tokenContract]);
+  }, [account, tokenContract]);
 
   const data = useMemo(() => state, [state]);
   return data;

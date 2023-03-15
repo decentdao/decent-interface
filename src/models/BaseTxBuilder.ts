@@ -1,6 +1,5 @@
 import { ethers } from 'ethers';
-import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
-import { BaseContracts, UsulContracts } from './types/contracts';
+import { BaseContracts, UsulContracts, GnosisDAO, TokenGovernanceDAO, SubDAO } from '../types';
 
 export class BaseTxBuilder {
   protected readonly signerOrProvider: ethers.Signer | any;

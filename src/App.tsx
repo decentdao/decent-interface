@@ -4,6 +4,7 @@ import Header from './components/ui/page/Header';
 import Navigation from './components/ui/page/Navigation';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
 import { useActionToast } from './hooks/toasts/useActionToast';
+import { useDocTitle } from './hooks/utils/useDocTitle';
 import { useFractal } from './providers/Fractal/hooks/useFractal';
 import FractalRoutes from './routes/FractalRoutes';
 import { notProd, testErrorBoundary } from './utils/dev';
@@ -32,6 +33,7 @@ function App() {
     buttonOnClick: acceptAuditWarning,
   });
 
+  useDocTitle();
   localDevConfigs();
 
   return (

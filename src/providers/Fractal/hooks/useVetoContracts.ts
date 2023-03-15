@@ -3,15 +3,16 @@ import { ethers } from 'ethers';
 import { Dispatch, useEffect, useCallback } from 'react';
 import { getEventRPC } from '../../../helpers';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { GnosisAction } from '../constants';
 import {
   GnosisActions,
-  GnosisModuleType,
   IGnosisModuleData,
   IGnosisVetoContract,
   VetoGuardType,
+  GnosisModuleType,
   VetoVotingType,
-} from '../types';
+  GnosisAction,
+} from '../../../types';
+
 import { ContractConnection } from './../../../types/contract';
 
 export function useVetoContracts(

@@ -8,8 +8,8 @@ import {
 } from '../../../../helpers/freezePeriodHelpers';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../../../routes/constants';
+import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {

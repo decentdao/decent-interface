@@ -2,16 +2,18 @@ import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { Dispatch, useEffect, useCallback } from 'react';
 import { useParseSafeTxs } from '../../../../hooks/utils/useParseSafeTxs';
 import { useSafeActivitiesWithState } from '../../../../hooks/utils/useSafeActivitiesWithState';
-import { IGnosis } from '../../types';
-import { GovernanceAction, GovernanceActions } from '../actions';
 import {
   IGovernance,
-  TxProposalState,
-  GovernanceTypes,
-  ActivityEventType,
-  MultisigProposal,
+  IGnosis,
+  GovernanceActions,
   VetoGuardType,
-} from './../types';
+  MultisigProposal,
+  ActivityEventType,
+  TxProposalState,
+  GovernanceAction,
+  GovernanceTypes,
+} from '../../../../types';
+
 interface IUseSafeMultisigTxs {
   governance: IGovernance;
   gnosis: IGnosis;

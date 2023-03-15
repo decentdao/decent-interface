@@ -1,6 +1,5 @@
 import { BigNumber } from 'ethers';
-import { GovernanceTypes } from '../../providers/Fractal/types';
-import { CreatorFormState } from './types';
+import { CreatorFormState, GovernanceTypes } from '../../types';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
@@ -23,7 +22,9 @@ export const initialState: CreatorFormState = {
         },
       },
     ],
-    parentAllocationAmount: undefined,
+    parentAllocationAmount: {
+      value: '',
+    },
   },
   /**
    * Time periods in CreatorState are denoted in MINUTES in the UI,

@@ -11,7 +11,7 @@ import VetoMultisigVoting from '@fractal-framework/fractal-contracts/deployments
 import VotesToken from '@fractal-framework/fractal-contracts/deployments/polygon/VotesToken.json';
 import { polygon } from 'wagmi/chains';
 import polygonDefault from '../../../assets/images/coin-icon-polygon.svg';
-import { NetworkConfig } from '../types';
+import { NetworkConfig } from '../../../types/network';
 
 export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',

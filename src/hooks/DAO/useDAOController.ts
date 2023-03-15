@@ -1,24 +1,17 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useProvider, useSigner, useAccount } from 'wagmi';
-import { GnosisAction, TreasuryAction } from '../../providers/Fractal/constants/actions';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { BASE_ROUTES } from '../../routes/constants';
-import { GovernanceAction } from './../../providers/Fractal/governance/actions';
+import { TreasuryAction, GovernanceAction, GnosisAction } from '../../types';
 import { useSearchDao } from './useSearchDao';
 
 export default function useDAOController() {
   const {
-    gnosis: { safe, safeService },
+    gnosis: { safe },
     dispatches: { gnosisDispatch, governanceDispatch, treasuryDispatch },
   } = useFractal();
   const params = useParams();
-  const provider = useProvider();
-  const { data: signer, isLoading: isProviderLoading } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-
-  const { address: account } = useAccount();
 
   const { errorMessage, address, isLoading, setSearchString } = useSearchDao();
   const navigate = useNavigate();
@@ -27,15 +20,15 @@ export default function useDAOController() {
    * Passes param address to setSearchString
    */
   const loadDAO = useCallback(() => {
-    if (safe.address !== params.address && !isProviderLoading) {
+    if (safe.address !== params.address) {
       setSearchString(params.address!);
     }
-  }, [safe.address, params.address, setSearchString, isProviderLoading]);
+  }, [safe.address, params.address, setSearchString]);
 
   useEffect(() => loadDAO(), [loadDAO]);
 
   useEffect(() => {
-    if (address && signerOrProvider && safeService) {
+    if (address) {
       (async () => {
         treasuryDispatch({
           type: TreasuryAction.RESET,
@@ -48,16 +41,9 @@ export default function useDAOController() {
           payload: address,
         });
       })();
+      return () => {};
     }
-  }, [
-    address,
-    signerOrProvider,
-    account,
-    gnosisDispatch,
-    safeService,
-    governanceDispatch,
-    treasuryDispatch,
-  ]);
+  }, [address, gnosisDispatch, governanceDispatch, treasuryDispatch]);
 
   useEffect(() => {
     if (!isLoading) {

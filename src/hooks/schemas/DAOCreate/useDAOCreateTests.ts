@@ -3,8 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
-import { AddressValidationMap, CreatorFormState } from '../../../components/DaoCreator/types';
-import { TokenAllocation } from '../../../types';
+import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { validateAddress } from '../common/useValidationAddress';
 
 /**
@@ -103,7 +102,9 @@ export function useDAOCreateTests() {
           BigNumber.from(0)
         );
 
-        if (allocationSum.isZero() || allocationSum.add(parentAllocationAmount).gt(tokenSupply)) {
+        const totalAllocation = allocationSum.add(parentAllocationAmount);
+
+        if (totalAllocation.isZero() || totalAllocation.gt(tokenSupply)) {
           return false;
         }
         return true;

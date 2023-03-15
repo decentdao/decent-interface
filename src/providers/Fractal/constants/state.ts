@@ -1,6 +1,11 @@
-import { IGovernance, VetoGuardType, VetoVotingType } from '../governance/types';
-import { IConnectedAccount, IGnosis } from '../types/state';
-import { ITreasury } from '../types/treasury';
+import {
+  IGnosis,
+  VetoVotingType,
+  VetoGuardType,
+  IGovernance,
+  ITreasury,
+  IConnectedAccount,
+} from '../../../types';
 
 export const gnosisInitialState: IGnosis = {
   safeService: undefined,
@@ -20,6 +25,7 @@ export const gnosisInitialState: IGnosis = {
   },
   safe: {},
   isGnosisLoading: true,
+  isNodesLoaded: false,
   daoName: '',
 };
 

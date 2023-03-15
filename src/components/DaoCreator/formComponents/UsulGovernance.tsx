@@ -9,12 +9,12 @@ import {
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { ICreationStepProps, CreatorSteps } from '../../../types';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { ICreationStepProps, CreatorSteps } from '../types';
 
 export function UsulGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;

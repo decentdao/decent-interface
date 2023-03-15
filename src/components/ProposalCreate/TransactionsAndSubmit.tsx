@@ -2,11 +2,9 @@ import { Button, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-
 import { Info } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { Formik } from 'formik';
-import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import { ProposalExecuteData, ProposalFormState } from '../../types/proposal';
-import { TransactionData } from '../../types/transaction';
+import { ProposalFormState, TransactionsAndSubmitProps } from '../../types';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -28,32 +26,6 @@ const defaultProposal: ProposalFormState = {
   },
   nonce: undefined,
 };
-
-export interface TransactionsAndSubmitProps {
-  show: boolean | undefined;
-  showBackButton: boolean;
-  onGoBack: () => void;
-  pendingCreateTx: boolean;
-  submitProposal: ({
-    proposalData,
-    nonce,
-    pendingToastMessage,
-    failedToastMessage,
-    successToastMessage,
-    successCallback,
-  }: {
-    proposalData: ProposalExecuteData | undefined;
-    nonce: number | undefined;
-    pendingToastMessage: string;
-    failedToastMessage: string;
-    successToastMessage: string;
-    successCallback?: ((daoAddress: string) => void) | undefined;
-  }) => Promise<void>;
-  proposalData: ProposalExecuteData | undefined;
-  nonce: number | undefined;
-  successCallback: () => void;
-  setTransactions: Dispatch<SetStateAction<TransactionData[]>>;
-}
 
 function TransactionsAndSubmit({
   show,

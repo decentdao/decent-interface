@@ -5,8 +5,8 @@ import { TitledInfoBox } from '../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import PageHeader from '../../components/ui/page/Header/PageHeader';
-import { GovernanceTypes } from '../../providers/Fractal/governance/types';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../types';
 import { Assets } from './components/Assets';
 import { Transactions } from './components/Transactions';
 
@@ -45,6 +45,7 @@ function Treasury() {
         buttonTestId="link-send-assets"
       />
       <Flex
+        mt="3rem"
         align="start"
         gap="1rem"
         flexWrap="wrap"

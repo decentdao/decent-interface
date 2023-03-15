@@ -1,6 +1,6 @@
 import { BigNumberish, Signer, utils } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
-import { GnosisTransaction } from '../types/gnosis';
+import { GnosisTransaction } from '../../../types';
 
 export const EIP_DOMAIN = {
   EIP712Domain: [
