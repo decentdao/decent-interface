@@ -1,0 +1,8 @@
+sources:
+  - name: fractal
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/43215/fractal-test/v0.0.3
+
+documents:
+  - ./src/graphql/DAO.graphql
