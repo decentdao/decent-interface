@@ -31,20 +31,3 @@ export interface TransactionsAndSubmitProps {
   setTransactions: Dispatch<SetStateAction<TransactionData[]>>;
   removeTransaction: (transactionNumber: number) => void;
 }
-
-export interface UsulMetadataProps {
-  show: boolean;
-  setInputtedMetadata: Dispatch<SetStateAction<boolean>>;
-  metadata: {
-    title: string;
-    description: string;
-    documentationUrl: string;
-  };
-  setMetadata: Dispatch<
-    SetStateAction<{
-      title: string;
-      description: string;
-      documentationUrl: string;
-    }>
-  >;
-}
