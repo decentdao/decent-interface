@@ -1,4 +1,6 @@
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
+import { GraphApolloLink } from '@graphprotocol/client-apollo';
 import { midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
@@ -11,6 +13,7 @@ import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';
 import 'react-toastify/dist/ReactToastify.css';
 import { WagmiConfig } from 'wagmi';
+import * as GraphClient from '../.graphclient';
 import App from './App';
 import { theme } from './assets/theme';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
@@ -24,6 +27,10 @@ import reportWebVitals from './reportWebVitals';
 const container = document.getElementById('root');
 const root = createRoot(container!);
 const queryClient = new QueryClient();
+const graphQLClient = new ApolloClient({
+  link: new GraphApolloLink(GraphClient),
+  cache: new InMemoryCache(),
+});
 
 initErrorLogging();
 
@@ -44,17 +51,19 @@ root.render(
                   theme={midnightTheme()}
                 >
                   <NetworkConfigProvider>
-                    <FractalProvider>
-                      <ToastContainer
-                        position="bottom-center"
-                        closeButton={false}
-                        newestOnTop={false}
-                        pauseOnFocusLoss={false}
-                      />
-                      <ModalProvider>
-                        <App />
-                      </ModalProvider>
-                    </FractalProvider>
+                    <ApolloProvider client={graphQLClient}>
+                      <FractalProvider>
+                        <ToastContainer
+                          position="bottom-center"
+                          closeButton={false}
+                          newestOnTop={false}
+                          pauseOnFocusLoss={false}
+                        />
+                        <ModalProvider>
+                          <App />
+                        </ModalProvider>
+                      </FractalProvider>
+                    </ApolloProvider>
                   </NetworkConfigProvider>
                 </RainbowKitProvider>
               </WagmiConfig>
