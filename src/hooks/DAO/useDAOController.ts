@@ -1,10 +1,9 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { GnosisAction, TreasuryAction } from '../../providers/Fractal/constants/actions';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { BASE_ROUTES } from '../../routes/constants';
-import { GovernanceAction } from './../../providers/Fractal/governance/actions';
+import { TreasuryAction, GovernanceAction, GnosisAction } from '../../types';
 import { useSearchDao } from './useSearchDao';
 
 export default function useDAOController() {

@@ -6,8 +6,7 @@ import { useEffect, useCallback, Dispatch } from 'react';
 // set token claim;
 
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { ContractConnection } from '../../../types';
-import { GovernanceAction, GovernanceActions } from '../governance/actions';
+import { ContractConnection, GovernanceAction, GovernanceActions } from '../../../types';
 
 interface IUseTokenClaim {
   tokenContract?: ContractConnection<VotesToken>;

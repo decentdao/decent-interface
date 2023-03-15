@@ -2,8 +2,8 @@ import { VStack, HStack, Text } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { logError } from '../../helpers/errorLogging';
+import { BigNumberValuePair } from '../../types';
 import { TransactionData } from '../../types/transaction';
-import { BigNumberValuePair } from '../ui/forms/BigNumberInput';
 import { BigNumberComponent, EthAddressComponent, InputComponent } from './InputComponent';
 
 interface TransactionProps {

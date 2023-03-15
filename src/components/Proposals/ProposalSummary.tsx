@@ -6,7 +6,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { UsulProposal } from '../../providers/Fractal/types';
+import { UsulProposal } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';

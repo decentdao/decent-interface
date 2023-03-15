@@ -13,9 +13,9 @@ import PageHeader from '../../components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../constants/common';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../providers/Fractal/types';
 import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
-import { ProposalExecuteData } from '../../types/proposal';
+import { GovernanceTypes } from '../../types';
+import { ProposalExecuteData } from '../../types/daoProposal';
 import { TransactionData } from '../../types/transaction';
 
 const defaultTransaction = {

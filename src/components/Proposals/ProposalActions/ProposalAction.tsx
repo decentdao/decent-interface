@@ -4,13 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import {
-  MultisigProposal,
-  TxProposal,
-  TxProposalState,
-  UsulProposal,
-} from '../../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../../routes/constants';
+import { TxProposal, UsulProposal, TxProposalState, MultisigProposal } from '../../../types';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';

@@ -7,9 +7,14 @@ import {
   isWithinFreezeProposalPeriod,
 } from '../../../helpers/freezePeriodHelpers';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
-import { GnosisAction } from '../constants';
-import { GnosisActions, IGnosisFreezeData, IGnosisVetoContract, VetoVotingType } from '../types';
-import { FreezeVoteCastedListener } from '../types/vetoVotingEvent';
+import {
+  IGnosisVetoContract,
+  GnosisActions,
+  VetoVotingType,
+  IGnosisFreezeData,
+  GnosisAction,
+  FreezeVoteCastedListener,
+} from '../../../types';
 
 export function useFreezeData(
   vetoGuardContract: IGnosisVetoContract,

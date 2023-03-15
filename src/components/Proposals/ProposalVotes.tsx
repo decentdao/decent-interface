@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
+import { ProposalVote, UsulProposal } from '../../types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import StatusBox from '../ui/badges/StatusBox';
 import ContentBox from '../ui/containers/ContentBox';

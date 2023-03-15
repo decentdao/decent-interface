@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { AccountAction } from '../../constants/actions';
+import { AccountAction } from '../../../../types';
 import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
 
 interface IUseAccountAudit {

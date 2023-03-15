@@ -1,12 +1,11 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { GovernanceTypes } from '../../providers/Fractal/types';
+import { DAOTrigger, CreatorFormState, GovernanceTypes } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
 
 import { usePrepareFormData } from './hooks/usePrepareFormData';
-import { CreatorFormState, DAOTrigger } from './types';
 
 function DaoCreator({
   deployDAO,

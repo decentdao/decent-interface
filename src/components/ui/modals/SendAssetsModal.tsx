@@ -7,12 +7,13 @@ import { useTranslation } from 'react-i18next';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { BigNumberValuePair } from '../../../types';
 import {
   formatCoinFromAsset,
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
-import { BigNumberInput, BigNumberValuePair } from '../forms/BigNumberInput';
+import { BigNumberInput } from '../forms/BigNumberInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
 
 export function SendAssetsModal({ close }: { close: () => void }) {

@@ -3,7 +3,7 @@ import { TypedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
-import { TokenDepositEvent, TokenEventType, TokenWithdrawEvent } from '../types';
+import { TokenDepositEvent, TokenWithdrawEvent, TokenEventType } from '../../../types';
 
 const useGnosisEvents = (gnosisSafe?: GnosisSafe) => {
   const [depositEvents, setDepositEvents] = useState<TokenDepositEvent[]>([]);

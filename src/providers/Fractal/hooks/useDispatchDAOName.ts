@@ -1,7 +1,6 @@
 import { Dispatch, useEffect } from 'react';
 import useDAOName from '../../../hooks/DAO/useDAOName';
-import { GnosisAction } from '../constants';
-import { GnosisActions } from '../types';
+import { GnosisActions, GnosisAction } from '../../../types';
 
 export default function useDispatchDAOName({
   address,

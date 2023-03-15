@@ -1,7 +1,7 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { TxProposalState, DAOState } from '../../../providers/Fractal/types';
+import { TxProposalState, DAOState } from '../../../types';
 
 type BadgeType = { [key: string]: { Icon?: any; tooltipKey?: string; bg: string; color: string } };
 

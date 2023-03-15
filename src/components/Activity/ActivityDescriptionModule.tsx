@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { TxProposal } from '../../providers/Fractal/types';
+import { TxProposal } from '../../types';
 import { ActivityAddress } from './ActivityAddress';
 
 export function ActivityDescriptionModule({ activity }: { activity: TxProposal }) {

@@ -12,8 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { TxProposal } from '../../../providers/Fractal/types';
-import { DecodedTransaction } from '../../../types';
+import { DecodedTransaction, TxProposal } from '../../../types';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {
   const { t } = useTranslation('proposal');

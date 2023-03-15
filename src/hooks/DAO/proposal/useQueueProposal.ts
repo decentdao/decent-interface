@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { VetoGuardType } from '../../../providers/Fractal/types';
+import { VetoGuardType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 
 export default function useQueueProposal() {

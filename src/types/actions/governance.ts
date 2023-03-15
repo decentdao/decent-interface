@@ -1,6 +1,8 @@
 import { TokenClaim } from '@fractal-framework/fractal-contracts';
-import { GovernanceContracts, GovernanceTypes, TxProposalsInfo } from '../types';
-import { IGoveranceTokenData } from './hooks/useGovernanceTokenData';
+import { GovernanceTypes } from '../daoGovernance';
+import { TxProposalsInfo } from '../daoProposal';
+import { GovernanceContracts } from '../fractal';
+import { IGoveranceTokenData } from '../votingFungibleToken';
 
 export type GovernanceActions =
   | { type: GovernanceAction.SET_USUL_CONTRACTS; payload: GovernanceContracts }

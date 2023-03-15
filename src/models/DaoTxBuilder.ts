@@ -1,12 +1,16 @@
 import { GnosisSafe } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
 import { buildContractCall, encodeMultiSend } from '../helpers';
-import { SafeTransaction } from '../types';
+import {
+  BaseContracts,
+  GnosisDAO,
+  SafeTransaction,
+  TokenGovernanceDAO,
+  UsulContracts,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
-import { BaseContracts, UsulContracts } from './types/contracts';
 
 const { AddressZero } = ethers.constants;
 

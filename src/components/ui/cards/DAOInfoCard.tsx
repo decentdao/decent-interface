@@ -14,12 +14,8 @@ import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { NodeLineHorizontal } from '../../../pages/FractalNodes/NodeLines';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import {
-  IGnosisFreezeData,
-  IGnosisVetoContract,
-  SafeInfoResponseWithGuard,
-} from '../../../providers/Fractal/types';
 import { DAO_ROUTES } from '../../../routes/constants';
+import { SafeInfoResponseWithGuard, IGnosisFreezeData, IGnosisVetoContract } from '../../../types';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {

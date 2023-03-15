@@ -12,11 +12,10 @@ import { Gear, LabelWrapper } from '@decent-org/fractal-ui';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { TokenAllocation } from '../../../types';
+import { BigNumberValuePair, ICreationStepProps, TokenAllocation } from '../../../types';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput, BigNumberValuePair } from '../../ui/forms/BigNumberInput';
-import { ICreationStepProps } from '../types';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
 
 export function UsulTokenAllocations(props: ICreationStepProps) {

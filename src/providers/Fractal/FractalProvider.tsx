@@ -1,16 +1,15 @@
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
 import { useMatch } from 'react-router-dom';
 import { DAO_ROUTES } from '../../routes/constants';
+import { GnosisAction, TreasuryAction, GovernanceAction } from '../../types';
 import { useNetworkConfg } from '../NetworkConfig/NetworkConfigProvider';
 import {
   gnosisInitialState,
-  governanceInitialState,
   treasuryInitialState,
+  governanceInitialState,
   connectedAccountInitialState,
-  GnosisAction,
-  TreasuryAction,
 } from './constants';
-import { GovernanceAction } from './governance/actions';
+
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';

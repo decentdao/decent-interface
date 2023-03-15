@@ -13,10 +13,10 @@ import { Field, FieldAttributes } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
+import { ICreationStepProps, CreatorSteps } from '../../../types';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { CreatorSteps, ICreationStepProps } from '../types';
 
 export function GnosisMultisig(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);

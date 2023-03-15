@@ -5,7 +5,7 @@ import { ActivityCard } from '../../../components/Activity/ActivityCard';
 import { FreezeButton } from '../../../components/Activity/FreezeButton';
 import { Badge } from '../../../components/ui/badges/Badge';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
-import { DAOState, IGnosisFreezeData } from '../../../providers/Fractal/governance/types';
+import { IGnosisFreezeData, DAOState } from '../../../types';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   const { t } = useTranslation('dashboard');

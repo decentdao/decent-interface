@@ -1,5 +1,5 @@
-import { TreasuryAction, treasuryInitialState } from '../constants';
-import { ITreasury, TreasuryActions } from '../types';
+import { ITreasury, TreasuryActions, TreasuryAction } from '../../../types';
+import { treasuryInitialState } from '../constants';
 
 export const initializeTreasuryState = (_initialState: ITreasury) => {
   return _initialState;

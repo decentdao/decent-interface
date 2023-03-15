@@ -1,8 +1,8 @@
 import { Box, Divider, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
-import { GovernanceTypes } from '../../providers/Fractal/governance/types';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../types';
 import { BarLoader } from '../ui/loaders/BarLoader';
 
 export function ProposalDetails() {

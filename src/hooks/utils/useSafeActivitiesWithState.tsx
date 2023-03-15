@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
 import { checkIsRejected, checkIsApproved } from '../../helpers/activity';
-import { Activity, ActivityEventType, TxProposalState } from '../../providers/Fractal/types';
+import { Activity, ActivityEventType, TxProposalState } from '../../types';
 
 export async function getTxQueuedTimestamp(activity: Activity, vetoGuard: VetoGuard) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;

@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { ICreationStepProps, CreatorSteps } from '../../types';
 import { EstablishEssentials } from './formComponents/EstablishEssentials';
 import { GnosisMultisig } from './formComponents/GnosisMultisig';
 import GuardDetails from './formComponents/GuardDetails';
 import { UsulGovernance } from './formComponents/UsulGovernance';
 import { UsulTokenDetails } from './formComponents/UsulTokenDetails';
-import { ICreationStepProps, CreatorSteps } from './types';
 
 function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) {
   const [step, setStepState] = useState<CreatorSteps>(CreatorSteps.ESSENTIALS);

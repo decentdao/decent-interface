@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { useEffect, useState, useCallback, useMemo } from 'react';
-import { AccountAction } from '../../constants/actions';
+import { AccountAction } from '../../../../types';
 import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
 
 interface IUseFavorites {

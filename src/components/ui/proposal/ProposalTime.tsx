@@ -5,12 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import {
-  TxProposal,
-  UsulProposal,
-  TxProposalState,
-  VetoGuardType,
-} from '../../../providers/Fractal/types';
+import { TxProposal, TxProposalState, UsulProposal, VetoGuardType } from '../../../types';
 
 const ICONS_MAP = {
   vote: Vote,
