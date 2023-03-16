@@ -15,6 +15,8 @@ export function DaoNode({
   safeAddress: string;
   trueDepth: number;
 }) {
+  // TODO: This recursive useFetchNodes is probably bad idea in combination with Subgraph/
+  // @mudrila gonna refactor this
   const { childNodes } = useFetchNodes(safeAddress);
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(!parentSafeAddress);
   const childrenExpansionToggle = () => {
