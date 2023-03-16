@@ -1,47 +1,28 @@
-import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
-import { getEventRPC } from '../../helpers';
 import { getUsulModuleFromModules } from '../../hooks/DAO/proposal/useUsul';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { useGnosisModuleTypes } from '../../providers/Fractal/hooks/useGnosisModuleTypes';
 import { SafeInfoResponseWithGuard } from '../../types';
 
+// TODO: When the whole cycle of tracking events will be implemented in Subgraph
+// We will not need thise hook at all
 export function useFetchNodes(address?: string) {
   const [childNodes, setChildNodes] = useState<SafeInfoResponseWithGuard[]>();
   const provider = useProvider();
   const {
-    fractalRegistryContract,
     gnosisVetoGuardMasterCopyContract,
     usulVetoGuardMasterCopyContract,
     fractalUsulMasterCopyContract,
   } = useSafeContracts();
 
   const {
-    gnosis: { safeService },
+    gnosis: { safeService, hierarchy },
   } = useFractal();
 
   const { lookupModules } = useGnosisModuleTypes(provider.network.chainId);
-
-  const fetchSubDAOAddresses = useCallback(
-    async (parentDAOAddress: string) => {
-      if (!fractalRegistryContract) {
-        return [];
-      }
-      const eventRPC = getEventRPC<FractalRegistry>(
-        fractalRegistryContract!,
-        provider.network.chainId
-      );
-      const filter = eventRPC.filters.FractalSubDAODeclared(parentDAOAddress);
-      const events = await eventRPC.queryFilter(filter);
-      const subDAOsAddresses = events.map(({ args }) => args.subDAOAddress);
-
-      return subDAOsAddresses;
-    },
-    [provider, fractalRegistryContract]
-  );
 
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
@@ -81,34 +62,31 @@ export function useFetchNodes(address?: string) {
     ]
   );
 
-  const fetchSubDAOs = useCallback(
-    async (parentAddress: string) => {
-      const subDAOs: SafeInfoResponseWithGuard[] = [];
-      for await (const subDAOAddress of await fetchSubDAOAddresses(parentAddress)) {
-        const safeInfo = (await safeService!.getSafeInfo(
-          subDAOAddress
-        )) as SafeInfoResponseWithGuard;
-        if (safeInfo.guard) {
-          if (safeInfo.guard === ethers.constants.AddressZero) {
+  const fetchSubDAOs = useCallback(async () => {
+    const subDAOs: SafeInfoResponseWithGuard[] = [];
+    for await (const subDAO of hierarchy) {
+      const safeInfo = (await safeService!.getSafeInfo(
+        subDAO.address
+      )) as SafeInfoResponseWithGuard;
+      if (safeInfo.guard) {
+        if (safeInfo.guard === ethers.constants.AddressZero) {
+          subDAOs.push(safeInfo);
+        } else {
+          const owner = await getDAOOwner(safeInfo);
+          if (owner && owner === address) {
+            // push node address
             subDAOs.push(safeInfo);
-          } else {
-            const owner = await getDAOOwner(safeInfo);
-            if (owner && owner === parentAddress) {
-              // push node address
-              subDAOs.push(safeInfo);
-            }
           }
         }
       }
-      // set subDAOs
-      setChildNodes(subDAOs);
-    },
-    [fetchSubDAOAddresses, getDAOOwner, safeService]
-  );
+    }
+    // set subDAOs
+    setChildNodes(subDAOs);
+  }, [getDAOOwner, safeService, hierarchy, address]);
 
   useEffect(() => {
     if (address) {
-      fetchSubDAOs(address);
+      fetchSubDAOs();
     }
   }, [fetchSubDAOs, address]);
 

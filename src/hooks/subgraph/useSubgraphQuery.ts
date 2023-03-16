@@ -24,7 +24,6 @@ export default function useSubgraphQuery({
       const daos = data.daos;
       const dao = daos[0];
       if (dao) {
-        console.log(dao);
         const { parentAddress, hierarchy } = dao;
         // TODO: This could/should be single dispatch
         gnosisDispatch({ type: GnosisAction.SET_DAO_PARENT, payload: parentAddress });
