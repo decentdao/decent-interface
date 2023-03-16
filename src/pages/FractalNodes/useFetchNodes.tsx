@@ -65,19 +65,23 @@ export function useFetchNodes(address?: string) {
   const fetchSubDAOs = useCallback(async () => {
     const subDAOs: SafeInfoResponseWithGuard[] = [];
     for await (const subDAO of hierarchy) {
-      const safeInfo = (await safeService!.getSafeInfo(
-        subDAO.address
-      )) as SafeInfoResponseWithGuard;
-      if (safeInfo.guard) {
-        if (safeInfo.guard === ethers.constants.AddressZero) {
-          subDAOs.push(safeInfo);
-        } else {
-          const owner = await getDAOOwner(safeInfo);
-          if (owner && owner === address) {
-            // push node address
+      try {
+        const safeInfo = (await safeService!.getSafeInfo(
+          ethers.utils.getAddress(subDAO.address)
+        )) as SafeInfoResponseWithGuard;
+        if (safeInfo.guard) {
+          if (safeInfo.guard === ethers.constants.AddressZero) {
             subDAOs.push(safeInfo);
+          } else {
+            const owner = await getDAOOwner(safeInfo);
+            if (owner && owner === address) {
+              // push node address
+              subDAOs.push(safeInfo);
+            }
           }
         }
+      } catch (e) {
+        console.error('Error while verifying subDAO ownership', e, subDAO);
       }
     }
     // set subDAOs
