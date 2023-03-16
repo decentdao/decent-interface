@@ -15,7 +15,6 @@ export const encodeFunction = (
   try {
     return new utils.Interface([functionSignature]).encodeFunctionData(_functionName, parameters);
   } catch (e) {
-    console.log('🚀 ~ file: contract.ts:18 ~ e:', e);
     return;
   }
 };
