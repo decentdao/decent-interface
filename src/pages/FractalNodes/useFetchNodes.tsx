@@ -1,6 +1,8 @@
+import { useQuery } from '@apollo/client';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
+import { DAOQueryDocument } from '../../.graphclient';
 import { getUsulModuleFromModules } from '../../hooks/DAO/proposal/useUsul';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
@@ -8,7 +10,7 @@ import { useGnosisModuleTypes } from '../../providers/Fractal/hooks/useGnosisMod
 import { SafeInfoResponseWithGuard } from '../../types';
 
 // TODO: When the whole cycle of tracking events will be implemented in Subgraph
-// We will not need thise hook at all
+// We won't need this hook at all
 export function useFetchNodes(address?: string) {
   const [childNodes, setChildNodes] = useState<SafeInfoResponseWithGuard[]>();
   const provider = useProvider();
@@ -19,8 +21,12 @@ export function useFetchNodes(address?: string) {
   } = useSafeContracts();
 
   const {
-    gnosis: { safeService, hierarchy },
+    gnosis: { safeService, safe, hierarchy },
   } = useFractal();
+  const { data, error } = useQuery(DAOQueryDocument, {
+    variables: { daoAddress: address },
+    skip: address === safe.address, // If address === safe.address - we already have hierarchy obtained in the context
+  });
 
   const { lookupModules } = useGnosisModuleTypes(provider.network.chainId);
 
@@ -63,18 +69,24 @@ export function useFetchNodes(address?: string) {
   );
 
   const fetchSubDAOs = useCallback(async () => {
+    const { getAddress } = ethers.utils;
+    let nodes = hierarchy;
+    if (safe.address !== address && data && !error) {
+      // Means we're getting childNodes for current's DAO parent, and not the DAO itself
+      nodes = data.daos[0]?.hierarchy;
+    }
     const subDAOs: SafeInfoResponseWithGuard[] = [];
-    for await (const subDAO of hierarchy) {
+    for await (const subDAO of nodes) {
       try {
         const safeInfo = (await safeService!.getSafeInfo(
-          ethers.utils.getAddress(subDAO.address)
+          getAddress(subDAO.address)
         )) as SafeInfoResponseWithGuard;
         if (safeInfo.guard) {
           if (safeInfo.guard === ethers.constants.AddressZero) {
             subDAOs.push(safeInfo);
           } else {
             const owner = await getDAOOwner(safeInfo);
-            if (owner && owner === address) {
+            if (owner && address && owner === getAddress(address)) {
               // push node address
               subDAOs.push(safeInfo);
             }
@@ -86,7 +98,7 @@ export function useFetchNodes(address?: string) {
     }
     // set subDAOs
     setChildNodes(subDAOs);
-  }, [getDAOOwner, safeService, hierarchy, address]);
+  }, [getDAOOwner, safeService, hierarchy, address, data, error, safe]);
 
   useEffect(() => {
     if (address) {

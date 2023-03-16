@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../components/DaoCreator';
@@ -22,12 +23,12 @@ function DaoCreate() {
       if (!safeService) return;
 
       const daoFound = await requestWithRetries(
-        () => safeService.getSafeCreationInfo(daoAddress),
+        () => safeService.getSafeCreationInfo(ethers.utils.getAddress(daoAddress)),
         5
       );
       if (daoFound) {
-        toggleFavorite(daoAddress);
-        navigate(DAO_ROUTES.dao.relative(daoAddress));
+        toggleFavorite(ethers.utils.getAddress(daoAddress));
+        navigate(DAO_ROUTES.dao.relative(ethers.utils.getAddress(daoAddress)));
       }
     },
     [safeService, requestWithRetries, toggleFavorite, navigate]

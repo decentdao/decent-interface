@@ -60,7 +60,7 @@ export function useGnosisApiServices(
     try {
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS,
-        payload: await safeService.getUsdBalances(address),
+        payload: await safeService.getUsdBalances(ethers.utils.getAddress(address)),
       });
     } catch (e) {
       logError(e);
@@ -74,7 +74,7 @@ export function useGnosisApiServices(
     try {
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,
-        payload: await safeService.getCollectibles(address),
+        payload: await safeService.getCollectibles(ethers.utils.getAddress(address)),
       });
     } catch (e) {
       logError(e);
@@ -105,7 +105,7 @@ export function useGnosisApiServices(
     try {
       gnosisDispatch({
         type: GnosisAction.SET_SAFE_TRANSACTIONS,
-        payload: await safeService.getAllTransactions(address),
+        payload: await safeService.getAllTransactions(ethers.utils.getAddress(address)),
       });
     } catch (e) {
       logError(e);
