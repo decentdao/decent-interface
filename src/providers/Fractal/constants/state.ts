@@ -27,6 +27,7 @@ export const gnosisInitialState: IGnosis = {
   isGnosisLoading: true,
   isNodesLoaded: false,
   daoName: '',
+  hierarchy: [],
 };
 
 export const governanceInitialState: IGovernance = {

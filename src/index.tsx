@@ -13,7 +13,7 @@ import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';
 import 'react-toastify/dist/ReactToastify.css';
 import { WagmiConfig } from 'wagmi';
-import * as GraphClient from '../.graphclient';
+import * as GraphClient from './.graphclient';
 import App from './App';
 import { theme } from './assets/theme';
 import { ModalProvider } from './components/ui/modals/ModalProvider';

@@ -12,6 +12,7 @@ import SafeServiceClient, {
   EthereumTxWithTransfersResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
+import { DAO } from '../.graphclient';
 import { IConnectedAccount } from './account';
 import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
 import { ContractConnection } from './contract';
@@ -70,6 +71,7 @@ export interface IGnosis {
   isGnosisLoading: boolean;
   isNodesLoaded: boolean;
   parentDAOAddress?: string;
+  hierarchy: DAO['hierarchy'];
 }
 
 export interface IGovernance {
