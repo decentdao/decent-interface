@@ -8,96 +8,106 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { ArrowDown, ArrowRight, Trash } from '@decent-org/fractal-ui';
-import { FormikProps } from 'formik';
+import { FormikErrors, FormikProps } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProposalFormState } from '../../types';
-import { TransactionData } from '../../types/transaction';
+import { BigNumberValuePair, CreateProposalForm, CreateProposalTransaction } from '../../types';
 import Transaction from './Transaction';
 
-interface TransactionsProps extends Omit<FormikProps<ProposalFormState>, 'handleSubmit'> {
-  setTransactions: React.Dispatch<React.SetStateAction<TransactionData[]>>;
-  pending: boolean;
-  // removeTransaction: (transactionNumber: number) => void;
+interface TransactionsProps extends FormikProps<CreateProposalForm> {
+  isVisible: boolean;
+  showBackButton: boolean;
+  pendingTransaction: boolean;
 }
-
 function Transactions({
-  values,
+  values: { transactions },
   errors,
   setFieldValue,
-  setTransactions,
-  pending,
+  pendingTransaction,
 }: TransactionsProps) {
-  const { transactions } = values;
-  const updateTransaction = (transactionData: TransactionData, transactionNumber: number) => {
-    const transactionsArr = [...transactions];
-    transactionsArr[transactionNumber] = { ...transactionData };
-    setTransactions(transactionsArr);
-  };
-
   const { t } = useTranslation(['proposal', 'common']);
 
-  function toggleExpanded(transactionNumber: number) {
-    const newTransactionData = Object.assign({}, transactions[transactionNumber]);
-    newTransactionData.isExpanded = !transactions[transactionNumber].isExpanded;
-    updateTransaction(newTransactionData, transactionNumber);
-  }
+  const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 
+  const removeTransaction = (transactionIndex: number) => {
+    const transactionsArr = [...transactions];
+    transactionsArr.splice(transactionIndex, 1);
+    setFieldValue('transactions', transactionsArr);
+  };
   return (
     <Accordion
       allowMultiple
-      index={transactions.map((tr, index) => (tr.isExpanded ? index : -1))}
+      index={expandedIndecies}
     >
-      {transactions.map((transaction, index) => (
-        <AccordionItem
-          key={index}
-          borderTop="none"
-          borderBottom="none"
-        >
-          {({ isExpanded }) => (
-            <Box
-              rounded="lg"
-              p={3}
-              my="2"
-              bg="black.900"
-            >
-              <HStack justify="space-between">
-                <AccordionButton
-                  onClick={() => toggleExpanded(index)}
-                  p={0}
-                  textStyle="text-button-md-semibold"
-                  color="grayscale.100"
-                >
-                  {isExpanded ? <ArrowDown boxSize="1.5rem" /> : <ArrowRight fontSize="1.5rem" />}
-                  {t('transaction')} {index + 1}
-                </AccordionButton>
-                {index !== 0 || transactions.length !== 1 ? (
-                  <IconButton
-                    icon={<Trash boxSize="24px" />}
-                    aria-label={t('removetransactionlabel')}
-                    variant="unstyled"
-                    // onClick={() => removeTransaction(index)}
-                    minWidth="auto"
-                    _hover={{ color: 'gold.500' }}
-                    _disabled={{ opacity: 0.4, cursor: 'default' }}
-                    sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
-                    disabled={pending}
+      {transactions.map((_, index) => {
+        const txErrors = errors?.transactions?.[index] as
+          | FormikErrors<CreateProposalTransaction<BigNumberValuePair>>
+          | undefined;
+        const txAddressError = txErrors?.targetAddress;
+
+        return (
+          <AccordionItem
+            key={index}
+            borderTop="none"
+            borderBottom="none"
+          >
+            {({ isExpanded }) => (
+              <Box
+                rounded="lg"
+                p={3}
+                my="2"
+                bg="black.900"
+              >
+                <HStack justify="space-between">
+                  <AccordionButton
+                    onClick={() => {
+                      setExpandedIndecies(indexArray => {
+                        if (indexArray.includes(index)) {
+                          const newTxArr = [...indexArray];
+                          newTxArr.splice(newTxArr.indexOf(index), 1);
+                          return newTxArr;
+                        } else {
+                          return [...indexArray, index];
+                        }
+                      });
+                    }}
+                    p={0}
+                    textStyle="text-button-md-semibold"
+                    color="grayscale.100"
+                  >
+                    {isExpanded ? <ArrowDown boxSize="1.5rem" /> : <ArrowRight fontSize="1.5rem" />}
+                    {t('transaction')} {index + 1}
+                  </AccordionButton>
+                  {index !== 0 || transactions.length !== 1 ? (
+                    <IconButton
+                      icon={<Trash boxSize="24px" />}
+                      aria-label={t('removetransactionlabel')}
+                      variant="unstyled"
+                      onClick={() => removeTransaction(index)}
+                      minWidth="auto"
+                      _hover={{ color: 'gold.500' }}
+                      _disabled={{ opacity: 0.4, cursor: 'default' }}
+                      sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
+                      disabled={pendingTransaction}
+                    />
+                  ) : (
+                    <Box h="36px" />
+                  )}
+                </HStack>
+                <AccordionPanel p={0}>
+                  <Transaction
+                    transaction={transactions[index]}
+                    txAddressError={txAddressError}
+                    transactionIndex={index}
+                    setFieldValue={setFieldValue}
+                    transactionPending={pendingTransaction}
                   />
-                ) : (
-                  <Box h="36px" />
-                )}
-              </HStack>
-              <AccordionPanel p={0}>
-                <Transaction
-                  transaction={transaction}
-                  transactionNumber={index}
-                  updateTransaction={updateTransaction}
-                  pending={pending}
-                />
-              </AccordionPanel>
-            </Box>
-          )}
-        </AccordionItem>
-      ))}
+                </AccordionPanel>
+              </Box>
+            )}
+          </AccordionItem>
+        );
+      })}
     </Accordion>
   );
 }

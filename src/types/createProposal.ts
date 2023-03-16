@@ -42,9 +42,8 @@ export interface CreateProposalTransaction<T = BigNumberValuePair> {
   targetAddress: string;
   ethValue: T;
   functionName: string;
-  functionSignature?: string;
-  parameters?: string;
-  encodedFunctionData?: string;
+  functionSignature: string;
+  parameters: string;
 }
 
 export type CreateProposalMetadata = {
@@ -56,5 +55,5 @@ export type CreateProposalMetadata = {
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
   proposalMetadata: CreateProposalMetadata;
-  nonce?: Number;
+  nonce?: number;
 };

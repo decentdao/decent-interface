@@ -1,3 +1,4 @@
+import { utils } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
@@ -18,18 +19,38 @@ export const useCreateProposalSchema = () => {
         transactions: Yup.array()
           .min(1)
           .of(
-            Yup.object().shape({
-              targetAddress: Yup.string().test(addressValidationTest),
-              ethValue: Yup.object().shape({
-                value: Yup.string(),
-              }),
-              functionName: Yup.string(),
-              // @add function error handling
-              functionSignature: Yup.string(),
-              parameters: Yup.string(),
-              // @todo use Yup to update this value
-              encodedFunctionData: Yup.string(),
-            })
+            Yup.object()
+              .shape({
+                targetAddress: Yup.string().test(addressValidationTest),
+                ethValue: Yup.object().shape({
+                  value: Yup.string(),
+                }),
+                functionName: Yup.string(),
+                // @add function error handling
+                functionSignature: Yup.string(),
+                parameters: Yup.string(),
+                // @todo use Yup to update this value
+                encodedFunctionData: Yup.string(),
+              })
+              .test({
+                message: t('errorInvalidFragments'),
+                test: value => {
+                  if (!value.functionName) return false;
+                  const functionSignature = `function ${value.functionName}(${value.functionSignature})`;
+                  const parameters = !!value.parameters
+                    ? value.parameters.split(',').map(p => (p = p.trim()))
+                    : undefined;
+                  try {
+                    new utils.Interface([functionSignature]).encodeFunctionData(
+                      value.functionName,
+                      parameters
+                    );
+                    return true;
+                  } catch (e) {
+                    return false;
+                  }
+                },
+              })
           ),
         proposalMetadata: Yup.object().shape({
           title: Yup.string().notRequired(),
