@@ -12,6 +12,7 @@ export interface CreateProposalTransaction<T = BigNumberValuePair> {
   functionName: string;
   functionSignature: string;
   parameters: string;
+  encodedFunctionData?: string;
 }
 
 export type CreateProposalMetadata = {

@@ -8,6 +8,7 @@ interface TransactionProps {
   transactionIndex: number;
   transactionPending: boolean;
   txAddressError?: string;
+  txFunctionError?: string;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void;
 }
 
@@ -16,6 +17,7 @@ function Transaction({
   transactionIndex,
   transactionPending,
   txAddressError,
+  txFunctionError,
   setFieldValue,
 }: TransactionProps) {
   const { t } = useTranslation(['proposal', 'common']);
@@ -70,7 +72,7 @@ function Transaction({
           </HStack>
         }
         // @todo update withn new error messages
-        errorMessage={undefined}
+        errorMessage={transaction.functionName && txFunctionError ? txFunctionError : undefined}
         testId="transaction.functionName"
       />
       <InputComponent
@@ -89,7 +91,9 @@ function Transaction({
           </HStack>
         }
         testId="transaction.functionSignature"
-        errorMessage={undefined}
+        errorMessage={
+          transaction.functionSignature && txFunctionError ? txFunctionError : undefined
+        }
       />
       <InputComponent
         label={t('labelParameters')}
@@ -110,7 +114,9 @@ function Transaction({
           </HStack>
         }
         testId="transaction.parameters"
-        errorMessage={undefined}
+        errorMessage={
+          transaction.functionSignature && txFunctionError ? txFunctionError : undefined
+        }
       />
 
       <BigNumberComponent

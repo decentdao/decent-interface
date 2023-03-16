@@ -5,8 +5,7 @@ export const DEFAULT_TRANSACTION = {
   functionName: '',
   functionSignature: '',
   parameters: '',
-  // isExpanded: true, // @todo move this in a lower component
-  encodedFunctionData: undefined, // @todo use Yup.
+  encodedFunctionData: undefined,
 };
 
 export const DEFAULT_META_DATA = {

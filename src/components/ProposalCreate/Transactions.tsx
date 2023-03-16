@@ -44,6 +44,7 @@ function Transactions({
           | FormikErrors<CreateProposalTransaction<BigNumberValuePair>>
           | undefined;
         const txAddressError = txErrors?.targetAddress;
+        const txFunctionError = txErrors?.encodedFunctionData;
 
         return (
           <AccordionItem
@@ -98,6 +99,7 @@ function Transactions({
                   <Transaction
                     transaction={transactions[index]}
                     txAddressError={txAddressError}
+                    txFunctionError={txFunctionError}
                     transactionIndex={index}
                     setFieldValue={setFieldValue}
                     transactionPending={pendingTransaction}

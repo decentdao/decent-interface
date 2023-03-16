@@ -1,7 +1,7 @@
-import { utils } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
+import { encodeFunction } from '../../../utils/contract';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 /**
@@ -11,7 +11,7 @@ import { useValidationAddress } from '../common/useValidationAddress';
 export const useCreateProposalSchema = () => {
   const { addressValidationTest } = useValidationAddress();
 
-  const { t } = useTranslation(['createProposal']);
+  const { t } = useTranslation(['createProposal', 'proposal']);
 
   const createProposalValidation = useMemo(
     () =>
@@ -19,38 +19,35 @@ export const useCreateProposalSchema = () => {
         transactions: Yup.array()
           .min(1)
           .of(
-            Yup.object()
-              .shape({
-                targetAddress: Yup.string().test(addressValidationTest),
-                ethValue: Yup.object().shape({
-                  value: Yup.string(),
-                }),
-                functionName: Yup.string(),
-                // @add function error handling
-                functionSignature: Yup.string(),
-                parameters: Yup.string(),
-                // @todo use Yup to update this value
-                encodedFunctionData: Yup.string(),
-              })
-              .test({
-                message: t('errorInvalidFragments'),
-                test: value => {
-                  if (!value.functionName) return false;
-                  const functionSignature = `function ${value.functionName}(${value.functionSignature})`;
-                  const parameters = !!value.parameters
-                    ? value.parameters.split(',').map(p => (p = p.trim()))
-                    : undefined;
-                  try {
-                    new utils.Interface([functionSignature]).encodeFunctionData(
-                      value.functionName,
-                      parameters
-                    );
-                    return true;
-                  } catch (e) {
-                    return false;
-                  }
+            Yup.object().shape({
+              targetAddress: Yup.string().test(addressValidationTest),
+              ethValue: Yup.object().shape({
+                value: Yup.string(),
+              }),
+              functionName: Yup.string(),
+              functionSignature: Yup.string(),
+              parameters: Yup.string(),
+              encodedFunctionData: Yup.string().test({
+                message: t('errorInvalidFragments', { ns: 'proposal' }),
+                test: (_, context) => {
+                  const functionName = context.parent.functionName;
+                  const functionSignature = context.parent.functionSignature;
+                  const parameters = context.parent.parameters;
+                  if (!functionName) return false;
+                  const encodedFunction = encodeFunction(
+                    functionName,
+                    functionSignature,
+                    parameters
+                  );
+                  console.log(
+                    '🚀 ~ file: useCreateProposalSchema.ts:42 ~ encodedFunction:',
+                    encodedFunction
+                  );
+
+                  return !!encodedFunction;
                 },
-              })
+              }),
+            })
           ),
         proposalMetadata: Yup.object().shape({
           title: Yup.string().notRequired(),
