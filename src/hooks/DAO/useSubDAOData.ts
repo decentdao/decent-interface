@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { SafeInfoResponseWithGuard } from '../../types';
 import { SubDAOData } from '../../types/daoGeneral';
@@ -15,7 +16,9 @@ export function useSubDAOData(safeAddress?: string) {
     if (!safeService || !safeAddress) {
       return;
     }
-    const safeInfo: SafeInfoResponseWithGuard = await safeService.getSafeInfo(safeAddress);
+    const safeInfo: SafeInfoResponseWithGuard = await safeService.getSafeInfo(
+      ethers.utils.getAddress(safeAddress)
+    );
     if (!safeInfo.guard) {
       return;
     }

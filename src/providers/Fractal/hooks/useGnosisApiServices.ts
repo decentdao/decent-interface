@@ -119,7 +119,7 @@ export function useGnosisApiServices(
     try {
       gnosisDispatch({
         type: GnosisAction.SET_SAFE,
-        payload: await safeService.getSafeInfo(providedSafeAddress),
+        payload: await safeService.getSafeInfo(ethers.utils.getAddress(providedSafeAddress)),
       });
     } catch (e) {
       logError(e);
