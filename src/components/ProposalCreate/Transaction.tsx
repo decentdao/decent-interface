@@ -72,7 +72,7 @@ function Transaction({
           </HStack>
         }
         // @todo update withn new error messages
-        errorMessage={transaction.functionName && txFunctionError ? txFunctionError : undefined}
+        errorMessage={undefined}
         testId="transaction.functionName"
       />
       <InputComponent
