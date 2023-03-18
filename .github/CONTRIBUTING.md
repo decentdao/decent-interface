@@ -30,4 +30,4 @@
 
 ### Submitting Language Translations
 
-- See [TRANSLATIONS.md](./TRANSLATIONS.md) for details on submitting language translations.
+- See [TRANSLATIONS.md](../docs/TRANSLATIONS.md) for details on submitting language translations.
