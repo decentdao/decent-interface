@@ -114,9 +114,7 @@ function Transaction({
           </HStack>
         }
         testId="transaction.parameters"
-        errorMessage={
-          transaction.functionSignature && txFunctionError ? txFunctionError : undefined
-        }
+        errorMessage={transaction.parameters && txFunctionError ? txFunctionError : undefined}
       />
 
       <BigNumberComponent
