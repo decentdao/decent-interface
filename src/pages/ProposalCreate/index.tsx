@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../components/ProposalCreate/ProposalHeader';
-import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsForm';
+import TransactionsForm from '../../components/ProposalCreate/TransactionsForm';
 import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
 import { DEFAULT_PROPOSAL } from '../../components/ProposalCreate/constants';
 import { BarLoader } from '../../components/ui/loaders/BarLoader';
@@ -146,7 +146,7 @@ function ProposalCreate() {
                         setFormState={setFormState}
                         {...formikProps}
                       />
-                      <TransactionsAndSubmit
+                      <TransactionsForm
                         isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                         setFormState={setFormState}
                         showBackButton={type === GovernanceTypes.GNOSIS_SAFE_USUL}
