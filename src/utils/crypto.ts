@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { utils } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
+import { logError } from '../helpers/errorLogging';
 import { buildGnosisApiUrl, parseMultiSendTransactions } from '../providers/Fractal/utils';
 import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../types';
 
@@ -70,6 +71,7 @@ export const encodeFunction = (
   try {
     return new utils.Interface([functionSignature]).encodeFunctionData(_functionName, parameters);
   } catch (e) {
+    logError(e);
     return;
   }
 };
