@@ -50,7 +50,7 @@ function TransactionsForm(props: TransactionsFormProps) {
           status="info"
           w="fit-full"
         >
-          <Info boxSize="24px" />
+          <Info boxSize="1.5rem" />
           <AlertTitle>
             <Text
               textStyle="text-lg-mono-medium"

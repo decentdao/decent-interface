@@ -81,7 +81,7 @@ function Transactions({
                   </AccordionButton>
                   {index !== 0 || transactions.length !== 1 ? (
                     <IconButton
-                      icon={<Trash boxSize="24px" />}
+                      icon={<Trash boxSize="1.5rem" />}
                       aria-label={t('removetransactionlabel')}
                       variant="unstyled"
                       onClick={() => removeTransaction(index)}
@@ -92,7 +92,7 @@ function Transactions({
                       disabled={pendingTransaction}
                     />
                   ) : (
-                    <Box h="36px" />
+                    <Box h="2.25rem" />
                   )}
                 </HStack>
                 <AccordionPanel p={0}>
