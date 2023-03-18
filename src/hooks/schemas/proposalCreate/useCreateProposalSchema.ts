@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { encodeFunction } from '../../../utils/contract';
+import { encodeFunction } from '../../../utils/crypto';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 /**

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { CreateProposalForm } from '../../../types';
-import { encodeFunction } from '../../../utils/contract';
+import { encodeFunction } from '../../../utils/crypto';
 
 export function usePrepareProposal() {
   const prepareProposal = useCallback((values: CreateProposalForm) => {
