@@ -15,7 +15,6 @@ export function NodeLineVertical({
   numberOfSiblings,
   numberOfChildren,
 }: INodeLine) {
-  console.log('🚀 ~ file: NodeLines.tsx:11 ~ numberOfChildren:', numberOfSiblings);
   const showFullLength = useMemo(
     () =>
       (numberOfSiblings && numberOfSiblings >= 1) || (numberOfChildren && numberOfChildren >= 2),
