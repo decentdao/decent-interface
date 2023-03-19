@@ -18,7 +18,6 @@ import SafeServiceClient, {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
-  SafeInfoResponse,
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
@@ -335,10 +334,10 @@ export interface GovernanceContractsRefactored {
 }
 
 export interface FractalNode {
-  daoName: string;
-  daoAddress: string;
-  safe: SafeInfoResponse;
-  parentDAO: FractalNode;
+  daoName: string | null;
+  daoAddress: string | null;
+  safe: SafeInfoResponseWithGuard | null;
+  parentDAO: FractalNode | null;
   fractalModules: FractalModuleData[];
 }
 

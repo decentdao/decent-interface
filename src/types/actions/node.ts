@@ -42,9 +42,3 @@ export type GnosisActions =
   | { type: GnosisAction.SET_DAO_PARENT; payload: string }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
-
-export enum NodeAction {
-  Reset,
-}
-
-export const NodeActions = { type: NodeAction.Reset };
