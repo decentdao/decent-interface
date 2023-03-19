@@ -8,7 +8,7 @@ import EtherscanTransactionLink from '../../../components/ui/links/EtherscanTran
 import { ShortenedAddressLink } from '../../../components/ui/links/ShortenedAddressLink';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { AssetTransfer, TransferType } from '../../../providers/Fractal/types/treasury';
+import { TransferType, AssetTransfer } from '../../../types';
 import {
   TokenEventType,
   TransferDisplayData,

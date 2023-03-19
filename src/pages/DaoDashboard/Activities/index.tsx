@@ -8,8 +8,7 @@ import { EmptyBox } from '../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../components/ui/loaders/InfoBoxLoader';
 import { Sort } from '../../../components/ui/utils/Sort';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { ActivityEventType, TreasuryActivity, TxProposal } from '../../../providers/Fractal/types';
-import { SortBy } from '../../../types';
+import { ActivityEventType, SortBy, TreasuryActivity, TxProposal } from '../../../types';
 import { ActivityFreeze } from './ActivityFreeze';
 import { useActivities } from './hooks/useActivities';
 

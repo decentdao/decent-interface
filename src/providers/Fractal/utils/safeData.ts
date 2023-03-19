@@ -1,6 +1,6 @@
 import { TransferWithTokenInfoResponse } from '@safe-global/safe-service-client';
 import { constants, BigNumber } from 'ethers';
-import { AssetTotals, GnosisTransferType } from '../types';
+import { AssetTotals, GnosisTransferType } from '../../../types';
 
 /**
  * Used for looping for Transfer data retrieved from Safe api to determind a total for each asset in a safe

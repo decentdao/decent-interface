@@ -1,28 +1,21 @@
 import EthersAdapter from '@safe-global/safe-ethers-lib';
-import SafeServiceClient, { TransferResponse } from '@safe-global/safe-service-client';
+import SafeServiceClient from '@safe-global/safe-service-client';
 import axios, { AxiosResponse } from 'axios';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
-import { GnosisAction, TreasuryAction } from '../constants/actions';
-import { GnosisActions, IGnosis, TreasuryActions } from '../types';
+import {
+  IGnosis,
+  TreasuryActions,
+  GnosisActions,
+  GnosisAction,
+  TreasuryAction,
+  AllTransfersListResponse,
+} from '../../../types';
 import { buildGnosisApiUrl } from '../utils';
 import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
 import { useNetworkConfg } from './../../NetworkConfig/NetworkConfigProvider';
-
-/**
- * We generally use SafeServiceClient to make requests to the Safe API, however it does not
- * support the /transfers/ endpoint, so we do that via a normal get request instead.
- *
- * This API is paginated, but for our current usage we take the first page, and in
- * the Treasury page have a component to link to Etherscan in the event they want
- * to see more than the first page of assets.
- */
-export interface AllTransfersListResponse {
-  next: any;
-  results: TransferResponse[];
-}
 
 /**
  * hooks on loading of a Gnosis Module will make requests to Gnosis API endpoints to gather any additional safe information

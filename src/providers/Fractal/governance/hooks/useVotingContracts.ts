@@ -7,10 +7,13 @@ import {
 import { Dispatch, useEffect, useMemo, useCallback } from 'react';
 import { getEventRPC } from '../../../../helpers';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
-import { ContractConnection } from '../../../../types';
-import { GovernanceAction, GovernanceActions } from '../actions';
-import { GnosisModuleType } from '../types';
-import { IGnosis } from './../../types/state';
+import {
+  ContractConnection,
+  GnosisModuleType,
+  GovernanceAction,
+  GovernanceActions,
+  IGnosis,
+} from '../../../../types';
 
 interface IUseVotingContracts {
   gnosis: IGnosis;

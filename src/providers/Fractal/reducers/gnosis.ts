@@ -1,5 +1,5 @@
-import { GnosisAction, gnosisInitialState } from '../constants';
-import { GnosisActions, IGnosis } from '../types';
+import { IGnosis, GnosisActions, GnosisAction } from '../../../types';
+import { gnosisInitialState } from '../constants';
 
 export const initializeGnosisState = (_initialState: IGnosis) => {
   return _initialState;

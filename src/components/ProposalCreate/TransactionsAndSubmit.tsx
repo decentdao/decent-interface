@@ -1,40 +1,8 @@
 import { Button, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
-import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import Transactions from '../../components/ProposalCreate/Transactions';
-import { ProposalExecuteData } from '../../types/proposal';
-import { TransactionData } from '../../types/transaction';
-
-export interface TransactionsAndSubmitProps {
-  show: boolean | undefined;
-  showBackButton: boolean;
-  onGoBack: () => void;
-  addTransaction: () => void;
-  pendingCreateTx: boolean;
-  submitProposal: ({
-    proposalData,
-    nonce,
-    pendingToastMessage,
-    failedToastMessage,
-    successToastMessage,
-    successCallback,
-  }: {
-    proposalData: ProposalExecuteData | undefined;
-    nonce: number | undefined;
-    pendingToastMessage: string;
-    failedToastMessage: string;
-    successToastMessage: string;
-    successCallback?: ((daoAddress: string) => void) | undefined;
-  }) => Promise<void>;
-  proposalData: ProposalExecuteData | undefined;
-  nonce: number | undefined;
-  successCallback: () => void;
-  isCreateDisabled: boolean;
-  transactions: TransactionData[];
-  setTransactions: Dispatch<SetStateAction<TransactionData[]>>;
-  removeTransaction: (transactionNumber: number) => void;
-}
+import { TransactionsAndSubmitProps } from '../../types';
 
 function TransactionsAndSubmit({
   show,

@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useQueueProposal from '../../../hooks/DAO/proposal/useQueueProposal';
-import { TxProposal, TxProposalState } from '../../../providers/Fractal/types';
+import { TxProposal, TxProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 

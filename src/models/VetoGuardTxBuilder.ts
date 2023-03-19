@@ -8,9 +8,8 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { SubDAO } from '../components/DaoCreator/types';
 import { buildContractCall } from '../helpers';
-import { SafeTransaction } from '../types';
+import { BaseContracts, SafeTransaction, SubDAO, UsulContracts } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import {
   buildDeployZodiacModuleTx,
@@ -19,7 +18,6 @@ import {
   generateSalt,
   TIMER_MULT,
 } from './helpers/utils';
-import { BaseContracts, UsulContracts } from './types/contracts';
 
 export class VetoGuardTxBuilder extends BaseTxBuilder {
   // Salt used to generate transactions

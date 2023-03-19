@@ -13,8 +13,8 @@ import { logError } from '../../../helpers/errorLogging';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { MultisigProposal, TxProposalState } from '../../../providers/Fractal/types';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { MultisigProposal, TxProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 

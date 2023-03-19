@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerli } from 'wagmi/chains';
+import { NetworkConfig } from '../../types/network';
 import { goerliConfig } from './networks';
-import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',

@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GnosisModuleType, SafeInfoResponseWithGuard } from '../../providers/Fractal/types';
+import { SafeInfoResponseWithGuard, GnosisModuleType } from '../../types';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {

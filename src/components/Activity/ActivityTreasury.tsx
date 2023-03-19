@@ -3,7 +3,7 @@ import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { TreasuryActivity, ActivityEventType } from '../../providers/Fractal/types';
+import { TreasuryActivity, ActivityEventType } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
 import { ActivityCard } from './ActivityCard';

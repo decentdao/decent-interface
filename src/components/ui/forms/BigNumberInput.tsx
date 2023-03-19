@@ -1,11 +1,7 @@
 import { FormControlOptions, Input, InputElementProps } from '@chakra-ui/react';
 import { utils, BigNumber, constants } from 'ethers';
 import { useState, useCallback, useEffect } from 'react';
-
-export interface BigNumberValuePair {
-  value: string;
-  bigNumberValue?: BigNumber;
-}
+import { BigNumberValuePair } from '../../../types';
 
 export interface BigNumberInputProps
   extends Omit<InputElementProps, 'value' | 'onChange'>,
