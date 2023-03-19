@@ -9,6 +9,9 @@ interface INodeLine {
   numberOfChildren?: number;
 }
 
+const INFO_CARD_FULL_LENGTH = '7.45rem'; // + some margin
+const INFO_CARD_HALF_LENGTH = `calc(${INFO_CARD_FULL_LENGTH} / 2)`;
+
 export function NodeLineVertical({
   isCurrentDAO,
   trueDepth = 0,
@@ -25,14 +28,14 @@ export function NodeLineVertical({
     if (showFullLength) {
       return '100%';
     }
-    return '3.35rem';
+    return INFO_CARD_HALF_LENGTH;
   }, [showFullLength]);
 
   return (
     <>
       <Box
         position="absolute"
-        h="calc(100% - 7.75rem)"
+        h={`calc(100% - ${INFO_CARD_FULL_LENGTH})`}
         w="100%"
         zIndex={-1 - trueDepth}
         bottom={0}
