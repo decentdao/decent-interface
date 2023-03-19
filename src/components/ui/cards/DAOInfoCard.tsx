@@ -135,6 +135,7 @@ export function DAOInfoCard({
             onClick={() => copyToClipboard(safeAddress)}
             gap="0.5rem"
             cursor="pointer"
+            w="fit-content"
           >
             <Text
               textStyle="text-base-mono-regular"
