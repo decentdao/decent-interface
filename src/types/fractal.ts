@@ -4,19 +4,31 @@ import {
   OZLinearVoting,
   TokenClaim,
   VotesToken,
+  UsulVetoGuard,
+  VetoERC20Voting,
+  VetoGuard,
+  VetoMultisigVoting,
+  FractalRegistry,
+  GnosisSafe,
+  GnosisSafeProxyFactory,
+  ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
   AllTransactionsListResponse,
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
+  SafeInfoResponse,
+  SafeBalanceUsdResponse,
+  SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
-import { BigNumber } from 'ethers';
-import { IConnectedAccount } from './account';
+import { BigNumber, Transaction } from 'ethers';
+import { MultiSend } from '../assets/typechain-types/usul';
+import { FractalAudit, FractalFavorites, IConnectedAccount, VotesTokenData } from './account';
 import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
 import { ContractConnection } from './contract';
 import { CreateDAOFunc } from './createDAO';
-import { GovernanceTypes } from './daoGovernance';
+import { GovernanceTypes, VetoGuardType, VetoVotingType } from './daoGovernance';
 import { IGnosisVetoContract } from './daoGuard';
 import {
   CreateProposalFunc,
@@ -26,8 +38,8 @@ import {
   UsulProposal,
 } from './daoProposal';
 import { ITreasury, TreasuryActivity } from './daoTreasury';
-import { SafeInfoResponseWithGuard } from './safeGlobal';
-import { IGoveranceTokenData } from './votingFungibleToken';
+import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
+import { BNFormattedPair, IGoveranceTokenData } from './votingFungibleToken';
 
 export enum GnosisModuleType {
   USUL,
@@ -287,4 +299,127 @@ export interface ITokenAccount {
   votingWeight: BigNumber | undefined;
   votingWeightString: string | undefined;
   isDelegatesSet: boolean | undefined;
+}
+
+// ! below this line is the refactored types
+
+export interface Fractal {
+  node: FractalNode; // holds the main identifing data for the current fractal node
+  guard: FreezeGuard; // holds the guard for the current fractal node; note maybe this should stay generic?; how does this scale?
+  governance: AzuriousGovernance | SafeMultisigGovernance; // extendable class type with Governance Base interface
+  treasury: FractalTreasury; // Treasury
+  account: FractalAccount; // Account
+  baseContracts: FractalContracts; // useSafeContracts should just load here...
+  governanceContracts: GovernanceContractsRefactored;
+  guardContracts: FractalGuardContracts;
+  nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
+  clients: FractalClients; // third party services
+}
+
+export interface FractalAccount {
+  votesToken?: VotesTokenData;
+  favorites: FractalFavorites;
+  audit: FractalAudit;
+}
+
+export interface FractalClients {
+  safeService: SafeServiceClient;
+  // @todo graph service would go here
+}
+
+// @todo rename to GovernanceContracts
+export interface GovernanceContractsRefactored {
+  ozLinearVotingContract: ContractConnection<OZLinearVoting>;
+  usulContract: ContractConnection<FractalUsul>;
+  tokenContract: ContractConnection<VotesToken>;
+}
+
+export interface FractalNode {
+  daoName: string;
+  daoAddress: string;
+  safe: SafeInfoResponse;
+  parentDAO: FractalNode;
+  fractalModules: FractalModuleData[];
+}
+
+export interface FractalModuleData {
+  moduleContract: FractalUsul | FractalModule | undefined;
+  moduleAddress: string; // address
+  moduleType: FractalModuleType; // ENUM
+}
+
+export enum FractalModuleType {
+  USUL,
+  FRACTAL,
+  UNKNOWN,
+}
+
+export interface FractalGuardContracts {
+  vetoGuardContract: ContractConnection<VetoGuard | UsulVetoGuard> | undefined;
+  vetoVotingContract: ContractConnection<VetoERC20Voting | VetoMultisigVoting> | undefined;
+  vetoGuardType: VetoGuardType;
+  vetoVotingType: VetoVotingType;
+}
+
+export interface FreezeGuard {
+  freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
+  freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
+  freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
+  freezeProposalPeriod: BigNumber; // Number of blocks a freeze proposal has to succeed
+  freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  userHasFreezeVoted: boolean;
+  isFrozen: boolean;
+  userHasVotes: boolean;
+}
+
+export interface FractalTreasury {
+  transactions: Transaction[];
+  assetsFungible: SafeBalanceUsdResponse[];
+  assetsNonFungible: SafeCollectibleResponse[];
+  transfers?: AllTransfersListResponse;
+}
+
+export interface AzuriousGovernance extends FractalGovernance {
+  votesStrategy?: [VotesStrategyAzurious];
+}
+export interface SafeMultisigGovernance extends FractalGovernance {}
+
+export interface FractalGovernance {
+  type: StrategyType;
+  proposals: {};
+}
+
+export interface VotesStrategyAzurious extends VotesStrategy {}
+
+export interface VotesStrategy<Type = BNFormattedPair> {
+  votingPeriod?: Type;
+  quorumPercentage?: Type;
+  timeLockPeriod?: Type;
+}
+
+export enum StrategyType {
+  GNOSIS_SAFE = 'labelMultisigGov',
+  GNOSIS_SAFE_USUL = 'labelUsulGov',
+}
+
+export interface NodeHierarchy {
+  parentNodes: FractalNode[];
+  childNodes: FractalNode[];
+}
+
+export interface FractalContracts {
+  multiSendContract: ContractConnection<MultiSend>;
+  gnosisSafeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
+  fractalUsulMasterCopyContract: ContractConnection<FractalUsul>;
+  linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>;
+  gnosisSafeSingletonContract: ContractConnection<GnosisSafe>;
+  zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
+  fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
+  fractalRegistryContract: ContractConnection<FractalRegistry>;
+  gnosisVetoGuardMasterCopyContract: ContractConnection<VetoGuard>;
+  usulVetoGuardMasterCopyContract: ContractConnection<UsulVetoGuard>;
+  vetoMultisigVotingMasterCopyContract: ContractConnection<VetoMultisigVoting>;
+  vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
+  votesTokenMasterCopyContract: ContractConnection<VotesToken>;
+  claimingMasterCopyContract: ContractConnection<TokenClaim>;
 }
