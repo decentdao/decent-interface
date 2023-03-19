@@ -1,17 +1,39 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { useMemo } from 'react';
 
 interface INodeLine {
   isCurrentDAO?: boolean;
   trueDepth?: number;
   isFirstChild?: boolean;
+  numberOfSiblings?: number;
+  numberOfChildren?: number;
 }
 
-export function NodeLineVertical({ isCurrentDAO, trueDepth = 0 }: INodeLine) {
+export function NodeLineVertical({
+  isCurrentDAO,
+  trueDepth = 0,
+  numberOfSiblings,
+  numberOfChildren,
+}: INodeLine) {
+  console.log('🚀 ~ file: NodeLines.tsx:11 ~ numberOfChildren:', numberOfSiblings);
+  const showFullLength = useMemo(
+    () =>
+      (numberOfSiblings && numberOfSiblings >= 1) || (numberOfChildren && numberOfChildren >= 2),
+    [numberOfSiblings, numberOfChildren]
+  );
+
+  const lineHeight = useMemo(() => {
+    if (showFullLength) {
+      return '100%';
+    }
+    return '3.5rem';
+  }, [showFullLength]);
+
   return (
     <>
       <Box
         position="absolute"
-        h="calc(100% - 8.5rem)"
+        h="calc(100% - 7.75rem)"
         w="100%"
         zIndex={-1 - trueDepth}
         bottom={0}
@@ -28,12 +50,13 @@ export function NodeLineVertical({ isCurrentDAO, trueDepth = 0 }: INodeLine) {
             mb={1}
             position="absolute"
             zIndex={2}
-            bg={isCurrentDAO ? 'gold.500' : 'chocolate.400'}
+            bg={isCurrentDAO && trueDepth === 0 ? 'gold.500' : 'chocolate.400'}
           />
           <Box
             position="absolute"
-            bottom={0}
-            height="100%"
+            bottom={showFullLength ? 0 : undefined}
+            top={showFullLength ? undefined : 0}
+            h={lineHeight}
             bg="chocolate.400"
             mb="3.3rem"
             w="1px"
