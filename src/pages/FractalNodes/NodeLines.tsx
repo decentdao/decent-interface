@@ -11,10 +11,10 @@ export function NodeLineVertical({ trueDepth = 0 }: INodeLine) {
     <>
       <Box
         position="absolute"
-        h="100%"
+        h="calc(100% - 6.75rem)"
         w="100%"
         zIndex={-1 - trueDepth}
-        top={0}
+        bottom={0}
         overflow="hidden"
       >
         <Box
