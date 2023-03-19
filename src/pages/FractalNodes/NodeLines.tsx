@@ -6,12 +6,12 @@ interface INodeLine {
   isFirstChild?: boolean;
 }
 
-export function NodeLineVertical({ trueDepth = 0 }: INodeLine) {
+export function NodeLineVertical({ isCurrentDAO, trueDepth = 0 }: INodeLine) {
   return (
     <>
       <Box
         position="absolute"
-        h="calc(100% - 6.75rem)"
+        h="calc(100% - 8.5rem)"
         w="100%"
         zIndex={-1 - trueDepth}
         bottom={0}
@@ -21,6 +21,15 @@ export function NodeLineVertical({ trueDepth = 0 }: INodeLine) {
           position="relative"
           height="100%"
         >
+          <Box
+            borderRadius="100%"
+            boxSize="7px"
+            ml="1.85rem"
+            mb={1}
+            position="absolute"
+            zIndex={2}
+            bg={isCurrentDAO ? 'gold.500' : 'chocolate.400'}
+          />
           <Box
             position="absolute"
             bottom={0}
