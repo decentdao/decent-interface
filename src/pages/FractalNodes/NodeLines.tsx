@@ -25,7 +25,7 @@ export function NodeLineVertical({
     if (showFullLength) {
       return '100%';
     }
-    return '3.5rem';
+    return '3.35rem';
   }, [showFullLength]);
 
   return (
