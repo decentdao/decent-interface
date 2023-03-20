@@ -25,7 +25,7 @@ export default function Document() {
         />
         <link
           rel="apple-touch-icon"
-          href="/logo192.png"
+          href="/images/logo192.png"
         />
         <link
           rel="manifest"

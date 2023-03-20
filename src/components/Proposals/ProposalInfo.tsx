@@ -1,5 +1,4 @@
 import { Box, Flex, Link, Text, Image } from '@chakra-ui/react';
-import externalLink from '../../assets/images/external-link.svg';
 import { TxProposal, UsulProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import { ModalType } from '../ui/modals/ModalProvider';
@@ -31,7 +30,7 @@ export function ProposalInfo({ proposal }: { proposal: TxProposal }) {
           >
             <Flex>
               <Image
-                src={externalLink}
+                src="/images/external-link.svg"
                 alt={'Test'}
                 w="1rem"
                 h="1rem"

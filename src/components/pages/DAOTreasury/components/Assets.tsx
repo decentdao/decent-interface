@@ -4,8 +4,6 @@ import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
-import coinDefault from '../../../assets/images/coin-icon-default.svg';
-import nftDefault from '../../../assets/images/nft-image-default.svg';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../../ui/links/EtherscanLinkNFT';
 import EtherscanLinkToken from '../../../ui/links/EtherscanLinkToken';
@@ -66,7 +64,7 @@ function CoinRow({
         <HStack marginEnd="1rem">
           <Image
             src={asset.iconUri}
-            fallbackSrc={coinDefault}
+            fallbackSrc="/images/coin-icon-default.svg"
             alt={asset.symbol}
             w="1rem"
             h="1rem"
@@ -160,7 +158,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
       >
         <Image
           src={image}
-          fallbackSrc={nftDefault}
+          fallbackSrc="/images/nft-image-default.svg"
           alt={name}
           w="3rem"
           h="3rem"

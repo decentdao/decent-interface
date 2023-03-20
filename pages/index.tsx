@@ -102,7 +102,7 @@ export default function HomePage() {
             priority
             width={252}
             height={48}
-            src="/fractal-text-logo.svg"
+            src="/images/fractal-text-logo.svg"
             alt="Fractal Logo"
           />
         </Box>

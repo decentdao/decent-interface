@@ -1,7 +1,6 @@
 import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TransferType, TokenInfo, AssetTransfer } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
-import coinDefault from '../../../assets/images/coin-icon-default.svg';
 
 export enum TokenEventType {
   DEPOSIT,
@@ -42,7 +41,7 @@ export function useFormatTransfers(
         imageSrc = nativeTokenIcon;
         break;
       default:
-        imageSrc = coinDefault;
+        imageSrc = '/images/coin-icon-default.svg';
     }
     let symbol = transfer.tokenInfo === null ? nativeTokenSymbol : transfer.tokenInfo.symbol;
     const formatted: TransferDisplayData = {

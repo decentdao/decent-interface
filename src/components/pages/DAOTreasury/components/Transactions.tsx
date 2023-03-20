@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import { TransferType, AssetTransfer } from '../../../../types';
-import coinDefault from '../../../assets/images/coin-icon-default.svg';
-import nftDefault from '../../../assets/images/nft-image-default.svg';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
 import EtherscanTransactionLink from '../../../ui/links/EtherscanTransactionLink';
 import { ShortenedAddressLink } from '../../../ui/links/ShortenedAddressLink';
@@ -57,7 +55,9 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
           <Image
             src={displayData.image}
             fallbackSrc={
-              displayData.transferType === TransferType.ERC721_TRANSFER ? nftDefault : coinDefault
+              displayData.transferType === TransferType.ERC721_TRANSFER
+                ? '/images/nft-image-default.svg'
+                : '/images/coin-icon-default.svg'
             }
             alt={displayData.assetDisplay}
             w="1.5rem"
