@@ -22,7 +22,9 @@ import SafeServiceClient, {
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber, Transaction } from 'ethers';
+import { Dispatch } from 'react';
 import { MultiSend } from '../assets/typechain-types/usul';
+import { NodeActions } from './../providers/App/node/action';
 import { FractalAudit, FractalFavorites, IConnectedAccount, VotesTokenData } from './account';
 import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
 import { ContractConnection } from './contract';
@@ -301,7 +303,23 @@ export interface ITokenAccount {
 }
 
 // ! below this line is the refactored types
-
+export interface FractalStore
+  extends Omit<
+    Fractal,
+    | 'guard'
+    | 'governance'
+    | 'treasury'
+    | 'account'
+    | 'baseContracts'
+    | 'governanceContracts'
+    | 'guardContracts'
+    | 'nodeHierarchy'
+    | 'clients'
+  > {
+  dispatch: {
+    node: Dispatch<NodeActions>;
+  };
+}
 export interface Fractal {
   node: FractalNode; // holds the main identifing data for the current fractal node
   guard: FreezeGuard; // holds the guard for the current fractal node; note maybe this should stay generic?; how does this scale?
@@ -337,7 +355,6 @@ export interface FractalNode {
   daoName: string | null;
   daoAddress: string | null;
   safe: SafeInfoResponseWithGuard | null;
-  parentDAO: FractalNode | null;
   fractalModules: FractalModuleData[];
 }
 

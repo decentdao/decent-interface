@@ -1,16 +1,23 @@
-import { Context, createContext, useContext, useReducer } from 'react';
-import { Fractal } from '../../types';
+import { Context, createContext, useContext, useMemo, useReducer } from 'react';
+import { FractalStore } from '../../types';
 import { initialNodeState, nodeReducer } from './node/reducer';
 
-export const FractalContext = createContext<Fractal | null>(null);
+export const FractalContext = createContext<FractalStore | null>(null);
 
-export const useFractal = (): Fractal => useContext(FractalContext as Context<Fractal>);
+export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
 
 export function AppProvider() {
-  // @todo this file will setup reducers states and handle dispatching actions to the reducers.
-
-  // node state
+  // handles current viewing node (DAO) state
   const [node, nodeDispatch] = useReducer(nodeReducer, initialNodeState);
 
-  return <FractalContext.Provider value={{} as Fractal}></FractalContext.Provider>;
+  const fractalStore: FractalStore = useMemo(() => {
+    return {
+      node,
+      dispatch: {
+        node: nodeDispatch,
+      },
+    };
+  }, [node]);
+
+  return <FractalContext.Provider value={fractalStore}></FractalContext.Provider>;
 }
