@@ -2,13 +2,13 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { DAO_ROUTES } from '../../../../routes/constants';
 import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 

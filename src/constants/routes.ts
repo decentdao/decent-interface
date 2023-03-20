@@ -1,3 +1,8 @@
+export const BASE_ROUTES = {
+  landing: '/',
+  create: '/create',
+};
+
 type RouteInfo = { relative: (...args: any) => string; path: string };
 type RouteIndex = { [key: string]: RouteInfo };
 export interface DAORoutes extends RouteIndex {

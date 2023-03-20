@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../../../routes/constants';
 import { InfoBox } from '../../../ui/containers/InfoBox';
 import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';

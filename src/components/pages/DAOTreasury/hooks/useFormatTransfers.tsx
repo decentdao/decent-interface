@@ -1,7 +1,7 @@
+import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { TransferType, TokenInfo, AssetTransfer } from '../../../../types';
+import { formatCoin } from '../../../../utils/numberFormats';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { TransferType, TokenInfo, AssetTransfer } from '../../../types';
-import { formatCoin } from '../../../utils/numberFormats';
 
 export enum TokenEventType {
   DEPOSIT,

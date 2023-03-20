@@ -5,7 +5,9 @@ import { TokenClaim } from '../../../src/components/pages/DaoDashboard/TokenClai
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
 
 export default function DaoDashboardPage() {
-  useDAOController();
+  // TODO: There's a good place for improvement - using Next.js experimental layouts feature
+  // However, given that it is still experimental - there will be better timing to introduce them
+  useDAOController(); // Then such "global" hooks are gonna be lying in single-usage place
   return (
     <Box mt={12}>
       <Info />

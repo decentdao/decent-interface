@@ -4,19 +4,20 @@ import { BigNumber } from 'ethers';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
-import { ProposalHeader } from '../../components/ProposalCreate/ProposalHeader';
-import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
-import UsulMetadata from '../../components/ProposalCreate/UsulMetadata';
-import { BarLoader } from '../../components/ui/loaders/BarLoader';
-import PageHeader from '../../components/ui/page/Header/PageHeader';
-import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../constants/common';
-import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
-import { GovernanceTypes } from '../../types';
-import { ProposalExecuteData } from '../../types/daoProposal';
-import { TransactionData } from '../../types/transaction';
+import { ProposalDetails } from '../../../../src/components/ProposalCreate/ProposalDetails';
+import { ProposalHeader } from '../../../../src/components/ProposalCreate/ProposalHeader';
+import TransactionsAndSubmit from '../../../../src/components/ProposalCreate/TransactionsAndSubmit';
+import UsulMetadata from '../../../../src/components/ProposalCreate/UsulMetadata';
+import { BarLoader } from '../../../../src/components/ui/loaders/BarLoader';
+import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
+import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../../../src/constants/common';
+import { BASE_ROUTES, DAO_ROUTES } from '../../../../src/constants/routes';
+import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
+import useDAOController from '../../../../src/hooks/DAO/useDAOController';
+import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../../../src/types';
+import { ProposalExecuteData } from '../../../../src/types/daoProposal';
+import { TransactionData } from '../../../../src/types/transaction';
 
 const defaultTransaction = {
   targetAddress: '',
@@ -32,7 +33,8 @@ const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
   "details"`;
 
-function ProposalCreate() {
+export default function ProposalCreate() {
+  useDAOController();
   const {
     gnosis: { safe },
     governance: { type },
@@ -237,5 +239,3 @@ function ProposalCreate() {
     </Box>
   );
 }
-
-export default ProposalCreate;

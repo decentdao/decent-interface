@@ -1,7 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { formatCoin, formatUSD } from '../../../utils/numberFormats';
+import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
 
 export interface TokenDisplayData {
   iconUri: string;

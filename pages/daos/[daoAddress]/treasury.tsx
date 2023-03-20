@@ -1,16 +1,18 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { TitledInfoBox } from '../../components/ui/containers/TitledInfoBox';
-import { ModalType } from '../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../components/ui/modals/useFractalModal';
-import PageHeader from '../../components/ui/page/Header/PageHeader';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../types';
-import { Assets } from './components/Assets';
-import { Transactions } from './components/Transactions';
+import { Assets } from '../../../src/components/pages/DAOTreasury/components/Assets';
+import { Transactions } from '../../../src/components/pages/DAOTreasury/components/Transactions';
+import { TitledInfoBox } from '../../../src/components/ui/containers/TitledInfoBox';
+import { ModalType } from '../../../src/components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../../src/components/ui/modals/useFractalModal';
+import PageHeader from '../../../src/components/ui/page/Header/PageHeader';
+import useDAOController from '../../../src/hooks/DAO/useDAOController';
+import { useFractal } from '../../../src/providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../../src/types';
 
-function Treasury() {
+export default function Treasury() {
+  useDAOController();
   const {
     gnosis: {
       safe: { owners },
@@ -68,4 +70,3 @@ function Treasury() {
     </Box>
   );
 }
-export default Treasury;

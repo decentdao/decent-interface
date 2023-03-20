@@ -15,8 +15,8 @@ import { FractalBrandBurger, FractalBrand } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES } from '../../../../routes/constants';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { NavigationLinks } from './NavigationLinks';
 

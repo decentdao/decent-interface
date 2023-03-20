@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import DaoCreator from '../src/components/DaoCreator';
+import { DAO_ROUTES } from '../src/constants/routes';
 import useDeployDAO from '../src/hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../src/hooks/utils/useAsyncRetry';
 import { useFractal } from '../src/providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../src/routes/constants';
 import { GnosisDAO, TokenGovernanceDAO } from '../src/types';
 
 export default function DaoCreatePage() {

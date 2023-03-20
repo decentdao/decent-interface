@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
-import { DAO_ROUTES } from '../../routes/constants';
+import { DAO_ROUTES } from '../../constants/routes';
 import { GnosisAction, TreasuryAction, GovernanceAction } from '../../types';
 import { useNetworkConfg } from '../NetworkConfig/NetworkConfigProvider';
 import {
@@ -9,7 +9,6 @@ import {
   governanceInitialState,
   connectedAccountInitialState,
 } from './constants';
-
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';

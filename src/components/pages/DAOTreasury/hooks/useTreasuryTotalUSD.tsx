@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { formatUSD } from '../../../utils/numberFormats';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { formatUSD } from '../../../../utils/numberFormats';
 
 export function useTreasuryTotalUSD(): string {
   const {

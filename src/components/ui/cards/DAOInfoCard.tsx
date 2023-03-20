@@ -8,12 +8,12 @@ import {
 } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
+import { DAO_ROUTES } from '../../../constants/routes';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../../routes/constants';
 import { SafeInfoResponseWithGuard, IGnosisFreezeData, IGnosisVetoContract } from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';

@@ -1,8 +1,8 @@
 import { MenuItem, Text } from '@chakra-ui/react';
 import { StarGoldSolid } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/router';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
-import { DAO_ROUTES } from '../../../../routes/constants';
 
 interface IFavorite {
   address: string;

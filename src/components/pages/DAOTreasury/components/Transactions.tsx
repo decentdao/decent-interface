@@ -1,14 +1,14 @@
 import { Box, Divider, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/react';
 import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { useDateTimeDisplay } from '../../../../helpers/dateTime';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { TransferType, AssetTransfer } from '../../../../types';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
 import nftDefault from '../../../assets/images/nft-image-default.svg';
-import EtherscanLinkAddress from '../../../components/ui/links/EtherscanLinkAddress';
-import EtherscanTransactionLink from '../../../components/ui/links/EtherscanTransactionLink';
-import { ShortenedAddressLink } from '../../../components/ui/links/ShortenedAddressLink';
-import { useDateTimeDisplay } from '../../../helpers/dateTime';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { TransferType, AssetTransfer } from '../../../types';
+import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../../../ui/links/EtherscanTransactionLink';
+import { ShortenedAddressLink } from '../../../ui/links/ShortenedAddressLink';
 import {
   TokenEventType,
   TransferDisplayData,

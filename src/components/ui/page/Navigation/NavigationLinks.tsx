@@ -8,9 +8,9 @@ import {
   Discord,
   Documents,
 } from '@decent-org/fractal-ui';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
 import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
-import { DAO_ROUTES } from '../../../../routes/constants';
 import { NavigationExternalLink } from './NavigationExternalLink';
 import { NavigationLink } from './NavigationLink';
 

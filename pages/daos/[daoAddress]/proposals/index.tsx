@@ -3,14 +3,16 @@ import { AddPlus } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import Proposals from '../../components/Proposals';
-import { ModalType } from '../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../components/ui/modals/useFractalModal';
-import PageHeader from '../../components/ui/page/Header/PageHeader';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../types';
+import Proposals from '../../../../src/components/Proposals';
+import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
+import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
+import useDAOController from '../../../../src/hooks/DAO/useDAOController';
+import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../../../src/types';
 
-export function Governance() {
+export default function ProposalsPage() {
+  useDAOController();
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance: { type, governanceToken },

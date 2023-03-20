@@ -3,8 +3,8 @@ import { Trash } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import PageHeader from '../ui/page/Header/PageHeader';
 
 interface IStepWrapper {

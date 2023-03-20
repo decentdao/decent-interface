@@ -1,8 +1,8 @@
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'react-i18next';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { DAO_ROUTES } from '../../../../routes/constants/dao';
 
 interface ISearchDisplay {
   loading?: boolean;

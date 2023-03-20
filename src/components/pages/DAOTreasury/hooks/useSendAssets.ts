@@ -2,9 +2,9 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
-import { ProposalExecuteData } from '../../../types';
-import { formatCoin } from '../../../utils/numberFormats';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { ProposalExecuteData } from '../../../../types';
+import { formatCoin } from '../../../../utils/numberFormats';
 
 const useSendAssets = ({
   transferAmount,

@@ -7,8 +7,8 @@ import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
-import { BASE_ROUTES } from '../src/routes/constants';
 
 interface IconWithTextProps {
   icon: ReactNode;

@@ -2,13 +2,13 @@ import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
 import coinDefault from '../../../assets/images/coin-icon-default.svg';
 import nftDefault from '../../../assets/images/nft-image-default.svg';
-import EtherscanLinkAddress from '../../../components/ui/links/EtherscanLinkAddress';
-import EtherscanLinkNFT from '../../../components/ui/links/EtherscanLinkNFT';
-import EtherscanLinkToken from '../../../components/ui/links/EtherscanLinkToken';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { formatPercentage, formatUSD } from '../../../utils/numberFormats';
+import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
+import EtherscanLinkNFT from '../../../ui/links/EtherscanLinkNFT';
+import EtherscanLinkToken from '../../../ui/links/EtherscanLinkToken';
 import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
 function CoinHeader() {

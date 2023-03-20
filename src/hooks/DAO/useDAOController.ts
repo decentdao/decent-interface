@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { BASE_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES } from '../../routes/constants';
 import { TreasuryAction, GovernanceAction, GnosisAction } from '../../types';
 import { useSearchDao } from './useSearchDao';
 
