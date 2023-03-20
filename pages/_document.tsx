@@ -1,7 +1,20 @@
 import { ColorModeScript } from '@chakra-ui/react';
 import { Html, Main, Head, NextScript } from 'next/document';
+import Script from 'next/script';
 
 export default function Document() {
+  const noOverlayWorkaroundScript = `
+    window.addEventListener('error', event => {
+      event.stopImmediatePropagation()
+    })
+
+    window.addEventListener('unhandledrejection', event => {
+      event.stopImmediatePropagation()
+    })
+  `;
+  // Yessir - this sucks. See https://github.com/vercel/next.js/discussions/13387
+  // The reason for using this is that ChakraUI + Next.js v13 doesn't work really well in terms of SSR.
+  // This should get better with Next.js v14 - when app/ directory will become part of core API and ChakraUI folks would support that.
   return (
     <Html>
       <Head>
@@ -59,6 +72,13 @@ export default function Document() {
           property="og:site_name"
           content="Fractal"
         />
+        {process.env.NODE_ENV !== 'production' && (
+          <Script
+            strategy="beforeInteractive"
+            id="disable-nextjs-error-popup"
+            dangerouslySetInnerHTML={{ __html: noOverlayWorkaroundScript }}
+          />
+        )}
       </Head>
       <body>
         {/* Make Color mode to persists when you refresh the page. */}
