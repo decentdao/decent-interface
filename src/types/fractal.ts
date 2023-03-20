@@ -306,17 +306,15 @@ export interface ITokenAccount {
 export interface FractalStore
   extends Omit<
     Fractal,
-    | 'guard'
     | 'governance'
     | 'treasury'
     | 'account'
-    | 'baseContracts'
     | 'governanceContracts'
     | 'guardContracts'
     | 'nodeHierarchy'
-    | 'clients'
   > {
   baseContracts: FractalContracts; // useSafeContracts should just load here...
+  clients: FractalClients; // third party services
   dispatch: {
     node: Dispatch<NodeActions>;
   };
@@ -330,7 +328,6 @@ export interface Fractal {
   governanceContracts: GovernanceContractsRefactored;
   guardContracts: FractalGuardContracts;
   nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
-  clients: FractalClients; // third party services
 }
 
 export interface FractalAccount {
@@ -378,11 +375,11 @@ export interface FractalGuardContracts {
 }
 
 export interface FreezeGuard {
-  freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
-  freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
-  freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
-  freezeProposalPeriod: BigNumber; // Number of blocks a freeze proposal has to succeed
-  freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  freezeVotesThreshold: BigNumber | null; // Number of freeze votes required to activate a freeze
+  freezeProposalCreatedTime: BigNumber | null; // Block number the freeze proposal was created at
+  freezeProposalVoteCount: BigNumber | null; // Number of accrued freeze votes
+  freezeProposalPeriod: BigNumber | null; // Number of blocks a freeze proposal has to succeed
+  freezePeriod: BigNumber | null; // Number of blocks a freeze lasts, from time of freeze proposal creation
   userHasFreezeVoted: boolean;
   isFrozen: boolean;
   userHasVotes: boolean;
