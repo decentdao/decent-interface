@@ -6,6 +6,7 @@ export const FractalContext = createContext<FractalStore | null>(null);
 
 export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
 
+// @RENAME to FractalProvider
 export function AppProvider() {
   // handles current viewing node (DAO) state
   const [node, nodeDispatch] = useReducer(nodeReducer, initialNodeState);

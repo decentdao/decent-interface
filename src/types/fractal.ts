@@ -344,7 +344,7 @@ export interface FractalClients {
   // @todo graph service would go here
 }
 
-// @todo rename to GovernanceContracts
+// @RENAME -> GovernanceContracts
 export interface GovernanceContractsRefactored {
   ozLinearVotingContract: ContractConnection<OZLinearVoting>;
   usulContract: ContractConnection<FractalUsul>;
