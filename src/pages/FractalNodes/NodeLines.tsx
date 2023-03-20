@@ -1,20 +1,44 @@
 import { Box, Flex } from '@chakra-ui/react';
+import { useMemo } from 'react';
 
 interface INodeLine {
   isCurrentDAO?: boolean;
   trueDepth?: number;
   isFirstChild?: boolean;
+  numberOfSiblings?: number;
+  numberOfChildren?: number;
 }
 
-export function NodeLineVertical({ trueDepth = 0 }: INodeLine) {
+const INFO_CARD_FULL_LENGTH = '7.45rem'; // + some margin
+const INFO_CARD_HALF_LENGTH = `calc(${INFO_CARD_FULL_LENGTH} / 2)`;
+
+export function NodeLineVertical({
+  isCurrentDAO,
+  trueDepth = 0,
+  numberOfSiblings,
+  numberOfChildren,
+}: INodeLine) {
+  const showFullLength = useMemo(
+    () =>
+      (numberOfSiblings && numberOfSiblings >= 1) || (numberOfChildren && numberOfChildren >= 2),
+    [numberOfSiblings, numberOfChildren]
+  );
+
+  const lineHeight = useMemo(() => {
+    if (showFullLength) {
+      return '100%';
+    }
+    return INFO_CARD_HALF_LENGTH;
+  }, [showFullLength]);
+
   return (
     <>
       <Box
         position="absolute"
-        h="100%"
+        h={`calc(100% - ${INFO_CARD_FULL_LENGTH})`}
         w="100%"
         zIndex={-1 - trueDepth}
-        top={0}
+        bottom={0}
         overflow="hidden"
       >
         <Box
@@ -22,9 +46,19 @@ export function NodeLineVertical({ trueDepth = 0 }: INodeLine) {
           height="100%"
         >
           <Box
+            borderRadius="100%"
+            boxSize="7px"
+            ml="1.85rem"
+            mb={1}
             position="absolute"
-            bottom={0}
-            height="100%"
+            zIndex={2}
+            bg={isCurrentDAO && trueDepth === 0 ? 'gold.500' : 'chocolate.400'}
+          />
+          <Box
+            position="absolute"
+            bottom={showFullLength ? 0 : undefined}
+            top={showFullLength ? undefined : 0}
+            h={lineHeight}
             bg="chocolate.400"
             mb="3.3rem"
             w="1px"

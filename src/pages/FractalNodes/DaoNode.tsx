@@ -10,10 +10,12 @@ export function DaoNode({
   parentSafeAddress,
   safeAddress,
   trueDepth,
+  numberOfSiblings,
 }: {
   parentSafeAddress?: string;
   safeAddress: string;
   trueDepth: number;
+  numberOfSiblings?: number;
 }) {
   const { childNodes } = useFetchNodes(safeAddress);
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(!parentSafeAddress);
@@ -42,6 +44,8 @@ export function DaoNode({
       />
       <NodeLineVertical
         trueDepth={trueDepth}
+        numberOfSiblings={numberOfSiblings}
+        numberOfChildren={childNodes?.length}
         isCurrentDAO={currentDAOAddress === safeAddress}
       />
 
@@ -56,6 +60,7 @@ export function DaoNode({
               safeAddress={node.address}
               parentSafeAddress={safeAddress}
               trueDepth={trueDepth + 1}
+              numberOfSiblings={childNodes.length}
             />
           </Box>
         ))}
