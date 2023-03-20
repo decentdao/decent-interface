@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { BarLoader } from '../../../ui/loaders/BarLoader';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 export function InfoGovernance() {
   const { t } = useTranslation(['dashboard', 'daoCreate']);

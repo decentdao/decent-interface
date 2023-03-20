@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Proposals } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { BarLoader } from '../../../ui/loaders/BarLoader';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 interface IDAOGovernance {}
 

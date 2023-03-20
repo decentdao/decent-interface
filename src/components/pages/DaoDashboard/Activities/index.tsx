@@ -1,14 +1,14 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { ActivityEventType, SortBy, TreasuryActivity, TxProposal } from '../../../../types';
 import { ActivityGovernance } from '../../../Activity/ActivityGovernance';
 import { ActivityModule } from '../../../Activity/ActivityModule';
 import { ActivityTreasury } from '../../../Activity/ActivityTreasury';
 import { EmptyBox } from '../../../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../ui/loaders/InfoBoxLoader';
 import { Sort } from '../../../ui/utils/Sort';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { ActivityEventType, SortBy, TreasuryActivity, TxProposal } from '../../../../types';
 import { ActivityFreeze } from './ActivityFreeze';
 import { useActivities } from './hooks/useActivities';
 

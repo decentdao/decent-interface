@@ -6,7 +6,7 @@ import SubDaoCreate from '../pages/SubDaoCreate';
 import Treasury from '../pages/Treasury';
 import { DAO_ROUTES } from './constants';
 
-function DAOSubRoutes() {
+export default function DAOSubRoutes() {
   return (
     <Routes>
       <Route
