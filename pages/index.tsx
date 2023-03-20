@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import logo from '../src/assets/images/fractal-next-logo.svg';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
 import { BASE_ROUTES } from '../src/routes/constants';
 
@@ -99,7 +98,9 @@ export default function Home() {
       >
         <Box marginBottom="3.5rem">
           <NextImage
-            src={logo}
+            width={252}
+            height={48}
+            src="/fractal-text-logo.svg"
             alt="Fractal Logo"
           />
         </Box>

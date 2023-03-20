@@ -4,10 +4,6 @@ import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
-
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
-import 'react-toastify/dist/ReactToastify.css';
 import { WagmiConfig } from 'wagmi';
 import { theme } from '../src/assets/theme';
 import { ModalProvider } from '../src/components/ui/modals/ModalProvider';
