@@ -35,7 +35,7 @@ export function NavigationLinks({
             my={8}
           >
             <NavigationLink
-              to={DAO_ROUTES.dao.relative(address)}
+              href={DAO_ROUTES.dao.relative(address)}
               labelKey="home"
               testId="navigation-daoHomeLink"
               routeKey="dao"
@@ -43,7 +43,7 @@ export function NavigationLinks({
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              to={DAO_ROUTES.nodes.relative(address)}
+              href={DAO_ROUTES.nodes.relative(address)}
               labelKey="nodes"
               testId="navigation-hierarchy"
               routeKey="nodes"
@@ -51,7 +51,7 @@ export function NavigationLinks({
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              to={DAO_ROUTES.proposals.relative(address)}
+              href={DAO_ROUTES.proposals.relative(address)}
               labelKey="proposals"
               testId="navigation-proposalsLink"
               routeKey="proposals"
@@ -59,7 +59,7 @@ export function NavigationLinks({
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              to={DAO_ROUTES.treasury.relative(address)}
+              href={DAO_ROUTES.treasury.relative(address)}
               labelKey="treasury"
               testId="navigation-treasuryLink"
               routeKey="treasury"

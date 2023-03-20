@@ -8,7 +8,7 @@ export function initErrorLogging() {
   // Used for remote error reporting
   // https://sentry.io/organizations/decent-mg/issues/
   Sentry.init({
-    dsn: process.env.REACT_APP_SENTRY_DSN || '',
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || '',
     integrations: [new BrowserTracing()],
 
     // Setting tracesSampleRate to 1.0 captures 100%

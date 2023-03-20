@@ -26,10 +26,10 @@ jobs:
           npm install
           npm run build
         env:
-          REACT_APP_INFURA_API_KEY: ${{ secrets.REACT_APP_INFURA_API_KEY }}
-          REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
-          REACT_APP_SITE_URL: ${{ secrets.REACT_APP_SITE_URL }}
-          REACT_APP_REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_REACT_APP_SENTRY_DSN }}
+          NEXT_PUBLIC_INFURA_API_KEY: ${{ secrets.NEXT_PUBLIC_INFURA_API_KEY }}
+          NEXT_PUBLIC_ALCHEMY_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_NEXT_PUBLIC_SENTRY_DSN }}
 
       - name: IPFS Pinata deploy GitHub action
         uses: decent-dao/ipfs-pinata-deploy-action@v2.0.1

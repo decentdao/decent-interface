@@ -1,8 +1,8 @@
 import { Box, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
+import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
 import PageHeader from '../ui/page/Header/PageHeader';
@@ -21,7 +21,7 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
     },
   } = useFractal();
   const { t } = useTranslation(['daoCreate']);
-  const navigate = useNavigate();
+  const { push } = useRouter();
   return (
     <Box>
       <PageHeader
@@ -35,9 +35,7 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
         ButtonIcon={Trash}
         buttonVariant="secondary"
         isButtonDisabled={isFormSubmitting}
-        buttonClick={() =>
-          navigate(!isSubDAO ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(address))
-        }
+        buttonClick={() => push(!isSubDAO ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(address))}
       />
       <Text
         textStyle="text-2xl-mono-regular"

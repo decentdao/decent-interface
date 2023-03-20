@@ -18,7 +18,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
+    "incremental": true
   },
   "exclude": [
     "docker"
@@ -26,5 +27,6 @@
   "include": [
     "src",
     "tests",
+    "pages"
   ]
 }

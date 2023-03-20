@@ -1,6 +1,6 @@
 import { MenuItem, Text } from '@chakra-ui/react';
 import { StarGoldSolid } from '@decent-org/fractal-ui';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { DAO_ROUTES } from '../../../../routes/constants';
 
@@ -10,7 +10,7 @@ interface IFavorite {
 export function Favorite({ address }: IFavorite) {
   const { daoRegistryName } = useDAOName({ address });
 
-  const navigate = useNavigate();
+  const { push } = useRouter();
 
   return (
     <MenuItem
@@ -19,7 +19,7 @@ export function Favorite({ address }: IFavorite) {
       gap="2"
       width="full"
       px="0px"
-      onClick={() => navigate(DAO_ROUTES.dao.relative(address))}
+      onClick={() => push(DAO_ROUTES.dao.relative(address))}
       data-testid={'favorites-' + daoRegistryName}
     >
       <StarGoldSolid />

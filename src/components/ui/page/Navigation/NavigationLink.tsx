@@ -1,13 +1,12 @@
 import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
-import { constants } from 'ethers';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useMatch } from 'react-router-dom';
-import { DAO_ROUTES } from '../../../../routes/constants';
 import { NavigationTooltip } from './NavigationTooltip';
 
 interface INavigationLink {
-  to: string;
+  href: string;
   labelKey: string;
   tooltipKey?: string;
   testId: string;
@@ -25,17 +24,14 @@ export function NavigationLink({
   routeKey,
   tooltipKey,
   closeDrawer,
+  href,
   ...rest
 }: INavigationLink) {
   const tooltipTranslationKey = tooltipKey || labelKey;
 
   const { t } = useTranslation('navigation');
-  const patternString = !routeKey
-    ? constants.AddressZero
-    : routeKey === 'dao'
-    ? 'daos/:address'
-    : `daos/:address/${DAO_ROUTES[routeKey].path}/*`;
-  const match = useMatch(patternString);
+  const { asPath } = useRouter();
+  const match = asPath === href;
 
   const activeColors = useCallback(() => {
     let isActive = !!match;
@@ -51,6 +47,7 @@ export function NavigationLink({
       <Link
         data-testid={testId}
         aria-label={t(tooltipTranslationKey)}
+        href={href}
         {...rest}
         onClick={closeDrawer}
       >

@@ -1,5 +1,5 @@
+import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
-import { useMatch } from 'react-router-dom';
 import { DAO_ROUTES } from '../../routes/constants';
 import { GnosisAction, TreasuryAction, GovernanceAction } from '../../types';
 import { useNetworkConfg } from '../NetworkConfig/NetworkConfigProvider';
@@ -28,6 +28,7 @@ import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
  */
 export function FractalProvider({ children }: { children: ReactNode }) {
   const { chainId } = useNetworkConfg();
+  const { asPath } = useRouter();
 
   const [gnosis, gnosisDispatch] = useReducer(
     gnosisReducer,
@@ -78,7 +79,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useNodes({ gnosis, gnosisDispatch, chainId });
   const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
-  const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
+  const isViewingDAO = asPath === DAO_ROUTES.daos.path;
   useEffect(() => {
     // Resets Fractal state when not viewing DAO
     if (!isViewingDAO) {

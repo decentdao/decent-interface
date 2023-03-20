@@ -1,23 +1,12 @@
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
-import './i18n';
-import Header from './components/ui/page/Header';
-import Navigation from './components/ui/page/Navigation';
-import { CONTENT_HEIGHT, HEADER_HEIGHT } from './constants/common';
-import { useActionToast } from './hooks/toasts/useActionToast';
-import { useDocTitle } from './hooks/utils/useDocTitle';
-import { useFractal } from './providers/Fractal/hooks/useFractal';
-import FractalRoutes from './routes/FractalRoutes';
-import { notProd, testErrorBoundary } from './utils/dev';
+import { PropsWithChildren } from 'react';
+import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
+import { useActionToast } from '../../../../hooks/toasts/useActionToast';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import Header from '../Header';
+import Navigation from '../Navigation';
 
-function localDevConfigs() {
-  if (notProd()) {
-    if (process.env.REACT_APP_TEST_ERROR_BOUNDARY === 'true') {
-      testErrorBoundary();
-    }
-  }
-}
-
-function App() {
+export default function Layout({ children }: PropsWithChildren<{}>) {
   const {
     account: {
       audit: { hasAccepted, acceptAuditWarning },
@@ -32,17 +21,13 @@ function App() {
     buttonTranslationKey: 'accept',
     buttonOnClick: acceptAuditWarning,
   });
-
-  useDocTitle();
-  localDevConfigs();
-
   return (
     <Grid
       templateAreas={{
         base: `"nav header"
-        "main main"`,
+"main main"`,
         md: `"nav header"
-        "nav main"`,
+"nav main"`,
       }}
       gridTemplateColumns="4.25rem 1fr"
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
@@ -59,7 +44,7 @@ function App() {
           minH={CONTENT_HEIGHT}
           paddingBottom="2rem"
         >
-          <FractalRoutes />
+          {children}
         </Container>
       </GridItem>
       <GridItem area={'header'}>
@@ -90,5 +75,3 @@ function App() {
     </Grid>
   );
 }
-
-export default App;
