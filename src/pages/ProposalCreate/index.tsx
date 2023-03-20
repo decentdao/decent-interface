@@ -1,9 +1,9 @@
 import { Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../components/ProposalCreate/ProposalHeader';
 import TransactionsAndSubmit from '../../components/ProposalCreate/TransactionsAndSubmit';
@@ -45,7 +45,7 @@ function ProposalCreate() {
   ]);
   const [proposalData, setProposalData] = useState<ProposalExecuteData>();
   const [nonce, setNonce] = useState<number>();
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const [showTransactionsAndSubmit, setShowTransactionsAndSubmit] = useState<boolean>();
   const [inputtedMetadata, setInputtedMetadata] = useState<boolean>(false);
@@ -80,7 +80,7 @@ function ProposalCreate() {
     setProposalData(undefined);
 
     if (safe) {
-      navigate(`/daos/${safe.address}/proposals`);
+      push(`/daos/${safe.address}/proposals`);
     }
   };
 
@@ -166,7 +166,7 @@ function ProposalCreate() {
         ButtonIcon={Trash}
         buttonVariant="secondary"
         buttonClick={() =>
-          navigate(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
+          push(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
         }
         isButtonDisabled={pendingCreateTx}
       />

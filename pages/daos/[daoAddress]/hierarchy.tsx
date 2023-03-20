@@ -1,12 +1,12 @@
 import { Box, Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { BarLoader } from '../../components/ui/loaders/BarLoader';
-import PageHeader from '../../components/ui/page/Header/PageHeader';
-import { HEADER_HEIGHT } from '../../constants/common';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { DaoNode } from './DaoNode';
+import { DaoNode } from '../../../src/components/pages/DaoHierarchy/DaoNode';
+import { BarLoader } from '../../../src/components/ui/loaders/BarLoader';
+import PageHeader from '../../../src/components/ui/page/Header/PageHeader';
+import { HEADER_HEIGHT } from '../../../src/constants/common';
+import { useFractal } from '../../../src/providers/Fractal/hooks/useFractal';
 
-export function FractalNodes() {
+export default function HierarchyPage() {
   const {
     gnosis: { safe, parentDAOAddress },
   } = useFractal();

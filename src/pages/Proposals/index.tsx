@@ -1,7 +1,7 @@
 import { Box, Button, Show } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import Proposals from '../../components/Proposals';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
@@ -43,7 +43,7 @@ export function Governance() {
         buttonTestId="link-delegate"
       >
         {showCreateButton && (
-          <Link to="new">
+          <Link href="new">
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

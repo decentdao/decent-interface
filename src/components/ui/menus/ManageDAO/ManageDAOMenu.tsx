@@ -1,7 +1,7 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
+import { useRouter } from 'next/router';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
@@ -25,7 +25,7 @@ export function ManageDAOMenu({
   freezeData,
   guardContracts,
 }: IManageDAOMenu) {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { handleClawBack } = useClawBack({
     parentSafeAddress,
@@ -35,7 +35,7 @@ export function ManageDAOMenu({
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
-      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+      onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
     if (
       freezeData &&
@@ -75,7 +75,7 @@ export function ManageDAOMenu({
     } else {
       return [createSubDAOOption];
     }
-  }, [safeAddress, navigate, guardContracts, handleClawBack, freezeData, currentTime]);
+  }, [safeAddress, push, guardContracts, handleClawBack, freezeData, currentTime]);
 
   return (
     <OptionMenu

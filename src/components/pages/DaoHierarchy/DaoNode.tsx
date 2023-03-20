@@ -1,8 +1,8 @@
 import { Box } from '@chakra-ui/react';
 import { useState } from 'react';
-import { DAONodeCard } from '../../components/ui/cards/DAOInfoCard';
-import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { DAONodeCard } from '../../ui/cards/DAOInfoCard';
+import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import { NodeLineVertical } from './NodeLines';
 import { useFetchNodes } from './useFetchNodes';
 

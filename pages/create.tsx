@@ -1,14 +1,14 @@
+import { useRouter } from 'next/router';
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import DaoCreator from '../../components/DaoCreator';
-import useDeployDAO from '../../hooks/DAO/useDeployDAO';
-import { useAsyncRetry } from '../../hooks/utils/useAsyncRetry';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../routes/constants';
-import { GnosisDAO, TokenGovernanceDAO } from '../../types';
+import DaoCreator from '../src/components/DaoCreator';
+import useDeployDAO from '../src/hooks/DAO/useDeployDAO';
+import { useAsyncRetry } from '../src/hooks/utils/useAsyncRetry';
+import { useFractal } from '../src/providers/Fractal/hooks/useFractal';
+import { DAO_ROUTES } from '../src/routes/constants';
+import { GnosisDAO, TokenGovernanceDAO } from '../src/types';
 
-function DaoCreate() {
-  const navigate = useNavigate();
+export default function DaoCreatePage() {
+  const { push } = useRouter();
   const { requestWithRetries } = useAsyncRetry();
   const {
     gnosis: { safeService },
@@ -27,10 +27,10 @@ function DaoCreate() {
       );
       if (daoFound) {
         toggleFavorite(daoAddress);
-        navigate(DAO_ROUTES.dao.relative(daoAddress));
+        push(DAO_ROUTES.dao.relative(daoAddress));
       }
     },
-    [safeService, requestWithRetries, toggleFavorite, navigate]
+    [safeService, requestWithRetries, toggleFavorite, push]
   );
 
   const [deploy, pending] = useDeployDAO();
@@ -46,5 +46,3 @@ function DaoCreate() {
     />
   );
 }
-
-export default DaoCreate;

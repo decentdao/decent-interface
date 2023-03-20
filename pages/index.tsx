@@ -1,4 +1,5 @@
 import { Box, Center, Flex, HStack, Text, Link, Button } from '@chakra-ui/react';
+// import { Link } from '@chakra-ui/next-js'
 import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import NextImage from 'next/image';
@@ -82,7 +83,7 @@ function InfoLinks() {
   );
 }
 
-export default function Home() {
+export default function HomePage() {
   const { t } = useTranslation('daoCreate');
   const { address: account } = useAccount();
   const { openConnectModal } = useConnectModal();
@@ -98,6 +99,7 @@ export default function Home() {
       >
         <Box marginBottom="3.5rem">
           <NextImage
+            priority
             width={252}
             height={48}
             src="/fractal-text-logo.svg"

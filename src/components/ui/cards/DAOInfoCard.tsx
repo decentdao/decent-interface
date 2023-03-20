@@ -6,16 +6,16 @@ import {
   Copy,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { NodeLineHorizontal } from '../../../pages/FractalNodes/NodeLines';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { DAO_ROUTES } from '../../../routes/constants';
 import { SafeInfoResponseWithGuard, IGnosisFreezeData, IGnosisVetoContract } from '../../../types';
+import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
@@ -97,7 +97,7 @@ export function DAOInfoCard({
             gap="0.5rem"
             flexWrap="wrap"
           >
-            <Link to={DAO_ROUTES.dao.relative(safeAddress)}>
+            <Link href={DAO_ROUTES.dao.relative(safeAddress)}>
               <Text
                 as="h1"
                 textStyle="text-2xl-mono-regular"
@@ -118,7 +118,7 @@ export function DAOInfoCard({
               onClick={() => toggleFavorite(safeAddress)}
             />
             {!!numberOfChildrenDAO && (
-              <Link to={DAO_ROUTES.nodes.relative(safeAddress)}>
+              <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
                 <Box
                   bg="chocolate.500"
                   borderRadius="4px"

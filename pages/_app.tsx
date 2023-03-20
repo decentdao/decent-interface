@@ -1,3 +1,4 @@
+import { CacheProvider } from '@chakra-ui/next-js';
 import { ChakraProvider } from '@chakra-ui/react';
 import { midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import type { AppProps } from 'next/app';
@@ -39,33 +40,35 @@ export default function App({ Component, pageProps }: AppProps) {
         />
         <title>Fractal</title>
       </Head>
-      <ChakraProvider theme={theme}>
-        <FractalErrorBoundary fallback={<ErrorFallback />}>
-          <WagmiConfig client={wagmiClient}>
-            <RainbowKitProvider
-              chains={chains}
-              modalSize="compact"
-              theme={midnightTheme()}
-            >
-              <NetworkConfigProvider>
-                <FractalProvider>
-                  <ToastContainer
-                    position="bottom-center"
-                    closeButton={false}
-                    newestOnTop={false}
-                    pauseOnFocusLoss={false}
-                  />
-                  <ModalProvider>
-                    <Layout>
-                      <Component {...pageProps} />
-                    </Layout>
-                  </ModalProvider>
-                </FractalProvider>
-              </NetworkConfigProvider>
-            </RainbowKitProvider>
-          </WagmiConfig>
-        </FractalErrorBoundary>
-      </ChakraProvider>
+      <CacheProvider>
+        <ChakraProvider theme={theme}>
+          <FractalErrorBoundary fallback={<ErrorFallback />}>
+            <WagmiConfig client={wagmiClient}>
+              <RainbowKitProvider
+                chains={chains}
+                modalSize="compact"
+                theme={midnightTheme()}
+              >
+                <NetworkConfigProvider>
+                  <FractalProvider>
+                    <ToastContainer
+                      position="bottom-center"
+                      closeButton={false}
+                      newestOnTop={false}
+                      pauseOnFocusLoss={false}
+                    />
+                    <ModalProvider>
+                      <Layout>
+                        <Component {...pageProps} />
+                      </Layout>
+                    </ModalProvider>
+                  </FractalProvider>
+                </NetworkConfigProvider>
+              </RainbowKitProvider>
+            </WagmiConfig>
+          </FractalErrorBoundary>
+        </ChakraProvider>
+      </CacheProvider>
     </>
   );
 }

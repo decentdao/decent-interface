@@ -4,9 +4,9 @@ import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { useTransaction } from '../../hooks/utils/useTransaction';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { formatCoin } from '../../utils/numberFormats';
+import { useTransaction } from '../../../hooks/utils/useTransaction';
+import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { formatCoin } from '../../../utils/numberFormats';
 
 export function TokenClaim() {
   const [userClaimable, setUserClaimable] = useState(BigNumber.from(0));

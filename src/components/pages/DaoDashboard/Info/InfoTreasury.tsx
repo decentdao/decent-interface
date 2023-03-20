@@ -1,9 +1,9 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Treasury } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { BarLoader } from '../../../components/ui/loaders/BarLoader';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { useTreasuryTotalUSD } from '../../Treasury/hooks/useTreasuryTotalUSD';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useTreasuryTotalUSD } from '../../../../pages/Treasury/hooks/useTreasuryTotalUSD';
 
 interface IDAOGovernance {}
 

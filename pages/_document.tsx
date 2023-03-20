@@ -1,3 +1,4 @@
+import { ColorModeScript } from '@chakra-ui/react';
 import { Html, Main, Head, NextScript } from 'next/document';
 
 export default function Document() {
@@ -60,6 +61,8 @@ export default function Document() {
         />
       </Head>
       <body>
+        {/* Make Color mode to persists when you refresh the page. */}
+        <ColorModeScript />
         <Main />
         <NextScript />
       </body>

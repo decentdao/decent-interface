@@ -1,15 +1,15 @@
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useMemo, useState } from 'react';
-import { useParseSafeTxs } from '../../../../hooks/utils/useParseSafeTxs';
-import { useSafeActivitiesWithState } from '../../../../hooks/utils/useSafeActivitiesWithState';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useParseSafeTxs } from '../../../../../hooks/utils/useParseSafeTxs';
+import { useSafeActivitiesWithState } from '../../../../../hooks/utils/useSafeActivitiesWithState';
+import { useFractal } from '../../../../../providers/Fractal/hooks/useFractal';
 import {
   Activity,
   ActivityEventType,
   GovernanceTypes,
   SortBy,
   VetoGuardType,
-} from '../../../../types';
+} from '../../../../../types';
 
 export const useActivities = (sortBy: SortBy) => {
   const {

@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
 import { MultisigProposalDetails } from '../../components/Proposals/MultisigProposalDetails';
 import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
 import { EmptyBox } from '../../components/ui/containers/EmptyBox';
@@ -13,7 +13,7 @@ import { DAO_ROUTES } from '../../routes/constants';
 import { TxProposal, UsulProposal } from '../../types';
 
 function ProposalDetails() {
-  const params = useParams();
+  const { query } = useRouter();
 
   const {
     gnosis: {
@@ -35,20 +35,20 @@ function ProposalDetails() {
   });
 
   useEffect(() => {
-    if (!txProposals || !txProposals.length || !params.proposalNumber) {
+    if (!txProposals || !txProposals.length || !query.proposalNumber) {
       setProposal(undefined);
       return;
     }
 
     const foundProposal = txProposals.find(p => {
-      return p.proposalNumber === params.proposalNumber;
+      return p.proposalNumber === query.proposalNumber;
     });
     if (!foundProposal) {
       setProposal(null);
       return;
     }
     setProposal(foundProposal);
-  }, [txProposals, params.proposalNumber]);
+  }, [txProposals, query.proposalNumber]);
 
   return (
     <Box>
@@ -61,7 +61,7 @@ function ProposalDetails() {
           {
             title: t('proposal', {
               ns: 'breadcrumbs',
-              proposalNumber: params.proposalNumber,
+              proposalNumber: query.proposalNumber,
               proposalTitle: proposal?.metaData?.title || transactionDescription,
             }),
             path: '',

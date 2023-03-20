@@ -1,11 +1,11 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { useTranslation } from 'react-i18next';
-import { ActivityCard } from '../../../components/Activity/ActivityCard';
-import { FreezeButton } from '../../../components/Activity/FreezeButton';
-import { Badge } from '../../../components/ui/badges/Badge';
-import { useDateTimeDisplay } from '../../../helpers/dateTime';
-import { IGnosisFreezeData, DAOState } from '../../../types';
+import { useDateTimeDisplay } from '../../../../helpers/dateTime';
+import { IGnosisFreezeData, DAOState } from '../../../../types';
+import { ActivityCard } from '../../../Activity/ActivityCard';
+import { FreezeButton } from '../../../Activity/FreezeButton';
+import { Badge } from '../../../ui/badges/Badge';
 
 export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   const { t } = useTranslation('dashboard');

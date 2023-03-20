@@ -1,8 +1,8 @@
 import { Flex } from '@chakra-ui/react';
-import { DAOInfoCard } from '../../../components/ui/cards/DAOInfoCard';
-import { BarLoader } from '../../../components/ui/loaders/BarLoader';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { useFetchNodes } from '../../FractalNodes/useFetchNodes';
+import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { DAOInfoCard } from '../../../ui/cards/DAOInfoCard';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
+import { useFetchNodes } from '../../DaoHierarchy/useFetchNodes';
 
 export function InfoDAO() {
   const {

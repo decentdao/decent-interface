@@ -43,7 +43,7 @@ export function NavigationLinks({
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              href={DAO_ROUTES.nodes.relative(address)}
+              href={DAO_ROUTES.hierarchy.relative(address)}
               labelKey="nodes"
               testId="navigation-hierarchy"
               routeKey="nodes"

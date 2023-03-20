@@ -1,5 +1,5 @@
+import { Link } from '@chakra-ui/next-js';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
 
 export type Crumb = {
   title: string;
@@ -42,7 +42,7 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
             ) : (
               <BreadcrumbLink
                 as={Link}
-                to={path}
+                href={path}
                 display="flex"
                 alignItems="center"
               >

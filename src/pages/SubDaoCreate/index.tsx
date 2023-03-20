@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import DaoCreator from '../../components/DaoCreator';
 import { useCreateSubDAOProposal } from '../../hooks/DAO/useCreateSubDAOProposal';
 import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
@@ -7,7 +7,7 @@ import { DAO_ROUTES } from '../../routes/constants';
 import { GnosisDAO, TokenGovernanceDAO, SubDAO } from '../../types';
 
 function SubDaoCreate() {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const {
     actions: { refreshSafeData },
   } = useFractal();
@@ -16,7 +16,7 @@ function SubDaoCreate() {
 
   const successCallback = async (daoAddress: string) => {
     await refreshSafeData();
-    navigate(DAO_ROUTES.dao.relative(daoAddress));
+    push(DAO_ROUTES.dao.relative(daoAddress));
   };
 
   const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();
