@@ -316,6 +316,7 @@ export interface FractalStore
     | 'nodeHierarchy'
     | 'clients'
   > {
+  baseContracts: FractalContracts; // useSafeContracts should just load here...
   dispatch: {
     node: Dispatch<NodeActions>;
   };
@@ -326,7 +327,6 @@ export interface Fractal {
   governance: AzuriousGovernance | SafeMultisigGovernance; // extendable class type with Governance Base interface
   treasury: FractalTreasury; // Treasury
   account: FractalAccount; // Account
-  baseContracts: FractalContracts; // useSafeContracts should just load here...
   governanceContracts: GovernanceContractsRefactored;
   guardContracts: FractalGuardContracts;
   nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
