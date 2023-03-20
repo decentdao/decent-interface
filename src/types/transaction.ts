@@ -1,5 +1,4 @@
 import { BigNumber } from 'ethers';
-import { BigNumberValuePair } from './common';
 
 export interface DecodedTransaction {
   target: string;
@@ -30,19 +29,6 @@ export interface SafeTransaction extends MetaTransaction {
   refundReceiver: string;
   nonce: string | number;
 }
-
-export interface TransactionData {
-  targetAddress: string;
-  ethValue: BigNumberValuePair;
-  functionName: string;
-  functionSignature: string;
-  parameters: string;
-  addressError?: string;
-  fragmentError?: string;
-  isExpanded: boolean;
-  encodedFunctionData: string | undefined;
-}
-
 export type DecodedTxParam = {
   name: string;
   type: string;

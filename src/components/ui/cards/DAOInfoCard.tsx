@@ -8,6 +8,7 @@ import {
 } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useAccount } from 'wagmi';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
@@ -134,6 +135,7 @@ export function DAOInfoCard({
             onClick={() => copyToClipboard(safeAddress)}
             gap="0.5rem"
             cursor="pointer"
+            w="fit-content"
           >
             <Text
               textStyle="text-base-mono-regular"
@@ -175,7 +177,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
     <Flex
       mt="1rem"
       minH="6.75rem"
-      bg="black.900"
+      bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
       flex={1}
