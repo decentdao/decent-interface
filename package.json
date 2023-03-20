@@ -36,8 +36,8 @@
     "yup": "^1"
   },
   "scripts": {
-    "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "set:env": "GENERATE_SOURCEMAP=false NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD`",
     "dev": "npm run set:env & next dev",
     "start": "npm run set:env & next start",
@@ -74,6 +74,7 @@
     "@typescript-eslint/parser": "^5.47.0",
     "eslint": "^8.22.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-next": "^13.2.4",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.30.1",

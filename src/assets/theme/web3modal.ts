@@ -1,4 +1,4 @@
-export default {
+const styles = {
   '.web3modal-modal-card': {
     backgroundColor: 'chocolate.900 !important',
     padding: '1rem 1.5rem !important',
@@ -64,3 +64,5 @@ export default {
     color: 'grayscale.300 !important',
   },
 };
+
+export default styles;
