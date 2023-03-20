@@ -156,7 +156,7 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>address to, uint256 amount</Text>
+            <Text {...exampleLabelStyle}>address, uint256</Text>
           </HStack>
         }
         testId="transaction.functionSignature"
