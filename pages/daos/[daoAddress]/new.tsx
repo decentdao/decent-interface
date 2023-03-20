@@ -1,12 +1,14 @@
 import { useRouter } from 'next/router';
-import DaoCreator from '../../components/DaoCreator';
-import { useCreateSubDAOProposal } from '../../hooks/DAO/useCreateSubDAOProposal';
-import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../routes/constants';
-import { GnosisDAO, TokenGovernanceDAO, SubDAO } from '../../types';
+import DaoCreator from '../../../src/components/DaoCreator';
+import { DAO_ROUTES } from '../../../src/constants/routes';
+import { useCreateSubDAOProposal } from '../../../src/hooks/DAO/useCreateSubDAOProposal';
+import useDAOController from '../../../src/hooks/DAO/useDAOController';
+import useDefaultNonce from '../../../src/hooks/DAO/useDefaultNonce';
+import { useFractal } from '../../../src/providers/Fractal/hooks/useFractal';
+import { GnosisDAO, TokenGovernanceDAO, SubDAO } from '../../../src/types';
 
 function SubDaoCreate() {
+  useDAOController();
   const { push } = useRouter();
   const {
     actions: { refreshSafeData },

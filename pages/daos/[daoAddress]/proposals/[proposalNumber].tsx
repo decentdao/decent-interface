@@ -2,17 +2,18 @@ import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MultisigProposalDetails } from '../../components/Proposals/MultisigProposalDetails';
-import { UsulProposalDetails } from '../../components/Proposals/UsulDetails';
-import { EmptyBox } from '../../components/ui/containers/EmptyBox';
-import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
-import PageHeader from '../../components/ui/page/Header/PageHeader';
+import { MultisigProposalDetails } from '../../../../src/components/Proposals/MultisigProposalDetails';
+import { UsulProposalDetails } from '../../../../src/components/Proposals/UsulDetails';
+import { EmptyBox } from '../../../../src/components/ui/containers/EmptyBox';
+import { InfoBoxLoader } from '../../../../src/components/ui/loaders/InfoBoxLoader';
+import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
+import { DAO_ROUTES } from '../../../../src/constants/routes';
+import useDAOController from '../../../../src/hooks/DAO/useDAOController';
+import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
+import { TxProposal, UsulProposal } from '../../../../src/types';
 
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../routes/constants';
-import { TxProposal, UsulProposal } from '../../types';
-
-function ProposalDetails() {
+export default function ProposalDetailsPage() {
+  useDAOController();
   const { query } = useRouter();
 
   const {
@@ -85,5 +86,3 @@ function ProposalDetails() {
     </Box>
   );
 }
-
-export default ProposalDetails;
