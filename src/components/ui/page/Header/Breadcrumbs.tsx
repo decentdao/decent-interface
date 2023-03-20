@@ -1,5 +1,5 @@
-import { Link } from '@chakra-ui/next-js';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text } from '@chakra-ui/react';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Link } from '@chakra-ui/react';
+import NextLink from 'next/link';
 
 export type Crumb = {
   title: string;
@@ -41,12 +41,12 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
               crumbText
             ) : (
               <BreadcrumbLink
-                as={Link}
+                as={NextLink}
                 href={path}
                 display="flex"
                 alignItems="center"
               >
-                {crumbText}
+                <Link>{crumbText}</Link>
               </BreadcrumbLink>
             )}
           </BreadcrumbItem>

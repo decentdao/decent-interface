@@ -1,5 +1,4 @@
 import { Box, Center, Flex, HStack, Text, Link, Button } from '@chakra-ui/react';
-// import { Link } from '@chakra-ui/next-js'
 import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import NextImage from 'next/image';
