@@ -52,7 +52,7 @@ function UsulMetadata(props: UsulMetadataProps) {
   };
 
   const updateDocumentationUrl = (documentationUrl: string) => {
-    setUrlErrorMessage(isValidUrl(documentationUrl) ? undefined : 'Invalid URL');
+    setUrlErrorMessage(isValidUrl(documentationUrl) ? undefined : t('errorInvalidURL'));
     const metadataCopy = {
       ...metadata,
       documentationUrl,
