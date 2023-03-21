@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 

@@ -1,6 +1,6 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {

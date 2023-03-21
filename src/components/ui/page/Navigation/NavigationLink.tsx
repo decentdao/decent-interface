@@ -1,6 +1,6 @@
 import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavigationTooltip } from './NavigationTooltip';
@@ -30,8 +30,8 @@ export function NavigationLink({
   const tooltipTranslationKey = tooltipKey || labelKey;
 
   const { t } = useTranslation('navigation');
-  const { asPath } = useRouter();
-  const match = asPath === href;
+  const pathname = usePathname();
+  const match = pathname === href;
 
   const activeColors = useCallback(() => {
     let isActive = !!match;

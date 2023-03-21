@@ -1,15 +1,17 @@
+'use client';
+
 import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { Assets } from '../../../src/components/pages/DAOTreasury/components/Assets';
-import { Transactions } from '../../../src/components/pages/DAOTreasury/components/Transactions';
-import { TitledInfoBox } from '../../../src/components/ui/containers/TitledInfoBox';
-import { ModalType } from '../../../src/components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../../src/components/ui/modals/useFractalModal';
-import PageHeader from '../../../src/components/ui/page/Header/PageHeader';
-import useDAOController from '../../../src/hooks/DAO/useDAOController';
-import { useFractal } from '../../../src/providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../../src/types';
+import { Assets } from '../../../../src/components/pages/DAOTreasury/components/Assets';
+import { Transactions } from '../../../../src/components/pages/DAOTreasury/components/Transactions';
+import { TitledInfoBox } from '../../../../src/components/ui/containers/TitledInfoBox';
+import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
+import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
+import useDAOController from '../../../../src/hooks/DAO/useDAOController';
+import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
+import { GovernanceTypes } from '../../../../src/types';
 
 export default function Treasury() {
   useDAOController();

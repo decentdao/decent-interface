@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@chakra-ui/react": "2.3.4",
+    "@chakra-ui/next-js": "^2.0.1",
+    "@chakra-ui/react": "^2.5.2",
     "@decent-org/fractal-ui": "^0.1.15",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
@@ -73,6 +74,7 @@
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.47.0",
     "@typescript-eslint/parser": "^5.47.0",
+    "encoding": "^0.1.13",
     "eslint": "^8.22.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "^13.2.4",

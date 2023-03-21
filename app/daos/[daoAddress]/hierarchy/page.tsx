@@ -1,11 +1,13 @@
+'use client';
+
 import { Box, Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { DaoNode } from '../../../src/components/pages/DaoHierarchy/DaoNode';
-import { BarLoader } from '../../../src/components/ui/loaders/BarLoader';
-import PageHeader from '../../../src/components/ui/page/Header/PageHeader';
-import { HEADER_HEIGHT } from '../../../src/constants/common';
-import useDAOController from '../../../src/hooks/DAO/useDAOController';
-import { useFractal } from '../../../src/providers/Fractal/hooks/useFractal';
+import { DaoNode } from '../../../../src/components/pages/DaoHierarchy/DaoNode';
+import { BarLoader } from '../../../../src/components/ui/loaders/BarLoader';
+import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
+import { HEADER_HEIGHT } from '../../../../src/constants/common';
+import useDAOController from '../../../../src/hooks/DAO/useDAOController';
+import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
 
 export default function HierarchyPage() {
   const {

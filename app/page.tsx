@@ -1,13 +1,16 @@
+'use client';
+
 import { Box, Center, Flex, HStack, Text, Link, Button } from '@chakra-ui/react';
 import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import NextImage from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
+import useClientSide from '../src/hooks/utils/useClientSide';
 
 interface IconWithTextProps {
   icon: ReactNode;
@@ -83,6 +86,7 @@ function InfoLinks() {
 }
 
 export default function HomePage() {
+  const isClientSide = useClientSide();
   const { t } = useTranslation('daoCreate');
   const { address: account } = useAccount();
   const { openConnectModal } = useConnectModal();
@@ -105,7 +109,7 @@ export default function HomePage() {
             alt="Fractal Logo"
           />
         </Box>
-        {!account && (
+        {!account && isClientSide && (
           <Text
             data-testid="home-pageTitleDisconnected"
             textStyle="text-2xl-mono-regular"
@@ -116,20 +120,22 @@ export default function HomePage() {
           </Text>
         )}
         <Text
-          data-testid={account ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'}
+          data-testid={
+            isClientSide && account ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'
+          }
           textStyle="text-base-mono-regular"
           color="grayscale.100"
           marginBottom="1.5rem"
         >
-          {t(account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
+          {t(isClientSide && account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
         </Text>
         <Button
-          onClick={account ? createDAO : openConnectModal}
-          data-testid={account ? 'home-linkCreate' : 'home-linkConnect'}
+          onClick={isClientSide && account ? createDAO : openConnectModal}
+          data-testid={isClientSide && account ? 'home-linkCreate' : 'home-linkConnect'}
           size="lg"
           marginBottom="3.25rem"
         >
-          {account ? t('homeButtonCreate') : t('homeButtonConnect')}
+          {t(account && isClientSide ? 'homeButtonCreate' : 'homeButtonConnect')}
         </Button>
         <InfoLinks />
         <Link

@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Button, Show } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
 import Link from 'next/link';

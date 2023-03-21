@@ -1,20 +1,23 @@
+'use client';
+
 import { Box } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MultisigProposalDetails } from '../../../../src/components/Proposals/MultisigProposalDetails';
-import { UsulProposalDetails } from '../../../../src/components/Proposals/UsulDetails';
-import { EmptyBox } from '../../../../src/components/ui/containers/EmptyBox';
-import { InfoBoxLoader } from '../../../../src/components/ui/loaders/InfoBoxLoader';
-import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import { DAO_ROUTES } from '../../../../src/constants/routes';
-import useDAOController from '../../../../src/hooks/DAO/useDAOController';
-import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
-import { TxProposal, UsulProposal } from '../../../../src/types';
+import { MultisigProposalDetails } from '../../../../../src/components/Proposals/MultisigProposalDetails';
+import { UsulProposalDetails } from '../../../../../src/components/Proposals/UsulDetails';
+import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
+import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxLoader';
+import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
+import { DAO_ROUTES } from '../../../../../src/constants/routes';
+import useDAOController from '../../../../../src/hooks/DAO/useDAOController';
+import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
+import { TxProposal, UsulProposal } from '../../../../../src/types';
 
 export default function ProposalDetailsPage() {
   useDAOController();
-  const { query } = useRouter();
+  const search = useSearchParams();
+  const proposalNumber = search.get('proposalNumber');
 
   const {
     gnosis: {
@@ -36,20 +39,20 @@ export default function ProposalDetailsPage() {
   });
 
   useEffect(() => {
-    if (!txProposals || !txProposals.length || !query.proposalNumber) {
+    if (!txProposals || !txProposals.length || !proposalNumber) {
       setProposal(undefined);
       return;
     }
 
     const foundProposal = txProposals.find(p => {
-      return p.proposalNumber === query.proposalNumber;
+      return p.proposalNumber === proposalNumber;
     });
     if (!foundProposal) {
       setProposal(null);
       return;
     }
     setProposal(foundProposal);
-  }, [txProposals, query.proposalNumber]);
+  }, [txProposals, proposalNumber]);
 
   return (
     <Box>
@@ -62,7 +65,7 @@ export default function ProposalDetailsPage() {
           {
             title: t('proposal', {
               ns: 'breadcrumbs',
-              proposalNumber: query.proposalNumber,
+              proposalNumber,
               proposalTitle: proposal?.metaData?.title || transactionDescription,
             }),
             path: '',

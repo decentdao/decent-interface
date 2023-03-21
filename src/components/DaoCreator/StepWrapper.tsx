@@ -1,6 +1,6 @@
 import { Box, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';

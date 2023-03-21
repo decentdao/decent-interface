@@ -1,23 +1,25 @@
+'use client';
+
 import { Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ProposalDetails } from '../../../../src/components/ProposalCreate/ProposalDetails';
-import { ProposalHeader } from '../../../../src/components/ProposalCreate/ProposalHeader';
-import TransactionsForm from '../../../../src/components/ProposalCreate/TransactionsForm';
-import UsulMetadata from '../../../../src/components/ProposalCreate/UsulMetadata';
-import { DEFAULT_PROPOSAL } from '../../../../src/components/ProposalCreate/constants';
-import { BarLoader } from '../../../../src/components/ui/loaders/BarLoader';
-import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../../../src/constants/common';
-import { BASE_ROUTES, DAO_ROUTES } from '../../../../src/constants/routes';
-import { usePrepareProposal } from '../../../../src/hooks/DAO/proposal/usePrepareProposal';
-import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
-import { useCreateProposalSchema } from '../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
-import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
-import { CreateProposalForm, CreateProposalState, GovernanceTypes } from '../../../../src/types';
+import { ProposalDetails } from '../../../../../src/components/ProposalCreate/ProposalDetails';
+import { ProposalHeader } from '../../../../../src/components/ProposalCreate/ProposalHeader';
+import TransactionsForm from '../../../../../src/components/ProposalCreate/TransactionsForm';
+import UsulMetadata from '../../../../../src/components/ProposalCreate/UsulMetadata';
+import { DEFAULT_PROPOSAL } from '../../../../../src/components/ProposalCreate/constants';
+import { BarLoader } from '../../../../../src/components/ui/loaders/BarLoader';
+import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
+import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../../../../src/constants/common';
+import { BASE_ROUTES, DAO_ROUTES } from '../../../../../src/constants/routes';
+import { usePrepareProposal } from '../../../../../src/hooks/DAO/proposal/usePrepareProposal';
+import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
+import { useCreateProposalSchema } from '../../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
+import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
+import { CreateProposalForm, CreateProposalState, GovernanceTypes } from '../../../../../src/types';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"

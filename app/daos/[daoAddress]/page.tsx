@@ -1,3 +1,5 @@
+'use client';
+
 import { Box } from '@chakra-ui/react';
 import { Activities } from '../../../src/components/pages/DaoDashboard/Activities';
 import { Info } from '../../../src/components/pages/DaoDashboard/Info';
