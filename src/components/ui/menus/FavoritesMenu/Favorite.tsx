@@ -17,6 +17,7 @@ export function Favorite({ address }: IFavorite) {
       display="flex"
       alignItems="center"
       gap="2"
+      my={1}
       width="full"
       px="0px"
       onClick={() => push(DAO_ROUTES.dao.relative(address))}
