@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import logo from '../../assets/images/fractal-text-logo.svg';
+import { RELEASE_VERSION } from '../../constants/common';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../../constants/url';
 import { BASE_ROUTES } from '../../routes/constants';
 
@@ -136,7 +137,7 @@ function Home() {
             textStyle="text-md-mono-semibold"
             color="gold.500"
           >
-            Deployed by Netlify
+            v{RELEASE_VERSION} Deployed by Netlify
           </Text>
         </Link>
       </Flex>
