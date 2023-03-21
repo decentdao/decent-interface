@@ -1,7 +1,7 @@
 'use client';
 
 import { CacheProvider } from '@chakra-ui/next-js';
-import { ColorModeScript, ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import { midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { ReactNode, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
@@ -95,7 +95,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <title>Fractal</title>
       </head>
       <body>
-        <ColorModeScript />
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <FractalErrorBoundary fallback={<ErrorFallback />}>
