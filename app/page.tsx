@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Center, Flex, HStack, Text, Link, Button } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/next-js';
+import { Box, Center, Flex, HStack, Text, Button } from '@chakra-ui/react';
 import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import NextImage from 'next/image';
@@ -24,7 +25,7 @@ function IconWithText({ icon, label, url, testid }: IconWithTextProps) {
     <Link
       data-testid={testid}
       href={url}
-      isExternal
+      target="_blank"
     >
       <HStack>
         {icon}
@@ -141,7 +142,7 @@ export default function HomePage() {
         <Link
           marginTop="2rem"
           href="https://www.netlify.com/"
-          isExternal
+          target="_blank"
         >
           <Text
             textStyle="text-md-mono-semibold"
