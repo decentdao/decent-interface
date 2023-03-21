@@ -1,8 +1,8 @@
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { DAO_ROUTES } from '../../../../routes/constants/dao';
 
 interface ISearchDisplay {
   loading?: boolean;
@@ -22,7 +22,7 @@ export function SearchDisplay({
   closeDrawer,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
-  const navigate = useNavigate();
+  const { push } = useRouter();
 
   const { displayName } = useDisplayName(address);
   if (loading && address) {
@@ -46,7 +46,7 @@ export function SearchDisplay({
         onClick={() => {
           onClickView();
           if (closeDrawer) closeDrawer();
-          navigate(DAO_ROUTES.dao.relative(address));
+          push(DAO_ROUTES.dao.relative(address));
         }}
         cursor="default"
         justifyContent="space-between"

@@ -1,4 +1,4 @@
-import { Link } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/next-js';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
 function EtherscanLinkNFT({
@@ -14,7 +14,7 @@ function EtherscanLinkNFT({
   return (
     <Link
       href={`${etherscanBaseURL}/${address}/${tokenId}`}
-      isExternal
+      target="_blank"
     >
       {children}
     </Link>

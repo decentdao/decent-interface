@@ -5,7 +5,6 @@ import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
-import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { BigNumberValuePair } from '../../../types';
 import {
@@ -13,6 +12,7 @@ import {
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
+import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
 import { BigNumberInput } from '../forms/BigNumberInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
 

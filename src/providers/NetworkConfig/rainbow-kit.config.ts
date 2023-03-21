@@ -18,13 +18,13 @@ import { testWallet } from './testWallet';
 const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
 
 // allows connection to localhost only in development mode.
-if (process.env.REACT_APP_TESTING_ENVIROMENT) {
+if (process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
 export const { chains, provider } = configureChains(supportedWagmiChains, [
-  infuraProvider({ apiKey: process.env.REACT_APP_INFURA_API_KEY! }),
-  alchemyProvider({ apiKey: process.env.REACT_APP_ALCHEMY_API_KEY! }),
+  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY! }),
+  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! }),
   publicProvider(),
 ]);
 
@@ -35,7 +35,7 @@ const defaultWallets = [
   walletConnectWallet({ chains }),
 ];
 // allows connection to localhost only in development mode.
-if (process.env.REACT_APP_TESTING_ENVIROMENT) {
+if (process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
   defaultWallets.unshift(testWallet({ chains }));
 }
 
@@ -49,7 +49,12 @@ const connectors = connectorsForWallets([
 
 export const wagmiClient = createClient({
   autoConnect: true,
-  storage: createStorage({ storage: window.localStorage }),
+  storage:
+    typeof window !== 'undefined'
+      ? createStorage({
+          storage: window.localStorage,
+        })
+      : undefined,
   connectors,
   provider,
 });
