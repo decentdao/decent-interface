@@ -38,6 +38,7 @@ body:
       description: What server does this bug appear on?
       options:
         - Prod (app.fractalframework.xyz/)
+        - Staging (app.staging.fractalframework.xyz/)
         - Dev (app.dev.fractalframework.xyz/)
     validations:
       required: true

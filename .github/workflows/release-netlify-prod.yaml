@@ -1,0 +1,27 @@
+# Production release workflow, generally following the guide posted here
+# https://github.com/marketplace/actions/netlify-deploy
+name: 'Netlify Production Deploy'
+on:
+  release: # release on *release* to main
+    types: ['published']
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: 'Deploy'
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: jsmrcaga/action-netlify-deploy@master
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }} # auth token, generated at https://app.netlify.com/user/applications#personal-access-tokens
+          NETLIFY_SITE_ID: '85f89f29-dd69-4697-b78d-3aa31d6c4c90' # production site Netlify id (not a private identifier)
+          NETLIFY_DEPLOY_TO_PROD: true
+          REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
+          REACT_APP_INFURA_API_KEY: ${{ secrets.REACT_APP_INFURA_API_KEY }}
+          REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_SENTRY_DSN }}
+          REACT_APP_SITE_URL: ${{ secrets.REACT_APP_SITE_URL }}
+          TESTING_ALCHEMY_API_KEY: ${{ secrets.TESTING_ALCHEMY_API_KEY }}
