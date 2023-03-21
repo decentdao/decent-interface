@@ -2,7 +2,7 @@ name: Release IPFS Prod
 on:
   push:
     branches:
-      - master
+      - main
 
 jobs:
   create_release:

@@ -65,7 +65,7 @@ Test results for each test on each browser type will be output into the [playwri
 
 Both the "dev" and "prod" environments of this app are currently deployed via both Netlify and IPFS (see the Github workflow files).
 
-The "dev" environment tracks the `develop` branch, and the "prod" environment tracks the `master` branch.
+The "dev" environment tracks the `develop` branch, and the "prod" environment tracks the `main` branch.
 
 On both hosting platforms, both the "dev" and "prod" environments are where custom environment variables are configured. For Netlify, it's in the site's build settings in the Netlify project. For the IPFS build, it's in Github's "secrets", and exposed to the build scripts in `.github/workflows/release-ipfs-[dev|prod].yaml`.
 
