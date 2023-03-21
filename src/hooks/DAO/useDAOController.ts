@@ -1,4 +1,4 @@
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { BASE_ROUTES } from '../../constants/routes';
@@ -6,14 +6,12 @@ import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { TreasuryAction, GovernanceAction, GnosisAction } from '../../types';
 import { useSearchDao } from './useSearchDao';
 
-export default function useDAOController() {
+export default function useDAOController({ daoAddress }: { daoAddress: string }) {
   const {
     gnosis: { safe },
     dispatches: { gnosisDispatch, governanceDispatch, treasuryDispatch },
   } = useFractal();
   const { push } = useRouter();
-  const search = useSearchParams();
-  const daoAddress = search.get('daoAddress');
 
   const { errorMessage, address, isLoading, setSearchString } = useSearchDao();
 

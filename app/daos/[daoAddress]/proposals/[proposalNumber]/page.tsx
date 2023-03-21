@@ -1,7 +1,6 @@
 'use client';
 
 import { Box } from '@chakra-ui/react';
-import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MultisigProposalDetails } from '../../../../../src/components/Proposals/MultisigProposalDetails';
@@ -10,15 +9,14 @@ import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
-import useDAOController from '../../../../../src/hooks/DAO/useDAOController';
 import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
 import { TxProposal, UsulProposal } from '../../../../../src/types';
 
-export default function ProposalDetailsPage() {
-  useDAOController();
-  const search = useSearchParams();
-  const proposalNumber = search.get('proposalNumber');
-
+export default function ProposalDetailsPage({
+  params: { proposalNumber },
+}: {
+  params: { proposalNumber: string };
+}) {
   const {
     gnosis: {
       safe: { address },

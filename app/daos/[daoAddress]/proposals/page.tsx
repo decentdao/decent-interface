@@ -9,12 +9,10 @@ import Proposals from '../../../../src/components/Proposals';
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import useDAOController from '../../../../src/hooks/DAO/useDAOController';
 import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../src/types';
 
 export default function ProposalsPage() {
-  useDAOController();
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance: { type, governanceToken },

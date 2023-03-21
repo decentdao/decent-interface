@@ -6,7 +6,6 @@ import { DaoNode } from '../../../../src/components/pages/DaoHierarchy/DaoNode';
 import { BarLoader } from '../../../../src/components/ui/loaders/BarLoader';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import { HEADER_HEIGHT } from '../../../../src/constants/common';
-import useDAOController from '../../../../src/hooks/DAO/useDAOController';
 import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
 
 export default function HierarchyPage() {
@@ -14,7 +13,6 @@ export default function HierarchyPage() {
     gnosis: { safe, parentDAOAddress },
   } = useFractal();
   const { t } = useTranslation(['breadcrubms']);
-  useDAOController();
 
   if (!safe.address) {
     return (
