@@ -62,7 +62,7 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
     if (
       !!chain &&
       !supportedChainIds.includes(chain.id) &&
-      !process.env.REACT_APP_TESTING_ENVIROMENT
+      !process.env.NEXT_PUBLIC_TESTING_ENVIROMENT
     ) {
       toast(t('toastSwitchChain', { chainNames: supportedChainIds }), {
         toastId: 'switchChain',

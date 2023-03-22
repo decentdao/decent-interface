@@ -40,8 +40,8 @@ const useTransaction = () => {
           const wait =
             process.env.NODE_ENV !== 'development'
               ? 0
-              : process.env.REACT_APP_DEVELOPMENT_TX_WAIT_MS
-              ? parseInt(process.env.REACT_APP_DEVELOPMENT_TX_WAIT_MS)
+              : process.env.NEXT_PUBLIC_DEVELOPMENT_TX_WAIT_MS
+              ? parseInt(process.env.NEXT_PUBLIC_DEVELOPMENT_TX_WAIT_MS)
               : 0;
 
           return Promise.all([

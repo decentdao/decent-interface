@@ -28,7 +28,7 @@ jobs:
     - name: Wait for Development Server
       uses: nev7n/wait_for_response@v1
       with:
-        url: 'http://localhost:3000/'
+        url: 'http://localhost:3000'
         responseCode: 200
     - name: Run Playwright tests
       run: npm run tests

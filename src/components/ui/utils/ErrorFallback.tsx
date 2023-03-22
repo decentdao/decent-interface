@@ -1,4 +1,5 @@
-import { Box, Button, Center, Flex, Link, Text } from '@chakra-ui/react';
+import { Link } from '@chakra-ui/next-js';
+import { Box, Button, Center, Flex, Text } from '@chakra-ui/react';
 import { Alert } from '@decent-org/fractal-ui';
 import { Trans, useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';
@@ -31,7 +32,7 @@ export function ErrorFallback() {
                 <Link
                   color="gold.500"
                   href={URL_DISCORD}
-                  isExternal
+                  target="_blank"
                 />
               </Trans>
             </Text>

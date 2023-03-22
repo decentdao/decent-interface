@@ -12,11 +12,11 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { FractalBrandBurger, FractalBrand } from '@decent-org/fractal-ui';
+import Link from 'next/link';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES } from '../../../../routes/constants';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { NavigationLinks } from './NavigationLinks';
 
@@ -107,7 +107,7 @@ function Navigation() {
       <Show above="md">
         <Link
           data-testid="navigationLogo-homeLink"
-          to={BASE_ROUTES.landing}
+          href={BASE_ROUTES.landing}
           aria-label={t('ariaLabelFractalBrand')}
         >
           <FractalBrand
