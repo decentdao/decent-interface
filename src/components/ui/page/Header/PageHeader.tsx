@@ -9,9 +9,9 @@ import {
   Spacer,
 } from '@chakra-ui/react';
 import { ReactNode, useEffect, useState } from 'react';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../../../routes/constants';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
   breadcrumbs: Crumb[];

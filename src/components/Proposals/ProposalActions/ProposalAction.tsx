@@ -1,10 +1,10 @@
 import { Button } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
+import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../../routes/constants';
 import { TxProposal, UsulProposal, TxProposalState, MultisigProposal } from '../../../types';
 import { Execute } from './Execute';
 import Queue from './Queue';
@@ -21,7 +21,7 @@ export function ProposalAction({
     gnosis: { safe },
   } = useFractal();
   const { address: account } = useAccount();
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const { t } = useTranslation();
   const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
 
@@ -33,7 +33,7 @@ export function ProposalAction({
     proposal.state === TxProposalState.Queued;
 
   const handleClick = () => {
-    navigate(DAO_ROUTES.proposal.relative(safe.address, proposal.proposalNumber));
+    push(DAO_ROUTES.proposal.relative(safe.address, proposal.proposalNumber));
   };
 
   const hasVoted = useMemo(() => {

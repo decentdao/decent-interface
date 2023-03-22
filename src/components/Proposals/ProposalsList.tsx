@@ -1,6 +1,6 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { TxProposal, GovernanceTypes } from '../../types';
@@ -41,7 +41,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
           {showCreateButton && (
-            <Link to="new">
+            <Link href="new">
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"

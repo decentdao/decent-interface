@@ -35,7 +35,7 @@ export const useUpdateTimer = (safeAddress?: string) => {
     [isActive]
   );
   useEffect(() => {
-    if (!safeAddress || process.env.REACT_APP_TESTING_ENVIROMENT) {
+    if (!safeAddress || process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
       timers.forEach(timer => clearInterval(timer.timerId));
     }
   }, [safeAddress, timers]);

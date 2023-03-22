@@ -7,7 +7,7 @@ import { FractalPage } from './FractalPage';
  */
 export abstract class NavPage extends FractalPage {
   async clickFractalLogo() {
-    await this.click('a[href="#/"]');
+    await this.click('a[href="/"]');
   }
 
   async enterSearchTerm(term: string) {

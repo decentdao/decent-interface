@@ -1,6 +1,6 @@
+import { usePathname } from 'next/navigation';
 import { ReactNode, useEffect, useMemo, useReducer } from 'react';
-import { useMatch } from 'react-router-dom';
-import { DAO_ROUTES } from '../../routes/constants';
+import { DAO_ROUTES } from '../../constants/routes';
 import { GnosisAction, TreasuryAction, GovernanceAction } from '../../types';
 import { useNetworkConfg } from '../NetworkConfig/NetworkConfigProvider';
 import {
@@ -9,7 +9,6 @@ import {
   governanceInitialState,
   connectedAccountInitialState,
 } from './constants';
-
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
 import { useAccount } from './hooks/account/useAccount';
@@ -28,6 +27,7 @@ import { TreasuryReducer, initializeTreasuryState } from './reducers/treasury';
  */
 export function FractalProvider({ children }: { children: ReactNode }) {
   const { chainId } = useNetworkConfg();
+  const pathname = usePathname();
 
   const [gnosis, gnosisDispatch] = useReducer(
     gnosisReducer,
@@ -78,7 +78,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   useNodes({ gnosis, gnosisDispatch, chainId });
   const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
-  const isViewingDAO = useMatch(DAO_ROUTES.daos.path);
+  const isViewingDAO = pathname === DAO_ROUTES.daos.path;
   useEffect(() => {
     // Resets Fractal state when not viewing DAO
     if (!isViewingDAO) {
