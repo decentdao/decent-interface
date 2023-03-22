@@ -1,11 +1,12 @@
 import { Context, createContext, useContext, useMemo, useReducer } from 'react';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore } from '../../types';
+import { accountReducer, initialAccountState } from './account/reducer';
 import { governanceReducer, initialGovernanceState } from './governance/reducer';
 import { guardReducer, initialGuardState } from './guard/reducer';
 import { useSafeService } from './hooks/useSafeService';
 import { initialNodeState, nodeReducer } from './node/reducer';
-import { initialTreasuryState, TreasuryReducer } from './treasury/reducer';
+import { initialTreasuryState, treasuryReducer } from './treasury/reducer';
 
 export const FractalContext = createContext<FractalStore | null>(null);
 
@@ -24,8 +25,9 @@ export function AppProvider() {
   // handles current viewing governance state
   const [governance, governanceDispatch] = useReducer(governanceReducer, initialGovernanceState);
   // handles current viewing governance state
-  const [treasury, treasuryDispatch] = useReducer(TreasuryReducer, initialTreasuryState);
-
+  const [treasury, treasuryDispatch] = useReducer(treasuryReducer, initialTreasuryState);
+  // handles current connected account state
+  const [account, accountDispatch] = useReducer(accountReducer, initialAccountState);
   // memoize fractal store
   const fractalStore: FractalStore = useMemo(() => {
     return {
@@ -33,18 +35,20 @@ export function AppProvider() {
       guard,
       governance,
       treasury,
+      account,
       dispatch: {
         node: nodeDispatch,
         guard: guardDispatch,
         governance: governanceDispatch,
         treasury: treasuryDispatch,
+        account: accountDispatch,
       },
       clients: {
         safeService,
       },
       baseContracts,
     };
-  }, [node, guard, governance, treasury, safeService, baseContracts]);
+  }, [node, guard, governance, treasury, account, safeService, baseContracts]);
 
   return <FractalContext.Provider value={fractalStore}></FractalContext.Provider>;
 }

@@ -8,7 +8,7 @@ export const initialTreasuryState: FractalTreasury = {
   transfers: undefined,
 };
 
-export const TreasuryReducer = (
+export const treasuryReducer = (
   state: FractalTreasury,
   action: TreasuryActions
 ): FractalTreasury => {

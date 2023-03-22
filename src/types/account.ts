@@ -16,18 +16,6 @@ export interface IFavorites {
   toggleFavorite: (key: string) => void;
 }
 
-export interface FractalFavorites {
-  favoritesList: string[];
-  isConnectedFavorited: boolean;
-  toggleFavorite: (key: string) => void;
-}
-
-// @todo is this still used?
-export interface FractalAudit {
-  hasAccepted?: boolean;
-  acceptAuditWarning: () => void;
-}
-
 export interface VotesTokenData {
   name: string;
   balance: BigNumber;

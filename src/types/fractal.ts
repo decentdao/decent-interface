@@ -25,7 +25,7 @@ import { BigNumber, Transaction } from 'ethers';
 import { Dispatch } from 'react';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { NodeActions } from './../providers/App/node/action';
-import { FractalAudit, FractalFavorites, IConnectedAccount, VotesTokenData } from './account';
+import { IConnectedAccount, VotesTokenData } from './account';
 import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
 import { ContractConnection } from './contract';
 import { CreateDAOFunc } from './createDAO';
@@ -333,7 +333,12 @@ export interface Fractal {
 export interface FractalAccount {
   votesToken?: VotesTokenData;
   favorites: FractalFavorites;
-  audit: FractalAudit;
+}
+
+export interface FractalFavorites {
+  favoritesList: string[];
+  isConnectedFavorited: boolean;
+  readonly toggleFavorite: (key: string) => void;
 }
 
 export interface FractalClients {
