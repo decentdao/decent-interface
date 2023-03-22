@@ -1,8 +1,5 @@
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
-import 'react-toastify/dist/ReactToastify.css';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import { useActionToast } from '../../../../hooks/toasts/useActionToast';
 import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
