@@ -56,34 +56,38 @@ export const setValue = (
   chainId: number,
   expirationMinutes: number = CacheExpiry.ONE_WEEK
 ): void => {
-  const val: IStorageValue = {
-    v: value,
-    e:
-      expirationMinutes === CacheExpiry.NEVER
-        ? CacheExpiry.NEVER
-        : Date.now() + expirationMinutes * 60000,
-  };
-  localStorage.setItem(keyInternal(chainId, key), JSON.stringify(val));
+  if (typeof window !== 'undefined') {
+    const val: IStorageValue = {
+      v: value,
+      e:
+        expirationMinutes === CacheExpiry.NEVER
+          ? CacheExpiry.NEVER
+          : Date.now() + expirationMinutes * 60000,
+    };
+    localStorage.setItem(keyInternal(chainId, key), JSON.stringify(val));
+  }
 };
 
 export const getValue = (key: string, chainId: number): any => {
-  const rawVal = localStorage.getItem(keyInternal(chainId, key));
-  if (rawVal) {
-    const parsed: IStorageValue = JSON.parse(rawVal);
-    if (parsed.e === CacheExpiry.NEVER) {
-      return parsed.v;
-    } else {
-      if (parsed.e < Date.now()) {
-        localStorage.removeItem(keyInternal(chainId, key));
-        return null;
-      } else {
+  if (typeof window !== 'undefined') {
+    const rawVal = localStorage.getItem(keyInternal(chainId, key));
+    if (rawVal) {
+      const parsed: IStorageValue = JSON.parse(rawVal);
+      if (parsed.e === CacheExpiry.NEVER) {
         return parsed.v;
+      } else {
+        if (parsed.e < Date.now()) {
+          localStorage.removeItem(keyInternal(chainId, key));
+          return null;
+        } else {
+          return parsed.v;
+        }
       }
+    } else if (CACHE_DEFAULTS[key]) {
+      return CACHE_DEFAULTS[key];
+    } else {
+      return null;
     }
-  } else if (CACHE_DEFAULTS[key]) {
-    return CACHE_DEFAULTS[key];
-  } else {
-    return null;
   }
 };
 

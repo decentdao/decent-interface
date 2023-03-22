@@ -1,5 +1,4 @@
 import { mainnet } from 'wagmi/chains';
-import ethDefault from '../../../assets/images/coin-icon-eth.svg';
 import { NetworkConfig } from '../../../types/network';
 
 export const mainnetConfig: NetworkConfig = {
@@ -9,7 +8,7 @@ export const mainnetConfig: NetworkConfig = {
   name: mainnet.name,
   color: 'green.300',
   nativeTokenSymbol: mainnet.nativeCurrency.symbol,
-  nativeTokenIcon: ethDefault,
+  nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: mainnet,
   contracts: {
     gnosisSafe: '',

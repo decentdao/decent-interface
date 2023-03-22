@@ -1,66 +1,25 @@
 import { Button, Divider, VStack } from '@chakra-ui/react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { CreateProposalForm, CreateProposalState } from '../../types';
 import { InputComponent, TextareaComponent } from './InputComponent';
 
-export interface UsulMetadataProps {
-  show: boolean;
-  setInputtedMetadata: Dispatch<SetStateAction<boolean>>;
-  metadata: {
-    title: string;
-    description: string;
-    documentationUrl: string;
-  };
-  setMetadata: Dispatch<
-    SetStateAction<{
-      title: string;
-      description: string;
-      documentationUrl: string;
-    }>
-  >;
+export interface UsulMetadataProps extends FormikProps<CreateProposalForm> {
+  isVisible: boolean;
+  setFormState: (state: CreateProposalState) => void;
 }
 
 function UsulMetadata(props: UsulMetadataProps) {
-  const { show, setInputtedMetadata, metadata, setMetadata } = props;
+  const {
+    values: { proposalMetadata },
+    setFieldValue,
+    errors: { proposalMetadata: proposalMetadataError },
+    isVisible,
+    setFormState,
+  } = props;
   const { t } = useTranslation(['proposal', 'common']);
-  const [urlErrorMessage, setUrlErrorMessage] = useState<string>();
 
-  const isValidUrl = (url: string) => {
-    if (!url) return true;
-
-    try {
-      return Boolean(new URL(url));
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const updateTitle = (title: string) => {
-    const metadataCopy = {
-      ...metadata,
-      title,
-    };
-    setMetadata(metadataCopy);
-  };
-
-  const updateDescription = (description: string) => {
-    const metadataCopy = {
-      ...metadata,
-      description,
-    };
-    setMetadata(metadataCopy);
-  };
-
-  const updateDocumentationUrl = (documentationUrl: string) => {
-    setUrlErrorMessage(isValidUrl(documentationUrl) ? undefined : 'Invalid URL');
-    const metadataCopy = {
-      ...metadata,
-      documentationUrl,
-    };
-    setMetadata(metadataCopy);
-  };
-
-  if (!show) return null;
+  if (!isVisible) return null;
 
   return (
     <>
@@ -73,8 +32,8 @@ function UsulMetadata(props: UsulMetadataProps) {
           label={t('proposalTitle')}
           helper={t('proposalTitleHelper')}
           isRequired={false}
-          value={metadata.title}
-          onChange={e => updateTitle(e.target.value)}
+          value={proposalMetadata.title}
+          onChange={e => setFieldValue('proposalMetadata.title', e.target.value)}
           disabled={false}
           placeholder={t('proposalTitlePlaceholder')}
           testId="metadata.title"
@@ -83,8 +42,8 @@ function UsulMetadata(props: UsulMetadataProps) {
           label={t('proposalDescription')}
           helper={t('proposalDescriptionHelper')}
           isRequired={false}
-          value={metadata.description}
-          onChange={e => updateDescription(e.target.value)}
+          value={proposalMetadata.description}
+          onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}
           disabled={false}
           placeholder={t('proposalDescriptionPlaceholder')}
           rows={3}
@@ -93,11 +52,13 @@ function UsulMetadata(props: UsulMetadataProps) {
           label={t('proposalAdditionalResources')}
           helper={t('proposalAdditionalResourcesHelper')}
           isRequired={false}
-          value={metadata.documentationUrl}
-          onChange={e => updateDocumentationUrl(e.target.value)}
+          onChange={e => setFieldValue('proposalMetadata.documentationUrl', e.target.value)}
+          value={proposalMetadata.documentationUrl}
           disabled={false}
           placeholder={t('proposalAdditionalResourcesPlaceholder')}
-          errorMessage={urlErrorMessage}
+          errorMessage={
+            proposalMetadata.documentationUrl && proposalMetadataError?.documentationUrl
+          }
           testId="metadata.documentationUrl"
         />
       </VStack>
@@ -108,8 +69,8 @@ function UsulMetadata(props: UsulMetadataProps) {
       />
       <Button
         w="100%"
-        onClick={() => setInputtedMetadata(true)}
-        disabled={!!urlErrorMessage}
+        onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
+        disabled={!!proposalMetadataError}
       >
         Next
       </Button>

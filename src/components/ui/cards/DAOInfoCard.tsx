@@ -6,16 +6,17 @@ import {
   Copy,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { useAccount } from 'wagmi';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { DAO_ROUTES } from '../../../constants/routes';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { NodeLineHorizontal } from '../../../pages/FractalNodes/NodeLines';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../../routes/constants';
 import { SafeInfoResponseWithGuard, IGnosisFreezeData, IGnosisVetoContract } from '../../../types';
+import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
@@ -97,7 +98,7 @@ export function DAOInfoCard({
             gap="0.5rem"
             flexWrap="wrap"
           >
-            <Link to={DAO_ROUTES.dao.relative(safeAddress)}>
+            <Link href={DAO_ROUTES.dao.relative(safeAddress)}>
               <Text
                 as="h1"
                 textStyle="text-2xl-mono-regular"
@@ -118,7 +119,7 @@ export function DAOInfoCard({
               onClick={() => toggleFavorite(safeAddress)}
             />
             {!!numberOfChildrenDAO && (
-              <Link to={DAO_ROUTES.nodes.relative(safeAddress)}>
+              <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
                 <Box
                   bg="chocolate.500"
                   borderRadius="4px"
@@ -134,6 +135,7 @@ export function DAOInfoCard({
             onClick={() => copyToClipboard(safeAddress)}
             gap="0.5rem"
             cursor="pointer"
+            w="fit-content"
           >
             <Text
               textStyle="text-base-mono-regular"
@@ -175,7 +177,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
     <Flex
       mt="1rem"
       minH="6.75rem"
-      bg="black.900"
+      bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"
       flex={1}

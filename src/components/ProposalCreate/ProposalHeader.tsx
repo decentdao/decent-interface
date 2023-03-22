@@ -1,24 +1,21 @@
 import { HStack, Text } from '@chakra-ui/react';
-import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 
 export function ProposalHeader({
   isUsul,
-  inputtedMetadata,
   metadataTitle,
   nonce,
   setNonce,
 }: {
-  isUsul: boolean | undefined;
-  inputtedMetadata: boolean;
-  metadataTitle: string;
-  nonce: number | undefined;
-  setNonce: Dispatch<SetStateAction<number | undefined>>;
+  isUsul?: boolean;
+  metadataTitle?: string;
+  nonce?: number;
+  setNonce: (nonce?: number) => void;
 }) {
   const { t } = useTranslation(['proposal']);
 
-  if (inputtedMetadata && metadataTitle) {
+  if (!!metadataTitle) {
     return (
       <Text
         textStyle="text-xl-mono-medium"
