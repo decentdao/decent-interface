@@ -25,6 +25,8 @@ jobs:
       run: npm i -D @playwright/test
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Build graphql assets
+      run: npm run graphql:build
     - name: Wait for Development Server
       uses: nev7n/wait_for_response@v1
       with:
