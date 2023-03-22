@@ -3,6 +3,7 @@ import SafeServiceClient, {
   AllTransactionsListResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
+import { DAO } from '../../../.graphclient';
 import { IGnosisVetoContract } from '../daoGuard';
 import { IGnosisModuleData, IGnosisFreezeData } from '../fractal';
 
@@ -18,6 +19,7 @@ export enum GnosisAction {
   FREEZE_VOTE_EVENT,
   SET_DAO_NAME,
   SET_DAO_PARENT,
+  SET_DAO_HIERARCHY,
   INVALIDATE,
   RESET,
 }
@@ -40,5 +42,6 @@ export type GnosisActions =
     }
   | { type: GnosisAction.SET_DAO_NAME; payload: string }
   | { type: GnosisAction.SET_DAO_PARENT; payload: string }
+  | { type: GnosisAction.SET_DAO_HIERARCHY; payload: DAO[] }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };

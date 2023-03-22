@@ -1,5 +1,6 @@
 'use client';
 
+import { ApolloProvider } from '@apollo/client';
 import { CacheProvider } from '@chakra-ui/next-js';
 import { ChakraProvider } from '@chakra-ui/react';
 import { midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
@@ -10,6 +11,7 @@ import { theme } from '../src/assets/theme';
 import { ModalProvider } from '../src/components/ui/modals/ModalProvider';
 import Layout from '../src/components/ui/page/Layout';
 import { ErrorFallback } from '../src/components/ui/utils/ErrorFallback';
+import graphQLClient from '../src/graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogging';
 import { FractalProvider } from '../src/providers/Fractal/FractalProvider';
 import { NetworkConfigProvider } from '../src/providers/NetworkConfig/NetworkConfigProvider';
@@ -26,9 +28,9 @@ function localDevConfigs() {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  localDevConfigs();
   useEffect(() => {
     initErrorLogging();
+    localDevConfigs();
   }, []);
 
   return (
@@ -105,17 +107,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   theme={midnightTheme()}
                 >
                   <NetworkConfigProvider>
-                    <FractalProvider>
-                      <ToastContainer
-                        position="bottom-center"
-                        closeButton={false}
-                        newestOnTop={false}
-                        pauseOnFocusLoss={false}
-                      />
-                      <ModalProvider>
-                        <Layout>{children}</Layout>
-                      </ModalProvider>
-                    </FractalProvider>
+                    <ApolloProvider client={graphQLClient}>
+                      <FractalProvider>
+                        <ToastContainer
+                          position="bottom-center"
+                          closeButton={false}
+                          newestOnTop={false}
+                          pauseOnFocusLoss={false}
+                        />
+                        <ModalProvider>
+                          <Layout>{children}</Layout>
+                        </ModalProvider>
+                      </FractalProvider>
+                    </ApolloProvider>
                   </NetworkConfigProvider>
                 </RainbowKitProvider>
               </WagmiConfig>

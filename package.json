@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^3.7.10",
     "@chakra-ui/next-js": "^2.0.1",
     "@chakra-ui/react": "^2.5.2",
     "@decent-org/fractal-ui": "^0.1.16",
@@ -12,6 +13,7 @@
     "@fontsource/ibm-plex-mono": "^4.5.12",
     "@fontsource/ibm-plex-sans": "^4.5.13",
     "@fractal-framework/fractal-contracts": "^0.1.16",
+    "@graphprotocol/client-apollo": "^1.0.16",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@safe-global/safe-ethers-lib": "^1.7.0",
     "@safe-global/safe-service-client": "^1.4.0",
@@ -25,6 +27,7 @@
     "ethers": "^5.7.2",
     "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
+    "graphql": "^16.6.0",
     "i18next": "^21.9.2",
     "i18next-browser-languagedetector": "^6.1.5",
     "js-big-decimal": "^1.3.12",
@@ -45,8 +48,10 @@
     "start": "npm run set:env & next start",
     "start:https": "npm run set:env & HTTPS=true next start",
     "start:windows": "set \"GENERATE_SOURCEMAP=false\" && for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"NEXT_PUBLIC_GIT_HASH=%I\" && next start",
-    "build": "NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next build",
+    "build": "npm run graphql:build && NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next build",
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"NEXT_PUBLIC_GIT_HASH=%I\" && next build",
+    "graphql:build": "graphclient build",
+    "graphql:dev-server": "graphclient serve-dev",
     "test": "npm run set:env & next test",
     "prepare": "husky install",
     "tests": "playwright test"
@@ -68,6 +73,7 @@
     ]
   },
   "devDependencies": {
+    "@graphprotocol/client-cli": "^2.2.20",
     "@playwright/test": "^1.29.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^18.0.17",
