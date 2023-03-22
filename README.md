@@ -24,7 +24,6 @@ Build Subgraph artifacts
 
 ```shell
 $ npm run graphql:build # For UNIX
-$ npm run graphql:build:windows # For Win
 ```
 
 Running development environment
