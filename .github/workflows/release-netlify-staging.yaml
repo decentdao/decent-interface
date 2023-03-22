@@ -19,10 +19,8 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }} # auth token, generated at https://app.netlify.com/user/applications#personal-access-tokens
           NETLIFY_SITE_ID: '93816111-a19e-4218-b9ce-c480fab074b4' # staging site Netlify id (not a private identifier)
           NETLIFY_DEPLOY_TO_PROD: true
-          REACT_APP_ALCHEMY_API_KEY: ${{ secrets.REACT_APP_ALCHEMY_API_KEY }}
-          REACT_APP_INFURA_API_KEY: ${{ secrets.REACT_APP_INFURA_API_KEY }}
-          REACT_APP_SENTRY_DSN: ${{ secrets.REACT_APP_SENTRY_DSN }}
-          REACT_APP_SITE_URL: ${{ secrets.REACT_APP_SITE_URL }}
           TESTING_ALCHEMY_API_KEY: ${{ secrets.TESTING_ALCHEMY_API_KEY }}
-          NEXT_PUBLIC_ALCHEMY_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_API_KEY }}
           NEXT_PUBLIC_INFURA_API_KEY: ${{ secrets.NEXT_PUBLIC_INFURA_API_KEY }}
+          NEXT_PUBLIC_ALCHEMY_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
