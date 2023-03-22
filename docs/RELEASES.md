@@ -9,7 +9,11 @@ Fractal has three application environments:
 - [Production (prod)](https://app.fractalframework.xyz/) - The user facing application, which requires a version tag to publish a new release.
 
 ## Release preparation and testing
-Every 2nd Thursday morning all code currently merged in the development environment is merged into staging, and tagged as a potential release candidate.
+Every 2nd Thursday morning all code currently merged in the development environment is included in a pull request into staging.
+
+Included in this PR is an update to `RELEASE_VERSION`, following the release conventions detailed below.
+
+The engineering team performs a quick scan of the pull request Thursday morning, and given 2 approvals, the code is merged into staging as a potential release candidate.
 
 The QA team performs manual and automated regression testing on Thursday and Friday, with any regressions logged as Github issue tickets, to be fixed by the engineering team prior to the end of the week.
 
