@@ -322,7 +322,7 @@ export interface FractalStore
 export interface Fractal {
   node: FractalNode; // holds the main identifing data for the current fractal node
   guard: FreezeGuard; // holds the guard for the current fractal node; note maybe this should stay generic?; how does this scale?
-  governance: AzuriousGovernance | SafeMultisigGovernance; // extendable class type with Governance Base interface
+  governance: FractalGovernance; // extendable class type with Governance Base interface
   treasury: FractalTreasury; // Treasury
   account: FractalAccount; // Account
   governanceContracts: GovernanceContractsRefactored;
@@ -391,15 +391,16 @@ export interface FractalTreasury {
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
 }
-
-export interface AzuriousGovernance extends FractalGovernance {
+export type FractalGovernance = AzuriousGovernance | SafeMultisigGovernance;
+export interface AzuriousGovernance extends Governance {
   votesStrategy?: [VotesStrategyAzurious];
 }
-export interface SafeMultisigGovernance extends FractalGovernance {}
+export interface SafeMultisigGovernance extends Governance {}
 
-export interface FractalGovernance {
-  type: StrategyType;
-  proposals: {};
+export interface Governance {
+  type?: StrategyType;
+  // @todo this needs to be typed
+  proposals: [];
 }
 
 export interface VotesStrategyAzurious extends VotesStrategy {}

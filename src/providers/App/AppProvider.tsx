@@ -1,6 +1,7 @@
 import { Context, createContext, useContext, useMemo, useReducer } from 'react';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore } from '../../types';
+import { governanceReducer, initialGovernanceState } from './governance/reducer';
 import { guardReducer, initialGuardState } from './guard/reducer';
 import { useSafeService } from './hooks/useSafeService';
 import { initialNodeState, nodeReducer } from './node/reducer';
@@ -17,23 +18,27 @@ export function AppProvider() {
   const safeService = useSafeService();
   // handles current viewing node (DAO) state
   const [node, nodeDispatch] = useReducer(nodeReducer, initialNodeState);
+  // handles current viewing guard state
   const [guard, guardDispatch] = useReducer(guardReducer, initialGuardState);
 
+  const [governance, governanceDispatch] = useReducer(governanceReducer, initialGovernanceState);
   // memoize fractal store
   const fractalStore: FractalStore = useMemo(() => {
     return {
       node,
       guard,
+      governance,
       dispatch: {
         node: nodeDispatch,
         guard: guardDispatch,
+        governance: governanceDispatch,
       },
       clients: {
         safeService,
       },
       baseContracts,
     };
-  }, [node, guard, safeService, baseContracts]);
+  }, [node, guard, governance, safeService, baseContracts]);
 
   return <FractalContext.Provider value={fractalStore}></FractalContext.Provider>;
 }
