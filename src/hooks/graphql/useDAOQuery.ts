@@ -4,7 +4,7 @@ import { DAOQueryDocument } from '../../../.graphclient';
 import { IGnosis, GnosisActions, GnosisAction } from '../../types';
 import useDAOName from '../DAO/useDAOName';
 
-export default function useSubgraphQuery({
+export default function useDAOQuery({
   gnosis,
   gnosisDispatch,
 }: {
@@ -17,7 +17,7 @@ export default function useSubgraphQuery({
 
   const registryName = data?.daos[0]?.name;
 
-  // To prevent calling queries
+  // To prevent executing GraphQL queries for each DAO name request - we're using useDAOName inside useDAOQuery and not vice versa
   const { daoRegistryName } = useDAOName({ address: gnosis.safe.address, registryName });
 
   useEffect(() => {
@@ -26,10 +26,14 @@ export default function useSubgraphQuery({
       const dao = daos[0];
       if (dao) {
         const { parentAddress, hierarchy } = dao;
-        // TODO: This could/should be single dispatch
-        gnosisDispatch({ type: GnosisAction.SET_DAO_PARENT, payload: parentAddress });
-        gnosisDispatch({ type: GnosisAction.SET_DAO_NAME, payload: daoRegistryName });
-        gnosisDispatch({ type: GnosisAction.SET_DAO_HIERARCHY, payload: hierarchy });
+        gnosisDispatch({
+          type: GnosisAction.SET_DAO_DATA,
+          payload: {
+            parentDAOAddress: parentAddress,
+            daoName: daoRegistryName,
+            hierarchy,
+          },
+        });
       }
     }
   }, [error, data, gnosisDispatch, daoRegistryName]);

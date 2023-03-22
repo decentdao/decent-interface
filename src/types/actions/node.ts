@@ -17,9 +17,7 @@ export enum GnosisAction {
   SET_GUARD_CONTRACTS,
   SET_FREEZE_DATA,
   FREEZE_VOTE_EVENT,
-  SET_DAO_NAME,
-  SET_DAO_PARENT,
-  SET_DAO_HIERARCHY,
+  SET_DAO_DATA,
   INVALIDATE,
   RESET,
 }
@@ -40,8 +38,9 @@ export type GnosisActions =
         freezeProposalVoteCount: BigNumber;
       };
     }
-  | { type: GnosisAction.SET_DAO_NAME; payload: string }
-  | { type: GnosisAction.SET_DAO_PARENT; payload: string }
-  | { type: GnosisAction.SET_DAO_HIERARCHY; payload: DAO[] }
+  | {
+      type: GnosisAction.SET_DAO_DATA;
+      payload: { daoName?: string; parentDAOAddress?: string; hierarchy?: DAO[] };
+    }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };
