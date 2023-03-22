@@ -3,6 +3,10 @@ import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore } from '../../types';
 import { accountReducer, initialAccountState } from './account/reducer';
 import { governanceReducer, initialGovernanceState } from './governance/reducer';
+import {
+  governanceContractsReducer,
+  initialGovernanceContractsState,
+} from './governanceContracts/reducer';
 import { guardReducer, initialGuardState } from './guard/reducer';
 import { useSafeService } from './hooks/useSafeService';
 import { initialNodeState, nodeReducer } from './node/reducer';
@@ -20,14 +24,20 @@ export function AppProvider() {
   const safeService = useSafeService();
   // handles current viewing node (DAO) state
   const [node, nodeDispatch] = useReducer(nodeReducer, initialNodeState);
-  // handles current viewing guard state
+  // handles current node's guard state
   const [guard, guardDispatch] = useReducer(guardReducer, initialGuardState);
-  // handles current viewing governance state
+  // handles current node's governance state
   const [governance, governanceDispatch] = useReducer(governanceReducer, initialGovernanceState);
-  // handles current viewing governance state
+  // handles current node's treasury state
   const [treasury, treasuryDispatch] = useReducer(treasuryReducer, initialTreasuryState);
   // handles current connected account state
   const [account, accountDispatch] = useReducer(accountReducer, initialAccountState);
+  // handles current node's governance contracts state
+  const [governanceContracts, governanceContractsDispatch] = useReducer(
+    governanceContractsReducer,
+    initialGovernanceContractsState
+  );
+
   // memoize fractal store
   const fractalStore: FractalStore = useMemo(() => {
     return {
@@ -36,19 +46,21 @@ export function AppProvider() {
       governance,
       treasury,
       account,
+      governanceContracts,
       dispatch: {
         node: nodeDispatch,
         guard: guardDispatch,
         governance: governanceDispatch,
         treasury: treasuryDispatch,
         account: accountDispatch,
+        governanceContracts: governanceContractsDispatch,
       },
       clients: {
         safeService,
       },
       baseContracts,
     };
-  }, [node, guard, governance, treasury, account, safeService, baseContracts]);
+  }, [node, guard, governance, treasury, account, governanceContracts, safeService, baseContracts]);
 
   return <FractalContext.Provider value={fractalStore}></FractalContext.Provider>;
 }

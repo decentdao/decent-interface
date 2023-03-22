@@ -348,9 +348,9 @@ export interface FractalClients {
 
 // @RENAME -> GovernanceContracts
 export interface GovernanceContractsRefactored {
-  ozLinearVotingContract: ContractConnection<OZLinearVoting>;
-  usulContract: ContractConnection<FractalUsul>;
-  tokenContract: ContractConnection<VotesToken>;
+  ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
+  usulContract: ContractConnection<FractalUsul> | null;
+  tokenContract: ContractConnection<VotesToken> | null;
 }
 
 export interface FractalNode {
