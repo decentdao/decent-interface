@@ -373,10 +373,10 @@ export enum FractalModuleType {
 }
 
 export interface FractalGuardContracts {
-  vetoGuardContract: ContractConnection<VetoGuard | UsulVetoGuard> | undefined;
-  vetoVotingContract: ContractConnection<VetoERC20Voting | VetoMultisigVoting> | undefined;
-  vetoGuardType: VetoGuardType;
-  vetoVotingType: VetoVotingType;
+  vetoGuardContract?: ContractConnection<VetoGuard | UsulVetoGuard>;
+  vetoVotingContract?: ContractConnection<VetoERC20Voting | VetoMultisigVoting>;
+  vetoGuardType: VetoGuardType | null;
+  vetoVotingType: VetoVotingType | null;
 }
 
 export interface FreezeGuard {

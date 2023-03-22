@@ -8,8 +8,10 @@ import {
   initialGovernanceContractsState,
 } from './governanceContracts/reducer';
 import { guardReducer, initialGuardState } from './guard/reducer';
+import { guardContractReducer, initialGuardContractsState } from './guardContracts/reducer';
 import { useSafeService } from './hooks/useSafeService';
 import { initialNodeState, nodeReducer } from './node/reducer';
+import { initialNodeHierarchyState, nodeHierarchyReducer } from './nodeHierarchy/reducer';
 import { initialTreasuryState, treasuryReducer } from './treasury/reducer';
 
 export const FractalContext = createContext<FractalStore | null>(null);
@@ -37,7 +39,16 @@ export function AppProvider() {
     governanceContractsReducer,
     initialGovernanceContractsState
   );
-
+  // handles current node's guard contracts state
+  const [guardContracts, guardContractsDispatch] = useReducer(
+    guardContractReducer,
+    initialGuardContractsState
+  );
+  // handles current nodes's hiearchy state
+  const [nodeHierarchy, nodeHierarchyDispatch] = useReducer(
+    nodeHierarchyReducer,
+    initialNodeHierarchyState
+  );
   // memoize fractal store
   const fractalStore: FractalStore = useMemo(() => {
     return {
@@ -47,6 +58,8 @@ export function AppProvider() {
       treasury,
       account,
       governanceContracts,
+      guardContracts,
+      nodeHierarchy,
       dispatch: {
         node: nodeDispatch,
         guard: guardDispatch,
@@ -54,13 +67,26 @@ export function AppProvider() {
         treasury: treasuryDispatch,
         account: accountDispatch,
         governanceContracts: governanceContractsDispatch,
+        guardContracts: guardContractsDispatch,
+        nodeHierarchy: nodeHierarchyDispatch,
       },
       clients: {
         safeService,
       },
       baseContracts,
     };
-  }, [node, guard, governance, treasury, account, governanceContracts, safeService, baseContracts]);
+  }, [
+    node,
+    guard,
+    governance,
+    treasury,
+    account,
+    guardContracts,
+    governanceContracts,
+    nodeHierarchy,
+    safeService,
+    baseContracts,
+  ]);
 
   return <FractalContext.Provider value={fractalStore}></FractalContext.Provider>;
 }
