@@ -2,6 +2,7 @@ import { Button, Box, Flex } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/Fractal/hooks/useFractal';
 import { TxProposal, GovernanceTypes } from '../../types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
@@ -13,7 +14,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
 
   const {
     gnosis: {
-      safe: { owners },
+      safe: { owners, address },
     },
     governance: { type },
   } = useFractal();
@@ -41,7 +42,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
           {showCreateButton && (
-            <Link href="new">
+            <Link href={DAO_ROUTES.proposalNew.relative(address)}>
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"
