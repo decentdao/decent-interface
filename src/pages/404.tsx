@@ -7,6 +7,8 @@ import { I18nextProvider, useTranslation } from 'react-i18next';
 import { theme } from '../assets/theme';
 import { BASE_ROUTES } from '../constants/routes';
 import i18n from '../i18n';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
 
 export default function FourOhFourPage() {
   const { t } = useTranslation('common');
