@@ -1,7 +1,6 @@
 import { Context, createContext, ReactNode, useContext, useMemo, useReducer } from 'react';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore } from '../../types';
-import { accountReducer, initialAccountState } from './account/reducer';
 import { FractalGovernanceAction } from './governance/action';
 import { governanceReducer, initialGovernanceState } from './governance/reducer';
 import { GovernanceContractAction } from './governanceContracts/action';
@@ -35,8 +34,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [governance, governanceDispatch] = useReducer(governanceReducer, initialGovernanceState);
   // handles current node's treasury state
   const [treasury, treasuryDispatch] = useReducer(treasuryReducer, initialTreasuryState);
-  // handles current connected account state
-  const [account, accountDispatch] = useReducer(accountReducer, initialAccountState);
   // handles current node's governance contracts state
   const [governanceContracts, governanceContractsDispatch] = useReducer(
     governanceContractsReducer,
@@ -64,7 +61,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       guard,
       governance,
       treasury,
-      account,
       governanceContracts,
       guardContracts,
       nodeHierarchy,
@@ -73,7 +69,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         guard: guardDispatch,
         governance: governanceDispatch,
         treasury: treasuryDispatch,
-        account: accountDispatch,
         governanceContracts: governanceContractsDispatch,
         guardContracts: guardContractsDispatch,
         nodeHierarchy: nodeHierarchyDispatch,
@@ -97,7 +92,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     guard,
     governance,
     treasury,
-    account,
     guardContracts,
     governanceContracts,
     nodeHierarchy,
