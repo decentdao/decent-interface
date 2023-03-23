@@ -76,7 +76,7 @@ export const createSubgraphDAO = (
 ) => {
   return {
     data: {
-      daos: [
+      _0_daos: [
         {
           address,
           name,
