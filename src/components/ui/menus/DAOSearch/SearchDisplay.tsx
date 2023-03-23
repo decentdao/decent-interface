@@ -13,6 +13,11 @@ interface ISearchDisplay {
   closeDrawer?: () => void;
 }
 
+function DAONameDisplay({ address }: { address: string }) {
+  const { displayName } = useDisplayName(address);
+  return <Text textStyle="text-base-sans-medium">{displayName}</Text>;
+}
+
 export function SearchDisplay({
   loading,
   errorMessage,
@@ -23,8 +28,6 @@ export function SearchDisplay({
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const { push } = useRouter();
-
-  const { displayName } = useDisplayName(address);
   if (loading && address) {
     return (
       <Box>
@@ -62,7 +65,7 @@ export function SearchDisplay({
             >
               {t('labelDAOFound')}
             </Text>
-            <Text textStyle="text-base-sans-medium">{displayName}</Text>
+            <DAONameDisplay address={address} />
           </Flex>
         </Flex>
         <Button
