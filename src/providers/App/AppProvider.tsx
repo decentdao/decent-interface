@@ -1,17 +1,24 @@
-import { Context, createContext, useContext, useMemo, useReducer } from 'react';
+import { Context, createContext, ReactNode, useContext, useMemo, useReducer } from 'react';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore } from '../../types';
 import { accountReducer, initialAccountState } from './account/reducer';
+import { FractalGovernanceAction } from './governance/action';
 import { governanceReducer, initialGovernanceState } from './governance/reducer';
+import { GovernanceContractAction } from './governanceContracts/action';
 import {
   governanceContractsReducer,
   initialGovernanceContractsState,
 } from './governanceContracts/reducer';
+import { FractalGuardAction } from './guard/action';
 import { guardReducer, initialGuardState } from './guard/reducer';
+import { GuardContractAction } from './guardContracts/action';
 import { guardContractReducer, initialGuardContractsState } from './guardContracts/reducer';
 import { useSafeService } from './hooks/useSafeService';
+import { NodeAction } from './node/action';
 import { initialNodeState, nodeReducer } from './node/reducer';
+import { NodeHierarchyAction } from './nodeHierarchy/action';
 import { initialNodeHierarchyState, nodeHierarchyReducer } from './nodeHierarchy/reducer';
+import { TreasuryAction } from './treasury/action';
 import { initialTreasuryState, treasuryReducer } from './treasury/reducer';
 
 export const FractalContext = createContext<FractalStore | null>(null);
@@ -19,11 +26,7 @@ export const FractalContext = createContext<FractalStore | null>(null);
 export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
 
 // @RENAME to FractalProvider
-export function AppProvider() {
-  // loads base Fractal contracts with provider into state
-  const baseContracts = useSafeContracts();
-  // loads safe service into state;
-  const safeService = useSafeService();
+export function AppProvider({ children }: { children: ReactNode }) {
   // handles current viewing node (DAO) state
   const [node, nodeDispatch] = useReducer(nodeReducer, initialNodeState);
   // handles current node's guard state
@@ -49,6 +52,11 @@ export function AppProvider() {
     nodeHierarchyReducer,
     initialNodeHierarchyState
   );
+  // loads base Fractal contracts with provider into state
+  const baseContracts = useSafeContracts();
+  // loads safe service into state;
+  const safeService = useSafeService();
+
   // memoize fractal store
   const fractalStore: FractalStore = useMemo(() => {
     return {
@@ -69,6 +77,15 @@ export function AppProvider() {
         governanceContracts: governanceContractsDispatch,
         guardContracts: guardContractsDispatch,
         nodeHierarchy: nodeHierarchyDispatch,
+        resetDAO: () => {
+          nodeDispatch({ type: NodeAction.RESET });
+          guardDispatch({ type: FractalGuardAction.RESET });
+          governanceDispatch({ type: FractalGovernanceAction.RESET });
+          treasuryDispatch({ type: TreasuryAction.RESET });
+          governanceContractsDispatch({ type: GovernanceContractAction.RESET });
+          guardContractsDispatch({ type: GuardContractAction.RESET });
+          nodeHierarchyDispatch({ type: NodeHierarchyAction.RESET });
+        },
       },
       clients: {
         safeService,
@@ -88,5 +105,5 @@ export function AppProvider() {
     baseContracts,
   ]);
 
-  return <FractalContext.Provider value={fractalStore}></FractalContext.Provider>;
+  return <FractalContext.Provider value={fractalStore}>{children}</FractalContext.Provider>;
 }

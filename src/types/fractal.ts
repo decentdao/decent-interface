@@ -24,6 +24,13 @@ import SafeServiceClient, {
 import { BigNumber, Transaction } from 'ethers';
 import { Dispatch } from 'react';
 import { MultiSend } from '../assets/typechain-types/usul';
+// @RENAME
+import { AccountActions } from '../providers/App/account/action';
+import { FractalGovernanceActions } from '../providers/App/governance/action';
+import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
+import { FractalGuardActions } from '../providers/App/guard/action';
+import { GuardContractActions } from '../providers/App/guardContracts/action';
+import { NodeHierarchyActions } from '../providers/App/nodeHierarchy/action';
 import { NodeActions } from './../providers/App/node/action';
 import { IConnectedAccount, VotesTokenData } from './account';
 import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
@@ -303,20 +310,19 @@ export interface ITokenAccount {
 }
 
 // ! below this line is the refactored types
-export interface FractalStore
-  extends Omit<
-    Fractal,
-    | 'governance'
-    | 'treasury'
-    | 'account'
-    | 'governanceContracts'
-    | 'guardContracts'
-    | 'nodeHierarchy'
-  > {
+export interface FractalStore extends Fractal {
   baseContracts: FractalContracts; // useSafeContracts should just load here...
   clients: FractalClients; // third party services
   dispatch: {
     node: Dispatch<NodeActions>;
+    guard: Dispatch<FractalGuardActions>;
+    governance: Dispatch<FractalGovernanceActions>;
+    treasury: Dispatch<TreasuryActions>;
+    account: Dispatch<AccountActions>;
+    governanceContracts: Dispatch<GovernanceContractActions>;
+    guardContracts: Dispatch<GuardContractActions>;
+    nodeHierarchy: Dispatch<NodeHierarchyActions>;
+    resetDAO: () => void;
   };
 }
 export interface Fractal {
