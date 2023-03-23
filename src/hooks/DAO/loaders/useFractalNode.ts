@@ -47,7 +47,6 @@ export const useFractalNode = ({ daoAddress }: { daoAddress: string }) => {
           type: NodeAction.SET_DAO_NODE,
           payload: { daoAddress: utils.getAddress(safe.address), safe, fractalModules, daoName },
         });
-        console.count('safeInfoRequests');
       } catch (e) {
         logError(e);
         invalidateDAO('errorInvalidSearch');
