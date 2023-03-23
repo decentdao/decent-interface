@@ -50,11 +50,11 @@ export const useFractalNode = ({ daoAddress }: { daoAddress: string }) => {
         console.count('safeInfoRequests');
       } catch (e) {
         logError(e);
-        invalidateDAO('invalid DAO');
+        invalidateDAO('errorInvalidSearch');
       }
     } else {
       // invalid address
-      invalidateDAO('invalid address');
+      invalidateDAO('errorFailedSearch');
     }
   }, [daoAddress, safeService, invalidateDAO, lookupModules, getDAOName, dispatch]);
 
