@@ -14,11 +14,13 @@ export class SubgraphMocker {
   constructor(page: Page) {
     this.page = page;
     // log requests for debugging
-    this.page.on('request', request => console.log('>>', request.method(), request.url()));
+    this.page.on('request', request =>
+      console.log('>>', request.method(), request.url(), request.postData())
+    );
   }
 
-  mock(response: object) {
-    this.mockWithHandler(() => response);
+  async mock(response: object) {
+    await this.mockWithHandler(() => response);
   }
 
   async mockWithHandler(handler: (request: Request) => object) {

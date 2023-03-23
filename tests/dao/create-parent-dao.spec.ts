@@ -18,7 +18,7 @@ test.beforeEach(async ({ page }) => {
 test('Create Multisig DAO', async ({ page }) => {
   new CreateMultisigMocker(page);
   const subgraphMocker = new SubgraphMocker(page);
-  subgraphMocker.mock(createSubgraphDAO('0x', 'Test Multisig', []));
+  await subgraphMocker.mock(createSubgraphDAO('0x', 'Test Multisig', []));
 
   await create
     .fillName('Test Multisig')
@@ -32,7 +32,7 @@ test('Create Multisig DAO', async ({ page }) => {
   await page.waitForURL(BASE_URL + '/daos/*');
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
-  await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 20000 });
+  await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
   expect(daoNameEle).toContainText('Test Multisig');
 });
 
@@ -56,6 +56,6 @@ test('Create Token Voting DAO', async ({ page }) => {
   await page.waitForURL(BASE_URL + '/daos/*');
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
-  await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 20000 });
+  await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
   expect(daoNameEle).toContainText('Test Token Voting');
 });
