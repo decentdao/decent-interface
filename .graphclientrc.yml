@@ -1,7 +1,7 @@
 sources:
   - name: fractal
     handler:
-      graphql:
+      graphql: # TODO: Make sure to switch to "production" API url once start hitting limits
         endpoint: https://api.studio.thegraph.com/query/43215/fractal-test/v0.0.3
 
 documents:
