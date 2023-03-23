@@ -24,6 +24,12 @@ import SafeServiceClient, {
 import { BigNumber, Transaction } from 'ethers';
 import { Dispatch } from 'react';
 import { MultiSend } from '../assets/typechain-types/usul';
+// @RENAME
+import { FractalGovernanceActions } from '../providers/App/governance/action';
+import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
+import { FractalGuardActions } from '../providers/App/guard/action';
+import { GuardContractActions } from '../providers/App/guardContracts/action';
+import { NodeHierarchyActions } from '../providers/App/nodeHierarchy/action';
 import { NodeActions } from './../providers/App/node/action';
 import { IConnectedAccount, VotesTokenData } from './account';
 import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
@@ -303,20 +309,18 @@ export interface ITokenAccount {
 }
 
 // ! below this line is the refactored types
-export interface FractalStore
-  extends Omit<
-    Fractal,
-    | 'governance'
-    | 'treasury'
-    | 'account'
-    | 'governanceContracts'
-    | 'guardContracts'
-    | 'nodeHierarchy'
-  > {
+export interface FractalStore extends Fractal {
   baseContracts: FractalContracts; // useSafeContracts should just load here...
   clients: FractalClients; // third party services
   dispatch: {
     node: Dispatch<NodeActions>;
+    guard: Dispatch<FractalGuardActions>;
+    governance: Dispatch<FractalGovernanceActions>;
+    treasury: Dispatch<TreasuryActions>;
+    governanceContracts: Dispatch<GovernanceContractActions>;
+    guardContracts: Dispatch<GuardContractActions>;
+    nodeHierarchy: Dispatch<NodeHierarchyActions>;
+    resetDAO: () => void;
   };
 }
 export interface Fractal {
@@ -324,21 +328,9 @@ export interface Fractal {
   guard: FreezeGuard; // holds the guard for the current fractal node; note maybe this should stay generic?; how does this scale?
   governance: FractalGovernance; // extendable class type with Governance Base interface
   treasury: FractalTreasury; // Treasury
-  account: FractalAccount; // Account
   governanceContracts: GovernanceContractsRefactored;
   guardContracts: FractalGuardContracts;
   nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
-}
-
-export interface FractalAccount {
-  votesToken?: VotesTokenData;
-  favorites: FractalFavorites;
-}
-
-export interface FractalFavorites {
-  favoritesList: string[];
-  isConnectedFavorited: boolean;
-  readonly toggleFavorite: (key: string) => void;
 }
 
 export interface FractalClients {
@@ -399,6 +391,7 @@ export interface FractalTreasury {
 export type FractalGovernance = AzuriousGovernance | SafeMultisigGovernance;
 export interface AzuriousGovernance extends Governance {
   votesStrategy?: [VotesStrategyAzurious];
+  votesToken?: VotesTokenData;
 }
 export interface SafeMultisigGovernance extends Governance {}
 
