@@ -14,9 +14,7 @@ export class SubgraphMocker {
   constructor(page: Page) {
     this.page = page;
     // log requests for debugging
-    this.page.on('request', request =>
-      console.log('>>', request.method(), request.url(), request.postData())
-    );
+    this.page.on('request', request => console.log('>>', request.method(), request.url()));
   }
 
   async mock(response: object) {
@@ -25,8 +23,10 @@ export class SubgraphMocker {
 
   async mockWithHandler(handler: (request: Request) => object) {
     await this.page.route(SUBGRAPH_API_URL, async (route, request) => {
+      const mockedResult = handler(request);
+      console.log('Subgraph Mocker', mockedResult);
       await route.fulfill({
-        body: JSON.stringify(handler(request)),
+        body: JSON.stringify(mockedResult),
       });
     });
   }
