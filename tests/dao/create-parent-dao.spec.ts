@@ -17,6 +17,8 @@ test.beforeEach(async ({ page }) => {
 
 test('Create Multisig DAO', async ({ page }) => {
   new CreateMultisigMocker(page);
+  const subgraphMocker = new SubgraphMocker(page);
+  subgraphMocker.mock(createSubgraphDAO('0x', 'Test Multisig', []));
 
   await create
     .fillName('Test Multisig')
@@ -29,12 +31,6 @@ test('Create Multisig DAO', async ({ page }) => {
 
   await page.waitForURL(BASE_URL + '/daos/*');
 
-  const subgraphMocker = new SubgraphMocker(page);
-  await subgraphMocker.mockWithHandler(() => {
-    const daoAddrArr = page.url().match(/((0x).+?(?=\/))/)!;
-    return createSubgraphDAO(daoAddrArr[0]!, 'Test Multisig', []);
-  });
-
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
   await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
   expect(daoNameEle).toContainText('Test Multisig');
@@ -42,6 +38,8 @@ test('Create Multisig DAO', async ({ page }) => {
 
 test('Create Token Voting DAO', async ({ page }) => {
   new CreateTokenVotingMocker(page);
+  const subgraphMocker = new SubgraphMocker(page);
+  subgraphMocker.mock(createSubgraphDAO('0x', 'Test Token Voting', []));
 
   await create
     .fillName('Test Token Voting')
@@ -56,12 +54,6 @@ test('Create Token Voting DAO', async ({ page }) => {
     .then(() => create.clickDeployButton());
 
   await page.waitForURL(BASE_URL + '/daos/*');
-
-  const subgraphMocker = new SubgraphMocker(page);
-  await subgraphMocker.mockWithHandler(() => {
-    const daoAddrArr = page.url().match(/((0x).+?(?=\/))/)!;
-    return createSubgraphDAO(daoAddrArr[0]!, 'Test Token Voting', []);
-  });
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
   await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
