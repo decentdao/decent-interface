@@ -28,8 +28,8 @@ export default function useUpdateProposalState({
             const updatedProposal = {
               ...proposal,
               state: await getTxProposalState(
-                usulContract,
-                ozLinearVotingContract,
+                ozLinearVotingContract.asSigner,
+                usulContract.asSigner,
                 proposalNumber,
                 chainId
               ),

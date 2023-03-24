@@ -343,6 +343,7 @@ export interface GovernanceContractsRefactored {
   ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
   usulContract: ContractConnection<FractalUsul> | null;
   tokenContract: ContractConnection<VotesToken> | null;
+  isLoaded: boolean;
 }
 
 export interface FractalNode {
@@ -397,8 +398,7 @@ export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
   type?: StrategyType;
-  // @todo this needs to be typed
-  proposals: [];
+  proposals: FractalProposal[];
 }
 
 export interface VotesStrategyAzurious extends VotesStrategy {}
@@ -435,3 +435,5 @@ export interface FractalContracts {
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;
   claimingMasterCopyContract: ContractConnection<TokenClaim>;
 }
+
+export type FractalProposal = UsulProposal | MultisigProposal;

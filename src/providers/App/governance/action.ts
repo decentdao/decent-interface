@@ -1,10 +1,16 @@
 import { BigNumber } from 'ethers';
-import { FractalGovernance } from '../../../types';
+import {
+  FractalGovernance,
+  FractalProposal,
+  ProposalVotesSummary,
+  TxProposalState,
+} from '../../../types';
 
 export enum FractalGovernanceAction {
   SET_GOVERNANCE,
   UPDATE_PROPOSALS_NEW,
-  UPDATE_PROPOSALS_STATE,
+  UPDATE_NEW_USUL_VOTE,
+  UPDATE_PROPOSAL_STATE,
   UPDATE_VOTING_PERIOD,
   UPDATE_VOTING_QUORUM,
   UPDATE_TIMELOCK_PERIOD,
@@ -14,11 +20,21 @@ export enum FractalGovernanceAction {
 export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_GOVERNANCE; payload: FractalGovernance }
   // @todo update with proposal type
-  | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: any }
+  | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
+  | {
+      type: FractalGovernanceAction.UPDATE_NEW_USUL_VOTE;
+      payload: {
+        proposalNumber: string;
+        voter: string;
+        support: number;
+        weight: BigNumber;
+        votesSummary: ProposalVotesSummary;
+      };
+    }
   // @todo update with proposal state
   | {
-      type: FractalGovernanceAction.UPDATE_PROPOSALS_STATE;
-      payload: { state: any; proposalNumber: BigNumber };
+      type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
+      payload: { state: TxProposalState; proposalNumber: string };
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;
