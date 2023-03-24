@@ -54,13 +54,14 @@ export function useGnosisApiServices(
   }, [signerOrProvider, gnosisDispatch, safeBaseURL]);
 
   const getGnosisSafeFungibleAssets = useCallback(async () => {
+    const { getAddress } = ethers.utils;
     if (!address || !safeService) {
       return;
     }
     try {
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_FUNGIBLE_ASSETS,
-        payload: await safeService.getUsdBalances(address),
+        payload: await safeService.getUsdBalances(getAddress(address)),
       });
     } catch (e) {
       logError(e);
@@ -71,10 +72,11 @@ export function useGnosisApiServices(
     if (!address || !safeService) {
       return;
     }
+    const { getAddress } = ethers.utils;
     try {
       treasuryDispatch({
         type: TreasuryAction.UPDATE_GNOSIS_SAFE_NONFUNGIBLE_ASSETS,
-        payload: await safeService.getCollectibles(address),
+        payload: await safeService.getCollectibles(getAddress(address)),
       });
     } catch (e) {
       logError(e);
@@ -102,10 +104,11 @@ export function useGnosisApiServices(
     if (!address || !safeService) {
       return;
     }
+    const { getAddress } = ethers.utils;
     try {
       gnosisDispatch({
         type: GnosisAction.SET_SAFE_TRANSACTIONS,
-        payload: await safeService.getAllTransactions(address),
+        payload: await safeService.getAllTransactions(getAddress(address)),
       });
     } catch (e) {
       logError(e);
@@ -116,10 +119,11 @@ export function useGnosisApiServices(
     if (!providedSafeAddress || !safeService || !isGnosisLoading) {
       return;
     }
+    const { getAddress } = ethers.utils;
     try {
       gnosisDispatch({
         type: GnosisAction.SET_SAFE,
-        payload: await safeService.getSafeInfo(providedSafeAddress),
+        payload: await safeService.getSafeInfo(getAddress(providedSafeAddress)),
       });
     } catch (e) {
       logError(e);

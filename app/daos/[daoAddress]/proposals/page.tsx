@@ -9,6 +9,7 @@ import Proposals from '../../../../src/components/Proposals';
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
+import { DAO_ROUTES } from '../../../../src/constants/routes';
 import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../src/types';
 
@@ -17,7 +18,7 @@ export default function ProposalsPage() {
   const {
     governance: { type, governanceToken },
     gnosis: {
-      safe: { owners },
+      safe: { owners, address },
     },
   } = useFractal();
 
@@ -45,7 +46,7 @@ export default function ProposalsPage() {
         buttonTestId="link-delegate"
       >
         {showCreateButton && (
-          <Link href="new">
+          <Link href={DAO_ROUTES.proposalNew.relative(address)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

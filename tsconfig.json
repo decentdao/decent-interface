@@ -32,9 +32,7 @@
   "include": [
     "src",
     "tests",
-    "pages",
     "app",
-    "app/page.tsx",
     ".next/types/**/*.ts"
   ]
 }
