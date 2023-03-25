@@ -11,7 +11,7 @@ Fractal has three application environments:
 ## Release preparation and testing
 Every 2nd Thursday morning all code currently merged in the development environment is included in a pull request into staging.
 
-Included in this PR is an update to `RELEASE_VERSION`, following the release conventions detailed below.
+Included in this PR is an update to `version` in the app's `package.json`, following the release conventions detailed below.
 
 The engineering team performs a quick scan of the pull request Thursday morning, and given 2 approvals, the code is merged into staging as a potential release candidate.
 
