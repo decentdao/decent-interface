@@ -2,7 +2,9 @@ import { BigNumber } from 'ethers';
 import {
   FractalProposal,
   ProposalVotesSummary,
+  TokenData,
   TxProposalState,
+  VotesData,
   VotesStrategy,
 } from '../../../types';
 
@@ -15,6 +17,9 @@ export enum FractalGovernanceAction {
   UPDATE_VOTING_PERIOD,
   UPDATE_VOTING_QUORUM,
   UPDATE_TIMELOCK_PERIOD,
+  SET_TOKEN_DATA,
+  SET_TOKEN_ACCOUNT_DATA,
+  RESET_TOKEN_ACCOUNT_DATA,
   RESET,
 }
 
@@ -49,5 +54,16 @@ export type FractalGovernanceActions =
   | {
       type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD;
       payload: BigNumber;
+    }
+  | {
+      type: FractalGovernanceAction.SET_TOKEN_DATA;
+      payload: TokenData;
+    }
+  | {
+      type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
+      payload: VotesData;
+    }
+  | {
+      type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
     }
   | { type: FractalGovernanceAction.RESET };
