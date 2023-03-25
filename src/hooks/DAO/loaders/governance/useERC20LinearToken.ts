@@ -1,10 +1,11 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 export const useERC20LinearToken = () => {
+  const isTokenLoaded = useRef(false);
   const {
     governanceContracts: { tokenContract },
     dispatch,
@@ -35,10 +36,14 @@ export const useERC20LinearToken = () => {
       address: tokenAddress,
       totalSupply,
     };
+    isTokenLoaded.current = true;
     dispatch.governance({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
   }, [tokenContract, dispatch]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
+    if (!isTokenLoaded.current) {
+      return;
+    }
     if (!tokenContract || !account) {
       dispatch.governance({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
       return;
