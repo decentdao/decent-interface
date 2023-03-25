@@ -25,7 +25,7 @@ export const useSafeMultisigProposals = () => {
       );
       dispatch.governance({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: (await multisendProposals) as MultisigProposal[],
+        payload: multisendProposals as MultisigProposal[],
       });
     } catch (e) {
       logError(e);
