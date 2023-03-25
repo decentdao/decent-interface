@@ -16,19 +16,18 @@ export const useFractalGovernance = () => {
   const loadDAOProposals = useDAOProposals();
   const loadAzuriousStrategy = useAzuriousStrategy();
   const loadERC20Token = useERC20LinearToken();
+
   useEffect(() => {
     const { isLoaded, usulContract } = governanceContracts;
     if (isLoaded && !!daoAddress && daoAddress !== currentValidAddress.current) {
       currentValidAddress.current = daoAddress;
-      (async () => {
-        loadDAOProposals();
-        if (!!usulContract) {
-          // load DAO voting strategy data
-          loadAzuriousStrategy();
-          // load voting token
-          loadERC20Token();
-        }
-      })();
+      loadDAOProposals();
+      if (!!usulContract) {
+        // load DAO voting strategy data
+        loadAzuriousStrategy();
+        // load voting token
+        loadERC20Token();
+      }
     }
   }, [daoAddress, governanceContracts, loadDAOProposals, loadAzuriousStrategy, loadERC20Token]);
 };

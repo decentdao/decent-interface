@@ -64,11 +64,11 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     }
     case FractalGovernanceAction.SET_TOKEN_DATA: {
       const { votesToken } = state as AzuriousGovernance;
-      return { ...state, votesToken: { ...votesToken, timelockPeriod: action.payload } };
+      return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
     case FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzuriousGovernance;
-      return { ...state, votesToken: { ...votesToken, timelockPeriod: action.payload } };
+      return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzuriousGovernance;
