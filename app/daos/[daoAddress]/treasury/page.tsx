@@ -47,7 +47,7 @@ export default function Treasury() {
         buttonTestId="link-send-assets"
       />
       <Flex
-        mt="3rem"
+        mt="1rem"
         align="start"
         gap="1rem"
         flexWrap="wrap"

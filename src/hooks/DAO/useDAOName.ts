@@ -13,7 +13,13 @@ import { createAccountSubstring } from '../utils/useDisplayName';
  * 2. Fractal name registry name
  * 3. Truncated Eth address in the form 0xbFC4...7551
  */
-export default function useDAOName({ address }: { address?: string }) {
+export default function useDAOName({
+  address,
+  registryName,
+}: {
+  address?: string;
+  registryName?: string | null;
+}) {
   const { fractalRegistryContract } = useSafeContracts();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
   const provider = useProvider();
@@ -45,19 +51,24 @@ export default function useDAOName({ address }: { address?: string }) {
       setDAORegistryName(createAccountSubstring(address));
       return;
     }
-    const rpc = getEventRPC<FractalRegistry>(fractalRegistryContract, networkId);
-    const events = await rpc.queryFilter(rpc.filters.FractalNameUpdated(address));
+    if (registryName) {
+      // Aka supplied from Subgraph
+      setDAORegistryName(registryName);
+    } else {
+      const rpc = getEventRPC<FractalRegistry>(fractalRegistryContract, networkId);
+      const events = await rpc.queryFilter(rpc.filters.FractalNameUpdated(address));
 
-    const latestEvent = events.pop();
-    if (!latestEvent) {
-      setDAORegistryName(createAccountSubstring(address));
-      return;
+      const latestEvent = events.pop();
+      if (!latestEvent) {
+        setDAORegistryName(createAccountSubstring(address));
+        return;
+      }
+
+      const { daoName } = latestEvent.args;
+      setValue(CacheKeys.DAO_NAME_PREFIX + address, daoName, 60);
+      setDAORegistryName(daoName);
     }
-
-    const { daoName } = latestEvent.args;
-    setValue(CacheKeys.DAO_NAME_PREFIX + address, daoName, 60);
-    setDAORegistryName(daoName);
-  }, [address, ensName, fractalRegistryContract, getValue, networkId, setValue]);
+  }, [address, ensName, fractalRegistryContract, getValue, networkId, setValue, registryName]);
 
   useEffect(() => {
     (async () => {

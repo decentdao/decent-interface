@@ -23,7 +23,6 @@ function Header() {
         h="full"
         w="full"
         justifyContent="flex-end"
-        alignItems="center"
       >
         {!!account && isClientSide && <FavoritesMenu />}
         {isClientSide && <AccountDisplay />}

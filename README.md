@@ -20,6 +20,17 @@ Install the dependencies
 $ npm install
 ```
 
+Build Subgraph artifacts
+
+```shell
+$ npm run graphql:build # For UNIX
+```
+
+Running development environment
+```shell
+$ npm run dev
+```
+
 ## Testing - Playwright
 
 ### Setup - Docker

@@ -1,3 +1,5 @@
+import { DAO } from '../../../../.graphclient';
+
 export const SINGLE_OWNER_MULTISIG_CREATION = {
   created: '2022-12-13T20:32:48Z',
   creator: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
@@ -63,6 +65,27 @@ export const createSafeInfo = (safeAddress: string, owners: string[]) => {
     fallbackHandler: '0x0000000000000000000000000000000000000000',
     guard: '0x0000000000000000000000000000000000000000',
     version: '1.3.0',
+  };
+};
+
+export const createSubgraphDAO = (
+  address: string,
+  name: string,
+  hierarchy: DAO[],
+  parentAddress?: string
+) => {
+  return {
+    data: {
+      _0_daos: [
+        {
+          address,
+          name,
+          parentAddress,
+          hierarchy,
+          id: address,
+        },
+      ],
+    },
   };
 };
 

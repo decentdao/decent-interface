@@ -68,5 +68,7 @@
     "clear": "Clear",
     "cancel": "Cancel",
     "example": "Example",
-    "titleNodes": "DAO Hierarchy"
+    "titleNodes": "DAO Hierarchy",
+    "404Title": "Page not found",
+    "404Button": "Fractal App Home"
 }

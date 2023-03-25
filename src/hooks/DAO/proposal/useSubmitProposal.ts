@@ -1,7 +1,7 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { FractalUsul, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { BigNumber, Signer } from 'ethers';
+import { ethers, BigNumber, Signer } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
@@ -224,8 +224,9 @@ export default function useSubmitProposal() {
       }
 
       if (safeAddress && safeService) {
+        const { getAddress } = ethers.utils;
         // Submitting proposal to any DAO out of global context
-        const safeInfo = await safeService.getSafeInfo(safeAddress);
+        const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
         const usulModule = getUsulModuleFromModules(modules!);
         if (!usulModule) {
