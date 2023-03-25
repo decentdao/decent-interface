@@ -18,6 +18,7 @@ import {
   getTxProposalState,
   mapProposalCreatedEventToProposal,
 } from '../../../../providers/Fractal/utils';
+import { UsulProposal } from './../../../../types/daoProposal';
 import { useDecodeTransaction } from './../../../utils/useDecodeTransaction';
 
 export const useAzuriousProposals = () => {
@@ -32,9 +33,9 @@ export const useAzuriousProposals = () => {
   } = provider;
   const decodeTransactions = useDecodeTransaction();
 
-  const loadAzuriousProposals = useCallback(async () => {
+  const loadAzuriousProposals = useCallback(async (): Promise<UsulProposal[]> => {
     if (!usulContract || !ozLinearVotingContract) {
-      return;
+      return [];
     }
     const rpc = getEventRPC<FractalUsul>(usulContract, chainId);
     const proposalCreatedFilter = rpc.filters.ProposalCreated();

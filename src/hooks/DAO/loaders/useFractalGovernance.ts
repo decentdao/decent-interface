@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useAzuriousStrategy } from './governance/useAzuriousStrategy';
 import { useDAOProposals } from './useDAOProposals';
 
 export const useFractalGovernance = () => {
@@ -12,14 +13,20 @@ export const useFractalGovernance = () => {
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
+  const loadAzuriousStrategy = useAzuriousStrategy();
+
   useEffect(() => {
-    const { isLoaded } = governanceContracts;
+    const { isLoaded, usulContract } = governanceContracts;
     if (isLoaded && !!daoAddress && daoAddress !== currentValidAddress.current) {
       currentValidAddress.current = daoAddress;
-      // load DAO proposals
-      const proposals = loadDAOProposals();
-      // load DAO voting strategy data
-      // load voting token
+      (async () => {
+        loadDAOProposals();
+        if (!!usulContract) {
+          // load DAO voting strategy data
+          loadAzuriousStrategy();
+          // load voting token
+        }
+      })();
     }
-  }, [daoAddress, governanceContracts, loadDAOProposals]);
+  }, [daoAddress, governanceContracts, loadDAOProposals, loadAzuriousStrategy]);
 };

@@ -1,5 +1,5 @@
 import { FractalGovernance, UsulProposal, VOTE_CHOICES } from '../../../types';
-import { FractalProposal } from './../../../types/fractal';
+import { AzuriousGovernance, FractalProposal } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
@@ -9,8 +9,9 @@ export const initialGovernanceState: FractalGovernance = {
 export const governanceReducer = (state: FractalGovernance, action: FractalGovernanceActions) => {
   const { proposals } = state;
   switch (action.type) {
-    case FractalGovernanceAction.SET_GOVERNANCE:
-      return action.payload;
+    case FractalGovernanceAction.SET_STRATEGY: {
+      return { ...state, strategy: action.payload };
+    }
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...proposals, action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_USUL_VOTE: {
@@ -43,14 +44,16 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: updatedProposals };
     }
     case FractalGovernanceAction.UPDATE_VOTING_PERIOD:
-      // const { votingPeriod, proposalNumber } = action.payload;
-      return { ...state };
-    case FractalGovernanceAction.UPDATE_VOTING_QUORUM:
-      // const { votingQuorum, proposalNumber } = action.payload;
-      return { ...state };
-    case FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD:
-      // const { timelockPeriod, proposalNumber } = action.payload;
-      return { ...state };
+      const { votesStrategy } = state as AzuriousGovernance;
+      {
+        return { ...state, votesStrategy: { ...votesStrategy, votingPeriod: action.payload } };
+      }
+    case FractalGovernanceAction.UPDATE_VOTING_QUORUM: {
+      return { ...state, votesStrategy: { ...votesStrategy, votingQuorum: action.payload } };
+    }
+    case FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD: {
+      return { ...state, votesStrategy: { ...votesStrategy, timelockPeriod: action.payload } };
+    }
     case FractalGovernanceAction.RESET:
       return initialGovernanceState;
     default:
