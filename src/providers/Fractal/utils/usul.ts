@@ -1,8 +1,5 @@
 import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
-import {
-  SafeMultisigTransactionWithTransfersResponse,
-  SafeMultisigTransactionResponse,
-} from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
@@ -15,6 +12,7 @@ import {
   ProposalMetaData,
   ProposalVote,
   ProposalVotesSummary,
+  SafeMultisigTransactionResponse,
   TxProposalState,
   UsulProposal,
   VOTE_CHOICES,

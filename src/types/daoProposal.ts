@@ -1,6 +1,6 @@
-import { SafeMultisigConfirmationResponse } from '@safe-global/safe-service-client';
 import { BigNumber, BigNumberish } from 'ethers';
 import { GovernanceActivity } from './fractal';
+import { SafeMultisigConfirmationResponse } from './safeGlobal';
 import { MetaTransaction, DecodedTransaction } from './transaction';
 
 export interface ProposalExecuteData extends ExecuteData {
