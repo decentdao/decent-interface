@@ -16,6 +16,9 @@ export const initialVotesTokenAccountData = {
 export const governanceReducer = (state: FractalGovernance, action: FractalGovernanceActions) => {
   const { proposals } = state;
   switch (action.type) {
+    case FractalGovernanceAction.SET_PROPOSALS: {
+      return { ...state, proposals: action.payload };
+    }
     case FractalGovernanceAction.SET_STRATEGY: {
       return { ...state, strategy: action.payload };
     }
