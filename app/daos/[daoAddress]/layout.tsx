@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
+import useDAOName from '../../../src/hooks/DAO/useDAOName';
 
 export default function DaoPageLayout({
   children,
@@ -12,6 +13,14 @@ export default function DaoPageLayout({
 }) {
   // TODO: We could move PageHeader here as well - but that will require breadcrumbs logic refactoring
   useDAOController({ daoAddress });
+  const { daoRegistryName } = useDAOName({
+    address: daoAddress,
+  });
 
-  return <>{children}</>;
+  return (
+    <>
+      <title>{daoRegistryName ? `${daoRegistryName} | Fractal` : 'Fractal'}</title>
+      {children}
+    </>
+  );
 }
