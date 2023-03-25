@@ -6,6 +6,8 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 export const useERC20LinearToken = () => {
   const isTokenLoaded = useRef(false);
+  const tokenAccount = useRef<string>();
+
   const {
     governanceContracts: { tokenContract },
     dispatch,
@@ -41,14 +43,10 @@ export const useERC20LinearToken = () => {
   }, [tokenContract, dispatch]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
-    if (!isTokenLoaded.current) {
-      return;
-    }
     if (!tokenContract || !account) {
       dispatch.governance({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
       return;
     }
-
     const [tokenBalance, tokenDelegatee, tokenVotingWeight, delegateChangeEvents] =
       await Promise.all([
         tokenContract.asSigner.balanceOf(account),
@@ -62,6 +60,7 @@ export const useERC20LinearToken = () => {
       votingWeight: tokenVotingWeight,
       isDelegatesSet: delegateChangeEvents.length > 0,
     };
+    tokenAccount.current = account;
     dispatch.governance({
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA,
       payload: tokenAccountData,
@@ -69,6 +68,9 @@ export const useERC20LinearToken = () => {
   }, [tokenContract, dispatch, account]);
 
   useEffect(() => {
+    if (!isTokenLoaded.current || tokenAccount.current === account) {
+      return;
+    }
     loadERC20TokenAccountData();
   }, [account, loadERC20TokenAccountData]);
 
