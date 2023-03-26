@@ -21,7 +21,7 @@ import SafeServiceClient, {
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
-import { BigNumber, Transaction } from 'ethers';
+import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
 import { MultiSend } from '../assets/typechain-types/usul';
 // @RENAME
@@ -30,6 +30,7 @@ import { GovernanceContractActions } from '../providers/App/governanceContracts/
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { NodeHierarchyActions } from '../providers/App/nodeHierarchy/action';
+import { TreasuryActions as TreasuryActionsRenamed } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { IConnectedAccount, VotesTokenData } from './account';
 import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
@@ -316,7 +317,7 @@ export interface FractalStore extends Fractal {
     node: Dispatch<NodeActions>;
     guard: Dispatch<FractalGuardActions>;
     governance: Dispatch<FractalGovernanceActions>;
-    treasury: Dispatch<TreasuryActions>;
+    treasury: Dispatch<TreasuryActionsRenamed>;
     governanceContracts: Dispatch<GovernanceContractActions>;
     guardContracts: Dispatch<GuardContractActions>;
     nodeHierarchy: Dispatch<NodeHierarchyActions>;
@@ -384,7 +385,6 @@ export interface FreezeGuard {
 }
 
 export interface FractalTreasury {
-  transactions: Transaction[];
   assetsFungible: SafeBalanceUsdResponse[];
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;

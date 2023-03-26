@@ -53,7 +53,7 @@ export const useFractalTreasury = () => {
 
   useEffect(() => {
     if (daoAddress !== currentValidAddress.current) {
-      setMethodOnInterval(loadTreasury, 10000);
+      setMethodOnInterval(loadTreasury);
     }
   }, [daoAddress, loadTreasury, setMethodOnInterval]);
 
