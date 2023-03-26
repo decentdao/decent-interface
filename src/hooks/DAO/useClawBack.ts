@@ -29,10 +29,11 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
   useEffect(() => {
     const loadData = async () => {
       if (safeService) {
-        setChildSafeInfo(await safeService.getSafeInfo(childSafeAddress));
-        setChildSafeBalance(await safeService.getBalances(childSafeAddress));
+        const { getAddress } = ethers.utils;
+        setChildSafeInfo(await safeService.getSafeInfo(getAddress(childSafeAddress)));
+        setChildSafeBalance(await safeService.getBalances(getAddress(childSafeAddress)));
         if (parentSafeAddress) {
-          setParentSafeInfo(await safeService.getSafeInfo(parentSafeAddress));
+          setParentSafeInfo(await safeService.getSafeInfo(getAddress(parentSafeAddress)));
         }
       }
     };

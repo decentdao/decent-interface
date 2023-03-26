@@ -1,5 +1,6 @@
 'use client';
 
+import { ApolloProvider } from '@apollo/client';
 import { CacheProvider } from '@chakra-ui/next-js';
 import { ChakraProvider } from '@chakra-ui/react';
 import { midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
@@ -10,12 +11,16 @@ import { theme } from '../src/assets/theme';
 import { ModalProvider } from '../src/components/ui/modals/ModalProvider';
 import Layout from '../src/components/ui/page/Layout';
 import { ErrorFallback } from '../src/components/ui/utils/ErrorFallback';
+import graphQLClient from '../src/graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogging';
 import { FractalProvider } from '../src/providers/Fractal/FractalProvider';
 import { NetworkConfigProvider } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 import { chains, wagmiClient } from '../src/providers/NetworkConfig/rainbow-kit.config';
 import { notProd, testErrorBoundary } from '../src/utils/dev';
 import '../src/i18n';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 function localDevConfigs() {
   if (notProd()) {
@@ -26,9 +31,9 @@ function localDevConfigs() {
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  localDevConfigs();
   useEffect(() => {
     initErrorLogging();
+    localDevConfigs();
   }, []);
 
   return (
@@ -94,7 +99,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <title>Fractal</title>
       </head>
-      <body>
+      <body className="bg-gray-600">
         <CacheProvider>
           <ChakraProvider theme={theme}>
             <FractalErrorBoundary fallback={<ErrorFallback />}>
@@ -105,17 +110,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   theme={midnightTheme()}
                 >
                   <NetworkConfigProvider>
-                    <FractalProvider>
-                      <ToastContainer
-                        position="bottom-center"
-                        closeButton={false}
-                        newestOnTop={false}
-                        pauseOnFocusLoss={false}
-                      />
-                      <ModalProvider>
-                        <Layout>{children}</Layout>
-                      </ModalProvider>
-                    </FractalProvider>
+                    <ApolloProvider client={graphQLClient}>
+                      <FractalProvider>
+                        <ToastContainer
+                          position="bottom-center"
+                          closeButton={false}
+                          newestOnTop={false}
+                          pauseOnFocusLoss={false}
+                        />
+                        <ModalProvider>
+                          <Layout>{children}</Layout>
+                        </ModalProvider>
+                      </FractalProvider>
+                    </ApolloProvider>
                   </NetworkConfigProvider>
                 </RainbowKitProvider>
               </WagmiConfig>

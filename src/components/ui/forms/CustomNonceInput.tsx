@@ -21,8 +21,10 @@ export function CustomNonceInput({
       : undefined;
 
   useEffect(() => {
-    onChange(defaultNonce);
-  }, [defaultNonce, onChange]);
+    if (defaultNonce !== nonce) {
+      onChange(defaultNonce);
+    }
+  }, [defaultNonce, nonce, onChange]);
 
   if (!!usulContract) return null;
 
