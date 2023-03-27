@@ -39,12 +39,16 @@ export const useERC20LinearToken = () => {
       totalSupply,
     };
     isTokenLoaded.current = true;
+    console.count('loadERC20Token');
     dispatch.governance({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
   }, [tokenContract, dispatch]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
     if (!tokenContract || !account) {
       dispatch.governance({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
+      return;
+    }
+    if (tokenAccount.current === account && !!isTokenLoaded.current) {
       return;
     }
     const [tokenBalance, tokenDelegatee, tokenVotingWeight, delegateChangeEvents] =
