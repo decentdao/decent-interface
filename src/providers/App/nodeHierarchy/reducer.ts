@@ -1,9 +1,9 @@
-import { NodeHierarchy } from '../../../types';
+import { Node, NodeHierarchy } from '../../../types';
 import { NodeHierarchyAction, NodeHierarchyActions } from './action';
 
 export const initialNodeHierarchyState: NodeHierarchy = {
-  parentNodes: [],
-  childNodes: [],
+  parentAddress: null,
+  childNodes: [] as Node[],
 };
 
 export function nodeHierarchyReducer(state: NodeHierarchy, action: NodeHierarchyActions) {

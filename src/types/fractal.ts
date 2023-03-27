@@ -332,7 +332,6 @@ export interface Fractal {
   treasury: FractalTreasury; // Treasury
   governanceContracts: GovernanceContractsRefactored;
   guardContracts: FractalGuardContracts;
-  nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
 }
 
 export interface FractalClients {
@@ -353,7 +352,10 @@ export interface FractalNode {
   daoAddress: string | null;
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
+  nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
 }
+
+export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules'> {}
 
 export interface FractalModuleData {
   moduleContract: FractalUsul | FractalModule | undefined;
@@ -416,8 +418,8 @@ export enum StrategyType {
 }
 
 export interface NodeHierarchy {
-  parentNodes: FractalNode[];
-  childNodes: FractalNode[];
+  parentAddress: string | null;
+  childNodes: Node[];
 }
 
 export interface FractalContracts {
