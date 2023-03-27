@@ -8,7 +8,7 @@ import { BASE_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { NodeAction } from '../../../providers/App/node/action';
-import { Node } from '../../../types';
+import { FractalNode, Node } from '../../../types';
 import { useFractalModules } from './useFractalModules';
 
 const mapChildNodes = (_hierarchy: any) => {
@@ -24,7 +24,13 @@ const mapChildNodes = (_hierarchy: any) => {
   });
 };
 
-export const useFractalNode = ({ daoAddress }: { daoAddress: string }) => {
+export const useFractalNode = ({
+  daoAddress,
+  loadOnMount = true,
+}: {
+  daoAddress: string;
+  loadOnMount?: boolean;
+}) => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string>();
   const {
@@ -81,41 +87,62 @@ export const useFractalNode = ({ daoAddress }: { daoAddress: string }) => {
   );
 
   // loads dao from safe
-  const loadDao = useCallback(async () => {
-    if (utils.isAddress(daoAddress)) {
-      try {
-        currentValidAddress.current = daoAddress;
-        const safe = await safeService.getSafeInfo(daoAddress);
-        const fractalModules = await lookupModules(safe.modules);
-        const graphNodeInfo = formatDAOQuery(await getDAOInfo({ variables: { daoAddress } }));
-        if (!graphNodeInfo) {
-          invalidateDAO('errorFailedSearch');
-          logError('graphQL query failed');
-          return;
-        }
-        // @todo move subgraph call here, this would move heirarchy to FractalNode?
-        // const daoName = await getDAOName({ address: daoAddress });
-        dispatch.node({
-          type: NodeAction.SET_DAO_NODE,
-          payload: {
+  type WithError = { error?: string };
+  const loadDao = useCallback(
+    async (_daoAddress: string): Promise<FractalNode | WithError> => {
+      if (utils.isAddress(_daoAddress)) {
+        try {
+          currentValidAddress.current = _daoAddress;
+          const safe = await safeService.getSafeInfo(_daoAddress);
+          const fractalModules = await lookupModules(safe.modules);
+          const graphNodeInfo = formatDAOQuery(
+            await getDAOInfo({ variables: { daoAddress: _daoAddress } })
+          );
+          if (!graphNodeInfo) {
+            logError('graphQL query failed');
+            return { error: 'errorFailedSearch' };
+          }
+          console.count('useFractalNode');
+
+          return {
             safe,
             fractalModules,
             ...graphNodeInfo,
-          },
-        });
-      } catch (e) {
-        logError(e);
-        invalidateDAO('errorInvalidSearch');
+          };
+        } catch (e) {
+          logError(e);
+          return { error: 'errorInvalidSearch' };
+        }
+      } else {
+        // invalid address
+        return { error: 'errorFailedSearch' };
       }
-    } else {
-      // invalid address
-      invalidateDAO('errorFailedSearch');
-    }
-  }, [daoAddress, safeService, invalidateDAO, lookupModules, formatDAOQuery, getDAOInfo, dispatch]);
+    },
+    [safeService, lookupModules, formatDAOQuery, getDAOInfo]
+  );
+
+  const setDAO = useCallback(
+    async (_daoAddress: string) => {
+      if (_daoAddress) {
+        const fractalNode = await loadDao(_daoAddress);
+        if ((fractalNode as WithError).error) {
+          invalidateDAO('errorInvalidSearch');
+          return;
+        }
+        dispatch.node({
+          type: NodeAction.SET_DAO_NODE,
+          payload: fractalNode as FractalNode,
+        });
+      }
+    },
+    [dispatch, invalidateDAO, loadDao]
+  );
 
   useEffect(() => {
-    if (daoAddress !== currentValidAddress.current) {
-      loadDao();
+    if (daoAddress !== currentValidAddress.current && loadOnMount) {
+      setDAO(daoAddress);
     }
-  }, [daoAddress, loadDao]);
+  }, [daoAddress, loadOnMount, setDAO]);
+
+  return { loadDao };
 };
