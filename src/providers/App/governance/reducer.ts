@@ -26,7 +26,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: [...proposals, action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_USUL_VOTE: {
       const { proposalNumber, voter, support, weight, votesSummary } = action.payload;
-      const updatedProposals = ([...proposals] as UsulProposal[]).map(proposal => {
+      const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
           const newProposal: UsulProposal = {
             ...proposal,
@@ -41,7 +41,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     }
     case FractalGovernanceAction.UPDATE_PROPOSAL_STATE: {
       const { proposalNumber, state: proposalState } = action.payload;
-      const updatedProposals = ([...proposals] as UsulProposal[]).map(proposal => {
+      const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
           const newProposal: UsulProposal = {
             ...proposal,
