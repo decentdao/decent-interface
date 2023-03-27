@@ -12,7 +12,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
-export const useAzuriousStrategy = () => {
+export const useAzoriusStrategy = () => {
   const {
     governanceContracts: { ozLinearVotingContract },
     dispatch,
@@ -22,7 +22,7 @@ export const useAzuriousStrategy = () => {
   } = useProvider();
   const { getTimeDuration } = useTimeHelpers();
 
-  const loadAzuriousStrategy = useCallback(async () => {
+  const loadAzoriusStrategy = useCallback(async () => {
     if (!ozLinearVotingContract) {
       return {};
     }
@@ -92,5 +92,5 @@ export const useAzuriousStrategy = () => {
     rpc.on(timeLockPeriodFilter, listener);
   }, [ozLinearVotingContract, chainId, dispatch]);
 
-  return loadAzuriousStrategy;
+  return loadAzoriusStrategy;
 };

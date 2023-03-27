@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
-import { useAzuriousProposals } from './governance/useAzuriousProposals';
+import { useAzoriusProposals } from './governance/useAzoriusProposals';
 
 export const useDAOProposals = () => {
   const { governanceContracts, dispatch } = useFractal();
 
-  const loadAzuriousProposals = useAzuriousProposals();
+  const loadAzoriusProposals = useAzoriusProposals();
 
   const loadDAOProposals = useCallback(async () => {
     const { usulContract } = governanceContracts;
@@ -15,11 +15,11 @@ export const useDAOProposals = () => {
       // load Usul proposals and strategies
       dispatch.governance({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: await loadAzuriousProposals(),
+        payload: await loadAzoriusProposals(),
       });
     } else {
       // load mulisig proposals
     }
-  }, [governanceContracts, loadAzuriousProposals, dispatch]);
+  }, [governanceContracts, loadAzoriusProposals, dispatch]);
   return loadDAOProposals;
 };
