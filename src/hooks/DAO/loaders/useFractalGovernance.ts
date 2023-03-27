@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
-import { useDAOProposals } from './useDAOProposals';
+import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
