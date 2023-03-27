@@ -69,7 +69,7 @@ export function TxActions({
         },
       });
     } catch (e) {
-      logError(e, 'Error occured during transaction confirmation');
+      logError(e, 'Error occurred during transaction confirmation');
     }
   };
 
@@ -109,7 +109,7 @@ export function TxActions({
         },
       });
     } catch (e) {
-      logError(e, 'Error occured during transaction execution');
+      logError(e, 'Error occurred during transaction execution');
     }
   };
 
@@ -150,7 +150,7 @@ export function TxActions({
         },
       });
     } catch (e) {
-      logError(e, 'Error occured during transaction execution');
+      logError(e, 'Error occurred during transaction execution');
     }
   };
 
