@@ -102,7 +102,6 @@ export const useFractalNode = ({
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
-          console.count('useFractalNode');
 
           return {
             safe,

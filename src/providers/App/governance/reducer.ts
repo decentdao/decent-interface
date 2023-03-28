@@ -1,5 +1,5 @@
 import { FractalGovernance, UsulProposal, VOTE_CHOICES } from '../../../types';
-import { AzuriousGovernance, FractalProposal } from './../../../types/fractal';
+import { AzuriousGovernance, FractalProposal, StrategyType } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
@@ -17,10 +17,11 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
   const { proposals } = state;
   switch (action.type) {
     case FractalGovernanceAction.SET_PROPOSALS: {
-      return { ...state, proposals: action.payload };
+      const { type, proposals: newProposals } = action.payload;
+      return { ...state, type, proposals: newProposals };
     }
     case FractalGovernanceAction.SET_STRATEGY: {
-      return { ...state, strategy: action.payload };
+      return { ...state, type: StrategyType.GNOSIS_SAFE_USUL, votesStrategy: action.payload };
     }
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...proposals, action.payload] };

@@ -1,15 +1,19 @@
 import { Flex } from '@chakra-ui/react';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { DAOInfoCard } from '../../../ui/cards/DAOInfoCard';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
-import { useFetchNodes } from '../../DaoHierarchy/useFetchNodes';
 
 export function InfoDAO() {
   const {
-    gnosis: { safe, freezeData, guardContracts, parentDAOAddress },
+    node: {
+      safe,
+      nodeHierarchy: { parentAddress: parentDAOAddress, childNodes },
+    },
+    guardContracts,
+    guard,
   } = useFractal();
-  const { childNodes } = useFetchNodes(safe.address);
-  if (!safe.address) {
+
+  if (!safe?.address) {
     return (
       <Flex
         minHeight="8.5rem"
@@ -27,7 +31,7 @@ export function InfoDAO() {
       parentSafeAddress={parentDAOAddress}
       safeAddress={safe.address}
       numberOfChildrenDAO={(childNodes ?? []).length}
-      freezeData={freezeData}
+      freezeData={guard}
       guardContracts={guardContracts}
     />
   );

@@ -392,8 +392,8 @@ export interface FractalTreasury {
 }
 export type FractalGovernance = AzuriousGovernance | SafeMultisigGovernance;
 export interface AzuriousGovernance extends Governance {
-  votesStrategy?: [VotesStrategyAzurious];
-  votesToken?: VotesTokenData;
+  votesStrategy: VotesStrategyAzurious;
+  votesToken: VotesTokenData;
 }
 export interface SafeMultisigGovernance extends Governance {}
 

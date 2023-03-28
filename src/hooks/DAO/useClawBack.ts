@@ -4,13 +4,14 @@ import { ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { SafeInfoResponseWithGuard, GnosisModuleType } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { SafeInfoResponseWithGuard, FractalModuleType } from '../../types';
+import { useFractalModules } from './loaders/useFractalModules';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
   childSafeAddress: string;
-  parentSafeAddress?: string;
+  parentSafeAddress?: string | null;
 }
 
 export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUseClawBack) {
@@ -21,11 +22,10 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
   const { t } = useTranslation(['proposal', 'proposalMetadata']);
   const provider = useProvider();
   const {
-    gnosis: { safeService },
-    actions: { lookupModules },
+    clients: { safeService },
   } = useFractal();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
-
+  const lookupModules = useFractalModules();
   useEffect(() => {
     const loadData = async () => {
       if (safeService) {
@@ -45,7 +45,9 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
     if (canUserCreateProposal && parentSafeAddress && childSafeInfo && parentSafeInfo) {
       const abiCoder = new ethers.utils.AbiCoder();
       const modules = await lookupModules(childSafeInfo.modules);
-      const fractalModule = modules!.find(module => module.moduleType === GnosisModuleType.FRACTAL);
+      const fractalModule = modules!.find(
+        module => module.moduleType === FractalModuleType.FRACTAL
+      );
       const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
       if (fractalModule) {
         const transactions = childSafeBalance.map(asset => {

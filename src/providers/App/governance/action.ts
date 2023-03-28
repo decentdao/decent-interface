@@ -7,6 +7,7 @@ import {
   VotesData,
   VotesStrategy,
 } from '../../../types';
+import { StrategyType } from './../../../types/fractal';
 
 export enum FractalGovernanceAction {
   SET_PROPOSALS,
@@ -25,7 +26,10 @@ export enum FractalGovernanceAction {
 
 export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotesStrategy }
-  | { type: FractalGovernanceAction.SET_PROPOSALS; payload: FractalProposal[] }
+  | {
+      type: FractalGovernanceAction.SET_PROPOSALS;
+      payload: { type: StrategyType; proposals: FractalProposal[] };
+    }
   // @todo update with proposal type
   | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
   | {

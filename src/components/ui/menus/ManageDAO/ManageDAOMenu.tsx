@@ -9,14 +9,14 @@ import {
 } from '../../../../helpers/freezePeriodHelpers';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../types';
+import { FractalGuardContracts, FreezeGuard } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentSafeAddress?: string;
+  parentSafeAddress?: string | null;
   safeAddress: string;
-  freezeData?: IGnosisFreezeData;
-  guardContracts: IGnosisVetoContract;
+  freezeData?: FreezeGuard;
+  guardContracts: FractalGuardContracts;
 }
 
 export function ManageDAOMenu({
@@ -39,6 +39,9 @@ export function ManageDAOMenu({
     };
     if (
       freezeData &&
+      freezeData.freezeProposalCreatedTime &&
+      freezeData.freezeProposalPeriod &&
+      freezeData.freezePeriod &&
       !isWithinFreezeProposalPeriod(
         freezeData.freezeProposalCreatedTime,
         freezeData.freezeProposalPeriod,
@@ -58,6 +61,8 @@ export function ManageDAOMenu({
       return [createSubDAOOption, freezeOption];
     } else if (
       freezeData &&
+      freezeData.freezeProposalCreatedTime &&
+      freezeData.freezePeriod &&
       isWithinFreezePeriod(
         freezeData.freezeProposalCreatedTime,
         freezeData.freezePeriod,

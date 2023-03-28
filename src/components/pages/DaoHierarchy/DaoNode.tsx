@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { DAONodeCard } from '../../ui/cards/DAOInfoCard';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import { NodeLineVertical } from './NodeLines';
@@ -24,10 +24,9 @@ export function DaoNode({
   };
 
   const {
-    gnosis: {
-      safe: { address: currentDAOAddress },
-    },
+    node: { daoAddress: currentDAOAddress },
   } = useFractal();
+
   if (!childNodes) {
     return <InfoBoxLoader />;
   }

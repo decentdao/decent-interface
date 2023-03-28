@@ -1,17 +1,18 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { AzuriousGovernance, StrategyType } from '../../../../types';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 export function InfoGovernance() {
   const { t } = useTranslation(['dashboard', 'daoCreate']);
   const {
-    gnosis: { safe },
-    governance: { type, governanceToken, governanceIsLoading },
+    node: { safe },
+    governance,
   } = useFractal();
 
-  if (!safe.address || governanceIsLoading) {
+  if (!safe?.address || !governance.type) {
     return (
       <Flex
         h="8.5rem"
@@ -23,6 +24,11 @@ export function InfoGovernance() {
       </Flex>
     );
   }
+
+  const governanceAzurious =
+    governance.type === StrategyType.GNOSIS_SAFE_USUL
+      ? (governance as AzuriousGovernance)
+      : undefined;
 
   return (
     <Box
@@ -44,27 +50,33 @@ export function InfoGovernance() {
         mb="0.25rem"
       >
         <Text color="chocolate.200">{t('titleType')}</Text>
-        <Text color="grayscale.100">{type ? t(type.toString(), { ns: 'daoCreate' }) : ''}</Text>
+        <Text color="grayscale.100">
+          {governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : ''}
+        </Text>
       </Flex>
 
-      {governanceToken?.votingPeriod && (
+      {governanceAzurious?.votesStrategy?.votingPeriod && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
         >
           <Text color="chocolate.200">{t('titleVotingPeriod')}</Text>
-          <Text color="grayscale.100">{governanceToken?.votingPeriod?.formatted}</Text>
+          <Text color="grayscale.100">
+            {governanceAzurious.votesStrategy.votingPeriod.formatted}
+          </Text>
         </Flex>
       )}
-      {governanceToken?.quorumPercentage && (
+      {governanceAzurious?.votesStrategy?.quorumPercentage && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
         >
           <Text color="chocolate.200">{t('titleQuorum')}</Text>
-          <Text color="grayscale.100">{governanceToken?.quorumPercentage?.formatted}</Text>
+          <Text color="grayscale.100">
+            {governanceAzurious.votesStrategy.quorumPercentage.formatted}
+          </Text>
         </Flex>
       )}
     </Box>

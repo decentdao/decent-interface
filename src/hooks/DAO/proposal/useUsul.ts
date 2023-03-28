@@ -1,11 +1,11 @@
 import { FractalUsul__factory, FractalUsul } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { IGnosisModuleData, GnosisModuleType } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalModuleData, FractalModuleType } from '../../../types';
 
-export function getUsulModuleFromModules(modules: IGnosisModuleData[]) {
-  const usulModule = modules.find(module => module.moduleType === GnosisModuleType.USUL);
+export function getUsulModuleFromModules(modules: FractalModuleData[]) {
+  const usulModule = modules.find(module => module.moduleType === FractalModuleType.USUL);
   return usulModule;
 }
 
@@ -19,16 +19,16 @@ export default function useUsul() {
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
   const {
-    gnosis: { modules },
+    node: { fractalModules },
   } = useFractal();
 
   useEffect(() => {
     const init = async () => {
-      if (!signerOrProvider || !modules) {
+      if (!signerOrProvider || !fractalModules) {
         return;
       }
 
-      const usulModule = getUsulModuleFromModules(modules);
+      const usulModule = getUsulModuleFromModules(fractalModules);
 
       if (!usulModule) {
         setIsLoaded(true);
@@ -54,7 +54,7 @@ export default function useUsul() {
       setIsLoaded(true);
     };
     init();
-  }, [modules, signerOrProvider]);
+  }, [fractalModules, signerOrProvider]);
 
   return {
     usulContract,
