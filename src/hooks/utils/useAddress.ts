@@ -1,11 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
-import {
-  CacheExpiry,
-  CacheKeys,
-  useLocalStorage,
-} from '../../providers/Fractal/hooks/account/useLocalStorage';
+import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useProvider();

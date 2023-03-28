@@ -16,7 +16,7 @@ import Link from 'next/link';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { BASE_ROUTES } from '../../../../constants/routes';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { NavigationLinks } from './NavigationLinks';
 
@@ -26,14 +26,10 @@ function Navigation() {
   const btnRef = React.useRef<HTMLButtonElement | null>(null);
 
   const {
-    gnosis: {
-      safe: { address },
-      safeService,
-      isGnosisLoading,
-    },
+    node: { daoAddress },
   } = useFractal();
 
-  const showDAOLinks = !!address && !!safeService && !isGnosisLoading;
+  const showDAOLinks = !!daoAddress;
   return (
     <Flex
       alignItems="center"
@@ -96,7 +92,7 @@ function Navigation() {
                 <Divider color="chocolate.700" />
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}
-                  address={address}
+                  address={daoAddress}
                   closeDrawer={onClose}
                 />
               </Flex>
@@ -117,7 +113,7 @@ function Navigation() {
         </Link>
         <NavigationLinks
           showDAOLinks={showDAOLinks}
-          address={address}
+          address={daoAddress}
         />
       </Show>
     </Flex>

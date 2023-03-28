@@ -6,11 +6,8 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { NodeAction } from '../../../providers/App/node/action';
-import {
-  useLocalStorage,
-  CacheKeys,
-} from '../../../providers/Fractal/hooks/account/useLocalStorage';
 import { createAccountSubstring } from '../../utils/useDisplayName';
+import { useLocalStorage, CacheKeys } from '../../utils/useLocalStorage';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:

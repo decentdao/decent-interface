@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useNetworkConfg } from '../../../NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 /**
  * The list of cache keys used in the app.

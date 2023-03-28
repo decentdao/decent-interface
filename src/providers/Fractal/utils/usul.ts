@@ -3,6 +3,7 @@ import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-
 import { BigNumber } from 'ethers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { CacheExpiry, CacheKeys, getValue, setValue } from '../../../hooks/utils/useLocalStorage';
 import {
   ActivityEventType,
   ContractConnection,
@@ -19,7 +20,6 @@ import {
 } from '../../../types';
 import { Providers } from '../../../types/network';
 import { strategyTxProposalStates } from '../governance/constants';
-import { CacheExpiry, CacheKeys, getValue, setValue } from '../hooks/account/useLocalStorage';
 
 export const getTxProposalState = async (
   strategy: OZLinearVoting,

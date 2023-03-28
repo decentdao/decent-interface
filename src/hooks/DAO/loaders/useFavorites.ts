@@ -1,26 +1,25 @@
 import { ethers } from 'ethers';
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import { AccountAction } from '../../../../types';
-import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
-
-interface IUseFavorites {
-  safeAddress?: string;
-  accountDispatch: any;
-}
+import { useCallback, useMemo } from 'react';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { CacheExpiry, CacheKeys, useLocalStorage } from '../../utils/useLocalStorage';
 
 /**
  * handles loading favorites data into Fractal state
  */
-export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavorites) => {
+export const useAccountFavorites = () => {
+  const {
+    node: { daoAddress },
+  } = useFractal();
+
   const { setValue, getValue } = useLocalStorage();
-  const [favoritesList, setFavorites] = useState<string[]>(getValue(CacheKeys.FAVORITES));
+  const favoritesList = useMemo<string[]>(() => getValue(CacheKeys.FAVORITES), [getValue]);
 
   /**
    * @returns favorited status of loaded safe
    */
   const isConnectedFavorited = useMemo(
-    () => (!safeAddress ? false : favoritesList.includes(safeAddress)),
-    [safeAddress, favoritesList]
+    () => (!daoAddress ? false : favoritesList.includes(daoAddress)),
+    [daoAddress, favoritesList]
   );
 
   /**
@@ -40,20 +39,9 @@ export const useAccountFavorites = ({ safeAddress, accountDispatch }: IUseFavori
         updatedFavorites = favoritesList.concat([normalizedAddress]);
       }
       setValue(CacheKeys.FAVORITES, updatedFavorites, CacheExpiry.NEVER);
-      setFavorites(updatedFavorites);
     },
     [favoritesList, setValue]
   );
 
-  useEffect(() => {
-    // this keeps the account information update to date with any changes made.
-    accountDispatch({
-      type: AccountAction.UPDATE_DAO_FAVORITES,
-      payload: {
-        favoritesList,
-        isConnectedFavorited,
-        toggleFavorite,
-      },
-    });
-  }, [accountDispatch, isConnectedFavorited, toggleFavorite, favoritesList]);
+  return { favoritesList, isConnectedFavorited, toggleFavorite };
 };
