@@ -12,12 +12,14 @@ import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useUsul from '../../../hooks/DAO/proposal/useUsul';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
   GovernanceTypes,
   CreatorSteps,
+  AzuriousGovernance,
+  StrategyType,
 } from '../../../types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
@@ -30,16 +32,17 @@ import { StepWrapper } from '../StepWrapper';
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
   const {
-    gnosis: { safe },
-    governance: { type, governanceToken, governanceIsLoading },
+    node: { safe },
+    governance,
   } = useFractal();
+  const { type } = governance;
   const { usulContract, isLoaded: isUsulLoaded } = useUsul();
   const [showCustomNonce, setShowCustomNonce] = useState(false);
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
-
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
-  const governance = values.essentials.governance;
+  const azuriousGovernance = governance as AzuriousGovernance;
+  const governanceFormType = values.essentials.governance;
 
   const handleNonceChange = useCallback(
     (nonce?: number) => {
@@ -55,14 +58,14 @@ function GuardDetails(props: ICreationStepProps) {
 
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
-      if (governanceIsLoading || !safe || !governanceToken) return;
+      if (!type || !safe || !azuriousGovernance.votesToken) return;
 
       let totalVotes: BigNumberValuePair;
       switch (type) {
-        case GovernanceTypes.GNOSIS_SAFE_USUL:
+        case StrategyType.GNOSIS_SAFE_USUL:
           const normalized = ethers.utils.formatUnits(
-            governanceToken.totalSupply || '0',
-            governanceToken.decimals
+            azuriousGovernance.votesToken.totalSupply || '0',
+            azuriousGovernance.votesToken.decimals
           );
           // ethers.utils.formatUnits returns a whole number string in the form `xxx.0`
           // but BigNumber won't parse out the insignificant decimal, so we need to cut it
@@ -71,7 +74,7 @@ function GuardDetails(props: ICreationStepProps) {
             bigNumberValue: BigNumber.from(normalized.substring(0, normalized.indexOf('.'))),
           };
           break;
-        case GovernanceTypes.GNOSIS_SAFE:
+        case StrategyType.GNOSIS_SAFE:
         default:
           totalVotes = {
             value: safe.owners?.length.toString() || '',
@@ -85,22 +88,14 @@ function GuardDetails(props: ICreationStepProps) {
         : {
             value: ethers.utils.formatUnits(
               totalVotes.bigNumberValue!.div(2),
-              governanceToken.decimals
+              azuriousGovernance.votesToken.decimals
             ),
             bigNumberValue: totalVotes.bigNumberValue!.div(2),
           };
       setFieldValue('vetoGuard.vetoVotesThreshold', childThresholds);
       setFieldValue('vetoGuard.freezeVotesThreshold', childThresholds);
     }
-  }, [
-    governanceIsLoading,
-    governanceToken,
-    safe,
-    safe.threshold,
-    totalParentVotes,
-    type,
-    setFieldValue,
-  ]);
+  }, [azuriousGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
 
   const showVetoFreezeHelpers = totalParentVotes.gt(0);
   const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);
@@ -120,7 +115,7 @@ function GuardDetails(props: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governance === GovernanceTypes.GNOSIS_SAFE && (
+        {governanceFormType === GovernanceTypes.GNOSIS_SAFE && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -259,7 +254,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governance === GovernanceTypes.GNOSIS_SAFE
+            governanceFormType === GovernanceTypes.GNOSIS_SAFE
               ? CreatorSteps.GNOSIS_GOVERNANCE
               : CreatorSteps.GOV_CONFIG
           }

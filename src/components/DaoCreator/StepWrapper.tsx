@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../providers/App/AppProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
 
 interface IStepWrapper {
@@ -16,9 +16,7 @@ interface IStepWrapper {
 
 export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: IStepWrapper) {
   const {
-    gnosis: {
-      safe: { address },
-    },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation(['daoCreate']);
   const { push } = useRouter();
@@ -35,7 +33,9 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
         ButtonIcon={Trash}
         buttonVariant="secondary"
         isButtonDisabled={isFormSubmitting}
-        buttonClick={() => push(!isSubDAO ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(address))}
+        buttonClick={() =>
+          push(!isSubDAO ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(safe?.address))
+        }
       />
       <Text
         textStyle="text-2xl-mono-regular"
