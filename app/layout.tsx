@@ -13,7 +13,7 @@ import Layout from '../src/components/ui/page/Layout';
 import { ErrorFallback } from '../src/components/ui/utils/ErrorFallback';
 import graphQLClient from '../src/graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogging';
-import { FractalProvider } from '../src/providers/Fractal/FractalProvider';
+import { AppProvider } from '../src/providers/App/AppProvider';
 import { NetworkConfigProvider } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 import { chains, wagmiClient } from '../src/providers/NetworkConfig/rainbow-kit.config';
 import { notProd, testErrorBoundary } from '../src/utils/dev';
@@ -111,7 +111,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 >
                   <NetworkConfigProvider>
                     <ApolloProvider client={graphQLClient}>
-                      <FractalProvider>
+                      <AppProvider>
                         <ToastContainer
                           position="bottom-center"
                           closeButton={false}
@@ -121,7 +121,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                         <ModalProvider>
                           <Layout>{children}</Layout>
                         </ModalProvider>
-                      </FractalProvider>
+                      </AppProvider>
                     </ApolloProvider>
                   </NetworkConfigProvider>
                 </RainbowKitProvider>
