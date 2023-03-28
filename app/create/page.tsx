@@ -5,21 +5,19 @@ import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import DaoCreator from '../../src/components/DaoCreator';
 import { DAO_ROUTES } from '../../src/constants/routes';
+import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../src/hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../src/hooks/utils/useAsyncRetry';
-import { useFractal } from '../../src/providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../src/providers/App/AppProvider';
 import { GnosisDAO, TokenGovernanceDAO } from '../../src/types';
 
 export default function DaoCreatePage() {
   const { push } = useRouter();
   const { requestWithRetries } = useAsyncRetry();
   const {
-    gnosis: { safeService },
-    account: {
-      favorites: { toggleFavorite },
-    },
+    clients: { safeService },
   } = useFractal();
-
+  const { toggleFavorite } = useAccountFavorites();
   const successCallback = useCallback(
     async (daoAddress: string) => {
       if (!safeService) return;
