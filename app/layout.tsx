@@ -100,18 +100,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <title>Fractal</title>
       </head>
       <body className="bg-gray-600">
-        <CacheProvider>
-          <ChakraProvider theme={theme}>
-            <FractalErrorBoundary fallback={<ErrorFallback />}>
-              <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider
-                  chains={chains}
-                  modalSize="compact"
-                  theme={midnightTheme()}
-                >
-                  <NetworkConfigProvider>
-                    <ApolloProvider client={graphQLClient}>
-                      <AppProvider>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider
+            chains={chains}
+            modalSize="compact"
+            theme={midnightTheme()}
+          >
+            <NetworkConfigProvider>
+              <AppProvider>
+                <CacheProvider>
+                  <ChakraProvider theme={theme}>
+                    <FractalErrorBoundary fallback={<ErrorFallback />}>
+                      <ApolloProvider client={graphQLClient}>
                         <ToastContainer
                           position="bottom-center"
                           closeButton={false}
@@ -121,14 +121,14 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                         <ModalProvider>
                           <Layout>{children}</Layout>
                         </ModalProvider>
-                      </AppProvider>
-                    </ApolloProvider>
-                  </NetworkConfigProvider>
-                </RainbowKitProvider>
-              </WagmiConfig>
-            </FractalErrorBoundary>
-          </ChakraProvider>
-        </CacheProvider>
+                      </ApolloProvider>
+                    </FractalErrorBoundary>
+                  </ChakraProvider>
+                </CacheProvider>
+              </AppProvider>
+            </NetworkConfigProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
       </body>
     </html>
   );

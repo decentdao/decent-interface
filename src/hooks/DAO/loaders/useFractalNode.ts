@@ -123,6 +123,7 @@ export const useFractalNode = ({
   const setDAO = useCallback(
     async (_daoAddress: string) => {
       if (_daoAddress) {
+        dispatch.resetDAO();
         const fractalNode = await loadDao(_daoAddress);
         if ((fractalNode as WithError).error) {
           invalidateDAO('errorInvalidSearch');
