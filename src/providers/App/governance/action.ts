@@ -1,3 +1,4 @@
+import { TokenClaim } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import {
   FractalProposal,
@@ -20,6 +21,7 @@ export enum FractalGovernanceAction {
   UPDATE_TIMELOCK_PERIOD,
   SET_TOKEN_DATA,
   SET_TOKEN_ACCOUNT_DATA,
+  SET_CLAIMING_CONTRACT,
   RESET_TOKEN_ACCOUNT_DATA,
   RESET,
 }
@@ -67,6 +69,7 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
       payload: VotesData;
     }
+  | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: TokenClaim }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
     }

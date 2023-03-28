@@ -400,6 +400,7 @@ export interface SafeMultisigGovernance extends Governance {}
 export interface Governance {
   type?: StrategyType;
   proposals: FractalProposal[];
+  tokenClaimContract?: TokenClaim;
 }
 
 export interface VotesStrategyAzurious extends VotesStrategy {}

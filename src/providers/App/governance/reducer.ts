@@ -74,6 +74,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       const { votesToken } = state as AzuriousGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
+    case FractalGovernanceAction.SET_CLAIMING_CONTRACT: {
+      return { ...state, tokenClaimContract: action.payload };
+    }
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzuriousGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
