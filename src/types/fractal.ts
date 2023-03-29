@@ -390,9 +390,9 @@ export interface FractalTreasury {
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
 }
-export type FractalGovernance = AzuriousGovernance | SafeMultisigGovernance;
-export interface AzuriousGovernance extends Governance {
-  votesStrategy: VotesStrategyAzurious;
+export type FractalGovernance = AzoriusGovernance | SafeMultisigGovernance;
+export interface AzoriusGovernance extends Governance {
+  votesStrategy: VotesStrategyAzorius;
   votesToken: VotesTokenData;
 }
 export interface SafeMultisigGovernance extends Governance {}
@@ -403,7 +403,7 @@ export interface Governance {
   tokenClaimContract?: TokenClaim;
 }
 
-export interface VotesStrategyAzurious extends VotesStrategy {}
+export interface VotesStrategyAzorius extends VotesStrategy {}
 
 export interface VotesStrategy<Type = BNFormattedPair> {
   votingPeriod?: Type;
