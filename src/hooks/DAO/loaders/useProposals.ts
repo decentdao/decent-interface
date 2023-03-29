@@ -14,7 +14,7 @@ export const useDAOProposals = () => {
 
   const loadAzoriusProposals = useAzoriusProposals();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
-  const { setMethodOnInterval } = useUpdateTimer(daoAddress || undefined);
+  const { setMethodOnInterval } = useUpdateTimer(daoAddress);
   const loadDAOProposals = useCallback(async () => {
     const { usulContract } = governanceContracts;
 
