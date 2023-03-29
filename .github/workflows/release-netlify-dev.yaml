@@ -19,7 +19,7 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }} # auth token, generated at https://app.netlify.com/user/applications#personal-access-tokens
           NETLIFY_SITE_ID: 'ccad1ffe-d58e-4238-bbca-cc09315855cf' # development site Netlify id (not a private identifier)
           NETLIFY_DEPLOY_TO_PROD: true
-          build_directory: './.next/static/'
+          build_directory: './.next/'
         env:
           TESTING_ALCHEMY_API_KEY: ${{ secrets.TESTING_ALCHEMY_API_KEY }}
           NEXT_PUBLIC_INFURA_API_KEY: ${{ secrets.NEXT_PUBLIC_INFURA_API_KEY }}
