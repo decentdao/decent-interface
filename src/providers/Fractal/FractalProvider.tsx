@@ -12,7 +12,6 @@ import {
 } from './constants';
 import { useGnosisGovernance } from './governance/hooks/useGnosisGovernance';
 import { governanceReducer, initializeGovernanceState } from './governance/reducer';
-import { useAccount } from './hooks/account/useAccount';
 import { FractalContext } from './hooks/useFractal';
 import { useFreezeData } from './hooks/useFreezeData';
 import { useGnosisApiServices } from './hooks/useGnosisApiServices';
@@ -46,7 +45,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
     initializeGovernanceState
   );
 
-  const [account, accountDispatch] = useReducer(
+  const [account] = useReducer(
     connectedAccountReducer,
     connectedAccountInitialState,
     initializeConnectedAccount
@@ -61,10 +60,6 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   const { lookupModules } = useGnosisModuleTypes(chainId, gnosis.safe.modules, gnosisDispatch);
 
   useDAOQuery({ gnosis, gnosisDispatch });
-  useAccount({
-    safeAddress: gnosis.safe.address,
-    accountDispatch,
-  });
 
   const { getVetoGuardContracts } = useVetoContracts(
     gnosisDispatch,

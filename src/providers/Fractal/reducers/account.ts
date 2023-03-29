@@ -12,9 +12,6 @@ export const connectedAccountReducer = (
     case AccountAction.UPDATE_DAO_FAVORITES: {
       return { ...state, favorites: action.payload };
     }
-    case AccountAction.UPDATE_AUDIT_MESSAGE: {
-      return { ...state, audit: action.payload };
-    }
     default:
       return state;
   }

@@ -2,7 +2,6 @@ import { BigNumber } from 'ethers';
 
 export interface IConnectedAccount {
   favorites: IFavorites;
-  audit: IAudit;
 }
 
 export interface IAudit {

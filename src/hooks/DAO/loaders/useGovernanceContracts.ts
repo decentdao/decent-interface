@@ -9,8 +9,8 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
-import { useLocalStorage } from '../../../providers/Fractal/hooks/account/useLocalStorage';
 import { ContractConnection, FractalModuleType, FractalNode } from '../../../types';
+import { useLocalStorage } from '../../utils/useLocalStorage';
 
 const USUL_MODULE_CACHE_KEY = 'usul_module_gov_';
 export const useGovernanceContracts = () => {

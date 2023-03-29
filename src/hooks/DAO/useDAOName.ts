@@ -2,9 +2,9 @@ import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, useEnsName, useProvider } from 'wagmi';
 import { getEventRPC } from '../../helpers';
-import { CacheKeys, useLocalStorage } from '../../providers/Fractal/hooks/account/useLocalStorage';
-import useSafeContracts from '../safe/useSafeContracts';
+import { useFractal } from '../../providers/App/AppProvider';
 import { createAccountSubstring } from '../utils/useDisplayName';
+import { CacheKeys, useLocalStorage } from '../utils/useLocalStorage';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:
@@ -20,7 +20,9 @@ export default function useDAOName({
   address?: string;
   registryName?: string | null;
 }) {
-  const { fractalRegistryContract } = useSafeContracts();
+  const {
+    baseContracts: { fractalRegistryContract },
+  } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
   const provider = useProvider();
   const networkId = provider.network.chainId;
