@@ -1,5 +1,5 @@
 import { FractalGovernance, UsulProposal, VOTE_CHOICES } from '../../../types';
-import { AzuriousGovernance, FractalProposal, StrategyType } from './../../../types/fractal';
+import { AzoriusGovernance, FractalProposal, StrategyType } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
@@ -27,7 +27,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: [...proposals, action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_USUL_VOTE: {
       const { proposalNumber, voter, support, weight, votesSummary } = action.payload;
-      const updatedProposals = ([...proposals] as UsulProposal[]).map(proposal => {
+      const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
           const newProposal: UsulProposal = {
             ...proposal,
@@ -42,7 +42,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     }
     case FractalGovernanceAction.UPDATE_PROPOSAL_STATE: {
       const { proposalNumber, state: proposalState } = action.payload;
-      const updatedProposals = ([...proposals] as UsulProposal[]).map(proposal => {
+      const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
           const newProposal: UsulProposal = {
             ...proposal,
@@ -55,30 +55,30 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: updatedProposals };
     }
     case FractalGovernanceAction.UPDATE_VOTING_PERIOD: {
-      const { votesStrategy } = state as AzuriousGovernance;
+      const { votesStrategy } = state as AzoriusGovernance;
       return { ...state, votesStrategy: { ...votesStrategy, votingPeriod: action.payload } };
     }
     case FractalGovernanceAction.UPDATE_VOTING_QUORUM: {
-      const { votesStrategy } = state as AzuriousGovernance;
+      const { votesStrategy } = state as AzoriusGovernance;
       return { ...state, votesStrategy: { ...votesStrategy, votingQuorum: action.payload } };
     }
     case FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD: {
-      const { votesStrategy } = state as AzuriousGovernance;
+      const { votesStrategy } = state as AzoriusGovernance;
       return { ...state, votesStrategy: { ...votesStrategy, timelockPeriod: action.payload } };
     }
     case FractalGovernanceAction.SET_TOKEN_DATA: {
-      const { votesToken } = state as AzuriousGovernance;
+      const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
     case FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA: {
-      const { votesToken } = state as AzuriousGovernance;
+      const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
     case FractalGovernanceAction.SET_CLAIMING_CONTRACT: {
       return { ...state, tokenClaimContract: action.payload };
     }
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
-      const { votesToken } = state as AzuriousGovernance;
+      const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
     }
     case FractalGovernanceAction.RESET:

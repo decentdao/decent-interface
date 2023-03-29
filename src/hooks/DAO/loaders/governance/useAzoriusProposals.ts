@@ -18,10 +18,10 @@ import {
   getTxProposalState,
   mapProposalCreatedEventToProposal,
 } from '../../../../providers/Fractal/utils';
-import { UsulProposal } from './../../../../types/daoProposal';
-import { useDecodeTransaction } from './../../../utils/useDecodeTransaction';
+import { UsulProposal } from '../../../../types/daoProposal';
+import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 
-export const useAzuriousProposals = () => {
+export const useAzoriusProposals = () => {
   const {
     governanceContracts: { usulContract, ozLinearVotingContract },
     dispatch,
@@ -33,7 +33,7 @@ export const useAzuriousProposals = () => {
   } = provider;
   const decodeTransactions = useDecodeTransaction();
 
-  const loadAzuriousProposals = useCallback(async (): Promise<UsulProposal[]> => {
+  const loadAzoriusProposals = useCallback(async (): Promise<UsulProposal[]> => {
     if (!usulContract || !ozLinearVotingContract) {
       return [];
     }
@@ -227,5 +227,5 @@ export const useAzuriousProposals = () => {
     proposalCanceledListener,
   ]);
 
-  return loadAzuriousProposals;
+  return loadAzoriusProposals;
 };
