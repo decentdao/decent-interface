@@ -72,9 +72,9 @@ export interface IFractalContext {
       _guardAddress: string,
       _modules?: IGnosisModuleData[] | undefined
     ) => Promise<IGnosisVetoContract | undefined>;
-    lookupFreezeData: (
+    lookupFreezeGuard: (
       _vetoGuardContracts: IGnosisVetoContract
-    ) => Promise<IGnosisFreezeData | undefined>;
+    ) => Promise<IGnosisFreezeGuard | undefined>;
   };
 }
 
@@ -85,7 +85,7 @@ export interface IGnosis {
   safe: Partial<SafeInfoResponseWithGuard>;
   modules: IGnosisModuleData[];
   guardContracts: IGnosisVetoContract;
-  freezeData: IGnosisFreezeData | undefined;
+  freezeGuard: IGnosisFreezeGuard | undefined;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
   parentAddress?: string;
@@ -257,7 +257,7 @@ export enum TxProposalState {
   Module = 'stateModule',
 }
 
-export interface IGnosisFreezeData {
+export interface IGnosisFreezeGuard {
   freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
   freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
   freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes

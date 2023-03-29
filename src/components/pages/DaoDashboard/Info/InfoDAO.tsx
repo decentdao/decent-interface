@@ -31,7 +31,7 @@ export function InfoDAO() {
       parentAddress={parentAddress}
       safeAddress={daoAddress}
       numberOfChildrenDAO={(childNodes ?? []).length}
-      freezeData={guard}
+      freezeGuard={guard}
       guardContracts={guardContracts}
     />
   );

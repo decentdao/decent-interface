@@ -21,10 +21,10 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 }
 
 export function ActivityFreeze({
-  freezeData,
+  freezeGuard,
   vetoVotingContract,
 }: {
-  freezeData: FreezeGuard;
+  freezeGuard: FreezeGuard;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }) {
   const {
@@ -33,7 +33,7 @@ export function ActivityFreeze({
     freezePeriod,
     freezeVotesThreshold,
     freezeProposalVoteCount,
-  } = freezeData;
+  } = freezeGuard;
   const { t } = useTranslation('dashboard');
   const freezeProposalDeadlineDate = new Date(
     freezeProposalCreatedTime!.add(freezeProposalPeriod!).mul(1000).toNumber()
@@ -59,11 +59,11 @@ export function ActivityFreeze({
     <ActivityCard
       Badge={
         <Badge
-          labelKey={freezeData.isFrozen ? DAOState.frozen : DAOState.freezeInit}
+          labelKey={freezeGuard.isFrozen ? DAOState.frozen : DAOState.freezeInit}
           size="base"
         />
       }
-      description={<FreezeDescription isFrozen={freezeData.isFrozen} />}
+      description={<FreezeDescription isFrozen={freezeGuard.isFrozen} />}
       RightElement={
         <Flex
           color="blue.500"
@@ -71,7 +71,7 @@ export function ActivityFreeze({
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            {!freezeData.isFrozen && freezeVotesThreshold!.gt(0) && (
+            {!freezeGuard.isFrozen && freezeVotesThreshold!.gt(0) && (
               <Tooltip
                 label={t('tipFreeze', { amount: voteToThreshold })}
                 placement="bottom"
@@ -82,14 +82,14 @@ export function ActivityFreeze({
           </Text>
           {!isFreezeProposalDeadlinePassed && !isFreezeDeadlinePassed && (
             <Text textStyle="text-base-sans-regular">
-              {freezeData.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
+              {freezeGuard.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
             </Text>
           )}
-          {!freezeData.isFrozen && vetoVotingContract && (
+          {!freezeGuard.isFrozen && vetoVotingContract && (
             <FreezeButton
-              isFrozen={freezeData.isFrozen}
-              userHasFreezeVoted={freezeData.userHasFreezeVoted}
-              userHasVotes={freezeData.userHasVotes}
+              isFrozen={freezeGuard.isFrozen}
+              userHasFreezeVoted={freezeGuard.userHasFreezeVoted}
+              userHasVotes={freezeGuard.userHasVotes}
               vetoVotingContract={vetoVotingContract}
             />
           )}

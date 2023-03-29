@@ -1,12 +1,12 @@
 import { IGnosisVetoContract } from './daoGuard';
-import { IGnosisModuleData, IGnosisFreezeData } from './fractal';
+import { IGnosisModuleData, IGnosisFreezeGuard } from './fractal';
 import { SafeInfoResponseWithGuard } from './safeGlobal';
 
 export type SubDAOData = {
   safeInfo: SafeInfoResponseWithGuard;
   modules: IGnosisModuleData[] | undefined;
   vetoGuardContracts: IGnosisVetoContract;
-  freezeData: IGnosisFreezeData | undefined;
+  freezeGuard: IGnosisFreezeGuard | undefined;
 };
 
 export enum DAOState {

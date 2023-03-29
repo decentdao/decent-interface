@@ -11,7 +11,7 @@ import {
   IGnosisVetoContract,
   GnosisActions,
   VetoVotingType,
-  IGnosisFreezeData,
+  IGnosisFreezeGuard,
   GnosisAction,
   FreezeVoteCastedListener,
 } from '../../../types';
@@ -24,14 +24,14 @@ export function useFreezeData(
   const { gnosisSafeSingletonContract, votesTokenMasterCopyContract } = useSafeContracts();
   const { address: account } = useAccount();
 
-  const lookupFreezeData = useCallback(
+  const lookupFreezeGuard = useCallback(
     async ({ vetoVotingType, vetoVotingContract }: IGnosisVetoContract) => {
       let userHasVotes: boolean = false;
       const freezeCreatedBlock = await (
         vetoVotingContract!.asSigner as VetoERC20Voting
       ).freezeProposalCreatedBlock();
 
-      const freezeData = {
+      const freezeGuard = {
         freezeVotesThreshold: await vetoVotingContract!.asSigner.freezeVotesThreshold(),
         freezeProposalCreatedTime: await vetoVotingContract!.asSigner.freezeProposalCreatedTime(),
         freezeProposalVoteCount: await vetoVotingContract!.asSigner.freezeProposalVoteCount(),
@@ -58,13 +58,13 @@ export function useFreezeData(
         const currentTimestamp = (await provider!.getBlock(currentBlockNumber)).timestamp;
         const isFreezeActive =
           isWithinFreezeProposalPeriod(
-            freezeData.freezeProposalCreatedTime,
-            freezeData.freezeProposalPeriod,
+            freezeGuard.freezeProposalCreatedTime,
+            freezeGuard.freezeProposalPeriod,
             BigNumber.from(currentTimestamp)
           ) ||
           isWithinFreezePeriod(
-            freezeData.freezeProposalCreatedTime,
-            freezeData.freezePeriod,
+            freezeGuard.freezeProposalCreatedTime,
+            freezeGuard.freezePeriod,
             BigNumber.from(currentTimestamp)
           );
         userHasVotes = (
@@ -76,8 +76,8 @@ export function useFreezeData(
         ).gt(0);
       }
 
-      const freeze: IGnosisFreezeData = {
-        ...freezeData,
+      const freeze: IGnosisFreezeGuard = {
+        ...freezeGuard,
         userHasVotes,
       };
       return freeze;
@@ -91,14 +91,14 @@ export function useFreezeData(
         return;
       }
 
-      lookupFreezeData(vetoGuardContract).then(freezeData => {
+      lookupFreezeGuard(vetoGuardContract).then(freezeGuard => {
         gnosisDispatch({
           type: GnosisAction.SET_FREEZE_DATA,
-          payload: freezeData,
+          payload: freezeGuard,
         });
       });
     })();
-  }, [gnosisDispatch, , vetoGuardContract, lookupFreezeData]);
+  }, [gnosisDispatch, , vetoGuardContract, lookupFreezeGuard]);
 
   useEffect(() => {
     if (
@@ -162,5 +162,5 @@ export function useFreezeData(
     };
   }, [account, vetoGuardContract, gnosisDispatch]);
 
-  return { lookupFreezeData };
+  return { lookupFreezeGuard };
 }

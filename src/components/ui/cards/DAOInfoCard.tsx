@@ -37,9 +37,9 @@ export function DAOInfoCard({
   toggleExpansion,
   expanded,
   numberOfChildrenDAO,
-  freezeData,
+  freezeGuard,
   guardContracts,
-}: IDAOInfoCard & { freezeData?: FreezeGuard; guardContracts: FractalGuardContracts }) {
+}: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
   const {
     node: { daoAddress, daoName },
   } = useFractal();
@@ -148,7 +148,7 @@ export function DAOInfoCard({
         <ManageDAOMenu
           parentAddress={parentAddress}
           safeAddress={safeAddress}
-          freezeData={freezeData}
+          freezeGuard={freezeGuard}
           guardContracts={guardContracts}
         />
       )}
@@ -167,8 +167,8 @@ export function DAONodeCard(props: IDAOInfoCard) {
 
   const nodeGuardContracts =
     !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
-  const nodeFreezeData =
-    !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : !isCurrentDAO ? undefined : guard;
+  const nodeFreezeGuard =
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuard : !isCurrentDAO ? undefined : guard;
   const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
 
   return (
@@ -189,7 +189,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
       <DAOInfoCard
         {...props}
         guardContracts={nodeGuardContracts}
-        freezeData={nodeFreezeData}
+        freezeGuard={nodeFreezeGuard}
       />
     </Flex>
   );

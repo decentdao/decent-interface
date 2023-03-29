@@ -31,7 +31,7 @@ export const useFractalFreeze = () => {
     network: { chainId },
   } = provider;
 
-  const loadFractalFreezeData = useCallback(
+  const loadFractalFreezeGuard = useCallback(
     async ({ vetoVotingContract, vetoVotingType }: FractalGuardContracts) => {
       if (vetoVotingType == null || !vetoVotingContract) return;
       let userHasVotes: boolean = false;
@@ -51,7 +51,7 @@ export const useFractalFreeze = () => {
       );
       const isFrozen = await vetoVotingContract!.asSigner.isFrozen();
 
-      const freezeData = {
+      const freezeGuard = {
         freezeVotesThreshold,
         freezeProposalCreatedTime,
         freezeProposalVoteCount,
@@ -75,13 +75,13 @@ export const useFractalFreeze = () => {
         const currentTimestamp = (await provider!.getBlock(currentBlockNumber)).timestamp;
         const isFreezeActive =
           isWithinFreezeProposalPeriod(
-            freezeData.freezeProposalCreatedTime,
-            freezeData.freezeProposalPeriod,
+            freezeGuard.freezeProposalCreatedTime,
+            freezeGuard.freezeProposalPeriod,
             BigNumber.from(currentTimestamp)
           ) ||
           isWithinFreezePeriod(
-            freezeData.freezeProposalCreatedTime,
-            freezeData.freezePeriod,
+            freezeGuard.freezeProposalCreatedTime,
+            freezeGuard.freezePeriod,
             BigNumber.from(currentTimestamp)
           );
         userHasVotes = (
@@ -94,7 +94,7 @@ export const useFractalFreeze = () => {
       }
 
       const freeze = {
-        ...freezeData,
+        ...freezeGuard,
         userHasVotes,
       };
       isFreezeSet.current = true;
@@ -110,9 +110,9 @@ export const useFractalFreeze = () => {
       !!guardContracts.vetoVotingContract &&
       guardContracts.vetoVotingContract.asSigner.address !== currentValidAddress.current
     ) {
-      loadFractalFreezeData(guardContracts);
+      loadFractalFreezeGuard(guardContracts);
     }
-  }, [loadFractalFreezeData, guardContracts, daoAddress]);
+  }, [loadFractalFreezeGuard, guardContracts, daoAddress]);
 
   useEffect(() => {
     const { vetoVotingContract, vetoVotingType } = guardContracts;

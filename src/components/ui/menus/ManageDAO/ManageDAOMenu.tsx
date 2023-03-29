@@ -15,14 +15,14 @@ import { OptionMenu } from '../OptionMenu';
 interface IManageDAOMenu {
   parentAddress?: string | null;
   safeAddress: string;
-  freezeData?: FreezeGuard;
+  freezeGuard?: FreezeGuard;
   guardContracts: FractalGuardContracts;
 }
 
 export function ManageDAOMenu({
   parentAddress,
   safeAddress,
-  freezeData,
+  freezeGuard,
   guardContracts,
 }: IManageDAOMenu) {
   const { push } = useRouter();
@@ -38,21 +38,21 @@ export function ManageDAOMenu({
       onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
     if (
-      freezeData &&
-      freezeData.freezeProposalCreatedTime &&
-      freezeData.freezeProposalPeriod &&
-      freezeData.freezePeriod &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezeProposalPeriod &&
+      freezeGuard.freezePeriod &&
       !isWithinFreezeProposalPeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezeProposalPeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezeProposalPeriod,
         currentTime
       ) &&
       !isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.userHasVotes
+      freezeGuard.userHasVotes
     ) {
       const freezeOption = {
         optionKey: 'optionInitiateFreeze',
@@ -60,16 +60,16 @@ export function ManageDAOMenu({
       };
       return [createSubDAOOption, freezeOption];
     } else if (
-      freezeData &&
-      freezeData.freezeProposalCreatedTime &&
-      freezeData.freezePeriod &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezePeriod &&
       isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.isFrozen &&
-      freezeData.userHasVotes
+      freezeGuard.isFrozen &&
+      freezeGuard.userHasVotes
     ) {
       const clawBackOption = {
         optionKey: 'optionInitiateClawback',
@@ -80,7 +80,7 @@ export function ManageDAOMenu({
     } else {
       return [createSubDAOOption];
     }
-  }, [safeAddress, push, guardContracts, handleClawBack, freezeData, currentTime]);
+  }, [safeAddress, push, guardContracts, handleClawBack, freezeGuard, currentTime]);
 
   return (
     <OptionMenu

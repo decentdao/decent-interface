@@ -5,7 +5,7 @@ import SafeServiceClient, {
 import { BigNumber } from 'ethers';
 import { DAO } from '../../../.graphclient';
 import { IGnosisVetoContract } from '../daoGuard';
-import { IGnosisModuleData, IGnosisFreezeData } from '../fractal';
+import { IGnosisModuleData, IGnosisFreezeGuard } from '../fractal';
 
 // @todo Rename to NodeActions and NodeAction
 export enum GnosisAction {
@@ -29,7 +29,7 @@ export type GnosisActions =
   | { type: GnosisAction.SET_SAFE_TRANSACTIONS; payload: AllTransactionsListResponse }
   | { type: GnosisAction.SET_MODULES; payload: IGnosisModuleData[] }
   | { type: GnosisAction.SET_GUARD_CONTRACTS; payload: IGnosisVetoContract }
-  | { type: GnosisAction.SET_FREEZE_DATA; payload: IGnosisFreezeData }
+  | { type: GnosisAction.SET_FREEZE_DATA; payload: IGnosisFreezeGuard }
   | {
       type: GnosisAction.FREEZE_VOTE_EVENT;
       payload: {

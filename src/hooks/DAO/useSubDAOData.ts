@@ -7,7 +7,7 @@ import { useFractal } from './../../providers/Fractal/hooks/useFractal';
 export function useSubDAOData(safeAddress?: string) {
   const {
     gnosis: { safeService },
-    actions: { lookupModules, getVetoGuardContracts, lookupFreezeData },
+    actions: { lookupModules, getVetoGuardContracts, lookupFreezeGuard },
   } = useFractal();
 
   const [subDAOData, setSubDAOData] = useState<SubDAOData>();
@@ -28,15 +28,15 @@ export function useSubDAOData(safeAddress?: string) {
     if (!vetoGuardContracts) {
       return;
     }
-    const freezeData = await lookupFreezeData(vetoGuardContracts);
+    const freezeGuard = await lookupFreezeGuard(vetoGuardContracts);
 
     setSubDAOData({
       safeInfo,
       modules,
       vetoGuardContracts,
-      freezeData,
+      freezeGuard,
     });
-  }, [safeService, lookupModules, getVetoGuardContracts, lookupFreezeData, safeAddress]);
+  }, [safeService, lookupModules, getVetoGuardContracts, lookupFreezeGuard, safeAddress]);
 
   useEffect(() => {
     loadSubDAOData();

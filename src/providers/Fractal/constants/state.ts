@@ -16,7 +16,7 @@ export const gnosisInitialState: IGnosis = {
     vetoVotingType: VetoVotingType.UNKNOWN,
     vetoGuardType: VetoGuardType.UNKNOWN,
   },
-  freezeData: undefined,
+  freezeGuard: undefined,
   transactions: {
     count: 0,
     next: undefined,
