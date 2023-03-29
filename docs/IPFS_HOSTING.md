@@ -4,7 +4,7 @@
 Fractal's app hosting on IPFS consists of the following setup pieces:
 
 - `PINATA_API_KEY` and `PINATA_API_SECRET_KEY` repository secrets for a https://www.pinata.cloud/ account. A free account is limited to only 100 pinned files, so a paid account is necessary.
-- The Github workflow files `release-ipfs-dev.yaml` and `release-ipfs-prod.yaml` which trigger an upload and pinning of the static app files, which trigger on each push to the `develop` or `master` branches, respectively.
+- The Github workflow files `release-ipfs-dev.yaml`, `release-ipfs-staging.yaml`, and `release-ipfs-prod.yaml` which trigger an upload and pinning of the static app files, which trigger on each push to the `develop`, `staging` or `main` branches, respectively.
 - A [DNSLink](https://dnslink.dev/) set within Cloudflare that redirects a user running an IPFS node (see below) to the IPFS hosted version of the app.
 
 Additionally, customized setup pieces are referenced within the workflow yaml files:
