@@ -72,35 +72,34 @@ export const useFractalGuardContracts = () => {
       }
     }
 
-    if (!vetoGuardContract) {
-      return;
+    if (!!vetoGuardContract) {
+      const votingAddress = await vetoGuardContract.asSigner.vetoVoting();
+      const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
+      const vetoVotingType =
+        votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.asSigner.address
+          ? VetoVotingType.MULTISIG
+          : VetoVotingType.ERC20;
+
+      const vetoVotingContract =
+        vetoVotingType === VetoVotingType.MULTISIG
+          ? {
+              asSigner: vetoMultisigVotingMasterCopyContract.asSigner.attach(votingAddress),
+              asProvider: vetoMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
+            }
+          : {
+              asSigner: vetoERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
+              asProvider: vetoERC20VotingMasterCopyContract.asProvider.attach(votingAddress),
+            };
+
+      const contracts = {
+        vetoGuardContract: vetoGuardContract,
+        vetoVotingContract: vetoVotingContract,
+        vetoVotingType,
+        vetoGuardType,
+      };
+
+      dispatch.guardContracts({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
     }
-    const votingAddress = await vetoGuardContract.asSigner.vetoVoting();
-    const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
-    const vetoVotingType =
-      votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.asSigner.address
-        ? VetoVotingType.MULTISIG
-        : VetoVotingType.ERC20;
-
-    const vetoVotingContract =
-      vetoVotingType === VetoVotingType.MULTISIG
-        ? {
-            asSigner: vetoMultisigVotingMasterCopyContract.asSigner.attach(votingAddress),
-            asProvider: vetoMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
-          }
-        : {
-            asSigner: vetoERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
-            asProvider: vetoERC20VotingMasterCopyContract.asProvider.attach(votingAddress),
-          };
-
-    const contracts = {
-      vetoGuardContract: vetoGuardContract,
-      vetoVotingContract: vetoVotingContract,
-      vetoVotingType,
-      vetoGuardType,
-    };
-
-    dispatch.guardContracts({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
   }, [
     dispatch,
     daoAddress,

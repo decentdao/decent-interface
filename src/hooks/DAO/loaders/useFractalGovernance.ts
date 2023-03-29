@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useAzuriousStrategy } from './governance/useERC20LinearStrategy';
+import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
-import { useDAOProposals } from './useDAOProposals';
+import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
@@ -14,7 +14,7 @@ export const useFractalGovernance = () => {
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
-  const loadAzuriousStrategy = useAzuriousStrategy();
+  const loadAzoriusStrategy = useAzoriusStrategy();
   const loadERC20Token = useERC20LinearToken();
 
   useEffect(() => {
@@ -24,10 +24,10 @@ export const useFractalGovernance = () => {
       loadDAOProposals();
       if (!!usulContract) {
         // load DAO voting strategy data
-        loadAzuriousStrategy();
+        loadAzoriusStrategy();
         // load voting token
         loadERC20Token();
       }
     }
-  }, [daoAddress, governanceContracts, loadDAOProposals, loadAzuriousStrategy, loadERC20Token]);
+  }, [daoAddress, governanceContracts, loadDAOProposals, loadAzoriusStrategy, loadERC20Token]);
 };

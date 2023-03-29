@@ -83,22 +83,14 @@ export const useERC20LinearToken = () => {
       return;
     }
     const rpc = getEventRPC<VotesToken>(tokenContract, chainId);
-    const filter = rpc.filters.DelegateChanged();
-    rpc.on(filter, loadERC20TokenAccountData);
-    return () => {
-      rpc.off(filter, loadERC20TokenAccountData);
-    };
-  }, [tokenContract, chainId, loadERC20TokenAccountData]);
+    const delegateVotesChangedfilter = rpc.filters.DelegateVotesChanged();
+    const delegateChangedfilter = rpc.filters.DelegateChanged();
+    rpc.on(delegateVotesChangedfilter, loadERC20TokenAccountData);
+    rpc.on(delegateChangedfilter, loadERC20TokenAccountData);
 
-  useEffect(() => {
-    if (!tokenContract) {
-      return;
-    }
-    const rpc = getEventRPC<VotesToken>(tokenContract, chainId);
-    const filter = rpc.filters.DelegateVotesChanged();
-    rpc.on(filter, loadERC20TokenAccountData);
     return () => {
-      rpc.off(filter, loadERC20TokenAccountData);
+      rpc.off(delegateVotesChangedfilter, loadERC20TokenAccountData);
+      rpc.off(delegateChangedfilter, loadERC20TokenAccountData);
     };
   }, [tokenContract, chainId, loadERC20TokenAccountData]);
 
