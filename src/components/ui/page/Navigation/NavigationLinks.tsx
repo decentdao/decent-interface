@@ -38,7 +38,6 @@ export function NavigationLinks({
               href={DAO_ROUTES.dao.relative(address)}
               labelKey="home"
               testId="navigation-daoHomeLink"
-              routeKey="dao"
               Icon={Home}
               closeDrawer={closeDrawer}
             />
@@ -46,7 +45,6 @@ export function NavigationLinks({
               href={DAO_ROUTES.hierarchy.relative(address)}
               labelKey="nodes"
               testId="navigation-hierarchy"
-              routeKey="nodes"
               Icon={Tree}
               closeDrawer={closeDrawer}
             />
@@ -54,7 +52,6 @@ export function NavigationLinks({
               href={DAO_ROUTES.proposals.relative(address)}
               labelKey="proposals"
               testId="navigation-proposalsLink"
-              routeKey="proposals"
               Icon={Proposals}
               closeDrawer={closeDrawer}
             />
@@ -62,7 +59,6 @@ export function NavigationLinks({
               href={DAO_ROUTES.treasury.relative(address)}
               labelKey="treasury"
               testId="navigation-treasuryLink"
-              routeKey="treasury"
               Icon={Treasury}
               closeDrawer={closeDrawer}
             />
@@ -70,7 +66,6 @@ export function NavigationLinks({
               href={DAO_ROUTES.integrations.relative(address)}
               labelKey="integrations"
               testId="navigation-integrationsLink"
-              routeKey="integrations"
               Icon={Treasury} // TODO - Change this to Integrations icon once https://github.com/decent-dao/decent-ui/pull/77 is merged
               closeDrawer={closeDrawer}
             />

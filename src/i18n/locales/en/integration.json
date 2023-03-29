@@ -1,0 +1,10 @@
+{
+    "createIntegration": "Add a new Integration",
+    "integrationTitle": "Integration Title",
+    "integrationTitleHelperText": "A short title for this integration",
+    "integrationDescription": "Description",
+    "integrationDescriptionHelperText": "Add a brief description",
+    "preview": "Preview",
+    "previewTitle": "Title",
+    "previewThumnbail": "Thumbnail"
+}

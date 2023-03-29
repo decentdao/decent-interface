@@ -6,6 +6,7 @@ import BREADCRUMBS_EN from './locales/en/breadcrumbs.json';
 import COMMON_EN from './locales/en/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
 import DASHBOARD_EN from './locales/en/dashboard.json';
+import INTEGRATION_EN from './locales/en/integration.json';
 import LANGUAGES_EN from './locales/en/languages.json';
 import MENU_EN from './locales/en/menu.json';
 import MODALS_EN from './locales/en/modals.json';
@@ -55,6 +56,7 @@ export const supportedLanguages = {
     daoCreate: DAOCREATE_EN,
     menu: MENU_EN,
     dashboard: DASHBOARD_EN,
+    integration: INTEGRATION_EN,
     proposal: PROPOSAL_EN,
     proposalMetadata: PROPOSAL_METADATA_EN,
     transaction: TRANSACTION_EN,
