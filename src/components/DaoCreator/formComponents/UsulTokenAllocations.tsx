@@ -13,9 +13,9 @@ import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
 import { BigNumberValuePair, ICreationStepProps, TokenAllocation } from '../../../types';
-import { LabelComponent } from '../../ui/forms/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { LabelComponent } from '../../ui/forms/InputComponent';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
 
 export function UsulTokenAllocations(props: ICreationStepProps) {
