@@ -21,7 +21,7 @@ export function Execute({ proposal }: { proposal: TxProposal }) {
       <Button
         onClick={() => executeProposal(proposal)}
         width="full"
-        disabled={disabled}
+        isDisabled={disabled}
         marginTop={5}
       >
         {t('execute', { ns: 'common' })}

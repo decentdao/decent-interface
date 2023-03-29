@@ -73,7 +73,7 @@ function PageHeader({
             onClick={buttonClick}
             data-testid={buttonTestId}
             variant={buttonVariant}
-            disabled={isButtonDisabled}
+            isDisabled={isButtonDisabled}
           >
             {buttonText}
           </Button>
@@ -88,7 +88,7 @@ function PageHeader({
             data-testid={buttonTestId}
             size="base"
             variant={buttonVariant}
-            disabled={isButtonDisabled}
+            isDisabled={isButtonDisabled}
           >
             {buttonText}
           </IconButton>

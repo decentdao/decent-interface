@@ -93,7 +93,7 @@ export function TokenClaim() {
       <Button
         variant="text"
         onClick={claimToken}
-        disabled={pending}
+        isDisabled={pending}
       >
         {t('claim')}
       </Button>

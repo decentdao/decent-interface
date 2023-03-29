@@ -21,7 +21,7 @@ export default function Queue({ proposal }: { proposal: TxProposal }) {
       </Flex>
       <Button
         width="full"
-        disabled={disabled}
+        isDisabled={disabled}
         marginTop={5}
         onClick={() => queueProposal(BigNumber.from(proposal.proposalNumber))}
       >

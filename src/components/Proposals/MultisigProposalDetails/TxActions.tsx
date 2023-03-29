@@ -215,7 +215,7 @@ export function TxActions({
         <Button
           w="full"
           rightIcon={buttonProps[proposal.state!].icon}
-          disabled={isButtonDisabled}
+          isDisabled={isButtonDisabled}
           onClick={buttonProps[proposal.state!].action}
         >
           {t(buttonProps[proposal.state!].text, { ns: 'common' })}

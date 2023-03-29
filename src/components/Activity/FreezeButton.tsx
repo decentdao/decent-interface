@@ -29,7 +29,7 @@ export function FreezeButton({
       borderColor={'blue.500'}
       textColor={'blue.500'}
       onClick={castFreezeVote}
-      disabled={disabled}
+      isDisabled={disabled}
     >
       {t(
         !userHasVotes ? 'noVotesButton' : userHasFreezeVoted ? 'freezeVotedButton' : 'freezeButton'
