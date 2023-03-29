@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
-  target: "serverless",
+  output: 'standalone',
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
