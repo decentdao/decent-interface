@@ -16,11 +16,16 @@ export interface IFavorites {
   toggleFavorite: (key: string) => void;
 }
 
-export interface VotesTokenData {
+export interface VotesTokenData extends VotesData, TokenData {}
+export interface VotesData {
+  balance: BigNumber | null;
+  delegatee: string | null;
+  votingWeight: BigNumber | null;
+  isDelegatesSet: boolean | null;
+}
+
+export interface TokenData {
   name: string;
-  balance: BigNumber;
-  delegatee: string;
-  votingWeight: BigNumber; // there was a string version of this, look into why this isn't just parsed in component
   symbol: string;
   decimals: number;
   address: string;

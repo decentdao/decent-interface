@@ -343,6 +343,7 @@ export interface GovernanceContractsRefactored {
   ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
   usulContract: ContractConnection<FractalUsul> | null;
   tokenContract: ContractConnection<VotesToken> | null;
+  isLoaded: boolean;
 }
 
 export interface FractalNode {
@@ -388,20 +389,19 @@ export interface FractalTreasury {
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
 }
-export type FractalGovernance = AzuriousGovernance | SafeMultisigGovernance;
-export interface AzuriousGovernance extends Governance {
-  votesStrategy?: [VotesStrategyAzurious];
+export type FractalGovernance = AzoriusGovernance | SafeMultisigGovernance;
+export interface AzoriusGovernance extends Governance {
+  votesStrategy?: [VotesStrategyAzorius];
   votesToken?: VotesTokenData;
 }
 export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
   type?: StrategyType;
-  // @todo this needs to be typed
-  proposals: [];
+  proposals: FractalProposal[];
 }
 
-export interface VotesStrategyAzurious extends VotesStrategy {}
+export interface VotesStrategyAzorius extends VotesStrategy {}
 
 export interface VotesStrategy<Type = BNFormattedPair> {
   votingPeriod?: Type;
@@ -435,3 +435,5 @@ export interface FractalContracts {
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;
   claimingMasterCopyContract: ContractConnection<TokenClaim>;
 }
+
+export type FractalProposal = UsulProposal | MultisigProposal;

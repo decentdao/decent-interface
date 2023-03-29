@@ -1,10 +1,6 @@
 import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
-import {
-  SafeMultisigTransactionWithTransfersResponse,
-  SafeMultisigTransactionResponse,
-} from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { getEventRPC } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import {
@@ -16,6 +12,7 @@ import {
   ProposalMetaData,
   ProposalVote,
   ProposalVotesSummary,
+  SafeMultisigTransactionResponse,
   TxProposalState,
   UsulProposal,
   VOTE_CHOICES,
@@ -25,23 +22,21 @@ import { strategyTxProposalStates } from '../governance/constants';
 import { CacheExpiry, CacheKeys, getValue, setValue } from '../hooks/account/useLocalStorage';
 
 export const getTxProposalState = async (
-  usulContract: ContractConnection<FractalUsul>,
-  linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>,
+  strategy: OZLinearVoting,
+  usulContract: FractalUsul,
   proposalId: BigNumber,
   chainId: number
 ): Promise<TxProposalState> => {
   const cache: TxProposalState = getValue(
-    CacheKeys.PROPOSAL_STATE_PREFIX + linearVotingMasterCopyContract.asSigner.address + proposalId,
+    CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
     chainId
   );
   if (cache) {
     return cache;
   }
-  const state = await usulContract.asSigner.state(proposalId);
+  const state = await usulContract.state(proposalId);
   if (state === 0) {
     // Usul says proposal is active, but we need to get more info in this case
-    const { strategy: strategyAddress } = await usulContract.asSigner.proposals(proposalId);
-    const strategy = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
     const { deadline } = await strategy.proposals(proposalId);
     if (Number(deadline.toString()) * 1000 < new Date().getTime()) {
       // Deadline has passed: we have to determine if proposal is passed or failed
@@ -53,9 +48,7 @@ export const getTxProposalState = async (
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
           setValue(
-            CacheKeys.PROPOSAL_STATE_PREFIX +
-              linearVotingMasterCopyContract.asSigner.address +
-              proposalId,
+            CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
             TxProposalState.Rejected,
             chainId,
             CacheExpiry.NEVER
@@ -63,9 +56,7 @@ export const getTxProposalState = async (
           return TxProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
           setValue(
-            CacheKeys.PROPOSAL_STATE_PREFIX +
-              linearVotingMasterCopyContract.asSigner.address +
-              proposalId,
+            CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
             TxProposalState.Failed,
             chainId,
             CacheExpiry.NEVER
@@ -83,12 +74,9 @@ export const getTxProposalState = async (
 };
 
 export const getProposalVotesSummary = async (
-  usulContract: FractalUsul,
-  strategyContract: OZLinearVoting,
+  strategy: OZLinearVoting,
   proposalNumber: BigNumber
 ): Promise<ProposalVotesSummary> => {
-  const { strategy: strategyAddress } = await usulContract.proposals(proposalNumber);
-  const strategy = strategyContract.attach(strategyAddress);
   const { yesVotes, noVotes, abstainVotes, startBlock } = await strategy.proposals(proposalNumber);
 
   let quorum;
@@ -128,34 +116,24 @@ export const getProposalVotes = async (
 };
 
 export const mapProposalCreatedEventToProposal = async (
-  strategyAddress: string,
+  strategyContract: OZLinearVoting,
   proposalNumber: BigNumber,
   proposer: string,
   usulContract: ContractConnection<FractalUsul>,
-  linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>,
   provider: Providers,
   chainId: number,
   metaData?: ProposalMetaData
 ) => {
-  const strategyContract = linearVotingMasterCopyContract.asSigner.attach(strategyAddress);
-  const strategyContractProvider = getEventRPC<OZLinearVoting>(
-    linearVotingMasterCopyContract,
-    chainId
-  ).attach(strategyAddress);
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getTxProposalState(
-    usulContract,
-    linearVotingMasterCopyContract,
+    strategyContract,
+    usulContract.asSigner,
     proposalNumber,
     chainId
   );
-  const votes = await getProposalVotes(strategyContractProvider, proposalNumber);
+  const votes = await getProposalVotes(strategyContract, proposalNumber);
   const block = await provider.getBlock(startBlock.toNumber());
-  const votesSummary = await getProposalVotesSummary(
-    usulContract.asSigner,
-    linearVotingMasterCopyContract.asSigner,
-    proposalNumber
-  );
+  const votesSummary = await getProposalVotesSummary(strategyContract, proposalNumber);
 
   const targets = metaData
     ? metaData.decodedTransactions.map(tx => createAccountSubstring(tx.target))

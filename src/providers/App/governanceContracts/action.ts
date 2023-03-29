@@ -8,7 +8,7 @@ export enum GovernanceContractAction {
 export type GovernanceContractActions =
   | {
       type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT;
-      payload: GovernanceContractsRefactored;
+      payload: Omit<GovernanceContractsRefactored, 'isLoaded'>;
     }
   | {
       type: GovernanceContractAction.RESET;

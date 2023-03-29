@@ -1,3 +1,4 @@
+import { OZLinearVoting } from '@fractal-framework/fractal-contracts';
 import {
   VoteFinalizedEvent,
   VotedEvent,
@@ -40,6 +41,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     txProposalsInfo,
     contracts: { usulContract, ozLinearVotingContract },
   } = governance;
+
   const updateProposalState = useUpdateProposalState({
     governance,
     governanceDispatch,
@@ -70,12 +72,14 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
           ),
         };
       }
+      const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId).attach(
+        strategyAddress
+      );
       const proposal = await mapProposalCreatedEventToProposal(
-        strategyAddress,
+        strategyContract,
         proposalNumber,
         proposer,
         usulContract,
-        ozLinearVotingContract,
         provider,
         provider.network.chainId,
         metaData
@@ -101,15 +105,16 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
       txProposalsInfo.active,
       governanceDispatch,
       safeBaseURL,
+      chainId,
     ]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
     async (...[voter, proposalNumber, support, weight]) => {
-      if (!ozLinearVotingContract || !usulContract) {
+      if (!ozLinearVotingContract) {
         return;
       }
-
+      const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
       const proposals = await Promise.all(
         (txProposalsInfo.txProposals as UsulProposal[]).map(async proposal => {
           if (proposalNumber.eq(proposal.proposalNumber)) {
@@ -123,11 +128,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
                   weight,
                 },
               ],
-              votesSummary: await getProposalVotesSummary(
-                usulContract.asSigner,
-                ozLinearVotingContract.asSigner,
-                proposalNumber
-              ),
+              votesSummary: await getProposalVotesSummary(strategyContract, proposalNumber),
             };
             return updatedProposal;
           }
@@ -144,7 +145,7 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
         },
       });
     },
-    [usulContract, ozLinearVotingContract, governanceDispatch, txProposalsInfo]
+    [ozLinearVotingContract, governanceDispatch, txProposalsInfo, chainId]
   );
 
   const proposalQueuedEventListener: TypedListener<VoteFinalizedEvent> = useCallback(
@@ -230,12 +231,16 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
               decodedTransactions,
             };
           }
+          const strategyContract = getEventRPC<OZLinearVoting>(
+            ozLinearVotingContract,
+            chainId
+          ).attach(args[0]);
+
           return mapProposalCreatedEventToProposal(
-            args[0],
+            strategyContract,
             args[1],
             args[2],
             usulContract,
-            ozLinearVotingContract,
             provider,
             provider.network.chainId,
             metaData
@@ -263,5 +268,5 @@ export default function useUsulProposals({ governance, governanceDispatch }: IUs
     };
 
     loadProposals();
-  }, [usulContract, ozLinearVotingContract, governanceDispatch, provider, safeBaseURL]);
+  }, [usulContract, chainId, ozLinearVotingContract, governanceDispatch, provider, safeBaseURL]);
 }
