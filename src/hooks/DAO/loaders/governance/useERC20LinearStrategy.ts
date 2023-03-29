@@ -12,7 +12,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
-export const useAzuriousStrategy = () => {
+export const useAzoriusStrategy = () => {
   const {
     governanceContracts: { ozLinearVotingContract },
     dispatch,
@@ -22,7 +22,7 @@ export const useAzuriousStrategy = () => {
   } = useProvider();
   const { getTimeDuration } = useTimeHelpers();
 
-  const loadAzuriousStrategy = useCallback(async () => {
+  const loadAzoriusStrategy = useCallback(async () => {
     if (!ozLinearVotingContract) {
       return {};
     }
@@ -53,21 +53,6 @@ export const useAzuriousStrategy = () => {
       return;
     }
     const rpc = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-    const votingPeriodFilter = rpc.filters.QuorumNumeratorUpdated();
-    const listener: TypedListener<QuorumNumeratorUpdatedEvent> = quorumPercentage => {
-      dispatch.governance({
-        type: FractalGovernanceAction.UPDATE_VOTING_QUORUM,
-        payload: quorumPercentage,
-      });
-    };
-    rpc.on(votingPeriodFilter, listener);
-  }, [ozLinearVotingContract, chainId, dispatch]);
-
-  useEffect(() => {
-    if (!ozLinearVotingContract) {
-      return;
-    }
-    const rpc = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
     const votingPeriodfilter = rpc.filters.VotingPeriodUpdated();
     const listener: TypedListener<VotingPeriodUpdatedEvent> = votingPeriod => {
       dispatch.governance({
@@ -75,22 +60,33 @@ export const useAzuriousStrategy = () => {
         payload: votingPeriod,
       });
     };
-    rpc.on(votingPeriodfilter, listener);
-  }, [ozLinearVotingContract, chainId, dispatch]);
-  useEffect(() => {
-    if (!ozLinearVotingContract) {
-      return;
-    }
-    const rpc = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-    const listener: TypedListener<TimeLockUpdatedEvent> = timelockPeriod => {
+
+    const quorumNumeratorUpdatedFilter = rpc.filters.QuorumNumeratorUpdated();
+    const quorumNumeratorUpdatedListener: TypedListener<
+      QuorumNumeratorUpdatedEvent
+    > = quorumPercentage => {
+      dispatch.governance({
+        type: FractalGovernanceAction.UPDATE_VOTING_QUORUM,
+        payload: quorumPercentage,
+      });
+    };
+    const timelockPeriodListener: TypedListener<TimeLockUpdatedEvent> = timelockPeriod => {
       dispatch.governance({
         type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
         payload: timelockPeriod,
       });
     };
     const timeLockPeriodFilter = rpc.filters.TimeLockUpdated();
-    rpc.on(timeLockPeriodFilter, listener);
+
+    rpc.on(timeLockPeriodFilter, timelockPeriodListener);
+    rpc.on(votingPeriodfilter, listener);
+    rpc.on(quorumNumeratorUpdatedFilter, quorumNumeratorUpdatedListener);
+    return () => {
+      rpc.off(quorumNumeratorUpdatedFilter, quorumNumeratorUpdatedListener);
+      rpc.off(timeLockPeriodFilter, timelockPeriodListener);
+      rpc.off(votingPeriodfilter, listener);
+    };
   }, [ozLinearVotingContract, chainId, dispatch]);
 
-  return loadAzuriousStrategy;
+  return loadAzoriusStrategy;
 };

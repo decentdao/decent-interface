@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
-import { useAzuriousProposals } from './governance/useAzuriousProposals';
+import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
 
 export const useDAOProposals = () => {
@@ -12,7 +12,7 @@ export const useDAOProposals = () => {
     dispatch,
   } = useFractal();
 
-  const loadAzuriousProposals = useAzuriousProposals();
+  const loadAzoriusProposals = useAzoriusProposals();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const { setMethodOnInterval } = useUpdateTimer(daoAddress || undefined);
   const loadDAOProposals = useCallback(async () => {
@@ -22,7 +22,7 @@ export const useDAOProposals = () => {
       // load Usul proposals and strategies
       dispatch.governance({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: await loadAzuriousProposals(),
+        payload: await loadAzoriusProposals(),
       });
     } else {
       // load mulisig proposals
@@ -30,7 +30,7 @@ export const useDAOProposals = () => {
     }
   }, [
     governanceContracts,
-    loadAzuriousProposals,
+    loadAzoriusProposals,
     dispatch,
     loadSafeMultisigProposals,
     setMethodOnInterval,
