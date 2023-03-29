@@ -66,6 +66,14 @@ export function NavigationLinks({
               Icon={Treasury}
               closeDrawer={closeDrawer}
             />
+            <NavigationLink
+              href={DAO_ROUTES.integrations.relative(address)}
+              labelKey="integrations"
+              testId="navigation-integrationsLink"
+              routeKey="integrations"
+              Icon={Treasury} // TODO - Change this to Integrations icon once https://github.com/decent-dao/decent-ui/pull/77 is merged
+              closeDrawer={closeDrawer}
+            />
           </Flex>
         </>
       )}
