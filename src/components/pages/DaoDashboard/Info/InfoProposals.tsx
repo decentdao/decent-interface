@@ -10,11 +10,11 @@ interface IDAOGovernance {}
 export function InfoProposals({}: IDAOGovernance) {
   const { t } = useTranslation('dashboard');
   const {
-    node: { safe },
+    node: { daoAddress },
     governance,
   } = useFractal();
 
-  if (!safe?.address || !governance.type) {
+  if (!daoAddress || !governance.type) {
     return (
       <Flex
         h="8.5rem"

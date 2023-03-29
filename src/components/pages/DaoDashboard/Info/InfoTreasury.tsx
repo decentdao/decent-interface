@@ -12,10 +12,10 @@ export function InfoTreasury({}: IDAOGovernance) {
   const totalUSD = useTreasuryTotalUSD();
 
   const {
-    node: { safe },
+    node: { daoAddress },
   } = useFractal();
 
-  if (!safe?.address) {
+  if (!daoAddress) {
     return (
       <Flex
         h="8.5rem"

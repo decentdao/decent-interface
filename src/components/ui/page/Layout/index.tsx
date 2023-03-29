@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';

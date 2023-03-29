@@ -8,11 +8,11 @@ import { BarLoader } from '../../../ui/loaders/BarLoader';
 export function InfoGovernance() {
   const { t } = useTranslation(['dashboard', 'daoCreate']);
   const {
-    node: { safe },
+    node: { daoAddress },
     governance,
   } = useFractal();
 
-  if (!safe?.address || !governance.type) {
+  if (!daoAddress || !governance.type) {
     return (
       <Flex
         h="8.5rem"

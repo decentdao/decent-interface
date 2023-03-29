@@ -1,3 +1,5 @@
+'use client';
+
 import { Context, createContext, ReactNode, useContext, useMemo, useReducer } from 'react';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore } from '../../types';

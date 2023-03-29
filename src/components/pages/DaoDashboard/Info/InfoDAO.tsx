@@ -6,14 +6,14 @@ import { BarLoader } from '../../../ui/loaders/BarLoader';
 export function InfoDAO() {
   const {
     node: {
-      safe,
+      daoAddress,
       nodeHierarchy: { parentAddress: parentDAOAddress, childNodes },
     },
     guardContracts,
     guard,
   } = useFractal();
 
-  if (!safe?.address) {
+  if (!daoAddress) {
     return (
       <Flex
         minHeight="8.5rem"
@@ -29,7 +29,7 @@ export function InfoDAO() {
   return (
     <DAOInfoCard
       parentSafeAddress={parentDAOAddress}
-      safeAddress={safe.address}
+      safeAddress={daoAddress}
       numberOfChildrenDAO={(childNodes ?? []).length}
       freezeData={guard}
       guardContracts={guardContracts}
