@@ -29,14 +29,17 @@ export default function IntegrationDetails({
           {integrationMetadata.title && (
             <Avatar
               size="sm"
+              w="28px"
+              h="28px"
               name={integrationMetadata.title}
               borderRadius="4px"
+              getInitials={(title: string) => title.slice(0, 2)}
             />
           )}
         </HStack>
         <HStack justifyContent="space-between">
           <Text color="chocolate.200">{t('integrationDescription')}</Text>
-          <Text>{integrationMetadata.description}</Text>
+          <Text textAlign="right">{integrationMetadata.description}</Text>
         </HStack>
         <Divider color="chocolate.700" />
       </VStack>
