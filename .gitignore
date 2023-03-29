@@ -37,3 +37,6 @@ yarn-error.log*
 
 # GraphQL generated files
 .graphclient/
+
+# Netlify build
+out_*
