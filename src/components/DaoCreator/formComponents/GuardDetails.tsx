@@ -18,7 +18,7 @@ import {
   BigNumberValuePair,
   GovernanceTypes,
   CreatorSteps,
-  AzuriousGovernance,
+  AzoriusGovernance,
   StrategyType,
 } from '../../../types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
@@ -41,7 +41,7 @@ function GuardDetails(props: ICreationStepProps) {
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
-  const azuriousGovernance = governance as AzuriousGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const governanceFormType = values.essentials.governance;
 
   const handleNonceChange = useCallback(
@@ -58,14 +58,14 @@ function GuardDetails(props: ICreationStepProps) {
 
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
-      if (!type || !safe || !azuriousGovernance.votesToken) return;
+      if (!type || !safe || !azoriusGovernance.votesToken) return;
 
       let totalVotes: BigNumberValuePair;
       switch (type) {
         case StrategyType.GNOSIS_SAFE_USUL:
           const normalized = ethers.utils.formatUnits(
-            azuriousGovernance.votesToken.totalSupply || '0',
-            azuriousGovernance.votesToken.decimals
+            azoriusGovernance.votesToken.totalSupply || '0',
+            azoriusGovernance.votesToken.decimals
           );
           // ethers.utils.formatUnits returns a whole number string in the form `xxx.0`
           // but BigNumber won't parse out the insignificant decimal, so we need to cut it
@@ -88,14 +88,14 @@ function GuardDetails(props: ICreationStepProps) {
         : {
             value: ethers.utils.formatUnits(
               totalVotes.bigNumberValue!.div(2),
-              azuriousGovernance.votesToken.decimals
+              azoriusGovernance.votesToken.decimals
             ),
             bigNumberValue: totalVotes.bigNumberValue!.div(2),
           };
       setFieldValue('vetoGuard.vetoVotesThreshold', childThresholds);
       setFieldValue('vetoGuard.freezeVotesThreshold', childThresholds);
     }
-  }, [azuriousGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
+  }, [azoriusGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
 
   const showVetoFreezeHelpers = totalParentVotes.gt(0);
   const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);

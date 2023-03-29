@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
-  AzuriousGovernance,
+  AzoriusGovernance,
   TxProposal,
   TxProposalState,
   UsulProposal,
@@ -38,9 +38,9 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
   );
 
   const usulProposal = proposal as UsulProposal;
-  const azuriousGovernance = governance as AzuriousGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   useEffect(() => {
-    const timeLockPeriod = azuriousGovernance.votesStrategy?.timeLockPeriod;
+    const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
     if (!timeLockPeriod) {
       return;
     }

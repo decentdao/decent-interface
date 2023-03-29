@@ -13,7 +13,7 @@ import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
-  AzuriousGovernance,
+  AzoriusGovernance,
   BigNumberValuePair,
   ICreationStepProps,
   TokenAllocation,
@@ -27,8 +27,8 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation('daoCreate');
   const { governance } = useFractal();
-  const azuriousGovernance = governance as AzuriousGovernance;
-  const canReceiveParentAllocations = isSubDAO && azuriousGovernance.votesToken?.address;
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const canReceiveParentAllocations = isSubDAO && azoriusGovernance.votesToken?.address;
 
   return (
     <Box>

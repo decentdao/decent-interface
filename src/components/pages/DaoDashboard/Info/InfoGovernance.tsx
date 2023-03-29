@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzuriousGovernance, StrategyType } from '../../../../types';
+import { AzoriusGovernance, StrategyType } from '../../../../types';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 export function InfoGovernance() {
@@ -25,9 +25,9 @@ export function InfoGovernance() {
     );
   }
 
-  const governanceAzurious =
+  const governanceAzorius =
     governance.type === StrategyType.GNOSIS_SAFE_USUL
-      ? (governance as AzuriousGovernance)
+      ? (governance as AzoriusGovernance)
       : undefined;
 
   return (
@@ -55,7 +55,7 @@ export function InfoGovernance() {
         </Text>
       </Flex>
 
-      {governanceAzurious?.votesStrategy?.votingPeriod && (
+      {governanceAzorius?.votesStrategy?.votingPeriod && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -63,11 +63,11 @@ export function InfoGovernance() {
         >
           <Text color="chocolate.200">{t('titleVotingPeriod')}</Text>
           <Text color="grayscale.100">
-            {governanceAzurious.votesStrategy.votingPeriod.formatted}
+            {governanceAzorius.votesStrategy.votingPeriod.formatted}
           </Text>
         </Flex>
       )}
-      {governanceAzurious?.votesStrategy?.quorumPercentage && (
+      {governanceAzorius?.votesStrategy?.quorumPercentage && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -75,7 +75,7 @@ export function InfoGovernance() {
         >
           <Text color="chocolate.200">{t('titleQuorum')}</Text>
           <Text color="grayscale.100">
-            {governanceAzurious.votesStrategy.quorumPercentage.formatted}
+            {governanceAzorius.votesStrategy.quorumPercentage.formatted}
           </Text>
         </Flex>
       )}
