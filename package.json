@@ -75,6 +75,7 @@
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "^2.2.20",
+    "@netlify/plugin-nextjs": "^4.33.0",
     "@playwright/test": "^1.29.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^18.0.17",
