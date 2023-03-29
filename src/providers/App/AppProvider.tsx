@@ -15,8 +15,6 @@ import { guardContractReducer, initialGuardContractsState } from './guardContrac
 import { useSafeService } from './hooks/useSafeService';
 import { NodeAction } from './node/action';
 import { initialNodeState, nodeReducer } from './node/reducer';
-import { NodeHierarchyAction } from './nodeHierarchy/action';
-import { initialNodeHierarchyState, nodeHierarchyReducer } from './nodeHierarchy/reducer';
 import { TreasuryAction } from './treasury/action';
 import { initialTreasuryState, treasuryReducer } from './treasury/reducer';
 
@@ -44,11 +42,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     guardContractReducer,
     initialGuardContractsState
   );
-  // handles current nodes's hiearchy state
-  const [nodeHierarchy, nodeHierarchyDispatch] = useReducer(
-    nodeHierarchyReducer,
-    initialNodeHierarchyState
-  );
   // loads base Fractal contracts with provider into state
   const baseContracts = useSafeContracts();
   // loads safe service into state;
@@ -63,7 +56,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
       treasury,
       governanceContracts,
       guardContracts,
-      nodeHierarchy,
       dispatch: {
         node: nodeDispatch,
         guard: guardDispatch,
@@ -71,7 +63,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
         treasury: treasuryDispatch,
         governanceContracts: governanceContractsDispatch,
         guardContracts: guardContractsDispatch,
-        nodeHierarchy: nodeHierarchyDispatch,
         resetDAO: () => {
           nodeDispatch({ type: NodeAction.RESET });
           guardDispatch({ type: FractalGuardAction.RESET });
@@ -79,7 +70,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
           treasuryDispatch({ type: TreasuryAction.RESET });
           governanceContractsDispatch({ type: GovernanceContractAction.RESET });
           guardContractsDispatch({ type: GuardContractAction.RESET });
-          nodeHierarchyDispatch({ type: NodeHierarchyAction.RESET });
         },
       },
       clients: {
@@ -94,7 +84,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     treasury,
     guardContracts,
     governanceContracts,
-    nodeHierarchy,
     safeService,
     baseContracts,
   ]);

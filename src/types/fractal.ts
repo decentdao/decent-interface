@@ -30,7 +30,6 @@ import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
-import { NodeHierarchyActions } from '../providers/App/nodeHierarchy/action';
 import { TreasuryActions as TreasuryActionsRenamed } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { IConnectedAccount, VotesTokenData } from './account';
@@ -321,7 +320,6 @@ export interface FractalStore extends Fractal {
     treasury: Dispatch<TreasuryActionsRenamed>;
     governanceContracts: Dispatch<GovernanceContractActions>;
     guardContracts: Dispatch<GuardContractActions>;
-    nodeHierarchy: Dispatch<NodeHierarchyActions>;
     resetDAO: () => void;
   };
 }
@@ -332,7 +330,6 @@ export interface Fractal {
   treasury: FractalTreasury; // Treasury
   governanceContracts: GovernanceContractsRefactored;
   guardContracts: FractalGuardContracts;
-  nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
 }
 
 export interface FractalClients {
@@ -353,7 +350,10 @@ export interface FractalNode {
   daoAddress: string | null;
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
+  nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
 }
+
+export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules'> {}
 
 export interface FractalModuleData {
   moduleContract: FractalUsul | FractalModule | undefined;
@@ -416,8 +416,8 @@ export enum StrategyType {
 }
 
 export interface NodeHierarchy {
-  parentNodes: FractalNode[];
-  childNodes: FractalNode[];
+  parentAddress: string | null;
+  childNodes: Node[];
 }
 
 export interface FractalContracts {
