@@ -36,7 +36,7 @@ jobs:
         id: upload
         with:
           pin-name: 'app.dev.fractalframework.xyz'
-          path: './.next/'
+          path: './.next/static/'
           pinata-api-key: ${{ secrets.PINATA_API_KEY }}
           pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
 

@@ -1,28 +1,28 @@
-name: NextJS CI/CD
-
+# Development release workflow, generally following the guide posted here
+# https://github.com/marketplace/actions/netlify-deploy
+name: 'Netlify Development Deploy'
 on:
-  push:
+  push: # release on any push to develop
     branches:
       - develop
 
 jobs:
-  deploy-development:
-    needs: test
+  deploy:
+    name: 'Deploy'
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    environment: dev
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build application
-        run: npm run build
-
-      - name: Deploy to development environment
-        uses: netlify/cli-action@master
+      - uses: actions/checkout@v1
+      - uses: jsmrcaga/action-netlify-deploy@master
         with:
-          command: deploy
-          args: --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod --json
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }} # auth token, generated at https://app.netlify.com/user/applications#personal-access-tokens
+          NETLIFY_SITE_ID: 'ccad1ffe-d58e-4238-bbca-cc09315855cf' # development site Netlify id (not a private identifier)
+          NETLIFY_DEPLOY_TO_PROD: true
+          build_directory: './.next/'
+        env:
+          TESTING_ALCHEMY_API_KEY: ${{ secrets.TESTING_ALCHEMY_API_KEY }}
+          NEXT_PUBLIC_INFURA_API_KEY: ${{ secrets.NEXT_PUBLIC_INFURA_API_KEY }}
+          NEXT_PUBLIC_ALCHEMY_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
