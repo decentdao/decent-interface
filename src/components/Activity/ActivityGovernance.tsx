@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../providers/App/AppProvider';
 import { TxProposal, ActivityEventType } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { ProposalAction } from '../Proposals/ProposalActions/ProposalAction';
@@ -13,13 +13,13 @@ import { ActivityDescription } from './ActivityDescription';
 
 export function ActivityGovernance({ activity }: { activity: TxProposal }) {
   const {
-    gnosis: { safe },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation();
 
   const eventDateLabel = t(
     activity.eventType === ActivityEventType.Treasury
-      ? activity.transaction?.to === safe.address
+      ? activity.transaction?.to === safe?.address
         ? 'received'
         : 'sent'
       : 'created'

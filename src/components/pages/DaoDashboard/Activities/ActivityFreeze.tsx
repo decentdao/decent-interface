@@ -2,7 +2,7 @@ import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
-import { IGnosisFreezeData, DAOState } from '../../../../types';
+import { DAOState, FreezeGuard } from '../../../../types';
 import { ActivityCard } from '../../../Activity/ActivityCard';
 import { FreezeButton } from '../../../Activity/FreezeButton';
 import { Badge } from '../../../ui/badges/Badge';
@@ -24,15 +24,22 @@ export function ActivityFreeze({
   freezeData,
   vetoVotingContract,
 }: {
-  freezeData: IGnosisFreezeData;
+  freezeData: FreezeGuard;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }) {
+  const {
+    freezeProposalCreatedTime,
+    freezeProposalPeriod,
+    freezePeriod,
+    freezeVotesThreshold,
+    freezeProposalVoteCount,
+  } = freezeData;
   const { t } = useTranslation('dashboard');
   const freezeProposalDeadlineDate = new Date(
-    freezeData.freezeProposalCreatedTime.add(freezeData.freezeProposalPeriod).mul(1000).toNumber()
+    freezeProposalCreatedTime!.add(freezeProposalPeriod!).mul(1000).toNumber()
   );
   const freezeDeadlineDate = new Date(
-    freezeData.freezeProposalCreatedTime.add(freezeData.freezePeriod).mul(1000).toNumber()
+    freezeProposalCreatedTime!.add(freezePeriod!).mul(1000).toNumber()
   );
   const now = new Date();
 
@@ -46,9 +53,7 @@ export function ActivityFreeze({
   }
 
   const voteToThreshold =
-    freezeData.freezeProposalVoteCount.toString() +
-    ' / ' +
-    freezeData.freezeVotesThreshold.toString();
+    freezeProposalVoteCount!.toString() + ' / ' + freezeVotesThreshold!.toString();
 
   return (
     <ActivityCard
@@ -66,7 +71,7 @@ export function ActivityFreeze({
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            {!freezeData.isFrozen && freezeData.freezeVotesThreshold.gt(0) && (
+            {!freezeData.isFrozen && freezeVotesThreshold!.gt(0) && (
               <Tooltip
                 label={t('tipFreeze', { amount: voteToThreshold })}
                 placement="bottom"

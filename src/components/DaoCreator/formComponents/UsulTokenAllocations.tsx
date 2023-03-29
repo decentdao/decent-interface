@@ -11,8 +11,13 @@ import {
 import { Gear, LabelWrapper } from '@decent-org/fractal-ui';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { BigNumberValuePair, ICreationStepProps, TokenAllocation } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import {
+  AzoriusGovernance,
+  BigNumberValuePair,
+  ICreationStepProps,
+  TokenAllocation,
+} from '../../../types';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
@@ -21,11 +26,9 @@ import { UsulTokenAllocation } from './UsulTokenAllocation';
 export function UsulTokenAllocations(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation('daoCreate');
-  const {
-    governance: { governanceToken },
-  } = useFractal();
-
-  const canReceiveParentAllocations = isSubDAO && governanceToken?.address;
+  const { governance } = useFractal();
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const canReceiveParentAllocations = isSubDAO && azoriusGovernance.votesToken?.address;
 
   return (
     <Box>

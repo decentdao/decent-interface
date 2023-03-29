@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
-import useDAOName from '../../../src/hooks/DAO/useDAOName';
+import { useFractal } from '../../../src/providers/App/AppProvider';
 
 export default function DaoPageLayout({
   children,
@@ -11,15 +11,15 @@ export default function DaoPageLayout({
   children: ReactNode;
   params: { daoAddress: string };
 }) {
+  const {
+    node: { daoName },
+  } = useFractal();
   // TODO: We could move PageHeader here as well - but that will require breadcrumbs logic refactoring
   useDAOController({ daoAddress });
-  const { daoRegistryName } = useDAOName({
-    address: daoAddress,
-  });
 
   return (
     <>
-      <title>{daoRegistryName ? `${daoRegistryName} | Fractal` : 'Fractal'}</title>
+      <title>{daoName ? `${daoName} | Fractal` : 'Fractal'}</title>
       {children}
     </>
   );

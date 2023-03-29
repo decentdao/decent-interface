@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzuriousGovernance } from '../../../types';
+import { AzoriusGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export function TokenClaim() {
@@ -16,7 +16,7 @@ export function TokenClaim() {
   const { tokenClaimContract, type } = governance;
   const { t } = useTranslation(['dashboard', 'transaction']);
   const [contractCall, pending] = useTransaction();
-  const azuriousGovernance = governance as AzuriousGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
 
   const loadClaim = useCallback(async () => {
     if (!tokenClaimContract || !type || !account) {
@@ -31,40 +31,40 @@ export function TokenClaim() {
   }, [loadClaim]);
 
   const claimToken = async () => {
-    if (!tokenClaimContract || !azuriousGovernance.votesToken || !account) {
+    if (!tokenClaimContract || !azoriusGovernance.votesToken || !account) {
       return;
     }
     const claimableString = formatCoin(
       userClaimable,
       false,
-      azuriousGovernance.votesToken.decimals,
-      azuriousGovernance.votesToken.symbol
+      azoriusGovernance.votesToken.decimals,
+      azoriusGovernance.votesToken.symbol
     );
     contractCall({
       contractFn: () => tokenClaimContract?.claimToken(account),
       pendingMessage: t('pendingTokenClaim', {
-        symbol: azuriousGovernance.votesToken.symbol,
+        symbol: azoriusGovernance.votesToken.symbol,
         ns: 'transaction',
       }),
       failedMessage: t('failedTokenClaim', {
-        symbol: azuriousGovernance.votesToken.symbol,
+        symbol: azoriusGovernance.votesToken.symbol,
         ns: 'transaction',
       }),
       successMessage: t('successTokenClaim', {
         amount: claimableString,
-        symbol: azuriousGovernance.votesToken.symbol,
+        symbol: azoriusGovernance.votesToken.symbol,
         ns: 'transaction',
       }),
       successCallback: loadClaim,
     });
   };
 
-  if (!azuriousGovernance.votesToken || userClaimable.isZero()) return null;
+  if (!azoriusGovernance.votesToken || userClaimable.isZero()) return null;
   const claimableString = formatCoin(
     userClaimable,
     false,
-    azuriousGovernance.votesToken.decimals,
-    azuriousGovernance.votesToken.symbol
+    azoriusGovernance.votesToken.decimals,
+    azoriusGovernance.votesToken.symbol
   );
   return (
     <Alert

@@ -98,6 +98,7 @@ export const useFractalFreeze = () => {
         userHasVotes,
       };
       isFreezeSet.current = true;
+      currentValidAddress.current = vetoVotingContract.asSigner.address;
       dispatch.guard({ type: FractalGuardAction.SET_FREEZE_GUARD, payload: freeze });
     },
     [dispatch, account, provider, gnosisSafeSingletonContract, votesTokenMasterCopyContract]
@@ -105,9 +106,9 @@ export const useFractalFreeze = () => {
 
   useEffect(() => {
     if (
-      daoAddress !== currentValidAddress.current &&
       !!guardContracts.vetoVotingType &&
-      !!guardContracts.vetoVotingContract
+      !!guardContracts.vetoVotingContract &&
+      guardContracts.vetoVotingContract.asSigner.address !== currentValidAddress.current
     ) {
       loadFractalFreezeData(guardContracts);
     }

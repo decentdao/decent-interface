@@ -1,3 +1,5 @@
+'use client';
+
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';

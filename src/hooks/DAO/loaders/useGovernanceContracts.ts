@@ -104,7 +104,25 @@ export const useGovernanceContracts = () => {
               tokenContract,
             },
           });
+        } else {
+          dispatch.governanceContracts({
+            type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+            payload: {
+              ozLinearVotingContract: null,
+              usulContract: null,
+              tokenContract: null,
+            },
+          });
         }
+      } else {
+        dispatch.governanceContracts({
+          type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+          payload: {
+            ozLinearVotingContract: null,
+            usulContract: null,
+            tokenContract: null,
+          },
+        });
       }
     },
     [

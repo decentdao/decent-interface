@@ -1,26 +1,12 @@
+'use client';
+
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
-import { useActionToast } from '../../../../hooks/toasts/useActionToast';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
 import Header from '../Header';
 import Navigation from '../Navigation';
 
 export default function Layout({ children }: PropsWithChildren<{}>) {
-  const {
-    account: {
-      audit: { hasAccepted, acceptAuditWarning },
-    },
-  } = useFractal();
-
-  useActionToast({
-    toastId: 'audit:toast',
-    testId: 'toast-audit',
-    isVisible: hasAccepted !== undefined && !hasAccepted,
-    titleTranslationKey: 'auditDisclaimer',
-    buttonTranslationKey: 'accept',
-    buttonOnClick: acceptAuditWarning,
-  });
   return (
     <Grid
       templateAreas={{

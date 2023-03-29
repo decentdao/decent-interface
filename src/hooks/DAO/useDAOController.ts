@@ -1,3 +1,5 @@
+'use client';
+
 import { useFractalFreeze } from './loaders/useFractalFreeze';
 import { useFractalGovernance } from './loaders/useFractalGovernance';
 import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';

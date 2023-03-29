@@ -1,3 +1,5 @@
+'use client';
+
 import { Flex } from '@chakra-ui/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
