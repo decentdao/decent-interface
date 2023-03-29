@@ -51,10 +51,8 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
         isGnosisLoading: false,
       };
     }
-    case GnosisAction.SET_DAO_NAME:
-      return { ...state, daoName: action.payload };
-    case GnosisAction.SET_DAO_PARENT:
-      return { ...state, parentDAOAddress: action.payload };
+    case GnosisAction.SET_DAO_DATA:
+      return { ...state, ...action.payload };
 
     // resets DAO
     case GnosisAction.INVALIDATE:

@@ -1,5 +1,6 @@
 'use client';
 
+import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import DaoCreator from '../../src/components/DaoCreator';
@@ -22,9 +23,9 @@ export default function DaoCreatePage() {
   const successCallback = useCallback(
     async (daoAddress: string) => {
       if (!safeService) return;
-
+      const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
-        () => safeService.getSafeCreationInfo(daoAddress),
+        () => safeService.getSafeCreationInfo(getAddress(daoAddress)),
         5
       );
       if (daoFound) {

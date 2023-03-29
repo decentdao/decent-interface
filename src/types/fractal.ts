@@ -23,6 +23,7 @@ import SafeServiceClient, {
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
+import { DAO } from '../../.graphclient';
 import { MultiSend } from '../assets/typechain-types/usul';
 // @RENAME
 import { FractalGovernanceActions } from '../providers/App/governance/action';
@@ -88,8 +89,8 @@ export interface IGnosis {
   freezeData: IGnosisFreezeData | undefined;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
-  isNodesLoaded: boolean;
   parentDAOAddress?: string;
+  hierarchy: DAO['hierarchy'];
 }
 
 export interface IGovernance {
