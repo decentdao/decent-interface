@@ -45,7 +45,7 @@ export const useCreateIntegrationSchema = () => {
             })
           ),
         integrationMetadata: Yup.object().shape({
-          title: Yup.string().notRequired(),
+          title: Yup.string().required(),
           description: Yup.string().notRequired(),
         }),
       }),

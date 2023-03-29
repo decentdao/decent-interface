@@ -10,7 +10,7 @@ import {
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
-import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import { LabelComponent } from '../../ui/forms/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { StepButtons } from '../StepButtons';

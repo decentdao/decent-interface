@@ -2,7 +2,7 @@ import { Button, Divider, VStack } from '@chakra-ui/react';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalForm, CreateProposalState } from '../../types';
-import { InputComponent, TextareaComponent } from './InputComponent';
+import { InputComponent, TextareaComponent } from '../ui/forms/InputComponent';
 
 export interface UsulMetadataProps extends FormikProps<CreateProposalForm> {
   isVisible: boolean;
@@ -72,7 +72,7 @@ function UsulMetadata(props: UsulMetadataProps) {
         onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
         disabled={!!proposalMetadataError}
       >
-        Next
+        {t('next', { ns: 'common' })}
       </Button>
     </>
   );

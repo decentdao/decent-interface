@@ -20,7 +20,7 @@ import {
   CreatorSteps,
 } from '../../../types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
-import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import { LabelComponent } from '../../ui/forms/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';

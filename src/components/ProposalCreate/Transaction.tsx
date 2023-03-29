@@ -1,7 +1,7 @@
 import { VStack, HStack, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalTransaction } from '../../types/createProposal';
-import { BigNumberComponent, InputComponent } from './InputComponent';
+import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
 
 interface TransactionProps {
   transaction: CreateProposalTransaction;

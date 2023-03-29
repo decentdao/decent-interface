@@ -1,21 +1,33 @@
 'use client';
 
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import IntegrationDetails from '../../../../../src/components/CreateIntegration/IntegrationDetails';
+import IntegrationMetadata from '../../../../../src/components/CreateIntegration/IntegrationMetadata';
 import { DEFAULT_INTEGRATION } from '../../../../../src/components/CreateIntegration/constants';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../src/constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../src/constants/routes';
 import useCreateIntegration from '../../../../../src/hooks/DAO/proposal/useCreateIntegration';
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import useDefaultNonce from '../../../../../src/hooks/DAO/useDefaultNonce';
 import { useCreateIntegrationSchema } from '../../../../../src/hooks/schemas/createIntegration/useCreateIntegrationSchema';
 import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
-import { CreateIntegrationForm } from '../../../../../src/types/createIntegration';
+import {
+  CreateIntegrationForm,
+  CreateIntegrationState,
+} from '../../../../../src/types/createIntegration';
+
+const templateAreaTwoCol = '"content details"';
+const templateAreaSingleCol = `"content"
+  "details"`;
 
 export default function CreateIntegrationPage() {
+  const [formState, setFormState] = useState(CreateIntegrationState.METADATA_FORM);
   const { t } = useTranslation('integration');
   const { push } = useRouter();
 
@@ -84,6 +96,42 @@ export default function CreateIntegrationPage() {
               >
                 {t('createIntegration')}
               </Text>
+              <Grid
+                mt={8}
+                gap={4}
+                templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
+                gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
+                templateAreas={{
+                  base: templateAreaSingleCol,
+                  lg: templateAreaTwoCol,
+                }}
+              >
+                <GridItem area="content">
+                  <Flex
+                    flexDirection="column"
+                    align="left"
+                  >
+                    <Box
+                      rounded="lg"
+                      p="1rem"
+                      bg={BACKGROUND_SEMI_TRANSPARENT}
+                    >
+                      {formState === CreateIntegrationState.METADATA_FORM ? (
+                        <IntegrationMetadata
+                          setFormState={setFormState}
+                          {...formikProps}
+                        />
+                      ) : null}
+                    </Box>
+                  </Flex>
+                </GridItem>
+                <GridItem
+                  area="details"
+                  w="100%"
+                >
+                  <IntegrationDetails />
+                </GridItem>
+              </Grid>
             </Box>
           </form>
         );
