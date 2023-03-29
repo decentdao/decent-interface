@@ -129,7 +129,7 @@ export default function CreateIntegrationPage() {
                   area="details"
                   w="100%"
                 >
-                  <IntegrationDetails />
+                  <IntegrationDetails {...formikProps} />
                 </GridItem>
               </Grid>
             </Box>
