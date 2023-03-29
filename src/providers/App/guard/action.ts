@@ -9,6 +9,10 @@ export type FractalGuardActions =
   | { type: FractalGuardAction.SET_FREEZE_GUARD; payload: FreezeGuard }
   | {
       type: FractalGuardAction.UPDATE_FREEZE_VOTE;
-      payload: { isVoter: boolean; votesCast: BigNumber };
+      payload: {
+        isVoter: boolean;
+        freezeProposalCreatedTime: BigNumber;
+        votesCast: BigNumber;
+      };
     }
   | { type: FractalGuardAction.RESET };
