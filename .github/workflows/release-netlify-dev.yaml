@@ -28,10 +28,9 @@ jobs:
           NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
 
       - name: Deploy to Netlify
-        id: deploy-netlify
         uses: netlify/actions/cli@master
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: 'ccad1ffe-d58e-4238-bbca-cc09315855cf' # development site Netlify id (not a private identifier)
         with:
-          args: deploy -m 'v${{ steps.package-version.outputs.current-version}} ・ ${{ github.head_ref }}'
+          args: deploy --dir=build
