@@ -55,8 +55,7 @@
     "graphql:dev-server": "graphclient serve-dev",
     "test": "npm run set:env & next test",
     "prepare": "husky install",
-    "tests": "playwright test",
-    "postbuild": "next-on-netlify"
+    "tests": "playwright test"
   },
   "engines": {
     "node": "18.12.1",
@@ -76,7 +75,6 @@
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "^2.2.20",
-    "@netlify/plugin-nextjs": "^4.33.0",
     "@playwright/test": "^1.29.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^18.0.17",
@@ -92,7 +90,6 @@
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.0",
-    "next-on-netlify": "^3.0.1",
     "playwright": "^1.29.0",
     "prettier": "^2.7.1",
     "typescript": "^4.8.0",
