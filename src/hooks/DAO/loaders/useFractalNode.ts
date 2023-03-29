@@ -105,14 +105,10 @@ export const useFractalNode = ({
             return { error: 'errorFailedSearch' };
           }
 
-          return Object.assign(
-            {},
-            {
-              safe,
-              fractalModules,
-              ...graphNodeInfo,
-            }
-          );
+          return Object.assign(graphNodeInfo, {
+            safe,
+            fractalModules,
+          });
         } catch (e) {
           logError(e);
           return { error: 'errorInvalidSearch' };

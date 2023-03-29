@@ -158,11 +158,11 @@ export function DAOInfoCard({
 
 export function DAONodeCard(props: IDAOInfoCard) {
   const {
-    node: { safe },
+    node: { daoAddress },
     guardContracts,
     guard,
   } = useFractal();
-  const isCurrentDAO = props.safeAddress === safe?.address;
+  const isCurrentDAO = props.safeAddress === daoAddress;
   const { subDAOData } = useSubDAOData(!isCurrentDAO ? props.safeAddress : undefined);
 
   const nodeGuardContracts =
@@ -184,7 +184,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
     >
       <NodeLineHorizontal
         isCurrentDAO={isCurrentDAO}
-        isFirstChild={props.depth === 0 && props.parentSafeAddress !== safe?.address}
+        isFirstChild={props.depth === 0 && props.parentSafeAddress !== daoAddress}
       />
       <DAOInfoCard
         {...props}

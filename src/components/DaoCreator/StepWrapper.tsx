@@ -16,7 +16,7 @@ interface IStepWrapper {
 
 export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: IStepWrapper) {
   const {
-    node: { safe },
+    node: { daoAddress },
   } = useFractal();
   const { t } = useTranslation(['daoCreate']);
   const { push } = useRouter();
@@ -34,7 +34,7 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
         buttonVariant="secondary"
         isButtonDisabled={isFormSubmitting}
         buttonClick={() =>
-          push(!isSubDAO ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(safe?.address))
+          push(!isSubDAO && daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress))
         }
       />
       <Text

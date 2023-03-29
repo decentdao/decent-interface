@@ -18,7 +18,7 @@ export function ProposalAction({
   expandedView?: boolean;
 }) {
   const {
-    node: { safe },
+    node: { daoAddress },
   } = useFractal();
   const { address: account } = useAccount();
   const { push } = useRouter();
@@ -33,7 +33,7 @@ export function ProposalAction({
     proposal.state === TxProposalState.Queued;
 
   const handleClick = () => {
-    push(DAO_ROUTES.proposal.relative(safe?.address, proposal.proposalNumber));
+    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalNumber));
   };
 
   const hasVoted = useMemo(() => {
