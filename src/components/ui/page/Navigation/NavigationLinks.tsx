@@ -7,6 +7,7 @@ import {
   SupportQuestion,
   Discord,
   Documents,
+  Integrations,
 } from '@decent-org/fractal-ui';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
@@ -66,7 +67,7 @@ export function NavigationLinks({
               href={DAO_ROUTES.integrations.relative(address)}
               labelKey="integrations"
               testId="navigation-integrationsLink"
-              Icon={Treasury} // TODO - Change this to Integrations icon once https://github.com/decent-dao/decent-ui/pull/77 is merged
+              Icon={Integrations}
               closeDrawer={closeDrawer}
             />
           </Flex>
