@@ -21,7 +21,7 @@ import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
-  parentSafeAddress?: string | null;
+  parentAddress?: string | null;
   subDAOSafeInfo?: SafeInfoResponseWithGuard;
   safeAddress: string;
   toggleExpansion?: () => void;
@@ -32,7 +32,7 @@ interface IDAOInfoCard {
 }
 
 export function DAOInfoCard({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
   toggleExpansion,
   expanded,
@@ -146,7 +146,7 @@ export function DAOInfoCard({
       {/* Veritical Elipsis */}
       {canManageDAO && (
         <ManageDAOMenu
-          parentSafeAddress={parentSafeAddress}
+          parentAddress={parentAddress}
           safeAddress={safeAddress}
           freezeData={freezeData}
           guardContracts={guardContracts}
@@ -184,7 +184,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
     >
       <NodeLineHorizontal
         isCurrentDAO={isCurrentDAO}
-        isFirstChild={props.depth === 0 && props.parentSafeAddress !== daoAddress}
+        isFirstChild={props.depth === 0 && props.parentAddress !== daoAddress}
       />
       <DAOInfoCard
         {...props}

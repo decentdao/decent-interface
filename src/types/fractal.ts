@@ -88,7 +88,7 @@ export interface IGnosis {
   freezeData: IGnosisFreezeData | undefined;
   transactions: AllTransactionsListResponse;
   isGnosisLoading: boolean;
-  parentDAOAddress?: string;
+  parentAddress?: string;
   hierarchy: DAO['hierarchy'];
 }
 

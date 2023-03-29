@@ -29,7 +29,7 @@ export default function useDAOQuery({
         gnosisDispatch({
           type: GnosisAction.SET_DAO_DATA,
           payload: {
-            parentDAOAddress: parentAddress,
+            parentAddress: parentAddress,
             daoName: daoRegistryName,
             hierarchy,
           },

@@ -7,18 +7,18 @@ import { NodeLineVertical } from './NodeLines';
 import { useFetchNodes } from './useFetchNodes';
 
 export function DaoNode({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
   trueDepth,
   numberOfSiblings,
 }: {
-  parentSafeAddress?: string;
+  parentAddress?: string;
   safeAddress: string;
   trueDepth: number;
   numberOfSiblings?: number;
 }) {
   const { childNodes } = useFetchNodes(safeAddress);
-  const [isChildrenExpanded, setIsChildrenExpanded] = useState(!parentSafeAddress);
+  const [isChildrenExpanded, setIsChildrenExpanded] = useState(!parentAddress);
   const childrenExpansionToggle = () => {
     setIsChildrenExpanded(v => !v);
   };
@@ -34,7 +34,7 @@ export function DaoNode({
   return (
     <Box position="relative">
       <DAONodeCard
-        parentSafeAddress={parentSafeAddress}
+        parentAddress={parentAddress}
         safeAddress={safeAddress}
         toggleExpansion={!!childNodes?.length ? childrenExpansionToggle : undefined}
         expanded={isChildrenExpanded}
@@ -57,7 +57,7 @@ export function DaoNode({
           >
             <DaoNode
               safeAddress={node.address}
-              parentSafeAddress={safeAddress}
+              parentAddress={safeAddress}
               trueDepth={trueDepth + 1}
               numberOfSiblings={childNodes.length}
             />

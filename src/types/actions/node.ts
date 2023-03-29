@@ -40,7 +40,7 @@ export type GnosisActions =
     }
   | {
       type: GnosisAction.SET_DAO_DATA;
-      payload: { daoName?: string; parentDAOAddress?: string; hierarchy?: DAO[] };
+      payload: { daoName?: string; parentAddress?: string; hierarchy?: DAO[] };
     }
   | { type: GnosisAction.INVALIDATE }
   | { type: GnosisAction.RESET };

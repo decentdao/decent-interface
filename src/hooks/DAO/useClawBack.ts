@@ -11,10 +11,10 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
   childSafeAddress: string;
-  parentSafeAddress?: string | null;
+  parentAddress?: string | null;
 }
 
-export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUseClawBack) {
+export default function useClawBack({ childSafeAddress, parentAddress }: IUseClawBack) {
   const [childSafeInfo, setChildSafeInfo] = useState<SafeInfoResponseWithGuard>();
   const [parentSafeInfo, setParentSafeInfo] = useState<SafeInfoResponseWithGuard>();
   const [childSafeBalance, setChildSafeBalance] = useState<SafeBalanceResponse[]>([]);
@@ -32,17 +32,17 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
         const { getAddress } = ethers.utils;
         setChildSafeInfo(await safeService.getSafeInfo(getAddress(childSafeAddress)));
         setChildSafeBalance(await safeService.getBalances(getAddress(childSafeAddress)));
-        if (parentSafeAddress) {
-          setParentSafeInfo(await safeService.getSafeInfo(getAddress(parentSafeAddress)));
+        if (parentAddress) {
+          setParentSafeInfo(await safeService.getSafeInfo(getAddress(parentAddress)));
         }
       }
     };
 
     loadData();
-  }, [childSafeAddress, safeService, parentSafeAddress]);
+  }, [childSafeAddress, safeService, parentAddress]);
 
   const handleClawBack = useCallback(async () => {
-    if (canUserCreateProposal && parentSafeAddress && childSafeInfo && parentSafeInfo) {
+    if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
       const abiCoder = new ethers.utils.AbiCoder();
       const modules = await lookupModules(childSafeInfo.modules);
       const fractalModule = modules!.find(
@@ -55,7 +55,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
             // Seems like we're operating with native coin i.e ETH
             const txData = abiCoder.encode(
               ['address', 'uint256', 'bytes', 'uint8'],
-              [parentSafeAddress, asset.balance, '0x', 0]
+              [parentAddress, asset.balance, '0x', 0]
             );
             const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
               'execTx',
@@ -69,7 +69,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
           } else {
             const tokenContract = ERC20__factory.connect(asset.tokenAddress, provider);
             const clawBackCalldata = tokenContract.interface.encodeFunctionData('transfer', [
-              parentSafeAddress,
+              parentAddress,
               asset.balance,
             ]);
             const txData = abiCoder.encode(
@@ -104,7 +104,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
           pendingToastMessage: t('clawBackPendingToastMessage'),
           failedToastMessage: t('clawBackFailedToastMessage'),
           successToastMessage: t('clawBackSuccessToastMessage'),
-          safeAddress: parentSafeAddress,
+          safeAddress: parentAddress,
         });
       }
     }
@@ -113,7 +113,7 @@ export default function useClawBack({ childSafeAddress, parentSafeAddress }: IUs
     childSafeInfo,
     childSafeBalance,
     lookupModules,
-    parentSafeAddress,
+    parentAddress,
     parentSafeInfo,
     provider,
     submitProposal,

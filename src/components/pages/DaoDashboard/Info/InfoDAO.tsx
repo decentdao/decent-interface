@@ -7,7 +7,7 @@ export function InfoDAO() {
   const {
     node: {
       daoAddress,
-      nodeHierarchy: { parentAddress: parentDAOAddress, childNodes },
+      nodeHierarchy: { parentAddress, childNodes },
     },
     guardContracts,
     guard,
@@ -28,7 +28,7 @@ export function InfoDAO() {
 
   return (
     <DAOInfoCard
-      parentSafeAddress={parentDAOAddress}
+      parentAddress={parentAddress}
       safeAddress={daoAddress}
       numberOfChildrenDAO={(childNodes ?? []).length}
       freezeData={guard}

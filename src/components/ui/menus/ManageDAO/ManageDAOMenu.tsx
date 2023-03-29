@@ -13,14 +13,14 @@ import { FractalGuardContracts, FreezeGuard } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentSafeAddress?: string | null;
+  parentAddress?: string | null;
   safeAddress: string;
   freezeData?: FreezeGuard;
   guardContracts: FractalGuardContracts;
 }
 
 export function ManageDAOMenu({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
   freezeData,
   guardContracts,
@@ -28,7 +28,7 @@ export function ManageDAOMenu({
   const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { handleClawBack } = useClawBack({
-    parentSafeAddress,
+    parentAddress,
     childSafeAddress: safeAddress,
   });
 

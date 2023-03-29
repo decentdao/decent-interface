@@ -37,7 +37,7 @@ const useBuildDAOTx = () => {
   const buildDao = useCallback(
     async (
       daoData: TokenGovernanceDAO | GnosisDAO,
-      parentDAOAddress?: string,
+      parentAddress?: string,
       parentTokenAddress?: string
     ) => {
       let usulContracts;
@@ -96,7 +96,7 @@ const useBuildDAOTx = () => {
         baseContracts,
         usulContracts,
         daoData,
-        parentDAOAddress,
+        parentAddress,
         parentTokenAddress
       );
 
