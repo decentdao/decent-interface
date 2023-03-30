@@ -16,19 +16,25 @@ import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { SafeInfoResponseWithGuard, FreezeGuard, FractalGuardContracts } from '../../../types';
+import {
+  SafeInfoResponseWithGuard,
+  FreezeGuard,
+  FractalGuardContracts,
+  FractalNode,
+} from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
   parentAddress?: string | null;
   subDAOSafeInfo?: SafeInfoResponseWithGuard;
-  safeAddress: string;
+  safeAddress: string | null;
   toggleExpansion?: () => void;
   expanded?: boolean;
   numberOfChildrenDAO?: number;
   viewChildren?: boolean;
   depth?: number;
+  fractalNode?: FractalNode;
 }
 
 export function DAOInfoCard({
@@ -47,13 +53,15 @@ export function DAOInfoCard({
   const { address: account } = useAccount();
   const copyToClipboard = useCopyText();
   const { daoRegistryName } = useDAOName({
-    address: daoAddress !== safeAddress ? safeAddress : undefined,
+    address: safeAddress && daoAddress !== safeAddress ? safeAddress : undefined,
   });
   const { accountSubstring } = useDisplayName(safeAddress);
-  const isFavorite = favoritesList.includes(safeAddress);
+  const isFavorite = favoritesList.includes(safeAddress || '');
 
   // @todo add viewable conditions
   const canManageDAO = !!account;
+
+  if (!safeAddress) return null;
   return (
     <Flex
       justifyContent="space-between"
@@ -158,12 +166,14 @@ export function DAOInfoCard({
 
 export function DAONodeCard(props: IDAOInfoCard) {
   const {
-    node: { daoAddress },
+    node: { daoAddress: currentDAOAddress },
     guardContracts,
     guard,
   } = useFractal();
-  const isCurrentDAO = props.safeAddress === daoAddress;
-  const { subDAOData } = useSubDAOData(!isCurrentDAO ? props.safeAddress : undefined);
+  const isCurrentDAO = props.safeAddress === currentDAOAddress;
+  const { subDAOData } = useSubDAOData(
+    !isCurrentDAO && props.fractalNode ? props.fractalNode : undefined
+  );
 
   const nodeGuardContracts =
     !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
@@ -184,7 +194,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
     >
       <NodeLineHorizontal
         isCurrentDAO={isCurrentDAO}
-        isFirstChild={props.depth === 0 && props.parentAddress !== daoAddress}
+        isFirstChild={props.depth === 0 && props.parentAddress !== currentDAOAddress}
       />
       <DAOInfoCard
         {...props}
