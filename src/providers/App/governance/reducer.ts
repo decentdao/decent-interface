@@ -1,9 +1,9 @@
 import { FractalGovernance, UsulProposal, VOTE_CHOICES } from '../../../types';
-import { AzoriusGovernance, FractalProposal, StrategyType } from './../../../types/fractal';
+import { AzoriusGovernance, StrategyType } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
-  proposals: [] as FractalProposal[],
+  proposals: null,
 };
 
 export const initialVotesTokenAccountData = {
@@ -24,7 +24,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, type: StrategyType.GNOSIS_SAFE_USUL, votesStrategy: action.payload };
     }
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
-      return { ...state, proposals: [...proposals, action.payload] };
+      return { ...state, proposals: [...(proposals || []), action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_USUL_VOTE: {
       const { proposalNumber, voter, support, weight, votesSummary } = action.payload;
       const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
@@ -81,8 +81,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
     }
-    case FractalGovernanceAction.RESET:
-      return initialGovernanceState;
+    case FractalGovernanceAction.RESET: {
+      return { ...initialGovernanceState };
+    }
     default:
       return state;
   }

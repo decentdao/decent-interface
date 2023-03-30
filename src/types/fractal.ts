@@ -320,7 +320,7 @@ export interface FractalStore extends Fractal {
     treasury: Dispatch<TreasuryActionsRenamed>;
     governanceContracts: Dispatch<GovernanceContractActions>;
     guardContracts: Dispatch<GuardContractActions>;
-    resetDAO: () => void;
+    resetDAO: () => Promise<void>;
   };
 }
 export interface Fractal {
@@ -399,7 +399,7 @@ export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
   type?: StrategyType;
-  proposals: FractalProposal[];
+  proposals: FractalProposal[] | null;
   tokenClaimContract?: TokenClaim;
 }
 

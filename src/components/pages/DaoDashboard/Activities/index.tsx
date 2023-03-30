@@ -13,13 +13,14 @@ import { ActivityFreeze } from './ActivityFreeze';
 import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
-  const { guardContracts, guard } = useFractal();
+  const {
+    guardContracts,
+    guard,
+    governance: { type },
+  } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const { sortedActivities } = useActivities(sortBy);
 
-  const {
-    governance: { type },
-  } = useFractal();
   const { t } = useTranslation('dashboard');
   return (
     <Box>

@@ -15,7 +15,7 @@ export default function useProposals({
 
   const getProposalsTotal = useCallback(
     (state: TxProposalState) => {
-      if (proposals.length) {
+      if (proposals && proposals.length) {
         return proposals.filter(proposal => proposal.state === state).length;
       }
     },
@@ -23,7 +23,7 @@ export default function useProposals({
   );
 
   const sortedAndFilteredProposals = useMemo(() => {
-    return [...proposals]
+    return [...(proposals || [])]
       .filter(proposal => filters.includes(proposal.state!))
       .sort((a, b) => {
         const dataA = new Date(a.eventDate).getTime();

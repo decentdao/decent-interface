@@ -92,7 +92,6 @@ export const useFractalNode = ({
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
       if (utils.isAddress(_daoAddress)) {
-        console.count('loadDao');
         try {
           const safe = await safeService.getSafeInfo(_daoAddress);
           const fractalModules = await lookupModules(safe.modules);
@@ -129,6 +128,7 @@ export const useFractalNode = ({
           invalidateDAO('errorInvalidSearch');
           return;
         }
+        await dispatch.resetDAO();
         dispatch.node({
           type: NodeAction.SET_SAFE_INFO,
           payload: safe,
@@ -159,7 +159,6 @@ export const useFractalNode = ({
     const isCurrentAddress = daoAddress === currentValidAddress.current;
     if (!currentValidAddress.current && loadOnMount) {
       if (currentValidAddress.current === undefined) {
-        dispatch.resetDAO();
         currentValidAddress.current = daoAddress;
       }
       if (!isCurrentAddress) {
