@@ -48,7 +48,7 @@ export function NodeLineVertical({
           <Box
             borderRadius="100%"
             boxSize="7px"
-            ml="1.85rem"
+            ml="1.80rem"
             mb={1}
             position="absolute"
             zIndex={2}

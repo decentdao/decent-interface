@@ -41,7 +41,14 @@ export function DaoNode({
   }, [loadDao, safeAddress]);
 
   if (!fractalNode?.nodeHierarchy.childNodes) {
-    return <InfoBoxLoader />;
+    return (
+      <Box
+        h="6.25rem"
+        my={8}
+      >
+        <InfoBoxLoader />
+      </Box>
+    );
   }
 
   return (
@@ -57,6 +64,7 @@ export function DaoNode({
         numberOfChildrenDAO={fractalNode?.nodeHierarchy.childNodes.length}
         depth={trueDepth}
       />
+
       <NodeLineVertical
         trueDepth={trueDepth}
         numberOfSiblings={numberOfSiblings}
