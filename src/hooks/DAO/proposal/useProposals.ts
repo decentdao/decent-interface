@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { SortBy, TxProposalState } from '../../../types';
 
 export default function useProposals({
@@ -10,22 +10,20 @@ export default function useProposals({
   filters: TxProposalState[];
 }) {
   const {
-    governance: {
-      txProposalsInfo: { txProposals },
-    },
+    governance: { proposals },
   } = useFractal();
 
   const getProposalsTotal = useCallback(
     (state: TxProposalState) => {
-      if (txProposals.length) {
-        return txProposals.filter(proposal => proposal.state === state).length;
+      if (proposals.length) {
+        return proposals.filter(proposal => proposal.state === state).length;
       }
     },
-    [txProposals]
+    [proposals]
   );
 
   const sortedAndFilteredProposals = useMemo(() => {
-    return [...txProposals]
+    return [...proposals]
       .filter(proposal => filters.includes(proposal.state!))
       .sort((a, b) => {
         const dataA = new Date(a.eventDate).getTime();
@@ -35,7 +33,7 @@ export default function useProposals({
         }
         return dataB - dataA;
       });
-  }, [sortBy, filters, txProposals]);
+  }, [sortBy, filters, proposals]);
 
   return {
     proposals: sortedAndFilteredProposals,

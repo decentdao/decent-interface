@@ -1,10 +1,11 @@
+'use client';
 import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes, SortBy, TxProposalState } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { SortBy, StrategyType, TxProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
@@ -54,8 +55,8 @@ const FILTERS_MULTISIG_CHILD = [
 
 export default function Proposals() {
   const {
-    governance: { type, governanceIsLoading },
-    gnosis: { guardContracts, isGnosisLoading },
+    governance: { type },
+    guardContracts,
   } = useFractal();
 
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
@@ -66,18 +67,18 @@ export default function Proposals() {
   const { proposals, getProposalsTotal } = useProposals({ sortBy, filters });
 
   useEffect(() => {
-    if (governanceIsLoading || isGnosisLoading) return;
+    if (!type) return;
 
     let options;
     switch (type) {
-      case GovernanceTypes.GNOSIS_SAFE_USUL:
+      case StrategyType.GNOSIS_SAFE_USUL:
         if (guardContracts.vetoGuardContract) {
           options = FILTERS_USUL_CHILD;
         } else {
           options = FILTERS_USUL_BASE;
         }
         break;
-      case GovernanceTypes.GNOSIS_SAFE:
+      case StrategyType.GNOSIS_SAFE:
       default:
         if (guardContracts.vetoGuardContract) {
           options = FILTERS_MULTISIG_CHILD;
@@ -88,7 +89,7 @@ export default function Proposals() {
     }
     setAllOptions(options);
     setFilters(options);
-  }, [governanceIsLoading, guardContracts.vetoGuardContract, isGnosisLoading, type]);
+  }, [guardContracts.vetoGuardContract, type]);
 
   const toggleFilter = (filter: TxProposalState) => {
     setFilters(prevState => {
