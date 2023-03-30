@@ -45,7 +45,7 @@ export const useFractalTreasury = () => {
 
     const treasuryData = {
       assetsFungible,
-      assetsNonFungible: assetsNonFungible.data,
+      assetsNonFungible: assetsNonFungible.data.results,
       transfers: transfers.data,
     };
     dispatch.treasury({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });

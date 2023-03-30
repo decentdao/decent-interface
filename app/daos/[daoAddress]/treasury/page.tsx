@@ -9,27 +9,27 @@ import { TitledInfoBox } from '../../../../src/components/ui/containers/TitledIn
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../../../src/types';
+import { useFractal } from '../../../../src/providers/App/AppProvider';
+import { AzoriusGovernance, StrategyType } from '../../../../src/types';
 
 export default function Treasury() {
   const {
-    gnosis: {
-      safe: { owners },
-    },
-    governance: { type, governanceToken },
+    node: { safe },
+    governance,
     treasury: { assetsFungible },
   } = useFractal();
-
+  const { type } = governance;
+  const azoriousGovernance = governance as AzoriusGovernance;
+  const { owners } = safe || {};
   const { address: account } = useAccount();
   const { t } = useTranslation('treasury');
   const hasAssetBalance = assetsFungible.some(asset => parseFloat(asset.balance) > 0);
 
   const isOwnerOrDelegate =
     hasAssetBalance &&
-    (type === GovernanceTypes.GNOSIS_SAFE
+    (type === StrategyType.GNOSIS_SAFE
       ? owners?.includes(account || '')
-      : governanceToken?.votingWeight?.gt(0));
+      : azoriousGovernance?.votesToken.votingWeight?.gt(0));
 
   const showButton = isOwnerOrDelegate && assetsFungible.length > 0;
 

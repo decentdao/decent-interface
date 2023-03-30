@@ -2,7 +2,7 @@ import { Box, Divider, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/r
 import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { TransferType, AssetTransfer } from '../../../../types';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
 import EtherscanTransactionLink from '../../../ui/links/EtherscanTransactionLink';
@@ -119,7 +119,7 @@ function EmptyTransactions() {
   );
 }
 
-function MoreTransactions({ address }: { address: string | undefined }) {
+function MoreTransactions({ address }: { address: string | null }) {
   const { t } = useTranslation('treasury');
   return (
     <EtherscanLinkAddress address={address}>
@@ -138,13 +138,13 @@ function MoreTransactions({ address }: { address: string | undefined }) {
 
 export function Transactions() {
   const {
-    gnosis: { safe },
+    node: { daoAddress },
     treasury: { transfers },
   } = useFractal();
 
   const displayData: TransferDisplayData[] = useFormatTransfers(
     transfers ? (transfers.results as AssetTransfer[]) : [],
-    safe.address!
+    daoAddress!
   );
 
   if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
@@ -159,7 +159,7 @@ export function Transactions() {
           />
         );
       })}
-      {transfers.next && <MoreTransactions address={safe.address} />}
+      {transfers.next && <MoreTransactions address={daoAddress} />}
     </Box>
   );
 }
