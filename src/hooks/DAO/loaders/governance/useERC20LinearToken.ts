@@ -47,9 +47,7 @@ export const useERC20LinearToken = () => {
       dispatch.governance({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
       return;
     }
-    if (tokenAccount.current === account && !!isTokenLoaded.current) {
-      return;
-    }
+    // @todo We could probably save on some requests here.
     const [tokenBalance, tokenDelegatee, tokenVotingWeight, delegateChangeEvents] =
       await Promise.all([
         tokenContract.asSigner.balanceOf(account),
@@ -63,7 +61,7 @@ export const useERC20LinearToken = () => {
       votingWeight: tokenVotingWeight,
       isDelegatesSet: delegateChangeEvents.length > 0,
     };
-    tokenAccount.current = account;
+
     dispatch.governance({
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA,
       payload: tokenAccountData,
@@ -71,10 +69,10 @@ export const useERC20LinearToken = () => {
   }, [tokenContract, dispatch, account]);
 
   useEffect(() => {
-    if (!isTokenLoaded.current || tokenAccount.current === account) {
-      return;
+    if (isTokenLoaded.current && tokenAccount.current !== account) {
+      tokenAccount.current = account;
+      loadERC20TokenAccountData();
     }
-    loadERC20TokenAccountData();
   }, [account, loadERC20TokenAccountData]);
 
   useEffect(() => {

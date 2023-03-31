@@ -1,7 +1,7 @@
-import { GovernanceContractsRefactored } from '../../../types';
+import { FractalGovernanceContracts } from '../../../types';
 import { GovernanceContractAction, GovernanceContractActions } from './action';
 
-export const initialGovernanceContractsState: GovernanceContractsRefactored = {
+export const initialGovernanceContractsState: FractalGovernanceContracts = {
   ozLinearVotingContract: null,
   usulContract: null,
   tokenContract: null,
@@ -9,7 +9,7 @@ export const initialGovernanceContractsState: GovernanceContractsRefactored = {
 };
 
 export const governanceContractsReducer = (
-  state: GovernanceContractsRefactored,
+  state: FractalGovernanceContracts,
   action: GovernanceContractActions
 ) => {
   switch (action.type) {

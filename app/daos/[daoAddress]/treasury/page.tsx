@@ -20,7 +20,7 @@ export default function Treasury() {
     treasury: { assetsFungible },
   } = useFractal();
   const { type } = governance;
-  const azoriousGovernance = governance as AzoriusGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const { owners } = safe || {};
   const { address: account } = useAccount();
   const { t } = useTranslation('treasury');
@@ -32,8 +32,8 @@ export default function Treasury() {
     if (type === StrategyType.GNOSIS_SAFE) {
       return owners?.includes(account || '');
     }
-    return azoriousGovernance?.votesToken.votingWeight?.gt(0);
-  }, [account, azoriousGovernance, hasAssetBalance, owners, type]);
+    return azoriusGovernance?.votesToken.votingWeight?.gt(0);
+  }, [account, azoriusGovernance, hasAssetBalance, owners, type]);
 
   const showButton = isOwnerOrDelegate && assetsFungible.length > 0;
 

@@ -7,8 +7,14 @@ import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { TxProposal, UsulProposal, TxProposalState, UsulVoteChoice } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import {
+  TxProposal,
+  UsulProposal,
+  TxProposalState,
+  UsulVoteChoice,
+  AzoriusGovernance,
+} from '../../../types';
 
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
@@ -23,10 +29,9 @@ function Vote({
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
-  const {
-    governance: { governanceToken },
-  } = useFractal();
+  const { governance } = useFractal();
 
+  const azoriusGovernance = governance as AzoriusGovernance;
   const usulProposal = proposal as UsulProposal;
 
   const { address: account } = useAccount();
@@ -37,7 +42,10 @@ function Vote({
   });
 
   // if the user has no delegated tokens, don't show anything
-  if (governanceToken?.votingWeight?.eq(0)) {
+  if (
+    azoriusGovernance.votesToken.votingWeight &&
+    azoriusGovernance.votesToken?.votingWeight.eq(0)
+  ) {
     return null;
   }
 
