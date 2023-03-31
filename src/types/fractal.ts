@@ -186,6 +186,7 @@ export interface GovernanceActivity extends ActivityBase {
   targets: string[];
   metaData?: ProposalMetaData;
 }
+
 export interface ActivityBase {
   eventDate: Date;
   eventType: ActivityEventType;
@@ -221,7 +222,13 @@ export interface ITokenAccount {
   isDelegatesSet: boolean | undefined;
 }
 
-// ! below this line is the refactored types
+/**
+ * @dev This interface represents the store for the Fractal DAO.
+ * @param baseContracts - This object contains the base contracts for the Fractal DAO.
+ * @param clients - This object contains the clients for the Fractal DAO.
+ * @param dispatch - This object contains the dispatch functions for the Fractal DAO.
+ */
+
 export interface FractalStore extends Fractal {
   baseContracts: FractalContracts;
   clients: FractalClients;
@@ -236,17 +243,16 @@ export interface FractalStore extends Fractal {
   };
 }
 export interface Fractal {
-  node: FractalNode; // holds the main identifing data for the current fractal node
-  guard: FreezeGuard; // holds the guard for the current fractal node; note maybe this should stay generic?; how does this scale?
-  governance: FractalGovernance; // extendable class type with Governance Base interface
-  treasury: FractalTreasury; // Treasury
+  node: FractalNode;
+  guard: FreezeGuard;
+  governance: FractalGovernance;
+  treasury: FractalTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
 }
 
 export interface FractalClients {
   safeService: SafeServiceClient;
-  // @todo graph service would go here
 }
 
 export interface FractalGovernanceContracts {
@@ -261,15 +267,15 @@ export interface FractalNode {
   daoAddress: string | null;
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
-  nodeHierarchy: NodeHierarchy; // holds the information for parent nodes and childNodes
+  nodeHierarchy: NodeHierarchy;
 }
 
 export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules'> {}
 
 export interface FractalModuleData {
   moduleContract: FractalUsul | FractalModule | undefined;
-  moduleAddress: string; // address
-  moduleType: FractalModuleType; // ENUM
+  moduleAddress: string;
+  moduleType: FractalModuleType;
 }
 
 export enum FractalModuleType {
