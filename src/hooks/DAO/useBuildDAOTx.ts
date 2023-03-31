@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useProvider, useSigner, useAccount } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
+import { useFractal } from '../../providers/App/AppProvider';
 import {
   TokenGovernanceDAO,
   GnosisDAO,
@@ -8,7 +9,6 @@ import {
   UsulContracts,
   BaseContracts,
 } from '../../types';
-import useSafeContracts from '../safe/useSafeContracts';
 
 const useBuildDAOTx = () => {
   const provider = useProvider();
@@ -18,21 +18,23 @@ const useBuildDAOTx = () => {
   const { address: account } = useAccount();
 
   const {
-    multiSendContract,
-    gnosisSafeFactoryContract,
-    gnosisSafeSingletonContract,
-    linearVotingMasterCopyContract,
-    fractalUsulMasterCopyContract,
-    zodiacModuleProxyFactoryContract,
-    fractalRegistryContract,
-    fractalModuleMasterCopyContract,
-    gnosisVetoGuardMasterCopyContract,
-    usulVetoGuardMasterCopyContract,
-    vetoMultisigVotingMasterCopyContract,
-    vetoERC20VotingMasterCopyContract,
-    votesTokenMasterCopyContract,
-    claimingMasterCopyContract,
-  } = useSafeContracts();
+    baseContracts: {
+      multiSendContract,
+      gnosisSafeFactoryContract,
+      gnosisSafeSingletonContract,
+      linearVotingMasterCopyContract,
+      fractalUsulMasterCopyContract,
+      zodiacModuleProxyFactoryContract,
+      fractalRegistryContract,
+      fractalModuleMasterCopyContract,
+      gnosisVetoGuardMasterCopyContract,
+      usulVetoGuardMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
+      vetoERC20VotingMasterCopyContract,
+      votesTokenMasterCopyContract,
+      claimingMasterCopyContract,
+    },
+  } = useFractal();
 
   const buildDao = useCallback(
     async (

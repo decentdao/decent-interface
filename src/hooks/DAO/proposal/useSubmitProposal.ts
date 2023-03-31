@@ -11,7 +11,6 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData } from '../../../types';
 import { buildGnosisApiUrl } from '../../../utils';
-import useSafeContracts from '../../safe/useSafeContracts';
 import { useSafeMultisigProposals } from '../loaders/governance/useSafeMultisigProposals';
 import { useFractalModules } from '../loaders/useFractalModules';
 import useUsul, { getUsulModuleFromModules } from './useUsul';
@@ -47,10 +46,10 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
 
-  const { multiSendContract } = useSafeContracts();
   const { usulContract: globalUsulContract, votingStrategiesAddresses } = useUsul();
   const {
     node: { safe },
+    baseContracts: { multiSendContract },
     clients: { safeService },
   } = useFractal();
 

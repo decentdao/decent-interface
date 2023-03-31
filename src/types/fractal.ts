@@ -224,8 +224,8 @@ export interface ITokenAccount {
 
 // ! below this line is the refactored types
 export interface FractalStore extends Fractal {
-  baseContracts: FractalContracts; // useSafeContracts should just load here...
-  clients: FractalClients; // third party services
+  baseContracts: FractalContracts;
+  clients: FractalClients;
   dispatch: {
     node: Dispatch<NodeActions>;
     guard: Dispatch<FractalGuardActions>;
