@@ -22,22 +22,22 @@ export default function ProposalSummary({
 }) {
   const { governance } = useFractal();
 
-  const azoriousGovernance = governance as AzoriusGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const { displayName: proposerDisplayName } = useDisplayName(proposer);
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const getVotesPercentage = (voteTotal: BigNumber): number => {
     if (
-      !azoriousGovernance.votesToken.totalSupply ||
-      azoriousGovernance.votesToken.totalSupply.eq(0)
+      !azoriusGovernance.votesToken.totalSupply ||
+      azoriusGovernance.votesToken.totalSupply.eq(0)
     ) {
       return 0;
     }
 
-    return voteTotal.div(azoriousGovernance.votesToken.totalSupply.div(100)).toNumber();
+    return voteTotal.div(azoriusGovernance.votesToken.totalSupply.div(100)).toNumber();
   };
 
-  if (!azoriousGovernance.votesToken.totalSupply) {
+  if (!azoriusGovernance.votesToken.totalSupply) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -48,7 +48,7 @@ export default function ProposalSummary({
   const yesVotesPercentage = getVotesPercentage(votesSummary.yes);
   const noVotesPercentage = getVotesPercentage(votesSummary.no);
   const quorum = votesSummary.quorum
-    .div(azoriousGovernance.votesToken.totalSupply.div(100))
+    .div(azoriusGovernance.votesToken.totalSupply.div(100))
     .toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 

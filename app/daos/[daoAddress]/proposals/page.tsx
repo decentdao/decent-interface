@@ -21,12 +21,12 @@ export default function ProposalsPage() {
   } = useFractal();
   const { type } = governance;
   const { address: account } = useAccount();
-  const azoriousGovernance = governance as AzoriusGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
   const showDelegate =
     type === StrategyType.GNOSIS_SAFE_USUL &&
-    !!azoriousGovernance.votesToken.balance &&
-    azoriousGovernance.votesToken.balance.gt(0);
+    !!azoriusGovernance.votesToken.balance &&
+    azoriusGovernance.votesToken.balance.gt(0);
 
   const showCreateButton =
     type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(account || '');

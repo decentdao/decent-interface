@@ -27,9 +27,9 @@ export function DelegateModal({ close }: { close: Function }) {
     governanceContracts: { tokenContract },
   } = useFractal();
   const { address: account } = useAccount();
-  const azoriousGovernance = governance as AzoriusGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
-  const delegateeDisplayName = useDisplayName(azoriousGovernance?.votesToken.delegatee);
+  const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
     votingTokenContract: tokenContract?.asSigner,
@@ -50,7 +50,7 @@ export function DelegateModal({ close }: { close: Function }) {
       ? t('errorInvalidAddress', { ns: 'common' })
       : undefined;
 
-  if (!azoriousGovernance.votesToken) return null;
+  if (!azoriusGovernance.votesToken) return null;
 
   return (
     <Box>
@@ -69,10 +69,10 @@ export function DelegateModal({ close }: { close: Function }) {
           color="grayscale.100"
         >
           {formatCoin(
-            azoriousGovernance.votesToken.balance || BigNumber.from(0),
+            azoriusGovernance.votesToken.balance || BigNumber.from(0),
             false,
-            azoriousGovernance.votesToken.decimals,
-            azoriousGovernance.votesToken.symbol
+            azoriusGovernance.votesToken.decimals,
+            azoriusGovernance.votesToken.symbol
           )}
         </Text>
         <Text
@@ -86,10 +86,10 @@ export function DelegateModal({ close }: { close: Function }) {
           color="grayscale.100"
         >
           {formatCoin(
-            azoriousGovernance.votesToken.votingWeight || BigNumber.from(0),
+            azoriusGovernance.votesToken.votingWeight || BigNumber.from(0),
             false,
-            azoriousGovernance.votesToken.decimals,
-            azoriousGovernance.votesToken.symbol
+            azoriusGovernance.votesToken.decimals,
+            azoriusGovernance.votesToken.symbol
           )}
         </Text>
         <Text
@@ -102,10 +102,10 @@ export function DelegateModal({ close }: { close: Function }) {
           align="end"
           color="grayscale.100"
         >
-          {azoriousGovernance.votesToken.delegatee === constants.AddressZero ? (
+          {azoriusGovernance.votesToken.delegatee === constants.AddressZero ? (
             '--'
           ) : (
-            <EtherscanLinkAddress address={azoriousGovernance.votesToken.delegatee}>
+            <EtherscanLinkAddress address={azoriusGovernance.votesToken.delegatee}>
               {delegateeDisplayName.displayName}
             </EtherscanLinkAddress>
           )}

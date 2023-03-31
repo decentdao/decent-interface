@@ -87,7 +87,7 @@ function ProposalVotes({
 }) {
   const { governance } = useFractal();
 
-  const azoriousGovernance = governance as AzoriusGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const { t } = useTranslation(['common', 'proposal']);
   const totalVotesCasted = yes.add(no).add(abstain);
 
@@ -99,7 +99,7 @@ function ProposalVotes({
     return voteTotal.div(totalVotesCasted.div(100)).toNumber();
   };
 
-  if (!azoriousGovernance.votesToken) {
+  if (!azoriusGovernance.votesToken) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -183,9 +183,9 @@ function ProposalVotes({
               <ProposalVoteItem
                 key={vote.voter}
                 vote={vote}
-                govTokenTotalSupply={azoriousGovernance.votesToken.totalSupply}
-                govTokenDecimals={azoriousGovernance.votesToken.decimals}
-                govTokenSymbol={azoriousGovernance.votesToken.symbol}
+                govTokenTotalSupply={azoriusGovernance.votesToken.totalSupply}
+                govTokenDecimals={azoriusGovernance.votesToken.decimals}
+                govTokenSymbol={azoriusGovernance.votesToken.symbol}
               />
             ))}
           </Flex>

@@ -24,12 +24,12 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
     governanceDispatch: dispatch.governance,
   });
 
-  const azoriousGovernance = governance as AzoriusGovernance;
+  const azoriusGovernance = governance as AzoriusGovernance;
 
   const { address: account } = useAccount();
 
   useEffect(() => {
-    const timeLockPeriod = azoriousGovernance.votesStrategy?.timeLockPeriod;
+    const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
     if (!timeLockPeriod) {
       return;
     }
