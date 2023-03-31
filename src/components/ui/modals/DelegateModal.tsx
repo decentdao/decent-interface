@@ -1,12 +1,14 @@
 import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { constants } from 'ethers';
+import { BigNumber, constants } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { AzoriusGovernance } from '../../../types';
+import { formatCoin } from '../../../utils/numberFormats';
 import { EthAddressInput } from '../forms/EthAddressInput';
 import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
 
@@ -21,15 +23,13 @@ export function DelegateModal({ close }: { close: Function }) {
   const [pending, setPending] = useState<boolean>(false);
 
   const {
-    governance: {
-      governanceToken,
-      contracts: { tokenContract },
-    },
+    governance,
+    governanceContracts: { tokenContract },
   } = useFractal();
   const { address: account } = useAccount();
-
+  const azoriousGovernance = governance as AzoriusGovernance;
   const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
-  const delegateeDisplayName = useDisplayName(governanceToken?.delegatee);
+  const delegateeDisplayName = useDisplayName(azoriousGovernance?.votesToken.delegatee);
   const delegateVote = useDelegateVote({
     delegatee: newDelegatee,
     votingTokenContract: tokenContract?.asSigner,
@@ -50,7 +50,7 @@ export function DelegateModal({ close }: { close: Function }) {
       ? t('errorInvalidAddress', { ns: 'common' })
       : undefined;
 
-  if (!governanceToken) return null;
+  if (!azoriousGovernance.votesToken) return null;
 
   return (
     <Box>
@@ -68,7 +68,12 @@ export function DelegateModal({ close }: { close: Function }) {
           align="end"
           color="grayscale.100"
         >
-          {governanceToken.userBalanceString}
+          {formatCoin(
+            azoriousGovernance.votesToken.balance || BigNumber.from(0),
+            false,
+            azoriousGovernance.votesToken.decimals,
+            azoriousGovernance.votesToken.symbol
+          )}
         </Text>
         <Text
           align="start"
@@ -80,7 +85,12 @@ export function DelegateModal({ close }: { close: Function }) {
           align="end"
           color="grayscale.100"
         >
-          {governanceToken.votingWeightString}
+          {formatCoin(
+            azoriousGovernance.votesToken.votingWeight || BigNumber.from(0),
+            false,
+            azoriousGovernance.votesToken.decimals,
+            azoriousGovernance.votesToken.symbol
+          )}
         </Text>
         <Text
           align="start"
@@ -92,10 +102,10 @@ export function DelegateModal({ close }: { close: Function }) {
           align="end"
           color="grayscale.100"
         >
-          {governanceToken?.delegatee === constants.AddressZero ? (
+          {azoriousGovernance.votesToken.delegatee === constants.AddressZero ? (
             '--'
           ) : (
-            <EtherscanLinkAddress address={governanceToken.delegatee}>
+            <EtherscanLinkAddress address={azoriousGovernance.votesToken.delegatee}>
               {delegateeDisplayName.displayName}
             </EtherscanLinkAddress>
           )}

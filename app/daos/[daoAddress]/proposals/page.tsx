@@ -24,7 +24,9 @@ export default function ProposalsPage() {
   const azoriousGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
   const showDelegate =
-    type === StrategyType.GNOSIS_SAFE_USUL && azoriousGovernance.votesToken.balance?.gt(0);
+    type === StrategyType.GNOSIS_SAFE_USUL &&
+    !!azoriousGovernance.votesToken.balance &&
+    azoriousGovernance.votesToken.balance.gt(0);
 
   const showCreateButton =
     type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(account || '');
