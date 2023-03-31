@@ -1,20 +1,5 @@
 import { BigNumber } from 'ethers';
 
-export interface IConnectedAccount {
-  favorites: IFavorites;
-}
-
-export interface IAudit {
-  hasAccepted?: boolean;
-  acceptAuditWarning: () => void;
-}
-
-export interface IFavorites {
-  favoritesList: string[];
-  isConnectedFavorited: boolean;
-  toggleFavorite: (key: string) => void;
-}
-
 export interface VotesTokenData extends VotesData, TokenData {}
 export interface VotesData {
   balance: BigNumber | null;
