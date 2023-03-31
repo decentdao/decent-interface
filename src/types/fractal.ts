@@ -23,12 +23,11 @@ import SafeServiceClient, {
 import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
 import { MultiSend } from '../assets/typechain-types/usul';
-// @RENAME
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
-import { TreasuryActions as TreasuryActionsRenamed } from '../providers/App/treasury/action';
+import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
@@ -230,7 +229,7 @@ export interface FractalStore extends Fractal {
     node: Dispatch<NodeActions>;
     guard: Dispatch<FractalGuardActions>;
     governance: Dispatch<FractalGovernanceActions>;
-    treasury: Dispatch<TreasuryActionsRenamed>;
+    treasury: Dispatch<TreasuryActions>;
     governanceContracts: Dispatch<GovernanceContractActions>;
     guardContracts: Dispatch<GuardContractActions>;
     resetDAO: () => Promise<void>;
@@ -250,7 +249,6 @@ export interface FractalClients {
   // @todo graph service would go here
 }
 
-// @RENAME -> GovernanceContracts
 export interface FractalGovernanceContracts {
   ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
   usulContract: ContractConnection<FractalUsul> | null;
