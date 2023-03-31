@@ -13,7 +13,7 @@ import {
   TreasuryAction,
   AllTransfersListResponse,
 } from '../../../types';
-import { buildGnosisApiUrl } from '../utils';
+import { buildGnosisApiUrl } from '../../../utils';
 import { useUpdateTimer } from './../../../hooks/utils/useUpdateTimer';
 import { useNetworkConfg } from './../../NetworkConfig/NetworkConfigProvider';
 

@@ -3,8 +3,8 @@ import { useEffect, useCallback, useRef } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
-import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { buildGnosisApiUrl } from '../../../utils';
 import { useUpdateTimer } from './../../utils/useUpdateTimer';
 
 export const useFractalTreasury = () => {

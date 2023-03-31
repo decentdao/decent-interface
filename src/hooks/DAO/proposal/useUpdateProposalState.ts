@@ -1,8 +1,11 @@
 import { BigNumber } from 'ethers';
 import { useCallback, Dispatch } from 'react';
-import { FractalGovernanceContracts } from '../../../../types';
-import { FractalGovernanceAction, FractalGovernanceActions } from '../../../App/governance/action';
-import { getTxProposalState } from '../../utils';
+import {
+  FractalGovernanceAction,
+  FractalGovernanceActions,
+} from '../../../providers/App/governance/action';
+import { FractalGovernanceContracts } from '../../../types';
+import { getTxProposalState } from '../../../utils';
 
 interface IUseUpdateProposalState {
   governanceContracts: FractalGovernanceContracts;

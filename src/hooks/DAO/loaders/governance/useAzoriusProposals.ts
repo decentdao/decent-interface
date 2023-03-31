@@ -13,12 +13,13 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+
+import { UsulProposal } from '../../../../types/daoProposal';
 import {
+  mapProposalCreatedEventToProposal,
   getProposalVotesSummary,
   getTxProposalState,
-  mapProposalCreatedEventToProposal,
-} from '../../../../providers/Fractal/utils';
-import { UsulProposal } from '../../../../types/daoProposal';
+} from '../../../../utils';
 import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 
 export const useAzoriusProposals = () => {

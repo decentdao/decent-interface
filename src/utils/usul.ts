@@ -1,25 +1,26 @@
 import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { logError } from '../../../helpers/errorLogging';
-import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { CacheExpiry, CacheKeys, getValue, setValue } from '../../../hooks/utils/useLocalStorage';
+
+import { logError } from '../helpers/errorLogging';
+import { createAccountSubstring } from '../hooks/utils/useDisplayName';
+import { getValue, CacheKeys, setValue, CacheExpiry } from '../hooks/utils/useLocalStorage';
+import { strategyTxProposalStates } from '../providers/Fractal/governance/constants';
 import {
-  ActivityEventType,
-  ContractConnection,
-  DataDecoded,
-  Parameter,
-  ProposalIsPassedError,
-  ProposalMetaData,
-  ProposalVote,
-  ProposalVotesSummary,
-  SafeMultisigTransactionResponse,
   TxProposalState,
-  UsulProposal,
+  ProposalIsPassedError,
+  ProposalVotesSummary,
+  ProposalVote,
   VOTE_CHOICES,
-} from '../../../types';
-import { Providers } from '../../../types/network';
-import { strategyTxProposalStates } from '../governance/constants';
+  ContractConnection,
+  ProposalMetaData,
+  UsulProposal,
+  ActivityEventType,
+  Parameter,
+  SafeMultisigTransactionResponse,
+  DataDecoded,
+} from '../types';
+import { Providers } from '../types/network';
 
 export const getTxProposalState = async (
   strategy: OZLinearVoting,
