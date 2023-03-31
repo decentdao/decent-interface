@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Flex } from '@chakra-ui/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { Assets } from '../../../../src/components/pages/DAOTreasury/components/Assets';
@@ -24,12 +25,15 @@ export default function Treasury() {
   const { address: account } = useAccount();
   const { t } = useTranslation('treasury');
   const hasAssetBalance = assetsFungible.some(asset => parseFloat(asset.balance) > 0);
-
-  const isOwnerOrDelegate =
-    hasAssetBalance &&
-    (type === StrategyType.GNOSIS_SAFE
-      ? owners?.includes(account || '')
-      : azoriousGovernance?.votesToken.votingWeight?.gt(0));
+  const isOwnerOrDelegate = useMemo(() => {
+    if (!hasAssetBalance || !type) {
+      return false;
+    }
+    if (type === StrategyType.GNOSIS_SAFE) {
+      return owners?.includes(account || '');
+    }
+    return azoriousGovernance?.votesToken.votingWeight?.gt(0);
+  }, [account, azoriousGovernance, hasAssetBalance, owners, type]);
 
   const showButton = isOwnerOrDelegate && assetsFungible.length > 0;
 
