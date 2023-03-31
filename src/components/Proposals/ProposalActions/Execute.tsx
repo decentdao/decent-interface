@@ -2,15 +2,15 @@ import { Text, Button, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useExecuteProposal from '../../../hooks/DAO/proposal/useExecuteProposal';
-import { TxProposal, TxProposalState } from '../../../types';
+import { FractalProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 
-export function Execute({ proposal }: { proposal: TxProposal }) {
+export function Execute({ proposal }: { proposal: FractalProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
   const { executeProposal, pending } = useExecuteProposal();
 
-  const disabled = proposal.state !== TxProposalState.Executing || pending;
+  const disabled = proposal.state !== FractalProposalState.Executing || pending;
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>

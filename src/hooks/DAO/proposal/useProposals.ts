@@ -1,20 +1,20 @@
 import { useCallback, useMemo } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { SortBy, TxProposalState } from '../../../types';
+import { SortBy, FractalProposalState } from '../../../types';
 
 export default function useProposals({
   sortBy,
   filters,
 }: {
   sortBy: SortBy;
-  filters: TxProposalState[];
+  filters: FractalProposalState[];
 }) {
   const {
     governance: { proposals },
   } = useFractal();
 
   const getProposalsTotal = useCallback(
-    (state: TxProposalState) => {
+    (state: FractalProposalState) => {
       if (proposals && proposals.length) {
         return proposals.filter(proposal => proposal.state === state).length;
       }

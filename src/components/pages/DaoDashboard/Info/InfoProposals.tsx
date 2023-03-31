@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Proposals } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { TxProposalState } from '../../../../types';
+import { FractalProposalState } from '../../../../types';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 interface IDAOGovernance {}
@@ -29,7 +29,7 @@ export function InfoProposals({}: IDAOGovernance) {
   const passed = !proposals
     ? 0
     : proposals.reduce(
-        (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
+        (prev, proposal) => (proposal.state === FractalProposalState.Executed ? prev + 1 : prev),
         0
       );
 
@@ -37,7 +37,8 @@ export function InfoProposals({}: IDAOGovernance) {
     ? 0
     : proposals.reduce(
         (prev, proposal) =>
-          proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Executing
+          proposal.state === FractalProposalState.Active ||
+          proposal.state === FractalProposalState.Executing
             ? prev + 1
             : prev,
         0

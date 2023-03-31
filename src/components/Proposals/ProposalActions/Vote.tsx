@@ -9,9 +9,9 @@ import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
-  TxProposal,
+  FractalProposal,
   UsulProposal,
-  TxProposalState,
+  FractalProposalState,
   UsulVoteChoice,
   AzoriusGovernance,
 } from '../../../types';
@@ -23,7 +23,7 @@ function Vote({
   proposal,
   currentUserHasVoted,
 }: {
-  proposal: TxProposal;
+  proposal: FractalProposal;
   currentUserHasVoted: boolean;
 }) {
   const [pending, setPending] = useState<boolean>(false);
@@ -59,7 +59,7 @@ function Vote({
 
   const disabled =
     pending ||
-    proposal.state !== TxProposalState.Active ||
+    proposal.state !== FractalProposalState.Active ||
     !!usulProposal.votes.find(vote => vote.voter === account) ||
     proposalStartBlockNotFinalized;
 

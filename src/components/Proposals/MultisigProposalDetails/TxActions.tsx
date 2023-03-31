@@ -15,7 +15,7 @@ import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MultisigProposal, TxProposalState } from '../../../types';
+import { MultisigProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 
@@ -161,10 +161,10 @@ export function TxActions({
   const isPending = asyncRequestPending || contractCallPending;
 
   if (
-    (proposal.state === TxProposalState.Active && (hasSigned || !isOwner)) ||
-    proposal.state === TxProposalState.Rejected ||
-    proposal.state === TxProposalState.Executed ||
-    proposal.state === TxProposalState.Expired
+    (proposal.state === FractalProposalState.Active && (hasSigned || !isOwner)) ||
+    proposal.state === FractalProposalState.Rejected ||
+    proposal.state === FractalProposalState.Executed ||
+    proposal.state === FractalProposalState.Expired
   ) {
     return null;
   }
@@ -179,25 +179,25 @@ export function TxActions({
   };
 
   const buttonProps: ButtonProps = {
-    [TxProposalState.Active]: {
+    [FractalProposalState.Active]: {
       action: signTransaction,
       text: 'approve',
       pageTitle: 'signTitle',
       icon: undefined,
     },
-    [TxProposalState.Executing]: {
+    [FractalProposalState.Executing]: {
       action: executeTransaction,
       text: 'execute',
       pageTitle: 'executeTitle',
       icon: <Check boxSize="1.5rem" />,
     },
-    [TxProposalState.Queueable]: {
+    [FractalProposalState.Queueable]: {
       action: queueTransaction,
       text: 'queue',
       pageTitle: 'queueTitle',
       icon: undefined,
     },
-    [TxProposalState.Queued]: {
+    [FractalProposalState.Queued]: {
       action: async () => {},
       text: 'execute',
       pageTitle: 'executeTitle',
@@ -205,7 +205,7 @@ export function TxActions({
     },
   };
 
-  const isButtonDisabled = isPending || proposal.state === TxProposalState.Queued;
+  const isButtonDisabled = isPending || proposal.state === FractalProposalState.Queued;
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>

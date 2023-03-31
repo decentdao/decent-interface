@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { DecodedTransaction, TxProposal } from '../../../types';
+import { DecodedTransaction, FractalProposal } from '../../../types';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {
   const { t } = useTranslation('proposal');
@@ -84,7 +84,7 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
   );
 }
 
-export default function ProposalExecutableCode({ proposal }: { proposal: TxProposal }) {
+export default function ProposalExecutableCode({ proposal }: { proposal: FractalProposal }) {
   const { t } = useTranslation('proposal');
   if (!proposal.metaData) {
     return null;

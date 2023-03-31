@@ -45,7 +45,7 @@ import { BNFormattedPair } from './votingFungibleToken';
  *
  * Although in some cases (documented below), what we show to the user may be different.
  */
-export enum TxProposalState {
+export enum FractalProposalState {
   /**
    * Proposal is created and can be voted on.  This is the initial state of all
    * newly created proposals.
@@ -181,7 +181,7 @@ export interface IGnosisFreezeGuard {
 }
 
 export interface GovernanceActivity extends ActivityBase {
-  state: TxProposalState | null;
+  state: FractalProposalState | null;
   proposalNumber: string;
   targets: string[];
   metaData?: ProposalMetaData;

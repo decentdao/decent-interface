@@ -16,7 +16,7 @@ import {
   GnosisTransferType,
   ActivityEventType,
   Activity,
-  TxProposalState,
+  FractalProposalState,
 } from '../../types';
 import { formatWeiToValue, parseDecodedData } from '../../utils';
 import { getTxQueuedTimestamp } from './useSafeActivitiesWithState';
@@ -45,7 +45,7 @@ export const useSafeTransactions = () => {
             if (activity.transaction.txType === 'MODULE_TRANSACTION') {
               return {
                 ...activity,
-                state: TxProposalState.Module,
+                state: FractalProposalState.Module,
               };
             }
 
@@ -66,18 +66,18 @@ export const useSafeTransactions = () => {
             const isApproved = checkIsApproved(multiSigTransaction);
             const queuedTimestamp = await getTxQueuedTimestamp(activity, vetoGuard);
 
-            let state: TxProposalState;
+            let state: FractalProposalState;
 
             if (multiSigTransaction.isExecuted) {
-              state = TxProposalState.Executed;
+              state = FractalProposalState.Executed;
             } else if (queuedTimestamp === 0) {
               // Has not been queued
               if (isRejected) {
-                state = TxProposalState.Rejected;
+                state = FractalProposalState.Rejected;
               } else if (isApproved) {
-                state = TxProposalState.Queueable;
+                state = FractalProposalState.Queueable;
               } else {
-                state = TxProposalState.Active;
+                state = FractalProposalState.Active;
               }
             } else {
               // Has been Queued
@@ -88,14 +88,14 @@ export const useSafeTransactions = () => {
                   queuedTimestamp + guardTimelockPeriod.toNumber() + guardExecutionPeriod.toNumber()
                 ) {
                   // Within execution period
-                  state = TxProposalState.Executing;
+                  state = FractalProposalState.Executing;
                 } else {
                   // Execution period has ended
-                  state = TxProposalState.Expired;
+                  state = FractalProposalState.Expired;
                 }
               } else {
                 // Within timelock period
-                state = TxProposalState.Queued;
+                state = FractalProposalState.Queued;
               }
             }
 
@@ -111,7 +111,7 @@ export const useSafeTransactions = () => {
           if (activity.transaction.txType === 'MODULE_TRANSACTION') {
             return {
               ...activity,
-              state: TxProposalState.Module,
+              state: FractalProposalState.Module,
             };
           }
 
@@ -133,13 +133,13 @@ export const useSafeTransactions = () => {
 
           let state;
           if (isRejected) {
-            state = TxProposalState.Rejected;
+            state = FractalProposalState.Rejected;
           } else if (multiSigTransaction.isExecuted) {
-            state = TxProposalState.Executed;
+            state = FractalProposalState.Executed;
           } else if (isApproved) {
-            state = TxProposalState.Executing;
+            state = FractalProposalState.Executing;
           } else {
-            state = TxProposalState.Active;
+            state = FractalProposalState.Active;
           }
           return { ...activity, state };
         });

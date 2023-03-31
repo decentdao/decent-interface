@@ -10,7 +10,7 @@ import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxL
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import { TxProposal, UsulProposal } from '../../../../../src/types';
+import { FractalProposal, UsulProposal } from '../../../../../src/types';
 
 export default function ProposalDetailsPage({
   params: { proposalNumber },
@@ -22,7 +22,7 @@ export default function ProposalDetailsPage({
     governance: { proposals },
   } = useFractal();
 
-  const [proposal, setProposal] = useState<TxProposal | null>();
+  const [proposal, setProposal] = useState<FractalProposal | null>();
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
   const usulProposal = proposal as UsulProposal;

@@ -1,12 +1,12 @@
 import { Box, Button, Flex, Text, Image } from '@chakra-ui/react';
-import { TxProposal, UsulProposal } from '../../types';
+import { FractalProposal, UsulProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 
-export function ProposalInfo({ proposal }: { proposal: TxProposal }) {
+export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
   const usulProposal = proposal as UsulProposal;
   const description = usulProposal.metaData?.description;
   const documentationUrl = usulProposal.metaData?.documentationUrl;

@@ -1,3 +1,3 @@
-import { TxProposalState } from '../types';
+import { FractalProposalState } from '../types';
 
-export const strategyTxProposalStates = Object.values(TxProposalState);
+export const strategyFractalProposalStates = Object.values(FractalProposalState);

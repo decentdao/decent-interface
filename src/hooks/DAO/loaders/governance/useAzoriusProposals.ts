@@ -18,7 +18,7 @@ import { UsulProposal } from '../../../../types/daoProposal';
 import {
   mapProposalCreatedEventToProposal,
   getProposalVotesSummary,
-  getTxProposalState,
+  getFractalProposalState,
 } from '../../../../utils';
 import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 
@@ -159,7 +159,7 @@ export const useAzoriusProposals = () => {
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
       const usulContractRPC = getEventRPC<FractalUsul>(usulContract, chainId);
 
-      const state = await getTxProposalState(
+      const state = await getFractalProposalState(
         strategyContract,
         usulContractRPC,
         proposalNumber,
@@ -182,7 +182,7 @@ export const useAzoriusProposals = () => {
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
       const usulContractRPC = getEventRPC<FractalUsul>(usulContract, chainId);
 
-      const state = await getTxProposalState(
+      const state = await getFractalProposalState(
         strategyContract,
         usulContractRPC,
         proposalNumber,

@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
-import { TxProposal, StrategyType } from '../../types';
+import { FractalProposal, StrategyType } from '../../types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
-export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
+export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const { address: account } = useAccount();
 
   const {

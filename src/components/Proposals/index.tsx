@@ -5,52 +5,52 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SortBy, StrategyType, TxProposalState } from '../../types';
+import { SortBy, StrategyType, FractalProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
 const FILTERS_USUL_BASE = [
-  TxProposalState.Active,
-  TxProposalState.Queueable,
-  TxProposalState.TimeLocked,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Queueable,
+  FractalProposalState.TimeLocked,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Failed,
-  TxProposalState.Expired,
-  TxProposalState.Rejected,
+  FractalProposalState.Failed,
+  FractalProposalState.Expired,
+  FractalProposalState.Rejected,
 ];
 
 const FILTERS_USUL_CHILD = [
-  TxProposalState.Active,
-  TxProposalState.Queueable,
-  TxProposalState.TimeLocked,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Queueable,
+  FractalProposalState.TimeLocked,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Failed,
-  TxProposalState.Expired,
-  TxProposalState.Rejected,
+  FractalProposalState.Failed,
+  FractalProposalState.Expired,
+  FractalProposalState.Rejected,
 ];
 
 const FILTERS_MULTISIG_BASE = [
-  TxProposalState.Active,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Rejected,
+  FractalProposalState.Rejected,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
-  TxProposalState.Active,
-  TxProposalState.Queueable,
-  TxProposalState.Queued,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Queueable,
+  FractalProposalState.Queued,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Rejected,
-  TxProposalState.Expired,
+  FractalProposalState.Rejected,
+  FractalProposalState.Expired,
 ];
 
 export default function Proposals() {
@@ -60,8 +60,8 @@ export default function Proposals() {
   } = useFractal();
 
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
-  const [filters, setFilters] = useState<TxProposalState[]>([]);
-  const [allOptions, setAllOptions] = useState<TxProposalState[]>([]);
+  const [filters, setFilters] = useState<FractalProposalState[]>([]);
+  const [allOptions, setAllOptions] = useState<FractalProposalState[]>([]);
 
   const { t } = useTranslation(['proposal', 'common']);
   const { proposals, getProposalsTotal } = useProposals({ sortBy, filters });
@@ -91,7 +91,7 @@ export default function Proposals() {
     setFilters(options);
   }, [guardContracts.vetoGuardContract, type]);
 
-  const toggleFilter = (filter: TxProposalState) => {
+  const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {
       if (prevState.includes(filter)) {
         return prevState.filter(state => state !== filter);

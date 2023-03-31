@@ -5,7 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { TxProposal, UsulProposal, TxProposalState, MultisigProposal } from '../../../types';
+import {
+  FractalProposal,
+  UsulProposal,
+  FractalProposalState,
+  MultisigProposal,
+} from '../../../types';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';
@@ -14,7 +19,7 @@ export function ProposalAction({
   proposal,
   expandedView,
 }: {
-  proposal: TxProposal;
+  proposal: FractalProposal;
   expandedView?: boolean;
 }) {
   const {
@@ -26,11 +31,11 @@ export function ProposalAction({
   const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
 
   const showActionButton =
-    proposal.state === TxProposalState.Active ||
-    proposal.state === TxProposalState.Executing ||
-    proposal.state === TxProposalState.Queueable ||
-    proposal.state === TxProposalState.TimeLocked ||
-    proposal.state === TxProposalState.Queued;
+    proposal.state === FractalProposalState.Active ||
+    proposal.state === FractalProposalState.Executing ||
+    proposal.state === FractalProposalState.Queueable ||
+    proposal.state === FractalProposalState.TimeLocked ||
+    proposal.state === FractalProposalState.Queued;
 
   const handleClick = () => {
     push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalNumber));
@@ -47,7 +52,7 @@ export function ProposalAction({
   }, [account, isUsulProposal, proposal]);
 
   const label = useMemo(() => {
-    if (proposal.state === TxProposalState.Active) {
+    if (proposal.state === FractalProposalState.Active) {
       if (hasVoted) {
         return t('details');
       }
@@ -73,18 +78,18 @@ export function ProposalAction({
 
   if (expandedView) {
     switch (proposal.state) {
-      case TxProposalState.Active:
+      case FractalProposalState.Active:
         return (
           <CastVote
             proposal={proposal}
             currentUserHasVoted={hasVoted}
           />
         );
-      case TxProposalState.Queueable:
+      case FractalProposalState.Queueable:
         return <Queue proposal={proposal} />;
-      case TxProposalState.Executing:
-      case TxProposalState.TimeLocked:
-      case TxProposalState.Queued:
+      case FractalProposalState.Executing:
+      case FractalProposalState.TimeLocked:
+      case FractalProposalState.Queued:
         return <Execute proposal={proposal} />;
     }
   }
