@@ -43,7 +43,6 @@ export default function IntegrationTransactions({
           | FormikErrors<CreateIntegrationTransaction<BigNumberValuePair>>
           | undefined;
         const txAddressError = txErrors?.targetAddress;
-        const txFunctionError = txErrors?.encodedFunctionData;
 
         return (
           <AccordionItem
@@ -98,7 +97,6 @@ export default function IntegrationTransactions({
                   <IntegrationTransaction
                     transaction={transactions[index]}
                     txAddressError={txAddressError}
-                    txFunctionError={txFunctionError}
                     transactionIndex={index}
                     setFieldValue={setFieldValue}
                     transactionPending={pendingTransaction}

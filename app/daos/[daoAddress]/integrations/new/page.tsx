@@ -29,7 +29,7 @@ const templateAreaSingleCol = `"content"
 
 export default function CreateIntegrationPage() {
   const [formState, setFormState] = useState(CreateIntegrationState.METADATA_FORM);
-  const { t } = useTranslation('integration');
+  const { t } = useTranslation(['integration', 'proposal']);
   const { push } = useRouter();
 
   const {
@@ -54,15 +54,15 @@ export default function CreateIntegrationPage() {
     <Formik<CreateIntegrationForm>
       validationSchema={createIntegrationValidation}
       initialValues={DEFAULT_INTEGRATION}
-      onSubmit={values => {
+      onSubmit={async values => {
         if (canUserCreateProposal) {
-          const proposalData = prepareIntegrationProposal(values);
+          const proposalData = await prepareIntegrationProposal(values);
           submitProposal({
             proposalData,
             nonce,
-            pendingToastMessage: t('proposalCreatePendingToastMessage'),
-            successToastMessage: t('proposalCreateSuccessToastMessage'),
-            failedToastMessage: t('proposalCreateFailureToastMessage'),
+            pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+            successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+            failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
             successCallback,
           });
         }

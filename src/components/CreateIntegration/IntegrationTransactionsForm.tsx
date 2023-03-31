@@ -72,7 +72,7 @@ export default function IntegrationTransactionsForm(props: IntegrationTransactio
           <Button
             w="100%"
             type="submit"
-            disabled={!canUserCreateProposal || !!transactionsError || pendingTransaction}
+            isDisabled={!canUserCreateProposal || !!transactionsError || pendingTransaction}
           >
             {t('createProposal', { ns: 'proposal' })}
           </Button>

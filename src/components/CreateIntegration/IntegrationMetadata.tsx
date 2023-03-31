@@ -50,7 +50,7 @@ export default function IntegrationMetadata({
       <Button
         w="100%"
         onClick={() => setFormState(CreateIntegrationState.TRANSACTIONS_FORM)}
-        disabled={!!integrationMetadataError || !integrationMetadata.title}
+        isDisabled={!!integrationMetadataError || !integrationMetadata.title}
       >
         {t('next', { ns: 'common' })}
       </Button>
