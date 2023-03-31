@@ -9,9 +9,9 @@ import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
 export default function useDAOController({ daoAddress }: { daoAddress: string }) {
   useFractalGovernance();
-  useFractalFreeze();
+  useFractalFreeze({});
   useGovernanceContracts();
-  useFractalGuardContracts();
+  useFractalGuardContracts({});
   useFractalTreasury();
   useFractalNode({ daoAddress });
 }

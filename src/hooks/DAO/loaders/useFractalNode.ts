@@ -9,7 +9,7 @@ import { BASE_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { NodeAction } from '../../../providers/App/node/action';
-import { FractalNode, Node } from '../../../types';
+import { FractalNode, Node, WithError } from '../../../types';
 import { useFractalModules } from './useFractalModules';
 
 const mapChildNodes = (_hierarchy: any) => {
@@ -29,7 +29,7 @@ export const useFractalNode = ({
   daoAddress,
   loadOnMount = true,
 }: {
-  daoAddress: string;
+  daoAddress?: string;
   loadOnMount?: boolean;
 }) => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
@@ -87,8 +87,6 @@ export const useFractalNode = ({
     []
   );
 
-  // loads dao from safe
-  type WithError = { error?: string };
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
       if (utils.isAddress(_daoAddress)) {
@@ -161,7 +159,8 @@ export const useFractalNode = ({
       if (currentValidAddress.current === undefined) {
         currentValidAddress.current = daoAddress;
       }
-      if (!isCurrentAddress) {
+      if (!isCurrentAddress && daoAddress) {
+        console.log('🚀 ~ file: useFractalNode.ts:163 ~ daoAddress:', daoAddress);
         setDAO(daoAddress);
       }
     }

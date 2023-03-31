@@ -1,42 +1,51 @@
-import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
-import { SafeInfoResponseWithGuard } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { initialGuardState } from '../../providers/App/guard/reducer';
+import { initialGuardContractsState } from '../../providers/App/guardContracts/reducer';
+import { FractalNode } from '../../types';
 import { SubDAOData } from '../../types/daoGeneral';
-import { useFractal } from './../../providers/Fractal/hooks/useFractal';
+import { FractalGuardContracts } from './../../types/fractal';
+import { useFractalFreeze } from './loaders/useFractalFreeze';
+import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 
-export function useSubDAOData(safeAddress?: string) {
+export function useSubDAOData(fractalNode?: FractalNode) {
   const {
-    gnosis: { safeService },
-    actions: { lookupModules, getVetoGuardContracts, lookupFreezeGuard },
+    clients: { safeService },
   } = useFractal();
 
   const [subDAOData, setSubDAOData] = useState<SubDAOData>();
+  const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
+  const loadFractalFreezeGuard = useFractalFreeze({ loadOnMount: false });
 
   const loadSubDAOData = useCallback(async () => {
-    if (!safeService || !safeAddress) {
+    if (!safeService || !fractalNode) {
       return;
     }
-    const { getAddress } = ethers.utils;
-    const safeInfo: SafeInfoResponseWithGuard = await safeService.getSafeInfo(
-      getAddress(safeAddress)
-    );
-    if (!safeInfo.guard) {
-      return;
-    }
-    const modules = await lookupModules(safeInfo.modules);
-    const vetoGuardContracts = await getVetoGuardContracts(safeInfo.guard, modules);
-    if (!vetoGuardContracts) {
-      return;
-    }
-    const freezeGuard = await lookupFreezeGuard(vetoGuardContracts);
+    const { daoAddress, safe, fractalModules } = fractalNode;
 
+    if (!daoAddress || !safe) {
+      return;
+    }
+
+    let vetoGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
+      daoAddress,
+      safe,
+      fractalModules
+    );
+    if (!vetoGuardContracts) {
+      vetoGuardContracts = initialGuardContractsState;
+    }
+    let freezeGuard = await loadFractalFreezeGuard(vetoGuardContracts);
+    if (!freezeGuard) {
+      freezeGuard = initialGuardState;
+    }
     setSubDAOData({
-      safeInfo,
-      modules,
+      safe,
+      fractalModules,
       vetoGuardContracts,
       freezeGuard,
     });
-  }, [safeService, lookupModules, getVetoGuardContracts, lookupFreezeGuard, safeAddress]);
+  }, [safeService, fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);
 
   useEffect(() => {
     loadSubDAOData();
