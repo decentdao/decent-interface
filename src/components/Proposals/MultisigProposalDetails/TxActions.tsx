@@ -10,9 +10,10 @@ import { useAccount, useProvider, useSigner } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
+import { useSafeMultisigProposals } from '../../../hooks/DAO/loaders/governance/useSafeMultisigProposals';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MultisigProposal, TxProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -26,8 +27,8 @@ export function TxActions({
   vetoGuard: VetoGuard;
 }) {
   const {
-    gnosis: { safe, safeService },
-    actions: { refreshSafeData },
+    node: { safe },
+    clients: { safeService },
   } = useFractal();
   const provider = useProvider();
   const { data: signer } = useSigner();
@@ -39,13 +40,14 @@ export function TxActions({
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
+  const loadSafeMultisigProposals = useSafeMultisigProposals();
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!safeService || !signerOrProvider || !safe.address) {
+    if (!safeService || !signerOrProvider || !safe?.address) {
       return;
     }
     try {
@@ -65,7 +67,7 @@ export function TxActions({
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
           await safeService.confirmTransaction(proposal.proposalNumber, signature);
-          setTimeout(() => Promise.resolve(refreshSafeData()), 500);
+          await loadSafeMultisigProposals();
         },
       });
     } catch (e) {
@@ -105,7 +107,7 @@ export function TxActions({
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
-          setTimeout(() => Promise.resolve(refreshSafeData()), 1000);
+          await await loadSafeMultisigProposals();
         },
       });
     } catch (e) {
@@ -115,7 +117,7 @@ export function TxActions({
 
   const executeTransaction = async () => {
     try {
-      if (!signerOrProvider || !safe.address || !multisigTx.confirmations) {
+      if (!signerOrProvider || !safe?.address || !multisigTx.confirmations) {
         return;
       }
       const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
@@ -146,7 +148,7 @@ export function TxActions({
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
-          setTimeout(() => Promise.resolve(refreshSafeData()), 1000);
+          await loadSafeMultisigProposals();
         },
       });
     } catch (e) {
@@ -155,7 +157,7 @@ export function TxActions({
   };
 
   const hasSigned = proposal.confirmations.find(confirm => confirm.owner === account);
-  const isOwner = safe.owners?.includes(account || '');
+  const isOwner = safe?.owners?.includes(account || '');
   const isPending = asyncRequestPending || contractCallPending;
 
   if (
