@@ -7,11 +7,13 @@ import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData } from '../../../types';
 import useSafeContracts from '../../safe/useSafeContracts';
+import { useSafeMultisigProposals } from '../loaders/governance/useSafeMultisigProposals';
+import { useFractalModules } from '../loaders/useFractalModules';
 import useUsul, { getUsulModuleFromModules } from './useUsul';
 
 interface ISubmitProposal {
@@ -48,14 +50,16 @@ export default function useSubmitProposal() {
   const { multiSendContract } = useSafeContracts();
   const { usulContract: globalUsulContract, votingStrategiesAddresses } = useUsul();
   const {
-    actions: { refreshSafeData, lookupModules },
-    gnosis: { safe, safeService },
+    node: { safe },
+    clients: { safeService },
   } = useFractal();
+
+  const lookupModules = useFractalModules();
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { chainId, safeBaseURL } = useNetworkConfg();
-
+  const loadSafeMultisigProposals = useSafeMultisigProposals();
   const submitMultisigProposal = useCallback(
     async ({
       pendingToastMessage,
@@ -134,7 +138,7 @@ export default function useSubmitProposal() {
           )
         );
         await new Promise(resolve => setTimeout(resolve, 1000));
-        await refreshSafeData();
+        loadSafeMultisigProposals();
         if (successCallback) {
           successCallback(safeAddress);
         }
@@ -148,7 +152,7 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [chainId, multiSendContract, refreshSafeData, safeBaseURL, signerOrProvider]
+    [chainId, multiSendContract, safeBaseURL, signerOrProvider, loadSafeMultisigProposals]
   );
 
   const submitTokenVotingProposal = useCallback(
@@ -258,7 +262,7 @@ export default function useSubmitProposal() {
           });
         }
       } else {
-        if (!globalUsulContract || !votingStrategiesAddresses || !safe.address) {
+        if (!globalUsulContract || !votingStrategiesAddresses || !safe?.address) {
           submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -266,7 +270,7 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            safeAddress: safe.address,
+            safeAddress: safe?.address,
           });
         } else {
           submitTokenVotingProposal({
@@ -286,7 +290,7 @@ export default function useSubmitProposal() {
     [
       globalUsulContract,
       votingStrategiesAddresses,
-      safe.address,
+      safe,
       submitMultisigProposal,
       submitTokenVotingProposal,
       lookupModules,

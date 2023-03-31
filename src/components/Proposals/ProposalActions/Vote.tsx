@@ -73,7 +73,7 @@ function Vote({
         </Flex>
         <Button
           width="full"
-          disabled={disabled}
+          isDisabled={disabled}
           onClick={() => castVote(UsulVoteChoice.Yes)}
           marginTop={5}
         >
@@ -83,7 +83,7 @@ function Vote({
         <Button
           marginTop={5}
           width="full"
-          disabled={disabled}
+          isDisabled={disabled}
           onClick={() => castVote(UsulVoteChoice.No)}
         >
           {t('reject')}
@@ -92,7 +92,7 @@ function Vote({
         <Button
           marginTop={5}
           width="full"
-          disabled={disabled}
+          isDisabled={disabled}
           onClick={() => castVote(UsulVoteChoice.Abstain)}
         >
           {t('abstain')}

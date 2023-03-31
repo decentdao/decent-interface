@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { TxProposal, UsulProposal, TxProposalState, MultisigProposal } from '../../../types';
 import { Execute } from './Execute';
 import Queue from './Queue';
@@ -18,7 +18,7 @@ export function ProposalAction({
   expandedView?: boolean;
 }) {
   const {
-    gnosis: { safe },
+    node: { daoAddress },
   } = useFractal();
   const { address: account } = useAccount();
   const { push } = useRouter();
@@ -33,7 +33,7 @@ export function ProposalAction({
     proposal.state === TxProposalState.Queued;
 
   const handleClick = () => {
-    push(DAO_ROUTES.proposal.relative(safe.address, proposal.proposalNumber));
+    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalNumber));
   };
 
   const hasVoted = useMemo(() => {

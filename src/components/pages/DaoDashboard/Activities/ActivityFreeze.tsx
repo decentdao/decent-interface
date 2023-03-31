@@ -2,7 +2,7 @@ import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
-import { IGnosisFreezeData, DAOState } from '../../../../types';
+import { DAOState, FreezeGuard } from '../../../../types';
 import { ActivityCard } from '../../../Activity/ActivityCard';
 import { FreezeButton } from '../../../Activity/FreezeButton';
 import { Badge } from '../../../ui/badges/Badge';
@@ -21,18 +21,25 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 }
 
 export function ActivityFreeze({
-  freezeData,
+  freezeGuard,
   vetoVotingContract,
 }: {
-  freezeData: IGnosisFreezeData;
+  freezeGuard: FreezeGuard;
   vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
 }) {
+  const {
+    freezeProposalCreatedTime,
+    freezeProposalPeriod,
+    freezePeriod,
+    freezeVotesThreshold,
+    freezeProposalVoteCount,
+  } = freezeGuard;
   const { t } = useTranslation('dashboard');
   const freezeProposalDeadlineDate = new Date(
-    freezeData.freezeProposalCreatedTime.add(freezeData.freezeProposalPeriod).mul(1000).toNumber()
+    freezeProposalCreatedTime!.add(freezeProposalPeriod!).mul(1000).toNumber()
   );
   const freezeDeadlineDate = new Date(
-    freezeData.freezeProposalCreatedTime.add(freezeData.freezePeriod).mul(1000).toNumber()
+    freezeProposalCreatedTime!.add(freezePeriod!).mul(1000).toNumber()
   );
   const now = new Date();
 
@@ -46,19 +53,17 @@ export function ActivityFreeze({
   }
 
   const voteToThreshold =
-    freezeData.freezeProposalVoteCount.toString() +
-    ' / ' +
-    freezeData.freezeVotesThreshold.toString();
+    freezeProposalVoteCount!.toString() + ' / ' + freezeVotesThreshold!.toString();
 
   return (
     <ActivityCard
       Badge={
         <Badge
-          labelKey={freezeData.isFrozen ? DAOState.frozen : DAOState.freezeInit}
+          labelKey={freezeGuard.isFrozen ? DAOState.frozen : DAOState.freezeInit}
           size="base"
         />
       }
-      description={<FreezeDescription isFrozen={freezeData.isFrozen} />}
+      description={<FreezeDescription isFrozen={freezeGuard.isFrozen} />}
       RightElement={
         <Flex
           color="blue.500"
@@ -66,7 +71,7 @@ export function ActivityFreeze({
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            {!freezeData.isFrozen && freezeData.freezeVotesThreshold.gt(0) && (
+            {!freezeGuard.isFrozen && freezeVotesThreshold!.gt(0) && (
               <Tooltip
                 label={t('tipFreeze', { amount: voteToThreshold })}
                 placement="bottom"
@@ -77,14 +82,14 @@ export function ActivityFreeze({
           </Text>
           {!isFreezeProposalDeadlinePassed && !isFreezeDeadlinePassed && (
             <Text textStyle="text-base-sans-regular">
-              {freezeData.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
+              {freezeGuard.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
             </Text>
           )}
-          {!freezeData.isFrozen && vetoVotingContract && (
+          {!freezeGuard.isFrozen && vetoVotingContract && (
             <FreezeButton
-              isFrozen={freezeData.isFrozen}
-              userHasFreezeVoted={freezeData.userHasFreezeVoted}
-              userHasVotes={freezeData.userHasVotes}
+              isFrozen={freezeGuard.isFrozen}
+              userHasFreezeVoted={freezeGuard.userHasFreezeVoted}
+              userHasVotes={freezeGuard.userHasVotes}
               vetoVotingContract={vetoVotingContract}
             />
           )}

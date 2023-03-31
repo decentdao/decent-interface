@@ -16,8 +16,14 @@ export const initialNodeState: FractalNode = {
 
 export function nodeReducer(state: FractalNode, action: NodeActions) {
   switch (action.type) {
-    case NodeAction.SET_DAO_NODE: {
-      return action.payload;
+    case NodeAction.SET_SAFE_INFO: {
+      return { ...state, safe: action.payload };
+    }
+    case NodeAction.SET_DAO_INFO: {
+      return { ...state, ...action.payload };
+    }
+    case NodeAction.SET_FRACTAL_MODULES: {
+      return { ...state, fractalModules: action.payload };
     }
     case NodeAction.UPDATE_DAO_NAME: {
       return { ...state, daoName: action.payload };

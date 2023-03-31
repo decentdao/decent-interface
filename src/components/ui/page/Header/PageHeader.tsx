@@ -10,8 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import useDAOName from '../../../../hooks/DAO/useDAOName';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
   breadcrumbs: Crumb[];
@@ -40,14 +39,8 @@ function PageHeader({
   children,
 }: IPageHeader) {
   const {
-    gnosis: {
-      safe: { address },
-      daoName,
-    },
+    node: { daoAddress, daoName },
   } = useFractal();
-  const { daoRegistryName } = useDAOName({
-    address,
-  });
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
@@ -55,13 +48,13 @@ function PageHeader({
     if (hasDAOLink) {
       setLinks([
         {
-          title: daoRegistryName || daoName,
-          path: DAO_ROUTES.dao.relative(address),
+          title: daoName || '',
+          path: DAO_ROUTES.dao.relative(daoAddress),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, address, daoName, daoRegistryName, breadcrumbs]);
+  }, [hasDAOLink, daoName, daoAddress, breadcrumbs]);
 
   return (
     <Box
@@ -80,7 +73,7 @@ function PageHeader({
             onClick={buttonClick}
             data-testid={buttonTestId}
             variant={buttonVariant}
-            disabled={isButtonDisabled}
+            isDisabled={isButtonDisabled}
           >
             {buttonText}
           </Button>
@@ -95,7 +88,7 @@ function PageHeader({
             data-testid={buttonTestId}
             size="base"
             variant={buttonVariant}
-            disabled={isButtonDisabled}
+            isDisabled={isButtonDisabled}
           >
             {buttonText}
           </IconButton>

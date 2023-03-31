@@ -135,7 +135,7 @@ export function DelegateModal({ close }: { close: Function }) {
       <Button
         marginTop="2rem"
         width="100%"
-        disabled={!isValidAddress || newDelegatee.trim() === '' || pending}
+        isDisabled={!isValidAddress || newDelegatee.trim() === '' || pending}
         onClick={onDelegateClick}
       >
         {t('buttonDelegate')}

@@ -40,7 +40,7 @@ function TransactionsForm(props: TransactionsFormProps) {
         <Button
           variant="text"
           onClick={() => setFieldValue('transactions', [...transactions, DEFAULT_TRANSACTION])}
-          disabled={pendingTransaction}
+          isDisabled={pendingTransaction}
           w="fit-content"
           pl={0}
         >
@@ -77,7 +77,7 @@ function TransactionsForm(props: TransactionsFormProps) {
           <Button
             w="100%"
             type="submit"
-            disabled={!canUserCreateProposal || !!transactionsError || pendingTransaction}
+            isDisabled={!canUserCreateProposal || !!transactionsError || pendingTransaction}
           >
             {t('createProposal')}
           </Button>

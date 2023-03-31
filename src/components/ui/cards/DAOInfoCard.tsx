@@ -10,17 +10,18 @@ import Link from 'next/link';
 import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
+import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { SafeInfoResponseWithGuard, IGnosisFreezeData, IGnosisVetoContract } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { SafeInfoResponseWithGuard, FreezeGuard, FractalGuardContracts } from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
-  parentSafeAddress?: string;
+  parentAddress?: string | null;
   subDAOSafeInfo?: SafeInfoResponseWithGuard;
   safeAddress: string;
   toggleExpansion?: () => void;
@@ -31,27 +32,22 @@ interface IDAOInfoCard {
 }
 
 export function DAOInfoCard({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
   toggleExpansion,
   expanded,
   numberOfChildrenDAO,
-  freezeData,
+  freezeGuard,
   guardContracts,
-}: IDAOInfoCard & { freezeData?: IGnosisFreezeData; guardContracts: IGnosisVetoContract }) {
+}: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
   const {
-    gnosis: {
-      safe: { address },
-      daoName,
-    },
-    account: {
-      favorites: { favoritesList, toggleFavorite },
-    },
+    node: { daoAddress, daoName },
   } = useFractal();
+  const { favoritesList, toggleFavorite } = useAccountFavorites();
   const { address: account } = useAccount();
   const copyToClipboard = useCopyText();
   const { daoRegistryName } = useDAOName({
-    address: address !== safeAddress ? safeAddress : undefined,
+    address: daoAddress !== safeAddress ? safeAddress : undefined,
   });
   const { accountSubstring } = useDisplayName(safeAddress);
   const isFavorite = favoritesList.includes(safeAddress);
@@ -150,9 +146,9 @@ export function DAOInfoCard({
       {/* Veritical Elipsis */}
       {canManageDAO && (
         <ManageDAOMenu
-          parentSafeAddress={parentSafeAddress}
+          parentAddress={parentAddress}
           safeAddress={safeAddress}
-          freezeData={freezeData}
+          freezeGuard={freezeGuard}
           guardContracts={guardContracts}
         />
       )}
@@ -162,15 +158,17 @@ export function DAOInfoCard({
 
 export function DAONodeCard(props: IDAOInfoCard) {
   const {
-    gnosis: { safe, guardContracts, freezeData },
+    node: { daoAddress },
+    guardContracts,
+    guard,
   } = useFractal();
-  const isCurrentDAO = props.safeAddress === safe.address;
+  const isCurrentDAO = props.safeAddress === daoAddress;
   const { subDAOData } = useSubDAOData(!isCurrentDAO ? props.safeAddress : undefined);
 
   const nodeGuardContracts =
     !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
-  const nodeFreezeData =
-    !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : !isCurrentDAO ? undefined : freezeData;
+  const nodeFreezeGuard =
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuard : !isCurrentDAO ? undefined : guard;
   const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
 
   return (
@@ -186,12 +184,12 @@ export function DAONodeCard(props: IDAOInfoCard) {
     >
       <NodeLineHorizontal
         isCurrentDAO={isCurrentDAO}
-        isFirstChild={props.depth === 0 && props.parentSafeAddress !== safe.address}
+        isFirstChild={props.depth === 0 && props.parentAddress !== daoAddress}
       />
       <DAOInfoCard
         {...props}
         guardContracts={nodeGuardContracts}
-        freezeData={nodeFreezeData}
+        freezeGuard={nodeFreezeGuard}
       />
     </Flex>
   );

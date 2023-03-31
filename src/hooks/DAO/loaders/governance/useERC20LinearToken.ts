@@ -39,7 +39,6 @@ export const useERC20LinearToken = () => {
       totalSupply,
     };
     isTokenLoaded.current = true;
-    console.count('loadERC20Token');
     dispatch.governance({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
   }, [tokenContract, dispatch]);
 

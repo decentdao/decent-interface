@@ -25,11 +25,11 @@ export default function useDAOQuery({
       const daos = data.daos;
       const dao = daos[0];
       if (dao) {
-        const { parentAddress, hierarchy } = dao;
+        const { parentAddress, hierarchy } = dao as any;
         gnosisDispatch({
           type: GnosisAction.SET_DAO_DATA,
           payload: {
-            parentDAOAddress: parentAddress,
+            parentAddress: parentAddress,
             daoName: daoRegistryName,
             hierarchy,
           },

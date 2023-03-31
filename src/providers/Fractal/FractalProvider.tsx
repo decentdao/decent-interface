@@ -69,7 +69,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
   );
 
   useGnosisGovernance({ governance, gnosis, governanceDispatch, chainId });
-  const { lookupFreezeData } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
+  const { lookupFreezeGuard } = useFreezeData(gnosis.guardContracts, gnosisDispatch);
 
   const isViewingDAO = pathname === DAO_ROUTES.daos.path;
   useEffect(() => {
@@ -99,7 +99,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
         },
         lookupModules,
         getVetoGuardContracts,
-        lookupFreezeData,
+        lookupFreezeGuard,
       },
     }),
     [
@@ -111,7 +111,7 @@ export function FractalProvider({ children }: { children: ReactNode }) {
       getGnosisSafeInfo,
       lookupModules,
       getVetoGuardContracts,
-      lookupFreezeData,
+      lookupFreezeGuard,
     ]
   );
 

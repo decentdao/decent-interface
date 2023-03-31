@@ -25,7 +25,7 @@ export const fractalModuleData = (
   zodiacModuleProxyFactoryContract: ModuleProxyFactory,
   safeContract: GnosisSafe,
   saltNum: string,
-  parentDAOAddress?: string
+  parentAddress?: string
 ): FractalModuleData => {
   const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
     'setUp',
@@ -33,7 +33,7 @@ export const fractalModuleData = (
       ethers.utils.defaultAbiCoder.encode(
         ['address', 'address', 'address', 'address[]'],
         [
-          parentDAOAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
+          parentAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
           safeContract.address, // Avatar
           safeContract.address, // Target
           [], // Authorized Controllers

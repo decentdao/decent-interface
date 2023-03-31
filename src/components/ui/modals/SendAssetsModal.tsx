@@ -147,7 +147,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       <Button
         marginTop="2rem"
         width="100%"
-        disabled={isSubmitDisabled}
+        isDisabled={isSubmitDisabled}
         onClick={onSubmit}
       >
         {t('sendAssetsSubmit')}

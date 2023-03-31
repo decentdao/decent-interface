@@ -10,7 +10,7 @@ import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
 
 export default function HierarchyPage() {
   const {
-    gnosis: { safe, parentDAOAddress },
+    gnosis: { safe, parentAddress },
   } = useFractal();
   const { t } = useTranslation(['breadcrubms']);
 
@@ -33,7 +33,7 @@ export default function HierarchyPage() {
         ]}
       />
       <DaoNode
-        safeAddress={parentDAOAddress || safe.address}
+        safeAddress={parentAddress || safe.address}
         trueDepth={0}
       />
     </Box>

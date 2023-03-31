@@ -9,26 +9,26 @@ import {
 } from '../../../../helpers/freezePeriodHelpers';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../types';
+import { FractalGuardContracts, FreezeGuard } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentSafeAddress?: string;
+  parentAddress?: string | null;
   safeAddress: string;
-  freezeData?: IGnosisFreezeData;
-  guardContracts: IGnosisVetoContract;
+  freezeGuard?: FreezeGuard;
+  guardContracts: FractalGuardContracts;
 }
 
 export function ManageDAOMenu({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
-  freezeData,
+  freezeGuard,
   guardContracts,
 }: IManageDAOMenu) {
   const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { handleClawBack } = useClawBack({
-    parentSafeAddress,
+    parentAddress,
     childSafeAddress: safeAddress,
   });
 
@@ -38,18 +38,21 @@ export function ManageDAOMenu({
       onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
     if (
-      freezeData &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezeProposalPeriod &&
+      freezeGuard.freezePeriod &&
       !isWithinFreezeProposalPeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezeProposalPeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezeProposalPeriod,
         currentTime
       ) &&
       !isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.userHasVotes
+      freezeGuard.userHasVotes
     ) {
       const freezeOption = {
         optionKey: 'optionInitiateFreeze',
@@ -57,14 +60,16 @@ export function ManageDAOMenu({
       };
       return [createSubDAOOption, freezeOption];
     } else if (
-      freezeData &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezePeriod &&
       isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.isFrozen &&
-      freezeData.userHasVotes
+      freezeGuard.isFrozen &&
+      freezeGuard.userHasVotes
     ) {
       const clawBackOption = {
         optionKey: 'optionInitiateClawback',
@@ -75,7 +80,7 @@ export function ManageDAOMenu({
     } else {
       return [createSubDAOOption];
     }
-  }, [safeAddress, push, guardContracts, handleClawBack, freezeData, currentTime]);
+  }, [safeAddress, push, guardContracts, handleClawBack, freezeGuard, currentTime]);
 
   return (
     <OptionMenu

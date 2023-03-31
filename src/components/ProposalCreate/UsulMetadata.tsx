@@ -70,7 +70,7 @@ function UsulMetadata(props: UsulMetadataProps) {
       <Button
         w="100%"
         onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
-        disabled={!!proposalMetadataError}
+        isDisabled={!!proposalMetadataError}
       >
         Next
       </Button>

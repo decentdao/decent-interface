@@ -4,8 +4,14 @@ import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { TxProposal, TxProposalState, UsulProposal, VetoGuardType } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import {
+  AzoriusGovernance,
+  TxProposal,
+  TxProposalState,
+  UsulProposal,
+  VetoGuardType,
+} from '../../../types';
 
 const ICONS_MAP = {
   vote: Vote,
@@ -19,9 +25,7 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
   const { t } = useTranslation('proposal');
   const {
     governance,
-    gnosis: {
-      guardContracts: { vetoGuardContract, vetoGuardType },
-    },
+    guardContracts: { vetoGuardContract, vetoGuardType },
   } = useFractal();
 
   const isActive = useMemo(() => proposal.state === TxProposalState.Active, [proposal]);
@@ -34,9 +38,9 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
   );
 
   const usulProposal = proposal as UsulProposal;
-
+  const azoriusGovernance = governance as AzoriusGovernance;
   useEffect(() => {
-    const timeLockPeriod = governance.governanceToken?.timeLockPeriod;
+    const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
     if (!timeLockPeriod) {
       return;
     }

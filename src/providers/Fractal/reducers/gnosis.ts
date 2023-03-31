@@ -30,19 +30,19 @@ export const gnosisReducer = (state: IGnosis, action: GnosisActions): IGnosis =>
     case GnosisAction.SET_GUARD_CONTRACTS:
       return { ...state, guardContracts: { ...action.payload } };
     case GnosisAction.SET_FREEZE_DATA:
-      return { ...state, freezeData: { ...action.payload } };
+      return { ...state, freezeGuard: { ...action.payload } };
     case GnosisAction.FREEZE_VOTE_EVENT: {
-      if (!state.freezeData) {
+      if (!state.freezeGuard) {
         return { ...state };
       }
-      const freezeData = state.freezeData;
+      const freezeGuard = state.freezeGuard;
       const { isVoter, freezeProposalCreatedTime, freezeProposalVoteCount } = action.payload;
       const userHasFreezeVoted = isVoter;
-      const isFrozen = freezeProposalVoteCount.gte(freezeData.freezeVotesThreshold);
+      const isFrozen = freezeProposalVoteCount.gte(freezeGuard.freezeVotesThreshold);
       return {
         ...state,
-        freezeData: {
-          ...freezeData,
+        freezeGuard: {
+          ...freezeGuard,
           freezeProposalVoteCount,
           userHasFreezeVoted,
           isFrozen,
