@@ -328,7 +328,7 @@ export interface Fractal {
   guard: FreezeGuard; // holds the guard for the current fractal node; note maybe this should stay generic?; how does this scale?
   governance: FractalGovernance; // extendable class type with Governance Base interface
   treasury: FractalTreasury; // Treasury
-  governanceContracts: GovernanceContractsRefactored;
+  governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
 }
 
@@ -338,7 +338,7 @@ export interface FractalClients {
 }
 
 // @RENAME -> GovernanceContracts
-export interface GovernanceContractsRefactored {
+export interface FractalGovernanceContracts {
   ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
   usulContract: ContractConnection<FractalUsul> | null;
   tokenContract: ContractConnection<VotesToken> | null;

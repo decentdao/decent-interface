@@ -12,8 +12,8 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useDisplayName from '../../hooks/utils/useDisplayName';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { ProposalVote, UsulProposal } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { AzoriusGovernance, ProposalVote, UsulProposal } from '../../types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import StatusBox from '../ui/badges/StatusBox';
 import ContentBox from '../ui/containers/ContentBox';
@@ -85,9 +85,9 @@ function ProposalVotes({
 }: {
   proposal: UsulProposal;
 }) {
-  const {
-    governance: { governanceToken },
-  } = useFractal();
+  const { governance } = useFractal();
+
+  const azoriousGovernance = governance as AzoriusGovernance;
   const { t } = useTranslation(['common', 'proposal']);
   const totalVotesCasted = yes.add(no).add(abstain);
 
@@ -99,7 +99,7 @@ function ProposalVotes({
     return voteTotal.div(totalVotesCasted.div(100)).toNumber();
   };
 
-  if (!governanceToken || !governanceToken.totalSupply) {
+  if (!azoriousGovernance.votesToken) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -183,9 +183,9 @@ function ProposalVotes({
               <ProposalVoteItem
                 key={vote.voter}
                 vote={vote}
-                govTokenTotalSupply={governanceToken.totalSupply!}
-                govTokenDecimals={governanceToken.decimals!}
-                govTokenSymbol={governanceToken.symbol!}
+                govTokenTotalSupply={azoriousGovernance.votesToken.totalSupply}
+                govTokenDecimals={azoriousGovernance.votesToken.decimals}
+                govTokenSymbol={azoriousGovernance.votesToken.symbol}
               />
             ))}
           </Flex>

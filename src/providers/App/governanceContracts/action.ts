@@ -1,4 +1,4 @@
-import { GovernanceContractsRefactored } from '../../../types';
+import { FractalGovernanceContracts } from '../../../types';
 
 export enum GovernanceContractAction {
   SET_GOVERNANCE_CONTRACT,
@@ -8,7 +8,7 @@ export enum GovernanceContractAction {
 export type GovernanceContractActions =
   | {
       type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT;
-      payload: Omit<GovernanceContractsRefactored, 'isLoaded'>;
+      payload: Omit<FractalGovernanceContracts, 'isLoaded'>;
     }
   | {
       type: GovernanceContractAction.RESET;

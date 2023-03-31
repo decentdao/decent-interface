@@ -1,19 +1,17 @@
 import { BigNumber } from 'ethers';
 import { useCallback, Dispatch } from 'react';
-import { IGovernance, GovernanceActions, UsulProposal, GovernanceAction } from '../../../../types';
+import { FractalGovernanceContracts } from '../../../../types';
+import { FractalGovernanceAction, FractalGovernanceActions } from '../../../App/governance/action';
 import { getTxProposalState } from '../../utils';
 
 interface IUseUpdateProposalState {
-  governance: IGovernance;
-  governanceDispatch: Dispatch<GovernanceActions>;
+  governanceContracts: FractalGovernanceContracts;
+  governanceDispatch: Dispatch<FractalGovernanceActions>;
   chainId: number;
 }
 
 export default function useUpdateProposalState({
-  governance: {
-    txProposalsInfo,
-    contracts: { usulContract, ozLinearVotingContract },
-  },
+  governanceContracts: { usulContract, ozLinearVotingContract },
   governanceDispatch,
   chainId,
 }: IUseUpdateProposalState) {
@@ -22,42 +20,19 @@ export default function useUpdateProposalState({
       if (!usulContract || !ozLinearVotingContract) {
         return;
       }
-      const proposals = await Promise.all(
-        (txProposalsInfo.txProposals as UsulProposal[]).map(async proposal => {
-          if (proposalNumber.eq(proposal.proposalNumber)) {
-            const updatedProposal = {
-              ...proposal,
-              state: await getTxProposalState(
-                ozLinearVotingContract.asSigner,
-                usulContract.asSigner,
-                proposalNumber,
-                chainId
-              ),
-            };
-            return updatedProposal;
-          }
-          return proposal;
-        })
+      const newState = await getTxProposalState(
+        ozLinearVotingContract.asSigner,
+        usulContract.asSigner,
+        proposalNumber,
+        chainId
       );
 
       governanceDispatch({
-        type: GovernanceAction.UPDATE_PROPOSALS,
-        payload: {
-          txProposals: proposals,
-          passed: txProposalsInfo.passed,
-          active: txProposalsInfo.active ? txProposalsInfo.active : 1,
-        },
+        type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
+        payload: { proposalNumber: proposalNumber.toString(), state: newState },
       });
     },
-    [
-      usulContract,
-      ozLinearVotingContract,
-      txProposalsInfo.txProposals,
-      txProposalsInfo.passed,
-      txProposalsInfo.active,
-      governanceDispatch,
-      chainId,
-    ]
+    [usulContract, ozLinearVotingContract, governanceDispatch, chainId]
   );
 
   return updateProposalState;

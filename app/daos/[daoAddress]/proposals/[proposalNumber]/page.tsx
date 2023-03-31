@@ -9,7 +9,7 @@ import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
-import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import { TxProposal, UsulProposal } from '../../../../../src/types';
 
 export default function ProposalDetailsPage({
@@ -18,12 +18,8 @@ export default function ProposalDetailsPage({
   params: { proposalNumber: string };
 }) {
   const {
-    gnosis: {
-      safe: { address },
-    },
-    governance: {
-      txProposalsInfo: { txProposals },
-    },
+    node: { daoAddress },
+    governance: { proposals },
   } = useFractal();
 
   const [proposal, setProposal] = useState<TxProposal | null>();
@@ -37,12 +33,12 @@ export default function ProposalDetailsPage({
   });
 
   useEffect(() => {
-    if (!txProposals || !txProposals.length || !proposalNumber) {
+    if (!proposals || !proposals.length || !proposalNumber) {
       setProposal(undefined);
       return;
     }
 
-    const foundProposal = txProposals.find(p => {
+    const foundProposal = proposals.find(p => {
       return p.proposalNumber === proposalNumber;
     });
     if (!foundProposal) {
@@ -50,7 +46,7 @@ export default function ProposalDetailsPage({
       return;
     }
     setProposal(foundProposal);
-  }, [txProposals, proposalNumber]);
+  }, [proposals, proposalNumber]);
 
   return (
     <Box>
@@ -58,7 +54,7 @@ export default function ProposalDetailsPage({
         breadcrumbs={[
           {
             title: t('proposals', { ns: 'breadcrumbs' }),
-            path: DAO_ROUTES.proposals.relative(address),
+            path: DAO_ROUTES.proposals.relative(daoAddress),
           },
           {
             title: t('proposal', {

@@ -9,7 +9,6 @@ import {
 import { useTokenClaim } from '../../hooks/useTokenClaim';
 import useGovernanceTokenData from './useGovernanceTokenData';
 import { useSafeMultisigTxs } from './useSafeMultisigTxs';
-import useUsulProposals from './useUsulProposals';
 import { useVotingContracts } from './useVotingContracts';
 
 interface IUseGnosisGovernance {
@@ -31,7 +30,6 @@ export const useGnosisGovernance = ({
   const governanceTokenData = useGovernanceTokenData(governance.contracts);
   useTokenClaim({ tokenContract: governance.contracts.tokenContract, governanceDispatch });
   // loads transactions (multisig) or proposals (usul)
-  useUsulProposals({ governance, governanceDispatch });
   useSafeMultisigTxs({ governance, gnosis, governanceDispatch });
 
   useEffect(() => {

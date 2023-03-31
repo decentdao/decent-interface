@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { UsulProposal } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { AzoriusGovernance, UsulProposal } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
@@ -20,21 +20,24 @@ export default function ProposalSummary({
 }: {
   proposal: UsulProposal;
 }) {
-  const {
-    governance: { governanceToken },
-  } = useFractal();
+  const { governance } = useFractal();
+
+  const azoriousGovernance = governance as AzoriusGovernance;
   const { displayName: proposerDisplayName } = useDisplayName(proposer);
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const getVotesPercentage = (voteTotal: BigNumber): number => {
-    if (!governanceToken || !governanceToken.totalSupply || governanceToken.totalSupply.eq(0)) {
+    if (
+      !azoriousGovernance.votesToken.totalSupply ||
+      azoriousGovernance.votesToken.totalSupply.eq(0)
+    ) {
       return 0;
     }
 
-    return voteTotal.div(governanceToken.totalSupply.div(100)).toNumber();
+    return voteTotal.div(azoriousGovernance.votesToken.totalSupply.div(100)).toNumber();
   };
 
-  if (!governanceToken || !governanceToken.totalSupply) {
+  if (!azoriousGovernance.votesToken.totalSupply) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -44,7 +47,9 @@ export default function ProposalSummary({
 
   const yesVotesPercentage = getVotesPercentage(votesSummary.yes);
   const noVotesPercentage = getVotesPercentage(votesSummary.no);
-  const quorum = votesSummary.quorum.div(governanceToken.totalSupply.div(100)).toNumber();
+  const quorum = votesSummary.quorum
+    .div(azoriousGovernance.votesToken.totalSupply.div(100))
+    .toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
   return (
