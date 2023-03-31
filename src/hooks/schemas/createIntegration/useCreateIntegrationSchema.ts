@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { encodeFunction } from '../../../utils/crypto';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 /**
@@ -10,8 +8,6 @@ import { useValidationAddress } from '../common/useValidationAddress';
  */
 export const useCreateIntegrationSchema = () => {
   const { addressValidationTest } = useValidationAddress();
-
-  const { t } = useTranslation(['createIntegration', 'proposal']);
 
   const createIntegrationValidation = useMemo(
     () =>
@@ -25,23 +21,13 @@ export const useCreateIntegrationSchema = () => {
                 value: Yup.string(),
               }),
               functionName: Yup.string(),
-              functionSignature: Yup.string(),
-              parameters: Yup.string(),
-              encodedFunctionData: Yup.string().test({
-                message: t('errorInvalidFragments', { ns: 'proposal' }),
-                test: (_, context) => {
-                  const functionName = context.parent.functionName;
-                  const functionSignature = context.parent.functionSignature;
-                  const parameters = context.parent.parameters;
-                  if (!functionName) return false;
-                  const encodedFunction = encodeFunction(
-                    functionName,
-                    functionSignature,
-                    parameters
-                  );
-                  return !!encodedFunction;
-                },
-              }),
+              parameters: Yup.array().of(
+                Yup.object().shape({
+                  signature: Yup.string().required(),
+                  label: Yup.string(),
+                  value: Yup.string(),
+                })
+              ),
             })
           ),
         integrationMetadata: Yup.object().shape({
@@ -49,7 +35,7 @@ export const useCreateIntegrationSchema = () => {
           description: Yup.string().notRequired(),
         }),
       }),
-    [addressValidationTest, t]
+    [addressValidationTest]
   );
   return { createIntegrationValidation };
 };

@@ -12,5 +12,9 @@
     "labelParameterLabel": "Parameter Label",
     "helperParameterLabel": "Add a label for a blank input",
     "labelParameterValue": "Parameter Value",
-    "integrationLeaveBlank": "or leave blank to allow for user input"
+    "integrationLeaveBlank": "or leave blank to allow for user input",
+    "parameter": "Parameter",
+    "value": "Value",
+    "userInput": "user input",
+    "eth": "ETH"
 }

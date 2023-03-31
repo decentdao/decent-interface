@@ -75,7 +75,7 @@ export function InputComponent(props: InputProps) {
         id={id}
         value={value}
         onChange={onChange}
-        disabled={disabled}
+        isDisabled={disabled}
         data-testid={testId}
         placeholder={placeholder}
       />
@@ -105,7 +105,7 @@ export function TextareaComponent(props: TextareaProps) {
         resize="none"
         onChange={onChange}
         value={value}
-        disabled={disabled}
+        isDisabled={disabled}
         rows={rows}
         placeholder={placeholder}
         size="base"

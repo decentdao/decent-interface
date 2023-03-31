@@ -14,7 +14,6 @@ export interface CreateIntegrationTransaction<T = BigNumberValuePair> {
     label?: string;
     value?: string;
   }[];
-  encodedFunctionData?: string;
 }
 
 export type CreateIntegrationMetadata = {
