@@ -10,26 +10,24 @@ import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
-import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../../../src/types';
+import { useFractal } from '../../../../src/providers/App/AppProvider';
+import { AzoriusGovernance, StrategyType } from '../../../../src/types';
 
 export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
-    governance: { type, governanceToken },
-    gnosis: {
-      safe: { owners, address },
-    },
+    governance,
+    node: { daoAddress, safe },
   } = useFractal();
-
+  const { type } = governance;
   const { address: account } = useAccount();
-
+  const azoriousGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
   const showDelegate =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL && governanceToken?.userBalance?.gt(0);
+    type === StrategyType.GNOSIS_SAFE_USUL && azoriousGovernance.votesToken.balance?.gt(0);
 
   const showCreateButton =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
+    type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(account || '');
 
   return (
     <Box>
@@ -46,7 +44,7 @@ export default function ProposalsPage() {
         buttonTestId="link-delegate"
       >
         {showCreateButton && (
-          <Link href={DAO_ROUTES.proposalNew.relative(address)}>
+          <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

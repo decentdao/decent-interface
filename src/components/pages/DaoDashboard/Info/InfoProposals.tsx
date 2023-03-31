@@ -11,10 +11,10 @@ export function InfoProposals({}: IDAOGovernance) {
   const { t } = useTranslation('dashboard');
   const {
     node: { daoAddress },
-    governance,
+    governance: { proposals, type },
   } = useFractal();
 
-  if (!daoAddress || !governance.type) {
+  if (!daoAddress || !type) {
     return (
       <Flex
         h="8.5rem"
@@ -26,18 +26,22 @@ export function InfoProposals({}: IDAOGovernance) {
       </Flex>
     );
   }
-  const passed = governance.proposals.reduce(
-    (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
-    0
-  );
+  const passed = !proposals
+    ? 0
+    : proposals.reduce(
+        (prev, proposal) => (proposal.state === TxProposalState.Executed ? prev + 1 : prev),
+        0
+      );
 
-  const active = governance.proposals.reduce(
-    (prev, proposal) =>
-      proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Executing
-        ? prev + 1
-        : prev,
-    0
-  );
+  const active = !proposals
+    ? 0
+    : proposals.reduce(
+        (prev, proposal) =>
+          proposal.state === TxProposalState.Active || proposal.state === TxProposalState.Executing
+            ? prev + 1
+            : prev,
+        0
+      );
 
   return (
     <Box data-testid="dashboard-daoProposals">
