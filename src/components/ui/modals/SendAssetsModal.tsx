@@ -5,7 +5,7 @@ import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { BigNumberValuePair } from '../../../types';
 import {
   formatCoinFromAsset,
