@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import IntegrationDetails from '../../../../../src/components/CreateIntegration/IntegrationDetails';
 import IntegrationMetadata from '../../../../../src/components/CreateIntegration/IntegrationMetadata';
+import IntegrationTransactionsForm from '../../../../../src/components/CreateIntegration/IntegrationTransactionsForm';
 import { DEFAULT_INTEGRATION } from '../../../../../src/components/CreateIntegration/constants';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../src/constants/common';
@@ -121,7 +122,22 @@ export default function CreateIntegrationPage() {
                           setFormState={setFormState}
                           {...formikProps}
                         />
-                      ) : null}
+                      ) : (
+                        <>
+                          <Text
+                            textStyle="text-xl-mono-medium"
+                            mb={4}
+                          >
+                            {formikProps.values.integrationMetadata.title}
+                          </Text>
+                          <IntegrationTransactionsForm
+                            setFormState={setFormState}
+                            canUserCreateProposal={canUserCreateProposal}
+                            pendingTransaction={pendingCreateTx}
+                            {...formikProps}
+                          />
+                        </>
+                      )}
                     </Box>
                   </Flex>
                 </GridItem>

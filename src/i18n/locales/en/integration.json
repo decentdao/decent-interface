@@ -6,5 +6,11 @@
     "integrationDescriptionHelperText": "Add a brief description",
     "preview": "Preview",
     "previewTitle": "Title",
-    "previewThumnbail": "Thumbnail"
+    "previewThumnbail": "Thumbnail",
+    "labelFunctionParameter": "Function Parameter",
+    "helperFunctionParameter": "The function of the above smart contract to be called",
+    "labelParameterLabel": "Parameter Label",
+    "helperParameterLabel": "Add a label for a blank input",
+    "labelParameterValue": "Parameter Value",
+    "integrationLeaveBlank": "or leave blank to allow for user input"
 }

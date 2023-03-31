@@ -1,4 +1,4 @@
-import { Input, HStack, Text, Textarea, Grid, GridItem } from '@chakra-ui/react';
+import { Input, HStack, Text, Textarea, Grid, GridItem, GridProps } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumberInput, BigNumberInputProps } from './BigNumberInput';
 import { EthAddressInput } from './EthAddressInput';
@@ -13,6 +13,7 @@ interface BaseProps {
   subLabel?: React.ReactNode;
   errorMessage?: string;
   children: React.ReactNode;
+  gridContainerProps?: GridProps;
 }
 
 interface InputProps extends Omit<BaseProps, 'children'> {
@@ -35,13 +36,14 @@ interface BigNumberProps
     Omit<BigNumberInputProps, 'isRequired'> {}
 
 export function LabelComponent(props: Omit<BaseProps, 'value' | 'disabled'>) {
-  const { label, helper, isRequired, subLabel, errorMessage, children } = props;
+  const { label, helper, isRequired, subLabel, errorMessage, children, gridContainerProps } = props;
   return (
     <Grid
       columnGap={3}
       templateColumns={{ base: '1fr', md: '1fr 2fr' }}
       fontSize="14px"
       alignItems="start"
+      {...gridContainerProps}
     >
       <GridItem>
         <HStack

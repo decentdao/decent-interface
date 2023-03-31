@@ -3,15 +3,17 @@ import { BigNumberValuePair } from './common';
 export enum CreateIntegrationState {
   METADATA_FORM,
   TRANSACTIONS_FORM,
-  LOADING,
 }
 
 export interface CreateIntegrationTransaction<T = BigNumberValuePair> {
   targetAddress: string;
   ethValue: T;
   functionName: string;
-  functionSignature: string;
-  parameters: string;
+  parameters: {
+    signature: string;
+    label?: string;
+    value?: string;
+  }[];
   encodedFunctionData?: string;
 }
 
