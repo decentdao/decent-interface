@@ -1,6 +1,6 @@
 import { Box, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { ICreationStepProps, GovernanceTypes, CreatorSteps } from '../../../types';
+import { ICreationStepProps, StrategyType, CreatorSteps } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
@@ -50,13 +50,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
               label={t('labelMultisigGov')}
               description={t('descMultisigGov')}
               testId="choose-multisig"
-              value={GovernanceTypes.GNOSIS_SAFE}
+              value={StrategyType.GNOSIS_SAFE}
             />
             <RadioWithText
               label={t('labelUsulGov')}
               description={t('descUsulGov')}
               testId="choose-usul"
-              value={GovernanceTypes.GNOSIS_SAFE_USUL}
+              value={StrategyType.GNOSIS_SAFE_USUL}
             />
           </RadioGroup>
         </LabelComponent>
@@ -68,7 +68,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         nextStep={
-          values.essentials.governance === GovernanceTypes.GNOSIS_SAFE
+          values.essentials.governance === StrategyType.GNOSIS_SAFE
             ? CreatorSteps.GNOSIS_GOVERNANCE
             : CreatorSteps.GNOSIS_WITH_USUL
         }

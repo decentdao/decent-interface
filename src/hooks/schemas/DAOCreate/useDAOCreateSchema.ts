@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { DAOEssentials, GovernanceTypes, BigNumberValuePair } from '../../../types';
+import { DAOEssentials, StrategyType, BigNumberValuePair } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
@@ -24,7 +24,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           governance: Yup.string().required(),
         }),
         gnosis: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceTypes.GNOSIS_SAFE,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE,
           then: _schema =>
             _schema.shape({
               trustedAddresses: Yup.array()
@@ -46,7 +46,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         govToken: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceTypes.GNOSIS_SAFE_USUL,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_USUL,
           then: _schema =>
             _schema.shape({
               tokenName: Yup.string().required(),
@@ -76,7 +76,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         govModule: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceTypes.GNOSIS_SAFE_USUL,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_USUL,
           then: _schema =>
             _schema.shape({
               quorumPercentage: Yup.object().shape({ value: Yup.string().required() }),

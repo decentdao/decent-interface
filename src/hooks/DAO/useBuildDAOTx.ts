@@ -5,7 +5,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import {
   TokenGovernanceDAO,
   GnosisDAO,
-  GovernanceTypes,
+  StrategyType,
   UsulContracts,
   BaseContracts,
 } from '../../types';
@@ -61,7 +61,7 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === GovernanceTypes.GNOSIS_SAFE_USUL) {
+      if (daoData.governance === StrategyType.GNOSIS_SAFE_USUL) {
         if (
           !fractalUsulMasterCopyContract ||
           !linearVotingMasterCopyContract ||
@@ -107,7 +107,7 @@ const useBuildDAOTx = () => {
 
       // Build Tx bundle based on governance type (Usul or Multisig)
       const safeTx =
-        daoData.governance === GovernanceTypes.GNOSIS_SAFE_USUL
+        daoData.governance === StrategyType.GNOSIS_SAFE_USUL
           ? await daoTxBuilder.buildUsulTx()
           : await daoTxBuilder.buildMultisigTx();
 

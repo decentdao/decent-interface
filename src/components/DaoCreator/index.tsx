@@ -3,7 +3,7 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { DAOTrigger, CreatorFormState, GovernanceTypes } from '../../types';
+import { DAOTrigger, CreatorFormState, StrategyType } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
 
@@ -29,7 +29,7 @@ function DaoCreator({
           const choosenGovernance = values.essentials.governance;
           const vetoGuard = isSubDAO ? values.vetoGuard : undefined;
           switch (choosenGovernance) {
-            case GovernanceTypes.GNOSIS_SAFE: {
+            case StrategyType.GNOSIS_SAFE: {
               const data = await prepareMultisigFormData({
                 ...values.essentials,
                 ...values.gnosis,
@@ -38,7 +38,7 @@ function DaoCreator({
               deployDAO(data);
               return;
             }
-            case GovernanceTypes.GNOSIS_SAFE_USUL: {
+            case StrategyType.GNOSIS_SAFE_USUL: {
               const data = await prepareGnosisUsulFormData({
                 ...values.essentials,
                 ...values.govModule,
