@@ -10,7 +10,6 @@ import { useCallback } from 'react';
 import { useProvider } from 'wagmi';
 import { checkIsApproved, checkIsRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
-import { parseDecodedData } from '../../providers/Fractal/utils';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
@@ -19,7 +18,7 @@ import {
   Activity,
   TxProposalState,
 } from '../../types';
-import { formatWeiToValue } from '../../utils';
+import { formatWeiToValue, parseDecodedData } from '../../utils';
 import { getTxQueuedTimestamp } from './useSafeActivitiesWithState';
 
 export const useSafeTransactions = () => {
