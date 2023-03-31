@@ -7,7 +7,7 @@ function EtherscanLinkAddress({
   children,
 }: {
   path?: string;
-  address?: string;
+  address?: string | null;
   children: React.ReactNode;
 }) {
   const { etherscanBaseURL } = useNetworkConfg();

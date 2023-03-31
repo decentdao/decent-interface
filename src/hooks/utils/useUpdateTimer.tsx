@@ -38,6 +38,9 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
     if (!safeAddress || process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
       timers.forEach(timer => clearInterval(timer.timerId));
     }
+    return () => {
+      timers.forEach(timer => clearInterval(timer.timerId));
+    };
   }, [safeAddress, timers]);
   return { setMethodOnInterval };
 };

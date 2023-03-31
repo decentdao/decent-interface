@@ -18,14 +18,12 @@ export const useFractalTreasury = () => {
 
   const { safeBaseURL } = useNetworkConfg();
 
-  const { setMethodOnInterval } = useUpdateTimer();
+  const { setMethodOnInterval } = useUpdateTimer(daoAddress);
 
   const loadTreasury = useCallback(async () => {
     if (!daoAddress || !safeService) {
       return;
     }
-    currentValidAddress.current = daoAddress;
-
     const [assetsFungible, assetsNonFungible, transfers] = await Promise.all([
       safeService.getUsdBalances(daoAddress).catch(e => {
         logError(e);
@@ -45,14 +43,15 @@ export const useFractalTreasury = () => {
 
     const treasuryData = {
       assetsFungible,
-      assetsNonFungible: assetsNonFungible.data,
+      assetsNonFungible: assetsNonFungible.data.results,
       transfers: transfers.data,
     };
     dispatch.treasury({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
   }, [daoAddress, safeService, safeBaseURL, dispatch]);
 
   useEffect(() => {
-    if (daoAddress !== currentValidAddress.current) {
+    if (daoAddress && daoAddress !== currentValidAddress.current) {
+      currentValidAddress.current = daoAddress;
       setMethodOnInterval(loadTreasury);
     }
   }, [daoAddress, loadTreasury, setMethodOnInterval]);
