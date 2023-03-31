@@ -6,8 +6,8 @@ import { ProposalAction } from '../../../components/Proposals/ProposalActions/Pr
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import { useFractal } from '../../../providers/App/AppProvider';
-import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { UsulProposal, TxProposalState, AzoriusGovernance } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';

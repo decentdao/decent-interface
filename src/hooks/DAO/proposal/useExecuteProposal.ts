@@ -2,10 +2,10 @@ import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, TxProposal, UsulProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
+import useUpdateProposalState from './useUpdateProposalState';
 import useUsul from './useUsul';
 
 export default function useExecuteProposal() {
