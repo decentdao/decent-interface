@@ -1,11 +1,11 @@
 import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
+import { strategyTxProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
 import { createAccountSubstring } from '../hooks/utils/useDisplayName';
 import { getValue, CacheKeys, setValue, CacheExpiry } from '../hooks/utils/useLocalStorage';
-import { strategyTxProposalStates } from '../providers/Fractal/governance/constants';
 import {
   TxProposalState,
   ProposalIsPassedError,
