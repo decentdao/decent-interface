@@ -29,7 +29,6 @@ export default function useUpdateProposalState({
         proposalNumber,
         chainId
       );
-
       governanceDispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
         payload: { proposalNumber: proposalNumber.toString(), state: newState },

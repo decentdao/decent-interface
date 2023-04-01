@@ -2,6 +2,7 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useDAOProposals } from '../../../../hooks/DAO/loaders/useProposals';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -18,6 +19,7 @@ const useSendAssets = ({
   nonce: number | undefined;
 }) => {
   const { submitProposal } = useSubmitProposal();
+  const loadDAOProposals = useDAOProposals();
   const { t } = useTranslation(['modals', 'proposalMetadata']);
 
   const sendAssets = useCallback(() => {
@@ -49,6 +51,9 @@ const useSendAssets = ({
     submitProposal({
       proposalData,
       nonce,
+      successCallback: async () => {
+        await loadDAOProposals();
+      },
       pendingToastMessage: t('sendAssetsPendingToastMessage'),
       successToastMessage: t('sendAssetsSuccessToastMessage'),
       failedToastMessage: t('sendAssetsFailureToastMessage'),
@@ -60,6 +65,7 @@ const useSendAssets = ({
     transferAmount,
     destinationAddress,
     t,
+    loadDAOProposals,
     submitProposal,
     nonce,
   ]);

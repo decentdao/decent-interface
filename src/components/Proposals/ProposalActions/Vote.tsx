@@ -1,10 +1,9 @@
-import { Text, Button, Flex, Tooltip } from '@chakra-ui/react';
+import { Button, Tooltip } from '@chakra-ui/react';
 import { CloseX, Check } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -15,9 +14,6 @@ import {
   UsulVoteChoice,
   AzoriusGovernance,
 } from '../../../types';
-
-import ContentBox from '../../ui/containers/ContentBox';
-import ProposalTime from '../../ui/proposal/ProposalTime';
 
 function Vote({
   proposal,
@@ -74,11 +70,7 @@ function Vote({
           : undefined
       }
     >
-      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-        <Flex justifyContent="space-between">
-          <Text textStyle="text-lg-mono-medium">{t('vote')}</Text>
-          <ProposalTime proposal={proposal} />
-        </Flex>
+      <>
         <Button
           width="full"
           isDisabled={disabled}
@@ -105,7 +97,7 @@ function Vote({
         >
           {t('abstain')}
         </Button>
-      </ContentBox>
+      </>
     </Tooltip>
   );
 }

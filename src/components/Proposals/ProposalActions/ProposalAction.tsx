@@ -1,8 +1,9 @@
-import { Button } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
@@ -11,9 +12,38 @@ import {
   FractalProposalState,
   MultisigProposal,
 } from '../../../types';
+import ContentBox from '../../ui/containers/ContentBox';
+import ProposalTime from '../../ui/proposal/ProposalTime';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';
+
+export function ProposalActions({
+  proposal,
+  hasVoted,
+}: {
+  proposal: FractalProposal;
+  hasVoted: boolean;
+}) {
+  console.log('🚀 ~ file: ProposalActionWrapper.tsx:18 ~ hasVoted:', hasVoted);
+  switch (proposal.state) {
+    case FractalProposalState.Active:
+      return (
+        <CastVote
+          proposal={proposal}
+          currentUserHasVoted={hasVoted}
+        />
+      );
+    case FractalProposalState.Queueable:
+      return <Queue proposal={proposal} />;
+    case FractalProposalState.Executing:
+    case FractalProposalState.TimeLocked:
+    case FractalProposalState.Queued:
+      return <Execute proposal={proposal} />;
+    default:
+      return <></>;
+  }
+}
 
 export function ProposalAction({
   proposal,
@@ -51,6 +81,21 @@ export function ProposalAction({
     }
   }, [account, isUsulProposal, proposal]);
 
+  const labelKey = useMemo(() => {
+    switch (proposal.state) {
+      case FractalProposalState.Active:
+        return 'vote';
+      case FractalProposalState.Queueable:
+        return 'queueTitle';
+      case FractalProposalState.Executing:
+      case FractalProposalState.TimeLocked:
+      case FractalProposalState.Queued:
+        return 'executeTitle';
+      default:
+        return '';
+    }
+  }, [proposal]);
+
   const label = useMemo(() => {
     if (proposal.state === FractalProposalState.Active) {
       if (hasVoted) {
@@ -77,21 +122,22 @@ export function ProposalAction({
   }
 
   if (expandedView) {
-    switch (proposal.state) {
-      case FractalProposalState.Active:
-        return (
-          <CastVote
-            proposal={proposal}
-            currentUserHasVoted={hasVoted}
-          />
-        );
-      case FractalProposalState.Queueable:
-        return <Queue proposal={proposal} />;
-      case FractalProposalState.Executing:
-      case FractalProposalState.TimeLocked:
-      case FractalProposalState.Queued:
-        return <Execute proposal={proposal} />;
-    }
+    return (
+      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <Flex justifyContent="space-between">
+          <Text textStyle="text-lg-mono-medium">
+            {t(labelKey, {
+              ns: proposal.state === FractalProposalState.Active ? 'common' : 'proposal',
+            })}
+          </Text>
+          <ProposalTime proposal={proposal} />
+        </Flex>
+        <ProposalActions
+          proposal={proposal}
+          hasVoted={hasVoted}
+        />
+      </ContentBox>
+    );
   }
 
   return (
