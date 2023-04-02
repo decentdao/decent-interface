@@ -53,7 +53,6 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       _fractalModules: FractalModuleData[]
     ) => {
       const { guard } = _safe;
-      currentValidAddress.current = _daoAddress;
 
       let vetoGuardContract: ContractConnection<UsulVetoGuard | VetoGuard> | undefined;
       let vetoGuardType: VetoGuardType | null = null;
@@ -128,7 +127,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   }, [dispatch, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
-    if (daoAddress !== currentValidAddress.current && loadOnMount) {
+    if (daoAddress && daoAddress !== currentValidAddress.current && loadOnMount) {
+      currentValidAddress.current = daoAddress;
       setGuardContracts();
     }
   }, [setGuardContracts, daoAddress, loadOnMount]);

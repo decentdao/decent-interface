@@ -99,7 +99,6 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
         userHasVotes,
       };
       isFreezeSet.current = true;
-      currentValidAddress.current = vetoVotingContract.asSigner.address;
       return freeze;
     },
     [account, provider, gnosisSafeSingletonContract, votesTokenMasterCopyContract]
@@ -122,6 +121,7 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
       guardContracts.vetoVotingContract.asSigner.address !== currentValidAddress.current &&
       loadOnMount
     ) {
+      currentValidAddress.current = guardContracts.vetoVotingContract.asSigner.address;
       setFractalFreezeGuard(guardContracts);
     }
   }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
