@@ -28,7 +28,7 @@ export async function getTxQueuedTimestamp(activity: Activity, vetoGuard: VetoGu
         [
           multiSigTransaction.to,
           multiSigTransaction.value,
-          ethers.utils.solidityKeccak256(['bytes'], [multiSigTransaction.data as string]),
+          ethers.utils.solidityKeccak256(['bytes'], [(multiSigTransaction.data as string) || '0x']),
           multiSigTransaction.operation,
           multiSigTransaction.safeTxGas,
           multiSigTransaction.baseGas,
