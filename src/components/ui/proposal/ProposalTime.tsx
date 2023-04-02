@@ -76,7 +76,6 @@ function useCountdown(proposal: FractalProposal) {
     };
 
     const startCountdown = (initialTime: number, intervalTime: number) => {
-      updateCountdown(initialTime);
       countdownInterval = setInterval(() => {
         updateCountdown(initialTime - Date.now());
       }, intervalTime);
@@ -180,6 +179,7 @@ function ProposalTime({ proposal }: { proposal: FractalProposal }) {
   }
 
   const zeroPad = (num: number, places: number) => String(num).padStart(places, '0');
+  const daysLeft = Math.floor(countdown / (1000 * 60 * 60 * 24));
   const hoursLeft = Math.floor(countdown / (1000 * 60 * 60));
   const minutesLeft = Math.floor((countdown / (60 * 1000)) % 60);
   const secondsLeft = Math.floor((countdown / 1000) % 60);
@@ -202,7 +202,8 @@ function ProposalTime({ proposal }: { proposal: FractalProposal }) {
             color="chocolate.200"
             textStyle="text-base-mono-semibold"
           >
-            {zeroPad(hoursLeft, 2)}:{zeroPad(minutesLeft, 2)}:{zeroPad(secondsLeft, 2)}
+            {zeroPad(daysLeft, 2)}:{zeroPad(hoursLeft, 2)}:{zeroPad(minutesLeft, 2)}:
+            {zeroPad(secondsLeft, 2)}
           </Text>
         </Flex>
       </Flex>

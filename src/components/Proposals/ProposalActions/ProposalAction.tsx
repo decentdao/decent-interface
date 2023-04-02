@@ -25,7 +25,6 @@ export function ProposalActions({
   proposal: FractalProposal;
   hasVoted: boolean;
 }) {
-  console.log('🚀 ~ file: ProposalActionWrapper.tsx:18 ~ hasVoted:', hasVoted);
   switch (proposal.state) {
     case FractalProposalState.Active:
       return (
