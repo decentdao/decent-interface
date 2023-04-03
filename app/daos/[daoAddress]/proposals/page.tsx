@@ -3,6 +3,7 @@
 import { Box, Button, Show } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import Proposals from '../../../../src/components/Proposals';
@@ -21,12 +22,18 @@ export default function ProposalsPage() {
   } = useFractal();
   const { type } = governance;
   const { address: account } = useAccount();
-  const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
-  const showDelegate =
-    type === StrategyType.GNOSIS_SAFE_USUL &&
-    !!azoriusGovernance.votesToken.balance &&
-    azoriusGovernance.votesToken.balance.gt(0);
+  const showDelegate = useMemo(() => {
+    if (type) {
+      const azoriusGovernance = governance as AzoriusGovernance;
+      if (type === StrategyType.GNOSIS_SAFE_USUL) {
+        if (azoriusGovernance.votesToken && azoriusGovernance.votesToken.balance) {
+          return azoriusGovernance.votesToken.balance.gt(0);
+        }
+      }
+    }
+    return false;
+  }, [type, governance]);
 
   const showCreateButton =
     type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(account || '');

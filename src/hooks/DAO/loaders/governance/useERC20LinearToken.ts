@@ -69,11 +69,15 @@ export const useERC20LinearToken = () => {
   }, [tokenContract, dispatch, account]);
 
   useEffect(() => {
-    if (isTokenLoaded.current && tokenAccount.current !== account) {
-      tokenAccount.current = account;
+    if (
+      tokenContract &&
+      isTokenLoaded.current &&
+      tokenAccount.current !== account + tokenContract.asSigner.address
+    ) {
+      tokenAccount.current = account + tokenContract.asSigner.address;
       loadERC20TokenAccountData();
     }
-  }, [account, loadERC20TokenAccountData]);
+  }, [account, tokenContract, loadERC20TokenAccountData]);
 
   useEffect(() => {
     if (!tokenContract) {

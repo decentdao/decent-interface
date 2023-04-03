@@ -140,8 +140,8 @@ export const useGovernanceContracts = () => {
   useEffect(() => {
     if (!!node.daoAddress && node.daoAddress !== currentValidAddress.current) {
       // load governance contracts for DAO
-      loadGovernanceContracts(node);
       currentValidAddress.current = node.daoAddress;
+      loadGovernanceContracts(node);
     }
   }, [node, loadGovernanceContracts]);
   return;
