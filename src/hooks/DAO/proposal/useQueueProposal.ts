@@ -6,6 +6,7 @@ import { useProvider, useSigner } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { VetoGuardType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
+import useUpdateProposalState from './useUpdateProposalState';
 
 export default function useQueueProposal() {
   const { t } = useTranslation('transaction');
@@ -16,8 +17,19 @@ export default function useQueueProposal() {
   const [contractCallQueueProposal, contractCallPending] = useTransaction();
   const {
     guardContracts: { vetoGuardContract, vetoGuardType },
-    governanceContracts: { ozLinearVotingContract },
+    governanceContracts,
+    dispatch,
   } = useFractal();
+  const { ozLinearVotingContract } = governanceContracts;
+
+  const {
+    network: { chainId },
+  } = useProvider();
+  const updateProposalState = useUpdateProposalState({
+    governanceContracts,
+    governanceDispatch: dispatch.governance,
+    chainId,
+  });
 
   const queueProposal = useCallback(
     (proposalNumber: BigNumber) => {
@@ -32,6 +44,9 @@ export default function useQueueProposal() {
 
       contractCallQueueProposal({
         contractFn: () => contractFunc(proposalNumber),
+        successCallback: async () => {
+          await updateProposalState(proposalNumber);
+        },
         pendingMessage: t('pendingQueue'),
         failedMessage: t('failedQueue'),
         successMessage: t('successQueue'),
@@ -41,6 +56,7 @@ export default function useQueueProposal() {
       contractCallQueueProposal,
       signerOrProvider,
       t,
+      updateProposalState,
       ozLinearVotingContract,
       vetoGuardContract,
       vetoGuardType,
