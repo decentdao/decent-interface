@@ -2,7 +2,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { ActivityEventType, SortBy, TreasuryActivity, TxProposal } from '../../../../types';
+import { ActivityEventType, SortBy, TreasuryActivity, FractalProposal } from '../../../../types';
 import { ActivityGovernance } from '../../../Activity/ActivityGovernance';
 import { ActivityModule } from '../../../Activity/ActivityModule';
 import { ActivityTreasury } from '../../../Activity/ActivityTreasury';
@@ -56,7 +56,7 @@ export function Activities() {
                 return (
                   <ActivityGovernance
                     key={i}
-                    activity={activity as TxProposal}
+                    activity={activity as FractalProposal}
                   />
                 );
               }
@@ -64,7 +64,7 @@ export function Activities() {
                 return (
                   <ActivityModule
                     key={i}
-                    activity={activity as TxProposal}
+                    activity={activity as FractalProposal}
                   />
                 );
               }

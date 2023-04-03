@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
 import { checkIsRejected, checkIsApproved } from '../../helpers/activity';
-import { Activity, ActivityEventType, TxProposalState } from '../../types';
+import { Activity, ActivityEventType, FractalProposalState } from '../../types';
 
 export async function getTxQueuedTimestamp(activity: Activity, vetoGuard: VetoGuard) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
@@ -71,7 +71,7 @@ export function useSafeActivitiesWithState(
             if (activity.transaction.txType === 'MODULE_TRANSACTION') {
               return {
                 ...activity,
-                state: TxProposalState.Module,
+                state: FractalProposalState.Module,
               };
             }
 
@@ -92,18 +92,18 @@ export function useSafeActivitiesWithState(
             const isApproved = checkIsApproved(multiSigTransaction);
             const queuedTimestamp = await getTxQueuedTimestamp(activity, vetoGuard);
 
-            let state: TxProposalState;
+            let state: FractalProposalState;
 
             if (multiSigTransaction.isExecuted) {
-              state = TxProposalState.Executed;
+              state = FractalProposalState.Executed;
             } else if (queuedTimestamp === 0) {
               // Has not been queued
               if (isRejected) {
-                state = TxProposalState.Rejected;
+                state = FractalProposalState.Rejected;
               } else if (isApproved) {
-                state = TxProposalState.Queueable;
+                state = FractalProposalState.Queueable;
               } else {
-                state = TxProposalState.Active;
+                state = FractalProposalState.Active;
               }
             } else {
               // Has been Queued
@@ -114,14 +114,14 @@ export function useSafeActivitiesWithState(
                   queuedTimestamp + timelockPeriod.toNumber() + executionPeriod.toNumber()
                 ) {
                   // Within execution period
-                  state = TxProposalState.Executing;
+                  state = FractalProposalState.Executing;
                 } else {
                   // Execution period has ended
-                  state = TxProposalState.Expired;
+                  state = FractalProposalState.Expired;
                 }
               } else {
                 // Within timelock period
-                state = TxProposalState.Queued;
+                state = FractalProposalState.Queued;
               }
             }
 
@@ -140,7 +140,7 @@ export function useSafeActivitiesWithState(
           if (activity.transaction.txType === 'MODULE_TRANSACTION') {
             return {
               ...activity,
-              state: TxProposalState.Module,
+              state: FractalProposalState.Module,
             };
           }
 
@@ -162,13 +162,13 @@ export function useSafeActivitiesWithState(
 
           let state;
           if (isRejected) {
-            state = TxProposalState.Rejected;
+            state = FractalProposalState.Rejected;
           } else if (multiSigTransaction.isExecuted) {
-            state = TxProposalState.Executed;
+            state = FractalProposalState.Executed;
           } else if (isApproved) {
-            state = TxProposalState.Executing;
+            state = FractalProposalState.Executing;
           } else {
-            state = TxProposalState.Active;
+            state = FractalProposalState.Active;
           }
           return { ...activity, state };
         })

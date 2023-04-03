@@ -16,10 +16,9 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  GovernanceTypes,
+  StrategyType,
   CreatorSteps,
   AzoriusGovernance,
-  StrategyType,
 } from '../../../types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
 import { LabelComponent } from '../../ProposalCreate/InputComponent';
@@ -115,7 +114,7 @@ function GuardDetails(props: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governanceFormType === GovernanceTypes.GNOSIS_SAFE && (
+        {governanceFormType === StrategyType.GNOSIS_SAFE && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -254,7 +253,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === GovernanceTypes.GNOSIS_SAFE
+            governanceFormType === StrategyType.GNOSIS_SAFE
               ? CreatorSteps.GNOSIS_GOVERNANCE
               : CreatorSteps.GOV_CONFIG
           }

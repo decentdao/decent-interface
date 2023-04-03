@@ -9,7 +9,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { UsulProposal, TxProposalState, AzoriusGovernance } from '../../../types';
+import { UsulProposal, FractalProposalState, AzoriusGovernance } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { ProposalInfo } from '../ProposalInfo';
@@ -35,9 +35,9 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
     }
     let timeout = 0;
     const now = new Date();
-    if (proposal.state === TxProposalState.Active) {
+    if (proposal.state === FractalProposalState.Active) {
       timeout = proposal.deadline * 1000 - now.getTime();
-    } else if (proposal.state === TxProposalState.TimeLocked) {
+    } else if (proposal.state === FractalProposalState.TimeLocked) {
       const timeLockNumber = timeLockPeriod?.value?.toNumber();
       timeout =
         new Date((proposal.deadline + Number(timeLockNumber)) * 1000).getTime() - now.getTime();

@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, TxProposal, UsulProposal } from '../../../types';
+import { MetaTransaction, FractalProposal, UsulProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 import useUpdateProposalState from './useUpdateProposalState';
 import useUsul from './useUsul';
@@ -22,7 +22,7 @@ export default function useExecuteProposal() {
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
-    (proposal: TxProposal) => {
+    (proposal: FractalProposal) => {
       const usulProposal = proposal as UsulProposal;
       if (!usulContract || !usulProposal.metaData || !usulProposal.metaData.transactions) {
         return;

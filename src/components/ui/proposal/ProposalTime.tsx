@@ -7,8 +7,8 @@ import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWith
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
-  TxProposal,
-  TxProposalState,
+  FractalProposal,
+  FractalProposalState,
   UsulProposal,
   VetoGuardType,
 } from '../../../types';
@@ -19,7 +19,7 @@ const ICONS_MAP = {
   execute: Execute,
 };
 
-function ProposalTime({ proposal }: { proposal: TxProposal }) {
+function ProposalTime({ proposal }: { proposal: FractalProposal }) {
   const [countdown, setCountdown] = useState<number>();
   const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timer>();
   const { t } = useTranslation('proposal');
@@ -28,10 +28,13 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
     guardContracts: { vetoGuardContract, vetoGuardType },
   } = useFractal();
 
-  const isActive = useMemo(() => proposal.state === TxProposalState.Active, [proposal]);
-  const isTimeLocked = useMemo(() => proposal.state === TxProposalState.TimeLocked, [proposal]);
-  const isQueued = useMemo(() => proposal.state === TxProposalState.Queued, [proposal]);
-  const isExecutable = useMemo(() => proposal.state === TxProposalState.Executing, [proposal]);
+  const isActive = useMemo(() => proposal.state === FractalProposalState.Active, [proposal]);
+  const isTimeLocked = useMemo(
+    () => proposal.state === FractalProposalState.TimeLocked,
+    [proposal]
+  );
+  const isQueued = useMemo(() => proposal.state === FractalProposalState.Queued, [proposal]);
+  const isExecutable = useMemo(() => proposal.state === FractalProposalState.Executing, [proposal]);
   const showCountdown = useMemo(
     () => isActive || isTimeLocked || isExecutable || isQueued,
     [isActive, isTimeLocked, isExecutable, isQueued]

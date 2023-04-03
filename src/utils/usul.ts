@@ -1,13 +1,13 @@
 import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { strategyTxProposalStates } from '../constants/strategy';
+import { strategyFractalProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
 import { createAccountSubstring } from '../hooks/utils/useDisplayName';
 import { getValue, CacheKeys, setValue, CacheExpiry } from '../hooks/utils/useLocalStorage';
 import {
-  TxProposalState,
+  FractalProposalState,
   ProposalIsPassedError,
   ProposalVotesSummary,
   ProposalVote,
@@ -22,13 +22,13 @@ import {
 } from '../types';
 import { Providers } from '../types/network';
 
-export const getTxProposalState = async (
+export const getFractalProposalState = async (
   strategy: OZLinearVoting,
   usulContract: FractalUsul,
   proposalId: BigNumber,
   chainId: number
-): Promise<TxProposalState> => {
-  const cache: TxProposalState = getValue(
+): Promise<FractalProposalState> => {
+  const cache: FractalProposalState = getValue(
     CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
     chainId
   );
@@ -45,33 +45,33 @@ export const getTxProposalState = async (
       try {
         // This function never returns false, it either returns true or throws an error
         await strategy.isPassed(proposalId);
-        return TxProposalState.Queueable;
+        return FractalProposalState.Queueable;
       } catch (e: any) {
         if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
           setValue(
             CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
-            TxProposalState.Rejected,
+            FractalProposalState.Rejected,
             chainId,
             CacheExpiry.NEVER
           );
-          return TxProposalState.Rejected;
+          return FractalProposalState.Rejected;
         } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
           setValue(
             CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
-            TxProposalState.Failed,
+            FractalProposalState.Failed,
             chainId,
             CacheExpiry.NEVER
           );
-          return TxProposalState.Failed;
+          return FractalProposalState.Failed;
         } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
-          return TxProposalState.Active;
+          return FractalProposalState.Active;
         }
-        return TxProposalState.Failed;
+        return FractalProposalState.Failed;
       }
     }
-    return TxProposalState.Active;
+    return FractalProposalState.Active;
   }
-  return strategyTxProposalStates[state];
+  return strategyFractalProposalStates[state];
 };
 
 export const getProposalVotesSummary = async (
@@ -126,7 +126,7 @@ export const mapProposalCreatedEventToProposal = async (
   metaData?: ProposalMetaData
 ) => {
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
-  const state = await getTxProposalState(
+  const state = await getFractalProposalState(
     strategyContract,
     usulContract.asSigner,
     proposalNumber,
@@ -141,7 +141,7 @@ export const mapProposalCreatedEventToProposal = async (
     : [];
 
   let transactionHash: string | undefined;
-  if (state === TxProposalState.Executed) {
+  if (state === FractalProposalState.Executed) {
     const proposalExecutedFilter = usulContract.asSigner.filters.TransactionExecuted();
     const proposalExecutedEvents = await usulContract.asSigner.queryFilter(proposalExecutedFilter);
     const executedEvent = proposalExecutedEvents.find(event => event.args[0].eq(proposalNumber));

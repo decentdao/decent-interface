@@ -5,7 +5,7 @@ import {
   FractalGovernanceActions,
 } from '../../../providers/App/governance/action';
 import { FractalGovernanceContracts } from '../../../types';
-import { getTxProposalState } from '../../../utils';
+import { getFractalProposalState } from '../../../utils';
 
 interface IUseUpdateProposalState {
   governanceContracts: FractalGovernanceContracts;
@@ -23,7 +23,7 @@ export default function useUpdateProposalState({
       if (!usulContract || !ozLinearVotingContract) {
         return;
       }
-      const newState = await getTxProposalState(
+      const newState = await getFractalProposalState(
         ozLinearVotingContract.asSigner,
         usulContract.asSigner,
         proposalNumber,

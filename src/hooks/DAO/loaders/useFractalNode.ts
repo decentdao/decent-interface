@@ -160,7 +160,6 @@ export const useFractalNode = ({
         currentValidAddress.current = daoAddress;
       }
       if (!isCurrentAddress && daoAddress) {
-        console.log('🚀 ~ file: useFractalNode.ts:163 ~ daoAddress:', daoAddress);
         setDAO(daoAddress);
       }
     }

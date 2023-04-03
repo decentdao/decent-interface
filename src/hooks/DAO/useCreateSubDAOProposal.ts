@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
 import { TokenGovernanceDAO, GnosisDAO, AzoriusGovernance } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
-import useSafeContracts from '../safe/useSafeContracts';
 import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
-  const { multiSendContract, fractalRegistryContract } = useSafeContracts();
+  const {
+    baseContracts: { multiSendContract, fractalRegistryContract },
+  } = useFractal();
   const { t } = useTranslation(['daoCreate', 'proposal', 'proposalMetadata']);
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();

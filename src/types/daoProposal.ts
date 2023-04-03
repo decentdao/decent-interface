@@ -15,12 +15,6 @@ export interface ExecuteData {
   calldatas: string[];
 }
 
-export interface TxProposalsInfo {
-  txProposals: TxProposal[];
-  active?: number; // active/queued (usul) | not executed (multisig)
-  passed?: number; // executed (usul/multisig)
-}
-
 export type CreateProposalFunc = (proposal: {
   proposalData: {};
   successCallback: () => void;
@@ -76,5 +70,3 @@ export enum ProposalIsPassedError {
   QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
   PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
 }
-
-export type TxProposal = UsulProposal | MultisigProposal;
