@@ -1,5 +1,7 @@
 import { HStack, Text } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 
 export function ProposalHeader({
@@ -10,21 +12,16 @@ export function ProposalHeader({
 }: {
   isUsul?: boolean;
   metadataTitle?: string;
-  nonce?: number;
+  nonce: number;
   setNonce: (nonce?: number) => void;
 }) {
   const { t } = useTranslation(['proposal']);
-
-  if (!!metadataTitle) {
-    return (
-      <Text
-        textStyle="text-xl-mono-medium"
-        mb={4}
-      >
-        {metadataTitle}
-      </Text>
-    );
-  }
+  const defaultNonce = useDefaultNonce();
+  useEffect(() => {
+    if (defaultNonce && nonce === undefined) {
+      setNonce(defaultNonce);
+    }
+  }, [defaultNonce, nonce, setNonce]);
 
   return (
     <HStack justifyContent="space-between">
@@ -32,12 +29,13 @@ export function ProposalHeader({
         textStyle="text-xl-mono-medium"
         mb={4}
       >
-        {t('proposal', { ns: 'proposal' })}
+        {metadataTitle ? metadataTitle : t('proposal', { ns: 'proposal' })}
       </Text>
       {!isUsul && (
         <CustomNonceInput
           nonce={nonce}
           onChange={setNonce}
+          defaultNonce={defaultNonce}
         />
       )}
     </HStack>

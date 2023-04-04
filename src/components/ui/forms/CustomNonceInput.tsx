@@ -1,30 +1,23 @@
 import { Flex, Text, Input, Tooltip } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useUsul from '../../../hooks/DAO/proposal/useUsul';
-import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 
 export function CustomNonceInput({
   nonce,
   onChange,
+  defaultNonce,
 }: {
   nonce: number | undefined;
+  defaultNonce: number | undefined;
   onChange: (nonce?: number) => void;
 }) {
   const { usulContract } = useUsul();
-  const defaultNonce = useDefaultNonce();
   const { t } = useTranslation(['proposal']);
   const errorMessage =
     (nonce || nonce === 0) && (defaultNonce || defaultNonce === 0) && nonce < defaultNonce
       ? t('customNonceError')
       : undefined;
-
-  useEffect(() => {
-    if (defaultNonce !== nonce) {
-      onChange(defaultNonce);
-    }
-  }, [defaultNonce, nonce, onChange]);
 
   if (!!usulContract) return null;
 
@@ -64,7 +57,6 @@ export function CustomNonceInput({
         px="4"
         ml="4"
         width="auto"
-        min={defaultNonce || 1}
       />
       {errorMessage && (
         <Flex

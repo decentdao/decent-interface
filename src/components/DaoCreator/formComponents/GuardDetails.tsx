@@ -12,6 +12,7 @@ import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useUsul from '../../../hooks/DAO/proposal/useUsul';
+import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
@@ -42,7 +43,7 @@ function GuardDetails(props: ICreationStepProps) {
   const minutes = t('minutes', { ns: 'common' });
   const azoriusGovernance = governance as AzoriusGovernance;
   const governanceFormType = values.essentials.governance;
-
+  const defaultNonce = useDefaultNonce();
   const handleNonceChange = useCallback(
     (nonce?: number) => {
       setFieldValue('gnosis.customNonce', nonce);
@@ -243,6 +244,7 @@ function GuardDetails(props: ICreationStepProps) {
             <CustomNonceInput
               nonce={values.gnosis.customNonce}
               onChange={handleNonceChange}
+              defaultNonce={defaultNonce}
             />
             <Divider
               color="chocolate.700"
