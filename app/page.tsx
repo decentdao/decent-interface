@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import packageJson from '../package.json';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
 import useClientSide from '../src/hooks/utils/useClientSide';
@@ -160,7 +161,7 @@ export default function HomePage() {
             textStyle="text-md-mono-semibold"
             color="gold.500"
           >
-            Deployed by Netlify
+            v{packageJson.version} Deployed by Netlify
           </Text>
         </Link>
       </Flex>

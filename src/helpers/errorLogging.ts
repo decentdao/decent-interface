@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
+import { isProd, notProd } from '../utils/dev';
 
 /**
  * Initializes error logging.
@@ -7,16 +8,18 @@ import { BrowserTracing } from '@sentry/tracing';
 export function initErrorLogging() {
   // Used for remote error reporting
   // https://sentry.io/organizations/decent-mg/issues/
-  Sentry.init({
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || '',
-    integrations: [new BrowserTracing()],
+  if (notProd()) {
+    Sentry.init({
+      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || '',
+      integrations: [new BrowserTracing()],
 
-    // Setting tracesSampleRate to 1.0 captures 100%
-    // of sentry transactions for performance monitoring.
-    tracesSampleRate: 1.0,
+      // Setting tracesSampleRate to 1.0 captures 100%
+      // of sentry transactions for performance monitoring.
+      tracesSampleRate: 1.0,
 
-    debug: process.env.NODE_ENV !== 'production',
-  });
+      debug: true,
+    });
+  }
 }
 
 /**
@@ -26,8 +29,7 @@ export function initErrorLogging() {
  * @param walletAddress the wallet address of the currently connected wallet
  */
 export function setLoggedWallet(walletAddress: string | null) {
-  // don't track wallet addresses in production
-  if (process.env.NODE_ENV === 'production') return;
+  if (isProd()) return;
   if (!walletAddress) {
     Sentry.setUser(null);
   } else {
@@ -44,6 +46,7 @@ export function setLoggedWallet(walletAddress: string | null) {
  * @param value the context value
  */
 export function setErrorContext(key: string, value: string) {
+  if (isProd()) return;
   Sentry.setTag(key, value);
 }
 
@@ -52,6 +55,7 @@ export function setErrorContext(key: string, value: string) {
  * Sentry events.
  */
 export function clearErrorContext() {
+  if (isProd()) return;
   Sentry.setTags({});
   setLoggedWallet(null);
 }
@@ -62,12 +66,13 @@ export function clearErrorContext() {
  * else is logged as an exception.
  */
 export function logError(error: any, ...optionalParams: any[]) {
+  console.error(error, optionalParams);
+  if (isProd()) return;
   if (typeof error === 'string' || error instanceof String) {
     Sentry.captureMessage(error + ': ' + optionalParams);
   } else {
     Sentry.captureException(error);
   }
-  console.error(error, optionalParams);
 }
 
 /**
@@ -81,7 +86,8 @@ export class FractalErrorBoundary extends Sentry.ErrorBoundary {
     },
     errorInfo: React.ErrorInfo
   ) {
-    super.componentDidCatch(error, errorInfo);
     console.error(error, errorInfo);
+    if (isProd()) return;
+    super.componentDidCatch(error, errorInfo);
   }
 }
