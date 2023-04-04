@@ -12,17 +12,19 @@ const useSendAssets = ({
   asset,
   destinationAddress,
   nonce,
+  daoAddress,
 }: {
   transferAmount: BigNumber;
   asset: SafeBalanceUsdResponse;
   destinationAddress: string;
   nonce: number | undefined;
+  daoAddress: string | null;
 }) => {
   const { submitProposal } = useSubmitProposal();
-  const loadDAOProposals = useDAOProposals();
-  const { t } = useTranslation(['modals', 'proposalMetadata']);
 
-  const sendAssets = useCallback(() => {
+  const { t } = useTranslation(['modals', 'proposalMetadata']);
+  const loadDAOProposals = useDAOProposals();
+  const sendAssets = useCallback(async () => {
     const isEth = !asset.tokenAddress;
     const description = formatCoin(
       transferAmount,
@@ -48,15 +50,16 @@ const useSendAssets = ({
       documentationUrl: '',
     };
 
-    submitProposal({
+    await submitProposal({
       proposalData,
-      nonce,
-      successCallback: async () => {
-        await loadDAOProposals();
+      successCallback: () => {
+        loadDAOProposals();
       },
+      nonce,
       pendingToastMessage: t('sendAssetsPendingToastMessage'),
       successToastMessage: t('sendAssetsSuccessToastMessage'),
       failedToastMessage: t('sendAssetsFailureToastMessage'),
+      safeAddress: daoAddress!,
     });
   }, [
     asset.tokenAddress,
@@ -64,8 +67,9 @@ const useSendAssets = ({
     asset?.token?.symbol,
     transferAmount,
     destinationAddress,
-    t,
+    daoAddress,
     loadDAOProposals,
+    t,
     submitProposal,
     nonce,
   ]);
