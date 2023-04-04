@@ -4,7 +4,7 @@ contact_links:
     url: https://docs.fractalframework.xyz/
     about: Your question might already be answered here!
   - name: Report a Vulnerability
-    url: https://github.com/decent-dao/fractal-interface/blob/HEAD/SECURITY.md
+    url: https://github.com/decent-dao/fractal-interface/blob/HEAD/.github/SECURITY.md
     about: Securely report a vulnerability
   - name: Join our Discord
     url: https://chat.fractalframework.xyz/
