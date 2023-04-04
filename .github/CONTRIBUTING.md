@@ -4,7 +4,7 @@
 
 - Some issues may already be reported, please search existing issues before submitting a new one.
 
-- If this is a potential security vulnerability in Fractal, please see our [Security Policy](https://github.com/decent-dao/fractal-interface/blob/HEAD/SECURITY.md) for instructions on privately reporting to our security team.
+- If this is a potential security vulnerability in Fractal, please see our [Security Policy](https://github.com/decent-dao/fractal-interface/blob/HEAD/.github/SECURITY.md) for instructions on privately reporting to our security team.
 
 - Otherwise, simply create a new issue and the Fractal development team will respond in a timely manner. Please be as descriptive of the issue as possible.
 
