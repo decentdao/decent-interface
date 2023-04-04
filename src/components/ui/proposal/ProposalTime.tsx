@@ -1,20 +1,22 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { Vote, Execute, Lock } from '@decent-org/fractal-ui';
-import { VetoGuard } from '@fractal-framework/fractal-contracts';
+import { UsulVetoGuard, VetoGuard } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
+import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
-import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
   FractalProposal,
   FractalProposalState,
+  StrategyType,
   UsulProposal,
   VetoGuardType,
 } from '../../../types';
+import { getTxQueuedTimestamp } from '../../../utils/guard';
 
 const ICONS_MAP = {
   vote: Vote,
@@ -30,11 +32,14 @@ function useCountdown(proposal: FractalProposal) {
     governanceContracts,
     dispatch,
   } = useFractal();
+
   const {
     network: { chainId },
   } = useProvider();
+
   const usulProposal = proposal as UsulProposal;
   const azoriusGovernance = governance as AzoriusGovernance;
+  const loadDAOProposals = useDAOProposals();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     governanceDispatch: dispatch.governance,
@@ -43,7 +48,15 @@ function useCountdown(proposal: FractalProposal) {
 
   let updateStateInterval = useRef<NodeJS.Timer | undefined>();
   useEffect(() => {
-    if (proposal.state === FractalProposalState.Executing) {
+    if (
+      [
+        FractalProposalState.Executing,
+        FractalProposalState.Executed,
+        FractalProposalState.Expired,
+        FractalProposalState.Rejected,
+        null,
+      ].includes(proposal.state)
+    ) {
       clearInterval(updateStateInterval.current);
       return;
     }
@@ -52,7 +65,11 @@ function useCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            await updateProposalState(BigNumber.from(proposal.proposalNumber));
+            if (governance.type === StrategyType.GNOSIS_SAFE_USUL) {
+              await updateProposalState(BigNumber.from(proposal.proposalNumber));
+            } else {
+              await loadDAOProposals();
+            }
           } catch (error) {
             console.error('Error updating proposal state:', error);
           }
@@ -67,7 +84,7 @@ function useCountdown(proposal: FractalProposal) {
         clearInterval(updateStateInterval.current);
       }
     };
-  }, [countdown, updateProposalState, proposal]);
+  }, [countdown, loadDAOProposals, proposal, updateProposalState, governance.type]);
 
   useEffect(() => {
     let countdownInterval: NodeJS.Timer | undefined;
@@ -82,33 +99,48 @@ function useCountdown(proposal: FractalProposal) {
     };
 
     async function getCountdown() {
-      const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
-      if (!timeLockPeriod) {
-        return;
-      }
-
       const vetoGuard =
         vetoGuardType === VetoGuardType.MULTISIG
           ? (vetoGuardContract?.asSigner as VetoGuard)
+          : vetoGuardType === VetoGuardType.USUL
+          ? (vetoGuardContract?.asSigner as UsulVetoGuard)
           : undefined;
 
-      if (proposal.state === FractalProposalState.Active && usulProposal.deadline) {
-        startCountdown(usulProposal.deadline * 1000, 1000);
+      const isSafeGuard = vetoGuardType === VetoGuardType.MULTISIG;
+      const isUsulGuard = vetoGuardType === VetoGuardType.USUL;
+
+      const usulDeadline = usulProposal.deadline ? usulProposal.deadline * 1000 : undefined;
+      const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
+
+      // If the proposal is active and has a deadline, start the countdown (for usul proposals)
+      if (proposal.state === FractalProposalState.Active && usulDeadline) {
+        startCountdown(usulDeadline, 1000);
       } else if (
+        // If the proposal is time locked and has a deadline, start the countdown (for usul proposals)
         proposal.state === FractalProposalState.TimeLocked &&
-        usulProposal.deadline &&
+        usulDeadline &&
         timeLockPeriod
       ) {
-        startCountdown((usulProposal.deadline + Number(timeLockPeriod.value)) * 1000, 1000);
-      } else if (proposal.state === FractalProposalState.Queued && vetoGuard) {
-        const queuedTimestamp = await getTxQueuedTimestamp(proposal, vetoGuard);
-        const guardTimeLockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
+        startCountdown(usulDeadline + Number(timeLockPeriod.value) * 1000, 1000);
+        // If the proposal is queued start the countdown (for safe multisig proposals with guards)
+      } else if (proposal.state === FractalProposalState.Queued && vetoGuard && isSafeGuard) {
+        const safeGuard = vetoGuard as VetoGuard;
+        const queuedTimestamp = (await getTxQueuedTimestamp(proposal, safeGuard)) * 1000;
+        const guardTimeLockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
         startCountdown(queuedTimestamp + guardTimeLockPeriod, 1000);
+        // If the proposal is executing start the countdown (for safe multisig proposals with guards)
       } else if (proposal.state === FractalProposalState.Executing && vetoGuard) {
-        const queuedTimestamp = await getTxQueuedTimestamp(proposal, vetoGuard);
-        const guardTimeLockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
-        const guardExecutionPeriod = (await vetoGuard.executionPeriod()).toNumber();
-        startCountdown(queuedTimestamp + guardTimeLockPeriod + guardExecutionPeriod, 1000);
+        let queuePeriod: number = 0;
+        if (isSafeGuard) {
+          const safeGuard = vetoGuard as VetoGuard;
+          const queuedTimestamp = (await getTxQueuedTimestamp(proposal, safeGuard)) * 1000;
+          const guardTimeLockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
+          queuePeriod = queuedTimestamp + guardTimeLockPeriod;
+        } else if (isUsulGuard && timeLockPeriod && usulDeadline) {
+          queuePeriod = Number(timeLockPeriod.value) * 1000 + usulDeadline;
+        }
+        const guardExecutionPeriod = Number(await vetoGuard.executionPeriod()) * 1000;
+        startCountdown(queuePeriod + guardExecutionPeriod, 1000);
       }
     }
 
