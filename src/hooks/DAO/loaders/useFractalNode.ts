@@ -121,29 +121,34 @@ export const useFractalNode = ({
   const setDAO = useCallback(
     async (_daoAddress: string) => {
       if (utils.isAddress(_daoAddress)) {
-        const safe = await safeService.getSafeInfo(_daoAddress);
-        if (!safe) {
-          invalidateDAO('errorInvalidSearch');
-          return;
-        }
-        await dispatch.resetDAO();
-        dispatch.node({
-          type: NodeAction.SET_SAFE_INFO,
-          payload: safe,
-        });
-        dispatch.node({
-          type: NodeAction.SET_FRACTAL_MODULES,
-          payload: await lookupModules(safe.modules),
-        });
-        const graphNodeInfo = formatDAOQuery(
-          await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-          _daoAddress
-        );
-        if (!!graphNodeInfo) {
+        try {
+          const safe = await safeService.getSafeInfo(utils.getAddress(_daoAddress));
+          if (!safe) {
+            invalidateDAO('errorInvalidSearch');
+            return;
+          }
+          await dispatch.resetDAO();
           dispatch.node({
-            type: NodeAction.SET_DAO_INFO,
-            payload: graphNodeInfo,
+            type: NodeAction.SET_SAFE_INFO,
+            payload: safe,
           });
+          dispatch.node({
+            type: NodeAction.SET_FRACTAL_MODULES,
+            payload: await lookupModules(safe.modules),
+          });
+          const graphNodeInfo = formatDAOQuery(
+            await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
+            _daoAddress
+          );
+          if (!!graphNodeInfo) {
+            dispatch.node({
+              type: NodeAction.SET_DAO_INFO,
+              payload: graphNodeInfo,
+            });
+          }
+        } catch (e) {
+          // network error
+          invalidateDAO('errorFailedSearch');
         }
       } else {
         // invalid address

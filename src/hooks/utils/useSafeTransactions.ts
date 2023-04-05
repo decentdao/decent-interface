@@ -19,7 +19,7 @@ import {
   FractalProposalState,
 } from '../../types';
 import { formatWeiToValue, parseDecodedData } from '../../utils';
-import { getTxQueuedTimestamp } from './useSafeActivitiesWithState';
+import { getTxQueuedTimestamp } from '../../utils/guard';
 
 export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfg();
@@ -48,7 +48,6 @@ export const useSafeTransactions = () => {
                 state: FractalProposalState.Module,
               };
             }
-
             const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
 
             const multiSigTransaction =
@@ -81,12 +80,11 @@ export const useSafeTransactions = () => {
               }
             } else {
               // Has been Queued
-              if (lastBlock.timestamp > queuedTimestamp + guardTimelockPeriod.toNumber()) {
+              const timeLockPeriodEnd = queuedTimestamp + Number(guardTimelockPeriod);
+              if (lastBlock.timestamp > timeLockPeriodEnd) {
                 // Timelock has ended
-                if (
-                  lastBlock.timestamp <
-                  queuedTimestamp + guardTimelockPeriod.toNumber() + guardExecutionPeriod.toNumber()
-                ) {
+                const queuePeriodEnd = timeLockPeriodEnd + Number(guardExecutionPeriod);
+                if (lastBlock.timestamp < queuePeriodEnd) {
                   // Within execution period
                   state = FractalProposalState.Executing;
                 } else {

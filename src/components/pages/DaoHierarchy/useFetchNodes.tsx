@@ -3,9 +3,9 @@ import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
-import { getUsulModuleFromModules } from '../../../hooks/DAO/proposal/useUsul';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SafeInfoResponseWithGuard } from '../../../types';
+import { getUsulModuleFromModules } from '../../../utils';
 
 export function useFetchNodes(address?: string) {
   const [childNodes, setChildNodes] = useState<SafeInfoResponseWithGuard[]>();

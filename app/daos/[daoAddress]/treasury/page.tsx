@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Flex } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -32,7 +33,8 @@ export default function Treasury() {
     if (type === StrategyType.GNOSIS_SAFE) {
       return owners?.includes(account || '');
     }
-    return azoriusGovernance?.votesToken.votingWeight?.gt(0);
+    const votingWeight = azoriusGovernance.votesToken.votingWeight;
+    return (votingWeight || BigNumber.from(0)).gt(0);
   }, [account, azoriusGovernance, hasAssetBalance, owners, type]);
 
   const showButton = isOwnerOrDelegate && assetsFungible.length > 0;

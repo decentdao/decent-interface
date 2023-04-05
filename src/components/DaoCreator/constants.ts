@@ -77,5 +77,6 @@ export const initialState: CreatorFormState = {
     trustedAddresses: [''],
     signatureThreshold: 1,
     numOfSigners: 1,
+    customNonce: 0,
   },
 };
