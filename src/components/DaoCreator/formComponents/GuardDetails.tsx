@@ -11,7 +11,6 @@ import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useUsul from '../../../hooks/DAO/proposal/useUsul';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
@@ -34,9 +33,9 @@ function GuardDetails(props: ICreationStepProps) {
   const {
     node: { safe },
     governance,
+    governanceContracts: { usulContract },
   } = useFractal();
   const { type } = governance;
-  const { usulContract, isLoaded: isUsulLoaded } = useUsul();
   const [showCustomNonce, setShowCustomNonce] = useState(false);
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
@@ -52,9 +51,12 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentUsul = !!usulContract;
-    setShowCustomNonce(Boolean(isSubDAO && !isParentUsul && isUsulLoaded));
-  }, [isSubDAO, usulContract, isUsulLoaded]);
+    const isParentUsul = type === StrategyType.GNOSIS_SAFE_USUL;
+    if (!isParentUsul && isSubDAO) {
+      setFieldValue('gnosis.customNonce', defaultNonce);
+      setShowCustomNonce(true);
+    }
+  }, [isSubDAO, usulContract, type, setFieldValue, defaultNonce]);
 
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
