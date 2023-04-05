@@ -24,7 +24,6 @@ export const FractalContext = createContext<FractalStore | null>(null);
 
 export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
 
-// @RENAME to FractalProvider
 export function AppProvider({ children }: { children: ReactNode }) {
   // handles current viewing node (DAO) state
   const [node, nodeDispatch] = useReducer(nodeReducer, initialNodeState);
@@ -65,13 +64,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
         treasury: treasuryDispatch,
         governanceContracts: governanceContractsDispatch,
         guardContracts: guardContractsDispatch,
-        resetDAO: () => {
-          nodeDispatch({ type: NodeAction.RESET });
-          guardDispatch({ type: FractalGuardAction.RESET });
-          governanceDispatch({ type: FractalGovernanceAction.RESET });
-          treasuryDispatch({ type: TreasuryAction.RESET });
-          governanceContractsDispatch({ type: GovernanceContractAction.RESET });
-          guardContractsDispatch({ type: GuardContractAction.RESET });
+        resetDAO: async () => {
+          await Promise.all([
+            nodeDispatch({ type: NodeAction.RESET }),
+            governanceContractsDispatch({ type: GovernanceContractAction.RESET }),
+            guardContractsDispatch({ type: GuardContractAction.RESET }),
+            governanceDispatch({ type: FractalGovernanceAction.RESET }),
+            guardDispatch({ type: FractalGuardAction.RESET }),
+            treasuryDispatch({ type: TreasuryAction.RESET }),
+          ]);
         },
       },
       clients: {

@@ -1,77 +1,77 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { TxProposalState, DAOState } from '../../../types';
+import { FractalProposalState, DAOState } from '../../../types';
 
 type BadgeType = { [key: string]: { Icon?: any; tooltipKey?: string; bg: string; color: string } };
 
 const BADGE_MAPPING: BadgeType = {
-  [TxProposalState.Active]: {
+  [FractalProposalState.Active]: {
     Icon: ActiveTwo,
     tooltipKey: 'stateActiveTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Canceled]: {
+  [FractalProposalState.Canceled]: {
     Icon: CloseX,
     tooltipKey: 'stateCanceledTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.TimeLocked]: {
+  [FractalProposalState.TimeLocked]: {
     Icon: ClockTwo,
     tooltipKey: 'stateQueuedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Executed]: {
+  [FractalProposalState.Executed]: {
     Icon: DoubleCheck,
     tooltipKey: 'stateExecutedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Executing]: {
+  [FractalProposalState.Executing]: {
     Icon: Check,
     tooltipKey: 'stateExecutingTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Uninitialized]: {
+  [FractalProposalState.Uninitialized]: {
     Icon: CloseX,
     tooltipKey: 'stateUninitializedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Failed]: {
+  [FractalProposalState.Failed]: {
     Icon: CloseX,
     tooltipKey: 'stateFailedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Queueable]: {
+  [FractalProposalState.Queueable]: {
     Icon: ClockTwo,
     tooltipKey: 'stateQueueableTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Queued]: {
+  [FractalProposalState.Queued]: {
     Icon: ClockTwo,
     tooltipKey: 'stateQueuedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Module]: {
+  [FractalProposalState.Module]: {
     tooltipKey: 'stateModuleTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Expired]: {
+  [FractalProposalState.Expired]: {
     Icon: ClockTwo,
     tooltipKey: 'stateExpiredTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [TxProposalState.Rejected]: {
+  [FractalProposalState.Rejected]: {
     Icon: CloseX,
     tooltipKey: 'stateRejectedTip',
     bg: 'sand.700',
@@ -100,7 +100,7 @@ const BADGE_SIZES: BadgeSize = {
 
 interface IBadge {
   size: 'sm' | 'base';
-  labelKey: TxProposalState | DAOState | string;
+  labelKey: FractalProposalState | DAOState | string;
 }
 
 export function Badge({ labelKey, size }: IBadge) {

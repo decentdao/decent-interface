@@ -13,12 +13,13 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import {
-  getProposalVotesSummary,
-  getTxProposalState,
-  mapProposalCreatedEventToProposal,
-} from '../../../../providers/Fractal/utils';
+
 import { UsulProposal } from '../../../../types/daoProposal';
+import {
+  mapProposalCreatedEventToProposal,
+  getProposalVotesSummary,
+  getFractalProposalState,
+} from '../../../../utils';
 import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 
 export const useAzoriusProposals = () => {
@@ -158,7 +159,7 @@ export const useAzoriusProposals = () => {
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
       const usulContractRPC = getEventRPC<FractalUsul>(usulContract, chainId);
 
-      const state = await getTxProposalState(
+      const state = await getFractalProposalState(
         strategyContract,
         usulContractRPC,
         proposalNumber,
@@ -181,7 +182,7 @@ export const useAzoriusProposals = () => {
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
       const usulContractRPC = getEventRPC<FractalUsul>(usulContract, chainId);
 
-      const state = await getTxProposalState(
+      const state = await getFractalProposalState(
         strategyContract,
         usulContractRPC,
         proposalNumber,

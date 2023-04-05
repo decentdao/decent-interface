@@ -4,7 +4,7 @@ import {
   FractalProposal,
   ProposalVotesSummary,
   TokenData,
-  TxProposalState,
+  FractalProposalState,
   VotesData,
   VotesStrategy,
 } from '../../../types';
@@ -47,7 +47,7 @@ export type FractalGovernanceActions =
   // @todo update with proposal state
   | {
       type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
-      payload: { state: TxProposalState; proposalNumber: string };
+      payload: { state: FractalProposalState; proposalNumber: string };
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;

@@ -1,9 +1,9 @@
 import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { TxProposal } from '../../types';
+import { FractalProposal } from '../../types';
 import { ActivityAddress } from './ActivityAddress';
 
-export function ActivityDescriptionModule({ activity }: { activity: TxProposal }) {
+export function ActivityDescriptionModule({ activity }: { activity: FractalProposal }) {
   const { t } = useTranslation(['treasury', 'dashboard']);
   return (
     <Flex

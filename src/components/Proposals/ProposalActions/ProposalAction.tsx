@@ -1,20 +1,54 @@
-import { Button } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { TxProposal, UsulProposal, TxProposalState, MultisigProposal } from '../../../types';
+import {
+  FractalProposal,
+  UsulProposal,
+  FractalProposalState,
+  MultisigProposal,
+} from '../../../types';
+import ContentBox from '../../ui/containers/ContentBox';
+import ProposalTime from '../../ui/proposal/ProposalTime';
 import { Execute } from './Execute';
 import Queue from './Queue';
 import CastVote from './Vote';
+
+export function ProposalActions({
+  proposal,
+  hasVoted,
+}: {
+  proposal: FractalProposal;
+  hasVoted: boolean;
+}) {
+  switch (proposal.state) {
+    case FractalProposalState.Active:
+      return (
+        <CastVote
+          proposal={proposal}
+          currentUserHasVoted={hasVoted}
+        />
+      );
+    case FractalProposalState.Queueable:
+      return <Queue proposal={proposal} />;
+    case FractalProposalState.Executing:
+    case FractalProposalState.TimeLocked:
+    case FractalProposalState.Queued:
+      return <Execute proposal={proposal} />;
+    default:
+      return <></>;
+  }
+}
 
 export function ProposalAction({
   proposal,
   expandedView,
 }: {
-  proposal: TxProposal;
+  proposal: FractalProposal;
   expandedView?: boolean;
 }) {
   const {
@@ -26,11 +60,11 @@ export function ProposalAction({
   const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
 
   const showActionButton =
-    proposal.state === TxProposalState.Active ||
-    proposal.state === TxProposalState.Executing ||
-    proposal.state === TxProposalState.Queueable ||
-    proposal.state === TxProposalState.TimeLocked ||
-    proposal.state === TxProposalState.Queued;
+    proposal.state === FractalProposalState.Active ||
+    proposal.state === FractalProposalState.Executing ||
+    proposal.state === FractalProposalState.Queueable ||
+    proposal.state === FractalProposalState.TimeLocked ||
+    proposal.state === FractalProposalState.Queued;
 
   const handleClick = () => {
     push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalNumber));
@@ -46,8 +80,23 @@ export function ProposalAction({
     }
   }, [account, isUsulProposal, proposal]);
 
+  const labelKey = useMemo(() => {
+    switch (proposal.state) {
+      case FractalProposalState.Active:
+        return 'vote';
+      case FractalProposalState.Queueable:
+        return 'queueTitle';
+      case FractalProposalState.Executing:
+      case FractalProposalState.TimeLocked:
+      case FractalProposalState.Queued:
+        return 'executeTitle';
+      default:
+        return '';
+    }
+  }, [proposal]);
+
   const label = useMemo(() => {
-    if (proposal.state === TxProposalState.Active) {
+    if (proposal.state === FractalProposalState.Active) {
       if (hasVoted) {
         return t('details');
       }
@@ -72,21 +121,22 @@ export function ProposalAction({
   }
 
   if (expandedView) {
-    switch (proposal.state) {
-      case TxProposalState.Active:
-        return (
-          <CastVote
-            proposal={proposal}
-            currentUserHasVoted={hasVoted}
-          />
-        );
-      case TxProposalState.Queueable:
-        return <Queue proposal={proposal} />;
-      case TxProposalState.Executing:
-      case TxProposalState.TimeLocked:
-      case TxProposalState.Queued:
-        return <Execute proposal={proposal} />;
-    }
+    return (
+      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <Flex justifyContent="space-between">
+          <Text textStyle="text-lg-mono-medium">
+            {t(labelKey, {
+              ns: proposal.state === FractalProposalState.Active ? 'common' : 'proposal',
+            })}
+          </Text>
+          <ProposalTime proposal={proposal} />
+        </Flex>
+        <ProposalActions
+          proposal={proposal}
+          hasVoted={hasVoted}
+        />
+      </ContentBox>
+    );
   }
 
   return (

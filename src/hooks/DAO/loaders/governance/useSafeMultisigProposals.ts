@@ -20,7 +20,7 @@ export const useSafeMultisigProposals = () => {
     }
     try {
       const transactions = await safeService.getAllTransactions(daoAddress);
-      const activities = parseTransactions(transactions, daoAddress);
+      const activities = await parseTransactions(transactions, daoAddress);
       const multisendProposals = activities.filter(
         activity => activity.eventType !== ActivityEventType.Treasury
       );

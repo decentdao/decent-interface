@@ -1,0 +1,5 @@
+{
+  "modules": "Modules",
+  "guards": "Guards",
+  "noModulesEnabled": "No {{title}} Enabled"
+}

@@ -1,11 +1,11 @@
 blank_issues_enabled: true
 contact_links:
   - name: Check out the docs
-    url: https://decent-dao.gitbook.io/decent-dao-documentation/
+    url: https://docs.fractalframework.xyz/
     about: Your question might already be answered here!
   - name: Report a Vulnerability
     url: https://github.com/decent-dao/fractal-interface/blob/HEAD/SECURITY.md
     about: Securely report a vulnerability
   - name: Join our Discord
-    url: https://discord.gg/Zh2emKspVF
+    url: https://chat.fractalframework.xyz/
     about: You can ask product related questions here.

@@ -2,8 +2,8 @@ import { GridItem, Box } from '@chakra-ui/react';
 import { VetoGuard } from '@fractal-framework/fractal-contracts';
 import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { TxProposal, MultisigProposal } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalProposal, MultisigProposal } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import ProposalCreatedBy from '../../ui/proposal/ProposalCreatedBy';
@@ -12,12 +12,10 @@ import { SignerDetails } from './SignerDetails';
 import { TxActions } from './TxActions';
 import { TxDetails } from './TxDetails';
 
-export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) {
+export function MultisigProposalDetails({ proposal }: { proposal: FractalProposal }) {
   const txProposal = proposal as MultisigProposal;
   const {
-    gnosis: {
-      guardContracts: { vetoGuardContract },
-    },
+    guardContracts: { vetoGuardContract },
   } = useFractal();
   const { address: account } = useAccount();
   return (

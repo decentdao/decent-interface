@@ -6,35 +6,38 @@ import { ProposalAction } from '../../../components/Proposals/ProposalActions/Pr
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { UsulProposal, TxProposalState } from '../../../types';
+import { UsulProposal, FractalProposalState, AzoriusGovernance } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   const [activeTimeout, setActiveTimeout] = useState<NodeJS.Timeout>();
-  const {
-    governance,
-    dispatches: { governanceDispatch },
-  } = useFractal();
+  const { governance, governanceContracts, dispatch } = useFractal();
   const { chainId } = useNetworkConfg();
-  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch, chainId });
+  const updateProposalState = useUpdateProposalState({
+    governanceContracts,
+    chainId,
+    governanceDispatch: dispatch.governance,
+  });
+
+  const azoriusGovernance = governance as AzoriusGovernance;
 
   const { address: account } = useAccount();
 
   useEffect(() => {
-    const timeLockPeriod = governance.governanceToken?.timeLockPeriod;
+    const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
     if (!timeLockPeriod) {
       return;
     }
     let timeout = 0;
     const now = new Date();
-    if (proposal.state === TxProposalState.Active) {
+    if (proposal.state === FractalProposalState.Active) {
       timeout = proposal.deadline * 1000 - now.getTime();
-    } else if (proposal.state === TxProposalState.TimeLocked) {
+    } else if (proposal.state === FractalProposalState.TimeLocked) {
       const timeLockNumber = timeLockPeriod?.value?.toNumber();
       timeout =
         new Date((proposal.deadline + Number(timeLockNumber)) * 1000).getTime() - now.getTime();

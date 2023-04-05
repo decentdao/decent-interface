@@ -14,12 +14,12 @@ import { DEFAULT_PROPOSAL } from '../../../../../src/components/ProposalCreate/c
 import { BarLoader } from '../../../../../src/components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../../../../src/constants/common';
-import { BASE_ROUTES, DAO_ROUTES } from '../../../../../src/constants/routes';
+import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import { usePrepareProposal } from '../../../../../src/hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useCreateProposalSchema } from '../../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
-import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
-import { CreateProposalForm, CreateProposalState, GovernanceTypes } from '../../../../../src/types';
+import { useFractal } from '../../../../../src/providers/App/AppProvider';
+import { CreateProposalForm, CreateProposalState, StrategyType } from '../../../../../src/types';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
@@ -27,7 +27,7 @@ const templateAreaSingleCol = `"content"
 
 export default function ProposalCreatePage() {
   const {
-    gnosis: { safe },
+    node: { daoAddress },
     governance: { type },
   } = useFractal();
 
@@ -42,7 +42,7 @@ export default function ProposalCreatePage() {
 
   useEffect(() => {
     if (!type) return;
-    if (type === GovernanceTypes.GNOSIS_SAFE_USUL) {
+    if (type === StrategyType.GNOSIS_SAFE_USUL) {
       setFormState(CreateProposalState.METADATA_FORM);
     } else {
       setFormState(CreateProposalState.TRANSACTIONS_FORM);
@@ -50,12 +50,12 @@ export default function ProposalCreatePage() {
   }, [type]);
 
   const successCallback = () => {
-    if (safe) {
-      push(`/daos/${safe.address}/proposals`);
+    if (daoAddress) {
+      push(`/daos/${daoAddress}/proposals`);
     }
   };
 
-  if (!type) {
+  if (!type || !daoAddress) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
@@ -89,7 +89,7 @@ export default function ProposalCreatePage() {
                 breadcrumbs={[
                   {
                     title: t('proposals', { ns: 'breadcrumbs' }),
-                    path: DAO_ROUTES.proposals.relative(safe.address),
+                    path: DAO_ROUTES.proposals.relative(daoAddress),
                   },
                   {
                     title: t('proposalNew', { ns: 'breadcrumbs' }),
@@ -98,9 +98,7 @@ export default function ProposalCreatePage() {
                 ]}
                 ButtonIcon={Trash}
                 buttonVariant="secondary"
-                buttonClick={() =>
-                  push(safe.address ? DAO_ROUTES.dao.relative(safe.address) : BASE_ROUTES.landing)
-                }
+                buttonClick={() => push(DAO_ROUTES.dao.relative(daoAddress))}
                 isButtonDisabled={pendingCreateTx}
               />
               <Text
@@ -130,7 +128,7 @@ export default function ProposalCreatePage() {
                       bg={BACKGROUND_SEMI_TRANSPARENT}
                     >
                       <ProposalHeader
-                        isUsul={type === GovernanceTypes.GNOSIS_SAFE_USUL}
+                        isUsul={type === StrategyType.GNOSIS_SAFE_USUL}
                         metadataTitle={
                           formState === CreateProposalState.TRANSACTIONS_FORM &&
                           !!values.proposalMetadata.title
@@ -149,7 +147,7 @@ export default function ProposalCreatePage() {
                       <TransactionsForm
                         isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                         setFormState={setFormState}
-                        showBackButton={type === GovernanceTypes.GNOSIS_SAFE_USUL}
+                        showBackButton={type === StrategyType.GNOSIS_SAFE_USUL}
                         pendingTransaction={pendingCreateTx}
                         canUserCreateProposal={canUserCreateProposal}
                         {...formikProps}

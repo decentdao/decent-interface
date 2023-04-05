@@ -29,7 +29,7 @@ export function nodeReducer(state: FractalNode, action: NodeActions) {
       return { ...state, daoName: action.payload };
     }
     case NodeAction.RESET:
-      return initialNodeState;
+      return { ...initialNodeState };
     default:
       return state;
   }

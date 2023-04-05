@@ -3,9 +3,10 @@ import { BigNumber } from 'ethers';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { VetoGuardType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
+import useUpdateProposalState from './useUpdateProposalState';
 
 export default function useQueueProposal() {
   const { t } = useTranslation('transaction');
@@ -15,13 +16,20 @@ export default function useQueueProposal() {
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const [contractCallQueueProposal, contractCallPending] = useTransaction();
   const {
-    gnosis: {
-      guardContracts: { vetoGuardContract, vetoGuardType },
-    },
-    governance: {
-      contracts: { ozLinearVotingContract },
-    },
+    guardContracts: { vetoGuardContract, vetoGuardType },
+    governanceContracts,
+    dispatch,
   } = useFractal();
+  const { ozLinearVotingContract } = governanceContracts;
+
+  const {
+    network: { chainId },
+  } = useProvider();
+  const updateProposalState = useUpdateProposalState({
+    governanceContracts,
+    governanceDispatch: dispatch.governance,
+    chainId,
+  });
 
   const queueProposal = useCallback(
     (proposalNumber: BigNumber) => {
@@ -36,6 +44,9 @@ export default function useQueueProposal() {
 
       contractCallQueueProposal({
         contractFn: () => contractFunc(proposalNumber),
+        successCallback: async () => {
+          await updateProposalState(proposalNumber);
+        },
         pendingMessage: t('pendingQueue'),
         failedMessage: t('failedQueue'),
         successMessage: t('successQueue'),
@@ -45,6 +56,7 @@ export default function useQueueProposal() {
       contractCallQueueProposal,
       signerOrProvider,
       t,
+      updateProposalState,
       ozLinearVotingContract,
       vetoGuardContract,
       vetoGuardType,

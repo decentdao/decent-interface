@@ -1,14 +1,21 @@
 'use client';
 
 import { Flex, Box, Text, HStack } from '@chakra-ui/react';
-import { Copy } from '@decent-org/fractal-ui';
-import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { InfoBox } from '../../ui/containers/InfoBox';
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
+import { BACKGROUND_SEMI_TRANSPARENT } from "../../../constants/common";
+import { ethers } from "ethers";
+import { ArrowAngleUp } from "@decent-org/fractal-ui";
+import { useTranslation, TFunction } from "react-i18next";
 
-function NoModules({ title }: { title: string }) {
-  return <Box mt={2}>No {title} enabled</Box>;
+function NoModules({ title, t }: { title: string, t: TFunction<"settings"[]> }) {
+  return <Box mt={2}>
+    <Text color="chocolate.200">
+      {
+        t('noModulesEnabled', {title})
+      }
+    </Text>
+  </Box>;
 }
 
 function ModuleDisplay({ moduleAddress }: { moduleAddress: string }) {
@@ -18,10 +25,60 @@ function ModuleDisplay({ moduleAddress }: { moduleAddress: string }) {
         address={moduleAddress}
         showCopyButton
       >
-        {moduleAddress}
+        <Text color="gold.500" as="span" verticalAlign="sub">
+          {moduleAddress}
+          <ArrowAngleUp/>
+        </Text>
       </EtherscanLinkAddress>
     </Box>
   );
+}
+
+function ModulesContainer({ addresses, title, t }: { addresses: string[], title: string, t: TFunction<"settings"[]> }) {
+  return (
+    <Box
+      maxHeight="fit-content"
+      minHeight="6.25rem"
+      bg={BACKGROUND_SEMI_TRANSPARENT}
+      p="1rem"
+      mt="12"
+      borderRadius="0.5rem"
+    >
+      <HStack marginBottom="0.5rem">
+        <Flex
+          flexDirection="column"
+          gap="1rem"
+        >
+          <Text textStyle="text-lg-mono-medium">
+            {title}
+          </Text>
+          {addresses.length === 0 ? (
+            <NoModules title={title} t={t} />
+          ) : (
+            addresses.map(address => (
+              <ModuleDisplay
+                key={address}
+                moduleAddress={address}
+              />
+            ))
+          )}
+        </Flex>
+      </HStack>
+    </Box>
+  );
+}
+
+// There will only be 0 or 1 guards, but coerce to an array for normalization with modules
+function formatSafeGuardAddress(guardAddress: string | undefined): string[] {
+  let safeGuardAddresses: string[];
+
+  if (!guardAddress || guardAddress === ethers.constants.AddressZero) {
+    safeGuardAddresses = []
+  } else {
+    safeGuardAddresses = [guardAddress]
+  }
+
+  return safeGuardAddresses;
 }
 
 export function Settings() {
@@ -29,43 +86,21 @@ export function Settings() {
     node: { safe },
   } = useFractal();
 
+  const { t } = useTranslation(['settings']);
+
   if (!safe) {
-    return;
+    return (
+      <></>
+    );
   }
 
-  const safeModules = safe.modules || [];
-  const safeGuard = safe.guard;
+  const safeModuleAddresses = safe.modules || [];
+  const safeGuardAddress = formatSafeGuardAddress(safe.guard);
 
   return (
-    <Box>
-      <HStack marginBottom="0.5rem">
-        <Flex
-          flexDirection="column"
-          gap="1rem"
-        >
-          <Text>Modules</Text>
-          {safeModules.length === 0 ? (
-            <NoModules title={'Modules'} />
-          ) : (
-            safeModules.map(module => (
-              <ModuleDisplay
-                key={module}
-                moduleAddress={module}
-              />
-            ))
-          )}
-
-          <Text>Guards</Text>
-          {safeGuard ? (
-            <NoModules title={'Guards'} />
-          ) : (
-            <ModuleDisplay
-              key={safeGuard}
-              moduleAddress={safeGuard!}
-            />
-          )}
-        </Flex>
-      </HStack>
-    </Box>
+    <>
+      <ModulesContainer addresses={safeModuleAddresses} title={t('modules')} t={t} />
+      <ModulesContainer addresses={safeGuardAddress} title={t('guards')} t={t} />
+    </>
   );
 }

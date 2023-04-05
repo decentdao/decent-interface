@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Flex } from '@chakra-ui/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { Assets } from '../../../../src/components/pages/DAOTreasury/components/Assets';
@@ -9,27 +10,30 @@ import { TitledInfoBox } from '../../../../src/components/ui/containers/TitledIn
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
-import { GovernanceTypes } from '../../../../src/types';
+import { useFractal } from '../../../../src/providers/App/AppProvider';
+import { AzoriusGovernance, StrategyType } from '../../../../src/types';
 
 export default function Treasury() {
   const {
-    gnosis: {
-      safe: { owners },
-    },
-    governance: { type, governanceToken },
+    node: { safe },
+    governance,
     treasury: { assetsFungible },
   } = useFractal();
-
+  const { type } = governance;
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const { owners } = safe || {};
   const { address: account } = useAccount();
   const { t } = useTranslation('treasury');
   const hasAssetBalance = assetsFungible.some(asset => parseFloat(asset.balance) > 0);
-
-  const isOwnerOrDelegate =
-    hasAssetBalance &&
-    (type === GovernanceTypes.GNOSIS_SAFE
-      ? owners?.includes(account || '')
-      : governanceToken?.votingWeight?.gt(0));
+  const isOwnerOrDelegate = useMemo(() => {
+    if (!hasAssetBalance || !type) {
+      return false;
+    }
+    if (type === StrategyType.GNOSIS_SAFE) {
+      return owners?.includes(account || '');
+    }
+    return azoriusGovernance?.votesToken.votingWeight?.gt(0);
+  }, [account, azoriusGovernance, hasAssetBalance, owners, type]);
 
   const showButton = isOwnerOrDelegate && assetsFungible.length > 0;
 

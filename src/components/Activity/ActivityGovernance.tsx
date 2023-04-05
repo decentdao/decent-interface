@@ -2,7 +2,7 @@ import { Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
-import { TxProposal, ActivityEventType } from '../../types';
+import { FractalProposal, ActivityEventType } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { ProposalAction } from '../Proposals/ProposalActions/ProposalAction';
 import { Badge } from '../ui/badges/Badge';
@@ -11,7 +11,7 @@ import ProposalTime from '../ui/proposal/ProposalTime';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
-export function ActivityGovernance({ activity }: { activity: TxProposal }) {
+export function ActivityGovernance({ activity }: { activity: FractalProposal }) {
   const {
     node: { safe },
   } = useFractal();

@@ -1,28 +1,28 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, TxProposal, UsulProposal } from '../../../types';
+import { MetaTransaction, FractalProposal, UsulProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
+import useUpdateProposalState from './useUpdateProposalState';
 import useUsul from './useUsul';
 
 export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
   const { usulContract } = useUsul();
-  const {
-    actions: { refreshSafeData },
-    governance,
-    dispatches: { governanceDispatch },
-  } = useFractal();
+  const { governanceContracts, dispatch } = useFractal();
   const { chainId } = useNetworkConfg();
-  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch, chainId });
+  const updateProposalState = useUpdateProposalState({
+    governanceContracts,
+    governanceDispatch: dispatch.governance,
+    chainId,
+  });
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
-    (proposal: TxProposal) => {
+    (proposal: FractalProposal) => {
       const usulProposal = proposal as UsulProposal;
       if (!usulContract || !usulProposal.metaData || !usulProposal.metaData.transactions) {
         return;
@@ -52,13 +52,13 @@ export default function useExecuteProposal() {
         pendingMessage: t('pendingExecute'),
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
-        successCallback: () => {
-          refreshSafeData();
+        successCallback: async () => {
+          // @todo may need to re-add a loader here
           updateProposalState(BigNumber.from(proposal.proposalNumber));
         },
       });
     },
-    [contractCallExecuteProposal, t, usulContract, updateProposalState, refreshSafeData]
+    [contractCallExecuteProposal, t, usulContract, updateProposalState]
   );
 
   return {

@@ -12,8 +12,9 @@ import {
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { ContractConnection, FractalGuardContracts, VetoVotingType } from '../../../types';
+import { FreezeGuard } from './../../../types/fractal';
 
-export const useFractalFreeze = () => {
+export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string>();
   const isFreezeSet = useRef(false);
@@ -93,28 +94,40 @@ export const useFractalFreeze = () => {
         ).gt(0);
       }
 
-      const freeze = {
+      const freeze: FreezeGuard = {
         ...freezeGuard,
         userHasVotes,
       };
       isFreezeSet.current = true;
-      currentValidAddress.current = vetoVotingContract.asSigner.address;
-      dispatch.guard({ type: FractalGuardAction.SET_FREEZE_GUARD, payload: freeze });
+      return freeze;
     },
-    [dispatch, account, provider, gnosisSafeSingletonContract, votesTokenMasterCopyContract]
+    [account, provider, gnosisSafeSingletonContract, votesTokenMasterCopyContract]
+  );
+
+  const setFractalFreezeGuard = useCallback(
+    async (_guardContracts: FractalGuardContracts) => {
+      const freezeGuard = await loadFractalFreezeGuard(_guardContracts);
+      if (freezeGuard) {
+        dispatch.guard({ type: FractalGuardAction.SET_FREEZE_GUARD, payload: freezeGuard });
+      }
+    },
+    [dispatch, loadFractalFreezeGuard]
   );
 
   useEffect(() => {
     if (
       !!guardContracts.vetoVotingType &&
       !!guardContracts.vetoVotingContract &&
-      guardContracts.vetoVotingContract.asSigner.address !== currentValidAddress.current
+      guardContracts.vetoVotingContract.asSigner.address !== currentValidAddress.current &&
+      loadOnMount
     ) {
-      loadFractalFreezeGuard(guardContracts);
+      currentValidAddress.current = guardContracts.vetoVotingContract.asSigner.address;
+      setFractalFreezeGuard(guardContracts);
     }
-  }, [loadFractalFreezeGuard, guardContracts, daoAddress]);
+  }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
 
   useEffect(() => {
+    if (!loadOnMount) return;
     const { vetoVotingContract, vetoVotingType } = guardContracts;
     let votingRPC: VetoMultisigVoting | VetoERC20Voting;
     const listenerCallback: TypedListener<FreezeVoteCastEvent> = async (
@@ -148,6 +161,6 @@ export const useFractalFreeze = () => {
         votingRPC.on(filter, listenerCallback);
       }
     }
-  }, [guardContracts, chainId, account, dispatch]);
-  return;
+  }, [guardContracts, chainId, account, dispatch, loadOnMount]);
+  return loadFractalFreezeGuard;
 };

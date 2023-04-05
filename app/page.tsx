@@ -6,12 +6,14 @@ import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import packageJson from '../package.json';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
 import useClientSide from '../src/hooks/utils/useClientSide';
+import { useFractal } from '../src/providers/App/AppProvider';
 
 interface IconWithTextProps {
   icon: ReactNode;
@@ -95,6 +97,17 @@ export default function HomePage() {
   const createDAO = () => {
     push(BASE_ROUTES.create);
   };
+
+  const {
+    node: { daoAddress },
+    dispatch,
+  } = useFractal();
+
+  useEffect(() => {
+    if (daoAddress) {
+      dispatch.resetDAO();
+    }
+  }, [daoAddress, dispatch]);
   return (
     <Center h="full">
       <Flex
@@ -148,7 +161,7 @@ export default function HomePage() {
             textStyle="text-md-mono-semibold"
             color="gold.500"
           >
-            Deployed by Netlify
+            v{packageJson.version} Deployed by Netlify
           </Text>
         </Link>
       </Flex>

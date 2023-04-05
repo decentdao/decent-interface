@@ -79,6 +79,7 @@ export function OptionMenu({
         bg="grayscale.black"
         border="none"
         padding="1rem"
+        zIndex={1000}
       >
         {titleKey && (
           <Text

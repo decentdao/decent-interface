@@ -8,10 +8,9 @@ import { useProvider, useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData } from '../../../types';
-import useSafeContracts from '../../safe/useSafeContracts';
+import { buildGnosisApiUrl } from '../../../utils';
 import { useSafeMultisigProposals } from '../loaders/governance/useSafeMultisigProposals';
 import { useFractalModules } from '../loaders/useFractalModules';
 import useUsul, { getUsulModuleFromModules } from './useUsul';
@@ -47,10 +46,10 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
 
-  const { multiSendContract } = useSafeContracts();
   const { usulContract: globalUsulContract, votingStrategiesAddresses } = useUsul();
   const {
     node: { safe },
+    baseContracts: { multiSendContract },
     clients: { safeService },
   } = useFractal();
 

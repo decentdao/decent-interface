@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { useCallback, useRef } from 'react';
-import { buildGnosisApiUrl, parseMultiSendTransactions } from '../../providers/Fractal/utils';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../../types';
+import { buildGnosisApiUrl, parseMultiSendTransactions } from '../../utils';
 
 export const useDecodeTransaction = () => {
   const { safeBaseURL } = useNetworkConfg();

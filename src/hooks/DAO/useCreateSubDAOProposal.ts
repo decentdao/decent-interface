@@ -1,24 +1,25 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { TokenGovernanceDAO, GnosisDAO } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { TokenGovernanceDAO, GnosisDAO, AzoriusGovernance } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
-import useSafeContracts from '../safe/useSafeContracts';
 import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
-  const { multiSendContract, fractalRegistryContract } = useSafeContracts();
+  const {
+    baseContracts: { multiSendContract, fractalRegistryContract },
+  } = useFractal();
   const { t } = useTranslation(['daoCreate', 'proposal', 'proposalMetadata']);
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const [build] = useBuildDAOTx();
   const {
-    gnosis: { safe },
-    governance: { governanceToken },
+    node: { daoAddress },
+    governance,
   } = useFractal();
-
+  const azoriusGovernance = governance as AzoriusGovernance;
   const proposeDao = useCallback(
     (
       daoData: TokenGovernanceDAO | GnosisDAO,
@@ -26,11 +27,11 @@ export const useCreateSubDAOProposal = () => {
       successCallback: (daoAddress: string) => void
     ) => {
       const propose = async () => {
-        if (!multiSendContract || !fractalRegistryContract) {
+        if (!multiSendContract || !fractalRegistryContract || !daoAddress) {
           return;
         }
 
-        const builtSafeTx = await build(daoData, safe.address, governanceToken?.address);
+        const builtSafeTx = await build(daoData, daoAddress, azoriusGovernance.votesToken?.address);
         if (!builtSafeTx) {
           return;
         }
@@ -65,9 +66,9 @@ export const useCreateSubDAOProposal = () => {
       multiSendContract,
       fractalRegistryContract,
       build,
-      safe.address,
+      daoAddress,
       submitProposal,
-      governanceToken?.address,
+      azoriusGovernance,
       t,
     ]
   );

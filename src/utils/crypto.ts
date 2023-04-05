@@ -2,8 +2,9 @@ import axios from 'axios';
 import { utils } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import { logError } from '../helpers/errorLogging';
-import { buildGnosisApiUrl, parseMultiSendTransactions } from '../providers/Fractal/utils';
 import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../types';
+import { buildGnosisApiUrl } from './api';
+import { parseMultiSendTransactions } from './usul';
 
 export const decodeTransactions = async (
   transactions: MetaTransaction[],
