@@ -17,7 +17,7 @@
   python3 2_csv_to_json.py
   ```
 
-- Submit a pull request with these changes, as detailed in [CONTRIBUTING.md](./CONTRIBUTING.md).
+- Submit a pull request with these changes, as detailed in [CONTRIBUTING.md](../.github/CONTRIBUTING.md).
 
 - We encourage anyone to try cloning the Fractal repo and submitting a PR with translations (you can definitely do it!), however if you get stuck the Fractal team can provide you with a CSV to edit and return to us, simply add your request to the related Github issue.
 
