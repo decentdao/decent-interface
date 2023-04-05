@@ -136,6 +136,7 @@ function useCountdown(proposal: FractalProposal) {
           const queuedTimestamp = (await getTxQueuedTimestamp(proposal, safeGuard)) * 1000;
           const safeGuardTimelockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
           guardTimelockPeriod = queuedTimestamp + safeGuardTimelockPeriod;
+          // If the proposal is executing start the countdown (for Azorius proposals with guards)
         } else if (isUsulGuard && timeLockPeriod && usulDeadline) {
           guardTimelockPeriod = Number(timeLockPeriod.value) * 1000 + usulDeadline;
         }
