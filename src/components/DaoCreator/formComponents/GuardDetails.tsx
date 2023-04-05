@@ -45,7 +45,7 @@ function GuardDetails(props: ICreationStepProps) {
   const defaultNonce = useDefaultNonce();
   const handleNonceChange = useCallback(
     (nonce?: number) => {
-      setFieldValue('gnosis.customNonce', nonce);
+      setFieldValue('gnosis.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
     },
     [setFieldValue]
   );

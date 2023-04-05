@@ -16,9 +16,7 @@ export function CustomNonceInput({
   const { governance } = useFractal();
   const { t } = useTranslation(['proposal']);
   const errorMessage =
-    (nonce || nonce === 0) && (defaultNonce || defaultNonce === 0) && nonce < defaultNonce
-      ? t('customNonceError')
-      : undefined;
+    !nonce || nonce < (!!defaultNonce && defaultNonce) ? t('customNonceError') : undefined;
 
   if (governance.type === StrategyType.GNOSIS_SAFE_USUL) return null;
 
