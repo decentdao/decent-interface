@@ -1,7 +1,6 @@
 {
     "titleFavorites": "Вподобані",
     "emptyFavorites": "Нема вподобайок",
-    "errorInvalidSearch": "Це недійсна адреса Fractal-y або Safe-y",
     "errorFailedSearch": "Вибачте, ця адреса - ані Safe ані Fractal",
     "searchDAOPlaceholder": "Введіть адресу Fractal DAO",
     "titleGovernance": "Система Управління",
