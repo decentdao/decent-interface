@@ -24,6 +24,7 @@ export function CustomNonceInput({
     <Flex
       display="inline-flex"
       flexWrap="wrap"
+      alignItems="center"
     >
       <Flex
         display="inline-flex"
