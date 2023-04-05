@@ -12,9 +12,9 @@ import MODALS_EN from './locales/en/modals.json';
 import NAVIGATION_EN from './locales/en/navigation.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
 import PROPOSAL_METADATA_EN from './locales/en/proposalMetadata.json';
+import SETTINGS_EN from './locales/en/settings.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
-import SETTINGS_EN from './locales/en/settings.json';
 import BREADCRUMBS_UK from './locales/uk/breadcrumbs.json';
 import COMMON_UK from './locales/uk/common.json';
 import DAOCREATE_UK from './locales/uk/daoCreate.json';
@@ -25,9 +25,9 @@ import MODALS_UK from './locales/uk/modals.json';
 import NAVIGATION_UK from './locales/uk/navigation.json';
 import PROPOSAL_UK from './locales/uk/proposal.json';
 import PROPOSAL_METADATA_UK from './locales/uk/proposalMetadata.json';
+import SETTINGS_UK from './locales/uk/settings.json';
 import TRANSACTION_UK from './locales/uk/transaction.json';
 import TREASURY_UK from './locales/uk/treasury.json';
-import SETTINGS_UK from './locales/uk/settings.json';
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
  * language setting. This library is based on the popular i18next JavaScript library, tailored specificaly to React.

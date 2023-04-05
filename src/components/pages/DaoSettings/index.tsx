@@ -1,21 +1,19 @@
 'use client';
 
 import { Flex, Box, Text, HStack } from '@chakra-ui/react';
+import { ArrowAngleUp } from '@decent-org/fractal-ui';
+import { ethers } from 'ethers';
+import { useTranslation, TFunction } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
-import { BACKGROUND_SEMI_TRANSPARENT } from "../../../constants/common";
-import { ethers } from "ethers";
-import { ArrowAngleUp } from "@decent-org/fractal-ui";
-import { useTranslation, TFunction } from "react-i18next";
 
-function NoModules({ title, t }: { title: string, t: TFunction<"settings"[]> }) {
-  return <Box mt={2}>
-    <Text color="chocolate.200">
-      {
-        t('noModulesEnabled', {title})
-      }
-    </Text>
-  </Box>;
+function NoModules({ title, t }: { title: string; t: TFunction<'settings'[]> }) {
+  return (
+    <Box mt={2}>
+      <Text color="chocolate.200">{t('noModulesEnabled', { title })}</Text>
+    </Box>
+  );
 }
 
 function ModuleDisplay({ moduleAddress }: { moduleAddress: string }) {
@@ -25,16 +23,28 @@ function ModuleDisplay({ moduleAddress }: { moduleAddress: string }) {
         address={moduleAddress}
         showCopyButton
       >
-        <Text color="gold.500" as="span" verticalAlign="sub">
+        <Text
+          color="gold.500"
+          as="span"
+          verticalAlign="sub"
+        >
           {moduleAddress}
-          <ArrowAngleUp/>
+          <ArrowAngleUp verticalAlign="revert"/>
         </Text>
       </EtherscanLinkAddress>
     </Box>
   );
 }
 
-function ModulesContainer({ addresses, title, t }: { addresses: string[], title: string, t: TFunction<"settings"[]> }) {
+function ModulesContainer({
+  addresses,
+  title,
+  t,
+}: {
+  addresses: string[];
+  title: string;
+  t: TFunction<'settings'[]>;
+}) {
   return (
     <Box
       maxHeight="fit-content"
@@ -49,11 +59,12 @@ function ModulesContainer({ addresses, title, t }: { addresses: string[], title:
           flexDirection="column"
           gap="1rem"
         >
-          <Text textStyle="text-lg-mono-medium">
-            {title}
-          </Text>
+          <Text textStyle="text-lg-mono-medium">{title}</Text>
           {addresses.length === 0 ? (
-            <NoModules title={title} t={t} />
+            <NoModules
+              title={title}
+              t={t}
+            />
           ) : (
             addresses.map(address => (
               <ModuleDisplay
@@ -73,9 +84,9 @@ function formatSafeGuardAddress(guardAddress: string | undefined): string[] {
   let safeGuardAddresses: string[];
 
   if (!guardAddress || guardAddress === ethers.constants.AddressZero) {
-    safeGuardAddresses = []
+    safeGuardAddresses = [];
   } else {
-    safeGuardAddresses = [guardAddress]
+    safeGuardAddresses = [guardAddress];
   }
 
   return safeGuardAddresses;
@@ -89,9 +100,7 @@ export function Settings() {
   const { t } = useTranslation(['settings']);
 
   if (!safe) {
-    return (
-      <></>
-    );
+    return <></>;
   }
 
   const safeModuleAddresses = safe.modules || [];
@@ -99,8 +108,16 @@ export function Settings() {
 
   return (
     <>
-      <ModulesContainer addresses={safeModuleAddresses} title={t('modules')} t={t} />
-      <ModulesContainer addresses={safeGuardAddress} title={t('guards')} t={t} />
+      <ModulesContainer
+        addresses={safeModuleAddresses}
+        title={t('modules')}
+        t={t}
+      />
+      <ModulesContainer
+        addresses={safeGuardAddress}
+        title={t('guards')}
+        t={t}
+      />
     </>
   );
 }

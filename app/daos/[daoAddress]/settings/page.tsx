@@ -1,7 +1,7 @@
 'use client';
 
 import { Box } from '@chakra-ui/react';
-import { Settings } from "../../../../src/components/pages/DaoSettings";
+import { Settings } from '../../../../src/components/pages/DaoSettings';
 
 export default function SettingsPage() {
   return (
