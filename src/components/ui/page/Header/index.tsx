@@ -1,12 +1,10 @@
 import { Flex, Show } from '@chakra-ui/react';
-import { useAccount } from 'wagmi';
 import useClientSide from '../../../../hooks/utils/useClientSide';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
 
 function Header() {
-  const { address: account } = useAccount();
   const isClientSide = useClientSide();
   return (
     <Flex
@@ -24,7 +22,7 @@ function Header() {
         w="full"
         justifyContent="flex-end"
       >
-        {!!account && isClientSide && <FavoritesMenu />}
+        {isClientSide && <FavoritesMenu />}
         {isClientSide && <AccountDisplay />}
       </Flex>
     </Flex>
