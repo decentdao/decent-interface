@@ -127,7 +127,6 @@ export const useFractalNode = ({
             invalidateDAO('errorInvalidSearch');
             return;
           }
-          await dispatch.resetDAO();
           dispatch.node({
             type: NodeAction.SET_SAFE_INFO,
             payload: safe,
@@ -165,6 +164,7 @@ export const useFractalNode = ({
         currentValidAddress.current = daoAddress;
       }
       if (!isCurrentAddress && daoAddress) {
+        dispatch.resetDAO();
         setDAO(daoAddress);
       }
     }
