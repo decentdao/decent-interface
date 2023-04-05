@@ -130,17 +130,17 @@ function useCountdown(proposal: FractalProposal) {
         startCountdown(queuedTimestamp + guardTimeLockPeriod, 1000);
         // If the proposal is executing start the countdown (for safe multisig proposals with guards)
       } else if (proposal.state === FractalProposalState.Executing && vetoGuard) {
-        let queuePeriod: number = 0;
+        let guardTimelockPeriod: number = 0;
         if (isSafeGuard) {
           const safeGuard = vetoGuard as VetoGuard;
           const queuedTimestamp = (await getTxQueuedTimestamp(proposal, safeGuard)) * 1000;
-          const guardTimeLockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
-          queuePeriod = queuedTimestamp + guardTimeLockPeriod;
+          const safeGuardTimelockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
+          guardTimelockPeriod = queuedTimestamp + safeGuardTimelockPeriod;
         } else if (isUsulGuard && timeLockPeriod && usulDeadline) {
-          queuePeriod = Number(timeLockPeriod.value) * 1000 + usulDeadline;
+          guardTimelockPeriod = Number(timeLockPeriod.value) * 1000 + usulDeadline;
         }
         const guardExecutionPeriod = Number(await vetoGuard.executionPeriod()) * 1000;
-        startCountdown(queuePeriod + guardExecutionPeriod, 1000);
+        startCountdown(guardTimelockPeriod + guardExecutionPeriod, 1000);
       }
     }
 
