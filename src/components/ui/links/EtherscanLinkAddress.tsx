@@ -1,6 +1,5 @@
 import { Link } from '@chakra-ui/next-js';
-import { Flex, Text } from '@chakra-ui/react';
-import { ArrowAngleUp, Copy } from '@decent-org/fractal-ui';
+import { Copy } from '@decent-org/fractal-ui';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 

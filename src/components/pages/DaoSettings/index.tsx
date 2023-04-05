@@ -29,7 +29,7 @@ function ModuleDisplay({ moduleAddress }: { moduleAddress: string }) {
           verticalAlign="sub"
         >
           {moduleAddress}
-          <ArrowAngleUp verticalAlign="revert"/>
+          <ArrowAngleUp verticalAlign="revert" />
         </Text>
       </EtherscanLinkAddress>
     </Box>
