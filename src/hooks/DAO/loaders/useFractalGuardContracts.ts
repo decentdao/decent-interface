@@ -24,7 +24,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       usulVetoGuardMasterCopyContract,
       gnosisVetoGuardMasterCopyContract,
     },
-    dispatch,
+    action,
   } = useFractal();
 
   const {
@@ -123,8 +123,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     if (!daoAddress || !safe || !fractalModules.length || !safe.guard) return;
     const contracts = await loadFractalGuardContracts(daoAddress, safe, fractalModules);
     if (!contracts) return;
-    dispatch.guardContracts({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
-  }, [dispatch, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
+    action.dispatch({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
+  }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
     if (daoAddress && daoAddress !== currentValidAddress.current && loadOnMount) {

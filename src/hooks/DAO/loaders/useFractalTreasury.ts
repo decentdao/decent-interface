@@ -9,11 +9,11 @@ import { useUpdateTimer } from './../../utils/useUpdateTimer';
 
 export const useFractalTreasury = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string>();
+  const currentValidAddress = useRef<string | null>();
   const {
     node: { daoAddress },
     clients: { safeService },
-    dispatch,
+    action,
   } = useFractal();
 
   const { safeBaseURL } = useNetworkConfg();
@@ -46,14 +46,14 @@ export const useFractalTreasury = () => {
       assetsNonFungible: assetsNonFungible.data.results,
       transfers: transfers.data,
     };
-    dispatch.treasury({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-  }, [daoAddress, safeService, safeBaseURL, dispatch]);
+    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
+  }, [daoAddress, safeService, safeBaseURL, action]);
 
   useEffect(() => {
     if (daoAddress && daoAddress !== currentValidAddress.current) {
-      currentValidAddress.current = daoAddress;
       setMethodOnInterval(loadTreasury);
     }
+    currentValidAddress.current = daoAddress;
   }, [daoAddress, loadTreasury, setMethodOnInterval]);
 
   return;

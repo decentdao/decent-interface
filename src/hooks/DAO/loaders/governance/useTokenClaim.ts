@@ -10,7 +10,7 @@ export function useTokenClaim() {
   const {
     governanceContracts: { tokenContract },
     baseContracts: { claimingMasterCopyContract },
-    dispatch,
+    action,
   } = useFractal();
 
   const loadTokenClaimContract = useCallback(async () => {
@@ -29,12 +29,12 @@ export function useTokenClaim() {
     if (!tokenClaimArray.length && tokenClaimArray[0].args[1] === tokenContract.asSigner.address) {
       return;
     }
-    // dispatch to governance
-    dispatch.governance({
+    // action to governance
+    action.dispatch({
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
       payload: possibleTokenClaimContract,
     });
-  }, [claimingMasterCopyContract, tokenContract, dispatch]);
+  }, [claimingMasterCopyContract, tokenContract, action]);
 
   useEffect(() => {
     loadTokenClaimContract();

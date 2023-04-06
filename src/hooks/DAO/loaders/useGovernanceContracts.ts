@@ -15,7 +15,7 @@ import { useLocalStorage } from '../../utils/useLocalStorage';
 const USUL_MODULE_CACHE_KEY = 'usul_module_gov_';
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string>();
+  const currentValidAddress = useRef<string | null>();
   const {
     node,
     baseContracts: {
@@ -24,7 +24,7 @@ export const useGovernanceContracts = () => {
       votesTokenMasterCopyContract,
       fractalUsulMasterCopyContract,
     },
-    dispatch,
+    action,
   } = useFractal();
 
   const {
@@ -96,7 +96,7 @@ export const useGovernanceContracts = () => {
             votingContractMasterCopyAddress,
           });
 
-          dispatch.governanceContracts({
+          action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
               ozLinearVotingContract,
@@ -105,7 +105,7 @@ export const useGovernanceContracts = () => {
             },
           });
         } else {
-          dispatch.governanceContracts({
+          action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
               ozLinearVotingContract: null,
@@ -115,7 +115,7 @@ export const useGovernanceContracts = () => {
           });
         }
       } else {
-        dispatch.governanceContracts({
+        action.dispatch({
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
           payload: {
             ozLinearVotingContract: null,
@@ -127,7 +127,7 @@ export const useGovernanceContracts = () => {
     },
     [
       chainId,
-      dispatch,
+      action,
       getValue,
       setValue,
       linearVotingMasterCopyContract,
@@ -140,6 +140,7 @@ export const useGovernanceContracts = () => {
   useEffect(() => {
     if (!!node.daoAddress && node.daoAddress !== currentValidAddress.current) {
       // load governance contracts for DAO
+      console.count('load governance contracts');
       currentValidAddress.current = node.daoAddress;
       loadGovernanceContracts(node);
     }

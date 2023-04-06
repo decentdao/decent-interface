@@ -4,6 +4,9 @@ import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
   proposals: null,
+  type: undefined,
+  votesStrategy: undefined,
+  votesToken: undefined,
 };
 
 export const initialVotesTokenAccountData = {
@@ -86,9 +89,6 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
-    }
-    case FractalGovernanceAction.RESET: {
-      return { ...initialGovernanceState };
     }
     default:
       return state;

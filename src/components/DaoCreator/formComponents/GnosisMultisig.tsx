@@ -32,7 +32,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
   } = props;
   const { restrictChars } = useFormHelpers();
 
-  const handleSignersChanges = (inputValue: string, numberStr: number) => {
+  const handleSignersChanges = (_: string, numberStr: number) => {
     let numOfSigners = Number(numberStr || 0);
     // greater than 100 signers is unreasonable for manual input here,
     // we don't use an error message because we don't want to render
@@ -55,7 +55,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
         setFieldValue('gnosis.trustedAddresses', gnosisAddresses);
       }
     }
-    setFieldValue('gnosis.numOfSigners', inputValue);
+    setFieldValue('gnosis.numOfSigners', numOfSigners);
   };
 
   useEffect(() => {

@@ -10,7 +10,7 @@ export const useERC20LinearToken = () => {
 
   const {
     governanceContracts: { tokenContract },
-    dispatch,
+    action,
   } = useFractal();
 
   const {
@@ -39,12 +39,12 @@ export const useERC20LinearToken = () => {
       totalSupply,
     };
     isTokenLoaded.current = true;
-    dispatch.governance({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
-  }, [tokenContract, dispatch]);
+    action.dispatch({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
+  }, [tokenContract, action]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
     if (!tokenContract || !account) {
-      dispatch.governance({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
+      action.dispatch({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
       return;
     }
     // @todo We could probably save on some requests here.
@@ -62,11 +62,11 @@ export const useERC20LinearToken = () => {
       isDelegatesSet: delegateChangeEvents.length > 0,
     };
 
-    dispatch.governance({
+    action.dispatch({
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA,
       payload: tokenAccountData,
     });
-  }, [tokenContract, dispatch, account]);
+  }, [tokenContract, action, account]);
 
   useEffect(() => {
     if (

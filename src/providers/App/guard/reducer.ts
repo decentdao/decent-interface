@@ -31,8 +31,6 @@ export function guardReducer(state: FreezeGuard, action: FractalGuardActions) {
         userHasVotes,
       };
     }
-    case FractalGuardAction.RESET:
-      return initialGuardState;
     default:
       return state;
   }

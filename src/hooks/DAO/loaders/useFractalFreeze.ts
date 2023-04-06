@@ -23,7 +23,7 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     node: { daoAddress },
     baseContracts: { votesTokenMasterCopyContract, gnosisSafeSingletonContract },
     guardContracts,
-    dispatch,
+    action,
   } = useFractal();
 
   const { address: account } = useAccount();
@@ -108,10 +108,10 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     async (_guardContracts: FractalGuardContracts) => {
       const freezeGuard = await loadFractalFreezeGuard(_guardContracts);
       if (freezeGuard) {
-        dispatch.guard({ type: FractalGuardAction.SET_FREEZE_GUARD, payload: freezeGuard });
+        action.dispatch({ type: FractalGuardAction.SET_FREEZE_GUARD, payload: freezeGuard });
       }
     },
-    [dispatch, loadFractalFreezeGuard]
+    [action, loadFractalFreezeGuard]
   );
 
   useEffect(() => {
@@ -127,14 +127,14 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
   }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
 
   useEffect(() => {
-    if (!loadOnMount) return;
     const { vetoVotingContract, vetoVotingType } = guardContracts;
+    if (!loadOnMount) return;
     let votingRPC: VetoMultisigVoting | VetoERC20Voting;
     const listenerCallback: TypedListener<FreezeVoteCastEvent> = async (
       voter: string,
       votesCast
     ) => {
-      dispatch.guard({
+      action.dispatch({
         type: FractalGuardAction.UPDATE_FREEZE_VOTE,
         payload: {
           isVoter: voter === account,
@@ -161,6 +161,6 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
         votingRPC.on(filter, listenerCallback);
       }
     }
-  }, [guardContracts, chainId, account, dispatch, loadOnMount]);
+  }, [guardContracts, chainId, account, action, loadOnMount]);
   return loadFractalFreezeGuard;
 };
