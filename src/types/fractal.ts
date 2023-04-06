@@ -228,20 +228,25 @@ export interface ITokenAccount {
  * @param clients - This object contains the clients for the Fractal DAO.
  * @param dispatch - This object contains the dispatch functions for the Fractal DAO.
  */
-
 export interface FractalStore extends Fractal {
   baseContracts: FractalContracts;
   clients: FractalClients;
-  dispatch: {
-    node: Dispatch<NodeActions>;
-    guard: Dispatch<FractalGuardActions>;
-    governance: Dispatch<FractalGovernanceActions>;
-    treasury: Dispatch<TreasuryActions>;
-    governanceContracts: Dispatch<GovernanceContractActions>;
-    guardContracts: Dispatch<GuardContractActions>;
+  action: {
+    dispatch: Dispatch<FractalActions>;
     resetDAO: () => Promise<void>;
   };
 }
+export enum StoreAction {
+  RESET = 'RESET',
+}
+export type FractalActions =
+  | { type: StoreAction.RESET }
+  | NodeActions
+  | FractalGuardActions
+  | FractalGovernanceActions
+  | TreasuryActions
+  | GovernanceContractActions
+  | GuardContractActions;
 export interface Fractal {
   node: FractalNode;
   guard: FreezeGuard;

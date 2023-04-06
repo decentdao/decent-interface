@@ -30,7 +30,7 @@ function useCountdown(proposal: FractalProposal) {
     governance,
     guardContracts: { vetoGuardContract, vetoGuardType },
     governanceContracts,
-    dispatch,
+    action,
   } = useFractal();
 
   const {
@@ -42,7 +42,7 @@ function useCountdown(proposal: FractalProposal) {
   const loadDAOProposals = useDAOProposals();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
-    governanceDispatch: dispatch.governance,
+    governanceDispatch: action.dispatch,
     chainId,
   });
 

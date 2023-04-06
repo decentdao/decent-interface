@@ -9,7 +9,7 @@ export const useSafeMultisigProposals = () => {
   const {
     node: { daoAddress },
     clients: { safeService },
-    dispatch,
+    action,
   } = useFractal();
 
   const { parseTransactions } = useSafeTransactions();
@@ -24,7 +24,7 @@ export const useSafeMultisigProposals = () => {
       const multisendProposals = activities.filter(
         activity => activity.eventType !== ActivityEventType.Treasury
       );
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
         payload: {
           type: StrategyType.GNOSIS_SAFE,
@@ -34,6 +34,6 @@ export const useSafeMultisigProposals = () => {
     } catch (e) {
       logError(e);
     }
-  }, [daoAddress, safeService, parseTransactions, dispatch]);
+  }, [daoAddress, safeService, parseTransactions, action]);
   return loadSafeMultisigProposals;
 };

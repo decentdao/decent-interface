@@ -25,7 +25,7 @@ import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 export const useAzoriusProposals = () => {
   const {
     governanceContracts: { usulContract, ozLinearVotingContract },
-    dispatch,
+    action,
   } = useFractal();
 
   const provider = useProvider();
@@ -121,12 +121,12 @@ export const useAzoriusProposals = () => {
         provider.network.chainId,
         metaData
       );
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
         payload: proposal,
       });
     },
-    [ozLinearVotingContract, usulContract, provider, chainId, decodeTransactions, dispatch]
+    [ozLinearVotingContract, usulContract, provider, chainId, decodeTransactions, action]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
@@ -137,7 +137,7 @@ export const useAzoriusProposals = () => {
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
       const votesSummary = await getProposalVotesSummary(strategyContract, proposalNumber);
 
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.UPDATE_NEW_USUL_VOTE,
         payload: {
           proposalNumber: proposalNumber.toString(),
@@ -148,7 +148,7 @@ export const useAzoriusProposals = () => {
         },
       });
     },
-    [ozLinearVotingContract, chainId, dispatch]
+    [ozLinearVotingContract, chainId, action]
   );
 
   const proposalQueuedEventListener: TypedListener<VoteFinalizedEvent> = useCallback(
@@ -166,12 +166,12 @@ export const useAzoriusProposals = () => {
         chainId
       );
 
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
         payload: { state, proposalNumber: proposalNumber.toString() },
       });
     },
-    [chainId, ozLinearVotingContract, usulContract, dispatch]
+    [chainId, ozLinearVotingContract, usulContract, action]
   );
 
   const proposalCanceledListener: TypedListener<ProposalCanceledEvent> = useCallback(
@@ -188,12 +188,12 @@ export const useAzoriusProposals = () => {
         proposalNumber,
         chainId
       );
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
         payload: { state, proposalNumber: proposalNumber.toString() },
       });
     },
-    [chainId, ozLinearVotingContract, usulContract, dispatch]
+    [chainId, ozLinearVotingContract, usulContract, action]
   );
 
   useEffect(() => {

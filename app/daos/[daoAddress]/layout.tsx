@@ -9,7 +9,7 @@ export default function DaoPageLayout({
   params: { daoAddress },
 }: {
   children: ReactNode;
-  params: { daoAddress: string };
+  params: { daoAddress?: string };
 }) {
   const {
     node: { daoName },

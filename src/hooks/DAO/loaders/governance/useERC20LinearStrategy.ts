@@ -15,7 +15,7 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 export const useAzoriusStrategy = () => {
   const {
     governanceContracts: { ozLinearVotingContract },
-    dispatch,
+    action,
   } = useFractal();
   const {
     network: { chainId },
@@ -45,8 +45,8 @@ export const useAzoriusStrategy = () => {
         formatted: getTimeDuration(timeLockPeriod.toString()),
       },
     };
-    dispatch.governance({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
-  }, [ozLinearVotingContract, getTimeDuration, dispatch]);
+    action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
+  }, [ozLinearVotingContract, getTimeDuration, action]);
 
   useEffect(() => {
     if (!ozLinearVotingContract) {
@@ -55,7 +55,7 @@ export const useAzoriusStrategy = () => {
     const rpc = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
     const votingPeriodfilter = rpc.filters.VotingPeriodUpdated();
     const listener: TypedListener<VotingPeriodUpdatedEvent> = votingPeriod => {
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.UPDATE_VOTING_PERIOD,
         payload: votingPeriod,
       });
@@ -65,13 +65,13 @@ export const useAzoriusStrategy = () => {
     const quorumNumeratorUpdatedListener: TypedListener<
       QuorumNumeratorUpdatedEvent
     > = quorumPercentage => {
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.UPDATE_VOTING_QUORUM,
         payload: quorumPercentage,
       });
     };
     const timelockPeriodListener: TypedListener<TimeLockUpdatedEvent> = timelockPeriod => {
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
         payload: timelockPeriod,
       });
@@ -86,7 +86,7 @@ export const useAzoriusStrategy = () => {
       rpc.off(timeLockPeriodFilter, timelockPeriodListener);
       rpc.off(votingPeriodfilter, listener);
     };
-  }, [ozLinearVotingContract, chainId, dispatch]);
+  }, [ozLinearVotingContract, chainId, action]);
 
   return loadAzoriusStrategy;
 };

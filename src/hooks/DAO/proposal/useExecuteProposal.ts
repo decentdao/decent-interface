@@ -10,12 +10,12 @@ import useUpdateProposalState from './useUpdateProposalState';
 export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
-  const { governanceContracts, dispatch } = useFractal();
+  const { governanceContracts, action } = useFractal();
   const { usulContract } = governanceContracts;
   const { chainId } = useNetworkConfg();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
-    governanceDispatch: dispatch.governance,
+    governanceDispatch: action.dispatch,
     chainId,
   });
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
