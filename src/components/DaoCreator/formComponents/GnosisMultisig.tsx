@@ -32,7 +32,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
   } = props;
   const { restrictChars } = useFormHelpers();
 
-  const handleSignersChanges = (_: string, numberStr: number) => {
+  const handleSignersChanges = (_: string, numberStr: number, index?: number) => {
     let numOfSigners = Number(numberStr || 0);
     // greater than 99 signers is unreasonable for manual input here,
     // we don't use an error message because we don't want to render
@@ -52,7 +52,11 @@ export function GnosisMultisig(props: ICreationStepProps) {
       }
       if (numOfSigners < trustedAddressLength) {
         const difference = trustedAddressLength - numOfSigners;
-        gnosisAddresses.splice(trustedAddressLength - difference, difference + 1);
+        if (index !== undefined) {
+          gnosisAddresses.splice(index, 1);
+        } else {
+          gnosisAddresses.splice(trustedAddressLength - difference, difference + 1);
+        }
       }
       if (gnosisAddresses.length) {
         setFieldValue('gnosis.trustedAddresses', gnosisAddresses);
@@ -87,7 +91,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
           <NumberInput
             value={values.gnosis.numOfSigners}
             min={1}
-            onChange={handleSignersChanges}
+            onChange={(inputStr, inputNum) => handleSignersChanges(inputStr, inputNum)}
             onKeyDown={restrictChars}
           >
             <NumberInputField data-testid="gnosisConfig-numberOfSignerInput" />
@@ -151,7 +155,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
                       }
                       type="button"
                       onClick={async () => {
-                        handleSignersChanges('', --values.gnosis.numOfSigners);
+                        handleSignersChanges('', --values.gnosis.numOfSigners, i);
                       }}
                       data-testid={'gnosis.numOfSigners-' + i}
                     />
