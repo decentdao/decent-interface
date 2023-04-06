@@ -34,11 +34,11 @@ export function GnosisMultisig(props: ICreationStepProps) {
 
   const handleSignersChanges = (_: string, numberStr: number) => {
     let numOfSigners = Number(numberStr || 0);
-    // greater than 100 signers is unreasonable for manual input here,
+    // greater than 99 signers is unreasonable for manual input here,
     // we don't use an error message because we don't want to render
     // 1000 input fields and lag the app
-    if (numOfSigners > 100) {
-      numOfSigners = 100;
+    if (numOfSigners > 99) {
+      numOfSigners = 99;
     }
     const gnosisAddresses = [...values.gnosis.trustedAddresses];
     const trustedAddressLength = gnosisAddresses.length;
