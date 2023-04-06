@@ -43,6 +43,9 @@ export function GnosisMultisig(props: ICreationStepProps) {
     const gnosisAddresses = [...values.gnosis.trustedAddresses];
     const trustedAddressLength = gnosisAddresses.length;
     if (trustedAddressLength !== numOfSigners) {
+      if (!numOfSigners || numOfSigners < 1) {
+        numOfSigners = 1;
+      }
       if (numOfSigners > trustedAddressLength) {
         const difference = numOfSigners - trustedAddressLength;
         gnosisAddresses.push(...new Array(difference).fill(''));
