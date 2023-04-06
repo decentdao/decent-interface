@@ -29,7 +29,6 @@ export const initialState = {
 
 export const combinedReducer = (state: Fractal, action: FractalActions) => {
   if (action.type === StoreAction.RESET) {
-    console.count('RESET_ALL');
     return initialState;
   }
 
