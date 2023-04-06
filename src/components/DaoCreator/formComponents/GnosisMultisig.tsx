@@ -126,12 +126,14 @@ export function GnosisMultisig(props: ICreationStepProps) {
                   : null;
 
               return (
-                <Grid
+                <LabelWrapper
                   key={i}
-                  templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
-                  alignItems="center"
+                  errorMessage={errorMessage}
                 >
-                  <LabelWrapper errorMessage={errorMessage}>
+                  <Grid
+                    templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
+                    alignItems="center"
+                  >
                     <Field name={`gnosis.trustedAddresses.${i}`}>
                       {({ field }: FieldAttributes<any>) => (
                         <Input
@@ -141,26 +143,26 @@ export function GnosisMultisig(props: ICreationStepProps) {
                         />
                       )}
                     </Field>
-                  </LabelWrapper>
-                  {values.gnosis.trustedAddresses.length > 1 && (
-                    <IconButton
-                      aria-label="remove allocation"
-                      variant="unstyled"
-                      minW={16}
-                      icon={
-                        <Trash
-                          color="gold.500"
-                          boxSize="1.5rem"
-                        />
-                      }
-                      type="button"
-                      onClick={async () => {
-                        handleSignersChanges('', --values.gnosis.numOfSigners, i);
-                      }}
-                      data-testid={'gnosis.numOfSigners-' + i}
-                    />
-                  )}
-                </Grid>
+                    {values.gnosis.trustedAddresses.length > 1 && (
+                      <IconButton
+                        aria-label="remove allocation"
+                        variant="unstyled"
+                        minW={16}
+                        icon={
+                          <Trash
+                            color="gold.500"
+                            boxSize="1.5rem"
+                          />
+                        }
+                        type="button"
+                        onClick={async () => {
+                          handleSignersChanges('', --values.gnosis.numOfSigners, i);
+                        }}
+                        data-testid={'gnosis.numOfSigners-' + i}
+                      />
+                    )}
+                  </Grid>
+                </LabelWrapper>
               );
             })}
           </LabelComponent>
