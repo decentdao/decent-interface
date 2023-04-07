@@ -28,6 +28,25 @@ export function DelegateModal({ close }: { close: Function }) {
   const { delegateVote, contractCallPending } = useDelegateVote();
   const { addressValidationTest } = useValidationAddress();
 
+  const submitDelegation = async (values: { address: string }) => {
+    if (!tokenContract) return;
+    let validAddress = values.address;
+    if (validAddress.endsWith('.eth')) {
+      validAddress = await signer!.resolveName(values.address);
+    }
+    delegateVote({
+      delegatee: validAddress,
+      votingTokenContract: tokenContract?.asSigner,
+      successCallback: () => {
+        close();
+      },
+    });
+  };
+
+  const delegationValidationSchema = Yup.object().shape({
+    address: Yup.string().test(addressValidationTest),
+  });
+
   if (!azoriusGovernance.votesToken) return null;
 
   return (
@@ -97,23 +116,8 @@ export function DelegateModal({ close }: { close: Function }) {
         initialValues={{
           address: '',
         }}
-        onSubmit={async function (values) {
-          if (!tokenContract) return;
-          let validAddress = values.address;
-          if (validAddress.endsWith('.eth')) {
-            validAddress = await signer!.resolveName(values.address);
-          }
-          delegateVote({
-            delegatee: validAddress,
-            votingTokenContract: tokenContract?.asSigner,
-            successCallback: () => {
-              close();
-            },
-          });
-        }}
-        validationSchema={Yup.object().shape({
-          address: Yup.string().test(addressValidationTest),
-        })}
+        onSubmit={submitDelegation}
+        validationSchema={delegationValidationSchema}
       >
         {({ handleSubmit, setFieldValue, errors }) => (
           <form onSubmit={handleSubmit}>
