@@ -1,54 +1,32 @@
-import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, Input, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, constants } from 'ethers';
-import { useState } from 'react';
+import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
+import * as Yup from 'yup';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
+import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
-import { EthAddressInput } from '../forms/EthAddressInput';
 import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {
-  // the state of the Eth address input, which can be different
-  // from the actual address being submitted (in the case of ENS)
-  const [inputValue, setInputValue] = useState<string>('');
-  // the ETH address being delegated to. Not necessarily the state
-  // of the address input
-  const [newDelegatee, setNewDelegatee] = useState<string>('');
   const { t } = useTranslation(['modals', 'common']);
-  const [pending, setPending] = useState<boolean>(false);
 
   const {
     governance,
     governanceContracts: { tokenContract },
   } = useFractal();
   const { address: account } = useAccount();
+
+  const { data: signer } = useSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
-  const [isValidAddress, setIsValidAddress] = useState<boolean>(false);
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken.delegatee);
-  const delegateVote = useDelegateVote({
-    delegatee: newDelegatee,
-    votingTokenContract: tokenContract?.asSigner,
-    setPending: setPending,
-  });
-
-  const delegateSelf = () => {
-    if (account) setInputValue(account);
-  };
-
-  const onDelegateClick = () => {
-    delegateVote();
-    if (close) close();
-  };
-
-  const errorMessage =
-    inputValue != '' && isValidAddress === false
-      ? t('errorInvalidAddress', { ns: 'common' })
-      : undefined;
+  const { delegateVote, contractCallPending } = useDelegateVote();
+  const { addressValidationTest } = useValidationAddress();
 
   if (!azoriusGovernance.votesToken) return null;
 
@@ -115,41 +93,68 @@ export function DelegateModal({ close }: { close: Function }) {
         color="chocolate.700"
         marginBottom="1rem"
       />
-      <Flex alignItems="center">
-        <Text color="grayscale.100">{t('labelDelegateInput')}</Text>
-        <Spacer />
-        <Button
-          pr={0}
-          variant="text"
-          textStyle="text-sm-sans-regular"
-          color="gold.500-active"
-          onClick={delegateSelf}
-        >
-          {t('linkSelfDelegate')}
-        </Button>
-      </Flex>
-      <LabelWrapper
-        subLabel={t('sublabelDelegateInput')}
-        errorMessage={errorMessage}
+      <Formik
+        initialValues={{
+          address: '',
+        }}
+        onSubmit={async function (values) {
+          if (!tokenContract) return;
+          let validAddress = values.address;
+          if (validAddress.endsWith('.eth')) {
+            validAddress = await signer!.resolveName(values.address);
+          }
+          delegateVote({
+            delegatee: validAddress,
+            votingTokenContract: tokenContract?.asSigner,
+            successCallback: () => {
+              close();
+            },
+          });
+        }}
+        validationSchema={Yup.object().shape({
+          address: Yup.string().test(addressValidationTest),
+        })}
       >
-        <EthAddressInput
-          data-testid="delegate-addressInput"
-          value={inputValue}
-          setValue={setInputValue}
-          onAddressChange={function (address: string, isValid: boolean): void {
-            setNewDelegatee(address);
-            setIsValidAddress(isValid);
-          }}
-        />
-      </LabelWrapper>
-      <Button
-        marginTop="2rem"
-        width="100%"
-        isDisabled={!isValidAddress || newDelegatee.trim() === '' || pending}
-        onClick={onDelegateClick}
-      >
-        {t('buttonDelegate')}
-      </Button>
+        {({ handleSubmit, setFieldValue, errors }) => (
+          <form onSubmit={handleSubmit}>
+            <Flex alignItems="center">
+              <Text color="grayscale.100">{t('labelDelegateInput')}</Text>
+              <Spacer />
+              <Button
+                pr={0}
+                variant="text"
+                textStyle="text-sm-sans-regular"
+                color="gold.500-active"
+                onClick={() => (account ? setFieldValue('address', account) : null)}
+              >
+                {t('linkSelfDelegate')}
+              </Button>
+            </Flex>
+            <Field name={'address'}>
+              {({ field }: FieldAttributes<any>) => (
+                <LabelWrapper
+                  subLabel={t('sublabelDelegateInput')}
+                  errorMessage={errors.address}
+                >
+                  <Input
+                    data-testid="delegate-addressInput"
+                    placeholder="0x0000...0000"
+                    {...field}
+                  />
+                </LabelWrapper>
+              )}
+            </Field>
+            <Button
+              type="submit"
+              marginTop="2rem"
+              width="100%"
+              isDisabled={!!errors.address || contractCallPending}
+            >
+              {t('buttonDelegate')}
+            </Button>
+          </form>
+        )}
+      </Formik>
     </Box>
   );
 }
