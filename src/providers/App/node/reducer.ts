@@ -1,3 +1,4 @@
+import { utils } from 'ethers';
 import { FractalNode, NodeHierarchy } from '../../../types';
 import { NodeAction, NodeActions } from './action';
 
@@ -17,7 +18,11 @@ export const initialNodeState: FractalNode = {
 export function nodeReducer(state: FractalNode, action: NodeActions) {
   switch (action.type) {
     case NodeAction.SET_SAFE_INFO: {
-      return { ...state, safe: action.payload };
+      return {
+        ...state,
+        safe: action.payload,
+        daoAddress: utils.getAddress(action.payload.address),
+      };
     }
     case NodeAction.SET_DAO_INFO: {
       return { ...state, ...action.payload };
