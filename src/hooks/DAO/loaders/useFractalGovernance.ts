@@ -32,7 +32,6 @@ export const useFractalGovernance = () => {
       !!daoAddress &&
       daoAddress + guardContracts.vetoGuardType !== currentValidAddress.current
     ) {
-      console.count('useFractalGovernance');
       currentValidAddress.current =
         daoAddress + guardContracts.vetoGuardType || constants.AddressZero;
       loadDAOProposals();

@@ -8,7 +8,6 @@
     "errorLowSignerThreshold": "Поріг голосів має бути більше ніж 0",
     "errorHighSignerThreshold": "Поріг голосів зависокий",
     "labelSigners": "Загалом підписантів",
-    "helperSigners": "Кількість довіренних користувачів для цього Multisig",
     "labelSigThreshold": "Поріг підписів",
     "helperSigThreshold": "Кількість необхідних підписів для схвалення пропозиції",
     "titleSignerAddresses": "Адреса підписанта",
