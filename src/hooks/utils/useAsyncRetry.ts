@@ -15,7 +15,7 @@ export function useAsyncRetry() {
        * the Promise won't resolve until the method is resolved. rejections are caught and return null.
        */
       const funcResponse = await new Promise((resolve, reject) => {
-        setTimeout(() => resolve(func().catch(reject)), 3000);
+        setTimeout(() => resolve(func().catch(reject)), currentRetries === retries ? 0 : 2000);
       }).catch(() => null);
 
       if (funcResponse) {
@@ -26,7 +26,6 @@ export function useAsyncRetry() {
         // @todo maybe a toast Error?
         return null;
       }
-
       currentRetries = currentRetries - 1;
       request();
     };
