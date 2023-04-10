@@ -3,13 +3,13 @@ import * as Yup from 'yup';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 /**
- * validation schema for Create Integration workflow
+ * validation schema for Create Proposal Template workflow
  * @dev https://www.npmjs.com/package/yup
  */
-export const useCreateIntegrationSchema = () => {
+const useCreateProposalTemplateSchema = () => {
   const { addressValidationTest } = useValidationAddress();
 
-  const createIntegrationValidation = useMemo(
+  const createProposalTemplateValidation = useMemo(
     () =>
       Yup.object().shape({
         transactions: Yup.array()
@@ -30,12 +30,14 @@ export const useCreateIntegrationSchema = () => {
               ),
             })
           ),
-        integrationMetadata: Yup.object().shape({
+        proposalTemplateMetadata: Yup.object().shape({
           title: Yup.string().required(),
           description: Yup.string().notRequired(),
         }),
       }),
     [addressValidationTest]
   );
-  return { createIntegrationValidation };
+  return { createProposalTemplateValidation };
 };
+
+export default useCreateProposalTemplateSchema;

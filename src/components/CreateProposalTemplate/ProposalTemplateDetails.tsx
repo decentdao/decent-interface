@@ -3,7 +3,7 @@ import { FormikProps } from 'formik';
 import { Fragment, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
-import { CreateIntegrationForm } from '../../types/createIntegration';
+import { CreateProposalTemplateForm } from '../../types/createProposalTemplate';
 
 export function TransactionValueContainer({
   children,
@@ -26,10 +26,10 @@ export function TransactionValueContainer({
   );
 }
 
-export default function IntegrationDetails({
-  values: { integrationMetadata, transactions },
-}: FormikProps<CreateIntegrationForm>) {
-  const { t } = useTranslation(['integration', 'proposal']);
+export default function ProposalTemplateDetails({
+  values: { proposalTemplateMetadata, transactions },
+}: FormikProps<CreateProposalTemplateForm>) {
+  const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
   return (
     <Box
@@ -46,24 +46,24 @@ export default function IntegrationDetails({
         <Divider color="chocolate.700" />
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('previewTitle')}</Text>
-          <Text>{integrationMetadata.title}</Text>
+          <Text>{proposalTemplateMetadata.title}</Text>
         </HStack>
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('previewThumnbail')}</Text>
-          {integrationMetadata.title && (
+          {proposalTemplateMetadata.title && (
             <Avatar
               size="sm"
               w="28px"
               h="28px"
-              name={integrationMetadata.title}
+              name={proposalTemplateMetadata.title}
               borderRadius="4px"
               getInitials={(title: string) => title.slice(0, 2)}
             />
           )}
         </HStack>
         <HStack justifyContent="space-between">
-          <Text color="grayscale.500">{t('integrationDescription')}</Text>
-          <Text textAlign="right">{integrationMetadata.description}</Text>
+          <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
+          <Text textAlign="right">{proposalTemplateMetadata.description}</Text>
         </HStack>
         <Divider color="chocolate.700" />
         {transactions.map((transaction, i) => (

@@ -2,17 +2,22 @@ import { Button, Box, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@ch
 import { Info } from '@decent-org/fractal-ui';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CreateIntegrationForm, CreateIntegrationState } from '../../types/createIntegration';
-import IntegrationTransactions from './IntegrationTransactions';
-import { DEFAULT_INTEGRATION_TRANSACTION } from './constants';
+import {
+  CreateProposalTemplateForm,
+  CreateProposalTemplateFormState,
+} from '../../types/createProposalTemplate';
+import ProposalTemplateTransactions from './ProposalTemplateTransactions';
+import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
 
-interface IntegrationTransactionsFormProps extends FormikProps<CreateIntegrationForm> {
+interface ProposalTemplateTransactionsFormProps extends FormikProps<CreateProposalTemplateForm> {
   pendingTransaction: boolean;
-  setFormState: (state: CreateIntegrationState) => void;
+  setFormState: (state: CreateProposalTemplateFormState) => void;
   canUserCreateProposal: boolean;
 }
 
-export default function IntegrationTransactionsForm(props: IntegrationTransactionsFormProps) {
+export default function ProposalTemplateTransactionsForm(
+  props: ProposalTemplateTransactionsFormProps
+) {
   const {
     pendingTransaction,
     setFormState,
@@ -21,11 +26,11 @@ export default function IntegrationTransactionsForm(props: IntegrationTransactio
     errors: { transactions: transactionsError },
     canUserCreateProposal,
   } = props;
-  const { t } = useTranslation(['integration', 'proposal', 'common']);
+  const { t } = useTranslation(['proposalTemplate', 'proposal', 'common']);
 
   return (
     <Box>
-      <IntegrationTransactions {...props} />
+      <ProposalTemplateTransactions {...props} />
       <VStack
         align="left"
         spacing={6}
@@ -34,7 +39,7 @@ export default function IntegrationTransactionsForm(props: IntegrationTransactio
         <Button
           variant="text"
           onClick={() =>
-            setFieldValue('transactions', [...transactions, DEFAULT_INTEGRATION_TRANSACTION])
+            setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION])
           }
           disabled={pendingTransaction}
           w="fit-content"
@@ -63,7 +68,7 @@ export default function IntegrationTransactionsForm(props: IntegrationTransactio
             textStyle="text-md-mono-regular"
             color="gold.500"
             cursor="pointer"
-            onClick={() => setFormState(CreateIntegrationState.METADATA_FORM)}
+            onClick={() => setFormState(CreateProposalTemplateFormState.METADATA_FORM)}
             mb={4}
           >
             {`< ${t('proposalBack', { ns: 'proposal' })}`}

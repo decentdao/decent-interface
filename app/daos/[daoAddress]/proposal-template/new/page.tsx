@@ -6,30 +6,30 @@ import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import IntegrationDetails from '../../../../../src/components/CreateIntegration/IntegrationDetails';
-import IntegrationMetadata from '../../../../../src/components/CreateIntegration/IntegrationMetadata';
-import IntegrationTransactionsForm from '../../../../../src/components/CreateIntegration/IntegrationTransactionsForm';
-import { DEFAULT_INTEGRATION } from '../../../../../src/components/CreateIntegration/constants';
+import ProposalTemplateDetails from '../../../../../src/components/CreateProposalTemplate/ProposalTemplateDetails';
+import ProposalTemplateMetadata from '../../../../../src/components/CreateProposalTemplate/ProposalTemplateMetadata';
+import ProposalTemplateTransactionsForm from '../../../../../src/components/CreateProposalTemplate/ProposalTemplateTransactionsForm';
+import { DEFAULT_PROPOSAL_TEMPLATE } from '../../../../../src/components/CreateProposalTemplate/constants';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../src/constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../src/constants/routes';
-import useCreateIntegration from '../../../../../src/hooks/DAO/proposal/useCreateIntegration';
+import useCreateProposalTemplate from '../../../../../src/hooks/DAO/proposal/useCreateProposalTemplate';
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import useDefaultNonce from '../../../../../src/hooks/DAO/useDefaultNonce';
-import { useCreateIntegrationSchema } from '../../../../../src/hooks/schemas/createIntegration/useCreateIntegrationSchema';
+import useCreateProposalTemplateSchema from '../../../../../src/hooks/schemas/createProposalTemplate/useCreateProposalTemplateSchema';
 import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
 import {
-  CreateIntegrationForm,
-  CreateIntegrationState,
-} from '../../../../../src/types/createIntegration';
+  CreateProposalTemplateForm,
+  CreateProposalTemplateFormState,
+} from '../../../../../src/types/createProposalTemplate';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
   "details"`;
 
-export default function CreateIntegrationPage() {
-  const [formState, setFormState] = useState(CreateIntegrationState.METADATA_FORM);
-  const { t } = useTranslation(['integration', 'proposal']);
+export default function CreateProposalTemplatePage() {
+  const [formState, setFormState] = useState(CreateProposalTemplateFormState.METADATA_FORM);
+  const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const { push } = useRouter();
 
   const {
@@ -38,25 +38,25 @@ export default function CreateIntegrationPage() {
     },
   } = useFractal();
 
-  const { prepareIntegrationProposal } = useCreateIntegration();
+  const { prepareProposalTemplateProposal } = useCreateProposalTemplate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
-  const { createIntegrationValidation } = useCreateIntegrationSchema();
+  const { createProposalTemplateValidation } = useCreateProposalTemplateSchema();
   const nonce = useDefaultNonce();
 
   const successCallback = () => {
     if (address) {
-      // Redirecting to proposals page so that user will see Proposal for Integration creation
+      // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
       push(`/daos/${address}/proposals`);
     }
   };
 
   return (
-    <Formik<CreateIntegrationForm>
-      validationSchema={createIntegrationValidation}
-      initialValues={DEFAULT_INTEGRATION}
+    <Formik<CreateProposalTemplateForm>
+      validationSchema={createProposalTemplateValidation}
+      initialValues={DEFAULT_PROPOSAL_TEMPLATE}
       onSubmit={async values => {
         if (canUserCreateProposal) {
-          const proposalData = await prepareIntegrationProposal(values);
+          const proposalData = await prepareProposalTemplateProposal(values);
           submitProposal({
             proposalData,
             nonce,
@@ -68,7 +68,7 @@ export default function CreateIntegrationPage() {
         }
       }}
     >
-      {(formikProps: FormikProps<CreateIntegrationForm>) => {
+      {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
         const { handleSubmit } = formikProps;
         return (
           <form onSubmit={handleSubmit}>
@@ -76,18 +76,20 @@ export default function CreateIntegrationPage() {
               <PageHeader
                 breadcrumbs={[
                   {
-                    title: t('integrations', { ns: 'breadcrumbs' }),
-                    path: DAO_ROUTES.integrations.relative(address),
+                    title: t('proposalTemplates', { ns: 'breadcrumbs' }),
+                    path: DAO_ROUTES.proposalTemplates.relative(address),
                   },
                   {
-                    title: t('integrationNew', { ns: 'breadcrumbs' }),
+                    title: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
                     path: '',
                   },
                 ]}
                 ButtonIcon={Trash}
                 buttonVariant="secondary"
                 buttonClick={() =>
-                  push(address ? DAO_ROUTES.integrations.relative(address) : BASE_ROUTES.landing)
+                  push(
+                    address ? DAO_ROUTES.proposalTemplates.relative(address) : BASE_ROUTES.landing
+                  )
                 }
                 isButtonDisabled={pendingCreateTx}
               />
@@ -95,7 +97,7 @@ export default function CreateIntegrationPage() {
                 textStyle="text-2xl-mono-regular"
                 color="grayscale.100"
               >
-                {t('createIntegration')}
+                {t('createProposalTemplate')}
               </Text>
               <Grid
                 mt={8}
@@ -117,8 +119,8 @@ export default function CreateIntegrationPage() {
                       p="1rem"
                       bg={BACKGROUND_SEMI_TRANSPARENT}
                     >
-                      {formState === CreateIntegrationState.METADATA_FORM ? (
-                        <IntegrationMetadata
+                      {formState === CreateProposalTemplateFormState.METADATA_FORM ? (
+                        <ProposalTemplateMetadata
                           setFormState={setFormState}
                           {...formikProps}
                         />
@@ -128,9 +130,9 @@ export default function CreateIntegrationPage() {
                             textStyle="text-xl-mono-medium"
                             mb={4}
                           >
-                            {formikProps.values.integrationMetadata.title}
+                            {formikProps.values.proposalTemplateMetadata.title}
                           </Text>
-                          <IntegrationTransactionsForm
+                          <ProposalTemplateTransactionsForm
                             setFormState={setFormState}
                             canUserCreateProposal={canUserCreateProposal}
                             pendingTransaction={pendingCreateTx}
@@ -145,7 +147,7 @@ export default function CreateIntegrationPage() {
                   area="details"
                   w="100%"
                 >
-                  <IntegrationDetails {...formikProps} />
+                  <ProposalTemplateDetails {...formikProps} />
                 </GridItem>
               </Grid>
             </Box>

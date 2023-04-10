@@ -64,9 +64,9 @@ export function NavigationLinks({
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              href={DAO_ROUTES.integrations.relative(address)}
-              labelKey="integrations"
-              testId="navigation-integrationsLink"
+              href={DAO_ROUTES.proposalTemplates.relative(address)}
+              labelKey="proposalTemplates"
+              testId="navigation-proposalTemplatesLink"
               Icon={Integrations}
               closeDrawer={closeDrawer}
             />

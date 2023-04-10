@@ -1,27 +1,27 @@
 import { VStack, HStack, Text, Box, Flex, IconButton } from '@chakra-ui/react';
 import { AddPlus, Trash } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { CreateIntegrationTransaction } from '../../types/createIntegration';
+import { CreateProposalTemplateTransaction } from '../../types/createProposalTemplate';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
-import { DEFAULT_INTEGRATION_TRANSACTION } from './constants';
+import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
 
-interface IntegrationTransactionProps {
-  transaction: CreateIntegrationTransaction;
+interface ProposalTemplateTransactionProps {
+  transaction: CreateProposalTemplateTransaction;
   transactionIndex: number;
   transactionPending: boolean;
   txAddressError?: string;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void;
 }
 
-export default function IntegrationTransaction({
+export default function ProposalTemplateTransaction({
   transaction,
   transactionIndex,
   transactionPending,
   txAddressError,
   setFieldValue,
-}: IntegrationTransactionProps) {
-  const { t } = useTranslation(['proposal', 'integration', 'common']);
+}: ProposalTemplateTransactionProps) {
+  const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
 
   return (
     <VStack
@@ -103,7 +103,7 @@ export default function IntegrationTransaction({
                   onClick={() =>
                     setFieldValue(`transactions.${transactionIndex}.parameters`, [
                       ...transaction.parameters,
-                      DEFAULT_INTEGRATION_TRANSACTION,
+                      DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION,
                     ])
                   }
                 >
@@ -116,8 +116,8 @@ export default function IntegrationTransaction({
               padding={6}
             >
               <InputComponent
-                label={t('labelFunctionParameter', { ns: 'integration' })}
-                helper={t('helperFunctionParameter', { ns: 'integration' })}
+                label={t('labelFunctionParameter', { ns: 'proposalTemplate' })}
+                helper={t('helperFunctionParameter', { ns: 'proposalTemplate' })}
                 isRequired={false}
                 value={parameter.signature}
                 onChange={e =>
@@ -141,7 +141,7 @@ export default function IntegrationTransaction({
                 mt={4}
               >
                 <InputComponent
-                  label={t('labelParameterLabel', { ns: 'integration' })}
+                  label={t('labelParameterLabel', { ns: 'proposalTemplate' })}
                   helper=""
                   isRequired={false}
                   value={parameter.label || ''}
@@ -155,7 +155,7 @@ export default function IntegrationTransaction({
                   testId={`transactions.${transactionIndex}.parameters.${i}.label`}
                   subLabel={
                     <HStack>
-                      <Text>{t('helperParameterLabel', { ns: 'integration' })}</Text>
+                      <Text>{t('helperParameterLabel', { ns: 'proposalTemplate' })}</Text>
                     </HStack>
                   }
                   gridContainerProps={{
@@ -165,7 +165,7 @@ export default function IntegrationTransaction({
                 />
                 <Text>{t('or', { ns: 'common' })}</Text>
                 <InputComponent
-                  label={t('labelParameterValue', { ns: 'integration' })}
+                  label={t('labelParameterValue', { ns: 'proposalTemplate' })}
                   helper=""
                   isRequired={false}
                   value={parameter.value || ''}
@@ -180,7 +180,9 @@ export default function IntegrationTransaction({
                     <HStack wordBreak="break-all">
                       <Text>{t('example', { ns: 'common' })}:</Text>
                       <ExampleLabel>value</ExampleLabel>
-                      <Text as="span">{t('integrationLeaveBlank', { ns: 'integration' })}</Text>
+                      <Text as="span">
+                        {t('proposalTemplateLeaveBlank', { ns: 'proposalTemplate' })}
+                      </Text>
                     </HStack>
                   }
                   testId={`transactions.${transactionIndex}.parameters.${i}.value`}

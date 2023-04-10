@@ -12,19 +12,22 @@ import { FormikErrors, FormikProps } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BigNumberValuePair } from '../../types';
-import { CreateIntegrationForm, CreateIntegrationTransaction } from '../../types/createIntegration';
-import IntegrationTransaction from './IntegrationTransaction';
+import {
+  CreateProposalTemplateForm,
+  CreateProposalTemplateTransaction,
+} from '../../types/createProposalTemplate';
+import ProposalTemplateTransaction from './ProposalTemplateTransaction';
 
-interface IntegrationTransactionsProps extends FormikProps<CreateIntegrationForm> {
+interface ProposalTemplateTransactionsProps extends FormikProps<CreateProposalTemplateForm> {
   pendingTransaction: boolean;
 }
-export default function IntegrationTransactions({
+export default function ProposalTemplateTransactions({
   values: { transactions },
   errors,
   setFieldValue,
   pendingTransaction,
-}: IntegrationTransactionsProps) {
-  const { t } = useTranslation(['proposal', 'integration', 'common']);
+}: ProposalTemplateTransactionsProps) {
+  const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
 
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 
@@ -40,7 +43,7 @@ export default function IntegrationTransactions({
     >
       {transactions.map((_, index) => {
         const txErrors = errors?.transactions?.[index] as
-          | FormikErrors<CreateIntegrationTransaction<BigNumberValuePair>>
+          | FormikErrors<CreateProposalTemplateTransaction<BigNumberValuePair>>
           | undefined;
         const txAddressError = txErrors?.targetAddress;
 
@@ -94,7 +97,7 @@ export default function IntegrationTransactions({
                   )}
                 </HStack>
                 <AccordionPanel p={0}>
-                  <IntegrationTransaction
+                  <ProposalTemplateTransaction
                     transaction={transactions[index]}
                     txAddressError={txAddressError}
                     transactionIndex={index}

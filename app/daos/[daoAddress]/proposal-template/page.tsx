@@ -5,13 +5,13 @@ import { AddPlus } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import Integrations from '../../../../src/components/Integrations';
+import ProposalTemplates from '../../../../src/components/ProposalTemplates';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
 import { useFractal } from '../../../../src/providers/Fractal/hooks/useFractal';
 import { GovernanceTypes } from '../../../../src/types';
 
-export default function IntegrationsPage() {
+export default function ProposalTemplatesPage() {
   const { t } = useTranslation();
   const {
     governance: { type },
@@ -28,13 +28,13 @@ export default function IntegrationsPage() {
       <PageHeader
         breadcrumbs={[
           {
-            title: t('integrations', { ns: 'breadcrumbs' }),
+            title: t('proposalTemplates', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}
       >
         {showCreateButton && (
-          <Link href={DAO_ROUTES.integrationNew.relative(address)}>
+          <Link href={DAO_ROUTES.proposalTemplateNew.relative(address)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>
@@ -42,7 +42,7 @@ export default function IntegrationsPage() {
           </Link>
         )}
       </PageHeader>
-      <Integrations />
+      <ProposalTemplates />
     </Box>
   );
 }
