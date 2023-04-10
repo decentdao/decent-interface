@@ -1,5 +1,6 @@
 {
   "modules": "Modules",
   "guards": "Guards",
-  "noModulesEnabled": "No {{title}} Enabled"
+  "noModulesEnabled": "No Modules Enabled",
+  "noGuardsEnabled": "No Guards Enabled"
 }

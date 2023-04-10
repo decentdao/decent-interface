@@ -8,10 +8,20 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
 
+enum ModuleType {
+  MODULES = "modules",
+  GUARDS = "guards"
+}
+
 function NoModules({ title, t }: { title: string; t: TFunction<'settings'[]> }) {
+  const noModulesTranslation =
+    title === ModuleType.MODULES ?
+      t('noModulesEnabled') :
+      t('noGuardsEnabled')
+
   return (
     <Box mt={2}>
-      <Text color="chocolate.200">{t('noModulesEnabled', { title })}</Text>
+      <Text color="chocolate.200">{noModulesTranslation}</Text>
     </Box>
   );
 }
@@ -110,12 +120,12 @@ export function Settings() {
     <>
       <ModulesContainer
         addresses={safeModuleAddresses}
-        title={t('modules')}
+        title={t(ModuleType.MODULES)}
         t={t}
       />
       <ModulesContainer
         addresses={safeGuardAddress}
-        title={t('guards')}
+        title={t(ModuleType.GUARDS)}
         t={t}
       />
     </>
