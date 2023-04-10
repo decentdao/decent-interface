@@ -36,7 +36,7 @@ export const useFractalNode = ({
   const currentValidAddress = useRef<string | undefined>();
   const {
     clients: { safeService },
-    dispatch,
+    action,
   } = useFractal();
   const { t } = useTranslation();
   const { replace } = useRouter();
@@ -48,10 +48,10 @@ export const useFractalNode = ({
     (errorMessage: string) => {
       // invalid DAO
       toast(t(errorMessage), { toastId: 'invalid-dao' });
-      dispatch.resetDAO();
+      action.resetDAO();
       replace(BASE_ROUTES.landing);
     },
-    [dispatch, replace, t]
+    [action, replace, t]
   );
 
   const formatDAOQuery = useCallback(
@@ -121,36 +121,40 @@ export const useFractalNode = ({
   const setDAO = useCallback(
     async (_daoAddress: string) => {
       if (utils.isAddress(_daoAddress)) {
-        const safe = await safeService.getSafeInfo(_daoAddress);
-        if (!safe) {
-          invalidateDAO('errorInvalidSearch');
-          return;
-        }
-        await dispatch.resetDAO();
-        dispatch.node({
-          type: NodeAction.SET_SAFE_INFO,
-          payload: safe,
-        });
-        dispatch.node({
-          type: NodeAction.SET_FRACTAL_MODULES,
-          payload: await lookupModules(safe.modules),
-        });
-        const graphNodeInfo = formatDAOQuery(
-          await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-          _daoAddress
-        );
-        if (!!graphNodeInfo) {
-          dispatch.node({
-            type: NodeAction.SET_DAO_INFO,
-            payload: graphNodeInfo,
+        try {
+          const safe = await safeService.getSafeInfo(utils.getAddress(_daoAddress));
+          if (!safe) {
+            invalidateDAO('errorInvalidSearch');
+            return;
+          }
+          action.dispatch({
+            type: NodeAction.SET_SAFE_INFO,
+            payload: safe,
           });
+          action.dispatch({
+            type: NodeAction.SET_FRACTAL_MODULES,
+            payload: await lookupModules(safe.modules),
+          });
+          const graphNodeInfo = formatDAOQuery(
+            await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
+            _daoAddress
+          );
+          if (!!graphNodeInfo) {
+            action.dispatch({
+              type: NodeAction.SET_DAO_INFO,
+              payload: graphNodeInfo,
+            });
+          }
+        } catch (e) {
+          // network error
+          invalidateDAO('errorFailedSearch');
         }
       } else {
         // invalid address
         invalidateDAO('errorFailedSearch');
       }
     },
-    [dispatch, invalidateDAO, safeService, lookupModules, formatDAOQuery, getDAOInfo]
+    [action, invalidateDAO, safeService, lookupModules, formatDAOQuery, getDAOInfo]
   );
 
   useEffect(() => {
@@ -163,7 +167,7 @@ export const useFractalNode = ({
         setDAO(daoAddress);
       }
     }
-  }, [daoAddress, loadOnMount, setDAO, dispatch, currentValidAddress]);
+  }, [daoAddress, loadOnMount, setDAO, action, currentValidAddress]);
 
   return { loadDao };
 };

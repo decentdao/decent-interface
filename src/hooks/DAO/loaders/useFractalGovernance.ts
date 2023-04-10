@@ -1,3 +1,4 @@
+import { constants } from 'ethers';
 import { useEffect, useRef } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
@@ -9,8 +10,12 @@ export const useFractalGovernance = () => {
   const currentValidAddress = useRef<string>();
 
   const {
-    node: { daoAddress },
+    node: {
+      daoAddress,
+      nodeHierarchy: { parentAddress },
+    },
     governanceContracts,
+    guardContracts,
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
@@ -19,8 +24,16 @@ export const useFractalGovernance = () => {
 
   useEffect(() => {
     const { isLoaded, usulContract } = governanceContracts;
-    if (isLoaded && !!daoAddress && daoAddress !== currentValidAddress.current) {
-      currentValidAddress.current = daoAddress;
+    if (parentAddress && guardContracts.vetoGuardType === null) {
+      return;
+    }
+    if (
+      isLoaded &&
+      !!daoAddress &&
+      daoAddress + guardContracts.vetoGuardType !== currentValidAddress.current
+    ) {
+      currentValidAddress.current =
+        daoAddress + guardContracts.vetoGuardType || constants.AddressZero;
       loadDAOProposals();
       if (!!usulContract) {
         // load DAO voting strategy data
@@ -28,6 +41,16 @@ export const useFractalGovernance = () => {
         // load voting token
         loadERC20Token();
       }
+    } else if (!isLoaded) {
+      currentValidAddress.current = undefined;
     }
-  }, [daoAddress, governanceContracts, loadDAOProposals, loadAzoriusStrategy, loadERC20Token]);
+  }, [
+    daoAddress,
+    parentAddress,
+    governanceContracts,
+    loadDAOProposals,
+    guardContracts,
+    loadAzoriusStrategy,
+    loadERC20Token,
+  ]);
 };

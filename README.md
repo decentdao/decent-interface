@@ -70,7 +70,7 @@ Example:
 $ npx playwright test --project=chromium
 ```
 
-Test results for each test on each browser type will be output into the [playwright-report](./playwright-report/) (HTML) and [test-results](./test-results/)(screenshots and videos) folders.
+Test results for each test on each browser type will be output into the `/playwright-report` (HTML) and `/test-results` (screenshots and videos) folders.
 
 ## Deployment Notes
 

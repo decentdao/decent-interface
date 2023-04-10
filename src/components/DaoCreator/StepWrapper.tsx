@@ -34,7 +34,7 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
         buttonVariant="secondary"
         isButtonDisabled={isFormSubmitting}
         buttonClick={() =>
-          push(!isSubDAO && daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress))
+          push(!isSubDAO || !daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress))
         }
       />
       <Text

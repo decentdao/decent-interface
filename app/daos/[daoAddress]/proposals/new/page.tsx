@@ -17,6 +17,7 @@ import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../../../../src/c
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import { usePrepareProposal } from '../../../../../src/hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
+import useDefaultNonce from '../../../../../src/hooks/DAO/useDefaultNonce';
 import { useCreateProposalSchema } from '../../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import { CreateProposalForm, CreateProposalState, StrategyType } from '../../../../../src/types';
@@ -30,7 +31,7 @@ export default function ProposalCreatePage() {
     node: { daoAddress },
     governance: { type },
   } = useFractal();
-
+  const defaultNonce = useDefaultNonce();
   const { createProposalValidation } = useCreateProposalSchema();
   const { prepareProposal } = usePrepareProposal();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -66,7 +67,7 @@ export default function ProposalCreatePage() {
   return (
     <Formik<CreateProposalForm>
       validationSchema={createProposalValidation}
-      initialValues={DEFAULT_PROPOSAL}
+      initialValues={{ ...DEFAULT_PROPOSAL, nonce: defaultNonce || 0 }}
       onSubmit={values => {
         const { nonce } = values;
         const proposal = prepareProposal(values);
@@ -77,6 +78,7 @@ export default function ProposalCreatePage() {
           successToastMessage: t('proposalCreateSuccessToastMessage'),
           failedToastMessage: t('proposalCreateFailureToastMessage'),
           successCallback,
+          safeAddress: daoAddress,
         });
       }}
     >
@@ -136,7 +138,10 @@ export default function ProposalCreatePage() {
                             : undefined
                         }
                         nonce={values.nonce}
-                        setNonce={(nonce?: number) => setFieldValue('nonce', nonce)}
+                        defaultNonce={defaultNonce}
+                        setNonce={(nonce?: number) =>
+                          setFieldValue('nonce', nonce ? parseInt(nonce.toString(), 10) : undefined)
+                        }
                       />
 
                       <UsulMetadata

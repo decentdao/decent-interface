@@ -24,5 +24,5 @@ export type CreateProposalMetadata = {
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
   proposalMetadata: CreateProposalMetadata;
-  nonce?: number;
+  nonce: number;
 };

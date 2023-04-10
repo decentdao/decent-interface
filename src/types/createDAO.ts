@@ -59,7 +59,7 @@ export interface GnosisConfiguration {
   trustedAddresses: string[];
   signatureThreshold: number;
   numOfSigners: number;
-  customNonce?: number;
+  customNonce: number;
 }
 
 export interface SubDAO<T = BigNumber>

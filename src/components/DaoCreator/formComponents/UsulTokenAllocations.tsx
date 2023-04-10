@@ -37,9 +37,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
         {({ remove, push }) => (
           <Box my={4}>
             <Grid
-              gridTemplateColumns={
-                values.govToken.tokenAllocations.length > 1 ? '1fr 35% 2rem' : '1fr 1fr'
-              }
+              gridTemplateColumns="1fr 35% 2rem"
               columnGap={4}
               rowGap={2}
               data-testid="tokenVoting-tokenAllocations"
@@ -56,7 +54,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
               >
                 {t('titleAmount')}
               </Text>
-              {values.govToken.tokenAllocations.length > 1 && <Box>{/* EMPTY */}</Box>}
+              <Box>{/* EMPTY */}</Box>
 
               {values.govToken.tokenAllocations.map((tokenAllocation, index) => {
                 const tokenAllocationError = (

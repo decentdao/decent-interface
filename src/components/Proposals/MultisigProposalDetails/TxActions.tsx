@@ -204,7 +204,6 @@ export function TxActions({
       icon: undefined,
     },
   };
-
   const isButtonDisabled = isPending || proposal.state === FractalProposalState.Queued;
 
   return (

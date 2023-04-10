@@ -6,17 +6,16 @@ import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigP
 import { MetaTransaction, FractalProposal, UsulProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 import useUpdateProposalState from './useUpdateProposalState';
-import useUsul from './useUsul';
 
 export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
-  const { usulContract } = useUsul();
-  const { governanceContracts, dispatch } = useFractal();
+  const { governanceContracts, action } = useFractal();
+  const { usulContract } = governanceContracts;
   const { chainId } = useNetworkConfg();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
-    governanceDispatch: dispatch.governance,
+    governanceDispatch: action.dispatch,
     chainId,
   });
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
@@ -42,7 +41,7 @@ export default function useExecuteProposal() {
 
       contractCallExecuteProposal({
         contractFn: () =>
-          usulContract.executeProposalBatch(
+          usulContract.asSigner.executeProposalBatch(
             proposal.proposalNumber,
             targets,
             values,

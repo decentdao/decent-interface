@@ -58,6 +58,7 @@ export const useCreateSubDAOProposal = () => {
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
           successCallback,
+          safeAddress: daoAddress,
         });
       };
       propose();

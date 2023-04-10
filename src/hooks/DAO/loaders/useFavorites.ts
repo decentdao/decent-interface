@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { CacheExpiry, CacheKeys, useLocalStorage } from '../../utils/useLocalStorage';
 
@@ -12,7 +12,11 @@ export const useAccountFavorites = () => {
   } = useFractal();
 
   const { setValue, getValue } = useLocalStorage();
-  const favoritesList = useMemo<string[]>(() => getValue(CacheKeys.FAVORITES), [getValue]);
+  const [favoritesList, setFavoritesList] = useState<string[]>([]);
+
+  useEffect(() => {
+    setFavoritesList(getValue(CacheKeys.FAVORITES));
+  }, [getValue]);
 
   /**
    * @returns favorited status of loaded safe
@@ -38,6 +42,7 @@ export const useAccountFavorites = () => {
       } else {
         updatedFavorites = favoritesList.concat([normalizedAddress]);
       }
+      setFavoritesList(updatedFavorites);
       setValue(CacheKeys.FAVORITES, updatedFavorites, CacheExpiry.NEVER);
     },
     [favoritesList, setValue]

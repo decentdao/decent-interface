@@ -19,7 +19,7 @@ import { useLocalStorage, CacheKeys } from '../../utils/useLocalStorage';
 export default function useDAOName() {
   const {
     node: { daoAddress },
-    dispatch,
+    action,
     baseContracts: { fractalRegistryContract },
   } = useFractal();
 
@@ -61,7 +61,7 @@ export default function useDAOName() {
     if (!daoAddress) return;
     const listenerCallback: TypedListener<FractalNameUpdatedEvent> = daoName => {
       setValue(CacheKeys.DAO_NAME_PREFIX + daoAddress, daoName, 60);
-      dispatch.node({ type: NodeAction.UPDATE_DAO_NAME, payload: daoName });
+      action.dispatch({ type: NodeAction.UPDATE_DAO_NAME, payload: daoName });
     };
 
     const rpc = getEventRPC<FractalRegistry>(fractalRegistryContract, networkId);
@@ -72,7 +72,7 @@ export default function useDAOName() {
     return () => {
       rpc.off(filter, listenerCallback);
     };
-  }, [daoAddress, dispatch, fractalRegistryContract, networkId, setValue]);
+  }, [daoAddress, action, fractalRegistryContract, networkId, setValue]);
 
   return getDaoName;
 }

@@ -16,12 +16,12 @@ import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   const [activeTimeout, setActiveTimeout] = useState<NodeJS.Timeout>();
-  const { governance, governanceContracts, dispatch } = useFractal();
+  const { governance, governanceContracts, action } = useFractal();
   const { chainId } = useNetworkConfg();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     chainId,
-    governanceDispatch: dispatch.governance,
+    governanceDispatch: action.dispatch,
   });
 
   const azoriusGovernance = governance as AzoriusGovernance;

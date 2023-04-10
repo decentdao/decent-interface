@@ -1,10 +1,8 @@
-import { OZLinearVoting__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider, useSigner } from 'wagmi';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useTransaction } from '../../utils/useTransaction';
-import useUsul from './useUsul';
 
 const useCastVote = ({
   proposalNumber,
@@ -13,10 +11,9 @@ const useCastVote = ({
   proposalNumber: BigNumber;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { votingStrategiesAddresses } = useUsul();
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const {
+    governanceContracts: { ozLinearVotingContract },
+  } = useFractal();
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
@@ -28,28 +25,18 @@ const useCastVote = ({
 
   const castVote = useCallback(
     (vote: number) => {
-      if (
-        !signerOrProvider ||
-        proposalNumber === undefined ||
-        vote === undefined ||
-        !votingStrategiesAddresses[0]
-      ) {
+      if (!proposalNumber || !vote || !ozLinearVotingContract) {
         return;
       }
 
-      const votingStrategyContract = OZLinearVoting__factory.connect(
-        votingStrategiesAddresses[0],
-        signerOrProvider
-      );
-
       contractCallCastVote({
-        contractFn: () => votingStrategyContract.vote(proposalNumber, vote, '0x'),
+        contractFn: () => ozLinearVotingContract.asSigner.vote(proposalNumber, vote, '0x'),
         pendingMessage: t('pendingCastVote'),
         failedMessage: t('failedCastVote'),
         successMessage: t('successCastVote'),
       });
     },
-    [contractCallCastVote, proposalNumber, signerOrProvider, t, votingStrategiesAddresses]
+    [contractCallCastVote, proposalNumber, t, ozLinearVotingContract]
   );
   return castVote;
 };

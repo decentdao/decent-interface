@@ -4,6 +4,9 @@ import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
   proposals: null,
+  type: undefined,
+  votesStrategy: undefined,
+  votesToken: undefined,
 };
 
 export const initialVotesTokenAccountData = {
@@ -27,12 +30,15 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: [...(proposals || []), action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_USUL_VOTE: {
       const { proposalNumber, voter, support, weight, votesSummary } = action.payload;
-      const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
+      const updatedProposals = [...(proposals as UsulProposal[])].map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
+          const foundVote = proposal.votes.find(vote => vote.voter === voter);
           const newProposal: UsulProposal = {
             ...proposal,
             votesSummary,
-            votes: [...proposal.votes, { voter, choice: VOTE_CHOICES[support], weight }],
+            votes: foundVote
+              ? [...proposal.votes]
+              : [...proposal.votes, { voter, choice: VOTE_CHOICES[support], weight }],
           };
           return newProposal;
         }
@@ -42,6 +48,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     }
     case FractalGovernanceAction.UPDATE_PROPOSAL_STATE: {
       const { proposalNumber, state: proposalState } = action.payload;
+      if (!proposals) {
+        return state;
+      }
       const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
           const newProposal: UsulProposal = {
@@ -80,9 +89,6 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
-    }
-    case FractalGovernanceAction.RESET: {
-      return { ...initialGovernanceState };
     }
     default:
       return state;

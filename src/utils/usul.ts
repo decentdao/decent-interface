@@ -19,6 +19,8 @@ import {
   Parameter,
   SafeMultisigTransactionResponse,
   DataDecoded,
+  FractalModuleData,
+  FractalModuleType,
 } from '../types';
 import { Providers } from '../types/network';
 
@@ -225,3 +227,8 @@ export const parseDecodedData = (
   }
   return Array.from(eventTransactionMap.values());
 };
+
+export function getUsulModuleFromModules(modules: FractalModuleData[]) {
+  const usulModule = modules.find(module => module.moduleType === FractalModuleType.USUL);
+  return usulModule;
+}

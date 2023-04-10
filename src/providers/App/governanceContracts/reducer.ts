@@ -15,8 +15,6 @@ export const governanceContractsReducer = (
   switch (action.type) {
     case GovernanceContractAction.SET_GOVERNANCE_CONTRACT:
       return { ...action.payload, isLoaded: true };
-    case GovernanceContractAction.RESET:
-      return initialGovernanceContractsState;
     default:
       return state;
   }
