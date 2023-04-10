@@ -18,7 +18,7 @@ export default function useQueueProposal() {
   const {
     guardContracts: { vetoGuardContract, vetoGuardType },
     governanceContracts,
-    dispatch,
+    action,
   } = useFractal();
   const { ozLinearVotingContract } = governanceContracts;
 
@@ -27,7 +27,7 @@ export default function useQueueProposal() {
   } = useProvider();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
-    governanceDispatch: dispatch.governance,
+    governanceDispatch: action.dispatch,
     chainId,
   });
 

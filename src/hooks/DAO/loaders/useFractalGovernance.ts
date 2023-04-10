@@ -1,3 +1,4 @@
+import { constants } from 'ethers';
 import { useEffect, useRef } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
@@ -23,15 +24,17 @@ export const useFractalGovernance = () => {
 
   useEffect(() => {
     const { isLoaded, usulContract } = governanceContracts;
+    if (parentAddress && guardContracts.vetoGuardType === null) {
+      return;
+    }
     if (
       isLoaded &&
       !!daoAddress &&
       daoAddress + guardContracts.vetoGuardType !== currentValidAddress.current
     ) {
-      if (parentAddress && guardContracts.vetoGuardType === null) {
-        return;
-      }
-      currentValidAddress.current = daoAddress + guardContracts.vetoGuardType;
+      console.count('useFractalGovernance');
+      currentValidAddress.current =
+        daoAddress + guardContracts.vetoGuardType || constants.AddressZero;
       loadDAOProposals();
       if (!!usulContract) {
         // load DAO voting strategy data
@@ -39,6 +42,8 @@ export const useFractalGovernance = () => {
         // load voting token
         loadERC20Token();
       }
+    } else if (!isLoaded) {
+      currentValidAddress.current = undefined;
     }
   }, [
     daoAddress,

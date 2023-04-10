@@ -28,8 +28,6 @@ export function nodeReducer(state: FractalNode, action: NodeActions) {
     case NodeAction.UPDATE_DAO_NAME: {
       return { ...state, daoName: action.payload };
     }
-    case NodeAction.RESET:
-      return { ...initialNodeState };
     default:
       return state;
   }

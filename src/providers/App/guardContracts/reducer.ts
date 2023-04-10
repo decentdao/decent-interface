@@ -4,6 +4,8 @@ import { GuardContractAction, GuardContractActions } from './action';
 export const initialGuardContractsState: FractalGuardContracts = {
   vetoGuardType: null,
   vetoVotingType: null,
+  vetoGuardContract: undefined,
+  vetoVotingContract: undefined,
 };
 
 export const guardContractReducer = (
@@ -13,8 +15,6 @@ export const guardContractReducer = (
   switch (action.type) {
     case GuardContractAction.SET_GUARD_CONTRACT:
       return action.payload;
-    case GuardContractAction.RESET:
-      return initialGuardContractsState;
     default:
       return state;
   }

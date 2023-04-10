@@ -10,7 +10,7 @@ export const useDAOProposals = () => {
   const {
     node: { daoAddress },
     governanceContracts,
-    dispatch,
+    action,
   } = useFractal();
 
   const loadAzoriusProposals = useAzoriusProposals();
@@ -21,7 +21,7 @@ export const useDAOProposals = () => {
 
     if (!!usulContract) {
       // load Usul proposals and strategies
-      dispatch.governance({
+      action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
         payload: { type: StrategyType.GNOSIS_SAFE_USUL, proposals: await loadAzoriusProposals() },
       });
@@ -32,7 +32,7 @@ export const useDAOProposals = () => {
   }, [
     governanceContracts,
     loadAzoriusProposals,
-    dispatch,
+    action,
     loadSafeMultisigProposals,
     setMethodOnInterval,
   ]);

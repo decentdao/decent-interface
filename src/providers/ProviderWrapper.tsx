@@ -1,3 +1,4 @@
+'use client';
 import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useFractal } from '../../../../providers/App/AppProvider';
 
 interface ISearchDisplay {
   loading?: boolean;
@@ -27,6 +28,7 @@ export function SearchDisplay({
   closeDrawer,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
+  const { action } = useFractal();
   const { push } = useRouter();
   if (loading && address) {
     return (
@@ -49,6 +51,7 @@ export function SearchDisplay({
         onClick={() => {
           onClickView();
           if (closeDrawer) closeDrawer();
+          action.resetDAO();
           push(DAO_ROUTES.dao.relative(address));
         }}
         cursor="default"

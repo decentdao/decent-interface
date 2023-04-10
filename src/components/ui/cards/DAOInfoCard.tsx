@@ -48,12 +48,14 @@ export function DAOInfoCard({
 }: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
   const {
     node: { daoAddress, daoName },
+    action,
   } = useFractal();
   const { favoritesList, toggleFavorite } = useAccountFavorites();
   const { address: account } = useAccount();
   const copyToClipboard = useCopyText();
+  const isCurrentDAO = safeAddress === daoAddress;
   const { daoRegistryName } = useDAOName({
-    address: safeAddress && daoAddress !== safeAddress ? safeAddress : undefined,
+    address: safeAddress && !isCurrentDAO ? safeAddress : undefined,
   });
   const { accountSubstring } = useDisplayName(safeAddress);
   const isFavorite = favoritesList.includes(safeAddress || '');
@@ -102,7 +104,14 @@ export function DAOInfoCard({
             gap="0.5rem"
             flexWrap="wrap"
           >
-            <Link href={DAO_ROUTES.dao.relative(safeAddress)}>
+            <Link
+              href={DAO_ROUTES.dao.relative(safeAddress)}
+              onClick={() => {
+                if (!isCurrentDAO) {
+                  action.resetDAO();
+                }
+              }}
+            >
               <Text
                 as="h1"
                 textStyle="text-2xl-mono-regular"

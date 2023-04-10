@@ -36,7 +36,7 @@ export const useFractalNode = ({
   const currentValidAddress = useRef<string | undefined>();
   const {
     clients: { safeService },
-    dispatch,
+    action,
   } = useFractal();
   const { t } = useTranslation();
   const { replace } = useRouter();
@@ -48,10 +48,10 @@ export const useFractalNode = ({
     (errorMessage: string) => {
       // invalid DAO
       toast(t(errorMessage), { toastId: 'invalid-dao' });
-      dispatch.resetDAO();
+      action.resetDAO();
       replace(BASE_ROUTES.landing);
     },
-    [dispatch, replace, t]
+    [action, replace, t]
   );
 
   const formatDAOQuery = useCallback(
@@ -127,11 +127,11 @@ export const useFractalNode = ({
             invalidateDAO('errorInvalidSearch');
             return;
           }
-          dispatch.node({
+          action.dispatch({
             type: NodeAction.SET_SAFE_INFO,
             payload: safe,
           });
-          dispatch.node({
+          action.dispatch({
             type: NodeAction.SET_FRACTAL_MODULES,
             payload: await lookupModules(safe.modules),
           });
@@ -140,7 +140,7 @@ export const useFractalNode = ({
             _daoAddress
           );
           if (!!graphNodeInfo) {
-            dispatch.node({
+            action.dispatch({
               type: NodeAction.SET_DAO_INFO,
               payload: graphNodeInfo,
             });
@@ -154,7 +154,7 @@ export const useFractalNode = ({
         invalidateDAO('errorFailedSearch');
       }
     },
-    [dispatch, invalidateDAO, safeService, lookupModules, formatDAOQuery, getDAOInfo]
+    [action, invalidateDAO, safeService, lookupModules, formatDAOQuery, getDAOInfo]
   );
 
   useEffect(() => {
@@ -164,11 +164,10 @@ export const useFractalNode = ({
         currentValidAddress.current = daoAddress;
       }
       if (!isCurrentAddress && daoAddress) {
-        dispatch.resetDAO();
         setDAO(daoAddress);
       }
     }
-  }, [daoAddress, loadOnMount, setDAO, dispatch, currentValidAddress]);
+  }, [daoAddress, loadOnMount, setDAO, action, currentValidAddress]);
 
   return { loadDao };
 };

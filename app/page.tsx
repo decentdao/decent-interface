@@ -100,14 +100,15 @@ export default function HomePage() {
 
   const {
     node: { daoAddress },
-    dispatch,
+    action,
   } = useFractal();
 
   useEffect(() => {
     if (daoAddress) {
-      dispatch.resetDAO();
+      action.resetDAO();
     }
-  }, [daoAddress, dispatch]);
+  }, [daoAddress, action]);
+
   return (
     <Center h="full">
       <Flex
