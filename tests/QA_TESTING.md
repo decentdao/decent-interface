@@ -88,7 +88,7 @@ From Step 2: *enter Token Name / Symbol / Supply* -> *enter allocation Address /
 - [ ] Deploy button initiates a transaction to deploy the DAO
 
 ## DAO Home (Token Voting)
-https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD839B66AFF
+https://app.staging.fractalframework.xyz/daos/{address}
 
 ### Sidebar
 - [ ] DAO Home is highlighted
@@ -113,17 +113,18 @@ https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD8
 - [ ] Details button links to the Proposal Details
 
 ## DAO Hierarchy (Token Voting)
-https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD839B66AFF/hierarchy
+https://app.staging.fractalframework.xyz/daos/{address}/hierarchy
 
 - [ ] DAO Hierarchy is highlighted in sidebar
 - [ ] DAO name links to DAO homepage
 - [ ] DAO card name links to DAO homepage
 - [ ] DAO card address copies address to clipboard
-- [ ] Manage DAO menu contains Add a subDAO option
-- [ ] TODO more about subDAO cards
+- [ ] Manage DAO menu contains Add a subDAO option on parent DAO
+- [ ] Manage DAO menu contains Add a subDAO and Initiate Freeze options on subDAOs
+- [ ] subDAO name links to subDAO's homepage
 
 ## Proposals (Token Voting)
-https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD839B66AFF/proposals
+https://app.staging.fractalframework.xyz/daos/{address}/proposals
 
 ### General
 - [ ] Proposals is highlighted in sidebar
@@ -143,7 +144,7 @@ TODO more here
 - [ ] Delegate Voting Tokens button initiates transaction to delegate and closes the modal
 
 ## Treasury (Token Voting)
-https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD839B66AFF/treasury
+https://app.staging.fractalframework.xyz/daos/{address}/treasury
 
 ### General
 - [ ] Treasury is highlighted in sidebar
@@ -170,7 +171,7 @@ https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD8
 - [ ] TODO
 
 ## Proposal Creation (Token Voting)
-https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD839B66AFF/proposals/new
+https://app.staging.fractalframework.xyz/daos/{address}/proposals/new
 
 ### Step 1: Proposal Metadata
 - [ ] Voting Period, Quorum, Timelock appear under Proposal Details
@@ -192,16 +193,34 @@ https://app.staging.fractalframework.xyz/daos/0x2DD8ad6974e40BcF8B48C49600656aD8
 - [ ] Trash icon deletes the selected builder component
 - [ ] Create Proposal button initiates transaction to create the proposal
 
-## SubDAO Creation
-- [ ] TODO
+## SubDAO Creation (Token Voting)
+https://app.staging.fractalframework.xyz/daos/{parentAddress}/new
+
+### General
+- [ ] All aspects of [Create a DAO](#create-a-dao)
+- [ ] Advanced appears in Configure Voting Token
+- [ ] Parent token holder claiming accepts any number up to 18 decimal places
+- [ ] Parent token holder amount included in total allocation calculation to enable Next
+
+### Step 4: Configure Parent Controls
+- [ ] Prev button returns user to Compose Governance
+- [ ] Execution Period accepts any whole number
+- [ ] Freeze Votes Threshold accepts any whole number
+- [ ] Freeze Proposal Period accepts any whole number
+- [ ] Freeze Period accepts any whole number
+- [ ] All fields required to enable Create button
+- [ ] Create subDAO Proposal initiates transaction to submit proposal
 
 ## Freeze Voting
 - [ ] TODO
 
+## Token Claim
+- [ ] TODO
+
 ## DAO Home (Multisig)
-https://app.staging.fractalframework.xyz/daos/0x4F7A6f79BB743c12B35492C5cea9e3648ecAF574
+https://app.staging.fractalframework.xyz/daos/{address}
 
 - [ ] Governace card displays Multisig governance details
 - [ ] Proposals card displays Pending / Passed counts
 
-TODO multisig specific stuff
+## TODO multisig specific stuff

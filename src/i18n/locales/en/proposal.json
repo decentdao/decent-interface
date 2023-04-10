@@ -31,7 +31,7 @@
     "stateQueued": "Queued",
     "stateTimeLocked": "Queued",
     "stateQueuedTip": "The proposal has passed, but cannot yet be executed until its queue period has ended.",
-    "stateFreezeInit": "Freeze Initiated",
+    "stateFreezeInit": "Freeze Pending",
     "stateFreezeInitTip": "The parent has initiated a vote to potentially freeze this DAO.",
     "stateFrozen": "Frozen",
     "stateFrozenTip": "The parent has voted to freeze this DAO.",
