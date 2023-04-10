@@ -9,15 +9,13 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
 
 enum ModuleType {
-  MODULES = "modules",
-  GUARDS = "guards"
+  MODULES = 'modules',
+  GUARDS = 'guards',
 }
 
 function NoModules({ title, t }: { title: string; t: TFunction<'settings'[]> }) {
   const noModulesTranslation =
-    title === ModuleType.MODULES ?
-      t('noModulesEnabled') :
-      t('noGuardsEnabled')
+    title === ModuleType.MODULES ? t('noModulesEnabled') : t('noGuardsEnabled');
 
   return (
     <Box mt={2}>
