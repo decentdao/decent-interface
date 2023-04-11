@@ -12,7 +12,7 @@ import { useFractal } from '../../src/providers/App/AppProvider';
 import { GnosisDAO, TokenGovernanceDAO } from '../../src/types';
 
 export default function DaoCreatePage() {
-  const { replace } = useRouter();
+  const { push } = useRouter();
   const { requestWithRetries } = useAsyncRetry();
   const {
     clients: { safeService },
@@ -31,12 +31,12 @@ export default function DaoCreatePage() {
       );
       if (daoFound) {
         toggleFavorite(daoAddress);
-        replace(DAO_ROUTES.dao.relative(daoAddress));
+        push(DAO_ROUTES.dao.relative(daoAddress));
       } else {
         setRedirectPending(false);
       }
     },
-    [safeService, requestWithRetries, toggleFavorite, replace]
+    [safeService, requestWithRetries, toggleFavorite, push]
   );
 
   const [deploy, pending] = useDeployDAO();
