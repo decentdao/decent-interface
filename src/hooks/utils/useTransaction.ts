@@ -72,7 +72,7 @@ const useTransaction = () => {
             return;
           }
 
-          toast.error(t('errorGeneral', { ns: 'common' }));
+          toast.error(error.message, { autoClose: false });
         });
     },
     [t]
