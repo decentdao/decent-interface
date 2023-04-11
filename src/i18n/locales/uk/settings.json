@@ -1,0 +1,6 @@
+{
+  "modules": "Модулі",
+  "guards": "Охоронці",
+  "noModulesEnabled": "Немає ввімкнених модулів",
+  "noGuardsEnabled": "Охоронці не ввімкнено"
+}
