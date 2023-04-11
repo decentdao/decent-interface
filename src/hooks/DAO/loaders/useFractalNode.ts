@@ -128,12 +128,12 @@ export const useFractalNode = ({
             return;
           }
           action.dispatch({
-            type: NodeAction.SET_SAFE_INFO,
-            payload: safe,
-          });
-          action.dispatch({
             type: NodeAction.SET_FRACTAL_MODULES,
             payload: await lookupModules(safe.modules),
+          });
+          action.dispatch({
+            type: NodeAction.SET_SAFE_INFO,
+            payload: safe,
           });
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
