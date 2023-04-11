@@ -29,7 +29,7 @@ test('Create Multisig DAO', async ({ page }) => {
     .then(() => create.fillMultisigSigner(0, accounts[0]))
     .then(() => create.clickDeployButton());
 
-  await page.waitForURL(BASE_URL + '/daos/*');
+  await page.waitForURL(BASE_URL + '/daos/*', { timeout: 10000 });
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
   await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
@@ -53,7 +53,7 @@ test('Create Token Voting DAO', async ({ page }) => {
     .then(() => create.clickNext())
     .then(() => create.clickDeployButton());
 
-  await page.waitForURL(BASE_URL + '/daos/*');
+  await page.waitForURL(BASE_URL + '/daos/*', { timeout: 10000 });
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
   await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
