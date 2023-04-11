@@ -161,7 +161,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       />
       <CustomNonceInput
         nonce={nonceInput}
-        onChange={nonce => setNonceInput(nonce ? parseInt(nonce.toString(), 10) : undefined)}
+        onChange={nonce => setNonceInput(nonce ? nonce : undefined)}
         defaultNonce={defaultNonce}
       />
 
