@@ -37,9 +37,11 @@ const useTransaction = () => {
       params
         .contractFn()
         .then((txResponse: ethers.ContractTransaction) => {
+          console.log('🚀 ~ file: useTransaction.ts:40 ~ txResponse:', txResponse);
           return Promise.all([txResponse.wait(), toastId]);
         })
         .then(([txReceipt, toastID]) => {
+          console.log('🚀 ~ file: useTransaction.ts:50 ~ txReceipt:', txReceipt);
           toast.dismiss(toastID);
           if (txReceipt.status === 0) {
             toast.error(params.failedMessage);

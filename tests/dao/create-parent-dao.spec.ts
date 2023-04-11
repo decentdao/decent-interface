@@ -11,12 +11,12 @@ import { BASE_URL } from '../testUtils';
 let create: DAOCreate;
 
 test.beforeEach(async ({ page }) => {
+  page.on('console', msg => console.log(msg.text()));
   const home = await new HomePage(page).visit();
   create = await home.clickCreateAFractal();
 });
 
 test.only('Create Multisig DAO', async ({ page }) => {
-  page.on('console', msg => console.log(msg.text()));
   new CreateMultisigMocker(page);
   const subgraphMocker = new SubgraphMocker(page);
   await subgraphMocker.mock(createSubgraphDAO('0x', 'Test Multisig', []));
@@ -27,9 +27,8 @@ test.only('Create Multisig DAO', async ({ page }) => {
     .then(() => create.fillTotalSigners('1'))
     .then(() => create.fillThreshold('1'))
     .then(() => create.fillMultisigSigner(0, accounts[0]))
-    .then(() => create.clickDeployButton());
-
-  await page.waitForURL(BASE_URL + '/daos/*');
+    .then(() => create.clickDeployButton())
+    .then(() => page.waitForURL(BASE_URL + '/daos/*'));
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
   await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
