@@ -23,6 +23,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
         value={values.essentials.daoName}
         id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
+        onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
         disabled={false}
         placeholder={t('daoNamePlaceholder')}
         testId="essentials-daoName"
