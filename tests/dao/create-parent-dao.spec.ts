@@ -32,7 +32,7 @@ test.only('Create Multisig DAO', async ({ page }) => {
   await page.waitForURL(BASE_URL + '/daos/*');
 
   const daoNameEle = page.locator('[data-testid=DAOInfo-name]');
-  await page.waitForSelector('[data-testid=DAOInfo-name]');
+  await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
   expect(daoNameEle).toContainText('Test Multisig');
 });
 
