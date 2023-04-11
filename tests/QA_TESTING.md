@@ -111,6 +111,7 @@ https://app.staging.fractalframework.xyz/daos/{address}
 - [ ] Proposals are displayed
 - [ ] Newest / Oldest toggle list by creation date
 - [ ] Details button links to the Proposal Details
+- [ ] State filter filters by Proposal states (Active, Timelocked, Executable, Executed, Failed)
 
 ## DAO Hierarchy (Token Voting)
 https://app.staging.fractalframework.xyz/daos/{address}/hierarchy
@@ -167,6 +168,13 @@ https://app.staging.fractalframework.xyz/daos/{address}/treasury
 - [ ] Amount and recipient required to enable Submit button
 - [ ] Submit Proposal button initiates transaction to create a Proposal
 
+## Templates (Token Voting)
+https://app.staging.fractalframework.xyz/daos/{address}/ ???? TODO
+
+### General
+- [ ] Templates is highlighted in sidebar
+- [ ] TODO
+
 ## Proposal Details (Token Voting)
 - [ ] TODO
 
@@ -215,7 +223,21 @@ https://app.staging.fractalframework.xyz/daos/{parentAddress}/new
 - [ ] TODO
 
 ## Token Claim
-- [ ] TODO
+- *Create a subDAO Proposal*
+- *During subDAO creation, add token claim amount in Advanced*
+- *Pass the Proposal*
+
+- [ ] Blue Claim component does NOT appear on the DAO homepage for a connected non token holder
+- [ ] Blue Claim component DOES appear on the DAO homepage for a connected token holder
+- [ ] Claim button initiates a transaction which immediately claims tokens for the caller
+
+## Clawback
+- *Initiate a Freeze on a subDAO*
+
+- [ ] Initiate Clawback option does NOT appear in the Manage DAO menu of the subDAO's homepage for NON rootDAO delegated token holders
+- [ ] Initiate Clawback option DOES appear in the Manage DAO menu of the subDAO's homepage for rootDAO delegated token holders
+- [ ] Initiate Clawback creates a Proposal on the rootDAO called Clawback Proposal
+- [ ] Passing the Clawback Proposal on the rootDAO transfers all ERC20 tokens from the subDAO to the rootDAO
 
 ## DAO Home (Multisig)
 https://app.staging.fractalframework.xyz/daos/{address}
