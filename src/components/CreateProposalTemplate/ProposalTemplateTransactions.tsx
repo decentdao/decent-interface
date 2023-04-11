@@ -46,6 +46,7 @@ export default function ProposalTemplateTransactions({
           | FormikErrors<CreateProposalTemplateTransaction<BigNumberValuePair>>
           | undefined;
         const txAddressError = txErrors?.targetAddress;
+        const txFunctionError = txErrors?.functionName;
 
         return (
           <AccordionItem
@@ -99,6 +100,7 @@ export default function ProposalTemplateTransactions({
                 <AccordionPanel p={0}>
                   <ProposalTemplateTransaction
                     transaction={transactions[index]}
+                    txFunctionError={txFunctionError}
                     txAddressError={txAddressError}
                     transactionIndex={index}
                     setFieldValue={setFieldValue}

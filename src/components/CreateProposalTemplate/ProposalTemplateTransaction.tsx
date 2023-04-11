@@ -11,6 +11,7 @@ interface ProposalTemplateTransactionProps {
   transactionIndex: number;
   transactionPending: boolean;
   txAddressError?: string;
+  txFunctionError?: string;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void;
 }
 
@@ -19,6 +20,7 @@ export default function ProposalTemplateTransaction({
   transactionIndex,
   transactionPending,
   txAddressError,
+  txFunctionError,
   setFieldValue,
 }: ProposalTemplateTransactionProps) {
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
@@ -71,7 +73,7 @@ export default function ProposalTemplateTransaction({
                 <ExampleLabel>transfer</ExampleLabel>
               </HStack>
             }
-            errorMessage={undefined}
+            errorMessage={transaction.functionName && txFunctionError ? txFunctionError : undefined}
             testId="transaction.functionName"
           />
         </Box>
@@ -161,6 +163,10 @@ export default function ProposalTemplateTransaction({
                   gridContainerProps={{
                     display: 'inline-flex',
                     flexWrap: 'wrap',
+                    width: '27%',
+                  }}
+                  inputContainerProps={{
+                    width: '100%',
                   }}
                 />
                 <Text>{t('or', { ns: 'common' })}</Text>
@@ -178,10 +184,11 @@ export default function ProposalTemplateTransaction({
                   disabled={transactionPending || !!parameter.label}
                   subLabel={
                     <HStack wordBreak="break-all">
-                      <Text>{t('example', { ns: 'common' })}:</Text>
-                      <ExampleLabel>value</ExampleLabel>
-                      <Text as="span">
-                        {t('proposalTemplateLeaveBlank', { ns: 'proposalTemplate' })}
+                      <Text>
+                        {t('example', { ns: 'common' })}: <ExampleLabel>value</ExampleLabel>
+                        <Text as="span">
+                          {t('proposalTemplateLeaveBlank', { ns: 'proposalTemplate' })}
+                        </Text>
                       </Text>
                     </HStack>
                   }
@@ -189,6 +196,10 @@ export default function ProposalTemplateTransaction({
                   gridContainerProps={{
                     display: 'inline-flex',
                     flexWrap: 'wrap',
+                    flex: '1',
+                  }}
+                  inputContainerProps={{
+                    width: '100%',
                   }}
                 />
               </Flex>

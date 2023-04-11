@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../common/useValidationAddress';
 
@@ -7,6 +8,7 @@ import { useValidationAddress } from '../common/useValidationAddress';
  * @dev https://www.npmjs.com/package/yup
  */
 const useCreateProposalTemplateSchema = () => {
+  const { t } = useTranslation('proposal');
   const { addressValidationTest } = useValidationAddress();
 
   const createProposalTemplateValidation = useMemo(
@@ -20,7 +22,9 @@ const useCreateProposalTemplateSchema = () => {
               ethValue: Yup.object().shape({
                 value: Yup.string(),
               }),
-              functionName: Yup.string(),
+              functionName: Yup.string().matches(/^[a-z0-9]+$/i, {
+                message: t('functionNameError'),
+              }),
               parameters: Yup.array().of(
                 Yup.object().shape({
                   signature: Yup.string().required(),
@@ -31,11 +35,11 @@ const useCreateProposalTemplateSchema = () => {
             })
           ),
         proposalTemplateMetadata: Yup.object().shape({
-          title: Yup.string().required(),
-          description: Yup.string().notRequired(),
+          title: Yup.string().trim().required().max(50),
+          description: Yup.string().trim().notRequired().max(300),
         }),
       }),
-    [addressValidationTest]
+    [addressValidationTest, t]
   );
   return { createProposalTemplateValidation };
 };

@@ -14,8 +14,8 @@ export default function useCreateProposalTemplate() {
         documentationUrl: '',
       };
       const proposalTemplateData = {
-        title: values.proposalTemplateMetadata.title,
-        description: values.proposalTemplateMetadata.description,
+        title: values.proposalTemplateMetadata.title.trim(),
+        description: values.proposalTemplateMetadata.description.trim(),
         transactions: values.transactions,
       };
       const ipfs = await IPFS.create();

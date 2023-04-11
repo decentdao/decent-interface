@@ -30,6 +30,7 @@ export default function ProposalTemplateDetails({
   values: { proposalTemplateMetadata, transactions },
 }: FormikProps<CreateProposalTemplateForm>) {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
+  const trimmedTitle = proposalTemplateMetadata.title.trim();
 
   return (
     <Box
@@ -46,16 +47,16 @@ export default function ProposalTemplateDetails({
         <Divider color="chocolate.700" />
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('previewTitle')}</Text>
-          <Text>{proposalTemplateMetadata.title}</Text>
+          <Text textAlign="right">{trimmedTitle}</Text>
         </HStack>
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('previewThumnbail')}</Text>
-          {proposalTemplateMetadata.title && (
+          {trimmedTitle && (
             <Avatar
               size="sm"
               w="28px"
               h="28px"
-              name={proposalTemplateMetadata.title}
+              name={trimmedTitle}
               borderRadius="4px"
               getInitials={(title: string) => title.slice(0, 2)}
             />
@@ -63,7 +64,12 @@ export default function ProposalTemplateDetails({
         </HStack>
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
-          <Text textAlign="right">{proposalTemplateMetadata.description}</Text>
+          <Text
+            textAlign="right"
+            wordBreak="break-all"
+          >
+            {proposalTemplateMetadata.description.trim()}
+          </Text>
         </HStack>
         <Divider color="chocolate.700" />
         {transactions.map((transaction, i) => (
@@ -99,6 +105,7 @@ export default function ProposalTemplateDetails({
               <Text
                 textAlign="right"
                 color={transaction.ethValue.bigNumberValue?.gt(0) ? 'white' : 'grayscale.500'}
+                wordBreak="break-all"
               >
                 {transaction.ethValue.bigNumberValue?.gt(0) ? transaction.ethValue.value : 'n/a'}
               </Text>

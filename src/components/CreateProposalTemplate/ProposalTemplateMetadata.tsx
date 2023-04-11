@@ -34,6 +34,7 @@ export default function ProposalTemplateMetadata({
           onChange={e => setFieldValue('proposalTemplateMetadata.title', e.target.value)}
           disabled={false}
           testId="metadata.title"
+          maxLength={50}
         />
         <TextareaComponent
           label={t('proposalTemplateDescription')}
@@ -43,6 +44,7 @@ export default function ProposalTemplateMetadata({
           onChange={e => setFieldValue('proposalTemplateMetadata.description', e.target.value)}
           disabled={false}
           rows={3}
+          maxLength={300}
         />
       </VStack>
       <Divider

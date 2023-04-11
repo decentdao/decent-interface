@@ -1,4 +1,13 @@
-import { Input, HStack, Text, Textarea, Grid, GridItem, GridProps } from '@chakra-ui/react';
+import {
+  Input,
+  HStack,
+  Text,
+  Textarea,
+  Grid,
+  GridItem,
+  GridProps,
+  GridItemProps,
+} from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumberInput, BigNumberInputProps } from './BigNumberInput';
 import { EthAddressInput } from './EthAddressInput';
@@ -14,6 +23,8 @@ interface BaseProps {
   errorMessage?: string;
   children: React.ReactNode;
   gridContainerProps?: GridProps;
+  inputContainerProps?: GridItemProps;
+  maxLength?: number;
 }
 
 interface InputProps extends Omit<BaseProps, 'children'> {
@@ -44,6 +55,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
     errorMessage,
     children,
     gridContainerProps,
+    inputContainerProps,
     disabled,
   } = props;
   return (
@@ -65,7 +77,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
         </HStack>
         <Text color="grayscale.500">{helper}</Text>
       </GridItem>
-      <GridItem>
+      <GridItem {...inputContainerProps}>
         <LabelWrapper
           subLabel={subLabel}
           errorMessage={errorMessage}
@@ -78,7 +90,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { id, value, disabled, onChange, placeholder, testId } = props;
+  const { id, value, disabled, onChange, placeholder, testId, maxLength } = props;
   return (
     <LabelComponent
       {...props}
@@ -91,6 +103,7 @@ export function InputComponent(props: InputProps) {
         isDisabled={disabled}
         data-testid={testId}
         placeholder={placeholder}
+        maxLength={maxLength}
       />
     </LabelComponent>
   );
@@ -113,7 +126,7 @@ export function EthAddressComponent(props: EthAddressProps) {
 }
 
 export function TextareaComponent(props: TextareaProps) {
-  const { id, value, disabled, onChange, rows, placeholder } = props;
+  const { id, value, disabled, onChange, rows, placeholder, maxLength } = props;
   return (
     <LabelComponent
       {...props}
@@ -127,8 +140,10 @@ export function TextareaComponent(props: TextareaProps) {
         isDisabled={disabled}
         rows={rows}
         placeholder={placeholder}
+        borderColor="black.400"
         size="base"
         p="0.5rem 1rem"
+        maxLength={maxLength}
       />
     </LabelComponent>
   );
