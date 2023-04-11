@@ -26,7 +26,8 @@ const config: PlaywrightTestConfig = {
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: 'http://localhost:3000',
-    headless: true,
+    headless: false,
+    
     viewport: { width: 1280, height: 1020 },
     ignoreHTTPSErrors: false,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
