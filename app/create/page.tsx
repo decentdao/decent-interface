@@ -4,7 +4,6 @@ import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useAccount, useProvider } from 'wagmi';
 import DaoCreator from '../../src/components/DaoCreator';
 import { DAO_ROUTES } from '../../src/constants/routes';
 import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
@@ -15,8 +14,6 @@ import { GnosisDAO, TokenGovernanceDAO } from '../../src/types';
 
 export default function DaoCreatePage() {
   const { push } = useRouter();
-  const provider = useProvider();
-  const { address: account } = useAccount();
   const { requestWithRetries } = useAsyncRetry();
   const {
     clients: { safeService },
@@ -26,6 +23,7 @@ export default function DaoCreatePage() {
 
   const successCallback = useCallback(
     async (daoAddress: string) => {
+      console.log('🚀 ~ file: page.tsx:26 ~ daoAddress:', daoAddress);
       if (!safeService) return;
       setRedirectPending(true);
       const { getAddress } = ethers.utils;
@@ -33,6 +31,7 @@ export default function DaoCreatePage() {
         () => safeService.getSafeCreationInfo(getAddress(daoAddress)),
         5
       );
+      console.log('🚀 ~ file: page.tsx:34 ~ daoFound:', daoFound);
       if (daoFound) {
         toggleFavorite(daoAddress);
         push(DAO_ROUTES.dao.relative(daoAddress));
@@ -53,13 +52,7 @@ export default function DaoCreatePage() {
   return (
     <DaoCreator
       pending={pending || redirectPending}
-      deployDAO={() => {
-        toast(account);
-        if (account) {
-          console.log('ASODIHASODHAS', provider.getBalance(account));
-          push(DAO_ROUTES.dao.relative('0x'));
-        }
-      }}
+      deployDAO={deployDAO}
     />
   );
 }
