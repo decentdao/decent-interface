@@ -93,6 +93,17 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
             >
               {t('helperAllocations')}
             </Text>
+            <Button
+              size="base"
+              maxWidth="fit-content"
+              px={0}
+              mx={0}
+              variant="text"
+              onClick={() => push({ address: '', amount: { value: '' } })}
+              data-testid="tokenVoting-addAllocation"
+            >
+              {t('labelAddAllocation')}
+            </Button>
             {canReceiveParentAllocations && (
               <Accordion allowToggle>
                 <AccordionItem
@@ -145,17 +156,6 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
                 </AccordionItem>
               </Accordion>
             )}
-            <Button
-              size="base"
-              maxWidth="fit-content"
-              px={0}
-              mx={0}
-              variant="text"
-              onClick={() => push({ address: '', amount: { value: '' } })}
-              data-testid="tokenVoting-addAllocation"
-            >
-              {t('labelAddAllocation')}
-            </Button>
           </Box>
         )}
       </FieldArray>
