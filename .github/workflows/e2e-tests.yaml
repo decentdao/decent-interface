@@ -22,7 +22,7 @@ jobs:
     - name: Start containers
       run: docker-compose up -d --build
     - name: Install playwright
-      run: npm i -D @playwright/test
+      run: npm i -D @playwright/test@1.29.0
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Wait for Development Server
