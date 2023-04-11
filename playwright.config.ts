@@ -11,8 +11,8 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
-  timeout: 60 * 1000, // From https://github.com/vercel/next.js/blob/canary/examples/with-playwright/playwright.config.ts
+  retries: process.env.CI ? 1 : 0,
+  timeout: 30 * 1000, // From https://github.com/vercel/next.js/blob/canary/examples/with-playwright/playwright.config.ts
   reporter: [
     /* List reporter for getting updates */
     [process.env.CI ? 'list' : 'line'],
