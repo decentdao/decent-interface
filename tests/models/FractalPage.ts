@@ -50,6 +50,7 @@ export abstract class FractalPage {
   }
 
   async clickTestId(testId: string) {
+    await this.waitForIdle();
     await this.click('[data-testid=' + testId + ']');
   }
 
