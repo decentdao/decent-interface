@@ -1,7 +1,7 @@
 {
   "name": "hardhat-docker",
   "scripts": {
-    "start": "npx hardhat node"
+    "start": "npx hardhat node --verbose"
   },
   "devDependencies": {
     "hardhat": "^2.6.4",
