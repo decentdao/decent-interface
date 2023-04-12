@@ -7,6 +7,6 @@ module.exports = {
   },
   experimental: {
     esmExternals: false,
-    appDir: true
+    appDir: true,
   }
 }

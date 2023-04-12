@@ -69,9 +69,9 @@ export default function ProposalCreatePage() {
       initialValues={DEFAULT_PROPOSAL}
       onSubmit={values => {
         const { nonce } = values;
-        const proposal = prepareProposal(values);
+        const proposalData = prepareProposal(values);
         submitProposal({
-          proposalData: proposal,
+          proposalData,
           nonce,
           pendingToastMessage: t('proposalCreatePendingToastMessage'),
           successToastMessage: t('proposalCreateSuccessToastMessage'),

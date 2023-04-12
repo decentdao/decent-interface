@@ -14,6 +14,9 @@ export interface DAORoutes extends RouteIndex {
   proposals: RouteInfo;
   proposal: RouteInfo;
   proposalNew: RouteInfo;
+  proposalTemplates: RouteInfo;
+  proposalTemplate: RouteInfo;
+  proposalTemplateNew: RouteInfo;
 }
 
 export const DAO_ROUTES: DAORoutes = {
@@ -49,5 +52,18 @@ export const DAO_ROUTES: DAORoutes = {
   proposalNew: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/proposals/new`,
     path: 'proposals/new',
+  },
+  proposalTemplates: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/proposal-templates`,
+    path: 'proposal-templates',
+  },
+  proposalTemplate: {
+    relative: (daoAddress: string, proposalTemplateKey: string) =>
+      `/daos/${daoAddress}/proposal-templates/${proposalTemplateKey}`,
+    path: 'proposal-templates/:proposalTemplateKey',
+  },
+  proposalTemplateNew: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/proposal-templates/new`,
+    path: 'proposal-templates/new',
   },
 };
