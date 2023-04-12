@@ -11,7 +11,7 @@ import { useValidationAddress } from '../common/useValidationAddress';
 export const useCreateProposalSchema = () => {
   const { addressValidationTest } = useValidationAddress();
 
-  const { t } = useTranslation(['createProposal', 'proposal']);
+  const { t } = useTranslation('proposal');
 
   const createProposalValidation = useMemo(
     () =>
@@ -24,11 +24,13 @@ export const useCreateProposalSchema = () => {
               ethValue: Yup.object().shape({
                 value: Yup.string(),
               }),
-              functionName: Yup.string(),
+              functionName: Yup.string().matches(/^[a-z0-9]+$/i, {
+                message: t('functionNameError'),
+              }),
               functionSignature: Yup.string(),
               parameters: Yup.string(),
               encodedFunctionData: Yup.string().test({
-                message: t('errorInvalidFragments', { ns: 'proposal' }),
+                message: t('errorInvalidFragments'),
                 test: (_, context) => {
                   const functionName = context.parent.functionName;
                   const functionSignature = context.parent.functionSignature;

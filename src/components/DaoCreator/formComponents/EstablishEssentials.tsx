@@ -1,7 +1,7 @@
 import { Box, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { ICreationStepProps, StrategyType, CreatorSteps } from '../../../types';
-import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
+import { ICreationStepProps, CreatorSteps, StrategyType } from '../../../types';
+import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';

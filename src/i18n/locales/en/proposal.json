@@ -111,5 +111,7 @@
     "currentUserAlreadyVoted": "Seems like you already casted your vote. Check the votes summary",
     "customNonceError": "The nonce you entered is lower than the Safe's current nonce.",
     "noTimeDifference": "0 seconds",
-    "errorInvalidURL": "Invalid URL"
+    "errorInvalidURL": "Invalid URL",
+    "functionNameError": "The function name can contain only numbers and letters.",
+    "labelOrValueRequired": "Parameter Label or Parameter Value is required"
 }

@@ -12,6 +12,7 @@ import MODALS_EN from './locales/en/modals.json';
 import NAVIGATION_EN from './locales/en/navigation.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
 import PROPOSAL_METADATA_EN from './locales/en/proposalMetadata.json';
+import PROPOSAL_TEMPLATE_EN from './locales/en/proposalTemplate.json';
 import SETTINGS_EN from './locales/en/settings.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
@@ -57,6 +58,7 @@ export const supportedLanguages = {
     daoCreate: DAOCREATE_EN,
     menu: MENU_EN,
     dashboard: DASHBOARD_EN,
+    proposalTemplate: PROPOSAL_TEMPLATE_EN,
     proposal: PROPOSAL_EN,
     proposalMetadata: PROPOSAL_METADATA_EN,
     transaction: TRANSACTION_EN,
