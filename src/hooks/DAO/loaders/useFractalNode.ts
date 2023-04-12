@@ -145,7 +145,6 @@ export const useFractalNode = ({
             safe.address
           );
           const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo?.daoName);
-          console.log('🚀 ~ file: useFractalNode.ts:148 ~ daoName:', daoName);
 
           if (!!graphNodeInfo) {
             action.dispatch({
