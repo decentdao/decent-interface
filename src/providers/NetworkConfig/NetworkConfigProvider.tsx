@@ -58,13 +58,14 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const supportedChainIds = supportedChains.map(c => c.chainId) || [];
+    const supportedChainNames = supportedChains.map(c => c.name) || [];
 
     if (
       !!chain &&
       !supportedChainIds.includes(chain.id) &&
       !process.env.NEXT_PUBLIC_TESTING_ENVIROMENT
     ) {
-      toast(t('toastSwitchChain', { chainNames: supportedChainIds }), {
+      toast(t('toastSwitchChain', { chainNames: supportedChainNames }), {
         toastId: 'switchChain',
       });
       disconnect();
