@@ -94,13 +94,13 @@ export function useLazyDAOName() {
   const { setValue, getValue } = useLocalStorage();
   const provider = useProvider();
   const getDaoName = useCallback(
-    async (_address: string, _registryName?: string | null) => {
+    async (_address: string, _registryName?: string | null): Promise<string> => {
       const cachedName = getValue(CacheKeys.DAO_NAME_PREFIX + _address);
       if (cachedName) {
         return cachedName;
       }
       // check if ens name resolves
-      const ensName = await provider.lookupAddress(_address);
+      const ensName = await provider.lookupAddress(_address).catch(() => null);
       if (ensName) {
         setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 60);
         return ensName;
@@ -111,9 +111,7 @@ export function useLazyDAOName() {
         return _registryName;
       }
 
-      if (!_registryName) {
-        return createAccountSubstring(_address);
-      }
+      return createAccountSubstring(_address);
     },
     [getValue, setValue, provider]
   );
