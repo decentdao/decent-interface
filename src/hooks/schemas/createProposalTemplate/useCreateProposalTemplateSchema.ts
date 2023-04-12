@@ -42,7 +42,7 @@ const useCreateProposalTemplateSchema = () => {
               }),
               parameters: Yup.array().of(
                 Yup.object().shape({
-                  signature: Yup.string().required(),
+                  signature: Yup.string(),
                   label: Yup.string().test({
                     message: t('labelOrValueRequired'),
                     test: labelOrValueValidationTest,

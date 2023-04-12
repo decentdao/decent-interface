@@ -204,33 +204,35 @@ export default function ProposalTemplateTransaction({
                 />
               </Flex>
             </Box>
-            <Flex
-              flex={1}
-              alignItems="center"
-              justifyContent="center"
-              bg="black.900"
-              px={2}
-              w="32px"
-            >
-              <IconButton
-                aria-label="Add function parameter"
-                w="16px"
-                minW="16px"
-                h="16px"
-                borderRadius="100%"
-                variant="secondary"
-                onClick={() =>
-                  setFieldValue(
-                    `transactions.${transactionIndex}.parameters`,
-                    transaction.parameters.filter(
-                      (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex === i
-                    )
-                  )
-                }
+            {i !== 0 && (
+              <Flex
+                flex={1}
+                alignItems="center"
+                justifyContent="center"
+                bg="black.900"
+                px={2}
+                w="32px"
               >
-                <Trash />
-              </IconButton>
-            </Flex>
+                <IconButton
+                  aria-label="Remove function parameter"
+                  w="16px"
+                  minW="16px"
+                  h="16px"
+                  borderRadius="100%"
+                  variant="secondary"
+                  onClick={() =>
+                    setFieldValue(
+                      `transactions.${transactionIndex}.parameters`,
+                      transaction.parameters.filter(
+                        (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex !== i
+                      )
+                    )
+                  }
+                >
+                  <Trash />
+                </IconButton>
+              </Flex>
+            )}
           </Flex>
         ))}
         <Box
