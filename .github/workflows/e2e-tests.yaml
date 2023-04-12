@@ -45,6 +45,7 @@ jobs:
         with:
           url: 'http://localhost:3000'
           responseCode: 200
+          timeout: 120000
 
       - name: Run Playwright tests
         run: npm run tests
