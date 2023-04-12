@@ -35,9 +35,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-
 
-      - name: Install Playwright and Browsers
+      - name: Install Playwright Browsers
         if: steps.cache-playwright.outputs.cache-hit != 'true'
-        run: npx --no-install playwright install --with-deps
+        run: |
+          npm ci
+          npx playwright install --with-deps
 
       - name: Wait for Development Server
         uses: nev7n/wait_for_response@v1
@@ -47,7 +49,7 @@ jobs:
           timeout: 120000
 
       - name: Run Playwright tests
-        run: npx --no-install playwright test
+        run: npm run tests
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v3
