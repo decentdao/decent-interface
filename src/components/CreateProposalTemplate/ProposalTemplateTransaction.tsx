@@ -131,8 +131,10 @@ export default function ProposalTemplateTransaction({
                 disabled={transactionPending}
                 subLabel={
                   <HStack>
-                    <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-                    <ExampleLabel>address, uint256</ExampleLabel>
+                    <Text>
+                      {t('example', { ns: 'common' })}: <ExampleLabel>address to</ExampleLabel>{' '}
+                      {t('or', { ns: 'common' })} <ExampleLabel>uint amount</ExampleLabel>
+                    </Text>
                   </HStack>
                 }
                 testId={`transactions.${transactionIndex}.parameters.${i}.signature`}

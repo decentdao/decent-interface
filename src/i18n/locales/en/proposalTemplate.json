@@ -8,7 +8,7 @@
     "previewTitle": "Title",
     "previewThumnbail": "Thumbnail",
     "labelFunctionParameter": "Function Parameter",
-    "helperFunctionParameter": "The function of the above smart contract to be called",
+    "helperFunctionParameter": "The parameter of the function of the above smart contract to be called",
     "labelParameterLabel": "Parameter Label",
     "helperParameterLabel": "Add a label for a blank input",
     "labelParameterValue": "Parameter Value",
