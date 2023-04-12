@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { TransferType, AssetTransfer } from '../../../../types';
+import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
 import EtherscanTransactionLink from '../../../ui/links/EtherscanTransactionLink';
-import { ShortenedAddressLink } from '../../../ui/links/ShortenedAddressLink';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -93,7 +93,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         </HStack>
         <HStack w="33%">
           <Spacer />
-          <ShortenedAddressLink
+          <DisplayAddress
             data-testid="link-transfer-address"
             address={displayData.transferAddress}
           />

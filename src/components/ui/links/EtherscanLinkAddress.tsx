@@ -3,6 +3,12 @@ import { Copy } from '@decent-org/fractal-ui';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
+/**
+ * An address link to Etherscan.
+ *
+ * For most use cases, you probably want to use DisplayAddress,
+ * to add proper styling.
+ */
 function EtherscanLinkAddress({
   path = 'address',
   address,

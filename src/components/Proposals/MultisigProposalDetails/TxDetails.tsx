@@ -6,16 +6,16 @@ import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
-import EtherscanDisplayTransaction from '../../ui/links/EtherscanDisplayTransaction';
+import DisplayTransaction from '../../ui/links/DisplayTransaction';
 
 export function InfoRow({
   property,
   value,
-  address,
+  txHash,
 }: {
   property: string;
   value?: string;
-  address?: string | null;
+  txHash?: string | null;
 }) {
   return (
     <Flex
@@ -28,7 +28,7 @@ export function InfoRow({
       >
         {property}
       </Text>
-      {address ? <EtherscanDisplayTransaction address={address} /> : <Text>{value}</Text>}
+      {txHash ? <DisplayTransaction txHash={txHash} /> : <Text>{value}</Text>}
     </Flex>
   );
 }
@@ -59,7 +59,7 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         <InfoRow
           property={t('transactionHash')}
           value={proposal.transactionHash ? undefined : '-'}
-          address={proposal.transactionHash}
+          txHash={proposal.transactionHash}
         />
         <InfoRow
           property={t('nonce')}
