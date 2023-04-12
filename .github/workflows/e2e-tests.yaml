@@ -39,7 +39,8 @@ jobs:
         if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: |
           npm init -y
-          npm i -D @playwright/test@1.14.1
+          npm i -D playwright
+          npm i -D @playwright/test
           npx playwright install --with-deps
 
       - name: Wait for Development Server
