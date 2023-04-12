@@ -8,6 +8,5 @@ module.exports = {
   experimental: {
     esmExternals: false,
     appDir: true,
-  },
-  resourceHints: false
+  }
 }
