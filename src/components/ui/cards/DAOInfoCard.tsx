@@ -185,7 +185,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
     guardContracts,
     guard,
   } = useFractal();
-  const isCurrentDAO = props.safeAddress === currentDAOAddress;
+  const isCurrentDAO = utils.getAddress(props.safeAddress || '') === currentDAOAddress;
   const { subDAOData } = useSubDAOData(
     !isCurrentDAO && props.fractalNode ? props.fractalNode : undefined
   );
