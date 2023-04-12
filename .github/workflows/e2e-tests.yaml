@@ -26,11 +26,8 @@ jobs:
       - name: Start containers
         run: docker-compose up -d --build
 
-      - name: Install dependencies
-        run: npm i -D @playwright/test
-
       - name: Cache Playwright Browsers
-        id: cache-playwright  
+        id: cache-playwright
         uses: actions/cache@v3
         with:
           path: ~/.cache/ms-playwright
@@ -40,14 +37,16 @@ jobs:
 
       - name: Install Playwright Browsers
         if: steps.cache-playwright.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+        run: |
+          npm init -y
+          npm i -D @playwright/test@1.14.1
+          npx playwright install --with-deps
 
       - name: Wait for Development Server
         uses: nev7n/wait_for_response@v1
         with:
           url: 'http://localhost:3000'
           responseCode: 200
-          timeout: 120000
 
       - name: Run Playwright tests
         run: npm run tests
