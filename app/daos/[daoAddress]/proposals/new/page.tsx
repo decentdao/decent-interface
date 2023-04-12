@@ -127,6 +127,7 @@ export default function ProposalCreatePage() {
                     <Box
                       rounded="lg"
                       p="1rem"
+                      mb="5rem"
                       bg={BACKGROUND_SEMI_TRANSPARENT}
                     >
                       <ProposalHeader
