@@ -25,7 +25,7 @@ const useCastVote = ({
 
   const castVote = useCallback(
     (vote: number) => {
-      if (!proposalNumber || !vote === undefined || !ozLinearVotingContract) {
+      if (!proposalNumber || vote === undefined || !ozLinearVotingContract) {
         return;
       }
 
