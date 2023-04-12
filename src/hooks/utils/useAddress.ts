@@ -36,8 +36,8 @@ const useAddress = (addressInput: string | undefined) => {
       setIsAddressLoading(false);
       return;
     }
-
-    if (!addressInput.includes('.') || addressInput.length - addressInput.indexOf('.') === 2) {
+    const [, domain] = addressInput.split('.');
+    if (!domain || domain.length <= 2) {
       setAddress(addressInput);
       setIsValidAddress(false);
       setIsAddressLoading(false);
