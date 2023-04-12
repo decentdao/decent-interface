@@ -11,6 +11,21 @@ const useCreateProposalTemplateSchema = () => {
   const { t } = useTranslation('proposal');
   const { addressValidationTest } = useValidationAddress();
 
+  const labelOrValueValidationTest: Yup.TestFunction<string | undefined, Yup.AnyObject> = (
+    _,
+    context
+  ) => {
+    if (!context.parent.signature) {
+      return true;
+    }
+
+    if (!!context.parent.label || !!context.parent.value) {
+      return true;
+    }
+
+    return false;
+  };
+
   const createProposalTemplateValidation = useMemo(
     () =>
       Yup.object().shape({
@@ -28,8 +43,14 @@ const useCreateProposalTemplateSchema = () => {
               parameters: Yup.array().of(
                 Yup.object().shape({
                   signature: Yup.string().required(),
-                  label: Yup.string(),
-                  value: Yup.string(),
+                  label: Yup.string().test({
+                    message: t('labelOrValueRequired'),
+                    test: labelOrValueValidationTest,
+                  }),
+                  value: Yup.string().test({
+                    message: t('labelOrValueRequired'),
+                    test: labelOrValueValidationTest,
+                  }),
                 })
               ),
             })

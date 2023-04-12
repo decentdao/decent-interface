@@ -120,7 +120,7 @@ export default function ProposalTemplateTransaction({
               <InputComponent
                 label={t('labelFunctionParameter', { ns: 'proposalTemplate' })}
                 helper={t('helperFunctionParameter', { ns: 'proposalTemplate' })}
-                isRequired={false}
+                isRequired
                 value={parameter.signature}
                 onChange={e =>
                   setFieldValue(
@@ -145,7 +145,7 @@ export default function ProposalTemplateTransaction({
                 <InputComponent
                   label={t('labelParameterLabel', { ns: 'proposalTemplate' })}
                   helper=""
-                  isRequired={false}
+                  isRequired={!parameter.value}
                   value={parameter.label || ''}
                   onChange={e =>
                     setFieldValue(
@@ -173,7 +173,7 @@ export default function ProposalTemplateTransaction({
                 <InputComponent
                   label={t('labelParameterValue', { ns: 'proposalTemplate' })}
                   helper=""
-                  isRequired={false}
+                  isRequired={!parameter.label}
                   value={parameter.value || ''}
                   onChange={e =>
                     setFieldValue(
@@ -204,35 +204,33 @@ export default function ProposalTemplateTransaction({
                 />
               </Flex>
             </Box>
-            {transaction.parameters.length > 1 && i !== 0 && (
-              <Flex
-                flex={1}
-                alignItems="center"
-                justifyContent="center"
-                bg="black.900"
-                px={2}
-                w="32px"
-              >
-                <IconButton
-                  aria-label="Add function parameter"
-                  w="16px"
-                  minW="16px"
-                  h="16px"
-                  borderRadius="100%"
-                  variant="secondary"
-                  onClick={() =>
-                    setFieldValue(
-                      `transactions.${transactionIndex}.parameters`,
-                      transaction.parameters.filter(
-                        (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex === i
-                      )
+            <Flex
+              flex={1}
+              alignItems="center"
+              justifyContent="center"
+              bg="black.900"
+              px={2}
+              w="32px"
+            >
+              <IconButton
+                aria-label="Add function parameter"
+                w="16px"
+                minW="16px"
+                h="16px"
+                borderRadius="100%"
+                variant="secondary"
+                onClick={() =>
+                  setFieldValue(
+                    `transactions.${transactionIndex}.parameters`,
+                    transaction.parameters.filter(
+                      (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex === i
                     )
-                  }
-                >
-                  <Trash />
-                </IconButton>
-              </Flex>
-            )}
+                  )
+                }
+              >
+                <Trash />
+              </IconButton>
+            </Flex>
           </Flex>
         ))}
         <Box

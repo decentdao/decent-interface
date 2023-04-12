@@ -113,5 +113,6 @@
     "customNonceError": "The custom nonce you entered is lower than safe's current nonce. This might lead to error while trying to execute transaction",
     "noTimeDifference": "0 seconds",
     "errorInvalidURL": "Invalid URL",
-    "functionNameError": "The function name can contain only numbers and letters."
+    "functionNameError": "The function name can contain only numbers and letters.",
+    "labelOrValueRequired": "Parameter Label or Parameter Value is required"
 }
