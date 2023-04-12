@@ -38,7 +38,7 @@ export const useAzoriusStrategy = () => {
       },
       quorumPercentage: {
         value: quorumPercentage,
-        formatted: getTimeDuration(quorumPercentage.toString()),
+        formatted: quorumPercentage.toString() + '%',
       },
       timeLockPeriod: {
         value: timeLockPeriod,
