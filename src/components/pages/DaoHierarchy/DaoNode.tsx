@@ -69,7 +69,7 @@ export function DaoNode({
         trueDepth={trueDepth}
         numberOfSiblings={numberOfSiblings}
         numberOfChildren={fractalNode?.nodeHierarchy.childNodes.length}
-        isCurrentDAO={currentDAOAddress === safeAddress}
+        isCurrentDAO={currentDAOAddress === utils.getAddress(safeAddress || '')}
       />
 
       {isChildrenExpanded &&
