@@ -1,8 +1,10 @@
 import { Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import { isAddress } from 'ethers/lib/utils';
+import detectProxyTarget from 'evm-proxy-detection';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useProvider } from 'wagmi';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { LabelComponent } from './InputComponent';
 
@@ -15,12 +17,17 @@ interface IABISelector {
 export default function ABISelector({ contractAddress, onChange, onFetchABI }: IABISelector) {
   const [abi, setABI] = useState();
   const { etherscanAPIBaseUrl } = useNetworkConfg();
+  const provider = useProvider();
   const { t } = useTranslation('common');
 
   useEffect(() => {
     const loadABI = async () => {
       if (contractAddress && isAddress(contractAddress)) {
         try {
+          // const target = await detectProxyTarget(
+          //   '0xA7AeFeaD2F25972D80516628417ac46b3F2604Af',
+          //   fetch
+          // );
           const response = await axios.get(
             `${etherscanAPIBaseUrl}/api?module=contract&action=getabi&address=${contractAddress}&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`
           );

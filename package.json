@@ -25,6 +25,7 @@
     "classnames": "^2.3.1",
     "date-fns": "^2.29.3",
     "ethers": "^5.7.2",
+    "evm-proxy-detection": "^1.1.0",
     "formik": "^2.2.9",
     "framer-motion": "^6.5.1",
     "graphql": "^16.6.0",
