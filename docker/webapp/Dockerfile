@@ -8,7 +8,7 @@ COPY package-lock.json ./fractal-webapp/package-lock.json
 COPY . ./fractal-webapp
 
 # Copies the exec file to bin
-COPY ./docker/webapp/entrypoint.sh /usr/local/bin
+COPY ./docker/webapp/entrypoint.sh /usr/local/bin/webapp
 
 WORKDIR /fractal-webapp/
 
@@ -16,4 +16,4 @@ RUN npm ci
 
 RUN npm run build
 
-ENTRYPOINT ["/bin/sh", "/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "/usr/local/bin/webapp/entrypoint.sh"]
