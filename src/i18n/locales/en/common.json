@@ -71,5 +71,6 @@
     "titleNodes": "DAO Hierarchy",
     "404Title": "Page not found",
     "404Button": "Fractal App Home",
-    "settings": "Settings"
+    "settings": "Settings",
+    "etherscanTip": "Open in Etherscan"
 }
