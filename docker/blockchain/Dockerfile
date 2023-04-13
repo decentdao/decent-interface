@@ -7,7 +7,7 @@ COPY ./hardhat.package.json /fractal-blockchain-node/package.json
 COPY ./hardhat.config.js /fractal-blockchain-node/hardhat.config.js
 
 # Copies the exec file to bin
-COPY ./entrypoint.sh /usr/local/bin/blockchain
+COPY ./entrypoint.sh /usr/local/bin
 
 WORKDIR /fractal-blockchain-node/
 
@@ -20,4 +20,4 @@ RUN apk --no-cache --virtual build-dependencies add python3 make g++
 RUN npm install
 
 # keeps server running
-ENTRYPOINT ["/bin/sh", "/usr/local/bin/blockchain/entrypoint.sh"]
+ENTRYPOINT ["/bin/sh", "/usr/local/bin/entrypoint.sh"]
