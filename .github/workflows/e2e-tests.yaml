@@ -28,20 +28,13 @@ jobs:
           docker-compose build --parallel
           docker-compose up -d
 
-      - name: Cache Node.js modules
-        id: cache-node-modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: remove package.json
+        run: | 
+          rm package.json
+          npm init -y
 
       - name: Install Node.js dependencies
-        if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: | 
-          npm ci
-          npm i -D @playwright/test
+        run: npm i -D @playwright/test playwright
 
       - name: Cache Playwright Browsers
         id: cache-playwright
