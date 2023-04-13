@@ -41,7 +41,7 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: | 
           npm ci
-          Run npm i -D @playwright/test
+          npm i -D @playwright/test
 
       - name: Cache Playwright Browsers
         id: cache-playwright
