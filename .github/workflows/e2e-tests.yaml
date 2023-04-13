@@ -99,7 +99,7 @@ jobs:
             ${{ runner.os }}-playwright-
 
       - name: Install dependencies for Playwright
-        run: npx playwright install-deps
+        run: playwright test
 
       - name: Install Playwright Browsers
         if: steps.cache-playwright.outputs.cache-hit != 'true'
