@@ -9,6 +9,7 @@ export interface DAORoutes extends RouteIndex {
   dao: RouteInfo;
   daos: RouteInfo;
   newSubDao: RouteInfo;
+  manageSigners: RouteInfo;
   hierarchy: RouteInfo;
   treasury: RouteInfo;
   proposals: RouteInfo;
@@ -28,6 +29,10 @@ export const DAO_ROUTES: DAORoutes = {
   newSubDao: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/new`,
     path: 'new',
+  },
+  manageSigners: {
+    relative: (daoAddress: string) => `/daos/${daoAddress}/managesigners`,
+    path: 'managesigners',
   },
   hierarchy: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/hierarchy`,
