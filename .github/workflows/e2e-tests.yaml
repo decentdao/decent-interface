@@ -31,6 +31,7 @@ jobs:
       - name: remove package.json
         run: | 
           rm package.json
+          rm package-lock.json
           npm init -y
 
       - name: Install Node.js dependencies
