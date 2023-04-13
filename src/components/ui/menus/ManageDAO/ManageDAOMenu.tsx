@@ -37,6 +37,10 @@ export function ManageDAOMenu({
       optionKey: 'optionCreateSubDAO',
       onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
+    const manageSignersOption = {
+      optionKey: 'optionManageSigners',
+      onClick: () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
+    };
     if (
       freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
@@ -58,7 +62,7 @@ export function ManageDAOMenu({
         optionKey: 'optionInitiateFreeze',
         onClick: () => guardContracts.vetoVotingContract?.asSigner.castFreezeVote(),
       };
-      return [createSubDAOOption, freezeOption];
+      return [createSubDAOOption, manageSignersOption, freezeOption];
     } else if (
       freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
@@ -78,7 +82,7 @@ export function ManageDAOMenu({
 
       return [clawBackOption];
     } else {
-      return [createSubDAOOption];
+      return [createSubDAOOption, manageSignersOption];
     }
   }, [safeAddress, push, guardContracts, handleClawBack, freezeGuard, currentTime]);
 
