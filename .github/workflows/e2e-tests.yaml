@@ -81,7 +81,7 @@ jobs:
             webapp:latest
 
       - name: remove package.json
-        run: | 
+        run: |
           rm package.json
           rm package-lock.json
           npm init -y
@@ -89,7 +89,22 @@ jobs:
       - name: Install Node.js dependencies
         run: npm i -D @playwright/test playwright
 
-      - name: Install Playwright Browsers
+      - name: Cache Playwright Browsers
+        id: cache-playwright
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/playwright.config.js') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Dependencies
+        if: steps.cache-playwright.outputs.cache-hit == 'true'
+        run: |
+          npx playwright install-deps
+
+      - name: Install Playwright Browsers and Dependencies
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: |
           npx playwright install --with-deps
 
@@ -118,4 +133,3 @@ jobs:
           docker rm webapp
           docker stop blockchain
           docker rm blockchain
-  
