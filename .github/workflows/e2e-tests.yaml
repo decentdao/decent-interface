@@ -35,7 +35,7 @@ jobs:
             ${{ runner.os }}-buildx-blockchain-
 
       - name: Build Docker image for blockchain
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: docker/blockchain
           file: docker/blockchain/Dockerfile
@@ -54,7 +54,7 @@ jobs:
             ${{ runner.os }}-buildx-webapp-
 
       - name: Build Docker image for webapp
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: docker/webapp/Dockerfile
