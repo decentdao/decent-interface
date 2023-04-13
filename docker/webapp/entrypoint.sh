@@ -1,3 +1,3 @@
 #!/bin/sh
 # Run react webapp
-npm run start;
+npm run build && npm run start;

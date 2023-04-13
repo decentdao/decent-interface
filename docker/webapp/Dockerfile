@@ -24,6 +24,4 @@ WORKDIR /fractal-webapp/
 
 RUN npm ci
 
-RUN npm run build
-
 ENTRYPOINT ["/bin/sh", "/usr/local/bin/entrypoint.sh"]
