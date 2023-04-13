@@ -24,7 +24,9 @@ jobs:
         run: echo TESTING_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env.tests.local
 
       - name: Start containers
-        run: docker-compose up -d --build
+        run: |
+          docker-compose build --parallel
+          docker-compose up -d
 
       - name: Cache Playwright Browsers
         id: cache-playwright
