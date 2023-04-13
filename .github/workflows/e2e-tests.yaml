@@ -23,10 +23,61 @@ jobs:
         working-directory: ./docker
         run: echo TESTING_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env.tests.local
 
-      - name: Start containers
+      - name: Cache Docker layers for blockchain
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache-blockchain
+          key: ${{ runner.os }}-buildx-blockchain-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-blockchain-
+
+      - name: Build Docker image for blockchain
+        uses: docker/build-push-action@v4
+        with:
+          context: docker/blockchain
+          file: docker/blockchain/Dockerfile
+          load: true
+          tags: blockchain:latest
+          cache-from: type=local,src=/tmp/.buildx-cache-blockchain
+          cache-to: type=local,dest=/tmp/.buildx-cache-blockchain,mode=max
+
+      - name: Cache Docker layers for webapp
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache-webapp
+          key: ${{ runner.os }}-buildx-webapp-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-webapp-
+
+      - name: Build Docker image for webapp
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: docker/webapp/Dockerfile
+          load: true
+          tags: webapp:latest
+          build-args: |
+            NEXT_PUBLIC_TESTING_ENVIROMENT=true
+            NEXT_PUBLIC_LOCAL_CHAIN_ID=31337
+            NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://127.0.0.1:8545
+          cache-from: type=local,src=/tmp/.buildx-cache-webapp
+          cache-to: type=local,dest=/tmp/.buildx-cache-webapp,mode=max
+
+      - name: Run blockchain container
         run: |
-          docker-compose build --parallel
-          docker-compose up -d
+          docker run -d --name blockchain \
+            -p 8545:8545 \
+            --env-file ./docker/.env.tests.local \
+            blockchain:latest
+
+      - name: Run webapp container
+        run: |
+          docker run -d --name webapp \
+            -p 3000:3000 \
+            -e NEXT_PUBLIC_TESTING_ENVIROMENT=true \
+            -e NEXT_PUBLIC_LOCAL_CHAIN_ID=31337 \
+            -e NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://0.0.0.0:8545 \
+            webapp:latest
 
       - name: remove package.json
         run: | 
@@ -36,6 +87,8 @@ jobs:
 
       - name: Install Node.js dependencies
         run: npm i -D @playwright/test playwright
+
+
 
       - name: Cache Playwright Browsers
         id: cache-playwright
@@ -74,4 +127,9 @@ jobs:
 
       - name: Stop containers
         if: always()
-        run: docker-compose down
+        run: |
+          docker stop webapp
+          docker rm webapp
+          docker stop blockchain
+          docker rm blockchain
+  
