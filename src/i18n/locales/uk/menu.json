@@ -16,5 +16,6 @@
     "titleManageDAO": "Керувати DAO",
     "optionCreateSubDAO": "Створити subDAO",
     "optionInitiateFreeze": "Ініціювати Замороження",
-    "optionInitiateClawback": "Ініціювати Повернення Коштів"
+    "optionInitiateClawback": "Ініціювати Повернення Коштів",
+    "optionManageSigners": "TODO"
 }

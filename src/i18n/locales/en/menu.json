@@ -16,5 +16,6 @@
     "titleManageDAO": "Manage DAO",
     "optionCreateSubDAO": "Add a subDAO",
     "optionInitiateFreeze": "Initiate a Freeze",
-    "optionInitiateClawback": "Initiate Clawback"
+    "optionInitiateClawback": "Initiate Clawback",
+    "optionManageSigners": "Manage Signers"
 }
