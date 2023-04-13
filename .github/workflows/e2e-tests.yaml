@@ -65,20 +65,10 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache-webapp,mode=max
 
       - name: Run blockchain container
-        run: |
-          docker run -d --name blockchain \
-            -p 8545:8545 \
-            --env-file ./docker/.env.tests.local \
-            blockchain:latest
+        run: docker run -d --name blockchain -p 8545:8545 --env-file ./docker/.env.tests.local blockchain:latest
 
       - name: Run webapp container
-        run: |
-          docker run -d --name webapp \
-            -p 3000:3000 \
-            -e NEXT_PUBLIC_TESTING_ENVIROMENT=true \
-            -e NEXT_PUBLIC_LOCAL_CHAIN_ID=31337 \
-            -e NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://0.0.0.0:8545 \
-            webapp:latest
+        run: docker run -d --name webapp -p 3000:3000 -e NEXT_PUBLIC_TESTING_ENVIROMENT=true -e NEXT_PUBLIC_LOCAL_CHAIN_ID=31337 -e NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://0.0.0.0:8545 webapp:latest
 
       - name: remove package.json
         run: |
