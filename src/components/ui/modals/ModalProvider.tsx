@@ -1,6 +1,8 @@
 import { Portal, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AddSignerModal from '../../pages/ManageSigners/AddSignerModal';
+import RemoveSignerModal from '../../pages/ManageSigners/RemoveSignerModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
@@ -11,6 +13,8 @@ export enum ModalType {
   DELEGATE,
   SEND_ASSETS,
   CONFIRM_URL,
+  REMOVE_SIGNER,
+  ADD_SIGNER,
 }
 
 export interface CurrentModal {
@@ -74,6 +78,25 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         co = (
           <ConfirmUrlModal
             url={current.props.url}
+            close={cl}
+          />
+        );
+        break;
+      case ModalType.REMOVE_SIGNER:
+        ti = 'Remove Signer';
+        co = (
+          <RemoveSignerModal
+            selectedSigner={current.props.selectedSigner}
+            signers={current.props.signers}
+            close={cl}
+          />
+        );
+        break;
+      case ModalType.ADD_SIGNER:
+        ti = 'Add Signer';
+        co = (
+          <AddSignerModal
+            signerCount={current.props.signerCount}
             close={cl}
           />
         );

@@ -27,7 +27,7 @@ export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size="md"
+      size="lg"
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
