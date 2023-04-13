@@ -1,4 +1,5 @@
 import { Box, Divider, Stack, Text, Image, Spacer, Flex } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 
 function DaoDetails({
   threshold,
@@ -7,6 +8,8 @@ function DaoDetails({
   threshold: number | undefined;
   signerCount: number | undefined;
 }) {
+  const { t } = useTranslation(['common']);
+
   if (!threshold || !signerCount) return <></>;
 
   return (
@@ -21,7 +24,7 @@ function DaoDetails({
         textStyle="text-lg-mono-regular"
         color="grayscale.100"
       >
-        DAO Details
+        {t('daoDetails', { ns: 'common' })}
       </Text>
       <Divider
         marginTop="1rem"
@@ -33,7 +36,7 @@ function DaoDetails({
             textStyle="text-base-sans-regular"
             color="chocolate.200"
           >
-            Signers Required
+            {t('signersRequired', { ns: 'common' })}
           </Text>
         </Box>
         <Spacer />
@@ -62,9 +65,9 @@ function DaoDetails({
             color="chocolate.200"
             mt={2}
           >
-            The number of signers required to execute a proposal.
+            {t('signersInfo1', { ns: 'common' })}
             <br />
-            Adding or removing a signer will require an update.
+            {t('signersInfo2', { ns: 'common' })}
           </Text>
         </Stack>
       </Stack>

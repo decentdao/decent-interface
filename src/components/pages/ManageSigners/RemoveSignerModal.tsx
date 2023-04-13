@@ -1,6 +1,8 @@
 import { Box, Button, Divider, Flex, HStack, Select, Text, Tooltip, Image } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Address, useEnsName, useProvider } from 'wagmi';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useRemoveSigner from './hooks/useRemoveSigner';
@@ -21,6 +23,14 @@ function RemoveSignerModal({
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(0);
   const defaultNonce = useDefaultNonce();
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+  const { data: ensName } = useEnsName({
+    address: selectedSigner as Address,
+    chainId: networkId,
+    cacheTime: 1000 * 60 * 30, // 30 min
+  });
+  const { t } = useTranslation(['modals', 'common']);
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length - 1 }, (_, i) => i + 1));
@@ -52,19 +62,18 @@ function RemoveSignerModal({
         textStyle="text-base-sans-regular"
         color="grayscale.100"
       >
-        Review the signer to remove
+        {t('removeSignerLabel', { ns: 'modals' })}
       </Text>
       <Text
         color="grayscale.600"
         textStyle="text-base-mono-regular"
-        // width="26rem"
         bgColor="black.500"
         px={4}
         py={2}
         mt={2}
         rounded="sm"
       >
-        {selectedSigner}
+        {ensName ? ensName : selectedSigner}
       </Text>
       <Divider
         mt={5}
@@ -76,7 +85,7 @@ function RemoveSignerModal({
           textStyle="text-base-sans-regular"
           color="grayscale.100"
         >
-          Update required signers
+          {t('updateThreshold', { ns: 'modals' })}
         </Text>
         <Flex>
           <Tooltip
@@ -96,7 +105,7 @@ function RemoveSignerModal({
       <HStack>
         <Select
           onChange={e => setThreshold(Number(e.target.value))}
-          placeholder="Select"
+          placeholder={t('select', { ns: 'modals' })}
           mt={4}
           width="8rem"
           bgColor="#2c2c2c"
@@ -139,7 +148,7 @@ function RemoveSignerModal({
           mr={3}
           textColor="blue.500"
         />
-        <Text>Access to your organization will be affected</Text>
+        <Text>{t('updateSignerWarning', { ns: 'modals' })}</Text>
       </HStack>
       <Button
         isDisabled={!threshold}
@@ -147,7 +156,7 @@ function RemoveSignerModal({
         width="100%"
         onClick={onSubmit}
       >
-        Submit
+        {t('submit', { ns: 'modals' })}
       </Button>
     </Box>
   );

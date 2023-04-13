@@ -20,5 +20,14 @@
   "confirmUrlTitle": "This link will take you to",
   "confirmUrlSubtitle": "Do you want to continue?",
   "modalContinue": "Continue",
-  "modalCancel": "Cancel"
+  "modalCancel": "Cancel",
+  "addSignerTitle": "Add Signer",
+  "addSignerLabel": "Add a new signer to your Safe",
+  "addSignerSublabel": "Ethereum wallet address or ENS only",
+  "updateThreshold": "Update required signers",
+  "select": "Select",
+  "updateSignerWarning": "Access to your organization will be affected",
+  "submit": "Submit",
+  "removeSignerTitle": "Remove Signer",
+  "removeSignerLabel": "Review the signer to remove"
 }

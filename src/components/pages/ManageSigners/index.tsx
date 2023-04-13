@@ -1,6 +1,7 @@
 import { Box, Button, Divider, HStack, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
 import { AddPlus, Trash } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
 import { ModalType } from '../../ui/modals/ModalProvider';
@@ -21,6 +22,7 @@ function ManageSigners({}: {}) {
   const addSigner = useFractalModal(ModalType.ADD_SIGNER, {
     signerCount: signers?.length,
   });
+  const { t } = useTranslation(['common', 'breadcrumbs']);
 
   useEffect(() => {
     setSigners(safe?.owners.map(owner => owner));
@@ -32,7 +34,7 @@ function ManageSigners({}: {}) {
         hasDAOLink={true}
         breadcrumbs={[
           {
-            title: 'Manage Signers',
+            title: t('manageSigners', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}
@@ -46,14 +48,14 @@ function ManageSigners({}: {}) {
       <HStack mt={8}>
         <Button onClick={addSigner}>
           <AddPlus />
-          Add Signer
+          {t('addSigner', { ns: 'common' })}
         </Button>
         <Button
           isDisabled={!selectedSigner || (signers && signers.length === 1)}
           onClick={removeSigner}
         >
           <Trash />
-          Remove Signer
+          {t('removeSigner', { ns: 'common' })}
         </Button>
       </HStack>
       <Stack
@@ -70,7 +72,7 @@ function ManageSigners({}: {}) {
             textStyle="text-lg-mono-regular"
             color="grayscale.100"
           >
-            Signers
+            {t('signers', { ns: 'common' })}
           </Text>
           <Divider
             marginTop="1rem"

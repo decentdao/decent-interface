@@ -83,7 +83,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         );
         break;
       case ModalType.REMOVE_SIGNER:
-        ti = 'Remove Signer';
+        ti = t('removeSignerTitle');
         co = (
           <RemoveSignerModal
             selectedSigner={current.props.selectedSigner}
@@ -93,7 +93,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         );
         break;
       case ModalType.ADD_SIGNER:
-        ti = 'Add Signer';
+        ti = t('addSignerTitle');
         co = (
           <AddSignerModal
             signerCount={current.props.signerCount}
