@@ -11,9 +11,13 @@ services:
     build:
       context: ./
       dockerfile: ./docker/webapp/Dockerfile
+      args:
+        NEXT_PUBLIC_TESTING_ENVIROMENT: 'true'
+        NEXT_PUBLIC_LOCAL_CHAIN_ID: '31337'
+        NEXT_PUBLIC_LOCAL_PROVIDER_URL: 'http://127.0.0.1:8545'
     ports:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_TESTING_ENVIROMENT=true
       - NEXT_PUBLIC_LOCAL_CHAIN_ID=31337
-      - NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://127.0.0.1:8545
+      - NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://0.0.0.0:8545
