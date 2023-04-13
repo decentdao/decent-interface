@@ -1,4 +1,22 @@
-FROM node:18.12.1
+# Base stage for dependencies
+FROM node:18.12.1 AS base
+
+WORKDIR /fractal-webapp/
+
+COPY package-lock.json .
+COPY package.json .
+
+RUN npm ci
+
+# Build stage for Next.js app
+FROM base AS build
+
+COPY . .
+
+RUN npm run build
+
+# Final stage for production
+FROM node:18.12.1 AS production
 
 # Set build-time arguments
 ARG NEXT_PUBLIC_TESTING_ENVIROMENT
@@ -10,20 +28,10 @@ ENV NEXT_PUBLIC_TESTING_ENVIROMENT=$NEXT_PUBLIC_TESTING_ENVIROMENT
 ENV NEXT_PUBLIC_LOCAL_CHAIN_ID=$NEXT_PUBLIC_LOCAL_CHAIN_ID
 ENV NEXT_PUBLIC_LOCAL_PROVIDER_URL=$NEXT_PUBLIC_LOCAL_PROVIDER_URL
 
-# Copies package-lock.json file to docker container
-# This file is are not included in the app's components COPY command below
-COPY package-lock.json ./fractal-webapp/package-lock.json
-
-# Copies app components to docker container directory
-COPY . ./fractal-webapp
-
-# Copies the exec file to bin
-COPY ./docker/webapp/entrypoint.sh /usr/local/bin
-
 WORKDIR /fractal-webapp/
 
-RUN npm ci
+COPY --from=build /fractal-webapp/ .
 
-RUN npm run build
+COPY ./docker/webapp/entrypoint.sh /usr/local/bin
 
 ENTRYPOINT ["/bin/sh", "/usr/local/bin/entrypoint.sh"]
