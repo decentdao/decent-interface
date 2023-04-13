@@ -40,7 +40,6 @@ jobs:
       - name: Install Node.js dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci
-              
 
       - name: Cache Playwright Browsers
         id: cache-playwright
@@ -51,10 +50,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-playwright-
 
+      - name: Install dependencies for Playwright
+        run: npx playwright install-deps
+
       - name: Install Playwright Browsers
         if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: |
-          npx playwright install --with-deps
+          npx playwright install
 
       - name: Wait for Development Server
         uses: nev7n/wait_for_response@v1
