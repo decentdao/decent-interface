@@ -23,6 +23,9 @@ jobs:
         working-directory: ./docker
         run: echo TESTING_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env.tests.local
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
       - name: Cache Docker layers for blockchain
         uses: actions/cache@v3
         with:
@@ -32,12 +35,13 @@ jobs:
             ${{ runner.os }}-buildx-blockchain-
 
       - name: Build Docker image for blockchain
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v2
         with:
           context: docker/blockchain
           file: docker/blockchain/Dockerfile
           load: true
           tags: blockchain:latest
+          builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache-blockchain
           cache-to: type=local,dest=/tmp/.buildx-cache-blockchain,mode=max
 
@@ -50,7 +54,7 @@ jobs:
             ${{ runner.os }}-buildx-webapp-
 
       - name: Build Docker image for webapp
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v2
         with:
           context: .
           file: docker/webapp/Dockerfile
@@ -60,6 +64,7 @@ jobs:
             NEXT_PUBLIC_TESTING_ENVIROMENT=true
             NEXT_PUBLIC_LOCAL_CHAIN_ID=31337
             NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://127.0.0.1:8545
+          builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache-webapp
           cache-to: type=local,dest=/tmp/.buildx-cache-webapp,mode=max
 
