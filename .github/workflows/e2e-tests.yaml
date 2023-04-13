@@ -7,7 +7,7 @@ on:
 
 jobs:
   playwright:
-    timeout-minutes: 20
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     environment: dev
     steps:
@@ -60,10 +60,6 @@ jobs:
           file: docker/webapp/Dockerfile
           load: true
           tags: webapp:latest
-          build-args: |
-            NEXT_PUBLIC_TESTING_ENVIROMENT=true
-            NEXT_PUBLIC_LOCAL_CHAIN_ID=31337
-            NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://127.0.0.1:8545
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache-webapp
           cache-to: type=local,dest=/tmp/.buildx-cache-webapp,mode=max
@@ -93,8 +89,6 @@ jobs:
       - name: Install Node.js dependencies
         run: npm i -D @playwright/test playwright
 
-
-
       - name: Cache Playwright Browsers
         id: cache-playwright
         uses: actions/cache@v3
@@ -120,7 +114,7 @@ jobs:
           timeout: 300000
 
       - name: Run Playwright tests
-        run: npx playwright test
+        run: npm run tests
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v3
