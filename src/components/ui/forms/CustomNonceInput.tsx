@@ -1,4 +1,4 @@
-import { Flex, Text, Input, Tooltip, HStack, VStack, Box } from '@chakra-ui/react';
+import { Flex, Text, Input, Tooltip, HStack, VStack } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';

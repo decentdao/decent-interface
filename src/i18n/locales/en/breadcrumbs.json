@@ -3,5 +3,8 @@
     "proposalNew": "New Proposal",
     "nodes": "DAO Hierarchy",
     "treasury": "Treasury",
-    "proposal": "#{{proposalNumber}} {{proposalTitle}}"
+    "proposal": "#{{proposalNumber}} {{proposalTitle}}",
+    "proposalTemplates": "Proposal Templates",
+    "proposalTemplate": "{{proposalTemplateTitle}}",
+    "proposalTemplateNew": "New Proposal Template"
 }
