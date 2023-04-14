@@ -11,8 +11,13 @@ import {
 import { Gear, LabelWrapper } from '@decent-org/fractal-ui';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { BigNumberValuePair, ICreationStepProps, TokenAllocation } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import {
+  AzoriusGovernance,
+  BigNumberValuePair,
+  ICreationStepProps,
+  TokenAllocation,
+} from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -21,11 +26,9 @@ import { UsulTokenAllocation } from './UsulTokenAllocation';
 export function UsulTokenAllocations(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation('daoCreate');
-  const {
-    governance: { governanceToken },
-  } = useFractal();
-
-  const canReceiveParentAllocations = isSubDAO && governanceToken?.address;
+  const { governance } = useFractal();
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const canReceiveParentAllocations = isSubDAO && azoriusGovernance.votesToken?.address;
 
   return (
     <Box>
@@ -34,9 +37,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
         {({ remove, push }) => (
           <Box my={4}>
             <Grid
-              gridTemplateColumns={
-                values.govToken.tokenAllocations.length > 1 ? '1fr 35% 2rem' : '1fr 1fr'
-              }
+              gridTemplateColumns="1fr 35% 2rem"
               columnGap={4}
               rowGap={2}
               data-testid="tokenVoting-tokenAllocations"
@@ -53,7 +54,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
               >
                 {t('titleAmount')}
               </Text>
-              {values.govToken.tokenAllocations.length > 1 && <Box>{/* EMPTY */}</Box>}
+              <Box>{/* EMPTY */}</Box>
 
               {values.govToken.tokenAllocations.map((tokenAllocation, index) => {
                 const tokenAllocationError = (
@@ -92,6 +93,17 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
             >
               {t('helperAllocations')}
             </Text>
+            <Button
+              size="base"
+              maxWidth="fit-content"
+              px={0}
+              mx={0}
+              variant="text"
+              onClick={() => push({ address: '', amount: { value: '' } })}
+              data-testid="tokenVoting-addAllocation"
+            >
+              {t('labelAddAllocation')}
+            </Button>
             {canReceiveParentAllocations && (
               <Accordion allowToggle>
                 <AccordionItem
@@ -144,17 +156,6 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
                 </AccordionItem>
               </Accordion>
             )}
-            <Button
-              size="base"
-              maxWidth="fit-content"
-              px={0}
-              mx={0}
-              variant="text"
-              onClick={() => push({ address: '', amount: { value: '' } })}
-              data-testid="tokenVoting-addAllocation"
-            >
-              {t('labelAddAllocation')}
-            </Button>
           </Box>
         )}
       </FieldArray>

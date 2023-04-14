@@ -31,7 +31,8 @@ export function StepButtons({
         <Button
           data-testid="create-prevButton"
           variant="text"
-          disabled={transactionPending || isSubmitting}
+          isDisabled={transactionPending || isSubmitting}
+          disabled={true}
           onClick={() => updateStep(prevStep)}
         >
           {t('prev', { ns: 'common' })}
@@ -40,7 +41,7 @@ export function StepButtons({
       <Button
         w="full"
         type={buttonType}
-        disabled={transactionPending || isSubmitting || !!errors[step]}
+        isDisabled={transactionPending || isSubmitting || !!errors[step]}
         onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
       >

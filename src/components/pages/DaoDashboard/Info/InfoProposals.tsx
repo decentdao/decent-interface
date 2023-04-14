@@ -1,7 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Proposals } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { FractalProposalState } from '../../../../types';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 interface IDAOGovernance {}
@@ -9,14 +10,11 @@ interface IDAOGovernance {}
 export function InfoProposals({}: IDAOGovernance) {
   const { t } = useTranslation('dashboard');
   const {
-    gnosis: { safe },
-    governance: {
-      txProposalsInfo: { passed, active },
-      governanceIsLoading,
-    },
+    node: { daoAddress },
+    governance: { proposals, type },
   } = useFractal();
 
-  if (!safe.address || governanceIsLoading) {
+  if (!daoAddress || !type) {
     return (
       <Flex
         h="8.5rem"
@@ -28,6 +26,23 @@ export function InfoProposals({}: IDAOGovernance) {
       </Flex>
     );
   }
+  const passed = !proposals
+    ? 0
+    : proposals.reduce(
+        (prev, proposal) => (proposal.state === FractalProposalState.Executed ? prev + 1 : prev),
+        0
+      );
+
+  const active = !proposals
+    ? 0
+    : proposals.reduce(
+        (prev, proposal) =>
+          proposal.state === FractalProposalState.Active ||
+          proposal.state === FractalProposalState.Executing
+            ? prev + 1
+            : prev,
+        0
+      );
 
   return (
     <Box data-testid="dashboard-daoProposals">

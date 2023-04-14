@@ -1,14 +1,10 @@
 import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { Favorite } from './Favorite';
 
 export function FavoritesList() {
-  const {
-    account: {
-      favorites: { favoritesList },
-    },
-  } = useFractal();
+  const { favoritesList } = useAccountFavorites();
 
   const { t } = useTranslation('dashboard');
   return (

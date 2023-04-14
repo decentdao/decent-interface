@@ -8,9 +8,10 @@ import { UsulProposalDetails } from '../../../../../src/components/Proposals/Usu
 import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
+import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
-import { useFractal } from '../../../../../src/providers/Fractal/hooks/useFractal';
-import { TxProposal, UsulProposal } from '../../../../../src/types';
+import { useFractal } from '../../../../../src/providers/App/AppProvider';
+import { FractalProposal, UsulProposal } from '../../../../../src/types';
 
 export default function ProposalDetailsPage({
   params: { proposalNumber },
@@ -18,15 +19,11 @@ export default function ProposalDetailsPage({
   params: { proposalNumber: string };
 }) {
   const {
-    gnosis: {
-      safe: { address },
-    },
-    governance: {
-      txProposalsInfo: { txProposals },
-    },
+    node: { daoAddress },
+    governance: { proposals },
   } = useFractal();
 
-  const [proposal, setProposal] = useState<TxProposal | null>();
+  const [proposal, setProposal] = useState<FractalProposal | null>();
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
   const usulProposal = proposal as UsulProposal;
@@ -37,12 +34,12 @@ export default function ProposalDetailsPage({
   });
 
   useEffect(() => {
-    if (!txProposals || !txProposals.length || !proposalNumber) {
+    if (!proposals || !proposals.length || !proposalNumber) {
       setProposal(undefined);
       return;
     }
 
-    const foundProposal = txProposals.find(p => {
+    const foundProposal = proposals.find(p => {
       return p.proposalNumber === proposalNumber;
     });
     if (!foundProposal) {
@@ -50,40 +47,42 @@ export default function ProposalDetailsPage({
       return;
     }
     setProposal(foundProposal);
-  }, [txProposals, proposalNumber]);
+  }, [proposals, proposalNumber]);
 
   return (
-    <Box>
-      <PageHeader
-        breadcrumbs={[
-          {
-            title: t('proposals', { ns: 'breadcrumbs' }),
-            path: DAO_ROUTES.proposals.relative(address),
-          },
-          {
-            title: t('proposal', {
-              ns: 'breadcrumbs',
-              proposalNumber,
-              proposalTitle: proposal?.metaData?.title || transactionDescription,
-            }),
-            path: '',
-          },
-        ]}
-      />
-      {proposal === undefined ? (
-        <Box mt={7}>
-          <InfoBoxLoader />
-        </Box>
-      ) : proposal === null ? (
-        <EmptyBox
-          emptyText={t('noProposal')}
-          m="2rem 0 0 0"
+    <ClientOnly>
+      <Box>
+        <PageHeader
+          breadcrumbs={[
+            {
+              title: t('proposals', { ns: 'breadcrumbs' }),
+              path: DAO_ROUTES.proposals.relative(daoAddress),
+            },
+            {
+              title: t('proposal', {
+                ns: 'breadcrumbs',
+                proposalNumber,
+                proposalTitle: proposal?.metaData?.title || transactionDescription,
+              }),
+              path: '',
+            },
+          ]}
         />
-      ) : usulProposal.govTokenAddress ? (
-        <UsulProposalDetails proposal={usulProposal} />
-      ) : (
-        <MultisigProposalDetails proposal={proposal} />
-      )}
-    </Box>
+        {proposal === undefined ? (
+          <Box mt={7}>
+            <InfoBoxLoader />
+          </Box>
+        ) : proposal === null ? (
+          <EmptyBox
+            emptyText={t('noProposal')}
+            m="2rem 0 0 0"
+          />
+        ) : usulProposal.govTokenAddress ? (
+          <UsulProposalDetails proposal={usulProposal} />
+        ) : (
+          <MultisigProposalDetails proposal={proposal} />
+        )}
+      </Box>
+    </ClientOnly>
   );
 }

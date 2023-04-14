@@ -4,107 +4,38 @@ import {
   OZLinearVoting,
   TokenClaim,
   VotesToken,
+  UsulVetoGuard,
+  VetoERC20Voting,
+  VetoGuard,
+  VetoMultisigVoting,
+  FractalRegistry,
+  GnosisSafe,
+  GnosisSafeProxyFactory,
+  ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
-  AllTransactionsListResponse,
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
+  SafeBalanceUsdResponse,
+  SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { DAO } from '../../.graphclient';
-import { IConnectedAccount } from './account';
-import { TreasuryActions, GovernanceActions, GnosisActions } from './actions';
+import { Dispatch } from 'react';
+import { MultiSend } from '../assets/typechain-types/usul';
+import { FractalGovernanceActions } from '../providers/App/governance/action';
+import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
+import { FractalGuardActions } from '../providers/App/guard/action';
+import { GuardContractActions } from '../providers/App/guardContracts/action';
+import { TreasuryActions } from '../providers/App/treasury/action';
+import { NodeActions } from './../providers/App/node/action';
+import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
-import { CreateDAOFunc } from './createDAO';
-import { GovernanceTypes } from './daoGovernance';
-import { IGnosisVetoContract } from './daoGuard';
-import {
-  CreateProposalFunc,
-  TxProposalsInfo,
-  ProposalMetaData,
-  MultisigProposal,
-  UsulProposal,
-} from './daoProposal';
-import { ITreasury, TreasuryActivity } from './daoTreasury';
-import { SafeInfoResponseWithGuard } from './safeGlobal';
-import { IGoveranceTokenData } from './votingFungibleToken';
-
-export enum GnosisModuleType {
-  USUL,
-  FRACTAL,
-  UNKNOWN,
-}
-
-export interface IFractalContext {
-  gnosis: IGnosis;
-  treasury: ITreasury;
-  governance: IGovernance;
-  account: IConnectedAccount;
-  dispatches: {
-    treasuryDispatch: React.Dispatch<TreasuryActions>;
-    governanceDispatch: React.Dispatch<GovernanceActions>;
-    gnosisDispatch: React.Dispatch<GnosisActions>;
-  };
-  actions: {
-    refreshSafeData: () => Promise<void>;
-    lookupModules: (_moduleAddresses: string[]) => Promise<IGnosisModuleData[] | undefined>;
-    getVetoGuardContracts: (
-      _guardAddress: string,
-      _modules?: IGnosisModuleData[] | undefined
-    ) => Promise<IGnosisVetoContract | undefined>;
-    lookupFreezeData: (
-      _vetoGuardContracts: IGnosisVetoContract
-    ) => Promise<IGnosisFreezeData | undefined>;
-  };
-}
-
-export interface IGnosis {
-  providedSafeAddress?: string;
-  daoName: string;
-  safeService?: SafeServiceClient;
-  safe: Partial<SafeInfoResponseWithGuard>;
-  modules: IGnosisModuleData[];
-  guardContracts: IGnosisVetoContract;
-  freezeData: IGnosisFreezeData | undefined;
-  transactions: AllTransactionsListResponse;
-  isGnosisLoading: boolean;
-  parentDAOAddress?: string;
-  hierarchy: DAO['hierarchy'];
-}
-
-export interface IGovernance {
-  actions: {
-    createProposal?: {
-      func: CreateProposalFunc;
-      pending: boolean;
-    };
-    createSubDAO?: {
-      func: CreateDAOFunc;
-      pending: boolean;
-    };
-  };
-  type: GovernanceTypes | null;
-  txProposalsInfo: TxProposalsInfo;
-  governanceToken?: IGoveranceTokenData;
-  tokenClaimContract?: TokenClaim;
-  contracts: GovernanceContracts;
-  governanceIsLoading: boolean;
-}
-
-export interface IGnosisModuleData {
-  moduleContract: FractalUsul | FractalModule | undefined;
-  moduleAddress: string;
-  moduleType: GnosisModuleType;
-}
-
-export interface GovernanceContracts {
-  ozLinearVotingContract?: ContractConnection<OZLinearVoting>;
-  usulContract?: ContractConnection<FractalUsul>;
-  tokenContract?: ContractConnection<VotesToken>;
-  contractsIsLoading: boolean;
-}
-
+import { VetoGuardType, VetoVotingType } from './daoGovernance';
+import { ProposalMetaData, MultisigProposal, UsulProposal } from './daoProposal';
+import { TreasuryActivity } from './daoTreasury';
+import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
+import { BNFormattedPair } from './votingFungibleToken';
 /**
  * The possible states of a DAO proposal, both Token Voting (Usul) and Multisignature
  * governance.
@@ -114,7 +45,7 @@ export interface GovernanceContracts {
  *
  * Although in some cases (documented below), what we show to the user may be different.
  */
-export enum TxProposalState {
+export enum FractalProposalState {
   /**
    * Proposal is created and can be voted on.  This is the initial state of all
    * newly created proposals.
@@ -238,7 +169,7 @@ export enum TxProposalState {
   Module = 'stateModule',
 }
 
-export interface IGnosisFreezeData {
+export interface IGnosisFreezeGuard {
   freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
   freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
   freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
@@ -250,11 +181,12 @@ export interface IGnosisFreezeData {
 }
 
 export interface GovernanceActivity extends ActivityBase {
-  state: TxProposalState | null;
+  state: FractalProposalState | null;
   proposalNumber: string;
   targets: string[];
   metaData?: ProposalMetaData;
 }
+
 export interface ActivityBase {
   eventDate: Date;
   eventType: ActivityEventType;
@@ -289,3 +221,143 @@ export interface ITokenAccount {
   votingWeightString: string | undefined;
   isDelegatesSet: boolean | undefined;
 }
+
+/**
+ * @dev This interface represents the store for the Fractal DAO.
+ * @param baseContracts - This object contains the base contracts for the Fractal DAO.
+ * @param clients - This object contains the clients for the Fractal DAO.
+ * @param dispatch - This object contains the dispatch functions for the Fractal DAO.
+ */
+export interface FractalStore extends Fractal {
+  baseContracts: FractalContracts;
+  clients: FractalClients;
+  action: {
+    dispatch: Dispatch<FractalActions>;
+    resetDAO: () => Promise<void>;
+  };
+}
+export enum StoreAction {
+  RESET = 'RESET',
+}
+export type FractalActions =
+  | { type: StoreAction.RESET }
+  | NodeActions
+  | FractalGuardActions
+  | FractalGovernanceActions
+  | TreasuryActions
+  | GovernanceContractActions
+  | GuardContractActions;
+export interface Fractal {
+  node: FractalNode;
+  guard: FreezeGuard;
+  governance: FractalGovernance;
+  treasury: FractalTreasury;
+  governanceContracts: FractalGovernanceContracts;
+  guardContracts: FractalGuardContracts;
+}
+
+export interface FractalClients {
+  safeService: SafeServiceClient;
+}
+
+export interface FractalGovernanceContracts {
+  ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
+  usulContract: ContractConnection<FractalUsul> | null;
+  tokenContract: ContractConnection<VotesToken> | null;
+  isLoaded: boolean;
+}
+
+export interface FractalNode {
+  daoName: string | null;
+  daoAddress: string | null;
+  safe: SafeInfoResponseWithGuard | null;
+  fractalModules: FractalModuleData[];
+  nodeHierarchy: NodeHierarchy;
+}
+
+export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules'> {}
+
+export interface FractalModuleData {
+  moduleContract: FractalUsul | FractalModule | undefined;
+  moduleAddress: string;
+  moduleType: FractalModuleType;
+}
+
+export enum FractalModuleType {
+  USUL,
+  FRACTAL,
+  UNKNOWN,
+}
+
+export interface FractalGuardContracts {
+  vetoGuardContract?: ContractConnection<VetoGuard | UsulVetoGuard>;
+  vetoVotingContract?: ContractConnection<VetoERC20Voting | VetoMultisigVoting>;
+  vetoGuardType: VetoGuardType | null;
+  vetoVotingType: VetoVotingType | null;
+}
+
+export interface FreezeGuard {
+  freezeVotesThreshold: BigNumber | null; // Number of freeze votes required to activate a freeze
+  freezeProposalCreatedTime: BigNumber | null; // Block number the freeze proposal was created at
+  freezeProposalVoteCount: BigNumber | null; // Number of accrued freeze votes
+  freezeProposalPeriod: BigNumber | null; // Number of blocks a freeze proposal has to succeed
+  freezePeriod: BigNumber | null; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  userHasFreezeVoted: boolean;
+  isFrozen: boolean;
+  userHasVotes: boolean;
+}
+
+export interface FractalTreasury {
+  assetsFungible: SafeBalanceUsdResponse[];
+  assetsNonFungible: SafeCollectibleResponse[];
+  transfers?: AllTransfersListResponse;
+}
+export type FractalGovernance = AzoriusGovernance | SafeMultisigGovernance;
+export interface AzoriusGovernance extends Governance {
+  votesStrategy: VotesStrategyAzorius;
+  votesToken: VotesTokenData;
+}
+export interface SafeMultisigGovernance extends Governance {}
+
+export interface Governance {
+  type?: StrategyType;
+  proposals: FractalProposal[] | null;
+  tokenClaimContract?: TokenClaim;
+}
+
+export interface VotesStrategyAzorius extends VotesStrategy {}
+
+export interface VotesStrategy<Type = BNFormattedPair> {
+  votingPeriod?: Type;
+  quorumPercentage?: Type;
+  timeLockPeriod?: Type;
+}
+
+export enum StrategyType {
+  GNOSIS_SAFE = 'labelMultisigGov',
+  GNOSIS_SAFE_USUL = 'labelUsulGov',
+}
+
+export interface NodeHierarchy {
+  parentAddress: string | null;
+  childNodes: Node[];
+}
+
+export interface FractalContracts {
+  multiSendContract: ContractConnection<MultiSend>;
+  gnosisSafeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
+  fractalUsulMasterCopyContract: ContractConnection<FractalUsul>;
+  linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>;
+  gnosisSafeSingletonContract: ContractConnection<GnosisSafe>;
+  zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
+  fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
+  fractalRegistryContract: ContractConnection<FractalRegistry>;
+  gnosisVetoGuardMasterCopyContract: ContractConnection<VetoGuard>;
+  usulVetoGuardMasterCopyContract: ContractConnection<UsulVetoGuard>;
+  vetoMultisigVotingMasterCopyContract: ContractConnection<VetoMultisigVoting>;
+  vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
+  votesTokenMasterCopyContract: ContractConnection<VotesToken>;
+  claimingMasterCopyContract: ContractConnection<TokenClaim>;
+}
+
+export type FractalProposal = UsulProposal | MultisigProposal;

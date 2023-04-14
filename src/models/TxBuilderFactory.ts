@@ -29,7 +29,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     baseContracts: BaseContracts,
     usulContracts: UsulContracts | undefined,
     daoData: GnosisDAO | TokenGovernanceDAO | SubDAO,
-    parentDAOAddress?: string,
+    parentAddress?: string,
     parentTokenAddress?: string
   ) {
     super(
@@ -37,7 +37,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       baseContracts,
       usulContracts,
       daoData,
-      parentDAOAddress,
+      parentAddress,
       parentTokenAddress
     );
 
@@ -75,7 +75,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.createSafeTx!,
       this.safeContract!,
       this,
-      this.parentDAOAddress,
+      this.parentAddress,
       this.parentTokenAddress
     );
   }
@@ -90,7 +90,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.daoData as SubDAO,
       this.safeContract!,
       this.saltNum,
-      this.parentDAOAddress!,
+      this.parentAddress!,
       this.parentTokenAddress,
       this.usulContracts,
       usulAddress,
@@ -110,7 +110,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.daoData as GnosisDAO,
       this.safeContract!,
       this.predictedGnosisSafeAddress!,
-      this.parentDAOAddress,
+      this.parentAddress,
       this.parentTokenAddress
     );
   }

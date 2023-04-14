@@ -3,24 +3,22 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../constants/routes';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { TxProposal, GovernanceTypes } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { FractalProposal, StrategyType } from '../../types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
-export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
+export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const { address: account } = useAccount();
 
   const {
-    gnosis: {
-      safe: { owners, address },
-    },
+    node: { daoAddress, safe },
     governance: { type },
   } = useFractal();
 
   const showCreateButton =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
+    type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(account || '');
 
   const { t } = useTranslation('proposal');
   return (
@@ -42,7 +40,7 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
           {showCreateButton && (
-            <Link href={DAO_ROUTES.proposalNew.relative(address)}>
+            <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"

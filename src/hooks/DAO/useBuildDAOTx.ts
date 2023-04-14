@@ -1,14 +1,14 @@
 import { useCallback, useMemo } from 'react';
 import { useProvider, useSigner, useAccount } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
+import { useFractal } from '../../providers/App/AppProvider';
 import {
   TokenGovernanceDAO,
   GnosisDAO,
-  GovernanceTypes,
+  StrategyType,
   UsulContracts,
   BaseContracts,
 } from '../../types';
-import useSafeContracts from '../safe/useSafeContracts';
 
 const useBuildDAOTx = () => {
   const provider = useProvider();
@@ -18,26 +18,28 @@ const useBuildDAOTx = () => {
   const { address: account } = useAccount();
 
   const {
-    multiSendContract,
-    gnosisSafeFactoryContract,
-    gnosisSafeSingletonContract,
-    linearVotingMasterCopyContract,
-    fractalUsulMasterCopyContract,
-    zodiacModuleProxyFactoryContract,
-    fractalRegistryContract,
-    fractalModuleMasterCopyContract,
-    gnosisVetoGuardMasterCopyContract,
-    usulVetoGuardMasterCopyContract,
-    vetoMultisigVotingMasterCopyContract,
-    vetoERC20VotingMasterCopyContract,
-    votesTokenMasterCopyContract,
-    claimingMasterCopyContract,
-  } = useSafeContracts();
+    baseContracts: {
+      multiSendContract,
+      gnosisSafeFactoryContract,
+      gnosisSafeSingletonContract,
+      linearVotingMasterCopyContract,
+      fractalUsulMasterCopyContract,
+      zodiacModuleProxyFactoryContract,
+      fractalRegistryContract,
+      fractalModuleMasterCopyContract,
+      gnosisVetoGuardMasterCopyContract,
+      usulVetoGuardMasterCopyContract,
+      vetoMultisigVotingMasterCopyContract,
+      vetoERC20VotingMasterCopyContract,
+      votesTokenMasterCopyContract,
+      claimingMasterCopyContract,
+    },
+  } = useFractal();
 
   const buildDao = useCallback(
     async (
       daoData: TokenGovernanceDAO | GnosisDAO,
-      parentDAOAddress?: string,
+      parentAddress?: string,
       parentTokenAddress?: string
     ) => {
       let usulContracts;
@@ -59,7 +61,7 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === GovernanceTypes.GNOSIS_SAFE_USUL) {
+      if (daoData.governance === StrategyType.GNOSIS_SAFE_USUL) {
         if (
           !fractalUsulMasterCopyContract ||
           !linearVotingMasterCopyContract ||
@@ -96,7 +98,7 @@ const useBuildDAOTx = () => {
         baseContracts,
         usulContracts,
         daoData,
-        parentDAOAddress,
+        parentAddress,
         parentTokenAddress
       );
 
@@ -105,7 +107,7 @@ const useBuildDAOTx = () => {
 
       // Build Tx bundle based on governance type (Usul or Multisig)
       const safeTx =
-        daoData.governance === GovernanceTypes.GNOSIS_SAFE_USUL
+        daoData.governance === StrategyType.GNOSIS_SAFE_USUL
           ? await daoTxBuilder.buildUsulTx()
           : await daoTxBuilder.buildMultisigTx();
 

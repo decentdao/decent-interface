@@ -1,8 +1,8 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { ActivityEventType, SortBy, TreasuryActivity, TxProposal } from '../../../../types';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { ActivityEventType, SortBy, TreasuryActivity, FractalProposal } from '../../../../types';
 import { ActivityGovernance } from '../../../Activity/ActivityGovernance';
 import { ActivityModule } from '../../../Activity/ActivityModule';
 import { ActivityTreasury } from '../../../Activity/ActivityTreasury';
@@ -14,11 +14,13 @@ import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
   const {
-    gnosis: { guardContracts, freezeData },
+    guardContracts,
+    guard,
+    governance: { type },
   } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
+  const { sortedActivities } = useActivities(sortBy);
 
-  const { sortedActivities, isActivitiesLoading } = useActivities(sortBy);
   const { t } = useTranslation('dashboard');
   return (
     <Box>
@@ -36,13 +38,13 @@ export function Activities() {
         flexDirection="column"
         gap="1rem"
       >
-        {freezeData && (
+        {guard.freezeProposalVoteCount?.gt(0) && (
           <ActivityFreeze
-            freezeData={freezeData}
+            freezeGuard={guard}
             vetoVotingContract={guardContracts.vetoVotingContract?.asSigner}
           />
         )}
-        {isActivitiesLoading ? (
+        {!type ? (
           <InfoBoxLoader />
         ) : sortedActivities.length ? (
           <Flex
@@ -54,7 +56,7 @@ export function Activities() {
                 return (
                   <ActivityGovernance
                     key={i}
-                    activity={activity as TxProposal}
+                    activity={activity as FractalProposal}
                   />
                 );
               }
@@ -62,7 +64,7 @@ export function Activities() {
                 return (
                   <ActivityModule
                     key={i}
-                    activity={activity as TxProposal}
+                    activity={activity as FractalProposal}
                   />
                 );
               }

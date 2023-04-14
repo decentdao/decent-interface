@@ -68,6 +68,7 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
         bg="grayscale.black"
         p="0.5rem 1rem"
         minWidth="min-content"
+        zIndex={5}
       >
         <SortMenuItem
           labelKey={SortBy.Newest}

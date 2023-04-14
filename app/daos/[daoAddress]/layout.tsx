@@ -1,26 +1,27 @@
 'use client';
 
 import { ReactNode } from 'react';
+import ClientOnly from '../../../src/components/ui/utils/ClientOnly';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
-import useDAOName from '../../../src/hooks/DAO/useDAOName';
+import { useFractal } from '../../../src/providers/App/AppProvider';
 
 export default function DaoPageLayout({
   children,
   params: { daoAddress },
 }: {
   children: ReactNode;
-  params: { daoAddress: string };
+  params: { daoAddress?: string };
 }) {
+  const {
+    node: { daoName },
+  } = useFractal();
   // TODO: We could move PageHeader here as well - but that will require breadcrumbs logic refactoring
   useDAOController({ daoAddress });
-  const { daoRegistryName } = useDAOName({
-    address: daoAddress,
-  });
 
   return (
-    <>
-      <title>{daoRegistryName ? `${daoRegistryName} | Fractal` : 'Fractal'}</title>
+    <ClientOnly>
+      <title>{daoName ? `${daoName} | Fractal` : 'Fractal'}</title>
       {children}
-    </>
+    </ClientOnly>
   );
 }

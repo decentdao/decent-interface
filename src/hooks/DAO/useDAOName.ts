@@ -2,9 +2,9 @@ import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, useEnsName, useProvider } from 'wagmi';
 import { getEventRPC } from '../../helpers';
-import { CacheKeys, useLocalStorage } from '../../providers/Fractal/hooks/account/useLocalStorage';
-import useSafeContracts from '../safe/useSafeContracts';
+import { useFractal } from '../../providers/App/AppProvider';
 import { createAccountSubstring } from '../utils/useDisplayName';
+import { CacheKeys, useLocalStorage } from '../utils/useLocalStorage';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:
@@ -20,7 +20,9 @@ export default function useDAOName({
   address?: string;
   registryName?: string | null;
 }) {
-  const { fractalRegistryContract } = useSafeContracts();
+  const {
+    baseContracts: { fractalRegistryContract },
+  } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
   const provider = useProvider();
   const networkId = provider.network.chainId;
@@ -77,4 +79,42 @@ export default function useDAOName({
   }, [getDaoName]);
 
   return { daoRegistryName };
+}
+
+/**
+ * Gets the 'display name' for a Fractal DAO, in the following order of preference:
+ *
+ * 1. Primary ENS Name (reverse record)
+ * 2. Fractal name registry name
+ * 3. Truncated Eth address in the form 0xbFC4...7551
+ *
+ * @dev this is used on initial load of the DAO Node, after subGraph data is loaded
+ */
+export function useLazyDAOName() {
+  const { setValue, getValue } = useLocalStorage();
+  const provider = useProvider();
+  const getDaoName = useCallback(
+    async (_address: string, _registryName?: string | null): Promise<string> => {
+      const cachedName = getValue(CacheKeys.DAO_NAME_PREFIX + _address);
+      if (cachedName) {
+        return cachedName;
+      }
+      // check if ens name resolves
+      const ensName = await provider.lookupAddress(_address).catch(() => null);
+      if (ensName) {
+        setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 60);
+        return ensName;
+      }
+
+      if (_registryName) {
+        setValue(CacheKeys.DAO_NAME_PREFIX + _address, _registryName, 60);
+        return _registryName;
+      }
+
+      return createAccountSubstring(_address);
+    },
+    [getValue, setValue, provider]
+  );
+
+  return { getDaoName };
 }

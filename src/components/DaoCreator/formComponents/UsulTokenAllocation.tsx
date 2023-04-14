@@ -1,4 +1,4 @@
-import { Input, IconButton } from '@chakra-ui/react';
+import { Input, IconButton, Box } from '@chakra-ui/react';
 import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { Field, FieldAttributes } from 'formik';
@@ -48,7 +48,7 @@ export function UsulTokenAllocation({
           onKeyDown={restrictChars}
         />
       </LabelWrapper>
-      {allocationLength > 1 && (
+      {allocationLength > 1 ? (
         <IconButton
           aria-label="remove allocation"
           variant="unstyled"
@@ -64,6 +64,8 @@ export function UsulTokenAllocation({
           onClick={() => remove(index)}
           data-testid={'tokenVoting-tokenAllocationRemoveButton-' + index}
         />
+      ) : (
+        <Box>{/* EMPTY */}</Box>
       )}
     </>
   );

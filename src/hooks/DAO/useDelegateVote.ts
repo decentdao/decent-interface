@@ -1,39 +1,35 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../utils/useTransaction';
 
-const useDelegateVote = ({
-  delegatee,
-  votingTokenContract,
-  setPending,
-}: {
-  delegatee: string | undefined;
-  votingTokenContract: VotesToken | undefined;
-  setPending: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+const useDelegateVote = () => {
   const [contractCallDelegateVote, contractCallPending] = useTransaction();
-
-  useEffect(() => {
-    setPending(contractCallPending);
-  }, [setPending, contractCallPending]);
 
   const { t } = useTranslation('transaction');
 
-  const delegateVote = useCallback(() => {
-    if (votingTokenContract === undefined || delegatee === undefined) {
-      return;
-    }
+  const delegateVote = useCallback(
+    ({
+      delegatee,
+      votingTokenContract,
+      successCallback,
+    }: {
+      delegatee: string;
+      votingTokenContract: VotesToken;
+      successCallback?: () => void;
+    }) => {
+      contractCallDelegateVote({
+        contractFn: () => votingTokenContract.delegate(delegatee),
+        pendingMessage: t('pendingDelegateVote'),
+        failedMessage: t('failedDelegateVote'),
+        successMessage: t('successDelegateVote'),
+        successCallback,
+      });
+    },
+    [contractCallDelegateVote, t]
+  );
 
-    contractCallDelegateVote({
-      contractFn: () => votingTokenContract.delegate(delegatee),
-      pendingMessage: t('pendingDelegateVote'),
-      failedMessage: t('failedDelegateVote'),
-      successMessage: t('successDelegateVote'),
-    });
-  }, [contractCallDelegateVote, votingTokenContract, delegatee, t]);
-
-  return delegateVote;
+  return { delegateVote, contractCallPending };
 };
 
 export default useDelegateVote;

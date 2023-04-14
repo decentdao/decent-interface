@@ -1,32 +1,33 @@
-import { Text, Button, Flex, Tooltip } from '@chakra-ui/react';
+import { Button, Tooltip } from '@chakra-ui/react';
 import { CloseX, Check } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { TxProposal, UsulProposal, TxProposalState, UsulVoteChoice } from '../../../types';
-
-import ContentBox from '../../ui/containers/ContentBox';
-import ProposalTime from '../../ui/proposal/ProposalTime';
+import { useFractal } from '../../../providers/App/AppProvider';
+import {
+  FractalProposal,
+  UsulProposal,
+  FractalProposalState,
+  UsulVoteChoice,
+  AzoriusGovernance,
+} from '../../../types';
 
 function Vote({
   proposal,
   currentUserHasVoted,
 }: {
-  proposal: TxProposal;
+  proposal: FractalProposal;
   currentUserHasVoted: boolean;
 }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
-  const {
-    governance: { governanceToken },
-  } = useFractal();
+  const { governance } = useFractal();
 
+  const azoriusGovernance = governance as AzoriusGovernance;
   const usulProposal = proposal as UsulProposal;
 
   const { address: account } = useAccount();
@@ -37,7 +38,10 @@ function Vote({
   });
 
   // if the user has no delegated tokens, don't show anything
-  if (governanceToken?.votingWeight?.eq(0)) {
+  if (
+    azoriusGovernance.votesToken.votingWeight &&
+    azoriusGovernance.votesToken?.votingWeight.eq(0)
+  ) {
     return null;
   }
 
@@ -51,7 +55,7 @@ function Vote({
 
   const disabled =
     pending ||
-    proposal.state !== TxProposalState.Active ||
+    proposal.state !== FractalProposalState.Active ||
     !!usulProposal.votes.find(vote => vote.voter === account) ||
     proposalStartBlockNotFinalized;
 
@@ -66,14 +70,10 @@ function Vote({
           : undefined
       }
     >
-      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
-        <Flex justifyContent="space-between">
-          <Text textStyle="text-lg-mono-medium">{t('vote')}</Text>
-          <ProposalTime proposal={proposal} />
-        </Flex>
+      <>
         <Button
           width="full"
-          disabled={disabled}
+          isDisabled={disabled}
           onClick={() => castVote(UsulVoteChoice.Yes)}
           marginTop={5}
         >
@@ -83,7 +83,7 @@ function Vote({
         <Button
           marginTop={5}
           width="full"
-          disabled={disabled}
+          isDisabled={disabled}
           onClick={() => castVote(UsulVoteChoice.No)}
         >
           {t('reject')}
@@ -92,12 +92,12 @@ function Vote({
         <Button
           marginTop={5}
           width="full"
-          disabled={disabled}
+          isDisabled={disabled}
           onClick={() => castVote(UsulVoteChoice.Abstain)}
         >
           {t('abstain')}
         </Button>
-      </ContentBox>
+      </>
     </Tooltip>
   );
 }

@@ -32,30 +32,37 @@ export function GnosisMultisig(props: ICreationStepProps) {
   } = props;
   const { restrictChars } = useFormHelpers();
 
-  const handleSignersChanges = (inputValue: string, numberStr: number) => {
+  const handleSignersChanges = (_: string, numberStr: number, index?: number) => {
     let numOfSigners = Number(numberStr || 0);
-    // greater than 100 signers is unreasonable for manual input here,
+    // greater than 99 signers is unreasonable for manual input here,
     // we don't use an error message because we don't want to render
     // 1000 input fields and lag the app
-    if (numOfSigners > 100) {
-      numOfSigners = 100;
+    if (numOfSigners > 99) {
+      numOfSigners = 99;
     }
     const gnosisAddresses = [...values.gnosis.trustedAddresses];
     const trustedAddressLength = gnosisAddresses.length;
     if (trustedAddressLength !== numOfSigners) {
+      if (!numOfSigners || numOfSigners < 1) {
+        numOfSigners = 1;
+      }
       if (numOfSigners > trustedAddressLength) {
         const difference = numOfSigners - trustedAddressLength;
         gnosisAddresses.push(...new Array(difference).fill(''));
       }
       if (numOfSigners < trustedAddressLength) {
         const difference = trustedAddressLength - numOfSigners;
-        gnosisAddresses.splice(trustedAddressLength - difference, difference + 1);
+        if (index !== undefined) {
+          gnosisAddresses.splice(index, 1);
+        } else {
+          gnosisAddresses.splice(trustedAddressLength - difference, difference + 1);
+        }
       }
       if (gnosisAddresses.length) {
         setFieldValue('gnosis.trustedAddresses', gnosisAddresses);
       }
     }
-    setFieldValue('gnosis.numOfSigners', inputValue);
+    setFieldValue('gnosis.numOfSigners', numOfSigners);
   };
 
   useEffect(() => {
@@ -84,7 +91,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
           <NumberInput
             value={values.gnosis.numOfSigners}
             min={1}
-            onChange={handleSignersChanges}
+            onChange={(inputStr, inputNum) => handleSignersChanges(inputStr, inputNum)}
             onKeyDown={restrictChars}
           >
             <NumberInputField data-testid="gnosisConfig-numberOfSignerInput" />
@@ -119,12 +126,14 @@ export function GnosisMultisig(props: ICreationStepProps) {
                   : null;
 
               return (
-                <Grid
+                <LabelWrapper
                   key={i}
-                  templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
-                  alignItems="center"
+                  errorMessage={errorMessage}
                 >
-                  <LabelWrapper errorMessage={errorMessage}>
+                  <Grid
+                    templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
+                    alignItems="center"
+                  >
                     <Field name={`gnosis.trustedAddresses.${i}`}>
                       {({ field }: FieldAttributes<any>) => (
                         <Input
@@ -134,26 +143,26 @@ export function GnosisMultisig(props: ICreationStepProps) {
                         />
                       )}
                     </Field>
-                  </LabelWrapper>
-                  {values.gnosis.trustedAddresses.length > 1 && (
-                    <IconButton
-                      aria-label="remove allocation"
-                      variant="unstyled"
-                      minW={16}
-                      icon={
-                        <Trash
-                          color="gold.500"
-                          boxSize="1.5rem"
-                        />
-                      }
-                      type="button"
-                      onClick={async () => {
-                        handleSignersChanges('', --values.gnosis.numOfSigners);
-                      }}
-                      data-testid={'gnosis.numOfSigners-' + i}
-                    />
-                  )}
-                </Grid>
+                    {values.gnosis.trustedAddresses.length > 1 && (
+                      <IconButton
+                        aria-label="remove allocation"
+                        variant="unstyled"
+                        minW={16}
+                        icon={
+                          <Trash
+                            color="gold.500"
+                            boxSize="1.5rem"
+                          />
+                        }
+                        type="button"
+                        onClick={async () => {
+                          handleSignersChanges('', --values.gnosis.numOfSigners, i);
+                        }}
+                        data-testid={'gnosis.numOfSigners-' + i}
+                      />
+                    )}
+                  </Grid>
+                </LabelWrapper>
               );
             })}
           </LabelComponent>

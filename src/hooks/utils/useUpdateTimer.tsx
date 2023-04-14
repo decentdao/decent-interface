@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 
-export const useUpdateTimer = (safeAddress?: string) => {
+export const useUpdateTimer = (safeAddress?: string | null) => {
   const [timers, setTimers] = useState<{ method: string; timerId: NodeJS.Timer }[]>([]);
   const [isActive, setIsActive] = useState<boolean>(true);
   const twentySeconds = 20000; // in milliseconds
@@ -38,6 +38,9 @@ export const useUpdateTimer = (safeAddress?: string) => {
     if (!safeAddress || process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
       timers.forEach(timer => clearInterval(timer.timerId));
     }
+    return () => {
+      timers.forEach(timer => clearInterval(timer.timerId));
+    };
   }, [safeAddress, timers]);
   return { setMethodOnInterval };
 };

@@ -1,28 +1,27 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, TxProposal, UsulProposal } from '../../../types';
+import { MetaTransaction, FractalProposal, UsulProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
-import useUsul from './useUsul';
+import useUpdateProposalState from './useUpdateProposalState';
 
 export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
-  const { usulContract } = useUsul();
-  const {
-    actions: { refreshSafeData },
-    governance,
-    dispatches: { governanceDispatch },
-  } = useFractal();
+  const { governanceContracts, action } = useFractal();
+  const { usulContract } = governanceContracts;
   const { chainId } = useNetworkConfg();
-  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch, chainId });
+  const updateProposalState = useUpdateProposalState({
+    governanceContracts,
+    governanceDispatch: action.dispatch,
+    chainId,
+  });
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
-    (proposal: TxProposal) => {
+    (proposal: FractalProposal) => {
       const usulProposal = proposal as UsulProposal;
       if (!usulContract || !usulProposal.metaData || !usulProposal.metaData.transactions) {
         return;
@@ -42,7 +41,7 @@ export default function useExecuteProposal() {
 
       contractCallExecuteProposal({
         contractFn: () =>
-          usulContract.executeProposalBatch(
+          usulContract.asSigner.executeProposalBatch(
             proposal.proposalNumber,
             targets,
             values,
@@ -52,13 +51,13 @@ export default function useExecuteProposal() {
         pendingMessage: t('pendingExecute'),
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
-        successCallback: () => {
-          refreshSafeData();
+        successCallback: async () => {
+          // @todo may need to re-add a loader here
           updateProposalState(BigNumber.from(proposal.proposalNumber));
         },
       });
     },
-    [contractCallExecuteProposal, t, usulContract, updateProposalState, refreshSafeData]
+    [contractCallExecuteProposal, t, usulContract, updateProposalState]
   );
 
   return {

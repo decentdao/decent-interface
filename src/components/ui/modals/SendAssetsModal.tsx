@@ -2,10 +2,10 @@ import { Box, Divider, Flex, Select, HStack, Text, Button } from '@chakra-ui/rea
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { BigNumberValuePair } from '../../../types';
 import {
   formatCoinFromAsset,
@@ -14,14 +14,16 @@ import {
 } from '../../../utils/numberFormats';
 import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
 import { BigNumberInput } from '../forms/BigNumberInput';
+import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
 
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
+    node: { daoAddress },
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const nonce = useDefaultNonce();
+  const defaultNonce = useDefaultNonce();
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
@@ -29,6 +31,13 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     fungibleAssetsWithBalance[0]
   );
   const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
+  const [nonceInput, setNonceInput] = useState<number | undefined>();
+
+  useEffect(() => {
+    if (defaultNonce && nonceInput === undefined) {
+      setNonceInput(defaultNonce);
+    }
+  }, [defaultNonce, nonceInput]);
   const [destination, setDestination] = useState<string>('');
 
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
@@ -41,7 +50,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
     asset: selectedAsset,
     destinationAddress: destination,
-    nonce,
+    nonce: nonceInput,
+    daoAddress: daoAddress,
   });
 
   const handleCoinChange = (index: string) => {
@@ -58,10 +68,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue?.isZero() || overDraft;
+  const isSubmitDisabled =
+    !isValidAddress || !inputAmount || inputAmount?.bigNumberValue?.isZero() || overDraft;
 
-  const onSubmit = () => {
-    sendAssets();
+  const onSubmit = async () => {
+    await sendAssets();
     if (close) close();
   };
 
@@ -144,10 +155,21 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           }}
         />
       </LabelWrapper>
+      <Divider
+        color="chocolate.700"
+        marginTop="0.75rem"
+        marginBottom="0.75rem"
+      />
+      <CustomNonceInput
+        nonce={nonceInput}
+        onChange={nonce => setNonceInput(nonce ? nonce : undefined)}
+        defaultNonce={defaultNonce}
+      />
+
       <Button
         marginTop="2rem"
         width="100%"
-        disabled={isSubmitDisabled}
+        isDisabled={isSubmitDisabled}
         onClick={onSubmit}
       >
         {t('sendAssetsSubmit')}

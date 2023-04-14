@@ -40,7 +40,7 @@ function TransactionsForm(props: TransactionsFormProps) {
         <Button
           variant="text"
           onClick={() => setFieldValue('transactions', [...transactions, DEFAULT_TRANSACTION])}
-          disabled={pendingTransaction}
+          isDisabled={pendingTransaction}
           w="fit-content"
           pl={0}
         >
@@ -71,13 +71,13 @@ function TransactionsForm(props: TransactionsFormProps) {
               onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
               mb={4}
             >
-              {`< ${t('proposalBack')}`}
+              {`< ${t('prev', { ns: 'common' })}`}
             </Button>
           )}
           <Button
             w="100%"
             type="submit"
-            disabled={!canUserCreateProposal || !!transactionsError || pendingTransaction}
+            isDisabled={!canUserCreateProposal || !!transactionsError || pendingTransaction}
           >
             {t('createProposal')}
           </Button>

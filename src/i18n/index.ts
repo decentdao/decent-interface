@@ -13,6 +13,7 @@ import NAVIGATION_EN from './locales/en/navigation.json';
 import PROPOSAL_EN from './locales/en/proposal.json';
 import PROPOSAL_METADATA_EN from './locales/en/proposalMetadata.json';
 import PROPOSAL_TEMPLATE_EN from './locales/en/proposalTemplate.json';
+import SETTINGS_EN from './locales/en/settings.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
 import BREADCRUMBS_UK from './locales/uk/breadcrumbs.json';
@@ -25,6 +26,7 @@ import MODALS_UK from './locales/uk/modals.json';
 import NAVIGATION_UK from './locales/uk/navigation.json';
 import PROPOSAL_UK from './locales/uk/proposal.json';
 import PROPOSAL_METADATA_UK from './locales/uk/proposalMetadata.json';
+import SETTINGS_UK from './locales/uk/settings.json';
 import TRANSACTION_UK from './locales/uk/transaction.json';
 import TREASURY_UK from './locales/uk/treasury.json';
 /**
@@ -64,6 +66,7 @@ export const supportedLanguages = {
     navigation: NAVIGATION_EN,
     modals: MODALS_EN,
     languages: LANGUAGES_EN,
+    settings: SETTINGS_EN,
   },
   uk: {
     breadcrumbs: BREADCRUMBS_UK,
@@ -78,6 +81,7 @@ export const supportedLanguages = {
     navigation: NAVIGATION_UK,
     modals: MODALS_UK,
     languages: LANGUAGES_UK,
+    settings: SETTINGS_UK,
   },
 };
 

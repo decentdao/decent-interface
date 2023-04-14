@@ -6,58 +6,70 @@ import {
   Copy,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
+import { utils } from 'ethers';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
+import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { SafeInfoResponseWithGuard, IGnosisFreezeData, IGnosisVetoContract } from '../../../types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import {
+  SafeInfoResponseWithGuard,
+  FreezeGuard,
+  FractalGuardContracts,
+  FractalNode,
+} from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
-  parentSafeAddress?: string;
+  parentAddress?: string | null;
   subDAOSafeInfo?: SafeInfoResponseWithGuard;
-  safeAddress: string;
+  safeAddress: string | null;
   toggleExpansion?: () => void;
   expanded?: boolean;
   numberOfChildrenDAO?: number;
   viewChildren?: boolean;
   depth?: number;
+  fractalNode?: FractalNode;
 }
 
 export function DAOInfoCard({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
   toggleExpansion,
   expanded,
   numberOfChildrenDAO,
-  freezeData,
+  freezeGuard,
   guardContracts,
-}: IDAOInfoCard & { freezeData?: IGnosisFreezeData; guardContracts: IGnosisVetoContract }) {
+}: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
   const {
-    gnosis: {
-      safe: { address },
-      daoName,
-    },
-    account: {
-      favorites: { favoritesList, toggleFavorite },
-    },
+    node: { daoAddress, daoName },
+    action,
   } = useFractal();
+  const { favoritesList, toggleFavorite } = useAccountFavorites();
   const { address: account } = useAccount();
   const copyToClipboard = useCopyText();
+  const isCurrentDAO = safeAddress === daoAddress;
   const { daoRegistryName } = useDAOName({
-    address: address !== safeAddress ? safeAddress : undefined,
+    address: safeAddress && !isCurrentDAO ? safeAddress : undefined,
   });
   const { accountSubstring } = useDisplayName(safeAddress);
-  const isFavorite = favoritesList.includes(safeAddress);
 
   // @todo add viewable conditions
   const canManageDAO = !!account;
+
+  const isFavorite = useMemo(
+    () => (!!safeAddress ? favoritesList.includes(utils.getAddress(safeAddress)) : false),
+    [favoritesList, safeAddress]
+  );
+
+  if (!safeAddress) return null;
   return (
     <Flex
       justifyContent="space-between"
@@ -98,7 +110,14 @@ export function DAOInfoCard({
             gap="0.5rem"
             flexWrap="wrap"
           >
-            <Link href={DAO_ROUTES.dao.relative(safeAddress)}>
+            <Link
+              href={DAO_ROUTES.dao.relative(safeAddress)}
+              onClick={() => {
+                if (!isCurrentDAO) {
+                  action.resetDAO();
+                }
+              }}
+            >
               <Text
                 as="h1"
                 textStyle="text-2xl-mono-regular"
@@ -150,9 +169,9 @@ export function DAOInfoCard({
       {/* Veritical Elipsis */}
       {canManageDAO && (
         <ManageDAOMenu
-          parentSafeAddress={parentSafeAddress}
+          parentAddress={parentAddress}
           safeAddress={safeAddress}
-          freezeData={freezeData}
+          freezeGuard={freezeGuard}
           guardContracts={guardContracts}
         />
       )}
@@ -162,15 +181,19 @@ export function DAOInfoCard({
 
 export function DAONodeCard(props: IDAOInfoCard) {
   const {
-    gnosis: { safe, guardContracts, freezeData },
+    node: { daoAddress: currentDAOAddress },
+    guardContracts,
+    guard,
   } = useFractal();
-  const isCurrentDAO = props.safeAddress === safe.address;
-  const { subDAOData } = useSubDAOData(!isCurrentDAO ? props.safeAddress : undefined);
+  const isCurrentDAO = utils.getAddress(props.safeAddress || '') === currentDAOAddress;
+  const { subDAOData } = useSubDAOData(
+    !isCurrentDAO && props.fractalNode ? props.fractalNode : undefined
+  );
 
   const nodeGuardContracts =
     !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
-  const nodeFreezeData =
-    !isCurrentDAO && !!subDAOData ? subDAOData.freezeData : !isCurrentDAO ? undefined : freezeData;
+  const nodeFreezeGuard =
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuard : !isCurrentDAO ? undefined : guard;
   const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
 
   return (
@@ -186,12 +209,12 @@ export function DAONodeCard(props: IDAOInfoCard) {
     >
       <NodeLineHorizontal
         isCurrentDAO={isCurrentDAO}
-        isFirstChild={props.depth === 0 && props.parentSafeAddress !== safe.address}
+        isFirstChild={props.depth === 0 && props.parentAddress !== currentDAOAddress}
       />
       <DAOInfoCard
         {...props}
         guardContracts={nodeGuardContracts}
-        freezeData={nodeFreezeData}
+        freezeGuard={nodeFreezeGuard}
       />
     </Flex>
   );

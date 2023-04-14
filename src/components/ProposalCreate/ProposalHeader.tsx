@@ -1,4 +1,4 @@
-import { HStack, Text } from '@chakra-ui/react';
+import { Grid, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 
@@ -7,39 +7,34 @@ export function ProposalHeader({
   metadataTitle,
   nonce,
   setNonce,
+  defaultNonce,
 }: {
   isUsul?: boolean;
   metadataTitle?: string;
-  nonce?: number;
+  nonce: number;
   setNonce: (nonce?: number) => void;
+  defaultNonce: number | undefined;
 }) {
   const { t } = useTranslation(['proposal']);
 
-  if (!!metadataTitle) {
-    return (
-      <Text
-        textStyle="text-xl-mono-medium"
-        mb={4}
-      >
-        {metadataTitle}
-      </Text>
-    );
-  }
-
   return (
-    <HStack justifyContent="space-between">
+    <Grid
+      gridTemplateColumns="repeat(2, 1fr)"
+      w="full"
+    >
       <Text
         textStyle="text-xl-mono-medium"
         mb={4}
       >
-        {t('proposal', { ns: 'proposal' })}
+        {metadataTitle ? metadataTitle : t('proposal', { ns: 'proposal' })}
       </Text>
       {!isUsul && (
         <CustomNonceInput
           nonce={nonce}
           onChange={setNonce}
+          defaultNonce={defaultNonce}
         />
       )}
-    </HStack>
+    </Grid>
   );
 }
