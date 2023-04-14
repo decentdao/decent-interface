@@ -11,7 +11,7 @@ import DaoDetails from './DaoDetails';
 
 function ManageSigners({}: {}) {
   const {
-    node: { daoName, safe },
+    node: { safe },
   } = useFractal();
   const [signers, setSigners] = useState<string[]>();
   const [selectedSigner, setSelectedSigner] = useState<string>();
@@ -39,12 +39,6 @@ function ManageSigners({}: {}) {
           },
         ]}
       />
-      <Text
-        textStyle="text-2xl-mono-regular"
-        color="grayscale.100"
-      >
-        {`${daoName} Signers`}
-      </Text>
       <HStack mt={8}>
         <Button onClick={addSigner}>
           <AddPlus />
