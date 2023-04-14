@@ -7,7 +7,7 @@ import {
   SupportQuestion,
   Discord,
   Documents,
-  Integrations,
+  Templates,
 } from '@decent-org/fractal-ui';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
@@ -67,7 +67,7 @@ export function NavigationLinks({
               href={DAO_ROUTES.proposalTemplates.relative(address)}
               labelKey="proposalTemplates"
               testId="navigation-proposalTemplatesLink"
-              Icon={Integrations}
+              Icon={Templates}
               closeDrawer={closeDrawer}
             />
           </Flex>
