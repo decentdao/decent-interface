@@ -148,7 +148,5 @@ export default function useSafeContracts() {
     signer,
   ]);
 
-  return {
-    ...daoContracts,
-  };
+  return daoContracts;
 }

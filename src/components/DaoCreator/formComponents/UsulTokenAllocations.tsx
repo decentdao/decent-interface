@@ -18,9 +18,9 @@ import {
   ICreationStepProps,
   TokenAllocation,
 } from '../../../types';
-import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { LabelComponent } from '../../ui/forms/InputComponent';
 import { UsulTokenAllocation } from './UsulTokenAllocation';
 
 export function UsulTokenAllocations(props: ICreationStepProps) {

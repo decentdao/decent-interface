@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
-import { LabelComponent } from '../../ProposalCreate/InputComponent';
+import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 

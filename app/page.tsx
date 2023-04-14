@@ -10,9 +10,9 @@ import { ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import packageJson from '../package.json';
+import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
-import useClientSide from '../src/hooks/utils/useClientSide';
 import { useFractal } from '../src/providers/App/AppProvider';
 
 interface IconWithTextProps {
@@ -89,7 +89,6 @@ function InfoLinks() {
 }
 
 export default function HomePage() {
-  const isClientSide = useClientSide();
   const { t } = useTranslation('daoCreate');
   const { address: account } = useAccount();
   const { openConnectModal } = useConnectModal();
@@ -108,64 +107,63 @@ export default function HomePage() {
       action.resetDAO();
     }
   }, [daoAddress, action]);
-
   return (
-    <Center h="full">
-      <Flex
-        flexDirection="column"
-        alignItems="center"
-      >
-        <Box marginBottom="3.5rem">
-          <NextImage
-            priority
-            width={252}
-            height={48}
-            src="/images/fractal-text-logo.svg"
-            alt="Fractal Logo"
-          />
-        </Box>
-        {!account && isClientSide && (
+    <ClientOnly>
+      <Center h="full">
+        <Flex
+          flexDirection="column"
+          alignItems="center"
+        >
+          <Box marginBottom="3.5rem">
+            <NextImage
+              priority
+              width={252}
+              height={48}
+              src="/images/fractal-text-logo.svg"
+              alt="Fractal Logo"
+            />
+          </Box>
+          {!account && (
+            <Text
+              data-testid="home-pageTitleDisconnected"
+              textStyle="text-2xl-mono-regular"
+              color="grayscale.100"
+              marginBottom="1.5rem"
+            >
+              {t('homeTitleDisconnected')}
+            </Text>
+          )}
           <Text
-            data-testid="home-pageTitleDisconnected"
-            textStyle="text-2xl-mono-regular"
+            data-testid={account ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'}
+            textStyle="text-base-mono-regular"
             color="grayscale.100"
             marginBottom="1.5rem"
           >
-            {t('homeTitleDisconnected')}
+            {t(account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
           </Text>
-        )}
-        <Text
-          data-testid={
-            isClientSide && account ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'
-          }
-          textStyle="text-base-mono-regular"
-          color="grayscale.100"
-          marginBottom="1.5rem"
-        >
-          {t(isClientSide && account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
-        </Text>
-        <Button
-          onClick={isClientSide && account ? createDAO : openConnectModal}
-          data-testid={isClientSide && account ? 'home-linkCreate' : 'home-linkConnect'}
-          size="lg"
-          marginBottom="3.25rem"
-        >
-          {t(account && isClientSide ? 'homeButtonCreate' : 'homeButtonConnect')}
-        </Button>
-        <InfoLinks />
-        <Link
-          marginTop="2rem"
-          href="https://www.netlify.com/"
-          target="_blank"
-        >
-          <Text
-            textStyle="text-md-mono-semibold"
-            color="gold.500"
+          <Button
+            onClick={account ? createDAO : openConnectModal}
+            data-testid={account ? 'home-linkCreate' : 'home-linkConnect'}
+            size="lg"
+            marginBottom="3.25rem"
           >
-            v{packageJson.version} Deployed by Netlify
-          </Text>
-        </Link>
-      </Flex>
-    </Center>
+            {t(account ? 'homeButtonCreate' : 'homeButtonConnect')}
+          </Button>
+          <InfoLinks />
+          <Link
+            marginTop="2rem"
+            href="https://www.netlify.com/"
+            target="_blank"
+          >
+            <Text
+              textStyle="text-md-mono-semibold"
+              color="gold.500"
+            >
+              v{packageJson.version} Deployed by Netlify
+            </Text>
+          </Link>
+        </Flex>
+      </Center>
+    </ClientOnly>
   );
 }
