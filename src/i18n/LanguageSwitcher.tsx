@@ -36,7 +36,6 @@ export function LanguageSwitcher() {
         options={supported}
         namespace="languages"
         tooltipKey="tooltipTitle"
-        showDividers
       />
     </Center>
   );
