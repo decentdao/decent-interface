@@ -14,7 +14,6 @@ export const useActivities = (sortBy: SortBy) => {
   const sortedActivities: Activity[] = useMemo(() => {
     return [...(proposals || [])].sort((a, b) => {
       const dataA = new Date(a.eventDate).getTime();
-      console.log('🚀 ~ fakeChange');
       const dataB = new Date(b.eventDate).getTime();
       if (sortBy === SortBy.Oldest) {
         return dataA - dataB;
