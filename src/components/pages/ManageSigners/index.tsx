@@ -2,12 +2,41 @@ import { Box, Button, Divider, Flex, HStack, Radio, RadioGroup, Text } from '@ch
 import { AddPlus, Trash } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, useEnsName, useProvider } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../ui/modals/useFractalModal';
 import PageHeader from '../../ui/page/Header/PageHeader';
 import DaoDetails from './DaoDetails';
+
+function Signer({ signer }: { signer: string }) {
+  const provider = useProvider();
+  const networkId = provider.network.chainId;
+
+  const { data: ensName } = useEnsName({
+    address: signer as Address,
+    chainId: networkId,
+    cacheTime: 1000 * 60 * 30, // 30 min
+  });
+
+  return (
+    <Box
+      key={signer}
+      my={2}
+    >
+      <Radio
+        value={signer}
+        colorScheme="gold"
+        borderColor="gold.500"
+        size="md"
+        my={1}
+      >
+        <EtherscanLinkAddress address={signer}>{ensName ? ensName : signer}</EtherscanLinkAddress>
+      </Radio>
+    </Box>
+  );
+}
 
 function ManageSigners({}: {}) {
   const {
@@ -82,20 +111,10 @@ function ManageSigners({}: {}) {
           >
             {signers &&
               signers.map(signer => (
-                <Box
+                <Signer
                   key={signer}
-                  my={2}
-                >
-                  <Radio
-                    value={signer}
-                    colorScheme="gold"
-                    borderColor="gold.500"
-                    size="md"
-                    my={1}
-                  >
-                    <EtherscanLinkAddress address={signer}>{signer}</EtherscanLinkAddress>
-                  </Radio>
-                </Box>
+                  signer={signer}
+                />
               ))}
           </RadioGroup>
         </Box>
