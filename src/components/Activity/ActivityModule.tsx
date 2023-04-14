@@ -2,14 +2,14 @@ import { Button } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { TxProposal } from '../../types';
+import { FractalProposal } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { Badge } from '../ui/badges/Badge';
 import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescriptionModule } from './ActivityDescriptionModule';
 
-export function ActivityModule({ activity }: { activity: TxProposal }) {
+export function ActivityModule({ activity }: { activity: FractalProposal }) {
   const { t } = useTranslation('common');
   return (
     <ActivityCard

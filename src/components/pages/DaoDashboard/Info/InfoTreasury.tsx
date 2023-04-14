@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Treasury } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 import { useTreasuryTotalUSD } from '../../DAOTreasury/hooks/useTreasuryTotalUSD';
 
@@ -12,11 +12,10 @@ export function InfoTreasury({}: IDAOGovernance) {
   const totalUSD = useTreasuryTotalUSD();
 
   const {
-    gnosis: { safe },
-    governance: { governanceIsLoading },
+    node: { daoAddress },
   } = useFractal();
 
-  if (!safe.address || governanceIsLoading) {
+  if (!daoAddress) {
     return (
       <Flex
         h="8.5rem"

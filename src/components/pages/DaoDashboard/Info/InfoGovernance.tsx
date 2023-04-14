@@ -1,17 +1,18 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { AzoriusGovernance, StrategyType } from '../../../../types';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 export function InfoGovernance() {
   const { t } = useTranslation(['dashboard', 'daoCreate']);
   const {
-    gnosis: { safe },
-    governance: { type, governanceToken, governanceIsLoading },
+    node: { daoAddress },
+    governance,
   } = useFractal();
 
-  if (!safe.address || governanceIsLoading) {
+  if (!daoAddress || !governance.type) {
     return (
       <Flex
         h="8.5rem"
@@ -24,6 +25,11 @@ export function InfoGovernance() {
     );
   }
 
+  const governanceAzorius =
+    governance.type === StrategyType.GNOSIS_SAFE_USUL
+      ? (governance as AzoriusGovernance)
+      : undefined;
+
   return (
     <Box
       data-testid="dashboard-daoGovernance"
@@ -35,7 +41,12 @@ export function InfoGovernance() {
         mb="1rem"
       >
         <Govern />
-        <Text color="grayscale.100">{t('titleGovernance')}</Text>
+        <Text
+          textStyle="text-sm-sans-regular"
+          color="grayscale.100"
+        >
+          {t('titleGovernance')}
+        </Text>
       </Flex>
 
       <Flex
@@ -43,28 +54,58 @@ export function InfoGovernance() {
         justifyContent="space-between"
         mb="0.25rem"
       >
-        <Text color="chocolate.200">{t('titleType')}</Text>
-        <Text color="grayscale.100">{type ? t(type.toString(), { ns: 'daoCreate' }) : ''}</Text>
+        <Text
+          textStyle="text-base-sans-regular"
+          color="chocolate.200"
+        >
+          {t('titleType')}
+        </Text>
+        <Text
+          textStyle="text-base-sans-regular"
+          color="grayscale.100"
+        >
+          {governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : ''}
+        </Text>
       </Flex>
 
-      {governanceToken?.votingPeriod && (
+      {governanceAzorius?.votesStrategy?.votingPeriod && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text color="chocolate.200">{t('titleVotingPeriod')}</Text>
-          <Text color="grayscale.100">{governanceToken?.votingPeriod?.formatted}</Text>
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {t('titleVotingPeriod')}
+          </Text>
+          <Text
+            textStyle="text-base-sans-regular"
+            color="grayscale.100"
+          >
+            {governanceAzorius.votesStrategy.votingPeriod.formatted}
+          </Text>
         </Flex>
       )}
-      {governanceToken?.quorumPercentage && (
+      {governanceAzorius?.votesStrategy?.quorumPercentage && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text color="chocolate.200">{t('titleQuorum')}</Text>
-          <Text color="grayscale.100">{governanceToken?.quorumPercentage?.formatted}</Text>
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {t('titleQuorum')}
+          </Text>
+          <Text
+            textStyle="text-base-sans-regular"
+            color="grayscale.100"
+          >
+            {governanceAzorius.votesStrategy.quorumPercentage.formatted}
+          </Text>
         </Flex>
       )}
     </Box>

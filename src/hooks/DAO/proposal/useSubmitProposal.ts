@@ -1,18 +1,18 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { FractalUsul, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { ethers, BigNumber, Signer } from 'ethers';
+import { BigNumber, Signer } from 'ethers';
+import { getAddress } from 'ethers/lib/utils.js';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { buildGnosisApiUrl } from '../../../providers/Fractal/utils';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, ProposalExecuteData } from '../../../types';
-import useSafeContracts from '../../safe/useSafeContracts';
-import useUsul, { getUsulModuleFromModules } from './useUsul';
+import { FractalModuleType, MetaTransaction, ProposalExecuteData } from '../../../types';
+import { buildGnosisApiUrl } from '../../../utils';
+import { useFractalModules } from '../loaders/useFractalModules';
 
 interface ISubmitProposal {
   proposalData: ProposalExecuteData | undefined;
@@ -45,12 +45,23 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
 
-  const { multiSendContract } = useSafeContracts();
-  const { usulContract: globalUsulContract, votingStrategiesAddresses } = useUsul();
   const {
-    actions: { refreshSafeData, lookupModules },
-    gnosis: { safe, safeService },
+    node: { safe, fractalModules },
+    baseContracts: { multiSendContract },
+    guardContracts: { vetoVotingContract },
+    governanceContracts: { ozLinearVotingContract },
+    clients: { safeService },
   } = useFractal();
+
+  const globalUsulContract = useMemo(() => {
+    const usulModule = fractalModules?.find(module => module.moduleType === FractalModuleType.USUL);
+    if (!usulModule) {
+      return undefined;
+    }
+    return usulModule.moduleContract as FractalUsul;
+  }, [fractalModules]);
+
+  const lookupModules = useFractalModules();
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
@@ -134,7 +145,6 @@ export default function useSubmitProposal() {
           )
         );
         await new Promise(resolve => setTimeout(resolve, 1000));
-        await refreshSafeData();
         if (successCallback) {
           successCallback(safeAddress);
         }
@@ -148,7 +158,7 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [chainId, multiSendContract, refreshSafeData, safeBaseURL, signerOrProvider]
+    [chainId, multiSendContract, safeBaseURL, signerOrProvider]
   );
 
   const submitTokenVotingProposal = useCallback(
@@ -224,11 +234,10 @@ export default function useSubmitProposal() {
       }
 
       if (safeAddress && safeService) {
-        const { getAddress } = ethers.utils;
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
-        const usulModule = getUsulModuleFromModules(modules!);
+        const usulModule = modules.find(module => module.moduleType === FractalModuleType.USUL);
         if (!usulModule) {
           submitMultisigProposal({
             proposalData,
@@ -240,11 +249,6 @@ export default function useSubmitProposal() {
             safeAddress,
           });
         } else {
-          const usulContract = usulModule.moduleContract as FractalUsul;
-          const [votingStrategies] = await usulContract.getStrategiesPaginated(
-            '0x0000000000000000000000000000000000000001',
-            10
-          );
           submitTokenVotingProposal({
             proposalData,
             pendingToastMessage,
@@ -253,12 +257,12 @@ export default function useSubmitProposal() {
             nonce,
             successCallback,
             safeAddress,
-            usulContract,
-            votingStrategyAddress: votingStrategies[0],
+            usulContract: usulModule.moduleContract as FractalUsul,
+            votingStrategyAddress: ozLinearVotingContract?.asSigner.address!,
           });
         }
       } else {
-        if (!globalUsulContract || !votingStrategiesAddresses || !safe.address) {
+        if (!globalUsulContract || !vetoVotingContract || !safe?.address) {
           submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -266,7 +270,7 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            safeAddress: safe.address,
+            safeAddress: safe?.address,
           });
         } else {
           submitTokenVotingProposal({
@@ -277,7 +281,7 @@ export default function useSubmitProposal() {
             nonce,
             successCallback,
             usulContract: globalUsulContract,
-            votingStrategyAddress: votingStrategiesAddresses[0],
+            votingStrategyAddress: vetoVotingContract.asSigner.address,
             safeAddress: safe.address,
           });
         }
@@ -285,11 +289,12 @@ export default function useSubmitProposal() {
     },
     [
       globalUsulContract,
-      votingStrategiesAddresses,
-      safe.address,
-      submitMultisigProposal,
-      submitTokenVotingProposal,
+      vetoVotingContract,
+      safe,
       lookupModules,
+      submitMultisigProposal,
+      ozLinearVotingContract,
+      submitTokenVotingProposal,
       safeService,
     ]
   );

@@ -13,15 +13,12 @@ import {
   FractalUsul__factory,
   TokenClaim__factory,
 } from '@fractal-framework/fractal-contracts';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { DAOContracts } from '../../types';
 
 export default function useSafeContracts() {
-  const [daoContracts, setDAOContracts] = useState<Partial<DAOContracts>>({});
-
   const provider = useProvider();
   const { data: signer } = useSigner();
 
@@ -44,12 +41,8 @@ export default function useSafeContracts() {
     },
   } = useNetworkConfg();
 
-  useEffect(() => {
+  const daoContracts = useMemo(() => {
     const signerOrProvider = signer || provider;
-    if (!signerOrProvider) {
-      setDAOContracts({});
-      return;
-    }
     const multiSendContract = {
       asSigner: MultiSend__factory.connect(gnosisMultisend, signerOrProvider),
       asProvider: MultiSend__factory.connect(gnosisMultisend, provider),
@@ -120,7 +113,7 @@ export default function useSafeContracts() {
       asProvider: TokenClaim__factory.connect(claimingMasterCopy, provider),
     };
 
-    setDAOContracts({
+    return {
       multiSendContract,
       gnosisSafeFactoryContract,
       fractalUsulMasterCopyContract,
@@ -135,7 +128,7 @@ export default function useSafeContracts() {
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
-    });
+    };
   }, [
     gnosisSafeFactory,
     gnosisSafe,

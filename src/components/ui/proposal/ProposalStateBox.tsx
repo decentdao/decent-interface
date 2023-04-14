@@ -1,11 +1,11 @@
-import { TxProposalState } from '../../../types';
+import { FractalProposalState } from '../../../types';
 import { Badge } from '../badges/Badge';
 
 interface ProposalStateBoxProps {
-  state: TxProposalState | null;
+  state: FractalProposalState | null;
 }
 
-export default function TxProposalStateBox({ state }: ProposalStateBoxProps) {
+export default function FractalProposalStateBox({ state }: ProposalStateBoxProps) {
   if (!state) return null;
 
   return (

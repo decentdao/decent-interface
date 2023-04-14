@@ -8,10 +8,9 @@ import {
 import { BigNumber, constants } from 'ethers';
 import { useMemo } from 'react';
 
-import { parseDecodedData } from '../../providers/Fractal/utils';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { AssetTotals, GnosisTransferType, ActivityEventType, Activity } from '../../types';
-import { formatWeiToValue } from '../../utils';
+import { formatWeiToValue, parseDecodedData } from '../../utils';
 
 export function useParseSafeTxs(
   transactions: AllTransactionsListResponse,

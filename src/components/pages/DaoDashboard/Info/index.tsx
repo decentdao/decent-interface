@@ -1,6 +1,8 @@
+'use client';
+
 import { Flex } from '@chakra-ui/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { InfoBox } from '../../../ui/containers/InfoBox';
 import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
@@ -9,9 +11,7 @@ import { InfoTreasury } from './InfoTreasury';
 
 export function Info() {
   const {
-    gnosis: {
-      safe: { address },
-    },
+    node: { daoAddress },
   } = useFractal();
   return (
     <Flex
@@ -31,13 +31,13 @@ export function Info() {
           <InfoGovernance />
         </InfoBox>
         <InfoBox
-          to={DAO_ROUTES.proposals.relative(address)}
+          to={DAO_ROUTES.proposals.relative(daoAddress)}
           minWidth={{ base: '100%', lg: '30%', xl: '21%', '2xl': '10rem' }}
         >
           <InfoProposals />
         </InfoBox>
         <InfoBox
-          to={DAO_ROUTES.treasury.relative(address)}
+          to={DAO_ROUTES.treasury.relative(daoAddress)}
           minWidth={{ base: '100%', lg: '30%', xl: '15%', '2xl': '9rem' }}
         >
           <InfoTreasury />

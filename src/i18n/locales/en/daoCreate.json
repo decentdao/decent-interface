@@ -8,7 +8,7 @@
     "errorLowSignerThreshold": "Threshold must be greater than 0",
     "errorHighSignerThreshold": "Threshold is too high",
     "labelSigners": "Total Signers",
-    "helperSigners": "The number of trusted users for this Multisig",
+    "helperSigners": "The number of trusted users for this Multisig (max 99)",
     "labelSigThreshold": "Signature Threshold",
     "helperSigThreshold": "The number of signatures needed to approve a proposal",
     "titleSignerAddresses": "Signer Addresses",

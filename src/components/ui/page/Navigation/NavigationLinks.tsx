@@ -21,7 +21,7 @@ export function NavigationLinks({
   closeDrawer,
 }: {
   showDAOLinks: boolean;
-  address?: string;
+  address: string | null;
   closeDrawer?: () => void;
 }) {
   return (

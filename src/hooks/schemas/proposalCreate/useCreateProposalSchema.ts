@@ -41,10 +41,6 @@ export const useCreateProposalSchema = () => {
                     functionSignature,
                     parameters
                   );
-                  console.log(
-                    '🚀 ~ file: useCreateProposalSchema.ts:42 ~ encodedFunction:',
-                    encodedFunction
-                  );
 
                   return !!encodedFunction;
                 },

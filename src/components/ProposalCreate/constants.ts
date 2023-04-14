@@ -17,5 +17,5 @@ export const DEFAULT_META_DATA = {
 export const DEFAULT_PROPOSAL = {
   proposalMetadata: DEFAULT_META_DATA,
   transactions: [DEFAULT_TRANSACTION],
-  nonce: undefined,
+  nonce: 0,
 };

@@ -29,6 +29,7 @@ interface BaseProps {
 
 interface InputProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
+  onBlur?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
   testId: string;
 }
@@ -90,7 +91,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { id, value, disabled, onChange, placeholder, testId, maxLength } = props;
+  const { id, value, disabled, onChange, onBlur, placeholder, testId, maxLength } = props;
   return (
     <LabelComponent
       {...props}
@@ -100,6 +101,7 @@ export function InputComponent(props: InputProps) {
         id={id}
         value={value}
         onChange={onChange}
+        onBlur={onBlur}
         isDisabled={disabled}
         data-testid={testId}
         placeholder={placeholder}

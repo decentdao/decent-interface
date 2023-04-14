@@ -1,83 +1,84 @@
+'use client';
 import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes, SortBy, TxProposalState } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { SortBy, StrategyType, FractalProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
 const FILTERS_USUL_BASE = [
-  TxProposalState.Active,
-  TxProposalState.Queueable,
-  TxProposalState.TimeLocked,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Queueable,
+  FractalProposalState.TimeLocked,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Failed,
-  TxProposalState.Expired,
-  TxProposalState.Rejected,
+  FractalProposalState.Failed,
+  FractalProposalState.Expired,
+  FractalProposalState.Rejected,
 ];
 
 const FILTERS_USUL_CHILD = [
-  TxProposalState.Active,
-  TxProposalState.Queueable,
-  TxProposalState.TimeLocked,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Queueable,
+  FractalProposalState.TimeLocked,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Failed,
-  TxProposalState.Expired,
-  TxProposalState.Rejected,
+  FractalProposalState.Failed,
+  FractalProposalState.Expired,
+  FractalProposalState.Rejected,
 ];
 
 const FILTERS_MULTISIG_BASE = [
-  TxProposalState.Active,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Rejected,
+  FractalProposalState.Rejected,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
-  TxProposalState.Active,
-  TxProposalState.Queueable,
-  TxProposalState.Queued,
-  TxProposalState.Executing,
-  TxProposalState.Executed,
+  FractalProposalState.Active,
+  FractalProposalState.Queueable,
+  FractalProposalState.Queued,
+  FractalProposalState.Executing,
+  FractalProposalState.Executed,
 
-  TxProposalState.Rejected,
-  TxProposalState.Expired,
+  FractalProposalState.Rejected,
+  FractalProposalState.Expired,
 ];
 
 export default function Proposals() {
   const {
-    governance: { type, governanceIsLoading },
-    gnosis: { guardContracts, isGnosisLoading },
+    governance: { type },
+    guardContracts,
   } = useFractal();
 
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
-  const [filters, setFilters] = useState<TxProposalState[]>([]);
-  const [allOptions, setAllOptions] = useState<TxProposalState[]>([]);
+  const [filters, setFilters] = useState<FractalProposalState[]>([]);
+  const [allOptions, setAllOptions] = useState<FractalProposalState[]>([]);
 
   const { t } = useTranslation(['proposal', 'common']);
   const { proposals, getProposalsTotal } = useProposals({ sortBy, filters });
 
   useEffect(() => {
-    if (governanceIsLoading || isGnosisLoading) return;
+    if (!type) return;
 
     let options;
     switch (type) {
-      case GovernanceTypes.GNOSIS_SAFE_USUL:
+      case StrategyType.GNOSIS_SAFE_USUL:
         if (guardContracts.vetoGuardContract) {
           options = FILTERS_USUL_CHILD;
         } else {
           options = FILTERS_USUL_BASE;
         }
         break;
-      case GovernanceTypes.GNOSIS_SAFE:
+      case StrategyType.GNOSIS_SAFE:
       default:
         if (guardContracts.vetoGuardContract) {
           options = FILTERS_MULTISIG_CHILD;
@@ -88,9 +89,9 @@ export default function Proposals() {
     }
     setAllOptions(options);
     setFilters(options);
-  }, [governanceIsLoading, guardContracts.vetoGuardContract, isGnosisLoading, type]);
+  }, [guardContracts.vetoGuardContract, type]);
 
-  const toggleFilter = (filter: TxProposalState) => {
+  const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {
       if (prevState.includes(filter)) {
         return prevState.filter(state => state !== filter);

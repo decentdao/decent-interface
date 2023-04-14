@@ -4,13 +4,12 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
-import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { UsulProposal } from '../../types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { AzoriusGovernance, UsulProposal } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
-import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
-import EtherscanTransactionLink from '../ui/links/EtherscanTransactionLink';
+import { DisplayAddress } from '../ui/links/DisplayAddress';
+import DisplayTransaction from '../ui/links/DisplayTransaction';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
@@ -20,21 +19,23 @@ export default function ProposalSummary({
 }: {
   proposal: UsulProposal;
 }) {
-  const {
-    governance: { governanceToken },
-  } = useFractal();
-  const { displayName: proposerDisplayName } = useDisplayName(proposer);
+  const { governance } = useFractal();
+
+  const azoriusGovernance = governance as AzoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const getVotesPercentage = (voteTotal: BigNumber): number => {
-    if (!governanceToken || !governanceToken.totalSupply || governanceToken.totalSupply.eq(0)) {
+    if (
+      !azoriusGovernance.votesToken.totalSupply ||
+      azoriusGovernance.votesToken.totalSupply.eq(0)
+    ) {
       return 0;
     }
 
-    return voteTotal.div(governanceToken.totalSupply.div(100)).toNumber();
+    return voteTotal.div(azoriusGovernance.votesToken.totalSupply.div(100)).toNumber();
   };
 
-  if (!governanceToken || !governanceToken.totalSupply) {
+  if (!azoriusGovernance.votesToken.totalSupply) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -44,7 +45,9 @@ export default function ProposalSummary({
 
   const yesVotesPercentage = getVotesPercentage(votesSummary.yes);
   const noVotesPercentage = getVotesPercentage(votesSummary.no);
-  const quorum = votesSummary.quorum.div(governanceToken.totalSupply.div(100)).toNumber();
+  const quorum = votesSummary.quorum
+    .div(azoriusGovernance.votesToken.totalSupply.div(100))
+    .toNumber();
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
   return (
@@ -75,9 +78,7 @@ export default function ProposalSummary({
           >
             {t('proposedBy')}
           </Text>
-          <EtherscanLinkAddress address={proposer}>
-            <Text color="gold.500">{proposerDisplayName}</Text>
-          </EtherscanLinkAddress>
+          <DisplayAddress address={proposer} />
         </Flex>
         {transactionHash && (
           <Flex
@@ -91,9 +92,7 @@ export default function ProposalSummary({
             >
               {t('transactionHash')}
             </Text>
-            <EtherscanTransactionLink txHash={transactionHash}>
-              <Text color="gold.500">{createAccountSubstring(transactionHash)}</Text>
-            </EtherscanTransactionLink>
+            <DisplayTransaction txHash={transactionHash} />
           </Flex>
         )}
         <Divider color="chocolate.700" />

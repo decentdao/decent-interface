@@ -1,26 +1,25 @@
 'use client';
 
 import { ApolloProvider } from '@apollo/client';
-import { CacheProvider } from '@chakra-ui/next-js';
 import { ChakraProvider } from '@chakra-ui/react';
+import { theme } from '@decent-org/fractal-ui';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
 import { midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import 'i18next';
 import { ReactNode, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { WagmiConfig } from 'wagmi';
-import { theme } from '../src/assets/theme';
 import { ModalProvider } from '../src/components/ui/modals/ModalProvider';
 import Layout from '../src/components/ui/page/Layout';
 import { ErrorFallback } from '../src/components/ui/utils/ErrorFallback';
 import graphQLClient from '../src/graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogging';
-import { FractalProvider } from '../src/providers/Fractal/FractalProvider';
+import { AppProvider } from '../src/providers/App/AppProvider';
 import { NetworkConfigProvider } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 import { chains, wagmiClient } from '../src/providers/NetworkConfig/rainbow-kit.config';
 import { notProd, testErrorBoundary } from '../src/utils/dev';
-import '../src/i18n';
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
-import 'react-toastify/dist/ReactToastify.min.css';
 
 function localDevConfigs() {
   if (notProd()) {
@@ -99,36 +98,38 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <title>Fractal</title>
       </head>
-      <body className="bg-gray-600">
-        <CacheProvider>
-          <ChakraProvider theme={theme}>
-            <FractalErrorBoundary fallback={<ErrorFallback />}>
-              <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider
-                  chains={chains}
-                  modalSize="compact"
-                  theme={midnightTheme()}
-                >
-                  <NetworkConfigProvider>
+      <body>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider
+            chains={chains}
+            modalSize="compact"
+            theme={midnightTheme()}
+          >
+            <ChakraProvider
+              theme={theme}
+              resetCSS
+            >
+              <NetworkConfigProvider>
+                <AppProvider>
+                  <ToastContainer
+                    position="bottom-center"
+                    closeButton={false}
+                    newestOnTop={false}
+                    pauseOnFocusLoss={false}
+                    autoClose={false}
+                  />
+                  <FractalErrorBoundary fallback={<ErrorFallback />}>
                     <ApolloProvider client={graphQLClient}>
-                      <FractalProvider>
-                        <ToastContainer
-                          position="bottom-center"
-                          closeButton={false}
-                          newestOnTop={false}
-                          pauseOnFocusLoss={false}
-                        />
-                        <ModalProvider>
-                          <Layout>{children}</Layout>
-                        </ModalProvider>
-                      </FractalProvider>
+                      <ModalProvider>
+                        <Layout>{children}</Layout>
+                      </ModalProvider>
                     </ApolloProvider>
-                  </NetworkConfigProvider>
-                </RainbowKitProvider>
-              </WagmiConfig>
-            </FractalErrorBoundary>
-          </ChakraProvider>
-        </CacheProvider>
+                  </FractalErrorBoundary>
+                </AppProvider>
+              </NetworkConfigProvider>
+            </ChakraProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
       </body>
     </html>
   );

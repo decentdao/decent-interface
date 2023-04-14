@@ -14,7 +14,7 @@ export function RadioWithText({ testId, description, label, disabled, value }: I
       display="flex"
       data-testid={testId}
       type="radio"
-      disabled={disabled}
+      isDisabled={disabled}
       colorScheme="gold"
       borderColor="gold.500"
       size="lg"

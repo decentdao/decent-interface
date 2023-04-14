@@ -2,7 +2,7 @@ import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
 import EtherscanLinkNFT from '../../../ui/links/EtherscanLinkNFT';
@@ -193,7 +193,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
 
 export function Assets() {
   const {
-    gnosis: { safe },
+    node: { daoAddress },
     treasury: { assetsFungible, assetsNonFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
@@ -220,7 +220,7 @@ export function Assets() {
         return (
           <CoinRow
             key={coin.address}
-            safe={safe.address!}
+            safe={daoAddress!}
             totalFiat={coinDisplay.totalFiatValue}
             asset={coin}
           />

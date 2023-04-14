@@ -40,7 +40,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     createSafeTx: SafeTransaction,
     safeContract: GnosisSafe,
     txBuilderFactory: TxBuilderFactory,
-    parentDAOAddress?: string,
+    parentAddress?: string,
     parentTokenAddress?: string
   ) {
     super(
@@ -48,7 +48,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       baseContracts,
       usulContracts,
       daoData,
-      parentDAOAddress,
+      parentAddress,
       parentTokenAddress
     );
 
@@ -72,7 +72,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       usulTxBuilder.buildEnableUsulModuleTx(),
     ];
 
-    if (this.parentDAOAddress) {
+    if (this.parentAddress) {
       const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder(
         usulTxBuilder.usulContract!.address,
         usulTxBuilder.linearVotingContract!.address
@@ -110,7 +110,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     }
 
     // If subDAO, deploy Fractal Module
-    if (this.parentDAOAddress) {
+    if (this.parentAddress) {
       txs.push(this.deployFractalModuleTx!);
     }
 
@@ -129,7 +129,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.internalTxs.push(this.buildUpdateDAONameTx());
 
     // subDAO case, add veto guard
-    if (this.parentDAOAddress) {
+    if (this.parentAddress) {
       const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
 
       this.internalTxs = this.internalTxs.concat([
@@ -150,7 +150,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     ];
 
     // If subDAO, deploy Fractal Module.
-    if (this.parentDAOAddress) {
+    if (this.parentAddress) {
       txs.splice(1, 0, this.deployFractalModuleTx!);
     }
 
@@ -168,7 +168,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       this.safeContract!,
       this.saltNum,
-      this.parentDAOAddress
+      this.parentAddress
     );
 
     this.enableFractalModuleTx = enableFractalModuleTx;

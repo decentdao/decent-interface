@@ -11,13 +11,14 @@ import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useUsul from '../../../hooks/DAO/proposal/useUsul';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
+import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  GovernanceTypes,
+  StrategyType,
   CreatorSteps,
+  AzoriusGovernance,
 } from '../../../types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -30,39 +31,43 @@ import { StepWrapper } from '../StepWrapper';
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
   const {
-    gnosis: { safe },
-    governance: { type, governanceToken, governanceIsLoading },
+    node: { safe },
+    governance,
+    governanceContracts: { usulContract },
   } = useFractal();
-  const { usulContract, isLoaded: isUsulLoaded } = useUsul();
+  const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState(false);
   const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
-
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
-  const governance = values.essentials.governance;
-
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const governanceFormType = values.essentials.governance;
+  const defaultNonce = useDefaultNonce();
   const handleNonceChange = useCallback(
     (nonce?: number) => {
-      setFieldValue('gnosis.customNonce', nonce);
+      setFieldValue('gnosis.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
     },
     [setFieldValue]
   );
 
   useEffect(() => {
-    const isParentUsul = !!usulContract;
-    setShowCustomNonce(Boolean(isSubDAO && !isParentUsul && isUsulLoaded));
-  }, [isSubDAO, usulContract, isUsulLoaded]);
+    const isParentUsul = type === StrategyType.GNOSIS_SAFE_USUL;
+    if (!isParentUsul && isSubDAO) {
+      setFieldValue('gnosis.customNonce', defaultNonce);
+      setShowCustomNonce(true);
+    }
+  }, [isSubDAO, usulContract, type, setFieldValue, defaultNonce]);
 
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
-      if (governanceIsLoading || !safe || !governanceToken) return;
+      if (!type || !safe || !azoriusGovernance.votesToken) return;
 
       let totalVotes: BigNumberValuePair;
       switch (type) {
-        case GovernanceTypes.GNOSIS_SAFE_USUL:
+        case StrategyType.GNOSIS_SAFE_USUL:
           const normalized = ethers.utils.formatUnits(
-            governanceToken.totalSupply || '0',
-            governanceToken.decimals
+            azoriusGovernance.votesToken.totalSupply || '0',
+            azoriusGovernance.votesToken.decimals
           );
           // ethers.utils.formatUnits returns a whole number string in the form `xxx.0`
           // but BigNumber won't parse out the insignificant decimal, so we need to cut it
@@ -71,7 +76,7 @@ function GuardDetails(props: ICreationStepProps) {
             bigNumberValue: BigNumber.from(normalized.substring(0, normalized.indexOf('.'))),
           };
           break;
-        case GovernanceTypes.GNOSIS_SAFE:
+        case StrategyType.GNOSIS_SAFE:
         default:
           totalVotes = {
             value: safe.owners?.length.toString() || '',
@@ -85,22 +90,14 @@ function GuardDetails(props: ICreationStepProps) {
         : {
             value: ethers.utils.formatUnits(
               totalVotes.bigNumberValue!.div(2),
-              governanceToken.decimals
+              azoriusGovernance.votesToken.decimals
             ),
             bigNumberValue: totalVotes.bigNumberValue!.div(2),
           };
       setFieldValue('vetoGuard.vetoVotesThreshold', childThresholds);
       setFieldValue('vetoGuard.freezeVotesThreshold', childThresholds);
     }
-  }, [
-    governanceIsLoading,
-    governanceToken,
-    safe,
-    safe.threshold,
-    totalParentVotes,
-    type,
-    setFieldValue,
-  ]);
+  }, [azoriusGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
 
   const showVetoFreezeHelpers = totalParentVotes.gt(0);
   const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);
@@ -120,7 +117,7 @@ function GuardDetails(props: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governance === GovernanceTypes.GNOSIS_SAFE && (
+        {governanceFormType === StrategyType.GNOSIS_SAFE && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -249,6 +246,7 @@ function GuardDetails(props: ICreationStepProps) {
             <CustomNonceInput
               nonce={values.gnosis.customNonce}
               onChange={handleNonceChange}
+              defaultNonce={defaultNonce}
             />
             <Divider
               color="chocolate.700"
@@ -259,7 +257,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governance === GovernanceTypes.GNOSIS_SAFE
+            governanceFormType === StrategyType.GNOSIS_SAFE
               ? CreatorSteps.GNOSIS_GOVERNANCE
               : CreatorSteps.GOV_CONFIG
           }

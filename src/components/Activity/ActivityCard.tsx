@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { ActivityBox } from '../ui/containers/ActivityBox';
 
@@ -21,10 +21,9 @@ export function ActivityCard({
 }: IActivityCard) {
   return (
     <ActivityBox borderColor={boxBorderColor}>
-      <Flex
+      <HStack
         justifyContent="space-between"
         alignItems="center"
-        flexWrap="wrap"
         gap={4}
       >
         <Flex flexDirection="column">
@@ -52,7 +51,7 @@ export function ActivityCard({
           )}
         </Flex>
         {RightElement}
-      </Flex>
+      </HStack>
     </ActivityBox>
   );
 }

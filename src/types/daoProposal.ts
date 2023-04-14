@@ -1,6 +1,6 @@
-import { SafeMultisigConfirmationResponse } from '@safe-global/safe-service-client';
 import { BigNumber, BigNumberish } from 'ethers';
 import { GovernanceActivity } from './fractal';
+import { SafeMultisigConfirmationResponse } from './safeGlobal';
 import { MetaTransaction, DecodedTransaction } from './transaction';
 
 export interface ProposalExecuteData extends ExecuteData {
@@ -13,12 +13,6 @@ export interface ExecuteData {
   targets: string[];
   values: BigNumberish[];
   calldatas: string[];
-}
-
-export interface TxProposalsInfo {
-  txProposals: TxProposal[];
-  active?: number; // active/queued (usul) | not executed (multisig)
-  passed?: number; // executed (usul/multisig)
 }
 
 export type CreateProposalFunc = (proposal: {
@@ -76,5 +70,3 @@ export enum ProposalIsPassedError {
   QUORUM_NOT_REACHED = 'a quorum has not been reached for the proposal',
   PROPOSAL_STILL_ACTIVE = 'voting period has not passed yet',
 }
-
-export type TxProposal = UsulProposal | MultisigProposal;

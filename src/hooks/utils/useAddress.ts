@@ -1,11 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
-import {
-  CacheExpiry,
-  CacheKeys,
-  useLocalStorage,
-} from '../../providers/Fractal/hooks/account/useLocalStorage';
+import { CacheExpiry, CacheKeys, useLocalStorage } from './useLocalStorage';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useProvider();
@@ -40,8 +36,8 @@ const useAddress = (addressInput: string | undefined) => {
       setIsAddressLoading(false);
       return;
     }
-
-    if (!addressInput.includes('.') || addressInput.length - addressInput.indexOf('.') === 2) {
+    const [, domain] = addressInput.split('.');
+    if (!domain || domain.length <= 2) {
       setAddress(addressInput);
       setIsValidAddress(false);
       setIsAddressLoading(false);

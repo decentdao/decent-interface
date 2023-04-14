@@ -45,7 +45,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
     daoData: SubDAO,
     safeContract: GnosisSafe,
     saltNum: string,
-    parentDAOAddress: string,
+    parentAddress: string,
     parentTokenAddress?: string,
     usulContracts?: UsulContracts,
     usulAddress?: string,
@@ -56,7 +56,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
       baseContracts,
       usulContracts,
       daoData,
-      parentDAOAddress,
+      parentAddress,
       parentTokenAddress
     );
 
@@ -101,12 +101,12 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
         ethers.utils.defaultAbiCoder.encode(
           ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
           [
-            this.parentDAOAddress, // Owner -- Parent DAO
+            this.parentAddress, // Owner -- Parent DAO
             subDaoData.vetoVotesThreshold, // VetoVotesThreshold
             subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
             subDaoData.freezeProposalPeriod.mul(TIMER_MULT), // FreezeProposalPeriod
             subDaoData.freezePeriod.mul(TIMER_MULT), // FreezePeriod
-            this.parentTokenAddress ?? this.parentDAOAddress, // ParentGnosisSafe or Votes Token
+            this.parentTokenAddress ?? this.parentAddress, // ParentGnosisSafe or Votes Token
             this.vetoGuardAddress, // VetoGuard
           ]
         ),
@@ -187,7 +187,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
         [
           subDaoData.timelockPeriod?.mul(TIMER_MULT), // Timelock Period
           subDaoData.executionPeriod.mul(TIMER_MULT), // Execution Period
-          this.parentDAOAddress, // Owner -- Parent DAO
+          this.parentAddress, // Owner -- Parent DAO
           this.vetoVotingAddress, // Veto Voting
           this.safeContract.address, // Gnosis Safe
         ]
@@ -202,7 +202,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
       ethers.utils.defaultAbiCoder.encode(
         ['address', 'address', 'address', 'address', 'uint256'],
         [
-          this.parentDAOAddress, // Owner -- Parent DAO
+          this.parentAddress, // Owner -- Parent DAO
           this.vetoVotingAddress, // Veto Voting
           this.strategyAddress, // Base Strategy
           this.usulAddress, // USUL

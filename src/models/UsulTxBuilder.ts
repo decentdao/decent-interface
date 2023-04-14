@@ -51,7 +51,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
     daoData: GnosisDAO | TokenGovernanceDAO,
     safeContract: GnosisSafe,
     predictedGnosisSafeAddress: string,
-    parentDAOAddress?: string,
+    parentAddress?: string,
     parentTokenAddress?: string
   ) {
     super(
@@ -59,7 +59,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
       baseContracts,
       usulContracts,
       daoData,
-      parentDAOAddress,
+      parentAddress,
       parentTokenAddress
     );
 
