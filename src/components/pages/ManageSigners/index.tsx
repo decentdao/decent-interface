@@ -1,4 +1,4 @@
-import { Box, Button, Divider, HStack, Radio, RadioGroup, Stack, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
 import { AddPlus, Trash } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,11 +52,14 @@ function ManageSigners({}: {}) {
           {t('removeSigner', { ns: 'common' })}
         </Button>
       </HStack>
-      <Stack
-        direction="row"
-        mt={8}
+      <Flex
+        mt="1rem"
+        align="start"
+        gap="1rem"
+        flexWrap="wrap"
       >
         <Box
+          minWidth={{ sm: '100%', xl: '55%' }}
           bg="black.900-semi-transparent"
           rounded="md"
           px={8}
@@ -70,28 +73,30 @@ function ManageSigners({}: {}) {
           </Text>
           <Divider
             marginTop="1rem"
-            borderColor="chocolate.400"
+            borderColor="chocolate.700"
           />
           <RadioGroup
             onChange={e => setSelectedSigner(e)}
             value={selectedSigner}
             mt={6}
           >
-            <Stack direction="column">
-              {signers &&
-                signers.map(signer => (
+            {signers &&
+              signers.map(signer => (
+                <Box
+                  key={signer}
+                  my={2}
+                >
                   <Radio
-                    key={signer}
                     value={signer}
                     colorScheme="gold"
                     borderColor="gold.500"
                     size="md"
-                    mb={3}
+                    my={1}
                   >
                     <EtherscanLinkAddress address={signer}>{signer}</EtherscanLinkAddress>
                   </Radio>
-                ))}
-            </Stack>
+                </Box>
+              ))}
           </RadioGroup>
         </Box>
 
@@ -99,7 +104,7 @@ function ManageSigners({}: {}) {
           threshold={safe?.threshold}
           signerCount={safe?.owners.length}
         />
-      </Stack>
+      </Flex>
     </Box>
   );
 }

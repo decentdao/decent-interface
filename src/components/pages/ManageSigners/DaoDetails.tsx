@@ -18,7 +18,7 @@ function DaoDetails({
       rounded="md"
       px={8}
       py={8}
-      maxWidth="30rem"
+      minWidth={{ sm: '100%', xl: '35%' }}
     >
       <Text
         textStyle="text-lg-mono-regular"
@@ -28,7 +28,7 @@ function DaoDetails({
       </Text>
       <Divider
         marginTop="1rem"
-        borderColor="chocolate.400"
+        borderColor="chocolate.700"
       />
       <Flex mt={4}>
         <Box>
