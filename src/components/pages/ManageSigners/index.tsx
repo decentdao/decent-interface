@@ -2,7 +2,8 @@ import { Box, Button, Divider, Flex, HStack, Radio, RadioGroup, Text } from '@ch
 import { AddPlus, Trash } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, useEnsName, useProvider } from 'wagmi';
+import { useAccount } from 'wagmi';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
 import { ModalType } from '../../ui/modals/ModalProvider';
@@ -11,14 +12,7 @@ import PageHeader from '../../ui/page/Header/PageHeader';
 import DaoDetails from './DaoDetails';
 
 function Signer({ signer }: { signer: string }) {
-  const provider = useProvider();
-  const networkId = provider.network.chainId;
-
-  const { data: ensName } = useEnsName({
-    address: signer as Address,
-    chainId: networkId,
-    cacheTime: 1000 * 60 * 30, // 30 min
-  });
+  const displayAddress = useDisplayName(signer);
 
   return (
     <Box
@@ -32,7 +26,7 @@ function Signer({ signer }: { signer: string }) {
         size="md"
         my={1}
       >
-        <EtherscanLinkAddress address={signer}>{ensName ? ensName : signer}</EtherscanLinkAddress>
+        <EtherscanLinkAddress address={signer}>{displayAddress.displayName}</EtherscanLinkAddress>
       </Radio>
     </Box>
   );
@@ -44,6 +38,7 @@ function ManageSigners({}: {}) {
   } = useFractal();
   const [signers, setSigners] = useState<string[]>();
   const [selectedSigner, setSelectedSigner] = useState<string>();
+  const [userIsSigner, setUserIsSigner] = useState<boolean>();
   const removeSigner = useFractalModal(ModalType.REMOVE_SIGNER, {
     selectedSigner: selectedSigner,
     signers: signers,
@@ -52,10 +47,19 @@ function ManageSigners({}: {}) {
     signerCount: signers?.length,
   });
   const { t } = useTranslation(['common', 'breadcrumbs']);
+  const { address: account } = useAccount();
 
   useEffect(() => {
     setSigners(safe?.owners.map(owner => owner));
   }, [safe?.owners]);
+
+  useEffect(() => {
+    if (!signers) {
+      return;
+    }
+
+    setUserIsSigner(account && signers.includes(account));
+  }, [account, signers]);
 
   return (
     <Box>
@@ -68,19 +72,21 @@ function ManageSigners({}: {}) {
           },
         ]}
       />
-      <HStack mt={8}>
-        <Button onClick={addSigner}>
-          <AddPlus />
-          {t('addSigner', { ns: 'common' })}
-        </Button>
-        <Button
-          isDisabled={!selectedSigner || (signers && signers.length === 1)}
-          onClick={removeSigner}
-        >
-          <Trash />
-          {t('removeSigner', { ns: 'common' })}
-        </Button>
-      </HStack>
+      {userIsSigner && (
+        <HStack mt={8}>
+          <Button onClick={addSigner}>
+            <AddPlus />
+            {t('addSigner', { ns: 'common' })}
+          </Button>
+          <Button
+            isDisabled={!selectedSigner || (signers && signers.length === 1)}
+            onClick={removeSigner}
+          >
+            <Trash />
+            {t('removeSigner', { ns: 'common' })}
+          </Button>
+        </HStack>
+      )}
       <Flex
         mt="1rem"
         align="start"
