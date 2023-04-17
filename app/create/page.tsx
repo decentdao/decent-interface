@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import DaoCreator from '../../src/components/DaoCreator';
+import ClientOnly from '../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../src/constants/routes';
 import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../src/hooks/DAO/useDeployDAO';
@@ -12,7 +13,7 @@ import { useFractal } from '../../src/providers/App/AppProvider';
 import { GnosisDAO, TokenGovernanceDAO } from '../../src/types';
 
 export default function DaoCreatePage() {
-  const { replace } = useRouter();
+  const { push } = useRouter();
   const { requestWithRetries } = useAsyncRetry();
   const {
     clients: { safeService },
@@ -31,12 +32,12 @@ export default function DaoCreatePage() {
       );
       if (daoFound) {
         toggleFavorite(daoAddress);
-        replace(DAO_ROUTES.dao.relative(daoAddress));
+        push(DAO_ROUTES.dao.relative(daoAddress));
       } else {
         setRedirectPending(false);
       }
     },
-    [safeService, requestWithRetries, toggleFavorite, replace]
+    [safeService, requestWithRetries, toggleFavorite, push]
   );
 
   const [deploy, pending] = useDeployDAO();
@@ -46,9 +47,11 @@ export default function DaoCreatePage() {
   };
 
   return (
-    <DaoCreator
-      pending={pending || redirectPending}
-      deployDAO={deployDAO}
-    />
+    <ClientOnly>
+      <DaoCreator
+        pending={pending || redirectPending}
+        deployDAO={deployDAO}
+      />
+    </ClientOnly>
   );
 }

@@ -1,7 +1,8 @@
 import { VStack, HStack, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalTransaction } from '../../types/createProposal';
-import { BigNumberComponent, InputComponent } from './InputComponent';
+import ExampleLabel from '../ui/forms/ExampleLabel';
+import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
 
 interface TransactionProps {
   transaction: CreateProposalTransaction;
@@ -22,15 +23,6 @@ function Transaction({
 }: TransactionProps) {
   const { t } = useTranslation(['proposal', 'common']);
 
-  const exampleLabelStyle = {
-    bg: 'chocolate.700',
-    borderRadius: '4px',
-    px: '4px',
-    py: '1px',
-    color: 'grayscale.100',
-    fontSize: '12px',
-  };
-
   return (
     <VStack
       align="left"
@@ -45,7 +37,7 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>0x4168592...</Text>
+            <ExampleLabel>0x4168592...</ExampleLabel>
           </HStack>
         }
         errorMessage={transaction.targetAddress && txAddressError ? txAddressError : undefined}
@@ -68,7 +60,7 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>transfer</Text>
+            <ExampleLabel>transfer</ExampleLabel>
           </HStack>
         }
         // @todo update withn new error messages
@@ -87,7 +79,7 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>address, uint256</Text>
+            <ExampleLabel>address, uint256</ExampleLabel>
           </HStack>
         }
         testId="transaction.functionSignature"
@@ -105,12 +97,9 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text
-              {...exampleLabelStyle}
-              wordBreak="break-all"
-            >
+            <ExampleLabel wordBreak="break-all">
               {'0xADC74eE329a23060d3CB431Be0AB313740c191E7, 1000000000'}
-            </Text>
+            </ExampleLabel>
           </HStack>
         }
         testId="transaction.parameters"
@@ -125,7 +114,7 @@ function Transaction({
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>{'1.2'}</Text>
+            <ExampleLabel>{'1.2'}</ExampleLabel>
           </HStack>
         }
         errorMessage={undefined}
