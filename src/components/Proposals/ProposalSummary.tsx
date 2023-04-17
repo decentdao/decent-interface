@@ -4,13 +4,12 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
-import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, UsulProposal } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
-import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
-import EtherscanTransactionLink from '../ui/links/EtherscanTransactionLink';
+import { DisplayAddress } from '../ui/links/DisplayAddress';
+import DisplayTransaction from '../ui/links/DisplayTransaction';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
@@ -23,7 +22,6 @@ export default function ProposalSummary({
   const { governance } = useFractal();
 
   const azoriusGovernance = governance as AzoriusGovernance;
-  const { displayName: proposerDisplayName } = useDisplayName(proposer);
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const getVotesPercentage = (voteTotal: BigNumber): number => {
@@ -80,9 +78,7 @@ export default function ProposalSummary({
           >
             {t('proposedBy')}
           </Text>
-          <EtherscanLinkAddress address={proposer}>
-            <Text color="gold.500">{proposerDisplayName}</Text>
-          </EtherscanLinkAddress>
+          <DisplayAddress address={proposer} />
         </Flex>
         {transactionHash && (
           <Flex
@@ -96,9 +92,7 @@ export default function ProposalSummary({
             >
               {t('transactionHash')}
             </Text>
-            <EtherscanTransactionLink txHash={transactionHash}>
-              <Text color="gold.500">{createAccountSubstring(transactionHash)}</Text>
-            </EtherscanTransactionLink>
+            <DisplayTransaction txHash={transactionHash} />
           </Flex>
         )}
         <Divider color="chocolate.700" />
