@@ -21,10 +21,10 @@ import {
   AzoriusGovernance,
 } from '../../../types';
 import { formatBigNumberDisplay } from '../../../utils/numberFormats';
-import { LabelComponent } from '../../ProposalCreate/InputComponent';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
+import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 

@@ -4,5 +4,8 @@
     "nodes": "DAO Hierarchy",
     "treasury": "Treasury",
     "proposal": "#{{proposalNumber}} {{proposalTitle}}",
-    "manageSigners": "Manage Signers"
+    "manageSigners": "Manage Signers",
+    "proposalTemplates": "Proposal Templates",
+    "proposalTemplate": "{{proposalTemplateTitle}}",
+    "proposalTemplateNew": "New Proposal Template"
 }

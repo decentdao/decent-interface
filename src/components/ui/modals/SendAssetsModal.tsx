@@ -68,7 +68,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue?.isZero() || overDraft;
+  const isSubmitDisabled =
+    !isValidAddress || !inputAmount || inputAmount?.bigNumberValue?.isZero() || overDraft;
 
   const onSubmit = async () => {
     await sendAssets();
@@ -161,7 +162,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       />
       <CustomNonceInput
         nonce={nonceInput}
-        onChange={nonce => setNonceInput(nonce ? parseInt(nonce.toString(), 10) : undefined)}
+        onChange={nonce => setNonceInput(nonce ? nonce : undefined)}
         defaultNonce={defaultNonce}
       />
 

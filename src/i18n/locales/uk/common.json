@@ -66,5 +66,6 @@
     "clear": "Очистити",
     "cancel": "Відмінити",
     "example": "Приклад",
-    "titleNodes": "Ієрархія DAO"
+    "titleNodes": "Ієрархія DAO",
+    "settings": "налаштування"
 }

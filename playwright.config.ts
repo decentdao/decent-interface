@@ -33,7 +33,7 @@ const config: PlaywrightTestConfig = {
     trace: 'on-first-retry', /* Tracks exactly what is going on in the test. Saved as a zip file in test-results folder. Can be viewed at 'trace.playwright.dev' in a browser. To use 'npx playwright test --trace on' */
     screenshot: 'on',
     launchOptions: {
-      slowMo: 100, /* Adjusts tests' run speed to aid in video report visualization reports as well as mimic user input/action speed */
+      slowMo: !process.env.CI ? 100 : 0, /* Adjusts tests' run speed to aid in video report visualization reports as well as mimic user input/action speed */
       devtools: false, /* When tests are ran locally with the '--headed' flag devtools will appear for debugging purposes. */
     },
     video: !process.env.CI ? 'on' : 'off',
