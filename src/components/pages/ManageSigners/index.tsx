@@ -51,8 +51,6 @@ function ManageSigners({}: {}) {
   const { t } = useTranslation(['common', 'breadcrumbs']);
   const { address: account } = useAccount();
 
-  console.log('threshold: ', safe?.threshold);
-
   useEffect(() => {
     setSigners(safe?.owners.map(owner => owner));
   }, [safe?.owners]);
