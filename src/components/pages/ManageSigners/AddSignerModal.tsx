@@ -21,17 +21,29 @@ import { useValidationAddress } from '../../../hooks/schemas/common/useValidatio
 import { useFractal } from '../../../providers/App/AppProvider';
 import useAddSigner from './hooks/useAddSigner';
 
-function AddSignerModal({ close, signers }: { close: () => void; signers: string[] }) {
+function AddSignerModal({
+  close,
+  signers,
+  currentThreshold,
+}: {
+  close: () => void;
+  signers: string[];
+  currentThreshold: number;
+}) {
   const {
     node: { daoAddress },
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
-  const [threshold, setThreshold] = useState<number>();
+  const [threshold, setThreshold] = useState<number>(currentThreshold);
   const defaultNonce = useDefaultNonce();
   const { t } = useTranslation(['modals', 'common']);
 
   const { data: signer } = useSigner();
   const { addressValidationTest } = useValidationAddress();
+
+  useEffect(() => {
+    console.log('currentThreshold: ', currentThreshold);
+  }, [currentThreshold]);
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length + 1 }, (_, i) => i + 1));
@@ -118,7 +130,6 @@ function AddSignerModal({ close, signers }: { close: () => void; signers: string
             <HStack>
               <Select
                 onChange={e => setThreshold(Number(e.target.value))}
-                placeholder={t('select', { ns: 'modals' })}
                 mt={4}
                 width="8rem"
                 bgColor="#2c2c2c"

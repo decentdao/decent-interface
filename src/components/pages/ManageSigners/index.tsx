@@ -42,12 +42,16 @@ function ManageSigners({}: {}) {
   const removeSigner = useFractalModal(ModalType.REMOVE_SIGNER, {
     selectedSigner: selectedSigner,
     signers: signers,
+    currentThreshold: safe?.threshold,
   });
   const addSigner = useFractalModal(ModalType.ADD_SIGNER, {
     signers: signers,
+    currentThreshold: safe?.threshold,
   });
   const { t } = useTranslation(['common', 'breadcrumbs']);
   const { address: account } = useAccount();
+
+  console.log('threshold: ', safe?.threshold);
 
   useEffect(() => {
     setSigners(safe?.owners.map(owner => owner));

@@ -88,6 +88,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
           <RemoveSignerModal
             selectedSigner={current.props.selectedSigner}
             signers={current.props.signers}
+            currentThreshold={current.props.currentThreshold}
             close={cl}
           />
         );
@@ -97,6 +98,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         co = (
           <AddSignerModal
             signers={current.props.signers}
+            currentThreshold={current.props.currentThreshold}
             close={cl}
           />
         );
