@@ -9,6 +9,7 @@ import { goerliConfig } from './networks';
 export const defaultState = {
   safeBaseURL: '',
   etherscanBaseURL: '',
+  etherscanAPIBaseUrl: '',
   chainId: 0,
   name: '',
   color: '',
