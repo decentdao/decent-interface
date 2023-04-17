@@ -10,7 +10,7 @@ import {
   Input,
   Alert,
   AlertTitle,
-  Image
+  Image,
 } from '@chakra-ui/react';
 import { Info, LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
