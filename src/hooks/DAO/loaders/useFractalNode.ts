@@ -10,7 +10,6 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { NodeAction } from '../../../providers/App/node/action';
 import { FractalNode, Node, WithError } from '../../../types';
-import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
 const mapChildNodes = (_hierarchy: any) => {
@@ -39,7 +38,6 @@ export const useFractalNode = ({
     clients: { safeService },
     action,
   } = useFractal();
-  const { getDaoName } = useLazyDAOName();
   const { t } = useTranslation();
   const { replace } = useRouter();
 
@@ -103,10 +101,8 @@ export const useFractalNode = ({
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
-          const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
 
           return Object.assign(graphNodeInfo, {
-            daoName,
             safe,
             fractalModules,
           });
@@ -119,7 +115,7 @@ export const useFractalNode = ({
         return { error: 'errorFailedSearch' };
       }
     },
-    [safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
+    [safeService, lookupModules, formatDAOQuery, getDAOInfo]
   );
 
   const setDAO = useCallback(
@@ -132,24 +128,21 @@ export const useFractalNode = ({
             return;
           }
           action.dispatch({
-            type: NodeAction.SET_FRACTAL_MODULES,
-            payload: await lookupModules(safe.modules),
-          });
-          action.dispatch({
             type: NodeAction.SET_SAFE_INFO,
             payload: safe,
           });
-
+          action.dispatch({
+            type: NodeAction.SET_FRACTAL_MODULES,
+            payload: await lookupModules(safe.modules),
+          });
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            safe.address
+            _daoAddress
           );
-          const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo?.daoName);
-
           if (!!graphNodeInfo) {
             action.dispatch({
               type: NodeAction.SET_DAO_INFO,
-              payload: Object.assign(graphNodeInfo, { daoName }),
+              payload: graphNodeInfo,
             });
           }
         } catch (e) {
@@ -161,7 +154,7 @@ export const useFractalNode = ({
         invalidateDAO('errorFailedSearch');
       }
     },
-    [action, invalidateDAO, safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
+    [action, invalidateDAO, safeService, lookupModules, formatDAOQuery, getDAOInfo]
   );
 
   useEffect(() => {

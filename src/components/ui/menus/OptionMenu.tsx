@@ -34,6 +34,7 @@ interface IOptionMenu extends Omit<MenuProps, 'children'> {
   children?: ReactNode;
   closeOnSelect?: boolean;
   showOptionCount?: boolean;
+  showDividers?: boolean;
 }
 
 export function OptionMenu({
@@ -45,6 +46,7 @@ export function OptionMenu({
   buttonAs,
   showOptionSelected,
   showOptionCount,
+  showDividers,
   buttonProps,
   children,
   closeOnSelect = true,
@@ -127,7 +129,7 @@ export function OptionMenu({
                 </Text>
               )}
             </MenuItem>
-            {options[options.length - 1] !== option && (
+            {showDividers && options[options.length - 1] !== option && (
               <Divider
                 marginTop="0.25rem"
                 marginBottom="0.25rem"

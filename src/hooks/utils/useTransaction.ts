@@ -37,7 +37,19 @@ const useTransaction = () => {
       params
         .contractFn()
         .then((txResponse: ethers.ContractTransaction) => {
-          return Promise.all([txResponse.wait(), toastId]);
+          const wait =
+            process.env.NODE_ENV !== 'development'
+              ? 0
+              : process.env.NEXT_PUBLIC_DEVELOPMENT_TX_WAIT_MS
+              ? parseInt(process.env.NEXT_PUBLIC_DEVELOPMENT_TX_WAIT_MS)
+              : 0;
+
+          return Promise.all([
+            new Promise(resolve => setTimeout(() => resolve(null), wait)).then(() =>
+              txResponse.wait()
+            ),
+            toastId,
+          ]);
         })
         .then(([txReceipt, toastID]) => {
           toast.dismiss(toastID);

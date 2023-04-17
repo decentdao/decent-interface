@@ -1,16 +1,7 @@
-import {
-  Input,
-  HStack,
-  Text,
-  Textarea,
-  Grid,
-  GridItem,
-  GridProps,
-  GridItemProps,
-} from '@chakra-ui/react';
+import { Input, HStack, Text, Textarea, Grid, GridItem } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumberInput, BigNumberInputProps } from './BigNumberInput';
-import { EthAddressInput } from './EthAddressInput';
+import { BigNumberInput, BigNumberInputProps } from '../ui/forms/BigNumberInput';
+import { EthAddressInput } from '../ui/forms/EthAddressInput';
 
 interface BaseProps {
   label: string;
@@ -18,18 +9,14 @@ interface BaseProps {
   helper: string;
   isRequired: boolean;
   value: string;
-  disabled?: boolean;
+  disabled: boolean;
   subLabel?: React.ReactNode;
   errorMessage?: string;
   children: React.ReactNode;
-  gridContainerProps?: GridProps;
-  inputContainerProps?: GridItemProps;
-  maxLength?: number;
 }
 
 interface InputProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
-  onBlur?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
   testId: string;
 }
@@ -47,38 +34,26 @@ interface BigNumberProps
   extends Omit<BaseProps, 'children' | 'value'>,
     Omit<BigNumberInputProps, 'isRequired'> {}
 
-export function LabelComponent(props: Omit<BaseProps, 'value'>) {
-  const {
-    label,
-    helper,
-    isRequired,
-    subLabel,
-    errorMessage,
-    children,
-    gridContainerProps,
-    inputContainerProps,
-    disabled,
-  } = props;
+export function LabelComponent(props: Omit<BaseProps, 'value' | 'disabled'>) {
+  const { label, helper, isRequired, subLabel, errorMessage, children } = props;
   return (
     <Grid
       columnGap={3}
       templateColumns={{ base: '1fr', md: '1fr 2fr' }}
       fontSize="14px"
       alignItems="start"
-      cursor={disabled ? 'not-allowed' : 'pointer'}
-      {...gridContainerProps}
     >
       <GridItem>
         <HStack
           pb={1}
           textStyle="text-md-sans-regular"
         >
-          <Text color={disabled ? 'grayscale.500' : 'grayscale.100'}>{label}</Text>
+          <Text color="grayscale.100">{label}</Text>
           {isRequired && <Text color="gold.500">*</Text>}
         </HStack>
         <Text color="grayscale.500">{helper}</Text>
       </GridItem>
-      <GridItem {...inputContainerProps}>
+      <GridItem>
         <LabelWrapper
           subLabel={subLabel}
           errorMessage={errorMessage}
@@ -91,21 +66,16 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { id, value, disabled, onChange, onBlur, placeholder, testId, maxLength } = props;
+  const { id, value, disabled, onChange, placeholder, testId } = props;
   return (
-    <LabelComponent
-      {...props}
-      disabled={disabled}
-    >
+    <LabelComponent {...props}>
       <Input
         id={id}
         value={value}
         onChange={onChange}
-        onBlur={onBlur}
         isDisabled={disabled}
         data-testid={testId}
         placeholder={placeholder}
-        maxLength={maxLength}
       />
     </LabelComponent>
   );
@@ -114,10 +84,7 @@ export function InputComponent(props: InputProps) {
 export function EthAddressComponent(props: EthAddressProps) {
   const { id, disabled, onAddressChange } = props;
   return (
-    <LabelComponent
-      {...props}
-      disabled={disabled}
-    >
+    <LabelComponent {...props}>
       <EthAddressInput
         id={id}
         isDisabled={disabled}
@@ -128,12 +95,9 @@ export function EthAddressComponent(props: EthAddressProps) {
 }
 
 export function TextareaComponent(props: TextareaProps) {
-  const { id, value, disabled, onChange, rows, placeholder, maxLength } = props;
+  const { id, value, disabled, onChange, rows, placeholder } = props;
   return (
-    <LabelComponent
-      {...props}
-      disabled={disabled}
-    >
+    <LabelComponent {...props}>
       <Textarea
         id={id}
         resize="none"
@@ -142,10 +106,8 @@ export function TextareaComponent(props: TextareaProps) {
         isDisabled={disabled}
         rows={rows}
         placeholder={placeholder}
-        borderColor="black.400"
         size="base"
         p="0.5rem 1rem"
-        maxLength={maxLength}
       />
     </LabelComponent>
   );
@@ -154,10 +116,7 @@ export function TextareaComponent(props: TextareaProps) {
 export function BigNumberComponent(props: BigNumberProps) {
   const { id, value, disabled, onChange, decimalPlaces } = props;
   return (
-    <LabelComponent
-      {...props}
-      disabled={disabled}
-    >
+    <LabelComponent {...props}>
       <BigNumberInput
         value={value}
         id={id}

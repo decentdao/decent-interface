@@ -1,7 +1,6 @@
 'use client';
 
 import { ReactNode } from 'react';
-import ClientOnly from '../../../src/components/ui/utils/ClientOnly';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
 import { useFractal } from '../../../src/providers/App/AppProvider';
 
@@ -19,9 +18,9 @@ export default function DaoPageLayout({
   useDAOController({ daoAddress });
 
   return (
-    <ClientOnly>
+    <>
       <title>{daoName ? `${daoName} | Fractal` : 'Fractal'}</title>
       {children}
-    </ClientOnly>
+    </>
   );
 }

@@ -6,9 +6,7 @@ import {
   Copy,
   ArrowRightSm,
 } from '@decent-org/fractal-ui';
-import { utils } from 'ethers';
 import Link from 'next/link';
-import { useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
@@ -60,14 +58,10 @@ export function DAOInfoCard({
     address: safeAddress && !isCurrentDAO ? safeAddress : undefined,
   });
   const { accountSubstring } = useDisplayName(safeAddress);
+  const isFavorite = favoritesList.includes(safeAddress || '');
 
   // @todo add viewable conditions
   const canManageDAO = !!account;
-
-  const isFavorite = useMemo(
-    () => (!!safeAddress ? favoritesList.includes(utils.getAddress(safeAddress)) : false),
-    [favoritesList, safeAddress]
-  );
 
   if (!safeAddress) return null;
   return (
@@ -185,7 +179,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
     guardContracts,
     guard,
   } = useFractal();
-  const isCurrentDAO = utils.getAddress(props.safeAddress || '') === currentDAOAddress;
+  const isCurrentDAO = props.safeAddress === currentDAOAddress;
   const { subDAOData } = useSubDAOData(
     !isCurrentDAO && props.fractalNode ? props.fractalNode : undefined
   );

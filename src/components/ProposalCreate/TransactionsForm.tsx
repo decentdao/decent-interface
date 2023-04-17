@@ -71,7 +71,7 @@ function TransactionsForm(props: TransactionsFormProps) {
               onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
               mb={4}
             >
-              {`< ${t('prev', { ns: 'common' })}`}
+              {`< ${t('proposalBack')}`}
             </Button>
           )}
           <Button

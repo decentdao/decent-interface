@@ -7,7 +7,6 @@ import {
   SupportQuestion,
   Discord,
   Documents,
-  Integrations,
 } from '@decent-org/fractal-ui';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
@@ -39,6 +38,7 @@ export function NavigationLinks({
               href={DAO_ROUTES.dao.relative(address)}
               labelKey="home"
               testId="navigation-daoHomeLink"
+              routeKey="dao"
               Icon={Home}
               closeDrawer={closeDrawer}
             />
@@ -46,6 +46,7 @@ export function NavigationLinks({
               href={DAO_ROUTES.hierarchy.relative(address)}
               labelKey="nodes"
               testId="navigation-hierarchy"
+              routeKey="nodes"
               Icon={Tree}
               closeDrawer={closeDrawer}
             />
@@ -53,6 +54,7 @@ export function NavigationLinks({
               href={DAO_ROUTES.proposals.relative(address)}
               labelKey="proposals"
               testId="navigation-proposalsLink"
+              routeKey="proposals"
               Icon={Proposals}
               closeDrawer={closeDrawer}
             />
@@ -60,14 +62,8 @@ export function NavigationLinks({
               href={DAO_ROUTES.treasury.relative(address)}
               labelKey="treasury"
               testId="navigation-treasuryLink"
+              routeKey="treasury"
               Icon={Treasury}
-              closeDrawer={closeDrawer}
-            />
-            <NavigationLink
-              href={DAO_ROUTES.proposalTemplates.relative(address)}
-              labelKey="proposalTemplates"
-              testId="navigation-proposalTemplatesLink"
-              Icon={Integrations}
               closeDrawer={closeDrawer}
             />
           </Flex>

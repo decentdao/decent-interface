@@ -1,7 +1,7 @@
 import { Box, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { ICreationStepProps, CreatorSteps, StrategyType } from '../../../types';
-import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
+import { ICreationStepProps, StrategyType, CreatorSteps } from '../../../types';
+import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
@@ -23,7 +23,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
         value={values.essentials.daoName}
         id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
-        onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
         disabled={false}
         placeholder={t('daoNamePlaceholder')}
         testId="essentials-daoName"

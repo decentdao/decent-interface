@@ -40,7 +40,6 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       return getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId)
         .queryFilter(filter)
         .then(proxiesCreated => {
-          if (proxiesCreated.length === 0) return constants.AddressZero;
           return proxiesCreated[0].args.masterCopy;
         });
     },

@@ -41,12 +41,7 @@ export function InfoGovernance() {
         mb="1rem"
       >
         <Govern />
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="grayscale.100"
-        >
-          {t('titleGovernance')}
-        </Text>
+        <Text color="grayscale.100">{t('titleGovernance')}</Text>
       </Flex>
 
       <Flex
@@ -54,16 +49,8 @@ export function InfoGovernance() {
         justifyContent="space-between"
         mb="0.25rem"
       >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
-        >
-          {t('titleType')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
+        <Text color="chocolate.200">{t('titleType')}</Text>
+        <Text color="grayscale.100">
           {governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : ''}
         </Text>
       </Flex>
@@ -74,16 +61,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('titleVotingPeriod')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
+          <Text color="chocolate.200">{t('titleVotingPeriod')}</Text>
+          <Text color="grayscale.100">
             {governanceAzorius.votesStrategy.votingPeriod.formatted}
           </Text>
         </Flex>
@@ -94,16 +73,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('titleQuorum')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
+          <Text color="chocolate.200">{t('titleQuorum')}</Text>
+          <Text color="grayscale.100">
             {governanceAzorius.votesStrategy.quorumPercentage.formatted}
           </Text>
         </Flex>

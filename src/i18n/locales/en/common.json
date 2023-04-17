@@ -68,7 +68,6 @@
     "clear": "Clear",
     "cancel": "Cancel",
     "example": "Example",
-    "or": "or",
     "titleNodes": "DAO Hierarchy",
     "404Title": "Page not found",
     "404Button": "Fractal App Home",
@@ -78,7 +77,5 @@
     "daoDetails": "DAO Details",
     "signersRequired": "Signers Required",
     "signersInfo1": "The number of signers required to execute a proposal.",
-    "signersInfo2": "Adding or removing a signer will require an update.",
-    "settings": "Settings",
-    "etherscanTip": "Open in Etherscan"
+    "signersInfo2": "Adding or removing a signer will require an update."
 }

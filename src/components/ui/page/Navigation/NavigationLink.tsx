@@ -10,6 +10,7 @@ interface INavigationLink {
   labelKey: string;
   tooltipKey?: string;
   testId: string;
+  routeKey?: string;
   Icon: ComponentWithAs<'svg', IconProps>;
   target?: string;
   rel?: string;
@@ -20,6 +21,7 @@ export function NavigationLink({
   labelKey,
   testId,
   Icon,
+  routeKey,
   tooltipKey,
   closeDrawer,
   href,
@@ -29,17 +31,17 @@ export function NavigationLink({
 
   const { t } = useTranslation('navigation');
   const pathname = usePathname();
-  const isActive = pathname === href;
+  const match = pathname === href;
 
   const activeColors = useCallback(() => {
+    let isActive = !!match;
     return {
       color: isActive ? 'gold.500' : 'inherit',
       _hover: {
         color: isActive ? 'gold.500-hover' : 'inherit',
       },
     };
-  }, [isActive]);
-
+  }, [match]);
   return (
     <NavigationTooltip label={t(tooltipTranslationKey)}>
       <Link

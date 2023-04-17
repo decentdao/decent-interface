@@ -11,7 +11,6 @@ import { TitledInfoBox } from '../../../../src/components/ui/containers/TitledIn
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
 import { AzoriusGovernance, StrategyType } from '../../../../src/types';
 
@@ -41,41 +40,39 @@ export default function Treasury() {
   const showButton = isOwnerOrDelegate && assetsFungible.length > 0;
 
   return (
-    <ClientOnly>
-      <Box>
-        <PageHeader
-          breadcrumbs={[
-            {
-              title: t('treasury', { ns: 'breadcrumbs' }),
-              path: '',
-            },
-          ]}
-          buttonText={showButton ? t('buttonSendAssets') : undefined}
-          buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
-          buttonTestId="link-send-assets"
-        />
-        <Flex
-          mt="1rem"
-          align="start"
-          gap="1rem"
-          flexWrap="wrap"
+    <Box>
+      <PageHeader
+        breadcrumbs={[
+          {
+            title: t('treasury', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
+        buttonText={showButton ? t('buttonSendAssets') : undefined}
+        buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
+        buttonTestId="link-send-assets"
+      />
+      <Flex
+        mt="1rem"
+        align="start"
+        gap="1rem"
+        flexWrap="wrap"
+      >
+        <TitledInfoBox
+          minWidth={{ sm: '100%', xl: '55%' }}
+          title={t('titleTransactions')}
+          titleTestId="title-transactions"
         >
-          <TitledInfoBox
-            minWidth={{ sm: '100%', xl: '55%' }}
-            title={t('titleTransactions')}
-            titleTestId="title-transactions"
-          >
-            <Transactions />
-          </TitledInfoBox>
-          <TitledInfoBox
-            minWidth={{ sm: '100%', xl: '35%' }}
-            title={t('titleAssets')}
-            titleTestId="title-assets"
-          >
-            <Assets />
-          </TitledInfoBox>
-        </Flex>
-      </Box>
-    </ClientOnly>
+          <Transactions />
+        </TitledInfoBox>
+        <TitledInfoBox
+          minWidth={{ sm: '100%', xl: '35%' }}
+          title={t('titleAssets')}
+          titleTestId="title-assets"
+        >
+          <Assets />
+        </TitledInfoBox>
+      </Flex>
+    </Box>
   );
 }

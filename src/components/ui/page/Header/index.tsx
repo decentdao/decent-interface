@@ -1,32 +1,31 @@
 import { Flex, Show } from '@chakra-ui/react';
+import useClientSide from '../../../../hooks/utils/useClientSide';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
-import ClientOnly from '../../utils/ClientOnly';
 
 function Header() {
+  const isClientSide = useClientSide();
   return (
-    <ClientOnly>
+    <Flex
+      h="full"
+      w="full"
+      justifyContent="space-between"
+      px="0.5rem"
+      alignItems="center"
+    >
+      <Show above="md">
+        <DAOSearch />
+      </Show>
       <Flex
         h="full"
         w="full"
-        justifyContent="space-between"
-        px="0.5rem"
-        alignItems="center"
+        justifyContent="flex-end"
       >
-        <Show above="md">
-          <DAOSearch />
-        </Show>
-        <Flex
-          h="full"
-          w="full"
-          justifyContent="flex-end"
-        >
-          <FavoritesMenu />
-          <AccountDisplay />
-        </Flex>
+        {isClientSide && <FavoritesMenu />}
+        {isClientSide && <AccountDisplay />}
       </Flex>
-    </ClientOnly>
+    </Flex>
   );
 }
 
