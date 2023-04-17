@@ -12,7 +12,7 @@ import {
   AlertTitle,
   Image,
 } from '@chakra-ui/react';
-import { Info, LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
+import { LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -41,7 +41,7 @@ function AddSignerModal({
   const { t } = useTranslation(['modals', 'common']);
 
   const { data: signer } = useSigner();
-  const { addressValidationTest } = useValidationAddress();
+  const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length + 1 }, (_, i) => i + 1));
@@ -64,8 +64,8 @@ function AddSignerModal({
     });
   };
 
-  const delegationValidationSchema = Yup.object().shape({
-    address: Yup.string().test(addressValidationTest),
+  const addressValidationSchema = Yup.object().shape({
+    address: Yup.string().test(addressValidationTest).test(newSignerValidationTest),
   });
 
   return (
@@ -75,7 +75,7 @@ function AddSignerModal({
           address: '',
         }}
         onSubmit={onSubmit}
-        validationSchema={delegationValidationSchema}
+        validationSchema={addressValidationSchema}
       >
         {({ handleSubmit, errors }) => (
           <form onSubmit={handleSubmit}>
