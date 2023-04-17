@@ -11,17 +11,19 @@ function RemoveSignerModal({
   close,
   selectedSigner,
   signers,
+  currentThreshold,
 }: {
   close: () => void;
   selectedSigner: string;
   signers: string[];
+  currentThreshold: number;
 }) {
   const {
     node: { daoAddress },
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<string>('');
-  const [threshold, setThreshold] = useState<number>(0);
+  const [threshold, setThreshold] = useState<number>(currentThreshold);
   const defaultNonce = useDefaultNonce();
   const provider = useProvider();
   const networkId = provider.network.chainId;
@@ -105,7 +107,6 @@ function RemoveSignerModal({
       <HStack>
         <Select
           onChange={e => setThreshold(Number(e.target.value))}
-          placeholder={t('select', { ns: 'modals' })}
           mt={4}
           width="8rem"
           bgColor="#2c2c2c"
