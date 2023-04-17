@@ -96,7 +96,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         ti = t('addSignerTitle');
         co = (
           <AddSignerModal
-            signerCount={current.props.signerCount}
+            signers={current.props.signers}
             close={cl}
           />
         );

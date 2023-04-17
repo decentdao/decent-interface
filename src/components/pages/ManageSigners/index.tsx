@@ -44,7 +44,7 @@ function ManageSigners({}: {}) {
     signers: signers,
   });
   const addSigner = useFractalModal(ModalType.ADD_SIGNER, {
-    signerCount: signers?.length,
+    signers: signers,
   });
   const { t } = useTranslation(['common', 'breadcrumbs']);
   const { address: account } = useAccount();
