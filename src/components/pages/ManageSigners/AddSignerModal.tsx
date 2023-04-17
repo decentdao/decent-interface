@@ -21,7 +21,7 @@ import { useValidationAddress } from '../../../hooks/schemas/common/useValidatio
 import { useFractal } from '../../../providers/App/AppProvider';
 import useAddSigner from './hooks/useAddSigner';
 
-function AddSignerModal({ close, signerCount }: { close: () => void; signerCount: number }) {
+function AddSignerModal({ close, signers }: { close: () => void; signers: string[] }) {
   const {
     node: { daoAddress },
   } = useFractal();
@@ -34,8 +34,8 @@ function AddSignerModal({ close, signerCount }: { close: () => void; signerCount
   const { addressValidationTest } = useValidationAddress();
 
   useEffect(() => {
-    setThresholdOptions(Array.from({ length: signerCount + 1 }, (_, i) => i + 1));
-  }, [signerCount]);
+    setThresholdOptions(Array.from({ length: signers.length + 1 }, (_, i) => i + 1));
+  }, [signers]);
 
   const addSigner = useAddSigner();
 
@@ -140,7 +140,7 @@ function AddSignerModal({ close, signerCount }: { close: () => void; signerCount
                   color="grayscale.100"
                   mt={3}
                   ml={2}
-                >{`out of ${signerCount + 1} signers required`}</Text>
+                >{`out of ${signers.length + 1} signers required`}</Text>
               </Flex>
             </HStack>
             <HStack

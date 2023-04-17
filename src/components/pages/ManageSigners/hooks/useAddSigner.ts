@@ -7,8 +7,7 @@ import { ProposalExecuteData } from '../../../../types';
 
 const useAddSigner = () => {
   const { submitProposal } = useSubmitProposal();
-
-  const { t } = useTranslation(['modals', 'proposalMetadata']);
+  const { t } = useTranslation(['modals']);
   const loadDAOProposals = useDAOProposals();
   const addSigner = useCallback(
     async ({
@@ -25,9 +24,6 @@ const useAddSigner = () => {
       close: () => void;
     }) => {
       const description = 'Add Signer';
-
-      console.log('newSigner: ', newSigner);
-      console.log('threshold: ', threshold);
 
       const funcSignature = 'function addOwnerWithThreshold(address owner, uint256 _threshold)';
       const calldatas = [
@@ -46,10 +42,6 @@ const useAddSigner = () => {
         documentationUrl: '',
       };
 
-      console.log('submitting proposal');
-
-      console.log('proposalData: ', proposalData);
-
       await submitProposal({
         proposalData,
         successCallback: () => {
@@ -57,9 +49,9 @@ const useAddSigner = () => {
           loadDAOProposals();
         },
         nonce,
-        pendingToastMessage: t('sendAssetsPendingToastMessage'),
-        successToastMessage: t('sendAssetsSuccessToastMessage'),
-        failedToastMessage: t('sendAssetsFailureToastMessage'),
+        pendingToastMessage: t('addSignerPendingToastMessage'),
+        successToastMessage: t('addSignerSuccessToastMessage'),
+        failedToastMessage: t('addSignerFailureToastMessage'),
         safeAddress: daoAddress!,
       });
     },

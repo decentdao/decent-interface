@@ -20,7 +20,7 @@ const useRemoveSigner = ({
 }) => {
   const { submitProposal } = useSubmitProposal();
 
-  const { t } = useTranslation(['modals', 'proposalMetadata']);
+  const { t } = useTranslation(['modals']);
   const loadDAOProposals = useDAOProposals();
   const removeSigner = useCallback(async () => {
     const description = 'Remove Signers';
@@ -50,9 +50,9 @@ const useRemoveSigner = ({
         loadDAOProposals();
       },
       nonce,
-      pendingToastMessage: t('sendAssetsPendingToastMessage'),
-      successToastMessage: t('sendAssetsSuccessToastMessage'),
-      failedToastMessage: t('sendAssetsFailureToastMessage'),
+      pendingToastMessage: t('removeSignerPendingToastMessage'),
+      successToastMessage: t('removeSignerSuccessToastMessage'),
+      failedToastMessage: t('removeSignerFailureToastMessage'),
       safeAddress: daoAddress!,
     });
   }, [
