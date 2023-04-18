@@ -89,7 +89,7 @@ function AddSignerModal({
               {({ field }: FieldAttributes<any>) => (
                 <LabelWrapper
                   subLabel={t('addSignerSublabel', { ns: 'modals' })}
-                  errorMessage={errors.address}
+                  errorMessage={field.value && errors.address}
                 >
                   <Input
                     placeholder="0x0000...0000"
