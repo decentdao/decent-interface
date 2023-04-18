@@ -1,6 +1,5 @@
 import { VStack, HStack, Text, Box, Flex, IconButton } from '@chakra-ui/react';
 import { AddPlus, Trash } from '@decent-org/fractal-ui';
-import { isAddress } from 'ethers/lib/utils.js';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalTemplateTransaction } from '../../types/createProposalTemplate';
@@ -68,14 +67,13 @@ export default function ProposalTemplateTransaction({
           setFieldValue(`transactions.${transactionIndex}.targetAddress`, e.target.value)
         }
       />
-      {isAddress(transaction.targetAddress) && (
-        <Box>
-          <ABISelector
-            contractAddress={transaction.targetAddress}
-            onChange={handleABISelectorChange}
-          />
-        </Box>
-      )}
+      <Box>
+        <ABISelector
+          target={transaction.targetAddress}
+          onChange={handleABISelectorChange}
+        />
+      </Box>
+
       <Box
         backgroundColor="black"
         borderRadius="4px"
