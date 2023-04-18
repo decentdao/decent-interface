@@ -78,8 +78,9 @@ function ManageSigners({}: {}) {
     <Box>
       <PageHeader
         hasDAOLink={true}
-        buttonText={userIsSigner && selectedSigner ? '— ' + t('remove') : undefined}
+        buttonText={userIsSigner ? '— ' + t('remove') : undefined}
         buttonClick={userIsSigner ? removeSigner : undefined}
+        isButtonDisabled={!selectedSigner}
         breadcrumbs={[
           {
             title: t('manageSigners', { ns: 'breadcrumbs' }),
