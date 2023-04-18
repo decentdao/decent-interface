@@ -157,7 +157,7 @@ function RemoveSignerModal({
         width="100%"
         onClick={onSubmit}
       >
-        {t('submit', { ns: 'modals' })}
+        {t('createProposal', { ns: 'modals' })}
       </Button>
     </Box>
   );

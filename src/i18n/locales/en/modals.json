@@ -28,6 +28,7 @@
   "select": "Select",
   "updateSignerWarning": "Access to your organization will be affected",
   "submit": "Submit",
+  "createProposal": "Create Proposal",
   "removeSignerTitle": "Remove Signer",
   "removeSignerLabel": "Review the signer to remove",
   "addSignerPendingToastMessage": "Creating proposal to add signer",

@@ -181,7 +181,7 @@ function AddSignerModal({
               mt={6}
               width="100%"
             >
-              {t('submit', { ns: 'modals' })}
+              {t('createProposal', { ns: 'modals' })}
             </Button>
           </form>
         )}
