@@ -53,7 +53,7 @@ export function ModalBase(props: ModuleBaseProps) {
             </Text>
           </HStack>
           <Spacer />
-          <CloseX onClick={props.onClose} />
+          <CloseX cursor="pointer" onClick={props.onClose} />
         </Flex>
         <Divider
           color="chocolate.700"
