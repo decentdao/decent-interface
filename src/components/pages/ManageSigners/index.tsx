@@ -1,8 +1,19 @@
-import { Box, Button, Divider, Flex, HStack, Radio, RadioGroup, Text } from '@chakra-ui/react';
-import { AddPlus, Trash } from '@decent-org/fractal-ui';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  HStack,
+  Radio,
+  RadioGroup,
+  Show,
+  Text,
+} from '@chakra-ui/react';
+import { AddPlus } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import { ModalType } from '../../ui/modals/ModalProvider';
@@ -10,25 +21,25 @@ import { useFractalModal } from '../../ui/modals/useFractalModal';
 import PageHeader from '../../ui/page/Header/PageHeader';
 import DaoDetails from './DaoDetails';
 
-function Signer({ signer }: { signer: string }) {
+function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
   return (
-    <Box
+    <HStack
       key={signer}
-      my={2}
+      my={3}
     >
-      <Radio
-        value={signer}
-        colorScheme="gold"
-        borderColor="gold.500"
-        size="md"
-        my={1}
-      >
-        <DisplayAddress
-          address={signer}
-          truncate={false}
+      {!disabled && (
+        <Radio
+          value={signer}
+          colorScheme="gold"
+          borderColor="gold.500"
+          size="md"
         />
-      </Radio>
-    </Box>
+      )}
+      <DisplayAddress
+        address={signer}
+        truncate={false}
+      />
+    </HStack>
   );
 }
 
@@ -67,28 +78,25 @@ function ManageSigners({}: {}) {
     <Box>
       <PageHeader
         hasDAOLink={true}
+        buttonText={userIsSigner && selectedSigner ? '— ' + t('remove') : undefined}
+        buttonClick={userIsSigner ? removeSigner : undefined}
         breadcrumbs={[
           {
             title: t('manageSigners', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}
-      />
-      {userIsSigner && (
-        <HStack mt={8}>
-          <Button onClick={addSigner}>
-            <AddPlus />
-            {t('addSigner', { ns: 'common' })}
-          </Button>
+      >
+        {userIsSigner && (
           <Button
-            isDisabled={!selectedSigner || (signers && signers.length === 1)}
-            onClick={removeSigner}
+            minW={0}
+            onClick={addSigner}
           >
-            <Trash />
-            {t('removeSigner', { ns: 'common' })}
+            <AddPlus />
+            <Show above="sm">{t('add')}</Show>
           </Button>
-        </HStack>
-      )}
+        )}
+      </PageHeader>
       <Flex
         mt="1rem"
         align="start"
@@ -97,7 +105,7 @@ function ManageSigners({}: {}) {
       >
         <Box
           minWidth={{ sm: '100%', xl: '55%' }}
-          bg="black.900-semi-transparent"
+          bg={BACKGROUND_SEMI_TRANSPARENT}
           rounded="md"
           px={8}
           py={8}
@@ -122,11 +130,11 @@ function ManageSigners({}: {}) {
                 <Signer
                   key={signer}
                   signer={signer}
+                  disabled={!userIsSigner}
                 />
               ))}
           </RadioGroup>
         </Box>
-
         <DaoDetails
           threshold={safe?.threshold}
           signerCount={safe?.owners.length}
