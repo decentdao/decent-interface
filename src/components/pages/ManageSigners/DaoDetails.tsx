@@ -19,6 +19,7 @@ function DaoDetails({
       px={8}
       py={8}
       minWidth={{ sm: '100%', xl: '35%' }}
+      flexGrow={1}
     >
       <Text
         textStyle="text-lg-mono-regular"
@@ -52,6 +53,7 @@ function DaoDetails({
         mt={2}
       >
         <Image
+          alignSelf="center"
           src="/images/alert-triangle.svg"
           alt="alert triangle"
           w="1.5rem"

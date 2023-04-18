@@ -73,8 +73,6 @@
     "404Title": "Page not found",
     "404Button": "Fractal App Home",
     "signers": "Signers",
-    "addSigner": "Add Signer",
-    "removeSigner": "Remove Signer",
     "daoDetails": "DAO Details",
     "signersRequired": "Signers Required",
     "signersInfo1": "The number of signers required to execute a proposal.",
