@@ -13,7 +13,8 @@ export const createAccountSubstring = (account: string) => {
  * This is intended to be used for NON Fractal DAO display names.  If you would like to get the
  * display name for a Fractal DAO, use the useDAOName hook instead.
  */
-const useDisplayName = (account?: string | null) => {
+const useDisplayName = (account?: string | null, truncate?: boolean) => {
+  if (truncate === undefined) truncate = true;
   const provider = useProvider();
   const networkId = provider.network.chainId;
   const { data: ensName } = useEnsName({
@@ -34,18 +35,18 @@ const useDisplayName = (account?: string | null) => {
 
   const [displayName, setDisplayName] = useState<string>('');
   useEffect(() => {
-    if (!accountSubstring) {
+    if (!accountSubstring || !account) {
       setDisplayName('');
       return;
     }
 
     if (!ensName) {
-      setDisplayName(accountSubstring);
+      setDisplayName(truncate ? accountSubstring : account);
       return;
     }
 
     setDisplayName(ensName);
-  }, [accountSubstring, ensName]);
+  }, [account, accountSubstring, ensName, truncate]);
 
   return { displayName, accountSubstring };
 };

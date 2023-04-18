@@ -3,17 +3,14 @@ import { AddPlus, Trash } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
-import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
+import { DisplayAddress } from '../../ui/links/DisplayAddress';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../ui/modals/useFractalModal';
 import PageHeader from '../../ui/page/Header/PageHeader';
 import DaoDetails from './DaoDetails';
 
 function Signer({ signer }: { signer: string }) {
-  const displayAddress = useDisplayName(signer);
-
   return (
     <Box
       key={signer}
@@ -26,7 +23,10 @@ function Signer({ signer }: { signer: string }) {
         size="md"
         my={1}
       >
-        <EtherscanLinkAddress address={signer}>{displayAddress.displayName}</EtherscanLinkAddress>
+        <DisplayAddress
+          address={signer}
+          truncate={false}
+        />
       </Radio>
     </Box>
   );
