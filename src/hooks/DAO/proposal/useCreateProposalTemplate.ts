@@ -1,5 +1,4 @@
 import { BigNumber, utils } from 'ethers';
-import { create } from 'ipfs-http-client';
 import { useCallback } from 'react';
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalTemplateForm } from '../../../types/createProposalTemplate';
@@ -37,15 +36,15 @@ export default function useCreateProposalTemplate() {
           `${process.env.NEXT_PUBLIC_INFURA_PROJECT_API_KEY}:${process.env.NEXT_PUBLIC_INFURA_PROJECT_API_SECRET}`
         ).toString('base64');
 
-      const client = create({
-        host: 'ipfs.infura.io',
-        port: 5001,
-        protocol: 'https',
-        headers: {
-          authorization: auth,
-        },
-      });
-      const { cid } = await client.add(JSON.stringify([proposalTemplateData])); // TODO - When fetching proposal templates will be implemented - upload updated data and not completely new one
+      // const client = create({
+      //   host: 'ipfs.infura.io',
+      //   port: 5001,
+      //   protocol: 'https',
+      //   headers: {
+      //     authorization: auth,
+      //   },
+      // });
+      // const { cid } = await client.add(JSON.stringify([proposalTemplateData])); // TODO - When fetching proposal templates will be implemented - upload updated data and not completely new one
 
       const proposal: ProposalExecuteData = {
         ...proposalMetadata,
@@ -54,7 +53,7 @@ export default function useCreateProposalTemplate() {
         calldatas: [
           new utils.Interface([
             'function updateValues(string[] _keys, string[] _values)',
-          ]).encodeFunctionData('updateValues', [['proposalTemplates'], [`${cid}`]]), // Force conversion to string
+          ]).encodeFunctionData('updateValues', [['proposalTemplates'], [`${'cid'}`]]), // Force conversion to string
         ],
       };
 
