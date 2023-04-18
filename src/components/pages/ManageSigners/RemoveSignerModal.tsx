@@ -112,6 +112,7 @@ function RemoveSignerModal({
           bgColor="#2c2c2c"
           borderColor="#4d4d4d"
           rounded="sm"
+          cursor="pointer"
         >
           {thresholdOptions?.map(thresholdOption => (
             <option
