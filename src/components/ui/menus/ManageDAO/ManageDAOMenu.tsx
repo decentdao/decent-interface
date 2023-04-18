@@ -9,7 +9,8 @@ import {
 } from '../../../../helpers/freezePeriodHelpers';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { FractalGuardContracts, FreezeGuard } from '../../../../types';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { FractalGuardContracts, FreezeGuard, StrategyType } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -31,12 +32,16 @@ export function ManageDAOMenu({
     parentAddress,
     childSafeAddress: safeAddress,
   });
+  const {
+    governance: { type },
+  } = useFractal();
 
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
       onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
+
     const manageSignersOption = {
       optionKey: 'optionManageSigners',
       onClick: () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
@@ -62,7 +67,11 @@ export function ManageDAOMenu({
         optionKey: 'optionInitiateFreeze',
         onClick: () => guardContracts.vetoVotingContract?.asSigner.castFreezeVote(),
       };
-      return [createSubDAOOption, manageSignersOption, freezeOption];
+      if (type === StrategyType.GNOSIS_SAFE) {
+        return [createSubDAOOption, manageSignersOption, freezeOption];
+      } else {
+        return [createSubDAOOption, freezeOption];
+      }
     } else if (
       freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
@@ -82,9 +91,21 @@ export function ManageDAOMenu({
 
       return [clawBackOption];
     } else {
-      return [createSubDAOOption, manageSignersOption];
+      if (type === StrategyType.GNOSIS_SAFE) {
+        return [createSubDAOOption, manageSignersOption];
+      } else {
+        return [createSubDAOOption];
+      }
     }
-  }, [safeAddress, push, guardContracts, handleClawBack, freezeGuard, currentTime]);
+  }, [
+    freezeGuard,
+    currentTime,
+    push,
+    safeAddress,
+    type,
+    guardContracts.vetoVotingContract?.asSigner,
+    handleClawBack,
+  ]);
 
   return (
     <OptionMenu
