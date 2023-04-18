@@ -35,8 +35,8 @@ export const DAO_ROUTES: DAORoutes = {
     path: 'new',
   },
   manageSigners: {
-    relative: (daoAddress: string) => `/daos/${daoAddress}/managesigners`,
-    path: 'managesigners',
+    relative: (daoAddress: string) => `/daos/${daoAddress}/manage-signers`,
+    path: 'manage-signers',
   },
   hierarchy: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/hierarchy`,
