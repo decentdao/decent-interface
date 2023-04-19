@@ -87,10 +87,7 @@ export const useFractalNode = ({
     onCompleted: async data => {
       if (!daoAddress) return;
       const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
-      const daoName = await getDaoName(
-        utils.getAddress(data.daos[0].address),
-        graphNodeInfo?.daoName
-      );
+      const daoName = await getDaoName(utils.getAddress(daoAddress), graphNodeInfo?.daoName);
 
       if (!!graphNodeInfo) {
         action.dispatch({
