@@ -67,9 +67,9 @@ function DaoDetails({
             color="chocolate.200"
             mt={2}
           >
-            {t('signersInfo1', { ns: 'common' })}
+            {t('signersInfo1')}
             <br />
-            {t('signersInfo2', { ns: 'common' })}
+            {t('signersInfo2')}
           </Text>
         </Stack>
       </Stack>
