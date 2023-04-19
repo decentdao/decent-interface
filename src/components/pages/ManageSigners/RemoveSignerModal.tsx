@@ -1,4 +1,16 @@
-import { Box, Button, Divider, Flex, HStack, Select, Text, Tooltip, Image } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  HStack,
+  Select,
+  Text,
+  Tooltip,
+  Image,
+  AlertTitle,
+  Alert,
+} from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -132,26 +144,29 @@ function RemoveSignerModal({
           >{`out of ${signers.length - 1} signers required`}</Text>
         </Flex>
       </HStack>
-      <HStack
-        border="2px solid"
-        borderColor="blue.500"
-        textStyle="text-sm-mono-regular"
-        rounded="md"
-        px={2}
-        py={3}
+      <Alert
+        status="info"
+        w="fit-full"
         mt={6}
       >
         <Image
           src="/images/alert-triangle.svg"
           alt="alert triangle"
-          w="1rem"
-          h="1rem"
+          w="1.5rem"
+          h="1.5rem"
           ml={3}
           mr={3}
           textColor="blue.500"
         />
-        <Text>{t('updateSignerWarning', { ns: 'modals' })}</Text>
-      </HStack>
+        <AlertTitle>
+          <Text
+            textStyle="text-sm-mono-regular"
+            whiteSpace="pre-wrap"
+          >
+            {t('updateSignerWarning', { ns: 'modals' })}
+          </Text>
+        </AlertTitle>
+      </Alert>
       <Button
         isDisabled={!threshold}
         mt={6}
