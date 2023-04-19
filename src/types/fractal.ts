@@ -254,6 +254,8 @@ export interface Fractal {
   treasury: FractalTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
+  // @todo update type;
+  readOnlyState: any;
 }
 
 export interface FractalClients {

@@ -3,12 +3,13 @@
 import { ReactNode, useReducer, useMemo, Context, createContext, useContext } from 'react';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore, StoreAction } from '../../types';
-import { combinedReducer, initialState } from './combinedReducer';
 import { useSafeService } from './hooks/useSafeService';
+import { initialState, useCombinedReducer } from './useCombinedReducer';
 export const FractalContext = createContext<FractalStore | null>(null);
 
 export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
 export function AppProvider({ children }: { children: ReactNode }) {
+  const combinedReducer = useCombinedReducer();
   // Replace individual useReducer calls with a single combined reducer
   const [state, dispatch] = useReducer(combinedReducer, initialState);
   // loads base Fractal contracts with provider into state
@@ -24,6 +25,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       treasury: state.treasury,
       governanceContracts: state.governanceContracts,
       guardContracts: state.guardContracts,
+      readOnlyState: state.readOnlyState,
       action: {
         dispatch,
         resetDAO: async () => {
