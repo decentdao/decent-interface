@@ -1,8 +1,9 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDAOProposals } from '../../../../hooks/DAO/loaders/useProposals';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../types';
 
 const useRemoveSigner = ({
@@ -19,16 +20,17 @@ const useRemoveSigner = ({
   daoAddress: string | null;
 }) => {
   const { submitProposal } = useSubmitProposal();
-
   const { t } = useTranslation(['modals']);
   const loadDAOProposals = useDAOProposals();
+  const {
+    baseContracts: { gnosisSafeSingletonContract },
+  } = useFractal();
+
   const removeSigner = useCallback(async () => {
     const description = 'Remove Signers';
 
-    const funcSignature =
-      'function removeOwner(address prevOwner, address owner, uint256 _threshold)';
     const calldatas = [
-      new ethers.utils.Interface([funcSignature]).encodeFunctionData('removeOwner', [
+      gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData('removeOwner', [
         prevSigner,
         signerToRemove,
         BigNumber.from(threshold),
@@ -56,6 +58,7 @@ const useRemoveSigner = ({
       safeAddress: daoAddress!,
     });
   }, [
+    gnosisSafeSingletonContract.asSigner.interface,
     prevSigner,
     signerToRemove,
     threshold,

@@ -1,14 +1,18 @@
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDAOProposals } from '../../../../hooks/DAO/loaders/useProposals';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../types';
 
 const useAddSigner = () => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
   const loadDAOProposals = useDAOProposals();
+  const {
+    baseContracts: { gnosisSafeSingletonContract },
+  } = useFractal();
   const addSigner = useCallback(
     async ({
       newSigner,
@@ -25,9 +29,8 @@ const useAddSigner = () => {
     }) => {
       const description = 'Add Signer';
 
-      const funcSignature = 'function addOwnerWithThreshold(address owner, uint256 _threshold)';
       const calldatas = [
-        new ethers.utils.Interface([funcSignature]).encodeFunctionData('addOwnerWithThreshold', [
+        gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
           newSigner,
           BigNumber.from(threshold),
         ]),
@@ -55,7 +58,7 @@ const useAddSigner = () => {
         safeAddress: daoAddress!,
       });
     },
-    [submitProposal, t, loadDAOProposals]
+    [gnosisSafeSingletonContract.asSigner.interface, submitProposal, t, loadDAOProposals]
   );
 
   return addSigner;
