@@ -1,5 +1,5 @@
 import { BigNumber, utils } from 'ethers';
-import * as IPFS from 'ipfs-core';
+import { create } from 'ipfs-http-client';
 import { useCallback } from 'react';
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalTemplateForm } from '../../../types/createProposalTemplate';
@@ -16,10 +16,36 @@ export default function useCreateProposalTemplate() {
       const proposalTemplateData = {
         title: values.proposalTemplateMetadata.title.trim(),
         description: values.proposalTemplateMetadata.description.trim(),
-        transactions: values.transactions,
+        transactions: values.transactions.map(tx => ({
+          ...tx,
+          parameters: tx.parameters
+            .map(param => {
+              if (param.signature) {
+                return param;
+              } else {
+                // This allows submitting transaction function with no params
+                return undefined;
+              }
+            })
+            .filter(param => param),
+        })),
       };
-      const ipfs = await IPFS.create();
-      const { cid } = await ipfs.add(JSON.stringify([proposalTemplateData])); // TODO - When fetching proposal templates will be implemented - upload updated data and not completely new one
+
+      const auth =
+        'Basic ' +
+        Buffer.from(
+          `${process.env.NEXT_PUBLIC_INFURA_PROJECT_API_KEY}:${process.env.NEXT_PUBLIC_INFURA_PROJECT_API_SECRET}`
+        ).toString('base64');
+
+      const client = create({
+        host: 'ipfs.infura.io',
+        port: 5001,
+        protocol: 'https',
+        headers: {
+          authorization: auth,
+        },
+      });
+      const { cid } = await client.add(JSON.stringify([proposalTemplateData])); // TODO - When fetching proposal templates will be implemented - upload updated data and not completely new one
 
       const proposal: ProposalExecuteData = {
         ...proposalMetadata,
