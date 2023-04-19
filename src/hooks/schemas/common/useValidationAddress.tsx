@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { AddressValidationMap } from '../../../types';
 import { Providers } from '../../../types/network';
 
@@ -64,7 +65,10 @@ export const useValidationAddress = () => {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = signer || provider;
-  const { t } = useTranslation(['daoCreate', 'common']);
+  const { t } = useTranslation(['daoCreate', 'common', 'modals']);
+  const {
+    node: { safe },
+  } = useFractal();
 
   const addressValidationTest = useMemo(() => {
     return {
@@ -80,6 +84,17 @@ export const useValidationAddress = () => {
       },
     };
   }, [signerOrProvider, addressValidationMap, t]);
+
+  const newSignerValidationTest = useMemo(() => {
+    return {
+      name: 'New Signer Validation',
+      message: t('alreadySigner', { ns: 'modals' }),
+      test: async function (address: string | undefined) {
+        if (!address || !safe) return false;
+        return !safe.owners.includes(address);
+      },
+    };
+  }, [safe, t]);
 
   const uniqueAddressValidationTest = useMemo(() => {
     return {
@@ -125,6 +140,7 @@ export const useValidationAddress = () => {
 
   return {
     addressValidationTest,
+    newSignerValidationTest,
     uniqueAddressValidationTest,
   };
 };

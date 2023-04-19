@@ -27,7 +27,7 @@ export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size="md"
+      size="lg"
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
@@ -53,7 +53,10 @@ export function ModalBase(props: ModuleBaseProps) {
             </Text>
           </HStack>
           <Spacer />
-          <CloseX onClick={props.onClose} />
+          <CloseX
+            cursor="pointer"
+            onClick={props.onClose}
+          />
         </Flex>
         <Divider
           color="chocolate.700"
