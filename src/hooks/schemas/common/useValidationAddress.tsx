@@ -65,7 +65,7 @@ export const useValidationAddress = () => {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = signer || provider;
-  const { t } = useTranslation(['daoCreate', 'common']);
+  const { t } = useTranslation(['daoCreate', 'common', 'modals']);
   const {
     node: { safe },
   } = useFractal();
@@ -88,13 +88,13 @@ export const useValidationAddress = () => {
   const newSignerValidationTest = useMemo(() => {
     return {
       name: 'New Signer Validation',
-      message: 'Signer is already a signer',
+      message: t('alreadySigner', { ns: 'modals' }),
       test: async function (address: string | undefined) {
         if (!address || !safe) return false;
         return !safe.owners.includes(address);
       },
     };
-  }, [safe]);
+  }, [safe, t]);
 
   const uniqueAddressValidationTest = useMemo(() => {
     return {
