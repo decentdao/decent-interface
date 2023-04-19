@@ -53,8 +53,8 @@ export function ProposalAction({
 }) {
   const {
     node: { daoAddress },
+    readOnly: { user },
   } = useFractal();
-  const { address: account } = useAccount();
   const { push } = useRouter();
   const { t } = useTranslation();
   const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
@@ -73,12 +73,12 @@ export function ProposalAction({
   const hasVoted = useMemo(() => {
     if (isUsulProposal) {
       const usulProposal = proposal as UsulProposal;
-      return !!usulProposal.votes.find(vote => vote.voter === account);
+      return !!usulProposal.votes.find(vote => vote.voter === user.address);
     } else {
       const safeProposal = proposal as MultisigProposal;
-      return !!safeProposal.confirmations.find(confirmation => confirmation.owner === account);
+      return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [account, isUsulProposal, proposal]);
+  }, [isUsulProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -121,6 +121,8 @@ export function ProposalAction({
   }
 
   if (expandedView) {
+    if (user.votingWeight.eq(0)) return <></>;
+
     return (
       <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Flex justifyContent="space-between">

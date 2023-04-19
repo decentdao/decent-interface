@@ -254,8 +254,7 @@ export interface Fractal {
   treasury: FractalTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
-  // @todo update type;
-  readOnlyState: any;
+  readOnly: ReadOnlyState;
 }
 
 export interface FractalClients {
@@ -363,3 +362,20 @@ export interface FractalContracts {
 }
 
 export type FractalProposal = UsulProposal | MultisigProposal;
+
+export interface User {
+  /** The user's wallet address, if connected.  */
+  address?: string;
+  /** The number of delegated tokens for Azorius, or 1 for a Multisig DAO signer. */
+  votingWeight: BigNumber;
+}
+
+export interface DAO {
+  /** Whether the DAO is an Azorius DAO.  */
+  isAzorius: boolean;
+}
+
+export interface ReadOnlyState {
+  dao: DAO | null;
+  user: User;
+}

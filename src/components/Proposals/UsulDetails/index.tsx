@@ -1,7 +1,6 @@
 import { GridItem } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
 import { ProposalAction } from '../../../components/Proposals/ProposalActions/ProposalAction';
 import ProposalSummary from '../../../components/Proposals/ProposalSummary';
 import ProposalVotes from '../../../components/Proposals/ProposalVotes';
@@ -16,7 +15,12 @@ import { ProposalInfo } from '../ProposalInfo';
 
 export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   const [activeTimeout, setActiveTimeout] = useState<NodeJS.Timeout>();
-  const { governance, governanceContracts, action } = useFractal();
+  const {
+    governance,
+    governanceContracts,
+    action,
+    readOnly: { user },
+  } = useFractal();
   const { chainId } = useNetworkConfg();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
@@ -25,8 +29,6 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   });
 
   const azoriusGovernance = governance as AzoriusGovernance;
-
-  const { address: account } = useAccount();
 
   useEffect(() => {
     const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
@@ -74,7 +76,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
       </GridItem>
       <GridItem>
         <ProposalSummary proposal={proposal} />
-        {account && (
+        {user.address && (
           <ProposalAction
             proposal={proposal}
             expandedView

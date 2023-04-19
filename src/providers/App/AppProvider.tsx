@@ -25,7 +25,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       treasury: state.treasury,
       governanceContracts: state.governanceContracts,
       guardContracts: state.guardContracts,
-      readOnlyState: state.readOnlyState,
+      readOnly: state.readOnly,
       action: {
         dispatch,
         resetDAO: async () => {

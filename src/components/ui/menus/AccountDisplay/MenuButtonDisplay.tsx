@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import Avatar from '../../page/Header/Avatar';
 
 export function NotConnected() {
@@ -20,7 +21,10 @@ export function NotConnected() {
 }
 
 export function Connected() {
-  const { address: account } = useAccount();
+  const {
+    readOnly: { user },
+  } = useFractal();
+  const account = user.address;
   const { displayName: accountDisplayName } = useDisplayName(account);
   const avatarURL = useAvatar(account || null);
 
@@ -47,9 +51,10 @@ export function Connected() {
 }
 
 export function MenuButtonDisplay() {
-  const { address: account } = useAccount();
-
-  if (!account) {
+  const {
+    readOnly: { user },
+  } = useFractal();
+  if (!user.address) {
     return <NotConnected />;
   }
   return <Connected />;
