@@ -1,10 +1,10 @@
-import { LazyQueryResult, useLazyQuery } from '@apollo/client';
+import { useLazyQuery, useQuery } from '@apollo/client';
 import { utils } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { DAOQueryDocument, DAOQueryQuery, Exact } from '../../../../.graphclient';
+import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { BASE_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -47,8 +47,8 @@ export const useFractalNode = ({
   const { replace } = useRouter();
 
   const lookupModules = useFractalModules();
-  const [getDAOInfo] = useLazyQuery(DAOQueryDocument);
   const { setMethodOnInterval } = useUpdateTimer(currentValidAddress.current);
+  const [getDAOInfo] = useLazyQuery(DAOQueryDocument);
 
   const invalidateDAO = useCallback(
     (errorMessage: string) => {
@@ -60,38 +60,47 @@ export const useFractalNode = ({
     [action, replace, t]
   );
 
-  const formatDAOQuery = useCallback(
-    (
-      result: LazyQueryResult<
-        DAOQueryQuery,
-        Exact<{
-          daoAddress?: any;
-        }>
-      >,
-      _daoAddress: string
-    ) => {
-      if (!result.data) {
-        return;
-      }
-      const { daos } = result.data;
-      const dao = daos[0];
-      if (dao) {
-        const { parentAddress, name, hierarchy } = dao;
-
-        const currentNode: Node = {
-          nodeHierarchy: {
-            parentAddress: parentAddress as string,
-            childNodes: mapChildNodes(hierarchy),
-          },
-          daoName: name as string,
-          daoAddress: utils.getAddress(_daoAddress as string),
-        };
-        return currentNode;
-      }
+  const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
+    if (!result.data) {
       return;
+    }
+    const { daos } = result.data;
+    const dao = daos[0];
+    if (dao) {
+      const { parentAddress, name, hierarchy } = dao;
+
+      const currentNode: Node = {
+        nodeHierarchy: {
+          parentAddress: parentAddress as string,
+          childNodes: mapChildNodes(hierarchy),
+        },
+        daoName: name as string,
+        daoAddress: utils.getAddress(_daoAddress as string),
+      };
+      return currentNode;
+    }
+    return;
+  }, []);
+
+  useQuery(DAOQueryDocument, {
+    variables: { daoAddress },
+    onCompleted: async data => {
+      if (!daoAddress) return;
+      const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
+      const daoName = await getDaoName(
+        utils.getAddress(data.daos[0].address),
+        graphNodeInfo?.daoName
+      );
+
+      if (!!graphNodeInfo) {
+        action.dispatch({
+          type: NodeAction.SET_DAO_INFO,
+          payload: Object.assign(graphNodeInfo, { daoName }),
+        });
+      }
     },
-    []
-  );
+    pollInterval: ONE_MINUTE,
+  });
 
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
@@ -144,25 +153,6 @@ export const useFractalNode = ({
     [action, safeService, lookupModules]
   );
 
-  const updateDAOInfo = useCallback(
-    async (_daoAddress: string, safeAddress: string) => {
-      const graphNodeInfo = formatDAOQuery(
-        await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-        safeAddress
-      );
-
-      const daoName = await getDaoName(utils.getAddress(safeAddress), graphNodeInfo?.daoName);
-
-      if (!!graphNodeInfo) {
-        action.dispatch({
-          type: NodeAction.SET_DAO_INFO,
-          payload: Object.assign(graphNodeInfo, { daoName }),
-        });
-      }
-    },
-    [action, formatDAOQuery, getDAOInfo, getDaoName]
-  );
-
   const setDAO = useCallback(
     async (_daoAddress: string) => {
       if (utils.isAddress(_daoAddress) && safeService) {
@@ -172,7 +162,6 @@ export const useFractalNode = ({
             invalidateDAO('errorInvalidSearch');
             return;
           }
-          setMethodOnInterval(() => updateDAOInfo(_daoAddress, safe.address), ONE_MINUTE);
         } catch (e) {
           // network error
           invalidateDAO('errorFailedSearch');
@@ -182,7 +171,7 @@ export const useFractalNode = ({
         invalidateDAO('errorFailedSearch');
       }
     },
-    [invalidateDAO, updateSafeInfo, updateDAOInfo, setMethodOnInterval, safeService]
+    [invalidateDAO, updateSafeInfo, setMethodOnInterval, safeService]
   );
 
   useEffect(() => {
