@@ -1,46 +1,58 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIdleTimer } from 'react-idle-timer';
 
 export const useUpdateTimer = (safeAddress?: string | null) => {
-  const [timers, setTimers] = useState<{ method: string; timerId: NodeJS.Timer }[]>([]);
+  // Use useRef to store timers without triggering unnecessary re-renders
+  const timers = useRef<Map<string, NodeJS.Timer>>(new Map());
   const [isActive, setIsActive] = useState<boolean>(true);
   const twentySeconds = 20000; // in milliseconds
 
+  // Use react-idle-timer to manage user idle state
   useIdleTimer({
     timeout: twentySeconds * 3 * 5, // 5 minutes
     onIdle: () => setIsActive(false),
     onActive: () => setIsActive(true),
   });
 
+  // Set a method to be executed at a set interval, considering the user's idle state
   const setMethodOnInterval = useCallback(
-    (getMethod: () => Promise<void>, milliseconds: number = twentySeconds) => {
-      Promise.resolve(getMethod());
-      setTimers(prevState => {
-        const filteredTimers = prevState.filter(timer => {
-          const isAlreadySet = timer.method === getMethod.toString();
-          if (isAlreadySet) {
-            clearInterval(timer.timerId);
-          }
-          return !isAlreadySet;
-        });
+    async (getMethod: () => Promise<any | undefined>, milliseconds: number = twentySeconds) => {
+      let returnValue: any | undefined;
+      returnValue = await Promise.resolve(getMethod());
 
-        const intervalId = setInterval(() => {
-          if (isActive) {
-            Promise.resolve(getMethod());
-          }
-        }, milliseconds);
-        return [...filteredTimers, { method: getMethod.toString(), timerId: intervalId }];
-      });
+      // Clear the interval if the method is already in the timers list
+      const methodKey = getMethod.toString();
+      if (timers.current.has(methodKey)) {
+        clearInterval(timers.current.get(methodKey)!);
+      }
+
+      // Set the interval and store it in the timers list
+      const intervalId = setInterval(() => {
+        if (isActive) {
+          Promise.resolve(getMethod());
+        }
+      }, milliseconds);
+
+      timers.current.set(methodKey, intervalId);
+      return returnValue;
     },
     [isActive]
   );
+
+  // Clear intervals when the component is unmounted to avoid memory leaks
+  useEffect(() => {
+    const nodeTimers = timers.current;
+    return () => {
+      nodeTimers.forEach(timer => clearInterval(timer));
+    };
+  }, []);
+
+  // Clear intervals based on the safeAddress value and testing environment
   useEffect(() => {
     if (!safeAddress || process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
-      timers.forEach(timer => clearInterval(timer.timerId));
+      timers.current.forEach(timer => clearInterval(timer));
     }
-    return () => {
-      timers.forEach(timer => clearInterval(timer.timerId));
-    };
-  }, [safeAddress, timers]);
+  }, [safeAddress]);
+
   return { setMethodOnInterval };
 };
