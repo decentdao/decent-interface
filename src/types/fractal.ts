@@ -363,19 +363,26 @@ export interface FractalContracts {
 
 export type FractalProposal = UsulProposal | MultisigProposal;
 
-export interface User {
+/**
+ * Immutable state generally calculated from other stateful objects.
+ * These are front end specific values that are commonly used throughout
+ * the app.
+ */
+export interface ReadOnlyState {
+  /** The currently connected DAO or null if there isn't one. */
+  dao: ReadOnlyDAO | null;
+  /** The "user", meaning the app user, wallet connected or not. */
+  user: ReadOnlyUser;
+}
+
+export interface ReadOnlyUser {
   /** The user's wallet address, if connected.  */
   address?: string;
-  /** The number of delegated tokens for Azorius, or 1 for a Multisig DAO signer. */
+  /** The number of delegated tokens for the connected Azorius DAO, 1 for a Multisig DAO signer */
   votingWeight: BigNumber;
 }
 
-export interface DAO {
-  /** Whether the DAO is an Azorius DAO.  */
+export interface ReadOnlyDAO {
+  /** Whether the connected DAO is an Azorius DAO.  */
   isAzorius: boolean;
-}
-
-export interface ReadOnlyState {
-  dao: DAO | null;
-  user: User;
 }

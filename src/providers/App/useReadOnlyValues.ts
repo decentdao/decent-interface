@@ -1,7 +1,13 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 import { useCallback } from 'react';
-import { Fractal, AzoriusGovernance, StrategyType, DAO, ReadOnlyState } from '../../types';
+import { Fractal, AzoriusGovernance, StrategyType, ReadOnlyState } from '../../types';
 
+/**
+ * Sets "read only" values which are passed on to the FractalProvider.
+ *
+ * These are useful dao or user specific values calculated from other stateful
+ * values.
+ */
 export const useReadOnlyValues = () => {
   const readOnlyValues = useCallback((_state: Fractal, _account: string | undefined) => {
     const { node, governance } = _state;
@@ -21,19 +27,16 @@ export const useReadOnlyValues = () => {
       }
     };
 
-    // if there is no DAO connected, return null for this
-    const dao: DAO | null = !node.daoAddress
-      ? null
-      : {
-          isAzorius: governance.type === StrategyType.GNOSIS_SAFE_USUL,
-        };
-
     return {
       user: {
-        address: _account, // TODO normalize?
+        address: _account ? utils.getAddress(_account) : undefined,
         votingWeight: votingWeight(),
       },
-      dao: dao,
+      dao: !node.daoAddress
+        ? null // if there is no DAO connected, we return null for this
+        : {
+            isAzorius: governance.type === StrategyType.GNOSIS_SAFE_USUL,
+          },
     } as ReadOnlyState;
   }, []);
   return { readOnlyValues };

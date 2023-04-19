@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { Fractal, FractalActions, ReadOnlyState, StoreAction } from '../../types';
+import { Fractal, FractalActions, StoreAction } from '../../types';
 import { FractalGovernanceActions } from './governance/action';
 import { governanceReducer, initialGovernanceState } from './governance/reducer';
 import { GovernanceContractActions } from './governanceContracts/action';
@@ -16,14 +16,6 @@ import { initialNodeState, nodeReducer } from './node/reducer';
 import { TreasuryActions } from './treasury/action';
 import { initialTreasuryState, treasuryReducer } from './treasury/reducer';
 
-export const initialReadOnlyState: ReadOnlyState = {
-  dao: null,
-  user: {
-    address: undefined,
-    votingWeight: BigNumber.from(0),
-  },
-};
-
 export const initialState = {
   node: initialNodeState,
   governance: initialGovernanceState,
@@ -31,7 +23,13 @@ export const initialState = {
   governanceContracts: initialGovernanceContractsState,
   guardContracts: initialGuardContractsState,
   guard: initialGuardState,
-  readOnly: initialReadOnlyState,
+  readOnly: {
+    dao: null,
+    user: {
+      address: undefined,
+      votingWeight: BigNumber.from(0),
+    },
+  },
 };
 
 export const combinedReducer = (state: Fractal, action: FractalActions) => {
