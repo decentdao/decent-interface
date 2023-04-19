@@ -150,7 +150,10 @@ function AddSignerModal({
                   color="grayscale.100"
                   mt={3}
                   ml={2}
-                >{`out of ${signers.length + 1} signers required`}</Text>
+                >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length + 1} ${t(
+                  'signersRequired2',
+                  { ns: 'modals' }
+                )}`}</Text>
               </Flex>
             </HStack>
             <Alert
