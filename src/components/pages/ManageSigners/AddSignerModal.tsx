@@ -77,7 +77,7 @@ function AddSignerModal({
         onSubmit={onSubmit}
         validationSchema={addressValidationSchema}
       >
-        {({ handleSubmit, errors }) => (
+        {({ handleSubmit, errors, values }) => (
           <form onSubmit={handleSubmit}>
             <Text
               textStyle="text-base-sans-regular"
@@ -178,7 +178,7 @@ function AddSignerModal({
             </Alert>
             <Button
               type="submit"
-              isDisabled={!!errors.address || !threshold}
+              isDisabled={!values.address || !!errors.address || !threshold}
               mt={6}
               width="100%"
             >
