@@ -10,6 +10,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { NodeAction } from '../../../providers/App/node/action';
 import { FractalNode, Node, WithError } from '../../../types';
+import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
@@ -25,6 +26,8 @@ const mapChildNodes = (_hierarchy: any) => {
     };
   });
 };
+
+const ONE_MINUTE = 60 * 1000;
 
 export const useFractalNode = ({
   daoAddress,
@@ -45,6 +48,7 @@ export const useFractalNode = ({
 
   const lookupModules = useFractalModules();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument);
+  const { setMethodOnInterval } = useUpdateTimer(currentValidAddress.current);
 
   const invalidateDAO = useCallback(
     (errorMessage: string) => {
@@ -122,36 +126,53 @@ export const useFractalNode = ({
     [safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
   );
 
+  const updateSafeInfo = useCallback(
+    async (_daoAddress: string) => {
+      const safeInfo = await safeService.getSafeInfo(utils.getAddress(_daoAddress));
+      if (!safeInfo) return;
+
+      action.dispatch({
+        type: NodeAction.SET_FRACTAL_MODULES,
+        payload: await lookupModules(safeInfo.modules),
+      });
+      action.dispatch({
+        type: NodeAction.SET_SAFE_INFO,
+        payload: safeInfo,
+      });
+      return safeInfo;
+    },
+    [action, safeService, lookupModules]
+  );
+
+  const updateDAOInfo = useCallback(
+    async (_daoAddress: string, safeAddress: string) => {
+      const graphNodeInfo = formatDAOQuery(
+        await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
+        safeAddress
+      );
+
+      const daoName = await getDaoName(utils.getAddress(safeAddress), graphNodeInfo?.daoName);
+
+      if (!!graphNodeInfo) {
+        action.dispatch({
+          type: NodeAction.SET_DAO_INFO,
+          payload: Object.assign(graphNodeInfo, { daoName }),
+        });
+      }
+    },
+    [action, formatDAOQuery, getDAOInfo, getDaoName]
+  );
+
   const setDAO = useCallback(
     async (_daoAddress: string) => {
-      if (utils.isAddress(_daoAddress)) {
+      if (utils.isAddress(_daoAddress) && safeService) {
         try {
-          const safe = await safeService.getSafeInfo(utils.getAddress(_daoAddress));
+          const safe = await setMethodOnInterval(() => updateSafeInfo(_daoAddress), ONE_MINUTE);
           if (!safe) {
             invalidateDAO('errorInvalidSearch');
             return;
           }
-          action.dispatch({
-            type: NodeAction.SET_FRACTAL_MODULES,
-            payload: await lookupModules(safe.modules),
-          });
-          action.dispatch({
-            type: NodeAction.SET_SAFE_INFO,
-            payload: safe,
-          });
-
-          const graphNodeInfo = formatDAOQuery(
-            await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            safe.address
-          );
-          const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo?.daoName);
-
-          if (!!graphNodeInfo) {
-            action.dispatch({
-              type: NodeAction.SET_DAO_INFO,
-              payload: Object.assign(graphNodeInfo, { daoName }),
-            });
-          }
+          setMethodOnInterval(() => updateDAOInfo(_daoAddress, safe.address), ONE_MINUTE);
         } catch (e) {
           // network error
           invalidateDAO('errorFailedSearch');
@@ -161,7 +182,7 @@ export const useFractalNode = ({
         invalidateDAO('errorFailedSearch');
       }
     },
-    [action, invalidateDAO, safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
+    [invalidateDAO, updateSafeInfo, updateDAOInfo, setMethodOnInterval, safeService]
   );
 
   useEffect(() => {
