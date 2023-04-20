@@ -67,12 +67,14 @@ export default function ProposalTemplateTransaction({
           setFieldValue(`transactions.${transactionIndex}.targetAddress`, e.target.value)
         }
       />
-      <Box>
-        <ABISelector
-          target={transaction.targetAddress}
-          onChange={handleABISelectorChange}
-        />
-      </Box>
+      {transaction.targetAddress && (
+        <Box>
+          <ABISelector
+            target={transaction.targetAddress}
+            onChange={handleABISelectorChange}
+          />
+        </Box>
+      )}
 
       <Box
         backgroundColor="black"
