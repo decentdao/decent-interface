@@ -13,6 +13,7 @@ import { NetworkConfig } from '../../../types/network';
 export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
   etherscanBaseURL: 'https://goerli.etherscan.io',
+  etherscanAPIBaseUrl: 'https://api-goerli.etherscan.io',
   chainId: 5,
   name: goerli.name,
   color: 'gold.300',

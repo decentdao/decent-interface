@@ -15,6 +15,7 @@ import { NetworkConfig } from '../../../types/network';
 export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
+  etherscanAPIBaseUrl: 'https://api.polygonscan.com',
   chainId: 137,
   name: polygon.name,
   color: '#562FB0',

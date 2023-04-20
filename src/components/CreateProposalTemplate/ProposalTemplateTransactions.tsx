@@ -32,9 +32,10 @@ export default function ProposalTemplateTransactions({
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 
   const removeTransaction = (transactionIndex: number) => {
-    const transactionsArr = [...transactions];
-    transactionsArr.splice(transactionIndex, 1);
-    setFieldValue('transactions', transactionsArr);
+    setFieldValue(
+      'transactions',
+      transactions.filter((tx, i) => i !== transactionIndex)
+    );
   };
   return (
     <Accordion
