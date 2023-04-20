@@ -33,7 +33,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   constructor(
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
-    usulContracts: AzoriusContracts | undefined,
+    azoriusContracts: AzoriusContracts | undefined,
     daoData: GnosisDAO | TokenGovernanceDAO,
     saltNum: string,
     predictedGnosisSafeAddress: string,
@@ -46,7 +46,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     super(
       signerOrProvider,
       baseContracts,
-      usulContracts,
+      azoriusContracts,
       daoData,
       parentAddress,
       parentTokenAddress

@@ -12,11 +12,11 @@ export const gnosisSafeData = async (
   gnosisSafeSingletonContract: GnosisSafe,
   daoData: GnosisDAO,
   saltNum: string,
-  hasUsul?: boolean
+  hasAzorius?: boolean
 ) => {
   const gnosisDaoData = daoData as GnosisDAO;
 
-  const signers = hasUsul
+  const signers = hasAzorius
     ? [multiSendContract.address]
     : [
         ...gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress),

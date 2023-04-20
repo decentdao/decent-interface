@@ -10,7 +10,7 @@ import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
-const FILTERS_USUL_BASE = [
+const FILTERS_AZORIUS_BASE = [
   FractalProposalState.Active,
   FractalProposalState.Queueable,
   FractalProposalState.TimeLocked,
@@ -22,7 +22,7 @@ const FILTERS_USUL_BASE = [
   FractalProposalState.Rejected,
 ];
 
-const FILTERS_USUL_CHILD = [
+const FILTERS_AZORIUS_CHILD = [
   FractalProposalState.Active,
   FractalProposalState.Queueable,
   FractalProposalState.TimeLocked,
@@ -73,9 +73,9 @@ export default function Proposals() {
     switch (type) {
       case StrategyType.GNOSIS_SAFE_AZORIUS:
         if (guardContracts.vetoGuardContract) {
-          options = FILTERS_USUL_CHILD;
+          options = FILTERS_AZORIUS_CHILD;
         } else {
-          options = FILTERS_USUL_BASE;
+          options = FILTERS_AZORIUS_BASE;
         }
         break;
       case StrategyType.GNOSIS_SAFE:

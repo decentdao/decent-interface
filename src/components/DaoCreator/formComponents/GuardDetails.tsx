@@ -51,8 +51,8 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentUsul = type === StrategyType.GNOSIS_SAFE_AZORIUS;
-    if (!isParentUsul && isSubDAO) {
+    const isParentAzorius = type === StrategyType.GNOSIS_SAFE_AZORIUS;
+    if (!isParentAzorius && isSubDAO) {
       setFieldValue('gnosis.customNonce', defaultNonce);
       setShowCustomNonce(true);
     }

@@ -12,7 +12,7 @@ import { GovernanceContractAction } from '../../../providers/App/governanceContr
 import { ContractConnection, FractalModuleType, FractalNode } from '../../../types';
 import { useLocalStorage } from '../../utils/useLocalStorage';
 
-const USUL_MODULE_CACHE_KEY = 'usul_module_gov_';
+const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
@@ -45,7 +45,7 @@ export const useGovernanceContracts = () => {
           asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(azoriusModule.address),
           asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModule.address),
         };
-        const cachedContractAddresses = getValue('usul_module_gov_' + azoriusModule.address);
+        const cachedContractAddresses = getValue('azorius_module_gov_' + azoriusModule.address);
 
         // if existing cached addresses are found, use them
         let votingContractAddress: string | undefined =
@@ -91,7 +91,7 @@ export const useGovernanceContracts = () => {
         }
         if (!!ozLinearVotingContract && !!tokenContract) {
           // cache the addresses for future use, saves on query requests
-          setValue(USUL_MODULE_CACHE_KEY + azoriusModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
             votingContractAddress,
             govTokenAddress,
             votingContractMasterCopyAddress,

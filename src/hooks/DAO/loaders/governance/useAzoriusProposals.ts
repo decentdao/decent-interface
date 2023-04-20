@@ -87,9 +87,12 @@ export const useAzoriusProposals = () => {
       if (!azoriusContract || !ozLinearVotingContract) {
         return;
       }
-      const usulContractRPC = getEventRPC<FractalUsul>(azoriusContract, provider.network.chainId);
-      const proposalMetaDataCreatedFilter = usulContractRPC.filters.ProposalMetadataCreated();
-      const proposalMetaDataCreatedEvents = await usulContractRPC.queryFilter(
+      const azoriusContractRPC = getEventRPC<FractalUsul>(
+        azoriusContract,
+        provider.network.chainId
+      );
+      const proposalMetaDataCreatedFilter = azoriusContractRPC.filters.ProposalMetadataCreated();
+      const proposalMetaDataCreatedEvents = await azoriusContractRPC.queryFilter(
         proposalMetaDataCreatedFilter
       );
 
@@ -157,11 +160,11 @@ export const useAzoriusProposals = () => {
         return;
       }
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-      const usulContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
+      const azoriusContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
 
       const state = await getFractalProposalState(
         strategyContract,
-        usulContractRPC,
+        azoriusContractRPC,
         proposalNumber,
         chainId
       );
@@ -180,11 +183,11 @@ export const useAzoriusProposals = () => {
         return;
       }
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-      const usulContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
+      const azoriusContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
 
       const state = await getFractalProposalState(
         strategyContract,
-        usulContractRPC,
+        azoriusContractRPC,
         proposalNumber,
         chainId
       );
