@@ -1,5 +1,5 @@
 import { BigNumber } from 'ethers';
-import { CreatorFormState, StrategyType } from '../../types';
+import { CreatorFormState, StrategyType, TokenCreationType } from '../../types';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
@@ -9,6 +9,7 @@ export const initialState: CreatorFormState = {
     governance: StrategyType.GNOSIS_SAFE,
   },
   govToken: {
+    tokenCreationType: TokenCreationType.NEW,
     tokenName: '',
     tokenSupply: {
       value: '',
@@ -22,6 +23,7 @@ export const initialState: CreatorFormState = {
         },
       },
     ],
+    tokenImportAddress: '',
     parentAllocationAmount: {
       value: '',
     },

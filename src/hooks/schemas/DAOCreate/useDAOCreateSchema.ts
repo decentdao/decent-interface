@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { DAOEssentials, StrategyType, BigNumberValuePair } from '../../../types';
+import { DAOEssentials, StrategyType, BigNumberValuePair, TokenCreationType } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
@@ -10,9 +10,14 @@ import { useDAOCreateTests } from './useDAOCreateTests';
  * @dev https://www.npmjs.com/package/yup
  */
 export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
-  const { addressValidationTest, uniqueAddressValidationTest } = useValidationAddress();
-  const { maxAllocationValidation, allocationValidationTest, uniqueAllocationValidationTest } =
-    useDAOCreateTests();
+  const { addressValidationTestSimple, addressValidationTest, uniqueAddressValidationTest } =
+    useValidationAddress();
+  const {
+    maxAllocationValidation,
+    allocationValidationTest,
+    uniqueAllocationValidationTest,
+    validERC20Address,
+  } = useDAOCreateTests();
 
   const { t } = useTranslation(['daoCreate']);
 
@@ -51,7 +56,17 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             _schema.shape({
               tokenName: Yup.string().required(),
               tokenSymbol: Yup.string().required().min(2),
-              tokenSupply: Yup.object().shape({ value: Yup.string().required() }),
+              tokenSupply: Yup.object().shape({
+                value: Yup.string().when('tokenCreationType', {
+                  is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                  then: __schema => __schema.required(),
+                }),
+              }),
+              tokenImportAddress: Yup.string().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.IMPORTED,
+                then: __schmema =>
+                  __schmema.test(addressValidationTestSimple).test(validERC20Address),
+              }),
               parentAllocationAmount: Yup.object().when({
                 is: (value: BigNumberValuePair) => !!value.value,
                 then: schema =>
@@ -59,20 +74,22 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     value: Yup.string().test(maxAllocationValidation),
                   }),
               }),
-              tokenAllocations: Yup.array()
-                .min(1)
-                .of(
-                  Yup.object().shape({
-                    address: Yup.string()
-                      .test(allocationValidationTest)
-                      .test(uniqueAllocationValidationTest),
-                    amount: Yup.object()
-                      .required()
-                      .shape({
-                        value: Yup.string().test(maxAllocationValidation),
-                      }),
-                  })
-                ),
+              tokenAllocations: Yup.array().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                then: __schema =>
+                  __schema.min(1).of(
+                    Yup.object().shape({
+                      address: Yup.string()
+                        .test(allocationValidationTest)
+                        .test(uniqueAllocationValidationTest),
+                      amount: Yup.object()
+                        .required()
+                        .shape({
+                          value: Yup.string().test(maxAllocationValidation),
+                        }),
+                    })
+                  ),
+              }),
             }),
         }),
         govModule: Yup.object().when('essentials', {
@@ -105,6 +122,8 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
       allocationValidationTest,
       uniqueAllocationValidationTest,
       isSubDAO,
+      validERC20Address,
+      addressValidationTestSimple,
     ]
   );
   return { createDAOValidation };

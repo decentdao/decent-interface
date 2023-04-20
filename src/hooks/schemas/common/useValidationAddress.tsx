@@ -9,11 +9,13 @@ import { Providers } from '../../../types/network';
 export async function validateAddress({
   signerOrProvider,
   address,
+  checkENS = true,
 }: {
   signerOrProvider: Signer | Providers;
   address: string;
+  checkENS?: boolean;
 }) {
-  if (!!address && address.trim() && address.endsWith('.eth')) {
+  if (!!address && address.trim() && address.endsWith('.eth') && checkENS) {
     const resolvedAddress = await signerOrProvider.resolveName(address).catch();
     if (resolvedAddress) {
       return {
@@ -81,6 +83,25 @@ export const useValidationAddress = () => {
     };
   }, [signerOrProvider, addressValidationMap, t]);
 
+  const addressValidationTestSimple = useMemo(() => {
+    return {
+      name: 'Address Validation',
+      message: t('errorInvalidAddress', { ns: 'common' }),
+      test: async function (address: string | undefined) {
+        if (!address) return false;
+        const { validation } = await validateAddress({
+          signerOrProvider,
+          address,
+          checkENS: false,
+        });
+        if (validation.isValidAddress) {
+          addressValidationMap.current.set(address, validation);
+        }
+        return validation.isValidAddress;
+      },
+    };
+  }, [signerOrProvider, addressValidationMap, t]);
+
   const uniqueAddressValidationTest = useMemo(() => {
     return {
       name: 'Unique Addresses',
@@ -124,6 +145,7 @@ export const useValidationAddress = () => {
   }, [signerOrProvider, t]);
 
   return {
+    addressValidationTestSimple,
     addressValidationTest,
     uniqueAddressValidationTest,
   };

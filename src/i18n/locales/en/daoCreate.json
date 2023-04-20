@@ -21,7 +21,6 @@
     "titleFunding": "Add Funding",
     "labelConnectWallet": "To deploy a new Fractal",
     "titleFundingOptions": "Parent Treasury",
-    "labelSelectToken": "Select Token",
     "labelSelectNFT": "Select NFT",
     "labelVotingPeriod": "Voting Period",
     "labelChooseGovernance": "Choose Governance",
@@ -73,10 +72,19 @@
     "labelDeploySubDAO": "Create subDAO Proposal",
     "titleAllocations": "Initial Token Allocations",
     "titleTokenParams": "Token Metadata",
+    "titleSelectToken": "Select Token",
     "titleAddress": "Address",
     "titleAmount": "Amount",
     "createSubDAOPendingToastMessage": "Creating your subDAO Proposal",
     "createSubDAOSuccessToastMessage": "Deployment successful",
     "createSubDAOFailureToastMessage": "Deployment failed",
-    "helperAllocations": "Unallocated tokens will be placed in your DAO's treasury"
+    "helperAllocations": "Unallocated tokens will be placed in your DAO's treasury",
+    "labelSelectToken": "Select Token",
+    "helperSelectToken": "Create a new token or import an existing token to continue",
+    "radioLabelNewToken": "New Token",
+    "radioLabelExistingToken": "Existing Token",
+    "helperNewToken": "Create a new ERC-20 token to vote with",
+    "helperExistingToken": "Create a new token or import an existing token to continue",
+    "warningExistingToken": "This token needs to be wrapped in order to use as a voting token",
+    "warningExistingTokenTooltip": "Fractal will wrap this ERC-20 token within an ERC-20 governance token. You can unwrap at any time by opening your wallet."
 }

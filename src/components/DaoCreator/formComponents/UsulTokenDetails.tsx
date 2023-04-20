@@ -1,82 +1,194 @@
-import { Divider, Flex, Input } from '@chakra-ui/react';
-import { Field, FieldAttributes } from 'formik';
+import { Box, Flex, Input, RadioGroup, Text, Tooltip } from '@chakra-ui/react';
+import { LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
+import { ERC20Votes__factory } from '@fractal-framework/fractal-contracts';
+import { constants, ethers, utils } from 'ethers';
+import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { erc20ABI, useProvider } from 'wagmi';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { TokenCreationType, ICreationStepProps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
-import { StepButtons } from '../StepButtons';
+import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepWrapper } from '../StepWrapper';
-import { UsulTokenAllocations } from './UsulTokenAllocations';
+import { VotesTokenImport } from './VotesTokenImport';
+import { VotesTokenNew } from './VotesTokenNew';
+
+function TokenConfigDisplay(props: ICreationStepProps) {
+  switch (props.values.govToken.tokenCreationType) {
+    case TokenCreationType.NEW:
+      return <VotesTokenNew {...props} />;
+    case TokenCreationType.IMPORTED:
+      return <VotesTokenImport {...props} />;
+    default:
+      return null;
+  }
+}
 
 export function UsulTokenDetails(props: ICreationStepProps) {
-  const { values, isSubmitting, transactionPending, handleChange, isSubDAO, setFieldValue } = props;
+  const {
+    transactionPending,
+    isSubDAO,
+    setFieldValue,
+    values,
+    errors,
+    handleChange,
+    setFieldTouched,
+    isSubmitting,
+  } = props;
+
   const { t } = useTranslation('daoCreate');
-  const { restrictChars } = useFormHelpers();
+  const provider = useProvider();
+
+  const checkVotesToken = useCallback(
+    async (address: string) => {
+      try {
+        const votesContract = new ethers.Contract(address, ERC20Votes__factory.abi, provider);
+        await votesContract.estimateGas.delegate('0x0000000000000000000000000000000000000001');
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    [provider]
+  );
+
+  const updateImportFields = useCallback(async () => {
+    const importAddress = values.govToken.tokenImportAddress;
+    const importError = errors?.govToken?.tokenImportAddress;
+    if (importAddress && !importError && utils.isAddress(importAddress)) {
+      const isVotesToken = await checkVotesToken(importAddress);
+      const tokenContract = new ethers.Contract(importAddress, erc20ABI, provider);
+      const name = await tokenContract.name();
+      const symbol = await tokenContract.symbol();
+      if (!isVotesToken) {
+        setFieldValue('govToken.tokenName', 'Wrapped ' + name, true);
+        setFieldValue('govToken.tokenSymbol', 'W' + symbol, true);
+      } else {
+        setFieldValue('govToken.tokenName', name, true);
+        setFieldValue('govToken.tokenSymbol', symbol, true);
+      }
+    } else {
+      setFieldValue('govToken.tokenName', '', true);
+      setFieldValue('govToken.tokenSymbol', '', true);
+    }
+    setTimeout(() => {
+      setFieldTouched('govToken.tokenSymbol', true, true);
+      setFieldTouched('govToken.tokenName', true, true);
+    }, 0);
+  }, [
+    checkVotesToken,
+    errors?.govToken?.tokenImportAddress,
+    setFieldValue,
+    setFieldTouched,
+    provider,
+    values.govToken.tokenImportAddress,
+  ]);
+
+  useEffect(() => {
+    updateImportFields();
+  }, [updateImportFields]);
+
   return (
-    <StepWrapper
-      isSubDAO={isSubDAO}
-      isFormSubmitting={!!isSubmitting || transactionPending}
-      titleKey="titleUsulConfig"
-    >
-      <Flex
-        flexDirection="column"
-        gap={8}
+    <>
+      <StepWrapper
+        isSubDAO={isSubDAO}
+        isFormSubmitting={!!isSubmitting || transactionPending}
+        titleKey="titleUsulConfig"
       >
-        <ContentBoxTitle>{t('titleTokenParams')}</ContentBoxTitle>
-        <LabelComponent
-          label={t('labelTokenName')}
-          helper={t('helperTokenName')}
-          isRequired
+        <Flex
+          flexDirection="column"
+          gap={8}
         >
-          <Field name="govToken.tokenName">
-            {({ field }: FieldAttributes<any>) => (
-              <Input
-                {...field}
-                data-testid="tokenVoting-tokenNameInput"
-                minWidth="50%"
+          <ContentBoxTitle>{t('titleSelectToken')}</ContentBoxTitle>
+          <LabelComponent
+            label={t('helperSelectToken')}
+            helper=""
+            isRequired
+          >
+            <RadioGroup
+              bg="black.900-semi-transparent"
+              px={8}
+              py={4}
+              rounded="md"
+              display="flex"
+              flexDirection="column"
+              name="governance"
+              gap={4}
+              id="governance"
+              value={values.govToken.tokenCreationType}
+              onChange={value => {
+                setFieldValue('govToken.tokenCreationType', value);
+              }}
+            >
+              <RadioWithText
+                label={t('radioLabelNewToken')}
+                description={t('helperNewToken')}
+                testId="choose-newToken"
+                value={TokenCreationType.NEW}
+                onClick={() => {
+                  setFieldValue('govToken.tokenImportAddress', '');
+                  setFieldValue('govToken.tokenName', '');
+                  setFieldValue('govToken.tokenSymbol', '');
+                }}
               />
-            )}
-          </Field>
-        </LabelComponent>
-        <LabelComponent
-          label={t('labelTokenSymbol')}
-          helper={t('helperTokenSymbol')}
-          isRequired
-        >
-          <Input
-            name="govToken.tokenSymbol"
-            value={values.govToken.tokenSymbol}
-            onChange={handleChange}
-            maxLength={6}
-            data-testid="tokenVoting-tokenSymbolInput"
-          />
-        </LabelComponent>
-        <LabelComponent
-          label={t('labelTokenSupply')}
-          helper={t('helperTokenSupply')}
-          isRequired
-        >
-          <BigNumberInput
-            value={values.govToken.tokenSupply.bigNumberValue}
-            onChange={valuePair => setFieldValue('govToken.tokenSupply', valuePair)}
-            data-testid="tokenVoting-tokenSupplyInput"
-            onKeyDown={restrictChars}
-          />
-        </LabelComponent>
-        <Divider color="chocolate.700" />
-        <UsulTokenAllocations {...props} />
-        <Divider
-          color="chocolate.700"
-          mb={4}
-        />
-        <StepButtons
-          {...props}
-          prevStep={CreatorSteps.ESSENTIALS}
-          nextStep={CreatorSteps.GOV_CONFIG}
-        />
-      </Flex>
-    </StepWrapper>
+              <RadioWithText
+                label={t('radioLabelExistingToken')}
+                description={t('helperExistingToken')}
+                testId="choose-existingToken"
+                value={TokenCreationType.IMPORTED}
+                onClick={() => {
+                  setFieldValue('govToken.tokenName', '');
+                  setFieldValue('govToken.tokenSymbol', '');
+                }}
+              />
+              <LabelWrapper
+                errorMessage={
+                  values.govToken.tokenImportAddress && errors?.govToken?.tokenImportAddress
+                    ? errors.govToken.tokenImportAddress
+                    : undefined
+                }
+                isDisabled={values.govToken.tokenCreationType === TokenCreationType.NEW}
+              >
+                <Input
+                  name="govToken.tokenImportAddress"
+                  onChange={handleChange}
+                  value={values.govToken.tokenImportAddress}
+                  placeholder={createAccountSubstring(constants.AddressZero)}
+                  isDisabled={values.govToken.tokenCreationType === TokenCreationType.NEW}
+                />
+              </LabelWrapper>
+              <Flex
+                gap={4}
+                alignItems="center"
+              >
+                <Text
+                  color="blue.400"
+                  textStyle="text-base-sans-medium"
+                  whiteSpace="pre-wrap"
+                >
+                  {t('warningExistingToken')}
+                </Text>
+                <Tooltip label={t('warningExistingTokenTooltip')}>
+                  <SupportQuestion
+                    boxSize="1.5rem"
+                    color="blue.400"
+                  />
+                </Tooltip>
+              </Flex>
+            </RadioGroup>
+          </LabelComponent>
+        </Flex>
+      </StepWrapper>
+      <Box
+        bg="black.900-semi-transparent"
+        rounded="md"
+        mt={8}
+        px={4}
+        py={8}
+      >
+        <TokenConfigDisplay {...props} />
+      </Box>
+    </>
   );
 }
