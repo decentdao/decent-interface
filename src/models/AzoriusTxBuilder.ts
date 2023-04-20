@@ -86,7 +86,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public buildLinearVotingContractSetupTx(): SafeTransaction {
     return buildContractCall(
       this.linearVotingContract!,
-      'setAzorius',
+      'setUsul', // contract function name
       [this.azoriusContract!.address],
       0,
       false
