@@ -14,7 +14,7 @@ import {
   VOTE_CHOICES,
   ContractConnection,
   ProposalMetaData,
-  UsulProposal,
+  AzoriusProposal,
   ActivityEventType,
   Parameter,
   SafeMultisigTransactionResponse,
@@ -26,7 +26,7 @@ import { Providers } from '../types/network';
 
 export const getFractalProposalState = async (
   strategy: OZLinearVoting,
-  usulContract: FractalUsul,
+  azoriusContract: FractalUsul,
   proposalId: BigNumber,
   chainId: number
 ): Promise<FractalProposalState> => {
@@ -37,9 +37,9 @@ export const getFractalProposalState = async (
   if (cache) {
     return cache;
   }
-  const state = await usulContract.state(proposalId);
+  const state = await azoriusContract.state(proposalId);
   if (state === 0) {
-    // Usul says proposal is active, but we need to get more info in this case
+    // Azorius says proposal is active, but we need to get more info in this case
     const { deadline } = await strategy.proposals(proposalId);
     if (Number(deadline.toString()) * 1000 < new Date().getTime()) {
       // Deadline has passed: we have to determine if proposal is passed or failed
@@ -122,7 +122,7 @@ export const mapProposalCreatedEventToProposal = async (
   strategyContract: OZLinearVoting,
   proposalNumber: BigNumber,
   proposer: string,
-  usulContract: ContractConnection<FractalUsul>,
+  azoriusContract: ContractConnection<FractalUsul>,
   provider: Providers,
   chainId: number,
   metaData?: ProposalMetaData
@@ -130,7 +130,7 @@ export const mapProposalCreatedEventToProposal = async (
   const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
   const state = await getFractalProposalState(
     strategyContract,
-    usulContract.asSigner,
+    azoriusContract.asSigner,
     proposalNumber,
     chainId
   );
@@ -144,13 +144,15 @@ export const mapProposalCreatedEventToProposal = async (
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.Executed) {
-    const proposalExecutedFilter = usulContract.asSigner.filters.TransactionExecuted();
-    const proposalExecutedEvents = await usulContract.asSigner.queryFilter(proposalExecutedFilter);
+    const proposalExecutedFilter = azoriusContract.asSigner.filters.TransactionExecuted();
+    const proposalExecutedEvents = await azoriusContract.asSigner.queryFilter(
+      proposalExecutedFilter
+    );
     const executedEvent = proposalExecutedEvents.find(event => event.args[0].eq(proposalNumber));
     transactionHash = executedEvent?.transactionHash;
   }
 
-  const proposal: UsulProposal = {
+  const proposal: AzoriusProposal = {
     eventType: ActivityEventType.Governance,
     eventDate: new Date(block.timestamp * 1000),
     proposalNumber: proposalNumber.toString(),
@@ -228,7 +230,6 @@ export const parseDecodedData = (
   return Array.from(eventTransactionMap.values());
 };
 
-export function getUsulModuleFromModules(modules: FractalModuleData[]) {
-  const usulModule = modules.find(module => module.moduleType === FractalModuleType.USUL);
-  return usulModule;
+export function getAzoriusModuleFromModules(modules: FractalModuleData[]) {
+  return modules.find(module => module.moduleType === FractalModuleType.AZORIUS);
 }

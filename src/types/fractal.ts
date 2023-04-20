@@ -32,7 +32,7 @@ import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { VetoGuardType, VetoVotingType } from './daoGovernance';
-import { ProposalMetaData, MultisigProposal, UsulProposal } from './daoProposal';
+import { ProposalMetaData, MultisigProposal, AzoriusProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BNFormattedPair } from './votingFungibleToken';
@@ -194,7 +194,7 @@ export interface ActivityBase {
   transactionHash?: string | null;
 }
 
-export type Activity = TreasuryActivity | MultisigProposal | UsulProposal;
+export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal;
 
 export type ActivityTransactionType =
   | SafeMultisigTransactionWithTransfersResponse
@@ -263,7 +263,7 @@ export interface FractalClients {
 
 export interface FractalGovernanceContracts {
   ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
-  usulContract: ContractConnection<FractalUsul> | null;
+  azoriusContract: ContractConnection<FractalUsul> | null;
   tokenContract: ContractConnection<VotesToken> | null;
   isLoaded: boolean;
 }
@@ -285,7 +285,7 @@ export interface FractalModuleData {
 }
 
 export enum FractalModuleType {
-  USUL,
+  AZORIUS,
   FRACTAL,
   UNKNOWN,
 }
@@ -336,7 +336,7 @@ export interface VotesStrategy<Type = BNFormattedPair> {
 
 export enum StrategyType {
   GNOSIS_SAFE = 'labelMultisigGov',
-  GNOSIS_SAFE_USUL = 'labelUsulGov',
+  GNOSIS_SAFE_AZORIUS = 'labelAzoriusGov',
 }
 
 export interface NodeHierarchy {
@@ -347,21 +347,21 @@ export interface NodeHierarchy {
 export interface FractalContracts {
   multiSendContract: ContractConnection<MultiSend>;
   gnosisSafeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
-  fractalUsulMasterCopyContract: ContractConnection<FractalUsul>;
+  fractalAzoriusMasterCopyContract: ContractConnection<FractalUsul>;
   linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>;
   gnosisSafeSingletonContract: ContractConnection<GnosisSafe>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
   gnosisVetoGuardMasterCopyContract: ContractConnection<VetoGuard>;
-  usulVetoGuardMasterCopyContract: ContractConnection<UsulVetoGuard>;
+  azoriusVetoGuardMasterCopyContract: ContractConnection<UsulVetoGuard>;
   vetoMultisigVotingMasterCopyContract: ContractConnection<VetoMultisigVoting>;
   vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;
   claimingMasterCopyContract: ContractConnection<TokenClaim>;
 }
 
-export type FractalProposal = UsulProposal | MultisigProposal;
+export type FractalProposal = AzoriusProposal | MultisigProposal;
 
 /**
  * Immutable state generally calculated from other stateful objects.

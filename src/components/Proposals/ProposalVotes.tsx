@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, ProposalVote, UsulProposal } from '../../types';
+import { AzoriusGovernance, ProposalVote, AzoriusProposal } from '../../types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import StatusBox from '../ui/badges/StatusBox';
 import ContentBox from '../ui/containers/ContentBox';
@@ -83,7 +83,7 @@ function ProposalVotes({
     votes,
   },
 }: {
-  proposal: UsulProposal;
+  proposal: AzoriusProposal;
 }) {
   const { governance } = useFractal();
 

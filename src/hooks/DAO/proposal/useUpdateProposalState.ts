@@ -14,18 +14,18 @@ interface IUseUpdateProposalState {
 }
 
 export default function useUpdateProposalState({
-  governanceContracts: { usulContract, ozLinearVotingContract },
+  governanceContracts: { azoriusContract, ozLinearVotingContract },
   governanceDispatch,
   chainId,
 }: IUseUpdateProposalState) {
   const updateProposalState = useCallback(
     async (proposalNumber: BigNumber) => {
-      if (!usulContract || !ozLinearVotingContract) {
+      if (!azoriusContract || !ozLinearVotingContract) {
         return;
       }
       const newState = await getFractalProposalState(
         ozLinearVotingContract.asSigner,
-        usulContract.asSigner,
+        azoriusContract.asSigner,
         proposalNumber,
         chainId
       );
@@ -34,7 +34,7 @@ export default function useUpdateProposalState({
         payload: { proposalNumber: proposalNumber.toString(), state: newState },
       });
     },
-    [usulContract, ozLinearVotingContract, governanceDispatch, chainId]
+    [azoriusContract, ozLinearVotingContract, governanceDispatch, chainId]
   );
 
   return updateProposalState;

@@ -28,7 +28,7 @@ export type ProposalMetaData = {
   decodedTransactions: DecodedTransaction[];
 };
 
-export interface UsulProposal extends GovernanceActivity {
+export interface AzoriusProposal extends GovernanceActivity {
   proposer: string;
   govTokenAddress: string | null;
   votesSummary: ProposalVotesSummary;
@@ -59,7 +59,7 @@ export type ProposalVote = {
 
 export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
 
-export enum UsulVoteChoice {
+export enum AzoriusVoteChoice {
   No,
   Yes,
   Abstain,

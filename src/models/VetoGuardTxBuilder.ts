@@ -9,7 +9,7 @@ import {
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { buildContractCall } from '../helpers';
-import { BaseContracts, SafeTransaction, SubDAO, UsulContracts } from '../types';
+import { BaseContracts, SafeTransaction, SubDAO, AzoriusContracts } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import {
   buildDeployZodiacModuleTx,
@@ -35,8 +35,8 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
   private vetoGuardCallData: string | undefined;
   private vetoGuardAddress: string | undefined;
 
-  // Usul Data
-  private usulAddress: string | undefined;
+  // Azorius Data
+  private azoriusAddress: string | undefined;
   private strategyAddress: string | undefined;
 
   constructor(
@@ -47,14 +47,14 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
     saltNum: string,
     parentAddress: string,
     parentTokenAddress?: string,
-    usulContracts?: UsulContracts,
-    usulAddress?: string,
+    azoriusContracts?: AzoriusContracts,
+    azoriusAddress?: string,
     strategyAddress?: string
   ) {
     super(
       signerOrProvider,
       baseContracts,
-      usulContracts,
+      azoriusContracts,
       daoData,
       parentAddress,
       parentTokenAddress
@@ -62,7 +62,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
 
     this.safeContract = safeContract;
     this.saltNum = saltNum;
-    this.usulAddress = usulAddress;
+    this.azoriusAddress = azoriusAddress;
     this.strategyAddress = strategyAddress;
 
     this.initVetoVotesData();
@@ -171,8 +171,8 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
   }
 
   private setVetoGuardData() {
-    if (this.usulAddress) {
-      this.setVetoGuardCallDataUsul();
+    if (this.azoriusAddress) {
+      this.setVetoGuardCallDataAzorius();
     } else {
       this.setVetoGuardCallDataMultisig();
     }
@@ -195,7 +195,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
     ]);
   }
 
-  private setVetoGuardCallDataUsul() {
+  private setVetoGuardCallDataAzorius() {
     const subDaoData = this.daoData as SubDAO;
 
     this.vetoGuardCallData = UsulVetoGuard__factory.createInterface().encodeFunctionData('setUp', [
@@ -205,7 +205,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
           this.parentAddress, // Owner -- Parent DAO
           this.vetoVotingAddress, // Veto Voting
           this.strategyAddress, // Base Strategy
-          this.usulAddress, // USUL
+          this.azoriusAddress, // Azorius
           subDaoData.executionPeriod.mul(TIMER_MULT), // Execution Period
         ]
       ),
@@ -213,8 +213,8 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
   }
 
   private getGuardMasterCopyAddress(): string {
-    return this.usulContracts
-      ? this.usulContracts.usulVetoGuardMasterCopyContract.address
+    return this.azoriusContracts
+      ? this.azoriusContracts.azoriusVetoGuardMasterCopyContract.address
       : this.baseContracts.gnosisVetoGuardMasterCopyContract.address;
   }
 }

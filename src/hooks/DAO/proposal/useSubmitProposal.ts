@@ -29,15 +29,15 @@ interface ISubmitProposal {
 
 interface ISubmitTokenVotingProposal extends ISubmitProposal {
   /**
-   * @param usulContract - provided usul contract.
+   * @param azoriusContract - provided Azorius contract.
    * Depending on safeAddress it's either picked from global context
    * either grabbed from the safe info from Safe API.
    */
-  usulContract: FractalUsul;
+  azoriusContract: FractalUsul;
   /**
    * @param votingStrategyAddress - provided voting strategy address for proposal submission.
    * Depending on safeAddress it's either picked from global context
-   * either grabbed from the safe info from Safe API & provided Usul contract.
+   * either grabbed from the safe info from Safe API & provided Azorius contract.
    */
   votingStrategyAddress: string;
 }
@@ -53,12 +53,14 @@ export default function useSubmitProposal() {
     clients: { safeService },
   } = useFractal();
 
-  const globalUsulContract = useMemo(() => {
-    const usulModule = fractalModules?.find(module => module.moduleType === FractalModuleType.USUL);
-    if (!usulModule) {
+  const globalAzoriusContract = useMemo(() => {
+    const azoriusModule = fractalModules?.find(
+      module => module.moduleType === FractalModuleType.AZORIUS
+    );
+    if (!azoriusModule) {
       return undefined;
     }
-    return usulModule.moduleContract as FractalUsul;
+    return azoriusModule.moduleContract as FractalUsul;
   }, [fractalModules]);
 
   const lookupModules = useFractalModules();
@@ -164,7 +166,7 @@ export default function useSubmitProposal() {
   const submitTokenVotingProposal = useCallback(
     async ({
       proposalData,
-      usulContract,
+      azoriusContract,
       votingStrategyAddress,
       pendingToastMessage,
       successToastMessage,
@@ -192,9 +194,9 @@ export default function useSubmitProposal() {
           operation: 0,
         }));
 
-        // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Usul instance
+        // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Azorius instance
         await (
-          await usulContract.submitProposalWithMetaData(
+          await azoriusContract.submitProposalWithMetaData(
             votingStrategyAddress,
             '0x',
             transactions,
@@ -211,7 +213,7 @@ export default function useSubmitProposal() {
       } catch (e) {
         toast.dismiss(toastId);
         toast(failedToastMessage);
-        logError(e, 'Error during Usul proposal creation');
+        logError(e, 'Error during Azorius proposal creation');
       } finally {
         setPendingCreateTx(false);
       }
@@ -237,8 +239,10 @@ export default function useSubmitProposal() {
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
-        const usulModule = modules.find(module => module.moduleType === FractalModuleType.USUL);
-        if (!usulModule) {
+        const azoriusModule = modules.find(
+          module => module.moduleType === FractalModuleType.AZORIUS
+        );
+        if (!azoriusModule) {
           submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -257,12 +261,12 @@ export default function useSubmitProposal() {
             nonce,
             successCallback,
             safeAddress,
-            usulContract: usulModule.moduleContract as FractalUsul,
+            azoriusContract: azoriusModule.moduleContract as FractalUsul,
             votingStrategyAddress: ozLinearVotingContract?.asSigner.address!,
           });
         }
       } else {
-        if (!globalUsulContract || !vetoVotingContract || !safe?.address) {
+        if (!globalAzoriusContract || !vetoVotingContract || !safe?.address) {
           submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -280,7 +284,7 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            usulContract: globalUsulContract,
+            azoriusContract: globalAzoriusContract,
             votingStrategyAddress: vetoVotingContract.asSigner.address,
             safeAddress: safe.address,
           });
@@ -288,7 +292,7 @@ export default function useSubmitProposal() {
       }
     },
     [
-      globalUsulContract,
+      globalAzoriusContract,
       vetoVotingContract,
       safe,
       lookupModules,

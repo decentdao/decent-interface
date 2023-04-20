@@ -6,10 +6,10 @@ import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AzoriusMetadata from '../../../../../src/components/ProposalCreate/AzoriusMetadata';
 import { ProposalDetails } from '../../../../../src/components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../../../../src/components/ProposalCreate/ProposalHeader';
 import TransactionsForm from '../../../../../src/components/ProposalCreate/TransactionsForm';
-import UsulMetadata from '../../../../../src/components/ProposalCreate/UsulMetadata';
 import { DEFAULT_PROPOSAL } from '../../../../../src/components/ProposalCreate/constants';
 import { BarLoader } from '../../../../../src/components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
@@ -44,7 +44,7 @@ export default function ProposalCreatePage() {
 
   useEffect(() => {
     if (!type) return;
-    if (type === StrategyType.GNOSIS_SAFE_USUL) {
+    if (type === StrategyType.GNOSIS_SAFE_AZORIUS) {
       setFormState(CreateProposalState.METADATA_FORM);
     } else {
       setFormState(CreateProposalState.TRANSACTIONS_FORM);
@@ -132,7 +132,7 @@ export default function ProposalCreatePage() {
                         bg={BACKGROUND_SEMI_TRANSPARENT}
                       >
                         <ProposalHeader
-                          isUsul={type === StrategyType.GNOSIS_SAFE_USUL}
+                          isAzorius={type === StrategyType.GNOSIS_SAFE_AZORIUS}
                           metadataTitle={
                             formState === CreateProposalState.TRANSACTIONS_FORM &&
                             !!values.proposalMetadata.title
@@ -149,7 +149,7 @@ export default function ProposalCreatePage() {
                           }
                         />
 
-                        <UsulMetadata
+                        <AzoriusMetadata
                           isVisible={formState === CreateProposalState.METADATA_FORM}
                           setFormState={setFormState}
                           {...formikProps}
@@ -157,7 +157,7 @@ export default function ProposalCreatePage() {
                         <TransactionsForm
                           isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                           setFormState={setFormState}
-                          showBackButton={type === StrategyType.GNOSIS_SAFE_USUL}
+                          showBackButton={type === StrategyType.GNOSIS_SAFE_AZORIUS}
                           pendingTransaction={pendingCreateTx}
                           canUserCreateProposal={canUserCreateProposal}
                           {...formikProps}

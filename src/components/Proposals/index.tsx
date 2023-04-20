@@ -71,7 +71,7 @@ export default function Proposals() {
 
     let options;
     switch (type) {
-      case StrategyType.GNOSIS_SAFE_USUL:
+      case StrategyType.GNOSIS_SAFE_AZORIUS:
         if (guardContracts.vetoGuardContract) {
           options = FILTERS_USUL_CHILD;
         } else {

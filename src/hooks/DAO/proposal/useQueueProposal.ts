@@ -38,7 +38,7 @@ export default function useQueueProposal() {
       }
 
       const contractFunc =
-        vetoGuardContract && vetoGuardType === VetoGuardType.USUL
+        vetoGuardContract && vetoGuardType === VetoGuardType.AZORIUS
           ? (vetoGuardContract.asSigner as UsulVetoGuard).queueProposal
           : ozLinearVotingContract!.asSigner.finalizeStrategy;
 

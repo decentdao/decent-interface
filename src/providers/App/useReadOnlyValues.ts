@@ -20,7 +20,7 @@ export const useReadOnlyValues = () => {
       switch (governance.type) {
         case StrategyType.GNOSIS_SAFE:
           return isSigner ? BigNumber.from(1) : BigNumber.from(0);
-        case StrategyType.GNOSIS_SAFE_USUL:
+        case StrategyType.GNOSIS_SAFE_AZORIUS:
           return tokenWeight;
         default:
           return BigNumber.from(0);
@@ -35,7 +35,7 @@ export const useReadOnlyValues = () => {
       dao: !node.daoAddress
         ? null // if there is no DAO connected, we return null for this
         : {
-            isAzorius: governance.type === StrategyType.GNOSIS_SAFE_USUL,
+            isAzorius: governance.type === StrategyType.GNOSIS_SAFE_AZORIUS,
           },
     } as ReadOnlyState;
   }, []);

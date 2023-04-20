@@ -23,7 +23,7 @@ export const useFractalGovernance = () => {
   const loadERC20Token = useERC20LinearToken();
 
   useEffect(() => {
-    const { isLoaded, usulContract } = governanceContracts;
+    const { isLoaded, azoriusContract } = governanceContracts;
     if (parentAddress && guardContracts.vetoGuardType === null) {
       return;
     }
@@ -35,7 +35,7 @@ export const useFractalGovernance = () => {
       currentValidAddress.current =
         daoAddress + guardContracts.vetoGuardType || constants.AddressZero;
       loadDAOProposals();
-      if (!!usulContract) {
+      if (!!azoriusContract) {
         // load DAO voting strategy data
         loadAzoriusStrategy();
         // load voting token

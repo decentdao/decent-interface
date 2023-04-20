@@ -29,7 +29,7 @@ export class DAOCreate extends NavPage {
   }
 
   async clickTokenVoting() {
-    await this.clickTestId('choose-usul');
+    await this.clickTestId('choose-azorius');
   }
 
   async fillTotalSigners(total: string) {
