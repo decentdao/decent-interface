@@ -1,7 +1,9 @@
 import { VStack, HStack, Text, Box, Flex, IconButton } from '@chakra-ui/react';
 import { AddPlus, Trash } from '@decent-org/fractal-ui';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalTemplateTransaction } from '../../types/createProposalTemplate';
+import ABISelector, { ABIElement } from '../ui/forms/ABISelector';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
 import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
@@ -24,6 +26,20 @@ export default function ProposalTemplateTransaction({
   setFieldValue,
 }: ProposalTemplateTransactionProps) {
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
+  const handleABISelectorChange = useCallback(
+    (value: ABIElement) => {
+      setFieldValue(`transactions.${transactionIndex}.functionName`, value.name);
+      setFieldValue(
+        `transactions.${transactionIndex}.parameters`,
+        value.inputs.map(abiInput => ({
+          signature: `${abiInput.type} ${abiInput.name}`,
+          label: '',
+          value: '',
+        }))
+      );
+    },
+    [setFieldValue, transactionIndex]
+  );
 
   return (
     <VStack
@@ -51,6 +67,15 @@ export default function ProposalTemplateTransaction({
           setFieldValue(`transactions.${transactionIndex}.targetAddress`, e.target.value)
         }
       />
+      {transaction.targetAddress && (
+        <Box>
+          <ABISelector
+            target={transaction.targetAddress}
+            onChange={handleABISelectorChange}
+          />
+        </Box>
+      )}
+
       <Box
         backgroundColor="black"
         borderRadius="4px"

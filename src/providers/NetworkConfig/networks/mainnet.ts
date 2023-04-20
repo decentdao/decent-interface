@@ -4,6 +4,7 @@ import { NetworkConfig } from '../../../types/network';
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
+  etherscanAPIBaseUrl: 'https://api.etherscan.io',
   chainId: 1,
   name: mainnet.name,
   color: 'green.300',
