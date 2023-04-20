@@ -3,7 +3,7 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, constants } from 'ethers';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 import * as Yup from 'yup';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
@@ -19,8 +19,8 @@ export function DelegateModal({ close }: { close: Function }) {
   const {
     governance,
     governanceContracts: { tokenContract },
+    readOnly: { user },
   } = useFractal();
-  const { address: account } = useAccount();
 
   const { data: signer } = useSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
@@ -129,7 +129,7 @@ export function DelegateModal({ close }: { close: Function }) {
                 variant="text"
                 textStyle="text-sm-sans-regular"
                 color="gold.500-active"
-                onClick={() => (account ? setFieldValue('address', account) : null)}
+                onClick={() => (user.address ? setFieldValue('address', user.address) : null)}
               >
                 {t('linkSelfDelegate')}
               </Button>

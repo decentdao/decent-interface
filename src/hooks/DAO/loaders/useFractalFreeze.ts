@@ -3,7 +3,7 @@ import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typecha
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VetoERC20Voting';
 import { BigNumber, constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { useAccount, useProvider } from 'wagmi';
+import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import {
   isWithinFreezeProposalPeriod,
@@ -24,9 +24,10 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     baseContracts: { votesTokenMasterCopyContract, gnosisSafeSingletonContract },
     guardContracts,
     action,
+    readOnly: { user },
   } = useFractal();
 
-  const { address: account } = useAccount();
+  const account = user.address;
   const provider = useProvider();
   const {
     network: { chainId },

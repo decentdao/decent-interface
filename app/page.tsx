@@ -8,7 +8,6 @@ import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ReactNode, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import packageJson from '../package.json';
 import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
@@ -90,7 +89,6 @@ function InfoLinks() {
 
 export default function HomePage() {
   const { t } = useTranslation('daoCreate');
-  const { address: account } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { push } = useRouter();
   const createDAO = () => {
@@ -100,6 +98,7 @@ export default function HomePage() {
   const {
     node: { daoAddress },
     action,
+    readOnly: { user },
   } = useFractal();
 
   useEffect(() => {
@@ -123,7 +122,7 @@ export default function HomePage() {
               alt="Fractal Logo"
             />
           </Box>
-          {!account && (
+          {!user.address && (
             <Text
               data-testid="home-pageTitleDisconnected"
               textStyle="text-2xl-mono-regular"
@@ -134,20 +133,22 @@ export default function HomePage() {
             </Text>
           )}
           <Text
-            data-testid={account ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'}
+            data-testid={
+              user.address ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'
+            }
             textStyle="text-base-mono-regular"
             color="grayscale.100"
             marginBottom="1.5rem"
           >
-            {t(account ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
+            {t(user.address ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
           </Text>
           <Button
-            onClick={account ? createDAO : openConnectModal}
-            data-testid={account ? 'home-linkCreate' : 'home-linkConnect'}
+            onClick={user.address ? createDAO : openConnectModal}
+            data-testid={user.address ? 'home-linkCreate' : 'home-linkConnect'}
             size="lg"
             marginBottom="3.25rem"
           >
-            {t(account ? 'homeButtonCreate' : 'homeButtonConnect')}
+            {t(user.address ? 'homeButtonCreate' : 'homeButtonConnect')}
           </Button>
           <InfoLinks />
           <Link

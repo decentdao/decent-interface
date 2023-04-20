@@ -1,6 +1,6 @@
+import { BigNumber } from 'ethers';
 import { Fractal, FractalActions, StoreAction } from '../../types';
 import { FractalGovernanceActions } from './governance/action';
-// combinedReducer.js
 import { governanceReducer, initialGovernanceState } from './governance/reducer';
 import { GovernanceContractActions } from './governanceContracts/action';
 import {
@@ -8,15 +8,13 @@ import {
   initialGovernanceContractsState,
 } from './governanceContracts/reducer';
 import { FractalGuardActions } from './guard/action';
-import { initialGuardState, guardReducer } from './guard/reducer';
+import { guardReducer, initialGuardState } from './guard/reducer';
 import { GuardContractActions } from './guardContracts/action';
 import { guardContractReducer, initialGuardContractsState } from './guardContracts/reducer';
 import { NodeActions } from './node/action';
 import { initialNodeState, nodeReducer } from './node/reducer';
 import { TreasuryActions } from './treasury/action';
 import { initialTreasuryState, treasuryReducer } from './treasury/reducer';
-
-export const RESET_ALL = 'RESET_ALL';
 
 export const initialState = {
   node: initialNodeState,
@@ -25,6 +23,13 @@ export const initialState = {
   governanceContracts: initialGovernanceContractsState,
   guardContracts: initialGuardContractsState,
   guard: initialGuardState,
+  readOnly: {
+    dao: null,
+    user: {
+      address: undefined,
+      votingWeight: BigNumber.from(0),
+    },
+  },
 };
 
 export const combinedReducer = (state: Fractal, action: FractalActions) => {
@@ -42,5 +47,6 @@ export const combinedReducer = (state: Fractal, action: FractalActions) => {
     ),
     guardContracts: guardContractReducer(state.guardContracts, action as GuardContractActions),
     guard: guardReducer(state.guard, action as FractalGuardActions),
+    readOnly: state.readOnly,
   };
 };

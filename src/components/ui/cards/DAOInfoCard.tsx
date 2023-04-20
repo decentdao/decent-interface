@@ -9,7 +9,6 @@ import {
 import { utils } from 'ethers';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
@@ -51,9 +50,9 @@ export function DAOInfoCard({
   const {
     node: { daoAddress, daoName },
     action,
+    readOnly: { user },
   } = useFractal();
   const { favoritesList, toggleFavorite } = useAccountFavorites();
-  const { address: account } = useAccount();
   const copyToClipboard = useCopyText();
   const isCurrentDAO = safeAddress === daoAddress;
   const { daoRegistryName } = useDAOName({
@@ -62,7 +61,7 @@ export function DAOInfoCard({
   const { accountSubstring } = useDisplayName(safeAddress);
 
   // @todo add viewable conditions
-  const canManageDAO = !!account;
+  const canManageDAO = !!user.address;
 
   const isFavorite = useMemo(
     () => (!!safeAddress ? favoritesList.includes(utils.getAddress(safeAddress)) : false),

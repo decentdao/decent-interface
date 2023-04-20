@@ -5,7 +5,6 @@ import { AddPlus } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import Proposals from '../../../../src/components/Proposals';
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
@@ -20,9 +19,9 @@ export default function ProposalsPage() {
   const {
     governance,
     node: { daoAddress, safe },
+    readOnly: { user },
   } = useFractal();
   const { type } = governance;
-  const { address: account } = useAccount();
   const delegate = useFractalModal(ModalType.DELEGATE);
   const showDelegate = useMemo(() => {
     if (type) {
@@ -37,7 +36,7 @@ export default function ProposalsPage() {
   }, [type, governance]);
 
   const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(account || '');
+    type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(user.address || '');
 
   return (
     <ClientOnly>

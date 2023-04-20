@@ -3,7 +3,6 @@ import { CloseX, Check } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -25,12 +24,13 @@ function Vote({
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
-  const { governance } = useFractal();
+  const {
+    governance,
+    readOnly: { user },
+  } = useFractal();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const usulProposal = proposal as UsulProposal;
-
-  const { address: account } = useAccount();
 
   const castVote = useCastVote({
     proposalNumber: BigNumber.from(proposal.proposalNumber),
@@ -56,7 +56,7 @@ function Vote({
   const disabled =
     pending ||
     proposal.state !== FractalProposalState.Active ||
-    !!usulProposal.votes.find(vote => vote.voter === account) ||
+    !!usulProposal.votes.find(vote => vote.voter === user.address) ||
     proposalStartBlockNotFinalized;
 
   return (

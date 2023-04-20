@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useProvider, useSigner, useAccount } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
@@ -14,8 +14,6 @@ const useBuildDAOTx = () => {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-
-  const { address: account } = useAccount();
 
   const {
     baseContracts: {
@@ -34,6 +32,7 @@ const useBuildDAOTx = () => {
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
     },
+    readOnly: { user },
   } = useFractal();
 
   const buildDao = useCallback(
@@ -45,7 +44,7 @@ const useBuildDAOTx = () => {
       let usulContracts;
 
       if (
-        !account ||
+        !user.address ||
         !signerOrProvider ||
         !multiSendContract ||
         !fractalRegistryContract ||
@@ -118,7 +117,7 @@ const useBuildDAOTx = () => {
       };
     },
     [
-      account,
+      user.address,
       signerOrProvider,
       multiSendContract,
       fractalRegistryContract,
@@ -129,11 +128,11 @@ const useBuildDAOTx = () => {
       vetoERC20VotingMasterCopyContract,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
+      claimingMasterCopyContract,
       fractalUsulMasterCopyContract,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       usulVetoGuardMasterCopyContract,
-      claimingMasterCopyContract,
     ]
   );
 
