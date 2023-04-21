@@ -31,6 +31,7 @@ export const defaultState = {
     azoriusVetoGuardMasterCopy: '',
     vetoMultisigVotingMasterCopy: '',
     vetoERC20VotingMasterCopy: '',
+    votesERC20WrapperMasterCopy: '',
   },
 };
 

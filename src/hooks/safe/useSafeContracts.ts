@@ -113,6 +113,11 @@ export default function useSafeContracts() {
       asProvider: TokenClaim__factory.connect(claimingMasterCopy, provider),
     };
 
+    const votesERC20WrapperMasterCopyContract = {
+      asSigner: TokenClaim__factory.connect(claimingMasterCopy, signerOrProvider),
+      asProvider: TokenClaim__factory.connect(claimingMasterCopy, provider),
+    };
+
     return {
       multiSendContract,
       gnosisSafeFactoryContract,
@@ -128,6 +133,7 @@ export default function useSafeContracts() {
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
     };
   }, [
     gnosisSafeFactory,
