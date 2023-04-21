@@ -6,6 +6,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
+import { VotesERC20Wrapper } from '../../../assets/typechain-types/VotesERC20Wrapper';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
@@ -23,6 +24,7 @@ export const useGovernanceContracts = () => {
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       fractalAzoriusMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
     },
     action,
   } = useFractal();
@@ -56,7 +58,8 @@ export const useGovernanceContracts = () => {
         let govTokenAddress: string | undefined = cachedContractAddresses?.govTokenContractAddress;
 
         let ozLinearVotingContract: ContractConnection<OZLinearVoting> | undefined;
-        let tokenContract: ContractConnection<VotesToken> | undefined;
+        let tokenContract: ContractConnection<VotesToken | VotesERC20Wrapper> | undefined;
+        let underlyingTokenAddress: string | undefined;
 
         if (!votingContractAddress) {
           votingContractAddress = await getEventRPC<FractalUsul>(azoriusContract, chainId)
@@ -84,16 +87,28 @@ export const useGovernanceContracts = () => {
           if (!govTokenAddress) {
             govTokenAddress = await ozLinearVotingContract.asSigner.governanceToken();
           }
-          tokenContract = {
-            asSigner: votesTokenMasterCopyContract.asSigner.attach(govTokenAddress),
-            asProvider: votesTokenMasterCopyContract.asProvider.attach(govTokenAddress),
-          };
+          const possibleERC20Wrapper =
+            votesERC20WrapperMasterCopyContract.asProvider.attach(govTokenAddress);
+          underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => undefined);
+
+          if (!underlyingTokenAddress) {
+            tokenContract = {
+              asSigner: votesTokenMasterCopyContract.asSigner.attach(govTokenAddress),
+              asProvider: votesTokenMasterCopyContract.asProvider.attach(govTokenAddress),
+            };
+          } else {
+            tokenContract = {
+              asSigner: votesERC20WrapperMasterCopyContract.asSigner.attach(govTokenAddress),
+              asProvider: votesERC20WrapperMasterCopyContract.asProvider.attach(govTokenAddress),
+            };
+          }
         }
         if (!!ozLinearVotingContract && !!tokenContract) {
           // cache the addresses for future use, saves on query requests
           setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
             votingContractAddress,
             govTokenAddress,
+            underlyingTokenAddress,
             votingContractMasterCopyAddress,
           });
 
@@ -103,6 +118,7 @@ export const useGovernanceContracts = () => {
               ozLinearVotingContract,
               azoriusContract,
               tokenContract,
+              underlyingTokenAddress,
             },
           });
         } else {
@@ -135,13 +151,16 @@ export const useGovernanceContracts = () => {
       votesTokenMasterCopyContract,
       zodiacModuleProxyFactoryContract,
       fractalAzoriusMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
     ]
   );
 
   useEffect(() => {
-    if (!!node.daoAddress && node.daoAddress !== currentValidAddress.current) {
-      // load governance contracts for DAO
-      currentValidAddress.current = node.daoAddress;
+    if (
+      !!node.daoAddress &&
+      node.isModulesLoaded &&
+      node.daoAddress !== currentValidAddress.current
+    ) {
       loadGovernanceContracts(node);
     }
   }, [node, loadGovernanceContracts]);
