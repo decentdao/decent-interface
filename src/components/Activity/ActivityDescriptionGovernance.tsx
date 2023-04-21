@@ -6,7 +6,7 @@ import {
   MultisigProposal,
   ActivityEventType,
   TreasuryActivity,
-  UsulProposal,
+  AzoriusProposal,
 } from '../../types';
 
 import { createProposalNumberSubstring } from '../../utils/string';
@@ -78,13 +78,13 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
     count: governanceActivity.targets.length,
   });
 
-  const usulProposalMetaDataTitle = (activity as UsulProposal).metaData?.title;
+  const azoriusProposalMetaDataTitle = (activity as AzoriusProposal).metaData?.title;
 
-  if (!!usulProposalMetaDataTitle) {
+  if (!!azoriusProposalMetaDataTitle) {
     return (
       <>
         <ActivityProposalNumber proposalNumber={governanceActivity.proposalNumber} />
-        <Text>{usulProposalMetaDataTitle}</Text>
+        <Text>{azoriusProposalMetaDataTitle}</Text>
       </>
     );
   }

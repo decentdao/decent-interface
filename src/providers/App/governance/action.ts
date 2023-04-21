@@ -14,7 +14,7 @@ export enum FractalGovernanceAction {
   SET_PROPOSALS = 'SET_PROPOSALS',
   SET_STRATEGY = 'SET_STRATEGY',
   UPDATE_PROPOSALS_NEW = 'UPDATE_PROPOSALS_NEW',
-  UPDATE_NEW_USUL_VOTE = 'UPDATE_NEW_USUL_VOTE',
+  UPDATE_NEW_AZORIUS_VOTE = 'UPDATE_NEW_AZORIUS_VOTE',
   UPDATE_PROPOSAL_STATE = 'UPDATE_PROPOSAL_STATE',
   UPDATE_VOTING_PERIOD = 'UPDATE_VOTING_PERIOD',
   UPDATE_VOTING_QUORUM = 'UPDATE_VOTING_QUORUM',
@@ -34,7 +34,7 @@ export type FractalGovernanceActions =
   // @todo update with proposal type
   | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
   | {
-      type: FractalGovernanceAction.UPDATE_NEW_USUL_VOTE;
+      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE;
       payload: {
         proposalNumber: string;
         voter: string;

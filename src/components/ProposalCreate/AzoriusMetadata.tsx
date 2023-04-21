@@ -4,12 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { CreateProposalForm, CreateProposalState } from '../../types';
 import { InputComponent, TextareaComponent } from '../ui/forms/InputComponent';
 
-export interface UsulMetadataProps extends FormikProps<CreateProposalForm> {
+export interface AzoriusMetadataProps extends FormikProps<CreateProposalForm> {
   isVisible: boolean;
   setFormState: (state: CreateProposalState) => void;
 }
 
-function UsulMetadata(props: UsulMetadataProps) {
+function AzoriusMetadata(props: AzoriusMetadataProps) {
   const {
     values: { proposalMetadata },
     setFieldValue,
@@ -78,4 +78,4 @@ function UsulMetadata(props: UsulMetadataProps) {
   );
 }
 
-export default UsulMetadata;
+export default AzoriusMetadata;

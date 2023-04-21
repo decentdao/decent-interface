@@ -8,4 +8,4 @@ export * from './safeData';
 export * from './signatures';
 export * from './string';
 export * from './time';
-export * from './usul';
+export * from './azorius';

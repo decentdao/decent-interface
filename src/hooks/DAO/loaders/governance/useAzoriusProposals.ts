@@ -14,7 +14,7 @@ import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 
-import { UsulProposal } from '../../../../types/daoProposal';
+import { AzoriusProposal } from '../../../../types/daoProposal';
 import {
   mapProposalCreatedEventToProposal,
   getProposalVotesSummary,
@@ -24,7 +24,7 @@ import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 
 export const useAzoriusProposals = () => {
   const {
-    governanceContracts: { usulContract, ozLinearVotingContract },
+    governanceContracts: { azoriusContract, ozLinearVotingContract },
     action,
   } = useFractal();
 
@@ -34,11 +34,11 @@ export const useAzoriusProposals = () => {
   } = provider;
   const decodeTransactions = useDecodeTransaction();
 
-  const loadAzoriusProposals = useCallback(async (): Promise<UsulProposal[]> => {
-    if (!usulContract || !ozLinearVotingContract) {
+  const loadAzoriusProposals = useCallback(async (): Promise<AzoriusProposal[]> => {
+    if (!azoriusContract || !ozLinearVotingContract) {
       return [];
     }
-    const rpc = getEventRPC<FractalUsul>(usulContract, chainId);
+    const rpc = getEventRPC<FractalUsul>(azoriusContract, chainId);
     const proposalCreatedFilter = rpc.filters.ProposalCreated();
     const proposalMetaDataCreatedFilter = rpc.filters.ProposalMetadataCreated();
 
@@ -71,7 +71,7 @@ export const useAzoriusProposals = () => {
           strategyContract,
           args.proposalNumber,
           args.proposer,
-          usulContract,
+          azoriusContract,
           provider,
           chainId,
           metaData
@@ -79,17 +79,20 @@ export const useAzoriusProposals = () => {
       })
     );
     return proposals;
-  }, [chainId, decodeTransactions, ozLinearVotingContract, usulContract, provider]);
+  }, [chainId, decodeTransactions, ozLinearVotingContract, azoriusContract, provider]);
 
   // Azrious proposals are listeners
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
     async (strategyAddress, proposalNumber, proposer) => {
-      if (!usulContract || !ozLinearVotingContract) {
+      if (!azoriusContract || !ozLinearVotingContract) {
         return;
       }
-      const usulContractRPC = getEventRPC<FractalUsul>(usulContract, provider.network.chainId);
-      const proposalMetaDataCreatedFilter = usulContractRPC.filters.ProposalMetadataCreated();
-      const proposalMetaDataCreatedEvents = await usulContractRPC.queryFilter(
+      const azoriusContractRPC = getEventRPC<FractalUsul>(
+        azoriusContract,
+        provider.network.chainId
+      );
+      const proposalMetaDataCreatedFilter = azoriusContractRPC.filters.ProposalMetadataCreated();
+      const proposalMetaDataCreatedEvents = await azoriusContractRPC.queryFilter(
         proposalMetaDataCreatedFilter
       );
 
@@ -116,7 +119,7 @@ export const useAzoriusProposals = () => {
         strategyContract,
         proposalNumber,
         proposer,
-        usulContract,
+        azoriusContract,
         provider,
         provider.network.chainId,
         metaData
@@ -126,7 +129,7 @@ export const useAzoriusProposals = () => {
         payload: proposal,
       });
     },
-    [ozLinearVotingContract, usulContract, provider, chainId, decodeTransactions, action]
+    [ozLinearVotingContract, azoriusContract, provider, chainId, decodeTransactions, action]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
@@ -138,7 +141,7 @@ export const useAzoriusProposals = () => {
       const votesSummary = await getProposalVotesSummary(strategyContract, proposalNumber);
 
       action.dispatch({
-        type: FractalGovernanceAction.UPDATE_NEW_USUL_VOTE,
+        type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE,
         payload: {
           proposalNumber: proposalNumber.toString(),
           voter,
@@ -153,15 +156,15 @@ export const useAzoriusProposals = () => {
 
   const proposalQueuedEventListener: TypedListener<VoteFinalizedEvent> = useCallback(
     async proposalNumber => {
-      if (!ozLinearVotingContract || !usulContract) {
+      if (!ozLinearVotingContract || !azoriusContract) {
         return;
       }
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-      const usulContractRPC = getEventRPC<FractalUsul>(usulContract, chainId);
+      const azoriusContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
 
       const state = await getFractalProposalState(
         strategyContract,
-        usulContractRPC,
+        azoriusContractRPC,
         proposalNumber,
         chainId
       );
@@ -171,20 +174,20 @@ export const useAzoriusProposals = () => {
         payload: { state, proposalNumber: proposalNumber.toString() },
       });
     },
-    [chainId, ozLinearVotingContract, usulContract, action]
+    [chainId, ozLinearVotingContract, azoriusContract, action]
   );
 
   const proposalCanceledListener: TypedListener<ProposalCanceledEvent> = useCallback(
     async proposalNumber => {
-      if (!ozLinearVotingContract || !usulContract) {
+      if (!ozLinearVotingContract || !azoriusContract) {
         return;
       }
       const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-      const usulContractRPC = getEventRPC<FractalUsul>(usulContract, chainId);
+      const azoriusContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
 
       const state = await getFractalProposalState(
         strategyContract,
-        usulContractRPC,
+        azoriusContractRPC,
         proposalNumber,
         chainId
       );
@@ -193,34 +196,34 @@ export const useAzoriusProposals = () => {
         payload: { state, proposalNumber: proposalNumber.toString() },
       });
     },
-    [chainId, ozLinearVotingContract, usulContract, action]
+    [chainId, ozLinearVotingContract, azoriusContract, action]
   );
 
   useEffect(() => {
-    if (!usulContract || !ozLinearVotingContract) {
+    if (!azoriusContract || !ozLinearVotingContract) {
       return;
     }
-    const proposalCreatedFilter = usulContract.asSigner.filters.ProposalCreated();
-    const proposalCanceledFilter = usulContract.asSigner.filters.ProposalCanceled();
+    const proposalCreatedFilter = azoriusContract.asSigner.filters.ProposalCreated();
+    const proposalCanceledFilter = azoriusContract.asSigner.filters.ProposalCanceled();
 
     const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
     const queuedEvent = ozLinearVotingContract.asSigner.filters.VoteFinalized();
 
-    usulContract.asSigner.on(proposalCreatedFilter, proposalCreatedListener);
-    usulContract.asSigner.on(proposalCanceledFilter, proposalCanceledListener);
+    azoriusContract.asSigner.on(proposalCreatedFilter, proposalCreatedListener);
+    azoriusContract.asSigner.on(proposalCanceledFilter, proposalCanceledListener);
 
     ozLinearVotingContract.asSigner.on(votedEvent, proposalVotedEventListener);
     ozLinearVotingContract.asSigner.on(queuedEvent, proposalQueuedEventListener);
 
     return () => {
-      usulContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
-      usulContract.asSigner.off(proposalCanceledFilter, proposalCanceledListener);
+      azoriusContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
+      azoriusContract.asSigner.off(proposalCanceledFilter, proposalCanceledListener);
 
       ozLinearVotingContract.asSigner.off(votedEvent, proposalVotedEventListener);
       ozLinearVotingContract.asSigner.off(queuedEvent, proposalQueuedEventListener);
     };
   }, [
-    usulContract,
+    azoriusContract,
     ozLinearVotingContract,
     proposalCreatedListener,
     proposalVotedEventListener,

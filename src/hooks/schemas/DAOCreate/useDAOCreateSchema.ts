@@ -51,7 +51,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         govToken: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_USUL,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_AZORIUS,
           then: _schema =>
             _schema.shape({
               tokenName: Yup.string().required(),
@@ -93,7 +93,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         govModule: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_USUL,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_AZORIUS,
           then: _schema =>
             _schema.shape({
               quorumPercentage: Yup.object().shape({ value: Yup.string().required() }),

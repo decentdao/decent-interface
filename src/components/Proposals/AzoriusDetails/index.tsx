@@ -1,22 +1,26 @@
 import { GridItem } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
-import { ProposalAction } from '../../../components/Proposals/ProposalActions/ProposalAction';
-import ProposalSummary from '../../../components/Proposals/ProposalSummary';
-import ProposalVotes from '../../../components/Proposals/ProposalVotes';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { UsulProposal, FractalProposalState, AzoriusGovernance } from '../../../types';
+import { AzoriusProposal, FractalProposalState, AzoriusGovernance } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
+import { ProposalAction } from '../ProposalActions/ProposalAction';
 import { ProposalInfo } from '../ProposalInfo';
+import ProposalSummary from '../ProposalSummary';
+import ProposalVotes from '../ProposalVotes';
 
-export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
+export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal }) {
   const [activeTimeout, setActiveTimeout] = useState<NodeJS.Timeout>();
-  const { governance, governanceContracts, action } = useFractal();
+  const {
+    governance,
+    governanceContracts,
+    action,
+    readOnly: { user },
+  } = useFractal();
   const { chainId } = useNetworkConfg();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
@@ -25,8 +29,6 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
   });
 
   const azoriusGovernance = governance as AzoriusGovernance;
-
-  const { address: account } = useAccount();
 
   useEffect(() => {
     const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
@@ -74,7 +76,7 @@ export function UsulProposalDetails({ proposal }: { proposal: UsulProposal }) {
       </GridItem>
       <GridItem>
         <ProposalSummary proposal={proposal} />
-        {account && (
+        {user.address && (
           <ProposalAction
             proposal={proposal}
             expandedView

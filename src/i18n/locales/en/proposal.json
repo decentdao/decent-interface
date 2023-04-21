@@ -17,7 +17,7 @@
     "stateActive": "Active",
     "stateActiveTip": "The proposal can be voted on. This is the initial state of all newly created proposals.",
     "stateCanceled": "Canceled",
-    "stateCanceledTip": "The proposal was canceled by a function call on the Usul contract.",
+    "stateCanceledTip": "The proposal was canceled by a function call on the Azorius contract.",
     "stateRejected": "Rejected",
     "stateRejectedTip": "The proposal failed due to another proposal being executed with the same nonce.",
     "stateExecuting": "Executable",

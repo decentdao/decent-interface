@@ -6,6 +6,6 @@ export enum VetoVotingType {
 
 export enum VetoGuardType {
   MULTISIG,
-  USUL,
+  AZORIUS,
   UNKNOWN,
 }

@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
-import { useProvider, useSigner, useAccount } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
   TokenGovernanceDAO,
   GnosisDAO,
   StrategyType,
-  UsulContracts,
+  AzoriusContracts,
   BaseContracts,
 } from '../../types';
 
@@ -15,25 +15,24 @@ const useBuildDAOTx = () => {
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
-  const { address: account } = useAccount();
-
   const {
     baseContracts: {
       multiSendContract,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
       linearVotingMasterCopyContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
       zodiacModuleProxyFactoryContract,
       fractalRegistryContract,
       fractalModuleMasterCopyContract,
       gnosisVetoGuardMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
+      azoriusVetoGuardMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
     },
+    readOnly: { user },
   } = useFractal();
 
   const buildDao = useCallback(
@@ -42,10 +41,10 @@ const useBuildDAOTx = () => {
       parentAddress?: string,
       parentTokenAddress?: string
     ) => {
-      let usulContracts;
+      let azoriusContracts;
 
       if (
-        !account ||
+        !user.address ||
         !signerOrProvider ||
         !multiSendContract ||
         !fractalRegistryContract ||
@@ -61,24 +60,24 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === StrategyType.GNOSIS_SAFE_USUL) {
+      if (daoData.governance === StrategyType.GNOSIS_SAFE_AZORIUS) {
         if (
-          !fractalUsulMasterCopyContract ||
+          !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
           !votesTokenMasterCopyContract ||
-          !usulVetoGuardMasterCopyContract ||
+          !azoriusVetoGuardMasterCopyContract ||
           !claimingMasterCopyContract
         ) {
           return;
         }
 
-        usulContracts = {
-          fractalUsulMasterCopyContract: fractalUsulMasterCopyContract.asSigner,
+        azoriusContracts = {
+          fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
-          usulVetoGuardMasterCopyContract: usulVetoGuardMasterCopyContract.asSigner,
+          azoriusVetoGuardMasterCopyContract: azoriusVetoGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
-        } as UsulContracts;
+        } as AzoriusContracts;
       }
 
       const baseContracts = {
@@ -96,7 +95,7 @@ const useBuildDAOTx = () => {
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
         baseContracts,
-        usulContracts,
+        azoriusContracts,
         daoData,
         parentAddress,
         parentTokenAddress
@@ -105,10 +104,10 @@ const useBuildDAOTx = () => {
       await txBuilderFactory.setupGnosisSafeData();
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
 
-      // Build Tx bundle based on governance type (Usul or Multisig)
+      // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === StrategyType.GNOSIS_SAFE_USUL
-          ? await daoTxBuilder.buildUsulTx()
+        daoData.governance === StrategyType.GNOSIS_SAFE_AZORIUS
+          ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 
       return {
@@ -118,7 +117,7 @@ const useBuildDAOTx = () => {
       };
     },
     [
-      account,
+      user.address,
       signerOrProvider,
       multiSendContract,
       fractalRegistryContract,
@@ -129,11 +128,11 @@ const useBuildDAOTx = () => {
       vetoERC20VotingMasterCopyContract,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
-      fractalUsulMasterCopyContract,
+      claimingMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
-      claimingMasterCopyContract,
+      azoriusVetoGuardMasterCopyContract,
     ]
   );
 

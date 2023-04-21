@@ -9,6 +9,7 @@ export type Providers =
 export type NetworkConfig = {
   safeBaseURL: string;
   etherscanBaseURL: string;
+  etherscanAPIBaseUrl: string;
   chainId: number;
   name: string;
   color: string;
@@ -21,13 +22,13 @@ export type NetworkConfig = {
     zodiacModuleProxyFactory: string;
     linearVotingMasterCopy: string;
     gnosisMultisend: string;
-    fractalUsulMasterCopy: string;
+    fractalAzoriusMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalRegistry: string;
     votesTokenMasterCopy: string;
     claimingMasterCopy: string;
     gnosisVetoGuardMasterCopy: string;
-    usulVetoGuardMasterCopy: string;
+    azoriusVetoGuardMasterCopy: string;
     vetoMultisigVotingMasterCopy: string;
     vetoERC20VotingMasterCopy: string;
   };

@@ -4,8 +4,14 @@ import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
 
-export function DisplayAddress({ address }: { address: string }) {
-  const displayAddress = useDisplayName(address);
+export function DisplayAddress({
+  address,
+  truncate,
+}: {
+  address: string;
+  truncate?: boolean | undefined;
+}) {
+  const displayAddress = useDisplayName(address, truncate);
   const { t } = useTranslation();
   return (
     <EtherscanLinkAddress address={address}>

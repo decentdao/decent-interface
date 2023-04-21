@@ -6,7 +6,7 @@ import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-
 import { Signer } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useProvider, useSigner } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -29,11 +29,11 @@ export function TxActions({
   const {
     node: { safe },
     clients: { safeService },
+    readOnly: { user },
   } = useFractal();
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { address: account } = useAccount();
 
   const { chainId } = useNetworkConfg();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
@@ -41,6 +41,8 @@ export function TxActions({
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
+
+  if (user.votingWeight.eq(0)) return <></>;
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
@@ -156,8 +158,8 @@ export function TxActions({
     }
   };
 
-  const hasSigned = proposal.confirmations.find(confirm => confirm.owner === account);
-  const isOwner = safe?.owners?.includes(account || '');
+  const hasSigned = proposal.confirmations.find(confirm => confirm.owner === user.address);
+  const isOwner = safe?.owners?.includes(user.address || '');
   const isPending = asyncRequestPending || contractCallPending;
 
   if (

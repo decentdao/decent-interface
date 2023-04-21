@@ -3,7 +3,6 @@ import { Alert as AlertIcon } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
@@ -11,8 +10,11 @@ import { formatCoin } from '../../../utils/numberFormats';
 
 export function TokenClaim() {
   const [userClaimable, setUserClaimable] = useState(BigNumber.from(0));
-  const { address: account } = useAccount();
-  const { governance } = useFractal();
+  const {
+    governance,
+    readOnly: { user },
+  } = useFractal();
+  const account = user.address;
   const { tokenClaimContract, type } = governance;
   const { t } = useTranslation(['dashboard', 'transaction']);
   const [contractCall, pending] = useTransaction();

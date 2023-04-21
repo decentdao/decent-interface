@@ -45,7 +45,7 @@ export function usePrepareFormData() {
     [signer]
   );
 
-  const prepareGnosisUsulFormData = useCallback(
+  const prepareGnosisAzoriusFormData = useCallback(
     async ({
       tokenSupply,
       tokenAllocations,
@@ -91,5 +91,5 @@ export function usePrepareFormData() {
     },
     [signer]
   );
-  return { prepareMultisigFormData, prepareGnosisUsulFormData };
+  return { prepareMultisigFormData, prepareGnosisAzoriusFormData };
 }

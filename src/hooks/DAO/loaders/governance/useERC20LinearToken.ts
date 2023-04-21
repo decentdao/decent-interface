@@ -1,6 +1,6 @@
 import { VotesToken } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { useAccount, useProvider } from 'wagmi';
+import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -11,13 +11,13 @@ export const useERC20LinearToken = () => {
   const {
     governanceContracts: { tokenContract },
     action,
+    readOnly: { user },
   } = useFractal();
+  const account = user.address;
 
   const {
     network: { chainId },
   } = useProvider();
-
-  const { address: account } = useAccount();
 
   const loadERC20Token = useCallback(async () => {
     if (!tokenContract) {

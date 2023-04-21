@@ -1,10 +1,7 @@
 'use client';
 
 import { Box, Flex } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import { Assets } from '../../../../src/components/pages/DAOTreasury/components/Assets';
 import { Transactions } from '../../../../src/components/pages/DAOTreasury/components/Transactions';
 import { TitledInfoBox } from '../../../../src/components/ui/containers/TitledInfoBox';
@@ -13,32 +10,15 @@ import { useFractalModal } from '../../../../src/components/ui/modals/useFractal
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
-import { AzoriusGovernance, StrategyType } from '../../../../src/types';
 
 export default function Treasury() {
   const {
-    node: { safe },
-    governance,
+    readOnly: { user },
     treasury: { assetsFungible },
   } = useFractal();
-  const { type } = governance;
-  const azoriusGovernance = governance as AzoriusGovernance;
-  const { owners } = safe || {};
-  const { address: account } = useAccount();
   const { t } = useTranslation('treasury');
-  const hasAssetBalance = assetsFungible.some(asset => parseFloat(asset.balance) > 0);
-  const isOwnerOrDelegate = useMemo(() => {
-    if (!hasAssetBalance || !type) {
-      return false;
-    }
-    if (type === StrategyType.GNOSIS_SAFE) {
-      return owners?.includes(account || '');
-    }
-    const votingWeight = azoriusGovernance.votesToken.votingWeight;
-    return (votingWeight || BigNumber.from(0)).gt(0);
-  }, [account, azoriusGovernance, hasAssetBalance, owners, type]);
 
-  const showButton = isOwnerOrDelegate && assetsFungible.length > 0;
+  const showButton = user.votingWeight.gt(0) && assetsFungible.length > 0;
 
   return (
     <ClientOnly>

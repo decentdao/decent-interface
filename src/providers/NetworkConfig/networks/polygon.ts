@@ -15,6 +15,7 @@ import { NetworkConfig } from '../../../types/network';
 export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
+  etherscanAPIBaseUrl: 'https://api.polygonscan.com',
   chainId: 137,
   name: polygon.name,
   color: '#562FB0',
@@ -22,12 +23,12 @@ export const polygonConfig: NetworkConfig = {
   nativeTokenIcon: '/images/coin-icon-polygon.svg',
   wagmiChain: polygon,
   contracts: {
-    fractalUsulMasterCopy: FractalUsul.address,
+    fractalAzoriusMasterCopy: FractalUsul.address,
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
     votesTokenMasterCopy: VotesToken.address,
     claimingMasterCopy: TokenClaim.address,
-    usulVetoGuardMasterCopy: UsulVetoGuard.address,
+    azoriusVetoGuardMasterCopy: UsulVetoGuard.address,
     vetoMultisigVotingMasterCopy: VetoMultisigVoting.address,
     vetoERC20VotingMasterCopy: VetoERC20Voting.address,
     gnosisVetoGuardMasterCopy: VetoGuard.address,

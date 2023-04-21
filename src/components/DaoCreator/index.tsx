@@ -19,7 +19,7 @@ function DaoCreator({
   isSubDAO?: boolean;
 }) {
   const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
-  const { prepareMultisigFormData, prepareGnosisUsulFormData } = usePrepareFormData();
+  const { prepareMultisigFormData, prepareGnosisAzoriusFormData } = usePrepareFormData();
   return (
     <Box>
       <Formik<CreatorFormState>
@@ -38,8 +38,8 @@ function DaoCreator({
               deployDAO(data);
               return;
             }
-            case StrategyType.GNOSIS_SAFE_USUL: {
-              const data = await prepareGnosisUsulFormData({
+            case StrategyType.GNOSIS_SAFE_AZORIUS: {
+              const data = await prepareGnosisAzoriusFormData({
                 ...values.essentials,
                 ...values.govModule,
                 ...values.govToken,

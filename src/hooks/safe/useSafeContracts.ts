@@ -29,11 +29,11 @@ export default function useSafeContracts() {
       zodiacModuleProxyFactory,
       linearVotingMasterCopy,
       gnosisMultisend,
-      fractalUsulMasterCopy,
+      fractalAzoriusMasterCopy,
       fractalModuleMasterCopy,
       fractalRegistry,
       gnosisVetoGuardMasterCopy,
-      usulVetoGuardMasterCopy,
+      azoriusVetoGuardMasterCopy,
       vetoMultisigVotingMasterCopy,
       vetoERC20VotingMasterCopy,
       votesTokenMasterCopy,
@@ -53,9 +53,9 @@ export default function useSafeContracts() {
       asProvider: GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, provider),
     };
 
-    const fractalUsulMasterCopyContract = {
-      asSigner: FractalUsul__factory.connect(fractalUsulMasterCopy, signerOrProvider),
-      asProvider: FractalUsul__factory.connect(fractalUsulMasterCopy, provider),
+    const fractalAzoriusMasterCopyContract = {
+      asSigner: FractalUsul__factory.connect(fractalAzoriusMasterCopy, signerOrProvider),
+      asProvider: FractalUsul__factory.connect(fractalAzoriusMasterCopy, provider),
     };
 
     const linearVotingMasterCopyContract = {
@@ -88,9 +88,9 @@ export default function useSafeContracts() {
       asProvider: VetoGuard__factory.connect(gnosisVetoGuardMasterCopy, provider),
     };
 
-    const usulVetoGuardMasterCopyContract = {
-      asSigner: UsulVetoGuard__factory.connect(usulVetoGuardMasterCopy, signerOrProvider),
-      asProvider: UsulVetoGuard__factory.connect(usulVetoGuardMasterCopy, provider),
+    const azoriusVetoGuardMasterCopyContract = {
+      asSigner: UsulVetoGuard__factory.connect(azoriusVetoGuardMasterCopy, signerOrProvider),
+      asProvider: UsulVetoGuard__factory.connect(azoriusVetoGuardMasterCopy, provider),
     };
 
     const vetoMultisigVotingMasterCopyContract = {
@@ -116,14 +116,14 @@ export default function useSafeContracts() {
     return {
       multiSendContract,
       gnosisSafeFactoryContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       gnosisSafeSingletonContract,
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       fractalRegistryContract,
       gnosisVetoGuardMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
+      azoriusVetoGuardMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
@@ -134,12 +134,12 @@ export default function useSafeContracts() {
     gnosisSafe,
     zodiacModuleProxyFactory,
     linearVotingMasterCopy,
-    fractalUsulMasterCopy,
+    fractalAzoriusMasterCopy,
     gnosisMultisend,
     fractalModuleMasterCopy,
     fractalRegistry,
     gnosisVetoGuardMasterCopy,
-    usulVetoGuardMasterCopy,
+    azoriusVetoGuardMasterCopy,
     vetoMultisigVotingMasterCopy,
     vetoERC20VotingMasterCopy,
     votesTokenMasterCopy,

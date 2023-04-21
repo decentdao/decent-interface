@@ -1,7 +1,6 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal, StrategyType } from '../../types';
@@ -10,15 +9,14 @@ import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
-  const { address: account } = useAccount();
-
   const {
     node: { daoAddress, safe },
     governance: { type },
+    readOnly: { user },
   } = useFractal();
 
   const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(account || '');
+    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || '');
 
   const { t } = useTranslation('proposal');
   return (

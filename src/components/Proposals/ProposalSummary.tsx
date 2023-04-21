@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, UsulProposal } from '../../types';
+import { AzoriusGovernance, AzoriusProposal } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import { DisplayAddress } from '../ui/links/DisplayAddress';
@@ -17,7 +17,7 @@ import { InfoRow } from './MultisigProposalDetails/TxDetails';
 export default function ProposalSummary({
   proposal: { startBlock, votesSummary, deadline, proposer, eventDate, transactionHash },
 }: {
-  proposal: UsulProposal;
+  proposal: AzoriusProposal;
 }) {
   const { governance } = useFractal();
 

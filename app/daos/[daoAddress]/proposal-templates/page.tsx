@@ -4,7 +4,6 @@ import { Box, Button, Show } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import ProposalTemplates from '../../../../src/components/ProposalTemplates';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
@@ -17,11 +16,11 @@ export default function ProposalTemplatesPage() {
   const {
     governance: { type },
     node: { safe, daoAddress },
+    readOnly: { user },
   } = useFractal();
   const { owners } = safe || {};
-  const { address: account } = useAccount();
   const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
+    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : owners?.includes(user.address || '');
 
   return (
     <ClientOnly>

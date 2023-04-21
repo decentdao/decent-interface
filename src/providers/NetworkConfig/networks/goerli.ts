@@ -13,6 +13,7 @@ import { NetworkConfig } from '../../../types/network';
 export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
   etherscanBaseURL: 'https://goerli.etherscan.io',
+  etherscanAPIBaseUrl: 'https://api-goerli.etherscan.io',
   chainId: 5,
   name: goerli.name,
   color: 'gold.300',
@@ -20,12 +21,12 @@ export const goerliConfig: NetworkConfig = {
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: goerli,
   contracts: {
-    fractalUsulMasterCopy: FractalUsul.address,
+    fractalAzoriusMasterCopy: FractalUsul.address,
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
     votesTokenMasterCopy: VotesToken.address,
     claimingMasterCopy: TokenClaim.address,
-    usulVetoGuardMasterCopy: UsulVetoGuard.address,
+    azoriusVetoGuardMasterCopy: UsulVetoGuard.address,
     vetoMultisigVotingMasterCopy: VetoMultisigVoting.address,
     vetoERC20VotingMasterCopy: VetoERC20Voting.address,
     gnosisVetoGuardMasterCopy: VetoGuard.address,

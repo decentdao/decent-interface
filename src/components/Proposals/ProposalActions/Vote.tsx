@@ -3,15 +3,14 @@ import { CloseX, Check } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   FractalProposal,
-  UsulProposal,
+  AzoriusProposal,
   FractalProposalState,
-  UsulVoteChoice,
+  AzoriusVoteChoice,
   AzoriusGovernance,
 } from '../../../types';
 
@@ -25,12 +24,13 @@ function Vote({
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
-  const { governance } = useFractal();
+  const {
+    governance,
+    readOnly: { user },
+  } = useFractal();
 
   const azoriusGovernance = governance as AzoriusGovernance;
-  const usulProposal = proposal as UsulProposal;
-
-  const { address: account } = useAccount();
+  const azoriusProposal = proposal as AzoriusProposal;
 
   const castVote = useCastVote({
     proposalNumber: BigNumber.from(proposal.proposalNumber),
@@ -50,13 +50,13 @@ function Vote({
   // This gives a weird behavior when casting vote fails due to requirement under OZLinearVoting contract that current block number
   // Shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
   const proposalStartBlockNotFinalized = Boolean(
-    isCurrentBlockLoaded && currentBlockNumber && usulProposal.startBlock.gte(currentBlockNumber)
+    isCurrentBlockLoaded && currentBlockNumber && azoriusProposal.startBlock.gte(currentBlockNumber)
   );
 
   const disabled =
     pending ||
     proposal.state !== FractalProposalState.Active ||
-    !!usulProposal.votes.find(vote => vote.voter === account) ||
+    !!azoriusProposal.votes.find(vote => vote.voter === user.address) ||
     proposalStartBlockNotFinalized;
 
   return (
@@ -74,7 +74,7 @@ function Vote({
         <Button
           width="full"
           isDisabled={disabled}
-          onClick={() => castVote(UsulVoteChoice.Yes)}
+          onClick={() => castVote(AzoriusVoteChoice.Yes)}
           marginTop={5}
         >
           {t('approve')}
@@ -84,7 +84,7 @@ function Vote({
           marginTop={5}
           width="full"
           isDisabled={disabled}
-          onClick={() => castVote(UsulVoteChoice.No)}
+          onClick={() => castVote(AzoriusVoteChoice.No)}
         >
           {t('reject')}
           <CloseX />
@@ -93,7 +93,7 @@ function Vote({
           marginTop={5}
           width="full"
           isDisabled={disabled}
-          onClick={() => castVote(UsulVoteChoice.Abstain)}
+          onClick={() => castVote(AzoriusVoteChoice.Abstain)}
         >
           {t('abstain')}
         </Button>

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { ICreationStepProps, CreatorSteps } from '../../types';
+import { AzoriusGovernance } from './formComponents/AzoriusGovernance';
+import { AzoriusTokenDetails } from './formComponents/AzoriusTokenDetails';
 import { EstablishEssentials } from './formComponents/EstablishEssentials';
 import { GnosisMultisig } from './formComponents/GnosisMultisig';
 import GuardDetails from './formComponents/GuardDetails';
-import { UsulGovernance } from './formComponents/UsulGovernance';
-import { UsulTokenDetails } from './formComponents/UsulTokenDetails';
 
 function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) {
   const [step, setStepState] = useState<CreatorSteps>(CreatorSteps.ESSENTIALS);
@@ -28,9 +28,9 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
           updateStep={updateStep}
         />
       );
-    case CreatorSteps.GNOSIS_WITH_USUL:
+    case CreatorSteps.GNOSIS_WITH_AZORIUS:
       return (
-        <UsulTokenDetails
+        <AzoriusTokenDetails
           {...props}
           step={step}
           updateStep={updateStep}
@@ -38,7 +38,7 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
       );
     case CreatorSteps.GOV_CONFIG:
       return (
-        <UsulGovernance
+        <AzoriusGovernance
           {...props}
           step={step}
           updateStep={updateStep}

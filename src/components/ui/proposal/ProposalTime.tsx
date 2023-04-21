@@ -13,7 +13,7 @@ import {
   FractalProposal,
   FractalProposalState,
   StrategyType,
-  UsulProposal,
+  AzoriusProposal,
   VetoGuardType,
 } from '../../../types';
 import { getTxQueuedTimestamp } from '../../../utils/guard';
@@ -37,7 +37,7 @@ function useCountdown(proposal: FractalProposal) {
     network: { chainId },
   } = useProvider();
 
-  const usulProposal = proposal as UsulProposal;
+  const azoriusProposal = proposal as AzoriusProposal;
   const azoriusGovernance = governance as AzoriusGovernance;
   const loadDAOProposals = useDAOProposals();
   const updateProposalState = useUpdateProposalState({
@@ -65,7 +65,7 @@ function useCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (governance.type === StrategyType.GNOSIS_SAFE_USUL) {
+            if (governance.type === StrategyType.GNOSIS_SAFE_AZORIUS) {
               await updateProposalState(BigNumber.from(proposal.proposalNumber));
             } else {
               await loadDAOProposals();
@@ -102,26 +102,28 @@ function useCountdown(proposal: FractalProposal) {
       const vetoGuard =
         vetoGuardType === VetoGuardType.MULTISIG
           ? (vetoGuardContract?.asSigner as VetoGuard)
-          : vetoGuardType === VetoGuardType.USUL
+          : vetoGuardType === VetoGuardType.AZORIUS
           ? (vetoGuardContract?.asSigner as UsulVetoGuard)
           : undefined;
 
       const isSafeGuard = vetoGuardType === VetoGuardType.MULTISIG;
-      const isUsulGuard = vetoGuardType === VetoGuardType.USUL;
+      const isAzoriusGuard = vetoGuardType === VetoGuardType.AZORIUS;
 
-      const usulDeadline = usulProposal.deadline ? usulProposal.deadline * 1000 : undefined;
+      const azoriusDeadline = azoriusProposal.deadline
+        ? azoriusProposal.deadline * 1000
+        : undefined;
       const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
 
-      // If the proposal is active and has a deadline, start the countdown (for usul proposals)
-      if (proposal.state === FractalProposalState.Active && usulDeadline) {
-        startCountdown(usulDeadline, 1000);
+      // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
+      if (proposal.state === FractalProposalState.Active && azoriusDeadline) {
+        startCountdown(azoriusDeadline, 1000);
       } else if (
-        // If the proposal is time locked and has a deadline, start the countdown (for usul proposals)
+        // If the proposal is time locked and has a deadline, start the countdown (for Azorius proposals)
         proposal.state === FractalProposalState.TimeLocked &&
-        usulDeadline &&
+        azoriusDeadline &&
         timeLockPeriod
       ) {
-        startCountdown(usulDeadline + Number(timeLockPeriod.value) * 1000, 1000);
+        startCountdown(azoriusDeadline + Number(timeLockPeriod.value) * 1000, 1000);
         // If the proposal is queued start the countdown (for safe multisig proposals with guards)
       } else if (proposal.state === FractalProposalState.Queued && vetoGuard && isSafeGuard) {
         const safeGuard = vetoGuard as VetoGuard;
@@ -137,8 +139,8 @@ function useCountdown(proposal: FractalProposal) {
           const safeGuardTimelockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
           guardTimelockPeriod = queuedTimestamp + safeGuardTimelockPeriod;
           // If the proposal is executing start the countdown (for Azorius proposals with guards)
-        } else if (isUsulGuard && timeLockPeriod && usulDeadline) {
-          guardTimelockPeriod = Number(timeLockPeriod.value) * 1000 + usulDeadline;
+        } else if (isAzoriusGuard && timeLockPeriod && azoriusDeadline) {
+          guardTimelockPeriod = Number(timeLockPeriod.value) * 1000 + azoriusDeadline;
         }
         const guardExecutionPeriod = Number(await vetoGuard.executionPeriod()) * 1000;
         startCountdown(guardTimelockPeriod + guardExecutionPeriod, 1000);
@@ -154,7 +156,7 @@ function useCountdown(proposal: FractalProposal) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    usulProposal.deadline,
+    azoriusProposal.deadline,
     proposal.state,
     azoriusGovernance.votesStrategy,
     vetoGuardContract,

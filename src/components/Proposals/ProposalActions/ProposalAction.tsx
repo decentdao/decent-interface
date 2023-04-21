@@ -2,13 +2,12 @@ import { Button, Flex, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   FractalProposal,
-  UsulProposal,
+  AzoriusProposal,
   FractalProposalState,
   MultisigProposal,
 } from '../../../types';
@@ -53,11 +52,11 @@ export function ProposalAction({
 }) {
   const {
     node: { daoAddress },
+    readOnly: { user },
   } = useFractal();
-  const { address: account } = useAccount();
   const { push } = useRouter();
   const { t } = useTranslation();
-  const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
+  const isazoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
 
   const showActionButton =
     proposal.state === FractalProposalState.Active ||
@@ -71,14 +70,14 @@ export function ProposalAction({
   };
 
   const hasVoted = useMemo(() => {
-    if (isUsulProposal) {
-      const usulProposal = proposal as UsulProposal;
-      return !!usulProposal.votes.find(vote => vote.voter === account);
+    if (isazoriusProposal) {
+      const azoriusProposal = proposal as AzoriusProposal;
+      return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
     } else {
       const safeProposal = proposal as MultisigProposal;
-      return !!safeProposal.confirmations.find(confirmation => confirmation.owner === account);
+      return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [account, isUsulProposal, proposal]);
+  }, [isazoriusProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -100,10 +99,10 @@ export function ProposalAction({
       if (hasVoted) {
         return t('details');
       }
-      return t(isUsulProposal ? 'vote' : 'sign');
+      return t(isazoriusProposal ? 'vote' : 'sign');
     }
     return t('details');
-  }, [proposal, t, isUsulProposal, hasVoted]);
+  }, [proposal, t, isazoriusProposal, hasVoted]);
 
   if (!showActionButton) {
     if (!expandedView) {
@@ -121,6 +120,8 @@ export function ProposalAction({
   }
 
   if (expandedView) {
+    if (user.votingWeight.eq(0)) return <></>;
+
     return (
       <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Flex justifyContent="space-between">

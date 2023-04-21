@@ -25,7 +25,7 @@ function TokenConfigDisplay(props: ICreationStepProps) {
   }
 }
 
-export function UsulTokenDetails(props: ICreationStepProps) {
+export function AzoriusTokenDetails(props: ICreationStepProps) {
   const {
     transactionPending,
     isSubDAO,
@@ -94,7 +94,7 @@ export function UsulTokenDetails(props: ICreationStepProps) {
       <StepWrapper
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
-        titleKey="titleUsulConfig"
+        titleKey="titleAzoriusConfig"
       >
         <Flex
           flexDirection="column"

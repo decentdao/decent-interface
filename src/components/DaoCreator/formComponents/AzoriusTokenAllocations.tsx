@@ -21,9 +21,9 @@ import {
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
-import { UsulTokenAllocation } from './UsulTokenAllocation';
+import { AzoriusTokenAllocation } from './AzoriusTokenAllocation';
 
-export function UsulTokenAllocations(props: ICreationStepProps) {
+export function AzoriusTokenAllocations(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubDAO } = props;
   const { t } = useTranslation('daoCreate');
   const { governance } = useFractal();
@@ -74,7 +74,7 @@ export function UsulTokenAllocations(props: ICreationStepProps) {
                     : null;
 
                 return (
-                  <UsulTokenAllocation
+                  <AzoriusTokenAllocation
                     key={index}
                     index={index}
                     remove={remove}

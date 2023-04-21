@@ -11,7 +11,7 @@ export const useFractalModules = () => {
   const {
     baseContracts: {
       zodiacModuleProxyFactoryContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
       fractalModuleMasterCopyContract,
     },
   } = useFractal();
@@ -32,11 +32,11 @@ export const useFractalModules = () => {
 
           let safeModule: FractalModuleData;
 
-          if (masterCopyAddress === fractalUsulMasterCopyContract.asSigner.address) {
+          if (masterCopyAddress === fractalAzoriusMasterCopyContract.asSigner.address) {
             safeModule = {
-              moduleContract: fractalUsulMasterCopyContract.asSigner.attach(moduleAddress),
+              moduleContract: fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
-              moduleType: FractalModuleType.USUL,
+              moduleType: FractalModuleType.AZORIUS,
             };
           } else if (masterCopyAddress === fractalModuleMasterCopyContract.asSigner.address) {
             safeModule = {
@@ -59,7 +59,7 @@ export const useFractalModules = () => {
     },
     [
       zodiacModuleProxyFactoryContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
       fractalModuleMasterCopyContract,
       chainId,
     ]

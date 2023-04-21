@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 
 export function ProposalHeader({
-  isUsul,
+  isAzorius,
   metadataTitle,
   nonce,
   setNonce,
   defaultNonce,
 }: {
-  isUsul?: boolean;
+  isAzorius?: boolean;
   metadataTitle?: string;
   nonce: number;
   setNonce: (nonce?: number) => void;
@@ -28,7 +28,7 @@ export function ProposalHeader({
       >
         {metadataTitle ? metadataTitle : t('proposal', { ns: 'proposal' })}
       </Text>
-      {!isUsul && (
+      {!isAzorius && (
         <CustomNonceInput
           nonce={nonce}
           onChange={setNonce}
