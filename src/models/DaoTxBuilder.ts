@@ -96,9 +96,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     const txs: SafeTransaction[] = [this.createSafeTx!];
 
+    // build token wrapper if token is imported and not votes token (votes token contracts is already deployed)
     if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
       txs.push(azoriusTxBuilder.buildCreateTokenWrapperTx());
     }
+    // build token if token is not imported
     if (!data.isTokenImported) {
       txs.push(azoriusTxBuilder.buildCreateTokenTx());
     }
