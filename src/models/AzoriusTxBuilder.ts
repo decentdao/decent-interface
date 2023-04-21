@@ -201,6 +201,10 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildCreateTokenWrapperTx(): SafeTransaction {
+    console.log(
+      '🚀 ~ file: AzoriusTxBuilder.ts:216 ~ this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address:',
+      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address
+    );
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
@@ -225,6 +229,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         [encodedInitTokenData]
       );
   }
+
   public setPredictedERC20WrapperAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
       this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address.slice(2)

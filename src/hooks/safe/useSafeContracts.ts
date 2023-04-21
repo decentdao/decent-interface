@@ -39,6 +39,7 @@ export default function useSafeContracts() {
       vetoERC20VotingMasterCopy,
       votesTokenMasterCopy,
       claimingMasterCopy,
+      votesERC20WrapperMasterCopy,
     },
   } = useNetworkConfg();
 
@@ -115,8 +116,8 @@ export default function useSafeContracts() {
     };
 
     const votesERC20WrapperMasterCopyContract = {
-      asSigner: VotesERC20Wrapper__factory.connect(claimingMasterCopy, signerOrProvider),
-      asProvider: VotesERC20Wrapper__factory.connect(claimingMasterCopy, provider),
+      asSigner: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, signerOrProvider),
+      asProvider: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, provider),
     };
 
     return {
@@ -151,6 +152,7 @@ export default function useSafeContracts() {
     vetoERC20VotingMasterCopy,
     votesTokenMasterCopy,
     claimingMasterCopy,
+    votesERC20WrapperMasterCopy,
     provider,
     signer,
   ]);

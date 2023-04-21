@@ -98,7 +98,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
       txs.push(azoriusTxBuilder.buildCreateTokenWrapperTx());
-    } else if (!data.isTokenImported) {
+    }
+    if (!data.isTokenImported) {
       txs.push(azoriusTxBuilder.buildCreateTokenTx());
     }
 

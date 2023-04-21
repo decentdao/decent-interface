@@ -13,23 +13,18 @@ import {
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
   const provider = useProvider();
-  const signerOrProvider = signer || provider;
 
   const checkVotesToken = useCallback(
     async (address: string) => {
       try {
-        const votesContract = new ethers.Contract(
-          address,
-          ERC20Votes__factory.abi,
-          signerOrProvider
-        );
+        const votesContract = new ethers.Contract(address, ERC20Votes__factory.abi, provider);
         await votesContract.estimateGas.delegate('0x0000000000000000000000000000000000000001');
         return true;
       } catch (error) {
         return false;
       }
     },
-    [signerOrProvider]
+    [provider]
   );
 
   const prepareMultisigFormData = useCallback(
