@@ -7,7 +7,7 @@ import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
-import { UsulTokenAllocations } from './UsulTokenAllocations';
+import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 
 export function VotesTokenNew(props: ICreationStepProps) {
   const { values, handleChange, setFieldValue } = props;
@@ -60,7 +60,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
         />
       </LabelComponent>
       <Divider color="chocolate.700" />
-      <UsulTokenAllocations {...props} />
+      <AzoriusTokenAllocations {...props} />
       <Divider
         color="chocolate.700"
         mb={4}
