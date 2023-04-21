@@ -201,10 +201,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildCreateTokenWrapperTx(): SafeTransaction {
-    console.log(
-      '🚀 ~ file: AzoriusTxBuilder.ts:216 ~ this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address:',
-      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address
-    );
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',

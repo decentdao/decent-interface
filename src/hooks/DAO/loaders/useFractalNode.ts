@@ -166,7 +166,6 @@ export const useFractalNode = ({
         }
       } else {
         // invalid address
-        console.log('NOOOOOOO');
         invalidateDAO('errorFailedSearch');
       }
     },
