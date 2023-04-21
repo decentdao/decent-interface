@@ -21,7 +21,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       zodiacModuleProxyFactoryContract,
       vetoERC20VotingMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
+      azoriusVetoGuardMasterCopyContract,
       gnosisVetoGuardMasterCopyContract,
     },
     action,
@@ -58,17 +58,17 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       let vetoGuardContract: ContractConnection<UsulVetoGuard | VetoGuard> | undefined;
       let vetoGuardType: VetoGuardType | null = null;
 
-      const usulModule = _fractalModules?.find(
-        module => module.moduleType === FractalModuleType.USUL
+      const azoriusModule = _fractalModules?.find(
+        module => module.moduleType === FractalModuleType.AZORIUS
       );
-      if (!!usulModule && usulModule.moduleContract) {
-        const usulGuardAddress = await usulModule.moduleContract.getGuard();
-        if (usulGuardAddress === constants.AddressZero) return;
+      if (!!azoriusModule && azoriusModule.moduleContract) {
+        const azoriusGuardAddress = await azoriusModule.moduleContract.getGuard();
+        if (azoriusGuardAddress === constants.AddressZero) return;
         vetoGuardContract = {
-          asSigner: usulVetoGuardMasterCopyContract.asSigner.attach(usulGuardAddress),
-          asProvider: usulVetoGuardMasterCopyContract.asProvider.attach(usulGuardAddress),
+          asSigner: azoriusVetoGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress),
+          asProvider: azoriusVetoGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress),
         };
-        vetoGuardType = VetoGuardType.USUL;
+        vetoGuardType = VetoGuardType.AZORIUS;
       } else {
         const hasNoGuard = _safe.guard === constants.AddressZero;
         const guardMasterCopyAddress = await getMasterCopyAddress(guard!);
@@ -115,7 +115,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       getMasterCopyAddress,
       vetoERC20VotingMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
+      azoriusVetoGuardMasterCopyContract,
       gnosisVetoGuardMasterCopyContract,
     ]
   );

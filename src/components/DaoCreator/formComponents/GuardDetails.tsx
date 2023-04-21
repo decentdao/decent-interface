@@ -33,7 +33,7 @@ function GuardDetails(props: ICreationStepProps) {
   const {
     node: { safe },
     governance,
-    governanceContracts: { usulContract },
+    governanceContracts: { azoriusContract },
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState(false);
@@ -51,12 +51,12 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentUsul = type === StrategyType.GNOSIS_SAFE_USUL;
-    if (!isParentUsul && isSubDAO) {
+    const isParentAzorius = type === StrategyType.GNOSIS_SAFE_AZORIUS;
+    if (!isParentAzorius && isSubDAO) {
       setFieldValue('gnosis.customNonce', defaultNonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, usulContract, type, setFieldValue, defaultNonce]);
+  }, [isSubDAO, azoriusContract, type, setFieldValue, defaultNonce]);
 
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
@@ -64,7 +64,7 @@ function GuardDetails(props: ICreationStepProps) {
 
       let totalVotes: BigNumberValuePair;
       switch (type) {
-        case StrategyType.GNOSIS_SAFE_USUL:
+        case StrategyType.GNOSIS_SAFE_AZORIUS:
           const normalized = ethers.utils.formatUnits(
             azoriusGovernance.votesToken.totalSupply || '0',
             azoriusGovernance.votesToken.decimals

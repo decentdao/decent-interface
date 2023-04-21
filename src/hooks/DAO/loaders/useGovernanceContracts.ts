@@ -12,7 +12,7 @@ import { GovernanceContractAction } from '../../../providers/App/governanceContr
 import { ContractConnection, FractalModuleType, FractalNode } from '../../../types';
 import { useLocalStorage } from '../../utils/useLocalStorage';
 
-const USUL_MODULE_CACHE_KEY = 'usul_module_gov_';
+const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
@@ -22,7 +22,7 @@ export const useGovernanceContracts = () => {
       zodiacModuleProxyFactoryContract,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
     },
     action,
   } = useFractal();
@@ -37,14 +37,15 @@ export const useGovernanceContracts = () => {
     async (_node: FractalNode) => {
       const { fractalModules } = _node;
 
-      const usulModule = fractalModules.find(module => module.moduleType === FractalModuleType.USUL)
-        ?.moduleContract as FractalUsul | undefined;
-      if (!!usulModule) {
-        const usulContract = {
-          asProvider: fractalUsulMasterCopyContract.asProvider.attach(usulModule.address),
-          asSigner: fractalUsulMasterCopyContract.asSigner.attach(usulModule.address),
+      const azoriusModule = fractalModules.find(
+        module => module.moduleType === FractalModuleType.AZORIUS
+      )?.moduleContract as FractalUsul | undefined;
+      if (!!azoriusModule) {
+        const azoriusContract = {
+          asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(azoriusModule.address),
+          asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModule.address),
         };
-        const cachedContractAddresses = getValue('usul_module_gov_' + usulModule.address);
+        const cachedContractAddresses = getValue('azorius_module_gov_' + azoriusModule.address);
 
         // if existing cached addresses are found, use them
         let votingContractAddress: string | undefined =
@@ -58,8 +59,8 @@ export const useGovernanceContracts = () => {
         let tokenContract: ContractConnection<VotesToken> | undefined;
 
         if (!votingContractAddress) {
-          votingContractAddress = await getEventRPC<FractalUsul>(usulContract, chainId)
-            .queryFilter(usulModule.filters.EnabledStrategy())
+          votingContractAddress = await getEventRPC<FractalUsul>(azoriusContract, chainId)
+            .queryFilter(azoriusModule.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;
             });
@@ -90,7 +91,7 @@ export const useGovernanceContracts = () => {
         }
         if (!!ozLinearVotingContract && !!tokenContract) {
           // cache the addresses for future use, saves on query requests
-          setValue(USUL_MODULE_CACHE_KEY + usulModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
             votingContractAddress,
             govTokenAddress,
             votingContractMasterCopyAddress,
@@ -100,7 +101,7 @@ export const useGovernanceContracts = () => {
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
               ozLinearVotingContract,
-              usulContract,
+              azoriusContract,
               tokenContract,
             },
           });
@@ -109,7 +110,7 @@ export const useGovernanceContracts = () => {
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
               ozLinearVotingContract: null,
-              usulContract: null,
+              azoriusContract: null,
               tokenContract: null,
             },
           });
@@ -119,7 +120,7 @@ export const useGovernanceContracts = () => {
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
           payload: {
             ozLinearVotingContract: null,
-            usulContract: null,
+            azoriusContract: null,
             tokenContract: null,
           },
         });
@@ -133,7 +134,7 @@ export const useGovernanceContracts = () => {
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       zodiacModuleProxyFactoryContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
     ]
   );
 

@@ -14,7 +14,7 @@ interface ITokenAllocations {
   allocationLength: number;
 }
 
-export function UsulTokenAllocation({
+export function AzoriusTokenAllocation({
   index,
   addressErrorMessage,
   amountErrorMessage,

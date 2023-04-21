@@ -4,7 +4,7 @@ import { isAddress } from 'ethers/lib/utils';
 import { logError } from '../helpers/errorLogging';
 import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../types';
 import { buildGnosisApiUrl } from './api';
-import { parseMultiSendTransactions } from './usul';
+import { parseMultiSendTransactions } from './azorius';
 
 export const decodeTransactions = async (
   transactions: MetaTransaction[],

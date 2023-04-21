@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, FractalProposal, UsulProposal } from '../../../types';
+import { MetaTransaction, FractalProposal, AzoriusProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 import useUpdateProposalState from './useUpdateProposalState';
 
@@ -11,7 +11,7 @@ export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
   const { governanceContracts, action } = useFractal();
-  const { usulContract } = governanceContracts;
+  const { azoriusContract } = governanceContracts;
   const { chainId } = useNetworkConfg();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
@@ -22,8 +22,8 @@ export default function useExecuteProposal() {
 
   const executeProposal = useCallback(
     (proposal: FractalProposal) => {
-      const usulProposal = proposal as UsulProposal;
-      if (!usulContract || !usulProposal.metaData || !usulProposal.metaData.transactions) {
+      const azoriusProposal = proposal as AzoriusProposal;
+      if (!azoriusContract || !azoriusProposal.metaData || !azoriusProposal.metaData.transactions) {
         return;
       }
 
@@ -32,7 +32,7 @@ export default function useExecuteProposal() {
       const data: string[] = [];
       const operations: number[] = [];
 
-      usulProposal.metaData.transactions.forEach(tx => {
+      azoriusProposal.metaData.transactions.forEach(tx => {
         targets.push(tx.to);
         values.push(tx.value);
         data.push(tx.data);
@@ -41,7 +41,7 @@ export default function useExecuteProposal() {
 
       contractCallExecuteProposal({
         contractFn: () =>
-          usulContract.asSigner.executeProposalBatch(
+          azoriusContract.asSigner.executeProposalBatch(
             proposal.proposalNumber,
             targets,
             values,
@@ -57,7 +57,7 @@ export default function useExecuteProposal() {
         },
       });
     },
-    [contractCallExecuteProposal, t, usulContract, updateProposalState]
+    [contractCallExecuteProposal, t, azoriusContract, updateProposalState]
   );
 
   return {

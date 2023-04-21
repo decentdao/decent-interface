@@ -6,7 +6,7 @@ import {
   TokenGovernanceDAO,
   GnosisDAO,
   StrategyType,
-  UsulContracts,
+  AzoriusContracts,
   BaseContracts,
 } from '../../types';
 
@@ -21,12 +21,12 @@ const useBuildDAOTx = () => {
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
       linearVotingMasterCopyContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
       zodiacModuleProxyFactoryContract,
       fractalRegistryContract,
       fractalModuleMasterCopyContract,
       gnosisVetoGuardMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
+      azoriusVetoGuardMasterCopyContract,
       vetoMultisigVotingMasterCopyContract,
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
@@ -41,7 +41,7 @@ const useBuildDAOTx = () => {
       parentAddress?: string,
       parentTokenAddress?: string
     ) => {
-      let usulContracts;
+      let azoriusContracts;
 
       if (
         !user.address ||
@@ -60,24 +60,24 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === StrategyType.GNOSIS_SAFE_USUL) {
+      if (daoData.governance === StrategyType.GNOSIS_SAFE_AZORIUS) {
         if (
-          !fractalUsulMasterCopyContract ||
+          !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
           !votesTokenMasterCopyContract ||
-          !usulVetoGuardMasterCopyContract ||
+          !azoriusVetoGuardMasterCopyContract ||
           !claimingMasterCopyContract
         ) {
           return;
         }
 
-        usulContracts = {
-          fractalUsulMasterCopyContract: fractalUsulMasterCopyContract.asSigner,
+        azoriusContracts = {
+          fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
-          usulVetoGuardMasterCopyContract: usulVetoGuardMasterCopyContract.asSigner,
+          azoriusVetoGuardMasterCopyContract: azoriusVetoGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
-        } as UsulContracts;
+        } as AzoriusContracts;
       }
 
       const baseContracts = {
@@ -95,7 +95,7 @@ const useBuildDAOTx = () => {
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
         baseContracts,
-        usulContracts,
+        azoriusContracts,
         daoData,
         parentAddress,
         parentTokenAddress
@@ -104,10 +104,10 @@ const useBuildDAOTx = () => {
       await txBuilderFactory.setupGnosisSafeData();
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
 
-      // Build Tx bundle based on governance type (Usul or Multisig)
+      // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === StrategyType.GNOSIS_SAFE_USUL
-          ? await daoTxBuilder.buildUsulTx()
+        daoData.governance === StrategyType.GNOSIS_SAFE_AZORIUS
+          ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 
       return {
@@ -129,10 +129,10 @@ const useBuildDAOTx = () => {
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
       claimingMasterCopyContract,
-      fractalUsulMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
+      azoriusVetoGuardMasterCopyContract,
     ]
   );
 

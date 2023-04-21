@@ -27,14 +27,14 @@ export type ContractConnection<T> = {
 export interface DAOContracts {
   multiSendContract: ContractConnection<MultiSend>;
   gnosisSafeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
-  fractalUsulMasterCopyContract: ContractConnection<FractalUsul>;
+  fractalAzoriusMasterCopyContract: ContractConnection<FractalUsul>;
   linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>;
   gnosisSafeSingletonContract: ContractConnection<GnosisSafe>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
   gnosisVetoGuardMasterCopyContract: ContractConnection<VetoGuard>;
-  usulVetoGuardMasterCopyContract: ContractConnection<UsulVetoGuard>;
+  azoriusVetoGuardMasterCopyContract: ContractConnection<UsulVetoGuard>;
   vetoMultisigVotingMasterCopyContract: ContractConnection<VetoMultisigVoting>;
   vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;

@@ -1,4 +1,4 @@
-import { FractalGovernance, UsulProposal, VOTE_CHOICES } from '../../../types';
+import { FractalGovernance, AzoriusProposal, VOTE_CHOICES } from '../../../types';
 import { AzoriusGovernance, StrategyType } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
@@ -24,16 +24,16 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, type, proposals: newProposals };
     }
     case FractalGovernanceAction.SET_STRATEGY: {
-      return { ...state, type: StrategyType.GNOSIS_SAFE_USUL, votesStrategy: action.payload };
+      return { ...state, type: StrategyType.GNOSIS_SAFE_AZORIUS, votesStrategy: action.payload };
     }
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...(proposals || []), action.payload] };
-    case FractalGovernanceAction.UPDATE_NEW_USUL_VOTE: {
+    case FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE: {
       const { proposalNumber, voter, support, weight, votesSummary } = action.payload;
-      const updatedProposals = [...(proposals as UsulProposal[])].map(proposal => {
+      const updatedProposals = [...(proposals as AzoriusProposal[])].map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
           const foundVote = proposal.votes.find(vote => vote.voter === voter);
-          const newProposal: UsulProposal = {
+          const newProposal: AzoriusProposal = {
             ...proposal,
             votesSummary,
             votes: foundVote
@@ -51,9 +51,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       if (!proposals) {
         return state;
       }
-      const updatedProposals = (proposals as UsulProposal[]).map(proposal => {
+      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
         if (proposal.proposalNumber === proposalNumber) {
-          const newProposal: UsulProposal = {
+          const newProposal: AzoriusProposal = {
             ...proposal,
             state: proposalState,
           };

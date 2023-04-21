@@ -17,13 +17,16 @@ export const useDAOProposals = () => {
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const { setMethodOnInterval } = useUpdateTimer(daoAddress);
   const loadDAOProposals = useCallback(async () => {
-    const { usulContract } = governanceContracts;
+    const { azoriusContract } = governanceContracts;
 
-    if (!!usulContract) {
-      // load Usul proposals and strategies
+    if (!!azoriusContract) {
+      // load Azorius proposals and strategies
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: { type: StrategyType.GNOSIS_SAFE_USUL, proposals: await loadAzoriusProposals() },
+        payload: {
+          type: StrategyType.GNOSIS_SAFE_AZORIUS,
+          proposals: await loadAzoriusProposals(),
+        },
       });
     } else {
       // load mulisig proposals

@@ -7,7 +7,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   FractalProposal,
-  UsulProposal,
+  AzoriusProposal,
   FractalProposalState,
   MultisigProposal,
 } from '../../../types';
@@ -56,7 +56,7 @@ export function ProposalAction({
   } = useFractal();
   const { push } = useRouter();
   const { t } = useTranslation();
-  const isUsulProposal = !!(proposal as UsulProposal).govTokenAddress;
+  const isazoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
 
   const showActionButton =
     proposal.state === FractalProposalState.Active ||
@@ -70,14 +70,14 @@ export function ProposalAction({
   };
 
   const hasVoted = useMemo(() => {
-    if (isUsulProposal) {
-      const usulProposal = proposal as UsulProposal;
-      return !!usulProposal.votes.find(vote => vote.voter === user.address);
+    if (isazoriusProposal) {
+      const azoriusProposal = proposal as AzoriusProposal;
+      return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
     } else {
       const safeProposal = proposal as MultisigProposal;
       return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [isUsulProposal, proposal, user.address]);
+  }, [isazoriusProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -99,10 +99,10 @@ export function ProposalAction({
       if (hasVoted) {
         return t('details');
       }
-      return t(isUsulProposal ? 'vote' : 'sign');
+      return t(isazoriusProposal ? 'vote' : 'sign');
     }
     return t('details');
-  }, [proposal, t, isUsulProposal, hasVoted]);
+  }, [proposal, t, isazoriusProposal, hasVoted]);
 
   if (!showActionButton) {
     if (!expandedView) {

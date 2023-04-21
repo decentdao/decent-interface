@@ -8,9 +8,9 @@ import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { UsulTokenAllocations } from './UsulTokenAllocations';
+import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 
-export function UsulTokenDetails(props: ICreationStepProps) {
+export function AzoriusTokenDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, handleChange, isSubDAO, setFieldValue } = props;
   const { t } = useTranslation('daoCreate');
   const { restrictChars } = useFormHelpers();
@@ -18,7 +18,7 @@ export function UsulTokenDetails(props: ICreationStepProps) {
     <StepWrapper
       isSubDAO={isSubDAO}
       isFormSubmitting={!!isSubmitting || transactionPending}
-      titleKey="titleUsulConfig"
+      titleKey="titleAzoriusConfig"
     >
       <Flex
         flexDirection="column"
@@ -66,7 +66,7 @@ export function UsulTokenDetails(props: ICreationStepProps) {
           />
         </LabelComponent>
         <Divider color="chocolate.700" />
-        <UsulTokenAllocations {...props} />
+        <AzoriusTokenAllocations {...props} />
         <Divider
           color="chocolate.700"
           mb={4}

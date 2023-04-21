@@ -16,7 +16,7 @@ import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
-export function UsulGovernance(props: ICreationStepProps) {
+export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
@@ -109,7 +109,7 @@ export function UsulGovernance(props: ICreationStepProps) {
         />
         <StepButtons
           {...props}
-          prevStep={CreatorSteps.GNOSIS_WITH_USUL}
+          prevStep={CreatorSteps.GNOSIS_WITH_AZORIUS}
           nextStep={CreatorSteps.GUARD_CONFIG}
           isLastStep={!isSubDAO}
         />

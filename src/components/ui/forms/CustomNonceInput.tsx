@@ -18,7 +18,7 @@ export function CustomNonceInput({
   const errorMessage =
     nonce && defaultNonce && nonce < defaultNonce ? t('customNonceError') : undefined;
 
-  if (governance.type === StrategyType.GNOSIS_SAFE_USUL) return null;
+  if (governance.type === StrategyType.GNOSIS_SAFE_AZORIUS) return null;
 
   return (
     <VStack alignItems="start">

@@ -15,39 +15,39 @@ import {
   GnosisDAO,
   SafeTransaction,
   TokenGovernanceDAO,
-  UsulContracts,
+  AzoriusContracts,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt, TIMER_MULT } from './helpers/utils';
 
-export class UsulTxBuilder extends BaseTxBuilder {
+export class AzoriusTxBuilder extends BaseTxBuilder {
   private readonly safeContract: GnosisSafe;
   private readonly predictedGnosisSafeAddress: string;
 
   private encodedSetupTokenData: string | undefined;
   private encodedStrategySetupData: string | undefined;
-  private encodedSetupUsulData: string | undefined;
+  private encodedSetupAzoriusData: string | undefined;
   private encodedSetupTokenClaimData: string | undefined;
   private encodedSetupTokenApprovalData: string | undefined;
 
   private predictedTokenAddress: string | undefined;
   private predictedStrategyAddress: string | undefined;
-  private predictedUsulAddress: string | undefined;
+  private predictedAzoriusAddress: string | undefined;
   private predictedTokenClaimAddress: string | undefined;
 
-  public usulContract: FractalUsul | undefined;
+  public azoriusContract: FractalUsul | undefined;
   public linearVotingContract: OZLinearVoting | undefined;
   public votesTokenContract: VotesToken | undefined;
 
   private tokenNonce: string;
   private strategyNonce: string;
-  private usulNonce: string;
+  private azoriusNonce: string;
   private claimNonce: string;
 
   constructor(
     signerOrProvider: any,
     baseContracts: BaseContracts,
-    usulContracts: UsulContracts,
+    azoriusContracts: AzoriusContracts,
     daoData: GnosisDAO | TokenGovernanceDAO,
     safeContract: GnosisSafe,
     predictedGnosisSafeAddress: string,
@@ -57,7 +57,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
     super(
       signerOrProvider,
       baseContracts,
-      usulContracts,
+      azoriusContracts,
       daoData,
       parentAddress,
       parentTokenAddress
@@ -68,12 +68,12 @@ export class UsulTxBuilder extends BaseTxBuilder {
     this.tokenNonce = getRandomBytes();
     this.claimNonce = getRandomBytes();
     this.strategyNonce = getRandomBytes();
-    this.usulNonce = getRandomBytes();
+    this.azoriusNonce = getRandomBytes();
 
     this.setEncodedSetupTokenData();
     this.setPredictedTokenAddress();
     this.setPredictedStrategyAddress();
-    this.setPredictedUsulAddress();
+    this.setPredictedAzoriusAddress();
     this.setContracts();
 
     const data = daoData as TokenGovernanceDAO;
@@ -86,28 +86,28 @@ export class UsulTxBuilder extends BaseTxBuilder {
   public buildLinearVotingContractSetupTx(): SafeTransaction {
     return buildContractCall(
       this.linearVotingContract!,
-      'setUsul',
-      [this.usulContract!.address],
+      'setUsul', // contract function name
+      [this.azoriusContract!.address],
       0,
       false
     );
   }
 
-  public buildEnableUsulModuleTx(): SafeTransaction {
+  public buildEnableazoriusModuleTx(): SafeTransaction {
     return buildContractCall(
       this.safeContract!,
       'enableModule',
-      [this.usulContract!.address],
+      [this.azoriusContract!.address],
       0,
       false
     );
   }
 
-  public buildAddUsulContractAsOwnerTx(): SafeTransaction {
+  public buildAddAzoriusContractAsOwnerTx(): SafeTransaction {
     return buildContractCall(
       this.safeContract!,
       'addOwnerWithThreshold',
-      [this.usulContract!.address, 1],
+      [this.azoriusContract!.address, 1],
       0,
       false
     );
@@ -117,7 +117,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
     return buildContractCall(
       this.safeContract!,
       'removeOwner',
-      [this.usulContract!.address, this.baseContracts.multiSendContract.address, 1],
+      [this.azoriusContract!.address, this.baseContracts.multiSendContract.address, 1],
       0,
       false
     );
@@ -128,7 +128,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
       [
-        this.usulContracts!.votesTokenMasterCopyContract.address,
+        this.azoriusContracts!.votesTokenMasterCopyContract.address,
         this.encodedSetupTokenData,
         this.tokenNonce,
       ],
@@ -142,7 +142,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
       [
-        this.usulContracts!.linearVotingMasterCopyContract.address,
+        this.azoriusContracts!.linearVotingMasterCopyContract.address,
         this.encodedStrategySetupData,
         this.strategyNonce,
       ],
@@ -151,14 +151,14 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
   }
 
-  public buildDeployUsulTx(): SafeTransaction {
+  public buildDeployAzoriusTx(): SafeTransaction {
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
       [
-        this.usulContracts!.fractalUsulMasterCopyContract.address,
-        this.encodedSetupUsulData,
-        this.usulNonce,
+        this.azoriusContracts!.fractalAzoriusMasterCopyContract.address,
+        this.encodedSetupAzoriusData,
+        this.azoriusNonce,
       ],
       0,
       false
@@ -170,7 +170,7 @@ export class UsulTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
       [
-        this.usulContracts!.claimingMasterCopyContract.address,
+        this.azoriusContracts!.claimingMasterCopyContract.address,
         this.encodedSetupTokenClaimData,
         this.claimNonce,
       ],
@@ -238,14 +238,14 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
 
     this.encodedSetupTokenData =
-      this.usulContracts!.votesTokenMasterCopyContract.interface.encodeFunctionData('setUp', [
+      this.azoriusContracts!.votesTokenMasterCopyContract.interface.encodeFunctionData('setUp', [
         encodedInitTokenData,
       ]);
   }
 
   private setPredictedTokenAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
-      this.usulContracts!.votesTokenMasterCopyContract.address.slice(2)
+      this.azoriusContracts!.votesTokenMasterCopyContract.address.slice(2)
     );
 
     const tokenSalt = generateSalt(this.encodedSetupTokenData!, this.tokenNonce);
@@ -269,14 +269,14 @@ export class UsulTxBuilder extends BaseTxBuilder {
       ]
     );
     this.encodedSetupTokenClaimData =
-      this.usulContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
+      this.azoriusContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
         encodedInitTokenData,
       ]);
   }
 
   private setPredictedTokenClaimAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
-      this.usulContracts!.claimingMasterCopyContract.address.slice(2)
+      this.azoriusContracts!.claimingMasterCopyContract.address.slice(2)
     );
 
     const tokenSalt = generateSalt(this.encodedSetupTokenClaimData!, this.claimNonce);
@@ -306,12 +306,12 @@ export class UsulTxBuilder extends BaseTxBuilder {
     );
 
     const encodedStrategySetupData =
-      this.usulContracts!.linearVotingMasterCopyContract.interface.encodeFunctionData('setUp', [
+      this.azoriusContracts!.linearVotingMasterCopyContract.interface.encodeFunctionData('setUp', [
         encodedStrategyInitParams,
       ]);
 
     const strategyByteCodeLinear = generateContractByteCodeLinear(
-      this.usulContracts!.linearVotingMasterCopyContract.address.slice(2)
+      this.azoriusContracts!.linearVotingMasterCopyContract.address.slice(2)
     );
 
     const strategySalt = solidityKeccak256(
@@ -329,8 +329,8 @@ export class UsulTxBuilder extends BaseTxBuilder {
   }
 
   // TODO - verify we can use safe contract address
-  private setPredictedUsulAddress() {
-    const encodedInitUsulData = defaultAbiCoder.encode(
+  private setPredictedAzoriusAddress() {
+    const encodedInitAzoriusData = defaultAbiCoder.encode(
       ['address', 'address', 'address', 'address[]'],
       [
         this.safeContract.address,
@@ -340,27 +340,28 @@ export class UsulTxBuilder extends BaseTxBuilder {
       ]
     );
 
-    const encodedSetupUsulData =
-      this.usulContracts!.fractalUsulMasterCopyContract.interface.encodeFunctionData('setUp', [
-        encodedInitUsulData,
-      ]);
+    const encodedSetupAzoriusData =
+      this.azoriusContracts!.fractalAzoriusMasterCopyContract.interface.encodeFunctionData(
+        'setUp',
+        [encodedInitAzoriusData]
+      );
 
-    const usulByteCodeLinear = generateContractByteCodeLinear(
-      this.usulContracts!.fractalUsulMasterCopyContract.address.slice(2)
+    const azoriusByteCodeLinear = generateContractByteCodeLinear(
+      this.azoriusContracts!.fractalAzoriusMasterCopyContract.address.slice(2)
     );
-    const usulSalt = generateSalt(encodedSetupUsulData, this.usulNonce);
+    const azoriusSalt = generateSalt(encodedSetupAzoriusData, this.azoriusNonce);
 
-    this.encodedSetupUsulData = encodedSetupUsulData;
-    this.predictedUsulAddress = getCreate2Address(
+    this.encodedSetupAzoriusData = encodedSetupAzoriusData;
+    this.predictedAzoriusAddress = getCreate2Address(
       this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      usulSalt,
-      solidityKeccak256(['bytes'], [usulByteCodeLinear])
+      azoriusSalt,
+      solidityKeccak256(['bytes'], [azoriusByteCodeLinear])
     );
   }
 
   private setContracts() {
-    this.usulContract = FractalUsul__factory.connect(
-      this.predictedUsulAddress!,
+    this.azoriusContract = FractalUsul__factory.connect(
+      this.predictedAzoriusAddress!,
       this.signerOrProvider
     );
     this.linearVotingContract = OZLinearVoting__factory.connect(

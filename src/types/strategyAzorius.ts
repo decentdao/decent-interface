@@ -6,10 +6,10 @@ import {
   TokenClaim,
 } from '@fractal-framework/fractal-contracts';
 
-export interface UsulContracts {
-  fractalUsulMasterCopyContract: FractalUsul;
+export interface AzoriusContracts {
+  fractalAzoriusMasterCopyContract: FractalUsul;
   linearVotingMasterCopyContract: OZLinearVoting;
-  usulVetoGuardMasterCopyContract: UsulVetoGuard;
+  azoriusVetoGuardMasterCopyContract: UsulVetoGuard;
   votesTokenMasterCopyContract: VotesToken;
   claimingMasterCopyContract: TokenClaim;
 }

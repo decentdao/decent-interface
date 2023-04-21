@@ -7,7 +7,7 @@ import { EthAddress } from './utils';
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
   GNOSIS_GOVERNANCE = 'gnosis',
-  GNOSIS_WITH_USUL = 'govToken',
+  GNOSIS_WITH_AZORIUS = 'govToken',
   GOV_CONFIG = 'govModule',
   GUARD_CONFIG = 'vetoGuard',
 }

@@ -7,12 +7,12 @@ import {
   SafeTransaction,
   SubDAO,
   TokenGovernanceDAO,
-  UsulContracts,
+  AzoriusContracts,
 } from '../types';
+import { AzoriusTxBuilder as AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
 import { MultisigTxBuilder } from './MultisigTxBuilder';
-import { UsulTxBuilder } from './UsulTxBuilder';
 import { VetoGuardTxBuilder } from './VetoGuardTxBuilder';
 import { gnosisSafeData } from './helpers/gnosisSafeData';
 
@@ -27,7 +27,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   constructor(
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
-    usulContracts: UsulContracts | undefined,
+    azoriusContracts: AzoriusContracts | undefined,
     daoData: GnosisDAO | TokenGovernanceDAO | SubDAO,
     parentAddress?: string,
     parentTokenAddress?: string
@@ -35,7 +35,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     super(
       signerOrProvider,
       baseContracts,
-      usulContracts,
+      azoriusContracts,
       daoData,
       parentAddress,
       parentTokenAddress
@@ -51,7 +51,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts.gnosisSafeSingletonContract,
       this.daoData as GnosisDAO,
       this.saltNum,
-      !!this.usulContracts
+      !!this.azoriusContracts
     );
 
     const safeContract = GnosisSafe__factory.connect(
@@ -68,7 +68,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     return new DaoTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
-      this.usulContracts,
+      this.azoriusContracts,
       this.daoData,
       this.saltNum,
       this.predictedGnosisSafeAddress!,
@@ -81,7 +81,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public createVetoGuardTxBuilder(
-    usulAddress?: string,
+    azoriusAddress?: string,
     strategyAddress?: string
   ): VetoGuardTxBuilder {
     return new VetoGuardTxBuilder(
@@ -92,8 +92,8 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.saltNum,
       this.parentAddress!,
       this.parentTokenAddress,
-      this.usulContracts,
-      usulAddress,
+      this.azoriusContracts,
+      azoriusAddress,
       strategyAddress
     );
   }
@@ -102,11 +102,11 @@ export class TxBuilderFactory extends BaseTxBuilder {
     return new MultisigTxBuilder(this.baseContracts, this.daoData as GnosisDAO, this.safeContract!);
   }
 
-  public createUsulTxBuilder(): UsulTxBuilder {
-    return new UsulTxBuilder(
+  public createAzoriusTxBuilder(): AzoriusTxBuilder {
+    return new AzoriusTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
-      this.usulContracts!,
+      this.azoriusContracts!,
       this.daoData as GnosisDAO,
       this.safeContract!,
       this.predictedGnosisSafeAddress!,

@@ -16,7 +16,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   } = useFractal();
 
   const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_USUL ? true : safe?.owners.includes(user.address || '');
+    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || '');
 
   const { t } = useTranslation('proposal');
   return (
