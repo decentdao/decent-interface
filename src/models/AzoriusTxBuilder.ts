@@ -17,7 +17,6 @@ import {
   TokenGovernanceDAO,
   AzoriusContracts,
 } from '../types';
-import { TokenCreationType } from './../types/createDAO';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt, TIMER_MULT } from './helpers/utils';
 
@@ -72,10 +71,10 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.azoriusNonce = getRandomBytes();
 
     const data = daoData as TokenGovernanceDAO;
-    if (data.tokenCreationType === TokenCreationType.NEW) {
+    if (!data.isTokenImported) {
       this.setEncodedSetupTokenData();
       this.setPredictedTokenAddress();
-    } else if (data.isTokenImported) {
+    } else {
       if (data.isVotesToken) {
         this.predictedTokenAddress = data.tokenImportAddress;
       } else {
@@ -231,7 +230,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address.slice(2)
     );
 
-    const tokenSalt = generateSalt(this.encodedSetupTokenData!, this.tokenNonce);
+    const tokenSalt = generateSalt(this.encodedSetupERC20WrapperData!, this.tokenNonce);
 
     this.predictedTokenAddress = getCreate2Address(
       this.baseContracts.zodiacModuleProxyFactoryContract.address,

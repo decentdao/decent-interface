@@ -87,18 +87,23 @@ export class DaoTxBuilder extends BaseTxBuilder {
         vetoGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
       ]);
     }
+    const data = this.daoData as TokenGovernanceDAO;
 
     this.internalTxs = this.internalTxs.concat([
       azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
       azoriusTxBuilder.buildRemoveMultiSendOwnerTx(),
     ]);
 
-    const txs: SafeTransaction[] = [
-      this.createSafeTx!,
-      azoriusTxBuilder.buildCreateTokenTx(),
-      azoriusTxBuilder.buildDeployStrategyTx(),
-      azoriusTxBuilder.buildDeployAzoriusTx(),
-    ];
+    const txs: SafeTransaction[] = [this.createSafeTx!];
+
+    if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
+      txs.push(azoriusTxBuilder.buildCreateTokenWrapperTx());
+    } else if (!data.isTokenImported) {
+      txs.push(azoriusTxBuilder.buildCreateTokenTx());
+    }
+
+    txs.push(azoriusTxBuilder.buildDeployStrategyTx());
+    txs.push(azoriusTxBuilder.buildDeployAzoriusTx());
 
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
