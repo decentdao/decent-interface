@@ -1,14 +1,36 @@
+import { ERC20Votes__factory } from '@fractal-framework/fractal-contracts';
+import { ethers } from 'ethers';
 import { useCallback } from 'react';
-import { useSigner } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import {
   GnosisDAO,
   DAOVetoGuardConfig,
   BigNumberValuePair,
   TokenGovernanceDAO,
+  TokenCreationType,
 } from '../../../types';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
+  const provider = useProvider();
+  const signerOrProvider = signer || provider;
+
+  const checkVotesToken = useCallback(
+    async (address: string) => {
+      try {
+        const votesContract = new ethers.Contract(
+          address,
+          ERC20Votes__factory.abi,
+          signerOrProvider
+        );
+        await votesContract.estimateGas.delegate('0x0000000000000000000000000000000000000001');
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    [signerOrProvider]
+  );
 
   const prepareMultisigFormData = useCallback(
     async ({
@@ -54,6 +76,8 @@ export function usePrepareFormData() {
       timelock,
       votingPeriod,
       vetoGuard,
+      tokenImportAddress,
+      tokenCreationType,
       ...rest
     }: TokenGovernanceDAO<BigNumberValuePair> & {
       vetoGuard?: DAOVetoGuardConfig<BigNumberValuePair>;
@@ -78,6 +102,12 @@ export function usePrepareFormData() {
           freezePeriod: vetoGuard.freezePeriod.bigNumberValue!,
         };
       }
+      const isTokenImported =
+        tokenCreationType === TokenCreationType.IMPORTED && !!tokenImportAddress;
+      let isVotesToken = false;
+      if (isTokenImported) {
+        isVotesToken = await checkVotesToken(tokenImportAddress);
+      }
       return {
         tokenSupply: tokenSupply.bigNumberValue!,
         parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
@@ -85,11 +115,15 @@ export function usePrepareFormData() {
         timelock: timelock.bigNumberValue!,
         votingPeriod: votingPeriod.bigNumberValue!,
         tokenAllocations: resolvedTokenAllocations,
+        tokenImportAddress,
+        tokenCreationType,
+        isTokenImported,
+        isVotesToken,
         ...vetoGuardData,
         ...rest,
       };
     },
-    [signer]
+    [signer, checkVotesToken]
   );
-  return { prepareMultisigFormData, prepareGnosisAzoriusFormData };
+  return { prepareMultisigFormData, prepareGnosisAzoriusFormData, checkVotesToken };
 }

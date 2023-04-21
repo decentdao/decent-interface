@@ -31,6 +31,7 @@ const useBuildDAOTx = () => {
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
     },
     readOnly: { user },
   } = useFractal();
@@ -55,7 +56,8 @@ const useBuildDAOTx = () => {
         !vetoERC20VotingMasterCopyContract ||
         !gnosisSafeFactoryContract ||
         !gnosisSafeSingletonContract ||
-        !claimingMasterCopyContract
+        !claimingMasterCopyContract ||
+        !votesERC20WrapperMasterCopyContract
       ) {
         return;
       }
@@ -77,6 +79,7 @@ const useBuildDAOTx = () => {
           azoriusVetoGuardMasterCopyContract: azoriusVetoGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
+          votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asSigner,
         } as AzoriusContracts;
       }
 
@@ -133,6 +136,7 @@ const useBuildDAOTx = () => {
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       azoriusVetoGuardMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
     ]
   );
 

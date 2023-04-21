@@ -1,6 +1,5 @@
 import { Box, Flex, Input, RadioGroup, Text, Tooltip } from '@chakra-ui/react';
 import { LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
-import { ERC20Votes__factory } from '@fractal-framework/fractal-contracts';
 import { constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +10,7 @@ import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepWrapper } from '../StepWrapper';
+import { usePrepareFormData } from '../hooks/usePrepareFormData';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
 
@@ -40,18 +40,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
   const provider = useProvider();
 
-  const checkVotesToken = useCallback(
-    async (address: string) => {
-      try {
-        const votesContract = new ethers.Contract(address, ERC20Votes__factory.abi, provider);
-        await votesContract.estimateGas.delegate('0x0000000000000000000000000000000000000001');
-        return true;
-      } catch (error) {
-        return false;
-      }
-    },
-    [provider]
-  );
+  const { checkVotesToken } = usePrepareFormData();
 
   const updateImportFields = useCallback(async () => {
     const importAddress = values.govToken.tokenImportAddress;

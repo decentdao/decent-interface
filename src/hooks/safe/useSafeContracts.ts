@@ -16,6 +16,7 @@ import {
 import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
+import { VotesERC20Wrapper__factory } from '../../assets/typechain-types/usul/factories/VotesERC20Wrapper__factory';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSafeContracts() {
@@ -114,8 +115,8 @@ export default function useSafeContracts() {
     };
 
     const votesERC20WrapperMasterCopyContract = {
-      asSigner: TokenClaim__factory.connect(claimingMasterCopy, signerOrProvider),
-      asProvider: TokenClaim__factory.connect(claimingMasterCopy, provider),
+      asSigner: VotesERC20Wrapper__factory.connect(claimingMasterCopy, signerOrProvider),
+      asProvider: VotesERC20Wrapper__factory.connect(claimingMasterCopy, provider),
     };
 
     return {

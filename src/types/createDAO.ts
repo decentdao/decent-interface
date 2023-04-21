@@ -76,7 +76,10 @@ export interface SubDAO<T = BigNumber>
 export interface TokenGovernanceDAO<T = BigNumber>
   extends DAOGovenorToken<T>,
     DAOEssentials,
-    DAOGovenorModuleConfig<T> {}
+    DAOGovenorModuleConfig<T> {
+  isVotesToken?: boolean;
+  isTokenImported?: boolean;
+}
 
 export interface GnosisDAO extends DAOEssentials, GnosisConfiguration {}
 

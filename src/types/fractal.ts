@@ -28,6 +28,7 @@ import { GovernanceContractActions } from '../providers/App/governanceContracts/
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
+import { VotesERC20Wrapper } from './../assets/typechain-types/VotesERC20Wrapper';
 import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
@@ -359,6 +360,7 @@ export interface FractalContracts {
   vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;
   claimingMasterCopyContract: ContractConnection<TokenClaim>;
+  votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal;
