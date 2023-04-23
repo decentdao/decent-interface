@@ -1,7 +1,7 @@
 'use client';
 
-import { Box, Button, Show } from '@chakra-ui/react';
-import { AddPlus } from '@decent-org/fractal-ui';
+import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
+import { AddPlus, TokenPlaceholder } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,9 +23,10 @@ export default function ProposalsPage() {
   } = useFractal();
   const { type } = governance;
   const delegate = useFractalModal(ModalType.DELEGATE);
+  const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
   const showDelegate = useMemo(() => {
+    const azoriusGovernance = governance as AzoriusGovernance;
     if (type) {
-      const azoriusGovernance = governance as AzoriusGovernance;
       if (type === StrategyType.GNOSIS_SAFE_AZORIUS) {
         if (azoriusGovernance.votesToken && azoriusGovernance.votesToken.balance) {
           return azoriusGovernance.votesToken.balance.gt(0);
@@ -35,8 +36,16 @@ export default function ProposalsPage() {
     return false;
   }, [type, governance]);
 
-  const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || '');
+  const showCreateButton = useMemo(
+    () =>
+      type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || ''),
+    [type, safe, user.address]
+  );
+
+  const showWrapTokenButton = useMemo(() => {
+    const azoriusGovernance = governance as AzoriusGovernance;
+    return !!azoriusGovernance.votesToken?.underlyingTokenData;
+  }, [governance]);
 
   return (
     <ClientOnly>
@@ -53,6 +62,25 @@ export default function ProposalsPage() {
           buttonClick={showDelegate ? delegate : undefined}
           buttonTestId="link-delegate"
         >
+          {showWrapTokenButton && (
+            <Button
+              minW={0}
+              onClick={wrapTokenOpen}
+            >
+              <Flex
+                alignItems="center"
+                h="full"
+              >
+                <TokenPlaceholder
+                  boxSize="1.25rem"
+                  mt="1"
+                />
+                <Text>
+                  <Show above="sm">{t('wrapToken')}</Show>
+                </Text>
+              </Flex>
+            </Button>
+          )}
           {showCreateButton && (
             <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
               <Button minW={0}>

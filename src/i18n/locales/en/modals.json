@@ -39,5 +39,9 @@
   "removeSignerFailureToastMessage": "Remove signer proposal failed",
   "signersRequired1": "out of",
   "signersRequired2": "signers required",
-  "alreadySigner": "Address is already a signer"
+  "alreadySigner": "Address is already a signer",
+  "wrapTokenTitle": "Wrap your token",
+  "assetWrapTitle": "Asset to wrap",
+  "assetWrapAmountLabel": "How much would you like to wrap?",
+  "assetWrapSubLabel": "Wrap your ERC-20 token as an ERC-20 Voting token to use as governance"
 }

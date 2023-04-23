@@ -83,5 +83,6 @@
     "signersInfo1": "The number of signers required to execute a proposal.",
     "signersInfo2": "Adding or removing a signer will require an update.",
     "settings": "Settings",
-    "etherscanTip": "Open in Etherscan"
+    "etherscanTip": "Open in Etherscan",
+    "wrapToken": "Wrap Token"
 }
