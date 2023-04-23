@@ -265,7 +265,8 @@ export interface FractalClients {
 export interface FractalGovernanceContracts {
   ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
   azoriusContract: ContractConnection<FractalUsul> | null;
-  tokenContract: ContractConnection<VotesToken> | null;
+  tokenContract: ContractConnection<VotesToken | VotesERC20Wrapper> | null;
+  underlyingTokenAddress?: string;
   isLoaded: boolean;
 }
 
@@ -275,9 +276,10 @@ export interface FractalNode {
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
+  isModulesLoaded?: boolean;
 }
 
-export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules'> {}
+export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded'> {}
 
 export interface FractalModuleData {
   moduleContract: FractalUsul | FractalModule | undefined;
