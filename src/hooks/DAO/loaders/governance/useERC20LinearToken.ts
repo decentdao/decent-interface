@@ -9,7 +9,7 @@ export const useERC20LinearToken = () => {
   const tokenAccount = useRef<string>();
 
   const {
-    governanceContracts: { tokenContract },
+    governanceContracts: { tokenContract, underlyingTokenAddress },
     action,
     readOnly: { user },
   } = useFractal();
@@ -41,6 +41,28 @@ export const useERC20LinearToken = () => {
     isTokenLoaded.current = true;
     action.dispatch({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
   }, [tokenContract, action]);
+
+  const loadUnderlyingERC20Token = useCallback(async () => {
+    if (!tokenContract || !underlyingTokenAddress) {
+      return;
+    }
+
+    const erc20WrapperContract = tokenContract.asSigner.attach(underlyingTokenAddress);
+
+    const [tokenName, tokenSymbol] = await Promise.all([
+      erc20WrapperContract.name(),
+      erc20WrapperContract.symbol(),
+    ]);
+    const tokenData = {
+      name: tokenName,
+      symbol: tokenSymbol,
+      address: underlyingTokenAddress,
+    };
+    action.dispatch({
+      type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA,
+      payload: tokenData,
+    });
+  }, [tokenContract, underlyingTokenAddress, action]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
     if (!tokenContract || !account) {
@@ -110,5 +132,5 @@ export const useERC20LinearToken = () => {
     };
   }, [tokenContract, chainId, account, loadERC20TokenAccountData]);
 
-  return loadERC20Token;
+  return { loadERC20Token, loadUnderlyingERC20Token };
 };
