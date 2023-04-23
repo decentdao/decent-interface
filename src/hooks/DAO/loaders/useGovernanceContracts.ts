@@ -88,7 +88,7 @@ export const useGovernanceContracts = () => {
             govTokenAddress = await ozLinearVotingContract.asSigner.governanceToken();
           }
           const possibleERC20Wrapper =
-            votesERC20WrapperMasterCopyContract.asProvider.attach(govTokenAddress);
+            votesERC20WrapperMasterCopyContract.asSigner.attach(govTokenAddress);
           underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => undefined);
 
           if (!underlyingTokenAddress) {
@@ -111,7 +111,7 @@ export const useGovernanceContracts = () => {
             underlyingTokenAddress,
             votingContractMasterCopyAddress,
           });
-
+          currentValidAddress.current = _node.daoAddress;
           action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
@@ -122,6 +122,7 @@ export const useGovernanceContracts = () => {
             },
           });
         } else {
+          currentValidAddress.current = null;
           action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
@@ -132,6 +133,7 @@ export const useGovernanceContracts = () => {
           });
         }
       } else {
+        currentValidAddress.current = null;
         action.dispatch({
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
           payload: {
@@ -158,7 +160,7 @@ export const useGovernanceContracts = () => {
   useEffect(() => {
     if (
       !!node.daoAddress &&
-      node.isModulesLoaded &&
+      node.isModulesLoaded !== undefined &&
       node.daoAddress !== currentValidAddress.current
     ) {
       loadGovernanceContracts(node);
