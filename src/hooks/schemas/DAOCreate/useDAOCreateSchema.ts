@@ -54,8 +54,14 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_AZORIUS,
           then: _schema =>
             _schema.shape({
-              tokenName: Yup.string().required(),
-              tokenSymbol: Yup.string().required().min(2),
+              tokenName: Yup.string().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                then: __schema => __schema.required(),
+              }),
+              tokenSymbol: Yup.string().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                then: __schema => __schema.required(),
+              }),
               tokenSupply: Yup.object().shape({
                 value: Yup.string().when('tokenCreationType', {
                   is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
