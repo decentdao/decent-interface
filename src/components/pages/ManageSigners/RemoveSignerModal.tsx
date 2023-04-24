@@ -62,7 +62,7 @@ function RemoveSignerModal({
     prevSigner: prevSigner,
     signerToRemove: selectedSigner,
     threshold: threshold,
-    nonce: defaultNonce,
+    nonce: nonce,
     daoAddress: daoAddress,
   });
 
@@ -189,7 +189,7 @@ function RemoveSignerModal({
         defaultNonce={defaultNonce}
       />
       <Button
-        isDisabled={!threshold}
+        isDisabled={!threshold || !nonce || !defaultNonce || nonce < defaultNonce}
         mt={6}
         width="100%"
         onClick={onSubmit}

@@ -199,7 +199,14 @@ function AddSignerModal({
             />
             <Button
               type="submit"
-              isDisabled={!values.address || !!errors.address || !threshold}
+              isDisabled={
+                !values.address ||
+                !!errors.address ||
+                !threshold ||
+                !nonce ||
+                !defaultNonce ||
+                nonce < defaultNonce
+              }
               mt={6}
               width="100%"
             >
