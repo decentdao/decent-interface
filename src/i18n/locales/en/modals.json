@@ -48,5 +48,14 @@
   "wrapTokenFailedMessage": "Failed to wrap tokens",
   "wrapTokenSuccessMessage": "Tokens wrapped",
   "wrapTokenError": "Invalid amount",
-  "wrapTokenButton": "Wrap"
+  "wrapTokenButton": "Wrap",
+  "unwrapTokenTitle": "Unwrap your token",
+  "assetUnwrapTitle": "Asset to unwrap",
+  "assetUnwrapAmountLabel": "How much would you like to unwrap?",
+  "assetUnwrapSubLabel": "UnWrap your ERC-20 token as an ERC-20 Voting token to use as governance",
+  "unwrapTokenPendingMessage": "Unwrapping tokens...",
+  "unwrapTokenFailedMessage": "Failed to unwrap tokens",
+  "unwrapTokenSuccessMessage": "Tokens unwrapped",
+  "unwrapTokenError": "Invalid amount",
+  "unwrapTokenButton": "Unwrap"
 }

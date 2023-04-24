@@ -22,10 +22,12 @@ export default function ProposalsPage() {
     readOnly: { user },
   } = useFractal();
   const { type } = governance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
   const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
+  const unwrapTokenOpen = useFractalModal(ModalType.UNWRAP_TOKEN);
+
   const showDelegate = useMemo(() => {
-    const azoriusGovernance = governance as AzoriusGovernance;
     if (type) {
       if (type === StrategyType.GNOSIS_SAFE_AZORIUS) {
         if (azoriusGovernance.votesToken && azoriusGovernance.votesToken.balance) {
@@ -34,7 +36,7 @@ export default function ProposalsPage() {
       }
     }
     return false;
-  }, [type, governance]);
+  }, [type, azoriusGovernance]);
 
   const showCreateButton = useMemo(
     () =>
@@ -42,10 +44,8 @@ export default function ProposalsPage() {
     [type, safe, user.address]
   );
 
-  const showWrapTokenButton = useMemo(() => {
-    const azoriusGovernance = governance as AzoriusGovernance;
-    return !!azoriusGovernance.votesToken?.underlyingTokenData;
-  }, [governance]);
+  const showWrapTokenButton = !!azoriusGovernance.votesToken?.underlyingTokenData;
+  const showUnWrapTokenButton = !!showWrapTokenButton && !!azoriusGovernance.votesToken?.balance;
 
   return (
     <ClientOnly>
@@ -77,6 +77,25 @@ export default function ProposalsPage() {
                 />
                 <Text>
                   <Show above="sm">{t('wrapToken')}</Show>
+                </Text>
+              </Flex>
+            </Button>
+          )}
+          {showUnWrapTokenButton && (
+            <Button
+              minW={0}
+              onClick={unwrapTokenOpen}
+            >
+              <Flex
+                alignItems="center"
+                h="full"
+              >
+                <TokenPlaceholder
+                  boxSize="1.25rem"
+                  mt="1"
+                />
+                <Text>
+                  <Show above="sm">{t('unwrapToken')}</Show>
                 </Text>
               </Flex>
             </Button>

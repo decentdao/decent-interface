@@ -7,6 +7,7 @@ import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
 import { SendAssetsModal } from './SendAssetsModal';
+import { UnwrapToken } from './UnwrapToken';
 import { WrapToken } from './WrapToken';
 
 export enum ModalType {
@@ -14,6 +15,7 @@ export enum ModalType {
   DELEGATE,
   SEND_ASSETS,
   WRAP_TOKEN,
+  UNWRAP_TOKEN,
   CONFIRM_URL,
   REMOVE_SIGNER,
   ADD_SIGNER,
@@ -78,6 +80,11 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         // @todo add title to translations
         ti = t('wrapTokenTitle');
         co = <WrapToken close={cl} />;
+        break;
+      case ModalType.UNWRAP_TOKEN:
+        // @todo add title to translations
+        ti = t('UnwrapTokenTitle');
+        co = <UnwrapToken close={cl} />;
         break;
       case ModalType.CONFIRM_URL:
         ti = t('confirmUrlTitle');

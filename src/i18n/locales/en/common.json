@@ -84,5 +84,6 @@
     "signersInfo2": "Adding or removing a signer will require an update.",
     "settings": "Settings",
     "etherscanTip": "Open in Etherscan",
-    "wrapToken": "Wrap Token"
+    "wrapToken": "Wrap Token",
+    "unwrapToken": "Unwrap Token"
 }
