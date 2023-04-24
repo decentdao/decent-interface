@@ -89,11 +89,12 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           flexDirection="column"
           gap={8}
         >
-          <ContentBoxTitle>{t('titleSelectToken')}</ContentBoxTitle>
+          <Box mb={-8}>
+            <ContentBoxTitle>{t('titleSelectToken')}</ContentBoxTitle>
+          </Box>
           <LabelComponent
-            label={t('helperSelectToken')}
-            helper=""
-            isRequired
+            helper={t('helperSelectToken')}
+            isRequired={false}
           >
             <RadioGroup
               bg="black.900-semi-transparent"

@@ -13,9 +13,9 @@ import { BigNumberInput, BigNumberInputProps } from './BigNumberInput';
 import { EthAddressInput } from './EthAddressInput';
 
 interface BaseProps {
-  label: string;
+  label?: string;
   id?: string;
-  helper: string;
+  helper?: string;
   isRequired: boolean;
   value: string;
   disabled?: boolean;
