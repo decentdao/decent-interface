@@ -43,5 +43,10 @@
   "wrapTokenTitle": "Wrap your token",
   "assetWrapTitle": "Asset to wrap",
   "assetWrapAmountLabel": "How much would you like to wrap?",
-  "assetWrapSubLabel": "Wrap your ERC-20 token as an ERC-20 Voting token to use as governance"
+  "assetWrapSubLabel": "Wrap your ERC-20 token as an ERC-20 Voting token to use as governance",
+  "wrapTokenPendingMessage": "Wrapping tokens...",
+  "wrapTokenFailedMessage": "Failed to wrap tokens",
+  "wrapTokenSuccessMessage": "Tokens wrapped",
+  "wrapTokenError": "Invalid amount",
+  "wrapTokenButton": "Wrap"
 }
