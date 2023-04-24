@@ -123,14 +123,6 @@ function AddSignerModal({
                   label="Update signers"
                   maxW="18rem"
                   placement="left"
-                  // defaultIsOpen={true}
-                  // zIndex={1900}
-                  style={{ zIndex: 1500 }}
-                  closeDelay={100000}
-                  // portalProps={}
-                  shouldWrapChildren={true}
-                  offset={[200, 160]}
-                  // portalProps={zIndex=9999}
                 >
                   <SupportQuestion
                     boxSize="1.5rem"
