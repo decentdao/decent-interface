@@ -22,7 +22,11 @@ export function UnwrapToken({ close }: { close: () => void }) {
   const { address: account } = useAccount();
 
   const [contractCall, pending] = useTransaction();
-  const [approved, approveTransaction, approvalPending] = useApproval(
+  const {
+    approved,
+    approveTransaction,
+    pending: approvalPending,
+  } = useApproval(
     governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
     azoriusGovernance.votesToken.address
   );

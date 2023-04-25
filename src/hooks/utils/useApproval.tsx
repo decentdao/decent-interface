@@ -6,7 +6,11 @@ import { useAccount } from 'wagmi';
 import { VotesERC20Wrapper } from '../../assets/typechain-types/VotesERC20Wrapper';
 import { useTransaction } from './useTransaction';
 
-const useApproval = (tokenContract?: VotesToken | VotesERC20Wrapper, spenderAddress?: string) => {
+const useApproval = (
+  tokenContract?: VotesToken | VotesERC20Wrapper,
+  spenderAddress?: string,
+  userBalance?: BigNumber
+) => {
   const { address: account } = useAccount();
   const [allowance, setAllowance] = useState(BigNumber.from(0));
   const [approved, setApproved] = useState(false);
@@ -39,10 +43,10 @@ const useApproval = (tokenContract?: VotesToken | VotesERC20Wrapper, spenderAddr
   }, [fetchAllowance]);
 
   useEffect(() => {
-    setApproved(!allowance.isZero());
-  }, [allowance]);
+    setApproved(!allowance.isZero() || (!!userBalance && !userBalance.gt(allowance)));
+  }, [allowance, userBalance]);
 
-  return [approved, approveTransaction, pending] as const;
+  return { approved, allowance, approveTransaction, pending };
 };
 
 export default useApproval;

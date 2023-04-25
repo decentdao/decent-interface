@@ -28,9 +28,14 @@ export function WrapToken({ close }: { close: () => void }) {
   });
 
   const [contractCall, pending] = useTransaction();
-  const [approved, approveTransaction, approvalPending] = useApproval(
+  const {
+    approved,
+    approveTransaction,
+    pending: approvalPending,
+  } = useApproval(
     governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
-    azoriusGovernance.votesToken.address
+    azoriusGovernance.votesToken.address,
+    userBalance.bigNumberValue
   );
 
   const { t } = useTranslation(['modals', 'treasury']);
@@ -156,7 +161,6 @@ export function WrapToken({ close }: { close: () => void }) {
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="wrapToken-amount"
                   onKeyDown={restrictChars}
-                  isDisabled={!approved}
                 />
               </LabelWrapper>
 
