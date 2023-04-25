@@ -45,7 +45,8 @@ export default function ProposalsPage() {
   );
 
   const showWrapTokenButton = !!azoriusGovernance.votesToken?.underlyingTokenData;
-  const showUnWrapTokenButton = !!showWrapTokenButton && !!azoriusGovernance.votesToken?.balance;
+  const showUnWrapTokenButton =
+    !!azoriusGovernance.votesToken?.balance && !azoriusGovernance.votesToken.balance.isZero();
 
   return (
     <ClientOnly>
