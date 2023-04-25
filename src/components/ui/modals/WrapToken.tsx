@@ -79,7 +79,7 @@ export function WrapToken({ close }: { close: () => void }) {
   }, [getUserUnderlyingTokenBalance]);
 
   const handleFormSubmit = useCallback(
-    (amount: BigNumberValuePair, delegateToSelf: boolean) => {
+    (amount: BigNumberValuePair) => {
       const { tokenContract } = governanceContracts;
       if (!tokenContract || !signer || !account) return;
       const wrapperTokenContract = tokenContract.asSigner as VotesERC20Wrapper;
@@ -109,11 +109,10 @@ export function WrapToken({ close }: { close: () => void }) {
     <Formik
       initialValues={{
         amount: { value: '', bigNumberValue: BigNumber.from(0) },
-        delegateToSelf: false,
       }}
       onSubmit={values => {
-        const { amount, delegateToSelf } = values;
-        handleFormSubmit(amount, delegateToSelf);
+        const { amount } = values;
+        handleFormSubmit(amount);
       }}
       validationSchema={Yup.object().shape({
         amount: Yup.object({
@@ -163,15 +162,6 @@ export function WrapToken({ close }: { close: () => void }) {
                   onKeyDown={restrictChars}
                 />
               </LabelWrapper>
-
-              {/* @todo re-enable/delete after discussion */}
-              {/* <Checkbox
-                color="gold.500"
-                isChecked={values.delegateToSelf}
-                onChange={() => setFieldValue('linkSelfDelegate', !values.delegateToSelf)}
-              >
-                {t('linkSelfDelegate')}
-              </Checkbox> */}
 
               {approved ? (
                 <Button
