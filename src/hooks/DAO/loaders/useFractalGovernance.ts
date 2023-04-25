@@ -20,7 +20,7 @@ export const useFractalGovernance = () => {
 
   const loadDAOProposals = useDAOProposals();
   const loadAzoriusStrategy = useAzoriusStrategy();
-  const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken();
+  const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
 
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;

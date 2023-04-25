@@ -8,6 +8,7 @@ import { erc20ABI, useAccount, useSigner } from 'wagmi';
 import * as Yup from 'yup';
 import { VotesERC20Wrapper } from '../../../assets/typechain-types/VotesERC20Wrapper';
 import { logError } from '../../../helpers/errorLogging';
+import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useApproval from '../../../hooks/utils/useApproval';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -21,12 +22,12 @@ export function WrapToken({ close }: { close: () => void }) {
   const azoriusGovernance = governance as AzoriusGovernance;
   const { data: signer } = useSigner();
   const { address: account } = useAccount();
-
   const [userBalance, setUserBalance] = useState<BigNumberValuePair>({
     value: '',
     bigNumberValue: BigNumber.from(0),
   });
 
+  const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
   const [contractCall, pending] = useTransaction();
   const {
     approved,
@@ -88,13 +89,15 @@ export function WrapToken({ close }: { close: () => void }) {
         pendingMessage: t('wrapTokenPendingMessage'),
         failedMessage: t('wrapTokenFailedMessage'),
         successMessage: t('wrapTokenSuccessMessage'),
-        successCallback: () => {},
+        successCallback: async () => {
+          await loadERC20TokenAccountData();
+        },
         completedCallback: () => {
           close();
         },
       });
     },
-    [account, contractCall, governanceContracts, signer, close, t]
+    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData]
   );
 
   if (
