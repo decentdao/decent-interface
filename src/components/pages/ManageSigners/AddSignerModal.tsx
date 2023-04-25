@@ -41,15 +41,16 @@ function AddSignerModal({
   const defaultNonce = useDefaultNonce();
   const [nonce, setNonce] = useState<number | undefined>();
   const { t } = useTranslation(['modals', 'common']);
-
   const { data: signer } = useSigner();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
 
   useEffect(() => {
-    if (nonce === undefined && !!defaultNonce) {
-      setNonce(defaultNonce);
+    if (!defaultNonce) {
+      setNonce(undefined);
+      return;
     }
-  }, [defaultNonce, nonce]);
+    setNonce(defaultNonce);
+  }, [defaultNonce]);
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length + 1 }, (_, i) => i + 1));

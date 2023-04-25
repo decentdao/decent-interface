@@ -49,10 +49,12 @@ function RemoveSignerModal({
   const { t } = useTranslation(['modals', 'common']);
 
   useEffect(() => {
-    if (nonce === undefined && !!defaultNonce) {
-      setNonce(defaultNonce);
+    if (!defaultNonce) {
+      setNonce(undefined);
+      return;
     }
-  }, [defaultNonce, nonce]);
+    setNonce(defaultNonce);
+  }, [defaultNonce]);
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length - 1 }, (_, i) => i + 1));
