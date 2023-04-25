@@ -83,7 +83,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         break;
       case ModalType.UNWRAP_TOKEN:
         // @todo add title to translations
-        ti = t('UnwrapTokenTitle');
+        ti = t('unwrapTokenTitle');
         co = <UnwrapToken close={cl} />;
         break;
       case ModalType.CONFIRM_URL:
