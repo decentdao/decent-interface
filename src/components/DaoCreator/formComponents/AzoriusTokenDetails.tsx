@@ -101,9 +101,9 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               rounded="md"
               display="flex"
               flexDirection="column"
-              name="governance"
+              name="govToken.tokenCreationType"
               gap={4}
-              id="governance"
+              id="govToken.tokenCreationType"
               value={values.govToken.tokenCreationType}
               onChange={value => {
                 setFieldValue('govToken.tokenCreationType', value);
