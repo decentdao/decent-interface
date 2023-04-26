@@ -122,7 +122,7 @@ export const useGovernanceContracts = () => {
             },
           });
         } else {
-          currentValidAddress.current = null;
+          currentValidAddress.current = _node.daoAddress;
           action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
@@ -133,7 +133,7 @@ export const useGovernanceContracts = () => {
           });
         }
       } else {
-        currentValidAddress.current = null;
+        currentValidAddress.current = _node.daoAddress;
         action.dispatch({
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
           payload: {
@@ -166,5 +166,4 @@ export const useGovernanceContracts = () => {
       loadGovernanceContracts(node);
     }
   }, [node, loadGovernanceContracts]);
-  return;
 };
