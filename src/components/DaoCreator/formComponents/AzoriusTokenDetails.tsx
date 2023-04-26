@@ -150,7 +150,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                       placeholder={createAccountSubstring(constants.AddressZero)}
                     />
                   </LabelWrapper>
-                  {!isImportedVotesToken && (
+                  {!isImportedVotesToken && !errors.govToken?.tokenImportAddress && (
                     <Flex
                       gap={4}
                       alignItems="center"
@@ -162,7 +162,10 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                       >
                         {t('warningExistingToken')}
                       </Text>
-                      <Tooltip label={t('warningExistingTokenTooltip')}>
+                      <Tooltip
+                        maxW="18rem"
+                        label={t('warningExistingTokenTooltip')}
+                      >
                         <SupportQuestion
                           boxSize="1.5rem"
                           color="blue.400"
