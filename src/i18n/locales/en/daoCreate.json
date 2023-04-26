@@ -84,7 +84,7 @@
     "radioLabelNewToken": "New Token",
     "radioLabelExistingToken": "Existing Token",
     "helperNewToken": "Create a new ERC-20 token to vote with",
-    "helperExistingToken": "Create a new token or import an existing token to continue",
+    "helperExistingToken": "Use an existing ERC-20 for voting",
     "warningExistingToken": "This token must be wrapped in order to be used as a voting token",
-    "warningExistingTokenTooltip": "Fractal will deploy a new ERC-20 governance token to wrap this one. You can then deposit or withdraw  them at any time."
+    "warningExistingTokenTooltip": "Fractal will deploy a new ERC-20 governance token to wrap this one. Holders can deposit their tokens to vote with or withdraw them at any time."
 }
