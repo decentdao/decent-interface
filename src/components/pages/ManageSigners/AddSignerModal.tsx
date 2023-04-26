@@ -21,6 +21,7 @@ import * as Yup from 'yup';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import useAddSigner from './hooks/useAddSigner';
 
 function AddSignerModal({
@@ -38,10 +39,18 @@ function AddSignerModal({
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [threshold, setThreshold] = useState<number>(currentThreshold);
   const defaultNonce = useDefaultNonce();
+  const [nonce, setNonce] = useState<number | undefined>();
   const { t } = useTranslation(['modals', 'common']);
-
   const { data: signer } = useSigner();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
+
+  useEffect(() => {
+    if (!defaultNonce) {
+      setNonce(undefined);
+      return;
+    }
+    setNonce(defaultNonce);
+  }, [defaultNonce]);
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length + 1 }, (_, i) => i + 1));
@@ -58,7 +67,7 @@ function AddSignerModal({
     await addSigner({
       newSigner: validAddress,
       threshold: threshold,
-      nonce: defaultNonce,
+      nonce: nonce,
       daoAddress: daoAddress,
       close: close,
     });
@@ -101,7 +110,7 @@ function AddSignerModal({
             <Divider
               mt={6}
               mb={4}
-              borderColor="chocolate.700"
+              color="chocolate.700"
             />
             <HStack>
               <Text
@@ -179,9 +188,26 @@ function AddSignerModal({
                 </Text>
               </AlertTitle>
             </Alert>
+            <Divider
+              color="chocolate.700"
+              mt={6}
+              mb={6}
+            />
+            <CustomNonceInput
+              nonce={nonce}
+              onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
+              defaultNonce={defaultNonce}
+            />
             <Button
               type="submit"
-              isDisabled={!values.address || !!errors.address || !threshold}
+              isDisabled={
+                !values.address ||
+                !!errors.address ||
+                !threshold ||
+                !nonce ||
+                !defaultNonce ||
+                nonce < defaultNonce
+              }
               mt={6}
               width="100%"
             >

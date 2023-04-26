@@ -17,6 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { Address, useEnsName, useProvider } from 'wagmi';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import useRemoveSigner from './hooks/useRemoveSigner';
 
 function RemoveSignerModal({
@@ -36,6 +37,7 @@ function RemoveSignerModal({
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(currentThreshold);
+  const [nonce, setNonce] = useState<number | undefined>();
   const defaultNonce = useDefaultNonce();
   const provider = useProvider();
   const networkId = provider.network.chainId;
@@ -47,6 +49,14 @@ function RemoveSignerModal({
   const { t } = useTranslation(['modals', 'common']);
 
   useEffect(() => {
+    if (!defaultNonce) {
+      setNonce(undefined);
+      return;
+    }
+    setNonce(defaultNonce);
+  }, [defaultNonce]);
+
+  useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length - 1 }, (_, i) => i + 1));
   }, [signers]);
 
@@ -54,7 +64,7 @@ function RemoveSignerModal({
     prevSigner: prevSigner,
     signerToRemove: selectedSigner,
     threshold: threshold,
-    nonce: defaultNonce,
+    nonce: nonce,
     daoAddress: daoAddress,
   });
 
@@ -170,8 +180,18 @@ function RemoveSignerModal({
           </Text>
         </AlertTitle>
       </Alert>
+      <Divider
+        color="chocolate.700"
+        mt={6}
+        mb={6}
+      />
+      <CustomNonceInput
+        nonce={nonce}
+        onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
+        defaultNonce={defaultNonce}
+      />
       <Button
-        isDisabled={!threshold}
+        isDisabled={!threshold || !nonce || !defaultNonce || nonce < defaultNonce}
         mt={6}
         width="100%"
         onClick={onSubmit}

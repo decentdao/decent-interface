@@ -48,7 +48,7 @@ export function CustomNonceInput({
           value={nonce}
           onChange={e => onChange(e.target.value ? Number(e.target.value) : undefined)}
           type="number"
-          width="auto"
+          width="6rem"
         />
       </HStack>
       {errorMessage && (
