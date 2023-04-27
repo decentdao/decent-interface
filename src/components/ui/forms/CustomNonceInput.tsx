@@ -1,5 +1,6 @@
-import { Flex, Text, Input, Tooltip, HStack, VStack } from '@chakra-ui/react';
+import { Flex, Text, Input, Tooltip, HStack, VStack, Portal } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { StrategyType } from '../../../types';
@@ -17,13 +18,13 @@ export function CustomNonceInput({
   const { t } = useTranslation(['proposal']);
   const errorMessage =
     nonce && defaultNonce && nonce < defaultNonce ? t('customNonceError') : undefined;
-
+  const containerRef = useRef<HTMLDivElement>(null);
   if (governance.type === StrategyType.GNOSIS_SAFE_AZORIUS) return null;
 
   return (
     <VStack alignItems="start">
       <HStack>
-        <Flex>
+        <Flex ref={containerRef}>
           <Text
             textStyle="text-md-mono-regular"
             whiteSpace="nowrap"
@@ -31,18 +32,20 @@ export function CustomNonceInput({
           >
             {t('customNonce', { ns: 'proposal' })}
           </Text>
-          <Tooltip
-            label={t('customNonceTooltip', { ns: 'proposal' })}
-            maxW="18rem"
-            placement="top"
-          >
-            <SupportQuestion
-              boxSize="1.5rem"
-              minWidth="auto"
-              mx="2"
-              mt="1"
-            />
-          </Tooltip>
+          <Portal containerRef={containerRef}>
+            <Tooltip
+              label={t('customNonceTooltip', { ns: 'proposal' })}
+              maxW="18rem"
+              placement="top"
+            >
+              <SupportQuestion
+                boxSize="1.5rem"
+                minWidth="auto"
+                mx="2"
+                mt="1"
+              />
+            </Tooltip>
+          </Portal>
         </Flex>
         <Input
           value={nonce}
