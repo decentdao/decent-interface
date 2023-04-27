@@ -44,7 +44,7 @@ export default function ProposalsPage() {
         <PageHeader
           breadcrumbs={[
             {
-              title: t('proposals', { ns: 'breadcrumbs' }),
+              terminus: t('proposals', { ns: 'breadcrumbs' }),
               path: '',
             },
           ]}
