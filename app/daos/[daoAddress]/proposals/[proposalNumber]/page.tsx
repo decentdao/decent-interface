@@ -53,14 +53,13 @@ export default function ProposalDetailsPage({
     <ClientOnly>
       <Box>
         <PageHeader
-          title={t('proposalOverview')}
           breadcrumbs={[
             {
-              terminus: t('proposals', { ns: 'breadcrumbs' }),
+              title: t('proposals', { ns: 'breadcrumbs' }),
               path: DAO_ROUTES.proposals.relative(daoAddress),
             },
             {
-              terminus: t('proposal', {
+              title: t('proposal', {
                 ns: 'breadcrumbs',
                 proposalNumber,
                 proposalTitle: proposal?.metaData?.title || transactionDescription,
@@ -70,11 +69,14 @@ export default function ProposalDetailsPage({
           ]}
         />
         {proposal === undefined ? (
-          <Box>
+          <Box mt={7}>
             <InfoBoxLoader />
           </Box>
         ) : proposal === null ? (
-          <EmptyBox emptyText={t('noProposal')} />
+          <EmptyBox
+            emptyText={t('noProposal')}
+            m="2rem 0 0 0"
+          />
         ) : azoriusProposal.govTokenAddress ? (
           <AzoriusProposalDetails proposal={azoriusProposal} />
         ) : (

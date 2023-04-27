@@ -15,7 +15,6 @@ export default function Treasury() {
   const {
     readOnly: { user },
     treasury: { assetsFungible },
-    node: { daoName },
   } = useFractal();
   const { t } = useTranslation('treasury');
 
@@ -25,14 +24,9 @@ export default function Treasury() {
     <ClientOnly>
       <Box>
         <PageHeader
-          title={t('headerTitle', {
-            ns: 'breadcrumbs',
-            daoName: daoName,
-            subject: t('treasury', { ns: 'breadcrumbs' }),
-          })}
           breadcrumbs={[
             {
-              terminus: t('treasury', { ns: 'breadcrumbs' }),
+              title: t('treasury', { ns: 'breadcrumbs' }),
               path: '',
             },
           ]}

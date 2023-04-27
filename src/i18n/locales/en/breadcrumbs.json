@@ -1,8 +1,7 @@
 {
-    "headerTitle": "{{daoName}} {{subject}}",
     "proposals": "Proposals",
     "proposalNew": "New Proposal",
-    "nodes": "Hierarchy",
+    "nodes": "DAO Hierarchy",
     "treasury": "Treasury",
     "proposal": "#{{proposalNumber}} {{proposalTitle}}",
     "manageSigners": "Manage Signers",

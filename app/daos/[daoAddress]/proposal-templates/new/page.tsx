@@ -74,14 +74,13 @@ export default function CreateProposalTemplatePage() {
             <form onSubmit={handleSubmit}>
               <Box>
                 <PageHeader
-                  title={t('createProposalTemplate')}
                   breadcrumbs={[
                     {
-                      terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
+                      title: t('proposalTemplates', { ns: 'breadcrumbs' }),
                       path: DAO_ROUTES.proposalTemplates.relative(daoAddress),
                     },
                     {
-                      terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
+                      title: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
                       path: '',
                     },
                   ]}
@@ -96,7 +95,14 @@ export default function CreateProposalTemplatePage() {
                   }
                   isButtonDisabled={pendingCreateTx}
                 />
+                <Text
+                  textStyle="text-2xl-mono-regular"
+                  color="grayscale.100"
+                >
+                  {t('createProposalTemplate')}
+                </Text>
                 <Grid
+                  mt={8}
                   gap={4}
                   templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
                   gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}

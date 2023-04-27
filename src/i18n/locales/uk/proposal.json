@@ -9,6 +9,7 @@
     "helperParameters": "Параметри, використані для виконання функціі (через кому)",
     "labelEthValue": "Значення ETH",
     "helperEthValue": "Кількість ETH, що буде надіслана з цією транзакцією (з вашої скарбниці)",
+    "pageTitle": "Пропозиції {{daoName}}",
     "ownerApproved": "Затвердженно",
     "stateModule": "Модуль",
     "stateModuleTip": "Ця транзакція була виконана через модуль Safe.",

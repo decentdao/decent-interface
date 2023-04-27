@@ -45,7 +45,7 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
 
 function ManageSigners({}: {}) {
   const {
-    node: { safe, daoName },
+    node: { safe },
   } = useFractal();
   const [signers, setSigners] = useState<string[]>();
   const [selectedSigner, setSelectedSigner] = useState<string>();
@@ -77,18 +77,13 @@ function ManageSigners({}: {}) {
   return (
     <Box>
       <PageHeader
-        title={t('headerTitle', {
-          ns: 'breadcrumbs',
-          daoName: daoName,
-          subject: t('signers', { ns: 'common' }),
-        })}
         hasDAOLink={true}
         buttonText={userIsSigner ? '— ' + t('remove') : undefined}
         buttonClick={userIsSigner ? removeSigner : undefined}
         isButtonDisabled={!selectedSigner}
         breadcrumbs={[
           {
-            terminus: t('manageSigners', { ns: 'breadcrumbs' }),
+            title: t('manageSigners', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}

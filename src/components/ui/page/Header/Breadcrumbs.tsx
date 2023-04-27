@@ -2,7 +2,7 @@ import { Link } from '@chakra-ui/next-js';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text } from '@chakra-ui/react';
 
 export type Crumb = {
-  terminus: string;
+  title: string;
   path: string;
 };
 interface IBreadcrumbs {
@@ -18,7 +18,7 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
       alignItems="center"
       w={{ base: 'min-content', sm: 'initial' }}
     >
-      {links.map(({ terminus: title, path }, i) => {
+      {links.map(({ title, path }, i) => {
         const isCurrentPage = i === links.length - 1;
         const crumbText = (
           <Text

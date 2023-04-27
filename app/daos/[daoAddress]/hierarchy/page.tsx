@@ -14,10 +14,9 @@ export default function HierarchyPage() {
     node: {
       daoAddress,
       nodeHierarchy: { parentAddress },
-      daoName,
     },
   } = useFractal();
-  const { t } = useTranslation('breadcrumbs');
+  const { t } = useTranslation(['breadcrubms']);
 
   if (!daoAddress) {
     return (
@@ -31,13 +30,9 @@ export default function HierarchyPage() {
     <ClientOnly>
       <Box>
         <PageHeader
-          title={t('headerTitle', {
-            daoName: daoName,
-            subject: t('nodes'),
-          })}
           breadcrumbs={[
             {
-              terminus: t('nodes'),
+              title: t('nodes', { ns: 'breadcrumbs' }),
               path: '',
             },
           ]}

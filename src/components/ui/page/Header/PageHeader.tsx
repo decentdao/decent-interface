@@ -7,14 +7,12 @@ import {
   IconButton,
   IconProps,
   Spacer,
-  Text,
 } from '@chakra-ui/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
-  title?: string;
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
@@ -30,7 +28,6 @@ interface IPageHeader {
  * Intended to be used as the main title for a page.
  */
 function PageHeader({
-  title,
   breadcrumbs,
   hasDAOLink = true,
   buttonVariant,
@@ -51,7 +48,7 @@ function PageHeader({
     if (hasDAOLink) {
       setLinks([
         {
-          terminus: daoName || '',
+          title: daoName || '',
           path: DAO_ROUTES.dao.relative(daoAddress),
         },
         ...breadcrumbs,
@@ -102,15 +99,6 @@ function PageHeader({
         marginTop="1rem"
         borderColor="chocolate.400"
       />
-      {title && (
-        <Text
-          marginTop="2rem"
-          textStyle="text-2xl-mono-regular"
-          color="grayscale.100"
-        >
-          {title}
-        </Text>
-      )}
     </Box>
   );
 }
