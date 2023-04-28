@@ -1,6 +1,7 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import { FractalProposalState, DAOState } from '../../../types';
 
 type BadgeType = { [key: string]: { Icon?: any; tooltipKey?: string; bg: string; color: string } };
@@ -111,7 +112,7 @@ export function Badge({ labelKey, size }: IBadge) {
   return (
     <Tooltip
       label={tooltipKey ? t(tooltipKey) : undefined}
-      maxW="18rem"
+      maxW={TOOLTIP_MAXW}
       placement="top"
     >
       <Flex
