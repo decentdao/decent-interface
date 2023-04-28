@@ -12,5 +12,9 @@
     "labelReceived": "Received",
     "textEmptyTransactions": "No transfers yet",
     "textMoreTransactions": "View more",
-    "addresses": "{{numOfAddresses}} addresses"
+    "addresses": "{{numOfAddresses}} addresses",
+    "approveToken": "Approve Token",
+    "approvalPendingMessage": "Approving tokens...",
+    "approvalFailedMessage": "Token approval failed!",
+    "approvalSuccessMessage": "Tokens approved"
 }

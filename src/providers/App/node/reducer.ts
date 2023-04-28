@@ -28,7 +28,7 @@ export function nodeReducer(state: FractalNode, action: NodeActions) {
       return { ...state, ...action.payload };
     }
     case NodeAction.SET_FRACTAL_MODULES: {
-      return { ...state, fractalModules: action.payload };
+      return { ...state, fractalModules: action.payload, isModulesLoaded: true };
     }
     case NodeAction.UPDATE_DAO_NAME: {
       return { ...state, daoName: action.payload };

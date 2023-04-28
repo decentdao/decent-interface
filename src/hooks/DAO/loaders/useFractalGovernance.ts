@@ -20,7 +20,7 @@ export const useFractalGovernance = () => {
 
   const loadDAOProposals = useDAOProposals();
   const loadAzoriusStrategy = useAzoriusStrategy();
-  const loadERC20Token = useERC20LinearToken();
+  const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
 
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;
@@ -40,6 +40,7 @@ export const useFractalGovernance = () => {
         loadAzoriusStrategy();
         // load voting token
         loadERC20Token();
+        loadUnderlyingERC20Token();
       }
     } else if (!isLoaded) {
       currentValidAddress.current = undefined;
@@ -49,6 +50,7 @@ export const useFractalGovernance = () => {
     parentAddress,
     governanceContracts,
     loadDAOProposals,
+    loadUnderlyingERC20Token,
     guardContracts,
     loadAzoriusStrategy,
     loadERC20Token,

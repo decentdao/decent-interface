@@ -26,5 +26,6 @@ export const mainnetConfig: NetworkConfig = {
     azoriusVetoGuardMasterCopy: '',
     vetoMultisigVotingMasterCopy: '',
     vetoERC20VotingMasterCopy: '',
+    votesERC20WrapperMasterCopy: '',
   },
 };

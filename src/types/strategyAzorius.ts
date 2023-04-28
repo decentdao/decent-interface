@@ -5,6 +5,7 @@ import {
   VotesToken,
   TokenClaim,
 } from '@fractal-framework/fractal-contracts';
+import { VotesERC20Wrapper } from './../assets/typechain-types/VotesERC20Wrapper';
 
 export interface AzoriusContracts {
   fractalAzoriusMasterCopyContract: FractalUsul;
@@ -12,4 +13,5 @@ export interface AzoriusContracts {
   azoriusVetoGuardMasterCopyContract: UsulVetoGuard;
   votesTokenMasterCopyContract: VotesToken;
   claimingMasterCopyContract: TokenClaim;
+  votesERC20WrapperMasterCopyContract: VotesERC20Wrapper;
 }

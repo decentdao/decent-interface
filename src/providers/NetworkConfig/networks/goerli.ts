@@ -35,5 +35,6 @@ export const goerliConfig: NetworkConfig = {
     zodiacModuleProxyFactory: '0x740020d3B1BF3E64e84dbA7175fC560B85EdB9bC',
     linearVotingMasterCopy: '0x948db5691cc97AEcb4fF5FfcAEb72594B74D9D52',
     gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
+    votesERC20WrapperMasterCopy: '0x2321a6D07Bf064795987A943449fE556e1451b46',
   },
 };

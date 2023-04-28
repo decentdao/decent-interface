@@ -25,10 +25,10 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private readonly predictedGnosisSafeAddress: string;
 
   private encodedSetupTokenData: string | undefined;
+  private encodedSetupERC20WrapperData: string | undefined;
   private encodedStrategySetupData: string | undefined;
   private encodedSetupAzoriusData: string | undefined;
   private encodedSetupTokenClaimData: string | undefined;
-  private encodedSetupTokenApprovalData: string | undefined;
 
   private predictedTokenAddress: string | undefined;
   private predictedStrategyAddress: string | undefined;
@@ -70,13 +70,23 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.strategyNonce = getRandomBytes();
     this.azoriusNonce = getRandomBytes();
 
-    this.setEncodedSetupTokenData();
-    this.setPredictedTokenAddress();
+    const data = daoData as TokenGovernanceDAO;
+    if (!data.isTokenImported) {
+      this.setEncodedSetupTokenData();
+      this.setPredictedTokenAddress();
+    } else {
+      if (data.isVotesToken) {
+        this.predictedTokenAddress = data.tokenImportAddress;
+      } else {
+        this.setEncodedSetupERC20WrapperData();
+        this.setPredictedERC20WrapperAddress();
+      }
+    }
+
     this.setPredictedStrategyAddress();
     this.setPredictedAzoriusAddress();
     this.setContracts();
 
-    const data = daoData as TokenGovernanceDAO;
     if (parentTokenAddress && !data.parentAllocationAmount.isZero()) {
       this.setEncodedSetupTokenClaimData();
       this.setPredictedTokenClaimAddress();
@@ -187,6 +197,46 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       [this.predictedTokenClaimAddress, tokenGovernanceDaoData.parentAllocationAmount],
       0,
       false
+    );
+  }
+
+  public buildCreateTokenWrapperTx(): SafeTransaction {
+    return buildContractCall(
+      this.baseContracts.zodiacModuleProxyFactoryContract,
+      'deployModule',
+      [
+        this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address,
+        this.encodedSetupERC20WrapperData,
+        this.tokenNonce,
+      ],
+      0,
+      false
+    );
+  }
+
+  public setEncodedSetupERC20WrapperData() {
+    const { tokenImportAddress } = this.daoData as TokenGovernanceDAO;
+
+    const encodedInitTokenData = defaultAbiCoder.encode(['address'], [tokenImportAddress!]);
+
+    this.encodedSetupERC20WrapperData =
+      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.interface.encodeFunctionData(
+        'setUp',
+        [encodedInitTokenData]
+      );
+  }
+
+  public setPredictedERC20WrapperAddress() {
+    const tokenByteCodeLinear = generateContractByteCodeLinear(
+      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address.slice(2)
+    );
+
+    const tokenSalt = generateSalt(this.encodedSetupERC20WrapperData!, this.tokenNonce);
+
+    this.predictedTokenAddress = getCreate2Address(
+      this.baseContracts.zodiacModuleProxyFactoryContract.address,
+      tokenSalt,
+      solidityKeccak256(['bytes'], [tokenByteCodeLinear])
     );
   }
 

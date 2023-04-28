@@ -43,7 +43,7 @@ export const useFractalNode = ({
     action,
   } = useFractal();
   const { getDaoName } = useLazyDAOName();
-  const { t } = useTranslation();
+  const { t } = useTranslation('dashboard');
   const { replace } = useRouter();
 
   const lookupModules = useFractalModules();
@@ -161,6 +161,7 @@ export const useFractalNode = ({
           }
         } catch (e) {
           // network error
+          logError(e);
           invalidateDAO('errorFailedSearch');
         }
       } else {
