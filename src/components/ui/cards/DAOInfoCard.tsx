@@ -1,11 +1,5 @@
 import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
-import {
-  ArrowDownSm,
-  StarGoldSolid,
-  StarOutline,
-  Copy,
-  ArrowRightSm,
-} from '@decent-org/fractal-ui';
+import { ArrowDownSm, StarGoldSolid, StarOutline, ArrowRightSm } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import Link from 'next/link';
 import { useMemo } from 'react';
@@ -14,8 +8,6 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
-import { useCopyText } from '../../../hooks/utils/useCopyText';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   SafeInfoResponseWithGuard,
@@ -24,6 +16,7 @@ import {
   FractalNode,
 } from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
+import AddressCopier from '../links/AddressCopier';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 interface IDAOInfoCard {
@@ -53,12 +46,10 @@ export function DAOInfoCard({
     readOnly: { user },
   } = useFractal();
   const { favoritesList, toggleFavorite } = useAccountFavorites();
-  const copyToClipboard = useCopyText();
   const isCurrentDAO = safeAddress === daoAddress;
   const { daoRegistryName } = useDAOName({
     address: safeAddress && !isCurrentDAO ? safeAddress : undefined,
   });
-  const { accountSubstring } = useDisplayName(safeAddress);
 
   // @todo add viewable conditions
   const canManageDAO = !!user.address;
@@ -148,21 +139,7 @@ export function DAOInfoCard({
               </Link>
             )}
           </Flex>
-          <Flex
-            alignItems="center"
-            onClick={() => copyToClipboard(safeAddress)}
-            gap="0.5rem"
-            cursor="pointer"
-            w="fit-content"
-          >
-            <Text
-              textStyle="text-base-mono-regular"
-              color="grayscale.100"
-            >
-              {accountSubstring}
-            </Text>
-            <Copy boxSize="1.5rem" />
-          </Flex>
+          <AddressCopier address={safeAddress} />
         </Flex>
       </Flex>
       {/* Veritical Elipsis */}

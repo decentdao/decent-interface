@@ -15,7 +15,7 @@ export default function Treasury() {
   const {
     readOnly: { user },
     treasury: { assetsFungible },
-    node: { daoName },
+    node: { daoName, daoAddress },
   } = useFractal();
   const { t } = useTranslation('treasury');
 
@@ -30,6 +30,7 @@ export default function Treasury() {
             daoName: daoName,
             subject: t('treasury', { ns: 'breadcrumbs' }),
           })}
+          address={daoAddress ? daoAddress : undefined}
           breadcrumbs={[
             {
               terminus: t('treasury', { ns: 'breadcrumbs' }),

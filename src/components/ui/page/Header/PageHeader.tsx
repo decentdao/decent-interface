@@ -12,9 +12,11 @@ import {
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import AddressCopier from '../../links/AddressCopier';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
   title?: string;
+  address?: string;
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
@@ -31,6 +33,7 @@ interface IPageHeader {
  */
 function PageHeader({
   title,
+  address,
   breadcrumbs,
   hasDAOLink = true,
   buttonVariant,
@@ -110,6 +113,12 @@ function PageHeader({
         >
           {title}
         </Text>
+      )}
+      {address && (
+        <AddressCopier
+          marginTop="0.5rem"
+          address={address}
+        />
       )}
     </Box>
   );
