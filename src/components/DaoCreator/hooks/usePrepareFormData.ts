@@ -1,5 +1,4 @@
 import { ERC20Votes__factory } from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import {
@@ -17,8 +16,9 @@ export function usePrepareFormData() {
   const checkVotesToken = useCallback(
     async (address: string) => {
       try {
-        const votesContract = new ethers.Contract(address, ERC20Votes__factory.abi, provider);
-        await votesContract.estimateGas.delegate('0x0000000000000000000000000000000000000001');
+        const votesContract = ERC20Votes__factory.connect(address, provider);
+        await votesContract.delegates('0x0000000000000000000000000000000000000001');
+        await votesContract.getVotes('0x0000000000000000000000000000000000000001');
         return true;
       } catch (error) {
         return false;

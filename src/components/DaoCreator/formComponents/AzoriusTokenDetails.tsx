@@ -1,7 +1,7 @@
 import { Box, Flex, Input, RadioGroup, Text, Tooltip } from '@chakra-ui/react';
 import { LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
 import { constants, ethers, utils } from 'ethers';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
@@ -41,6 +41,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const provider = useProvider();
 
   const { checkVotesToken } = usePrepareFormData();
+  const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
 
   const updateImportFields = useCallback(async () => {
     const importAddress = values.govToken.tokenImportAddress;
@@ -53,11 +54,14 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       if (!isVotesToken) {
         setFieldValue('govToken.tokenName', 'Wrapped ' + name, true);
         setFieldValue('govToken.tokenSymbol', 'W' + symbol, true);
+        setIsImportedVotesToken(false);
       } else {
+        setIsImportedVotesToken(true);
         setFieldValue('govToken.tokenName', name, true);
         setFieldValue('govToken.tokenSymbol', symbol, true);
       }
     } else {
+      setIsImportedVotesToken(false);
       setFieldValue('govToken.tokenName', '', true);
       setFieldValue('govToken.tokenSymbol', '', true);
     }
@@ -89,9 +93,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           flexDirection="column"
           gap={8}
         >
-          <Box mb={-8}>
-            <ContentBoxTitle>{t('titleSelectToken')}</ContentBoxTitle>
-          </Box>
+          <ContentBoxTitle>{t('titleSelectToken')}</ContentBoxTitle>
           <LabelComponent
             helper={t('helperSelectToken')}
             isRequired={false}
@@ -103,9 +105,9 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               rounded="md"
               display="flex"
               flexDirection="column"
-              name="governance"
+              name="govToken.tokenCreationType"
               gap={4}
-              id="governance"
+              id="govToken.tokenCreationType"
               value={values.govToken.tokenCreationType}
               onChange={value => {
                 setFieldValue('govToken.tokenCreationType', value);
@@ -132,40 +134,47 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                   setFieldValue('govToken.tokenSymbol', '');
                 }}
               />
-              <LabelWrapper
-                errorMessage={
-                  values.govToken.tokenImportAddress && errors?.govToken?.tokenImportAddress
-                    ? errors.govToken.tokenImportAddress
-                    : undefined
-                }
-                isDisabled={values.govToken.tokenCreationType === TokenCreationType.NEW}
-              >
-                <Input
-                  name="govToken.tokenImportAddress"
-                  onChange={handleChange}
-                  value={values.govToken.tokenImportAddress}
-                  placeholder={createAccountSubstring(constants.AddressZero)}
-                  isDisabled={values.govToken.tokenCreationType === TokenCreationType.NEW}
-                />
-              </LabelWrapper>
-              <Flex
-                gap={4}
-                alignItems="center"
-              >
-                <Text
-                  color="blue.400"
-                  textStyle="text-base-sans-medium"
-                  whiteSpace="pre-wrap"
-                >
-                  {t('warningExistingToken')}
-                </Text>
-                <Tooltip label={t('warningExistingTokenTooltip')}>
-                  <SupportQuestion
-                    boxSize="1.5rem"
-                    color="blue.400"
-                  />
-                </Tooltip>
-              </Flex>
+              {values.govToken.tokenCreationType === TokenCreationType.IMPORTED && (
+                <>
+                  <LabelWrapper
+                    errorMessage={
+                      values.govToken.tokenImportAddress && errors?.govToken?.tokenImportAddress
+                        ? errors.govToken.tokenImportAddress
+                        : undefined
+                    }
+                  >
+                    <Input
+                      name="govToken.tokenImportAddress"
+                      onChange={handleChange}
+                      value={values.govToken.tokenImportAddress}
+                      placeholder={createAccountSubstring(constants.AddressZero)}
+                    />
+                  </LabelWrapper>
+                  {!isImportedVotesToken && !errors.govToken?.tokenImportAddress && (
+                    <Flex
+                      gap={4}
+                      alignItems="center"
+                    >
+                      <Text
+                        color="blue.400"
+                        textStyle="text-base-sans-medium"
+                        whiteSpace="pre-wrap"
+                      >
+                        {t('warningExistingToken')}
+                      </Text>
+                      <Tooltip
+                        maxW="18rem"
+                        label={t('warningExistingTokenTooltip')}
+                      >
+                        <SupportQuestion
+                          boxSize="1.5rem"
+                          color="blue.400"
+                        />
+                      </Tooltip>
+                    </Flex>
+                  )}
+                </>
+              )}
             </RadioGroup>
           </LabelComponent>
         </Flex>

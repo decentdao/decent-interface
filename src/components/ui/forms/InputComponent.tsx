@@ -76,7 +76,12 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
           <Text color={disabled ? 'grayscale.500' : 'grayscale.100'}>{label}</Text>
           {isRequired && <Text color="gold.500">*</Text>}
         </HStack>
-        <Text color="grayscale.500">{helper}</Text>
+        <Text
+          color="grayscale.500"
+          mr={20}
+        >
+          {helper}
+        </Text>
       </GridItem>
       <GridItem {...inputContainerProps}>
         <LabelWrapper
