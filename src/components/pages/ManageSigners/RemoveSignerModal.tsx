@@ -6,18 +6,19 @@ import {
   HStack,
   Select,
   Text,
-  Tooltip,
   Image,
   AlertTitle,
   Alert,
 } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, useEnsName, useProvider } from 'wagmi';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
+import ModalTooltip from '../../ui/modals/ModalTooltip';
 import useRemoveSigner from './hooks/useRemoveSigner';
 
 function RemoveSignerModal({
@@ -47,6 +48,7 @@ function RemoveSignerModal({
     cacheTime: 1000 * 60 * 30, // 30 min
   });
   const { t } = useTranslation(['modals', 'common']);
+  const tooltipContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!defaultNonce) {
@@ -111,11 +113,12 @@ function RemoveSignerModal({
         >
           {t('updateThreshold', { ns: 'modals' })}
         </Text>
-        <Flex>
-          <Tooltip
-            label="Update signers"
-            maxW="18rem"
-            placement="left"
+        <Flex ref={tooltipContainer}>
+          <ModalTooltip
+            containerRef={tooltipContainer}
+            label={t('updateSignersTooltip')}
+            maxW={TOOLTIP_MAXW}
+            placement="top"
           >
             <SupportQuestion
               boxSize="1.5rem"
@@ -123,7 +126,7 @@ function RemoveSignerModal({
               mx="2"
               mt="1"
             />
-          </Tooltip>
+          </ModalTooltip>
         </Flex>
       </HStack>
       <HStack>

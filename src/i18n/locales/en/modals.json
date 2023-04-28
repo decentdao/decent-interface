@@ -57,5 +57,6 @@
   "unwrapTokenFailedMessage": "Failed to unwrap tokens",
   "unwrapTokenSuccessMessage": "Tokens unwrapped",
   "unwrapTokenError": "Invalid amount",
-  "unwrapTokenButton": "Unwrap"
+  "unwrapTokenButton": "Unwrap",
+  "updateSignersTooltip": "The number of signers required to pass future proposals"
 }

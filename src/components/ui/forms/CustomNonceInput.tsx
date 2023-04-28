@@ -1,8 +1,11 @@
-import { Flex, Text, Input, Tooltip, HStack, VStack } from '@chakra-ui/react';
+import { Flex, Text, Input, HStack, VStack } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { StrategyType } from '../../../types';
+import ModalTooltip from '../modals/ModalTooltip';
 
 export function CustomNonceInput({
   nonce,
@@ -17,13 +20,13 @@ export function CustomNonceInput({
   const { t } = useTranslation(['proposal']);
   const errorMessage =
     nonce && defaultNonce && nonce < defaultNonce ? t('customNonceError') : undefined;
-
+  const containerRef = useRef<HTMLDivElement>(null);
   if (governance.type === StrategyType.GNOSIS_SAFE_AZORIUS) return null;
 
   return (
     <VStack alignItems="start">
       <HStack>
-        <Flex>
+        <Flex ref={containerRef}>
           <Text
             textStyle="text-md-mono-regular"
             whiteSpace="nowrap"
@@ -31,9 +34,10 @@ export function CustomNonceInput({
           >
             {t('customNonce', { ns: 'proposal' })}
           </Text>
-          <Tooltip
+          <ModalTooltip
+            containerRef={containerRef}
             label={t('customNonceTooltip', { ns: 'proposal' })}
-            maxW="18rem"
+            maxW={TOOLTIP_MAXW}
             placement="top"
           >
             <SupportQuestion
@@ -42,7 +46,7 @@ export function CustomNonceInput({
               mx="2"
               mt="1"
             />
-          </Tooltip>
+          </ModalTooltip>
         </Flex>
         <Input
           value={nonce}
