@@ -1,6 +1,6 @@
-import { Button, Flex, Input } from '@chakra-ui/react';
+import { Button, Flex, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber, Contract, utils } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -163,6 +163,7 @@ export function WrapToken({ close }: { close: () => void }) {
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="wrapToken-amount"
                   onKeyDown={restrictChars}
+                  maxValue={userBalance.bigNumberValue}
                 />
               </LabelWrapper>
 
