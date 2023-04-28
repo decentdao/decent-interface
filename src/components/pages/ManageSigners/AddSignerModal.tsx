@@ -6,7 +6,6 @@ import {
   HStack,
   Select,
   Text,
-  Tooltip,
   Input,
   Alert,
   AlertTitle,
@@ -14,14 +13,16 @@ import {
 } from '@chakra-ui/react';
 import { LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSigner } from 'wagmi';
 import * as Yup from 'yup';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
+import ModalTooltip from '../../ui/modals/ModalTooltip';
 import useAddSigner from './hooks/useAddSigner';
 
 function AddSignerModal({
@@ -43,6 +44,7 @@ function AddSignerModal({
   const { t } = useTranslation(['modals', 'common']);
   const { data: signer } = useSigner();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
+  const tooltipContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!defaultNonce) {
@@ -119,11 +121,12 @@ function AddSignerModal({
               >
                 {t('updateThreshold', { ns: 'modals' })}
               </Text>
-              <Flex>
-                <Tooltip
-                  label="Update signers"
-                  maxW="18rem"
-                  placement="left"
+              <Flex ref={tooltipContainer}>
+                <ModalTooltip
+                  containerRef={tooltipContainer}
+                  label={t('updateSignersTooltip')}
+                  maxW={TOOLTIP_MAXW}
+                  placement="top"
                 >
                   <SupportQuestion
                     boxSize="1.5rem"
@@ -131,7 +134,7 @@ function AddSignerModal({
                     mx="2"
                     mt="1"
                   />
-                </Tooltip>
+                </ModalTooltip>
               </Flex>
             </HStack>
             <HStack>

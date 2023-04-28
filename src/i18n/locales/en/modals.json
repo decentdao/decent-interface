@@ -39,5 +39,6 @@
   "removeSignerFailureToastMessage": "Remove signer proposal failed",
   "signersRequired1": "out of",
   "signersRequired2": "signers required",
-  "alreadySigner": "Address is already a signer"
+  "alreadySigner": "Address is already a signer",
+  "updateSignersTooltip": "The number of signers required to pass future proposals"
 }

@@ -1,9 +1,11 @@
-import { Flex, Text, Input, Tooltip, HStack, VStack, Portal } from '@chakra-ui/react';
+import { Flex, Text, Input, HStack, VStack } from '@chakra-ui/react';
 import { SupportQuestion } from '@decent-org/fractal-ui';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { StrategyType } from '../../../types';
+import ModalTooltip from '../modals/ModalTooltip';
 
 export function CustomNonceInput({
   nonce,
@@ -32,20 +34,19 @@ export function CustomNonceInput({
           >
             {t('customNonce', { ns: 'proposal' })}
           </Text>
-          <Portal containerRef={containerRef}>
-            <Tooltip
-              label={t('customNonceTooltip', { ns: 'proposal' })}
-              maxW="18rem"
-              placement="top"
-            >
-              <SupportQuestion
-                boxSize="1.5rem"
-                minWidth="auto"
-                mx="2"
-                mt="1"
-              />
-            </Tooltip>
-          </Portal>
+          <ModalTooltip
+            containerRef={containerRef}
+            label={t('customNonceTooltip', { ns: 'proposal' })}
+            maxW={TOOLTIP_MAXW}
+            placement="top"
+          >
+            <SupportQuestion
+              boxSize="1.5rem"
+              minWidth="auto"
+              mx="2"
+              mt="1"
+            />
+          </ModalTooltip>
         </Flex>
         <Input
           value={nonce}
