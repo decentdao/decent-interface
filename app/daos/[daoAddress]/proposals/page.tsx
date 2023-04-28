@@ -1,7 +1,7 @@
 'use client';
 
-import { Box, Button, Show } from '@chakra-ui/react';
-import { AddPlus } from '@decent-org/fractal-ui';
+import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
+import { AddPlus, TokenPlaceholder } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -22,10 +22,13 @@ export default function ProposalsPage() {
     readOnly: { user },
   } = useFractal();
   const { type } = governance;
+  const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
+  const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
+  const unwrapTokenOpen = useFractalModal(ModalType.UNWRAP_TOKEN);
+
   const showDelegate = useMemo(() => {
     if (type) {
-      const azoriusGovernance = governance as AzoriusGovernance;
       if (type === StrategyType.GNOSIS_SAFE_AZORIUS) {
         if (azoriusGovernance.votesToken && azoriusGovernance.votesToken.balance) {
           return azoriusGovernance.votesToken.balance.gt(0);
@@ -33,10 +36,19 @@ export default function ProposalsPage() {
       }
     }
     return false;
-  }, [type, governance]);
+  }, [type, azoriusGovernance]);
 
-  const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || '');
+  const showCreateButton = useMemo(
+    () =>
+      type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || ''),
+    [type, safe, user.address]
+  );
+
+  const showWrapTokenButton = !!azoriusGovernance.votesToken?.underlyingTokenData;
+  const showUnWrapTokenButton =
+    showWrapTokenButton &&
+    !!azoriusGovernance.votesToken?.balance &&
+    !azoriusGovernance.votesToken.balance.isZero();
 
   return (
     <ClientOnly>
@@ -53,6 +65,44 @@ export default function ProposalsPage() {
           buttonClick={showDelegate ? delegate : undefined}
           buttonTestId="link-delegate"
         >
+          {showWrapTokenButton && (
+            <Button
+              minW={0}
+              onClick={wrapTokenOpen}
+            >
+              <Flex
+                alignItems="center"
+                h="full"
+              >
+                <TokenPlaceholder
+                  boxSize="1.25rem"
+                  mt="1"
+                />
+                <Text>
+                  <Show above="sm">{t('wrapToken')}</Show>
+                </Text>
+              </Flex>
+            </Button>
+          )}
+          {showUnWrapTokenButton && (
+            <Button
+              minW={0}
+              onClick={unwrapTokenOpen}
+            >
+              <Flex
+                alignItems="center"
+                h="full"
+              >
+                <TokenPlaceholder
+                  boxSize="1.25rem"
+                  mt="1"
+                />
+                <Text>
+                  <Show above="sm">{t('unwrapToken')}</Show>
+                </Text>
+              </Flex>
+            </Button>
+          )}
           {showCreateButton && (
             <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
               <Button minW={0}>

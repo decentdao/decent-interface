@@ -37,5 +37,6 @@ export const polygonConfig: NetworkConfig = {
     zodiacModuleProxyFactory: ZodiacModuleProxyFactory.address,
     linearVotingMasterCopy: LinearVotingMasterCopy.address,
     gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
+    votesERC20WrapperMasterCopy: '',
   },
 };
