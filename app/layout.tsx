@@ -116,7 +116,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     closeButton={false}
                     newestOnTop={false}
                     pauseOnFocusLoss={false}
-                    autoClose={false}
                   />
                   <FractalErrorBoundary fallback={<ErrorFallback />}>
                     <ApolloProvider client={graphQLClient}>

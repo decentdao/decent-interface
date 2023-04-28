@@ -1,4 +1,5 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
+import { utils } from 'ethers';
 import { useCallback } from 'react';
 import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
@@ -32,7 +33,10 @@ export const useFractalModules = () => {
 
           let safeModule: FractalModuleData;
 
-          if (masterCopyAddress === fractalAzoriusMasterCopyContract.asSigner.address) {
+          if (
+            utils.getAddress(masterCopyAddress) ===
+            fractalAzoriusMasterCopyContract.asSigner.address
+          ) {
             safeModule = {
               moduleContract: fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,

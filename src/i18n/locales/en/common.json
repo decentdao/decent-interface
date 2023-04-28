@@ -36,6 +36,7 @@
     "labelDAOFound": "DAO Found!",
     "labelEtherscan": "View on Etherscan",
     "errorInvalidENSAddress": "Invalid ENS name or address",
+    "errorInvalidERC20Address": "Invalid ERC-20 token address",
     "errorInvalidAddress": "Invalid ETH address",
     "errorSentryFallbackTitle": "Oops!",
     "errorSentryFallbackMessage": "An unexpected error occurred. Try reloading or <1>ask the devs to do something</1>.",
@@ -82,5 +83,7 @@
     "signersInfo1": "The number of signers required to execute a proposal.",
     "signersInfo2": "Adding or removing a signer will require an update.",
     "settings": "Settings",
-    "etherscanTip": "Open in Etherscan"
+    "etherscanTip": "Open in Etherscan",
+    "wrapToken": "Wrap Token",
+    "unwrapToken": "Unwrap Token"
 }

@@ -7,6 +7,7 @@ import {
   FractalProposalState,
   VotesData,
   VotesStrategy,
+  UnderlyingTokenData,
 } from '../../../types';
 import { StrategyType } from './../../../types/fractal';
 
@@ -23,6 +24,7 @@ export enum FractalGovernanceAction {
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
   SET_CLAIMING_CONTRACT = 'SET_CLAIMING_CONTRACT',
   RESET_TOKEN_ACCOUNT_DATA = 'RESET_TOKEN_ACCOUNT_DATA',
+  SET_UNDERLYING_TOKEN_DATA = 'SET_UNDERLYING_TOKEN_DATA',
 }
 
 export type FractalGovernanceActions =
@@ -63,6 +65,10 @@ export type FractalGovernanceActions =
   | {
       type: FractalGovernanceAction.SET_TOKEN_DATA;
       payload: TokenData;
+    }
+  | {
+      type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA;
+      payload: UnderlyingTokenData;
     }
   | {
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;

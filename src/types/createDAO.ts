@@ -12,6 +12,10 @@ export enum CreatorSteps {
   GUARD_CONFIG = 'vetoGuard',
 }
 
+export enum TokenCreationType {
+  IMPORTED = 'imported',
+  NEW = 'new',
+}
 export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {
   transactionPending?: boolean;
   isSubDAO?: boolean;
@@ -33,6 +37,8 @@ export type DAOEssentials = {
 };
 
 export type DAOGovenorToken<T = BigNumber> = {
+  tokenCreationType: TokenCreationType;
+  tokenImportAddress?: string;
   tokenName: string;
   tokenSymbol: string;
   tokenSupply: T;
@@ -70,7 +76,10 @@ export interface SubDAO<T = BigNumber>
 export interface TokenGovernanceDAO<T = BigNumber>
   extends DAOGovenorToken<T>,
     DAOEssentials,
-    DAOGovenorModuleConfig<T> {}
+    DAOGovenorModuleConfig<T> {
+  isVotesToken?: boolean;
+  isTokenImported?: boolean;
+}
 
 export interface GnosisDAO extends DAOEssentials, GnosisConfiguration {}
 

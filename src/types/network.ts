@@ -31,5 +31,6 @@ export type NetworkConfig = {
     azoriusVetoGuardMasterCopy: string;
     vetoMultisigVotingMasterCopy: string;
     vetoERC20VotingMasterCopy: string;
+    votesERC20WrapperMasterCopy: string;
   };
 };

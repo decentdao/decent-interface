@@ -28,6 +28,7 @@ import { GovernanceContractActions } from '../providers/App/governanceContracts/
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
+import { VotesERC20Wrapper } from './../assets/typechain-types/VotesERC20Wrapper';
 import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
@@ -264,7 +265,8 @@ export interface FractalClients {
 export interface FractalGovernanceContracts {
   ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
   azoriusContract: ContractConnection<FractalUsul> | null;
-  tokenContract: ContractConnection<VotesToken> | null;
+  tokenContract: ContractConnection<VotesToken | VotesERC20Wrapper> | null;
+  underlyingTokenAddress?: string;
   isLoaded: boolean;
 }
 
@@ -274,9 +276,10 @@ export interface FractalNode {
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
+  isModulesLoaded?: boolean;
 }
 
-export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules'> {}
+export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded'> {}
 
 export interface FractalModuleData {
   moduleContract: FractalUsul | FractalModule | undefined;
@@ -359,6 +362,7 @@ export interface FractalContracts {
   vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
   votesTokenMasterCopyContract: ContractConnection<VotesToken>;
   claimingMasterCopyContract: ContractConnection<TokenClaim>;
+  votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal;

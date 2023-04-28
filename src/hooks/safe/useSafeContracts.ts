@@ -16,6 +16,7 @@ import {
 import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
+import { VotesERC20Wrapper__factory } from '../../assets/typechain-types/usul/factories/VotesERC20Wrapper__factory';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSafeContracts() {
@@ -38,6 +39,7 @@ export default function useSafeContracts() {
       vetoERC20VotingMasterCopy,
       votesTokenMasterCopy,
       claimingMasterCopy,
+      votesERC20WrapperMasterCopy,
     },
   } = useNetworkConfg();
 
@@ -113,6 +115,11 @@ export default function useSafeContracts() {
       asProvider: TokenClaim__factory.connect(claimingMasterCopy, provider),
     };
 
+    const votesERC20WrapperMasterCopyContract = {
+      asSigner: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, signerOrProvider),
+      asProvider: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, provider),
+    };
+
     return {
       multiSendContract,
       gnosisSafeFactoryContract,
@@ -128,6 +135,7 @@ export default function useSafeContracts() {
       vetoERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
     };
   }, [
     gnosisSafeFactory,
@@ -144,6 +152,7 @@ export default function useSafeContracts() {
     vetoERC20VotingMasterCopy,
     votesTokenMasterCopy,
     claimingMasterCopy,
+    votesERC20WrapperMasterCopy,
     provider,
     signer,
   ]);
