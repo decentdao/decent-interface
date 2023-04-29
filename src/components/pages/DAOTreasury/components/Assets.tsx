@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanLinkNFT from '../../../ui/links/EtherscanLinkNFT';
-import EtherscanLinkToken from '../../../ui/links/EtherscanLinkToken';
+import EtherscanLinkERC20 from '../../../ui/links/EtherscanLinkERC20';
+import EtherscanLinkERC721 from '../../../ui/links/EtherscanLinkERC721';
 import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
 function CoinHeader() {
@@ -79,7 +79,7 @@ function CoinRow({
             {asset.address === ethers.constants.AddressZero ? (
               <EtherscanLinkAddress address={safe}>{asset.symbol}</EtherscanLinkAddress>
             ) : (
-              <EtherscanLinkToken address={asset.address}>{asset.symbol}</EtherscanLinkToken>
+              <EtherscanLinkERC20 address={asset.address}>{asset.symbol}</EtherscanLinkERC20>
             )}
           </Text>
         </HStack>
@@ -151,7 +151,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const id = asset.id.toString();
   return (
     <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
-      <EtherscanLinkNFT
+      <EtherscanLinkERC721
         address={asset.address}
         tokenId={id}
         data-testid="link-nft-image"
@@ -164,7 +164,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           h="3rem"
           marginRight="0.75rem"
         />
-      </EtherscanLinkNFT>
+      </EtherscanLinkERC721>
       <Text
         textStyle="text-base-sans-regular"
         color="grayscale.100"
@@ -180,12 +180,12 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
         maxWidth="5rem"
         noOfLines={1}
       >
-        <EtherscanLinkNFT
+        <EtherscanLinkERC721
           address={asset.address}
           tokenId={id}
         >
           #{id}
-        </EtherscanLinkNFT>
+        </EtherscanLinkERC721>
       </Text>
     </HStack>
   );
