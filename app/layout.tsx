@@ -14,6 +14,7 @@ import { WagmiConfig } from 'wagmi';
 import { ModalProvider } from '../src/components/ui/modals/ModalProvider';
 import Layout from '../src/components/ui/page/Layout';
 import { ErrorFallback } from '../src/components/ui/utils/ErrorFallback';
+import { APP_NAME } from '../src/constants/common';
 import graphQLClient from '../src/graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogging';
 import { AppProvider } from '../src/providers/App/AppProvider';
@@ -46,7 +47,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
         <meta
           name="theme-color"
-          content="#000000"
+          content="#181716"
         />
         <meta
           name="description"
@@ -78,7 +79,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <meta
           property="og:title"
-          content="Fractal"
+          content={APP_NAME}
         />
         <meta
           property="og:image"
@@ -86,17 +87,17 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <meta
           property="og:image:alt"
-          content="Fractal"
+          content={APP_NAME}
         />
         <meta
           property="og:site_name"
-          content="Fractal"
+          content={APP_NAME}
         />
         <meta
           name="viewport"
           content="width=device-width, initial-scale=1"
         />
-        <title>Fractal</title>
+        <title>{APP_NAME}</title>
       </head>
       <body>
         <WagmiConfig client={wagmiClient}>
