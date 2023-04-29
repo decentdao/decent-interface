@@ -84,24 +84,24 @@ export function NavigationLinks({
         <Divider color="chocolate.700" />
         <NavigationExternalLink
           href={URL_FAQ}
-          tooltipKey="ariaLabelFAQ"
-          labelKey="faq"
+          ariaLabelKey="ariaLabelFAQ"
+          tooltipKey="faq"
           testId="navigationExternal-faq"
           Icon={SupportQuestion}
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
           href={URL_DISCORD}
-          tooltipKey="ariaLabelDiscord"
-          labelKey="discord"
+          ariaLabelKey="ariaLabelDiscord"
+          tooltipKey="discord"
           testId="navigationExternal-discord"
           Icon={Discord}
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
           href={URL_DOCS}
-          labelKey="documentation"
-          tooltipKey="ariaLabelDocumentation"
+          ariaLabelKey="ariaLabelDocumentation"
+          tooltipKey="documentation"
           testId="navigationExternal-documentation"
           Icon={Documents}
           closeDrawer={closeDrawer}
