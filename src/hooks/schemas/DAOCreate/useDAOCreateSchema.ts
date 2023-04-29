@@ -45,8 +45,10 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               signatureThreshold: Yup.number()
                 .min(1, t('errorLowSignerThreshold'))
                 .max(Yup.ref('numOfSigners'), t('errorHighSignerThreshold'))
-                .required(),
-              numOfSigners: Yup.number().min(1),
+                .required(t('errorHighSignerThreshold')),
+              numOfSigners: Yup.number()
+                .min(1, t('errorMinSigners'))
+                .required(t('errorMinSigners')),
               customNonce: Yup.number(),
             }),
         }),
