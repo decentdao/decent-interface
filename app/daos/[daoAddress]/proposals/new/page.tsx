@@ -1,6 +1,6 @@
 'use client';
 
-import { Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
+import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
