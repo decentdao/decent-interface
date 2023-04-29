@@ -1,12 +1,11 @@
 'use client';
 
 import { Flex, Box, Text, HStack } from '@chakra-ui/react';
-import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { ethers } from 'ethers';
 import { useTranslation, TFunction } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
-import EtherscanLinkAddress from '../../ui/links/EtherscanLinkAddress';
+import { DisplayAddress } from '../../ui/links/DisplayAddress';
 
 enum ModuleType {
   MODULES = 'modules',
@@ -20,26 +19,6 @@ function NoModules({ title, t }: { title: string; t: TFunction<'settings'[]> }) 
   return (
     <Box mt={2}>
       <Text color="chocolate.200">{noModulesTranslation}</Text>
-    </Box>
-  );
-}
-
-function ModuleDisplay({ moduleAddress }: { moduleAddress: string }) {
-  return (
-    <Box>
-      <EtherscanLinkAddress
-        address={moduleAddress}
-        showCopyButton
-      >
-        <Text
-          color="gold.500"
-          as="span"
-          verticalAlign="sub"
-        >
-          {moduleAddress}
-          <ArrowAngleUp verticalAlign="revert" />
-        </Text>
-      </EtherscanLinkAddress>
     </Box>
   );
 }
@@ -75,9 +54,9 @@ function ModulesContainer({
             />
           ) : (
             addresses.map(address => (
-              <ModuleDisplay
+              <DisplayAddress
                 key={address}
-                moduleAddress={address}
+                address={address}
               />
             ))
           )}

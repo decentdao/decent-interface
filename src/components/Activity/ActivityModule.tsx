@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FractalProposal } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { Badge } from '../ui/badges/Badge';
-import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../ui/links/EtherscanLinkTransaction';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescriptionModule } from './ActivityDescriptionModule';
 
@@ -24,10 +24,7 @@ export function ActivityModule({ activity }: { activity: FractalProposal }) {
       description={<ActivityDescriptionModule activity={activity} />}
       RightElement={
         !!activity.transactionHash && (
-          <EtherscanLinkAddress
-            path="tx"
-            address={activity.transactionHash}
-          >
+          <EtherscanTransactionLink txHash={activity.transactionHash}>
             <Button
               variant="text"
               size="lg"
@@ -36,7 +33,7 @@ export function ActivityModule({ activity }: { activity: FractalProposal }) {
             >
               {t('labelEtherscan')}
             </Button>
-          </EtherscanLinkAddress>
+          </EtherscanTransactionLink>
         )
       }
       eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}

@@ -6,7 +6,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { TransferType, AssetTransfer } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanTransactionLink from '../../../ui/links/EtherscanTransactionLink';
+import EtherscanTransactionLink from '../../../ui/links/EtherscanLinkTransaction';
 import {
   TokenEventType,
   TransferDisplayData,

@@ -51,7 +51,6 @@ export function DAOInfoCard({
     address: safeAddress && !isCurrentDAO ? safeAddress : undefined,
   });
 
-  // @todo add viewable conditions
   const canManageDAO = !!user.address;
 
   const isFavorite = useMemo(

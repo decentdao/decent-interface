@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
 import { TreasuryActivity, ActivityEventType } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
-import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
+import EtherscanTransactionLink from '../ui/links/EtherscanLinkTransaction';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
@@ -34,10 +34,7 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
       description={<ActivityDescription activity={activity} />}
       RightElement={
         activity.transactionHash ? (
-          <EtherscanLinkAddress
-            path="tx"
-            address={activity.transactionHash}
-          >
+          <EtherscanTransactionLink txHash={activity.transactionHash}>
             <Button
               variant="text"
               size="lg"
@@ -46,7 +43,7 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
             >
               {t('labelEtherscan')}
             </Button>
-          </EtherscanLinkAddress>
+          </EtherscanTransactionLink>
         ) : undefined
       }
       eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
