@@ -1,9 +1,10 @@
-import { Input, IconButton, Box } from '@chakra-ui/react';
+import { IconButton, Box } from '@chakra-ui/react';
 import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { Field, FieldAttributes } from 'formik';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { AddressInput } from '../../ui/forms/EthAddressInput';
 interface ITokenAllocations {
   index: number;
   remove: <T>(index: number) => T | undefined;
@@ -30,9 +31,8 @@ export function AzoriusTokenAllocation({
       <LabelWrapper errorMessage={addressErrorMessage}>
         <Field name={`govToken.tokenAllocations.${index}.address`}>
           {({ field }: FieldAttributes<any>) => (
-            <Input
+            <AddressInput
               {...field}
-              placeholder="0x0000...0000"
               data-testid={'tokenVoting-tokenAllocationAddressInput-' + index}
             />
           )}
