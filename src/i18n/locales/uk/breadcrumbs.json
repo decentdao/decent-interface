@@ -1,7 +1,7 @@
 {
     "proposals": "Пропозиції",
     "proposalNew": "Нова Пропозиція",
-    "nodes": "Ієрархія DAO",
+    "nodes": "Ієрархія",
     "treasury": "Скарбниця",
     "proposal": "#{{proposalNumber}} {{proposalTitle}}"
 }

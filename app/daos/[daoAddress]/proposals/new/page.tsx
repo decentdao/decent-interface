@@ -1,6 +1,6 @@
 'use client';
 
-import { Text, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
+import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
@@ -90,13 +90,14 @@ export default function ProposalCreatePage() {
             <form onSubmit={handleSubmit}>
               <Box>
                 <PageHeader
+                  title={t('createProposal')}
                   breadcrumbs={[
                     {
-                      title: t('proposals', { ns: 'breadcrumbs' }),
+                      terminus: t('proposals', { ns: 'breadcrumbs' }),
                       path: DAO_ROUTES.proposals.relative(daoAddress),
                     },
                     {
-                      title: t('proposalNew', { ns: 'breadcrumbs' }),
+                      terminus: t('proposalNew', { ns: 'breadcrumbs' }),
                       path: '',
                     },
                   ]}
@@ -105,14 +106,7 @@ export default function ProposalCreatePage() {
                   buttonClick={() => push(DAO_ROUTES.dao.relative(daoAddress))}
                   isButtonDisabled={pendingCreateTx}
                 />
-                <Text
-                  textStyle="text-2xl-mono-regular"
-                  color="grayscale.100"
-                >
-                  {t('createProposal')}
-                </Text>
                 <Grid
-                  mt={8}
                   gap={4}
                   templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
                   gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
@@ -128,7 +122,7 @@ export default function ProposalCreatePage() {
                     >
                       <Box
                         rounded="lg"
-                        p="5rem"
+                        p="1rem"
                         bg={BACKGROUND_SEMI_TRANSPARENT}
                       >
                         <ProposalHeader

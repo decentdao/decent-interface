@@ -4,7 +4,6 @@ import {
   Flex,
   Grid,
   IconButton,
-  Input,
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
@@ -14,6 +13,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
@@ -136,9 +136,8 @@ export function GnosisMultisig(props: ICreationStepProps) {
                   >
                     <Field name={`gnosis.trustedAddresses.${i}`}>
                       {({ field }: FieldAttributes<any>) => (
-                        <Input
+                        <AddressInput
                           {...field}
-                          placeholder="0x0000...0000"
                           data-testid={'gnosisConfig-signer-' + i}
                         />
                       )}

@@ -6,7 +6,6 @@ import {
   HStack,
   Select,
   Text,
-  Input,
   Alert,
   AlertTitle,
   Image,
@@ -22,6 +21,7 @@ import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
+import { AddressInput } from '../../ui/forms/EthAddressInput';
 import ModalTooltip from '../../ui/modals/ModalTooltip';
 import useAddSigner from './hooks/useAddSigner';
 
@@ -102,10 +102,7 @@ function AddSignerModal({
                   subLabel={t('addSignerSublabel', { ns: 'modals' })}
                   errorMessage={field.value && errors.address}
                 >
-                  <Input
-                    placeholder="0x0000...0000"
-                    {...field}
-                  />
+                  <AddressInput {...field} />
                 </LabelWrapper>
               )}
             </Field>

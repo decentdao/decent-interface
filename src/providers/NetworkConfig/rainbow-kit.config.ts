@@ -12,6 +12,7 @@ import { hardhat } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { publicProvider } from 'wagmi/providers/public';
+import { APP_NAME } from '../../constants/common';
 import { supportedChains } from './NetworkConfigProvider';
 import { testWallet } from './testWallet';
 
@@ -31,7 +32,7 @@ export const { chains, provider } = configureChains(supportedWagmiChains, [
 const defaultWallets = [
   injectedWallet({ chains }),
   metaMaskWallet({ chains }),
-  coinbaseWallet({ appName: 'Fractal', chains }),
+  coinbaseWallet({ appName: APP_NAME, chains }),
   walletConnectWallet({ chains }),
 ];
 // allows connection to localhost only in development mode.

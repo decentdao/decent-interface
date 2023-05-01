@@ -2,8 +2,6 @@
 
 import ManageSigners from '../../../../src/components/pages/ManageSigners';
 
-function Signers() {
+export default function Signers() {
   return <ManageSigners />;
 }
-
-export default Signers;
