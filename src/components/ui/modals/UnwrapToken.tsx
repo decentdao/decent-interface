@@ -128,6 +128,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="unWrapToken-amount"
                   onKeyDown={restrictChars}
+                  maxValue={azoriusGovernance.votesToken.balance!}
                   isDisabled={!approved}
                 />
               </LabelWrapper>
