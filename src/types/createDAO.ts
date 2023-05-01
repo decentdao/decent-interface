@@ -64,7 +64,7 @@ export type DAOVetoGuardConfig<T = BigNumber> = {
 export interface GnosisConfiguration {
   trustedAddresses: string[];
   signatureThreshold: number;
-  numOfSigners: number;
+  numOfSigners?: number;
   customNonce: number;
 }
 
