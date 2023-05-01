@@ -4,74 +4,63 @@ import {
   Flex,
   Grid,
   IconButton,
-  Input,
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
 import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes } from 'formik';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
 export function GnosisMultisig(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
-  const {
-    values,
-    errors,
-    setFieldValue,
-    isSubmitting,
-    transactionPending,
-    isSubDAO,
-    validateForm,
-    setErrors,
-  } = props;
+  const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   const { restrictChars } = useFormHelpers();
 
-  const handleSignersChanges = (_: string, numberStr: number, index?: number) => {
-    let numOfSigners = Number(numberStr || 0);
-    // greater than 99 signers is unreasonable for manual input here,
-    // we don't use an error message because we don't want to render
-    // 1000 input fields and lag the app
-    if (numOfSigners > 99) {
-      numOfSigners = 99;
-    }
-    const gnosisAddresses = [...values.gnosis.trustedAddresses];
-    const trustedAddressLength = gnosisAddresses.length;
-    if (trustedAddressLength !== numOfSigners) {
-      if (!numOfSigners || numOfSigners < 1) {
-        numOfSigners = 1;
-      }
-      if (numOfSigners > trustedAddressLength) {
-        const difference = numOfSigners - trustedAddressLength;
-        gnosisAddresses.push(...new Array(difference).fill(''));
-      }
-      if (numOfSigners < trustedAddressLength) {
-        const difference = trustedAddressLength - numOfSigners;
-        if (index !== undefined) {
-          gnosisAddresses.splice(index, 1);
-        } else {
-          gnosisAddresses.splice(trustedAddressLength - difference, difference + 1);
-        }
-      }
-      if (gnosisAddresses.length) {
-        setFieldValue('gnosis.trustedAddresses', gnosisAddresses);
-      }
-    }
-    setFieldValue('gnosis.numOfSigners', numOfSigners);
+  const truncateSignersList = (gnosisAddresses: string[], numOfSigners: number) => {
+    const difference = gnosisAddresses.length - numOfSigners;
+    return gnosisAddresses.slice(0, gnosisAddresses.length - difference);
   };
 
-  useEffect(() => {
-    if (values.gnosis.numOfSigners !== values.gnosis.trustedAddresses.length) {
-      (async () => {
-        setErrors(await validateForm(values));
-      })();
+  const appendEmptySigners = (gnosisAddresses: string[], numOfSigners: number) => {
+    const difference = numOfSigners - gnosisAddresses.length;
+    return gnosisAddresses.concat(new Array(difference).fill(''));
+  };
+
+  const handleSignersChanges = (
+    gnosisAddresses: string[],
+    numOfSigners?: number,
+    index?: number
+  ) => {
+    if (numOfSigners === undefined) {
+      setFieldValue('gnosis.numOfSigners', numOfSigners);
     }
-  }, [values, validateForm, setErrors]);
+
+    numOfSigners = Math.min(numOfSigners || 0, 99);
+    const trustedAddressLength = gnosisAddresses.length;
+
+    if (numOfSigners && trustedAddressLength !== numOfSigners) {
+      gnosisAddresses =
+        numOfSigners > trustedAddressLength
+          ? appendEmptySigners(gnosisAddresses, numOfSigners)
+          : truncateSignersList(gnosisAddresses, numOfSigners);
+
+      if (index !== undefined) {
+        gnosisAddresses.splice(index, 1);
+      }
+    }
+
+    setFieldValue('gnosis', {
+      ...values.gnosis,
+      numOfSigners: numOfSigners,
+      trustedAddresses: gnosisAddresses,
+    });
+  };
 
   return (
     <StepWrapper
@@ -90,8 +79,9 @@ export function GnosisMultisig(props: ICreationStepProps) {
         >
           <NumberInput
             value={values.gnosis.numOfSigners}
-            min={1}
-            onChange={(inputStr, inputNum) => handleSignersChanges(inputStr, inputNum)}
+            onChange={(_, inputNum) =>
+              handleSignersChanges(values.gnosis.trustedAddresses, inputNum)
+            }
             onKeyDown={restrictChars}
           >
             <NumberInputField data-testid="gnosisConfig-numberOfSignerInput" />
@@ -136,9 +126,8 @@ export function GnosisMultisig(props: ICreationStepProps) {
                   >
                     <Field name={`gnosis.trustedAddresses.${i}`}>
                       {({ field }: FieldAttributes<any>) => (
-                        <Input
+                        <AddressInput
                           {...field}
-                          placeholder="0x0000...0000"
                           data-testid={'gnosisConfig-signer-' + i}
                         />
                       )}
@@ -156,7 +145,11 @@ export function GnosisMultisig(props: ICreationStepProps) {
                         }
                         type="button"
                         onClick={async () => {
-                          handleSignersChanges('', --values.gnosis.numOfSigners, i);
+                          handleSignersChanges(
+                            values.gnosis.trustedAddresses,
+                            --values.gnosis.numOfSigners!,
+                            i
+                          );
                         }}
                         data-testid={'gnosis.numOfSigners-' + i}
                       />

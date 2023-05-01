@@ -6,7 +6,7 @@ import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigP
  * For most use cases, you probably want to use DisplayTransaction,
  * to add proper styling.
  */
-function EtherscanTransactionLink({
+function EtherscanLinkTransaction({
   txHash,
   children,
 }: {
@@ -25,4 +25,4 @@ function EtherscanTransactionLink({
   );
 }
 
-export default EtherscanTransactionLink;
+export default EtherscanLinkTransaction;
