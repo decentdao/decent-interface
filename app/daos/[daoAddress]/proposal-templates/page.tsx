@@ -26,9 +26,10 @@ export default function ProposalTemplatesPage() {
     <ClientOnly>
       <Box>
         <PageHeader
+          title={t('proposalTemplates', { ns: 'breadcrumbs' })}
           breadcrumbs={[
             {
-              title: t('proposalTemplates', { ns: 'breadcrumbs' }),
+              terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
               path: '',
             },
           ]}

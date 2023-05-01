@@ -2,13 +2,13 @@ import { HStack, Text, Tooltip } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import EtherscanTransactionLink from './EtherscanTransactionLink';
+import EtherscanLinkTransaction from './EtherscanLinkTransaction';
 
 export default function DisplayTransaction({ txHash }: { txHash: string }) {
   const displayName = createAccountSubstring(txHash);
   const { t } = useTranslation();
   return (
-    <EtherscanTransactionLink txHash={txHash}>
+    <EtherscanLinkTransaction txHash={txHash}>
       <Tooltip
         label={t('etherscanTip')}
         placement="bottom"
@@ -21,6 +21,6 @@ export default function DisplayTransaction({ txHash }: { txHash: string }) {
           <ArrowAngleUp />
         </HStack>
       </Tooltip>
-    </EtherscanTransactionLink>
+    </EtherscanLinkTransaction>
   );
 }

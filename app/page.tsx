@@ -6,40 +6,14 @@ import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ReactNode, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import packageJson from '../package.json';
+import IconWithText from '../src/components/ui/icons/IconWithText';
 import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
 import { useFractal } from '../src/providers/App/AppProvider';
-
-interface IconWithTextProps {
-  icon: ReactNode;
-  label: string;
-  url: string;
-  testid: string;
-}
-
-function IconWithText({ icon, label, url, testid }: IconWithTextProps) {
-  return (
-    <Link
-      data-testid={testid}
-      href={url}
-      target="_blank"
-    >
-      <HStack>
-        {icon}
-        <Text
-          textStyle="text-button-md-semibold"
-          color="gold.500"
-        >
-          {label}
-        </Text>
-      </HStack>
-    </Link>
-  );
-}
 
 function InfoLinks() {
   const { t } = useTranslation('menu');

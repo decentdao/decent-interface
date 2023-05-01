@@ -10,7 +10,7 @@ import { useCreateSubDAOProposal } from '../../../../src/hooks/DAO/useCreateSubD
 import useDefaultNonce from '../../../../src/hooks/DAO/useDefaultNonce';
 import { GnosisDAO, TokenGovernanceDAO, SubDAO } from '../../../../src/types';
 
-function SubDaoCreate() {
+export default function SubDaoCreate() {
   const { push } = useRouter();
   const [redirectPending, setRedirectPending] = useState(false);
   const loadDAOProposals = useDAOProposals();
@@ -40,5 +40,3 @@ function SubDaoCreate() {
     </ClientOnly>
   );
 }
-
-export default SubDaoCreate;

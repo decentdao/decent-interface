@@ -1,7 +1,7 @@
 import { Link } from '@chakra-ui/next-js';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
-function EtherscanLinkNFT({
+function EtherscanLinkERC721({
   address,
   tokenId,
   children,
@@ -21,4 +21,4 @@ function EtherscanLinkNFT({
   );
 }
 
-export default EtherscanLinkNFT;
+export default EtherscanLinkERC721;
