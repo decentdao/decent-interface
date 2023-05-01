@@ -116,6 +116,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             onChange={onChangeAmount}
             decimalPlaces={selectedAsset?.token?.decimals}
             placeholder="0"
+            maxValue={BigNumber.from(selectedAsset.balance)}
           />
         </Box>
       </Flex>

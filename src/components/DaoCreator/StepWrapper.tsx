@@ -1,4 +1,4 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -23,10 +23,11 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
   return (
     <Box>
       <PageHeader
+        title={t(titleKey)}
         hasDAOLink={!!isSubDAO}
         breadcrumbs={[
           {
-            title: t(!isSubDAO ? 'homeButtonCreate' : 'labelCreateSubDAOProposal'),
+            terminus: t(!isSubDAO ? 'homeButtonCreate' : 'labelCreateSubDAOProposal'),
             path: '',
           },
         ]}
@@ -37,12 +38,6 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
           push(!isSubDAO || !daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress))
         }
       />
-      <Text
-        textStyle="text-2xl-mono-regular"
-        color="grayscale.100"
-      >
-        {t(titleKey)}
-      </Text>
       <Box
         bg="black.900-semi-transparent"
         rounded="md"

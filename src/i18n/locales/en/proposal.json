@@ -1,4 +1,5 @@
 {
+    "proposalOverview": "Proposal Overview",
     "breakdownTitle": "Breakdown",
     "labelTargetAddress": "Target Address",
     "helperTargetAddress": "The smart contract address this proposal will modify",
@@ -10,7 +11,6 @@
     "helperParameters": "Parameters used to call the function (comma separated)",
     "labelEthValue": "ETH Value",
     "helperEthValue": "Amount of ETH to send with the transaction (from your treasury)",
-    "pageTitle": "{{daoName}} Proposals",
     "ownerApproved": "Approved",
     "stateModule": "Module",
     "stateModuleTip": "This transaction was executed by a Safe module.",

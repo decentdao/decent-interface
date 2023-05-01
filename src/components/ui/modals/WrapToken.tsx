@@ -163,6 +163,7 @@ export function WrapToken({ close }: { close: () => void }) {
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="wrapToken-amount"
                   onKeyDown={restrictChars}
+                  maxValue={userBalance.bigNumberValue}
                 />
               </LabelWrapper>
 

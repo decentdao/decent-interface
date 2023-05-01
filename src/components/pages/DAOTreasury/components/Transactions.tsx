@@ -6,7 +6,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { TransferType, AssetTransfer } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanTransactionLink from '../../../ui/links/EtherscanTransactionLink';
+import EtherscanLinkTransaction from '../../../ui/links/EtherscanLinkTransaction';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -63,7 +63,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             w="1.5rem"
             h="1.5rem"
           />
-          <EtherscanTransactionLink txHash={displayData.transactionHash}>
+          <EtherscanLinkTransaction txHash={displayData.transactionHash}>
             <Tooltip
               label={
                 displayData.transferType === TransferType.ERC721_TRANSFER
@@ -89,7 +89,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
                   displayData.assetDisplay}
               </Text>
             </Tooltip>
-          </EtherscanTransactionLink>
+          </EtherscanLinkTransaction>
         </HStack>
         <HStack w="33%">
           <Spacer />

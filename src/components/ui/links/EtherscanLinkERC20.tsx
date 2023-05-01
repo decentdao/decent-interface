@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
-function EtherscanLinkToken({ address, children }: { address: string; children: React.ReactNode }) {
+function EtherscanLinkERC20({ address, children }: { address: string; children: React.ReactNode }) {
   const { etherscanBaseURL } = useNetworkConfg();
   return (
     <a
@@ -16,4 +16,4 @@ function EtherscanLinkToken({ address, children }: { address: string; children: 
   );
 }
 
-export default EtherscanLinkToken;
+export default EtherscanLinkERC20;

@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Input, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, constants } from 'ethers';
 import { Field, FieldAttributes, Formik } from 'formik';
@@ -11,6 +11,7 @@ import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
+import { AddressInput } from '../forms/EthAddressInput';
 import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
 
 export function DelegateModal({ close }: { close: Function }) {
@@ -140,9 +141,8 @@ export function DelegateModal({ close }: { close: Function }) {
                   subLabel={t('sublabelDelegateInput')}
                   errorMessage={errors.address}
                 >
-                  <Input
+                  <AddressInput
                     data-testid="delegate-addressInput"
-                    placeholder="0x0000...0000"
                     {...field}
                   />
                 </LabelWrapper>
