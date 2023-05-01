@@ -25,3 +25,24 @@ export type CreateProposalTemplateForm = {
   transactions: CreateProposalTemplateTransaction[];
   proposalTemplateMetadata: CreateProposalTemplateMetadata;
 };
+
+export interface ProposalTemplateTransactionParameter {
+  id: string;
+  signature: string;
+  label: string;
+  value: string;
+}
+
+export interface ProposalTemplateTransaction {
+  id: string;
+  targetAddress: string;
+  ethValue?: string;
+  functionName: string;
+  parameters: ProposalTemplateTransactionParameter[];
+}
+export interface ProposalTemplate {
+  id: string;
+  title: string;
+  description?: string;
+  transactions: ProposalTemplateTransaction[];
+}

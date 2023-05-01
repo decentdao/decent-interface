@@ -32,6 +32,7 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
+import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalMetaData, MultisigProposal, AzoriusProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
