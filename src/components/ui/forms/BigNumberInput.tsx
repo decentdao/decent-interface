@@ -55,6 +55,7 @@ export function BigNumberInput({
   const [inputValue, setInputValue] = useState<string>();
 
   useEffect(() => {
+    console.log('🚀 ~ file: BigNumberInput.tsx:60 ~ value:', value);
     setInputValue(
       value
         ? !value.isZero()
@@ -170,6 +171,7 @@ export function BigNumberInput({
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
+    if (!inputValue) return;
     processValue(undefined, inputValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimalPlaces]);
