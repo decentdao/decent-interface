@@ -55,6 +55,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   });
 
   const handleCoinChange = (index: string) => {
+    setInputAmount({ value: '0', bigNumberValue: BigNumber.from(0) });
     setSelectedAsset(fungibleAssetsWithBalance[Number(index)]);
   };
 

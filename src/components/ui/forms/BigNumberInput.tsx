@@ -51,13 +51,19 @@ export function BigNumberInput({
     }
     return input;
   };
-  const initialValue = value
-    ? !value.isZero()
-      ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
-      : '0'
-    : '';
 
-  const [inputValue, setInputValue] = useState<string>(initialValue);
+  const [inputValue, setInputValue] = useState<string>();
+
+  useEffect(() => {
+    console.log('🚀 ~ file: BigNumberInput.tsx:60 ~ value:', value);
+    setInputValue(
+      value
+        ? !value.isZero()
+          ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
+          : '0'
+        : ''
+    );
+  }, [value, decimalPlaces]);
 
   // this will insure the caret in the input component does not shift to the end of the input when the value is changed
   const resetCaretPositionForInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -165,6 +171,7 @@ export function BigNumberInput({
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
+    if (!inputValue) return;
     processValue(undefined, inputValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimalPlaces]);
