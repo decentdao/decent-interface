@@ -18,6 +18,7 @@ export default function ProposalDetailsPage({
 }: {
   params: { proposalId: string };
 }) {
+  console.log('🚀 ~ file: page.tsx:21 ~ proposalId:', proposalId);
   const {
     node: { daoAddress },
     governance: { proposals },
