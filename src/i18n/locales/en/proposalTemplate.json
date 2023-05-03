@@ -16,5 +16,7 @@
     "parameter": "Parameter",
     "value": "Value",
     "userInput": "user input",
-    "eth": "ETH"
+    "eth": "ETH",
+    "emptyProposalTemplates": "No templates yet.",
+    "emptyProposalTemplatesCreateMessage": "Add your first template."
 }

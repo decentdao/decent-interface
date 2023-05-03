@@ -5,10 +5,11 @@ interface ContentBoxProps {
   title?: string;
   children: React.ReactNode;
   height?: string;
+  maxWidth?: string;
   bg?: string;
 }
 
-function ContentBox({ title, height, children, bg = 'black.900' }: ContentBoxProps) {
+function ContentBox({ title, height, maxWidth, children, bg = 'black.900' }: ContentBoxProps) {
   return (
     <Box
       rounded="lg"
@@ -16,6 +17,7 @@ function ContentBox({ title, height, children, bg = 'black.900' }: ContentBoxPro
       my="4"
       bg={bg}
       height={height}
+      maxWidth={maxWidth}
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}
       <Box

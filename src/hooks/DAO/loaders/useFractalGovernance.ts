@@ -1,6 +1,9 @@
+import { useQuery } from '@apollo/client';
 import { constants } from 'ethers';
 import { useEffect, useRef } from 'react';
+import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useDAOProposals } from './useProposals';
@@ -16,11 +19,33 @@ export const useFractalGovernance = () => {
     },
     governanceContracts,
     guardContracts,
+    action,
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
   const loadAzoriusStrategy = useAzoriusStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
+
+  const ONE_MINUTE = 60 * 1000;
+
+  useQuery(DAOQueryDocument, {
+    variables: { daoAddress },
+    onCompleted: async data => {
+      if (!daoAddress) return;
+      const { daos } = data;
+      const dao = daos[0];
+
+      const { proposalTemplates } = dao;
+
+      if (!!proposalTemplates) {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: proposalTemplates,
+        });
+      }
+    },
+    pollInterval: ONE_MINUTE,
+  });
 
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;

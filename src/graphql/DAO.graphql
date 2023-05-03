@@ -37,16 +37,16 @@ query DAOQuery($daoAddress: Bytes) {
             title
             description
             transactions {
-            id
-            targetAddress
-            ethValue
-            functionName
-            parameters {
                 id
-                signature
-                label
-                value
-            }
+                targetAddress
+                ethValue
+                functionName
+                parameters {
+                    id
+                    signature
+                    label
+                    value
+                }
             }
         }
     }

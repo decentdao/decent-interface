@@ -23,6 +23,7 @@ import SafeServiceClient, {
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
+import { ProposalTemplate } from '../../.graphclient';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';

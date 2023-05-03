@@ -5,6 +5,7 @@ import { BigNumber } from 'ethers';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
+import { logError } from '../../../helpers/errorLogging';
 import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -71,7 +72,7 @@ function useCountdown(proposal: FractalProposal) {
               await loadDAOProposals();
             }
           } catch (error) {
-            console.error('Error updating proposal state:', error);
+            logError('Error updating proposal state:', error);
           }
         })();
       }, 10000);
