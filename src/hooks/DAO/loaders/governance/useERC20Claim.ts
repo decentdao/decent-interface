@@ -1,12 +1,12 @@
 import { useEffect, useCallback } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { FractalGovernanceAction } from './../../../../providers/App/governance/action';
+import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 // get list of approvals; approval [0] should be token claim
 // query using attach = masterTokenClaim.attach(approval[0]).queryFilter()
 // check if module is tokenClaim;
 // set token claim;
 
-export function useTokenClaim() {
+export function useERC20Claim() {
   const {
     governanceContracts: { tokenContract },
     baseContracts: { claimingMasterCopyContract },
@@ -22,7 +22,7 @@ export function useTokenClaim() {
     const possibleTokenClaimContract = claimingMasterCopyContract.asSigner.attach(
       approvals[0].args[1]
     );
-    const tokenClaimFilter = possibleTokenClaimContract.filters.TokenClaimCreated();
+    const tokenClaimFilter = possibleTokenClaimContract.filters.ERC20ClaimCreated();
     const tokenClaimArray = await possibleTokenClaimContract
       .queryFilter(tokenClaimFilter)
       .catch(() => []);

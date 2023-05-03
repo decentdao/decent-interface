@@ -1,17 +1,17 @@
 import {
-  FractalUsul,
   FractalModule,
-  OZLinearVoting,
-  TokenClaim,
-  VotesToken,
-  UsulVetoGuard,
-  VetoERC20Voting,
-  VetoGuard,
-  VetoMultisigVoting,
   FractalRegistry,
   GnosisSafe,
   GnosisSafeProxyFactory,
   ModuleProxyFactory,
+  LinearERC20Voting,
+  Azorius,
+  AzoriusFreezeGuard,
+  ERC20Claim,
+  ERC20FreezeVoting,
+  MultisigFreezeVoting,
+  VotesERC20,
+  MultisigFreezeGuard,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
   SafeMultisigTransactionWithTransfersResponse,
@@ -32,118 +32,75 @@ import { VotesERC20Wrapper } from './../assets/typechain-types/VotesERC20Wrapper
 import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
-import { VetoGuardType, VetoVotingType } from './daoGovernance';
+import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalMetaData, MultisigProposal, AzoriusProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BNFormattedPair } from './votingFungibleToken';
 /**
- * The possible states of a DAO proposal, both Token Voting (Usul) and Multisignature
- * governance.
+ * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
+ * (Safe) governance.
  *
- * @note it is required that Usul-specific states match those on the Usul contracts:
- * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L23
- *
- * Although in some cases (documented below), what we show to the user may be different.
+ * @note it is required that Azorius-specific states match those on the Azorius contracts,
+ * including casing.
  */
 export enum FractalProposalState {
   /**
    * Proposal is created and can be voted on.  This is the initial state of all
    * newly created proposals.
    *
-   * Usul / Multisig (all proposals).
+   * Azorius / Multisig (all proposals).
    */
-  Active = 'stateActive',
+  ACTIVE = 'stateActive',
 
   /**
-   * This state occurs when the 'cancelProposals' function is called on the Usul contract:
-   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L237
+   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
+   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
    *
-   * @note We do not support this function in the UI and it is difficult to achieve this state
-   * given our current setup, but still possible, so we allow for the proper badge to be shown.
-   *
-   * Usul only.
+   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
    */
-  Canceled = 'stateCanceled',
+  TIMELOCKABLE = 'stateTimelockable',
 
   /**
-   * Similar to 'Queued' state for a multisig child, but applies to all Usul based
-   * DAOs.  The proposal cannot yet be executed, until the timelock period has elapsed.
+   * A proposal that passes enters the `TIMELOCKED` state, during which it cannot yet be executed.
+   * This is to allow time for token holders to potentially exit their position, as well as parent DAOs
+   * time to initiate a freeze, if they choose to do so. A proposal stays timelocked for the duration
+   * of its `timelockPeriod`.
    *
-   * In addition to allowing for the possiblity to freeze, this state also allows token
-   * holders to exit their shares, if they would like to, before the execution of a transaction
-   * they disagree with.
-   *
-   * @note 'TimeLocked' is the state that Usul calls this period, however for consistency in
-   * the Fractal UI, we display this state as 'Queued', the same as multisig subDAOs.
-   *
-   * Usul only.
+   * All Azorius and multisig subDAOs.
    */
-  TimeLocked = 'stateTimeLocked',
+  TIMELOCKED = 'stateTimeLocked',
 
   /**
-   * The proposal has been executed.
+   * Following the `TIMELOCKED` state, a passed proposal becomes `EXECUTABLE`, and can then finally
+   * be executed on chain by anyone.
    *
-   * Usul / Multisig (all proposals).
+   * Azorius / Multisig (all proposals).
    */
-  Executed = 'stateExecuted',
+  EXECUTABLE = 'stateExecutable',
 
   /**
-   * The queue/timelock period has ended and the proposal is able to be executed.
-   * Once in this state, the execution period starts, after which if the proposal
-   * has not been executed, it will become Expired.
+   * The final state for a passed proposal.  The proposal has been executed on the blockchain.
    *
-   * @note Usul calls this state 'Executing', however from our UI we display it as 'Executable', to
-   * be more clear to the user that it is an actionable state.
-   *
-   * Anyone can execute an Executable proposal.
-   *
-   * Usul / Multisig (all proposals).
+   * Azorius / Multisig (all proposals).
    */
-  Executing = 'stateExecuting',
+  EXECUTED = 'stateExecuted',
 
   /**
-   * This state occurs when a proposal does not have a voting strategy associated with it:
-   * https://github.com/SekerDAO/Usul/blob/0cb39c0dd941b2825d401de69d16d41138a26717/contracts/Usul.sol#L362
+   * A passed proposal which is not executed before its `executionPeriod` has elapsed will be `EXPIRED`,
+   * and can no longer be executed.
    *
-   * @note It is technically possible to achieve this state if a Usul mod is attached without a voting
-   * strategy outside our own UI, so we allow for the proper badge to be shown in this case.
-   *
-   * Usul only.
+   * Azorius (all) / multisig subDAO.
    */
-  Uninitialized = 'stateUninitialized',
+  EXPIRED = 'stateExpired',
 
   /**
-   * Quorum (or signers) is reached, the proposal can be queued for execution.
-   * Anyone can move the state from Queueable to Queued/TimeLocked via a transaction.
+   * A failed proposal (as defined by its [BaseStrategy](../BaseStrategy.md) `isPassed` function). For a basic strategy,
+   * this would mean it received more NO votes than YES or did not achieve quorum.
    *
-   * Usul / Multisig subDAO only.
+   * Azorius only.
    */
-  Queueable = 'stateQueueable',
-
-  /**
-   * The proposal is 'queued', during which the proposal cannot yet be executed.
-   * This period is intended to allow for the ability of the parent to freeze
-   * the DAO, to prevent a transaction from occurring, if they would like.
-   *
-   * Multisig subDAO Only.
-   */
-  Queued = 'stateQueued',
-
-  /**
-   * Quorum AND/OR less than 50% approval not reached within the voting period.
-   *
-   * Usul only.
-   */
-  Failed = 'stateFailed',
-
-  /**
-   * Proposal is not executed before the execution period ends following
-   * the Executing (e.g. executable) state.
-   *
-   * Usul (all) / multisig subDAO.
-   */
-  Expired = 'stateExpired',
+  FAILED = 'stateFailed',
 
   /**
    * Proposal fails due to a proposal being executed with the same nonce.
@@ -153,7 +110,7 @@ export enum FractalProposalState {
    *
    * Multisig only.
    */
-  Rejected = 'stateRejected',
+  REJECTED = 'stateRejected',
 
   /**
    * Any Safe is able to have modules attached (e.g. Zodiac), which can act essentially as a backdoor,
@@ -161,13 +118,13 @@ export enum FractalProposalState {
    *
    * Safe Module 'proposals' in this sense are single state proposals that are already executed.
    *
-   * This is a rare case, as the Usul module is shown using Usul states, but other third party
+   * This is a rare case, as the Azorius module is shown using Azorius states, but other third party
    * modules could potentially generate this state so we allow for badges to properly label
    * this case in the UI.
    *
    * Third party Safe module transactions only.
    */
-  Module = 'stateModule',
+  MODULE = 'stateModule',
 }
 
 export interface IGnosisFreezeGuard {
@@ -183,7 +140,7 @@ export interface IGnosisFreezeGuard {
 
 export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
-  proposalNumber: string;
+  proposalId: string;
   targets: string[];
   metaData?: ProposalMetaData;
 }
@@ -263,9 +220,9 @@ export interface FractalClients {
 }
 
 export interface FractalGovernanceContracts {
-  ozLinearVotingContract: ContractConnection<OZLinearVoting> | null;
-  azoriusContract: ContractConnection<FractalUsul> | null;
-  tokenContract: ContractConnection<VotesToken | VotesERC20Wrapper> | null;
+  ozLinearVotingContract: ContractConnection<LinearERC20Voting> | null;
+  azoriusContract: ContractConnection<Azorius> | null;
+  tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | null;
   underlyingTokenAddress?: string;
   isLoaded: boolean;
 }
@@ -282,7 +239,7 @@ export interface FractalNode {
 export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded'> {}
 
 export interface FractalModuleData {
-  moduleContract: FractalUsul | FractalModule | undefined;
+  moduleContract: Azorius | FractalModule | undefined;
   moduleAddress: string;
   moduleType: FractalModuleType;
 }
@@ -294,10 +251,10 @@ export enum FractalModuleType {
 }
 
 export interface FractalGuardContracts {
-  vetoGuardContract?: ContractConnection<VetoGuard | UsulVetoGuard>;
-  vetoVotingContract?: ContractConnection<VetoERC20Voting | VetoMultisigVoting>;
-  vetoGuardType: VetoGuardType | null;
-  vetoVotingType: VetoVotingType | null;
+  vetoGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
+  vetoVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
+  freezeGuardType: FreezeGuardType | null;
+  vetoVotingType: FreezeVotingType | null;
 }
 
 export interface FreezeGuard {
@@ -326,7 +283,7 @@ export interface SafeMultisigGovernance extends Governance {}
 export interface Governance {
   type?: StrategyType;
   proposals: FractalProposal[] | null;
-  tokenClaimContract?: TokenClaim;
+  tokenClaimContract?: ERC20Claim;
 }
 
 export interface VotesStrategyAzorius extends VotesStrategy {}
@@ -350,18 +307,18 @@ export interface NodeHierarchy {
 export interface FractalContracts {
   multiSendContract: ContractConnection<MultiSend>;
   gnosisSafeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
-  fractalAzoriusMasterCopyContract: ContractConnection<FractalUsul>;
-  linearVotingMasterCopyContract: ContractConnection<OZLinearVoting>;
+  fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
+  linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   gnosisSafeSingletonContract: ContractConnection<GnosisSafe>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
-  gnosisVetoGuardMasterCopyContract: ContractConnection<VetoGuard>;
-  azoriusVetoGuardMasterCopyContract: ContractConnection<UsulVetoGuard>;
-  vetoMultisigVotingMasterCopyContract: ContractConnection<VetoMultisigVoting>;
-  vetoERC20VotingMasterCopyContract: ContractConnection<VetoERC20Voting>;
-  votesTokenMasterCopyContract: ContractConnection<VotesToken>;
-  claimingMasterCopyContract: ContractConnection<TokenClaim>;
+  gnosisVetoGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
+  azoriusVetoGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
+  vetoMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
+  vetoERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
+  votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
+  claimingMasterCopyContract: ContractConnection<ERC20Claim>;
   votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;
 }
 

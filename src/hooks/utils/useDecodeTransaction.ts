@@ -9,9 +9,9 @@ export const useDecodeTransaction = () => {
   const metaDataMapping = useRef<Map<string, DecodedTransaction[]>>(new Map());
 
   const decodeTransactions = useCallback(
-    async (proposalNumber: string, transactions: MetaTransaction[]) => {
+    async (proposalId: string, transactions: MetaTransaction[]) => {
       const apiUrl = buildGnosisApiUrl(safeBaseURL, '/data-decoder/');
-      const cachedTransactions = metaDataMapping.current.get(proposalNumber.toString());
+      const cachedTransactions = metaDataMapping.current.get(proposalId.toString());
 
       if (!cachedTransactions) {
         const decodedTransactions = await Promise.all(
@@ -52,7 +52,7 @@ export const useDecodeTransaction = () => {
             }
           })
         );
-        metaDataMapping.current.set(proposalNumber.toString(), decodedTransactions.flat());
+        metaDataMapping.current.set(proposalId.toString(), decodedTransactions.flat());
         return decodedTransactions.flat();
       }
 

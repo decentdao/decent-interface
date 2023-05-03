@@ -7,72 +7,54 @@ import { FractalProposalState, DAOState } from '../../../types';
 type BadgeType = { [key: string]: { Icon?: any; tooltipKey?: string; bg: string; color: string } };
 
 const BADGE_MAPPING: BadgeType = {
-  [FractalProposalState.Active]: {
+  [FractalProposalState.ACTIVE]: {
     Icon: ActiveTwo,
     tooltipKey: 'stateActiveTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Canceled]: {
-    Icon: CloseX,
-    tooltipKey: 'stateCanceledTip',
-    bg: 'sand.700',
-    color: 'grayscale.black',
-  },
-  [FractalProposalState.TimeLocked]: {
+  [FractalProposalState.TIMELOCKED]: {
     Icon: ClockTwo,
-    tooltipKey: 'stateQueuedTip',
+    tooltipKey: 'stateTimelockedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Executed]: {
+  [FractalProposalState.EXECUTED]: {
     Icon: DoubleCheck,
     tooltipKey: 'stateExecutedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Executing]: {
+  [FractalProposalState.EXECUTABLE]: {
     Icon: Check,
-    tooltipKey: 'stateExecutingTip',
+    tooltipKey: 'stateExecutableTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Uninitialized]: {
-    Icon: CloseX,
-    tooltipKey: 'stateUninitializedTip',
-    bg: 'sand.700',
-    color: 'grayscale.black',
-  },
-  [FractalProposalState.Failed]: {
+  [FractalProposalState.FAILED]: {
     Icon: CloseX,
     tooltipKey: 'stateFailedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Queueable]: {
+  [FractalProposalState.TIMELOCKABLE]: {
     Icon: ClockTwo,
-    tooltipKey: 'stateQueueableTip',
+    tooltipKey: 'stateTimelockableTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Queued]: {
-    Icon: ClockTwo,
-    tooltipKey: 'stateQueuedTip',
-    bg: 'sand.700',
-    color: 'grayscale.black',
-  },
-  [FractalProposalState.Module]: {
+  [FractalProposalState.MODULE]: {
     tooltipKey: 'stateModuleTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Expired]: {
+  [FractalProposalState.EXPIRED]: {
     Icon: ClockTwo,
     tooltipKey: 'stateExpiredTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
-  [FractalProposalState.Rejected]: {
+  [FractalProposalState.REJECTED]: {
     Icon: CloseX,
     tooltipKey: 'stateRejectedTip',
     bg: 'sand.700',

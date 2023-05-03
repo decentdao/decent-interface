@@ -1,5 +1,5 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
-import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
+import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { DAOState, FreezeGuard } from '../../../../types';
@@ -25,7 +25,7 @@ export function ActivityFreeze({
   vetoVotingContract,
 }: {
   freezeGuard: FreezeGuard;
-  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
+  vetoVotingContract: ERC20FreezeVoting | MultisigFreezeVoting | undefined;
 }) {
   const {
     freezeProposalCreatedTime,

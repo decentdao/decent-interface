@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
-import { GnosisDAO, TokenGovernanceDAO } from '../../types';
+import { GnosisDAO, AzoriusGovernanceDAO } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
@@ -16,7 +16,7 @@ const useDeployDAO = () => {
   const { t } = useTranslation('transaction');
 
   const deployDao = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: (daoAddress: string) => void) => {
+    (daoData: GnosisDAO | AzoriusGovernanceDAO, successCallback: (daoAddress: string) => void) => {
       const deploy = async () => {
         if (!multiSendContract) {
           return;

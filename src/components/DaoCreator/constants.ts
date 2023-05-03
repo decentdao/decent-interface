@@ -48,8 +48,12 @@ export const initialState: CreatorFormState = {
       value: '10080',
       bigNumberValue: BigNumber.from(10080),
     },
+    executionPeriod: {
+      value: '2800',
+      bigNumberValue: BigNumber.from(2800),
+    },
   },
-  vetoGuard: {
+  freezeGuard: {
     executionPeriod: {
       value: '2800',
       bigNumberValue: BigNumber.from(2800),

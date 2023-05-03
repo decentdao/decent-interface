@@ -9,7 +9,7 @@ export enum CreatorSteps {
   GNOSIS_GOVERNANCE = 'gnosis',
   GNOSIS_WITH_AZORIUS = 'govToken',
   GOV_CONFIG = 'govModule',
-  GUARD_CONFIG = 'vetoGuard',
+  GUARD_CONFIG = 'freezeGuard',
 }
 
 export enum TokenCreationType {
@@ -28,7 +28,7 @@ export interface CreatorFormState<T = BigNumberValuePair> {
   gnosis: GnosisConfiguration;
   govToken: DAOGovenorToken<T>;
   govModule: DAOGovenorModuleConfig<T>;
-  vetoGuard: DAOVetoGuardConfig<T>;
+  freezeGuard: DAOVetoGuardConfig<T>;
 }
 
 export type DAOEssentials = {
@@ -50,6 +50,7 @@ export type DAOGovenorModuleConfig<T = BigNumber> = {
   quorumPercentage: T;
   timelock: T;
   votingPeriod: T;
+  executionPeriod: T;
 };
 
 export type DAOVetoGuardConfig<T = BigNumber> = {
@@ -70,10 +71,10 @@ export interface GnosisConfiguration {
 
 export interface SubDAO<T = BigNumber>
   extends GnosisConfiguration,
-    TokenGovernanceDAO<T>,
+    AzoriusGovernanceDAO<T>,
     DAOVetoGuardConfig<T> {}
 
-export interface TokenGovernanceDAO<T = BigNumber>
+export interface AzoriusGovernanceDAO<T = BigNumber>
   extends DAOGovenorToken<T>,
     DAOEssentials,
     DAOGovenorModuleConfig<T> {
@@ -83,7 +84,7 @@ export interface TokenGovernanceDAO<T = BigNumber>
 
 export interface GnosisDAO extends DAOEssentials, GnosisConfiguration {}
 
-export type DAOTrigger = (daoData: GnosisDAO | TokenGovernanceDAO | SubDAO) => void;
+export type DAOTrigger = (daoData: GnosisDAO | AzoriusGovernanceDAO | SubDAO) => void;
 
 export type AddressValidationMap = Map<string, AddressValidation>;
 

@@ -29,9 +29,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...(proposals || []), action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE: {
-      const { proposalNumber, voter, support, weight, votesSummary } = action.payload;
+      const { proposalId, voter, support, weight, votesSummary } = action.payload;
       const updatedProposals = [...(proposals as AzoriusProposal[])].map(proposal => {
-        if (proposal.proposalNumber === proposalNumber) {
+        if (proposal.proposalId === proposalId) {
           const foundVote = proposal.votes.find(vote => vote.voter === voter);
           const newProposal: AzoriusProposal = {
             ...proposal,
@@ -47,12 +47,12 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: updatedProposals };
     }
     case FractalGovernanceAction.UPDATE_PROPOSAL_STATE: {
-      const { proposalNumber, state: proposalState } = action.payload;
+      const { proposalId, state: proposalState } = action.payload;
       if (!proposals) {
         return state;
       }
       const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
-        if (proposal.proposalNumber === proposalNumber) {
+        if (proposal.proposalId === proposalId) {
           const newProposal: AzoriusProposal = {
             ...proposal,
             state: proposalState,

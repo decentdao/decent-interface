@@ -3,7 +3,7 @@ import { useProvider, useSigner } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
-  TokenGovernanceDAO,
+  AzoriusGovernanceDAO,
   GnosisDAO,
   StrategyType,
   AzoriusContracts,
@@ -38,7 +38,7 @@ const useBuildDAOTx = () => {
 
   const buildDao = useCallback(
     async (
-      daoData: TokenGovernanceDAO | GnosisDAO,
+      daoData: AzoriusGovernanceDAO | GnosisDAO,
       parentAddress?: string,
       parentTokenAddress?: string
     ) => {

@@ -1,25 +1,17 @@
-import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
-import {
-  VotedEvent,
-  VoteFinalizedEvent,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types/@tokenwalk/seele/contracts/extensions/BaseTokenVoting';
+import { Azorius, LinearERC20Voting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
-import {
-  ProposalCanceledEvent,
-  ProposalCreatedEvent,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/FractalUsul';
+import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
+import { VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
+import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { MetaData } from '../../../../types';
 
 import { AzoriusProposal } from '../../../../types/daoProposal';
-import {
-  mapProposalCreatedEventToProposal,
-  getProposalVotesSummary,
-  getFractalProposalState,
-} from '../../../../utils';
+import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
 import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 
 export const useAzoriusProposals = () => {
@@ -38,25 +30,20 @@ export const useAzoriusProposals = () => {
     if (!azoriusContract || !ozLinearVotingContract) {
       return [];
     }
-    const rpc = getEventRPC<FractalUsul>(azoriusContract, chainId);
+    const rpc = getEventRPC<Azorius>(azoriusContract, chainId);
     const proposalCreatedFilter = rpc.filters.ProposalCreated();
-    const proposalMetaDataCreatedFilter = rpc.filters.ProposalMetadataCreated();
 
     const proposalCreatedEvents = await rpc.queryFilter(proposalCreatedFilter);
-    const proposalMetaDataCreatedEvents = await rpc.queryFilter(proposalMetaDataCreatedFilter);
 
-    const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
+    const strategyContract = getEventRPC<LinearERC20Voting>(ozLinearVotingContract, chainId);
 
     const proposals = await Promise.all(
       proposalCreatedEvents.map(async ({ args }) => {
-        const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
-          event.args.proposalId.eq(args.proposalNumber)
-        );
-
         let metaData;
-        if (metaDataEvent) {
+        if (args.metadata) {
+          const metaDataEvent: MetaData = JSON.parse(args.metadata);
           const decodedTransactions = await decodeTransactions(
-            args.proposalNumber.toString(),
+            args.proposalId.toString(),
             metaDataEvent.args.transactions
           );
           metaData = {
@@ -69,7 +56,7 @@ export const useAzoriusProposals = () => {
         }
         return mapProposalCreatedEventToProposal(
           strategyContract,
-          args.proposalNumber,
+          args.proposalId,
           args.proposer,
           azoriusContract,
           provider,
@@ -83,41 +70,33 @@ export const useAzoriusProposals = () => {
 
   // Azrious proposals are listeners
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
-    async (strategyAddress, proposalNumber, proposer) => {
+    async (strategyAddress, proposalId, proposer, _, _metadata) => {
       if (!azoriusContract || !ozLinearVotingContract) {
         return;
       }
-      const azoriusContractRPC = getEventRPC<FractalUsul>(
-        azoriusContract,
-        provider.network.chainId
-      );
-      const proposalMetaDataCreatedFilter = azoriusContractRPC.filters.ProposalMetadataCreated();
-      const proposalMetaDataCreatedEvents = await azoriusContractRPC.queryFilter(
-        proposalMetaDataCreatedFilter
-      );
 
-      const metaDataEvent = proposalMetaDataCreatedEvents.find(event =>
-        event.args.proposalId.eq(proposalNumber)
-      );
       let metaData;
-      if (metaDataEvent) {
+
+      if (_metadata) {
+        const metaDataEvent: MetaData = JSON.parse(_metadata);
         metaData = {
           title: metaDataEvent.args.title,
           description: metaDataEvent.args.description,
           documentationUrl: metaDataEvent.args.documentationUrl,
           transactions: metaDataEvent.args.transactions,
           decodedTransactions: await decodeTransactions(
-            proposalNumber.toString(),
+            proposalId.toString(),
             metaDataEvent.args.transactions
           ),
         };
       }
-      const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId).attach(
-        strategyAddress
-      );
+      const strategyContract = getEventRPC<LinearERC20Voting>(
+        ozLinearVotingContract,
+        chainId
+      ).attach(strategyAddress);
       const proposal = await mapProposalCreatedEventToProposal(
         strategyContract,
-        proposalNumber,
+        proposalId,
         proposer,
         azoriusContract,
         provider,
@@ -133,17 +112,20 @@ export const useAzoriusProposals = () => {
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(
-    async (voter, proposalNumber, support, weight) => {
+    async (voter, proposalId, support, weight) => {
       if (!ozLinearVotingContract) {
         return;
       }
-      const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-      const votesSummary = await getProposalVotesSummary(strategyContract, proposalNumber);
+      const strategyContract = getEventRPC<LinearERC20Voting>(ozLinearVotingContract, chainId);
+      const votesSummary = await getProposalVotesSummary(
+        strategyContract,
+        BigNumber.from(proposalId)
+      );
 
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE,
         payload: {
-          proposalNumber: proposalNumber.toString(),
+          proposalId: proposalId.toString(),
           voter,
           support,
           weight,
@@ -154,81 +136,28 @@ export const useAzoriusProposals = () => {
     [ozLinearVotingContract, chainId, action]
   );
 
-  const proposalQueuedEventListener: TypedListener<VoteFinalizedEvent> = useCallback(
-    async proposalNumber => {
-      if (!ozLinearVotingContract || !azoriusContract) {
-        return;
-      }
-      const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-      const azoriusContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
-
-      const state = await getFractalProposalState(
-        strategyContract,
-        azoriusContractRPC,
-        proposalNumber,
-        chainId
-      );
-
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
-        payload: { state, proposalNumber: proposalNumber.toString() },
-      });
-    },
-    [chainId, ozLinearVotingContract, azoriusContract, action]
-  );
-
-  const proposalCanceledListener: TypedListener<ProposalCanceledEvent> = useCallback(
-    async proposalNumber => {
-      if (!ozLinearVotingContract || !azoriusContract) {
-        return;
-      }
-      const strategyContract = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-      const azoriusContractRPC = getEventRPC<FractalUsul>(azoriusContract, chainId);
-
-      const state = await getFractalProposalState(
-        strategyContract,
-        azoriusContractRPC,
-        proposalNumber,
-        chainId
-      );
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
-        payload: { state, proposalNumber: proposalNumber.toString() },
-      });
-    },
-    [chainId, ozLinearVotingContract, azoriusContract, action]
-  );
-
   useEffect(() => {
     if (!azoriusContract || !ozLinearVotingContract) {
       return;
     }
     const proposalCreatedFilter = azoriusContract.asSigner.filters.ProposalCreated();
-    const proposalCanceledFilter = azoriusContract.asSigner.filters.ProposalCanceled();
 
     const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
-    const queuedEvent = ozLinearVotingContract.asSigner.filters.VoteFinalized();
 
     azoriusContract.asSigner.on(proposalCreatedFilter, proposalCreatedListener);
-    azoriusContract.asSigner.on(proposalCanceledFilter, proposalCanceledListener);
 
     ozLinearVotingContract.asSigner.on(votedEvent, proposalVotedEventListener);
-    ozLinearVotingContract.asSigner.on(queuedEvent, proposalQueuedEventListener);
 
     return () => {
       azoriusContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
-      azoriusContract.asSigner.off(proposalCanceledFilter, proposalCanceledListener);
 
       ozLinearVotingContract.asSigner.off(votedEvent, proposalVotedEventListener);
-      ozLinearVotingContract.asSigner.off(queuedEvent, proposalQueuedEventListener);
     };
   }, [
     azoriusContract,
     ozLinearVotingContract,
     proposalCreatedListener,
     proposalVotedEventListener,
-    proposalQueuedEventListener,
-    proposalCanceledListener,
   ]);
 
   return loadAzoriusProposals;

@@ -5,23 +5,6 @@ import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 
 /**
- * The various time periods we use in DAO creation are all denoted *on chain* in SECONDS.
- * However, from the UI/user's perspective, the input fields are denoted in MINUTES.
- *
- * Thus the data from the user inputs must be converted to seconds before passing into
- * the transaction.  This applies to:
- *
- * votingPeriod
- * executionPeriod
- * timelockPeriod
- * freezeProposalPeriod
- * freezePeriod
- *
- * The UI defaults (in minutes) are defined in {@link CreatorProvider}.
- */
-export const TIMER_MULT = 60;
-
-/**
  * These hardcoded values were taken from
  * @link https://github.com/gnosis/module-factory/blob/master/contracts/ModuleProxyFactory.sol
  */

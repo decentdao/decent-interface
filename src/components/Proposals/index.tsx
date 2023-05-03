@@ -11,46 +11,46 @@ import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
 const FILTERS_AZORIUS_BASE = [
-  FractalProposalState.Active,
-  FractalProposalState.Queueable,
-  FractalProposalState.TimeLocked,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
+  FractalProposalState.ACTIVE,
+  FractalProposalState.TIMELOCKABLE,
+  FractalProposalState.TIMELOCKED,
+  FractalProposalState.EXECUTABLE,
+  FractalProposalState.EXECUTED,
 
-  FractalProposalState.Failed,
-  FractalProposalState.Expired,
-  FractalProposalState.Rejected,
+  FractalProposalState.FAILED,
+  FractalProposalState.EXPIRED,
+  FractalProposalState.REJECTED,
 ];
 
 const FILTERS_AZORIUS_CHILD = [
-  FractalProposalState.Active,
-  FractalProposalState.Queueable,
-  FractalProposalState.TimeLocked,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
+  FractalProposalState.ACTIVE,
+  FractalProposalState.TIMELOCKABLE,
+  FractalProposalState.TIMELOCKED,
+  FractalProposalState.EXECUTABLE,
+  FractalProposalState.EXECUTED,
 
-  FractalProposalState.Failed,
-  FractalProposalState.Expired,
-  FractalProposalState.Rejected,
+  FractalProposalState.FAILED,
+  FractalProposalState.EXPIRED,
+  FractalProposalState.REJECTED,
 ];
 
 const FILTERS_MULTISIG_BASE = [
-  FractalProposalState.Active,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
+  FractalProposalState.ACTIVE,
+  FractalProposalState.EXECUTABLE,
+  FractalProposalState.EXECUTED,
 
-  FractalProposalState.Rejected,
+  FractalProposalState.REJECTED,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
-  FractalProposalState.Active,
-  FractalProposalState.Queueable,
-  FractalProposalState.Queued,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
+  FractalProposalState.ACTIVE,
+  FractalProposalState.TIMELOCKABLE,
+  FractalProposalState.TIMELOCKED,
+  FractalProposalState.EXECUTABLE,
+  FractalProposalState.EXECUTED,
 
-  FractalProposalState.Rejected,
-  FractalProposalState.Expired,
+  FractalProposalState.REJECTED,
+  FractalProposalState.EXPIRED,
 ];
 
 export default function Proposals() {

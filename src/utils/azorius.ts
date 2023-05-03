@@ -1,14 +1,14 @@
-import { FractalUsul, OZLinearVoting } from '@fractal-framework/fractal-contracts';
+import { Azorius, LinearERC20Voting } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
 import { createAccountSubstring } from '../hooks/utils/useDisplayName';
-import { getValue, CacheKeys, setValue, CacheExpiry } from '../hooks/utils/useLocalStorage';
+
+import { getValue, CacheKeys } from '../hooks/utils/useLocalStorage';
 import {
   FractalProposalState,
-  ProposalIsPassedError,
   ProposalVotesSummary,
   ProposalVote,
   VOTE_CHOICES,
@@ -23,10 +23,11 @@ import {
   FractalModuleType,
 } from '../types';
 import { Providers } from '../types/network';
+import { getTimeStamp } from './contract';
 
-export const getFractalProposalState = async (
-  strategy: OZLinearVoting,
-  azoriusContract: FractalUsul,
+export const getAzoriusProposalState = async (
+  strategy: LinearERC20Voting,
+  azoriusContract: Azorius,
   proposalId: BigNumber,
   chainId: number
 ): Promise<FractalProposalState> => {
@@ -37,57 +38,22 @@ export const getFractalProposalState = async (
   if (cache) {
     return cache;
   }
-  const state = await azoriusContract.state(proposalId);
-  if (state === 0) {
-    // Azorius says proposal is active, but we need to get more info in this case
-    const { deadline } = await strategy.proposals(proposalId);
-    if (Number(deadline.toString()) * 1000 < new Date().getTime()) {
-      // Deadline has passed: we have to determine if proposal is passed or failed
-      // Dirty hack: isPassed will fail if the proposal is not passed
-      try {
-        // This function never returns false, it either returns true or throws an error
-        await strategy.isPassed(proposalId);
-        return FractalProposalState.Queueable;
-      } catch (e: any) {
-        if (e.message.match(ProposalIsPassedError.MAJORITY_YES_VOTES_NOT_REACHED)) {
-          setValue(
-            CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
-            FractalProposalState.Rejected,
-            chainId,
-            CacheExpiry.NEVER
-          );
-          return FractalProposalState.Rejected;
-        } else if (e.message.match(ProposalIsPassedError.QUORUM_NOT_REACHED)) {
-          setValue(
-            CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
-            FractalProposalState.Failed,
-            chainId,
-            CacheExpiry.NEVER
-          );
-          return FractalProposalState.Failed;
-        } else if (e.message.match(ProposalIsPassedError.PROPOSAL_STILL_ACTIVE)) {
-          return FractalProposalState.Active;
-        }
-        return FractalProposalState.Failed;
-      }
-    }
-    return FractalProposalState.Active;
-  }
+  const state = await azoriusContract.proposalState(proposalId);
   return strategyFractalProposalStates[state];
 };
 
 export const getProposalVotesSummary = async (
-  strategy: OZLinearVoting,
-  proposalNumber: BigNumber
+  strategy: LinearERC20Voting,
+  proposalId: BigNumber
 ): Promise<ProposalVotesSummary> => {
-  const { yesVotes, noVotes, abstainVotes, startBlock } = await strategy.proposals(proposalNumber);
+  const { yesVotes, noVotes, abstainVotes } = await strategy.getProposalVotes(proposalId);
 
   let quorum;
 
   try {
-    quorum = await strategy.quorum(startBlock);
+    quorum = await strategy.quorumVotes(proposalId);
   } catch (e) {
-    // For who knows reason - strategy.quorum might give you an error
+    // For who knows reason - strategy.quorumVotes might give you an error
     // Seems like occuring when token deployment haven't worked properly
     logError('Error while getting strategy quorum');
     quorum = BigNumber.from(0);
@@ -102,65 +68,66 @@ export const getProposalVotesSummary = async (
 };
 
 export const getProposalVotes = async (
-  strategyContract: OZLinearVoting,
-  proposalNumber: BigNumber
+  strategyContract: LinearERC20Voting,
+  proposalId: BigNumber
 ): Promise<ProposalVote[]> => {
   const voteEventFilter = strategyContract.filters.Voted();
   const votes = await strategyContract.queryFilter(voteEventFilter);
-  const proposalVotesEvent = votes.filter(voteEvent =>
-    voteEvent.args.proposalId.eq(proposalNumber)
-  );
+  const proposalVotesEvent = votes.filter(voteEvent => proposalId.eq(voteEvent.args.proposalId));
 
   return proposalVotesEvent.map(({ args }) => ({
     voter: args.voter,
-    choice: VOTE_CHOICES[args.support],
+    choice: VOTE_CHOICES[args.voteType],
     weight: args.weight,
   }));
 };
 
 export const mapProposalCreatedEventToProposal = async (
-  strategyContract: OZLinearVoting,
-  proposalNumber: BigNumber,
+  strategyContract: LinearERC20Voting,
+  proposalId: BigNumber,
   proposer: string,
-  azoriusContract: ContractConnection<FractalUsul>,
+  azoriusContract: ContractConnection<Azorius>,
   provider: Providers,
   chainId: number,
   metaData?: ProposalMetaData
 ) => {
-  const { deadline, startBlock } = await strategyContract.proposals(proposalNumber);
-  const state = await getFractalProposalState(
+  const { endBlock, startBlock } = await strategyContract.getProposalVotes(proposalId);
+  const deadline = await getTimeStamp(endBlock, provider);
+  const state = await getAzoriusProposalState(
     strategyContract,
     azoriusContract.asSigner,
-    proposalNumber,
+    proposalId,
     chainId
   );
-  const votes = await getProposalVotes(strategyContract, proposalNumber);
-  const block = await provider.getBlock(startBlock.toNumber());
-  const votesSummary = await getProposalVotesSummary(strategyContract, proposalNumber);
+  const votes = await getProposalVotes(strategyContract, proposalId);
+  const block = await provider.getBlock(startBlock);
+  const votesSummary = await getProposalVotesSummary(strategyContract, proposalId);
 
   const targets = metaData
     ? metaData.decodedTransactions.map(tx => createAccountSubstring(tx.target))
     : [];
 
   let transactionHash: string | undefined;
-  if (state === FractalProposalState.Executed) {
-    const proposalExecutedFilter = azoriusContract.asSigner.filters.TransactionExecuted();
+  if (state === FractalProposalState.EXECUTED) {
+    const proposalExecutedFilter = azoriusContract.asSigner.filters.ProposalExecuted();
     const proposalExecutedEvents = await azoriusContract.asSigner.queryFilter(
       proposalExecutedFilter
     );
-    const executedEvent = proposalExecutedEvents.find(event => event.args[0].eq(proposalNumber));
+    const executedEvent = proposalExecutedEvents.find(event =>
+      BigNumber.from(event.args[0]).eq(proposalId)
+    );
     transactionHash = executedEvent?.transactionHash;
   }
 
   const proposal: AzoriusProposal = {
     eventType: ActivityEventType.Governance,
     eventDate: new Date(block.timestamp * 1000),
-    proposalNumber: proposalNumber.toString(),
+    proposalId: proposalId.toString(),
     targets,
     proposer,
-    startBlock,
+    startBlock: BigNumber.from(startBlock),
     transactionHash,
-    deadline: deadline.toNumber(),
+    deadline: deadline,
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,

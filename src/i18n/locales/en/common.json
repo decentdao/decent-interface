@@ -22,7 +22,7 @@
     "to": "To",
     "from": "From",
     "execute": "Execute",
-    "queue": "Queue",
+    "timelock": "Timelock",
     "move": "Move",
     "minutes": "Min",
     "quorum": "Quorum",

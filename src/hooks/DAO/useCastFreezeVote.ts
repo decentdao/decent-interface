@@ -1,4 +1,4 @@
-import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
+import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../utils/useTransaction';
@@ -7,7 +7,7 @@ const useCastFreezeVote = ({
   vetoVotingContract,
   setPending,
 }: {
-  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting;
+  vetoVotingContract: ERC20FreezeVoting | MultisigFreezeVoting;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [contractCallCastFreeze, contractCallPending] = useTransaction();

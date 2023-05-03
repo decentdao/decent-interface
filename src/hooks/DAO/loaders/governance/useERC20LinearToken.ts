@@ -1,4 +1,4 @@
-import { VotesToken } from '@fractal-framework/fractal-contracts';
+import { VotesERC20 } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
@@ -106,7 +106,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     if (!tokenContract || !onMount) {
       return;
     }
-    const rpc = getEventRPC<VotesToken>(tokenContract, chainId);
+    const rpc = getEventRPC<VotesERC20>(tokenContract, chainId);
     const delegateVotesChangedfilter = rpc.filters.DelegateVotesChanged();
     const delegateChangedfilter = rpc.filters.DelegateChanged();
     rpc.on(delegateVotesChangedfilter, loadERC20TokenAccountData);
@@ -122,7 +122,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     if (!tokenContract || !account || !onMount) {
       return;
     }
-    const rpc = getEventRPC<VotesToken>(tokenContract, chainId);
+    const rpc = getEventRPC<VotesERC20>(tokenContract, chainId);
     const filterTo = rpc.filters.Transfer(null, account);
     const filterFrom = rpc.filters.Transfer(account, null);
     rpc.on(filterTo, loadERC20TokenAccountData);

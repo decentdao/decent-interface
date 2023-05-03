@@ -24,16 +24,16 @@ export const useFractalGovernance = () => {
 
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;
-    if (parentAddress && guardContracts.vetoGuardType === null) {
+    if (parentAddress && guardContracts.freezeGuardType === null) {
       return;
     }
     if (
       isLoaded &&
       !!daoAddress &&
-      daoAddress + guardContracts.vetoGuardType !== currentValidAddress.current
+      daoAddress + guardContracts.freezeGuardType !== currentValidAddress.current
     ) {
       currentValidAddress.current =
-        daoAddress + guardContracts.vetoGuardType || constants.AddressZero;
+        daoAddress + guardContracts.freezeGuardType || constants.AddressZero;
       loadDAOProposals();
       if (!!azoriusContract) {
         // load DAO voting strategy data

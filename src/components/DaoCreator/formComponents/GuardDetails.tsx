@@ -94,8 +94,8 @@ function GuardDetails(props: ICreationStepProps) {
             ),
             bigNumberValue: totalVotes.bigNumberValue!.div(2),
           };
-      setFieldValue('vetoGuard.vetoVotesThreshold', childThresholds);
-      setFieldValue('vetoGuard.freezeVotesThreshold', childThresholds);
+      setFieldValue('freezeGuard.vetoVotesThreshold', childThresholds);
+      setFieldValue('freezeGuard.freezeVotesThreshold', childThresholds);
     }
   }, [azoriusGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
 
@@ -125,8 +125,8 @@ function GuardDetails(props: ICreationStepProps) {
           >
             <InputGroup>
               <BigNumberInput
-                value={values.vetoGuard.timelockPeriod.bigNumberValue}
-                onChange={valuePair => setFieldValue('vetoGuard.timelockPeriod', valuePair)}
+                value={values.freezeGuard.timelockPeriod.bigNumberValue}
+                onChange={valuePair => setFieldValue('freezeGuard.timelockPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="guardConfig-executionDetails"
@@ -149,8 +149,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.executionPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('vetoGuard.executionPeriod', valuePair)}
+              value={values.freezeGuard.executionPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freezeGuard.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-executionDetails"
@@ -173,8 +173,8 @@ function GuardDetails(props: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.vetoGuard.freezeVotesThreshold.bigNumberValue}
-            onChange={valuePair => setFieldValue('vetoGuard.freezeVotesThreshold', valuePair)}
+            value={values.freezeGuard.freezeVotesThreshold.bigNumberValue}
+            onChange={valuePair => setFieldValue('freezeGuard.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
           />
@@ -186,8 +186,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezeProposalPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('vetoGuard.freezeProposalPeriod', valuePair)}
+              value={values.freezeGuard.freezeProposalPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freezeGuard.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeProposalDuration"
@@ -209,8 +209,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezePeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('vetoGuard.freezePeriod', valuePair)}
+              value={values.freezeGuard.freezePeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freezeGuard.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeDuration"

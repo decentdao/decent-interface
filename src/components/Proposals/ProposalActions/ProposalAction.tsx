@@ -14,7 +14,6 @@ import {
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 import { Execute } from './Execute';
-import Queue from './Queue';
 import CastVote from './Vote';
 
 export function ProposalActions({
@@ -25,18 +24,15 @@ export function ProposalActions({
   hasVoted: boolean;
 }) {
   switch (proposal.state) {
-    case FractalProposalState.Active:
+    case FractalProposalState.ACTIVE:
       return (
         <CastVote
           proposal={proposal}
           currentUserHasVoted={hasVoted}
         />
       );
-    case FractalProposalState.Queueable:
-      return <Queue proposal={proposal} />;
-    case FractalProposalState.Executing:
-    case FractalProposalState.TimeLocked:
-    case FractalProposalState.Queued:
+    case FractalProposalState.EXECUTABLE:
+    case FractalProposalState.TIMELOCKED:
       return <Execute proposal={proposal} />;
     default:
       return <></>;
@@ -59,14 +55,13 @@ export function ProposalAction({
   const isazoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
 
   const showActionButton =
-    proposal.state === FractalProposalState.Active ||
-    proposal.state === FractalProposalState.Executing ||
-    proposal.state === FractalProposalState.Queueable ||
-    proposal.state === FractalProposalState.TimeLocked ||
-    proposal.state === FractalProposalState.Queued;
+    proposal.state === FractalProposalState.ACTIVE ||
+    proposal.state === FractalProposalState.EXECUTABLE ||
+    proposal.state === FractalProposalState.TIMELOCKABLE ||
+    proposal.state === FractalProposalState.TIMELOCKED;
 
   const handleClick = () => {
-    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalNumber));
+    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
   };
 
   const hasVoted = useMemo(() => {
@@ -81,13 +76,12 @@ export function ProposalAction({
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
-      case FractalProposalState.Active:
+      case FractalProposalState.ACTIVE:
         return 'vote';
-      case FractalProposalState.Queueable:
-        return 'queueTitle';
-      case FractalProposalState.Executing:
-      case FractalProposalState.TimeLocked:
-      case FractalProposalState.Queued:
+      case FractalProposalState.TIMELOCKABLE:
+        return 'timelockTitle';
+      case FractalProposalState.EXECUTABLE:
+      case FractalProposalState.TIMELOCKED:
         return 'executeTitle';
       default:
         return '';
@@ -95,7 +89,7 @@ export function ProposalAction({
   }, [proposal]);
 
   const label = useMemo(() => {
-    if (proposal.state === FractalProposalState.Active) {
+    if (proposal.state === FractalProposalState.ACTIVE) {
       if (hasVoted) {
         return t('details');
       }
@@ -127,7 +121,7 @@ export function ProposalAction({
         <Flex justifyContent="space-between">
           <Text textStyle="text-lg-mono-medium">
             {t(labelKey, {
-              ns: proposal.state === FractalProposalState.Active ? 'common' : 'proposal',
+              ns: proposal.state === FractalProposalState.ACTIVE ? 'common' : 'proposal',
             })}
           </Text>
           <ProposalTime proposal={proposal} />

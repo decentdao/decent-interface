@@ -7,7 +7,7 @@ export function Execute({ proposal }: { proposal: FractalProposal }) {
   const { t } = useTranslation(['proposal', 'common']);
   const { executeProposal, pending } = useExecuteProposal();
 
-  const disabled = proposal.state !== FractalProposalState.Executing || pending;
+  const disabled = proposal.state !== FractalProposalState.EXECUTABLE || pending;
 
   return (
     <Button

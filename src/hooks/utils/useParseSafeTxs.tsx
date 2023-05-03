@@ -169,7 +169,7 @@ export function useParseSafeTxs(
           isMultisigRejectionTx && !!noncePair
             ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
             : undefined,
-        proposalNumber: eventSafeTxHash,
+        proposalId: eventSafeTxHash,
         targets,
         transactionHash: multiSigTransaction.transactionHash,
         metaData,

@@ -41,8 +41,8 @@ export default function useExecuteProposal() {
 
       contractCallExecuteProposal({
         contractFn: () =>
-          azoriusContract.asSigner.executeProposalBatch(
-            proposal.proposalNumber,
+          azoriusContract.asSigner.executeProposal(
+            proposal.proposalId,
             targets,
             values,
             data,
@@ -53,7 +53,7 @@ export default function useExecuteProposal() {
         successMessage: t('successExecute'),
         successCallback: async () => {
           // @todo may need to re-add a loader here
-          updateProposalState(BigNumber.from(proposal.proposalNumber));
+          updateProposalState(BigNumber.from(proposal.proposalId));
         },
       });
     },

@@ -1,4 +1,4 @@
-import { TokenClaim } from '@fractal-framework/fractal-contracts';
+import { ERC20Claim } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import {
   FractalProposal,
@@ -38,7 +38,7 @@ export type FractalGovernanceActions =
   | {
       type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE;
       payload: {
-        proposalNumber: string;
+        proposalId: string;
         voter: string;
         support: number;
         weight: BigNumber;
@@ -48,7 +48,7 @@ export type FractalGovernanceActions =
   // @todo update with proposal state
   | {
       type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
-      payload: { state: FractalProposalState; proposalNumber: string };
+      payload: { state: FractalProposalState; proposalId: string };
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;
@@ -74,7 +74,7 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
       payload: VotesData;
     }
-  | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: TokenClaim }
+  | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: ERC20Claim }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
     };

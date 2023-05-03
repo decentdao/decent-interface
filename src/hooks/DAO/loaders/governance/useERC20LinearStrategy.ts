@@ -1,39 +1,42 @@
-import { OZLinearVoting } from '@fractal-framework/fractal-contracts';
-import { QuorumNumeratorUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/@tokenwalk/seele/contracts/extensions/BaseQuorumPercent';
-import {
-  TimeLockUpdatedEvent,
-  VotingPeriodUpdatedEvent,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types/@tokenwalk/seele/contracts/extensions/BaseTokenVoting';
+import { Azorius, LinearERC20Voting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
+import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
+import { QuorumNumeratorUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/BaseQuorumPercent';
+import { VotingPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
+import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { getTimeStamp } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useAzoriusStrategy = () => {
   const {
-    governanceContracts: { ozLinearVotingContract },
+    governanceContracts: { ozLinearVotingContract, azoriusContract },
     action,
   } = useFractal();
+  const provider = useProvider();
   const {
     network: { chainId },
-  } = useProvider();
+  } = provider;
   const { getTimeDuration } = useTimeHelpers();
 
   const loadAzoriusStrategy = useCallback(async () => {
-    if (!ozLinearVotingContract) {
+    if (!ozLinearVotingContract || !azoriusContract) {
       return {};
     }
     const [votingPeriod, quorumPercentage, timeLockPeriod] = await Promise.all([
       ozLinearVotingContract.asSigner.votingPeriod(),
       ozLinearVotingContract.asSigner.quorumNumerator(),
-      ozLinearVotingContract.asSigner.timeLockPeriod(),
+      azoriusContract.asSigner.timelockPeriod(),
     ]);
+    const votingPeriodValue = await getTimeStamp(votingPeriod, provider);
+    const timeLockPeriodValue = await getTimeStamp(timeLockPeriod, provider);
     const votingData = {
       votingPeriod: {
-        value: votingPeriod,
+        value: BigNumber.from(votingPeriodValue),
         formatted: getTimeDuration(votingPeriod.toString()),
       },
       quorumPercentage: {
@@ -41,23 +44,23 @@ export const useAzoriusStrategy = () => {
         formatted: quorumPercentage.toString() + '%',
       },
       timeLockPeriod: {
-        value: timeLockPeriod,
+        value: BigNumber.from(timeLockPeriodValue),
         formatted: getTimeDuration(timeLockPeriod.toString()),
       },
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
-  }, [ozLinearVotingContract, getTimeDuration, action]);
+  }, [ozLinearVotingContract, azoriusContract, getTimeDuration, action, provider]);
 
   useEffect(() => {
     if (!ozLinearVotingContract) {
       return;
     }
-    const rpc = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
+    const rpc = getEventRPC<LinearERC20Voting>(ozLinearVotingContract, chainId);
     const votingPeriodfilter = rpc.filters.VotingPeriodUpdated();
     const listener: TypedListener<VotingPeriodUpdatedEvent> = votingPeriod => {
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_VOTING_PERIOD,
-        payload: votingPeriod,
+        payload: BigNumber.from(votingPeriod),
       });
     };
     rpc.on(votingPeriodfilter, listener);
@@ -70,7 +73,7 @@ export const useAzoriusStrategy = () => {
     if (!ozLinearVotingContract) {
       return;
     }
-    const rpc = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
+    const rpc = getEventRPC<LinearERC20Voting>(ozLinearVotingContract, chainId);
     const quorumNumeratorUpdatedFilter = rpc.filters.QuorumNumeratorUpdated();
     const quorumNumeratorUpdatedListener: TypedListener<
       QuorumNumeratorUpdatedEvent
@@ -87,22 +90,22 @@ export const useAzoriusStrategy = () => {
   }, [ozLinearVotingContract, chainId, action]);
 
   useEffect(() => {
-    if (!ozLinearVotingContract) {
+    if (!azoriusContract) {
       return;
     }
-    const rpc = getEventRPC<OZLinearVoting>(ozLinearVotingContract, chainId);
-    const timeLockPeriodFilter = rpc.filters.TimeLockUpdated();
-    const timelockPeriodListener: TypedListener<TimeLockUpdatedEvent> = timelockPeriod => {
+    const rpc = getEventRPC<Azorius>(azoriusContract, chainId);
+    const timeLockPeriodFilter = rpc.filters.TimelockPeriodUpdated();
+    const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
-        payload: timelockPeriod,
+        payload: BigNumber.from(timelockPeriod),
       });
     };
     rpc.on(timeLockPeriodFilter, timelockPeriodListener);
     return () => {
       rpc.off(timeLockPeriodFilter, timelockPeriodListener);
     };
-  }, [ozLinearVotingContract, chainId, action]);
+  }, [azoriusContract, chainId, action]);
 
   return loadAzoriusStrategy;
 };

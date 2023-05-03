@@ -1,8 +1,8 @@
 import {
-  FractalUsul,
+  Azorius,
   ModuleProxyFactory,
-  OZLinearVoting,
-  VotesToken,
+  LinearERC20Voting,
+  VotesERC20,
 } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
@@ -41,7 +41,7 @@ export const useGovernanceContracts = () => {
 
       const azoriusModule = fractalModules.find(
         module => module.moduleType === FractalModuleType.AZORIUS
-      )?.moduleContract as FractalUsul | undefined;
+      )?.moduleContract as Azorius | undefined;
       if (!!azoriusModule) {
         const azoriusContract = {
           asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(azoriusModule.address),
@@ -57,12 +57,12 @@ export const useGovernanceContracts = () => {
           cachedContractAddresses?.votingContractMasterCopyAddress;
         let govTokenAddress: string | undefined = cachedContractAddresses?.govTokenContractAddress;
 
-        let ozLinearVotingContract: ContractConnection<OZLinearVoting> | undefined;
-        let tokenContract: ContractConnection<VotesToken | VotesERC20Wrapper> | undefined;
+        let ozLinearVotingContract: ContractConnection<LinearERC20Voting> | undefined;
+        let tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | undefined;
         let underlyingTokenAddress: string | undefined;
 
         if (!votingContractAddress) {
-          votingContractAddress = await getEventRPC<FractalUsul>(azoriusContract, chainId)
+          votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
             .queryFilter(azoriusModule.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;

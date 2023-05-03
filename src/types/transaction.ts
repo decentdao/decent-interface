@@ -15,6 +15,15 @@ export interface MetaTransaction {
   operation: number;
 }
 
+export interface MetaData {
+  args: {
+    title: string;
+    description: string;
+    documentationUrl: string;
+    transactions: MetaTransaction[];
+  };
+}
+
 export interface SafePostTransaction extends SafeTransaction {
   safe: string;
   contractTransactionHash: string;

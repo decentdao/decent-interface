@@ -8,7 +8,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 
-export function TokenClaim() {
+export function ERCO20Claim() {
   const [userClaimable, setUserClaimable] = useState(BigNumber.from(0));
   const {
     governance,
@@ -43,7 +43,7 @@ export function TokenClaim() {
       azoriusGovernance.votesToken.symbol
     );
     contractCall({
-      contractFn: () => tokenClaimContract?.claimToken(account),
+      contractFn: () => tokenClaimContract.claimTokens(account),
       pendingMessage: t('pendingTokenClaim', {
         symbol: azoriusGovernance.votesToken.symbol,
         ns: 'transaction',

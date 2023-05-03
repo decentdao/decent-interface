@@ -19,7 +19,7 @@ function DaoCreator({
   isSubDAO?: boolean;
 }) {
   const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
-  const { prepareMultisigFormData, prepareGnosisAzoriusFormData } = usePrepareFormData();
+  const { prepareMultisigFormData, prepareAzoriusFormData } = usePrepareFormData();
   return (
     <Box>
       <Formik<CreatorFormState>
@@ -27,23 +27,23 @@ function DaoCreator({
         validationSchema={createDAOValidation}
         onSubmit={async values => {
           const choosenGovernance = values.essentials.governance;
-          const vetoGuard = isSubDAO ? values.vetoGuard : undefined;
+          const freezeGuard = isSubDAO ? values.freezeGuard : undefined;
           switch (choosenGovernance) {
             case StrategyType.GNOSIS_SAFE: {
               const data = await prepareMultisigFormData({
                 ...values.essentials,
                 ...values.gnosis,
-                vetoGuard,
+                freezeGuard,
               });
               deployDAO(data);
               return;
             }
             case StrategyType.GNOSIS_SAFE_AZORIUS: {
-              const data = await prepareGnosisAzoriusFormData({
+              const data = await prepareAzoriusFormData({
                 ...values.essentials,
                 ...values.govModule,
                 ...values.govToken,
-                vetoGuard,
+                freezeGuard,
               });
               deployDAO(data);
               return;

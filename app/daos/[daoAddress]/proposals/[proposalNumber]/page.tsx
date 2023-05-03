@@ -14,9 +14,9 @@ import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import { FractalProposal, AzoriusProposal } from '../../../../../src/types';
 
 export default function ProposalDetailsPage({
-  params: { proposalNumber },
+  params: { proposalId },
 }: {
-  params: { proposalNumber: string };
+  params: { proposalId: string };
 }) {
   const {
     node: { daoAddress },
@@ -34,20 +34,20 @@ export default function ProposalDetailsPage({
   });
 
   useEffect(() => {
-    if (!proposals || !proposals.length || !proposalNumber) {
+    if (!proposals || !proposals.length || !proposalId) {
       setProposal(undefined);
       return;
     }
 
     const foundProposal = proposals.find(p => {
-      return p.proposalNumber === proposalNumber;
+      return p.proposalId === proposalId;
     });
     if (!foundProposal) {
       setProposal(null);
       return;
     }
     setProposal(foundProposal);
-  }, [proposals, proposalNumber]);
+  }, [proposals, proposalId]);
 
   return (
     <ClientOnly>
@@ -62,7 +62,7 @@ export default function ProposalDetailsPage({
             {
               terminus: t('proposal', {
                 ns: 'breadcrumbs',
-                proposalNumber,
+                proposalId,
                 proposalTitle: proposal?.metaData?.title || transactionDescription,
               }),
               path: '',

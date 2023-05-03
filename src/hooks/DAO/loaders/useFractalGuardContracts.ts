@@ -1,4 +1,8 @@
-import { ModuleProxyFactory, UsulVetoGuard, VetoGuard } from '@fractal-framework/fractal-contracts';
+import {
+  ModuleProxyFactory,
+  AzoriusFreezeGuard,
+  MultisigFreezeGuard,
+} from '@fractal-framework/fractal-contracts';
 import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
@@ -8,8 +12,8 @@ import { GuardContractAction } from '../../../providers/App/guardContracts/actio
 import {
   ContractConnection,
   SafeInfoResponseWithGuard,
-  VetoGuardType,
-  VetoVotingType,
+  FreezeGuardType,
+  FreezeVotingType,
 } from '../../../types';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
@@ -55,8 +59,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     ) => {
       const { guard } = _safe;
 
-      let vetoGuardContract: ContractConnection<UsulVetoGuard | VetoGuard> | undefined;
-      let vetoGuardType: VetoGuardType | null = null;
+      let vetoGuardContract:
+        | ContractConnection<AzoriusFreezeGuard | MultisigFreezeGuard>
+        | undefined;
+      let freezeGuardType: FreezeGuardType | null = null;
 
       const azoriusModule = _fractalModules?.find(
         module => module.moduleType === FractalModuleType.AZORIUS
@@ -68,7 +74,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
           asSigner: azoriusVetoGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress),
           asProvider: azoriusVetoGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress),
         };
-        vetoGuardType = VetoGuardType.AZORIUS;
+        freezeGuardType = FreezeGuardType.AZORIUS;
       } else {
         const hasNoGuard = _safe.guard === constants.AddressZero;
         const guardMasterCopyAddress = await getMasterCopyAddress(guard!);
@@ -79,20 +85,20 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
             asSigner: gnosisVetoGuardMasterCopyContract.asSigner.attach(guard!),
             asProvider: gnosisVetoGuardMasterCopyContract.asProvider.attach(guard!),
           };
-          vetoGuardType = VetoGuardType.MULTISIG;
+          freezeGuardType = FreezeGuardType.MULTISIG;
         }
       }
 
       if (!!vetoGuardContract) {
-        const votingAddress = await vetoGuardContract.asSigner.vetoVoting();
+        const votingAddress = await vetoGuardContract.asSigner.freezeVoting();
         const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
         const vetoVotingType =
           votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.asSigner.address
-            ? VetoVotingType.MULTISIG
-            : VetoVotingType.ERC20;
+            ? FreezeVotingType.MULTISIG
+            : FreezeVotingType.ERC20;
 
         const vetoVotingContract =
-          vetoVotingType === VetoVotingType.MULTISIG
+          vetoVotingType === FreezeVotingType.MULTISIG
             ? {
                 asSigner: vetoMultisigVotingMasterCopyContract.asSigner.attach(votingAddress),
                 asProvider: vetoMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
@@ -106,7 +112,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
           vetoGuardContract: vetoGuardContract,
           vetoVotingContract: vetoVotingContract,
           vetoVotingType,
-          vetoGuardType,
+          freezeGuardType,
         };
         return contracts;
       }

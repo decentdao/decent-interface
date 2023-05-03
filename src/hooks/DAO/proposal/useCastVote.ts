@@ -5,10 +5,10 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useTransaction } from '../../utils/useTransaction';
 
 const useCastVote = ({
-  proposalNumber,
+  proposalId,
   setPending,
 }: {
-  proposalNumber: BigNumber;
+  proposalId: BigNumber;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {
@@ -25,18 +25,18 @@ const useCastVote = ({
 
   const castVote = useCallback(
     (vote: number) => {
-      if (!proposalNumber || vote === undefined || !ozLinearVotingContract) {
+      if (!proposalId || vote === undefined || !ozLinearVotingContract) {
         return;
       }
 
       contractCallCastVote({
-        contractFn: () => ozLinearVotingContract.asSigner.vote(proposalNumber, vote, '0x'),
+        contractFn: () => ozLinearVotingContract.asSigner.vote(proposalId, vote),
         pendingMessage: t('pendingCastVote'),
         failedMessage: t('failedCastVote'),
         successMessage: t('successCastVote'),
       });
     },
-    [contractCallCastVote, proposalNumber, t, ozLinearVotingContract]
+    [contractCallCastVote, proposalId, t, ozLinearVotingContract]
   );
   return castVote;
 };

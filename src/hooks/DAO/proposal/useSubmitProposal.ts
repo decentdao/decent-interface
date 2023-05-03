@@ -1,5 +1,5 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { FractalUsul, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
+import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer } from 'ethers';
 import { getAddress } from 'ethers/lib/utils.js';
@@ -33,7 +33,7 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
    * Depending on safeAddress it's either picked from global context
    * either grabbed from the safe info from Safe API.
    */
-  azoriusContract: FractalUsul;
+  azoriusContract: Azorius;
   /**
    * @param votingStrategyAddress - provided voting strategy address for proposal submission.
    * Depending on safeAddress it's either picked from global context
@@ -60,7 +60,7 @@ export default function useSubmitProposal() {
     if (!azoriusModule) {
       return undefined;
     }
-    return azoriusModule.moduleContract as FractalUsul;
+    return azoriusModule.moduleContract as Azorius;
   }, [fractalModules]);
 
   const lookupModules = useFractalModules();
@@ -196,13 +196,15 @@ export default function useSubmitProposal() {
 
         // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Azorius instance
         await (
-          await azoriusContract.submitProposalWithMetaData(
+          await azoriusContract.submitProposal(
             votingStrategyAddress,
             '0x',
             transactions,
-            proposalData.title,
-            proposalData.description,
-            proposalData.documentationUrl
+            JSON.stringify({
+              title: proposalData.title,
+              description: proposalData.description,
+              documentationUrl: proposalData.documentationUrl,
+            })
           )
         ).wait();
         if (successCallback) {
@@ -261,7 +263,7 @@ export default function useSubmitProposal() {
             nonce,
             successCallback,
             safeAddress,
-            azoriusContract: azoriusModule.moduleContract as FractalUsul,
+            azoriusContract: azoriusModule.moduleContract as Azorius,
             votingStrategyAddress: ozLinearVotingContract?.asSigner.address!,
           });
         }

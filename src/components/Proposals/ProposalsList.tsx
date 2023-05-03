@@ -31,7 +31,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
       ) : proposals.length > 0 ? (
         proposals.map(proposal => (
           <ActivityGovernance
-            key={proposal.proposalNumber}
+            key={proposal.proposalId}
             activity={proposal}
           />
         ))

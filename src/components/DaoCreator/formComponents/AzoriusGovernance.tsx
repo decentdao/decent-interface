@@ -92,6 +92,29 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             {t('exampleTimelockPeriod')}
           </Text>
         </LabelComponent>
+        <LabelComponent
+          label={t('labelExecutionPeriod')}
+          helper={t('helperExecutionPeriod')}
+          isRequired
+        >
+          <InputGroup>
+            <BigNumberInput
+              value={values.govModule.executionPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('govModule.executionPeriod', valuePair)}
+              decimalPlaces={0}
+              min="1"
+              data-testid="govModule-executionDetails"
+            />
+            <InputRightElement mr="4">{minutes}</InputRightElement>
+          </InputGroup>
+          <Text
+            textStyle="text-md-sans-regular"
+            color="grayscale.500"
+            mt={2}
+          >
+            {t('exampleExecutionPeriod')}
+          </Text>
+        </LabelComponent>
         <Alert status="info">
           <Info boxSize="24px" />
           <AlertTitle>

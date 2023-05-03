@@ -1,4 +1,4 @@
-import { VotesToken } from '@fractal-framework/fractal-contracts';
+import { VotesERC20 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,7 @@ import { VotesERC20Wrapper } from '../../assets/typechain-types/VotesERC20Wrappe
 import { useTransaction } from './useTransaction';
 
 const useApproval = (
-  tokenContract?: VotesToken | VotesERC20Wrapper,
+  tokenContract?: VotesERC20 | VotesERC20Wrapper,
   spenderAddress?: string,
   userBalance?: BigNumber
 ) => {

@@ -5,7 +5,7 @@ import {
   BaseContracts,
   GnosisDAO,
   SafeTransaction,
-  TokenGovernanceDAO,
+  AzoriusGovernanceDAO,
   AzoriusContracts,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -34,7 +34,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: GnosisDAO | TokenGovernanceDAO,
+    daoData: GnosisDAO | AzoriusGovernanceDAO,
     saltNum: string,
     predictedGnosisSafeAddress: string,
     createSafeTx: SafeTransaction,
@@ -69,7 +69,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.internalTxs = [
       this.buildUpdateDAONameTx(),
       azoriusTxBuilder.buildLinearVotingContractSetupTx(),
-      azoriusTxBuilder.buildEnableazoriusModuleTx(),
+      azoriusTxBuilder.buildEnableAzoriusModuleTx(),
     ];
 
     if (this.parentAddress) {
@@ -87,7 +87,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         vetoGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
       ]);
     }
-    const data = this.daoData as TokenGovernanceDAO;
+    const data = this.daoData as AzoriusGovernanceDAO;
 
     this.internalTxs = this.internalTxs.concat([
       azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
@@ -110,7 +110,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
-    const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
+    const parentAllocation = (this.daoData as AzoriusGovernanceDAO).parentAllocationAmount;
     if (this.parentTokenAddress && !parentAllocation.isZero()) {
       tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
       const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();

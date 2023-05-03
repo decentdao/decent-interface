@@ -42,7 +42,7 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         <Divider color="chocolate.700" />
         <InfoRow
           property={t('proposalId')}
-          value={createAccountSubstring(proposal.proposalNumber)}
+          value={createAccountSubstring(proposal.proposalId)}
         />
         <InfoRow
           property={t('txDetailsSignersCurrent')}

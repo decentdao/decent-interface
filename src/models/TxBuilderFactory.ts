@@ -6,7 +6,7 @@ import {
   GnosisDAO,
   SafeTransaction,
   SubDAO,
-  TokenGovernanceDAO,
+  AzoriusGovernanceDAO,
   AzoriusContracts,
 } from '../types';
 import { AzoriusTxBuilder as AzoriusTxBuilder } from './AzoriusTxBuilder';
@@ -28,7 +28,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: GnosisDAO | TokenGovernanceDAO | SubDAO,
+    daoData: GnosisDAO | AzoriusGovernanceDAO | SubDAO,
     parentAddress?: string,
     parentTokenAddress?: string
   ) {
@@ -107,7 +107,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.signerOrProvider,
       this.baseContracts,
       this.azoriusContracts!,
-      this.daoData as GnosisDAO,
+      this.daoData as AzoriusGovernanceDAO,
       this.safeContract!,
       this.predictedGnosisSafeAddress!,
       this.parentAddress,

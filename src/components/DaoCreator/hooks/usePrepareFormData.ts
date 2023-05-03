@@ -1,22 +1,51 @@
-import { ERC20Votes__factory } from '@fractal-framework/fractal-contracts';
+import { IVotes__factory } from '@fractal-framework/fractal-contracts';
+
 import { useCallback } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import {
   GnosisDAO,
   DAOVetoGuardConfig,
   BigNumberValuePair,
-  TokenGovernanceDAO,
+  AzoriusGovernanceDAO,
   TokenCreationType,
 } from '../../../types';
+import { getEstimatedFutureBlockNumber } from '../../../utils/contract';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
   const provider = useProvider();
 
+  // Helper function to prepare freezeGuard data
+  const prepareFreezeGuardData = useCallback(
+    async (freezeGuard: DAOVetoGuardConfig<BigNumberValuePair>): Promise<DAOVetoGuardConfig> => {
+      return {
+        executionPeriod: await getEstimatedFutureBlockNumber(
+          freezeGuard.executionPeriod.bigNumberValue!,
+          provider
+        ),
+        timelockPeriod: await getEstimatedFutureBlockNumber(
+          freezeGuard.timelockPeriod.bigNumberValue!,
+          provider
+        ),
+        vetoVotesThreshold: freezeGuard.vetoVotesThreshold.bigNumberValue!,
+        freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
+        freezeProposalPeriod: await getEstimatedFutureBlockNumber(
+          freezeGuard.freezeProposalPeriod.bigNumberValue!,
+          provider
+        ),
+        freezePeriod: await getEstimatedFutureBlockNumber(
+          freezeGuard.freezePeriod.bigNumberValue!,
+          provider
+        ),
+      };
+    },
+    [provider]
+  );
+
   const checkVotesToken = useCallback(
     async (address: string) => {
       try {
-        const votesContract = ERC20Votes__factory.connect(address, provider);
+        const votesContract = IVotes__factory.connect(address, provider);
         await votesContract.delegates('0x0000000000000000000000000000000000000001');
         await votesContract.getVotes('0x0000000000000000000000000000000000000001');
         return true;
@@ -30,9 +59,9 @@ export function usePrepareFormData() {
   const prepareMultisigFormData = useCallback(
     async ({
       trustedAddresses,
-      vetoGuard,
+      freezeGuard,
       ...rest
-    }: GnosisDAO & { vetoGuard?: DAOVetoGuardConfig<BigNumberValuePair> }) => {
+    }: GnosisDAO & { freezeGuard?: DAOVetoGuardConfig<BigNumberValuePair> }) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
           if (inputValue.endsWith('.eth')) {
@@ -43,15 +72,8 @@ export function usePrepareFormData() {
         })
       );
       let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
-      if (vetoGuard) {
-        vetoGuardData = {
-          executionPeriod: vetoGuard.executionPeriod.bigNumberValue!,
-          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue!,
-          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue!,
-          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue!,
-          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue!,
-          freezePeriod: vetoGuard.freezePeriod.bigNumberValue!,
-        };
+      if (freezeGuard) {
+        vetoGuardData = await prepareFreezeGuardData(freezeGuard);
       }
       return {
         trustedAddresses: resolvedAddresses,
@@ -59,10 +81,10 @@ export function usePrepareFormData() {
         ...rest,
       };
     },
-    [signer]
+    [signer, prepareFreezeGuardData]
   );
 
-  const prepareGnosisAzoriusFormData = useCallback(
+  const prepareAzoriusFormData = useCallback(
     async ({
       tokenSupply,
       tokenAllocations,
@@ -70,13 +92,14 @@ export function usePrepareFormData() {
       quorumPercentage,
       timelock,
       votingPeriod,
-      vetoGuard,
+      executionPeriod,
+      freezeGuard,
       tokenImportAddress,
       tokenCreationType,
       ...rest
-    }: TokenGovernanceDAO<BigNumberValuePair> & {
-      vetoGuard?: DAOVetoGuardConfig<BigNumberValuePair>;
-    }): Promise<TokenGovernanceDAO> => {
+    }: AzoriusGovernanceDAO<BigNumberValuePair> & {
+      freezeGuard?: DAOVetoGuardConfig<BigNumberValuePair>;
+    }): Promise<AzoriusGovernanceDAO> => {
       const resolvedTokenAllocations = await Promise.all(
         tokenAllocations.map(async allocation => {
           let address = allocation.address;
@@ -87,15 +110,8 @@ export function usePrepareFormData() {
         })
       );
       let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
-      if (vetoGuard) {
-        vetoGuardData = {
-          executionPeriod: vetoGuard.executionPeriod.bigNumberValue!,
-          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue!,
-          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue!,
-          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue!,
-          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue!,
-          freezePeriod: vetoGuard.freezePeriod.bigNumberValue!,
-        };
+      if (freezeGuard) {
+        vetoGuardData = await prepareFreezeGuardData(freezeGuard);
       }
       const isTokenImported =
         tokenCreationType === TokenCreationType.IMPORTED && !!tokenImportAddress;
@@ -107,8 +123,12 @@ export function usePrepareFormData() {
         tokenSupply: tokenSupply.bigNumberValue!,
         parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
         quorumPercentage: quorumPercentage.bigNumberValue!,
-        timelock: timelock.bigNumberValue!,
-        votingPeriod: votingPeriod.bigNumberValue!,
+        timelock: await getEstimatedFutureBlockNumber(timelock.bigNumberValue!, provider),
+        executionPeriod: await getEstimatedFutureBlockNumber(
+          executionPeriod.bigNumberValue!,
+          provider
+        ),
+        votingPeriod: await getEstimatedFutureBlockNumber(votingPeriod.bigNumberValue!, provider),
         tokenAllocations: resolvedTokenAllocations,
         tokenImportAddress,
         tokenCreationType,
@@ -118,7 +138,7 @@ export function usePrepareFormData() {
         ...rest,
       };
     },
-    [signer, checkVotesToken]
+    [signer, checkVotesToken, provider, prepareFreezeGuardData]
   );
-  return { prepareMultisigFormData, prepareGnosisAzoriusFormData, checkVotesToken };
+  return { prepareMultisigFormData, prepareAzoriusFormData, checkVotesToken };
 }
