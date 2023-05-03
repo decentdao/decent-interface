@@ -9,7 +9,7 @@ import {
   AzoriusGovernanceDAO,
   TokenCreationType,
 } from '../../../types';
-import { getEstimatedFutureBlockNumber } from '../../../utils/contract';
+import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
@@ -19,21 +19,21 @@ export function usePrepareFormData() {
   const prepareFreezeGuardData = useCallback(
     async (freezeGuard: DAOVetoGuardConfig<BigNumberValuePair>): Promise<DAOVetoGuardConfig> => {
       return {
-        executionPeriod: await getEstimatedFutureBlockNumber(
+        executionPeriod: await getEstimatedNumberOfBlocks(
           freezeGuard.executionPeriod.bigNumberValue!,
           provider
         ),
-        timelockPeriod: await getEstimatedFutureBlockNumber(
+        timelockPeriod: await getEstimatedNumberOfBlocks(
           freezeGuard.timelockPeriod.bigNumberValue!,
           provider
         ),
         vetoVotesThreshold: freezeGuard.vetoVotesThreshold.bigNumberValue!,
         freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
-        freezeProposalPeriod: await getEstimatedFutureBlockNumber(
+        freezeProposalPeriod: await getEstimatedNumberOfBlocks(
           freezeGuard.freezeProposalPeriod.bigNumberValue!,
           provider
         ),
-        freezePeriod: await getEstimatedFutureBlockNumber(
+        freezePeriod: await getEstimatedNumberOfBlocks(
           freezeGuard.freezePeriod.bigNumberValue!,
           provider
         ),
@@ -123,12 +123,12 @@ export function usePrepareFormData() {
         tokenSupply: tokenSupply.bigNumberValue!,
         parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
         quorumPercentage: quorumPercentage.bigNumberValue!,
-        timelock: await getEstimatedFutureBlockNumber(timelock.bigNumberValue!, provider),
-        executionPeriod: await getEstimatedFutureBlockNumber(
+        timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
+        executionPeriod: await getEstimatedNumberOfBlocks(
           executionPeriod.bigNumberValue!,
           provider
         ),
-        votingPeriod: await getEstimatedFutureBlockNumber(votingPeriod.bigNumberValue!, provider),
+        votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
         tokenAllocations: resolvedTokenAllocations,
         tokenImportAddress,
         tokenCreationType,

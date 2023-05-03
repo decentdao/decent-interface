@@ -42,7 +42,7 @@ export const getTimeStamp = async (blockNumber: number | 'latest', provider: Pro
   }
 };
 
-export const getEstimatedFutureBlockNumber = async (
+export const getEstimatedNumberOfBlocks = async (
   timeInMinutes: BigNumber,
   provider: Providers
 ): Promise<BigNumber> => {
