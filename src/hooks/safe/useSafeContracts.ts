@@ -12,11 +12,11 @@ import {
   LinearERC20Voting__factory,
   Azorius__factory,
   ERC20Claim__factory,
+  VotesERC20Wrapper__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
-import { VotesERC20Wrapper__factory } from '../../assets/typechain-types/usul/factories/VotesERC20Wrapper__factory';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSafeContracts() {

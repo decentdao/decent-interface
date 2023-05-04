@@ -4,8 +4,8 @@ import {
   AzoriusFreezeGuard,
   VotesERC20,
   ERC20Claim,
+  VotesERC20Wrapper,
 } from '@fractal-framework/fractal-contracts';
-import { VotesERC20Wrapper } from './../assets/typechain-types/VotesERC20Wrapper';
 
 export interface AzoriusContracts {
   fractalAzoriusMasterCopyContract: Azorius;

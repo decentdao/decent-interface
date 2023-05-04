@@ -3,10 +3,10 @@ import {
   ModuleProxyFactory,
   LinearERC20Voting,
   VotesERC20,
+  VotesERC20Wrapper,
 } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
-import { VotesERC20Wrapper } from '../../../assets/typechain-types/VotesERC20Wrapper';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';

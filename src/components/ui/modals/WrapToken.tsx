@@ -1,12 +1,12 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
+import { VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
 import { BigNumber, Contract } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useAccount, useSigner } from 'wagmi';
 import * as Yup from 'yup';
-import { VotesERC20Wrapper } from '../../../assets/typechain-types/VotesERC20Wrapper';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useApproval from '../../../hooks/utils/useApproval';

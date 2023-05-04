@@ -12,6 +12,7 @@ import {
   MultisigFreezeVoting,
   VotesERC20,
   MultisigFreezeGuard,
+  VotesERC20Wrapper,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
   SafeMultisigTransactionWithTransfersResponse,
@@ -28,7 +29,6 @@ import { GovernanceContractActions } from '../providers/App/governanceContracts/
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
-import { VotesERC20Wrapper } from './../assets/typechain-types/VotesERC20Wrapper';
 import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';

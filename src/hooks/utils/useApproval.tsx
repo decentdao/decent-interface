@@ -1,9 +1,8 @@
-import { VotesERC20 } from '@fractal-framework/fractal-contracts';
+import { VotesERC20, VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { VotesERC20Wrapper } from '../../assets/typechain-types/VotesERC20Wrapper';
 import { useTransaction } from './useTransaction';
 
 const useApproval = (
