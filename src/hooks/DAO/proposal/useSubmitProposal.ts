@@ -91,7 +91,7 @@ export default function useSubmitProposal() {
         progress: 1,
       });
 
-      if (!safeAddress || !signerOrProvider || !nonce) {
+      if (!safeAddress || !signerOrProvider || nonce === undefined) {
         toast.dismiss(toastId);
         return;
       }

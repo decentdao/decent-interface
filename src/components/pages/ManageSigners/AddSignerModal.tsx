@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 import { useSigner } from 'wagmi';
 import * as Yup from 'yup';
 import { TOOLTIP_MAXW } from '../../../constants/common';
-import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
@@ -25,6 +24,7 @@ import { AddressInput } from '../../ui/forms/EthAddressInput';
 import ModalTooltip from '../../ui/modals/ModalTooltip';
 import useAddSigner from './hooks/useAddSigner';
 
+// @todo refactor so that form control and validation is handled by the formik component
 function AddSignerModal({
   close,
   signers,
@@ -35,24 +35,14 @@ function AddSignerModal({
   currentThreshold: number;
 }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [threshold, setThreshold] = useState<number>(currentThreshold);
-  const defaultNonce = useDefaultNonce();
-  const [nonce, setNonce] = useState<number | undefined>();
   const { t } = useTranslation(['modals', 'common']);
   const { data: signer } = useSigner();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!defaultNonce) {
-      setNonce(undefined);
-      return;
-    }
-    setNonce(defaultNonce);
-  }, [defaultNonce]);
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length + 1 }, (_, i) => i + 1));
@@ -60,10 +50,11 @@ function AddSignerModal({
 
   const addSigner = useAddSigner();
 
-  const onSubmit = async (values: { address: string }) => {
-    let validAddress = values.address;
+  const onSubmit = async (values: { address: string; nonce: number }) => {
+    const { address, nonce } = values;
+    let validAddress = address;
     if (validAddress.endsWith('.eth')) {
-      validAddress = await signer!.resolveName(values.address);
+      validAddress = await signer!.resolveName(address);
     }
 
     await addSigner({
@@ -77,6 +68,9 @@ function AddSignerModal({
 
   const addressValidationSchema = Yup.object().shape({
     address: Yup.string().test(addressValidationTest).test(newSignerValidationTest),
+    nonce: Yup.number()
+      .required()
+      .moreThan(safe?.nonce || 0),
   });
 
   return (
@@ -84,11 +78,12 @@ function AddSignerModal({
       <Formik
         initialValues={{
           address: '',
+          nonce: safe?.nonce || 0,
         }}
         onSubmit={onSubmit}
         validationSchema={addressValidationSchema}
       >
-        {({ handleSubmit, errors, values }) => (
+        {({ handleSubmit, errors, values, setFieldValue }) => (
           <form onSubmit={handleSubmit}>
             <Text
               textStyle="text-base-sans-regular"
@@ -194,20 +189,12 @@ function AddSignerModal({
               mb={6}
             />
             <CustomNonceInput
-              nonce={nonce}
-              onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
-              defaultNonce={defaultNonce}
+              nonce={values.nonce}
+              onChange={newNonce => setFieldValue('nonce', newNonce ? newNonce : undefined)}
             />
             <Button
               type="submit"
-              isDisabled={
-                !values.address ||
-                !!errors.address ||
-                !threshold ||
-                !nonce ||
-                !defaultNonce ||
-                nonce < defaultNonce
-              }
+              isDisabled={!values.address || !!errors.address || !threshold || !safe}
               mt={6}
               width="100%"
             >

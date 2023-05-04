@@ -11,7 +11,6 @@ import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
@@ -42,7 +41,6 @@ function GuardDetails(props: ICreationStepProps) {
   const minutes = t('minutes', { ns: 'common' });
   const azoriusGovernance = governance as AzoriusGovernance;
   const governanceFormType = values.essentials.governance;
-  const defaultNonce = useDefaultNonce();
   const handleNonceChange = useCallback(
     (nonce?: number) => {
       setFieldValue('gnosis.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
@@ -52,11 +50,11 @@ function GuardDetails(props: ICreationStepProps) {
 
   useEffect(() => {
     const isParentAzorius = type === StrategyType.GNOSIS_SAFE_AZORIUS;
-    if (!isParentAzorius && isSubDAO) {
-      setFieldValue('gnosis.customNonce', defaultNonce);
+    if (!isParentAzorius && isSubDAO && safe) {
+      setFieldValue('gnosis.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, azoriusContract, type, setFieldValue, defaultNonce]);
+  }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
 
   useEffect(() => {
     if (totalParentVotes.eq(0)) {
@@ -246,7 +244,6 @@ function GuardDetails(props: ICreationStepProps) {
             <CustomNonceInput
               nonce={values.gnosis.customNonce}
               onChange={handleNonceChange}
-              defaultNonce={defaultNonce}
             />
             <Divider
               color="chocolate.700"
