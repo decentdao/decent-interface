@@ -35,13 +35,15 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
-      const { proposalTemplates } = dao;
+      if (dao) {
+        const { proposalTemplates } = dao;
 
-      if (!!proposalTemplates) {
-        action.dispatch({
-          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-          payload: proposalTemplates,
-        });
+        if (!!proposalTemplates) {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+            payload: proposalTemplates,
+          });
+        }
       }
     },
     pollInterval: ONE_MINUTE,
