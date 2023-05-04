@@ -27,7 +27,7 @@ export const getTimeStamp = async (blockNumber: number | 'latest', provider: Pro
     const block = await provider.getBlock(blockNumber);
     const latestBlock = await provider.getBlock('latest');
 
-    if (block.number < latestBlock.number) {
+    if (blockNumber < latestBlock.number) {
       return block.timestamp;
     } else {
       const averageBlockTime = await getAverageBlockTime(provider);
