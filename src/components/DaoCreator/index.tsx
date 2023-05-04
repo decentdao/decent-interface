@@ -50,7 +50,7 @@ function DaoCreator({
             }
           }
         }}
-        validateOnMount
+        isInitialValid={false}
       >
         {({ handleSubmit, ...rest }) => (
           <form onSubmit={handleSubmit}>

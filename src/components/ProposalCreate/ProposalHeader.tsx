@@ -7,13 +7,11 @@ export function ProposalHeader({
   metadataTitle,
   nonce,
   setNonce,
-  defaultNonce,
 }: {
   isAzorius?: boolean;
   metadataTitle?: string;
-  nonce: number;
+  nonce?: number;
   setNonce: (nonce?: number) => void;
-  defaultNonce: number | undefined;
 }) {
   const { t } = useTranslation(['proposal']);
 
@@ -29,7 +27,6 @@ export function ProposalHeader({
         <CustomNonceInput
           nonce={nonce}
           onChange={setNonce}
-          defaultNonce={defaultNonce}
         />
       )}
     </HStack>

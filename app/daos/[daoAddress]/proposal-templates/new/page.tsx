@@ -16,7 +16,6 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../src/constants/common
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../src/constants/routes';
 import useCreateProposalTemplate from '../../../../../src/hooks/DAO/proposal/useCreateProposalTemplate';
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
-import useDefaultNonce from '../../../../../src/hooks/DAO/useDefaultNonce';
 import useCreateProposalTemplateSchema from '../../../../../src/hooks/schemas/createProposalTemplate/useCreateProposalTemplateSchema';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import {
@@ -34,13 +33,12 @@ export default function CreateProposalTemplatePage() {
   const { push } = useRouter();
 
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
   } = useFractal();
 
   const { prepareProposalTemplateProposal } = useCreateProposalTemplate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const { createProposalTemplateValidation } = useCreateProposalTemplateSchema();
-  const nonce = useDefaultNonce();
 
   const successCallback = () => {
     if (daoAddress) {
@@ -59,7 +57,7 @@ export default function CreateProposalTemplatePage() {
             const proposalData = await prepareProposalTemplateProposal(values);
             submitProposal({
               proposalData,
-              nonce,
+              nonce: safe?.nonce,
               pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
               successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
               failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),

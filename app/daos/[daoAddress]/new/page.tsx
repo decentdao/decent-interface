@@ -7,15 +7,16 @@ import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
 import { useDAOProposals } from '../../../../src/hooks/DAO/loaders/useProposals';
 import { useCreateSubDAOProposal } from '../../../../src/hooks/DAO/useCreateSubDAOProposal';
-import useDefaultNonce from '../../../../src/hooks/DAO/useDefaultNonce';
+import { useFractal } from '../../../../src/providers/App/AppProvider';
 import { SafeMultisigDAO, AzoriusGovernanceDAO, SubDAO } from '../../../../src/types';
 
 export default function SubDaoCreate() {
   const { push } = useRouter();
   const [redirectPending, setRedirectPending] = useState(false);
   const loadDAOProposals = useDAOProposals();
-
-  const nonce = useDefaultNonce();
+  const {
+    node: { safe },
+  } = useFractal();
 
   const successCallback = async (daoAddress: string) => {
     setRedirectPending(true);
@@ -27,7 +28,7 @@ export default function SubDaoCreate() {
 
   const proposeSubDAO = (daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO) => {
     const subDAOData = daoData as SubDAO;
-    proposeDao(subDAOData, subDAOData.customNonce || nonce, successCallback);
+    proposeDao(subDAOData, subDAOData.customNonce || safe?.nonce, successCallback);
   };
 
   return (

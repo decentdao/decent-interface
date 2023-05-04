@@ -55,7 +55,6 @@ export function BigNumberInput({
   const [inputValue, setInputValue] = useState<string>();
 
   useEffect(() => {
-    console.log('🚀 ~ file: BigNumberInput.tsx:60 ~ value:', value);
     setInputValue(
       value
         ? !value.isZero()

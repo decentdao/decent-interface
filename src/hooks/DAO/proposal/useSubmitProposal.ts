@@ -91,7 +91,7 @@ export default function useSubmitProposal() {
         progress: 1,
       });
 
-      if (!safeAddress || !signerOrProvider || !nonce) {
+      if (!safeAddress || !signerOrProvider || nonce === undefined) {
         toast.dismiss(toastId);
         return;
       }
@@ -131,6 +131,7 @@ export default function useSubmitProposal() {
 
       try {
         const gnosisContract = GnosisSafe__factory.connect(safeAddress, signerOrProvider);
+        console.log('🚀 ~ file: useSubmitProposal.ts:134 ~ gnosisContract:', gnosisContract);
         await axios.post(
           buildGnosisApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(

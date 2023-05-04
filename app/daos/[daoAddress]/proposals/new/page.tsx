@@ -18,7 +18,6 @@ import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../../../../src/c
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import { usePrepareProposal } from '../../../../../src/hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
-import useDefaultNonce from '../../../../../src/hooks/DAO/useDefaultNonce';
 import { useCreateProposalSchema } from '../../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import { CreateProposalForm, CreateProposalState, StrategyType } from '../../../../../src/types';
@@ -29,10 +28,9 @@ const templateAreaSingleCol = `"content"
 
 export default function ProposalCreatePage() {
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
     governance: { type },
   } = useFractal();
-  const defaultNonce = useDefaultNonce();
   const { createProposalValidation } = useCreateProposalSchema();
   const { prepareProposal } = usePrepareProposal();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -57,7 +55,7 @@ export default function ProposalCreatePage() {
     }
   };
 
-  if (!type || !daoAddress) {
+  if (!type || !daoAddress || !safe) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
@@ -69,7 +67,7 @@ export default function ProposalCreatePage() {
     <ClientOnly>
       <Formik<CreateProposalForm>
         validationSchema={createProposalValidation}
-        initialValues={{ ...DEFAULT_PROPOSAL, nonce: defaultNonce || 0 }}
+        initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nonce }}
         onSubmit={values => {
           const { nonce } = values;
           const proposalData = prepareProposal(values);
@@ -83,6 +81,8 @@ export default function ProposalCreatePage() {
             safeAddress: daoAddress,
           });
         }}
+        validateOnMount
+        isInitialValid={false}
       >
         {(formikProps: FormikProps<CreateProposalForm>) => {
           const { handleSubmit, setFieldValue, values } = formikProps;
@@ -134,13 +134,9 @@ export default function ProposalCreatePage() {
                               : undefined
                           }
                           nonce={values.nonce}
-                          defaultNonce={defaultNonce}
-                          setNonce={(nonce?: number) =>
-                            setFieldValue(
-                              'nonce',
-                              nonce ? parseInt(nonce.toString(), 10) : undefined
-                            )
-                          }
+                          setNonce={(nonce?: number) => {
+                            setFieldValue('nonce', nonce);
+                          }}
                         />
 
                         <AzoriusMetadata
