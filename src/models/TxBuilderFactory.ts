@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { getRandomBytes } from '../helpers';
 import {
   BaseContracts,
-  GnosisDAO,
+  SafeMultisigDAO,
   SafeTransaction,
   SubDAO,
   AzoriusGovernanceDAO,
@@ -28,7 +28,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: GnosisDAO | AzoriusGovernanceDAO | SubDAO,
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO,
     parentAddress?: string,
     parentTokenAddress?: string
   ) {
@@ -49,7 +49,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts.multiSendContract,
       this.baseContracts.gnosisSafeFactoryContract,
       this.baseContracts.gnosisSafeSingletonContract,
-      this.daoData as GnosisDAO,
+      this.daoData as SafeMultisigDAO,
       this.saltNum,
       !!this.azoriusContracts
     );
@@ -99,7 +99,11 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public createMultiSigTxBuilder(): MultisigTxBuilder {
-    return new MultisigTxBuilder(this.baseContracts, this.daoData as GnosisDAO, this.safeContract!);
+    return new MultisigTxBuilder(
+      this.baseContracts,
+      this.daoData as SafeMultisigDAO,
+      this.safeContract!
+    );
   }
 
   public createAzoriusTxBuilder(): AzoriusTxBuilder {

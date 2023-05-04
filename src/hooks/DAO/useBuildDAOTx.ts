@@ -4,7 +4,7 @@ import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
   AzoriusGovernanceDAO,
-  GnosisDAO,
+  SafeMultisigDAO,
   StrategyType,
   AzoriusContracts,
   BaseContracts,
@@ -38,7 +38,7 @@ const useBuildDAOTx = () => {
 
   const buildDao = useCallback(
     async (
-      daoData: AzoriusGovernanceDAO | GnosisDAO,
+      daoData: AzoriusGovernanceDAO | SafeMultisigDAO,
       parentAddress?: string,
       parentTokenAddress?: string
     ) => {

@@ -3,7 +3,7 @@ import { IVotes__factory } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import {
-  GnosisDAO,
+  SafeMultisigDAO,
   DAOVetoGuardConfig,
   BigNumberValuePair,
   AzoriusGovernanceDAO,
@@ -61,7 +61,7 @@ export function usePrepareFormData() {
       trustedAddresses,
       freezeGuard,
       ...rest
-    }: GnosisDAO & { freezeGuard?: DAOVetoGuardConfig<BigNumberValuePair> }) => {
+    }: SafeMultisigDAO & { freezeGuard?: DAOVetoGuardConfig<BigNumberValuePair> }) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
           if (inputValue.endsWith('.eth')) {

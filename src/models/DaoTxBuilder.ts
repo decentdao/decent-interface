@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
-  GnosisDAO,
+  SafeMultisigDAO,
   SafeTransaction,
   AzoriusGovernanceDAO,
   AzoriusContracts,
@@ -34,7 +34,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: GnosisDAO | AzoriusGovernanceDAO,
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO,
     saltNum: string,
     predictedGnosisSafeAddress: string,
     createSafeTx: SafeTransaction,

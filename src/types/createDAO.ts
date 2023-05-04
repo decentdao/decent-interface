@@ -82,9 +82,9 @@ export interface AzoriusGovernanceDAO<T = BigNumber>
   isTokenImported?: boolean;
 }
 
-export interface GnosisDAO extends DAOEssentials, GnosisConfiguration {}
+export interface SafeMultisigDAO extends DAOEssentials, GnosisConfiguration {}
 
-export type DAOTrigger = (daoData: GnosisDAO | AzoriusGovernanceDAO | SubDAO) => void;
+export type DAOTrigger = (daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO) => void;
 
 export type AddressValidationMap = Map<string, AddressValidation>;
 
@@ -106,7 +106,10 @@ export type TokenAllocation<T = BigNumber> = {
   amount: T;
 } & EthAddress;
 
-export type CreateDAOFunc = (daoData: GnosisDAO, successCallback: DeployDAOSuccessCallback) => void;
+export type CreateDAOFunc = (
+  daoData: SafeMultisigDAO,
+  successCallback: DeployDAOSuccessCallback
+) => void;
 export type DeployDAOSuccessCallback = (daoAddress: string) => void;
 export type DAODetails = {
   daoName: string;
