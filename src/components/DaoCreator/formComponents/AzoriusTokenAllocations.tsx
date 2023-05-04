@@ -67,7 +67,9 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                   tokenAllocationError?.address && tokenAllocation.address.length
                     ? tokenAllocationError.address
                     : null;
+
                 const amountErrorMessage =
+                  values.govToken.tokenSupply.value &&
                   tokenAllocationError?.amount?.value &&
                   !tokenAllocation.amount.bigNumberValue?.isZero()
                     ? tokenAllocationError.amount.value
