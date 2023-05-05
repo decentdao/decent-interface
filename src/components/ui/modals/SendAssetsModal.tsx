@@ -16,9 +16,10 @@ import { BigNumberInput } from '../forms/BigNumberInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
 
+// @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
@@ -29,7 +30,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     fungibleAssetsWithBalance[0]
   );
   const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
-  const [nonceInput, setNonceInput] = useState<number | undefined>();
+  const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
 
   const [destination, setDestination] = useState<string>('');
 
