@@ -134,28 +134,30 @@ export const useAzoriusProposals = () => {
   );
 
   useEffect(() => {
-    if (!azoriusContract || !ozLinearVotingContract) {
+    if (!azoriusContract) {
       return;
     }
     const proposalCreatedFilter = azoriusContract.asSigner.filters.ProposalCreated();
 
-    const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
-
     azoriusContract.asSigner.on(proposalCreatedFilter, proposalCreatedListener);
+
+    return () => {
+      azoriusContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
+    };
+  }, [azoriusContract, proposalCreatedListener]);
+
+  useEffect(() => {
+    if (!ozLinearVotingContract) {
+      return;
+    }
+    const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
 
     ozLinearVotingContract.asSigner.on(votedEvent, proposalVotedEventListener);
 
     return () => {
-      azoriusContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
-
       ozLinearVotingContract.asSigner.off(votedEvent, proposalVotedEventListener);
     };
-  }, [
-    azoriusContract,
-    ozLinearVotingContract,
-    proposalCreatedListener,
-    proposalVotedEventListener,
-  ]);
+  }, [ozLinearVotingContract, proposalVotedEventListener]);
 
   return loadAzoriusProposals;
 };
