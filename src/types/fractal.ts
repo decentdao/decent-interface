@@ -54,14 +54,6 @@ export enum FractalProposalState {
   ACTIVE = 'stateActive',
 
   /**
-   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
-   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
-   *
-   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
-   */
-  TIMELOCKABLE = 'stateTimelockable',
-
-  /**
    * A proposal that passes enters the `TIMELOCKED` state, during which it cannot yet be executed.
    * This is to allow time for token holders to potentially exit their position, as well as parent DAOs
    * time to initiate a freeze, if they choose to do so. A proposal stays timelocked for the duration
@@ -124,6 +116,14 @@ export enum FractalProposalState {
    *
    * Third party Safe module transactions only.
    */
+  /**
+   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
+   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
+   *
+   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
+   */
+  TIMELOCKABLE = 'stateTimelockable',
+
   MODULE = 'stateModule',
 }
 
