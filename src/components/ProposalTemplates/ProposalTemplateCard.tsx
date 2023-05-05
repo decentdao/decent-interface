@@ -1,23 +1,63 @@
 import { Avatar, Flex, Text } from '@chakra-ui/react';
 import { VEllipsis } from '@decent-org/fractal-ui';
-import { logError } from '../../helpers/errorLogging';
+import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
+import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
+import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
+import { useFractal } from '../../providers/App/AppProvider';
 import { ProposalTemplate } from '../../types/createProposalTemplate';
 import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 
 type ProposalTemplateCardProps = {
   proposalTemplate: ProposalTemplate;
+  templateIndex: number;
 };
 
 export default function ProposalTemplateCard({
   proposalTemplate: { title, description },
+  templateIndex,
 }: ProposalTemplateCardProps) {
-  const manageTemplateOptions = [
-    {
+  const { push } = useRouter();
+  const { t } = useTranslation('proposalTemplate');
+  const {
+    node: { daoAddress },
+  } = useFractal();
+
+  const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
+  const { submitProposal, canUserCreateProposal } = useSubmitProposal();
+  const nonce = useDefaultNonce();
+
+  const successCallback = () => {
+    if (daoAddress) {
+      // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
+      push(`/daos/${daoAddress}/proposals`);
+    }
+  };
+
+  const handleRemoveTemplate = async () => {
+    const proposalData = await prepareRemoveProposalTemplateProposal(templateIndex);
+    if (!!proposalData) {
+      submitProposal({
+        proposalData,
+        nonce,
+        pendingToastMessage: t('removeTemplatePendingToastMessage', { ns: 'proposal' }),
+        successToastMessage: t('removeTemplateSuccessToastMessage', { ns: 'proposal' }),
+        failedToastMessage: t('removeTemplateFailureToastMessage', { ns: 'proposal' }),
+        successCallback,
+      });
+    }
+  };
+
+  const manageTemplateOptions = [];
+  if (canUserCreateProposal) {
+    const removeTemplateOption = {
       optionKey: 'optionRemoveTemplate',
-      onClick: () => logError('Removing Proposal Template not yet implemented. Sorry dude :('),
-    },
-  ];
+      onClick: handleRemoveTemplate,
+    };
+    manageTemplateOptions.push(removeTemplateOption);
+  }
 
   return (
     <ContentBox maxWidth="420px">
@@ -30,17 +70,19 @@ export default function ProposalTemplateCard({
           borderRadius="4px"
           getInitials={(_title: string) => _title.slice(0, 2)}
         />
-        <OptionMenu
-          trigger={
-            <VEllipsis
-              boxSize="1.5rem"
-              mt="0.25rem"
-            />
-          }
-          titleKey="titleManageProposalTemplate"
-          options={manageTemplateOptions}
-          namespace="menu"
-        />
+        {manageTemplateOptions.length > 0 && (
+          <OptionMenu
+            trigger={
+              <VEllipsis
+                boxSize="1.5rem"
+                mt="0.25rem"
+              />
+            }
+            titleKey="titleManageProposalTemplate"
+            options={manageTemplateOptions}
+            namespace="menu"
+          />
+        )}
       </Flex>
       <Text
         textStyle="text-lg-mono-regular"

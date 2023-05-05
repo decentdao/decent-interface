@@ -18,5 +18,8 @@
     "userInput": "user input",
     "eth": "ETH",
     "emptyProposalTemplates": "No templates yet.",
-    "emptyProposalTemplatesCreateMessage": "Add your first template."
+    "emptyProposalTemplatesCreateMessage": "Add your first template.",
+    "removeTemplatePendingToastMessage": "Creating proposal to remove proposal template",
+    "removeTemplateSuccessToastMessage": "Proposal to remove template created. Vote and execute to apply changes.",
+    "removeTemplateFailureToastMessage": "Creating proposal for removing proposal template failed."
 }
