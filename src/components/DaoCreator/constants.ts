@@ -62,10 +62,6 @@ export const initialState: CreatorFormState = {
       value: '1400',
       bigNumberValue: BigNumber.from(1400),
     },
-    vetoVotesThreshold: {
-      value: '1',
-      bigNumberValue: BigNumber.from(1),
-    },
     freezeVotesThreshold: {
       value: '1',
       bigNumberValue: BigNumber.from(1),

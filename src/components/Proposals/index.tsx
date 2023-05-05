@@ -62,7 +62,7 @@ export default function Proposals() {
         break;
       case StrategyType.GNOSIS_SAFE:
       default:
-        if (guardContracts.vetoGuardContract) {
+        if (guardContracts.freezeGuardContract) {
           options = FILTERS_MULTISIG_CHILD;
         } else {
           options = FILTERS_MULTISIG_BASE;
@@ -71,7 +71,7 @@ export default function Proposals() {
     }
     setAllOptions(options);
     setFilters(options);
-  }, [guardContracts.vetoGuardContract, type]);
+  }, [guardContracts.freezeGuardContract, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {

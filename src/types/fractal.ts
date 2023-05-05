@@ -251,10 +251,10 @@ export enum FractalModuleType {
 }
 
 export interface FractalGuardContracts {
-  vetoGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
-  vetoVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
+  freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
+  freezeVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
   freezeGuardType: FreezeGuardType | null;
-  vetoVotingType: FreezeVotingType | null;
+  freezeVotingType: FreezeVotingType | null;
 }
 
 export interface FreezeGuard {
@@ -313,10 +313,10 @@ export interface FractalContracts {
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
-  gnosisVetoGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
-  azoriusVetoGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
-  vetoMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
-  vetoERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
+  multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
+  azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
+  multisigFreezeVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
+  freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
   votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;

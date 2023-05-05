@@ -115,7 +115,6 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             _schema.shape({
               executionPeriod: Yup.object().shape({ value: Yup.string().required() }),
               timelockPeriod: Yup.object().shape({ value: Yup.string().required() }),
-              vetoVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeProposalPeriod: Yup.object().shape({ value: Yup.string().required() }),
               freezePeriod: Yup.object().shape({ value: Yup.string().required() }),

@@ -14,7 +14,7 @@ import { TxDetails } from './TxDetails';
 export function MultisigProposalDetails({ proposal }: { proposal: FractalProposal }) {
   const txProposal = proposal as MultisigProposal;
   const {
-    guardContracts: { vetoGuardContract },
+    guardContracts: { freezeGuardContract: freezeGuardContract },
     readOnly: { user },
   } = useFractal();
   return (
@@ -33,7 +33,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: FractalProposa
         {user.address && (
           <TxActions
             proposal={txProposal}
-            freezeGuard={vetoGuardContract?.asSigner as MultisigFreezeGuard}
+            freezeGuard={freezeGuardContract?.asSigner as MultisigFreezeGuard}
           />
         )}
       </GridItem>

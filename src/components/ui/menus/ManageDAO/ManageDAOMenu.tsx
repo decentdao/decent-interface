@@ -65,7 +65,7 @@ export function ManageDAOMenu({
     ) {
       const freezeOption = {
         optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.vetoVotingContract?.asSigner.castFreezeVote(),
+        onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
       };
       if (type === StrategyType.GNOSIS_SAFE) {
         return [createSubDAOOption, manageSignersOption, freezeOption];
@@ -103,7 +103,7 @@ export function ManageDAOMenu({
     push,
     safeAddress,
     type,
-    guardContracts.vetoVotingContract?.asSigner,
+    guardContracts.freezeVotingContract?.asSigner,
     handleClawBack,
   ]);
 

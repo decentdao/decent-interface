@@ -4,7 +4,7 @@ import { SafeInfoResponseWithGuard } from './safeGlobal';
 export type SubDAOData = {
   safe: SafeInfoResponseWithGuard;
   fractalModules?: FractalModuleData[];
-  vetoGuardContracts: FractalGuardContracts;
+  freezeGuardContracts: FractalGuardContracts;
   freezeGuard: FreezeGuard;
 };
 

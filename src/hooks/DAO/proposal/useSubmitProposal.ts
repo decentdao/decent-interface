@@ -48,7 +48,7 @@ export default function useSubmitProposal() {
   const {
     node: { safe, fractalModules },
     baseContracts: { multiSendContract },
-    guardContracts: { vetoVotingContract },
+    guardContracts: { freezeVotingContract: freezeVotingContract },
     governanceContracts: { ozLinearVotingContract },
     clients: { safeService },
   } = useFractal();
@@ -268,7 +268,7 @@ export default function useSubmitProposal() {
           });
         }
       } else {
-        if (!globalAzoriusContract || !vetoVotingContract || !safe?.address) {
+        if (!globalAzoriusContract || !freezeVotingContract || !safe?.address) {
           submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -287,7 +287,7 @@ export default function useSubmitProposal() {
             nonce,
             successCallback,
             azoriusContract: globalAzoriusContract,
-            votingStrategyAddress: vetoVotingContract.asSigner.address,
+            votingStrategyAddress: freezeVotingContract.asSigner.address,
             safeAddress: safe.address,
           });
         }
@@ -295,7 +295,7 @@ export default function useSubmitProposal() {
     },
     [
       globalAzoriusContract,
-      vetoVotingContract,
+      freezeVotingContract,
       safe,
       lookupModules,
       submitMultisigProposal,

@@ -41,7 +41,7 @@ export function Activities() {
         {guard.freezeProposalVoteCount?.gt(0) && (
           <ActivityFreeze
             freezeGuard={guard}
-            vetoVotingContract={guardContracts.vetoVotingContract?.asSigner}
+            freezeVotingContract={guardContracts.freezeVotingContract?.asSigner}
           />
         )}
         {!type ? (

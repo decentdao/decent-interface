@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import {
   SafeMultisigDAO,
-  DAOVetoGuardConfig,
+  DAOFreezeGuardConfig,
   BigNumberValuePair,
   AzoriusGovernanceDAO,
   TokenCreationType,
@@ -17,7 +17,9 @@ export function usePrepareFormData() {
 
   // Helper function to prepare freezeGuard data
   const prepareFreezeGuardData = useCallback(
-    async (freezeGuard: DAOVetoGuardConfig<BigNumberValuePair>): Promise<DAOVetoGuardConfig> => {
+    async (
+      freezeGuard: DAOFreezeGuardConfig<BigNumberValuePair>
+    ): Promise<DAOFreezeGuardConfig> => {
       return {
         executionPeriod: await getEstimatedNumberOfBlocks(
           freezeGuard.executionPeriod.bigNumberValue!,
@@ -27,7 +29,6 @@ export function usePrepareFormData() {
           freezeGuard.timelockPeriod.bigNumberValue!,
           provider
         ),
-        vetoVotesThreshold: freezeGuard.vetoVotesThreshold.bigNumberValue!,
         freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
         freezeProposalPeriod: await getEstimatedNumberOfBlocks(
           freezeGuard.freezeProposalPeriod.bigNumberValue!,
@@ -61,7 +62,7 @@ export function usePrepareFormData() {
       trustedAddresses,
       freezeGuard,
       ...rest
-    }: SafeMultisigDAO & { freezeGuard?: DAOVetoGuardConfig<BigNumberValuePair> }) => {
+    }: SafeMultisigDAO & { freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair> }) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
           if (inputValue.endsWith('.eth')) {
@@ -71,13 +72,13 @@ export function usePrepareFormData() {
           return inputValue;
         })
       );
-      let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
+      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
       if (freezeGuard) {
-        vetoGuardData = await prepareFreezeGuardData(freezeGuard);
+        freezeGuardData = await prepareFreezeGuardData(freezeGuard);
       }
       return {
         trustedAddresses: resolvedAddresses,
-        ...vetoGuardData,
+        ...freezeGuardData,
         ...rest,
       };
     },
@@ -98,7 +99,7 @@ export function usePrepareFormData() {
       tokenCreationType,
       ...rest
     }: AzoriusGovernanceDAO<BigNumberValuePair> & {
-      freezeGuard?: DAOVetoGuardConfig<BigNumberValuePair>;
+      freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair>;
     }): Promise<AzoriusGovernanceDAO> => {
       const resolvedTokenAllocations = await Promise.all(
         tokenAllocations.map(async allocation => {
@@ -109,9 +110,9 @@ export function usePrepareFormData() {
           return { amount: allocation.amount.bigNumberValue!, address: address };
         })
       );
-      let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
+      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
       if (freezeGuard) {
-        vetoGuardData = await prepareFreezeGuardData(freezeGuard);
+        freezeGuardData = await prepareFreezeGuardData(freezeGuard);
       }
       const isTokenImported =
         tokenCreationType === TokenCreationType.IMPORTED && !!tokenImportAddress;
@@ -134,7 +135,7 @@ export function usePrepareFormData() {
         tokenCreationType,
         isTokenImported,
         isVotesToken,
-        ...vetoGuardData,
+        ...freezeGuardData,
         ...rest,
       };
     },

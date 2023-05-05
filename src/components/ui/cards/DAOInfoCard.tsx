@@ -164,7 +164,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
   );
 
   const nodeGuardContracts =
-    !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuardContracts : guardContracts;
   const nodeFreezeGuard =
     !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuard : !isCurrentDAO ? undefined : guard;
   const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;

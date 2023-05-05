@@ -8,16 +8,19 @@ export function FreezeButton({
   isFrozen,
   userHasFreezeVoted,
   userHasVotes,
-  vetoVotingContract,
+  freezeVotingContract: freezeVotingContract,
 }: {
   isFrozen: boolean;
   userHasFreezeVoted: boolean;
   userHasVotes: boolean;
-  vetoVotingContract: ERC20FreezeVoting | MultisigFreezeVoting;
+  freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting;
 }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['dashboard']);
-  const castFreezeVote = useCastFreezeVote({ vetoVotingContract, setPending });
+  const castFreezeVote = useCastFreezeVote({
+    freezeVotingContract: freezeVotingContract,
+    setPending,
+  });
 
   const disabled = isFrozen || userHasFreezeVoted || pending || !userHasVotes;
 

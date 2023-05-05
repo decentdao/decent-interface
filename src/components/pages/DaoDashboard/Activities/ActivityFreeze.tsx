@@ -22,10 +22,10 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 
 export function ActivityFreeze({
   freezeGuard,
-  vetoVotingContract,
+  freezeVotingContract: freezeVotingContract,
 }: {
   freezeGuard: FreezeGuard;
-  vetoVotingContract: ERC20FreezeVoting | MultisigFreezeVoting | undefined;
+  freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting | undefined;
 }) {
   const {
     freezeProposalCreatedTime,
@@ -85,12 +85,12 @@ export function ActivityFreeze({
               {freezeGuard.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
             </Text>
           )}
-          {!freezeGuard.isFrozen && vetoVotingContract && (
+          {!freezeGuard.isFrozen && freezeVotingContract && (
             <FreezeButton
               isFrozen={freezeGuard.isFrozen}
               userHasFreezeVoted={freezeGuard.userHasFreezeVoted}
               userHasVotes={freezeGuard.userHasVotes}
-              vetoVotingContract={vetoVotingContract}
+              freezeVotingContract={freezeVotingContract}
             />
           )}
         </Flex>

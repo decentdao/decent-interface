@@ -12,8 +12,8 @@ import {
 import { AzoriusTxBuilder as AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
+import { FreezeGuardTxBuilder } from './FreezeGuardTxBuilder';
 import { MultisigTxBuilder } from './MultisigTxBuilder';
-import { VetoGuardTxBuilder } from './VetoGuardTxBuilder';
 import { gnosisSafeData } from './helpers/gnosisSafeData';
 
 export class TxBuilderFactory extends BaseTxBuilder {
@@ -80,11 +80,11 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public createVetoGuardTxBuilder(
+  public createFreezeGuardTxBuilder(
     azoriusAddress?: string,
     strategyAddress?: string
-  ): VetoGuardTxBuilder {
-    return new VetoGuardTxBuilder(
+  ): FreezeGuardTxBuilder {
+    return new FreezeGuardTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
       this.daoData as SubDAO,

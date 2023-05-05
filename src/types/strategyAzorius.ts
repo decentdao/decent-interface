@@ -10,7 +10,7 @@ import {
 export interface AzoriusContracts {
   fractalAzoriusMasterCopyContract: Azorius;
   linearVotingMasterCopyContract: LinearERC20Voting;
-  azoriusVetoGuardMasterCopyContract: AzoriusFreezeGuard;
+  azoriusFreezeGuardMasterCopyContract: AzoriusFreezeGuard;
   votesTokenMasterCopyContract: VotesERC20;
   claimingMasterCopyContract: ERC20Claim;
   votesERC20WrapperMasterCopyContract: VotesERC20Wrapper;

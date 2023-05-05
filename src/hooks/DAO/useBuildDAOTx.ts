@@ -25,10 +25,10 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       fractalRegistryContract,
       fractalModuleMasterCopyContract,
-      gnosisVetoGuardMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-      vetoERC20VotingMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract,
+      multisigFreezeVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
@@ -51,9 +51,9 @@ const useBuildDAOTx = () => {
         !fractalRegistryContract ||
         !zodiacModuleProxyFactoryContract ||
         !fractalModuleMasterCopyContract ||
-        !gnosisVetoGuardMasterCopyContract ||
-        !vetoMultisigVotingMasterCopyContract ||
-        !vetoERC20VotingMasterCopyContract ||
+        !multisigFreezeGuardMasterCopyContract ||
+        !freezeMultisigVotingMasterCopyContract ||
+        !freezeERC20VotingMasterCopyContract ||
         !gnosisSafeFactoryContract ||
         !gnosisSafeSingletonContract ||
         !claimingMasterCopyContract ||
@@ -67,7 +67,7 @@ const useBuildDAOTx = () => {
           !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
           !votesTokenMasterCopyContract ||
-          !azoriusVetoGuardMasterCopyContract ||
+          !azoriusFreezeGuardMasterCopyContract ||
           !claimingMasterCopyContract
         ) {
           return;
@@ -76,7 +76,7 @@ const useBuildDAOTx = () => {
         azoriusContracts = {
           fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
-          azoriusVetoGuardMasterCopyContract: azoriusVetoGuardMasterCopyContract.asSigner,
+          azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
           votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asSigner,
@@ -88,10 +88,10 @@ const useBuildDAOTx = () => {
         fractalRegistryContract: fractalRegistryContract.asSigner,
         gnosisSafeFactoryContract: gnosisSafeFactoryContract.asSigner,
         gnosisSafeSingletonContract: gnosisSafeSingletonContract.asSigner,
-        gnosisVetoGuardMasterCopyContract: gnosisVetoGuardMasterCopyContract.asSigner,
+        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         multiSendContract: multiSendContract.asSigner,
-        vetoERC20VotingMasterCopyContract: vetoERC20VotingMasterCopyContract.asSigner,
-        vetoMultisigVotingMasterCopyContract: vetoMultisigVotingMasterCopyContract.asSigner,
+        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
+        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
       } as BaseContracts;
 
@@ -126,16 +126,16 @@ const useBuildDAOTx = () => {
       fractalRegistryContract,
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
-      gnosisVetoGuardMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-      vetoERC20VotingMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
       claimingMasterCopyContract,
       fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
     ]
   );

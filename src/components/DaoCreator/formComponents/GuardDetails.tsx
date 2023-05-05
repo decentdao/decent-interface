@@ -92,15 +92,13 @@ function GuardDetails(props: ICreationStepProps) {
             ),
             bigNumberValue: totalVotes.bigNumberValue!.div(2),
           };
-      setFieldValue('freezeGuard.vetoVotesThreshold', childThresholds);
       setFieldValue('freezeGuard.freezeVotesThreshold', childThresholds);
     }
   }, [azoriusGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
 
-  const showVetoFreezeHelpers = totalParentVotes.gt(0);
   const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);
 
-  const freezeHelper = showVetoFreezeHelpers
+  const freezeHelper = totalParentVotes.gt(0)
     ? t('helperFreezeVotesThreshold', { totalVotes: formattedVotesTotal })
     : null;
 
@@ -231,7 +229,7 @@ function GuardDetails(props: ICreationStepProps) {
               textStyle="text-lg-mono-medium"
               whiteSpace="pre-wrap"
             >
-              {t('vetoGuardDescription')}
+              {t('freezeGuardDescription')}
             </Text>
           </AlertTitle>
         </Alert>

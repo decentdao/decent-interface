@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../utils/useTransaction';
 
 const useCastFreezeVote = ({
-  vetoVotingContract,
+  freezeVotingContract: freezeVotingContract,
   setPending,
 }: {
-  vetoVotingContract: ERC20FreezeVoting | MultisigFreezeVoting;
+  freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting;
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [contractCallCastFreeze, contractCallPending] = useTransaction();
@@ -20,12 +20,12 @@ const useCastFreezeVote = ({
 
   const castFreezeVote = useCallback(() => {
     contractCallCastFreeze({
-      contractFn: () => vetoVotingContract.castFreezeVote(),
+      contractFn: () => freezeVotingContract.castFreezeVote(),
       pendingMessage: t('pendingCastFreezeVote'),
       failedMessage: t('failedCastFreezeVote'),
       successMessage: t('successCastFreezeVote'),
     });
-  }, [contractCallCastFreeze, t, vetoVotingContract]);
+  }, [contractCallCastFreeze, t, freezeVotingContract]);
   return castFreezeVote;
 };
 

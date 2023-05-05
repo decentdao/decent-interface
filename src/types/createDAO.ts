@@ -28,7 +28,7 @@ export interface CreatorFormState<T = BigNumberValuePair> {
   gnosis: GnosisConfiguration;
   govToken: DAOGovenorToken<T>;
   govModule: DAOGovenorModuleConfig<T>;
-  freezeGuard: DAOVetoGuardConfig<T>;
+  freezeGuard: DAOFreezeGuardConfig<T>;
 }
 
 export type DAOEssentials = {
@@ -53,10 +53,9 @@ export type DAOGovenorModuleConfig<T = BigNumber> = {
   executionPeriod: T;
 };
 
-export type DAOVetoGuardConfig<T = BigNumber> = {
+export type DAOFreezeGuardConfig<T = BigNumber> = {
   executionPeriod: T;
   timelockPeriod: T;
-  vetoVotesThreshold: T;
   freezeVotesThreshold: T;
   freezeProposalPeriod: T;
   freezePeriod: T;
@@ -72,7 +71,7 @@ export interface GnosisConfiguration {
 export interface SubDAO<T = BigNumber>
   extends GnosisConfiguration,
     AzoriusGovernanceDAO<T>,
-    DAOVetoGuardConfig<T> {}
+    DAOFreezeGuardConfig<T> {}
 
 export interface AzoriusGovernanceDAO<T = BigNumber>
   extends DAOGovenorToken<T>,
