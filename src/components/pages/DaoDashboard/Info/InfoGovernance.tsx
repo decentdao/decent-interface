@@ -26,9 +26,7 @@ export function InfoGovernance() {
   }
 
   const governanceAzorius =
-    governance.type === StrategyType.AZORIUS
-      ? (governance as AzoriusGovernance)
-      : undefined;
+    governance.type === StrategyType.AZORIUS ? (governance as AzoriusGovernance) : undefined;
 
   return (
     <Box
