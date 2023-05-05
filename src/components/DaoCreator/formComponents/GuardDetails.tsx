@@ -36,7 +36,7 @@ function GuardDetails(props: ICreationStepProps) {
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState(false);
-  const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
+  const [totalParentVotes, setTotalParentVotes] = useState<BigNumber>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
   const azoriusGovernance = governance as AzoriusGovernance;
@@ -57,49 +57,56 @@ function GuardDetails(props: ICreationStepProps) {
   }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
 
   useEffect(() => {
-    if (totalParentVotes.eq(0)) {
-      if (!type || !safe || !azoriusGovernance.votesToken) return;
+    // set the initial value for freezeGuard.freezeVotesThreshold
+    // and display helperFreezeVotesThreshold
+    if (!totalParentVotes) {
+      if (!type) return;
 
-      let totalVotes: BigNumberValuePair;
+      let parentVotes: BigNumber;
+
       switch (type) {
         case StrategyType.GNOSIS_SAFE_AZORIUS:
+          if (!azoriusGovernance) return;
           const normalized = ethers.utils.formatUnits(
-            azoriusGovernance.votesToken.totalSupply || '0',
+            azoriusGovernance.votesToken.totalSupply,
             azoriusGovernance.votesToken.decimals
           );
-          // ethers.utils.formatUnits returns a whole number string in the form `xxx.0`
-          // but BigNumber won't parse out the insignificant decimal, so we need to cut it
-          totalVotes = {
-            value: safe.owners?.length.toString() || '',
-            bigNumberValue: BigNumber.from(normalized.substring(0, normalized.indexOf('.'))),
-          };
+          parentVotes = BigNumber.from(normalized);
           break;
         case StrategyType.GNOSIS_SAFE:
         default:
-          totalVotes = {
-            value: safe.owners?.length.toString() || '',
-            bigNumberValue: BigNumber.from(safe.owners?.length || 0),
-          };
+          if (!safe) return;
+          parentVotes = BigNumber.from(safe.owners.length);
       }
-      setTotalParentVotes(totalVotes.bigNumberValue!);
 
-      const childThresholds = totalVotes.bigNumberValue!.eq(1)
-        ? totalVotes
-        : {
-            value: ethers.utils.formatUnits(
-              totalVotes.bigNumberValue!.div(2),
-              azoriusGovernance.votesToken.decimals
-            ),
-            bigNumberValue: totalVotes.bigNumberValue!.div(2),
-          };
-      setFieldValue('freezeGuard.freezeVotesThreshold', childThresholds);
+      let thresholdDefault: BigNumberValuePair;
+
+      if (parentVotes.eq(1)) {
+        thresholdDefault = {
+          value: '1',
+          bigNumberValue: parentVotes,
+        };
+      } else {
+        thresholdDefault = {
+          value: parentVotes.toString(),
+          bigNumberValue: parentVotes.div(2),
+        };
+      }
+
+      setTotalParentVotes(parentVotes);
+      setFieldValue('freezeGuard.freezeVotesThreshold', thresholdDefault);
     }
-  }, [azoriusGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
+  }, [
+    azoriusGovernance.votesToken,
+    safe,
+    totalParentVotes,
+    type,
+    setFieldValue,
+    azoriusGovernance,
+  ]);
 
-  const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);
-
-  const freezeHelper = totalParentVotes.gt(0)
-    ? t('helperFreezeVotesThreshold', { totalVotes: formattedVotesTotal })
+  const freezeHelper = totalParentVotes
+    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigNumberDisplay(totalParentVotes) })
     : null;
 
   return (
