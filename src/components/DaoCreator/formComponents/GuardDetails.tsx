@@ -66,12 +66,12 @@ function GuardDetails(props: ICreationStepProps) {
 
       switch (type) {
         case StrategyType.AZORIUS:
-          if (!azoriusGovernance) return;
+          if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
           const normalized = ethers.utils.formatUnits(
             azoriusGovernance.votesToken.totalSupply,
             azoriusGovernance.votesToken.decimals
           );
-          parentVotes = BigNumber.from(normalized);
+          parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           break;
         case StrategyType.MULTISIG:
         default:
