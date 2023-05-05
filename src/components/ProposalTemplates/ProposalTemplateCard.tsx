@@ -42,9 +42,9 @@ export default function ProposalTemplateCard({
       submitProposal({
         proposalData,
         nonce,
-        pendingToastMessage: t('removeTemplatePendingToastMessage', { ns: 'proposal' }),
-        successToastMessage: t('removeTemplateSuccessToastMessage', { ns: 'proposal' }),
-        failedToastMessage: t('removeTemplateFailureToastMessage', { ns: 'proposal' }),
+        pendingToastMessage: t('removeTemplatePendingToastMessage'),
+        successToastMessage: t('removeTemplateSuccessToastMessage'),
+        failedToastMessage: t('removeTemplateFailureToastMessage'),
         successCallback,
       });
     }

@@ -33,6 +33,7 @@ export default function ProposalTemplates() {
           <ProposalTemplateCard
             key={i}
             proposalTemplate={proposalTemplate}
+            templateIndex={i}
           />
         ))
       ) : (
