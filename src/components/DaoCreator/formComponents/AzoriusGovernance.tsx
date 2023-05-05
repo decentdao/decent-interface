@@ -132,7 +132,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         />
         <StepButtons
           {...props}
-          prevStep={CreatorSteps.GNOSIS_WITH_AZORIUS}
+          prevStep={CreatorSteps.AZORIUS_GOVERNANCE}
           nextStep={CreatorSteps.GUARD_CONFIG}
           isLastStep={!isSubDAO}
         />

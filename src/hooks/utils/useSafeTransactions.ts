@@ -13,7 +13,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
-  GnosisTransferType,
+  SafeTransferType,
   ActivityEventType,
   Activity,
   FractalProposalState,
@@ -159,7 +159,7 @@ export const useSafeTransactions = () => {
     (transfers: TransferWithTokenInfoResponse[]) => {
       return transfers.reduce(
         (prev: Map<string, AssetTotals>, cur: TransferWithTokenInfoResponse) => {
-          if (cur.type === GnosisTransferType.ETHER && cur.value) {
+          if (cur.type === SafeTransferType.ETHER && cur.value) {
             const prevValue = prev.get(constants.AddressZero)!;
             if (prevValue) {
               prev.set(constants.AddressZero, {
@@ -174,14 +174,14 @@ export const useSafeTransactions = () => {
               decimals: 18,
             });
           }
-          if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+          if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
             prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
               bn: BigNumber.from(1),
               symbol: cur.tokenInfo.symbol,
               decimals: 0,
             });
           }
-          if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+          if (cur.type === SafeTransferType.ERC20 && cur.value && cur.tokenInfo) {
             const prevValue = prev.get(cur.tokenInfo.address);
             if (prevValue) {
               prev.set(cur.tokenInfo.address, {

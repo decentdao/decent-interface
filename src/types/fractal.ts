@@ -165,7 +165,7 @@ export enum ActivityEventType {
   Module,
 }
 
-export enum GnosisTransferType {
+export enum SafeTransferType {
   ERC721 = 'ERC721_TRANSFER',
   ERC20 = 'ERC20_TRANSFER',
   ETHER = 'ETHER_TRANSFER',
@@ -295,8 +295,8 @@ export interface VotesStrategy<Type = BNFormattedPair> {
 }
 
 export enum StrategyType {
-  GNOSIS_SAFE = 'labelMultisigGov',
-  GNOSIS_SAFE_AZORIUS = 'labelAzoriusGov',
+  MULTISIG = 'labelMultisigGov',
+  AZORIUS = 'labelAzoriusGov',
 }
 
 export interface NodeHierarchy {

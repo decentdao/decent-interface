@@ -67,7 +67,7 @@ export function ManageDAOMenu({
         optionKey: 'optionInitiateFreeze',
         onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
       };
-      if (type === StrategyType.GNOSIS_SAFE) {
+      if (type === StrategyType.MULTISIG) {
         return [createSubDAOOption, manageSignersOption, freezeOption];
       } else {
         return [createSubDAOOption, freezeOption];
@@ -91,7 +91,7 @@ export function ManageDAOMenu({
 
       return [clawBackOption];
     } else {
-      if (type === StrategyType.GNOSIS_SAFE) {
+      if (type === StrategyType.MULTISIG) {
         return [createSubDAOOption, manageSignersOption];
       } else {
         return [createSubDAOOption];

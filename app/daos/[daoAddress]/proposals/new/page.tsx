@@ -42,7 +42,7 @@ export default function ProposalCreatePage() {
 
   useEffect(() => {
     if (!type) return;
-    if (type === StrategyType.GNOSIS_SAFE_AZORIUS) {
+    if (type === StrategyType.AZORIUS) {
       setFormState(CreateProposalState.METADATA_FORM);
     } else {
       setFormState(CreateProposalState.TRANSACTIONS_FORM);
@@ -126,7 +126,7 @@ export default function ProposalCreatePage() {
                         bg={BACKGROUND_SEMI_TRANSPARENT}
                       >
                         <ProposalHeader
-                          isAzorius={type === StrategyType.GNOSIS_SAFE_AZORIUS}
+                          isAzorius={type === StrategyType.AZORIUS}
                           metadataTitle={
                             formState === CreateProposalState.TRANSACTIONS_FORM &&
                             !!values.proposalMetadata.title
@@ -147,7 +147,7 @@ export default function ProposalCreatePage() {
                         <TransactionsForm
                           isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                           setFormState={setFormState}
-                          showBackButton={type === StrategyType.GNOSIS_SAFE_AZORIUS}
+                          showBackButton={type === StrategyType.AZORIUS}
                           pendingTransaction={pendingCreateTx}
                           canUserCreateProposal={canUserCreateProposal}
                           {...formikProps}

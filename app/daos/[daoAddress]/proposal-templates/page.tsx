@@ -20,7 +20,7 @@ export default function ProposalTemplatesPage() {
   } = useFractal();
   const { owners } = safe || {};
   const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : owners?.includes(user.address || '');
+    type === StrategyType.AZORIUS ? true : owners?.includes(user.address || '');
 
   return (
     <ClientOnly>

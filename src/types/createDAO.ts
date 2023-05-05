@@ -6,8 +6,8 @@ import { StrategyType } from './fractal';
 import { EthAddress } from './utils';
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
-  GNOSIS_GOVERNANCE = 'gnosis',
-  GNOSIS_WITH_AZORIUS = 'govToken',
+  MULTISIG_GOVERNANCE = 'gnosis',
+  AZORIUS_GOVERNANCE = 'govToken',
   GOV_CONFIG = 'govModule',
   GUARD_CONFIG = 'freezeGuard',
 }

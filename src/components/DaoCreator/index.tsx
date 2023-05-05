@@ -29,7 +29,7 @@ function DaoCreator({
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freezeGuard : undefined;
           switch (choosenGovernance) {
-            case StrategyType.GNOSIS_SAFE: {
+            case StrategyType.MULTISIG: {
               const data = await prepareMultisigFormData({
                 ...values.essentials,
                 ...values.gnosis,
@@ -38,7 +38,7 @@ function DaoCreator({
               deployDAO(data);
               return;
             }
-            case StrategyType.GNOSIS_SAFE_AZORIUS: {
+            case StrategyType.AZORIUS: {
               const data = await prepareAzoriusFormData({
                 ...values.essentials,
                 ...values.govModule,

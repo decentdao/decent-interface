@@ -27,7 +27,7 @@ export const useSafeMultisigProposals = () => {
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
         payload: {
-          type: StrategyType.GNOSIS_SAFE,
+          type: StrategyType.MULTISIG,
           proposals: multisendProposals as MultisigProposal[],
         },
       });

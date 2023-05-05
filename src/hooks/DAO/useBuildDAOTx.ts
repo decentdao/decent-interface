@@ -62,7 +62,7 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === StrategyType.GNOSIS_SAFE_AZORIUS) {
+      if (daoData.governance === StrategyType.AZORIUS) {
         if (
           !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
@@ -109,7 +109,7 @@ const useBuildDAOTx = () => {
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === StrategyType.GNOSIS_SAFE_AZORIUS
+        daoData.governance === StrategyType.AZORIUS
           ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 

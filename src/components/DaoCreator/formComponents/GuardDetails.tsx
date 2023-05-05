@@ -49,7 +49,7 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentAzorius = type === StrategyType.GNOSIS_SAFE_AZORIUS;
+    const isParentAzorius = type === StrategyType.AZORIUS;
     if (!isParentAzorius && isSubDAO && safe) {
       setFieldValue('gnosis.customNonce', safe.nonce);
       setShowCustomNonce(true);
@@ -65,7 +65,7 @@ function GuardDetails(props: ICreationStepProps) {
       let parentVotes: BigNumber;
 
       switch (type) {
-        case StrategyType.GNOSIS_SAFE_AZORIUS:
+        case StrategyType.AZORIUS:
           if (!azoriusGovernance) return;
           const normalized = ethers.utils.formatUnits(
             azoriusGovernance.votesToken.totalSupply,
@@ -73,7 +73,7 @@ function GuardDetails(props: ICreationStepProps) {
           );
           parentVotes = BigNumber.from(normalized);
           break;
-        case StrategyType.GNOSIS_SAFE:
+        case StrategyType.MULTISIG:
         default:
           if (!safe) return;
           parentVotes = BigNumber.from(safe.owners.length);
@@ -120,7 +120,7 @@ function GuardDetails(props: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governanceFormType === StrategyType.GNOSIS_SAFE && (
+        {governanceFormType === StrategyType.MULTISIG && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -259,8 +259,8 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === StrategyType.GNOSIS_SAFE
-              ? CreatorSteps.GNOSIS_GOVERNANCE
+            governanceFormType === StrategyType.MULTISIG
+              ? CreatorSteps.MULTISIG_GOVERNANCE
               : CreatorSteps.GOV_CONFIG
           }
           isLastStep

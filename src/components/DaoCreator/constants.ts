@@ -6,7 +6,7 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
-    governance: StrategyType.GNOSIS_SAFE,
+    governance: StrategyType.MULTISIG,
   },
   govToken: {
     tokenCreationType: TokenCreationType.NEW,

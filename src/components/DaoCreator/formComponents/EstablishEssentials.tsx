@@ -51,13 +51,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
               label={t('labelMultisigGov')}
               description={t('descMultisigGov')}
               testId="choose-multisig"
-              value={StrategyType.GNOSIS_SAFE}
+              value={StrategyType.MULTISIG}
             />
             <RadioWithText
               label={t('labelAzoriusGov')}
               description={t('descAzoriusGov')}
               testId="choose-azorius"
-              value={StrategyType.GNOSIS_SAFE_AZORIUS}
+              value={StrategyType.AZORIUS}
             />
           </RadioGroup>
         </LabelComponent>
@@ -69,9 +69,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         nextStep={
-          values.essentials.governance === StrategyType.GNOSIS_SAFE
-            ? CreatorSteps.GNOSIS_GOVERNANCE
-            : CreatorSteps.GNOSIS_WITH_AZORIUS
+          values.essentials.governance === StrategyType.MULTISIG
+            ? CreatorSteps.MULTISIG_GOVERNANCE
+            : CreatorSteps.AZORIUS_GOVERNANCE
         }
       />
     </StepWrapper>

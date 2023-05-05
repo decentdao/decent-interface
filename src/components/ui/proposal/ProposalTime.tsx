@@ -65,7 +65,7 @@ function useCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (governance.type === StrategyType.GNOSIS_SAFE_AZORIUS) {
+            if (governance.type === StrategyType.AZORIUS) {
               await updateProposalState(BigNumber.from(proposal.proposalId));
             } else {
               await loadDAOProposals();

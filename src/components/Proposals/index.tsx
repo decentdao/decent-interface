@@ -57,10 +57,10 @@ export default function Proposals() {
 
     let options;
     switch (type) {
-      case StrategyType.GNOSIS_SAFE_AZORIUS:
+      case StrategyType.AZORIUS:
         options = FILTERS_AZORIUS;
         break;
-      case StrategyType.GNOSIS_SAFE:
+      case StrategyType.MULTISIG:
       default:
         if (guardContracts.freezeGuardContract) {
           options = FILTERS_MULTISIG_CHILD;

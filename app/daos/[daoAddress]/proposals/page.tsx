@@ -29,7 +29,7 @@ export default function ProposalsPage() {
 
   const showDelegate = useMemo(() => {
     if (type) {
-      if (type === StrategyType.GNOSIS_SAFE_AZORIUS) {
+      if (type === StrategyType.AZORIUS) {
         if (azoriusGovernance.votesToken && azoriusGovernance.votesToken.balance) {
           return azoriusGovernance.votesToken.balance.gt(0);
         }
@@ -40,7 +40,7 @@ export default function ProposalsPage() {
 
   const showCreateButton = useMemo(
     () =>
-      type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || ''),
+      type === StrategyType.AZORIUS ? true : safe?.owners.includes(user.address || ''),
     [type, safe, user.address]
   );
 

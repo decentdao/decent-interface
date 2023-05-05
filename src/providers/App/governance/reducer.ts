@@ -24,7 +24,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, type, proposals: newProposals };
     }
     case FractalGovernanceAction.SET_STRATEGY: {
-      return { ...state, type: StrategyType.GNOSIS_SAFE_AZORIUS, votesStrategy: action.payload };
+      return { ...state, type: StrategyType.AZORIUS, votesStrategy: action.payload };
     }
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...(proposals || []), action.payload] };
