@@ -37,7 +37,7 @@ function RemoveSignerModal({
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(currentThreshold);
-  const [nonce, setNonce] = useState<number | undefined>();
+  const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
   const provider = useProvider();
   const networkId = provider.network.chainId;
   const { data: ensName } = useEnsName({
@@ -144,7 +144,7 @@ function RemoveSignerModal({
             color="grayscale.100"
             mt={3}
             ml={2}
-          >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length + 1} ${t(
+          >{`${t('signersRequired1', { ns: 'modals' })} ${currentThreshold} ${t(
             'signersRequired2',
             { ns: 'modals' }
           )}`}</Text>
