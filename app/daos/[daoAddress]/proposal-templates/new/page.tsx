@@ -57,14 +57,16 @@ export default function CreateProposalTemplatePage() {
         onSubmit={async values => {
           if (canUserCreateProposal) {
             const proposalData = await prepareProposalTemplateProposal(values);
-            submitProposal({
-              proposalData,
-              nonce,
-              pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-              successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-              failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-              successCallback,
-            });
+            if (proposalData) {
+              submitProposal({
+                proposalData,
+                nonce,
+                pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+                successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+                failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+                successCallback,
+              });
+            }
           }
         }}
       >

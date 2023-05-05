@@ -13,6 +13,7 @@ import {
   Azorius__factory,
   ERC20Claim__factory,
   VotesERC20Wrapper__factory,
+  KeyValuePairs__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
@@ -40,6 +41,7 @@ export default function useSafeContracts() {
       votesERC20MasterCopy,
       claimingMasterCopy,
       votesERC20WrapperMasterCopy,
+      keyValuePairs,
     },
   } = useNetworkConfg();
 
@@ -126,6 +128,11 @@ export default function useSafeContracts() {
       asProvider: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, provider),
     };
 
+    const keyValuePairsContract = {
+      asSigner: KeyValuePairs__factory.connect(keyValuePairs, signerOrProvider),
+      asProvider: KeyValuePairs__factory.connect(keyValuePairs, provider),
+    };
+
     return {
       multiSendContract,
       gnosisSafeFactoryContract,
@@ -142,6 +149,7 @@ export default function useSafeContracts() {
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
+      keyValuePairsContract,
     };
   }, [
     gnosisSafeFactory,
@@ -159,6 +167,7 @@ export default function useSafeContracts() {
     votesERC20MasterCopy,
     claimingMasterCopy,
     votesERC20WrapperMasterCopy,
+    keyValuePairs,
     provider,
     signer,
   ]);

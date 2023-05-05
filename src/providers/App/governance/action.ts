@@ -1,6 +1,5 @@
 import { ERC20Claim } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { ProposalTemplate } from '../../../../.graphclient';
 import {
   FractalProposal,
   ProposalVotesSummary,
@@ -10,6 +9,7 @@ import {
   VotesStrategy,
   UnderlyingTokenData,
 } from '../../../types';
+import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { StrategyType } from './../../../types/fractal';
 
 export enum FractalGovernanceAction {

@@ -71,7 +71,7 @@ export default function ProposalTemplateTransactionsForm(
             onClick={() => setFormState(CreateProposalTemplateFormState.METADATA_FORM)}
             mb={4}
           >
-            {`< ${t('proposalBack', { ns: 'proposal' })}`}
+            {`< ${t('back', { ns: 'common' })}`}
           </Button>
 
           <Button

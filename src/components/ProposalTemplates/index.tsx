@@ -21,7 +21,7 @@ export default function ProposalTemplates() {
 
   return (
     <Flex
-      flexDirection="column"
+      flexDirection={proposalTemplates && proposalTemplates.length > 0 ? 'row' : 'column'}
       gap="1rem"
     >
       {!proposalTemplates ? (
@@ -29,9 +29,9 @@ export default function ProposalTemplates() {
           <InfoBoxLoader />
         </Box>
       ) : proposalTemplates.length > 0 ? (
-        proposalTemplates.map(proposalTemplate => (
+        proposalTemplates.map((proposalTemplate, i) => (
           <ProposalTemplateCard
-            key={proposalTemplate.id}
+            key={i}
             proposalTemplate={proposalTemplate}
           />
         ))

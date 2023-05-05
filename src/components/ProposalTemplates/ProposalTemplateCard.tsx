@@ -1,7 +1,7 @@
 import { Avatar, Flex, Text } from '@chakra-ui/react';
 import { VEllipsis } from '@decent-org/fractal-ui';
-import { ProposalTemplate } from '../../../.graphclient';
 import { logError } from '../../helpers/errorLogging';
+import { ProposalTemplate } from '../../types/createProposalTemplate';
 import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 

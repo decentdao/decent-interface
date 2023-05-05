@@ -32,22 +32,6 @@ query DAOQuery($daoAddress: Bytes) {
                 }
             }
         }
-        proposalTemplates {
-            id
-            title
-            description
-            transactions {
-                id
-                targetAddress
-                ethValue
-                functionName
-                parameters {
-                    id
-                    signature
-                    label
-                    value
-                }
-            }
-        }
+        proposalTemplatesHash
     }
 }
