@@ -10,7 +10,12 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
-import { ContractConnection, FractalModuleType, FractalNode } from '../../../types';
+import {
+  ContractConnection,
+  FractalModuleData,
+  FractalModuleType,
+  FractalNode,
+} from '../../../types';
 import { useLocalStorage } from '../../utils/useLocalStorage';
 
 const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
@@ -35,13 +40,17 @@ export const useGovernanceContracts = () => {
 
   const { setValue, getValue } = useLocalStorage();
 
+  const findAzoriusModule = (fractalModules: FractalModuleData[]): Azorius | undefined => {
+    return fractalModules.find(module => module.moduleType === FractalModuleType.AZORIUS)
+      ?.moduleContract as Azorius | undefined;
+  };
+
   const loadGovernanceContracts = useCallback(
     async (_node: FractalNode) => {
       const { fractalModules } = _node;
 
-      const azoriusModule = fractalModules.find(
-        module => module.moduleType === FractalModuleType.AZORIUS
-      )?.moduleContract as Azorius | undefined;
+      const azoriusModule = findAzoriusModule(fractalModules);
+
       if (!!azoriusModule) {
         const azoriusContract = {
           asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(azoriusModule.address),
@@ -89,7 +98,11 @@ export const useGovernanceContracts = () => {
           }
           const possibleERC20Wrapper =
             votesERC20WrapperMasterCopyContract.asSigner.attach(govTokenAddress);
-          underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => undefined);
+          underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => {
+            // if the underlying token is not an ERC20Wrapper, this will throw an error,
+            // so we catch it and return undefined
+            return undefined;
+          });
 
           if (!underlyingTokenAddress) {
             tokenContract = {
