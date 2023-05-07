@@ -90,7 +90,18 @@ export const mapProposalCreatedEventToProposal = async (
   chainId: number,
   metaData?: ProposalMetaData
 ) => {
-  const { endBlock, startBlock } = await strategyContract.getProposalVotes(proposalId);
+  const { endBlock, startBlock, abstainVotes, yesVotes, noVotes } =
+    await strategyContract.getProposalVotes(proposalId);
+  let quorum;
+
+  try {
+    quorum = await strategyContract.quorumVotes(proposalId);
+  } catch (e) {
+    // For who knows reason - strategy.quorumVotes might give you an error
+    // Seems like occuring when token deployment haven't worked properly
+    logError('Error while getting strategy quorum');
+    quorum = BigNumber.from(0);
+  }
   const deadline = await getTimeStamp(endBlock, provider);
   const state = await getAzoriusProposalState(
     strategyContract,
@@ -100,7 +111,12 @@ export const mapProposalCreatedEventToProposal = async (
   );
   const votes = await getProposalVotes(strategyContract, proposalId);
   const block = await provider.getBlock(startBlock);
-  const votesSummary = await getProposalVotesSummary(strategyContract, proposalId);
+  const votesSummary = {
+    yes: yesVotes,
+    no: noVotes,
+    abstain: abstainVotes,
+    quorum,
+  };
 
   const targets = metaData ? metaData.decodedTransactions.map(tx => tx.target) : [];
 
