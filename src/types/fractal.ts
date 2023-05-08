@@ -13,6 +13,7 @@ import {
   VotesERC20,
   MultisigFreezeGuard,
   VotesERC20Wrapper,
+  KeyValuePairs,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
   SafeMultisigTransactionWithTransfersResponse,
@@ -320,6 +321,7 @@ export interface FractalContracts {
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
   votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;
+  keyValuePairsContract: ContractConnection<KeyValuePairs>;
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal;

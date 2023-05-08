@@ -66,6 +66,22 @@ export function EstablishEssentials(props: ICreationStepProps) {
         color="chocolate.700"
         mb={4}
       />
+      <InputComponent
+        label="SnapShot"
+        helper="Include a link to your DAO's snapshot"
+        isRequired
+        value={values.essentials.snapshotURL}
+        id="searchEssentials-daoName"
+        onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
+        onBlur={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value.trim(), true)}
+        disabled={false}
+        placeholder="https://"
+        testId="essentials-snapshotURL"
+      />
+      <Divider
+        color="chocolate.700"
+        mb={4}
+      />
       <StepButtons
         {...props}
         nextStep={

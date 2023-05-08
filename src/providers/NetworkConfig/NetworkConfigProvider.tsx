@@ -32,6 +32,7 @@ export const defaultState = {
     multisigFreezeVotingMasterCopy: '',
     erc20FreezeVotingMasterCopy: '',
     votesERC20WrapperMasterCopy: '',
+    keyValuePairs: '',
   },
 };
 
