@@ -73,7 +73,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     ];
 
     if (this.parentAddress) {
-      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder(
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
         azoriusTxBuilder.azoriusContract!.address,
         azoriusTxBuilder.linearVotingContract!.address
       );
@@ -81,10 +81,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
         this.enableFractalModuleTx!,
-        vetoGuardTxBuilder.buildDeployZodiacModuleTx(),
-        vetoGuardTxBuilder.buildVetoVotingSetupTx(),
-        vetoGuardTxBuilder.buildDeployVetoGuardTx(),
-        vetoGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
+        freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
+        freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
+        freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
+        freezeGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
       ]);
     }
     const data = this.daoData as AzoriusGovernanceDAO;
@@ -136,17 +136,17 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
 
-    // subDAO case, add veto guard
+    // subDAO case, add freeze guard
     if (this.parentAddress) {
-      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder();
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
         this.enableFractalModuleTx!,
-        vetoGuardTxBuilder.buildDeployZodiacModuleTx(),
-        vetoGuardTxBuilder.buildVetoVotingSetupTx(),
-        vetoGuardTxBuilder.buildDeployVetoGuardTx(),
-        vetoGuardTxBuilder.buildSetGuardTx(this.safeContract),
+        freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
+        freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
+        freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
+        freezeGuardTxBuilder.buildSetGuardTx(this.safeContract),
       ]);
     }
 

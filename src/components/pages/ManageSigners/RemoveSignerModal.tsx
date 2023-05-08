@@ -15,7 +15,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, useEnsName, useProvider } from 'wagmi';
 import { TOOLTIP_MAXW } from '../../../constants/common';
-import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import ModalTooltip from '../../ui/modals/ModalTooltip';
@@ -33,13 +32,12 @@ function RemoveSignerModal({
   currentThreshold: number;
 }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(currentThreshold);
-  const [nonce, setNonce] = useState<number | undefined>();
-  const defaultNonce = useDefaultNonce();
+  const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
   const provider = useProvider();
   const networkId = provider.network.chainId;
   const { data: ensName } = useEnsName({
@@ -49,14 +47,6 @@ function RemoveSignerModal({
   });
   const { t } = useTranslation(['modals', 'common']);
   const tooltipContainer = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!defaultNonce) {
-      setNonce(undefined);
-      return;
-    }
-    setNonce(defaultNonce);
-  }, [defaultNonce]);
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length - 1 }, (_, i) => i + 1));
@@ -154,7 +144,7 @@ function RemoveSignerModal({
             color="grayscale.100"
             mt={3}
             ml={2}
-          >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length + 1} ${t(
+          >{`${t('signersRequired1', { ns: 'modals' })} ${currentThreshold} ${t(
             'signersRequired2',
             { ns: 'modals' }
           )}`}</Text>
@@ -191,10 +181,9 @@ function RemoveSignerModal({
       <CustomNonceInput
         nonce={nonce}
         onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
-        defaultNonce={defaultNonce}
       />
       <Button
-        isDisabled={!threshold || !nonce || !defaultNonce || nonce < defaultNonce}
+        isDisabled={!threshold || !nonce || !safe || nonce < safe.nonce}
         mt={6}
         width="100%"
         onClick={onSubmit}

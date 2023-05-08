@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
-import useDefaultNonce from '../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ProposalTemplate } from '../../types/createProposalTemplate';
 import ContentBox from '../ui/containers/ContentBox';
@@ -22,12 +21,11 @@ export default function ProposalTemplateCard({
   const { push } = useRouter();
   const { t } = useTranslation('proposalTemplate');
   const {
-    node: { daoAddress },
+    node: { safe, daoAddress },
   } = useFractal();
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
-  const nonce = useDefaultNonce();
 
   const successCallback = () => {
     if (daoAddress) {
@@ -36,6 +34,7 @@ export default function ProposalTemplateCard({
     }
   };
 
+  const nonce = safe?.nonce;
   const handleRemoveTemplate = async () => {
     const proposalData = await prepareRemoveProposalTemplateProposal(templateIndex);
     if (!!proposalData) {

@@ -52,7 +52,7 @@ export function ProposalAction({
   } = useFractal();
   const { push } = useRouter();
   const { t } = useTranslation();
-  const isazoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
+  const isAzoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
 
   const showActionButton =
     proposal.state === FractalProposalState.ACTIVE ||
@@ -65,14 +65,14 @@ export function ProposalAction({
   };
 
   const hasVoted = useMemo(() => {
-    if (isazoriusProposal) {
+    if (isAzoriusProposal) {
       const azoriusProposal = proposal as AzoriusProposal;
       return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
     } else {
       const safeProposal = proposal as MultisigProposal;
       return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [isazoriusProposal, proposal, user.address]);
+  }, [isAzoriusProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -93,10 +93,10 @@ export function ProposalAction({
       if (hasVoted) {
         return t('details');
       }
-      return t(isazoriusProposal ? 'vote' : 'sign');
+      return t(isAzoriusProposal ? 'vote' : 'sign');
     }
     return t('details');
-  }, [proposal, t, isazoriusProposal, hasVoted]);
+  }, [proposal, t, isAzoriusProposal, hasVoted]);
 
   if (!showActionButton) {
     if (!expandedView) {

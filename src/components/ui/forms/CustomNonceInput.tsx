@@ -10,18 +10,18 @@ import ModalTooltip from '../modals/ModalTooltip';
 export function CustomNonceInput({
   nonce,
   onChange,
-  defaultNonce,
 }: {
   nonce: number | undefined;
-  defaultNonce: number | undefined;
   onChange: (nonce?: number) => void;
 }) {
-  const { governance } = useFractal();
+  const {
+    governance,
+    node: { safe },
+  } = useFractal();
   const { t } = useTranslation(['proposal']);
-  const errorMessage =
-    nonce && defaultNonce && nonce < defaultNonce ? t('customNonceError') : undefined;
+  const errorMessage = nonce && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
-  if (governance.type === StrategyType.GNOSIS_SAFE_AZORIUS) return null;
+  if (governance.type === StrategyType.AZORIUS) return null;
 
   return (
     <VStack alignItems="start">

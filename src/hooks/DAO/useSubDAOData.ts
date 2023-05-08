@@ -27,22 +27,22 @@ export function useSubDAOData(fractalNode?: FractalNode) {
       return;
     }
 
-    let vetoGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
+    let freezeGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
       daoAddress,
       safe,
       fractalModules
     );
-    if (!vetoGuardContracts) {
-      vetoGuardContracts = initialGuardContractsState;
+    if (!freezeGuardContracts) {
+      freezeGuardContracts = initialGuardContractsState;
     }
-    let freezeGuard = await loadFractalFreezeGuard(vetoGuardContracts);
+    let freezeGuard = await loadFractalFreezeGuard(freezeGuardContracts);
     if (!freezeGuard) {
       freezeGuard = initialGuardState;
     }
     setSubDAOData({
       safe,
       fractalModules,
-      vetoGuardContracts,
+      freezeGuardContracts: freezeGuardContracts,
       freezeGuard,
     });
   }, [safeService, fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);

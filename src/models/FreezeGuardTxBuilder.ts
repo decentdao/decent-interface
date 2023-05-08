@@ -18,21 +18,21 @@ import {
   generateSalt,
 } from './helpers/utils';
 
-export class VetoGuardTxBuilder extends BaseTxBuilder {
+export class FreezeGuardTxBuilder extends BaseTxBuilder {
   // Salt used to generate transactions
   private readonly saltNum;
 
   // Gnosis Safe Data
   private readonly safeContract: GnosisSafe;
 
-  // Veto Voting Data
-  private vetoVotingType: any;
-  private vetoVotingCallData: string | undefined;
-  private vetoVotingAddress: string | undefined;
+  // Freeze Voting Data
+  private freezeVotingType: any;
+  private freezeVotingCallData: string | undefined;
+  private freezeVotingAddress: string | undefined;
 
-  // Veto Guard Data
-  private vetoGuardCallData: string | undefined;
-  private vetoGuardAddress: string | undefined;
+  // Freeze Guard Data
+  private freezeGuardCallData: string | undefined;
+  private freezeGuardAddress: string | undefined;
 
   // Azorius Data
   private azoriusAddress: string | undefined;
@@ -64,14 +64,14 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
     this.azoriusAddress = azoriusAddress;
     this.strategyAddress = strategyAddress;
 
-    this.initVetoVotesData();
+    this.initFreezeVotesData();
   }
 
-  initVetoVotesData() {
-    this.setVetoVotingTypeAndCallData();
-    this.setVetoVotingAddress();
-    this.setVetoGuardData();
-    this.setVetoGuardAddress();
+  initFreezeVotesData() {
+    this.setFreezeVotingTypeAndCallData();
+    this.setFreezeVotingAddress();
+    this.setFreezeGuardData();
+    this.setFreezeGuardAddress();
   }
 
   public buildDeployZodiacModuleTx(): SafeTransaction {
@@ -79,10 +79,10 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
       [
-        this.vetoVotingType === ERC20FreezeVoting__factory
-          ? this.baseContracts.vetoERC20VotingMasterCopyContract.address
-          : this.baseContracts.vetoMultisigVotingMasterCopyContract.address,
-        this.vetoVotingCallData,
+        this.freezeVotingType === ERC20FreezeVoting__factory
+          ? this.baseContracts.freezeERC20VotingMasterCopyContract.address
+          : this.baseContracts.freezeMultisigVotingMasterCopyContract.address,
+        this.freezeVotingCallData,
         this.saltNum,
       ],
       0,
@@ -90,23 +90,21 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
     );
   }
 
-  public buildVetoVotingSetupTx(): SafeTransaction {
+  public buildFreezeVotingSetupTx(): SafeTransaction {
     const subDaoData = this.daoData as SubDAO;
 
     return buildContractCall(
-      this.vetoVotingType.connect(this.vetoVotingAddress, this.signerOrProvider),
+      this.freezeVotingType.connect(this.freezeVotingAddress, this.signerOrProvider),
       'setUp',
       [
         ethers.utils.defaultAbiCoder.encode(
           ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
           [
             this.parentAddress, // Owner -- Parent DAO
-            subDaoData.vetoVotesThreshold, // VetoVotesThreshold
             subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
             subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
             subDaoData.freezePeriod, // FreezePeriod
             this.parentTokenAddress ?? this.parentAddress, // ParentGnosisSafe or Votes Token
-            this.vetoGuardAddress, // MultisigFreezeGuard
           ]
         ),
       ],
@@ -116,71 +114,71 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
   }
 
   public buildSetGuardTx(contract: GnosisSafe | Azorius): SafeTransaction {
-    return buildContractCall(contract, 'setGuard', [this.vetoGuardAddress], 0, false);
+    return buildContractCall(contract, 'setGuard', [this.freezeGuardAddress], 0, false);
   }
 
-  public buildDeployVetoGuardTx() {
+  public buildDeployFreezeGuardTx() {
     return buildDeployZodiacModuleTx(this.baseContracts.zodiacModuleProxyFactoryContract, [
       this.getGuardMasterCopyAddress(),
-      this.vetoGuardCallData!,
+      this.freezeGuardCallData!,
       this.saltNum,
     ]);
   }
 
   /**
-   * Methods to generate veto voting and guard addresses
+   * Methods to generate freeze voting and guard addresses
    * As well as calldata needed to create deploy Txs
    */
 
-  private setVetoVotingTypeAndCallData() {
-    this.vetoVotingType = this.parentTokenAddress
+  private setFreezeVotingTypeAndCallData() {
+    this.freezeVotingType = this.parentTokenAddress
       ? ERC20FreezeVoting__factory
       : MultisigFreezeVoting__factory;
 
-    this.vetoVotingCallData = this.vetoVotingType.createInterface().encodeFunctionData('owner');
+    this.freezeVotingCallData = this.freezeVotingType.createInterface().encodeFunctionData('owner');
   }
 
-  private setVetoVotingAddress() {
-    const vetoVotesMasterCopyContract = this.parentTokenAddress
-      ? this.baseContracts.vetoERC20VotingMasterCopyContract
-      : this.baseContracts.vetoMultisigVotingMasterCopyContract;
+  private setFreezeVotingAddress() {
+    const freezeVotesMasterCopyContract = this.parentTokenAddress
+      ? this.baseContracts.freezeERC20VotingMasterCopyContract
+      : this.baseContracts.freezeMultisigVotingMasterCopyContract;
 
-    const vetoVotingByteCodeLinear = generateContractByteCodeLinear(
-      vetoVotesMasterCopyContract.address.slice(2)
+    const freezeVotingByteCodeLinear = generateContractByteCodeLinear(
+      freezeVotesMasterCopyContract.address.slice(2)
     );
 
-    this.vetoVotingAddress = getCreate2Address(
+    this.freezeVotingAddress = getCreate2Address(
       this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      generateSalt(this.vetoVotingCallData!, this.saltNum),
-      solidityKeccak256(['bytes'], [vetoVotingByteCodeLinear])
+      generateSalt(this.freezeVotingCallData!, this.saltNum),
+      solidityKeccak256(['bytes'], [freezeVotingByteCodeLinear])
     );
   }
 
-  private setVetoGuardAddress() {
-    const vetoGuardByteCodeLinear = generateContractByteCodeLinear(
+  private setFreezeGuardAddress() {
+    const freezeGuardByteCodeLinear = generateContractByteCodeLinear(
       this.getGuardMasterCopyAddress().slice(2)
     );
-    const vetoGuardSalt = generateSalt(this.vetoGuardCallData!, this.saltNum);
+    const freezeGuardSalt = generateSalt(this.freezeGuardCallData!, this.saltNum);
 
-    this.vetoGuardAddress = generatePredictedModuleAddress(
+    this.freezeGuardAddress = generatePredictedModuleAddress(
       this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      vetoGuardSalt,
-      vetoGuardByteCodeLinear
+      freezeGuardSalt,
+      freezeGuardByteCodeLinear
     );
   }
 
-  private setVetoGuardData() {
+  private setFreezeGuardData() {
     if (this.azoriusAddress) {
-      this.setVetoGuardCallDataAzorius();
+      this.setFreezeGuardCallDataAzorius();
     } else {
-      this.setVetoGuardCallDataMultisig();
+      this.setFreezeGuardCallDataMultisig();
     }
   }
 
-  private setVetoGuardCallDataMultisig() {
+  private setFreezeGuardCallDataMultisig() {
     const subDaoData = this.daoData as SubDAO;
 
-    this.vetoGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
+    this.freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
         ethers.utils.defaultAbiCoder.encode(
@@ -189,7 +187,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
             subDaoData.timelockPeriod, // Timelock Period
             subDaoData.executionPeriod, // Execution Period
             this.parentAddress, // Owner -- Parent DAO
-            this.vetoVotingAddress, // Veto Voting
+            this.freezeVotingAddress, // Freeze Voting
             this.safeContract.address, // Gnosis Safe
           ]
         ),
@@ -197,17 +195,17 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
     );
   }
 
-  private setVetoGuardCallDataAzorius() {
+  private setFreezeGuardCallDataAzorius() {
     const subDaoData = this.daoData as SubDAO;
 
-    this.vetoGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
+    this.freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
         ethers.utils.defaultAbiCoder.encode(
           ['address', 'address', 'address', 'address', 'uint256'],
           [
             this.parentAddress, // Owner -- Parent DAO
-            this.vetoVotingAddress, // Veto Voting
+            this.freezeVotingAddress, // Freeze Voting
             this.strategyAddress, // Base Strategy
             this.azoriusAddress, // Azorius
             subDaoData.executionPeriod, // Execution Period
@@ -219,7 +217,7 @@ export class VetoGuardTxBuilder extends BaseTxBuilder {
 
   private getGuardMasterCopyAddress(): string {
     return this.azoriusContracts
-      ? this.azoriusContracts.azoriusVetoGuardMasterCopyContract.address
-      : this.baseContracts.gnosisVetoGuardMasterCopyContract.address;
+      ? this.azoriusContracts.azoriusFreezeGuardMasterCopyContract.address
+      : this.baseContracts.multisigFreezeGuardMasterCopyContract.address;
   }
 }

@@ -15,8 +15,8 @@ export function useFetchNodes(address?: string) {
     node: { safe, nodeHierarchy },
     clients: { safeService },
     baseContracts: {
-      gnosisVetoGuardMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract,
       fractalAzoriusMasterCopyContract,
     },
   } = useFractal();
@@ -29,9 +29,9 @@ export function useFetchNodes(address?: string) {
 
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
-      if (safeInfo && safeInfo.guard && gnosisVetoGuardMasterCopyContract) {
+      if (safeInfo && safeInfo.guard && multisigFreezeGuardMasterCopyContract) {
         if (safeInfo.guard !== ethers.constants.AddressZero) {
-          const guard = gnosisVetoGuardMasterCopyContract.asSigner.attach(safeInfo.guard);
+          const guard = multisigFreezeGuardMasterCopyContract.asSigner.attach(safeInfo.guard);
           const guardOwner = await guard.owner();
           if (guardOwner !== safeInfo.address) {
             return guardOwner;
@@ -42,7 +42,7 @@ export function useFetchNodes(address?: string) {
           const azoriusModule = getAzoriusModuleFromModules(modules);
           if (
             azoriusModule &&
-            azoriusVetoGuardMasterCopyContract &&
+            azoriusFreezeGuardMasterCopyContract &&
             fractalAzoriusMasterCopyContract
           ) {
             const azoriusContract = fractalAzoriusMasterCopyContract?.asSigner.attach(
@@ -50,7 +50,8 @@ export function useFetchNodes(address?: string) {
             );
             const azoriusGuardAddress = await azoriusContract.getGuard();
             if (azoriusGuardAddress !== ethers.constants.AddressZero) {
-              const guard = azoriusVetoGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress);
+              const guard =
+                azoriusFreezeGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress);
               const guardOwner = await guard.owner();
               if (guardOwner !== safeInfo.address) {
                 return guardOwner;
@@ -62,8 +63,8 @@ export function useFetchNodes(address?: string) {
       return undefined;
     },
     [
-      gnosisVetoGuardMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
       fractalAzoriusMasterCopyContract,
       lookupModules,
     ]

@@ -17,6 +17,16 @@ export const useDecodeTransaction = () => {
         const decodedTransactions = await Promise.all(
           transactions.map(async tx => {
             try {
+              if (!tx.data || tx.data.length <= 2) {
+                return {
+                  target: tx.to,
+                  value: tx.value.toString(),
+                  function: 'unknown',
+                  parameterTypes: [],
+                  parameterValues: [],
+                  decodingFailed: true,
+                };
+              }
               const decodedData = (
                 await axios.post(apiUrl, {
                   to: tx.to,

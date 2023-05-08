@@ -87,7 +87,7 @@ export default function useSafeContracts() {
       asProvider: FractalRegistry__factory.connect(fractalRegistry, provider),
     };
 
-    const gnosisVetoGuardMasterCopyContract = {
+    const multisigFreezeGuardMasterCopyContract = {
       asSigner: MultisigFreezeGuard__factory.connect(
         multisigFreezeGuardMasterCopy,
         signerOrProvider
@@ -95,12 +95,12 @@ export default function useSafeContracts() {
       asProvider: MultisigFreezeGuard__factory.connect(multisigFreezeGuardMasterCopy, provider),
     };
 
-    const azoriusVetoGuardMasterCopyContract = {
+    const azoriusFreezeGuardMasterCopyContract = {
       asSigner: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, signerOrProvider),
       asProvider: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, provider),
     };
 
-    const vetoMultisigVotingMasterCopyContract = {
+    const multisigFreezeVotingMasterCopyContract = {
       asSigner: MultisigFreezeVoting__factory.connect(
         multisigFreezeVotingMasterCopy,
         signerOrProvider
@@ -108,7 +108,7 @@ export default function useSafeContracts() {
       asProvider: MultisigFreezeVoting__factory.connect(multisigFreezeVotingMasterCopy, provider),
     };
 
-    const vetoERC20VotingMasterCopyContract = {
+    const freezeERC20VotingMasterCopyContract = {
       asSigner: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, signerOrProvider),
       asProvider: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, provider),
     };
@@ -142,10 +142,10 @@ export default function useSafeContracts() {
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       fractalRegistryContract,
-      gnosisVetoGuardMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-      vetoERC20VotingMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract,
+      multisigFreezeVotingMasterCopyContract: multisigFreezeVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,

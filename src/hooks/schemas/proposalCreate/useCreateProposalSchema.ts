@@ -20,7 +20,7 @@ export const useCreateProposalSchema = () => {
           .min(1)
           .of(
             Yup.object().shape({
-              targetAddress: Yup.string().test(addressValidationTest),
+              targetAddress: Yup.string().required().test(addressValidationTest),
               ethValue: Yup.object().shape({
                 value: Yup.string(),
               }),

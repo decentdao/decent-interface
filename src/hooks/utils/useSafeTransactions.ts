@@ -13,7 +13,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
-  GnosisTransferType,
+  SafeTransferType,
   ActivityEventType,
   Activity,
   FractalProposalState,
@@ -27,7 +27,7 @@ export const useSafeTransactions = () => {
   const provider = useProvider();
   const { guardContracts } = useFractal();
 
-  type VetoGuardData = {
+  type FreezeGuardData = {
     guardTimelockPeriod: BigNumber;
     guardExecutionPeriod: BigNumber;
     lastBlock: ethers.providers.Block;
@@ -37,10 +37,10 @@ export const useSafeTransactions = () => {
     async (
       activities: Activity[],
       freezeGuard?: MultisigFreezeGuard,
-      vetoGuardData?: VetoGuardData
+      freezeGuardData?: FreezeGuardData
     ) => {
-      if (freezeGuard && vetoGuardData) {
-        const { guardTimelockPeriod, guardExecutionPeriod, lastBlock } = vetoGuardData;
+      if (freezeGuard && freezeGuardData) {
+        const { guardTimelockPeriod, guardExecutionPeriod, lastBlock } = freezeGuardData;
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
             if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
@@ -159,7 +159,7 @@ export const useSafeTransactions = () => {
     (transfers: TransferWithTokenInfoResponse[]) => {
       return transfers.reduce(
         (prev: Map<string, AssetTotals>, cur: TransferWithTokenInfoResponse) => {
-          if (cur.type === GnosisTransferType.ETHER && cur.value) {
+          if (cur.type === SafeTransferType.ETHER && cur.value) {
             const prevValue = prev.get(constants.AddressZero)!;
             if (prevValue) {
               prev.set(constants.AddressZero, {
@@ -174,14 +174,14 @@ export const useSafeTransactions = () => {
               decimals: 18,
             });
           }
-          if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+          if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
             prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
               bn: BigNumber.from(1),
               symbol: cur.tokenInfo.symbol,
               decimals: 0,
             });
           }
-          if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+          if (cur.type === SafeTransferType.ERC20 && cur.value && cur.tokenInfo) {
             const prevValue = prev.get(cur.tokenInfo.address);
             if (prevValue) {
               prev.set(cur.tokenInfo.address, {
@@ -328,21 +328,21 @@ export const useSafeTransactions = () => {
         })
       );
       let freezeGuard: MultisigFreezeGuard | undefined;
-      let vetoGuardData: VetoGuardData | undefined;
+      let freezeGuardData: FreezeGuardData | undefined;
 
-      if (guardContracts.vetoGuardContract) {
+      if (guardContracts.freezeGuardContract) {
         const blockNumber = await provider.getBlockNumber();
-        freezeGuard = guardContracts.vetoGuardContract.asSigner as MultisigFreezeGuard;
+        freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
         const timeLockPeriodBlock = await freezeGuard.timelockPeriod();
         const texecutionPeriodBlock = await freezeGuard.executionPeriod();
-        vetoGuardData = {
+        freezeGuardData = {
           guardTimelockPeriod: BigNumber.from(await getTimeStamp(timeLockPeriodBlock, provider)),
           guardExecutionPeriod: BigNumber.from(await getTimeStamp(texecutionPeriodBlock, provider)),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
 
-      const activitiesWithState = await getState(activities, freezeGuard, vetoGuardData);
+      const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
     [nativeTokenSymbol, provider, guardContracts, getTransferTotal, getState]

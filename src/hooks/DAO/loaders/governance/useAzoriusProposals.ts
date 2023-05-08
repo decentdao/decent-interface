@@ -8,7 +8,7 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { MetaData } from '../../../../types';
+import { CreateProposalMetadata } from '../../../../types';
 
 import { AzoriusProposal } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
@@ -41,16 +41,16 @@ export const useAzoriusProposals = () => {
       proposalCreatedEvents.map(async ({ args }) => {
         let metaData;
         if (args.metadata) {
-          const metaDataEvent: MetaData = JSON.parse(args.metadata);
+          const metaDataEvent: CreateProposalMetadata = JSON.parse(args.metadata);
           const decodedTransactions = await decodeTransactions(
             args.proposalId.toString(),
-            metaDataEvent.args.transactions
+            args.transactions
           );
           metaData = {
-            title: metaDataEvent.args.title,
-            description: metaDataEvent.args.description,
-            documentationUrl: metaDataEvent.args.documentationUrl,
-            transactions: metaDataEvent.args.transactions,
+            title: metaDataEvent.title,
+            description: metaDataEvent.description,
+            documentationUrl: metaDataEvent.documentationUrl,
+            transactions: args.transactions,
             decodedTransactions,
           };
         }
@@ -70,7 +70,7 @@ export const useAzoriusProposals = () => {
 
   // Azrious proposals are listeners
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
-    async (strategyAddress, proposalId, proposer, _, _metadata) => {
+    async (strategyAddress, proposalId, proposer, transactions, _metadata) => {
       if (!azoriusContract || !ozLinearVotingContract) {
         return;
       }
@@ -78,16 +78,13 @@ export const useAzoriusProposals = () => {
       let metaData;
 
       if (_metadata) {
-        const metaDataEvent: MetaData = JSON.parse(_metadata);
+        const metaDataEvent: CreateProposalMetadata = JSON.parse(_metadata);
         metaData = {
-          title: metaDataEvent.args.title,
-          description: metaDataEvent.args.description,
-          documentationUrl: metaDataEvent.args.documentationUrl,
-          transactions: metaDataEvent.args.transactions,
-          decodedTransactions: await decodeTransactions(
-            proposalId.toString(),
-            metaDataEvent.args.transactions
-          ),
+          title: metaDataEvent.title,
+          description: metaDataEvent.description,
+          documentationUrl: metaDataEvent.documentationUrl,
+          transactions: transactions,
+          decodedTransactions: await decodeTransactions(proposalId.toString(), transactions),
         };
       }
       const strategyContract = getEventRPC<LinearERC20Voting>(
@@ -137,28 +134,30 @@ export const useAzoriusProposals = () => {
   );
 
   useEffect(() => {
-    if (!azoriusContract || !ozLinearVotingContract) {
+    if (!azoriusContract) {
       return;
     }
     const proposalCreatedFilter = azoriusContract.asSigner.filters.ProposalCreated();
 
-    const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
-
     azoriusContract.asSigner.on(proposalCreatedFilter, proposalCreatedListener);
+
+    return () => {
+      azoriusContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
+    };
+  }, [azoriusContract, proposalCreatedListener]);
+
+  useEffect(() => {
+    if (!ozLinearVotingContract) {
+      return;
+    }
+    const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
 
     ozLinearVotingContract.asSigner.on(votedEvent, proposalVotedEventListener);
 
     return () => {
-      azoriusContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
-
       ozLinearVotingContract.asSigner.off(votedEvent, proposalVotedEventListener);
     };
-  }, [
-    azoriusContract,
-    ozLinearVotingContract,
-    proposalCreatedListener,
-    proposalVotedEventListener,
-  ]);
+  }, [ozLinearVotingContract, proposalVotedEventListener]);
 
   return loadAzoriusProposals;
 };

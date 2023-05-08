@@ -33,10 +33,10 @@ export interface DAOContracts {
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
-  gnosisVetoGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
-  azoriusVetoGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
-  vetoMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
-  vetoERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
+  multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
+  azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
+  freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
+  freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
 }
@@ -46,9 +46,9 @@ export interface BaseContracts {
   fractalRegistryContract: FractalRegistry;
   gnosisSafeFactoryContract: GnosisSafeProxyFactory;
   gnosisSafeSingletonContract: GnosisSafe;
-  gnosisVetoGuardMasterCopyContract: MultisigFreezeGuard;
+  multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;
   multiSendContract: MultiSend;
-  vetoERC20VotingMasterCopyContract: ERC20FreezeVoting;
-  vetoMultisigVotingMasterCopyContract: MultisigFreezeVoting;
+  freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;
+  freezeMultisigVotingMasterCopyContract: MultisigFreezeVoting;
   zodiacModuleProxyFactoryContract: ModuleProxyFactory;
 }

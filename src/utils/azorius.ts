@@ -4,7 +4,6 @@ import { BigNumber } from 'ethers';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
-import { createAccountSubstring } from '../hooks/utils/useDisplayName';
 
 import { getValue, CacheKeys } from '../hooks/utils/useLocalStorage';
 import {
@@ -103,9 +102,7 @@ export const mapProposalCreatedEventToProposal = async (
   const block = await provider.getBlock(startBlock);
   const votesSummary = await getProposalVotesSummary(strategyContract, proposalId);
 
-  const targets = metaData
-    ? metaData.decodedTransactions.map(tx => createAccountSubstring(tx.target))
-    : [];
+  const targets = metaData ? metaData.decodedTransactions.map(tx => tx.target) : [];
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {

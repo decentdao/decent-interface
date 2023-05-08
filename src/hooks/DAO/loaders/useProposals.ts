@@ -24,7 +24,7 @@ export const useDAOProposals = () => {
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
         payload: {
-          type: StrategyType.GNOSIS_SAFE_AZORIUS,
+          type: StrategyType.AZORIUS,
           proposals: await loadAzoriusProposals(),
         },
       });

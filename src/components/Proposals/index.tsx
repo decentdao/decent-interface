@@ -57,12 +57,12 @@ export default function Proposals() {
 
     let options;
     switch (type) {
-      case StrategyType.GNOSIS_SAFE_AZORIUS:
+      case StrategyType.AZORIUS:
         options = FILTERS_AZORIUS;
         break;
-      case StrategyType.GNOSIS_SAFE:
+      case StrategyType.MULTISIG:
       default:
-        if (guardContracts.vetoGuardContract) {
+        if (guardContracts.freezeGuardContract) {
           options = FILTERS_MULTISIG_CHILD;
         } else {
           options = FILTERS_MULTISIG_BASE;
@@ -71,7 +71,7 @@ export default function Proposals() {
     }
     setAllOptions(options);
     setFilters(options);
-  }, [guardContracts.vetoGuardContract, type]);
+  }, [guardContracts.freezeGuardContract, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {

@@ -17,7 +17,7 @@ export default function ProposalTemplates() {
   } = useFractal();
 
   const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || '');
+    type === StrategyType.AZORIUS ? true : safe?.owners.includes(user.address || '');
 
   return (
     <Flex

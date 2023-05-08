@@ -35,7 +35,7 @@ export function ProposalDetails() {
         >
           <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
           <Divider color="chocolate.700" />
-          {type === StrategyType.GNOSIS_SAFE ? (
+          {type === StrategyType.MULTISIG ? (
             <HStack justifyContent="space-between">
               <Text color="chocolate.200">{t('labelProposalSigners')}</Text>
               <Text>

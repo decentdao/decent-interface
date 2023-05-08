@@ -2,9 +2,8 @@ import { Box, Divider, Flex, Select, HStack, Text, Button } from '@chakra-ui/rea
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigNumberValuePair } from '../../../types';
 import {
@@ -17,13 +16,13 @@ import { BigNumberInput } from '../forms/BigNumberInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
 
+// @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const defaultNonce = useDefaultNonce();
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
@@ -31,13 +30,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     fungibleAssetsWithBalance[0]
   );
   const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
-  const [nonceInput, setNonceInput] = useState<number | undefined>();
+  const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
 
-  useEffect(() => {
-    if (defaultNonce && nonceInput === undefined) {
-      setNonceInput(defaultNonce);
-    }
-  }, [defaultNonce, nonceInput]);
   const [destination, setDestination] = useState<string>('');
 
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
@@ -165,7 +159,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       <CustomNonceInput
         nonce={nonceInput}
         onChange={nonce => setNonceInput(nonce ? nonce : undefined)}
-        defaultNonce={defaultNonce}
       />
 
       <Button

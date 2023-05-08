@@ -6,7 +6,7 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
-    governance: StrategyType.GNOSIS_SAFE,
+    governance: StrategyType.MULTISIG,
   },
   govToken: {
     tokenCreationType: TokenCreationType.NEW,
@@ -61,10 +61,6 @@ export const initialState: CreatorFormState = {
     timelockPeriod: {
       value: '1400',
       bigNumberValue: BigNumber.from(1400),
-    },
-    vetoVotesThreshold: {
-      value: '1',
-      bigNumberValue: BigNumber.from(1),
     },
     freezeVotesThreshold: {
       value: '1',

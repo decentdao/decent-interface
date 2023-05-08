@@ -29,7 +29,7 @@ function useCountdown(proposal: FractalProposal) {
   const [countdown, setCountdown] = useState<number>();
   const {
     governance,
-    guardContracts: { vetoGuardContract, freezeGuardType },
+    guardContracts: { freezeGuardContract: freezeGuardContract, freezeGuardType },
     governanceContracts,
     action,
   } = useFractal();
@@ -66,7 +66,7 @@ function useCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (governance.type === StrategyType.GNOSIS_SAFE_AZORIUS) {
+            if (governance.type === StrategyType.AZORIUS) {
               await updateProposalState(BigNumber.from(proposal.proposalId));
             } else {
               await loadDAOProposals();
@@ -104,9 +104,9 @@ function useCountdown(proposal: FractalProposal) {
     async function getCountdown() {
       const freezeGuard =
         freezeGuardType === FreezeGuardType.MULTISIG
-          ? (vetoGuardContract?.asSigner as MultisigFreezeGuard)
+          ? (freezeGuardContract?.asSigner as MultisigFreezeGuard)
           : freezeGuardType === FreezeGuardType.AZORIUS
-          ? (vetoGuardContract?.asSigner as AzoriusFreezeGuard)
+          ? (freezeGuardContract?.asSigner as AzoriusFreezeGuard)
           : undefined;
 
       const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
@@ -167,11 +167,11 @@ function useCountdown(proposal: FractalProposal) {
     azoriusProposal.deadline,
     proposal.state,
     azoriusGovernance.votesStrategy,
-    vetoGuardContract,
+    freezeGuardContract,
     freezeGuardType,
     proposal.state,
     azoriusGovernance.votesStrategy,
-    vetoGuardContract,
+    freezeGuardContract,
     freezeGuardType,
   ]);
 

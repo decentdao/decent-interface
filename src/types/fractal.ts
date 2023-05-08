@@ -55,14 +55,6 @@ export enum FractalProposalState {
   ACTIVE = 'stateActive',
 
   /**
-   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
-   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
-   *
-   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
-   */
-  TIMELOCKABLE = 'stateTimelockable',
-
-  /**
    * A proposal that passes enters the `TIMELOCKED` state, during which it cannot yet be executed.
    * This is to allow time for token holders to potentially exit their position, as well as parent DAOs
    * time to initiate a freeze, if they choose to do so. A proposal stays timelocked for the duration
@@ -125,6 +117,14 @@ export enum FractalProposalState {
    *
    * Third party Safe module transactions only.
    */
+  /**
+   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
+   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
+   *
+   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
+   */
+  TIMELOCKABLE = 'stateTimelockable',
+
   MODULE = 'stateModule',
 }
 
@@ -166,7 +166,7 @@ export enum ActivityEventType {
   Module,
 }
 
-export enum GnosisTransferType {
+export enum SafeTransferType {
   ERC721 = 'ERC721_TRANSFER',
   ERC20 = 'ERC20_TRANSFER',
   ETHER = 'ETHER_TRANSFER',
@@ -252,10 +252,10 @@ export enum FractalModuleType {
 }
 
 export interface FractalGuardContracts {
-  vetoGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
-  vetoVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
+  freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
+  freezeVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
   freezeGuardType: FreezeGuardType | null;
-  vetoVotingType: FreezeVotingType | null;
+  freezeVotingType: FreezeVotingType | null;
 }
 
 export interface FreezeGuard {
@@ -297,8 +297,8 @@ export interface VotesStrategy<Type = BNFormattedPair> {
 }
 
 export enum StrategyType {
-  GNOSIS_SAFE = 'labelMultisigGov',
-  GNOSIS_SAFE_AZORIUS = 'labelAzoriusGov',
+  MULTISIG = 'labelMultisigGov',
+  AZORIUS = 'labelAzoriusGov',
 }
 
 export interface NodeHierarchy {
@@ -315,10 +315,10 @@ export interface FractalContracts {
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
-  gnosisVetoGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
-  azoriusVetoGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
-  vetoMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
-  vetoERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
+  multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
+  azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
+  multisigFreezeVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
+  freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
   votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;

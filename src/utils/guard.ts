@@ -13,7 +13,7 @@ export async function getTxTimelockedTimestamp(
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
   const abiCoder = new ethers.utils.AbiCoder();
-  const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
+  const freezeGuardTransactionHash = ethers.utils.solidityKeccak256(
     ['bytes'],
     [
       abiCoder.encode(
@@ -44,7 +44,7 @@ export async function getTxTimelockedTimestamp(
   );
 
   const timelockedTimestamp = await getTimeStamp(
-    await freezeGuard.getTransactionTimelockedBlock(vetoGuardTransactionHash),
+    await freezeGuard.getTransactionTimelockedBlock(freezeGuardTransactionHash),
     provider
   );
 

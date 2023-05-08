@@ -29,7 +29,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           governance: Yup.string().required(),
         }),
         gnosis: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.MULTISIG,
           then: _schema =>
             _schema.shape({
               trustedAddresses: Yup.array()
@@ -53,7 +53,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         govToken: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_AZORIUS,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.AZORIUS,
           then: _schema =>
             _schema.shape({
               tokenName: Yup.string().when('tokenCreationType', {
@@ -101,7 +101,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         govModule: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_AZORIUS,
+          is: ({ governance }: DAOEssentials) => governance === StrategyType.AZORIUS,
           then: _schema =>
             _schema.shape({
               quorumPercentage: Yup.object().shape({ value: Yup.string().required() }),
@@ -115,7 +115,6 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             _schema.shape({
               executionPeriod: Yup.object().shape({ value: Yup.string().required() }),
               timelockPeriod: Yup.object().shape({ value: Yup.string().required() }),
-              vetoVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeProposalPeriod: Yup.object().shape({ value: Yup.string().required() }),
               freezePeriod: Yup.object().shape({ value: Yup.string().required() }),
