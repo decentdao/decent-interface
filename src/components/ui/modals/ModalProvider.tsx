@@ -6,6 +6,7 @@ import RemoveSignerModal from '../../pages/ManageSigners/RemoveSignerModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
+import ProposalTemplateModal from './ProposalTemplateModal';
 import { SendAssetsModal } from './SendAssetsModal';
 import { UnwrapToken } from './UnwrapToken';
 import { WrapToken } from './WrapToken';
@@ -19,6 +20,7 @@ export enum ModalType {
   CONFIRM_URL,
   REMOVE_SIGNER,
   ADD_SIGNER,
+  CREATE_PROPOSAL_FROM_TEMPLATE,
 }
 
 export interface CurrentModal {
@@ -114,6 +116,15 @@ export function ModalProvider({ children }: { children: ReactNode }) {
             signers={current.props.signers}
             currentThreshold={current.props.currentThreshold}
             close={cl}
+          />
+        );
+        break;
+      case ModalType.CREATE_PROPOSAL_FROM_TEMPLATE:
+        ti = current.props.proposalTemplate.title;
+        co = (
+          <ProposalTemplateModal
+            proposalTemplate={current.props.proposalTemplate}
+            onClose={cl}
           />
         );
         break;

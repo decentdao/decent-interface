@@ -7,9 +7,17 @@ interface ContentBoxProps {
   height?: string;
   maxWidth?: string;
   bg?: string;
+  onClick?: () => void;
 }
 
-function ContentBox({ title, height, maxWidth, children, bg = 'black.900' }: ContentBoxProps) {
+function ContentBox({
+  title,
+  height,
+  maxWidth,
+  children,
+  onClick,
+  bg = 'black.900',
+}: ContentBoxProps) {
   return (
     <Box
       rounded="lg"
@@ -18,6 +26,8 @@ function ContentBox({ title, height, maxWidth, children, bg = 'black.900' }: Con
       bg={bg}
       height={height}
       maxWidth={maxWidth}
+      cursor={!!onClick ? 'pointer' : 'default'}
+      onClick={onClick}
     >
       {title && <ContentBoxTitle>{title}</ContentBoxTitle>}
       <Box

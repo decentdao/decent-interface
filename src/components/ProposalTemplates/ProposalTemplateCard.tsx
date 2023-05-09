@@ -8,6 +8,8 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { ProposalTemplate } from '../../types/createProposalTemplate';
 import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
+import { ModalType } from '../ui/modals/ModalProvider';
+import { useFractalModal } from '../ui/modals/useFractalModal';
 
 type ProposalTemplateCardProps = {
   proposalTemplate: ProposalTemplate;
@@ -15,7 +17,7 @@ type ProposalTemplateCardProps = {
 };
 
 export default function ProposalTemplateCard({
-  proposalTemplate: { title, description },
+  proposalTemplate,
   templateIndex,
 }: ProposalTemplateCardProps) {
   const { push } = useRouter();
@@ -26,6 +28,11 @@ export default function ProposalTemplateCard({
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
+  const { title, description } = proposalTemplate;
+
+  const openProposalForm = useFractalModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {
+    proposalTemplate,
+  });
 
   const successCallback = () => {
     if (daoAddress) {
@@ -59,7 +66,10 @@ export default function ProposalTemplateCard({
   }
 
   return (
-    <ContentBox maxWidth="420px">
+    <ContentBox
+      maxWidth="420px"
+      onClick={canUserCreateProposal ? openProposalForm : undefined}
+    >
       <Flex justifyContent="space-between">
         <Avatar
           size="lg"
