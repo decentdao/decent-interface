@@ -25,10 +25,10 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       fractalRegistryContract,
       fractalModuleMasterCopyContract,
-      multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract,
-      multisigFreezeVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract,
-      freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
+      multisigFreezeVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
@@ -52,7 +52,7 @@ const useBuildDAOTx = () => {
         !zodiacModuleProxyFactoryContract ||
         !fractalModuleMasterCopyContract ||
         !multisigFreezeGuardMasterCopyContract ||
-        !freezeMultisigVotingMasterCopyContract ||
+        !multisigFreezeVotingMasterCopyContract ||
         !freezeERC20VotingMasterCopyContract ||
         !gnosisSafeFactoryContract ||
         !gnosisSafeSingletonContract ||
@@ -91,7 +91,7 @@ const useBuildDAOTx = () => {
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         multiSendContract: multiSendContract.asSigner,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
-        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
+        freezeMultisigVotingMasterCopyContract: multisigFreezeVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
       } as BaseContracts;
 
@@ -127,7 +127,7 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       multisigFreezeGuardMasterCopyContract,
-      freezeMultisigVotingMasterCopyContract,
+      multisigFreezeVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,

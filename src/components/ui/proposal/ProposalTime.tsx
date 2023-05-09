@@ -28,7 +28,7 @@ function useCountdown(proposal: FractalProposal) {
   const [countdown, setCountdown] = useState<number>();
   const {
     governance,
-    guardContracts: { freezeGuardContract: freezeGuardContract, freezeGuardType },
+    guardContracts: { freezeGuardContract, freezeGuardType },
     governanceContracts,
     action,
   } = useFractal();
