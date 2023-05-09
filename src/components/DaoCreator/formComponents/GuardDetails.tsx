@@ -15,7 +15,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  StrategyType,
+  GovernanceModuleType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
@@ -49,7 +49,7 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentAzorius = type === StrategyType.AZORIUS;
+    const isParentAzorius = type === GovernanceModuleType.AZORIUS;
     if (!isParentAzorius && isSubDAO && safe) {
       setFieldValue('gnosis.customNonce', safe.nonce);
       setShowCustomNonce(true);
@@ -65,7 +65,7 @@ function GuardDetails(props: ICreationStepProps) {
       let parentVotes: BigNumber;
 
       switch (type) {
-        case StrategyType.AZORIUS:
+        case GovernanceModuleType.AZORIUS:
           if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
           const normalized = ethers.utils.formatUnits(
             azoriusGovernance.votesToken.totalSupply,
@@ -73,7 +73,7 @@ function GuardDetails(props: ICreationStepProps) {
           );
           parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           break;
-        case StrategyType.MULTISIG:
+        case GovernanceModuleType.MULTISIG:
         default:
           if (!safe) return;
           parentVotes = BigNumber.from(safe.owners.length);
@@ -120,7 +120,7 @@ function GuardDetails(props: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governanceFormType === StrategyType.MULTISIG && (
+        {governanceFormType === GovernanceModuleType.MULTISIG && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -259,7 +259,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === StrategyType.MULTISIG
+            governanceFormType === GovernanceModuleType.MULTISIG
               ? CreatorSteps.MULTISIG_GOVERNANCE
               : CreatorSteps.GOV_CONFIG
           }

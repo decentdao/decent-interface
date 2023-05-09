@@ -5,7 +5,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import {
   AzoriusGovernanceDAO,
   SafeMultisigDAO,
-  StrategyType,
+  GovernanceModuleType,
   AzoriusContracts,
   BaseContracts,
 } from '../../types';
@@ -62,7 +62,7 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === StrategyType.AZORIUS) {
+      if (daoData.governance === GovernanceModuleType.AZORIUS) {
         if (
           !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
@@ -109,7 +109,7 @@ const useBuildDAOTx = () => {
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === StrategyType.AZORIUS
+        daoData.governance === GovernanceModuleType.AZORIUS
           ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 

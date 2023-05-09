@@ -12,7 +12,7 @@ import {
   AzoriusGovernance,
   FractalProposal,
   FractalProposalState,
-  StrategyType,
+  GovernanceModuleType,
   AzoriusProposal,
   FreezeGuardType,
 } from '../../../types';
@@ -65,7 +65,7 @@ function useCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (governance.type === StrategyType.AZORIUS) {
+            if (governance.type === GovernanceModuleType.AZORIUS) {
               await updateProposalState(BigNumber.from(proposal.proposalId));
             } else {
               await loadDAOProposals();

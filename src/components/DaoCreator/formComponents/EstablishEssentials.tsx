@@ -1,6 +1,6 @@
 import { Box, Divider, RadioGroup } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { ICreationStepProps, CreatorSteps, StrategyType } from '../../../types';
+import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
@@ -51,13 +51,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
               label={t('labelMultisigGov')}
               description={t('descMultisigGov')}
               testId="choose-multisig"
-              value={StrategyType.MULTISIG}
+              value={GovernanceModuleType.MULTISIG}
             />
             <RadioWithText
               label={t('labelAzoriusGov')}
               description={t('descAzoriusGov')}
               testId="choose-azorius"
-              value={StrategyType.AZORIUS}
+              value={GovernanceModuleType.AZORIUS}
             />
           </RadioGroup>
         </LabelComponent>
@@ -69,7 +69,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         nextStep={
-          values.essentials.governance === StrategyType.MULTISIG
+          values.essentials.governance === GovernanceModuleType.MULTISIG
             ? CreatorSteps.MULTISIG_GOVERNANCE
             : CreatorSteps.AZORIUS_GOVERNANCE
         }

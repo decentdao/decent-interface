@@ -281,7 +281,7 @@ export interface AzoriusGovernance extends Governance {
 export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
-  type?: StrategyType;
+  type?: GovernanceModuleType;
   proposals: FractalProposal[] | null;
   tokenClaimContract?: ERC20Claim;
 }
@@ -294,7 +294,7 @@ export interface VotesStrategy<Type = BNFormattedPair> {
   timeLockPeriod?: Type;
 }
 
-export enum StrategyType {
+export enum GovernanceModuleType {
   MULTISIG = 'labelMultisigGov',
   AZORIUS = 'labelAzoriusGov',
 }

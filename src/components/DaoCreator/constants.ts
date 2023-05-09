@@ -1,12 +1,12 @@
 import { BigNumber } from 'ethers';
-import { CreatorFormState, StrategyType, TokenCreationType } from '../../types';
+import { CreatorFormState, GovernanceModuleType, TokenCreationType } from '../../types';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
-    governance: StrategyType.MULTISIG,
+    governance: GovernanceModuleType.MULTISIG,
   },
   govToken: {
     tokenCreationType: TokenCreationType.NEW,

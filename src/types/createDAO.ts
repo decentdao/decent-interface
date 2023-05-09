@@ -2,7 +2,7 @@ import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/sa
 import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { BigNumberValuePair } from './common';
-import { StrategyType } from './fractal';
+import { GovernanceModuleType } from './fractal';
 import { EthAddress } from './utils';
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
@@ -33,7 +33,7 @@ export interface CreatorFormState<T = BigNumberValuePair> {
 
 export type DAOEssentials = {
   daoName: string;
-  governance: StrategyType;
+  governance: GovernanceModuleType;
 };
 
 export type DAOGovenorToken<T = BigNumber> = {
@@ -112,5 +112,5 @@ export type CreateDAOFunc = (
 export type DeployDAOSuccessCallback = (daoAddress: string) => void;
 export type DAODetails = {
   daoName: string;
-  governance: StrategyType;
+  governance: GovernanceModuleType;
 };
