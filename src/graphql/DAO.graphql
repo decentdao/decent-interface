@@ -4,11 +4,13 @@ query DAOQuery($daoAddress: Bytes) {
         address
         parentAddress
         name
+        snapshotURL
         hierarchy {
             id
             address
             parentAddress
             name
+            snapshotURL
             # There's probably a better way to organize this with Fragments
             # However, current GraphQL spec does not allow recursive fragment.
             # Though this might be improved via generating GraphQL typings from fractal-subgraph repository
@@ -18,16 +20,19 @@ query DAOQuery($daoAddress: Bytes) {
                 address
                 parentAddress
                 name
+                snapshotURL
                 hierarchy {
                     id
                     address
                     parentAddress
                     name
+                    snapshotURL
                     hierarchy {
                         id
                         address
                         parentAddress
                         name
+                        snapshotURL
                     }
                 }
             }
