@@ -15,7 +15,7 @@ import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
 
 function TokenConfigDisplay(props: ICreationStepProps) {
-  switch (props.values.govToken.tokenCreationType) {
+  switch (props.values.token.tokenCreationType) {
     case TokenCreationType.NEW:
       return <VotesTokenNew {...props} />;
     case TokenCreationType.IMPORTED:
@@ -44,8 +44,8 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
 
   const updateImportFields = useCallback(async () => {
-    const importAddress = values.govToken.tokenImportAddress;
-    const importError = errors?.govToken?.tokenImportAddress;
+    const importAddress = values.token.tokenImportAddress;
+    const importError = errors?.token?.tokenImportAddress;
     if (importAddress && !importError && utils.isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
       const tokenContract = new ethers.Contract(importAddress, erc20ABI, provider);
@@ -71,11 +71,11 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     }, 0);
   }, [
     checkVotesToken,
-    errors?.govToken?.tokenImportAddress,
+    errors?.token?.tokenImportAddress,
     setFieldValue,
     setFieldTouched,
     provider,
-    values.govToken.tokenImportAddress,
+    values.token.tokenImportAddress,
   ]);
 
   useEffect(() => {
@@ -108,7 +108,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               name="govToken.tokenCreationType"
               gap={4}
               id="govToken.tokenCreationType"
-              value={values.govToken.tokenCreationType}
+              value={values.token.tokenCreationType}
               onChange={value => {
                 setFieldValue('govToken.tokenCreationType', value);
               }}
@@ -134,23 +134,23 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                   setFieldValue('govToken.tokenSymbol', '');
                 }}
               />
-              {values.govToken.tokenCreationType === TokenCreationType.IMPORTED && (
+              {values.token.tokenCreationType === TokenCreationType.IMPORTED && (
                 <>
                   <LabelWrapper
                     errorMessage={
-                      values.govToken.tokenImportAddress && errors?.govToken?.tokenImportAddress
-                        ? errors.govToken.tokenImportAddress
+                      values.token.tokenImportAddress && errors?.token?.tokenImportAddress
+                        ? errors.token.tokenImportAddress
                         : undefined
                     }
                   >
                     <Input
                       name="govToken.tokenImportAddress"
                       onChange={handleChange}
-                      value={values.govToken.tokenImportAddress}
+                      value={values.token.tokenImportAddress}
                       placeholder={createAccountSubstring(constants.AddressZero)}
                     />
                   </LabelWrapper>
-                  {!isImportedVotesToken && !errors.govToken?.tokenImportAddress && (
+                  {!isImportedVotesToken && !errors.token?.tokenImportAddress && (
                     <Flex
                       gap={4}
                       alignItems="center"

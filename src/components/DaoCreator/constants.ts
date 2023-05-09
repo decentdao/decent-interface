@@ -8,7 +8,7 @@ export const initialState: CreatorFormState = {
     daoName: '',
     governance: GovernanceModuleType.MULTISIG,
   },
-  govToken: {
+  token: {
     tokenCreationType: TokenCreationType.NEW,
     tokenName: '',
     tokenSupply: {
@@ -35,7 +35,7 @@ export const initialState: CreatorFormState = {
    *
    * See {@link useBuildDAOTx} for more info.
    */
-  govModule: {
+  azorius: {
     quorumPercentage: {
       value: '4',
       bigNumberValue: BigNumber.from(4),
@@ -53,7 +53,7 @@ export const initialState: CreatorFormState = {
       bigNumberValue: BigNumber.from(2800),
     },
   },
-  freezeGuard: {
+  freeze: {
     executionPeriod: {
       value: '2800',
       bigNumberValue: BigNumber.from(2800),
@@ -75,7 +75,7 @@ export const initialState: CreatorFormState = {
       bigNumberValue: BigNumber.from(10080),
     },
   },
-  gnosis: {
+  multisig: {
     trustedAddresses: [''],
     signatureThreshold: 1,
     numOfSigners: 1,

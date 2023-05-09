@@ -128,7 +128,7 @@ function GuardDetails(props: ICreationStepProps) {
           >
             <InputGroup>
               <BigNumberInput
-                value={values.freezeGuard.timelockPeriod.bigNumberValue}
+                value={values.freeze.timelockPeriod.bigNumberValue}
                 onChange={valuePair => setFieldValue('freezeGuard.timelockPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
@@ -152,7 +152,7 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.freezeGuard.executionPeriod.bigNumberValue}
+              value={values.freeze.executionPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('freezeGuard.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -176,7 +176,7 @@ function GuardDetails(props: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.freezeGuard.freezeVotesThreshold.bigNumberValue}
+            value={values.freeze.freezeVotesThreshold.bigNumberValue}
             onChange={valuePair => setFieldValue('freezeGuard.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
@@ -189,7 +189,7 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.freezeGuard.freezeProposalPeriod.bigNumberValue}
+              value={values.freeze.freezeProposalPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('freezeGuard.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -212,7 +212,7 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.freezeGuard.freezePeriod.bigNumberValue}
+              value={values.freeze.freezePeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('freezeGuard.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -247,7 +247,7 @@ function GuardDetails(props: ICreationStepProps) {
         {showCustomNonce && (
           <>
             <CustomNonceInput
-              nonce={values.gnosis.customNonce}
+              nonce={values.multisig.customNonce}
               onChange={handleNonceChange}
             />
             <Divider

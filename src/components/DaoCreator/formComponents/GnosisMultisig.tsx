@@ -56,7 +56,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
     }
 
     setFieldValue('gnosis', {
-      ...values.gnosis,
+      ...values.multisig,
       numOfSigners: numOfSigners,
       trustedAddresses: gnosisAddresses,
     });
@@ -78,9 +78,9 @@ export function GnosisMultisig(props: ICreationStepProps) {
           isRequired
         >
           <NumberInput
-            value={values.gnosis.numOfSigners}
+            value={values.multisig.numOfSigners}
             onChange={(_, inputNum) =>
-              handleSignersChanges(values.gnosis.trustedAddresses, inputNum)
+              handleSignersChanges(values.multisig.trustedAddresses, inputNum)
             }
             onKeyDown={restrictChars}
           >
@@ -91,12 +91,12 @@ export function GnosisMultisig(props: ICreationStepProps) {
           label={t('labelSigThreshold')}
           helper={t('helperSigThreshold')}
           errorMessage={
-            values.gnosis.signatureThreshold ? errors.gnosis?.signatureThreshold : undefined
+            values.multisig.signatureThreshold ? errors.multisig?.signatureThreshold : undefined
           }
           isRequired
         >
           <NumberInput
-            value={values.gnosis.signatureThreshold}
+            value={values.multisig.signatureThreshold}
             onKeyDown={restrictChars}
             onChange={value => setFieldValue('gnosis.signatureThreshold', value)}
           >
@@ -109,10 +109,10 @@ export function GnosisMultisig(props: ICreationStepProps) {
             helper={t('subTitleSignerAddresses')}
             isRequired={false}
           >
-            {values.gnosis.trustedAddresses.map((trustedAddress, i) => {
+            {values.multisig.trustedAddresses.map((trustedAddress, i) => {
               const errorMessage =
-                errors?.gnosis?.trustedAddresses?.[i] && trustedAddress.length
-                  ? errors?.gnosis?.trustedAddresses?.[i]
+                errors?.multisig?.trustedAddresses?.[i] && trustedAddress.length
+                  ? errors?.multisig?.trustedAddresses?.[i]
                   : null;
 
               return (
@@ -132,7 +132,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
                         />
                       )}
                     </Field>
-                    {values.gnosis.trustedAddresses.length > 1 && (
+                    {values.multisig.trustedAddresses.length > 1 && (
                       <IconButton
                         aria-label="remove allocation"
                         variant="unstyled"
@@ -146,8 +146,8 @@ export function GnosisMultisig(props: ICreationStepProps) {
                         type="button"
                         onClick={async () => {
                           handleSignersChanges(
-                            values.gnosis.trustedAddresses,
-                            --values.gnosis.numOfSigners!,
+                            values.multisig.trustedAddresses,
+                            --values.multisig.numOfSigners!,
                             i
                           );
                         }}

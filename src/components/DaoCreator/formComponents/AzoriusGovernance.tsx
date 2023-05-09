@@ -38,7 +38,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.votingPeriod.bigNumberValue}
+              value={values.azorius.votingPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.votingPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -61,7 +61,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.quorumPercentage.bigNumberValue}
+              value={values.azorius.quorumPercentage.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.quorumPercentage', valuePair)}
               max="100"
               decimalPlaces={0}
@@ -77,7 +77,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.timelock.bigNumberValue}
+              value={values.azorius.timelock.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.timelock', valuePair)}
               decimalPlaces={0}
               data-testid="govConfig-timelock"
@@ -99,7 +99,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.executionPeriod.bigNumberValue}
+              value={values.azorius.executionPeriod.bigNumberValue}
               onChange={valuePair => setFieldValue('govModule.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"

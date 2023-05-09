@@ -25,10 +25,10 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
 
 export interface CreatorFormState<T = BigNumberValuePair> {
   essentials: DAOEssentials;
-  gnosis: GnosisConfiguration;
-  govToken: DAOGovenorToken<T>;
-  govModule: DAOGovenorModuleConfig<T>;
-  freezeGuard: DAOFreezeGuardConfig<T>;
+  multisig: GnosisConfiguration;
+  token: DAOGovenorToken<T>;
+  azorius: DAOGovenorModuleConfig<T>;
+  freeze: DAOFreezeGuardConfig<T>;
 }
 
 export type DAOEssentials = {

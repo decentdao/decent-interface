@@ -40,7 +40,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
       >
         <Input
           name="govToken.tokenSymbol"
-          value={values.govToken.tokenSymbol}
+          value={values.token.tokenSymbol}
           onChange={handleChange}
           maxLength={6}
           data-testid="tokenVoting-tokenSymbolInput"
