@@ -145,6 +145,7 @@ export default function ProposalTemplateModal({
                 subLabel={parameter.label}
                 value={parameter.value || ''}
                 isRequired={!!parameter.label}
+                testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
                 inputContainerProps={{
                   width: '100%',
                 }}
