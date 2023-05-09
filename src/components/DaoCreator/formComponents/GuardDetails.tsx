@@ -43,7 +43,7 @@ function GuardDetails(props: ICreationStepProps) {
   const governanceFormType = values.essentials.governance;
   const handleNonceChange = useCallback(
     (nonce?: number) => {
-      setFieldValue('gnosis.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
+      setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
     },
     [setFieldValue]
   );
@@ -51,7 +51,7 @@ function GuardDetails(props: ICreationStepProps) {
   useEffect(() => {
     const isParentAzorius = type === GovernanceModuleType.AZORIUS;
     if (!isParentAzorius && isSubDAO && safe) {
-      setFieldValue('gnosis.customNonce', safe.nonce);
+      setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
   }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
@@ -94,7 +94,7 @@ function GuardDetails(props: ICreationStepProps) {
       }
 
       setTotalParentVotes(parentVotes);
-      setFieldValue('freezeGuard.freezeVotesThreshold', thresholdDefault);
+      setFieldValue('freeze.freezeVotesThreshold', thresholdDefault);
     }
   }, [
     azoriusGovernance.votesToken,
@@ -129,7 +129,7 @@ function GuardDetails(props: ICreationStepProps) {
             <InputGroup>
               <BigNumberInput
                 value={values.freeze.timelockPeriod.bigNumberValue}
-                onChange={valuePair => setFieldValue('freezeGuard.timelockPeriod', valuePair)}
+                onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="guardConfig-executionDetails"
@@ -153,7 +153,7 @@ function GuardDetails(props: ICreationStepProps) {
           <InputGroup>
             <BigNumberInput
               value={values.freeze.executionPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('freezeGuard.executionPeriod', valuePair)}
+              onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-executionDetails"
@@ -177,7 +177,7 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <BigNumberInput
             value={values.freeze.freezeVotesThreshold.bigNumberValue}
-            onChange={valuePair => setFieldValue('freezeGuard.freezeVotesThreshold', valuePair)}
+            onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
           />
@@ -190,7 +190,7 @@ function GuardDetails(props: ICreationStepProps) {
           <InputGroup>
             <BigNumberInput
               value={values.freeze.freezeProposalPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('freezeGuard.freezeProposalPeriod', valuePair)}
+              onChange={valuePair => setFieldValue('freeze.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeProposalDuration"
@@ -213,7 +213,7 @@ function GuardDetails(props: ICreationStepProps) {
           <InputGroup>
             <BigNumberInput
               value={values.freeze.freezePeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('freezeGuard.freezePeriod', valuePair)}
+              onChange={valuePair => setFieldValue('freeze.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeDuration"

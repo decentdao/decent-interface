@@ -54,7 +54,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
       >
         <BigNumberInput
           value={values.token.tokenSupply.bigNumberValue}
-          onChange={valuePair => setFieldValue('govToken.tokenSupply', valuePair)}
+          onChange={valuePair => setFieldValue('token.tokenSupply', valuePair)}
           data-testid="tokenVoting-tokenSupplyInput"
           onKeyDown={restrictChars}
         />

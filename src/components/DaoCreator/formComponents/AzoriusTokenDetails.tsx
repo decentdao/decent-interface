@@ -52,22 +52,22 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       const name = await tokenContract.name();
       const symbol = await tokenContract.symbol();
       if (!isVotesToken) {
-        setFieldValue('govToken.tokenName', 'Wrapped ' + name, true);
-        setFieldValue('govToken.tokenSymbol', 'W' + symbol, true);
+        setFieldValue('token.tokenName', 'Wrapped ' + name, true);
+        setFieldValue('token.tokenSymbol', 'W' + symbol, true);
         setIsImportedVotesToken(false);
       } else {
         setIsImportedVotesToken(true);
-        setFieldValue('govToken.tokenName', name, true);
-        setFieldValue('govToken.tokenSymbol', symbol, true);
+        setFieldValue('token.tokenName', name, true);
+        setFieldValue('token.tokenSymbol', symbol, true);
       }
     } else {
       setIsImportedVotesToken(false);
-      setFieldValue('govToken.tokenName', '', true);
-      setFieldValue('govToken.tokenSymbol', '', true);
+      setFieldValue('token.tokenName', '', true);
+      setFieldValue('token.tokenSymbol', '', true);
     }
     setTimeout(() => {
-      setFieldTouched('govToken.tokenSymbol', true, true);
-      setFieldTouched('govToken.tokenName', true, true);
+      setFieldTouched('token.tokenSymbol', true, true);
+      setFieldTouched('token.tokenName', true, true);
     }, 0);
   }, [
     checkVotesToken,
@@ -105,12 +105,12 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               rounded="md"
               display="flex"
               flexDirection="column"
-              name="govToken.tokenCreationType"
+              name="token.tokenCreationType"
               gap={4}
-              id="govToken.tokenCreationType"
+              id="token.tokenCreationType"
               value={values.token.tokenCreationType}
               onChange={value => {
-                setFieldValue('govToken.tokenCreationType', value);
+                setFieldValue('token.tokenCreationType', value);
               }}
             >
               <RadioWithText
@@ -119,9 +119,9 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 testId="choose-newToken"
                 value={TokenCreationType.NEW}
                 onClick={() => {
-                  setFieldValue('govToken.tokenImportAddress', '');
-                  setFieldValue('govToken.tokenName', '');
-                  setFieldValue('govToken.tokenSymbol', '');
+                  setFieldValue('token.tokenImportAddress', '');
+                  setFieldValue('token.tokenName', '');
+                  setFieldValue('token.tokenSymbol', '');
                 }}
               />
               <RadioWithText
@@ -130,8 +130,8 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 testId="choose-existingToken"
                 value={TokenCreationType.IMPORTED}
                 onClick={() => {
-                  setFieldValue('govToken.tokenName', '');
-                  setFieldValue('govToken.tokenSymbol', '');
+                  setFieldValue('token.tokenName', '');
+                  setFieldValue('token.tokenSymbol', '');
                 }}
               />
               {values.token.tokenCreationType === TokenCreationType.IMPORTED && (

@@ -38,7 +38,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
     index?: number
   ) => {
     if (numOfSigners === undefined) {
-      setFieldValue('gnosis.numOfSigners', numOfSigners);
+      setFieldValue('multisig.numOfSigners', numOfSigners);
     }
 
     numOfSigners = Math.min(numOfSigners || 0, 99);
@@ -55,7 +55,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
       }
     }
 
-    setFieldValue('gnosis', {
+    setFieldValue('multisig', {
       ...values.multisig,
       numOfSigners: numOfSigners,
       trustedAddresses: gnosisAddresses,
@@ -98,7 +98,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
           <NumberInput
             value={values.multisig.signatureThreshold}
             onKeyDown={restrictChars}
-            onChange={value => setFieldValue('gnosis.signatureThreshold', value)}
+            onChange={value => setFieldValue('multisig.signatureThreshold', value)}
           >
             <NumberInputField data-testid="gnosisConfig-thresholdInput" />
           </NumberInput>
@@ -151,7 +151,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
                             i
                           );
                         }}
-                        data-testid={'gnosis.numOfSigners-' + i}
+                        data-testid={'multisig.numOfSigners-' + i}
                       />
                     )}
                   </Grid>

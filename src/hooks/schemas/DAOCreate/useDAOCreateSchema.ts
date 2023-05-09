@@ -33,7 +33,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
         }),
-        gnosis: Yup.object().when('essentials', {
+        multisig: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.MULTISIG,
           then: _schema =>
             _schema.shape({
@@ -57,7 +57,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               customNonce: Yup.number(),
             }),
         }),
-        govToken: Yup.object().when('essentials', {
+        token: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
           then: _schema =>
             _schema.shape({
@@ -105,7 +105,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               }),
             }),
         }),
-        govModule: Yup.object().when('essentials', {
+        azorius: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
           then: _schema =>
             _schema.shape({
@@ -114,7 +114,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               votingPeriod: Yup.object().shape({ value: Yup.string().required() }),
             }),
         }),
-        freezeGuard: Yup.object().when({
+        freeze: Yup.object().when({
           is: isSubDAO,
           then: _schema =>
             _schema.shape({

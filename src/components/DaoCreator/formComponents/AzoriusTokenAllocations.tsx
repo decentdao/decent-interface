@@ -146,7 +146,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                               data-testid="tokenVoting-parentTokenAllocationInput"
                               value={values.token.parentAllocationAmount?.bigNumberValue}
                               onChange={valuePair =>
-                                setFieldValue('govToken.parentAllocationAmount', valuePair)
+                                setFieldValue('token.parentAllocationAmount', valuePair)
                               }
                               isInvalid={false}
                             />
