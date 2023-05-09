@@ -167,7 +167,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
       />
       <StepButtons
         {...props}
-        nextStep={CreatorSteps.GUARD_CONFIG}
+        nextStep={CreatorSteps.FREEZE_DETAILS}
         prevStep={CreatorSteps.ESSENTIALS}
         isLastStep={!isSubDAO}
       />

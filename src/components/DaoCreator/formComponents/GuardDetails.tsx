@@ -260,8 +260,8 @@ function GuardDetails(props: ICreationStepProps) {
           {...props}
           prevStep={
             governanceFormType === GovernanceModuleType.MULTISIG
-              ? CreatorSteps.MULTISIG_GOVERNANCE
-              : CreatorSteps.GOV_CONFIG
+              ? CreatorSteps.MULTISIG_DETAILS
+              : CreatorSteps.AZORIUS_DETAILS
           }
           isLastStep
         />

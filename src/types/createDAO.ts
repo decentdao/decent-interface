@@ -6,10 +6,10 @@ import { GovernanceModuleType } from './fractal';
 import { EthAddress } from './utils';
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
-  MULTISIG_GOVERNANCE = 'gnosis',
-  AZORIUS_GOVERNANCE = 'govToken',
-  GOV_CONFIG = 'govModule',
-  GUARD_CONFIG = 'freezeGuard',
+  MULTISIG_DETAILS = 'multisig',
+  TOKEN_DETAILS = 'token',
+  AZORIUS_DETAILS = 'azorius',
+  FREEZE_DETAILS = 'freeze',
 }
 
 export enum TokenCreationType {

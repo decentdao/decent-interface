@@ -132,8 +132,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         />
         <StepButtons
           {...props}
-          prevStep={CreatorSteps.AZORIUS_GOVERNANCE}
-          nextStep={CreatorSteps.GUARD_CONFIG}
+          prevStep={CreatorSteps.TOKEN_DETAILS}
+          nextStep={CreatorSteps.FREEZE_DETAILS}
           isLastStep={!isSubDAO}
         />
       </Flex>

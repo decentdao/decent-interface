@@ -70,8 +70,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
         {...props}
         nextStep={
           values.essentials.governance === GovernanceModuleType.MULTISIG
-            ? CreatorSteps.MULTISIG_GOVERNANCE
-            : CreatorSteps.AZORIUS_GOVERNANCE
+            ? CreatorSteps.MULTISIG_DETAILS
+            : CreatorSteps.TOKEN_DETAILS
         }
       />
     </StepWrapper>

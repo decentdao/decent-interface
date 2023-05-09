@@ -68,7 +68,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
       <StepButtons
         {...props}
         prevStep={CreatorSteps.ESSENTIALS}
-        nextStep={CreatorSteps.GOV_CONFIG}
+        nextStep={CreatorSteps.AZORIUS_DETAILS}
       />
     </Flex>
   );
