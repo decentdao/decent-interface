@@ -144,7 +144,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                     }
                   >
                     <Input
-                      name="govToken.tokenImportAddress"
+                      name="token.tokenImportAddress"
                       onChange={handleChange}
                       value={values.token.tokenImportAddress}
                       placeholder={createAccountSubstring(constants.AddressZero)}

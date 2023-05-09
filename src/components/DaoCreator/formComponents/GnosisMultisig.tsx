@@ -124,7 +124,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
                     templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
                     alignItems="center"
                   >
-                    <Field name={`gnosis.trustedAddresses.${i}`}>
+                    <Field name={`multisig.trustedAddresses.${i}`}>
                       {({ field }: FieldAttributes<any>) => (
                         <AddressInput
                           {...field}

@@ -33,7 +33,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
   return (
     <Box>
       <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
-      <FieldArray name="govToken.tokenAllocations">
+      <FieldArray name="token.tokenAllocations">
         {({ remove, push }) => (
           <Box my={4}>
             <Grid

@@ -24,7 +24,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
         helper={t('helperTokenName')}
         isRequired
       >
-        <Field name="govToken.tokenName">
+        <Field name="token.tokenName">
           {({ field }: FieldAttributes<any>) => (
             <Input
               {...field}
@@ -40,7 +40,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
         isRequired
       >
         <Input
-          name="govToken.tokenSymbol"
+          name="token.tokenSymbol"
           value={values.token.tokenSymbol}
           onChange={handleChange}
           maxLength={6}
