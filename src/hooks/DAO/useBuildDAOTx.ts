@@ -27,7 +27,7 @@ const useBuildDAOTx = () => {
       fractalModuleMasterCopyContract,
       multisigFreezeGuardMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
-      multisigFreezeVotingMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
@@ -52,7 +52,7 @@ const useBuildDAOTx = () => {
         !zodiacModuleProxyFactoryContract ||
         !fractalModuleMasterCopyContract ||
         !multisigFreezeGuardMasterCopyContract ||
-        !multisigFreezeVotingMasterCopyContract ||
+        !freezeMultisigVotingMasterCopyContract ||
         !freezeERC20VotingMasterCopyContract ||
         !gnosisSafeFactoryContract ||
         !gnosisSafeSingletonContract ||
@@ -91,7 +91,7 @@ const useBuildDAOTx = () => {
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         multiSendContract: multiSendContract.asSigner,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
-        freezeMultisigVotingMasterCopyContract: multisigFreezeVotingMasterCopyContract.asSigner,
+        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
       } as BaseContracts;
 
@@ -127,7 +127,7 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       multisigFreezeGuardMasterCopyContract,
-      multisigFreezeVotingMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,

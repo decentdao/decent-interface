@@ -98,7 +98,7 @@ export default function useSafeContracts() {
       asProvider: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, provider),
     };
 
-    const multisigFreezeVotingMasterCopyContract = {
+    const freezeMultisigVotingMasterCopyContract = {
       asSigner: MultisigFreezeVoting__factory.connect(
         multisigFreezeVotingMasterCopy,
         signerOrProvider
@@ -137,7 +137,7 @@ export default function useSafeContracts() {
       fractalRegistryContract,
       multisigFreezeGuardMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
-      multisigFreezeVotingMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,

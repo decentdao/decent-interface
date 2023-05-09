@@ -39,7 +39,8 @@ export default function ProposalsPage() {
   }, [type, azoriusGovernance]);
 
   const showCreateButton = useMemo(
-    () => (type === GovernanceModuleType.AZORIUS ? true : safe?.owners.includes(user.address || '')),
+    () =>
+      type === GovernanceModuleType.AZORIUS ? true : safe?.owners.includes(user.address || ''),
     [type, safe, user.address]
   );
 

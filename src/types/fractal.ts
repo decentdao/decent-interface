@@ -315,7 +315,7 @@ export interface FractalContracts {
   fractalRegistryContract: ContractConnection<FractalRegistry>;
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
-  multisigFreezeVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
+  freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;

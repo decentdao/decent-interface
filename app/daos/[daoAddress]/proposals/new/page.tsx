@@ -20,7 +20,11 @@ import { usePrepareProposal } from '../../../../../src/hooks/DAO/proposal/usePre
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useCreateProposalSchema } from '../../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import { CreateProposalForm, CreateProposalState, GovernanceModuleType } from '../../../../../src/types';
+import {
+  CreateProposalForm,
+  CreateProposalState,
+  GovernanceModuleType,
+} from '../../../../../src/types';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
