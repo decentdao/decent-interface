@@ -26,6 +26,8 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_STRATEGY: {
       return { ...state, type: StrategyType.AZORIUS, votesStrategy: action.payload };
     }
+    case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
+      return { ...state, proposals: [...(proposals || []), ...action.payload] };
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...(proposals || []), action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE: {

@@ -34,7 +34,12 @@ import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
-import { ProposalMetaData, MultisigProposal, AzoriusProposal } from './daoProposal';
+import {
+  ProposalMetaData,
+  MultisigProposal,
+  AzoriusProposal,
+  SnapshotProposal,
+} from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BNFormattedPair } from './votingFungibleToken';
@@ -126,6 +131,9 @@ export enum FractalProposalState {
   TIMELOCKABLE = 'stateTimelockable',
 
   MODULE = 'stateModule',
+
+  // Closed is proposal state specific to Snapshot proposals
+  CLOSED = 'stateClosed',
 }
 
 export interface IGnosisFreezeGuard {
@@ -325,7 +333,7 @@ export interface FractalContracts {
   keyValuePairsContract: ContractConnection<KeyValuePairs>;
 }
 
-export type FractalProposal = AzoriusProposal | MultisigProposal;
+export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
 
 /**
  * Immutable state generally calculated from other stateful objects.
