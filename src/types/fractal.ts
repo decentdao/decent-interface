@@ -105,6 +105,14 @@ export enum FractalProposalState {
   REJECTED = 'stateRejected',
 
   /**
+   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
+   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
+   *
+   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
+   */
+  TIMELOCKABLE = 'stateTimelockable',
+
+  /**
    * Any Safe is able to have modules attached (e.g. Zodiac), which can act essentially as a backdoor,
    * executing transactions without needing the required signers.
    *
@@ -116,14 +124,6 @@ export enum FractalProposalState {
    *
    * Third party Safe module transactions only.
    */
-  /**
-   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
-   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
-   *
-   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
-   */
-  TIMELOCKABLE = 'stateTimelockable',
-
   MODULE = 'stateModule',
 }
 
