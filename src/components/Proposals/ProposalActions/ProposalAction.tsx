@@ -10,6 +10,7 @@ import {
   AzoriusProposal,
   FractalProposalState,
   MultisigProposal,
+  SnapshotProposal,
 } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
@@ -53,6 +54,7 @@ export function ProposalAction({
   const { push } = useRouter();
   const { t } = useTranslation();
   const isAzoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
+  const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
   const showActionButton =
     proposal.state === FractalProposalState.ACTIVE ||
@@ -68,11 +70,14 @@ export function ProposalAction({
     if (isAzoriusProposal) {
       const azoriusProposal = proposal as AzoriusProposal;
       return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
+    } else if (isSnapshotProposal) {
+      // Snapshot proposals not tracking votes
+      return false;
     } else {
       const safeProposal = proposal as MultisigProposal;
       return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [isAzoriusProposal, proposal, user.address]);
+  }, [isAzoriusProposal, isSnapshotProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {

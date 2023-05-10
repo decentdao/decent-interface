@@ -45,7 +45,7 @@ export interface MultisigProposal extends GovernanceActivity {
 }
 
 export interface SnapshotProposal extends GovernanceActivity {
-  proposalId: string;
+  snapshotProposalId: string;
   title: string;
   description: string;
   startTime: number;
