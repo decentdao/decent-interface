@@ -16,11 +16,11 @@ interface IActivityDescription {
   activity: Activity;
 }
 interface IActivityProposal {
-  proposalNumber: string;
+  proposalId: string;
 }
 
-function ActivityProposalNumber({ proposalNumber }: IActivityProposal) {
-  return <Text>{createProposalNumberSubstring(proposalNumber)}</Text>;
+function ActivityProposalNumber({ proposalId }: IActivityProposal) {
+  return <Text>{createProposalNumberSubstring(proposalId)}</Text>;
 }
 
 function ActivityAddresses({ activity }: IActivityDescription) {
@@ -53,7 +53,7 @@ function OnChainRejectionMessage({ activity }: IActivityDescription) {
   return (
     <Text>
       {t('proposalOnChainRejection', {
-        proposalNumber: createProposalNumberSubstring(
+        proposalId: createProposalNumberSubstring(
           governanceActivity.multisigRejectedProposalNumber
         ),
       })}
@@ -83,7 +83,7 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
   if (!!azoriusProposalMetaDataTitle) {
     return (
       <>
-        <ActivityProposalNumber proposalNumber={governanceActivity.proposalNumber} />
+        <ActivityProposalNumber proposalId={governanceActivity.proposalId} />
         <Text>{azoriusProposalMetaDataTitle}</Text>
       </>
     );
@@ -91,7 +91,7 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
 
   return (
     <>
-      <ActivityProposalNumber proposalNumber={governanceActivity.proposalNumber} />
+      <ActivityProposalNumber proposalId={governanceActivity.proposalId} />
       <Text>{transactionDescription}</Text>
       <ActivityAddresses activity={activity} />
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}

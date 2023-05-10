@@ -20,7 +20,7 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
           updateStep={updateStep}
         />
       );
-    case CreatorSteps.GNOSIS_GOVERNANCE:
+    case CreatorSteps.MULTISIG_DETAILS:
       return (
         <GnosisMultisig
           {...props}
@@ -28,7 +28,7 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
           updateStep={updateStep}
         />
       );
-    case CreatorSteps.GNOSIS_WITH_AZORIUS:
+    case CreatorSteps.TOKEN_DETAILS:
       return (
         <AzoriusTokenDetails
           {...props}
@@ -36,7 +36,7 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
           updateStep={updateStep}
         />
       );
-    case CreatorSteps.GOV_CONFIG:
+    case CreatorSteps.AZORIUS_DETAILS:
       return (
         <AzoriusGovernance
           {...props}
@@ -44,7 +44,7 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
           updateStep={updateStep}
         />
       );
-    case CreatorSteps.GUARD_CONFIG:
+    case CreatorSteps.FREEZE_DETAILS:
       return (
         <GuardDetails
           {...props}

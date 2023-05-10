@@ -14,7 +14,6 @@ import {
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
 import { Execute } from './Execute';
-import Queue from './Queue';
 import CastVote from './Vote';
 
 export function ProposalActions({
@@ -25,18 +24,15 @@ export function ProposalActions({
   hasVoted: boolean;
 }) {
   switch (proposal.state) {
-    case FractalProposalState.Active:
+    case FractalProposalState.ACTIVE:
       return (
         <CastVote
           proposal={proposal}
           currentUserHasVoted={hasVoted}
         />
       );
-    case FractalProposalState.Queueable:
-      return <Queue proposal={proposal} />;
-    case FractalProposalState.Executing:
-    case FractalProposalState.TimeLocked:
-    case FractalProposalState.Queued:
+    case FractalProposalState.EXECUTABLE:
+    case FractalProposalState.TIMELOCKED:
       return <Execute proposal={proposal} />;
     default:
       return <></>;
@@ -56,38 +52,36 @@ export function ProposalAction({
   } = useFractal();
   const { push } = useRouter();
   const { t } = useTranslation();
-  const isazoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
+  const isAzoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
 
   const showActionButton =
-    proposal.state === FractalProposalState.Active ||
-    proposal.state === FractalProposalState.Executing ||
-    proposal.state === FractalProposalState.Queueable ||
-    proposal.state === FractalProposalState.TimeLocked ||
-    proposal.state === FractalProposalState.Queued;
+    proposal.state === FractalProposalState.ACTIVE ||
+    proposal.state === FractalProposalState.EXECUTABLE ||
+    proposal.state === FractalProposalState.TIMELOCKABLE ||
+    proposal.state === FractalProposalState.TIMELOCKED;
 
   const handleClick = () => {
-    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalNumber));
+    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
   };
 
   const hasVoted = useMemo(() => {
-    if (isazoriusProposal) {
+    if (isAzoriusProposal) {
       const azoriusProposal = proposal as AzoriusProposal;
       return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
     } else {
       const safeProposal = proposal as MultisigProposal;
       return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [isazoriusProposal, proposal, user.address]);
+  }, [isAzoriusProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
-      case FractalProposalState.Active:
+      case FractalProposalState.ACTIVE:
         return 'vote';
-      case FractalProposalState.Queueable:
-        return 'queueTitle';
-      case FractalProposalState.Executing:
-      case FractalProposalState.TimeLocked:
-      case FractalProposalState.Queued:
+      case FractalProposalState.TIMELOCKABLE:
+        return 'timelockTitle';
+      case FractalProposalState.EXECUTABLE:
+      case FractalProposalState.TIMELOCKED:
         return 'executeTitle';
       default:
         return '';
@@ -95,14 +89,14 @@ export function ProposalAction({
   }, [proposal]);
 
   const label = useMemo(() => {
-    if (proposal.state === FractalProposalState.Active) {
+    if (proposal.state === FractalProposalState.ACTIVE) {
       if (hasVoted) {
         return t('details');
       }
-      return t(isazoriusProposal ? 'vote' : 'sign');
+      return t(isAzoriusProposal ? 'vote' : 'sign');
     }
     return t('details');
-  }, [proposal, t, isazoriusProposal, hasVoted]);
+  }, [proposal, t, isAzoriusProposal, hasVoted]);
 
   if (!showActionButton) {
     if (!expandedView) {
@@ -127,7 +121,7 @@ export function ProposalAction({
         <Flex justifyContent="space-between">
           <Text textStyle="text-lg-mono-medium">
             {t(labelKey, {
-              ns: proposal.state === FractalProposalState.Active ? 'common' : 'proposal',
+              ns: proposal.state === FractalProposalState.ACTIVE ? 'common' : 'proposal',
             })}
           </Text>
           <ProposalTime proposal={proposal} />

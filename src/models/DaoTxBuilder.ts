@@ -3,9 +3,9 @@ import { ethers } from 'ethers';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
-  GnosisDAO,
+  SafeMultisigDAO,
   SafeTransaction,
-  TokenGovernanceDAO,
+  AzoriusGovernanceDAO,
   AzoriusContracts,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -34,7 +34,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: GnosisDAO | TokenGovernanceDAO,
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO,
     saltNum: string,
     predictedGnosisSafeAddress: string,
     createSafeTx: SafeTransaction,
@@ -69,11 +69,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.internalTxs = [
       this.buildUpdateDAONameTx(),
       azoriusTxBuilder.buildLinearVotingContractSetupTx(),
-      azoriusTxBuilder.buildEnableazoriusModuleTx(),
+      azoriusTxBuilder.buildEnableAzoriusModuleTx(),
     ];
 
     if (this.parentAddress) {
-      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder(
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
         azoriusTxBuilder.azoriusContract!.address,
         azoriusTxBuilder.linearVotingContract!.address
       );
@@ -81,13 +81,13 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
         this.enableFractalModuleTx!,
-        vetoGuardTxBuilder.buildDeployZodiacModuleTx(),
-        vetoGuardTxBuilder.buildVetoVotingSetupTx(),
-        vetoGuardTxBuilder.buildDeployVetoGuardTx(),
-        vetoGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
+        freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
+        freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
+        freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
+        freezeGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
       ]);
     }
-    const data = this.daoData as TokenGovernanceDAO;
+    const data = this.daoData as AzoriusGovernanceDAO;
 
     this.internalTxs = this.internalTxs.concat([
       azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
@@ -110,7 +110,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
-    const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
+    const parentAllocation = (this.daoData as AzoriusGovernanceDAO).parentAllocationAmount;
     if (this.parentTokenAddress && !parentAllocation.isZero()) {
       tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
       const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();
@@ -136,17 +136,17 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
 
-    // subDAO case, add veto guard
+    // subDAO case, add freeze guard
     if (this.parentAddress) {
-      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder();
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
         this.enableFractalModuleTx!,
-        vetoGuardTxBuilder.buildDeployZodiacModuleTx(),
-        vetoGuardTxBuilder.buildVetoVotingSetupTx(),
-        vetoGuardTxBuilder.buildDeployVetoGuardTx(),
-        vetoGuardTxBuilder.buildSetGuardTx(this.safeContract),
+        freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
+        freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
+        freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
+        freezeGuardTxBuilder.buildSetGuardTx(this.safeContract),
       ]);
     }
 

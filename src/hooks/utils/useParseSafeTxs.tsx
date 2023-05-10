@@ -9,7 +9,7 @@ import { BigNumber, constants } from 'ethers';
 import { useMemo } from 'react';
 
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { AssetTotals, GnosisTransferType, ActivityEventType, Activity } from '../../types';
+import { AssetTotals, SafeTransferType, ActivityEventType, Activity } from '../../types';
 import { formatWeiToValue, parseDecodedData } from '../../utils';
 
 export function useParseSafeTxs(
@@ -41,7 +41,7 @@ export function useParseSafeTxs(
       // returns mapping of Asset -> Asset Total Value by getting the total of each asset transfered
       const transferAmountTotalsMap = transaction.transfers.reduce(
         (prev: Map<string, AssetTotals>, cur: TransferWithTokenInfoResponse) => {
-          if (cur.type === GnosisTransferType.ETHER && cur.value) {
+          if (cur.type === SafeTransferType.ETHER && cur.value) {
             const prevValue = prev.get(constants.AddressZero)!;
             if (prevValue) {
               prev.set(constants.AddressZero, {
@@ -56,14 +56,14 @@ export function useParseSafeTxs(
               decimals: 18,
             });
           }
-          if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+          if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
             prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
               bn: BigNumber.from(1),
               symbol: cur.tokenInfo.symbol,
               decimals: 0,
             });
           }
-          if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+          if (cur.type === SafeTransferType.ERC20 && cur.value && cur.tokenInfo) {
             const prevValue = prev.get(cur.tokenInfo.address);
             if (prevValue) {
               prev.set(cur.tokenInfo.address, {
@@ -169,7 +169,7 @@ export function useParseSafeTxs(
           isMultisigRejectionTx && !!noncePair
             ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
             : undefined,
-        proposalNumber: eventSafeTxHash,
+        proposalId: eventSafeTxHash,
         targets,
         transactionHash: multiSigTransaction.transactionHash,
         metaData,

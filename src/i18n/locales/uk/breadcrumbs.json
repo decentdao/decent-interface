@@ -3,5 +3,5 @@
     "proposalNew": "Нова Пропозиція",
     "nodes": "Ієрархія",
     "treasury": "Скарбниця",
-    "proposal": "#{{proposalNumber}} {{proposalTitle}}"
+    "proposal": "#{{proposalId}} {{proposalTitle}}"
 }

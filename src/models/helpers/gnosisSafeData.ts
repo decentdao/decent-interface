@@ -3,23 +3,23 @@ import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { buildContractCall } from '../../helpers/crypto';
-import { GnosisDAO } from '../../types';
+import { SafeMultisigDAO } from '../../types';
 const { AddressZero, HashZero } = ethers.constants;
 
 export const gnosisSafeData = async (
   multiSendContract: MultiSend,
   gnosisSafeFactoryContract: GnosisSafeProxyFactory,
   gnosisSafeSingletonContract: GnosisSafe,
-  daoData: GnosisDAO,
+  daoData: SafeMultisigDAO,
   saltNum: string,
   hasAzorius?: boolean
 ) => {
-  const gnosisDaoData = daoData as GnosisDAO;
+  const safeMultisigDAOData = daoData as SafeMultisigDAO;
 
   const signers = hasAzorius
     ? [multiSendContract.address]
     : [
-        ...gnosisDaoData.trustedAddresses.map(trustedAddress => trustedAddress),
+        ...safeMultisigDAOData.trustedAddresses.map(trustedAddress => trustedAddress),
         multiSendContract.address,
       ];
 

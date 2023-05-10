@@ -1,7 +1,12 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { DAOEssentials, StrategyType, BigNumberValuePair, TokenCreationType } from '../../../types';
+import {
+  DAOEssentials,
+  GovernanceModuleType,
+  BigNumberValuePair,
+  TokenCreationType,
+} from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
@@ -28,8 +33,8 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
         }),
-        gnosis: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE,
+        multisig: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.MULTISIG,
           then: _schema =>
             _schema.shape({
               trustedAddresses: Yup.array()
@@ -52,8 +57,8 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               customNonce: Yup.number(),
             }),
         }),
-        govToken: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_AZORIUS,
+        token: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
           then: _schema =>
             _schema.shape({
               tokenName: Yup.string().when('tokenCreationType', {
@@ -100,8 +105,8 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               }),
             }),
         }),
-        govModule: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === StrategyType.GNOSIS_SAFE_AZORIUS,
+        azorius: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
           then: _schema =>
             _schema.shape({
               quorumPercentage: Yup.object().shape({ value: Yup.string().required() }),
@@ -109,13 +114,12 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               votingPeriod: Yup.object().shape({ value: Yup.string().required() }),
             }),
         }),
-        vetoGuard: Yup.object().when({
+        freeze: Yup.object().when({
           is: isSubDAO,
           then: _schema =>
             _schema.shape({
               executionPeriod: Yup.object().shape({ value: Yup.string().required() }),
               timelockPeriod: Yup.object().shape({ value: Yup.string().required() }),
-              vetoVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeProposalPeriod: Yup.object().shape({ value: Yup.string().required() }),
               freezePeriod: Yup.object().shape({ value: Yup.string().required() }),

@@ -11,12 +11,11 @@ import { Info } from '@decent-org/fractal-ui';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  StrategyType,
+  GovernanceModuleType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
@@ -37,73 +36,77 @@ function GuardDetails(props: ICreationStepProps) {
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState(false);
-  const [totalParentVotes, setTotalParentVotes] = useState(BigNumber.from(0));
+  const [totalParentVotes, setTotalParentVotes] = useState<BigNumber>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
   const azoriusGovernance = governance as AzoriusGovernance;
   const governanceFormType = values.essentials.governance;
-  const defaultNonce = useDefaultNonce();
   const handleNonceChange = useCallback(
     (nonce?: number) => {
-      setFieldValue('gnosis.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
+      setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
     },
     [setFieldValue]
   );
 
   useEffect(() => {
-    const isParentAzorius = type === StrategyType.GNOSIS_SAFE_AZORIUS;
-    if (!isParentAzorius && isSubDAO) {
-      setFieldValue('gnosis.customNonce', defaultNonce);
+    const isParentAzorius = type === GovernanceModuleType.AZORIUS;
+    if (!isParentAzorius && isSubDAO && safe) {
+      setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, azoriusContract, type, setFieldValue, defaultNonce]);
+  }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
 
   useEffect(() => {
-    if (totalParentVotes.eq(0)) {
-      if (!type || !safe || !azoriusGovernance.votesToken) return;
+    // set the initial value for freezeGuard.freezeVotesThreshold
+    // and display helperFreezeVotesThreshold
+    if (!totalParentVotes) {
+      if (!type) return;
 
-      let totalVotes: BigNumberValuePair;
+      let parentVotes: BigNumber;
+
       switch (type) {
-        case StrategyType.GNOSIS_SAFE_AZORIUS:
+        case GovernanceModuleType.AZORIUS:
+          if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
           const normalized = ethers.utils.formatUnits(
-            azoriusGovernance.votesToken.totalSupply || '0',
+            azoriusGovernance.votesToken.totalSupply,
             azoriusGovernance.votesToken.decimals
           );
-          // ethers.utils.formatUnits returns a whole number string in the form `xxx.0`
-          // but BigNumber won't parse out the insignificant decimal, so we need to cut it
-          totalVotes = {
-            value: safe.owners?.length.toString() || '',
-            bigNumberValue: BigNumber.from(normalized.substring(0, normalized.indexOf('.'))),
-          };
+          parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           break;
-        case StrategyType.GNOSIS_SAFE:
+        case GovernanceModuleType.MULTISIG:
         default:
-          totalVotes = {
-            value: safe.owners?.length.toString() || '',
-            bigNumberValue: BigNumber.from(safe.owners?.length || 0),
-          };
+          if (!safe) return;
+          parentVotes = BigNumber.from(safe.owners.length);
       }
-      setTotalParentVotes(totalVotes.bigNumberValue!);
 
-      const childThresholds = totalVotes.bigNumberValue!.eq(1)
-        ? totalVotes
-        : {
-            value: ethers.utils.formatUnits(
-              totalVotes.bigNumberValue!.div(2),
-              azoriusGovernance.votesToken.decimals
-            ),
-            bigNumberValue: totalVotes.bigNumberValue!.div(2),
-          };
-      setFieldValue('vetoGuard.vetoVotesThreshold', childThresholds);
-      setFieldValue('vetoGuard.freezeVotesThreshold', childThresholds);
+      let thresholdDefault: BigNumberValuePair;
+
+      if (parentVotes.eq(1)) {
+        thresholdDefault = {
+          value: '1',
+          bigNumberValue: parentVotes,
+        };
+      } else {
+        thresholdDefault = {
+          value: parentVotes.toString(),
+          bigNumberValue: parentVotes.div(2),
+        };
+      }
+
+      setTotalParentVotes(parentVotes);
+      setFieldValue('freeze.freezeVotesThreshold', thresholdDefault);
     }
-  }, [azoriusGovernance.votesToken, safe, totalParentVotes, type, setFieldValue]);
+  }, [
+    azoriusGovernance.votesToken,
+    safe,
+    totalParentVotes,
+    type,
+    setFieldValue,
+    azoriusGovernance,
+  ]);
 
-  const showVetoFreezeHelpers = totalParentVotes.gt(0);
-  const formattedVotesTotal = formatBigNumberDisplay(totalParentVotes);
-
-  const freezeHelper = showVetoFreezeHelpers
-    ? t('helperFreezeVotesThreshold', { totalVotes: formattedVotesTotal })
+  const freezeHelper = totalParentVotes
+    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigNumberDisplay(totalParentVotes) })
     : null;
 
   return (
@@ -117,7 +120,7 @@ function GuardDetails(props: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governanceFormType === StrategyType.GNOSIS_SAFE && (
+        {governanceFormType === GovernanceModuleType.MULTISIG && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -125,8 +128,8 @@ function GuardDetails(props: ICreationStepProps) {
           >
             <InputGroup>
               <BigNumberInput
-                value={values.vetoGuard.timelockPeriod.bigNumberValue}
-                onChange={valuePair => setFieldValue('vetoGuard.timelockPeriod', valuePair)}
+                value={values.freeze.timelockPeriod.bigNumberValue}
+                onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="guardConfig-executionDetails"
@@ -149,8 +152,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.executionPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('vetoGuard.executionPeriod', valuePair)}
+              value={values.freeze.executionPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-executionDetails"
@@ -173,8 +176,8 @@ function GuardDetails(props: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.vetoGuard.freezeVotesThreshold.bigNumberValue}
-            onChange={valuePair => setFieldValue('vetoGuard.freezeVotesThreshold', valuePair)}
+            value={values.freeze.freezeVotesThreshold.bigNumberValue}
+            onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
           />
@@ -186,8 +189,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezeProposalPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('vetoGuard.freezeProposalPeriod', valuePair)}
+              value={values.freeze.freezeProposalPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freeze.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeProposalDuration"
@@ -209,8 +212,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.vetoGuard.freezePeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('vetoGuard.freezePeriod', valuePair)}
+              value={values.freeze.freezePeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freeze.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeDuration"
@@ -233,7 +236,7 @@ function GuardDetails(props: ICreationStepProps) {
               textStyle="text-lg-mono-medium"
               whiteSpace="pre-wrap"
             >
-              {t('vetoGuardDescription')}
+              {t('freezeGuardDescription')}
             </Text>
           </AlertTitle>
         </Alert>
@@ -244,9 +247,8 @@ function GuardDetails(props: ICreationStepProps) {
         {showCustomNonce && (
           <>
             <CustomNonceInput
-              nonce={values.gnosis.customNonce}
+              nonce={values.multisig.customNonce}
               onChange={handleNonceChange}
-              defaultNonce={defaultNonce}
             />
             <Divider
               color="chocolate.700"
@@ -257,9 +259,9 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === StrategyType.GNOSIS_SAFE
-              ? CreatorSteps.GNOSIS_GOVERNANCE
-              : CreatorSteps.GOV_CONFIG
+            governanceFormType === GovernanceModuleType.MULTISIG
+              ? CreatorSteps.MULTISIG_DETAILS
+              : CreatorSteps.AZORIUS_DETAILS
           }
           isLastStep
         />

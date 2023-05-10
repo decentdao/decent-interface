@@ -19,7 +19,7 @@
     "noVotesButton": "Користувач на має голосів",
     "freezeDaysLeft": "Залишилось {{count}} днів",
     "tipFreeze": "{{amount}} необхідні голоси замороження",
-    "proposalOnChainRejection": "що відхиляє транзакцію # {{proposalNumber}}",
+    "proposalOnChainRejection": "що відхиляє транзакцію # {{proposalId}}",
     "proposalDescriptionCont": "що буде",
     "timeRemaining": "{{time}} залишилось",
     "labelUndoFreeze": "Розморозити",

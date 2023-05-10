@@ -1,5 +1,5 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
-import { VetoERC20Voting, VetoMultisigVoting } from '@fractal-framework/fractal-contracts';
+import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { DAOState, FreezeGuard } from '../../../../types';
@@ -22,10 +22,10 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 
 export function ActivityFreeze({
   freezeGuard,
-  vetoVotingContract,
+  freezeVotingContract,
 }: {
   freezeGuard: FreezeGuard;
-  vetoVotingContract: VetoERC20Voting | VetoMultisigVoting | undefined;
+  freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting | undefined;
 }) {
   const {
     freezeProposalCreatedTime,
@@ -85,12 +85,12 @@ export function ActivityFreeze({
               {freezeGuard.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
             </Text>
           )}
-          {!freezeGuard.isFrozen && vetoVotingContract && (
+          {!freezeGuard.isFrozen && freezeVotingContract && (
             <FreezeButton
               isFrozen={freezeGuard.isFrozen}
               userHasFreezeVoted={freezeGuard.userHasFreezeVoted}
               userHasVotes={freezeGuard.userHasVotes}
-              vetoVotingContract={vetoVotingContract}
+              freezeVotingContract={freezeVotingContract}
             />
           )}
         </Flex>

@@ -1,13 +1,19 @@
-import { VetoGuard } from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { Activity } from '../types';
+import { Providers } from '../types/network';
+import { getTimeStamp } from './contract';
 
-export async function getTxQueuedTimestamp(activity: Activity, vetoGuard: VetoGuard) {
+export async function getTxTimelockedTimestamp(
+  activity: Activity,
+  freezeGuard: MultisigFreezeGuard,
+  provider: Providers
+) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
   const abiCoder = new ethers.utils.AbiCoder();
-  const vetoGuardTransactionHash = ethers.utils.solidityKeccak256(
+  const freezeGuardTransactionHash = ethers.utils.solidityKeccak256(
     ['bytes'],
     [
       abiCoder.encode(
@@ -37,9 +43,10 @@ export async function getTxQueuedTimestamp(activity: Activity, vetoGuard: VetoGu
     ]
   );
 
-  const queuedTimestamp = (
-    await vetoGuard.getTransactionQueuedTimestamp(vetoGuardTransactionHash)
-  ).toNumber();
+  const timelockedTimestamp = await getTimeStamp(
+    await freezeGuard.getTransactionTimelockedBlock(freezeGuardTransactionHash),
+    provider
+  );
 
-  return queuedTimestamp;
+  return timelockedTimestamp;
 }

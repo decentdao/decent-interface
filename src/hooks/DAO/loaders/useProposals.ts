@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
-import { StrategyType } from '../../../types';
+import { GovernanceModuleType } from '../../../types';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
@@ -24,7 +24,7 @@ export const useDAOProposals = () => {
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
         payload: {
-          type: StrategyType.GNOSIS_SAFE_AZORIUS,
+          type: GovernanceModuleType.AZORIUS,
           proposals: await loadAzoriusProposals(),
         },
       });

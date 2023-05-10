@@ -6,7 +6,6 @@ import { useMemo } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
-import useDAOName from '../../../hooks/DAO/useDAOName';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
@@ -39,17 +38,16 @@ export function DAOInfoCard({
   numberOfChildrenDAO,
   freezeGuard,
   guardContracts,
+  fractalNode,
 }: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
   const {
     node: { daoAddress, daoName },
     action,
     readOnly: { user },
   } = useFractal();
+
   const { favoritesList, toggleFavorite } = useAccountFavorites();
   const isCurrentDAO = safeAddress === daoAddress;
-  const { daoRegistryName } = useDAOName({
-    address: safeAddress && !isCurrentDAO ? safeAddress : undefined,
-  });
 
   const canManageDAO = !!user.address;
 
@@ -113,7 +111,7 @@ export function DAOInfoCard({
                 color="grayscale.100"
                 data-testid="DAOInfo-name"
               >
-                {daoRegistryName || daoName}
+                {fractalNode?.daoName || daoName}
               </Text>
             </Link>
             <IconButton
@@ -166,7 +164,7 @@ export function DAONodeCard(props: IDAOInfoCard) {
   );
 
   const nodeGuardContracts =
-    !isCurrentDAO && !!subDAOData ? subDAOData.vetoGuardContracts : guardContracts;
+    !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuardContracts : guardContracts;
   const nodeFreezeGuard =
     !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuard : !isCurrentDAO ? undefined : guard;
   const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;

@@ -1,14 +1,14 @@
 import { BigNumber } from 'ethers';
-import { CreatorFormState, StrategyType, TokenCreationType } from '../../types';
+import { CreatorFormState, GovernanceModuleType, TokenCreationType } from '../../types';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
-    governance: StrategyType.GNOSIS_SAFE,
+    governance: GovernanceModuleType.MULTISIG,
   },
-  govToken: {
+  token: {
     tokenCreationType: TokenCreationType.NEW,
     tokenName: '',
     tokenSupply: {
@@ -35,7 +35,7 @@ export const initialState: CreatorFormState = {
    *
    * See {@link useBuildDAOTx} for more info.
    */
-  govModule: {
+  azorius: {
     quorumPercentage: {
       value: '4',
       bigNumberValue: BigNumber.from(4),
@@ -48,8 +48,12 @@ export const initialState: CreatorFormState = {
       value: '10080',
       bigNumberValue: BigNumber.from(10080),
     },
+    executionPeriod: {
+      value: '2800',
+      bigNumberValue: BigNumber.from(2800),
+    },
   },
-  vetoGuard: {
+  freeze: {
     executionPeriod: {
       value: '2800',
       bigNumberValue: BigNumber.from(2800),
@@ -57,10 +61,6 @@ export const initialState: CreatorFormState = {
     timelockPeriod: {
       value: '1400',
       bigNumberValue: BigNumber.from(1400),
-    },
-    vetoVotesThreshold: {
-      value: '1',
-      bigNumberValue: BigNumber.from(1),
     },
     freezeVotesThreshold: {
       value: '1',
@@ -75,7 +75,7 @@ export const initialState: CreatorFormState = {
       bigNumberValue: BigNumber.from(10080),
     },
   },
-  gnosis: {
+  multisig: {
     trustedAddresses: [''],
     signatureThreshold: 1,
     numOfSigners: 1,

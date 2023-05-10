@@ -5,52 +5,38 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SortBy, StrategyType, FractalProposalState } from '../../types';
+import { SortBy, GovernanceModuleType, FractalProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
-const FILTERS_AZORIUS_BASE = [
-  FractalProposalState.Active,
-  FractalProposalState.Queueable,
-  FractalProposalState.TimeLocked,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
+const FILTERS_AZORIUS = [
+  FractalProposalState.ACTIVE,
+  FractalProposalState.TIMELOCKED,
+  FractalProposalState.EXECUTABLE,
+  FractalProposalState.EXECUTED,
 
-  FractalProposalState.Failed,
-  FractalProposalState.Expired,
-  FractalProposalState.Rejected,
-];
-
-const FILTERS_AZORIUS_CHILD = [
-  FractalProposalState.Active,
-  FractalProposalState.Queueable,
-  FractalProposalState.TimeLocked,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
-
-  FractalProposalState.Failed,
-  FractalProposalState.Expired,
-  FractalProposalState.Rejected,
+  FractalProposalState.FAILED,
+  FractalProposalState.EXPIRED,
 ];
 
 const FILTERS_MULTISIG_BASE = [
-  FractalProposalState.Active,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
+  FractalProposalState.ACTIVE,
+  FractalProposalState.EXECUTABLE,
+  FractalProposalState.EXECUTED,
 
-  FractalProposalState.Rejected,
+  FractalProposalState.REJECTED,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
-  FractalProposalState.Active,
-  FractalProposalState.Queueable,
-  FractalProposalState.Queued,
-  FractalProposalState.Executing,
-  FractalProposalState.Executed,
+  FractalProposalState.ACTIVE,
+  FractalProposalState.TIMELOCKABLE,
+  FractalProposalState.TIMELOCKED,
+  FractalProposalState.EXECUTABLE,
+  FractalProposalState.EXECUTED,
 
-  FractalProposalState.Rejected,
-  FractalProposalState.Expired,
+  FractalProposalState.REJECTED,
+  FractalProposalState.EXPIRED,
 ];
 
 export default function Proposals() {
@@ -71,16 +57,12 @@ export default function Proposals() {
 
     let options;
     switch (type) {
-      case StrategyType.GNOSIS_SAFE_AZORIUS:
-        if (guardContracts.vetoGuardContract) {
-          options = FILTERS_AZORIUS_CHILD;
-        } else {
-          options = FILTERS_AZORIUS_BASE;
-        }
+      case GovernanceModuleType.AZORIUS:
+        options = FILTERS_AZORIUS;
         break;
-      case StrategyType.GNOSIS_SAFE:
+      case GovernanceModuleType.MULTISIG:
       default:
-        if (guardContracts.vetoGuardContract) {
+        if (guardContracts.freezeGuardContract) {
           options = FILTERS_MULTISIG_CHILD;
         } else {
           options = FILTERS_MULTISIG_BASE;
@@ -89,7 +71,7 @@ export default function Proposals() {
     }
     setAllOptions(options);
     setFilters(options);
-  }, [guardContracts.vetoGuardContract, type]);
+  }, [guardContracts.freezeGuardContract, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {

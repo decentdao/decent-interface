@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
-import { TokenGovernanceDAO, GnosisDAO, AzoriusGovernance } from '../../types';
+import { AzoriusGovernanceDAO, SafeMultisigDAO, AzoriusGovernance } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
@@ -22,7 +22,7 @@ export const useCreateSubDAOProposal = () => {
   const azoriusGovernance = governance as AzoriusGovernance;
   const proposeDao = useCallback(
     (
-      daoData: TokenGovernanceDAO | GnosisDAO,
+      daoData: AzoriusGovernanceDAO | SafeMultisigDAO,
       nonce: number | undefined,
       successCallback: (daoAddress: string) => void
     ) => {

@@ -3,17 +3,17 @@ import { ethers } from 'ethers';
 import { getRandomBytes } from '../helpers';
 import {
   BaseContracts,
-  GnosisDAO,
+  SafeMultisigDAO,
   SafeTransaction,
   SubDAO,
-  TokenGovernanceDAO,
+  AzoriusGovernanceDAO,
   AzoriusContracts,
 } from '../types';
 import { AzoriusTxBuilder as AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
+import { FreezeGuardTxBuilder } from './FreezeGuardTxBuilder';
 import { MultisigTxBuilder } from './MultisigTxBuilder';
-import { VetoGuardTxBuilder } from './VetoGuardTxBuilder';
 import { gnosisSafeData } from './helpers/gnosisSafeData';
 
 export class TxBuilderFactory extends BaseTxBuilder {
@@ -28,7 +28,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: GnosisDAO | TokenGovernanceDAO | SubDAO,
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO,
     parentAddress?: string,
     parentTokenAddress?: string
   ) {
@@ -49,7 +49,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts.multiSendContract,
       this.baseContracts.gnosisSafeFactoryContract,
       this.baseContracts.gnosisSafeSingletonContract,
-      this.daoData as GnosisDAO,
+      this.daoData as SafeMultisigDAO,
       this.saltNum,
       !!this.azoriusContracts
     );
@@ -80,11 +80,11 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public createVetoGuardTxBuilder(
+  public createFreezeGuardTxBuilder(
     azoriusAddress?: string,
     strategyAddress?: string
-  ): VetoGuardTxBuilder {
-    return new VetoGuardTxBuilder(
+  ): FreezeGuardTxBuilder {
+    return new FreezeGuardTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
       this.daoData as SubDAO,
@@ -99,7 +99,11 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public createMultiSigTxBuilder(): MultisigTxBuilder {
-    return new MultisigTxBuilder(this.baseContracts, this.daoData as GnosisDAO, this.safeContract!);
+    return new MultisigTxBuilder(
+      this.baseContracts,
+      this.daoData as SafeMultisigDAO,
+      this.safeContract!
+    );
   }
 
   public createAzoriusTxBuilder(): AzoriusTxBuilder {
@@ -107,7 +111,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.signerOrProvider,
       this.baseContracts,
       this.azoriusContracts!,
-      this.daoData as GnosisDAO,
+      this.daoData as AzoriusGovernanceDAO,
       this.safeContract!,
       this.predictedGnosisSafeAddress!,
       this.parentAddress,

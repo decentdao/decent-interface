@@ -94,6 +94,11 @@ export const useFractalNode = ({
           type: NodeAction.SET_DAO_INFO,
           payload: Object.assign(graphNodeInfo, { daoName }),
         });
+      } else {
+        action.dispatch({
+          type: NodeAction.UPDATE_DAO_NAME,
+          payload: daoName,
+        });
       }
     },
     pollInterval: ONE_MINUTE,

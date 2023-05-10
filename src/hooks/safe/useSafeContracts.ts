@@ -1,22 +1,22 @@
 import {
   FractalModule__factory,
   FractalRegistry__factory,
-  UsulVetoGuard__factory,
-  VetoERC20Voting__factory,
-  VetoGuard__factory,
-  VetoMultisigVoting__factory,
-  VotesToken__factory,
+  AzoriusFreezeGuard__factory,
+  ERC20FreezeVoting__factory,
+  MultisigFreezeGuard__factory,
+  MultisigFreezeVoting__factory,
+  VotesERC20__factory,
   GnosisSafeProxyFactory__factory,
   GnosisSafe__factory,
   ModuleProxyFactory__factory,
-  OZLinearVoting__factory,
-  FractalUsul__factory,
-  TokenClaim__factory,
+  LinearERC20Voting__factory,
+  Azorius__factory,
+  ERC20Claim__factory,
+  VotesERC20Wrapper__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
-import { VotesERC20Wrapper__factory } from '../../assets/typechain-types/usul/factories/VotesERC20Wrapper__factory';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSafeContracts() {
@@ -33,11 +33,11 @@ export default function useSafeContracts() {
       fractalAzoriusMasterCopy,
       fractalModuleMasterCopy,
       fractalRegistry,
-      gnosisVetoGuardMasterCopy,
-      azoriusVetoGuardMasterCopy,
-      vetoMultisigVotingMasterCopy,
-      vetoERC20VotingMasterCopy,
-      votesTokenMasterCopy,
+      multisigFreezeGuardMasterCopy,
+      azoriusFreezeGuardMasterCopy,
+      multisigFreezeVotingMasterCopy,
+      erc20FreezeVotingMasterCopy,
+      votesERC20MasterCopy,
       claimingMasterCopy,
       votesERC20WrapperMasterCopy,
     },
@@ -56,13 +56,13 @@ export default function useSafeContracts() {
     };
 
     const fractalAzoriusMasterCopyContract = {
-      asSigner: FractalUsul__factory.connect(fractalAzoriusMasterCopy, signerOrProvider),
-      asProvider: FractalUsul__factory.connect(fractalAzoriusMasterCopy, provider),
+      asSigner: Azorius__factory.connect(fractalAzoriusMasterCopy, signerOrProvider),
+      asProvider: Azorius__factory.connect(fractalAzoriusMasterCopy, provider),
     };
 
     const linearVotingMasterCopyContract = {
-      asSigner: OZLinearVoting__factory.connect(linearVotingMasterCopy, signerOrProvider),
-      asProvider: OZLinearVoting__factory.connect(linearVotingMasterCopy, provider),
+      asSigner: LinearERC20Voting__factory.connect(linearVotingMasterCopy, signerOrProvider),
+      asProvider: LinearERC20Voting__factory.connect(linearVotingMasterCopy, provider),
     };
 
     const gnosisSafeSingletonContract = {
@@ -85,34 +85,40 @@ export default function useSafeContracts() {
       asProvider: FractalRegistry__factory.connect(fractalRegistry, provider),
     };
 
-    const gnosisVetoGuardMasterCopyContract = {
-      asSigner: VetoGuard__factory.connect(gnosisVetoGuardMasterCopy, signerOrProvider),
-      asProvider: VetoGuard__factory.connect(gnosisVetoGuardMasterCopy, provider),
+    const multisigFreezeGuardMasterCopyContract = {
+      asSigner: MultisigFreezeGuard__factory.connect(
+        multisigFreezeGuardMasterCopy,
+        signerOrProvider
+      ),
+      asProvider: MultisigFreezeGuard__factory.connect(multisigFreezeGuardMasterCopy, provider),
     };
 
-    const azoriusVetoGuardMasterCopyContract = {
-      asSigner: UsulVetoGuard__factory.connect(azoriusVetoGuardMasterCopy, signerOrProvider),
-      asProvider: UsulVetoGuard__factory.connect(azoriusVetoGuardMasterCopy, provider),
+    const azoriusFreezeGuardMasterCopyContract = {
+      asSigner: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, signerOrProvider),
+      asProvider: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, provider),
     };
 
-    const vetoMultisigVotingMasterCopyContract = {
-      asSigner: VetoMultisigVoting__factory.connect(vetoMultisigVotingMasterCopy, signerOrProvider),
-      asProvider: VetoMultisigVoting__factory.connect(vetoMultisigVotingMasterCopy, provider),
+    const freezeMultisigVotingMasterCopyContract = {
+      asSigner: MultisigFreezeVoting__factory.connect(
+        multisigFreezeVotingMasterCopy,
+        signerOrProvider
+      ),
+      asProvider: MultisigFreezeVoting__factory.connect(multisigFreezeVotingMasterCopy, provider),
     };
 
-    const vetoERC20VotingMasterCopyContract = {
-      asSigner: VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy, signerOrProvider),
-      asProvider: VetoERC20Voting__factory.connect(vetoERC20VotingMasterCopy, provider),
+    const freezeERC20VotingMasterCopyContract = {
+      asSigner: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, signerOrProvider),
+      asProvider: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, provider),
     };
 
     const votesTokenMasterCopyContract = {
-      asSigner: VotesToken__factory.connect(votesTokenMasterCopy, signerOrProvider),
-      asProvider: VotesToken__factory.connect(votesTokenMasterCopy, provider),
+      asSigner: VotesERC20__factory.connect(votesERC20MasterCopy, signerOrProvider),
+      asProvider: VotesERC20__factory.connect(votesERC20MasterCopy, provider),
     };
 
     const claimingMasterCopyContract = {
-      asSigner: TokenClaim__factory.connect(claimingMasterCopy, signerOrProvider),
-      asProvider: TokenClaim__factory.connect(claimingMasterCopy, provider),
+      asSigner: ERC20Claim__factory.connect(claimingMasterCopy, signerOrProvider),
+      asProvider: ERC20Claim__factory.connect(claimingMasterCopy, provider),
     };
 
     const votesERC20WrapperMasterCopyContract = {
@@ -129,10 +135,10 @@ export default function useSafeContracts() {
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       fractalRegistryContract,
-      gnosisVetoGuardMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-      vetoERC20VotingMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
@@ -146,11 +152,11 @@ export default function useSafeContracts() {
     gnosisMultisend,
     fractalModuleMasterCopy,
     fractalRegistry,
-    gnosisVetoGuardMasterCopy,
-    azoriusVetoGuardMasterCopy,
-    vetoMultisigVotingMasterCopy,
-    vetoERC20VotingMasterCopy,
-    votesTokenMasterCopy,
+    multisigFreezeGuardMasterCopy,
+    azoriusFreezeGuardMasterCopy,
+    multisigFreezeVotingMasterCopy,
+    erc20FreezeVotingMasterCopy,
+    votesERC20MasterCopy,
     claimingMasterCopy,
     votesERC20WrapperMasterCopy,
     provider,

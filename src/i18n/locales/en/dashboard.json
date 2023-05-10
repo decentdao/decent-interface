@@ -22,7 +22,7 @@
     "noVotesButton": "User Has No Votes",
     "freezeDaysLeft": "{{count}} days left",
     "tipFreeze": "{{amount}} required freeze votes",
-    "proposalOnChainRejection": "that rejects transaction {{proposalNumber}}",
+    "proposalOnChainRejection": "that rejects transaction {{proposalId}}",
     "proposalDescriptionCont": "that will",
     "labelFreezeInitiated": "Freeze Vote Pending",
     "timeRemaining": "{{time}} remaining",

@@ -1,17 +1,17 @@
 import {
-  FractalUsul,
-  OZLinearVoting,
-  UsulVetoGuard,
-  VotesToken,
-  TokenClaim,
+  Azorius,
+  LinearERC20Voting,
+  AzoriusFreezeGuard,
+  VotesERC20,
+  ERC20Claim,
+  VotesERC20Wrapper,
 } from '@fractal-framework/fractal-contracts';
-import { VotesERC20Wrapper } from './../assets/typechain-types/VotesERC20Wrapper';
 
 export interface AzoriusContracts {
-  fractalAzoriusMasterCopyContract: FractalUsul;
-  linearVotingMasterCopyContract: OZLinearVoting;
-  azoriusVetoGuardMasterCopyContract: UsulVetoGuard;
-  votesTokenMasterCopyContract: VotesToken;
-  claimingMasterCopyContract: TokenClaim;
+  fractalAzoriusMasterCopyContract: Azorius;
+  linearVotingMasterCopyContract: LinearERC20Voting;
+  azoriusFreezeGuardMasterCopyContract: AzoriusFreezeGuard;
+  votesTokenMasterCopyContract: VotesERC20;
+  claimingMasterCopyContract: ERC20Claim;
   votesERC20WrapperMasterCopyContract: VotesERC20Wrapper;
 }

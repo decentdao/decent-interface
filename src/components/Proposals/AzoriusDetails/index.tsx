@@ -37,9 +37,9 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
     }
     let timeout = 0;
     const now = new Date();
-    if (proposal.state === FractalProposalState.Active) {
+    if (proposal.state === FractalProposalState.ACTIVE) {
       timeout = proposal.deadline * 1000 - now.getTime();
-    } else if (proposal.state === FractalProposalState.TimeLocked) {
+    } else if (proposal.state === FractalProposalState.TIMELOCKED) {
       const timeLockNumber = timeLockPeriod?.value?.toNumber();
       timeout =
         new Date((proposal.deadline + Number(timeLockNumber)) * 1000).getTime() - now.getTime();
@@ -49,7 +49,7 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
     if (timeout > 0 && timeout < 86400) {
       setActiveTimeout(
         setTimeout(
-          () => updateProposalState(BigNumber.from(proposal.proposalNumber)),
+          () => updateProposalState(BigNumber.from(proposal.proposalId)),
           timeout + 60000 // add extra 60 seconds to ensure that we woulnd't encounter issue while trying to update status in same minute as it supposed to change
         )
       );
@@ -61,7 +61,7 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
     // eslint-disable-next-line
   }, [
     proposal.state,
-    proposal.proposalNumber,
+    proposal.proposalId,
     proposal.deadline,
     updateProposalState,
   ]);

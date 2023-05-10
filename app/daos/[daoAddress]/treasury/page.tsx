@@ -4,6 +4,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../src/components/pages/DAOTreasury/components/Assets';
 import { Transactions } from '../../../../src/components/pages/DAOTreasury/components/Transactions';
+import { useTreasuryTotalBN } from '../../../../src/components/pages/DAOTreasury/hooks/useTreasuryTotalBN';
 import { TitledInfoBox } from '../../../../src/components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
@@ -14,12 +15,11 @@ import { useFractal } from '../../../../src/providers/App/AppProvider';
 export default function Treasury() {
   const {
     readOnly: { user },
-    treasury: { assetsFungible },
     node: { daoName, daoAddress },
   } = useFractal();
   const { t } = useTranslation('treasury');
-
-  const showButton = user.votingWeight.gt(0) && assetsFungible.length > 0;
+  const treasuryTotal = useTreasuryTotalBN();
+  const showButton = user.votingWeight.gt(0) && !treasuryTotal.isZero();
 
   return (
     <ClientOnly>

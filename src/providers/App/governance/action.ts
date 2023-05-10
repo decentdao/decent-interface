@@ -1,4 +1,4 @@
-import { TokenClaim } from '@fractal-framework/fractal-contracts';
+import { ERC20Claim } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import {
   FractalProposal,
@@ -9,7 +9,7 @@ import {
   VotesStrategy,
   UnderlyingTokenData,
 } from '../../../types';
-import { StrategyType } from './../../../types/fractal';
+import { GovernanceModuleType } from './../../../types/fractal';
 
 export enum FractalGovernanceAction {
   SET_PROPOSALS = 'SET_PROPOSALS',
@@ -31,14 +31,14 @@ export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotesStrategy }
   | {
       type: FractalGovernanceAction.SET_PROPOSALS;
-      payload: { type: StrategyType; proposals: FractalProposal[] };
+      payload: { type: GovernanceModuleType; proposals: FractalProposal[] };
     }
   // @todo update with proposal type
   | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
   | {
       type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE;
       payload: {
-        proposalNumber: string;
+        proposalId: string;
         voter: string;
         support: number;
         weight: BigNumber;
@@ -48,7 +48,7 @@ export type FractalGovernanceActions =
   // @todo update with proposal state
   | {
       type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
-      payload: { state: FractalProposalState; proposalNumber: string };
+      payload: { state: FractalProposalState; proposalId: string };
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;
@@ -74,7 +74,7 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
       payload: VotesData;
     }
-  | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: TokenClaim }
+  | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: ERC20Claim }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
     };

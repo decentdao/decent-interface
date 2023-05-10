@@ -33,7 +33,7 @@ function Vote({
   const azoriusProposal = proposal as AzoriusProposal;
 
   const castVote = useCastVote({
-    proposalNumber: BigNumber.from(proposal.proposalNumber),
+    proposalId: BigNumber.from(proposal.proposalId),
     setPending: setPending,
   });
 
@@ -47,7 +47,7 @@ function Vote({
 
   // If user is lucky enough - he could create a proposal and proceed to vote on it
   // even before the block, in which proposal was created, was mined.
-  // This gives a weird behavior when casting vote fails due to requirement under OZLinearVoting contract that current block number
+  // This gives a weird behavior when casting vote fails due to requirement under LinearERC20Voting contract that current block number
   // Shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
   const proposalStartBlockNotFinalized = Boolean(
     isCurrentBlockLoaded && currentBlockNumber && azoriusProposal.startBlock.gte(currentBlockNumber)
@@ -55,7 +55,7 @@ function Vote({
 
   const disabled =
     pending ||
-    proposal.state !== FractalProposalState.Active ||
+    proposal.state !== FractalProposalState.ACTIVE ||
     !!azoriusProposal.votes.find(vote => vote.voter === user.address) ||
     proposalStartBlockNotFinalized;
 

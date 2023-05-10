@@ -51,9 +51,9 @@ export const DAO_ROUTES: DAORoutes = {
     path: 'proposals',
   },
   proposal: {
-    relative: (daoAddress: string, proposalNumber: string) =>
-      `/daos/${daoAddress}/proposals/${proposalNumber}`,
-    path: 'proposals/:proposalNumber',
+    relative: (daoAddress: string, proposalId: string) =>
+      `/daos/${daoAddress}/proposals/${proposalId}`,
+    path: 'proposals/:proposalId',
   },
   proposalNew: {
     relative: (daoAddress: string) => `/daos/${daoAddress}/proposals/new`,

@@ -245,4 +245,14 @@ https://app.staging.fractalframework.xyz/daos/{address}
 - [ ] Governace card displays Multisig governance details
 - [ ] Proposals card displays Pending / Passed counts
 
-## TODO multisig specific stuff
+## Manage Signers (Multisig)
+https://app.staging.fractalframework.xyz/daos/{address}/manage-signers
+
+- [ ] List of current signers appears
+- [ ] DAO Details displays correct signers required
+- [ ] Remove highlights when user is selected
+- [ ] Remove modal creates remove signer proposal
+- [ ] Add modal creates add signer proposal
+- [ ] Add modal does not allow you to add an existing signer again
+
+## TODO more multisig specific stuff

@@ -1,7 +1,7 @@
 import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { GnosisSafe__factory, VetoGuard } from '@fractal-framework/fractal-contracts';
+import { GnosisSafe__factory, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useMemo } from 'react';
@@ -21,10 +21,10 @@ import ProposalTime from '../../ui/proposal/ProposalTime';
 
 export function TxActions({
   proposal,
-  vetoGuard,
+  freezeGuard,
 }: {
   proposal: MultisigProposal;
-  vetoGuard: VetoGuard;
+  freezeGuard: MultisigFreezeGuard;
 }) {
   const {
     node: { safe },
@@ -68,7 +68,7 @@ export function TxActions({
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
-          await safeService.confirmTransaction(proposal.proposalNumber, signature);
+          await safeService.confirmTransaction(proposal.proposalId, signature);
           await loadSafeMultisigProposals();
         },
       });
@@ -77,7 +77,7 @@ export function TxActions({
     }
   };
 
-  const queueTransaction = async () => {
+  const timelockTransaction = async () => {
     try {
       if (!multisigTx.confirmations) {
         return;
@@ -93,7 +93,7 @@ export function TxActions({
       );
       contractCall({
         contractFn: () =>
-          vetoGuard.queueTransaction(
+          freezeGuard.timelockTransaction(
             safeTx.to,
             safeTx.value,
             safeTx.data,
@@ -103,13 +103,14 @@ export function TxActions({
             safeTx.gasPrice,
             safeTx.gasToken,
             safeTx.refundReceiver,
-            signatures
+            signatures,
+            safeTx.nonce
           ),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
-          await await loadSafeMultisigProposals();
+          await loadSafeMultisigProposals();
         },
       });
     } catch (e) {
@@ -163,10 +164,10 @@ export function TxActions({
   const isPending = asyncRequestPending || contractCallPending;
 
   if (
-    (proposal.state === FractalProposalState.Active && (hasSigned || !isOwner)) ||
-    proposal.state === FractalProposalState.Rejected ||
-    proposal.state === FractalProposalState.Executed ||
-    proposal.state === FractalProposalState.Expired
+    (proposal.state === FractalProposalState.ACTIVE && (hasSigned || !isOwner)) ||
+    proposal.state === FractalProposalState.REJECTED ||
+    proposal.state === FractalProposalState.EXECUTED ||
+    proposal.state === FractalProposalState.EXPIRED
   ) {
     return null;
   }
@@ -181,32 +182,32 @@ export function TxActions({
   };
 
   const buttonProps: ButtonProps = {
-    [FractalProposalState.Active]: {
+    [FractalProposalState.ACTIVE]: {
       action: signTransaction,
       text: 'approve',
       pageTitle: 'signTitle',
       icon: undefined,
     },
-    [FractalProposalState.Executing]: {
+    [FractalProposalState.EXECUTABLE]: {
       action: executeTransaction,
       text: 'execute',
       pageTitle: 'executeTitle',
       icon: <Check boxSize="1.5rem" />,
     },
-    [FractalProposalState.Queueable]: {
-      action: queueTransaction,
-      text: 'queue',
-      pageTitle: 'queueTitle',
+    [FractalProposalState.TIMELOCKABLE]: {
+      action: timelockTransaction,
+      text: 'timelock',
+      pageTitle: 'timelockTitle',
       icon: undefined,
     },
-    [FractalProposalState.Queued]: {
+    [FractalProposalState.TIMELOCKED]: {
       action: async () => {},
       text: 'execute',
       pageTitle: 'executeTitle',
       icon: undefined,
     },
   };
-  const isButtonDisabled = isPending || proposal.state === FractalProposalState.Queued;
+  const isButtonDisabled = isPending || proposal.state === FractalProposalState.TIMELOCKED;
 
   return (
     <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>

@@ -25,12 +25,12 @@ export type NetworkConfig = {
     fractalAzoriusMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalRegistry: string;
-    votesTokenMasterCopy: string;
+    votesERC20MasterCopy: string;
     claimingMasterCopy: string;
-    gnosisVetoGuardMasterCopy: string;
-    azoriusVetoGuardMasterCopy: string;
-    vetoMultisigVotingMasterCopy: string;
-    vetoERC20VotingMasterCopy: string;
+    multisigFreezeGuardMasterCopy: string;
+    azoriusFreezeGuardMasterCopy: string;
+    multisigFreezeVotingMasterCopy: string;
+    erc20FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: string;
   };
 };

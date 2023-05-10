@@ -5,7 +5,7 @@ import {
   FractalGovernanceActions,
 } from '../../../providers/App/governance/action';
 import { FractalGovernanceContracts } from '../../../types';
-import { getFractalProposalState } from '../../../utils';
+import { getAzoriusProposalState } from '../../../utils';
 
 interface IUseUpdateProposalState {
   governanceContracts: FractalGovernanceContracts;
@@ -19,19 +19,19 @@ export default function useUpdateProposalState({
   chainId,
 }: IUseUpdateProposalState) {
   const updateProposalState = useCallback(
-    async (proposalNumber: BigNumber) => {
+    async (proposalId: BigNumber) => {
       if (!azoriusContract || !ozLinearVotingContract) {
         return;
       }
-      const newState = await getFractalProposalState(
+      const newState = await getAzoriusProposalState(
         ozLinearVotingContract.asSigner,
         azoriusContract.asSigner,
-        proposalNumber,
+        proposalId,
         chainId
       );
       governanceDispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
-        payload: { proposalNumber: proposalNumber.toString(), state: newState },
+        payload: { proposalId: proposalId.toString(), state: newState },
       });
     },
     [azoriusContract, ozLinearVotingContract, governanceDispatch, chainId]

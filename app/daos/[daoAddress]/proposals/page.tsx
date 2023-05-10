@@ -12,7 +12,7 @@ import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
-import { AzoriusGovernance, StrategyType } from '../../../../src/types';
+import { AzoriusGovernance, GovernanceModuleType } from '../../../../src/types';
 
 export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
@@ -29,7 +29,7 @@ export default function ProposalsPage() {
 
   const showDelegate = useMemo(() => {
     if (type) {
-      if (type === StrategyType.GNOSIS_SAFE_AZORIUS) {
+      if (type === GovernanceModuleType.AZORIUS) {
         if (azoriusGovernance.votesToken && azoriusGovernance.votesToken.balance) {
           return azoriusGovernance.votesToken.balance.gt(0);
         }
@@ -40,7 +40,7 @@ export default function ProposalsPage() {
 
   const showCreateButton = useMemo(
     () =>
-      type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || ''),
+      type === GovernanceModuleType.AZORIUS ? true : safe?.owners.includes(user.address || ''),
     [type, safe, user.address]
   );
 

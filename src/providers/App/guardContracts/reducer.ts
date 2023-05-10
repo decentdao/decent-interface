@@ -2,10 +2,10 @@ import { FractalGuardContracts } from '../../../types';
 import { GuardContractAction, GuardContractActions } from './action';
 
 export const initialGuardContractsState: FractalGuardContracts = {
-  vetoGuardType: null,
-  vetoVotingType: null,
-  vetoGuardContract: undefined,
-  vetoVotingContract: undefined,
+  freezeGuardType: null,
+  freezeVotingType: null,
+  freezeGuardContract: undefined,
+  freezeVotingContract: undefined,
 };
 
 export const guardContractReducer = (

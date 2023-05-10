@@ -1,6 +1,6 @@
 import { TransferWithTokenInfoResponse } from '@safe-global/safe-service-client';
 import { constants, BigNumber } from 'ethers';
-import { AssetTotals, GnosisTransferType } from '../types';
+import { AssetTotals, SafeTransferType } from '../types';
 
 /**
  * Used for looping for Transfer data retrieved from Safe api to determind a total for each asset in a safe
@@ -12,7 +12,7 @@ export const totalsReducer = (
   prev: Map<string, AssetTotals>,
   cur: TransferWithTokenInfoResponse
 ) => {
-  if (cur.type === GnosisTransferType.ETHER && cur.value) {
+  if (cur.type === SafeTransferType.ETHER && cur.value) {
     const prevValue = prev.get(constants.AddressZero)!;
     if (prevValue) {
       prev.set(constants.AddressZero, {
@@ -27,14 +27,14 @@ export const totalsReducer = (
       decimals: 18,
     });
   }
-  if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+  if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
     prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
       bn: BigNumber.from(1),
       symbol: cur.tokenInfo.symbol,
       decimals: 0,
     });
   }
-  if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+  if (cur.type === SafeTransferType.ERC20 && cur.value && cur.tokenInfo) {
     const prevValue = prev.get(cur.tokenInfo.address);
     if (prevValue) {
       prev.set(cur.tokenInfo.address, {

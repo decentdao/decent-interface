@@ -10,7 +10,7 @@ import {
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { FractalGuardContracts, FreezeGuard, StrategyType } from '../../../../types';
+import { FractalGuardContracts, FreezeGuard, GovernanceModuleType } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -65,9 +65,9 @@ export function ManageDAOMenu({
     ) {
       const freezeOption = {
         optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.vetoVotingContract?.asSigner.castFreezeVote(),
+        onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
       };
-      if (type === StrategyType.GNOSIS_SAFE) {
+      if (type === GovernanceModuleType.MULTISIG) {
         return [createSubDAOOption, manageSignersOption, freezeOption];
       } else {
         return [createSubDAOOption, freezeOption];
@@ -91,7 +91,7 @@ export function ManageDAOMenu({
 
       return [clawBackOption];
     } else {
-      if (type === StrategyType.GNOSIS_SAFE) {
+      if (type === GovernanceModuleType.MULTISIG) {
         return [createSubDAOOption, manageSignersOption];
       } else {
         return [createSubDAOOption];
@@ -103,7 +103,7 @@ export function ManageDAOMenu({
     push,
     safeAddress,
     type,
-    guardContracts.vetoVotingContract?.asSigner,
+    guardContracts.freezeVotingContract?.asSigner,
     handleClawBack,
   ]);
 

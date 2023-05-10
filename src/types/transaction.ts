@@ -14,7 +14,6 @@ export interface MetaTransaction {
   data: string;
   operation: number;
 }
-
 export interface SafePostTransaction extends SafeTransaction {
   safe: string;
   contractTransactionHash: string;

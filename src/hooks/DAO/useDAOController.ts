@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useERC20Claim } from './loaders/governance/useERC20Claim';
 import { useFractalFreeze } from './loaders/useFractalFreeze';
 import { useFractalGovernance } from './loaders/useFractalGovernance';
 import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
@@ -26,4 +27,5 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
   useFractalFreeze({});
   useFractalGovernance();
   useFractalTreasury();
+  useERC20Claim();
 }

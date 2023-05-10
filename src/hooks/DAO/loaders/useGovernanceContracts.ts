@@ -1,16 +1,21 @@
 import {
-  FractalUsul,
+  Azorius,
   ModuleProxyFactory,
-  OZLinearVoting,
-  VotesToken,
+  LinearERC20Voting,
+  VotesERC20,
+  VotesERC20Wrapper,
 } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
-import { VotesERC20Wrapper } from '../../../assets/typechain-types/VotesERC20Wrapper';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
-import { ContractConnection, FractalModuleType, FractalNode } from '../../../types';
+import {
+  ContractConnection,
+  FractalModuleData,
+  FractalModuleType,
+  FractalNode,
+} from '../../../types';
 import { useLocalStorage } from '../../utils/useLocalStorage';
 
 const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
@@ -35,13 +40,17 @@ export const useGovernanceContracts = () => {
 
   const { setValue, getValue } = useLocalStorage();
 
+  const findAzoriusModule = (fractalModules: FractalModuleData[]): Azorius | undefined => {
+    return fractalModules.find(module => module.moduleType === FractalModuleType.AZORIUS)
+      ?.moduleContract as Azorius | undefined;
+  };
+
   const loadGovernanceContracts = useCallback(
     async (_node: FractalNode) => {
       const { fractalModules } = _node;
 
-      const azoriusModule = fractalModules.find(
-        module => module.moduleType === FractalModuleType.AZORIUS
-      )?.moduleContract as FractalUsul | undefined;
+      const azoriusModule = findAzoriusModule(fractalModules);
+
       if (!!azoriusModule) {
         const azoriusContract = {
           asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(azoriusModule.address),
@@ -57,12 +66,12 @@ export const useGovernanceContracts = () => {
           cachedContractAddresses?.votingContractMasterCopyAddress;
         let govTokenAddress: string | undefined = cachedContractAddresses?.govTokenContractAddress;
 
-        let ozLinearVotingContract: ContractConnection<OZLinearVoting> | undefined;
-        let tokenContract: ContractConnection<VotesToken | VotesERC20Wrapper> | undefined;
+        let ozLinearVotingContract: ContractConnection<LinearERC20Voting> | undefined;
+        let tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | undefined;
         let underlyingTokenAddress: string | undefined;
 
         if (!votingContractAddress) {
-          votingContractAddress = await getEventRPC<FractalUsul>(azoriusContract, chainId)
+          votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
             .queryFilter(azoriusModule.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;
@@ -89,7 +98,11 @@ export const useGovernanceContracts = () => {
           }
           const possibleERC20Wrapper =
             votesERC20WrapperMasterCopyContract.asSigner.attach(govTokenAddress);
-          underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => undefined);
+          underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => {
+            // if the underlying token is not an ERC20Wrapper, this will throw an error,
+            // so we catch it and return undefined
+            return undefined;
+          });
 
           if (!underlyingTokenAddress) {
             tokenContract = {

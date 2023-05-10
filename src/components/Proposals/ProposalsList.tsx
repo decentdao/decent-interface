@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
-import { FractalProposal, StrategyType } from '../../types';
+import { FractalProposal, GovernanceModuleType } from '../../types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
@@ -16,7 +16,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   } = useFractal();
 
   const showCreateButton =
-    type === StrategyType.GNOSIS_SAFE_AZORIUS ? true : safe?.owners.includes(user.address || '');
+    type === GovernanceModuleType.AZORIUS ? true : safe?.owners.includes(user.address || '');
 
   const { t } = useTranslation('proposal');
   return (
@@ -31,7 +31,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
       ) : proposals.length > 0 ? (
         proposals.map(proposal => (
           <ActivityGovernance
-            key={proposal.proposalNumber}
+            key={proposal.proposalId}
             activity={proposal}
           />
         ))

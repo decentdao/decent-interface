@@ -1,4 +1,8 @@
-import { ModuleProxyFactory, UsulVetoGuard, VetoGuard } from '@fractal-framework/fractal-contracts';
+import {
+  ModuleProxyFactory,
+  AzoriusFreezeGuard,
+  MultisigFreezeGuard,
+} from '@fractal-framework/fractal-contracts';
 import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
@@ -8,8 +12,8 @@ import { GuardContractAction } from '../../../providers/App/guardContracts/actio
 import {
   ContractConnection,
   SafeInfoResponseWithGuard,
-  VetoGuardType,
-  VetoVotingType,
+  FreezeGuardType,
+  FreezeVotingType,
 } from '../../../types';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
@@ -19,10 +23,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     node: { daoAddress, safe, fractalModules },
     baseContracts: {
       zodiacModuleProxyFactoryContract,
-      vetoERC20VotingMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
-      gnosisVetoGuardMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
     },
     action,
   } = useFractal();
@@ -55,8 +59,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     ) => {
       const { guard } = _safe;
 
-      let vetoGuardContract: ContractConnection<UsulVetoGuard | VetoGuard> | undefined;
-      let vetoGuardType: VetoGuardType | null = null;
+      let freezeGuardContract:
+        | ContractConnection<AzoriusFreezeGuard | MultisigFreezeGuard>
+        | undefined;
+      let freezeGuardType: FreezeGuardType | null = null;
 
       const azoriusModule = _fractalModules?.find(
         module => module.moduleType === FractalModuleType.AZORIUS
@@ -64,59 +70,59 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       if (!!azoriusModule && azoriusModule.moduleContract) {
         const azoriusGuardAddress = await azoriusModule.moduleContract.getGuard();
         if (azoriusGuardAddress === constants.AddressZero) return;
-        vetoGuardContract = {
-          asSigner: azoriusVetoGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress),
-          asProvider: azoriusVetoGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress),
+        freezeGuardContract = {
+          asSigner: azoriusFreezeGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress),
+          asProvider: azoriusFreezeGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress),
         };
-        vetoGuardType = VetoGuardType.AZORIUS;
+        freezeGuardType = FreezeGuardType.AZORIUS;
       } else {
         const hasNoGuard = _safe.guard === constants.AddressZero;
         const guardMasterCopyAddress = await getMasterCopyAddress(guard!);
         const isGnosisGuard =
-          guardMasterCopyAddress === gnosisVetoGuardMasterCopyContract.asSigner.address;
+          guardMasterCopyAddress === multisigFreezeGuardMasterCopyContract.asSigner.address;
         if (isGnosisGuard && !hasNoGuard) {
-          vetoGuardContract = {
-            asSigner: gnosisVetoGuardMasterCopyContract.asSigner.attach(guard!),
-            asProvider: gnosisVetoGuardMasterCopyContract.asProvider.attach(guard!),
+          freezeGuardContract = {
+            asSigner: multisigFreezeGuardMasterCopyContract.asSigner.attach(guard!),
+            asProvider: multisigFreezeGuardMasterCopyContract.asProvider.attach(guard!),
           };
-          vetoGuardType = VetoGuardType.MULTISIG;
+          freezeGuardType = FreezeGuardType.MULTISIG;
         }
       }
 
-      if (!!vetoGuardContract) {
-        const votingAddress = await vetoGuardContract.asSigner.vetoVoting();
+      if (!!freezeGuardContract) {
+        const votingAddress = await freezeGuardContract.asSigner.freezeVoting();
         const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
-        const vetoVotingType =
-          votingMasterCopyAddress === vetoMultisigVotingMasterCopyContract.asSigner.address
-            ? VetoVotingType.MULTISIG
-            : VetoVotingType.ERC20;
+        const freezeVotingType =
+          votingMasterCopyAddress === freezeMultisigVotingMasterCopyContract.asSigner.address
+            ? FreezeVotingType.MULTISIG
+            : FreezeVotingType.ERC20;
 
-        const vetoVotingContract =
-          vetoVotingType === VetoVotingType.MULTISIG
+        const freezeVotingContract =
+          freezeVotingType === FreezeVotingType.MULTISIG
             ? {
-                asSigner: vetoMultisigVotingMasterCopyContract.asSigner.attach(votingAddress),
-                asProvider: vetoMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
+                asSigner: freezeMultisigVotingMasterCopyContract.asSigner.attach(votingAddress),
+                asProvider: freezeMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
               }
             : {
-                asSigner: vetoERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
-                asProvider: vetoERC20VotingMasterCopyContract.asProvider.attach(votingAddress),
+                asSigner: freezeERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
+                asProvider: freezeERC20VotingMasterCopyContract.asProvider.attach(votingAddress),
               };
 
         const contracts = {
-          vetoGuardContract: vetoGuardContract,
-          vetoVotingContract: vetoVotingContract,
-          vetoVotingType,
-          vetoGuardType,
+          freezeGuardContract,
+          freezeVotingContract,
+          freezeVotingType,
+          freezeGuardType,
         };
         return contracts;
       }
     },
     [
       getMasterCopyAddress,
-      vetoERC20VotingMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-      azoriusVetoGuardMasterCopyContract,
-      gnosisVetoGuardMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
     ]
   );
 

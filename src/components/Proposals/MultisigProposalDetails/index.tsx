@@ -1,5 +1,5 @@
 import { GridItem, Box } from '@chakra-ui/react';
-import { VetoGuard } from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalProposal, MultisigProposal } from '../../../types';
@@ -14,7 +14,7 @@ import { TxDetails } from './TxDetails';
 export function MultisigProposalDetails({ proposal }: { proposal: FractalProposal }) {
   const txProposal = proposal as MultisigProposal;
   const {
-    guardContracts: { vetoGuardContract },
+    guardContracts: { freezeGuardContract },
     readOnly: { user },
   } = useFractal();
   return (
@@ -33,7 +33,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: FractalProposa
         {user.address && (
           <TxActions
             proposal={txProposal}
-            vetoGuard={vetoGuardContract?.asSigner as VetoGuard}
+            freezeGuard={freezeGuardContract?.asSigner as MultisigFreezeGuard}
           />
         )}
       </GridItem>

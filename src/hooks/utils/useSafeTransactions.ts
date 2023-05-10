@@ -1,4 +1,4 @@
-import { VetoGuard } from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import {
   AllTransactionsListResponse,
   EthereumTxWithTransfersResponse,
@@ -13,29 +13,34 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
-  GnosisTransferType,
+  SafeTransferType,
   ActivityEventType,
   Activity,
   FractalProposalState,
 } from '../../types';
 import { formatWeiToValue, parseDecodedData } from '../../utils';
-import { getTxQueuedTimestamp } from '../../utils/guard';
+import { getTimeStamp } from '../../utils/contract';
+import { getTxTimelockedTimestamp } from '../../utils/guard';
 
 export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfg();
   const provider = useProvider();
   const { guardContracts } = useFractal();
 
-  type VetoGuardData = {
+  type FreezeGuardData = {
     guardTimelockPeriod: BigNumber;
     guardExecutionPeriod: BigNumber;
     lastBlock: ethers.providers.Block;
   };
 
   const getState = useCallback(
-    async (activities: Activity[], vetoGuard?: VetoGuard, vetoGuardData?: VetoGuardData) => {
-      if (vetoGuard && vetoGuardData) {
-        const { guardTimelockPeriod, guardExecutionPeriod, lastBlock } = vetoGuardData;
+    async (
+      activities: Activity[],
+      freezeGuard?: MultisigFreezeGuard,
+      freezeGuardData?: FreezeGuardData
+    ) => {
+      if (freezeGuard && freezeGuardData) {
+        const { guardTimelockPeriod, guardExecutionPeriod, lastBlock } = freezeGuardData;
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
             if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
@@ -45,7 +50,7 @@ export const useSafeTransactions = () => {
             if (activity.transaction.txType === 'MODULE_TRANSACTION') {
               return {
                 ...activity,
-                state: FractalProposalState.Module,
+                state: FractalProposalState.MODULE,
               };
             }
             const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
@@ -63,37 +68,41 @@ export const useSafeTransactions = () => {
             );
 
             const isApproved = checkIsApproved(multiSigTransaction);
-            const queuedTimestamp = await getTxQueuedTimestamp(activity, vetoGuard);
+            const timelockedTimestamp = await getTxTimelockedTimestamp(
+              activity,
+              freezeGuard,
+              provider
+            );
 
             let state: FractalProposalState;
 
             if (multiSigTransaction.isExecuted) {
-              state = FractalProposalState.Executed;
-            } else if (queuedTimestamp === 0) {
-              // Has not been queued
+              state = FractalProposalState.EXECUTED;
+            } else if (timelockedTimestamp === 0) {
+              // Has not been timelocked
               if (isRejected) {
-                state = FractalProposalState.Rejected;
+                state = FractalProposalState.REJECTED;
               } else if (isApproved) {
-                state = FractalProposalState.Queueable;
+                state = FractalProposalState.TIMELOCKABLE;
               } else {
-                state = FractalProposalState.Active;
+                state = FractalProposalState.ACTIVE;
               }
             } else {
-              // Has been Queued
-              const timeLockPeriodEnd = queuedTimestamp + Number(guardTimelockPeriod);
+              // Has been timelocked
+              const timeLockPeriodEnd = timelockedTimestamp + Number(guardTimelockPeriod);
               if (lastBlock.timestamp > timeLockPeriodEnd) {
                 // Timelock has ended
-                const queuePeriodEnd = timeLockPeriodEnd + Number(guardExecutionPeriod);
-                if (lastBlock.timestamp < queuePeriodEnd) {
+                const timelockPeriodEnd = timeLockPeriodEnd + Number(guardExecutionPeriod);
+                if (lastBlock.timestamp < timelockPeriodEnd) {
                   // Within execution period
-                  state = FractalProposalState.Executing;
+                  state = FractalProposalState.EXECUTABLE;
                 } else {
                   // Execution period has ended
-                  state = FractalProposalState.Expired;
+                  state = FractalProposalState.EXPIRED;
                 }
               } else {
                 // Within timelock period
-                state = FractalProposalState.Queued;
+                state = FractalProposalState.TIMELOCKED;
               }
             }
 
@@ -109,7 +118,7 @@ export const useSafeTransactions = () => {
           if (activity.transaction.txType === 'MODULE_TRANSACTION') {
             return {
               ...activity,
-              state: FractalProposalState.Module,
+              state: FractalProposalState.MODULE,
             };
           }
 
@@ -131,26 +140,26 @@ export const useSafeTransactions = () => {
 
           let state;
           if (isRejected) {
-            state = FractalProposalState.Rejected;
+            state = FractalProposalState.REJECTED;
           } else if (multiSigTransaction.isExecuted) {
-            state = FractalProposalState.Executed;
+            state = FractalProposalState.EXECUTED;
           } else if (isApproved) {
-            state = FractalProposalState.Executing;
+            state = FractalProposalState.EXECUTABLE;
           } else {
-            state = FractalProposalState.Active;
+            state = FractalProposalState.ACTIVE;
           }
           return { ...activity, state };
         });
       }
     },
-    []
+    [provider]
   );
 
   const getTransferTotal = useCallback(
     (transfers: TransferWithTokenInfoResponse[]) => {
       return transfers.reduce(
         (prev: Map<string, AssetTotals>, cur: TransferWithTokenInfoResponse) => {
-          if (cur.type === GnosisTransferType.ETHER && cur.value) {
+          if (cur.type === SafeTransferType.ETHER && cur.value) {
             const prevValue = prev.get(constants.AddressZero)!;
             if (prevValue) {
               prev.set(constants.AddressZero, {
@@ -165,14 +174,14 @@ export const useSafeTransactions = () => {
               decimals: 18,
             });
           }
-          if (cur.type === GnosisTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
+          if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
             prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
               bn: BigNumber.from(1),
               symbol: cur.tokenInfo.symbol,
               decimals: 0,
             });
           }
-          if (cur.type === GnosisTransferType.ERC20 && cur.value && cur.tokenInfo) {
+          if (cur.type === SafeTransferType.ERC20 && cur.value && cur.tokenInfo) {
             const prevValue = prev.get(cur.tokenInfo.address);
             if (prevValue) {
               prev.set(cur.tokenInfo.address, {
@@ -308,7 +317,7 @@ export const useSafeTransactions = () => {
               isMultisigRejectionTx && !!noncePair
                 ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
                 : undefined,
-            proposalNumber: eventSafeTxHash,
+            proposalId: eventSafeTxHash,
             targets,
             transactionHash: multiSigTransaction.transactionHash,
             metaData,
@@ -318,20 +327,22 @@ export const useSafeTransactions = () => {
           return activity;
         })
       );
-      let vetoGuard: VetoGuard | undefined;
-      let vetoGuardData: VetoGuardData | undefined;
+      let freezeGuard: MultisigFreezeGuard | undefined;
+      let freezeGuardData: FreezeGuardData | undefined;
 
-      if (guardContracts.vetoGuardContract) {
+      if (guardContracts.freezeGuardContract) {
         const blockNumber = await provider.getBlockNumber();
-        vetoGuard = guardContracts.vetoGuardContract.asSigner as VetoGuard;
-        vetoGuardData = {
-          guardTimelockPeriod: await vetoGuard.timelockPeriod(),
-          guardExecutionPeriod: await vetoGuard.executionPeriod(),
+        freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
+        const timeLockPeriodBlock = await freezeGuard.timelockPeriod();
+        const texecutionPeriodBlock = await freezeGuard.executionPeriod();
+        freezeGuardData = {
+          guardTimelockPeriod: BigNumber.from(await getTimeStamp(timeLockPeriodBlock, provider)),
+          guardExecutionPeriod: BigNumber.from(await getTimeStamp(texecutionPeriodBlock, provider)),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
 
-      const activitiesWithState = await getState(activities, vetoGuard, vetoGuardData);
+      const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
     [nativeTokenSymbol, provider, guardContracts, getTransferTotal, getState]
