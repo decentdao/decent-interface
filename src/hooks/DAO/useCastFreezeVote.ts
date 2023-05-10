@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../utils/useTransaction';
 
 const useCastFreezeVote = ({
-  freezeVotingContract: freezeVotingContract,
+  freezeVotingContract,
   setPending,
 }: {
   freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting;

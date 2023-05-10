@@ -14,7 +14,7 @@ import { TxDetails } from './TxDetails';
 export function MultisigProposalDetails({ proposal }: { proposal: FractalProposal }) {
   const txProposal = proposal as MultisigProposal;
   const {
-    guardContracts: { freezeGuardContract: freezeGuardContract },
+    guardContracts: { freezeGuardContract },
     readOnly: { user },
   } = useFractal();
   return (

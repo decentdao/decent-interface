@@ -2,14 +2,14 @@ import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/sa
 import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { BigNumberValuePair } from './common';
-import { StrategyType } from './fractal';
+import { GovernanceModuleType } from './fractal';
 import { EthAddress } from './utils';
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
-  MULTISIG_GOVERNANCE = 'gnosis',
-  AZORIUS_GOVERNANCE = 'govToken',
-  GOV_CONFIG = 'govModule',
-  GUARD_CONFIG = 'freezeGuard',
+  MULTISIG_DETAILS = 'multisig',
+  TOKEN_DETAILS = 'token',
+  AZORIUS_DETAILS = 'azorius',
+  FREEZE_DETAILS = 'freeze',
 }
 
 export enum TokenCreationType {
@@ -25,15 +25,15 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
 
 export interface CreatorFormState<T = BigNumberValuePair> {
   essentials: DAOEssentials;
-  gnosis: GnosisConfiguration;
-  govToken: DAOGovenorToken<T>;
-  govModule: DAOGovenorModuleConfig<T>;
-  freezeGuard: DAOFreezeGuardConfig<T>;
+  multisig: GnosisConfiguration;
+  token: DAOGovenorToken<T>;
+  azorius: DAOGovenorModuleConfig<T>;
+  freeze: DAOFreezeGuardConfig<T>;
 }
 
 export type DAOEssentials = {
   daoName: string;
-  governance: StrategyType;
+  governance: GovernanceModuleType;
 };
 
 export type DAOGovenorToken<T = BigNumber> = {
@@ -112,5 +112,5 @@ export type CreateDAOFunc = (
 export type DeployDAOSuccessCallback = (daoAddress: string) => void;
 export type DAODetails = {
   daoName: string;
-  governance: StrategyType;
+  governance: GovernanceModuleType;
 };

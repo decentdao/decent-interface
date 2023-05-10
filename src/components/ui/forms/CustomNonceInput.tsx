@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { StrategyType } from '../../../types';
+import { GovernanceModuleType } from '../../../types';
 import ModalTooltip from '../modals/ModalTooltip';
 
 export function CustomNonceInput({
@@ -21,7 +21,7 @@ export function CustomNonceInput({
   const { t } = useTranslation(['proposal']);
   const errorMessage = nonce && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
-  if (governance.type === StrategyType.AZORIUS) return null;
+  if (governance.type === GovernanceModuleType.AZORIUS) return null;
 
   return (
     <VStack alignItems="start">

@@ -87,10 +87,10 @@ export function useDAOCreateTests() {
         if (!value) return false;
 
         const formData: CreatorFormState = context.from.reverse()[0].value;
-        const tokenSupply = formData.govToken.tokenSupply.bigNumberValue as BigNumber;
-        const tokenAllocations = formData.govToken.tokenAllocations;
+        const tokenSupply = formData.token.tokenSupply.bigNumberValue as BigNumber;
+        const tokenAllocations = formData.token.tokenAllocations;
         const parentAllocationAmount =
-          formData.govToken.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
+          formData.token.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
 
         const filteredAllocations = tokenAllocations.filter(
           allocation =>

@@ -8,7 +8,7 @@ export function FreezeButton({
   isFrozen,
   userHasFreezeVoted,
   userHasVotes,
-  freezeVotingContract: freezeVotingContract,
+  freezeVotingContract,
 }: {
   isFrozen: boolean;
   userHasFreezeVoted: boolean;
@@ -18,7 +18,7 @@ export function FreezeButton({
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['dashboard']);
   const castFreezeVote = useCastFreezeVote({
-    freezeVotingContract: freezeVotingContract,
+    freezeVotingContract,
     setPending,
   });
 

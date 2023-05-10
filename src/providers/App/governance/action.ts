@@ -8,9 +8,9 @@ import {
   VotesData,
   VotesStrategy,
   UnderlyingTokenData,
+  GovernanceModuleType,
 } from '../../../types';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
-import { StrategyType } from './../../../types/fractal';
 
 export enum FractalGovernanceAction {
   SET_PROPOSALS = 'SET_PROPOSALS',
@@ -33,7 +33,7 @@ export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotesStrategy }
   | {
       type: FractalGovernanceAction.SET_PROPOSALS;
-      payload: { type: StrategyType; proposals: FractalProposal[] };
+      payload: { type: GovernanceModuleType; proposals: FractalProposal[] };
     }
   | { type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES; payload: ProposalTemplate[] }
   // @todo update with proposal type

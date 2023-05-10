@@ -33,7 +33,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
   return (
     <Box>
       <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
-      <FieldArray name="govToken.tokenAllocations">
+      <FieldArray name="token.tokenAllocations">
         {({ remove, push }) => (
           <Box my={4}>
             <Grid
@@ -56,9 +56,9 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
               </Text>
               <Box>{/* EMPTY */}</Box>
 
-              {values.govToken.tokenAllocations.map((tokenAllocation, index) => {
+              {values.token.tokenAllocations.map((tokenAllocation, index) => {
                 const tokenAllocationError = (
-                  errors?.govToken?.tokenAllocations as FormikErrors<
+                  errors?.token?.tokenAllocations as FormikErrors<
                     TokenAllocation<BigNumberValuePair>[] | undefined
                   >
                 )?.[index];
@@ -69,7 +69,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                     : null;
 
                 const amountErrorMessage =
-                  values.govToken.tokenSupply.value &&
+                  values.token.tokenSupply.value &&
                   tokenAllocationError?.amount?.value &&
                   !tokenAllocation.amount.bigNumberValue?.isZero()
                     ? tokenAllocationError.amount.value
@@ -82,8 +82,8 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                     remove={remove}
                     addressErrorMessage={addressErrorMessage}
                     amountErrorMessage={amountErrorMessage}
-                    amountInputValue={values.govToken.tokenAllocations[index].amount.bigNumberValue}
-                    allocationLength={values.govToken.tokenAllocations.length}
+                    amountInputValue={values.token.tokenAllocations[index].amount.bigNumberValue}
+                    allocationLength={values.token.tokenAllocations.length}
                     {...props}
                   />
                 );
@@ -137,16 +137,16 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                           <LabelWrapper
                             errorMessage={
                               (
-                                values.govToken.parentAllocationAmount?.bigNumberValue &&
-                                (errors.govToken?.parentAllocationAmount as any)
+                                values.token.parentAllocationAmount?.bigNumberValue &&
+                                (errors.token?.parentAllocationAmount as any)
                               )?.value
                             }
                           >
                             <BigNumberInput
                               data-testid="tokenVoting-parentTokenAllocationInput"
-                              value={values.govToken.parentAllocationAmount?.bigNumberValue}
+                              value={values.token.parentAllocationAmount?.bigNumberValue}
                               onChange={valuePair =>
-                                setFieldValue('govToken.parentAllocationAmount', valuePair)
+                                setFieldValue('token.parentAllocationAmount', valuePair)
                               }
                               isInvalid={false}
                             />

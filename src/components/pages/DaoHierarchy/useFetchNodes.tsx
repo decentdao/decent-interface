@@ -15,8 +15,8 @@ export function useFetchNodes(address?: string) {
     node: { safe, nodeHierarchy },
     clients: { safeService },
     baseContracts: {
-      multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
       fractalAzoriusMasterCopyContract,
     },
   } = useFractal();
