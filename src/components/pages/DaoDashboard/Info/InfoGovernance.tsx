@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzoriusGovernance, StrategyType } from '../../../../types';
+import { AzoriusGovernance, GovernanceModuleType } from '../../../../types';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 export function InfoGovernance() {
@@ -26,7 +26,9 @@ export function InfoGovernance() {
   }
 
   const governanceAzorius =
-    governance.type === StrategyType.AZORIUS ? (governance as AzoriusGovernance) : undefined;
+    governance.type === GovernanceModuleType.AZORIUS
+      ? (governance as AzoriusGovernance)
+      : undefined;
 
   return (
     <Box

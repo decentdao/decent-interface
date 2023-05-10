@@ -5,7 +5,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import {
   AzoriusGovernanceDAO,
   SafeMultisigDAO,
-  StrategyType,
+  GovernanceModuleType,
   AzoriusContracts,
   BaseContracts,
 } from '../../types';
@@ -25,10 +25,10 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactoryContract,
       fractalRegistryContract,
       fractalModuleMasterCopyContract,
-      multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract,
-      multisigFreezeVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract,
-      freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
@@ -66,7 +66,7 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === StrategyType.AZORIUS) {
+      if (daoData.governance === GovernanceModuleType.AZORIUS) {
         if (
           !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
@@ -114,7 +114,7 @@ const useBuildDAOTx = () => {
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === StrategyType.AZORIUS
+        daoData.governance === GovernanceModuleType.AZORIUS
           ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 

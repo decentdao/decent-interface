@@ -15,7 +15,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  StrategyType,
+  GovernanceModuleType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
@@ -43,15 +43,15 @@ function GuardDetails(props: ICreationStepProps) {
   const governanceFormType = values.essentials.governance;
   const handleNonceChange = useCallback(
     (nonce?: number) => {
-      setFieldValue('gnosis.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
+      setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
     },
     [setFieldValue]
   );
 
   useEffect(() => {
-    const isParentAzorius = type === StrategyType.AZORIUS;
+    const isParentAzorius = type === GovernanceModuleType.AZORIUS;
     if (!isParentAzorius && isSubDAO && safe) {
-      setFieldValue('gnosis.customNonce', safe.nonce);
+      setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
   }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
@@ -65,15 +65,15 @@ function GuardDetails(props: ICreationStepProps) {
       let parentVotes: BigNumber;
 
       switch (type) {
-        case StrategyType.AZORIUS:
-          if (!azoriusGovernance) return;
+        case GovernanceModuleType.AZORIUS:
+          if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
           const normalized = ethers.utils.formatUnits(
             azoriusGovernance.votesToken.totalSupply,
             azoriusGovernance.votesToken.decimals
           );
-          parentVotes = BigNumber.from(normalized);
+          parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           break;
-        case StrategyType.MULTISIG:
+        case GovernanceModuleType.MULTISIG:
         default:
           if (!safe) return;
           parentVotes = BigNumber.from(safe.owners.length);
@@ -94,7 +94,7 @@ function GuardDetails(props: ICreationStepProps) {
       }
 
       setTotalParentVotes(parentVotes);
-      setFieldValue('freezeGuard.freezeVotesThreshold', thresholdDefault);
+      setFieldValue('freeze.freezeVotesThreshold', thresholdDefault);
     }
   }, [
     azoriusGovernance.votesToken,
@@ -120,7 +120,7 @@ function GuardDetails(props: ICreationStepProps) {
         gap={8}
       >
         <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
-        {governanceFormType === StrategyType.MULTISIG && (
+        {governanceFormType === GovernanceModuleType.MULTISIG && (
           <LabelComponent
             label={t('labelTimelockPeriod')}
             helper={t('helperTimelockPeriod')}
@@ -128,8 +128,8 @@ function GuardDetails(props: ICreationStepProps) {
           >
             <InputGroup>
               <BigNumberInput
-                value={values.freezeGuard.timelockPeriod.bigNumberValue}
-                onChange={valuePair => setFieldValue('freezeGuard.timelockPeriod', valuePair)}
+                value={values.freeze.timelockPeriod.bigNumberValue}
+                onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
                 decimalPlaces={0}
                 min="1"
                 data-testid="guardConfig-executionDetails"
@@ -152,8 +152,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.freezeGuard.executionPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('freezeGuard.executionPeriod', valuePair)}
+              value={values.freeze.executionPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-executionDetails"
@@ -176,8 +176,8 @@ function GuardDetails(props: ICreationStepProps) {
           isRequired
         >
           <BigNumberInput
-            value={values.freezeGuard.freezeVotesThreshold.bigNumberValue}
-            onChange={valuePair => setFieldValue('freezeGuard.freezeVotesThreshold', valuePair)}
+            value={values.freeze.freezeVotesThreshold.bigNumberValue}
+            onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
           />
@@ -189,8 +189,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.freezeGuard.freezeProposalPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('freezeGuard.freezeProposalPeriod', valuePair)}
+              value={values.freeze.freezeProposalPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freeze.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeProposalDuration"
@@ -212,8 +212,8 @@ function GuardDetails(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.freezeGuard.freezePeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('freezeGuard.freezePeriod', valuePair)}
+              value={values.freeze.freezePeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('freeze.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="guardConfig-freezeDuration"
@@ -247,7 +247,7 @@ function GuardDetails(props: ICreationStepProps) {
         {showCustomNonce && (
           <>
             <CustomNonceInput
-              nonce={values.gnosis.customNonce}
+              nonce={values.multisig.customNonce}
               onChange={handleNonceChange}
             />
             <Divider
@@ -259,9 +259,9 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === StrategyType.MULTISIG
-              ? CreatorSteps.MULTISIG_GOVERNANCE
-              : CreatorSteps.GOV_CONFIG
+            governanceFormType === GovernanceModuleType.MULTISIG
+              ? CreatorSteps.MULTISIG_DETAILS
+              : CreatorSteps.AZORIUS_DETAILS
           }
           isLastStep
         />
