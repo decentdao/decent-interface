@@ -21,7 +21,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
         isRequired
         disabled={true}
       >
-        <Field name="govToken.tokenName">
+        <Field name="token.tokenName">
           {({ field }: FieldAttributes<any>) => (
             <Input
               {...field}
@@ -39,8 +39,8 @@ export function VotesTokenImport(props: ICreationStepProps) {
         disabled={true}
       >
         <Input
-          name="govToken.tokenSymbol"
-          value={values.govToken.tokenSymbol}
+          name="token.tokenSymbol"
+          value={values.token.tokenSymbol}
           onChange={handleChange}
           maxLength={6}
           data-testid="tokenVoting-tokenSymbolInput"
@@ -50,7 +50,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
       <StepButtons
         {...props}
         prevStep={CreatorSteps.ESSENTIALS}
-        nextStep={CreatorSteps.GOV_CONFIG}
+        nextStep={CreatorSteps.AZORIUS_DETAILS}
       />
     </Flex>
   );

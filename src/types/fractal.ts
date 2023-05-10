@@ -105,6 +105,14 @@ export enum FractalProposalState {
   REJECTED = 'stateRejected',
 
   /**
+   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
+   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
+   *
+   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
+   */
+  TIMELOCKABLE = 'stateTimelockable',
+
+  /**
    * Any Safe is able to have modules attached (e.g. Zodiac), which can act essentially as a backdoor,
    * executing transactions without needing the required signers.
    *
@@ -116,14 +124,6 @@ export enum FractalProposalState {
    *
    * Third party Safe module transactions only.
    */
-  /**
-   * Quorum (or signers) is reached, the proposal can be 'timelocked' for execution.
-   * Anyone can move the state from Timelockable to TimeLocked via a transaction.
-   *
-   * Multisig subDAO only, Azorius DAOs move from ACTIVE to TIMELOCKED automatically.
-   */
-  TIMELOCKABLE = 'stateTimelockable',
-
   MODULE = 'stateModule',
 }
 
@@ -281,7 +281,7 @@ export interface AzoriusGovernance extends Governance {
 export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
-  type?: StrategyType;
+  type?: GovernanceModuleType;
   proposals: FractalProposal[] | null;
   tokenClaimContract?: ERC20Claim;
 }
@@ -294,7 +294,7 @@ export interface VotesStrategy<Type = BNFormattedPair> {
   timeLockPeriod?: Type;
 }
 
-export enum StrategyType {
+export enum GovernanceModuleType {
   MULTISIG = 'labelMultisigGov',
   AZORIUS = 'labelAzoriusGov',
 }
@@ -315,7 +315,7 @@ export interface FractalContracts {
   fractalRegistryContract: ContractConnection<FractalRegistry>;
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
-  multisigFreezeVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
+  freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
