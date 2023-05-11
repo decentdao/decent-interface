@@ -1,4 +1,4 @@
-import { Flex, Text, Tooltip, Image } from '@chakra-ui/react';
+import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
@@ -84,10 +84,9 @@ const BADGE_SIZES: BadgeSize = {
 interface IBadge {
   size: 'sm' | 'base';
   labelKey: FractalProposalState | DAOState | string;
-  isSnapshot: boolean;
 }
 
-export function Badge({ labelKey, size, isSnapshot }: IBadge) {
+export function Badge({ labelKey, size }: IBadge) {
   const { Icon, tooltipKey, ...colors } = BADGE_MAPPING[labelKey];
   const sizes = BADGE_SIZES[size];
 
@@ -112,13 +111,6 @@ export function Badge({ labelKey, size, isSnapshot }: IBadge) {
           <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
         </Flex>
       </Tooltip>
-      {isSnapshot && (
-        <Image
-          src="/images/snapshot-icon.svg"
-          alt="snapshot icon"
-          ml={1}
-        />
-      )}
     </>
   );
 }

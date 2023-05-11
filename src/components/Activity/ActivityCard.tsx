@@ -1,4 +1,4 @@
-import { Box, Flex, HStack, Text } from '@chakra-ui/react';
+import { Box, Flex, HStack, Text, Image } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { ActivityBox } from '../ui/containers/ActivityBox';
 
@@ -9,6 +9,7 @@ interface IActivityCard {
   RightElement?: ReactNode;
   Badge?: ReactNode;
   boxBorderColor?: string;
+  isSnapshot?: boolean;
 }
 
 export function ActivityCard({
@@ -18,6 +19,7 @@ export function ActivityCard({
   description,
   RightElement,
   boxBorderColor,
+  isSnapshot,
 }: IActivityCard) {
   return (
     <ActivityBox borderColor={boxBorderColor}>
@@ -34,6 +36,13 @@ export function ActivityCard({
             mb="1rem"
           >
             {Badge}
+            {isSnapshot && (
+              <Image
+                src="/images/snapshot-icon.svg"
+                alt="snapshot icon"
+                ml={1}
+              />
+            )}
           </Flex>
           <Box>{description}</Box>
           {eventDate && (

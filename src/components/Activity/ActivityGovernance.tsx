@@ -16,6 +16,7 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
     node: { safe },
   } = useFractal();
   const { t } = useTranslation();
+  const isSnapshot = !!(activity as SnapshotProposal).snapshotProposalId;
 
   const eventDateLabel = t(
     activity.eventType === ActivityEventType.Treasury
@@ -32,7 +33,6 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
           <Badge
             labelKey={activity.state}
             size="base"
-            isSnapshot={!!(activity as SnapshotProposal).snapshotProposalId}
           />
         )
       }
@@ -48,6 +48,7 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
       }
       eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
       eventDateLabel={eventDateLabel}
+      isSnapshot={!!(activity as SnapshotProposal).snapshotProposalId}
     />
   );
 }
