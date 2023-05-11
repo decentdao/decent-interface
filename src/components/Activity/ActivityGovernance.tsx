@@ -1,4 +1,4 @@
-import { Flex, Image } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
