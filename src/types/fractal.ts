@@ -161,7 +161,7 @@ export interface ActivityBase {
   transactionHash?: string | null;
 }
 
-export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal;
+export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;
 
 export type ActivityTransactionType =
   | SafeMultisigTransactionWithTransfersResponse

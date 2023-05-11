@@ -14,6 +14,8 @@ export function InfoProposals({}: IDAOGovernance) {
     governance: { proposals, type },
   } = useFractal();
 
+  console.log('proposals: ', proposals);
+
   if (!daoAddress || !type) {
     return (
       <Flex

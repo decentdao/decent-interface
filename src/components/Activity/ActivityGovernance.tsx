@@ -1,8 +1,8 @@
-import { Flex } from '@chakra-ui/react';
+import { Flex, Image } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
-import { FractalProposal, ActivityEventType } from '../../types';
+import { FractalProposal, ActivityEventType, SnapshotProposal } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { ProposalAction } from '../Proposals/ProposalActions/ProposalAction';
 import { Badge } from '../ui/badges/Badge';
@@ -32,6 +32,7 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
           <Badge
             labelKey={activity.state}
             size="base"
+            isSnapshot={!!(activity as SnapshotProposal).snapshotProposalId}
           />
         )
       }

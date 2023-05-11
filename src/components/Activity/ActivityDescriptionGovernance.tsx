@@ -7,6 +7,7 @@ import {
   ActivityEventType,
   TreasuryActivity,
   AzoriusProposal,
+  SnapshotProposal,
 } from '../../types';
 
 import { createProposalNumberSubstring } from '../../utils/string';
@@ -79,6 +80,18 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
   });
 
   const azoriusProposalMetaDataTitle = (activity as AzoriusProposal).metaData?.title;
+  const isSnapshotProposal = !!(activity as SnapshotProposal).snapshotProposalId;
+
+  if (isSnapshotProposal) {
+    return (
+      <>
+        <ActivityProposalNumber
+          proposalId={(governanceActivity as SnapshotProposal).snapshotProposalId}
+        />
+        <Text>{(governanceActivity as SnapshotProposal).title}</Text>
+      </>
+    );
+  }
 
   if (!!azoriusProposalMetaDataTitle) {
     return (

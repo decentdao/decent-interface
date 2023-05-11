@@ -52,7 +52,7 @@ export const useSnapshotProposals = () => {
         console.log('snapshot query result: ', result);
         const proposals: SnapshotProposal[] = result.data.proposals.map((proposal: any) => {
           return {
-            eventDate: proposal.start,
+            eventDate: new Date(proposal.start * 1000),
             eventType: ActivityEventType.Governance,
             // transaction?: ActivityTransactionType;
             // transactionHash?: string | null;

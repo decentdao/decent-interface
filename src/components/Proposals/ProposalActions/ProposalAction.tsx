@@ -48,7 +48,7 @@ export function ProposalAction({
   expandedView?: boolean;
 }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoSnapshotURL },
     readOnly: { user },
   } = useFractal();
   const { push } = useRouter();
@@ -63,7 +63,11 @@ export function ProposalAction({
     proposal.state === FractalProposalState.TIMELOCKED;
 
   const handleClick = () => {
-    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
+    if (isSnapshotProposal) {
+      window.open(`https://demo.snapshot.org/#/${daoSnapshotURL}`);
+    } else {
+      push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
+    }
   };
 
   const hasVoted = useMemo(() => {
@@ -94,6 +98,10 @@ export function ProposalAction({
   }, [proposal]);
 
   const label = useMemo(() => {
+    if (isSnapshotProposal) {
+      return 'Vote on Snapshot';
+    }
+
     if (proposal.state === FractalProposalState.ACTIVE) {
       if (hasVoted) {
         return t('details');
@@ -101,7 +109,7 @@ export function ProposalAction({
       return t(isAzoriusProposal ? 'vote' : 'sign');
     }
     return t('details');
-  }, [proposal, t, isAzoriusProposal, hasVoted]);
+  }, [isSnapshotProposal, proposal.state, t, hasVoted, isAzoriusProposal]);
 
   if (!showActionButton) {
     if (!expandedView) {
