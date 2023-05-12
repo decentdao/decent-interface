@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import { logError } from '../helpers/errorLogging';
-import { setValue, getValue, CacheExpiry } from '../hooks/utils/useLocalStorage';
+import { CacheExpiry } from '../hooks/utils/cache/cacheDefaults';
+import { setValue, getValue } from '../hooks/utils/cache/useLocalStorage';
 import { Providers } from '../types/network';
 
 const getAverageBlockTime = async (provider: Providers) => {
