@@ -3,11 +3,12 @@ import { useCallback } from 'react';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../../types';
 import { buildGnosisApiUrl, parseMultiSendTransactions } from '../../utils';
-import { DBCacheKeys, useIndexedDB } from './useLocalDB';
+import { CacheKeys } from './cache/cacheDefaults';
+import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
 
 export const useDecodeTransaction = () => {
   const { safeBaseURL } = useNetworkConfg();
-  const [setValue, getValue] = useIndexedDB(DBCacheKeys.DECODED_TRANSACTIONS);
+  const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
   const decodeTransactions = useCallback(
     async (strategyAddress: string, proposalId: string, transactions: MetaTransaction[]) => {
@@ -63,8 +64,12 @@ export const useDecodeTransaction = () => {
             }
           })
         );
-        await setValue(strategyAddress + '_' + proposalId.toString(), decodedTransactions.flat());
-        return decodedTransactions.flat();
+        const flattened = decodedTransactions.flat();
+        await setValue(
+          CacheKeys.DECODED_TRANSACTION_PREFIX + strategyAddress + '_' + proposalId.toString(),
+          flattened
+        );
+        return flattened;
       }
 
       return cachedTransactions;

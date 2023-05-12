@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { CacheExpiry, CacheKeys, useLocalStorage } from '../../utils/useLocalStorage';
+import { CacheExpiry, CacheKeys, useLocalStorage } from '../../utils/cache/useLocalStorage';
 
 /**
  * handles loading favorites data into Fractal state

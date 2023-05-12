@@ -16,7 +16,7 @@ import {
   FractalModuleType,
   FractalNode,
 } from '../../../types';
-import { useLocalStorage } from '../../utils/useLocalStorage';
+import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 
 const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
 export const useGovernanceContracts = () => {

@@ -5,7 +5,7 @@ import { strategyFractalProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
 
-import { getValue, CacheKeys } from '../hooks/utils/useLocalStorage';
+import { getValue, CacheKeys } from '../hooks/utils/cache/useLocalStorage';
 import {
   FractalProposalState,
   ProposalVotesSummary,
