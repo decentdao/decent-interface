@@ -14,13 +14,13 @@ import { TxDetails } from './TxDetails';
 export function MultisigProposalDetails({ proposal }: { proposal: FractalProposal }) {
   const txProposal = proposal as MultisigProposal;
   const {
-    guardContracts: { freezeGuardContract: freezeGuardContract },
+    guardContracts: { freezeGuardContract },
     readOnly: { user },
   } = useFractal();
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
-        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <ProposalInfo proposal={proposal} />
           <Box mt={4}>
             <ProposalCreatedBy proposalProposer={txProposal.confirmations[0].owner} />

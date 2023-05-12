@@ -48,7 +48,7 @@ export default function useSubmitProposal() {
   const {
     node: { safe, fractalModules },
     baseContracts: { multiSendContract },
-    guardContracts: { freezeVotingContract: freezeVotingContract },
+    guardContracts: { freezeVotingContract },
     governanceContracts: { ozLinearVotingContract },
     clients: { safeService },
   } = useFractal();

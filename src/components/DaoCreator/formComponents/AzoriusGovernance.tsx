@@ -38,8 +38,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.votingPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('govModule.votingPeriod', valuePair)}
+              value={values.azorius.votingPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('azorius.votingPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="govConfig-votingPeriod"
@@ -61,8 +61,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.quorumPercentage.bigNumberValue}
-              onChange={valuePair => setFieldValue('govModule.quorumPercentage', valuePair)}
+              value={values.azorius.quorumPercentage.bigNumberValue}
+              onChange={valuePair => setFieldValue('azorius.quorumPercentage', valuePair)}
               max="100"
               decimalPlaces={0}
               data-testid="govConfig-quorumPercentage"
@@ -77,8 +77,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.timelock.bigNumberValue}
-              onChange={valuePair => setFieldValue('govModule.timelock', valuePair)}
+              value={values.azorius.timelock.bigNumberValue}
+              onChange={valuePair => setFieldValue('azorius.timelock', valuePair)}
               decimalPlaces={0}
               data-testid="govConfig-timelock"
             />
@@ -99,8 +99,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         >
           <InputGroup>
             <BigNumberInput
-              value={values.govModule.executionPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('govModule.executionPeriod', valuePair)}
+              value={values.azorius.executionPeriod.bigNumberValue}
+              onChange={valuePair => setFieldValue('azorius.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
               data-testid="govModule-executionDetails"
@@ -132,8 +132,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         />
         <StepButtons
           {...props}
-          prevStep={CreatorSteps.AZORIUS_GOVERNANCE}
-          nextStep={CreatorSteps.GUARD_CONFIG}
+          prevStep={CreatorSteps.TOKEN_DETAILS}
+          nextStep={CreatorSteps.FREEZE_DETAILS}
           isLastStep={!isSubDAO}
         />
       </Flex>

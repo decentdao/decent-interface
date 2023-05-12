@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { Address, useEnsName, useProvider } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
+import { CacheKeys } from '../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../utils/cache/useLocalStorage';
 import { createAccountSubstring } from '../utils/useDisplayName';
-import { CacheKeys, useLocalStorage } from '../utils/useLocalStorage';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:

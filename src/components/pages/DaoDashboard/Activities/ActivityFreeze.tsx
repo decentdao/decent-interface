@@ -22,7 +22,7 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
 
 export function ActivityFreeze({
   freezeGuard,
-  freezeVotingContract: freezeVotingContract,
+  freezeVotingContract,
 }: {
   freezeGuard: FreezeGuard;
   freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting | undefined;

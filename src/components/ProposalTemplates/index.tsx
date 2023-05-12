@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
-import { StrategyType } from '../../types';
+import { GovernanceModuleType } from '../../types';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import ProposalTemplateCard from './ProposalTemplateCard';
@@ -17,11 +17,12 @@ export default function ProposalTemplates() {
   } = useFractal();
 
   const showCreateButton =
-    type === StrategyType.AZORIUS ? true : safe?.owners.includes(user.address || '');
+    type === GovernanceModuleType.AZORIUS ? true : safe?.owners.includes(user.address || '');
 
   return (
     <Flex
       flexDirection={proposalTemplates && proposalTemplates.length > 0 ? 'row' : 'column'}
+      flexWrap="wrap"
       gap="1rem"
     >
       {!proposalTemplates ? (

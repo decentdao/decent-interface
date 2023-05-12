@@ -1,5 +1,5 @@
 import { FractalGovernance, AzoriusProposal, VOTE_CHOICES } from '../../../types';
-import { AzoriusGovernance, StrategyType } from './../../../types/fractal';
+import { AzoriusGovernance, GovernanceModuleType } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
@@ -28,7 +28,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposalTemplates: action.payload };
     }
     case FractalGovernanceAction.SET_STRATEGY: {
-      return { ...state, type: StrategyType.AZORIUS, votesStrategy: action.payload };
+      return { ...state, type: GovernanceModuleType.AZORIUS, votesStrategy: action.payload };
     }
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...(proposals || []), action.payload] };

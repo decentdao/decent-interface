@@ -10,8 +10,9 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { CreateProposalMetadata } from '../../../../types';
 
-import { AzoriusProposal } from '../../../../types/daoProposal';
+import { AzoriusProposal, ProposalMetaData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
+import { useAsyncRetry } from '../../../utils/useAsyncRetry';
 import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
 
 export const useAzoriusProposals = () => {
@@ -43,6 +44,7 @@ export const useAzoriusProposals = () => {
         if (args.metadata) {
           const metaDataEvent: CreateProposalMetadata = JSON.parse(args.metadata);
           const decodedTransactions = await decodeTransactions(
+            strategyContract.address,
             args.proposalId.toString(),
             args.transactions
           );
@@ -68,14 +70,14 @@ export const useAzoriusProposals = () => {
     return proposals;
   }, [chainId, decodeTransactions, ozLinearVotingContract, azoriusContract, provider]);
 
+  const { requestWithRetries } = useAsyncRetry();
   // Azrious proposals are listeners
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
     async (strategyAddress, proposalId, proposer, transactions, _metadata) => {
       if (!azoriusContract || !ozLinearVotingContract) {
         return;
       }
-
-      let metaData;
+      let metaData: ProposalMetaData | undefined;
 
       if (_metadata) {
         const metaDataEvent: CreateProposalMetadata = JSON.parse(_metadata);
@@ -84,28 +86,43 @@ export const useAzoriusProposals = () => {
           description: metaDataEvent.description,
           documentationUrl: metaDataEvent.documentationUrl,
           transactions: transactions,
-          decodedTransactions: await decodeTransactions(proposalId.toString(), transactions),
+          decodedTransactions: await decodeTransactions(
+            strategyAddress,
+            proposalId.toString(),
+            transactions
+          ),
         };
       }
       const strategyContract = getEventRPC<LinearERC20Voting>(
         ozLinearVotingContract,
         chainId
       ).attach(strategyAddress);
-      const proposal = await mapProposalCreatedEventToProposal(
-        strategyContract,
-        proposalId,
-        proposer,
-        azoriusContract,
-        provider,
-        provider.network.chainId,
-        metaData
-      );
+      const func = async () => {
+        return mapProposalCreatedEventToProposal(
+          strategyContract,
+          proposalId,
+          proposer,
+          azoriusContract,
+          provider,
+          provider.network.chainId,
+          metaData
+        );
+      };
+      const proposal = await requestWithRetries(func, 5, 7000);
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
         payload: proposal,
       });
     },
-    [ozLinearVotingContract, azoriusContract, provider, chainId, decodeTransactions, action]
+    [
+      ozLinearVotingContract,
+      azoriusContract,
+      provider,
+      chainId,
+      decodeTransactions,
+      action,
+      requestWithRetries,
+    ]
   );
 
   const proposalVotedEventListener: TypedListener<VotedEvent> = useCallback(

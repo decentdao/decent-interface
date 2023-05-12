@@ -67,7 +67,7 @@ export default function ProposalTemplateCard({
 
   return (
     <ContentBox
-      maxWidth="420px"
+      containerBoxProps={{ width: '420px' }}
       onClick={canUserCreateProposal ? openProposalForm : undefined}
     >
       <Flex justifyContent="space-between">

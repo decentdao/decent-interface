@@ -15,7 +15,7 @@ import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
 
 function TokenConfigDisplay(props: ICreationStepProps) {
-  switch (props.values.govToken.tokenCreationType) {
+  switch (props.values.token.tokenCreationType) {
     case TokenCreationType.NEW:
       return <VotesTokenNew {...props} />;
     case TokenCreationType.IMPORTED:
@@ -44,38 +44,38 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
 
   const updateImportFields = useCallback(async () => {
-    const importAddress = values.govToken.tokenImportAddress;
-    const importError = errors?.govToken?.tokenImportAddress;
+    const importAddress = values.token.tokenImportAddress;
+    const importError = errors?.token?.tokenImportAddress;
     if (importAddress && !importError && utils.isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
       const tokenContract = new ethers.Contract(importAddress, erc20ABI, provider);
       const name = await tokenContract.name();
       const symbol = await tokenContract.symbol();
       if (!isVotesToken) {
-        setFieldValue('govToken.tokenName', 'Wrapped ' + name, true);
-        setFieldValue('govToken.tokenSymbol', 'W' + symbol, true);
+        setFieldValue('token.tokenName', 'Wrapped ' + name, true);
+        setFieldValue('token.tokenSymbol', 'W' + symbol, true);
         setIsImportedVotesToken(false);
       } else {
         setIsImportedVotesToken(true);
-        setFieldValue('govToken.tokenName', name, true);
-        setFieldValue('govToken.tokenSymbol', symbol, true);
+        setFieldValue('token.tokenName', name, true);
+        setFieldValue('token.tokenSymbol', symbol, true);
       }
     } else {
       setIsImportedVotesToken(false);
-      setFieldValue('govToken.tokenName', '', true);
-      setFieldValue('govToken.tokenSymbol', '', true);
+      setFieldValue('token.tokenName', '', true);
+      setFieldValue('token.tokenSymbol', '', true);
     }
     setTimeout(() => {
-      setFieldTouched('govToken.tokenSymbol', true, true);
-      setFieldTouched('govToken.tokenName', true, true);
+      setFieldTouched('token.tokenSymbol', true, true);
+      setFieldTouched('token.tokenName', true, true);
     }, 0);
   }, [
     checkVotesToken,
-    errors?.govToken?.tokenImportAddress,
+    errors?.token?.tokenImportAddress,
     setFieldValue,
     setFieldTouched,
     provider,
-    values.govToken.tokenImportAddress,
+    values.token.tokenImportAddress,
   ]);
 
   useEffect(() => {
@@ -105,12 +105,12 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               rounded="md"
               display="flex"
               flexDirection="column"
-              name="govToken.tokenCreationType"
+              name="token.tokenCreationType"
               gap={4}
-              id="govToken.tokenCreationType"
-              value={values.govToken.tokenCreationType}
+              id="token.tokenCreationType"
+              value={values.token.tokenCreationType}
               onChange={value => {
-                setFieldValue('govToken.tokenCreationType', value);
+                setFieldValue('token.tokenCreationType', value);
               }}
             >
               <RadioWithText
@@ -119,9 +119,9 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 testId="choose-newToken"
                 value={TokenCreationType.NEW}
                 onClick={() => {
-                  setFieldValue('govToken.tokenImportAddress', '');
-                  setFieldValue('govToken.tokenName', '');
-                  setFieldValue('govToken.tokenSymbol', '');
+                  setFieldValue('token.tokenImportAddress', '');
+                  setFieldValue('token.tokenName', '');
+                  setFieldValue('token.tokenSymbol', '');
                 }}
               />
               <RadioWithText
@@ -130,27 +130,27 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 testId="choose-existingToken"
                 value={TokenCreationType.IMPORTED}
                 onClick={() => {
-                  setFieldValue('govToken.tokenName', '');
-                  setFieldValue('govToken.tokenSymbol', '');
+                  setFieldValue('token.tokenName', '');
+                  setFieldValue('token.tokenSymbol', '');
                 }}
               />
-              {values.govToken.tokenCreationType === TokenCreationType.IMPORTED && (
+              {values.token.tokenCreationType === TokenCreationType.IMPORTED && (
                 <>
                   <LabelWrapper
                     errorMessage={
-                      values.govToken.tokenImportAddress && errors?.govToken?.tokenImportAddress
-                        ? errors.govToken.tokenImportAddress
+                      values.token.tokenImportAddress && errors?.token?.tokenImportAddress
+                        ? errors.token.tokenImportAddress
                         : undefined
                     }
                   >
                     <Input
-                      name="govToken.tokenImportAddress"
+                      name="token.tokenImportAddress"
                       onChange={handleChange}
-                      value={values.govToken.tokenImportAddress}
+                      value={values.token.tokenImportAddress}
                       placeholder={createAccountSubstring(constants.AddressZero)}
                     />
                   </LabelWrapper>
-                  {!isImportedVotesToken && !errors.govToken?.tokenImportAddress && (
+                  {!isImportedVotesToken && !errors.token?.tokenImportAddress && (
                     <Flex
                       gap={4}
                       alignItems="center"

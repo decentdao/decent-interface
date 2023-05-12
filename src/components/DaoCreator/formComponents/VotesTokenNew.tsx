@@ -24,7 +24,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
         helper={t('helperTokenName')}
         isRequired
       >
-        <Field name="govToken.tokenName">
+        <Field name="token.tokenName">
           {({ field }: FieldAttributes<any>) => (
             <Input
               {...field}
@@ -40,8 +40,8 @@ export function VotesTokenNew(props: ICreationStepProps) {
         isRequired
       >
         <Input
-          name="govToken.tokenSymbol"
-          value={values.govToken.tokenSymbol}
+          name="token.tokenSymbol"
+          value={values.token.tokenSymbol}
           onChange={handleChange}
           maxLength={6}
           data-testid="tokenVoting-tokenSymbolInput"
@@ -53,8 +53,8 @@ export function VotesTokenNew(props: ICreationStepProps) {
         isRequired
       >
         <BigNumberInput
-          value={values.govToken.tokenSupply.bigNumberValue}
-          onChange={valuePair => setFieldValue('govToken.tokenSupply', valuePair)}
+          value={values.token.tokenSupply.bigNumberValue}
+          onChange={valuePair => setFieldValue('token.tokenSupply', valuePair)}
           data-testid="tokenVoting-tokenSupplyInput"
           onKeyDown={restrictChars}
         />
@@ -68,7 +68,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
       <StepButtons
         {...props}
         prevStep={CreatorSteps.ESSENTIALS}
-        nextStep={CreatorSteps.GOV_CONFIG}
+        nextStep={CreatorSteps.AZORIUS_DETAILS}
       />
     </Flex>
   );
