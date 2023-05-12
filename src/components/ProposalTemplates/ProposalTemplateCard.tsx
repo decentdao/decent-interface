@@ -59,7 +59,7 @@ export default function ProposalTemplateCard({
   }
 
   return (
-    <ContentBox maxWidth="420px">
+    <ContentBox containerBoxProps={{ width: '420px' }}>
       <Flex justifyContent="space-between">
         <Avatar
           size="lg"
