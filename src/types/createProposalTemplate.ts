@@ -25,3 +25,7 @@ export type CreateProposalTemplateForm = {
   transactions: CreateProposalTemplateTransaction[];
   proposalTemplateMetadata: CreateProposalTemplateMetadata;
 };
+
+export type ProposalTemplate = {
+  transactions: CreateProposalTemplateTransaction[];
+} & CreateProposalTemplateMetadata;

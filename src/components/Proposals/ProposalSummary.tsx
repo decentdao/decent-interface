@@ -51,7 +51,7 @@ export default function ProposalSummary({
   const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
 
   return (
-    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />

@@ -36,7 +36,7 @@ export function InfoRow({
 export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation('proposal');
   return (
-    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />

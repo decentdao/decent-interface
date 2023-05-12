@@ -49,7 +49,7 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
     return null;
   }
   return (
-    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Text textStyle="text-lg-mono-medium">{t('signers')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
