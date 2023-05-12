@@ -69,7 +69,7 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
-        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <ProposalInfo proposal={proposal} />
         </ContentBox>
         <ProposalVotes proposal={proposal} />

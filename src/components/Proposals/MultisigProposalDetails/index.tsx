@@ -20,7 +20,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: FractalProposa
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
-        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <ProposalInfo proposal={proposal} />
           <Box mt={4}>
             <ProposalCreatedBy proposalProposer={txProposal.confirmations[0].owner} />

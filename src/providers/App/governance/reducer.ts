@@ -4,6 +4,7 @@ import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
   proposals: null,
+  proposalTemplates: null,
   type: undefined,
   votesStrategy: undefined,
   votesToken: undefined,
@@ -22,6 +23,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_PROPOSALS: {
       const { type, proposals: newProposals } = action.payload;
       return { ...state, type, proposals: newProposals };
+    }
+    case FractalGovernanceAction.SET_PROPOSAL_TEMPLATES: {
+      return { ...state, proposalTemplates: action.payload };
     }
     case FractalGovernanceAction.SET_STRATEGY: {
       return { ...state, type: GovernanceModuleType.AZORIUS, votesStrategy: action.payload };

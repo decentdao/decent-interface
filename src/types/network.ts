@@ -32,5 +32,6 @@ export type NetworkConfig = {
     multisigFreezeVotingMasterCopy: string;
     erc20FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: string;
+    keyValuePairs: string;
   };
 };

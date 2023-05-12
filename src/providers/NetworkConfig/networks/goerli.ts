@@ -4,6 +4,7 @@ import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/goerli/
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/ERC20FreezeVoting.json';
 import FractalModule from '@fractal-framework/fractal-contracts/deployments/goerli/FractalModule.json';
 import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/goerli/FractalRegistry.json';
+import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/goerli/KeyValuePairs.json';
 import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/goerli/LinearERC20Voting.json';
 import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeGuard.json';
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeVoting.json';
@@ -38,5 +39,6 @@ export const goerliConfig: NetworkConfig = {
     linearVotingMasterCopy: LinearERC20Voting.address,
     gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
+    keyValuePairs: KeyValuePairs.address,
   },
 };

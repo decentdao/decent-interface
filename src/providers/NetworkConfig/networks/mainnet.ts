@@ -27,5 +27,6 @@ export const mainnetConfig: NetworkConfig = {
     multisigFreezeVotingMasterCopy: '',
     erc20FreezeVotingMasterCopy: '',
     votesERC20WrapperMasterCopy: '',
+    keyValuePairs: '',
   },
 };
