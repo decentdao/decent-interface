@@ -3,7 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Address, useEnsName, useProvider } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
-import { CacheKeys, useLocalStorage } from '../utils/cache/useLocalStorage';
+import { CacheKeys } from '../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../utils/cache/useLocalStorage';
 import { createAccountSubstring } from '../utils/useDisplayName';
 
 /**

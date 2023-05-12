@@ -4,8 +4,9 @@ import { BigNumber } from 'ethers';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
+import { CacheKeys } from '../hooks/utils/cache/cacheDefaults';
 
-import { getValue, CacheKeys } from '../hooks/utils/cache/useLocalStorage';
+import { getValue } from '../hooks/utils/cache/useLocalStorage';
 import {
   FractalProposalState,
   ProposalVotesSummary,

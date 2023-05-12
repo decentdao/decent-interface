@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
-import { CacheExpiry, CacheKeys, useLocalStorage } from './cache/useLocalStorage';
+import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
+import { useLocalStorage } from './cache/useLocalStorage';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useProvider();
