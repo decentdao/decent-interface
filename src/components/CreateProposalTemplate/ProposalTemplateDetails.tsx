@@ -66,7 +66,7 @@ export default function ProposalTemplateDetails({
           <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
           <Text
             textAlign="right"
-            wordBreak="break-all"
+            wordBreak="break-word"
           >
             {proposalTemplateMetadata.description.trim()}
           </Text>
