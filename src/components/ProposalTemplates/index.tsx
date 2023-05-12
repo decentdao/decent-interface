@@ -22,6 +22,7 @@ export default function ProposalTemplates() {
   return (
     <Flex
       flexDirection={proposalTemplates && proposalTemplates.length > 0 ? 'row' : 'column'}
+      flexWrap="wrap"
       gap="1rem"
     >
       {!proposalTemplates ? (
