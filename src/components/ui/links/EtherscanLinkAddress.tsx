@@ -1,6 +1,6 @@
-import { Link } from '@chakra-ui/next-js';
 import { LinkProps } from '@chakra-ui/react';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import EtherscanLinkBase from './EtherscanLinkBase';
 
 interface Props extends LinkProps {
   address?: string | null;
@@ -21,12 +21,11 @@ export default function EtherscanLinkAddress({ address, children, ...rest }: Pro
   }
 
   return (
-    <Link
+    <EtherscanLinkBase
       href={`${etherscanBaseURL}/address/${address}`}
-      target="_blank"
       {...rest}
     >
       {children}
-    </Link>
+    </EtherscanLinkBase>
   );
 }

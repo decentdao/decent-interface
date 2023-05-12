@@ -1,6 +1,5 @@
-import { HStack, Text, Tooltip } from '@chakra-ui/react';
+import { HStack, Text } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
-import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
 
@@ -12,21 +11,15 @@ export function DisplayAddress({
   truncate?: boolean | undefined;
 }) {
   const displayAddress = useDisplayName(address, truncate);
-  const { t } = useTranslation();
   return (
     <EtherscanLinkAddress address={address}>
-      <Tooltip
-        label={t('etherscanTip')}
-        placement="bottom"
+      <HStack
+        color="gold.500"
+        textStyle="text-base-sm-regular"
       >
-        <HStack
-          color="gold.500"
-          textStyle="text-base-sm-regular"
-        >
-          <Text>{displayAddress.displayName}</Text>
-          <ArrowAngleUp />
-        </HStack>
-      </Tooltip>
+        <Text>{displayAddress.displayName}</Text>
+        <ArrowAngleUp />
+      </HStack>
     </EtherscanLinkAddress>
   );
 }

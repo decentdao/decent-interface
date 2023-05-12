@@ -1,18 +1,29 @@
+import { LinkProps } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import EtherscanLinkBase from './EtherscanLinkBase';
 
-function EtherscanLinkERC20({ address, children }: { address: string; children: React.ReactNode }) {
+interface Props extends LinkProps {
+  address?: string | null;
+  children: React.ReactNode;
+}
+
+function EtherscanLinkERC20({ address, children, ...rest }: Props) {
   const { etherscanBaseURL } = useNetworkConfg();
+
+  if (!address) {
+    return null;
+  }
+
   return (
-    <a
+    <EtherscanLinkBase
       href={`${etherscanBaseURL}/${
         address === ethers.constants.AddressZero ? '' : 'token/'
       }${address}`}
-      target="_blank"
-      rel="noreferrer"
+      {...rest}
     >
       {children}
-    </a>
+    </EtherscanLinkBase>
   );
 }
 
