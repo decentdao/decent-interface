@@ -1,5 +1,6 @@
 import { BigNumber } from 'ethers';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
+import { useProvider, useSigner } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
@@ -7,6 +8,10 @@ import { CreateProposalTemplateForm } from '../../../types/createProposalTemplat
 import useSafeContracts from '../../safe/useSafeContracts';
 
 export default function useCreateProposalTemplate() {
+  const provider = useProvider();
+  const { data: signer } = useSigner();
+  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+
   const { keyValuePairsContract } = useSafeContracts();
   const client = useIPFSClient();
   const {
@@ -27,6 +32,9 @@ export default function useCreateProposalTemplate() {
           description: values.proposalTemplateMetadata.description.trim(),
           transactions: values.transactions.map(tx => ({
             ...tx,
+            targetAddress: tx.targetAddress.endsWith('.eth')
+              ? signerOrProvider.resolveName(tx.targetAddress)
+              : tx.targetAddress,
             parameters: tx.parameters
               .map(param => {
                 if (param.signature) {
@@ -59,7 +67,7 @@ export default function useCreateProposalTemplate() {
         return proposal;
       }
     },
-    [proposalTemplates, keyValuePairsContract, client]
+    [proposalTemplates, keyValuePairsContract, client, signerOrProvider]
   );
 
   return { prepareProposalTemplateProposal };
