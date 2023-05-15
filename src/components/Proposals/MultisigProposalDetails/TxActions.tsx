@@ -210,7 +210,7 @@ export function TxActions({
   const isButtonDisabled = isPending || proposal.state === FractalProposalState.TIMELOCKED;
 
   return (
-    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Flex justifyContent="space-between">
         <Text textStyle="text-lg-mono-medium">{t(buttonProps[proposal.state!].pageTitle)}</Text>
         <ProposalTime proposal={proposal} />

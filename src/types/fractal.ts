@@ -33,6 +33,7 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
+import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import {
   ProposalMetaData,
@@ -296,6 +297,7 @@ export interface SafeMultisigGovernance extends Governance {}
 export interface Governance {
   type?: GovernanceModuleType;
   proposals: FractalProposal[] | null;
+  proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContract?: ERC20Claim;
 }
 

@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
+import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SafeInfoResponseWithGuard } from '../../../types';
@@ -95,7 +96,7 @@ export function useFetchNodes(address?: string) {
           }
         }
       } catch (e) {
-        console.error('Error while verifying subDAO ownership', e, subDAO);
+        logError('Error while verifying subDAO ownership', e, subDAO);
       }
     }
     // set subDAOs

@@ -93,8 +93,6 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
     return null; // TODO: Show "error state" or "empty state"?
   }
 
-  console.log(abiFunctions);
-
   return (
     <LabelComponent
       label={t('abi')}

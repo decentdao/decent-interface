@@ -1,17 +1,19 @@
 import axios from 'axios';
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam, MetaTransaction } from '../../types';
 import { buildGnosisApiUrl, parseMultiSendTransactions } from '../../utils';
+import { CacheKeys } from './cache/cacheDefaults';
+import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
 
 export const useDecodeTransaction = () => {
   const { safeBaseURL } = useNetworkConfg();
-  const metaDataMapping = useRef<Map<string, DecodedTransaction[]>>(new Map());
+  const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
   const decodeTransactions = useCallback(
-    async (proposalId: string, transactions: MetaTransaction[]) => {
+    async (strategyAddress: string, proposalId: string, transactions: MetaTransaction[]) => {
       const apiUrl = buildGnosisApiUrl(safeBaseURL, '/data-decoder/');
-      const cachedTransactions = metaDataMapping.current.get(proposalId.toString());
+      const cachedTransactions = await getValue(strategyAddress + '_' + proposalId.toString());
 
       if (!cachedTransactions) {
         const decodedTransactions = await Promise.all(
@@ -62,13 +64,17 @@ export const useDecodeTransaction = () => {
             }
           })
         );
-        metaDataMapping.current.set(proposalId.toString(), decodedTransactions.flat());
-        return decodedTransactions.flat();
+        const flattened = decodedTransactions.flat();
+        await setValue(
+          CacheKeys.DECODED_TRANSACTION_PREFIX + strategyAddress + '_' + proposalId.toString(),
+          flattened
+        );
+        return flattened;
       }
 
       return cachedTransactions;
     },
-    [safeBaseURL]
+    [safeBaseURL, setValue, getValue]
   );
   return decodeTransactions;
 };

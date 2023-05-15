@@ -8,12 +8,14 @@ import {
   VotesData,
   VotesStrategy,
   UnderlyingTokenData,
+  GovernanceModuleType,
 } from '../../../types';
-import { GovernanceModuleType } from './../../../types/fractal';
+import { ProposalTemplate } from '../../../types/createProposalTemplate';
 
 export enum FractalGovernanceAction {
   SET_PROPOSALS = 'SET_PROPOSALS',
   SET_SNAPSHOT_PROPOSALS = 'SET_SNAPSHOT_PROPOSALS',
+  SET_PROPOSAL_TEMPLATES = 'SET_PROPOSAL_TEMPLATES',
   SET_STRATEGY = 'SET_STRATEGY',
   UPDATE_PROPOSALS_NEW = 'UPDATE_PROPOSALS_NEW',
   UPDATE_NEW_AZORIUS_VOTE = 'UPDATE_NEW_AZORIUS_VOTE',
@@ -38,6 +40,7 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS;
       payload: FractalProposal[];
     }
+  | { type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES; payload: ProposalTemplate[] }
   // @todo update with proposal type
   | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
   | {

@@ -44,6 +44,7 @@ export const useAzoriusProposals = () => {
         if (args.metadata) {
           const metaDataEvent: CreateProposalMetadata = JSON.parse(args.metadata);
           const decodedTransactions = await decodeTransactions(
+            strategyContract.address,
             args.proposalId.toString(),
             args.transactions
           );
@@ -85,7 +86,11 @@ export const useAzoriusProposals = () => {
           description: metaDataEvent.description,
           documentationUrl: metaDataEvent.documentationUrl,
           transactions: transactions,
-          decodedTransactions: await decodeTransactions(proposalId.toString(), transactions),
+          decodedTransactions: await decodeTransactions(
+            strategyAddress,
+            proposalId.toString(),
+            transactions
+          ),
         };
       }
       const strategyContract = getEventRPC<LinearERC20Voting>(

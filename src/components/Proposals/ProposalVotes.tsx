@@ -113,7 +113,7 @@ function ProposalVotes({
 
   return (
     <>
-      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+      <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
         <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
         <Grid
           templateColumns={{ base: 'repeat(2, 1ft)', md: 'repeat(5, 1fr)' }}
@@ -168,7 +168,7 @@ function ProposalVotes({
         </Grid>
       </ContentBox>
       {votes.length !== 0 && (
-        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
           <Divider
             color="chocolate.700"

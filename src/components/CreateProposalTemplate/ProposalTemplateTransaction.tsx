@@ -119,6 +119,13 @@ export default function ProposalTemplateTransaction({
                 bg="black.900"
                 px={2}
                 w="32px"
+                cursor="pointer"
+                onClick={() =>
+                  setFieldValue(`transactions.${transactionIndex}.parameters`, [
+                    ...transaction.parameters,
+                    DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION,
+                  ])
+                }
               >
                 <IconButton
                   aria-label="Add function parameter"
@@ -127,12 +134,6 @@ export default function ProposalTemplateTransaction({
                   h="16px"
                   borderRadius="100%"
                   variant="secondary"
-                  onClick={() =>
-                    setFieldValue(`transactions.${transactionIndex}.parameters`, [
-                      ...transaction.parameters,
-                      DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION,
-                    ])
-                  }
                 >
                   <AddPlus />
                 </IconButton>
@@ -239,6 +240,15 @@ export default function ProposalTemplateTransaction({
                 bg="black.900"
                 px={2}
                 w="32px"
+                cursor="pointer"
+                onClick={() =>
+                  setFieldValue(
+                    `transactions.${transactionIndex}.parameters`,
+                    transaction.parameters.filter(
+                      (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex !== i
+                    )
+                  )
+                }
               >
                 <IconButton
                   aria-label="Remove function parameter"
@@ -247,14 +257,6 @@ export default function ProposalTemplateTransaction({
                   h="16px"
                   borderRadius="100%"
                   variant="secondary"
-                  onClick={() =>
-                    setFieldValue(
-                      `transactions.${transactionIndex}.parameters`,
-                      transaction.parameters.filter(
-                        (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex !== i
-                      )
-                    )
-                  }
                 >
                   <Trash />
                 </IconButton>

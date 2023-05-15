@@ -130,7 +130,7 @@ export function ProposalAction({
     if (user.votingWeight.eq(0)) return <></>;
 
     return (
-      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+      <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
         <Flex justifyContent="space-between">
           <Text textStyle="text-lg-mono-medium">
             {t(labelKey, {
