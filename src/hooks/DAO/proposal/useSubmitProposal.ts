@@ -10,7 +10,12 @@ import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FractalModuleType, MetaTransaction, ProposalExecuteData } from '../../../types';
+import {
+  FractalModuleType,
+  MetaTransaction,
+  ProposalExecuteData,
+  GovernanceModuleType,
+} from '../../../types';
 import { buildGnosisApiUrl } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
 
@@ -50,7 +55,9 @@ export default function useSubmitProposal() {
     baseContracts: { multiSendContract },
     guardContracts: { freezeVotingContract },
     governanceContracts: { ozLinearVotingContract },
+    governance: { type },
     clients: { safeService },
+    readOnly: { user },
   } = useFractal();
 
   const globalAzoriusContract = useMemo(() => {
@@ -68,6 +75,12 @@ export default function useSubmitProposal() {
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { chainId, safeBaseURL } = useNetworkConfg();
+
+  const { owners } = safe || {};
+  const canUserCreateProposal = useMemo(
+    () => (type === GovernanceModuleType.AZORIUS ? true : owners?.includes(user.address || '')),
+    [owners, type, user]
+  );
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -305,5 +318,5 @@ export default function useSubmitProposal() {
     ]
   );
 
-  return { submitProposal, pendingCreateTx, canUserCreateProposal: true };
+  return { submitProposal, pendingCreateTx, canUserCreateProposal };
 }
