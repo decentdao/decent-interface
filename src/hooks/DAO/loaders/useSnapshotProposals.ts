@@ -18,8 +18,6 @@ export const useSnapshotProposals = () => {
   const currentSnapshotURL = useRef<string | undefined>();
 
   const loadSnapshotProposals = useCallback(async () => {
-    console.log('loading snapshot proposals, ', daoSnapshotURL);
-
     client
       .query({
         query: gql`
@@ -49,14 +47,10 @@ export const useSnapshotProposals = () => {
       `,
       })
       .then(result => {
-        console.log('snapshot query result: ', result);
-
         const proposals: SnapshotProposal[] = result.data.proposals.map((proposal: any) => {
           return {
             eventDate: new Date(proposal.start * 1000),
             eventType: ActivityEventType.Governance,
-            // transaction?: ActivityTransactionType;
-            // transactionHash?: string | null;
             state:
               proposal.state === 'active'
                 ? FractalProposalState.ACTIVE
@@ -67,7 +61,6 @@ export const useSnapshotProposals = () => {
             proposalId: proposal.id,
             snapshotProposalId: proposal.id,
             targets: [],
-            // metaData?: ProposalMetaData;
             title: proposal.title,
             description: proposal.body,
             startTime: proposal.start,

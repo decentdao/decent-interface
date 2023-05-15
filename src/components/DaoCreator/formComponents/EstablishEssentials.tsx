@@ -1,4 +1,5 @@
-import { Box, Divider, RadioGroup } from '@chakra-ui/react';
+import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
@@ -10,6 +11,11 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
   // @todo update labels for subDAOs
+
+  // useEffect(() => {
+  //   const resolvedAddress = await signerOrProvider.resolveName(address).catch();
+  // }, [values.essentials.snapshotURL]);
+
   return (
     <StepWrapper
       isSubDAO={isSubDAO}
@@ -66,18 +72,41 @@ export function EstablishEssentials(props: ICreationStepProps) {
         color="chocolate.700"
         mb={4}
       />
-      <InputComponent
+
+      <LabelComponent
         label="SnapShot"
-        helper="Include a link to your DAO's snapshot"
-        isRequired
+        helper="Include your DAO's SnapShot ENS name"
+        isRequired={false}
+      >
+        <LabelWrapper errorMessage="Invalid ENS name">
+          <Input
+            id="searchEssentials-snapshotURL"
+            value={values.essentials.snapshotURL}
+            onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
+            onBlur={cEvent =>
+              setFieldValue('essentials.snapshotURL', cEvent.target.value.trim(), true)
+            }
+            isDisabled={false}
+            data-testid="essentials-snapshotURL"
+            placeholder="fractaldao.eth"
+            maxLength={30}
+          />
+        </LabelWrapper>
+      </LabelComponent>
+
+      {/* <InputComponent
+        label="SnapShot"
+        helper="Include your DAO's SnapShot ENS name"
+        isRequired={false}
         value={values.essentials.snapshotURL}
         id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
         onBlur={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value.trim(), true)}
         disabled={false}
-        placeholder="https://"
+        placeholder="fractaldao.eth"
         testId="essentials-snapshotURL"
-      />
+      /> */}
+
       <Divider
         color="chocolate.700"
         mb={4}
