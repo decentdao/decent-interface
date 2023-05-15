@@ -8,6 +8,8 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { ProposalTemplate } from '../../types/createProposalTemplate';
 import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
+import { ModalType } from '../ui/modals/ModalProvider';
+import { useFractalModal } from '../ui/modals/useFractalModal';
 
 type ProposalTemplateCardProps = {
   proposalTemplate: ProposalTemplate;
@@ -15,7 +17,7 @@ type ProposalTemplateCardProps = {
 };
 
 export default function ProposalTemplateCard({
-  proposalTemplate: { title, description },
+  proposalTemplate,
   templateIndex,
 }: ProposalTemplateCardProps) {
   const { push } = useRouter();
@@ -26,6 +28,11 @@ export default function ProposalTemplateCard({
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
+  const { title, description } = proposalTemplate;
+
+  const openProposalForm = useFractalModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {
+    proposalTemplate,
+  });
 
   const successCallback = () => {
     if (daoAddress) {
@@ -59,7 +66,10 @@ export default function ProposalTemplateCard({
   }
 
   return (
-    <ContentBox containerBoxProps={{ width: '420px' }}>
+    <ContentBox
+      containerBoxProps={{ maxWidth: '420px', flex: '0 0 calc(33.333333% - 2rem)' }}
+      onClick={canUserCreateProposal ? openProposalForm : undefined}
+    >
       <Flex justifyContent="space-between">
         <Avatar
           size="lg"
@@ -69,7 +79,7 @@ export default function ProposalTemplateCard({
           borderRadius="4px"
           getInitials={(_title: string) => _title.slice(0, 2)}
         />
-        {manageTemplateOptions.length > 0 && (
+        {manageTemplateOptions.length > 0 && canUserCreateProposal && (
           <OptionMenu
             trigger={
               <VEllipsis

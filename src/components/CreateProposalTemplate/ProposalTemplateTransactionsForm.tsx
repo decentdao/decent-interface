@@ -12,7 +12,7 @@ import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
 interface ProposalTemplateTransactionsFormProps extends FormikProps<CreateProposalTemplateForm> {
   pendingTransaction: boolean;
   setFormState: (state: CreateProposalTemplateFormState) => void;
-  canUserCreateProposal: boolean;
+  canUserCreateProposal?: boolean;
 }
 
 export default function ProposalTemplateTransactionsForm(

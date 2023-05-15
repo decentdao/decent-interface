@@ -86,5 +86,6 @@
     "etherscanTip": "Open in Etherscan",
     "wrapToken": "Wrap Token",
     "unwrapToken": "Unwrap Token",
-    "max": "max"
+    "max": "max",
+    "favoriteTooltip": "Toggle favorite"
 }

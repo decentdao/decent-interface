@@ -191,7 +191,7 @@ export default function ProposalTemplateTransaction({
                   gridContainerProps={{
                     display: 'inline-flex',
                     flexWrap: 'wrap',
-                    width: '27%',
+                    width: '30%',
                   }}
                   inputContainerProps={{
                     width: '100%',
