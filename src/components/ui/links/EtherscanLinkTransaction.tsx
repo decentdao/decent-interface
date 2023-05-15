@@ -1,4 +1,11 @@
+import { LinkProps } from '@chakra-ui/react';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import EtherscanLinkBase from './EtherscanLinkBase';
+
+interface Props extends LinkProps {
+  txHash?: string | null;
+  children: React.ReactNode;
+}
 
 /**
  * A transaction link to Etherscan.
@@ -6,23 +13,19 @@ import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigP
  * For most use cases, you probably want to use DisplayTransaction,
  * to add proper styling.
  */
-function EtherscanLinkTransaction({
-  txHash,
-  children,
-}: {
-  txHash: string | undefined;
-  children: React.ReactNode;
-}) {
+export default function EtherscanLinkTransaction({ txHash, children, ...rest }: Props) {
   const { etherscanBaseURL } = useNetworkConfg();
+
+  if (!txHash) {
+    return null;
+  }
+
   return (
-    <a
+    <EtherscanLinkBase
       href={`${etherscanBaseURL}/tx/${txHash}`}
-      target="_blank"
-      rel="noreferrer"
+      {...rest}
     >
       {children}
-    </a>
+    </EtherscanLinkBase>
   );
 }
-
-export default EtherscanLinkTransaction;
