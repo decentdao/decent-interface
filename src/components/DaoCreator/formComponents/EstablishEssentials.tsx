@@ -12,10 +12,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
   // @todo update labels for subDAOs
 
-  // useEffect(() => {
-  //   const resolvedAddress = await signerOrProvider.resolveName(address).catch();
-  // }, [values.essentials.snapshotURL]);
-
   return (
     <StepWrapper
       isSubDAO={isSubDAO}
@@ -92,20 +88,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
           />
         </LabelWrapper>
       </LabelComponent>
-
-      {/* <InputComponent
-        label="SnapShot"
-        helper="Include your DAO's SnapShot ENS name"
-        isRequired={false}
-        value={values.essentials.snapshotURL}
-        id="searchEssentials-daoName"
-        onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
-        onBlur={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value.trim(), true)}
-        disabled={false}
-        placeholder="fractaldao.eth"
-        testId="essentials-snapshotURL"
-      /> */}
-
       <Divider
         color="chocolate.700"
         mb={4}
