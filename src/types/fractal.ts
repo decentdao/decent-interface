@@ -132,6 +132,9 @@ export enum FractalProposalState {
    */
   MODULE = 'stateModule',
 
+  // Pending proposal state specific to Snapshot proposals
+  PENDING = 'statePending',
+
   // Closed is proposal state specific to Snapshot proposals
   CLOSED = 'stateClosed',
 }
