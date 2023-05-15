@@ -20,20 +20,10 @@ import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogg
 import { AppProvider } from '../src/providers/App/AppProvider';
 import { NetworkConfigProvider } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 import { chains, wagmiClient } from '../src/providers/NetworkConfig/rainbow-kit.config';
-import { notProd, testErrorBoundary } from '../src/utils/dev';
-
-function localDevConfigs() {
-  if (notProd()) {
-    if (process.env.NEXT_PUBLIC_TEST_ERROR_BOUNDARY === 'true') {
-      testErrorBoundary();
-    }
-  }
-}
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     initErrorLogging();
-    localDevConfigs();
   }, []);
 
   return (

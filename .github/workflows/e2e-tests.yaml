@@ -24,7 +24,7 @@ jobs:
       # Create an environment file with sensitive information
       - name: Create env file
         working-directory: ./docker
-        run: echo TESTING_ALCHEMY_API_KEY=${{ secrets.TESTING_ALCHEMY_API_KEY }} >> .env.tests.local
+        run: echo NEXT_PUBLIC_ALCHEMY_TESTING_API_KEY=${{ secrets.NEXT_PUBLIC_ALCHEMY_TESTING_API_KEY }} >> .env.tests.local
 
       # Set up Docker Buildx for building Docker images with cache support
       - name: Set up Docker Buildx
