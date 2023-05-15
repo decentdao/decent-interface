@@ -68,7 +68,7 @@ const BADGE_MAPPING: BadgeType = {
   },
   [FractalProposalState.CLOSED]: {
     Icon: ClockTwo,
-    tooltipKey: 'stateRejectedTip',
+    tooltipKey: 'stateClosedTip',
     bg: 'sand.700',
     color: 'grayscale.black',
   },
