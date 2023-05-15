@@ -1,11 +1,9 @@
 import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
-import { ArrowDownSm, StarGoldSolid, StarOutline, ArrowRightSm } from '@decent-org/fractal-ui';
+import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import Link from 'next/link';
-import { useMemo } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
@@ -15,6 +13,7 @@ import {
   FractalNode,
 } from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
+import FavoriteIcon from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
@@ -46,15 +45,9 @@ export function DAOInfoCard({
     readOnly: { user },
   } = useFractal();
 
-  const { favoritesList, toggleFavorite } = useAccountFavorites();
   const isCurrentDAO = safeAddress === daoAddress;
 
   const canManageDAO = !!user.address;
-
-  const isFavorite = useMemo(
-    () => (!!safeAddress ? favoritesList.includes(utils.getAddress(safeAddress)) : false),
-    [favoritesList, safeAddress]
-  );
 
   if (!safeAddress) return null;
   return (
@@ -114,15 +107,9 @@ export function DAOInfoCard({
                 {fractalNode?.daoName || daoName}
               </Text>
             </Link>
-            <IconButton
-              variant="ghost"
-              minWidth="0px"
-              aria-label="Favorite Toggle"
+            <FavoriteIcon
+              safeAddress={safeAddress}
               data-testid="DAOInfo-favorite"
-              icon={
-                isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />
-              }
-              onClick={() => toggleFavorite(safeAddress)}
             />
             {!!numberOfChildrenDAO && (
               <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
