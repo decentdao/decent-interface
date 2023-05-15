@@ -79,7 +79,7 @@ export default function ProposalTemplateCard({
           borderRadius="4px"
           getInitials={(_title: string) => _title.slice(0, 2)}
         />
-        {manageTemplateOptions.length > 0 && (
+        {manageTemplateOptions.length > 0 && canUserCreateProposal && (
           <OptionMenu
             trigger={
               <VEllipsis

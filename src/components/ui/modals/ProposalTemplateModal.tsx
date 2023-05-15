@@ -144,7 +144,7 @@ export default function ProposalTemplateModal({
             >
               <InputComponent
                 label={parameter.label}
-                subLabel={parameter.signature}
+                placeholder={parameter.signature}
                 value={parameter.value || ''}
                 isRequired={!!parameter.label}
                 testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
@@ -169,10 +169,12 @@ export default function ProposalTemplateModal({
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
       ))}
-      <CustomNonceInput
-        nonce={nonce}
-        onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
-      />
+      <Box marginTop="1.5rem">
+        <CustomNonceInput
+          nonce={nonce}
+          onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
+        />
+      </Box>
       <Button
         marginTop="1.5rem"
         width="100%"
