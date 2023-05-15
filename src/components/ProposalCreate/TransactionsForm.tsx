@@ -11,7 +11,7 @@ interface TransactionsFormProps extends FormikProps<CreateProposalForm> {
   showBackButton: boolean;
   pendingTransaction: boolean;
   setFormState: (state: CreateProposalState) => void;
-  canUserCreateProposal: boolean;
+  canUserCreateProposal?: boolean;
 }
 
 function TransactionsForm(props: TransactionsFormProps) {

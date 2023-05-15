@@ -21,7 +21,7 @@ jobs:
           NETLIFY_DEPLOY_TO_PROD: true
           build_directory: './.next/'
         env:
-          TESTING_ALCHEMY_API_KEY: ${{ secrets.TESTING_ALCHEMY_API_KEY }}
+          NEXT_PUBLIC_ALCHEMY_TESTING_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_TESTING_API_KEY }}
           NEXT_PUBLIC_INFURA_API_KEY: ${{ secrets.NEXT_PUBLIC_INFURA_API_KEY }}
           NEXT_PUBLIC_ALCHEMY_API_KEY: ${{ secrets.NEXT_PUBLIC_ALCHEMY_API_KEY }}
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}

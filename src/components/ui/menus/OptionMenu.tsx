@@ -12,7 +12,7 @@ import {
   MenuProps,
   Tooltip,
 } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface Option {
@@ -65,6 +65,9 @@ export function OptionMenu({
         <MenuButton
           as={buttonAs}
           h="fit-content"
+          onClick={(event: MouseEvent<HTMLButtonElement>) => {
+            event.stopPropagation();
+          }}
           {...buttonProps}
         >
           {trigger}
