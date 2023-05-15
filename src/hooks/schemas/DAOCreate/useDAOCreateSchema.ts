@@ -15,8 +15,12 @@ import { useDAOCreateTests } from './useDAOCreateTests';
  * @dev https://www.npmjs.com/package/yup
  */
 export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
-  const { addressValidationTestSimple, addressValidationTest, uniqueAddressValidationTest } =
-    useValidationAddress();
+  const {
+    addressValidationTestSimple,
+    addressValidationTest,
+    uniqueAddressValidationTest,
+    ensNameValidationTest,
+  } = useValidationAddress();
   const {
     maxAllocationValidation,
     allocationValidationTest,
@@ -32,7 +36,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         essentials: Yup.object().shape({
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
-          snapshotURL: Yup.string(),
+          snapshotURL: Yup.string().test(ensNameValidationTest).notRequired(),
         }),
         multisig: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.MULTISIG,
@@ -128,15 +132,16 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         }),
       }),
     [
+      ensNameValidationTest,
+      isSubDAO,
       t,
       addressValidationTest,
       uniqueAddressValidationTest,
+      addressValidationTestSimple,
+      validERC20Address,
       maxAllocationValidation,
       allocationValidationTest,
       uniqueAllocationValidationTest,
-      isSubDAO,
-      validERC20Address,
-      addressValidationTestSimple,
     ]
   );
   return { createDAOValidation };

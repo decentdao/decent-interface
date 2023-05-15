@@ -9,7 +9,7 @@ import { StepWrapper } from '../StepWrapper';
 
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
   // @todo update labels for subDAOs
 
   // useEffect(() => {
@@ -72,13 +72,12 @@ export function EstablishEssentials(props: ICreationStepProps) {
         color="chocolate.700"
         mb={4}
       />
-
       <LabelComponent
         label="SnapShot"
         helper="Include your DAO's SnapShot ENS name"
         isRequired={false}
       >
-        <LabelWrapper errorMessage="Invalid ENS name">
+        <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
           <Input
             id="searchEssentials-snapshotURL"
             value={values.essentials.snapshotURL}

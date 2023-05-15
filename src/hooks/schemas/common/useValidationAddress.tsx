@@ -7,6 +7,34 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { AddressValidationMap } from '../../../types';
 import { Providers } from '../../../types/network';
 
+export async function validateENSName({
+  signerOrProvider,
+  ensName,
+}: {
+  signerOrProvider: Signer | Providers;
+  ensName: string;
+}) {
+  if (!!ensName && ensName.trim() && ensName.endsWith('.eth')) {
+    const resolvedAddress = await signerOrProvider.resolveName(ensName).catch();
+    if (resolvedAddress) {
+      return {
+        validation: {
+          address: resolvedAddress,
+          isValidAddress: true,
+        },
+        isValid: false,
+      };
+    }
+  }
+  return {
+    validation: {
+      address: '',
+      isValidAddress: false,
+    },
+    isValid: false,
+  };
+}
+
 export async function validateAddress({
   signerOrProvider,
   address,
@@ -81,6 +109,22 @@ export const useValidationAddress = () => {
         const { validation } = await validateAddress({ signerOrProvider, address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
+        }
+        return validation.isValidAddress;
+      },
+    };
+  }, [signerOrProvider, addressValidationMap, t]);
+
+  const ensNameValidationTest = useMemo(() => {
+    return {
+      name: 'ENS Name Validation',
+      // @todo: update this string
+      message: t('errorInvalidENSAddress', { ns: 'common' }),
+      test: async function (ensName: string | undefined) {
+        if (!ensName) return false;
+        const { validation } = await validateENSName({ signerOrProvider, ensName });
+        if (validation.isValidAddress) {
+          addressValidationMap.current.set(ensName, validation);
         }
         return validation.isValidAddress;
       },
@@ -162,6 +206,7 @@ export const useValidationAddress = () => {
   return {
     addressValidationTestSimple,
     addressValidationTest,
+    ensNameValidationTest,
     newSignerValidationTest,
     uniqueAddressValidationTest,
   };
