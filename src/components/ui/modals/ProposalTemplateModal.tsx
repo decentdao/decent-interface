@@ -7,6 +7,7 @@ import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePreparePropos
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
+import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { InputComponent } from '../forms/InputComponent';
 
 interface IProposalTemplateModalProps {
@@ -18,11 +19,13 @@ export default function ProposalTemplateModal({
   proposalTemplate: { title, description, transactions },
   onClose,
 }: IProposalTemplateModalProps) {
-  const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
-  const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const {
     node: { daoAddress, safe },
   } = useFractal();
+
+  const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
+  const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
+  const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const { push } = useRouter();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
   const { prepareProposal } = usePrepareProposal();
@@ -106,10 +109,10 @@ export default function ProposalTemplateModal({
       submitProposal({
         proposalData,
         successCallback,
+        nonce,
         pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        nonce: safe?.nonce,
       });
     } catch (e) {
       logError('Error during submitting proposal from template', e);
@@ -124,13 +127,12 @@ export default function ProposalTemplateModal({
   return (
     <Box>
       <Text
-        textStyle="text-sm-mono-regular"
+        textStyle="text-base-mono-regular"
         color="grayscale.100"
         marginBottom="1.5rem"
       >
         {description}
       </Text>
-      <Divider color="chocolate.700" />
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
           {transaction.parameters.map((parameter, parameterIndex) => (
@@ -141,8 +143,8 @@ export default function ProposalTemplateModal({
               marginTop="1.5rem"
             >
               <InputComponent
-                label={parameter.signature}
-                subLabel={parameter.label}
+                label={parameter.label}
+                subLabel={parameter.signature}
                 value={parameter.value || ''}
                 isRequired={!!parameter.label}
                 testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
@@ -167,6 +169,10 @@ export default function ProposalTemplateModal({
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
       ))}
+      <CustomNonceInput
+        nonce={nonce}
+        onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
+      />
       <Button
         marginTop="1.5rem"
         width="100%"

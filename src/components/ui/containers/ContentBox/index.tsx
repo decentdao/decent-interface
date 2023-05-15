@@ -1,11 +1,12 @@
 import { Box, BoxProps } from '@chakra-ui/react';
+import { ReactNode, MouseEvent } from 'react';
 import ContentBoxTitle from './ContentBoxTitle';
 
 interface ContentBoxProps {
   title?: string;
-  children: React.ReactNode;
+  children: ReactNode;
   containerBoxProps?: BoxProps;
-  onClick?: () => void;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }
 
 function ContentBox({ title, children, containerBoxProps, onClick }: ContentBoxProps) {
