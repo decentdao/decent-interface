@@ -60,6 +60,18 @@ const BADGE_MAPPING: BadgeType = {
     bg: 'sand.700',
     color: 'grayscale.black',
   },
+  [FractalProposalState.PENDING]: {
+    Icon: ClockTwo,
+    tooltipKey: 'statePendingTip',
+    bg: 'sand.700',
+    color: 'grayscale.black',
+  },
+  [FractalProposalState.CLOSED]: {
+    Icon: ClockTwo,
+    tooltipKey: 'stateRejectedTip',
+    bg: 'sand.700',
+    color: 'grayscale.black',
+  },
   [DAOState.freezeInit]: {
     Icon: Check,
     tooltipKey: 'stateFreezeInitTip',

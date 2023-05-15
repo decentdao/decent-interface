@@ -50,6 +50,7 @@ export const useSnapshotProposals = () => {
       })
       .then(result => {
         console.log('snapshot query result: ', result);
+
         const proposals: SnapshotProposal[] = result.data.proposals.map((proposal: any) => {
           return {
             eventDate: new Date(proposal.start * 1000),
@@ -59,7 +60,10 @@ export const useSnapshotProposals = () => {
             state:
               proposal.state === 'active'
                 ? FractalProposalState.ACTIVE
-                : FractalProposalState.CLOSED,
+                : proposal.state === 'closed'
+                ? FractalProposalState.CLOSED
+                : FractalProposalState.PENDING,
+
             proposalId: proposal.id,
             snapshotProposalId: proposal.id,
             targets: [],
