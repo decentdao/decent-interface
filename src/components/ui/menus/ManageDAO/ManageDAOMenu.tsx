@@ -1,70 +1,88 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../providers/Fractal/types';
-import { DAO_ROUTES } from '../../../../routes/constants';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { FractalGuardContracts, FreezeGuard, GovernanceModuleType } from '../../../../types';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentSafeAddress?: string;
+  parentAddress?: string | null;
   safeAddress: string;
-  freezeData?: IGnosisFreezeData;
-  guardContracts: IGnosisVetoContract;
+  freezeGuard?: FreezeGuard;
+  guardContracts: FractalGuardContracts;
 }
 
 export function ManageDAOMenu({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
-  freezeData,
+  freezeGuard,
   guardContracts,
 }: IManageDAOMenu) {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { handleClawBack } = useClawBack({
-    parentSafeAddress,
+    parentAddress,
     childSafeAddress: safeAddress,
   });
+  const {
+    governance: { type },
+  } = useFractal();
 
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
-      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+      onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
+    };
+
+    const manageSignersOption = {
+      optionKey: 'optionManageSigners',
+      onClick: () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
     };
     if (
-      freezeData &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezeProposalPeriod &&
+      freezeGuard.freezePeriod &&
       !isWithinFreezeProposalPeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezeProposalPeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezeProposalPeriod,
         currentTime
       ) &&
       !isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.userHasVotes
+      freezeGuard.userHasVotes
     ) {
       const freezeOption = {
         optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.vetoVotingContract?.asSigner.castFreezeVote(),
+        onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
       };
-      return [createSubDAOOption, freezeOption];
+      if (type === GovernanceModuleType.MULTISIG) {
+        return [createSubDAOOption, manageSignersOption, freezeOption];
+      } else {
+        return [createSubDAOOption, freezeOption];
+      }
     } else if (
-      freezeData &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezePeriod &&
       isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.isFrozen &&
-      freezeData.userHasVotes
+      freezeGuard.isFrozen &&
+      freezeGuard.userHasVotes
     ) {
       const clawBackOption = {
         optionKey: 'optionInitiateClawback',
@@ -73,9 +91,21 @@ export function ManageDAOMenu({
 
       return [clawBackOption];
     } else {
-      return [createSubDAOOption];
+      if (type === GovernanceModuleType.MULTISIG) {
+        return [createSubDAOOption, manageSignersOption];
+      } else {
+        return [createSubDAOOption];
+      }
     }
-  }, [safeAddress, navigate, guardContracts, handleClawBack, freezeData, currentTime]);
+  }, [
+    freezeGuard,
+    currentTime,
+    push,
+    safeAddress,
+    type,
+    guardContracts.freezeVotingContract?.asSigner,
+    handleClawBack,
+  ]);
 
   return (
     <OptionMenu

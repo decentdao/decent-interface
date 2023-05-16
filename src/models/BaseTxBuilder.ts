@@ -1,28 +1,33 @@
 import { ethers } from 'ethers';
-import { GnosisDAO, SubDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
-import { BaseContracts, UsulContracts } from './types/contracts';
+import {
+  BaseContracts,
+  AzoriusContracts,
+  SafeMultisigDAO,
+  AzoriusGovernanceDAO,
+  SubDAO,
+} from '../types';
 
 export class BaseTxBuilder {
   protected readonly signerOrProvider: ethers.Signer | any;
   protected readonly baseContracts: BaseContracts;
-  protected readonly usulContracts: UsulContracts | undefined;
-  protected readonly daoData: GnosisDAO | TokenGovernanceDAO | SubDAO;
-  protected readonly parentDAOAddress?: string;
+  protected readonly azoriusContracts: AzoriusContracts | undefined;
+  protected readonly daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO;
+  protected readonly parentAddress?: string;
   protected readonly parentTokenAddress?: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
-    usulContracts: UsulContracts | undefined,
-    daoData: GnosisDAO | TokenGovernanceDAO | SubDAO,
-    parentDAOAddress?: string,
+    azoriusContracts: AzoriusContracts | undefined,
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO,
+    parentAddress?: string,
     parentTokenAddress?: string
   ) {
     this.signerOrProvider = signerOrProvider;
     this.baseContracts = baseContracts;
     this.daoData = daoData;
-    this.usulContracts = usulContracts;
-    this.parentDAOAddress = parentDAOAddress;
+    this.azoriusContracts = azoriusContracts;
+    this.parentAddress = parentAddress;
     this.parentTokenAddress = parentTokenAddress;
   }
 }

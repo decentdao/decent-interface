@@ -3,12 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerli } from 'wagmi/chains';
+import { NetworkConfig } from '../../types/network';
 import { goerliConfig } from './networks';
-import { NetworkConfig } from './types';
 
 export const defaultState = {
   safeBaseURL: '',
   etherscanBaseURL: '',
+  etherscanAPIBaseUrl: '',
   chainId: 0,
   name: '',
   color: '',
@@ -21,15 +22,17 @@ export const defaultState = {
     zodiacModuleProxyFactory: '',
     linearVotingMasterCopy: '',
     gnosisMultisend: '',
-    fractalUsulMasterCopy: '',
+    fractalAzoriusMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalRegistry: '',
-    votesTokenMasterCopy: '',
+    votesERC20MasterCopy: '',
     claimingMasterCopy: '',
-    gnosisVetoGuardMasterCopy: '',
-    usulVetoGuardMasterCopy: '',
-    vetoMultisigVotingMasterCopy: '',
-    vetoERC20VotingMasterCopy: '',
+    multisigFreezeGuardMasterCopy: '',
+    azoriusFreezeGuardMasterCopy: '',
+    multisigFreezeVotingMasterCopy: '',
+    erc20FreezeVotingMasterCopy: '',
+    votesERC20WrapperMasterCopy: '',
+    keyValuePairs: '',
   },
 };
 
@@ -58,13 +61,14 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const supportedChainIds = supportedChains.map(c => c.chainId) || [];
+    const supportedChainNames = supportedChains.map(c => c.name) || [];
 
     if (
       !!chain &&
       !supportedChainIds.includes(chain.id) &&
-      !process.env.REACT_APP_TESTING_ENVIROMENT
+      !process.env.NEXT_PUBLIC_TESTING_ENVIROMENT
     ) {
-      toast(t('toastSwitchChain', { chainNames: supportedChainIds }), {
+      toast(t('toastSwitchChain', { chainNames: supportedChainNames }), {
         toastId: 'switchChain',
       });
       disconnect();

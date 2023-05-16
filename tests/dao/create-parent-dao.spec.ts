@@ -3,6 +3,8 @@ import { DAOCreate } from '../models/DAOCreate';
 import { HomePage } from '../models/HomePage';
 import { CreateMultisigMocker } from '../models/mock/CreateMultisigMocker';
 import { CreateTokenVotingMocker } from '../models/mock/CreateTokenVotingMocker';
+import { SubgraphMocker } from '../models/mock/SubgraphMocker';
+import { createSubgraphDAO } from '../models/mock/data/creation';
 import { accounts } from '../models/mock/data/testSigners';
 import { BASE_URL } from '../testUtils';
 
@@ -15,6 +17,9 @@ test.beforeEach(async ({ page }) => {
 
 test('Create Multisig DAO', async ({ page }) => {
   new CreateMultisigMocker(page);
+  const subgraphMocker = new SubgraphMocker(page);
+  await subgraphMocker.mock(createSubgraphDAO('0x', 'Test Multisig', []));
+
   await create
     .fillName('Test Multisig')
     .then(() => create.clickMultisig())
@@ -33,6 +38,9 @@ test('Create Multisig DAO', async ({ page }) => {
 
 test('Create Token Voting DAO', async ({ page }) => {
   new CreateTokenVotingMocker(page);
+  const subgraphMocker = new SubgraphMocker(page);
+  subgraphMocker.mock(createSubgraphDAO('0x', 'Test Token Voting', []));
+
   await create
     .fillName('Test Token Voting')
     .then(() => create.clickTokenVoting())

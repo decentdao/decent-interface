@@ -1,12 +1,14 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
-import useSafeContracts from '../safe/useSafeContracts';
+import { useFractal } from '../../providers/App/AppProvider';
+import { SafeMultisigDAO, AzoriusGovernanceDAO } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
 const useDeployDAO = () => {
-  const { multiSendContract } = useSafeContracts();
+  const {
+    baseContracts: { multiSendContract },
+  } = useFractal();
 
   const [contractCallDeploy, contractCallPending] = useTransaction();
   const [build] = useBuildDAOTx();
@@ -14,7 +16,10 @@ const useDeployDAO = () => {
   const { t } = useTranslation('transaction');
 
   const deployDao = useCallback(
-    (daoData: GnosisDAO | TokenGovernanceDAO, successCallback: (daoAddress: string) => void) => {
+    (
+      daoData: SafeMultisigDAO | AzoriusGovernanceDAO,
+      successCallback: (daoAddress: string) => void
+    ) => {
       const deploy = async () => {
         if (!multiSendContract) {
           return;

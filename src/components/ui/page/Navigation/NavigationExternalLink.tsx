@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { NavigationTooltip } from './NavigationTooltip';
 
 interface INavigationLink {
+  tooltipKey: string;
+  ariaLabelKey: string;
   href: string;
-  labelKey: string;
-  tooltipKey?: string;
   testId: string;
   routeKey?: string;
   Icon: ComponentWithAs<'svg', IconProps>;
@@ -13,23 +13,21 @@ interface INavigationLink {
 }
 
 export function NavigationExternalLink({
-  labelKey,
+  tooltipKey,
+  ariaLabelKey,
   testId,
   Icon,
   routeKey,
-  tooltipKey,
   closeDrawer,
   ...rest
 }: INavigationLink) {
-  const tooltipTranslationKey = tooltipKey || labelKey;
-
   const { t } = useTranslation('navigation');
 
   return (
-    <NavigationTooltip label={t(tooltipTranslationKey)}>
+    <NavigationTooltip label={t(tooltipKey)}>
       <a
         data-testid={testId}
-        aria-label={t(tooltipTranslationKey)}
+        aria-label={t(ariaLabelKey)}
         {...rest}
         onClick={closeDrawer}
         target="_blank"
@@ -43,7 +41,7 @@ export function NavigationExternalLink({
         >
           <Icon boxSize="1.5rem" />
           <Hide above="md">
-            <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
+            <Text textStyle="text-md-mono-medium">{t(tooltipKey)}</Text>
           </Hide>
         </Box>
       </a>

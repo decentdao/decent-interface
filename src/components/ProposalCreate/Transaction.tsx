@@ -1,112 +1,27 @@
 import { VStack, HStack, Text } from '@chakra-ui/react';
-import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { logError } from '../../helpers/errorLogging';
-import { TransactionData } from '../../types/transaction';
-import { BigNumberValuePair } from '../ui/forms/BigNumberInput';
-import { BigNumberComponent, EthAddressComponent, InputComponent } from './InputComponent';
+import { CreateProposalTransaction } from '../../types/createProposal';
+import ExampleLabel from '../ui/forms/ExampleLabel';
+import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
 
 interface TransactionProps {
-  transaction: TransactionData;
-  transactionNumber: number;
-  pending: boolean;
-  updateTransaction: (transactionData: TransactionData, transactionNumber: number) => void;
+  transaction: CreateProposalTransaction;
+  transactionIndex: number;
+  transactionPending: boolean;
+  txAddressError?: string;
+  txFunctionError?: string;
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void;
 }
 
 function Transaction({
   transaction,
-  transactionNumber,
-  pending,
-  updateTransaction,
+  transactionIndex,
+  transactionPending,
+  txAddressError,
+  txFunctionError,
+  setFieldValue,
 }: TransactionProps) {
   const { t } = useTranslation(['proposal', 'common']);
-
-  const encodeFunctionData = (
-    functionName: string,
-    dirtyfunctionSignature: string,
-    dirtyParameters: string
-  ): string | undefined => {
-    const functionSignature = `function ${functionName}(${dirtyfunctionSignature})`;
-    const parameters = !!dirtyParameters
-      ? dirtyParameters.split(',').map(p => (p = p.trim()))
-      : undefined;
-    try {
-      return new utils.Interface([functionSignature]).encodeFunctionData(functionName, parameters);
-    } catch (e) {
-      logError(e);
-      return;
-    }
-  };
-
-  const updateTargetAddress = (targetAddress: string, isValidAddress: boolean) => {
-    const transactionCopy = {
-      ...transaction,
-      targetAddress: targetAddress.trim(),
-      addressError:
-        !isValidAddress && targetAddress.trim()
-          ? t('errorInvalidAddress', { ns: 'common' })
-          : undefined,
-    };
-    updateTransaction(transactionCopy, transactionNumber);
-  };
-
-  const updateEthValue = (ethValue: BigNumberValuePair) => {
-    const transactionCopy = {
-      ...transaction,
-      ethValue,
-    };
-    updateTransaction(transactionCopy, transactionNumber);
-  };
-
-  const updateTransactionValue = (
-    value: string,
-    encodedFunctionData: string | undefined,
-    key: keyof TransactionData
-  ) => {
-    const transactionCopy = {
-      ...transaction,
-      [key]: value,
-      encodedFunctionData: encodedFunctionData,
-      fragmentError: !encodeFunctionData ? t('errorInvalidFragments') : undefined,
-    };
-    updateTransaction(transactionCopy, transactionNumber);
-  };
-
-  const updateFunctionName = (functionName: string) => {
-    const encodedFunctionData = encodeFunctionData(
-      functionName,
-      transaction.functionSignature,
-      transaction.parameters
-    );
-    updateTransactionValue(functionName, encodedFunctionData, 'functionName');
-  };
-
-  const updateFunctionSignature = (functionSignature: string) => {
-    const encodedFunctionData = encodeFunctionData(
-      transaction.functionName,
-      functionSignature,
-      transaction.parameters
-    );
-    updateTransactionValue(functionSignature, encodedFunctionData, 'functionSignature');
-  };
-
-  const updateParameters = (parameters: string) => {
-    const encodedFunctionData = encodeFunctionData(
-      transaction.functionName,
-      transaction.functionSignature,
-      parameters
-    );
-    updateTransactionValue(parameters, encodedFunctionData, 'parameters');
-  };
-
-  const exampleLabelStyle = {
-    bg: 'chocolate.700',
-    borderRadius: '4px',
-    px: '4px',
-    py: '1px',
-    color: 'grayscale.100',
-    fontSize: '12px',
-  };
 
   return (
     <VStack
@@ -114,36 +29,42 @@ function Transaction({
       spacing={4}
       mt={6}
     >
-      <EthAddressComponent
+      <InputComponent
         label={t('labelTargetAddress')}
         helper={t('helperTargetAddress')}
         isRequired={true}
-        disabled={pending}
+        disabled={transactionPending}
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>0x4168592...</Text>
+            <ExampleLabel>0x4168592...</ExampleLabel>
           </HStack>
         }
-        errorMessage={transaction.addressError}
-        onAddressChange={function (address: string, isValid: boolean): void {
-          updateTargetAddress(address, isValid);
-        }}
+        errorMessage={transaction.targetAddress && txAddressError ? txAddressError : undefined}
+        value={transaction.targetAddress}
+        testId="transaction.targetAddress"
+        onChange={e =>
+          setFieldValue(`transactions.${transactionIndex}.targetAddress`, e.target.value)
+        }
       />
+
       <InputComponent
         label={t('labelFunctionName')}
         helper={t('helperFunctionName')}
         isRequired={true}
         value={transaction.functionName}
-        onChange={e => updateFunctionName(e.target.value)}
-        disabled={pending}
+        onChange={e =>
+          setFieldValue(`transactions.${transactionIndex}.functionName`, e.target.value)
+        }
+        disabled={transactionPending}
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>transfer</Text>
+            <ExampleLabel>transfer</ExampleLabel>
           </HStack>
         }
-        errorMessage={transaction.fragmentError}
+        // @todo update withn new error messages
+        errorMessage={undefined}
         testId="transaction.functionName"
       />
       <InputComponent
@@ -151,52 +72,56 @@ function Transaction({
         helper={t('helperFunctionSignature')}
         isRequired={false}
         value={transaction.functionSignature}
-        onChange={e => updateFunctionSignature(e.target.value)}
-        disabled={pending}
+        onChange={e =>
+          setFieldValue(`transactions.${transactionIndex}.functionSignature`, e.target.value)
+        }
+        disabled={transactionPending}
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>address to, uint256 amount</Text>
+            <ExampleLabel>address, uint256</ExampleLabel>
           </HStack>
         }
         testId="transaction.functionSignature"
-        errorMessage={transaction.fragmentError}
+        errorMessage={
+          transaction.functionSignature && txFunctionError ? txFunctionError : undefined
+        }
       />
       <InputComponent
         label={t('labelParameters')}
         helper={t('helperParameters')}
         isRequired={false}
         value={transaction.parameters}
-        onChange={e => updateParameters(e.target.value)}
-        disabled={pending}
+        onChange={e => setFieldValue(`transactions.${transactionIndex}.parameters`, e.target.value)}
+        disabled={transactionPending}
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text
-              {...exampleLabelStyle}
-              wordBreak="break-all"
-            >
+            <ExampleLabel wordBreak="break-all">
               {'0xADC74eE329a23060d3CB431Be0AB313740c191E7, 1000000000'}
-            </Text>
+            </ExampleLabel>
           </HStack>
         }
         testId="transaction.parameters"
-        errorMessage={transaction.fragmentError}
+        errorMessage={transaction.parameters && txFunctionError ? txFunctionError : undefined}
       />
+
       <BigNumberComponent
         label={t('labelEthValue')}
         helper={t('helperEthValue')}
         isRequired={false}
-        disabled={pending}
+        disabled={transactionPending}
         subLabel={
           <HStack>
             <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-            <Text {...exampleLabelStyle}>{'1.2'}</Text>
+            <ExampleLabel>{'1.2'}</ExampleLabel>
           </HStack>
         }
-        errorMessage={transaction.fragmentError}
+        errorMessage={undefined}
         value={transaction.ethValue.bigNumberValue}
-        onChange={updateEthValue}
+        onChange={e => {
+          setFieldValue(`transactions.${transactionIndex}.ethValue`, e);
+        }}
         decimalPlaces={18}
       />
     </VStack>

@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
-import { To, useNavigate } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 export function InfoBox({
@@ -13,17 +13,17 @@ export function InfoBox({
   minHeight?: string;
   minWidth?: { [key: string]: string } | string;
   m?: string | number;
-  to?: To;
+  to?: string;
   children: ReactNode;
 }) {
-  const navigate = useNavigate();
+  const { push } = useRouter();
   return (
     <Box
       cursor={to ? 'pointer' : undefined}
       onClick={
         to
           ? () => {
-              navigate(to);
+              push(to);
             }
           : undefined
       }

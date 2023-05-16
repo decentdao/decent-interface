@@ -1,15 +1,15 @@
 import { mainnet } from 'wagmi/chains';
-import ethDefault from '../../../assets/images/coin-icon-eth.svg';
-import { NetworkConfig } from '../types';
+import { NetworkConfig } from '../../../types/network';
 
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
+  etherscanAPIBaseUrl: 'https://api.etherscan.io',
   chainId: 1,
   name: mainnet.name,
   color: 'green.300',
   nativeTokenSymbol: mainnet.nativeCurrency.symbol,
-  nativeTokenIcon: ethDefault,
+  nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: mainnet,
   contracts: {
     gnosisSafe: '',
@@ -17,14 +17,16 @@ export const mainnetConfig: NetworkConfig = {
     zodiacModuleProxyFactory: '',
     linearVotingMasterCopy: '',
     gnosisMultisend: '',
-    fractalUsulMasterCopy: '',
+    fractalAzoriusMasterCopy: '',
     fractalModuleMasterCopy: '',
     fractalRegistry: '',
-    votesTokenMasterCopy: '',
+    votesERC20MasterCopy: '',
     claimingMasterCopy: '',
-    gnosisVetoGuardMasterCopy: '',
-    usulVetoGuardMasterCopy: '',
-    vetoMultisigVotingMasterCopy: '',
-    vetoERC20VotingMasterCopy: '',
+    multisigFreezeGuardMasterCopy: '',
+    azoriusFreezeGuardMasterCopy: '',
+    multisigFreezeVotingMasterCopy: '',
+    erc20FreezeVotingMasterCopy: '',
+    votesERC20WrapperMasterCopy: '',
+    keyValuePairs: '',
   },
 };

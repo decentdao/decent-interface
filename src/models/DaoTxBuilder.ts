@@ -1,12 +1,16 @@
 import { GnosisSafe } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { GnosisDAO, TokenGovernanceDAO } from '../components/DaoCreator/types';
 import { buildContractCall, encodeMultiSend } from '../helpers';
-import { SafeTransaction } from '../types';
+import {
+  BaseContracts,
+  SafeMultisigDAO,
+  SafeTransaction,
+  AzoriusGovernanceDAO,
+  AzoriusContracts,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
-import { BaseContracts, UsulContracts } from './types/contracts';
 
 const { AddressZero } = ethers.constants;
 
@@ -29,22 +33,22 @@ export class DaoTxBuilder extends BaseTxBuilder {
   constructor(
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
-    usulContracts: UsulContracts | undefined,
-    daoData: GnosisDAO | TokenGovernanceDAO,
+    azoriusContracts: AzoriusContracts | undefined,
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO,
     saltNum: string,
     predictedGnosisSafeAddress: string,
     createSafeTx: SafeTransaction,
     safeContract: GnosisSafe,
     txBuilderFactory: TxBuilderFactory,
-    parentDAOAddress?: string,
+    parentAddress?: string,
     parentTokenAddress?: string
   ) {
     super(
       signerOrProvider,
       baseContracts,
-      usulContracts,
+      azoriusContracts,
       daoData,
-      parentDAOAddress,
+      parentAddress,
       parentTokenAddress
     );
 
@@ -58,59 +62,67 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.setFractalModuleTxs();
   }
 
-  public async buildUsulTx(): Promise<string> {
-    const usulTxBuilder = this.txBuilderFactory.createUsulTxBuilder();
+  public async buildAzoriusTx(): Promise<string> {
+    const azoriusTxBuilder = this.txBuilderFactory.createAzoriusTxBuilder();
 
     // transactions that must be called by safe
     this.internalTxs = [
       this.buildUpdateDAONameTx(),
-      usulTxBuilder.buildLinearVotingContractSetupTx(),
-      usulTxBuilder.buildEnableUsulModuleTx(),
+      azoriusTxBuilder.buildLinearVotingContractSetupTx(),
+      azoriusTxBuilder.buildEnableAzoriusModuleTx(),
     ];
 
-    if (this.parentDAOAddress) {
-      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder(
-        usulTxBuilder.usulContract!.address,
-        usulTxBuilder.linearVotingContract!.address
+    if (this.parentAddress) {
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
+        azoriusTxBuilder.azoriusContract!.address,
+        azoriusTxBuilder.linearVotingContract!.address
       );
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
         this.enableFractalModuleTx!,
-        vetoGuardTxBuilder.buildDeployZodiacModuleTx(),
-        vetoGuardTxBuilder.buildVetoVotingSetupTx(),
-        vetoGuardTxBuilder.buildDeployVetoGuardTx(),
-        vetoGuardTxBuilder.buildSetGuardTx(usulTxBuilder.usulContract!),
+        freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
+        freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
+        freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
+        freezeGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
       ]);
     }
+    const data = this.daoData as AzoriusGovernanceDAO;
 
     this.internalTxs = this.internalTxs.concat([
-      usulTxBuilder.buildAddUsulContractAsOwnerTx(),
-      usulTxBuilder.buildRemoveMultiSendOwnerTx(),
+      azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
+      azoriusTxBuilder.buildRemoveMultiSendOwnerTx(),
     ]);
 
-    const txs: SafeTransaction[] = [
-      this.createSafeTx!,
-      usulTxBuilder.buildCreateTokenTx(),
-      usulTxBuilder.buildDeployStrategyTx(),
-      usulTxBuilder.buildDeployUsulTx(),
-    ];
+    const txs: SafeTransaction[] = [this.createSafeTx!];
+
+    // build token wrapper if token is imported and not votes token (votes token contracts is already deployed)
+    if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
+      txs.push(azoriusTxBuilder.buildCreateTokenWrapperTx());
+    }
+    // build token if token is not imported
+    if (!data.isTokenImported) {
+      txs.push(azoriusTxBuilder.buildCreateTokenTx());
+    }
+
+    txs.push(azoriusTxBuilder.buildDeployStrategyTx());
+    txs.push(azoriusTxBuilder.buildDeployAzoriusTx());
 
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
-    const parentAllocation = (this.daoData as TokenGovernanceDAO).parentAllocationAmount;
+    const parentAllocation = (this.daoData as AzoriusGovernanceDAO).parentAllocationAmount;
     if (this.parentTokenAddress && !parentAllocation.isZero()) {
-      tokenClaimTx = usulTxBuilder.buildDeployTokenClaim();
-      const tokenApprovalTx = usulTxBuilder.buildApproveClaimAllocation();
+      tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
+      const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();
       this.internalTxs.push(tokenApprovalTx);
     }
 
     // If subDAO, deploy Fractal Module
-    if (this.parentDAOAddress) {
+    if (this.parentAddress) {
       txs.push(this.deployFractalModuleTx!);
     }
 
-    txs.push(this.buildExecInternalSafeTx(usulTxBuilder.signatures()));
+    txs.push(this.buildExecInternalSafeTx(azoriusTxBuilder.signatures()));
 
     // token claim deployment tx is pushed at the end to ensure approval is executed first
     if (tokenClaimTx) {
@@ -124,17 +136,17 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
 
-    // subDAO case, add veto guard
-    if (this.parentDAOAddress) {
-      const vetoGuardTxBuilder = this.txBuilderFactory.createVetoGuardTxBuilder();
+    // subDAO case, add freeze guard
+    if (this.parentAddress) {
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder();
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO
         this.enableFractalModuleTx!,
-        vetoGuardTxBuilder.buildDeployZodiacModuleTx(),
-        vetoGuardTxBuilder.buildVetoVotingSetupTx(),
-        vetoGuardTxBuilder.buildDeployVetoGuardTx(),
-        vetoGuardTxBuilder.buildSetGuardTx(this.safeContract),
+        freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
+        freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
+        freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
+        freezeGuardTxBuilder.buildSetGuardTx(this.safeContract),
       ]);
     }
 
@@ -146,7 +158,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     ];
 
     // If subDAO, deploy Fractal Module.
-    if (this.parentDAOAddress) {
+    if (this.parentAddress) {
       txs.splice(1, 0, this.deployFractalModuleTx!);
     }
 
@@ -155,7 +167,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   //
   // Setup Fractal Txs for use by
-  // both Multisig + Usul subDAOs
+  // both Multisig + Azorius subDAOs
   //
 
   private setFractalModuleTxs(): void {
@@ -164,7 +176,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       this.safeContract!,
       this.saltNum,
-      this.parentDAOAddress
+      this.parentAddress
     );
 
     this.enableFractalModuleTx = enableFractalModuleTx;

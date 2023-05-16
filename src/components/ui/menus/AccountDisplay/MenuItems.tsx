@@ -2,13 +2,16 @@ import { MenuList } from '@chakra-ui/react';
 import { Connect, Disconnect } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useDisconnect } from 'wagmi';
+import { useDisconnect } from 'wagmi';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { MenuItemButton } from './MenuItemButton';
 import { MenuItemNetwork } from './MenuItemNetwork';
 import { MenuItemWallet } from './MenuItemWallet';
 
 export function MenuItems() {
-  const { address: account } = useAccount();
+  const {
+    readOnly: { user },
+  } = useFractal();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
   const { t } = useTranslation('menu');
@@ -30,9 +33,9 @@ export function MenuItems() {
         },
       }}
     >
-      {account && <MenuItemWallet />}
+      {user.address && <MenuItemWallet />}
       <MenuItemNetwork />
-      {!account && (
+      {!user.address && (
         <MenuItemButton
           testId="accountMenu-connect"
           label={t('connect')}
@@ -40,7 +43,7 @@ export function MenuItems() {
           onClick={openConnectModal}
         />
       )}
-      {account && (
+      {user.address && (
         <MenuItemButton
           testId="accountMenu-disconnect"
           label={t('disconnect')}

@@ -3,7 +3,7 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useAccount } from 'wagmi';
+import { useFractal } from '../../../providers/App/AppProvider';
 
 function ToastContent({ label }: { label: string }) {
   const { openConnectModal } = useConnectModal();
@@ -26,9 +26,11 @@ function ToastContent({ label }: { label: string }) {
 }
 
 function ConnectWalletToast({ label }: { label: string }) {
-  const { address: account } = useAccount();
+  const {
+    readOnly: { user },
+  } = useFractal();
   useEffect(() => {
-    if (account) {
+    if (user.address) {
       return;
     }
 
@@ -40,7 +42,7 @@ function ConnectWalletToast({ label }: { label: string }) {
     });
 
     return () => toast.dismiss(toastId);
-  }, [account, label]);
+  }, [user.address, label]);
 
   return null;
 }

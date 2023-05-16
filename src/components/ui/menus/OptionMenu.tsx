@@ -12,7 +12,7 @@ import {
   MenuProps,
   Tooltip,
 } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface Option {
@@ -34,7 +34,6 @@ interface IOptionMenu extends Omit<MenuProps, 'children'> {
   children?: ReactNode;
   closeOnSelect?: boolean;
   showOptionCount?: boolean;
-  showDividers?: boolean;
 }
 
 export function OptionMenu({
@@ -46,7 +45,6 @@ export function OptionMenu({
   buttonAs,
   showOptionSelected,
   showOptionCount,
-  showDividers,
   buttonProps,
   children,
   closeOnSelect = true,
@@ -67,6 +65,9 @@ export function OptionMenu({
         <MenuButton
           as={buttonAs}
           h="fit-content"
+          onClick={(event: MouseEvent<HTMLButtonElement>) => {
+            event.stopPropagation();
+          }}
           {...buttonProps}
         >
           {trigger}
@@ -79,6 +80,7 @@ export function OptionMenu({
         bg="grayscale.black"
         border="none"
         padding="1rem"
+        zIndex={1000}
       >
         {titleKey && (
           <Text
@@ -128,7 +130,7 @@ export function OptionMenu({
                 </Text>
               )}
             </MenuItem>
-            {showDividers && options[options.length - 1] !== option && (
+            {options[options.length - 1] !== option && (
               <Divider
                 marginTop="0.25rem"
                 marginBottom="0.25rem"

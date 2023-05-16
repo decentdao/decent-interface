@@ -1,38 +1,41 @@
 import { useCallback } from 'react';
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export type RequestWithRetries<FuncRes = any> = (
+  func: () => Promise<FuncRes>,
+  retries: number,
+  secondsToWait?: number
+) => Promise<FuncRes | {} | null | undefined>;
+
 export function useAsyncRetry() {
-  /**
-   * Use to async request that will retry on failure
-   * Current setup relies on response status 404 for rejection and retry.
-   *
-   * @param func,function that returns a promise
-   * @param retries number of retries
-   *
-   */
-  const requestWithRetries = useCallback(async (func: () => Promise<any>, retries: number) => {
-    let currentRetries = retries;
-    const request = async () => {
-      /**
-       * the Promise won't resolve until the method is resolved. rejections are caught and return null.
-       */
-      const funcResponse = await new Promise((resolve, reject) => {
-        setTimeout(() => resolve(func().catch(reject)), 3000);
-      }).catch(() => null);
+  const requestWithRetries: RequestWithRetries = useCallback(
+    async (func: () => Promise<any>, retries: number, secondsToWait: number = 2000) => {
+      let currentRetries = 0;
+      let result = null;
 
-      if (funcResponse) {
-        return funcResponse;
+      while (currentRetries <= retries) {
+        try {
+          result = await func();
+          if (result) {
+            return result;
+          }
+        } catch (error) {
+          console.error('Error in requestWithRetries:', error);
+        }
+
+        currentRetries += 1;
+        if (currentRetries <= retries) {
+          await sleep(secondsToWait);
+        }
       }
 
-      if (!currentRetries) {
-        // @todo maybe a toast Error?
-        return null;
-      }
-
-      currentRetries = currentRetries - 1;
-      request();
-    };
-
-    return request();
-  }, []);
+      return result;
+    },
+    []
+  );
 
   return { requestWithRetries };
 }

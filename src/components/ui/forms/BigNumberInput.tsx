@@ -1,12 +1,15 @@
-import { FormControlOptions, Input, InputElementProps } from '@chakra-ui/react';
+import {
+  FormControlOptions,
+  Input,
+  InputGroup,
+  InputElementProps,
+  InputRightElement,
+  Button,
+} from '@chakra-ui/react';
 import { utils, BigNumber, constants } from 'ethers';
 import { useState, useCallback, useEffect } from 'react';
-
-export interface BigNumberValuePair {
-  value: string;
-  bigNumberValue?: BigNumber;
-}
-
+import { useTranslation } from 'react-i18next';
+import { BigNumberValuePair } from '../../../types';
 export interface BigNumberInputProps
   extends Omit<InputElementProps, 'value' | 'onChange'>,
     FormControlOptions {
@@ -15,6 +18,7 @@ export interface BigNumberInputProps
   decimalPlaces?: number;
   min?: string;
   max?: string;
+  maxValue?: BigNumber;
 }
 /**
  * This component will add a chakra Input component that accepts and sets a BigNumber
@@ -24,6 +28,7 @@ export interface BigNumberInputProps
  * @param decimalPlaces number of decimal places to be used to parse the value to set the BigNumber
  * @param min Setting a minimum value will reset the Input value to min when the component's focus is lost. Can set decimal number for minimum, but must respect the decimalPlaces value.
  * @param max Setting this will cause the value of the Input control to be reset to the maximum when a number larger than it is inputted.
+ * @param maxValue The maximum value that can be inputted. This is used to set the max value of the Input control.
  * @parma ...rest component accepts all properties for Input and FormControl
  * @returns
  */
@@ -33,8 +38,10 @@ export function BigNumberInput({
   decimalPlaces = 18,
   min,
   max,
+  maxValue,
   ...rest
 }: BigNumberInputProps) {
+  const { t } = useTranslation('common');
   const removeTrailingZeros = (input: string) => {
     if (input.includes('.')) {
       const [leftDigits, rightDigits] = input.split('.');
@@ -44,13 +51,18 @@ export function BigNumberInput({
     }
     return input;
   };
-  const initialValue = value
-    ? !value.isZero()
-      ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
-      : '0'
-    : '';
 
-  const [inputValue, setInputValue] = useState<string>(initialValue);
+  const [inputValue, setInputValue] = useState<string>();
+
+  useEffect(() => {
+    setInputValue(
+      value
+        ? !value.isZero()
+          ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
+          : '0'
+        : ''
+    );
+  }, [value, decimalPlaces]);
 
   // this will insure the caret in the input component does not shift to the end of the input when the value is changed
   const resetCaretPositionForInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,16 +170,38 @@ export function BigNumberInput({
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
+    if (!inputValue) return;
     processValue(undefined, inputValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [decimalPlaces]);
 
   return (
-    <Input
-      value={inputValue}
-      onChange={onChangeInput}
-      onBlur={onBlur}
-      {...rest}
-    />
+    <InputGroup>
+      <Input
+        value={inputValue}
+        onChange={onChangeInput}
+        onBlur={onBlur}
+        {...rest}
+      />
+      {maxValue && (
+        <InputRightElement width="4.5rem">
+          <Button
+            h="1.75rem"
+            onClick={() => {
+              const newValue = {
+                value: truncateDecimalPlaces(utils.formatUnits(maxValue, decimalPlaces)),
+                bigNumberValue: maxValue,
+              };
+              setInputValue(newValue.value);
+              onChange(newValue);
+            }}
+            variant="text"
+            size="md"
+          >
+            {t('max')}
+          </Button>
+        </InputRightElement>
+      )}
+    </InputGroup>
   );
 }

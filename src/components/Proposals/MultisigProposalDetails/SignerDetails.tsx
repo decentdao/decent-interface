@@ -2,8 +2,8 @@ import { Box, Divider, Grid, GridItem, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { MultisigProposal } from '../../../providers/Fractal/types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import { ActivityAddress } from '../../Activity/ActivityAddress';
 import { Badge } from '../../ui/badges/Badge';
@@ -42,21 +42,19 @@ function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigPr
 
 export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
   const {
-    gnosis: {
-      safe: { owners },
-    },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation('proposal');
-  if (!owners) {
+  if (!safe?.owners) {
     return null;
   }
   return (
-    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Text textStyle="text-lg-mono-medium">{t('signers')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <Box marginTop={4}>
-          {owners.map(owner => (
+          {safe.owners.map(owner => (
             <OwnerInfoRow
               key={owner}
               owner={owner}

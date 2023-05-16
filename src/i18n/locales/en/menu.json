@@ -14,7 +14,10 @@
     "network": "Network",
     "wallet": "Wallet",
     "titleManageDAO": "Manage DAO",
+    "titleManageProposalTemplate": "Manage Template",
     "optionCreateSubDAO": "Add a subDAO",
     "optionInitiateFreeze": "Initiate a Freeze",
-    "optionInitiateClawback": "Initiate Clawback"
+    "optionInitiateClawback": "Initiate Clawback",
+    "optionManageSigners": "Manage Signers",
+    "optionRemoveTemplate": "Remove Template"
 }

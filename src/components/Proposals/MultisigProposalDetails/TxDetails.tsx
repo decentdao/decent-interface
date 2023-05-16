@@ -3,19 +3,19 @@ import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { MultisigProposal } from '../../../providers/Fractal/types';
+import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
-import EtherscanDisplayTransaction from '../../ui/links/EtherscanDisplayTransaction';
+import DisplayTransaction from '../../ui/links/DisplayTransaction';
 
 export function InfoRow({
   property,
   value,
-  address,
+  txHash,
 }: {
   property: string;
   value?: string;
-  address?: string | null;
+  txHash?: string | null;
 }) {
   return (
     <Flex
@@ -28,7 +28,7 @@ export function InfoRow({
       >
         {property}
       </Text>
-      {address ? <EtherscanDisplayTransaction address={address} /> : <Text>{value}</Text>}
+      {txHash ? <DisplayTransaction txHash={txHash} /> : <Text>{value}</Text>}
     </Flex>
   );
 }
@@ -36,13 +36,13 @@ export function InfoRow({
 export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation('proposal');
   return (
-    <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <InfoRow
           property={t('proposalId')}
-          value={createAccountSubstring(proposal.proposalNumber)}
+          value={createAccountSubstring(proposal.proposalId)}
         />
         <InfoRow
           property={t('txDetailsSignersCurrent')}
@@ -59,7 +59,7 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         <InfoRow
           property={t('transactionHash')}
           value={proposal.transactionHash ? undefined : '-'}
-          address={proposal.transactionHash}
+          txHash={proposal.transactionHash}
         />
         <InfoRow
           property={t('nonce')}

@@ -1,5 +1,5 @@
 import { Flex } from '@chakra-ui/react';
-import { Activity } from '../../providers/Fractal/types';
+import { Activity } from '../../types';
 
 import { ActivityDescriptionGovernance } from './ActivityDescriptionGovernance';
 import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';

@@ -12,8 +12,8 @@ import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useDisplayName from '../../hooks/utils/useDisplayName';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { ProposalVote, UsulProposal } from '../../providers/Fractal/types';
+import { useFractal } from '../../providers/App/AppProvider';
+import { AzoriusGovernance, ProposalVote, AzoriusProposal } from '../../types';
 import { formatCoin, formatPercentage } from '../../utils/numberFormats';
 import StatusBox from '../ui/badges/StatusBox';
 import ContentBox from '../ui/containers/ContentBox';
@@ -83,11 +83,11 @@ function ProposalVotes({
     votes,
   },
 }: {
-  proposal: UsulProposal;
+  proposal: AzoriusProposal;
 }) {
-  const {
-    governance: { governanceToken },
-  } = useFractal();
+  const { governance } = useFractal();
+
+  const azoriusGovernance = governance as AzoriusGovernance;
   const { t } = useTranslation(['common', 'proposal']);
   const totalVotesCasted = yes.add(no).add(abstain);
 
@@ -99,7 +99,7 @@ function ProposalVotes({
     return voteTotal.div(totalVotesCasted.div(100)).toNumber();
   };
 
-  if (!governanceToken || !governanceToken.totalSupply) {
+  if (!azoriusGovernance.votesToken) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -113,7 +113,7 @@ function ProposalVotes({
 
   return (
     <>
-      <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+      <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
         <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
         <Grid
           templateColumns={{ base: 'repeat(2, 1ft)', md: 'repeat(5, 1fr)' }}
@@ -168,7 +168,7 @@ function ProposalVotes({
         </Grid>
       </ContentBox>
       {votes.length !== 0 && (
-        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
           <Divider
             color="chocolate.700"
@@ -183,9 +183,9 @@ function ProposalVotes({
               <ProposalVoteItem
                 key={vote.voter}
                 vote={vote}
-                govTokenTotalSupply={governanceToken.totalSupply!}
-                govTokenDecimals={governanceToken.decimals!}
-                govTokenSymbol={governanceToken.symbol!}
+                govTokenTotalSupply={azoriusGovernance.votesToken.totalSupply}
+                govTokenDecimals={azoriusGovernance.votesToken.decimals}
+                govTokenSymbol={azoriusGovernance.votesToken.symbol}
               />
             ))}
           </Flex>

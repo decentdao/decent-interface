@@ -1,43 +1,29 @@
 import { HStack, Text } from '@chakra-ui/react';
-import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 
 export function ProposalHeader({
-  isUsul,
-  inputtedMetadata,
+  isAzorius,
   metadataTitle,
   nonce,
   setNonce,
 }: {
-  isUsul: boolean | undefined;
-  inputtedMetadata: boolean;
-  metadataTitle: string;
-  nonce: number | undefined;
-  setNonce: Dispatch<SetStateAction<number | undefined>>;
+  isAzorius?: boolean;
+  metadataTitle?: string;
+  nonce?: number;
+  setNonce: (nonce?: number) => void;
 }) {
   const { t } = useTranslation(['proposal']);
 
-  if (inputtedMetadata && metadataTitle) {
-    return (
-      <Text
-        textStyle="text-xl-mono-medium"
-        mb={4}
-      >
-        {metadataTitle}
-      </Text>
-    );
-  }
-
   return (
-    <HStack justifyContent="space-between">
+    <HStack mb={4}>
       <Text
         textStyle="text-xl-mono-medium"
-        mb={4}
+        width="full"
       >
-        {t('proposal', { ns: 'proposal' })}
+        {metadataTitle ? metadataTitle : t('proposal', { ns: 'proposal' })}
       </Text>
-      {!isUsul && (
+      {!isAzorius && (
         <CustomNonceInput
           nonce={nonce}
           onChange={setNonce}

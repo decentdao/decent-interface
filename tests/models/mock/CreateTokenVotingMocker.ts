@@ -6,7 +6,7 @@ import {
 } from './data/creation';
 import { accounts } from './data/testSigners';
 
-// TODO should be Token Voting / Usul mocked data
+// TODO should be Token Voting / Azorius mocked data
 export class CreateTokenVotingMocker extends GnosisMocker {
   setMocks() {
     this.mock(Endpoint.SAFES_CREATED_LIST, SINGLE_OWNER_MULTISIG_CREATION);

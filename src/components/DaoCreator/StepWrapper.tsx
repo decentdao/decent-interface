@@ -1,10 +1,10 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { BASE_ROUTES, DAO_ROUTES } from '../../routes/constants';
+import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
+import { useFractal } from '../../providers/App/AppProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
 
 interface IStepWrapper {
@@ -16,19 +16,18 @@ interface IStepWrapper {
 
 export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: IStepWrapper) {
   const {
-    gnosis: {
-      safe: { address },
-    },
+    node: { daoAddress },
   } = useFractal();
   const { t } = useTranslation(['daoCreate']);
-  const navigate = useNavigate();
+  const { push } = useRouter();
   return (
     <Box>
       <PageHeader
+        title={t(titleKey)}
         hasDAOLink={!!isSubDAO}
         breadcrumbs={[
           {
-            title: t(!isSubDAO ? 'homeButtonCreate' : 'labelCreateSubDAOProposal'),
+            terminus: t(!isSubDAO ? 'homeButtonCreate' : 'labelCreateSubDAOProposal'),
             path: '',
           },
         ]}
@@ -36,15 +35,9 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
         buttonVariant="secondary"
         isButtonDisabled={isFormSubmitting}
         buttonClick={() =>
-          navigate(!isSubDAO ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(address))
+          push(!isSubDAO || !daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress))
         }
       />
-      <Text
-        textStyle="text-2xl-mono-regular"
-        color="grayscale.100"
-      >
-        {t(titleKey)}
-      </Text>
       <Box
         bg="black.900-semi-transparent"
         rounded="md"

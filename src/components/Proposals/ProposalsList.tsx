@@ -1,25 +1,22 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useAccount } from 'wagmi';
-import { useFractal } from '../../providers/Fractal/hooks/useFractal';
-import { GovernanceTypes, TxProposal } from '../../providers/Fractal/types';
+import { DAO_ROUTES } from '../../constants/routes';
+import { useFractal } from '../../providers/App/AppProvider';
+import { FractalProposal, GovernanceModuleType } from '../../types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
-export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
-  const { address: account } = useAccount();
-
+export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
-    gnosis: {
-      safe: { owners },
-    },
+    node: { daoAddress, safe },
     governance: { type },
+    readOnly: { user },
   } = useFractal();
 
   const showCreateButton =
-    type === GovernanceTypes.GNOSIS_SAFE_USUL ? true : owners?.includes(account || '');
+    type === GovernanceModuleType.AZORIUS ? true : safe?.owners.includes(user.address || '');
 
   const { t } = useTranslation('proposal');
   return (
@@ -34,14 +31,14 @@ export function ProposalsList({ proposals }: { proposals: TxProposal[] }) {
       ) : proposals.length > 0 ? (
         proposals.map(proposal => (
           <ActivityGovernance
-            key={proposal.proposalNumber}
+            key={proposal.proposalId}
             activity={proposal}
           />
         ))
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
           {showCreateButton && (
-            <Link to="new">
+            <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"

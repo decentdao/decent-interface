@@ -1,31 +1,29 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import useUpdateProposalState from '../../../providers/Fractal/governance/hooks/useUpdateProposalState';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { TxProposal, UsulProposal } from '../../../providers/Fractal/types';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction } from '../../../types';
+import { MetaTransaction, FractalProposal, AzoriusProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
-import useUsul from './useUsul';
+import useUpdateProposalState from './useUpdateProposalState';
 
 export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
-  const { usulContract } = useUsul();
-  const {
-    actions: { refreshSafeData },
-    governance,
-    dispatches: { governanceDispatch },
-  } = useFractal();
+  const { governanceContracts, action } = useFractal();
+  const { azoriusContract } = governanceContracts;
   const { chainId } = useNetworkConfg();
-  const updateProposalState = useUpdateProposalState({ governance, governanceDispatch, chainId });
+  const updateProposalState = useUpdateProposalState({
+    governanceContracts,
+    governanceDispatch: action.dispatch,
+    chainId,
+  });
   const [contractCallExecuteProposal, contractCallPending] = useTransaction();
 
   const executeProposal = useCallback(
-    (proposal: TxProposal) => {
-      const usulProposal = proposal as UsulProposal;
-      if (!usulContract || !usulProposal.metaData || !usulProposal.metaData.transactions) {
+    (proposal: FractalProposal) => {
+      const azoriusProposal = proposal as AzoriusProposal;
+      if (!azoriusContract || !azoriusProposal.metaData || !azoriusProposal.metaData.transactions) {
         return;
       }
 
@@ -34,7 +32,7 @@ export default function useExecuteProposal() {
       const data: string[] = [];
       const operations: number[] = [];
 
-      usulProposal.metaData.transactions.forEach(tx => {
+      azoriusProposal.metaData.transactions.forEach(tx => {
         targets.push(tx.to);
         values.push(tx.value);
         data.push(tx.data);
@@ -43,8 +41,8 @@ export default function useExecuteProposal() {
 
       contractCallExecuteProposal({
         contractFn: () =>
-          usulContract.executeProposalBatch(
-            proposal.proposalNumber,
+          azoriusContract.asSigner.executeProposal(
+            proposal.proposalId,
             targets,
             values,
             data,
@@ -53,13 +51,13 @@ export default function useExecuteProposal() {
         pendingMessage: t('pendingExecute'),
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
-        successCallback: () => {
-          refreshSafeData();
-          updateProposalState(BigNumber.from(proposal.proposalNumber));
+        successCallback: async () => {
+          // @todo may need to re-add a loader here
+          updateProposalState(BigNumber.from(proposal.proposalId));
         },
       });
     },
-    [contractCallExecuteProposal, t, usulContract, updateProposalState, refreshSafeData]
+    [contractCallExecuteProposal, t, azoriusContract, updateProposalState]
   );
 
   return {
