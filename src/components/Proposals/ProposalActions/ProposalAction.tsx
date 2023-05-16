@@ -99,7 +99,7 @@ export function ProposalAction({
 
   const label = useMemo(() => {
     if (isSnapshotProposal) {
-      return 'Vote on Snapshot';
+      return t('snapshotVote');
     }
 
     if (proposal.state === FractalProposalState.ACTIVE) {

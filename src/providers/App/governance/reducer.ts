@@ -40,7 +40,6 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, type: GovernanceModuleType.AZORIUS, votesStrategy: action.payload };
     }
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
-      console.log('setting snapshot proposals: ', ...action.payload);
       return { ...state, proposals: [...(proposals || []), ...action.payload] };
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...(proposals || []), action.payload] };

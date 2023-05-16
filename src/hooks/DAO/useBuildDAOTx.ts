@@ -45,8 +45,6 @@ const useBuildDAOTx = () => {
     ) => {
       let azoriusContracts;
 
-      console.log('daoData: ', daoData);
-
       if (
         !user.address ||
         !signerOrProvider ||

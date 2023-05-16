@@ -118,8 +118,7 @@ export const useValidationAddress = () => {
   const ensNameValidationTest = useMemo(() => {
     return {
       name: 'ENS Name Validation',
-      // @todo: update this string
-      message: t('errorInvalidENSAddress', { ns: 'common' }),
+      message: t('errorInvalidENSName', { ns: 'common' }),
       test: async function (ensName: string | undefined) {
         if (!ensName) return false;
         const { validation } = await validateENSName({ signerOrProvider, ensName });

@@ -69,8 +69,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
         mb={4}
       />
       <LabelComponent
-        label="SnapShot"
-        helper="Include your DAO's SnapShot ENS name"
+        label={t('snapshot')}
+        helper={t('snapshotHelper')}
         isRequired={false}
       >
         <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
