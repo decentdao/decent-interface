@@ -8,7 +8,7 @@
 
 - Otherwise, simply create a new issue and the Fractal development team will respond in a timely manner. Please be as descriptive of the issue as possible.
 
-- If looking to contribute a bug fix or feature contribution, please discuss the change via the bug ticket or a new Github issue before submitting a pull request for the greatest likelihood of being accepted.
+- If looking to contribute a bug fix or feature, please discuss the change via the bug ticket or a new Github issue before submitting a pull request for the greatest likelihood of being accepted.
 
 ### Submitting a Pull Request
 
