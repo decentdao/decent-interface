@@ -36,7 +36,10 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         essentials: Yup.object().shape({
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
-          snapshotURL: Yup.string().test(ensNameValidationTest).notRequired(),
+          snapshotURL: Yup.string().when({
+            is: (value: string) => !!value,
+            then: _schema => _schema.test(ensNameValidationTest),
+          }),
         }),
         multisig: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.MULTISIG,

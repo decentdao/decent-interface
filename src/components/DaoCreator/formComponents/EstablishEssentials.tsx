@@ -78,9 +78,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
             id="searchEssentials-snapshotURL"
             value={values.essentials.snapshotURL}
             onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
-            onBlur={cEvent =>
-              setFieldValue('essentials.snapshotURL', cEvent.target.value.trim(), true)
-            }
             isDisabled={false}
             data-testid="essentials-snapshotURL"
             placeholder="fractaldao.eth"
