@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/nextjs';
-import { BrowserTracing } from '@sentry/nextjs';
+import * as Sentry from '@sentry/react';
+import { BrowserTracing } from '@sentry/tracing';
 import { isProd, notProd } from '../utils/dev';
 
 /**
@@ -9,7 +9,7 @@ import { isProd, notProd } from '../utils/dev';
  * https://docs.sentry.io/product/sentry-basics/dsn-explainer/
  */
 const SENTRY_DSN_DEV =
-  'https://5acf7aad367047308ff5217d9f34e300@o4505173268365312.ingest.sentry.io/4505173270003712';
+  'https://23bdd0d2ce384e51a6b9d8c478767327@o4505173268365312.ingest.sentry.io/4505195485265920';
 
 /**
  * Initializes error logging. We do not log Sentry data in production.
