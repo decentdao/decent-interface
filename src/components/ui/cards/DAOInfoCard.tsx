@@ -1,4 +1,4 @@
-import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Text, Image } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import Link from 'next/link';
@@ -40,7 +40,7 @@ export function DAOInfoCard({
   fractalNode,
 }: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
   const {
-    node: { daoAddress, daoName },
+    node: { daoAddress, daoName, daoSnapshotURL },
     action,
     readOnly: { user },
   } = useFractal();
@@ -124,6 +124,18 @@ export function DAOInfoCard({
             )}
           </Flex>
           <AddressCopier address={safeAddress} />
+          <Button
+            onClick={() => window.open(`https://demo.snapshot.org/#/${daoSnapshotURL}`)}
+            variant="secondary"
+            mt={5}
+          >
+            <Image
+              src="/images/snapshot-icon.svg"
+              alt="snapshot icon"
+              mr={1}
+            />
+            SnapShot
+          </Button>
         </Flex>
       </Flex>
       {/* Veritical Elipsis */}

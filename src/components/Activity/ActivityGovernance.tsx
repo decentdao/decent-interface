@@ -16,7 +16,6 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
     node: { safe },
   } = useFractal();
   const { t } = useTranslation();
-  const isSnapshot = !!(activity as SnapshotProposal).snapshotProposalId;
 
   const eventDateLabel = t(
     activity.eventType === ActivityEventType.Treasury
