@@ -3,14 +3,21 @@ import { BrowserTracing } from '@sentry/tracing';
 import { isProd, notProd } from '../utils/dev';
 
 /**
- * Initializes error logging.
+ * Sentry key which allows pushing error events.  Since this only allows submission of new events,
+ * but not reading them, this is fine to have public.
+ *
+ * https://docs.sentry.io/product/sentry-basics/dsn-explainer/
+ */
+const SENTRY_DSN_DEV =
+  'https://5acf7aad367047308ff5217d9f34e300@o4505173268365312.ingest.sentry.io/4505173270003712';
+
+/**
+ * Initializes error logging. We do not log Sentry data in production.
  */
 export function initErrorLogging() {
-  // Used for remote error reporting
-  // https://sentry.io/organizations/decent-mg/issues/
   if (notProd()) {
     Sentry.init({
-      dsn: process.env.NEXT_PUBLIC_SENTRY_DSN || '',
+      dsn: SENTRY_DSN_DEV,
       integrations: [new BrowserTracing()],
 
       // Setting tracesSampleRate to 1.0 captures 100%
