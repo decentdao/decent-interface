@@ -80,7 +80,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
             onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
             isDisabled={false}
             data-testid="essentials-snapshotURL"
-            placeholder="fractaldao.eth"
+            placeholder="decent-dao.eth"
             maxLength={30}
           />
         </LabelWrapper>
