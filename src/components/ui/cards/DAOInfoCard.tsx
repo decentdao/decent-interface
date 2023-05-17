@@ -2,6 +2,7 @@ import { Box, Button, Flex, IconButton, Text, Image } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import Link from 'next/link';
+import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
@@ -44,6 +45,8 @@ export function DAOInfoCard({
     action,
     readOnly: { user },
   } = useFractal();
+
+  const { t } = useTranslation(['common']);
 
   const isCurrentDAO = safeAddress === daoAddress;
 
@@ -128,13 +131,15 @@ export function DAOInfoCard({
             onClick={() => window.open(`https://demo.snapshot.org/#/${daoSnapshotURL}`)}
             variant="secondary"
             mt={5}
+            h={6}
+            w={32}
           >
             <Image
               src="/images/snapshot-icon.svg"
               alt="snapshot icon"
               mr={1}
             />
-            SnapShot
+            {t('snapshot', { ns: 'common' })}
           </Button>
         </Flex>
       </Flex>
