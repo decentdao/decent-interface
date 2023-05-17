@@ -27,7 +27,7 @@ export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: 
         hasDAOLink={!!isSubDAO}
         breadcrumbs={[
           {
-            terminus: t(!isSubDAO ? 'homeButtonCreate' : 'labelCreateSubDAOProposal'),
+            terminus: t(!isSubDAO ? 'buttonCreate' : 'labelCreateSubDAOProposal'),
             path: '',
           },
         ]}
