@@ -127,20 +127,22 @@ export function DAOInfoCard({
             )}
           </Flex>
           <AddressCopier address={safeAddress} />
-          <Button
-            onClick={() => window.open(`https://demo.snapshot.org/#/${daoSnapshotURL}`)}
-            variant="secondary"
-            mt={5}
-            h={6}
-            w={32}
-          >
-            <Image
-              src="/images/snapshot-icon.svg"
-              alt="snapshot icon"
-              mr={1}
-            />
-            {t('snapshot', { ns: 'common' })}
-          </Button>
+          {daoSnapshotURL && (
+            <Button
+              onClick={() => window.open(`https://demo.snapshot.org/#/${daoSnapshotURL}`)}
+              variant="secondary"
+              mt={5}
+              h={6}
+              w={32}
+            >
+              <Image
+                src="/images/snapshot-icon.svg"
+                alt="snapshot icon"
+                mr={1}
+              />
+              {t('snapshot', { ns: 'common' })}
+            </Button>
+          )}
         </Flex>
       </Flex>
       {/* Veritical Elipsis */}
