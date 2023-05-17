@@ -64,7 +64,7 @@ export function ProposalAction({
 
   const handleClick = () => {
     if (isSnapshotProposal) {
-      window.open(`https://demo.snapshot.org/#/${daoSnapshotURL}`);
+      window.open(`https://snapshot.org/#/${daoSnapshotURL}`);
     } else {
       push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
     }

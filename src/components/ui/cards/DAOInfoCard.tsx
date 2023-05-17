@@ -129,7 +129,7 @@ export function DAOInfoCard({
           <AddressCopier address={safeAddress} />
           {daoSnapshotURL && (
             <Button
-              onClick={() => window.open(`https://demo.snapshot.org/#/${daoSnapshotURL}`)}
+              onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
               variant="secondary"
               mt={5}
               h={6}

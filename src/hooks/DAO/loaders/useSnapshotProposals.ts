@@ -6,7 +6,7 @@ import { ActivityEventType, FractalProposalState } from '../../../types';
 import { SnapshotProposal } from '../../../types/daoProposal';
 
 const client = new ApolloClient({
-  uri: 'https://testnet.snapshot.org/graphql',
+  uri: 'https://hub.snapshot.org/graphql',
   cache: new InMemoryCache(),
 });
 
