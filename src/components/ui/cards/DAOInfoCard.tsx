@@ -127,7 +127,7 @@ export function DAOInfoCard({
             )}
           </Flex>
           <AddressCopier address={safeAddress} />
-          {daoSnapshotURL && (
+          {/* {daoSnapshotURL && (
             <Button
               onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
               variant="secondary"
@@ -142,18 +142,44 @@ export function DAOInfoCard({
               />
               {t('snapshot', { ns: 'common' })}
             </Button>
+          )} */}
+        </Flex>
+      </Flex>
+      <Flex
+        justifyContent="space-between"
+        flexDirection="column"
+        // gap="0.5rem"
+      >
+        {/* Veritical Elipsis */}
+        {canManageDAO && (
+          <ManageDAOMenu
+            parentAddress={parentAddress}
+            safeAddress={safeAddress}
+            freezeGuard={freezeGuard}
+            guardContracts={guardContracts}
+          />
+        )}
+        <Flex>
+          {daoSnapshotURL && (
+            <Flex justifyContent="end">
+              <Button
+                onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
+                variant="secondary"
+                mt={5}
+                h={6}
+                w={32}
+              >
+                <Image
+                  src="/images/snapshot-icon.svg"
+                  alt="snapshot icon"
+                  mr={1}
+                />
+                {t('snapshot', { ns: 'common' })}
+              </Button>
+            </Flex>
           )}
         </Flex>
       </Flex>
-      {/* Veritical Elipsis */}
-      {canManageDAO && (
-        <ManageDAOMenu
-          parentAddress={parentAddress}
-          safeAddress={safeAddress}
-          freezeGuard={freezeGuard}
-          guardContracts={guardContracts}
-        />
-      )}
     </Flex>
   );
 }
