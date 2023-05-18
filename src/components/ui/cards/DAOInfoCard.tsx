@@ -1,4 +1,4 @@
-import { Box, Button, Flex, IconButton, Text, Image } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Text, Image, Spacer } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import Link from 'next/link';
@@ -14,6 +14,7 @@ import {
   FractalNode,
 } from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
+import { INFOBOX_HEIGHT_REM, INFOBOX_PADDING_REM } from '../containers/InfoBox';
 import FavoriteIcon from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
@@ -54,14 +55,8 @@ export function DAOInfoCard({
 
   if (!safeAddress) return null;
   return (
-    <Flex
-      justifyContent="space-between"
-      flexGrow={1}
-    >
-      <Flex
-        alignItems="center"
-        flexWrap="wrap"
-      >
+    <Flex justifyContent="space-between">
+      <Flex flexWrap="wrap">
         {!!toggleExpansion && (
           <IconButton
             variant="ghost"
@@ -127,30 +122,14 @@ export function DAOInfoCard({
             )}
           </Flex>
           <AddressCopier address={safeAddress} />
-          {/* {daoSnapshotURL && (
-            <Button
-              onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
-              variant="secondary"
-              mt={5}
-              h={6}
-              w={32}
-            >
-              <Image
-                src="/images/snapshot-icon.svg"
-                alt="snapshot icon"
-                mr={1}
-              />
-              {t('snapshot', { ns: 'common' })}
-            </Button>
-          )} */}
         </Flex>
       </Flex>
       <Flex
-        justifyContent="space-between"
         flexDirection="column"
-        // gap="0.5rem"
+        alignItems="end"
+        minHeight={INFOBOX_HEIGHT_REM - INFOBOX_PADDING_REM * 2 + 'rem'}
       >
-        {/* Veritical Elipsis */}
+        {/* Vertical Elipsis */}
         {canManageDAO && (
           <ManageDAOMenu
             parentAddress={parentAddress}
@@ -159,26 +138,23 @@ export function DAOInfoCard({
             guardContracts={guardContracts}
           />
         )}
-        <Flex>
-          {daoSnapshotURL && (
-            <Flex justifyContent="end">
-              <Button
-                onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
-                variant="secondary"
-                mt={5}
-                h={6}
-                w={32}
-              >
-                <Image
-                  src="/images/snapshot-icon.svg"
-                  alt="snapshot icon"
-                  mr={1}
-                />
-                {t('snapshot', { ns: 'common' })}
-              </Button>
-            </Flex>
-          )}
-        </Flex>
+        <Spacer />
+        {daoSnapshotURL && (
+          <Button
+            onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
+            variant="secondary"
+            mt={5}
+            h={6}
+            w={32}
+          >
+            <Image
+              src="/images/snapshot-icon.svg"
+              alt="snapshot icon"
+              mr={1}
+            />
+            {t('snapshot', { ns: 'common' })}
+          </Button>
+        )}
       </Flex>
     </Flex>
   );
