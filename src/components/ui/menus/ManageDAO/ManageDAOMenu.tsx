@@ -41,11 +41,11 @@ export function ManageDAOMenu({
 
   useEffect(() => {
     const verifyUserCanCreateProposal = async () => {
-      setCanUserCreateProposal(await getCanUserCreateProposal());
+      setCanUserCreateProposal(await getCanUserCreateProposal(safeAddress));
     };
 
     verifyUserCanCreateProposal();
-  }, [getCanUserCreateProposal]);
+  }, [getCanUserCreateProposal, safeAddress]);
 
   const handleNavigateToManageSigners = useMemo(
     () => () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
