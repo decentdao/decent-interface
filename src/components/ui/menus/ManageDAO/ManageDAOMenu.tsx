@@ -7,6 +7,7 @@ import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -28,6 +29,7 @@ export function ManageDAOMenu({
 }: IManageDAOMenu) {
   const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
+  const { canUserCreateProposal } = useSubmitProposal();
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeAddress: safeAddress,
@@ -35,6 +37,11 @@ export function ManageDAOMenu({
   const {
     governance: { type },
   } = useFractal();
+
+  const handleNavigateToManageSigners = useMemo(
+    () => () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
+    [push, safeAddress]
+  );
 
   const options = useMemo(() => {
     const createSubDAOOption = {
@@ -44,7 +51,12 @@ export function ManageDAOMenu({
 
     const manageSignersOption = {
       optionKey: 'optionManageSigners',
-      onClick: () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
+      onClick: handleNavigateToManageSigners,
+    };
+
+    const viewSignersOption = {
+      optionKey: 'optionViewSigners',
+      onClick: handleNavigateToManageSigners,
     };
     if (
       freezeGuard &&
@@ -91,8 +103,10 @@ export function ManageDAOMenu({
 
       return [clawBackOption];
     } else {
-      if (type === GovernanceModuleType.MULTISIG) {
+      if (type === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
         return [createSubDAOOption, manageSignersOption];
+      } else if (type === GovernanceModuleType.MULTISIG) {
+        return [viewSignersOption];
       } else {
         return [createSubDAOOption];
       }
@@ -105,6 +119,8 @@ export function ManageDAOMenu({
     type,
     guardContracts.freezeVotingContract?.asSigner,
     handleClawBack,
+    canUserCreateProposal,
+    handleNavigateToManageSigners,
   ]);
 
   return (
@@ -115,7 +131,7 @@ export function ManageDAOMenu({
           mt="0.25rem"
         />
       }
-      titleKey="titleManageDAO"
+      titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
     />
