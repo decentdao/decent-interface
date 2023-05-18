@@ -1,7 +1,7 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -27,9 +27,10 @@ export function ManageDAOMenu({
   freezeGuard,
   guardContracts,
 }: IManageDAOMenu) {
+  const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { getCanUserCreateProposal } = useSubmitProposal();
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeAddress: safeAddress,
@@ -37,6 +38,14 @@ export function ManageDAOMenu({
   const {
     governance: { type },
   } = useFractal();
+
+  useEffect(() => {
+    const verifyUserCanCreateProposal = async () => {
+      setCanUserCreateProposal(await getCanUserCreateProposal());
+    };
+
+    verifyUserCanCreateProposal();
+  }, [getCanUserCreateProposal]);
 
   const handleNavigateToManageSigners = useMemo(
     () => () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
