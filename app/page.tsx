@@ -22,7 +22,7 @@ function InfoLinks() {
       <IconWithText
         icon={
           <SupportQuestion
-            color="gold.500"
+            fill="currentColor"
             boxSize="1.5rem"
           />
         }
@@ -37,7 +37,7 @@ function InfoLinks() {
         <IconWithText
           icon={
             <Discord
-              color="gold.500"
+              fill="currentColor"
               boxSize="1.5rem"
             />
           }
@@ -49,7 +49,7 @@ function InfoLinks() {
       <IconWithText
         icon={
           <Documents
-            color="gold.500"
+            fill="currentColor"
             boxSize="1.5rem"
           />
         }
