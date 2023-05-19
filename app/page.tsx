@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppFooter } from '../src/components/pages/AppHome/AppFooter';
 import { CTABox } from '../src/components/pages/AppHome/CTABox';
-import DAOFeatureCard from '../src/components/pages/AppHome/DAOFeatureCard';
+import FeaturedDAOCard from '../src/components/pages/AppHome/FeaturedDAOCard';
 import ValueProposition from '../src/components/pages/AppHome/ValueProposition';
 import ExternalLink from '../src/components/ui/links/ExternalLink';
 import ClientOnly from '../src/components/ui/utils/ClientOnly';
@@ -147,7 +147,7 @@ export default function HomePage() {
           >
             {FEATURED_DAOS.map(feature => {
               return (
-                <DAOFeatureCard
+                <FeaturedDAOCard
                   width={{ sm: '100%', md: '50%' }}
                   key={feature.titleKey}
                   iconSrc={feature.iconSrc}

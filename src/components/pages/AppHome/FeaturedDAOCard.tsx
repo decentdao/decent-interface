@@ -11,7 +11,7 @@ interface DAOFeatureProps extends BoxProps {
   address: string;
 }
 
-export default function DAOFeatureCard({
+export default function FeaturedDAOCard({
   iconSrc,
   title,
   desc,
