@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
-import { BaseBox } from './BaseBox';
+import { StyledBox } from './StyledBox';
 
 export function InfoBox({
   minWidth = '100%',
@@ -17,7 +17,7 @@ export function InfoBox({
 }) {
   const { push } = useRouter();
   return (
-    <BaseBox
+    <StyledBox
       cursor={to ? 'pointer' : undefined}
       onClick={
         to
@@ -32,6 +32,6 @@ export function InfoBox({
       {...rest}
     >
       {children}
-    </BaseBox>
+    </StyledBox>
   );
 }

@@ -4,7 +4,7 @@ import { Flex, Box, Text, HStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation, TFunction } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { BaseBox } from '../../ui/containers/BaseBox';
+import { StyledBox } from '../../ui/containers/StyledBox';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 
 enum ModuleType {
@@ -33,7 +33,7 @@ function ModulesContainer({
   t: TFunction<'settings'[]>;
 }) {
   return (
-    <BaseBox
+    <StyledBox
       maxHeight="fit-content"
       minHeight="6.25rem"
       mt="12"
@@ -59,7 +59,7 @@ function ModulesContainer({
           )}
         </Flex>
       </HStack>
-    </BaseBox>
+    </StyledBox>
   );
 }
 

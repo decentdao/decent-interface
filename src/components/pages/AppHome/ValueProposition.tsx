@@ -6,7 +6,7 @@ interface DAOActionProps extends FlexProps {
   desc: string;
 }
 
-export default function DAOAction({ iconSrc, title, desc, ...rest }: DAOActionProps) {
+export default function ValueProposition({ iconSrc, title, desc, ...rest }: DAOActionProps) {
   return (
     <Flex {...rest}>
       <Image

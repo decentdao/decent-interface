@@ -1,15 +1,15 @@
 import { BoxProps, Center, Flex } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { BaseBox } from '../../ui/containers/BaseBox';
+import { StyledBox } from '../../ui/containers/StyledBox';
 
 interface Props extends BoxProps {
-  component1: ReactNode;
-  component2: ReactNode;
+  leftSlot: ReactNode;
+  rightSlot: ReactNode;
 }
 
-export function CTABox({ component1, component2, ...rest }: Props) {
+export function CTABox({ leftSlot, rightSlot, ...rest }: Props) {
   return (
-    <BaseBox
+    <StyledBox
       w="100%"
       {...rest}
     >
@@ -20,10 +20,10 @@ export function CTABox({ component1, component2, ...rest }: Props) {
           flexWrap="wrap"
           gap="2rem"
         >
-          {component1}
-          {component2}
+          {leftSlot}
+          {rightSlot}
         </Flex>
       </Center>
-    </BaseBox>
+    </StyledBox>
   );
 }

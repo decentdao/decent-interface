@@ -6,15 +6,15 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppFooter } from '../src/components/pages/AppHome/AppFooter';
 import { CTABox } from '../src/components/pages/AppHome/CTABox';
-import DAOAction from '../src/components/pages/AppHome/DAOAction';
 import DAOFeatureCard from '../src/components/pages/AppHome/DAOFeatureCard';
+import ValueProposition from '../src/components/pages/AppHome/ValueProposition';
 import ExternalLink from '../src/components/ui/links/ExternalLink';
 import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DOCS } from '../src/constants/url';
 import { useFractal } from '../src/providers/App/AppProvider';
 
-const DAO_ACTIONS = [
+const VALUE_PROPS = [
   {
     iconSrc: '/images/icon-govern.svg',
     titleKey: 'govern',
@@ -32,17 +32,17 @@ const DAO_ACTIONS = [
   },
 ];
 
-const DAO_FEATURES = [
+const FEATURED_DAOS = [
   {
     iconSrc: '/images/icon-decent.svg',
-    titleKey: 'feature1Title',
-    descKey: 'feature1Desc',
+    titleKey: 'decentTitle',
+    descKey: 'decentDesc',
     address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525', // TODO
   },
   {
     iconSrc: '/images/icon-awakevc.svg',
-    titleKey: 'feature2Title',
-    descKey: 'feature2Desc',
+    titleKey: 'awakeTitle',
+    descKey: 'awakeDesc',
     address: '0xF2C7C6445BD4E2d79e0Ee362812BaDD8D227b02F', // TODO
   },
 ];
@@ -95,9 +95,9 @@ export default function HomePage() {
             paddingBottom="2rem"
             flexWrap="wrap"
           >
-            {DAO_ACTIONS.map(daoAction => {
+            {VALUE_PROPS.map(daoAction => {
               return (
-                <DAOAction
+                <ValueProposition
                   paddingBottom="2rem"
                   width={{ md: '100%', lg: '33%' }}
                   key={daoAction.titleKey}
@@ -105,7 +105,7 @@ export default function HomePage() {
                   title={t(daoAction.titleKey)}
                   desc={t(daoAction.descKey)}
                   paddingEnd={
-                    daoAction.titleKey !== DAO_ACTIONS[DAO_ACTIONS.length - 1].titleKey
+                    daoAction.titleKey !== VALUE_PROPS[VALUE_PROPS.length - 1].titleKey
                       ? '2rem'
                       : '0rem'
                   }
@@ -114,12 +114,12 @@ export default function HomePage() {
             })}
           </Flex>
           <CTABox
-            component1={
+            leftSlot={
               <ExternalLink href={URL_DOCS}>
                 <Button>{t('getStartedButton')}</Button>
               </ExternalLink>
             }
-            component2={
+            rightSlot={
               <Text
                 textStyle="text-xl-mono-bold"
                 color="chocolate.100"
@@ -145,7 +145,7 @@ export default function HomePage() {
             flexWrap="wrap"
             paddingBottom="1.5rem"
           >
-            {DAO_FEATURES.map(feature => {
+            {FEATURED_DAOS.map(feature => {
               return (
                 <DAOFeatureCard
                   width={{ sm: '100%', md: '50%' }}
@@ -165,7 +165,7 @@ export default function HomePage() {
             })}
           </Flex>
           <CTABox
-            component1={
+            leftSlot={
               <Text
                 textStyle="text-xl-mono-bold"
                 color="chocolate.100"
@@ -173,7 +173,7 @@ export default function HomePage() {
                 {t('readyCTA')}
               </Text>
             }
-            component2={
+            rightSlot={
               <Button
                 data-testid="home-linkCreate"
                 h="3.5rem"

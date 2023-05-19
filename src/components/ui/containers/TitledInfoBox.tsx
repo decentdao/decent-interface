@@ -1,6 +1,6 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { BaseBox } from './BaseBox';
+import { StyledBox } from './StyledBox';
 
 export function TitledInfoBox({
   minWidth,
@@ -14,7 +14,7 @@ export function TitledInfoBox({
   children?: ReactNode;
 }) {
   return (
-    <BaseBox
+    <StyledBox
       flexGrow={1}
       minWidth={minWidth}
     >
@@ -32,6 +32,6 @@ export function TitledInfoBox({
         </Box>
       )}
       {children}
-    </BaseBox>
+    </StyledBox>
   );
 }

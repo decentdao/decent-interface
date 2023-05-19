@@ -1,7 +1,7 @@
 import { Text, BoxProps, Image, HStack, Spacer, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { BaseBox } from '../../ui/containers/BaseBox';
+import { StyledBox } from '../../ui/containers/StyledBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 
 interface DAOFeatureProps extends BoxProps {
@@ -20,7 +20,7 @@ export default function DAOFeatureCard({
 }: DAOFeatureProps) {
   const { t } = useTranslation('home');
   return (
-    <BaseBox {...rest}>
+    <StyledBox {...rest}>
       <HStack paddingBottom="1rem">
         <Image
           width="1.5rem"
@@ -52,6 +52,6 @@ export default function DAOFeatureCard({
           {t('featureLink')}
         </ExternalLink>
       </Flex>
-    </BaseBox>
+    </StyledBox>
   );
 }

@@ -1,6 +1,6 @@
 import { Box, SlideFade } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { BaseBox } from './BaseBox';
+import { StyledBox } from './StyledBox';
 
 export function ActivityBox({
   children,
@@ -14,14 +14,14 @@ export function ActivityBox({
       offsetY={'-100%'}
       in={true}
     >
-      <BaseBox
+      <StyledBox
         maxHeight="fit-content"
         minHeight="6.25rem"
         border={borderColor ? '1px' : undefined}
         borderColor={borderColor}
       >
         {children}
-      </BaseBox>
+      </StyledBox>
     </SlideFade>
   );
 }
