@@ -1,4 +1,4 @@
-import { Box, BoxProps, Center, Flex } from '@chakra-ui/react';
+import { BoxProps, Center, Flex } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { BaseBox } from '../../ui/containers/BaseBox';
 
@@ -15,13 +15,12 @@ export function CTABox({ component1, component2, ...rest }: Props) {
     >
       <Center>
         <Flex
-          w="fit-content"
-          alignSelf="center"
           padding="0.5rem"
           alignItems="center"
+          flexWrap="wrap"
+          gap="2rem"
         >
           {component1}
-          <Box w="2rem" />
           {component2}
         </Flex>
       </Center>

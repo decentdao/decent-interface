@@ -76,7 +76,7 @@ export default function HomePage() {
           <Text
             alignSelf="center"
             paddingBottom="1.5rem"
-            textStyle="text-6xl-mono-regular"
+            textStyle={{ md: 'text-6xl-mono-regular', sm: 'text-4xl-mono-regular' }}
             color="grayscale.100"
           >
             {t('homeTitle')}
@@ -91,17 +91,22 @@ export default function HomePage() {
           >
             {t('homeDesc')}
           </Text>
-          <Flex paddingBottom="4rem">
+          <Flex
+            paddingBottom="2rem"
+            flexWrap="wrap"
+          >
             {DAO_ACTIONS.map(daoAction => {
               return (
                 <DAOAction
+                  paddingBottom="2rem"
+                  width={{ md: '100%', lg: '33%' }}
                   key={daoAction.titleKey}
                   iconSrc={daoAction.iconSrc}
                   title={t(daoAction.titleKey)}
                   desc={t(daoAction.descKey)}
-                  marginEnd={
+                  paddingEnd={
                     daoAction.titleKey !== DAO_ACTIONS[DAO_ACTIONS.length - 1].titleKey
-                      ? '2.9rem'
+                      ? '2rem'
                       : '0rem'
                   }
                 />
@@ -136,21 +141,25 @@ export default function HomePage() {
           >
             {t('featuredDesc')}
           </Text>
-          <Flex paddingBottom="3.5rem">
+          <Flex
+            flexWrap="wrap"
+            paddingBottom="1.5rem"
+          >
             {DAO_FEATURES.map(feature => {
               return (
                 <DAOFeatureCard
-                  w="50%"
+                  width={{ sm: '100%', md: '50%' }}
                   key={feature.titleKey}
                   iconSrc={feature.iconSrc}
                   title={t(feature.titleKey)}
                   desc={t(feature.descKey)}
                   address={feature.address}
-                  marginEnd={
-                    feature.titleKey !== DAO_ACTIONS[DAO_ACTIONS.length - 1].titleKey
-                      ? '1.125rem'
-                      : '0rem'
-                  }
+                  marginBottom="2rem"
+                  // marginEnd={
+                  //   feature.titleKey !== DAO_FEATURES[DAO_FEATURES.length - 1].titleKey
+                  //     ? '1.125rem'
+                  //     : '0rem'
+                  // }
                 />
               );
             })}
