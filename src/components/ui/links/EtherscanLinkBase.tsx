@@ -12,7 +12,7 @@ export default function EtherscanBase({ children, ...rest }: LinkProps) {
     <Link
       target="_blank"
       rel="noreferrer"
-      style={{ textDecoration: 'none' }}
+      _hover={{ color: 'gold.500-hover', textDecoration: 'none' }}
       {...rest}
     >
       <Tooltip
