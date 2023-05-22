@@ -119,56 +119,57 @@ function GuardDetails(props: ICreationStepProps) {
         flexDirection="column"
         gap={8}
       >
-        <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
         {governanceFormType === GovernanceModuleType.MULTISIG && (
-          <LabelComponent
-            label={t('labelTimelockPeriod')}
-            helper={t('helperTimelockPeriod')}
-            isRequired
-          >
-            <InputGroup>
-              <BigNumberInput
-                value={values.freeze.timelockPeriod.bigNumberValue}
-                onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
-                decimalPlaces={0}
-                min="1"
-                data-testid="guardConfig-executionDetails"
-              />
-              <InputRightElement mr="4">{minutes}</InputRightElement>
-            </InputGroup>
-            <Text
-              textStyle="text-md-sans-regular"
-              color="grayscale.500"
-              mt={2}
+          <>
+            <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
+            <LabelComponent
+              label={t('labelTimelockPeriod')}
+              helper={t('helperTimelockPeriod')}
+              isRequired
             >
-              {t('exampleTimelockPeriod')}
-            </Text>
-          </LabelComponent>
+              <InputGroup>
+                <BigNumberInput
+                  value={values.freeze.timelockPeriod.bigNumberValue}
+                  onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
+                  decimalPlaces={0}
+                  min="1"
+                  data-testid="guardConfig-executionDetails"
+                />
+                <InputRightElement mr="4">{minutes}</InputRightElement>
+              </InputGroup>
+              <Text
+                textStyle="text-md-sans-regular"
+                color="grayscale.500"
+                mt={2}
+              >
+                {t('exampleTimelockPeriod')}
+              </Text>
+            </LabelComponent>
+            <LabelComponent
+              label={t('labelExecutionPeriod')}
+              helper={t('helperExecutionPeriod')}
+              isRequired
+            >
+              <InputGroup>
+                <BigNumberInput
+                  value={values.freeze.executionPeriod.bigNumberValue}
+                  onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
+                  decimalPlaces={0}
+                  min="1"
+                  data-testid="guardConfig-executionDetails"
+                />
+                <InputRightElement mr="4">{minutes}</InputRightElement>
+              </InputGroup>
+              <Text
+                textStyle="text-md-sans-regular"
+                color="grayscale.500"
+                mt={2}
+              >
+                {t('exampleExecutionPeriod')}
+              </Text>
+            </LabelComponent>
+          </>
         )}
-        <LabelComponent
-          label={t('labelExecutionPeriod')}
-          helper={t('helperExecutionPeriod')}
-          isRequired
-        >
-          <InputGroup>
-            <BigNumberInput
-              value={values.freeze.executionPeriod.bigNumberValue}
-              onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
-              decimalPlaces={0}
-              min="1"
-              data-testid="guardConfig-executionDetails"
-            />
-            <InputRightElement mr="4">{minutes}</InputRightElement>
-          </InputGroup>
-          <Text
-            textStyle="text-md-sans-regular"
-            color="grayscale.500"
-            mt={2}
-          >
-            {t('exampleExecutionPeriod')}
-          </Text>
-        </LabelComponent>
-
         <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
         <LabelComponent
           label={t('labelFreezeVotesThreshold')}

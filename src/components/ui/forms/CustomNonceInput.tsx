@@ -25,10 +25,10 @@ export function CustomNonceInput({
 
   return (
     <VStack alignItems="start">
-      <HStack>
+      <HStack fontSize="14px">
         <Flex ref={containerRef}>
           <Text
-            textStyle="text-md-mono-regular"
+            textStyle="text-md-sans-regular"
             whiteSpace="nowrap"
             mt="1"
           >
@@ -58,6 +58,7 @@ export function CustomNonceInput({
       {errorMessage && (
         <Flex
           width="100%"
+          fontSize="14px"
           mt={2}
         >
           <Text
