@@ -63,7 +63,6 @@ export default function HomePage() {
       action.resetDAO();
     }
   }, [daoAddress, action]);
-
   return (
     <ClientOnly>
       <Center>
