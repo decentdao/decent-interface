@@ -20,12 +20,7 @@ function InfoLinks() {
   return (
     <HStack>
       <IconWithText
-        icon={
-          <SupportQuestion
-            fill="currentColor"
-            boxSize="1.5rem"
-          />
-        }
+        icon={<SupportQuestion boxSize="1.5rem" />}
         label={t('faq')}
         url={URL_FAQ}
         testid="home-linkFAQ"
@@ -35,24 +30,14 @@ function InfoLinks() {
         paddingRight="1.25rem"
       >
         <IconWithText
-          icon={
-            <Discord
-              fill="currentColor"
-              boxSize="1.5rem"
-            />
-          }
+          icon={<Discord boxSize="1.5rem" />}
           label={t('discord')}
           url={URL_DISCORD}
           testid="home-linkDiscord"
         />
       </Box>
       <IconWithText
-        icon={
-          <Documents
-            fill="currentColor"
-            boxSize="1.5rem"
-          />
-        }
+        icon={<Documents boxSize="1.5rem" />}
         label={t('docs')}
         url={URL_DOCS}
         testid="home-linkDocs"
