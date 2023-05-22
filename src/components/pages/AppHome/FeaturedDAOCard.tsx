@@ -1,4 +1,4 @@
-import { Text, BoxProps, Image, HStack, Spacer, Flex } from '@chakra-ui/react';
+import { Text, BoxProps, Image, HStack, Spacer, Flex, Box } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { StyledBox } from '../../ui/containers/StyledBox';
@@ -20,38 +20,40 @@ export default function FeaturedDAOCard({
 }: DAOFeatureProps) {
   const { t } = useTranslation('home');
   return (
-    <StyledBox {...rest}>
-      <HStack paddingBottom="1rem">
-        <Image
-          width="1.5rem"
-          height="1.5rem"
-          src={iconSrc}
-          alt={title}
-        />
+    <Box {...rest}>
+      <StyledBox height="full">
+        <HStack paddingBottom="1rem">
+          <Image
+            width="1.5rem"
+            height="1.5rem"
+            src={iconSrc}
+            alt={title}
+          />
+          <Text
+            color="grayscale.100"
+            textStyle="text-lg-mono-bold"
+            paddingStart="1.25rem"
+          >
+            {title}
+          </Text>
+        </HStack>
         <Text
-          color="grayscale.100"
-          textStyle="text-lg-mono-bold"
-          paddingStart="1.25rem"
+          marginBottom="0.5rem"
+          color="grayscale.500"
         >
-          {title}
+          {desc}
         </Text>
-      </HStack>
-      <Text
-        marginBottom="0.5rem"
-        color="grayscale.500"
-      >
-        {desc}
-      </Text>
-      <Flex>
-        <Spacer />
-        <ExternalLink
-          alignSelf="end"
-          textStyle="text-lg-mono-bold"
-          href={DAO_ROUTES.dao.relative(address)}
-        >
-          {t('featureLink')}
-        </ExternalLink>
-      </Flex>
-    </StyledBox>
+        <Flex>
+          <Spacer />
+          <ExternalLink
+            alignSelf="end"
+            textStyle="text-lg-mono-bold"
+            href={DAO_ROUTES.dao.relative(address)}
+          >
+            {t('featureLink')}
+          </ExternalLink>
+        </Flex>
+      </StyledBox>
+    </Box>
   );
 }

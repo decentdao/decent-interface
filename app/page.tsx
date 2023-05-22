@@ -94,7 +94,7 @@ export default function HomePage() {
             paddingBottom="2rem"
             flexWrap="wrap"
           >
-            {VALUE_PROPS.map(daoAction => {
+            {VALUE_PROPS.map((daoAction, index) => {
               return (
                 <ValueProposition
                   paddingBottom="2rem"
@@ -103,11 +103,7 @@ export default function HomePage() {
                   iconSrc={daoAction.iconSrc}
                   title={t(daoAction.titleKey)}
                   desc={t(daoAction.descKey)}
-                  paddingEnd={
-                    daoAction.titleKey !== VALUE_PROPS[VALUE_PROPS.length - 1].titleKey
-                      ? '2rem'
-                      : '0rem'
-                  }
+                  paddingEnd={index !== VALUE_PROPS.length - 1 ? '2rem' : '0rem'}
                 />
               );
             })}
@@ -144,21 +140,18 @@ export default function HomePage() {
             flexWrap="wrap"
             paddingBottom="1.5rem"
           >
-            {FEATURED_DAOS.map(feature => {
+            {FEATURED_DAOS.map((feature, index) => {
               return (
                 <FeaturedDAOCard
-                  width={{ sm: '100%', md: '50%' }}
+                  width={{ sm: '100%', lg: '50%' }}
                   key={feature.titleKey}
                   iconSrc={feature.iconSrc}
                   title={t(feature.titleKey)}
                   desc={t(feature.descKey)}
                   address={feature.address}
                   marginBottom="2rem"
-                  // marginEnd={
-                  //   feature.titleKey !== DAO_FEATURES[DAO_FEATURES.length - 1].titleKey
-                  //     ? '1.125rem'
-                  //     : '0rem'
-                  // }
+                  paddingEnd={{ sm: '0rem', lg: index === 0 ? '0.56rem' : '0rem' }}
+                  paddingStart={{ sm: '0rem', lg: index === 1 ? '0.56rem' : '0rem' }}
                 />
               );
             })}
