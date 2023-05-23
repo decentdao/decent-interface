@@ -23,7 +23,6 @@ export default function ModifyGovernancePage() {
   return (
     <Box>
       <PageHeader
-        title={'Establish Essentials'}
         hasDAOLink
         buttonText={t('cancel', { ns: 'common' })}
         buttonVariant="secondary"
