@@ -12,6 +12,8 @@ import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGuardContracts, FreezeGuard, GovernanceModuleType } from '../../../../types';
+import { ModalType } from '../../modals/ModalProvider';
+import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -52,7 +54,9 @@ export function ManageDAOMenu({
     [push, safeAddress]
   );
 
-  const options = useMemo(() => {
+  const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
+
+  const optionGroups = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
       onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
@@ -67,6 +71,22 @@ export function ManageDAOMenu({
       optionKey: 'optionViewSigners',
       onClick: handleNavigateToManageSigners,
     };
+
+    const freezeOption = {
+      optionKey: 'optionInitiateFreeze',
+      onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
+    };
+
+    const clawBackOption = {
+      optionKey: 'optionInitiateClawback',
+      onClick: handleClawBack,
+    };
+
+    const modifyGovernanceOption = {
+      optionKey: 'optionModifyGovernance',
+      onClick: handleModifyGovernance,
+    };
+
     if (
       freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
@@ -84,14 +104,19 @@ export function ManageDAOMenu({
       ) &&
       freezeGuard.userHasVotes
     ) {
-      const freezeOption = {
-        optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
-      };
       if (type === GovernanceModuleType.MULTISIG) {
-        return [createSubDAOOption, manageSignersOption, freezeOption];
+        return [
+          {
+            titleKey: 'titleManageDAO',
+            options: [createSubDAOOption, manageSignersOption, freezeOption],
+          },
+          {
+            titleKey: 'titleEditDAO',
+            options: [modifyGovernanceOption],
+          },
+        ];
       } else {
-        return [createSubDAOOption, freezeOption];
+        return [{ titleKey: 'titleManageDAO', options: [createSubDAOOption, freezeOption] }];
       }
     } else if (
       freezeGuard &&
@@ -105,19 +130,20 @@ export function ManageDAOMenu({
       freezeGuard.isFrozen &&
       freezeGuard.userHasVotes
     ) {
-      const clawBackOption = {
-        optionKey: 'optionInitiateClawback',
-        onClick: handleClawBack,
-      };
-
-      return [clawBackOption];
+      return [{ titleKey: 'titleManageDAO', options: [clawBackOption] }];
     } else {
       if (type === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
-        return [createSubDAOOption, manageSignersOption];
+        return [
+          { titleKey: 'titleManageDAO', options: [createSubDAOOption, manageSignersOption] },
+          {
+            titleKey: 'titleEditDAO',
+            options: [modifyGovernanceOption],
+          },
+        ];
       } else if (type === GovernanceModuleType.MULTISIG) {
-        return [viewSignersOption];
+        return [{ titleKey: 'titleViewDAODetails', options: [viewSignersOption] }];
       } else {
-        return [createSubDAOOption];
+        return [{ titleKey: 'titleManageDAO', options: [createSubDAOOption] }];
       }
     }
   }, [
@@ -130,6 +156,7 @@ export function ManageDAOMenu({
     handleClawBack,
     canUserCreateProposal,
     handleNavigateToManageSigners,
+    handleModifyGovernance,
   ]);
 
   return (
@@ -141,7 +168,8 @@ export function ManageDAOMenu({
         />
       }
       titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
-      options={options}
+      options={[]}
+      optionGroups={optionGroups}
       namespace="menu"
     />
   );

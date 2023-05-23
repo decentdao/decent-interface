@@ -3,6 +3,7 @@ import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddSignerModal from '../../pages/ManageSigners/AddSignerModal';
 import RemoveSignerModal from '../../pages/ManageSigners/RemoveSignerModal';
+import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
@@ -21,6 +22,7 @@ export enum ModalType {
   REMOVE_SIGNER,
   ADD_SIGNER,
   CREATE_PROPOSAL_FROM_TEMPLATE,
+  CONFIRM_MODIFY_GOVERNANCE,
 }
 
 export interface CurrentModal {
@@ -127,6 +129,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
             onClose={cl}
           />
         );
+        break;
+      case ModalType.CONFIRM_MODIFY_GOVERNANCE:
+        co = <ConfirmModifyGovernanceModal close={cl} />;
         break;
       case ModalType.NONE:
       default:
