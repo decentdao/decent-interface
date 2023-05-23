@@ -318,5 +318,22 @@ export default function useSubmitProposal() {
     ]
   );
 
-  return { submitProposal, pendingCreateTx, canUserCreateProposal };
+  const getCanUserCreateProposal = useMemo(
+    () => async (safeAddress?: string) => {
+      if (!safeAddress || !user.address) {
+        return false;
+      }
+
+      if (type === GovernanceModuleType.AZORIUS) {
+        return true;
+      }
+
+      return safeService
+        .getSafeInfo(safeAddress)
+        .then(safeInfo => safeInfo.owners.includes(user.address!));
+    },
+    [safeService, type, user]
+  );
+
+  return { submitProposal, pendingCreateTx, canUserCreateProposal, getCanUserCreateProposal };
 }
