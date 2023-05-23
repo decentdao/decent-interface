@@ -1,4 +1,4 @@
-import { ethers, Signer, utils } from 'ethers';
+import { Signer, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
@@ -8,21 +8,14 @@ import { AddressValidationMap } from '../../../types';
 import { Providers } from '../../../types/network';
 
 export async function validateENSName({ ensName }: { ensName: string }) {
-  if (!!ensName && ensName.trim() && ensName.endsWith('.eth')) {
-    // Public provider is being used to resolve ENS names on mainnet
-    const providerKey =
-      process.env.NEXT_PUBLIC_INFURA_API_KEY || process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || '';
-    const mainnetProvider = new ethers.providers.JsonRpcProvider(providerKey);
-    const resolvedAddress = await mainnetProvider.resolveName(ensName).catch();
-    if (resolvedAddress) {
-      return {
-        validation: {
-          address: resolvedAddress,
-          isValidAddress: true,
-        },
-        isValid: false,
-      };
-    }
+  if (!!ensName && ensName.trim() && ensName.endsWith('.eth') && ensName.length >= 7) {
+    return {
+      validation: {
+        address: '',
+        isValidAddress: true,
+      },
+      isValid: false,
+    };
   }
   return {
     validation: {
