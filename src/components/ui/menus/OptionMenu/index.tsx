@@ -1,5 +1,5 @@
-import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip } from '@chakra-ui/react';
-import { MouseEvent, ReactNode } from 'react';
+import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Divider } from '@chakra-ui/react';
+import { MouseEvent, ReactNode, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import OptionsList, { IOption, IOptionsList } from './components';
 
@@ -67,16 +67,24 @@ export function OptionMenu({
       >
         {children}
         {optionGroups && optionGroups?.length > 0 ? (
-          optionGroups.map(optionGroup => (
-            <OptionsList
-              key={optionGroup.titleKey}
-              options={optionGroup.options}
-              titleKey={optionGroup.titleKey}
-              showOptionSelected={showOptionSelected}
-              closeOnSelect={closeOnSelect}
-              showOptionCount={showOptionCount}
-              namespace={namespace}
-            />
+          optionGroups.map((optionGroup, i) => (
+            <Fragment key={optionGroup.titleKey}>
+              <OptionsList
+                options={optionGroup.options}
+                titleKey={optionGroup.titleKey}
+                showOptionSelected={showOptionSelected}
+                closeOnSelect={closeOnSelect}
+                showOptionCount={showOptionCount}
+                namespace={namespace}
+              />
+              {i !== optionGroups.length - 1 && (
+                <Divider
+                  marginTop="1rem"
+                  marginBottom="1rem"
+                  color="chocolate.700"
+                />
+              )}
+            </Fragment>
           ))
         ) : (
           <OptionsList
