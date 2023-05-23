@@ -1,4 +1,4 @@
-import { Signer, utils } from 'ethers';
+import { ethers, Signer, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
@@ -7,15 +7,13 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { AddressValidationMap } from '../../../types';
 import { Providers } from '../../../types/network';
 
-export async function validateENSName({
-  signerOrProvider,
-  ensName,
-}: {
-  signerOrProvider: Signer | Providers;
-  ensName: string;
-}) {
+export async function validateENSName({ ensName }: { ensName: string }) {
   if (!!ensName && ensName.trim() && ensName.endsWith('.eth')) {
-    const resolvedAddress = await signerOrProvider.resolveName(ensName).catch();
+    // Public provider is being used to resolve ENS names on mainnet
+    const providerKey =
+      process.env.NEXT_PUBLIC_INFURA_API_KEY || process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || '';
+    const mainnetProvider = new ethers.providers.JsonRpcProvider(providerKey);
+    const resolvedAddress = await mainnetProvider.resolveName(ensName).catch();
     if (resolvedAddress) {
       return {
         validation: {
@@ -121,14 +119,14 @@ export const useValidationAddress = () => {
       message: t('errorInvalidENSName', { ns: 'common' }),
       test: async function (ensName: string | undefined) {
         if (!ensName) return false;
-        const { validation } = await validateENSName({ signerOrProvider, ensName });
+        const { validation } = await validateENSName({ ensName });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(ensName, validation);
         }
         return validation.isValidAddress;
       },
     };
-  }, [signerOrProvider, addressValidationMap, t]);
+  }, [addressValidationMap, t]);
 
   const addressValidationTestSimple = useMemo(() => {
     return {
