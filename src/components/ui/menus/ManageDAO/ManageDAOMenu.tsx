@@ -56,7 +56,7 @@ export function ManageDAOMenu({
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
-  const optionGroups = useMemo(() => {
+  const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
       onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
@@ -105,18 +105,9 @@ export function ManageDAOMenu({
       freezeGuard.userHasVotes
     ) {
       if (type === GovernanceModuleType.MULTISIG) {
-        return [
-          {
-            titleKey: 'titleManageDAO',
-            options: [createSubDAOOption, manageSignersOption, freezeOption],
-          },
-          {
-            titleKey: 'titleEditDAO',
-            options: [modifyGovernanceOption],
-          },
-        ];
+        return [createSubDAOOption, manageSignersOption, freezeOption, modifyGovernanceOption];
       } else {
-        return [{ titleKey: 'titleManageDAO', options: [createSubDAOOption, freezeOption] }];
+        return [createSubDAOOption, freezeOption];
       }
     } else if (
       freezeGuard &&
@@ -130,20 +121,14 @@ export function ManageDAOMenu({
       freezeGuard.isFrozen &&
       freezeGuard.userHasVotes
     ) {
-      return [{ titleKey: 'titleManageDAO', options: [clawBackOption] }];
+      return [clawBackOption];
     } else {
       if (type === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
-        return [
-          { titleKey: 'titleManageDAO', options: [createSubDAOOption, manageSignersOption] },
-          {
-            titleKey: 'titleEditDAO',
-            options: [modifyGovernanceOption],
-          },
-        ];
+        return [createSubDAOOption, manageSignersOption, modifyGovernanceOption];
       } else if (type === GovernanceModuleType.MULTISIG) {
-        return [{ titleKey: 'titleViewDAODetails', options: [viewSignersOption] }];
+        return [viewSignersOption];
       } else {
-        return [{ titleKey: 'titleManageDAO', options: [createSubDAOOption] }];
+        return [createSubDAOOption];
       }
     }
   }, [
@@ -168,8 +153,7 @@ export function ManageDAOMenu({
         />
       }
       titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
-      options={[]}
-      optionGroups={optionGroups}
+      options={options}
       namespace="menu"
     />
   );
