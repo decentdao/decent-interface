@@ -1,10 +1,14 @@
+import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
-import { StyledBox } from './StyledBox';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+
+export const INFOBOX_HEIGHT_REM = 10.5;
+export const INFOBOX_PADDING_REM = 1;
 
 export function InfoBox({
   minWidth = '100%',
-  minHeight = '10.5rem',
+  minHeight = INFOBOX_HEIGHT_REM + 'rem',
   children,
   to,
   ...rest
@@ -17,7 +21,7 @@ export function InfoBox({
 }) {
   const { push } = useRouter();
   return (
-    <StyledBox
+    <Box
       cursor={to ? 'pointer' : undefined}
       onClick={
         to
@@ -29,9 +33,12 @@ export function InfoBox({
       minWidth={minWidth}
       h="100%"
       minHeight={minHeight}
+      bg={BACKGROUND_SEMI_TRANSPARENT}
+      p={INFOBOX_PADDING_REM + 'rem'}
+      borderRadius="0.5rem"
       {...rest}
     >
       {children}
-    </StyledBox>
+    </Box>
   );
 }

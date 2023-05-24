@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client';
-import { constants } from 'ethers';
 import { useEffect, useRef } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
@@ -12,16 +11,12 @@ import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
-  // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string>();
+  // load key for component; helps prevent unnecessary calls
+  const loadKey = useRef<string>();
 
   const {
-    node: {
-      daoAddress,
-      nodeHierarchy: { parentAddress },
-    },
+    node: { daoAddress },
     governanceContracts,
-    guardContracts,
     action,
   } = useFractal();
 
@@ -79,17 +74,10 @@ export const useFractalGovernance = () => {
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;
 
-    if (parentAddress && guardContracts.freezeGuardType === null) {
-      return;
-    }
+    const newLoadKey = daoAddress + (azoriusContract ? '1' : '0');
 
-    const newValidAddress =
-      daoAddress && guardContracts.freezeGuardType
-        ? daoAddress + guardContracts.freezeGuardType
-        : constants.AddressZero;
-
-    if (isLoaded && daoAddress && newValidAddress !== currentValidAddress.current) {
-      currentValidAddress.current = newValidAddress;
+    if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
+      loadKey.current = newLoadKey;
 
       loadDAOProposals();
 
@@ -99,15 +87,13 @@ export const useFractalGovernance = () => {
         loadUnderlyingERC20Token();
       }
     } else if (!isLoaded) {
-      currentValidAddress.current = undefined;
+      loadKey.current = undefined;
     }
   }, [
     daoAddress,
-    parentAddress,
     governanceContracts,
     loadDAOProposals,
     loadUnderlyingERC20Token,
-    guardContracts,
     loadAzoriusStrategy,
     loadERC20Token,
   ]);

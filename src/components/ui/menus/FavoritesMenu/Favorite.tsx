@@ -29,14 +29,19 @@ export function Favorite({ address }: IFavorite) {
       onClick={onClickNav}
       data-testid={'favorites-' + daoRegistryName}
     >
-      <StarGoldSolid />
+      <StarGoldSolid
+        color="gold.500"
+        _hover={{
+          color: 'gold.500-hover',
+        }}
+      />
       <Text
         maxWidth="9rem"
         noOfLines={1}
         color="grayscale.100"
         textStyle="text-base-sans-medium"
         _hover={{
-          color: 'gold.500',
+          color: 'gold.500-hover',
         }}
       >
         {daoRegistryName}

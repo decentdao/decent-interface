@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next';
 import BREADCRUMBS_EN from './locales/en/breadcrumbs.json';
 import COMMON_EN from './locales/en/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
+import DAOEDIT_EN from './locales/en/daoEdit.json';
 import DASHBOARD_EN from './locales/en/dashboard.json';
 import HOME_EN from './locales/en/home.json';
 import LANGUAGES_EN from './locales/en/languages.json';
@@ -20,6 +21,7 @@ import TREASURY_EN from './locales/en/treasury.json';
 import BREADCRUMBS_UK from './locales/uk/breadcrumbs.json';
 import COMMON_UK from './locales/uk/common.json';
 import DAOCREATE_UK from './locales/uk/daoCreate.json';
+import DAOEDIT_UK from './locales/uk/daoEdit.json';
 import DASHBOARD_UK from './locales/uk/dashboard.json';
 import HOME_UK from './locales/uk/home.json';
 import LANGUAGES_UK from './locales/uk/languages.json';
@@ -58,6 +60,7 @@ export const supportedLanguages = {
     breadcrumbs: BREADCRUMBS_EN,
     common: COMMON_EN,
     daoCreate: DAOCREATE_EN,
+    daoEdit: DAOEDIT_EN,
     menu: MENU_EN,
     dashboard: DASHBOARD_EN,
     proposalTemplate: PROPOSAL_TEMPLATE_EN,
@@ -75,6 +78,7 @@ export const supportedLanguages = {
     breadcrumbs: BREADCRUMBS_UK,
     common: COMMON_UK,
     daoCreate: DAOCREATE_UK,
+    daoEdit: DAOEDIT_UK,
     menu: MENU_UK,
     dashboard: DASHBOARD_UK,
     proposal: PROPOSAL_UK,

@@ -1,4 +1,5 @@
-import { Box, Divider, RadioGroup } from '@chakra-ui/react';
+import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
@@ -8,8 +9,9 @@ import { StepWrapper } from '../StepWrapper';
 
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
   // @todo update labels for subDAOs
+
   return (
     <StepWrapper
       isSubDAO={isSubDAO}
@@ -62,6 +64,26 @@ export function EstablishEssentials(props: ICreationStepProps) {
           </RadioGroup>
         </LabelComponent>
       </Box>
+      <Divider
+        color="chocolate.700"
+        mb={4}
+      />
+      <LabelComponent
+        label={t('snapshot')}
+        helper={t('snapshotHelper')}
+        isRequired={false}
+      >
+        <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
+          <Input
+            value={values.essentials.snapshotURL}
+            onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
+            isDisabled={false}
+            data-testid="essentials-snapshotURL"
+            placeholder="decent-dao.eth"
+            maxLength={30}
+          />
+        </LabelWrapper>
+      </LabelComponent>
       <Divider
         color="chocolate.700"
         mb={4}

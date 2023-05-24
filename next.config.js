@@ -8,5 +8,5 @@ module.exports = {
   experimental: {
     esmExternals: false,
     appDir: true,
-  }
-}
+  },
+};

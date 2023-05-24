@@ -4,7 +4,7 @@ import { CacheExpiry } from '../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../hooks/utils/cache/useLocalStorage';
 import { Providers } from '../types/network';
 
-const getAverageBlockTime = async (provider: Providers) => {
+export const getAverageBlockTime = async (provider: Providers) => {
   let averageBlockTime: number = getValue('averageBlockTime', provider.network.chainId);
   if (averageBlockTime) {
     return averageBlockTime;
@@ -43,6 +43,22 @@ export const getTimeStamp = async (blockNumber: number | 'latest', provider: Pro
   }
 };
 
+export const blocksToSeconds = async (
+  numOfBlocks: number,
+  provider: Providers
+): Promise<number> => {
+  if (!provider || !numOfBlocks) {
+    return 0;
+  }
+  try {
+    const averageBlockTime = Math.round(await getAverageBlockTime(provider));
+    return averageBlockTime * numOfBlocks;
+  } catch (error) {
+    logError(error);
+    return 0;
+  }
+};
+
 export const getEstimatedNumberOfBlocks = async (
   timeInMinutes: BigNumber,
   provider: Providers
@@ -52,12 +68,13 @@ export const getEstimatedNumberOfBlocks = async (
   }
 
   try {
-    const timeInSecondsNumber = timeInMinutes.toNumber() * 1000;
+    const timeInSecondsNumber = timeInMinutes.toNumber() * 60;
     const averageBlockTime = await getAverageBlockTime(provider);
 
     const blocksToWait = Math.ceil(timeInSecondsNumber / averageBlockTime);
     return BigNumber.from(blocksToWait);
   } catch (error) {
+    // @todo maybe shouldn't return 0 here for error handling
     logError(error);
     return BigNumber.from(0);
   }

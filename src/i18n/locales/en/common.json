@@ -16,6 +16,8 @@
     "view": "View",
     "details": "Details",
     "vote": "Vote",
+    "snapshotVote": "Vote on Snapshot",
+    "snapshot": "Snapshot",
     "send": "Send",
     "transfer": "Transfer",
     "received": "Received",
@@ -36,6 +38,7 @@
     "labelDAOFound": "DAO Found!",
     "labelEtherscan": "View on Etherscan",
     "errorInvalidENSAddress": "Invalid ENS name or address",
+    "errorInvalidENSName": "Invalid ENS name",
     "errorInvalidERC20Address": "Invalid ERC-20 token address",
     "errorInvalidAddress": "Invalid ETH address",
     "errorSentryFallbackTitle": "Oops!",
@@ -87,5 +90,6 @@
     "wrapToken": "Wrap Token",
     "unwrapToken": "Unwrap Token",
     "max": "max",
-    "favoriteTooltip": "Toggle favorite"
+    "favoriteTooltip": "Toggle favorite",
+    "snapshotIconAlt": "Snapshot Icon"
 }

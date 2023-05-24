@@ -8,5 +8,6 @@
     "manageSigners": "Manage Signers",
     "proposalTemplates": "Proposal Templates",
     "proposalTemplate": "{{proposalTemplateTitle}}",
-    "proposalTemplateNew": "New Proposal Template"
+    "proposalTemplateNew": "New Proposal Template",
+    "modifyGovernance": "Modify Governance"
 }

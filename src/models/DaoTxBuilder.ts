@@ -68,6 +68,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     // transactions that must be called by safe
     this.internalTxs = [
       this.buildUpdateDAONameTx(),
+      this.buildUpdateDAOSnapshotURLTx(),
       azoriusTxBuilder.buildLinearVotingContractSetupTx(),
       azoriusTxBuilder.buildEnableAzoriusModuleTx(),
     ];
@@ -111,7 +112,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
     const parentAllocation = (this.daoData as AzoriusGovernanceDAO).parentAllocationAmount;
-    if (this.parentTokenAddress && !parentAllocation.isZero()) {
+    if (this.parentTokenAddress && parentAllocation && !parentAllocation.isZero()) {
       tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
       const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();
       this.internalTxs.push(tokenApprovalTx);
@@ -135,6 +136,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     const multisigTxBuilder = this.txBuilderFactory.createMultiSigTxBuilder();
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
+    this.internalTxs.push(this.buildUpdateDAOSnapshotURLTx());
 
     // subDAO case, add freeze guard
     if (this.parentAddress) {
@@ -192,6 +194,16 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.baseContracts.fractalRegistryContract,
       'updateDAOName',
       [this.daoData.daoName],
+      0,
+      false
+    );
+  }
+
+  private buildUpdateDAOSnapshotURLTx(): SafeTransaction {
+    return buildContractCall(
+      this.baseContracts.keyValuePairsContract,
+      'updateValues',
+      [['snapshotURL'], [this.daoData.snapshotURL]],
       0,
       false
     );
