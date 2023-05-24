@@ -75,7 +75,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
       >
         <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
           <Input
-            id="searchEssentials-snapshotURL"
             value={values.essentials.snapshotURL}
             onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
             isDisabled={false}
