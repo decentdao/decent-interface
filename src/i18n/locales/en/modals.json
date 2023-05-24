@@ -18,7 +18,7 @@
   "sendAssetsSuccessToastMessage": "Send assets proposal successfully created",
   "sendAssetsFailureToastMessage": "Send assets proposal failed",
   "confirmUrlTitle": "This link will take you to",
-  "confirmUrlSubtitle": "Do you want to continue?",
+  "confirmAction": "Do you want to continue?",
   "modalContinue": "Continue",
   "modalCancel": "Cancel",
   "addSignerTitle": "Add Signer",
@@ -58,5 +58,7 @@
   "unwrapTokenSuccessMessage": "Tokens unwrapped",
   "unwrapTokenError": "Invalid amount",
   "unwrapTokenButton": "Unwrap",
-  "updateSignersTooltip": "The number of signers required to pass future proposals"
+  "updateSignersTooltip": "The number of signers required to pass future proposals",
+  "confirmModifyGovernanceTitle": "Heads up this is a big deal!",
+  "confirmModifyGovernanceDescription": "Modifying your DAO’s governance will change a lot of things that you should be aware of before you proceed"
 }
