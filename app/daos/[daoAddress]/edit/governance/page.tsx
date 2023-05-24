@@ -3,15 +3,16 @@
 import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
+import DaoCreator from '../../../../../src/components/DaoCreator';
 import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import { GovernanceModuleType } from '../../../../../src/types';
+import { GovernanceModuleType, DAOTrigger } from '../../../../../src/types';
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoName, daoSnapshotURL },
     governance: { type },
     readOnly: { user },
   } = useFractal();
@@ -19,6 +20,10 @@ export default function ModifyGovernancePage() {
   const { push } = useRouter();
   const isMultisig = type === GovernanceModuleType.MULTISIG;
   const isSigner = user.address && safe?.owners.includes(user.address);
+
+  const handleDeployDAO: DAOTrigger = daoData => {
+    console.log(daoData);
+  };
 
   return (
     <Box>
@@ -36,7 +41,11 @@ export default function ModifyGovernancePage() {
         ]}
       />
       {isMultisig && isSigner ? (
-        <Box>TODO: Put DAO creator form</Box>
+        <DaoCreator
+          pending={false}
+          mode="edit"
+          deployDAO={handleDeployDAO}
+        />
       ) : (
         <EmptyBox emptyText={t('cannotModifyGovernance')} />
       )}
