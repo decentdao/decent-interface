@@ -21,28 +21,35 @@ export default function FeaturedDAOCard({
   const { t } = useTranslation('home');
   return (
     <Box {...rest}>
-      <StyledBox height="full">
-        <HStack paddingBottom="1rem">
-          <Image
-            width="1.5rem"
-            height="1.5rem"
-            src={iconSrc}
-            alt={title}
-          />
+      <StyledBox
+        height="full"
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+      >
+        <Box>
+          <HStack paddingBottom="1rem">
+            <Image
+              width="1.5rem"
+              height="1.5rem"
+              src={iconSrc}
+              alt={title}
+            />
+            <Text
+              color="grayscale.100"
+              textStyle="text-lg-mono-bold"
+              paddingStart="1.25rem"
+            >
+              {title}
+            </Text>
+          </HStack>
           <Text
-            color="grayscale.100"
-            textStyle="text-lg-mono-bold"
-            paddingStart="1.25rem"
+            marginBottom="0.5rem"
+            color="grayscale.500"
           >
-            {title}
+            {desc}
           </Text>
-        </HStack>
-        <Text
-          marginBottom="0.5rem"
-          color="grayscale.500"
-        >
-          {desc}
-        </Text>
+        </Box>
         <Flex>
           <Spacer />
           <ExternalLink
