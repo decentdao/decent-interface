@@ -41,7 +41,7 @@ export function ActivityCard({
             {Badge}
             {isSnapshot && (
               <Image
-                src="/images/snapshot-icon.svg"
+                src="/images/snapshot-icon-fill.svg"
                 alt={t('snapshotIconAlt')}
                 ml={1}
               />
