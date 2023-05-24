@@ -12,8 +12,8 @@ import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
-  // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string>();
+  // load key for component; helps prevent unnecessary calls
+  const loadKey = useRef<string>();
 
   const {
     node: {
@@ -78,18 +78,19 @@ export const useFractalGovernance = () => {
 
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;
-
-    if (parentAddress && guardContracts.freezeGuardType === null) {
+    if (!isLoaded || guardContracts.freezeVotingType === null) {
       return;
     }
 
-    const newValidAddress =
-      daoAddress && guardContracts.freezeGuardType
-        ? daoAddress + guardContracts.freezeGuardType
-        : constants.AddressZero;
+    const parentAddressKey = parentAddress || constants.AddressZero;
+    const freezeContractAddressKey =
+      guardContracts.freezeGuardContract?.asProvider.address || constants.AddressZero;
 
-    if (isLoaded && daoAddress && newValidAddress !== currentValidAddress.current) {
-      currentValidAddress.current = newValidAddress;
+    const newLoadKey =
+      daoAddress + parentAddressKey + freezeContractAddressKey + (azoriusContract ? '1' : '0');
+
+    if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
+      loadKey.current = newLoadKey;
 
       loadDAOProposals();
 
@@ -99,7 +100,7 @@ export const useFractalGovernance = () => {
         loadUnderlyingERC20Token();
       }
     } else if (!isLoaded) {
-      currentValidAddress.current = undefined;
+      loadKey.current = undefined;
     }
   }, [
     daoAddress,

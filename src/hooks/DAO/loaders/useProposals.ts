@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import { GovernanceModuleType } from '../../../types';
@@ -21,13 +22,17 @@ export const useDAOProposals = () => {
 
     if (!!azoriusContract) {
       // load Azorius proposals and strategies
-      action.dispatch({
-        type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: {
-          type: GovernanceModuleType.AZORIUS,
-          proposals: await loadAzoriusProposals(),
-        },
-      });
+      try {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSALS,
+          payload: {
+            type: GovernanceModuleType.AZORIUS,
+            proposals: await loadAzoriusProposals(),
+          },
+        });
+      } catch (e) {
+        logError(e);
+      }
     } else {
       // load mulisig proposals
       setMethodOnInterval(loadSafeMultisigProposals);
