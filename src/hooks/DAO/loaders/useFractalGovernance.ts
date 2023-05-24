@@ -1,5 +1,4 @@
 import { useQuery } from '@apollo/client';
-import { constants } from 'ethers';
 import { useEffect, useRef } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
@@ -16,12 +15,8 @@ export const useFractalGovernance = () => {
   const loadKey = useRef<string>();
 
   const {
-    node: {
-      daoAddress,
-      nodeHierarchy: { parentAddress },
-    },
+    node: { daoAddress },
     governanceContracts,
-    guardContracts,
     action,
   } = useFractal();
 
@@ -78,16 +73,8 @@ export const useFractalGovernance = () => {
 
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;
-    if (!isLoaded || guardContracts.freezeVotingType === null) {
-      return;
-    }
 
-    const parentAddressKey = parentAddress || constants.AddressZero;
-    const freezeContractAddressKey =
-      guardContracts.freezeGuardContract?.asProvider.address || constants.AddressZero;
-
-    const newLoadKey =
-      daoAddress + parentAddressKey + freezeContractAddressKey + (azoriusContract ? '1' : '0');
+    const newLoadKey = daoAddress + (azoriusContract ? '1' : '0');
 
     if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
@@ -104,11 +91,9 @@ export const useFractalGovernance = () => {
     }
   }, [
     daoAddress,
-    parentAddress,
     governanceContracts,
     loadDAOProposals,
     loadUnderlyingERC20Token,
-    guardContracts,
     loadAzoriusStrategy,
     loadERC20Token,
   ]);
