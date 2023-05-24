@@ -13,6 +13,7 @@ import {
   VotesERC20,
   MultisigFreezeGuard,
   VotesERC20Wrapper,
+  KeyValuePairs,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
   SafeMultisigTransactionWithTransfersResponse,
@@ -34,7 +35,12 @@ import { VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
-import { ProposalMetaData, MultisigProposal, AzoriusProposal } from './daoProposal';
+import {
+  ProposalMetaData,
+  MultisigProposal,
+  AzoriusProposal,
+  SnapshotProposal,
+} from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BNFormattedPair } from './votingFungibleToken';
@@ -126,6 +132,12 @@ export enum FractalProposalState {
    * Third party Safe module transactions only.
    */
   MODULE = 'stateModule',
+
+  // Pending proposal state specific to Snapshot proposals
+  PENDING = 'statePending',
+
+  // Closed is proposal state specific to Snapshot proposals
+  CLOSED = 'stateClosed',
 }
 
 export interface IGnosisFreezeGuard {
@@ -153,7 +165,7 @@ export interface ActivityBase {
   transactionHash?: string | null;
 }
 
-export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal;
+export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;
 
 export type ActivityTransactionType =
   | SafeMultisigTransactionWithTransfersResponse
@@ -235,6 +247,7 @@ export interface FractalNode {
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
+  daoSnapshotURL?: string;
 }
 
 export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded'> {}
@@ -322,9 +335,10 @@ export interface FractalContracts {
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
   votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;
+  keyValuePairsContract: ContractConnection<KeyValuePairs>;
 }
 
-export type FractalProposal = AzoriusProposal | MultisigProposal;
+export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
 
 /**
  * Immutable state generally calculated from other stateful objects.

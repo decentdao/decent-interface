@@ -12,6 +12,7 @@ import {
   ERC20FreezeVoting,
   VotesERC20,
   ERC20Claim,
+  KeyValuePairs,
 } from '@fractal-framework/fractal-contracts';
 import { MultiSend } from '../assets/typechain-types/usul';
 
@@ -39,6 +40,7 @@ export interface DAOContracts {
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
+  keyValuePairsContract: ContractConnection<KeyValuePairs>;
 }
 
 export interface BaseContracts {
@@ -51,4 +53,5 @@ export interface BaseContracts {
   freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;
   freezeMultisigVotingMasterCopyContract: MultisigFreezeVoting;
   zodiacModuleProxyFactoryContract: ModuleProxyFactory;
+  keyValuePairsContract: KeyValuePairs;
 }

@@ -67,7 +67,7 @@ export const useFractalNode = ({
     const { daos } = result.data;
     const dao = daos[0];
     if (dao) {
-      const { parentAddress, name, hierarchy } = dao;
+      const { parentAddress, name, hierarchy, snapshotURL } = dao;
 
       const currentNode: Node = {
         nodeHierarchy: {
@@ -76,6 +76,7 @@ export const useFractalNode = ({
         },
         daoName: name as string,
         daoAddress: utils.getAddress(_daoAddress as string),
+        daoSnapshotURL: snapshotURL as string,
       };
       return currentNode;
     }
