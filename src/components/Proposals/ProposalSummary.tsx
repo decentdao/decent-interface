@@ -65,7 +65,7 @@ export default function ProposalSummary({
         />
         <InfoRow
           property={t('proposalSummaryEndDate')}
-          value={format(deadline * 1000, DEFAULT_DATE_TIME_FORMAT)}
+          value={format(deadline, DEFAULT_DATE_TIME_FORMAT)}
         />
         <Flex
           marginTop={4}

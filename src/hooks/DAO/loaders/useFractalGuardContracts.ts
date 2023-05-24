@@ -17,10 +17,10 @@ import {
 } from '../../../types';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
-  // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string>();
+  // load key for component; helps prevent unnecessary calls
+  const loadKey = useRef<string>();
   const {
-    node: { daoAddress, safe, fractalModules },
+    node: { daoAddress, safe, fractalModules, isModulesLoaded },
     baseContracts: {
       zodiacModuleProxyFactoryContract,
       freezeERC20VotingMasterCopyContract,
@@ -134,10 +134,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
-    if (daoAddress && daoAddress !== currentValidAddress.current && loadOnMount) {
-      currentValidAddress.current = daoAddress;
+    if (daoAddress && daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
+      loadKey.current = daoAddress;
       setGuardContracts();
     }
-  }, [setGuardContracts, daoAddress, loadOnMount]);
+  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount]);
   return loadFractalGuardContracts;
 };

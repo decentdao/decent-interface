@@ -9,7 +9,7 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { getTimeStamp } from '../../../../utils/contract';
+import { blocksToSeconds } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useAzoriusStrategy = () => {
@@ -27,17 +27,18 @@ export const useAzoriusStrategy = () => {
     if (!ozLinearVotingContract || !azoriusContract) {
       return {};
     }
-    const [votingPeriod, quorumPercentage, timeLockPeriod] = await Promise.all([
+    const [votingPeriodBlocks, quorumPercentage, timeLockPeriod] = await Promise.all([
       ozLinearVotingContract.asSigner.votingPeriod(),
       ozLinearVotingContract.asSigner.quorumNumerator(),
       azoriusContract.asSigner.timelockPeriod(),
     ]);
-    const votingPeriodValue = await getTimeStamp(votingPeriod, provider);
-    const timeLockPeriodValue = await getTimeStamp(timeLockPeriod, provider);
+
+    const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
+    const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
     const votingData = {
       votingPeriod: {
         value: BigNumber.from(votingPeriodValue),
-        formatted: getTimeDuration(votingPeriod.toString()),
+        formatted: getTimeDuration(votingPeriodValue),
       },
       quorumPercentage: {
         value: quorumPercentage,
@@ -45,7 +46,7 @@ export const useAzoriusStrategy = () => {
       },
       timeLockPeriod: {
         value: BigNumber.from(timeLockPeriodValue),
-        formatted: getTimeDuration(timeLockPeriod.toString()),
+        formatted: getTimeDuration(timeLockPeriodValue),
       },
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
