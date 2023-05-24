@@ -1,5 +1,6 @@
 import { Box, Flex, HStack, Text, Image } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityBox } from '../ui/containers/ActivityBox';
 
 interface IActivityCard {
@@ -21,6 +22,8 @@ export function ActivityCard({
   boxBorderColor,
   isSnapshot,
 }: IActivityCard) {
+  const { t } = useTranslation('common');
+
   return (
     <ActivityBox borderColor={boxBorderColor}>
       <HStack
@@ -39,7 +42,7 @@ export function ActivityCard({
             {isSnapshot && (
               <Image
                 src="/images/snapshot-icon.svg"
-                alt="snapshot icon"
+                alt={t('snapshotIconAlt')}
                 ml={1}
               />
             )}

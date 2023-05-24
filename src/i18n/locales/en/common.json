@@ -90,5 +90,6 @@
     "wrapToken": "Wrap Token",
     "unwrapToken": "Unwrap Token",
     "max": "max",
-    "favoriteTooltip": "Toggle favorite"
+    "favoriteTooltip": "Toggle favorite",
+    "snapshotIconAlt": "Snapshot Icon"
 }
