@@ -34,6 +34,7 @@ export interface CreatorFormState<T = BigNumberValuePair> {
 export type DAOEssentials = {
   daoName: string;
   governance: GovernanceModuleType;
+  snapshotURL: string;
 };
 
 export type DAOGovenorToken<T = BigNumber> = {
