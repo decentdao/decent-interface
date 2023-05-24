@@ -8,7 +8,7 @@ import { AddressValidationMap } from '../../../types';
 import { Providers } from '../../../types/network';
 
 export async function validateENSName({ ensName }: { ensName: string }) {
-  if (!!ensName && ensName.trim() && ensName.endsWith('.eth') && ensName.length >= 7) {
+  if (!!ensName && ensName.trim() && ensName.endsWith('.eth') && [...ensName].length >= 7) {
     return {
       validation: {
         address: '',
