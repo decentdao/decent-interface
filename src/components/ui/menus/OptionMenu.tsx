@@ -69,6 +69,7 @@ export function OptionMenu({
             event.stopPropagation();
           }}
           {...buttonProps}
+          _hover={{ color: 'gold.500-hover' }}
         >
           {trigger}
         </MenuButton>
