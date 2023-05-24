@@ -10,6 +10,7 @@ import {
   AzoriusProposal,
   FractalProposalState,
   MultisigProposal,
+  SnapshotProposal,
 } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import ProposalTime from '../../ui/proposal/ProposalTime';
@@ -47,12 +48,13 @@ export function ProposalAction({
   expandedView?: boolean;
 }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoSnapshotURL },
     readOnly: { user },
   } = useFractal();
   const { push } = useRouter();
   const { t } = useTranslation();
   const isAzoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
+  const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
   const showActionButton =
     proposal.state === FractalProposalState.ACTIVE ||
@@ -61,18 +63,29 @@ export function ProposalAction({
     proposal.state === FractalProposalState.TIMELOCKED;
 
   const handleClick = () => {
-    push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
+    if (isSnapshotProposal) {
+      window.open(
+        `https://snapshot.org/#/${daoSnapshotURL}/proposal/${
+          (proposal as SnapshotProposal).snapshotProposalId
+        }`
+      );
+    } else {
+      push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
+    }
   };
 
   const hasVoted = useMemo(() => {
     if (isAzoriusProposal) {
       const azoriusProposal = proposal as AzoriusProposal;
       return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
+    } else if (isSnapshotProposal) {
+      // Snapshot proposals not tracking votes
+      return false;
     } else {
       const safeProposal = proposal as MultisigProposal;
       return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [isAzoriusProposal, proposal, user.address]);
+  }, [isAzoriusProposal, isSnapshotProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -89,6 +102,10 @@ export function ProposalAction({
   }, [proposal]);
 
   const label = useMemo(() => {
+    if (isSnapshotProposal) {
+      return t('snapshotVote');
+    }
+
     if (proposal.state === FractalProposalState.ACTIVE) {
       if (hasVoted) {
         return t('details');
@@ -96,7 +113,7 @@ export function ProposalAction({
       return t(isAzoriusProposal ? 'vote' : 'sign');
     }
     return t('details');
-  }, [proposal, t, isAzoriusProposal, hasVoted]);
+  }, [isSnapshotProposal, proposal.state, t, hasVoted, isAzoriusProposal]);
 
   if (!showActionButton) {
     if (!expandedView) {

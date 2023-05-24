@@ -18,6 +18,8 @@ const FILTERS_AZORIUS = [
 
   FractalProposalState.FAILED,
   FractalProposalState.EXPIRED,
+  FractalProposalState.CLOSED,
+  FractalProposalState.PENDING,
 ];
 
 const FILTERS_MULTISIG_BASE = [
@@ -26,6 +28,8 @@ const FILTERS_MULTISIG_BASE = [
   FractalProposalState.EXECUTED,
 
   FractalProposalState.REJECTED,
+  FractalProposalState.CLOSED,
+  FractalProposalState.PENDING,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
@@ -37,6 +41,8 @@ const FILTERS_MULTISIG_CHILD = [
 
   FractalProposalState.REJECTED,
   FractalProposalState.EXPIRED,
+  FractalProposalState.CLOSED,
+  FractalProposalState.PENDING,
 ];
 
 export default function Proposals() {

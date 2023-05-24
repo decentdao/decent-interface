@@ -12,6 +12,8 @@ import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGuardContracts, FreezeGuard, GovernanceModuleType } from '../../../../types';
+import { ModalType } from '../../modals/ModalProvider';
+import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -52,6 +54,8 @@ export function ManageDAOMenu({
     [push, safeAddress]
   );
 
+  const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
+
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
@@ -67,6 +71,22 @@ export function ManageDAOMenu({
       optionKey: 'optionViewSigners',
       onClick: handleNavigateToManageSigners,
     };
+
+    const freezeOption = {
+      optionKey: 'optionInitiateFreeze',
+      onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
+    };
+
+    const clawBackOption = {
+      optionKey: 'optionInitiateClawback',
+      onClick: handleClawBack,
+    };
+
+    const modifyGovernanceOption = {
+      optionKey: 'optionModifyGovernance',
+      onClick: handleModifyGovernance,
+    };
+
     if (
       freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
@@ -84,12 +104,8 @@ export function ManageDAOMenu({
       ) &&
       freezeGuard.userHasVotes
     ) {
-      const freezeOption = {
-        optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
-      };
       if (type === GovernanceModuleType.MULTISIG) {
-        return [createSubDAOOption, manageSignersOption, freezeOption];
+        return [createSubDAOOption, manageSignersOption, freezeOption, modifyGovernanceOption];
       } else {
         return [createSubDAOOption, freezeOption];
       }
@@ -105,15 +121,10 @@ export function ManageDAOMenu({
       freezeGuard.isFrozen &&
       freezeGuard.userHasVotes
     ) {
-      const clawBackOption = {
-        optionKey: 'optionInitiateClawback',
-        onClick: handleClawBack,
-      };
-
       return [clawBackOption];
     } else {
       if (type === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
-        return [createSubDAOOption, manageSignersOption];
+        return [createSubDAOOption, manageSignersOption, modifyGovernanceOption];
       } else if (type === GovernanceModuleType.MULTISIG) {
         return [viewSignersOption];
       } else {
@@ -130,6 +141,7 @@ export function ManageDAOMenu({
     handleClawBack,
     canUserCreateProposal,
     handleNavigateToManageSigners,
+    handleModifyGovernance,
   ]);
 
   return (

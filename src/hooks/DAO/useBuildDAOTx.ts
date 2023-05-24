@@ -32,6 +32,7 @@ const useBuildDAOTx = () => {
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
+      keyValuePairsContract,
     },
     readOnly: { user },
   } = useFractal();
@@ -57,7 +58,8 @@ const useBuildDAOTx = () => {
         !gnosisSafeFactoryContract ||
         !gnosisSafeSingletonContract ||
         !claimingMasterCopyContract ||
-        !votesERC20WrapperMasterCopyContract
+        !votesERC20WrapperMasterCopyContract ||
+        !keyValuePairsContract
       ) {
         return;
       }
@@ -93,6 +95,7 @@ const useBuildDAOTx = () => {
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
+        keyValuePairsContract: keyValuePairsContract.asSigner,
       } as BaseContracts;
 
       const txBuilderFactory = new TxBuilderFactory(
@@ -132,11 +135,12 @@ const useBuildDAOTx = () => {
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
       claimingMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
+      keyValuePairsContract,
       fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
     ]
   );
 
