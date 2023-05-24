@@ -44,6 +44,7 @@ export function OptionMenu({
           onClick={(event: MouseEvent<HTMLButtonElement>) => {
             event.stopPropagation();
           }}
+          _hover={{ color: 'gold.500-hover' }}
           {...buttonProps}
         >
           {trigger}
