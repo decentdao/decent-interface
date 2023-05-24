@@ -7,6 +7,7 @@ export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
     governance: GovernanceModuleType.MULTISIG,
+    snapshotURL: '',
   },
   token: {
     tokenCreationType: TokenCreationType.NEW,
