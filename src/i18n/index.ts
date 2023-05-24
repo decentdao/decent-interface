@@ -20,6 +20,7 @@ import TREASURY_EN from './locales/en/treasury.json';
 import BREADCRUMBS_UK from './locales/uk/breadcrumbs.json';
 import COMMON_UK from './locales/uk/common.json';
 import DAOCREATE_UK from './locales/uk/daoCreate.json';
+import DAOEDIT_UK from './locales/uk/daoEdit.json';
 import DASHBOARD_UK from './locales/uk/dashboard.json';
 import LANGUAGES_UK from './locales/uk/languages.json';
 import MENU_UK from './locales/uk/menu.json';
@@ -74,6 +75,7 @@ export const supportedLanguages = {
     breadcrumbs: BREADCRUMBS_UK,
     common: COMMON_UK,
     daoCreate: DAOCREATE_UK,
+    daoEdit: DAOEDIT_UK,
     menu: MENU_UK,
     dashboard: DASHBOARD_UK,
     proposal: PROPOSAL_UK,

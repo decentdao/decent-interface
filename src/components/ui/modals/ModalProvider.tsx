@@ -131,6 +131,8 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         );
         break;
       case ModalType.CONFIRM_MODIFY_GOVERNANCE:
+        wa = true;
+        ti = t('confirmModifyGovernanceTitle');
         co = <ConfirmModifyGovernanceModal close={cl} />;
         break;
       case ModalType.NONE:

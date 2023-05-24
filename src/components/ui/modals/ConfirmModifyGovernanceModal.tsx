@@ -1,5 +1,4 @@
-import { Box, Flex, Button, Divider, Text } from '@chakra-ui/react';
-import { Alert } from '@decent-org/fractal-ui';
+import { Box, Button, Divider, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../constants/routes';
@@ -13,20 +12,6 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
 
   return (
     <Box>
-      <Flex>
-        <Alert marginRight="1rem" />
-        <Text
-          marginBottom="1rem"
-          color="grayscale.100"
-          textStyle="text-xl-mono-medium"
-        >
-          {t('confirmModifyGovernanceTitle')}
-        </Text>
-      </Flex>
-      <Divider
-        color="chocolate.700"
-        marginBottom="1rem"
-      />
       <Text
         marginBottom="1rem"
         textStyle="text-base-sans-regular"
