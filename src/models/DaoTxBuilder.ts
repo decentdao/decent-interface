@@ -111,7 +111,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
     const parentAllocation = (this.daoData as AzoriusGovernanceDAO).parentAllocationAmount;
-    if (this.parentTokenAddress && !parentAllocation.isZero()) {
+    if (this.parentTokenAddress && parentAllocation && !parentAllocation.isZero()) {
       tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
       const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();
       this.internalTxs.push(tokenApprovalTx);
