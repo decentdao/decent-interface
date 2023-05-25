@@ -7,7 +7,7 @@ import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';
 import { midnightTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import 'i18next';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { WagmiConfig } from 'wagmi';
@@ -16,15 +16,15 @@ import Layout from '../src/components/ui/page/Layout';
 import { ErrorFallback } from '../src/components/ui/utils/ErrorFallback';
 import { APP_NAME } from '../src/constants/common';
 import graphQLClient from '../src/graphql';
-import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogging';
+import { FractalErrorBoundary } from '../src/helpers/errorLogging';
 import { AppProvider } from '../src/providers/App/AppProvider';
 import { NetworkConfigProvider } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 import { chains, wagmiClient } from '../src/providers/NetworkConfig/rainbow-kit.config';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    initErrorLogging();
-  }, []);
+  // useEffect(() => {
+  //   initErrorLogging();
+  // }, []);
 
   return (
     <html>
