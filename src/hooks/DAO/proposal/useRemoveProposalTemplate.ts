@@ -26,7 +26,7 @@ export default function useRemoveProposalTemplate() {
           (_, index: number) => index !== templateIndex
         );
 
-        const { cid } = await client.add(JSON.stringify(updatedTemplatesList));
+        const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
 
         const proposal: ProposalExecuteData = {
           ...proposalMetadata,
@@ -35,7 +35,7 @@ export default function useRemoveProposalTemplate() {
           calldatas: [
             keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
               ['proposalTemplates'],
-              [`${cid}`], // Force conversion to string
+              [`${Hash}`], // Force conversion to string
             ]),
           ],
         };

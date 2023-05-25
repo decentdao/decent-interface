@@ -53,7 +53,7 @@ export default function useCreateProposalTemplate() {
 
         const updatedTemplatesList = [...proposalTemplates, proposalTemplateData];
 
-        const { cid } = await client.add(JSON.stringify(updatedTemplatesList));
+        const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
 
         const proposal: ProposalExecuteData = {
           ...proposalMetadata,
@@ -62,7 +62,7 @@ export default function useCreateProposalTemplate() {
           calldatas: [
             keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
               ['proposalTemplates'],
-              [`${cid}`], // Force conversion to string
+              [`${Hash}`], // Force conversion to string
             ]),
           ],
         };
