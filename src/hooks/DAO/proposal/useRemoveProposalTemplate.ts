@@ -35,7 +35,7 @@ export default function useRemoveProposalTemplate() {
           calldatas: [
             keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
               ['proposalTemplates'],
-              [`${Hash}`], // Force conversion to string
+              [Hash],
             ]),
           ],
         };

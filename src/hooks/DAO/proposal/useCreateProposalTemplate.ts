@@ -62,7 +62,7 @@ export default function useCreateProposalTemplate() {
           calldatas: [
             keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
               ['proposalTemplates'],
-              [`${Hash}`], // Force conversion to string
+              [Hash],
             ]),
           ],
         };
