@@ -13,15 +13,13 @@ export default function DaoPageLayout({
   children: ReactNode;
   params: { daoAddress?: string };
 }) {
-  const {
-    node: { daoName },
-  } = useFractal();
+  const { node } = useFractal();
   // TODO: We could move PageHeader here as well - but that will require breadcrumbs logic refactoring
   useDAOController({ daoAddress });
 
   return (
     <ClientOnly>
-      <title>{daoName ? `${daoName} | ${APP_NAME}` : APP_NAME}</title>
+      <title>{node?.daoName ? `${node.daoName} | ${APP_NAME}` : APP_NAME}</title>
       {children}
     </ClientOnly>
   );
