@@ -12,12 +12,12 @@ import {
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { ContractConnection, FractalGuardContracts, FreezeVotingType } from '../../../types';
-import { getTimeStamp } from '../../../utils/contract';
+import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
 import { FreezeGuard } from './../../../types/fractal';
 
 export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
-  // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string>();
+  // load key for component; helps prevent unnecessary calls
+  const loadKey = useRef<string>();
   const isFreezeSet = useRef(false);
 
   const {
@@ -49,9 +49,11 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
       const freezeProposalVoteCount =
         await freezeVotingContract!.asSigner.freezeProposalVoteCount();
       const freezeProposalBlock = await freezeVotingContract!.asSigner.freezeProposalPeriod();
-      const freezeProposalPeriod = await getTimeStamp(freezeProposalBlock, provider);
+      // length of time to vote on freeze
+      const freezeProposalPeriod = await blocksToSeconds(freezeProposalBlock, provider);
       const freezePeriodBlock = await freezeVotingContract!.asSigner.freezePeriod();
-      const freezePeriod = await getTimeStamp(freezePeriodBlock, provider);
+      // length of time frozen for in seconds
+      const freezePeriod = await blocksToSeconds(freezePeriodBlock, provider);
 
       const userHasFreezeVoted = await freezeVotingContract!.asSigner.userHasFreezeVoted(
         account || constants.AddressZero,
@@ -124,10 +126,10 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     if (
       !!guardContracts.freezeVotingType &&
       !!guardContracts.freezeVotingContract &&
-      guardContracts.freezeVotingContract.asSigner.address !== currentValidAddress.current &&
+      guardContracts.freezeVotingContract.asSigner.address !== loadKey.current &&
       loadOnMount
     ) {
-      currentValidAddress.current = guardContracts.freezeVotingContract.asSigner.address;
+      loadKey.current = guardContracts.freezeVotingContract.asSigner.address;
       setFractalFreezeGuard(guardContracts);
     }
   }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
