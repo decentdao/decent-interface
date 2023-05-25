@@ -75,7 +75,11 @@ export default function HomePage() {
           <Text
             alignSelf="center"
             paddingBottom="1.5rem"
-            textStyle={{ md: 'text-6xl-mono-regular', sm: 'text-4xl-mono-regular' }}
+            textStyle={{
+              base: 'text-2xl-mono-regular',
+              sm: 'text-4xl-mono-regular',
+              md: 'text-6xl-mono-regular',
+            }}
             color="grayscale.100"
           >
             {t('homeTitle')}
