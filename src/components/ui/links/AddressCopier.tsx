@@ -24,13 +24,16 @@ export default function AddressCopier({ address, ...rest }: Props) {
       cursor="pointer"
       w="fit-content"
       color="grayscale.100"
-      _hover={{ color: 'gold.500-hover' }}
       {...rest}
     >
-      <EtherscanLinkAddress address={address}>
+      <EtherscanLinkAddress
+        address={address}
+        color="grayscale.100"
+      >
         <Text textStyle="text-base-mono-regular">{accountSubstring}</Text>
       </EtherscanLinkAddress>
       <Copy
+        _hover={{ color: 'gold.500-hover' }}
         boxSize="1.5rem"
         fill="currentColor"
       />

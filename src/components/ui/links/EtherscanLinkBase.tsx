@@ -1,5 +1,6 @@
-import { Link, LinkProps, Tooltip } from '@chakra-ui/react';
+import { LinkProps, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import ExternalLink from './ExternalLink';
 
 /**
  * The default link function for Etherscan links.
@@ -9,18 +10,13 @@ import { useTranslation } from 'react-i18next';
 export default function EtherscanBase({ children, ...rest }: LinkProps) {
   const { t } = useTranslation();
   return (
-    <Link
-      target="_blank"
-      rel="noreferrer"
-      _hover={{ color: 'gold.500-hover', textDecoration: 'none' }}
-      {...rest}
-    >
+    <ExternalLink {...rest}>
       <Tooltip
         label={t('etherscanTip')}
         placement="bottom"
       >
         {children}
       </Tooltip>
-    </Link>
+    </ExternalLink>
   );
 }
