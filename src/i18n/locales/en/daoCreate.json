@@ -1,9 +1,5 @@
 {
-    "homeTitleDisconnected": "Welcome to Fractal",
-    "homeSubTitleDisconnected": "Connect your wallet to get started",
-    "homeSubTitleConnected": "Find your Fractal or create a new one",
-    "homeButtonConnect": "Connect your wallet",
-    "homeButtonCreate": "Create a Fractal",
+    "buttonCreate": "Create a Fractal",
     "labelCreateSubDAOProposal": "Create a subDAO",
     "errorLowSignerThreshold": "Threshold must be greater than 0",
     "errorHighSignerThreshold": "Threshold is too high",

@@ -3,8 +3,8 @@
 import { Flex, Box, Text, HStack } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation, TFunction } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { StyledBox } from '../../ui/containers/StyledBox';
 import { DisplayAddress } from '../../ui/links/DisplayAddress';
 
 enum ModuleType {
@@ -33,13 +33,10 @@ function ModulesContainer({
   t: TFunction<'settings'[]>;
 }) {
   return (
-    <Box
+    <StyledBox
       maxHeight="fit-content"
       minHeight="6.25rem"
-      bg={BACKGROUND_SEMI_TRANSPARENT}
-      p="1rem"
       mt="12"
-      borderRadius="0.5rem"
     >
       <HStack marginBottom="0.5rem">
         <Flex
@@ -62,7 +59,7 @@ function ModulesContainer({
           )}
         </Flex>
       </HStack>
-    </Box>
+    </StyledBox>
   );
 }
 
