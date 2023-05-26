@@ -35,7 +35,7 @@ export function NavigationLink({
     return {
       color: isActive ? 'gold.500' : 'inherit',
       _hover: {
-        color: 'gold.500-hover',
+        color: isActive ? 'gold.500-hover' : 'inherit',
       },
     };
   }, [isActive]);
@@ -54,17 +54,10 @@ export function NavigationLink({
           gap={8}
           justifyContent="space-between"
           alignItems="center"
-          {...activeColors()}
         >
           <Icon
             boxSize="1.5rem"
-            sx={{
-              'g path': {
-                transitionProperty: 'all',
-                transitionDuration: '300ms',
-                transitionTimingFunction: 'easy-out',
-              },
-            }}
+            {...activeColors()}
           />
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>

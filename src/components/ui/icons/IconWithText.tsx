@@ -15,9 +15,8 @@ export default function IconWithText({ icon, label, url, testid }: IconWithTextP
       data-testid={testid}
       href={url}
       target="_blank"
-      color="black"
     >
-      <HStack _hover={{ color: 'gold.500-hover' }}>
+      <HStack>
         {icon}
         <Text
           textStyle="text-button-md-semibold"

@@ -9,7 +9,6 @@ export default function DisplayTransaction({ txHash }: { txHash: string }) {
     <EtherscanLinkTransaction txHash={txHash}>
       <HStack
         color="gold.500"
-        _hover={{ color: 'gold.500-hover' }}
         textStyle="text-base-sm-regular"
       >
         <Text>{displayName}</Text>

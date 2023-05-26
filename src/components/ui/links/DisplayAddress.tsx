@@ -15,7 +15,6 @@ export function DisplayAddress({
     <EtherscanLinkAddress address={address}>
       <HStack
         color="gold.500"
-        _hover={{ color: 'gold.500-hover' }}
         textStyle="text-base-sm-regular"
       >
         <Text>{displayAddress.displayName}</Text>

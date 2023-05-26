@@ -20,10 +20,7 @@ export function FavoritesMenu() {
             }}
           >
             <Flex alignItems="center">
-              <StarGoldSolid
-                boxSize="1.5rem"
-                fill="currentColor"
-              />
+              <StarGoldSolid boxSize="1.5rem" />
               <Show above="md">
                 <Text
                   mx="0.5rem"
