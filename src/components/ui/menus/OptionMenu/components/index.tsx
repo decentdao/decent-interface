@@ -45,7 +45,6 @@ export default function OptionsList({
             cursor="pointer"
             textStyle="text-base-mono-medium"
             color="grayscale.100"
-            _hover={{ color: 'gold.200', textDecoration: 'none' }}
             paddingStart="0rem"
             paddingEnd="0rem"
             gap={2}

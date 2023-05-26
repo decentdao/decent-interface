@@ -25,9 +25,6 @@ export function MenuItemButton({
         onClick={onClick}
         border="1px solid"
         borderColor="chocolate.700"
-        _hover={{
-          color: 'gold.500-hover',
-        }}
       >
         <Flex
           alignItems="center"

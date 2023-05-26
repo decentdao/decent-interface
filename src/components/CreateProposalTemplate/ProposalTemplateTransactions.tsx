@@ -89,7 +89,6 @@ export default function ProposalTemplateTransactions({
                       variant="unstyled"
                       onClick={() => removeTransaction(index)}
                       minWidth="auto"
-                      _hover={{ color: 'gold.500' }}
                       _disabled={{ opacity: 0.4, cursor: 'default' }}
                       sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
                       disabled={pendingTransaction}

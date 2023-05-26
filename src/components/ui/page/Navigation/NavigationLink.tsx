@@ -1,7 +1,5 @@
 import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavigationTooltip } from './NavigationTooltip';
 
@@ -28,18 +26,6 @@ export function NavigationLink({
   const tooltipTranslationKey = tooltipKey || labelKey;
 
   const { t } = useTranslation('navigation');
-  const pathname = usePathname();
-  const isActive = pathname === href;
-
-  const activeColors = useCallback(() => {
-    return {
-      color: isActive ? 'gold.500' : 'inherit',
-      _hover: {
-        color: 'gold.500-hover',
-      },
-    };
-  }, [isActive]);
-
   return (
     <NavigationTooltip label={t(tooltipTranslationKey)}>
       <Link
@@ -54,7 +40,6 @@ export function NavigationLink({
           gap={8}
           justifyContent="space-between"
           alignItems="center"
-          {...activeColors()}
         >
           <Icon boxSize="1.5rem" />
           <Hide above="md">

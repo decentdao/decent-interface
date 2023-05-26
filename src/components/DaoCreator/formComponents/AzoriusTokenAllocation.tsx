@@ -52,7 +52,6 @@ export function AzoriusTokenAllocation({
           variant="unstyled"
           minW="0"
           color="gold.500"
-          _hover={{ color: 'gold.500-hover' }}
           mt={2}
           icon={<Trash boxSize="1.5rem" />}
           type="button"

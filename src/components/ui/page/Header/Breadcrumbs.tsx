@@ -45,7 +45,6 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
                 display="flex"
                 alignItems="center"
                 color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
-                _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
               >
                 {crumbText}
               </BreadcrumbLink>

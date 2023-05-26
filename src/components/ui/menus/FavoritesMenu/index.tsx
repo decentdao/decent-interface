@@ -15,9 +15,6 @@ export function FavoritesMenu() {
             h="full"
             mx="1.5rem"
             color="gold.500"
-            _hover={{
-              color: 'gold.500-hover',
-            }}
           >
             <Flex alignItems="center">
               <StarGoldSolid boxSize="1.5rem" />

@@ -86,7 +86,6 @@ function Transactions({
                       variant="unstyled"
                       onClick={() => removeTransaction(index)}
                       minWidth="auto"
-                      _hover={{ color: 'gold.500' }}
                       _disabled={{ opacity: 0.4, cursor: 'default' }}
                       sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
                       isDisabled={pendingTransaction}

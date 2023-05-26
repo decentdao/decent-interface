@@ -21,7 +21,6 @@ export default function FavoriteIcon({ safeAddress, ...rest }: Props) {
       <Tooltip label={t('favoriteTooltip')}>
         <IconButton
           color="gold.500"
-          _hover={{ color: 'gold.500-hover' }}
           variant="ghost"
           minWidth="0px"
           icon={isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />}

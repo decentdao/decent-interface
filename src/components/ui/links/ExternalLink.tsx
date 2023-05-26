@@ -4,7 +4,6 @@ export default function ExternalLink({ children, ...rest }: LinkProps) {
   return (
     <Link
       color="gold.500"
-      _hover={{ color: 'gold.500-hover' }}
       target="_blank"
       rel="noreferrer"
       textDecoration="none"
