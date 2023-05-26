@@ -14,7 +14,7 @@ export function NotConnected() {
       gap="1"
     >
       <Text textStyle="text-sm-mono-medium">{t('connectWallet')}</Text>
-      <ArrowDown fill="currentColor" />
+      <ArrowDown />
     </Flex>
   );
 }
@@ -43,7 +43,7 @@ export function Connected() {
         />
       </Box>
       <Text textStyle="text-sm-mono-semibold">{accountDisplayName}</Text>
-      <ArrowDown fill="currentColor" />
+      <ArrowDown />
     </Flex>
   );
 }

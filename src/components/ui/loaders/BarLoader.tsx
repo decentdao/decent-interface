@@ -16,7 +16,6 @@ export function BarLoader() {
       width="8px"
       height="40px"
       borderRadius="4px"
-      background="currentColor"
       color="#FFF"
       position="relative"
       boxSizing="border-box"
@@ -27,7 +26,6 @@ export function BarLoader() {
           width: '8px',
           height: '40px',
           borderRadius: '4px',
-          background: 'currentColor',
           position: 'absolute',
           top: '50%',
           transform: 'translateY(-50%)',

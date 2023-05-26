@@ -35,7 +35,6 @@ export default function AddressCopier({ address, ...rest }: Props) {
       <Copy
         _hover={{ color: 'gold.500-hover' }}
         boxSize="1.5rem"
-        fill="currentColor"
       />
     </Flex>
   );
