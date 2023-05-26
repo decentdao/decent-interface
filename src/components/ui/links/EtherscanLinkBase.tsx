@@ -1,4 +1,4 @@
-import { Link, LinkProps, Tooltip } from '@chakra-ui/react';
+import { LinkProps, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import ExternalLink from './ExternalLink';
 
