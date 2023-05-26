@@ -56,16 +56,7 @@ export function NavigationLink({
           alignItems="center"
           {...activeColors()}
         >
-          <Icon
-            boxSize="1.5rem"
-            sx={{
-              'g path': {
-                transitionProperty: 'all',
-                transitionDuration: '300ms',
-                transitionTimingFunction: 'easy-out',
-              },
-            }}
-          />
+          <Icon boxSize="1.5rem" />
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
           </Hide>
