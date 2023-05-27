@@ -27,7 +27,6 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
             whiteSpace="nowrap"
             textOverflow="ellipsis"
             textStyle="text-base-mono-regular"
-            color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
           >
             {title}
           </Text>
@@ -45,6 +44,8 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
                 href={path}
                 display="flex"
                 alignItems="center"
+                color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
+                _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
               >
                 {crumbText}
               </BreadcrumbLink>

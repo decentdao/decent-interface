@@ -29,7 +29,13 @@ export function ActivityModule({ activity }: { activity: FractalProposal }) {
               variant="text"
               size="lg"
               px="0px"
-              rightIcon={<ArrowAngleUp boxSize="1.5rem" />}
+              _hover={{ color: 'gold.500-hover' }}
+              rightIcon={
+                <ArrowAngleUp
+                  boxSize="1.5rem"
+                  fill="currentColor"
+                />
+              }
             >
               {t('labelEtherscan')}
             </Button>
