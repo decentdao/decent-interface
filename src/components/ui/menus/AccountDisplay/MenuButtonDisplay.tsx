@@ -14,7 +14,7 @@ export function NotConnected() {
       gap="1"
     >
       <Text textStyle="text-sm-mono-medium">{t('connectWallet')}</Text>
-      <ArrowDown fill="currentColor" />
+      <ArrowDown />
     </Flex>
   );
 }
@@ -35,6 +35,7 @@ export function Connected() {
     <Flex
       alignItems="center"
       gap="0.75rem"
+      color="grayscale.100"
     >
       <Box mt="0.125rem">
         <Avatar
@@ -43,7 +44,7 @@ export function Connected() {
         />
       </Box>
       <Text textStyle="text-sm-mono-semibold">{accountDisplayName}</Text>
-      <ArrowDown fill="currentColor" />
+      <ArrowDown />
     </Flex>
   );
 }

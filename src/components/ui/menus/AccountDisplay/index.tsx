@@ -10,7 +10,6 @@ export function AccountDisplay() {
         <MenuButton
           data-testid="header-accountMenu"
           pr="1rem"
-          _hover={{ color: 'gold.200' }}
         >
           <MenuButtonDisplay />
         </MenuButton>

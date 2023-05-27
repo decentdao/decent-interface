@@ -51,12 +51,10 @@ export function AzoriusTokenAllocation({
           aria-label="remove allocation"
           variant="unstyled"
           minW="0"
-          color="gold.500"
-          _hover={{ color: 'gold.500-hover' }}
           mt={2}
           icon={
             <Trash
-              fill="currentColor"
+              color="gold.500"
               boxSize="1.5rem"
             />
           }
