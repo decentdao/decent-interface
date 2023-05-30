@@ -16,19 +16,19 @@ import { useFractal } from '../src/providers/App/AppProvider';
 
 const VALUE_PROPS = [
   {
+    iconSrc: '/images/icon-structure.svg',
+    titleKey: 'structure',
+    descKey: 'structureDesc',
+  },
+  {
     iconSrc: '/images/icon-govern.svg',
     titleKey: 'govern',
     descKey: 'governDesc',
   },
   {
-    iconSrc: '/images/icon-mint.svg',
-    titleKey: 'mint',
-    descKey: 'mintDesc',
-  },
-  {
-    iconSrc: '/images/icon-launch.svg',
-    titleKey: 'launch',
-    descKey: 'launchDesc',
+    iconSrc: '/images/icon-operate.svg',
+    titleKey: 'operate',
+    descKey: 'operateDesc',
   },
 ];
 
@@ -73,7 +73,6 @@ export default function HomePage() {
           paddingBottom="6.25rem"
         >
           <Text
-            alignSelf="center"
             paddingBottom="1.5rem"
             textStyle={{
               base: 'text-2xl-mono-regular',
@@ -84,16 +83,32 @@ export default function HomePage() {
           >
             {t('homeTitle')}
           </Text>
-          <Text
-            alignSelf="center"
-            textAlign="center"
-            maxWidth="49rem"
-            paddingBottom="4rem"
-            textStyle="text-lg-mono-regular"
-            color="grayscale.300"
-          >
-            {t('homeDesc')}
-          </Text>
+          <Center>
+            <Flex
+              paddingBottom="2rem"
+              alignItems="center"
+              flexWrap="wrap"
+            >
+              <Text
+                width={{ md: '100%', lg: '65%' }}
+                textStyle="text-lg-mono-regular"
+                color="grayscale.300"
+                paddingEnd="1rem"
+                marginBottom="2rem"
+              >
+                {t('homeDesc')}
+              </Text>
+              <Button
+                width={{ md: '100%', lg: '35%' }}
+                h="3.5rem"
+                onClick={createDAO}
+                variant="tertiary"
+                marginBottom="2rem"
+              >
+                {t('createButton')}
+              </Button>
+            </Flex>
+          </Center>
           <Flex
             paddingBottom="2rem"
             flexWrap="wrap"
