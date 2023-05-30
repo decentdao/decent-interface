@@ -1,81 +1,148 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
-import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useRouter } from 'next/navigation';
+import { useMemo, useState, useEffect } from 'react';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { IGnosisFreezeData, IGnosisVetoContract } from '../../../../providers/Fractal/types';
-import { DAO_ROUTES } from '../../../../routes/constants';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { FractalGuardContracts, FreezeGuard, GovernanceModuleType } from '../../../../types';
+import { ModalType } from '../../modals/ModalProvider';
+import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentSafeAddress?: string;
+  parentAddress?: string | null;
   safeAddress: string;
-  freezeData?: IGnosisFreezeData;
-  guardContracts: IGnosisVetoContract;
+  freezeGuard?: FreezeGuard;
+  guardContracts: FractalGuardContracts;
 }
 
 export function ManageDAOMenu({
-  parentSafeAddress,
+  parentAddress,
   safeAddress,
-  freezeData,
+  freezeGuard,
   guardContracts,
 }: IManageDAOMenu) {
-  const navigate = useNavigate();
+  const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
+  const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
+  const { getCanUserCreateProposal } = useSubmitProposal();
   const { handleClawBack } = useClawBack({
-    parentSafeAddress,
+    parentAddress,
     childSafeAddress: safeAddress,
   });
+  const {
+    governance: { type },
+  } = useFractal();
+
+  useEffect(() => {
+    const verifyUserCanCreateProposal = async () => {
+      setCanUserCreateProposal(await getCanUserCreateProposal(safeAddress));
+    };
+
+    verifyUserCanCreateProposal();
+  }, [getCanUserCreateProposal, safeAddress]);
+
+  const handleNavigateToManageSigners = useMemo(
+    () => () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
+    [push, safeAddress]
+  );
+
+  const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
-      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+      onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
+
+    const manageSignersOption = {
+      optionKey: 'optionManageSigners',
+      onClick: handleNavigateToManageSigners,
+    };
+
+    const viewSignersOption = {
+      optionKey: 'optionViewSigners',
+      onClick: handleNavigateToManageSigners,
+    };
+
+    const freezeOption = {
+      optionKey: 'optionInitiateFreeze',
+      onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
+    };
+
+    const clawBackOption = {
+      optionKey: 'optionInitiateClawback',
+      onClick: handleClawBack,
+    };
+
+    const modifyGovernanceOption = {
+      optionKey: 'optionModifyGovernance',
+      onClick: handleModifyGovernance,
+    };
+
     if (
-      freezeData &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezeProposalPeriod &&
+      freezeGuard.freezePeriod &&
       !isWithinFreezeProposalPeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezeProposalPeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezeProposalPeriod,
         currentTime
       ) &&
       !isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.userHasVotes
+      freezeGuard.userHasVotes
     ) {
-      const freezeOption = {
-        optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.vetoVotingContract?.asSigner.castFreezeVote(),
-      };
-      return [createSubDAOOption, freezeOption];
+      if (type === GovernanceModuleType.MULTISIG) {
+        return [createSubDAOOption, manageSignersOption, freezeOption, modifyGovernanceOption];
+      } else {
+        return [createSubDAOOption, freezeOption];
+      }
     } else if (
-      freezeData &&
+      freezeGuard &&
+      freezeGuard.freezeProposalCreatedTime &&
+      freezeGuard.freezePeriod &&
       isWithinFreezePeriod(
-        freezeData.freezeProposalCreatedTime,
-        freezeData.freezePeriod,
+        freezeGuard.freezeProposalCreatedTime,
+        freezeGuard.freezePeriod,
         currentTime
       ) &&
-      freezeData.isFrozen &&
-      freezeData.userHasVotes
+      freezeGuard.isFrozen &&
+      freezeGuard.userHasVotes
     ) {
-      const clawBackOption = {
-        optionKey: 'optionInitiateClawback',
-        onClick: handleClawBack,
-      };
-
       return [clawBackOption];
     } else {
-      return [createSubDAOOption];
+      if (type === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
+        return [createSubDAOOption, manageSignersOption, modifyGovernanceOption];
+      } else if (type === GovernanceModuleType.MULTISIG) {
+        return [viewSignersOption];
+      } else {
+        return [createSubDAOOption];
+      }
     }
-  }, [safeAddress, navigate, guardContracts, handleClawBack, freezeData, currentTime]);
+  }, [
+    freezeGuard,
+    currentTime,
+    push,
+    safeAddress,
+    type,
+    guardContracts.freezeVotingContract?.asSigner,
+    handleClawBack,
+    canUserCreateProposal,
+    handleNavigateToManageSigners,
+    handleModifyGovernance,
+  ]);
 
   return (
     <OptionMenu
@@ -85,7 +152,7 @@ export function ManageDAOMenu({
           mt="0.25rem"
         />
       }
-      titleKey="titleManageDAO"
+      titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
     />

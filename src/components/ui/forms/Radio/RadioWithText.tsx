@@ -6,37 +6,47 @@ interface IRadioWithText {
   label: string;
   value?: any;
   disabled?: boolean;
+  onClick?: () => void;
 }
 
-export function RadioWithText({ testId, description, label, disabled, value }: IRadioWithText) {
+export function RadioWithText({
+  testId,
+  description,
+  label,
+  disabled,
+  value,
+  onClick,
+}: IRadioWithText) {
   return (
-    <Radio
-      display="flex"
-      data-testid={testId}
-      type="radio"
-      disabled={disabled}
-      colorScheme="gold"
-      borderColor="gold.500"
-      size="lg"
-      value={value}
-    >
-      <Box
-        ml="4"
-        p="0.5rem 1rem"
+    <Box onClick={onClick}>
+      <Radio
+        display="flex"
+        data-testid={testId}
+        type="radio"
+        isDisabled={disabled}
+        colorScheme="gold"
+        borderColor="gold.500"
+        size="lg"
+        value={value}
       >
-        <Text
-          textStyle="text-base-sans-regular"
-          color={disabled ? 'grayscale.400' : 'grayscale.100'}
+        <Box
+          ml="4"
+          p="0.5rem 1rem"
         >
-          {label}
-        </Text>
-        <Text
-          textStyle="text-md-sans-regular"
-          color={disabled ? 'grayscale.400' : 'grayscale.500'}
-        >
-          {description}
-        </Text>
-      </Box>
-    </Radio>
+          <Text
+            textStyle="text-base-sans-regular"
+            color={disabled ? 'grayscale.400' : 'grayscale.100'}
+          >
+            {label}
+          </Text>
+          <Text
+            textStyle="text-md-sans-regular"
+            color={disabled ? 'grayscale.400' : 'grayscale.500'}
+          >
+            {description}
+          </Text>
+        </Box>
+      </Radio>
+    </Box>
   );
 }

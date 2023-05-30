@@ -1,10 +1,13 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { DAOEssentials } from '../../../components/DaoCreator/types';
+import {
+  DAOEssentials,
+  GovernanceModuleType,
+  BigNumberValuePair,
+  TokenCreationType,
+} from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
-import { BigNumberValuePair } from './../../../components/ui/forms/BigNumberInput';
-import { GovernanceTypes } from './../../../providers/Fractal/governance/types';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
 /**
@@ -12,9 +15,18 @@ import { useDAOCreateTests } from './useDAOCreateTests';
  * @dev https://www.npmjs.com/package/yup
  */
 export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
-  const { addressValidationTest, uniqueAddressValidationTest } = useValidationAddress();
-  const { maxAllocationValidation, allocationValidationTest, uniqueAllocationValidationTest } =
-    useDAOCreateTests();
+  const {
+    addressValidationTestSimple,
+    addressValidationTest,
+    uniqueAddressValidationTest,
+    ensNameValidationTest,
+  } = useValidationAddress();
+  const {
+    maxAllocationValidation,
+    allocationValidationTest,
+    uniqueAllocationValidationTest,
+    validERC20Address,
+  } = useDAOCreateTests();
 
   const { t } = useTranslation(['daoCreate']);
 
@@ -24,9 +36,13 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         essentials: Yup.object().shape({
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
+          snapshotURL: Yup.string().when({
+            is: (value: string) => !!value,
+            then: _schema => _schema.test(ensNameValidationTest),
+          }),
         }),
-        gnosis: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceTypes.GNOSIS_SAFE,
+        multisig: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.MULTISIG,
           then: _schema =>
             _schema.shape({
               trustedAddresses: Yup.array()
@@ -42,18 +58,36 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               signatureThreshold: Yup.number()
                 .min(1, t('errorLowSignerThreshold'))
                 .max(Yup.ref('numOfSigners'), t('errorHighSignerThreshold'))
-                .required(),
-              numOfSigners: Yup.number().min(1),
-              customNonce: Yup.number().min(1),
+                .required(t('errorHighSignerThreshold')),
+              numOfSigners: Yup.number()
+                .min(1, t('errorMinSigners'))
+                .required(t('errorMinSigners')),
+              customNonce: Yup.number(),
             }),
         }),
-        govToken: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceTypes.GNOSIS_SAFE_USUL,
+        token: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
           then: _schema =>
             _schema.shape({
-              tokenName: Yup.string().required(),
-              tokenSymbol: Yup.string().required().min(2),
-              tokenSupply: Yup.object().shape({ value: Yup.string().required() }),
+              tokenName: Yup.string().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                then: __schema => __schema.required(),
+              }),
+              tokenSymbol: Yup.string().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                then: __schema => __schema.required(),
+              }),
+              tokenSupply: Yup.object().shape({
+                value: Yup.string().when('tokenCreationType', {
+                  is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                  then: __schema => __schema.required(),
+                }),
+              }),
+              tokenImportAddress: Yup.string().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.IMPORTED,
+                then: __schmema =>
+                  __schmema.test(addressValidationTestSimple).test(validERC20Address),
+              }),
               parentAllocationAmount: Yup.object().when({
                 is: (value: BigNumberValuePair) => !!value.value,
                 then: schema =>
@@ -61,24 +95,26 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     value: Yup.string().test(maxAllocationValidation),
                   }),
               }),
-              tokenAllocations: Yup.array()
-                .min(1)
-                .of(
-                  Yup.object().shape({
-                    address: Yup.string()
-                      .test(allocationValidationTest)
-                      .test(uniqueAllocationValidationTest),
-                    amount: Yup.object()
-                      .required()
-                      .shape({
-                        value: Yup.string().test(maxAllocationValidation),
-                      }),
-                  })
-                ),
+              tokenAllocations: Yup.array().when('tokenCreationType', {
+                is: (value: TokenCreationType) => !!value && value === TokenCreationType.NEW,
+                then: __schema =>
+                  __schema.min(1).of(
+                    Yup.object().shape({
+                      address: Yup.string()
+                        .test(allocationValidationTest)
+                        .test(uniqueAllocationValidationTest),
+                      amount: Yup.object()
+                        .required()
+                        .shape({
+                          value: Yup.string().test(maxAllocationValidation),
+                        }),
+                    })
+                  ),
+              }),
             }),
         }),
-        govModule: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceTypes.GNOSIS_SAFE_USUL,
+        azorius: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
           then: _schema =>
             _schema.shape({
               quorumPercentage: Yup.object().shape({ value: Yup.string().required() }),
@@ -86,13 +122,12 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               votingPeriod: Yup.object().shape({ value: Yup.string().required() }),
             }),
         }),
-        vetoGuard: Yup.object().when({
+        freeze: Yup.object().when({
           is: isSubDAO,
           then: _schema =>
             _schema.shape({
               executionPeriod: Yup.object().shape({ value: Yup.string().required() }),
               timelockPeriod: Yup.object().shape({ value: Yup.string().required() }),
-              vetoVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
               freezeProposalPeriod: Yup.object().shape({ value: Yup.string().required() }),
               freezePeriod: Yup.object().shape({ value: Yup.string().required() }),
@@ -100,13 +135,16 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         }),
       }),
     [
+      ensNameValidationTest,
+      isSubDAO,
       t,
       addressValidationTest,
       uniqueAddressValidationTest,
+      addressValidationTestSimple,
+      validERC20Address,
       maxAllocationValidation,
       allocationValidationTest,
       uniqueAllocationValidationTest,
-      isSubDAO,
     ]
   );
   return { createDAOValidation };

@@ -1,78 +1,88 @@
 import { useCallback, useMemo } from 'react';
-import { useProvider, useSigner, useAccount } from 'wagmi';
-import { GnosisDAO, TokenGovernanceDAO } from '../../components/DaoCreator/types';
+import { useProvider, useSigner } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
-import { BaseContracts, UsulContracts } from '../../models/types/contracts';
-import { GovernanceTypes } from '../../providers/Fractal/types';
-import useSafeContracts from '../safe/useSafeContracts';
+import { useFractal } from '../../providers/App/AppProvider';
+import {
+  AzoriusGovernanceDAO,
+  SafeMultisigDAO,
+  GovernanceModuleType,
+  AzoriusContracts,
+  BaseContracts,
+} from '../../types';
 
 const useBuildDAOTx = () => {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
-  const { address: account } = useAccount();
-
   const {
-    multiSendContract,
-    gnosisSafeFactoryContract,
-    gnosisSafeSingletonContract,
-    linearVotingMasterCopyContract,
-    fractalUsulMasterCopyContract,
-    zodiacModuleProxyFactoryContract,
-    fractalRegistryContract,
-    fractalModuleMasterCopyContract,
-    gnosisVetoGuardMasterCopyContract,
-    usulVetoGuardMasterCopyContract,
-    vetoMultisigVotingMasterCopyContract,
-    vetoERC20VotingMasterCopyContract,
-    votesTokenMasterCopyContract,
-    claimingMasterCopyContract,
-  } = useSafeContracts();
+    baseContracts: {
+      multiSendContract,
+      gnosisSafeFactoryContract,
+      gnosisSafeSingletonContract,
+      linearVotingMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
+      zodiacModuleProxyFactoryContract,
+      fractalRegistryContract,
+      fractalModuleMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
+      votesTokenMasterCopyContract,
+      claimingMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
+      keyValuePairsContract,
+    },
+    readOnly: { user },
+  } = useFractal();
 
   const buildDao = useCallback(
     async (
-      daoData: TokenGovernanceDAO | GnosisDAO,
-      parentDAOAddress?: string,
+      daoData: AzoriusGovernanceDAO | SafeMultisigDAO,
+      parentAddress?: string,
       parentTokenAddress?: string
     ) => {
-      let usulContracts;
+      let azoriusContracts;
 
       if (
-        !account ||
+        !user.address ||
         !signerOrProvider ||
         !multiSendContract ||
         !fractalRegistryContract ||
         !zodiacModuleProxyFactoryContract ||
         !fractalModuleMasterCopyContract ||
-        !gnosisVetoGuardMasterCopyContract ||
-        !vetoMultisigVotingMasterCopyContract ||
-        !vetoERC20VotingMasterCopyContract ||
+        !multisigFreezeGuardMasterCopyContract ||
+        !freezeMultisigVotingMasterCopyContract ||
+        !freezeERC20VotingMasterCopyContract ||
         !gnosisSafeFactoryContract ||
         !gnosisSafeSingletonContract ||
-        !claimingMasterCopyContract
+        !claimingMasterCopyContract ||
+        !votesERC20WrapperMasterCopyContract ||
+        !keyValuePairsContract
       ) {
         return;
       }
 
-      if (daoData.governance === GovernanceTypes.GNOSIS_SAFE_USUL) {
+      if (daoData.governance === GovernanceModuleType.AZORIUS) {
         if (
-          !fractalUsulMasterCopyContract ||
+          !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
           !votesTokenMasterCopyContract ||
-          !usulVetoGuardMasterCopyContract ||
+          !azoriusFreezeGuardMasterCopyContract ||
           !claimingMasterCopyContract
         ) {
           return;
         }
 
-        usulContracts = {
-          fractalUsulMasterCopyContract: fractalUsulMasterCopyContract.asSigner,
+        azoriusContracts = {
+          fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
-          usulVetoGuardMasterCopyContract: usulVetoGuardMasterCopyContract.asSigner,
+          azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
-        } as UsulContracts;
+          votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asSigner,
+        } as AzoriusContracts;
       }
 
       const baseContracts = {
@@ -80,29 +90,30 @@ const useBuildDAOTx = () => {
         fractalRegistryContract: fractalRegistryContract.asSigner,
         gnosisSafeFactoryContract: gnosisSafeFactoryContract.asSigner,
         gnosisSafeSingletonContract: gnosisSafeSingletonContract.asSigner,
-        gnosisVetoGuardMasterCopyContract: gnosisVetoGuardMasterCopyContract.asSigner,
+        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         multiSendContract: multiSendContract.asSigner,
-        vetoERC20VotingMasterCopyContract: vetoERC20VotingMasterCopyContract.asSigner,
-        vetoMultisigVotingMasterCopyContract: vetoMultisigVotingMasterCopyContract.asSigner,
+        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
+        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
+        keyValuePairsContract: keyValuePairsContract.asSigner,
       } as BaseContracts;
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
         baseContracts,
-        usulContracts,
+        azoriusContracts,
         daoData,
-        parentDAOAddress,
+        parentAddress,
         parentTokenAddress
       );
 
       await txBuilderFactory.setupGnosisSafeData();
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
 
-      // Build Tx bundle based on governance type (Usul or Multisig)
+      // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === GovernanceTypes.GNOSIS_SAFE_USUL
-          ? await daoTxBuilder.buildUsulTx()
+        daoData.governance === GovernanceModuleType.AZORIUS
+          ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 
       return {
@@ -112,22 +123,24 @@ const useBuildDAOTx = () => {
       };
     },
     [
-      account,
+      user.address,
       signerOrProvider,
       multiSendContract,
       fractalRegistryContract,
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
-      gnosisVetoGuardMasterCopyContract,
-      vetoMultisigVotingMasterCopyContract,
-      vetoERC20VotingMasterCopyContract,
+      multisigFreezeGuardMasterCopyContract,
+      freezeMultisigVotingMasterCopyContract,
+      freezeERC20VotingMasterCopyContract,
       gnosisSafeFactoryContract,
       gnosisSafeSingletonContract,
-      fractalUsulMasterCopyContract,
+      claimingMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
+      keyValuePairsContract,
+      fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
-      usulVetoGuardMasterCopyContract,
-      claimingMasterCopyContract,
+      azoriusFreezeGuardMasterCopyContract,
     ]
   );
 

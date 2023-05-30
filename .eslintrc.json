@@ -4,9 +4,8 @@
         "es2021": true
     },
     "extends": [
-        "plugin:react/recommended",
+        "next/core-web-vitals",
         "plugin:import/recommended",
-        "react-app/jest",
         "airbnb-typescript/base"
     ],
     "parser": "@typescript-eslint/parser",
@@ -22,11 +21,9 @@
         "sourceType": "module"
     },
     "plugins": [
-        "react",
         "import",
         "@typescript-eslint",
-        "prettier",
-        "react-hooks"
+        "prettier"
     ],
     "settings": {
         // resolves imports without file extensions for listed extensions

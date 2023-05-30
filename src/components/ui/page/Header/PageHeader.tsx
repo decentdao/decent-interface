@@ -7,13 +7,16 @@ import {
   IconButton,
   IconProps,
   Spacer,
+  Text,
 } from '@chakra-ui/react';
 import { ReactNode, useEffect, useState } from 'react';
-import useDAOName from '../../../../hooks/DAO/useDAOName';
-import { useFractal } from '../../../../providers/Fractal/hooks/useFractal';
-import { DAO_ROUTES } from '../../../../routes/constants';
+import { DAO_ROUTES } from '../../../../constants/routes';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import AddressCopier from '../../links/AddressCopier';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
+  title?: string;
+  address?: string;
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
@@ -29,6 +32,8 @@ interface IPageHeader {
  * Intended to be used as the main title for a page.
  */
 function PageHeader({
+  title,
+  address,
   breadcrumbs,
   hasDAOLink = true,
   buttonVariant,
@@ -40,14 +45,8 @@ function PageHeader({
   children,
 }: IPageHeader) {
   const {
-    gnosis: {
-      safe: { address },
-      daoName,
-    },
+    node: { daoAddress, daoName },
   } = useFractal();
-  const { daoRegistryName } = useDAOName({
-    address,
-  });
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
@@ -55,13 +54,13 @@ function PageHeader({
     if (hasDAOLink) {
       setLinks([
         {
-          title: daoRegistryName || daoName,
-          path: DAO_ROUTES.dao.relative(address),
+          terminus: daoName || '',
+          path: DAO_ROUTES.dao.relative(daoAddress),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, address, daoName, daoRegistryName, breadcrumbs]);
+  }, [hasDAOLink, daoName, daoAddress, breadcrumbs]);
 
   return (
     <Box
@@ -80,7 +79,7 @@ function PageHeader({
             onClick={buttonClick}
             data-testid={buttonTestId}
             variant={buttonVariant}
-            disabled={isButtonDisabled}
+            isDisabled={isButtonDisabled}
           >
             {buttonText}
           </Button>
@@ -95,7 +94,7 @@ function PageHeader({
             data-testid={buttonTestId}
             size="base"
             variant={buttonVariant}
-            disabled={isButtonDisabled}
+            isDisabled={isButtonDisabled}
           >
             {buttonText}
           </IconButton>
@@ -106,6 +105,21 @@ function PageHeader({
         marginTop="1rem"
         borderColor="chocolate.400"
       />
+      {title && (
+        <Text
+          marginTop="2rem"
+          textStyle="text-2xl-mono-regular"
+          color="grayscale.100"
+        >
+          {title}
+        </Text>
+      )}
+      {address && (
+        <AddressCopier
+          marginTop="0.5rem"
+          address={address}
+        />
+      )}
     </Box>
   );
 }

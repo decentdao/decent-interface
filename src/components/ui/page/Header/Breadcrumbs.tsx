@@ -1,8 +1,8 @@
+import { Link } from '@chakra-ui/next-js';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text } from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
 
 export type Crumb = {
-  title: string;
+  terminus: string;
   path: string;
 };
 interface IBreadcrumbs {
@@ -18,7 +18,7 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
       alignItems="center"
       w={{ base: 'min-content', sm: 'initial' }}
     >
-      {links.map(({ title, path }, i) => {
+      {links.map(({ terminus: title, path }, i) => {
         const isCurrentPage = i === links.length - 1;
         const crumbText = (
           <Text
@@ -27,7 +27,6 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
             whiteSpace="nowrap"
             textOverflow="ellipsis"
             textStyle="text-base-mono-regular"
-            color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
           >
             {title}
           </Text>
@@ -42,9 +41,11 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
             ) : (
               <BreadcrumbLink
                 as={Link}
-                to={path}
+                href={path}
                 display="flex"
                 alignItems="center"
+                color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
+                _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
               >
                 {crumbText}
               </BreadcrumbLink>

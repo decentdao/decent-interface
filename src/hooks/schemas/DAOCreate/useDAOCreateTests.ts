@@ -1,10 +1,9 @@
-import { BigNumber } from 'ethers';
+import { BigNumber, ethers, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider, useSigner } from 'wagmi';
+import { erc20ABI, useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
-import { AddressValidationMap, CreatorFormState } from '../../../components/DaoCreator/types';
-import { TokenAllocation } from '../../../types';
+import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { validateAddress } from '../common/useValidationAddress';
 
 /**
@@ -88,10 +87,10 @@ export function useDAOCreateTests() {
         if (!value) return false;
 
         const formData: CreatorFormState = context.from.reverse()[0].value;
-        const tokenSupply = formData.govToken.tokenSupply.bigNumberValue as BigNumber;
-        const tokenAllocations = formData.govToken.tokenAllocations;
+        const tokenSupply = formData.token.tokenSupply.bigNumberValue as BigNumber;
+        const tokenAllocations = formData.token.tokenAllocations;
         const parentAllocationAmount =
-          formData.govToken.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
+          formData.token.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
 
         const filteredAllocations = tokenAllocations.filter(
           allocation =>
@@ -112,5 +111,33 @@ export function useDAOCreateTests() {
       },
     };
   }, [t]);
-  return { maxAllocationValidation, allocationValidationTest, uniqueAllocationValidationTest };
+
+  const validERC20Address = useMemo(() => {
+    return {
+      name: 'ERC20 Address Validation',
+      message: t('errorInvalidERC20Address', { ns: 'common' }),
+      test: async function (address: string | undefined) {
+        if (address && utils.isAddress(address)) {
+          try {
+            const tokenContract = new ethers.Contract(address, erc20ABI, provider);
+            const [name, symbol, decimals] = await Promise.all([
+              tokenContract.name(),
+              tokenContract.symbol(),
+              tokenContract.decimals(),
+            ]);
+            return !!name && !!symbol && !!decimals;
+          } catch (error) {
+            return false;
+          }
+        }
+        return false;
+      },
+    };
+  }, [provider, t]);
+  return {
+    maxAllocationValidation,
+    allocationValidationTest,
+    uniqueAllocationValidationTest,
+    validERC20Address,
+  };
 }

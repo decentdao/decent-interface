@@ -1,16 +1,17 @@
-import { Box, Divider, RadioGroup } from '@chakra-ui/react';
+import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { GovernanceTypes } from '../../../providers/Fractal/types';
-import { InputComponent, LabelComponent } from '../../ProposalCreate/InputComponent';
+import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
+import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { ICreationStepProps, CreatorSteps } from '../types';
 
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
   // @todo update labels for subDAOs
+
   return (
     <StepWrapper
       isSubDAO={isSubDAO}
@@ -24,6 +25,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
         value={values.essentials.daoName}
         id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
+        onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
         disabled={false}
         placeholder={t('daoNamePlaceholder')}
         testId="essentials-daoName"
@@ -51,13 +53,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
               label={t('labelMultisigGov')}
               description={t('descMultisigGov')}
               testId="choose-multisig"
-              value={GovernanceTypes.GNOSIS_SAFE}
+              value={GovernanceModuleType.MULTISIG}
             />
             <RadioWithText
-              label={t('labelUsulGov')}
-              description={t('descUsulGov')}
-              testId="choose-usul"
-              value={GovernanceTypes.GNOSIS_SAFE_USUL}
+              label={t('labelAzoriusGov')}
+              description={t('descAzoriusGov')}
+              testId="choose-azorius"
+              value={GovernanceModuleType.AZORIUS}
             />
           </RadioGroup>
         </LabelComponent>
@@ -66,12 +68,32 @@ export function EstablishEssentials(props: ICreationStepProps) {
         color="chocolate.700"
         mb={4}
       />
+      <LabelComponent
+        label={t('snapshot')}
+        helper={t('snapshotHelper')}
+        isRequired={false}
+      >
+        <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
+          <Input
+            value={values.essentials.snapshotURL}
+            onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
+            isDisabled={false}
+            data-testid="essentials-snapshotURL"
+            placeholder="decent-dao.eth"
+            maxLength={30}
+          />
+        </LabelWrapper>
+      </LabelComponent>
+      <Divider
+        color="chocolate.700"
+        mb={4}
+      />
       <StepButtons
         {...props}
         nextStep={
-          values.essentials.governance === GovernanceTypes.GNOSIS_SAFE
-            ? CreatorSteps.GNOSIS_GOVERNANCE
-            : CreatorSteps.GNOSIS_WITH_USUL
+          values.essentials.governance === GovernanceModuleType.MULTISIG
+            ? CreatorSteps.MULTISIG_DETAILS
+            : CreatorSteps.TOKEN_DETAILS
         }
       />
     </StepWrapper>

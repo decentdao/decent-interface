@@ -1,9 +1,8 @@
 import { GridItem, Box } from '@chakra-ui/react';
-import { VetoGuard } from '@fractal-framework/fractal-contracts';
-import { useAccount } from 'wagmi';
+import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
-import { MultisigProposal, TxProposal } from '../../../providers/Fractal/types';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalProposal, MultisigProposal } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import ProposalCreatedBy from '../../ui/proposal/ProposalCreatedBy';
@@ -12,18 +11,16 @@ import { SignerDetails } from './SignerDetails';
 import { TxActions } from './TxActions';
 import { TxDetails } from './TxDetails';
 
-export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) {
+export function MultisigProposalDetails({ proposal }: { proposal: FractalProposal }) {
   const txProposal = proposal as MultisigProposal;
   const {
-    gnosis: {
-      guardContracts: { vetoGuardContract },
-    },
+    guardContracts: { freezeGuardContract },
+    readOnly: { user },
   } = useFractal();
-  const { address: account } = useAccount();
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
-        <ContentBox bg={BACKGROUND_SEMI_TRANSPARENT}>
+        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <ProposalInfo proposal={proposal} />
           <Box mt={4}>
             <ProposalCreatedBy proposalProposer={txProposal.confirmations[0].owner} />
@@ -33,10 +30,10 @@ export function MultisigProposalDetails({ proposal }: { proposal: TxProposal }) 
       </GridItem>
       <GridItem colSpan={1}>
         <TxDetails proposal={txProposal} />
-        {account && (
+        {user.address && (
           <TxActions
             proposal={txProposal}
-            vetoGuard={vetoGuardContract?.asSigner as VetoGuard}
+            freezeGuard={freezeGuardContract?.asSigner as MultisigFreezeGuard}
           />
         )}
       </GridItem>

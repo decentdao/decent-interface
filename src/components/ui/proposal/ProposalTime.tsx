@@ -1,16 +1,23 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { Vote, Execute, Lock } from '@decent-org/fractal-ui';
-import { VetoGuard } from '@fractal-framework/fractal-contracts';
-import { useEffect, useMemo, useState } from 'react';
+import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
+import { BigNumber } from 'ethers';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getTxQueuedTimestamp } from '../../../hooks/utils/useSafeActivitiesWithState';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useProvider } from 'wagmi';
+import { logError } from '../../../helpers/errorLogging';
+import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
+import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
+import { useFractal } from '../../../providers/App/AppProvider';
 import {
-  TxProposal,
-  UsulProposal,
-  TxProposalState,
-  VetoGuardType,
-} from '../../../providers/Fractal/types';
+  AzoriusGovernance,
+  FractalProposal,
+  FractalProposalState,
+  GovernanceModuleType,
+  AzoriusProposal,
+  FreezeGuardType,
+} from '../../../types';
+import { getTxTimelockedTimestamp } from '../../../utils/guard';
 
 const ICONS_MAP = {
   vote: Vote,
@@ -18,66 +25,133 @@ const ICONS_MAP = {
   execute: Execute,
 };
 
-function ProposalTime({ proposal }: { proposal: TxProposal }) {
+function useCountdown(proposal: FractalProposal) {
   const [countdown, setCountdown] = useState<number>();
-  const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timer>();
-  const { t } = useTranslation('proposal');
   const {
     governance,
-    gnosis: {
-      guardContracts: { vetoGuardContract, vetoGuardType },
-    },
+    guardContracts: { freezeGuardContract, freezeGuardType },
+    governanceContracts,
+    action,
   } = useFractal();
 
-  const isActive = useMemo(() => proposal.state === TxProposalState.Active, [proposal]);
-  const isTimeLocked = useMemo(() => proposal.state === TxProposalState.TimeLocked, [proposal]);
-  const isQueued = useMemo(() => proposal.state === TxProposalState.Queued, [proposal]);
-  const isExecutable = useMemo(() => proposal.state === TxProposalState.Executing, [proposal]);
-  const showCountdown = useMemo(
-    () => isActive || isTimeLocked || isExecutable || isQueued,
-    [isActive, isTimeLocked, isExecutable, isQueued]
-  );
+  const {
+    network: { chainId },
+  } = useProvider();
 
-  const usulProposal = proposal as UsulProposal;
+  const azoriusProposal = proposal as AzoriusProposal;
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const loadDAOProposals = useDAOProposals();
+  const updateProposalState = useUpdateProposalState({
+    governanceContracts,
+    governanceDispatch: action.dispatch,
+    chainId,
+  });
 
+  let updateStateInterval = useRef<NodeJS.Timer | undefined>();
   useEffect(() => {
-    const timeLockPeriod = governance.governanceToken?.timeLockPeriod;
-    if (!timeLockPeriod) {
+    if (
+      [
+        FractalProposalState.EXECUTABLE,
+        FractalProposalState.EXECUTED,
+        FractalProposalState.EXPIRED,
+        FractalProposalState.REJECTED,
+        null,
+      ].includes(proposal.state)
+    ) {
+      clearInterval(updateStateInterval.current);
       return;
     }
+    if (countdown && countdown < 0 && !updateStateInterval.current) {
+      updateStateInterval.current = setInterval(() => {
+        // Wrap the updateProposalState call in an async IIFE
+        (async () => {
+          try {
+            if (governance.type === GovernanceModuleType.AZORIUS) {
+              await updateProposalState(BigNumber.from(proposal.proposalId));
+            } else {
+              await loadDAOProposals();
+            }
+          } catch (error) {
+            logError('Error updating proposal state:', error);
+          }
+        })();
+      }, 10000);
+    } else if (countdown && countdown > 0 && updateStateInterval.current) {
+      clearInterval(updateStateInterval.current);
+      updateStateInterval.current = undefined;
+    }
+    return () => {
+      if (updateStateInterval.current && !countdown) {
+        clearInterval(updateStateInterval.current);
+      }
+    };
+  }, [countdown, loadDAOProposals, proposal, updateProposalState, governance.type]);
+
+  const provider = useProvider();
+
+  useEffect(() => {
+    let countdownInterval: NodeJS.Timer | undefined;
+    const updateCountdown = (time: number) => {
+      setCountdown(time);
+    };
+
+    const startCountdown = (initialTime: number, intervalTime: number) => {
+      countdownInterval = setInterval(() => {
+        updateCountdown(initialTime - Date.now());
+      }, intervalTime);
+    };
 
     async function getCountdown() {
-      const vetoGuard =
-        vetoGuardType === VetoGuardType.MULTISIG
-          ? (vetoGuardContract?.asSigner as VetoGuard)
+      const freezeGuard =
+        freezeGuardType === FreezeGuardType.MULTISIG
+          ? (freezeGuardContract?.asSigner as MultisigFreezeGuard)
+          : freezeGuardType === FreezeGuardType.AZORIUS
+          ? (freezeGuardContract?.asSigner as AzoriusFreezeGuard)
           : undefined;
 
-      if (isActive && usulProposal.deadline) {
-        const interval = setInterval(() => {
-          setCountdown(usulProposal.deadline * 1000 - Date.now());
-        }, 1000);
-        setCountdownInterval(interval);
-      } else if (isTimeLocked && usulProposal.deadline && timeLockPeriod) {
-        const interval = setInterval(() => {
-          setCountdown((usulProposal.deadline + Number(timeLockPeriod.value)) * 1000 - Date.now());
-        }, 1000);
-        setCountdownInterval(interval);
-      } else if (isQueued && vetoGuard) {
-        const queuedTimestamp = await getTxQueuedTimestamp(proposal, vetoGuard);
-        const guardTimeLockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
-        const interval = setInterval(() => {
-          setCountdown(queuedTimestamp + guardTimeLockPeriod - Date.now());
-        }, 1000);
-        setCountdownInterval(interval);
-      } else if (isExecutable && vetoGuard) {
-        const queuedTimestamp = await getTxQueuedTimestamp(proposal, vetoGuard);
-        const guardTimeLockPeriod = (await vetoGuard.timelockPeriod()).toNumber();
-        const guardExecutionPeriod = (await vetoGuard.executionPeriod()).toNumber();
+      const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
+      const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
 
-        const interval = setInterval(() => {
-          setCountdown(queuedTimestamp + guardTimeLockPeriod + guardExecutionPeriod - Date.now());
-        }, 1000);
-        setCountdownInterval(interval);
+      const azoriusDeadline = azoriusProposal.deadline
+        ? azoriusProposal.deadline * 1000
+        : undefined;
+      const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
+
+      // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
+      if (proposal.state === FractalProposalState.ACTIVE && azoriusDeadline) {
+        startCountdown(azoriusDeadline, 1000);
+      } else if (
+        // If the proposal is time locked and has a deadline, start the countdown (for Azorius proposals)
+        proposal.state === FractalProposalState.TIMELOCKED &&
+        azoriusDeadline &&
+        timeLockPeriod
+      ) {
+        startCountdown(azoriusDeadline + Number(timeLockPeriod.value) * 1000, 1000);
+        // If the proposal is timelocked start the countdown (for safe multisig proposals with guards)
+      } else if (proposal.state === FractalProposalState.TIMELOCKED && freezeGuard && isSafeGuard) {
+        const safeGuard = freezeGuard as MultisigFreezeGuard;
+        const timelockedTimestamp =
+          (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;
+        const guardTimeLockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
+        startCountdown(timelockedTimestamp + guardTimeLockPeriod, 1000);
+        // If the proposal is executing start the countdown (for safe multisig proposals with guards)
+      } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {
+        let guardTimelockPeriod: number = 0;
+        if (isSafeGuard) {
+          // @todo ~ test this timer.
+          const safeGuard = freezeGuard as MultisigFreezeGuard;
+          const timelockedTimestamp =
+            (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;
+          const safeGuardTimelockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
+          const guardExecutionPeriod = Number(await safeGuard.executionPeriod()) * 1000;
+          guardTimelockPeriod =
+            timelockedTimestamp + safeGuardTimelockPeriod + guardExecutionPeriod;
+
+          // If the proposal is executing start the countdown (for Azorius proposals with guards)
+        } else if (isAzoriusGuard && timeLockPeriod && azoriusDeadline) {
+          guardTimelockPeriod = Number(timeLockPeriod.value) * 1000 + azoriusDeadline;
+        }
+        startCountdown(guardTimelockPeriod, 1000);
       }
     }
 
@@ -90,33 +164,48 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    usulProposal.deadline,
-    isActive,
-    isTimeLocked,
-    isQueued,
-    isExecutable,
-    proposal.transaction,
-    vetoGuardContract,
-    vetoGuardType,
-    proposal,
+    azoriusProposal.deadline,
+    proposal.state,
+    azoriusGovernance.votesStrategy,
+    freezeGuardContract,
+    freezeGuardType,
+    proposal.state,
+    azoriusGovernance.votesStrategy,
+    freezeGuardContract,
+    freezeGuardType,
   ]);
+
+  return countdown;
+}
+
+function ProposalTime({ proposal }: { proposal: FractalProposal }) {
+  const countdown = useCountdown(proposal);
+  const { t } = useTranslation('proposal');
+
+  const isActive = useMemo(() => proposal.state === FractalProposalState.ACTIVE, [proposal]);
+  const isTimeLocked = useMemo(
+    () => proposal.state === FractalProposalState.TIMELOCKED,
+    [proposal]
+  );
+  const isExecutable = useMemo(
+    () => proposal.state === FractalProposalState.EXECUTABLE,
+    [proposal]
+  );
+  const showCountdown = useMemo(
+    () => isActive || isTimeLocked || isExecutable,
+    [isActive, isTimeLocked, isExecutable]
+  );
 
   const tooltipLabel = t(
     isActive
       ? 'votingTooltip'
-      : isTimeLocked || isQueued
+      : isTimeLocked
       ? 'timeLockedTooltip'
       : isExecutable
       ? 'executableTooltip'
       : ''
   );
-  const iconName = isActive
-    ? 'vote'
-    : isTimeLocked || isQueued
-    ? 'lock'
-    : isExecutable
-    ? 'execute'
-    : undefined;
+  const iconName = isActive ? 'vote' : isTimeLocked ? 'lock' : isExecutable ? 'execute' : undefined;
 
   let Icon = null;
 
@@ -128,9 +217,8 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
     return null;
   }
 
-  // Unfortunately, date-fns don't have anything handy for our countdown display format
-  // So, have to do it manually
   const zeroPad = (num: number, places: number) => String(num).padStart(places, '0');
+  const daysLeft = Math.floor(countdown / (1000 * 60 * 60 * 24));
   const hoursLeft = Math.floor(countdown / (1000 * 60 * 60));
   const minutesLeft = Math.floor((countdown / (60 * 1000)) % 60);
   const secondsLeft = Math.floor((countdown / 1000) % 60);
@@ -153,7 +241,10 @@ function ProposalTime({ proposal }: { proposal: TxProposal }) {
             color="chocolate.200"
             textStyle="text-base-mono-semibold"
           >
-            {zeroPad(hoursLeft, 2)}:{zeroPad(minutesLeft, 2)}:{zeroPad(secondsLeft, 2)}
+            {daysLeft > 0 && `${zeroPad(daysLeft, 2)}:`}
+            {hoursLeft > 0 && `${zeroPad(hoursLeft, 2)}:`}
+            {minutesLeft > 0 && `${zeroPad(minutesLeft, 2)}:`}
+            {secondsLeft > 0 && `${zeroPad(secondsLeft, 2)}`}
           </Text>
         </Flex>
       </Flex>

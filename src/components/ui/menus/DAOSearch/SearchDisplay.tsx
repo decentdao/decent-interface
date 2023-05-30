@@ -1,8 +1,9 @@
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { DAO_ROUTES } from '../../../../routes/constants/dao';
+import { useFractal } from '../../../../providers/App/AppProvider';
 
 interface ISearchDisplay {
   loading?: boolean;
@@ -11,6 +12,11 @@ interface ISearchDisplay {
   address?: string;
   onClickView: Function;
   closeDrawer?: () => void;
+}
+
+function DAONameDisplay({ address }: { address: string }) {
+  const { displayName } = useDisplayName(address);
+  return <Text textStyle="text-base-sans-medium">{displayName}</Text>;
 }
 
 export function SearchDisplay({
@@ -22,9 +28,8 @@ export function SearchDisplay({
   closeDrawer,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
-  const navigate = useNavigate();
-
-  const { displayName } = useDisplayName(address);
+  const { action } = useFractal();
+  const { push } = useRouter();
   if (loading && address) {
     return (
       <Box>
@@ -46,7 +51,8 @@ export function SearchDisplay({
         onClick={() => {
           onClickView();
           if (closeDrawer) closeDrawer();
-          navigate(DAO_ROUTES.dao.relative(address));
+          action.resetDAO();
+          push(DAO_ROUTES.dao.relative(address));
         }}
         cursor="default"
         justifyContent="space-between"
@@ -62,7 +68,7 @@ export function SearchDisplay({
             >
               {t('labelDAOFound')}
             </Text>
-            <Text textStyle="text-base-sans-medium">{displayName}</Text>
+            <DAONameDisplay address={address} />
           </Flex>
         </Flex>
         <Button

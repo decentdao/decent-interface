@@ -2,12 +2,14 @@ import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import {
   Activity,
-  ActivityEventType,
   GovernanceActivity,
   MultisigProposal,
+  ActivityEventType,
   TreasuryActivity,
-  UsulProposal,
-} from '../../providers/Fractal/types';
+  AzoriusProposal,
+  SnapshotProposal,
+} from '../../types';
+
 import { createProposalNumberSubstring } from '../../utils/string';
 import { ActivityAddress } from './ActivityAddress';
 
@@ -15,11 +17,11 @@ interface IActivityDescription {
   activity: Activity;
 }
 interface IActivityProposal {
-  proposalNumber: string;
+  proposalId: string;
 }
 
-function ActivityProposalNumber({ proposalNumber }: IActivityProposal) {
-  return <Text>{createProposalNumberSubstring(proposalNumber)}</Text>;
+function ActivityProposalNumber({ proposalId }: IActivityProposal) {
+  return <Text>{createProposalNumberSubstring(proposalId)}</Text>;
 }
 
 function ActivityAddresses({ activity }: IActivityDescription) {
@@ -52,7 +54,7 @@ function OnChainRejectionMessage({ activity }: IActivityDescription) {
   return (
     <Text>
       {t('proposalOnChainRejection', {
-        proposalNumber: createProposalNumberSubstring(
+        proposalId: createProposalNumberSubstring(
           governanceActivity.multisigRejectedProposalNumber
         ),
       })}
@@ -77,20 +79,32 @@ export function ActivityDescriptionGovernance({ activity }: IActivityDescription
     count: governanceActivity.targets.length,
   });
 
-  const usulProposalMetaDataTitle = (activity as UsulProposal).metaData?.title;
+  const azoriusProposalMetaDataTitle = (activity as AzoriusProposal).metaData?.title;
+  const isSnapshotProposal = !!(activity as SnapshotProposal).snapshotProposalId;
 
-  if (!!usulProposalMetaDataTitle) {
+  if (isSnapshotProposal) {
     return (
       <>
-        <ActivityProposalNumber proposalNumber={governanceActivity.proposalNumber} />
-        <Text>{usulProposalMetaDataTitle}</Text>
+        <ActivityProposalNumber
+          proposalId={(governanceActivity as SnapshotProposal).snapshotProposalId}
+        />
+        <Text>{(governanceActivity as SnapshotProposal).title}</Text>
+      </>
+    );
+  }
+
+  if (!!azoriusProposalMetaDataTitle) {
+    return (
+      <>
+        <ActivityProposalNumber proposalId={governanceActivity.proposalId} />
+        <Text>{azoriusProposalMetaDataTitle}</Text>
       </>
     );
   }
 
   return (
     <>
-      <ActivityProposalNumber proposalNumber={governanceActivity.proposalNumber} />
+      <ActivityProposalNumber proposalId={governanceActivity.proposalId} />
       <Text>{transactionDescription}</Text>
       <ActivityAddresses activity={activity} />
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}

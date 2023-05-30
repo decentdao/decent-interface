@@ -1,0 +1,8 @@
+sources:
+  - name: fractal
+    handler:
+      graphql:
+        endpoint: https://api.thegraph.com/subgraphs/name/mudrila/fractal
+
+documents:
+  - ./src/graphql/DAO.graphql

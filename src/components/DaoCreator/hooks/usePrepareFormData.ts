@@ -1,17 +1,68 @@
+import { IVotes__factory } from '@fractal-framework/fractal-contracts';
+
 import { useCallback } from 'react';
-import { useSigner } from 'wagmi';
-import { BigNumberValuePair } from '../../ui/forms/BigNumberInput';
-import { DAOVetoGuardConfig, GnosisDAO, TokenGovernanceDAO } from '../types';
+import { useProvider, useSigner } from 'wagmi';
+import {
+  SafeMultisigDAO,
+  DAOFreezeGuardConfig,
+  BigNumberValuePair,
+  AzoriusGovernanceDAO,
+  TokenCreationType,
+} from '../../../types';
+import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
+  const provider = useProvider();
+
+  // Helper function to prepare freezeGuard data
+  const prepareFreezeGuardData = useCallback(
+    async (
+      freezeGuard: DAOFreezeGuardConfig<BigNumberValuePair>
+    ): Promise<DAOFreezeGuardConfig> => {
+      return {
+        executionPeriod: await getEstimatedNumberOfBlocks(
+          freezeGuard.executionPeriod.bigNumberValue!,
+          provider
+        ),
+        timelockPeriod: await getEstimatedNumberOfBlocks(
+          freezeGuard.timelockPeriod.bigNumberValue!,
+          provider
+        ),
+        freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
+        freezeProposalPeriod: await getEstimatedNumberOfBlocks(
+          freezeGuard.freezeProposalPeriod.bigNumberValue!,
+          provider
+        ),
+        freezePeriod: await getEstimatedNumberOfBlocks(
+          freezeGuard.freezePeriod.bigNumberValue!,
+          provider
+        ),
+      };
+    },
+    [provider]
+  );
+
+  const checkVotesToken = useCallback(
+    async (address: string) => {
+      try {
+        const votesContract = IVotes__factory.connect(address, provider);
+        await votesContract.delegates('0x0000000000000000000000000000000000000001');
+        await votesContract.getVotes('0x0000000000000000000000000000000000000001');
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    [provider]
+  );
 
   const prepareMultisigFormData = useCallback(
     async ({
       trustedAddresses,
-      vetoGuard,
+      freezeGuard,
       ...rest
-    }: GnosisDAO & { vetoGuard?: DAOVetoGuardConfig<BigNumberValuePair> }) => {
+    }: SafeMultisigDAO & { freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair> }) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
           if (inputValue.endsWith('.eth')) {
@@ -21,27 +72,20 @@ export function usePrepareFormData() {
           return inputValue;
         })
       );
-      let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
-      if (vetoGuard) {
-        vetoGuardData = {
-          executionPeriod: vetoGuard.executionPeriod.bigNumberValue!,
-          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue!,
-          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue!,
-          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue!,
-          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue!,
-          freezePeriod: vetoGuard.freezePeriod.bigNumberValue!,
-        };
+      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
+      if (freezeGuard) {
+        freezeGuardData = await prepareFreezeGuardData(freezeGuard);
       }
       return {
         trustedAddresses: resolvedAddresses,
-        ...vetoGuardData,
+        ...freezeGuardData,
         ...rest,
       };
     },
-    [signer]
+    [signer, prepareFreezeGuardData]
   );
 
-  const prepareGnosisUsulFormData = useCallback(
+  const prepareAzoriusFormData = useCallback(
     async ({
       tokenSupply,
       tokenAllocations,
@@ -49,11 +93,14 @@ export function usePrepareFormData() {
       quorumPercentage,
       timelock,
       votingPeriod,
-      vetoGuard,
+      executionPeriod,
+      freezeGuard,
+      tokenImportAddress,
+      tokenCreationType,
       ...rest
-    }: TokenGovernanceDAO<BigNumberValuePair> & {
-      vetoGuard?: DAOVetoGuardConfig<BigNumberValuePair>;
-    }): Promise<TokenGovernanceDAO> => {
+    }: AzoriusGovernanceDAO<BigNumberValuePair> & {
+      freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair>;
+    }): Promise<AzoriusGovernanceDAO> => {
       const resolvedTokenAllocations = await Promise.all(
         tokenAllocations.map(async allocation => {
           let address = allocation.address;
@@ -63,29 +110,36 @@ export function usePrepareFormData() {
           return { amount: allocation.amount.bigNumberValue!, address: address };
         })
       );
-      let vetoGuardData: Partial<DAOVetoGuardConfig> = {};
-      if (vetoGuard) {
-        vetoGuardData = {
-          executionPeriod: vetoGuard.executionPeriod.bigNumberValue!,
-          timelockPeriod: vetoGuard.timelockPeriod.bigNumberValue!,
-          vetoVotesThreshold: vetoGuard.vetoVotesThreshold.bigNumberValue!,
-          freezeVotesThreshold: vetoGuard.freezeVotesThreshold.bigNumberValue!,
-          freezeProposalPeriod: vetoGuard.freezeProposalPeriod.bigNumberValue!,
-          freezePeriod: vetoGuard.freezePeriod.bigNumberValue!,
-        };
+      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
+      if (freezeGuard) {
+        freezeGuardData = await prepareFreezeGuardData(freezeGuard);
+      }
+      const isTokenImported =
+        tokenCreationType === TokenCreationType.IMPORTED && !!tokenImportAddress;
+      let isVotesToken = false;
+      if (isTokenImported) {
+        isVotesToken = await checkVotesToken(tokenImportAddress);
       }
       return {
         tokenSupply: tokenSupply.bigNumberValue!,
         parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
         quorumPercentage: quorumPercentage.bigNumberValue!,
-        timelock: timelock.bigNumberValue!,
-        votingPeriod: votingPeriod.bigNumberValue!,
+        timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
+        executionPeriod: await getEstimatedNumberOfBlocks(
+          executionPeriod.bigNumberValue!,
+          provider
+        ),
+        votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
         tokenAllocations: resolvedTokenAllocations,
-        ...vetoGuardData,
+        tokenImportAddress,
+        tokenCreationType,
+        isTokenImported,
+        isVotesToken,
+        ...freezeGuardData,
         ...rest,
       };
     },
-    [signer]
+    [signer, checkVotesToken, provider, prepareFreezeGuardData]
   );
-  return { prepareMultisigFormData, prepareGnosisUsulFormData };
+  return { prepareMultisigFormData, prepareAzoriusFormData, checkVotesToken };
 }

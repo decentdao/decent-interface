@@ -1,10 +1,10 @@
 import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
 import { Copy } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import EtherscanLinkAddress from '../../links/EtherscanLinkAddress';
 import Avatar from '../../page/Header/Avatar';
 
@@ -13,7 +13,10 @@ import Avatar from '../../page/Header/Avatar';
  * Allows for copying of address
  */
 export function MenuItemWallet() {
-  const { address: account } = useAccount();
+  const {
+    readOnly: { user },
+  } = useFractal();
+  const account = user.address;
   const { displayName: accountDisplayName } = useDisplayName(account);
   const avatarURL = useAvatar(account || null);
   const copyTextToClipboard = useCopyText();

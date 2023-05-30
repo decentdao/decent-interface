@@ -1,7 +1,13 @@
-import { InputElementProps, FormControlOptions, Input } from '@chakra-ui/react';
+import { InputElementProps, FormControlOptions, Input, InputProps } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useAddress from '../../../hooks/utils/useAddress';
 
+/**
+ * @deprecated we've replaced this component with validation via Yup
+ * in {@link useValidationAddress}.
+ */
 export interface EthAddressInputProps
   extends Omit<InputElementProps, 'onChange' | 'placeholder' | 'type'>,
     FormControlOptions {
@@ -11,9 +17,8 @@ export interface EthAddressInputProps
 }
 
 /**
- * @param value an optional stateful string value, if you'd like to have access to this outside this component
- * @param setValue the corresponding setter for the value parameter, both are required for either to be used
- * @param onAddressChange a callback that provides the current address, along with whether it is valid
+ * @deprecated we've replaced this component with validation via Yup
+ * in {@link useValidationAddress}.
  */
 export function EthAddressInput({
   value,
@@ -47,6 +52,23 @@ export function EthAddressInput({
         }
         setActualInputValue(event.target.value.trim());
       }}
+      {...rest}
+    />
+  );
+}
+
+/**
+ * A simple Input for Ethereum addresses. Input validation is provided via Yup
+ * in {@link useValidationAddress}
+ */
+export function AddressInput({ ...rest }: InputProps) {
+  return (
+    <Input
+      // preface id with "search" to prevent showing 1password
+      // https://1password.community/discussion/comment/606453/#Comment_606453
+      id="searchButActuallyEthAddress"
+      autoComplete="off"
+      placeholder="0x0000...0000"
       {...rest}
     />
   );

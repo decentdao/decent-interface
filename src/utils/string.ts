@@ -1,8 +1,8 @@
 import { createAccountSubstring } from './../hooks/utils/useDisplayName';
 
-export const createProposalNumberSubstring = (proposalNumber: string) => {
-  if (proposalNumber.length < 10) {
-    return `#${proposalNumber}`;
+export const createProposalNumberSubstring = (proposalId: string) => {
+  if (proposalId.length < 10) {
+    return `#${proposalId}`;
   }
-  return `#${createAccountSubstring(proposalNumber)}`;
+  return `#${createAccountSubstring(proposalId)}`;
 };

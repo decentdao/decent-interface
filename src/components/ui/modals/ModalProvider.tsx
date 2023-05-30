@@ -1,16 +1,28 @@
 import { Portal, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AddSignerModal from '../../pages/ManageSigners/AddSignerModal';
+import RemoveSignerModal from '../../pages/ManageSigners/RemoveSignerModal';
+import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
+import ProposalTemplateModal from './ProposalTemplateModal';
 import { SendAssetsModal } from './SendAssetsModal';
+import { UnwrapToken } from './UnwrapToken';
+import { WrapToken } from './WrapToken';
 
 export enum ModalType {
   NONE,
   DELEGATE,
   SEND_ASSETS,
+  WRAP_TOKEN,
+  UNWRAP_TOKEN,
   CONFIRM_URL,
+  REMOVE_SIGNER,
+  ADD_SIGNER,
+  CREATE_PROPOSAL_FROM_TEMPLATE,
+  CONFIRM_MODIFY_GOVERNANCE,
 }
 
 export interface CurrentModal {
@@ -68,6 +80,16 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         ti = t('sendAssetsTitle');
         co = <SendAssetsModal close={cl} />;
         break;
+      case ModalType.WRAP_TOKEN:
+        // @todo add title to translations
+        ti = t('wrapTokenTitle');
+        co = <WrapToken close={cl} />;
+        break;
+      case ModalType.UNWRAP_TOKEN:
+        // @todo add title to translations
+        ti = t('unwrapTokenTitle');
+        co = <UnwrapToken close={cl} />;
+        break;
       case ModalType.CONFIRM_URL:
         ti = t('confirmUrlTitle');
         wa = true;
@@ -77,6 +99,41 @@ export function ModalProvider({ children }: { children: ReactNode }) {
             close={cl}
           />
         );
+        break;
+      case ModalType.REMOVE_SIGNER:
+        ti = t('removeSignerTitle');
+        co = (
+          <RemoveSignerModal
+            selectedSigner={current.props.selectedSigner}
+            signers={current.props.signers}
+            currentThreshold={current.props.currentThreshold}
+            close={cl}
+          />
+        );
+        break;
+      case ModalType.ADD_SIGNER:
+        ti = t('addSignerTitle');
+        co = (
+          <AddSignerModal
+            signers={current.props.signers}
+            currentThreshold={current.props.currentThreshold}
+            close={cl}
+          />
+        );
+        break;
+      case ModalType.CREATE_PROPOSAL_FROM_TEMPLATE:
+        ti = current.props.proposalTemplate.title;
+        co = (
+          <ProposalTemplateModal
+            proposalTemplate={current.props.proposalTemplate}
+            onClose={cl}
+          />
+        );
+        break;
+      case ModalType.CONFIRM_MODIFY_GOVERNANCE:
+        wa = true;
+        ti = t('confirmModifyGovernanceTitle');
+        co = <ConfirmModifyGovernanceModal close={cl} />;
         break;
       case ModalType.NONE:
       default:

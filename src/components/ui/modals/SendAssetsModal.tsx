@@ -4,23 +4,25 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useDefaultNonce from '../../../hooks/DAO/useDefaultNonce';
-import useSendAssets from '../../../pages/Treasury/hooks/useSendAssets';
-import { useFractal } from '../../../providers/Fractal/hooks/useFractal';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { BigNumberValuePair } from '../../../types';
 import {
   formatCoinFromAsset,
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
-import { BigNumberInput, BigNumberValuePair } from '../forms/BigNumberInput';
+import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
+import { BigNumberInput } from '../forms/BigNumberInput';
+import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
 
+// @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
+    node: { daoAddress, safe },
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const nonce = useDefaultNonce();
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
@@ -28,6 +30,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     fungibleAssetsWithBalance[0]
   );
   const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
+  const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
+
   const [destination, setDestination] = useState<string>('');
 
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
@@ -40,10 +44,12 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
     asset: selectedAsset,
     destinationAddress: destination,
-    nonce,
+    nonce: nonceInput,
+    daoAddress: daoAddress,
   });
 
   const handleCoinChange = (index: string) => {
+    setInputAmount({ value: '0', bigNumberValue: BigNumber.from(0) });
     setSelectedAsset(fungibleAssetsWithBalance[Number(index)]);
   };
 
@@ -57,10 +63,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled = !isValidAddress || inputAmount?.bigNumberValue?.isZero() || overDraft;
+  const isSubmitDisabled =
+    !isValidAddress || !inputAmount || inputAmount?.bigNumberValue?.isZero() || overDraft;
 
-  const onSubmit = () => {
-    sendAssets();
+  const onSubmit = async () => {
+    await sendAssets();
     if (close) close();
   };
 
@@ -104,6 +111,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             onChange={onChangeAmount}
             decimalPlaces={selectedAsset?.token?.decimals}
             placeholder="0"
+            maxValue={BigNumber.from(selectedAsset.balance)}
           />
         </Box>
       </Flex>
@@ -143,10 +151,20 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           }}
         />
       </LabelWrapper>
+      <Divider
+        color="chocolate.700"
+        marginTop="0.75rem"
+        marginBottom="0.75rem"
+      />
+      <CustomNonceInput
+        nonce={nonceInput}
+        onChange={nonce => setNonceInput(nonce ? nonce : undefined)}
+      />
+
       <Button
         marginTop="2rem"
         width="100%"
-        disabled={isSubmitDisabled}
+        isDisabled={isSubmitDisabled}
         onClick={onSubmit}
       >
         {t('sendAssetsSubmit')}

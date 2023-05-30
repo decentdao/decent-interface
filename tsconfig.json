@@ -18,7 +18,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "exclude": [
     "docker"
@@ -26,5 +32,9 @@
   "include": [
     "src",
     "tests",
+    "app",
+    ".next/types/**/*.ts",
+    "next-env.d.ts",
+    "next.config.js",
   ]
 }

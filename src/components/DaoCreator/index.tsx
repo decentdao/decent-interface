@@ -1,12 +1,13 @@
+'use client';
+
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { GovernanceTypes } from '../../providers/Fractal/types';
+import { DAOTrigger, CreatorFormState, GovernanceModuleType } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
 
 import { usePrepareFormData } from './hooks/usePrepareFormData';
-import { CreatorFormState, DAOTrigger } from './types';
 
 function DaoCreator({
   deployDAO,
@@ -18,7 +19,7 @@ function DaoCreator({
   isSubDAO?: boolean;
 }) {
   const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
-  const { prepareMultisigFormData, prepareGnosisUsulFormData } = usePrepareFormData();
+  const { prepareMultisigFormData, prepareAzoriusFormData } = usePrepareFormData();
   return (
     <Box>
       <Formik<CreatorFormState>
@@ -26,30 +27,30 @@ function DaoCreator({
         validationSchema={createDAOValidation}
         onSubmit={async values => {
           const choosenGovernance = values.essentials.governance;
-          const vetoGuard = isSubDAO ? values.vetoGuard : undefined;
+          const freezeGuard = isSubDAO ? values.freeze : undefined;
           switch (choosenGovernance) {
-            case GovernanceTypes.GNOSIS_SAFE: {
+            case GovernanceModuleType.MULTISIG: {
               const data = await prepareMultisigFormData({
                 ...values.essentials,
-                ...values.gnosis,
-                vetoGuard,
+                ...values.multisig,
+                freezeGuard,
               });
               deployDAO(data);
               return;
             }
-            case GovernanceTypes.GNOSIS_SAFE_USUL: {
-              const data = await prepareGnosisUsulFormData({
+            case GovernanceModuleType.AZORIUS: {
+              const data = await prepareAzoriusFormData({
                 ...values.essentials,
-                ...values.govModule,
-                ...values.govToken,
-                vetoGuard,
+                ...values.azorius,
+                ...values.token,
+                freezeGuard,
               });
               deployDAO(data);
               return;
             }
           }
         }}
-        validateOnMount
+        isInitialValid={false}
       >
         {({ handleSubmit, ...rest }) => (
           <form onSubmit={handleSubmit}>

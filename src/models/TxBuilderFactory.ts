@@ -1,15 +1,20 @@
 import { GnosisSafe, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { TokenGovernanceDAO, SubDAO, GnosisDAO } from '../components/DaoCreator/types';
 import { getRandomBytes } from '../helpers';
-import { SafeTransaction } from '../types';
+import {
+  BaseContracts,
+  SafeMultisigDAO,
+  SafeTransaction,
+  SubDAO,
+  AzoriusGovernanceDAO,
+  AzoriusContracts,
+} from '../types';
+import { AzoriusTxBuilder as AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
+import { FreezeGuardTxBuilder } from './FreezeGuardTxBuilder';
 import { MultisigTxBuilder } from './MultisigTxBuilder';
-import { UsulTxBuilder } from './UsulTxBuilder';
-import { VetoGuardTxBuilder } from './VetoGuardTxBuilder';
 import { gnosisSafeData } from './helpers/gnosisSafeData';
-import { BaseContracts, UsulContracts } from './types/contracts';
 
 export class TxBuilderFactory extends BaseTxBuilder {
   private readonly saltNum: string;
@@ -22,17 +27,17 @@ export class TxBuilderFactory extends BaseTxBuilder {
   constructor(
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
-    usulContracts: UsulContracts | undefined,
-    daoData: GnosisDAO | TokenGovernanceDAO | SubDAO,
-    parentDAOAddress?: string,
+    azoriusContracts: AzoriusContracts | undefined,
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO,
+    parentAddress?: string,
     parentTokenAddress?: string
   ) {
     super(
       signerOrProvider,
       baseContracts,
-      usulContracts,
+      azoriusContracts,
       daoData,
-      parentDAOAddress,
+      parentAddress,
       parentTokenAddress
     );
 
@@ -44,9 +49,9 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts.multiSendContract,
       this.baseContracts.gnosisSafeFactoryContract,
       this.baseContracts.gnosisSafeSingletonContract,
-      this.daoData as GnosisDAO,
+      this.daoData as SafeMultisigDAO,
       this.saltNum,
-      !!this.usulContracts
+      !!this.azoriusContracts
     );
 
     const safeContract = GnosisSafe__factory.connect(
@@ -63,49 +68,53 @@ export class TxBuilderFactory extends BaseTxBuilder {
     return new DaoTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
-      this.usulContracts,
+      this.azoriusContracts,
       this.daoData,
       this.saltNum,
       this.predictedGnosisSafeAddress!,
       this.createSafeTx!,
       this.safeContract!,
       this,
-      this.parentDAOAddress,
+      this.parentAddress,
       this.parentTokenAddress
     );
   }
 
-  public createVetoGuardTxBuilder(
-    usulAddress?: string,
+  public createFreezeGuardTxBuilder(
+    azoriusAddress?: string,
     strategyAddress?: string
-  ): VetoGuardTxBuilder {
-    return new VetoGuardTxBuilder(
+  ): FreezeGuardTxBuilder {
+    return new FreezeGuardTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
       this.daoData as SubDAO,
       this.safeContract!,
       this.saltNum,
-      this.parentDAOAddress!,
+      this.parentAddress!,
       this.parentTokenAddress,
-      this.usulContracts,
-      usulAddress,
+      this.azoriusContracts,
+      azoriusAddress,
       strategyAddress
     );
   }
 
   public createMultiSigTxBuilder(): MultisigTxBuilder {
-    return new MultisigTxBuilder(this.baseContracts, this.daoData as GnosisDAO, this.safeContract!);
+    return new MultisigTxBuilder(
+      this.baseContracts,
+      this.daoData as SafeMultisigDAO,
+      this.safeContract!
+    );
   }
 
-  public createUsulTxBuilder(): UsulTxBuilder {
-    return new UsulTxBuilder(
+  public createAzoriusTxBuilder(): AzoriusTxBuilder {
+    return new AzoriusTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
-      this.usulContracts!,
-      this.daoData as GnosisDAO,
+      this.azoriusContracts!,
+      this.daoData as AzoriusGovernanceDAO,
       this.safeContract!,
       this.predictedGnosisSafeAddress!,
-      this.parentDAOAddress,
+      this.parentAddress,
       this.parentTokenAddress
     );
   }

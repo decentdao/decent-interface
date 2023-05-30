@@ -3,17 +3,39 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
-import { AddressValidationMap } from '../../../components/DaoCreator/types';
-import { Providers } from '../../../providers/Fractal/types/ethers';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { AddressValidationMap } from '../../../types';
+import { Providers } from '../../../types/network';
+
+export function validateENSName({ ensName }: { ensName: string }) {
+  if (!!ensName && ensName.trim() && ensName.endsWith('.eth') && [...ensName].length >= 7) {
+    return {
+      validation: {
+        address: '',
+        isValidAddress: true,
+      },
+      isValid: false,
+    };
+  }
+  return {
+    validation: {
+      address: '',
+      isValidAddress: false,
+    },
+    isValid: false,
+  };
+}
 
 export async function validateAddress({
   signerOrProvider,
   address,
+  checkENS = true,
 }: {
   signerOrProvider: Signer | Providers;
   address: string;
+  checkENS?: boolean;
 }) {
-  if (!!address && address.trim() && address.endsWith('.eth')) {
+  if (!!address && address.trim() && address.endsWith('.eth') && checkENS) {
     const resolvedAddress = await signerOrProvider.resolveName(address).catch();
     if (resolvedAddress) {
       return {
@@ -64,7 +86,10 @@ export const useValidationAddress = () => {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = signer || provider;
-  const { t } = useTranslation(['daoCreate', 'common']);
+  const { t } = useTranslation(['daoCreate', 'common', 'modals']);
+  const {
+    node: { safe },
+  } = useFractal();
 
   const addressValidationTest = useMemo(() => {
     return {
@@ -80,6 +105,51 @@ export const useValidationAddress = () => {
       },
     };
   }, [signerOrProvider, addressValidationMap, t]);
+
+  const ensNameValidationTest = useMemo(() => {
+    return {
+      name: 'ENS Name Validation',
+      message: t('errorInvalidENSName', { ns: 'common' }),
+      test: async function (ensName: string | undefined) {
+        if (!ensName) return false;
+        const { validation } = await validateENSName({ ensName });
+        if (validation.isValidAddress) {
+          addressValidationMap.current.set(ensName, validation);
+        }
+        return validation.isValidAddress;
+      },
+    };
+  }, [addressValidationMap, t]);
+
+  const addressValidationTestSimple = useMemo(() => {
+    return {
+      name: 'Address Validation',
+      message: t('errorInvalidAddress', { ns: 'common' }),
+      test: async function (address: string | undefined) {
+        if (!address) return false;
+        const { validation } = await validateAddress({
+          signerOrProvider,
+          address,
+          checkENS: false,
+        });
+        if (validation.isValidAddress) {
+          addressValidationMap.current.set(address, validation);
+        }
+        return validation.isValidAddress;
+      },
+    };
+  }, [signerOrProvider, addressValidationMap, t]);
+
+  const newSignerValidationTest = useMemo(() => {
+    return {
+      name: 'New Signer Validation',
+      message: t('alreadySigner', { ns: 'modals' }),
+      test: async function (address: string | undefined) {
+        if (!address || !safe) return false;
+        return !safe.owners.includes(address);
+      },
+    };
+  }, [safe, t]);
 
   const uniqueAddressValidationTest = useMemo(() => {
     return {
@@ -124,7 +194,10 @@ export const useValidationAddress = () => {
   }, [signerOrProvider, t]);
 
   return {
+    addressValidationTestSimple,
     addressValidationTest,
+    ensNameValidationTest,
+    newSignerValidationTest,
     uniqueAddressValidationTest,
   };
 };

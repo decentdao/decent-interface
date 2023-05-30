@@ -1,5 +1,5 @@
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { Activity } from '../providers/Fractal/types';
+import { Activity } from '../types';
 
 export const checkIsRejected = (
   isMultiSigTransaction: boolean,
