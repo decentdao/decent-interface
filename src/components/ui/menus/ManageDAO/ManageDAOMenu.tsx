@@ -1,16 +1,19 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGuardContracts, FreezeGuard, GovernanceModuleType } from '../../../../types';
+import { ModalType } from '../../modals/ModalProvider';
+import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -26,8 +29,10 @@ export function ManageDAOMenu({
   freezeGuard,
   guardContracts,
 }: IManageDAOMenu) {
+  const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
+  const { getCanUserCreateProposal } = useSubmitProposal();
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeAddress: safeAddress,
@@ -35,6 +40,21 @@ export function ManageDAOMenu({
   const {
     governance: { type },
   } = useFractal();
+
+  useEffect(() => {
+    const verifyUserCanCreateProposal = async () => {
+      setCanUserCreateProposal(await getCanUserCreateProposal(safeAddress));
+    };
+
+    verifyUserCanCreateProposal();
+  }, [getCanUserCreateProposal, safeAddress]);
+
+  const handleNavigateToManageSigners = useMemo(
+    () => () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
+    [push, safeAddress]
+  );
+
+  const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
   const options = useMemo(() => {
     const createSubDAOOption = {
@@ -44,8 +64,29 @@ export function ManageDAOMenu({
 
     const manageSignersOption = {
       optionKey: 'optionManageSigners',
-      onClick: () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
+      onClick: handleNavigateToManageSigners,
     };
+
+    const viewSignersOption = {
+      optionKey: 'optionViewSigners',
+      onClick: handleNavigateToManageSigners,
+    };
+
+    const freezeOption = {
+      optionKey: 'optionInitiateFreeze',
+      onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
+    };
+
+    const clawBackOption = {
+      optionKey: 'optionInitiateClawback',
+      onClick: handleClawBack,
+    };
+
+    const modifyGovernanceOption = {
+      optionKey: 'optionModifyGovernance',
+      onClick: handleModifyGovernance,
+    };
+
     if (
       freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
@@ -63,12 +104,8 @@ export function ManageDAOMenu({
       ) &&
       freezeGuard.userHasVotes
     ) {
-      const freezeOption = {
-        optionKey: 'optionInitiateFreeze',
-        onClick: () => guardContracts.freezeVotingContract?.asSigner.castFreezeVote(),
-      };
       if (type === GovernanceModuleType.MULTISIG) {
-        return [createSubDAOOption, manageSignersOption, freezeOption];
+        return [createSubDAOOption, manageSignersOption, freezeOption, modifyGovernanceOption];
       } else {
         return [createSubDAOOption, freezeOption];
       }
@@ -84,15 +121,12 @@ export function ManageDAOMenu({
       freezeGuard.isFrozen &&
       freezeGuard.userHasVotes
     ) {
-      const clawBackOption = {
-        optionKey: 'optionInitiateClawback',
-        onClick: handleClawBack,
-      };
-
       return [clawBackOption];
     } else {
-      if (type === GovernanceModuleType.MULTISIG) {
-        return [createSubDAOOption, manageSignersOption];
+      if (type === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
+        return [createSubDAOOption, manageSignersOption, modifyGovernanceOption];
+      } else if (type === GovernanceModuleType.MULTISIG) {
+        return [viewSignersOption];
       } else {
         return [createSubDAOOption];
       }
@@ -105,6 +139,9 @@ export function ManageDAOMenu({
     type,
     guardContracts.freezeVotingContract?.asSigner,
     handleClawBack,
+    canUserCreateProposal,
+    handleNavigateToManageSigners,
+    handleModifyGovernance,
   ]);
 
   return (
@@ -115,7 +152,7 @@ export function ManageDAOMenu({
           mt="0.25rem"
         />
       }
-      titleKey="titleManageDAO"
+      titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
     />

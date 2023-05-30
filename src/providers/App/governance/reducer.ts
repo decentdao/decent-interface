@@ -1,4 +1,4 @@
-import { FractalGovernance, AzoriusProposal, VOTE_CHOICES } from '../../../types';
+import { FractalGovernance, AzoriusProposal, VOTE_CHOICES, SnapshotProposal } from '../../../types';
 import { AzoriusGovernance, GovernanceModuleType } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
@@ -22,7 +22,16 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
   switch (action.type) {
     case FractalGovernanceAction.SET_PROPOSALS: {
       const { type, proposals: newProposals } = action.payload;
-      return { ...state, type, proposals: newProposals };
+      return {
+        ...state,
+        type,
+        proposals: [
+          ...newProposals,
+          ...(proposals || []).filter(
+            proposal => !!(proposal as SnapshotProposal).snapshotProposalId
+          ),
+        ],
+      };
     }
     case FractalGovernanceAction.SET_PROPOSAL_TEMPLATES: {
       return { ...state, proposalTemplates: action.payload };
@@ -30,6 +39,8 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_STRATEGY: {
       return { ...state, type: GovernanceModuleType.AZORIUS, votesStrategy: action.payload };
     }
+    case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
+      return { ...state, proposals: [...(proposals || []), ...action.payload] };
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return { ...state, proposals: [...(proposals || []), action.payload] };
     case FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE: {

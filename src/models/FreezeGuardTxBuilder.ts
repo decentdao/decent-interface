@@ -98,7 +98,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       'setUp',
       [
         ethers.utils.defaultAbiCoder.encode(
-          ['address', 'uint256', 'uint256', 'uint256', 'uint256', 'address', 'address'],
+          ['address', 'uint256', 'uint32', 'uint32', 'address'],
           [
             this.parentAddress, // Owner -- Parent DAO
             subDaoData.freezeVotesThreshold, // FreezeVotesThreshold

@@ -1,78 +1,61 @@
 'use client';
 
-import { Link } from '@chakra-ui/next-js';
-import { Box, Center, Flex, HStack, Text, Button } from '@chakra-ui/react';
-import { Discord, Documents, SupportQuestion } from '@decent-org/fractal-ui';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
-import NextImage from 'next/image';
+import { Center, VStack, Text, Button, Flex } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import packageJson from '../package.json';
-import IconWithText from '../src/components/ui/icons/IconWithText';
+import { AppFooter } from '../src/components/pages/AppHome/AppFooter';
+import { CTABox } from '../src/components/pages/AppHome/CTABox';
+import FeaturedDAOCard from '../src/components/pages/AppHome/FeaturedDAOCard';
+import ValueProposition from '../src/components/pages/AppHome/ValueProposition';
+import ExternalLink from '../src/components/ui/links/ExternalLink';
 import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
-import { URL_DISCORD, URL_DOCS, URL_FAQ } from '../src/constants/url';
+import { URL_DOCS } from '../src/constants/url';
 import { useFractal } from '../src/providers/App/AppProvider';
 
-function InfoLinks() {
-  const { t } = useTranslation('menu');
-  return (
-    <HStack>
-      <IconWithText
-        icon={
-          <SupportQuestion
-            color="gold.500"
-            boxSize="1.5rem"
-          />
-        }
-        label={t('faq')}
-        url={URL_FAQ}
-        testid="home-linkFAQ"
-      />
-      <Box
-        paddingLeft="1.25rem"
-        paddingRight="1.25rem"
-      >
-        <IconWithText
-          icon={
-            <Discord
-              color="gold.500"
-              boxSize="1.5rem"
-            />
-          }
-          label={t('discord')}
-          url={URL_DISCORD}
-          testid="home-linkDiscord"
-        />
-      </Box>
-      <IconWithText
-        icon={
-          <Documents
-            color="gold.500"
-            boxSize="1.5rem"
-          />
-        }
-        label={t('docs')}
-        url={URL_DOCS}
-        testid="home-linkDocs"
-      />
-    </HStack>
-  );
-}
+const VALUE_PROPS = [
+  {
+    iconSrc: '/images/icon-structure.svg',
+    titleKey: 'structure',
+    descKey: 'structureDesc',
+  },
+  {
+    iconSrc: '/images/icon-govern.svg',
+    titleKey: 'govern',
+    descKey: 'governDesc',
+  },
+  {
+    iconSrc: '/images/icon-operate.svg',
+    titleKey: 'operate',
+    descKey: 'operateDesc',
+  },
+];
+
+const FEATURED_DAOS = [
+  {
+    iconSrc: '/images/icon-decent.svg',
+    titleKey: 'decentTitle',
+    descKey: 'decentDesc',
+    address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525', // TODO
+  },
+  {
+    iconSrc: '/images/icon-awakevc.svg',
+    titleKey: 'awakeTitle',
+    descKey: 'awakeDesc',
+    address: '0xF2C7C6445BD4E2d79e0Ee362812BaDD8D227b02F', // TODO
+  },
+];
 
 export default function HomePage() {
-  const { t } = useTranslation('daoCreate');
-  const { openConnectModal } = useConnectModal();
+  const { t } = useTranslation('home');
   const { push } = useRouter();
   const createDAO = () => {
     push(BASE_ROUTES.create);
   };
-
   const {
     node: { daoAddress },
     action,
-    readOnly: { user },
   } = useFractal();
 
   useEffect(() => {
@@ -82,62 +65,138 @@ export default function HomePage() {
   }, [daoAddress, action]);
   return (
     <ClientOnly>
-      <Center h="full">
-        <Flex
-          flexDirection="column"
-          alignItems="center"
+      <Center>
+        <VStack
+          maxW={{ md: '80%', sm: '95%' }}
+          alignItems="start"
+          paddingTop="6.25rem"
+          paddingBottom="6.25rem"
         >
-          <Box marginBottom="3.5rem">
-            <NextImage
-              priority
-              width={252}
-              height={48}
-              src="/images/fractal-text-logo.svg"
-              alt="Fractal Logo"
-            />
-          </Box>
-          {!user.address && (
-            <Text
-              data-testid="home-pageTitleDisconnected"
-              textStyle="text-2xl-mono-regular"
-              color="grayscale.100"
-              marginBottom="1.5rem"
-            >
-              {t('homeTitleDisconnected')}
-            </Text>
-          )}
           <Text
-            data-testid={
-              user.address ? 'home-pageSubtitleConnected' : 'home-pageSubtitleDisconnected'
-            }
-            textStyle="text-base-mono-regular"
+            paddingBottom="1.5rem"
+            textStyle={{
+              base: 'text-2xl-mono-regular',
+              sm: 'text-4xl-mono-regular',
+              md: 'text-6xl-mono-regular',
+            }}
             color="grayscale.100"
-            marginBottom="1.5rem"
           >
-            {t(user.address ? 'homeSubTitleConnected' : 'homeSubTitleDisconnected')}
+            {t('homeTitle')}
           </Text>
-          <Button
-            onClick={user.address ? createDAO : openConnectModal}
-            data-testid={user.address ? 'home-linkCreate' : 'home-linkConnect'}
-            size="lg"
-            marginBottom="3.25rem"
-          >
-            {t(user.address ? 'homeButtonCreate' : 'homeButtonConnect')}
-          </Button>
-          <InfoLinks />
-          <Link
-            marginTop="2rem"
-            href="https://www.netlify.com/"
-            target="_blank"
-          >
-            <Text
-              textStyle="text-md-mono-semibold"
-              color="gold.500"
+          <Center>
+            <Flex
+              paddingBottom="2rem"
+              alignItems="center"
+              flexWrap="wrap"
             >
-              v{packageJson.version} Deployed by Netlify
-            </Text>
-          </Link>
-        </Flex>
+              <Text
+                width={{ md: '100%', lg: '65%' }}
+                textStyle="text-lg-mono-regular"
+                color="grayscale.300"
+                paddingEnd="1rem"
+                marginBottom="2rem"
+              >
+                {t('homeDesc')}
+              </Text>
+              <Button
+                width={{ md: '100%', lg: '35%' }}
+                h="3.5rem"
+                onClick={createDAO}
+                variant="tertiary"
+                marginBottom="2rem"
+              >
+                {t('createButton')}
+              </Button>
+            </Flex>
+          </Center>
+          <Flex
+            paddingBottom="2rem"
+            flexWrap="wrap"
+          >
+            {VALUE_PROPS.map((daoAction, index) => {
+              return (
+                <ValueProposition
+                  paddingBottom="2rem"
+                  width={{ md: '100%', lg: '33%' }}
+                  key={daoAction.titleKey}
+                  iconSrc={daoAction.iconSrc}
+                  title={t(daoAction.titleKey)}
+                  desc={t(daoAction.descKey)}
+                  paddingEnd={index !== VALUE_PROPS.length - 1 ? '2rem' : '0rem'}
+                />
+              );
+            })}
+          </Flex>
+          <CTABox
+            leftSlot={
+              <ExternalLink href={URL_DOCS}>
+                <Button>{t('getStartedButton')}</Button>
+              </ExternalLink>
+            }
+            rightSlot={
+              <Text
+                textStyle="text-xl-mono-bold"
+                color="chocolate.100"
+              >
+                {t('learnCTA')}
+              </Text>
+            }
+          />
+          <Text
+            paddingTop="3.5rem"
+            textStyle="text-lg-mono-bold"
+            color="grayscale.100"
+          >
+            {t('featuredTitle')}
+          </Text>
+          <Text
+            color="grayscale.500"
+            paddingBottom="1.5rem"
+          >
+            {t('featuredDesc')}
+          </Text>
+          <Flex
+            flexWrap="wrap"
+            paddingBottom="1.5rem"
+          >
+            {FEATURED_DAOS.map((feature, index) => {
+              return (
+                <FeaturedDAOCard
+                  width={{ sm: '100%', lg: '50%' }}
+                  key={feature.titleKey}
+                  iconSrc={feature.iconSrc}
+                  title={t(feature.titleKey)}
+                  desc={t(feature.descKey)}
+                  address={feature.address}
+                  marginBottom="2rem"
+                  paddingEnd={{ sm: '0rem', lg: index === 0 ? '0.56rem' : '0rem' }}
+                  paddingStart={{ sm: '0rem', lg: index === 1 ? '0.56rem' : '0rem' }}
+                />
+              );
+            })}
+          </Flex>
+          <CTABox
+            leftSlot={
+              <Text
+                textStyle="text-xl-mono-bold"
+                color="chocolate.100"
+              >
+                {t('readyCTA')}
+              </Text>
+            }
+            rightSlot={
+              <Button
+                data-testid="home-linkCreate"
+                h="3.5rem"
+                onClick={createDAO}
+                variant="tertiary"
+              >
+                {t('createButton')}
+              </Button>
+            }
+          />
+          <AppFooter />
+        </VStack>
       </Center>
     </ClientOnly>
   );

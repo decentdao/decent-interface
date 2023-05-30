@@ -90,36 +90,36 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <title>{APP_NAME}</title>
       </head>
       <body>
-        <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider
-            chains={chains}
-            modalSize="compact"
-            theme={midnightTheme()}
-          >
-            <ChakraProvider
-              theme={theme}
-              resetCSS
-            >
-              <NetworkConfigProvider>
-                <AppProvider>
-                  <ToastContainer
-                    position="bottom-center"
-                    closeButton={false}
-                    newestOnTop={false}
-                    pauseOnFocusLoss={false}
-                  />
-                  <FractalErrorBoundary fallback={<ErrorFallback />}>
+        <ChakraProvider
+          theme={theme}
+          resetCSS
+        >
+          <FractalErrorBoundary fallback={<ErrorFallback />}>
+            <WagmiConfig client={wagmiClient}>
+              <RainbowKitProvider
+                chains={chains}
+                modalSize="compact"
+                theme={midnightTheme()}
+              >
+                <NetworkConfigProvider>
+                  <AppProvider>
+                    <ToastContainer
+                      position="bottom-center"
+                      closeButton={false}
+                      newestOnTop={false}
+                      pauseOnFocusLoss={false}
+                    />
                     <ApolloProvider client={graphQLClient}>
                       <ModalProvider>
                         <Layout>{children}</Layout>
                       </ModalProvider>
                     </ApolloProvider>
-                  </FractalErrorBoundary>
-                </AppProvider>
-              </NetworkConfigProvider>
-            </ChakraProvider>
-          </RainbowKitProvider>
-        </WagmiConfig>
+                  </AppProvider>
+                </NetworkConfigProvider>
+              </RainbowKitProvider>
+            </WagmiConfig>
+          </FractalErrorBoundary>
+        </ChakraProvider>
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import { Box, Divider, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { StyledBox } from './StyledBox';
 
 export function TitledInfoBox({
   minWidth,
@@ -14,12 +14,9 @@ export function TitledInfoBox({
   children?: ReactNode;
 }) {
   return (
-    <Box
+    <StyledBox
       flexGrow={1}
       minWidth={minWidth}
-      bg={BACKGROUND_SEMI_TRANSPARENT}
-      p="1.5rem"
-      borderRadius="0.5rem"
     >
       {title && (
         <Box>
@@ -35,6 +32,6 @@ export function TitledInfoBox({
         </Box>
       )}
       {children}
-    </Box>
+    </StyledBox>
   );
 }

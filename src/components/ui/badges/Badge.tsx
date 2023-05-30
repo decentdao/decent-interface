@@ -60,6 +60,18 @@ const BADGE_MAPPING: BadgeType = {
     bg: 'sand.700',
     color: 'grayscale.black',
   },
+  [FractalProposalState.PENDING]: {
+    Icon: ClockTwo,
+    tooltipKey: 'statePendingTip',
+    bg: 'sand.700',
+    color: 'grayscale.black',
+  },
+  [FractalProposalState.CLOSED]: {
+    Icon: ClockTwo,
+    tooltipKey: 'stateClosedTip',
+    bg: 'sand.700',
+    color: 'grayscale.black',
+  },
   [DAOState.freezeInit]: {
     Icon: Check,
     tooltipKey: 'stateFreezeInitTip',
@@ -92,23 +104,25 @@ export function Badge({ labelKey, size }: IBadge) {
 
   const { t } = useTranslation('proposal');
   return (
-    <Tooltip
-      label={tooltipKey ? t(tooltipKey) : undefined}
-      maxW={TOOLTIP_MAXW}
-      placement="top"
-    >
-      <Flex
-        padding="0.125rem 0.5rem"
-        alignItems="center"
-        gap="0.125rem"
-        borderRadius="0.25rem"
-        justifyContent="center"
-        {...sizes}
-        {...colors}
+    <>
+      <Tooltip
+        label={tooltipKey ? t(tooltipKey) : undefined}
+        maxW={TOOLTIP_MAXW}
+        placement="top"
       >
-        {!!Icon && <Icon />}
-        <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
-      </Flex>
-    </Tooltip>
+        <Flex
+          padding="0.125rem 0.5rem"
+          alignItems="center"
+          gap="0.125rem"
+          borderRadius="0.25rem"
+          justifyContent="center"
+          {...sizes}
+          {...colors}
+        >
+          {!!Icon && <Icon />}
+          <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
+        </Flex>
+      </Tooltip>
+    </>
   );
 }

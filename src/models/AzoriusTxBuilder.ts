@@ -80,7 +80,11 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.setPredictedAzoriusAddress();
     this.setContracts();
 
-    if (parentTokenAddress && !daoData.parentAllocationAmount.isZero()) {
+    if (
+      parentTokenAddress &&
+      daoData.parentAllocationAmount &&
+      !daoData.parentAllocationAmount.isZero()
+    ) {
       this.setEncodedSetupTokenClaimData();
       this.setPredictedTokenClaimAddress();
     }

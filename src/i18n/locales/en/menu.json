@@ -14,10 +14,14 @@
     "network": "Network",
     "wallet": "Wallet",
     "titleManageDAO": "Manage DAO",
+    "titleEditDAO": "Edit DAO",
+    "titleViewDAODetails": "View DAO Details",
     "titleManageProposalTemplate": "Manage Template",
     "optionCreateSubDAO": "Add a subDAO",
     "optionInitiateFreeze": "Initiate a Freeze",
     "optionInitiateClawback": "Initiate Clawback",
     "optionManageSigners": "Manage Signers",
-    "optionRemoveTemplate": "Remove Template"
+    "optionViewSigners": "View Signers",
+    "optionRemoveTemplate": "Remove Template",
+    "optionModifyGovernance": "Modify Governance"
 }

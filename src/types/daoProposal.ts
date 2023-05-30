@@ -44,6 +44,14 @@ export interface MultisigProposal extends GovernanceActivity {
   nonce?: number;
 }
 
+export interface SnapshotProposal extends GovernanceActivity {
+  snapshotProposalId: string;
+  title: string;
+  description: string;
+  startTime: number;
+  endTime: number;
+}
+
 export type ProposalVotesSummary = {
   yes: BigNumber;
   no: BigNumber;

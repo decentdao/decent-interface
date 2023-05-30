@@ -1,27 +1,20 @@
 import { useQuery } from '@apollo/client';
-import { constants } from 'ethers';
 import { useEffect, useRef } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
-import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
-  // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string>();
+  // load key for component; helps prevent unnecessary calls
+  const loadKey = useRef<string>();
 
   const {
-    node: {
-      daoAddress,
-      nodeHierarchy: { parentAddress },
-    },
+    node: { daoAddress },
     governanceContracts,
-    guardContracts,
     action,
   } = useFractal();
 
@@ -32,29 +25,6 @@ export const useFractalGovernance = () => {
 
   const ONE_MINUTE = 60 * 1000;
 
-  const parseProposalTemplatesJSON = async (
-    hash?: string | null
-  ): Promise<ProposalTemplate[] | undefined> => {
-    if (!hash) {
-      return undefined;
-    }
-
-    const templatesConfigFile = ipfsClient.cat(hash);
-    try {
-      for await (const chunk of templatesConfigFile) {
-        const data = JSON.parse(Buffer.from(chunk).toString('utf8'));
-        // Sanity check
-        return data.map((proposalTemplate: ProposalTemplate) => ({
-          title: proposalTemplate.title,
-          description: proposalTemplate.description,
-          transactions: proposalTemplate.transactions,
-        }));
-      }
-    } catch (e) {
-      logError('Error parsing proposal templates JSON configuration file');
-    }
-  };
-
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
     onCompleted: async data => {
@@ -62,10 +32,8 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
-      if (dao) {
-        const { proposalTemplatesHash } = dao;
-
-        const proposalTemplates = await parseProposalTemplatesJSON(proposalTemplatesHash);
+      if (dao && dao.proposalTemplatesHash) {
+        const proposalTemplates = await ipfsClient.cat(dao.proposalTemplatesHash);
 
         action.dispatch({
           type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
@@ -79,17 +47,10 @@ export const useFractalGovernance = () => {
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;
 
-    if (parentAddress && guardContracts.freezeGuardType === null) {
-      return;
-    }
+    const newLoadKey = daoAddress + (azoriusContract ? '1' : '0');
 
-    const newValidAddress =
-      daoAddress && guardContracts.freezeGuardType
-        ? daoAddress + guardContracts.freezeGuardType
-        : constants.AddressZero;
-
-    if (isLoaded && daoAddress && newValidAddress !== currentValidAddress.current) {
-      currentValidAddress.current = newValidAddress;
+    if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
+      loadKey.current = newLoadKey;
 
       loadDAOProposals();
 
@@ -99,15 +60,13 @@ export const useFractalGovernance = () => {
         loadUnderlyingERC20Token();
       }
     } else if (!isLoaded) {
-      currentValidAddress.current = undefined;
+      loadKey.current = undefined;
     }
   }, [
     daoAddress,
-    parentAddress,
     governanceContracts,
     loadDAOProposals,
     loadUnderlyingERC20Token,
-    guardContracts,
     loadAzoriusStrategy,
     loadERC20Token,
   ]);
