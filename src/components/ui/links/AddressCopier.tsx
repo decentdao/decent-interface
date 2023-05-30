@@ -32,7 +32,11 @@ export default function AddressCopier({ address, ...rest }: Props) {
       >
         <Text textStyle="text-base-mono-regular">{accountSubstring}</Text>
       </EtherscanLinkAddress>
-      <Copy boxSize="1.5rem" />
+      <Copy
+        _hover={{ color: 'gold.500-hover' }}
+        boxSize="1.5rem"
+        fill="currentColor"
+      />
     </Flex>
   );
 }
