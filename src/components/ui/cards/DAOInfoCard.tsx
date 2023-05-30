@@ -1,4 +1,14 @@
-import { Box, Button, Flex, IconButton, Text, Image, Spacer } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  IconButton,
+  Text,
+  Image,
+  Spacer,
+  VStack,
+  HStack,
+} from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import Link from 'next/link';
@@ -14,7 +24,6 @@ import {
   FractalNode,
 } from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
-import { INFOBOX_HEIGHT_REM, INFOBOX_PADDING_REM } from '../containers/InfoBox';
 import FavoriteIcon from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
@@ -55,81 +64,71 @@ export function DAOInfoCard({
 
   if (!safeAddress) return null;
   return (
-    <Flex justifyContent="space-between">
-      <Flex flexWrap="wrap">
-        {!!toggleExpansion && (
-          <IconButton
-            variant="ghost"
-            minWidth="0px"
-            aria-label="Favorite Toggle"
-            icon={
-              expanded ? (
-                <ArrowDownSm
-                  boxSize="1.5rem"
-                  mr="1.5rem"
-                />
-              ) : (
-                <ArrowRightSm
-                  boxSize="1.5rem"
-                  mr="1.5rem"
-                />
-              )
-            }
-            onClick={toggleExpansion}
-          />
-        )}
-        {/* DAO NAME AND INFO */}
-        <Flex
-          flexDirection="column"
-          gap="0.5rem"
-        >
-          <Flex
-            alignItems="center"
-            gap="0.5rem"
-            flexWrap="wrap"
-          >
-            <Link
-              href={DAO_ROUTES.dao.relative(safeAddress)}
-              onClick={() => {
-                if (!isCurrentDAO) {
-                  action.resetDAO();
-                }
-              }}
-            >
-              <Text
-                as="h1"
-                textStyle="text-2xl-mono-regular"
-                color="grayscale.100"
-                data-testid="DAOInfo-name"
-              >
-                {fractalNode?.daoName || daoName}
-              </Text>
-            </Link>
-            <FavoriteIcon
-              safeAddress={safeAddress}
-              data-testid="DAOInfo-favorite"
-            />
-            {!!numberOfChildrenDAO && (
-              <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
-                <Box
-                  bg="chocolate.500"
-                  borderRadius="4px"
-                  p="0.25rem 0.5rem"
-                >
-                  <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
-                </Box>
-              </Link>
-            )}
-          </Flex>
-          <AddressCopier address={safeAddress} />
-        </Flex>
-      </Flex>
+    <Flex>
+      {!!toggleExpansion && (
+        <IconButton
+          alignSelf="center"
+          variant="ghost"
+          minWidth="0px"
+          aria-label="Toggle"
+          icon={
+            expanded ? (
+              <ArrowDownSm
+                boxSize="1.5rem"
+                mr="1.5rem"
+              />
+            ) : (
+              <ArrowRightSm
+                boxSize="1.5rem"
+                mr="1.5rem"
+              />
+            )
+          }
+          onClick={toggleExpansion}
+        />
+      )}
       <Flex
         flexDirection="column"
-        alignItems="end"
-        minHeight={INFOBOX_HEIGHT_REM - INFOBOX_PADDING_REM * 2 + 'rem'}
+        gap="0.5rem"
       >
-        {/* Vertical Elipsis */}
+        <HStack>
+          <Link
+            href={DAO_ROUTES.dao.relative(safeAddress)}
+            onClick={() => {
+              if (!isCurrentDAO) {
+                action.resetDAO();
+              }
+            }}
+          >
+            <Text
+              as="h1"
+              textStyle="text-2xl-mono-regular"
+              color="grayscale.100"
+              data-testid="DAOInfo-name"
+            >
+              {fractalNode?.daoName || daoName}
+            </Text>
+          </Link>
+          <FavoriteIcon
+            safeAddress={safeAddress}
+            data-testid="DAOInfo-favorite"
+          />
+          {!!numberOfChildrenDAO && (
+            <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
+              <Box
+                bg="chocolate.500"
+                borderRadius="4px"
+                p="0.25rem 0.5rem"
+              >
+                <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
+              </Box>
+            </Link>
+          )}
+        </HStack>
+        <AddressCopier address={safeAddress} />
+      </Flex>
+      <Spacer />
+      <VStack alignItems="end">
         {canManageDAO && (
           <ManageDAOMenu
             parentAddress={parentAddress}
@@ -138,7 +137,6 @@ export function DAOInfoCard({
             guardContracts={guardContracts}
           />
         )}
-        <Spacer />
         {daoSnapshotURL && (
           <Button
             onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
@@ -155,7 +153,7 @@ export function DAOInfoCard({
             {t('snapshot', { ns: 'common' })}
           </Button>
         )}
-      </Flex>
+      </VStack>
     </Flex>
   );
 }
