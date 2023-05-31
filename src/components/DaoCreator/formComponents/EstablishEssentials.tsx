@@ -12,6 +12,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
   // @todo update labels for subDAOs
 
+  // initialize Next button state
+  setFieldValue('essentials.daoName', '', true);
+
   return (
     <StepWrapper
       isSubDAO={isSubDAO}
