@@ -61,6 +61,7 @@ function ManageSigners({}: {}) {
   });
   const { t } = useTranslation(['common', 'breadcrumbs']);
   const { address: account } = useAccount();
+  const enableRemove = userIsSigner && signers && signers?.length > 1;
 
   useEffect(() => {
     setSigners(safe?.owners.map(owner => owner));
@@ -83,8 +84,8 @@ function ManageSigners({}: {}) {
           subject: t('signers', { ns: 'common' }),
         })}
         hasDAOLink={true}
-        buttonText={userIsSigner ? '— ' + t('remove') : undefined}
-        buttonClick={userIsSigner ? removeSigner : undefined}
+        buttonText={enableRemove ? '— ' + t('remove') : undefined}
+        buttonClick={removeSigner}
         isButtonDisabled={!selectedSigner}
         breadcrumbs={[
           {
@@ -136,7 +137,7 @@ function ManageSigners({}: {}) {
                 <Signer
                   key={signer}
                   signer={signer}
-                  disabled={!userIsSigner}
+                  disabled={!enableRemove}
                 />
               ))}
           </RadioGroup>
