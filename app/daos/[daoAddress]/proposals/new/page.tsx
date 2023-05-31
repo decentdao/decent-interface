@@ -107,7 +107,7 @@ export default function ProposalCreatePage() {
                   ]}
                   ButtonIcon={Trash}
                   buttonVariant="secondary"
-                  buttonClick={() => push(DAO_ROUTES.dao.relative(daoAddress))}
+                  buttonClick={() => push(DAO_ROUTES.proposals.relative(daoAddress))}
                   isButtonDisabled={pendingCreateTx}
                 />
                 <Grid
