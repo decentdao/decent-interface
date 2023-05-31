@@ -91,5 +91,6 @@
     "unwrapToken": "Unwrap Token",
     "max": "max",
     "favoriteTooltip": "Toggle favorite",
-    "snapshotIconAlt": "Snapshot Icon"
+    "snapshotIconAlt": "Snapshot Icon",
+    "isMeSuffix": " (you)"
 }

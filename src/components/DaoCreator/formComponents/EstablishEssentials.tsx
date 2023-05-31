@@ -1,5 +1,6 @@
 import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
@@ -11,6 +12,11 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
   // @todo update labels for subDAOs
+
+  // initialize Next button state
+  useEffect(() => {
+    setFieldValue('essentials.daoName', '', true);
+  }, [setFieldValue]);
 
   return (
     <StepWrapper

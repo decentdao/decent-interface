@@ -125,6 +125,7 @@ export default function ProposalCreatePage() {
                       align="left"
                     >
                       <Box
+                        marginBottom="2rem"
                         rounded="lg"
                         p="1rem"
                         bg={BACKGROUND_SEMI_TRANSPARENT}
