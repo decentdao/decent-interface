@@ -1,14 +1,6 @@
-import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Text,
-  Image,
-  Spacer,
-  HStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Text, Image, Spacer, HStack } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
+import { is } from 'date-fns/locale';
 import { utils } from 'ethers';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -63,7 +55,10 @@ export function DAOInfoCard({
 
   if (!safeAddress) return null;
   return (
-    <Flex w="full" minH='full'>
+    <Flex
+      w="full"
+      minH="full"
+    >
       {!!toggleExpansion && (
         <IconButton
           alignSelf="center"
@@ -127,7 +122,11 @@ export function DAOInfoCard({
         <AddressCopier address={safeAddress} />
       </Flex>
       <Spacer />
-      <Flex flexDirection="column" alignItems="end" justifyContent="space-between">
+      <Flex
+        flexDirection="column"
+        alignItems="end"
+        justifyContent="space-between"
+      >
         {canManageDAO && (
           <ManageDAOMenu
             parentAddress={parentAddress}
@@ -136,22 +135,24 @@ export function DAOInfoCard({
             guardContracts={guardContracts}
           />
         )}
-        {daoSnapshotURL && (
-          <Button
-            onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
-            variant="secondary"
-            mt={5}
-            h={6}
-            w={32}
-          >
-            <Image
-              src="/images/snapshot-icon.svg"
-              alt="snapshot icon"
-              mr={1}
-            />
-            {t('snapshot', { ns: 'common' })}
-          </Button>
-        )}
+        {!isCurrentDAO && fractalNode
+          ? fractalNode.daoSnapshotURL
+          : daoSnapshotURL && (
+              <Button
+                onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
+                variant="secondary"
+                mt={5}
+                h={6}
+                w={32}
+              >
+                <Image
+                  src="/images/snapshot-icon.svg"
+                  alt="snapshot icon"
+                  mr={1}
+                />
+                {t('snapshot', { ns: 'common' })}
+              </Button>
+            )}
       </Flex>
     </Flex>
   );
