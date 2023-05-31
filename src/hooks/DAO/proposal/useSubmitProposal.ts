@@ -329,7 +329,7 @@ export default function useSubmitProposal() {
       }
 
       return safeService
-        .getSafeInfo(safeAddress)
+        .getSafeInfo(getAddress(safeAddress))
         .then(safeInfo => safeInfo.owners.includes(user.address!));
     },
     [safeService, type, user]
