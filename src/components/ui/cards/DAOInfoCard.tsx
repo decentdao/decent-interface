@@ -6,7 +6,6 @@ import {
   Text,
   Image,
   Spacer,
-  VStack,
   HStack,
 } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
@@ -64,7 +63,7 @@ export function DAOInfoCard({
 
   if (!safeAddress) return null;
   return (
-    <Flex>
+    <Flex w="full" minH='full'>
       {!!toggleExpansion && (
         <IconButton
           alignSelf="center"
@@ -128,7 +127,7 @@ export function DAOInfoCard({
         <AddressCopier address={safeAddress} />
       </Flex>
       <Spacer />
-      <VStack alignItems="end">
+      <Flex flexDirection="column" alignItems="end" justifyContent="space-between">
         {canManageDAO && (
           <ManageDAOMenu
             parentAddress={parentAddress}
@@ -153,7 +152,7 @@ export function DAOInfoCard({
             {t('snapshot', { ns: 'common' })}
           </Button>
         )}
-      </VStack>
+      </Flex>
     </Flex>
   );
 }
