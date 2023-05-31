@@ -50,13 +50,19 @@ function ProposalVoteItem({
 }) {
   const { t } = useTranslation();
   const { displayName } = useDisplayName(vote.voter);
+  const {
+    readOnly: { user },
+  } = useFractal();
   return (
     <Grid
       templateColumns="repeat(4, 1fr)"
       width="100%"
     >
       <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">{displayName}</Text>
+        <Text textStyle="text-base-sans-regular">
+          {displayName}
+          {user.address === vote.voter && t('isMeSuffix')}
+        </Text>
       </GridItem>
       <GridItem colSpan={1}>
         <StatusBox>
