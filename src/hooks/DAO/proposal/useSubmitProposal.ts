@@ -2,7 +2,7 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer } from 'ethers';
-import { getAddress } from 'ethers/lib/utils.js';
+import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
@@ -250,7 +250,7 @@ export default function useSubmitProposal() {
         return;
       }
 
-      if (safeAddress && safeService) {
+      if (safeAddress && safeService && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
@@ -329,7 +329,7 @@ export default function useSubmitProposal() {
       }
 
       return safeService
-        .getSafeInfo(safeAddress)
+        .getSafeInfo(getAddress(safeAddress))
         .then(safeInfo => safeInfo.owners.includes(user.address!));
     },
     [safeService, type, user]

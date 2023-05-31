@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DAOInfoCard } from '../../../ui/cards/DAOInfoCard';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
@@ -27,12 +27,14 @@ export function InfoDAO() {
   }
 
   return (
-    <DAOInfoCard
-      parentAddress={parentAddress}
-      safeAddress={daoAddress}
-      numberOfChildrenDAO={(childNodes ?? []).length}
-      freezeGuard={guard}
-      guardContracts={guardContracts}
-    />
+    <Box h="8.5rem">
+      <DAOInfoCard
+        parentAddress={parentAddress}
+        safeAddress={daoAddress}
+        numberOfChildrenDAO={(childNodes ?? []).length}
+        freezeGuard={guard}
+        guardContracts={guardContracts}
+      />
+    </Box>
   );
 }

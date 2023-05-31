@@ -1,5 +1,6 @@
-import { Box, Button, Flex, IconButton, Text, Image, Spacer } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Text, Image, Spacer, HStack } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
+import { is } from 'date-fns/locale';
 import { utils } from 'ethers';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +15,6 @@ import {
   FractalNode,
 } from '../../../types';
 import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
-import { INFOBOX_HEIGHT_REM, INFOBOX_PADDING_REM } from '../containers/InfoBox';
 import FavoriteIcon from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
@@ -55,81 +55,78 @@ export function DAOInfoCard({
 
   if (!safeAddress) return null;
   return (
-    <Flex justifyContent="space-between">
-      <Flex flexWrap="wrap">
-        {!!toggleExpansion && (
-          <IconButton
-            variant="ghost"
-            minWidth="0px"
-            aria-label="Favorite Toggle"
-            icon={
-              expanded ? (
-                <ArrowDownSm
-                  boxSize="1.5rem"
-                  mr="1.5rem"
-                />
-              ) : (
-                <ArrowRightSm
-                  boxSize="1.5rem"
-                  mr="1.5rem"
-                />
-              )
-            }
-            onClick={toggleExpansion}
-          />
-        )}
-        {/* DAO NAME AND INFO */}
-        <Flex
-          flexDirection="column"
-          gap="0.5rem"
-        >
-          <Flex
-            alignItems="center"
-            gap="0.5rem"
-            flexWrap="wrap"
+    <Flex
+      w="full"
+      minH="full"
+    >
+      {!!toggleExpansion && (
+        <IconButton
+          alignSelf="center"
+          variant="ghost"
+          minWidth="0px"
+          aria-label="Toggle"
+          icon={
+            expanded ? (
+              <ArrowDownSm
+                boxSize="1.5rem"
+                mr="1.5rem"
+              />
+            ) : (
+              <ArrowRightSm
+                boxSize="1.5rem"
+                mr="1.5rem"
+              />
+            )
+          }
+          onClick={toggleExpansion}
+        />
+      )}
+      <Flex
+        flexDirection="column"
+        gap="0.5rem"
+      >
+        <HStack>
+          <Link
+            href={DAO_ROUTES.dao.relative(safeAddress)}
+            onClick={() => {
+              if (!isCurrentDAO) {
+                action.resetDAO();
+              }
+            }}
           >
-            <Link
-              href={DAO_ROUTES.dao.relative(safeAddress)}
-              onClick={() => {
-                if (!isCurrentDAO) {
-                  action.resetDAO();
-                }
-              }}
+            <Text
+              as="h1"
+              textStyle="text-2xl-mono-regular"
+              color="grayscale.100"
+              data-testid="DAOInfo-name"
             >
-              <Text
-                as="h1"
-                textStyle="text-2xl-mono-regular"
-                color="grayscale.100"
-                data-testid="DAOInfo-name"
+              {fractalNode?.daoName || daoName}
+            </Text>
+          </Link>
+          <FavoriteIcon
+            safeAddress={safeAddress}
+            data-testid="DAOInfo-favorite"
+          />
+          {!!numberOfChildrenDAO && (
+            <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
+              <Box
+                bg="chocolate.500"
+                borderRadius="4px"
+                p="0.25rem 0.5rem"
               >
-                {fractalNode?.daoName || daoName}
-              </Text>
+                <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
+              </Box>
             </Link>
-            <FavoriteIcon
-              safeAddress={safeAddress}
-              data-testid="DAOInfo-favorite"
-            />
-            {!!numberOfChildrenDAO && (
-              <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
-                <Box
-                  bg="chocolate.500"
-                  borderRadius="4px"
-                  p="0.25rem 0.5rem"
-                >
-                  <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
-                </Box>
-              </Link>
-            )}
-          </Flex>
-          <AddressCopier address={safeAddress} />
-        </Flex>
+          )}
+        </HStack>
+        <AddressCopier address={safeAddress} />
       </Flex>
+      <Spacer />
       <Flex
         flexDirection="column"
         alignItems="end"
-        minHeight={INFOBOX_HEIGHT_REM - INFOBOX_PADDING_REM * 2 + 'rem'}
+        justifyContent="space-between"
       >
-        {/* Vertical Elipsis */}
         {canManageDAO && (
           <ManageDAOMenu
             parentAddress={parentAddress}
@@ -138,23 +135,24 @@ export function DAOInfoCard({
             guardContracts={guardContracts}
           />
         )}
-        <Spacer />
-        {daoSnapshotURL && (
-          <Button
-            onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
-            variant="secondary"
-            mt={5}
-            h={6}
-            w={32}
-          >
-            <Image
-              src="/images/snapshot-icon.svg"
-              alt="snapshot icon"
-              mr={1}
-            />
-            {t('snapshot', { ns: 'common' })}
-          </Button>
-        )}
+        {!isCurrentDAO && fractalNode
+          ? fractalNode.daoSnapshotURL
+          : daoSnapshotURL && (
+              <Button
+                onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
+                variant="secondary"
+                mt={5}
+                h={6}
+                w={32}
+              >
+                <Image
+                  src="/images/snapshot-icon.svg"
+                  alt="snapshot icon"
+                  mr={1}
+                />
+                {t('snapshot', { ns: 'common' })}
+              </Button>
+            )}
       </Flex>
     </Flex>
   );
