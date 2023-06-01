@@ -26,7 +26,7 @@ export default function ProposalTemplates() {
       gap="1rem"
     >
       {!proposalTemplates ? (
-        <Box mt={7}>
+        <Box>
           <InfoBoxLoader />
         </Box>
       ) : proposalTemplates.length > 0 ? (
