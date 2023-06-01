@@ -1,6 +1,5 @@
 import { Box, Button, Flex, IconButton, Text, Image, Spacer, HStack } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
-import { is } from 'date-fns/locale';
 import { utils } from 'ethers';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';

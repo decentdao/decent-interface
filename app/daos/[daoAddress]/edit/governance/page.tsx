@@ -21,7 +21,7 @@ export default function ModifyGovernancePage() {
   const isMultisig = type === GovernanceModuleType.MULTISIG;
   const isSigner = user.address && safe?.owners.includes(user.address);
 
-  const handleDeployDAO: DAOTrigger = daoData => {
+  const handleDeployAzorius: DAOTrigger = daoData => {
     console.log('TODO: Deploy Azorius Module', daoData);
   };
 
@@ -44,7 +44,7 @@ export default function ModifyGovernancePage() {
         <DaoCreator
           pending={false}
           mode="edit"
-          deployDAO={handleDeployDAO}
+          deployDAO={handleDeployAzorius}
         />
       ) : (
         <EmptyBox emptyText={t('cannotModifyGovernance')} />
