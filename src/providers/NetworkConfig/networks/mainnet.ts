@@ -10,16 +10,29 @@ import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployment
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeVoting.json';
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/goerli/VotesERC20.json';
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/goerli/VotesERC20Wrapper.json';
+import {
+  getSafeSingletonDeployment,
+  getProxyFactoryDeployment,
+  getMultiSendCallOnlyDeployment,
+} from '@safe-global/safe-deployments';
 import { mainnet } from 'wagmi/chains';
 import { NetworkConfig } from '../../../types/network';
+
+// TODO
+// 1. deploy contracts to mainnet and update fractal-contracts version
+// 2. update to that version in this repo and swap above imports for /mainnet/
+// 3. update subgraph to support mainnet?
+
+const CHAIN_ID = 1;
+const SAFE_VERSION = '1.3.0';
 
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
   etherscanAPIBaseUrl: 'https://api.etherscan.io',
-  chainId: 1,
+  chainId: CHAIN_ID,
   name: mainnet.name,
-  color: 'green.300',
+  color: 'blue.400',
   nativeTokenSymbol: mainnet.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: mainnet,
@@ -33,11 +46,18 @@ export const mainnetConfig: NetworkConfig = {
     multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    gnosisSafe: '0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552',
-    gnosisSafeFactory: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
-    zodiacModuleProxyFactory: 'TODO',
+    gnosisSafe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
+      ?.defaultAddress!,
+    gnosisSafeFactory: getProxyFactoryDeployment({
+      version: SAFE_VERSION,
+      network: CHAIN_ID.toString(),
+    })?.defaultAddress!,
+    zodiacModuleProxyFactory: '0x740020d3B1BF3E64e84dbA7175fC560B85EdB9bC',
     linearVotingMasterCopy: LinearERC20Voting.address,
-    gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
+    gnosisMultisend: getMultiSendCallOnlyDeployment({
+      version: SAFE_VERSION,
+      network: CHAIN_ID.toString(),
+    })?.defaultAddress!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

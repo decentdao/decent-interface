@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerli } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
+import { isProd } from '../../utils';
 import { goerliConfig, mainnetConfig } from './networks';
 
 export const defaultState = {
@@ -41,7 +42,10 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfg = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
-export const supportedChains = [goerliConfig, mainnetConfig];
+// in the production version, set mainnet first so it defaults to that when disconnected
+export const supportedChains = isProd()
+  ? [mainnetConfig, goerliConfig]
+  : [goerliConfig, mainnetConfig];
 
 const getNetworkConfig = (chainId: number) => {
   if (chainId === 31337) return goerliConfig;
