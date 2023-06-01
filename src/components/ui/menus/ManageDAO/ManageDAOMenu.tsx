@@ -42,15 +42,15 @@ export function ManageDAOMenu({
   const { push } = useRouter();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { getCanUserCreateProposal } = useSubmitProposal();
-  const { handleClawBack } = useClawBack({
-    parentAddress,
-    childSafeAddress: safeAddress,
-  });
   const {
     governance: { type },
   } = useFractal();
 
   const { address: account } = useAccount();
+  const { handleClawBack } = useClawBack({
+    parentAddress,
+    childSafeInfo: fractalNode,
+  });
 
   useEffect(() => {
     if (!fractalNode) {
