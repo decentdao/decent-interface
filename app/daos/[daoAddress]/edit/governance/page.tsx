@@ -12,7 +12,7 @@ import { GovernanceModuleType, DAOTrigger } from '../../../../../src/types';
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe, daoName, daoSnapshotURL },
+    node: { daoAddress, safe },
     governance: { type },
     readOnly: { user },
   } = useFractal();

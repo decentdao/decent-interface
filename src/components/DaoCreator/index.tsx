@@ -59,6 +59,7 @@ function DaoCreator({
             <StepController
               transactionPending={pending}
               isSubDAO={isSubDAO}
+              mode={mode}
               {...rest}
             />
           </form>

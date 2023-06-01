@@ -19,7 +19,7 @@ import { StepWrapper } from '../StepWrapper';
 
 export function GnosisMultisig(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate']);
-  const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
+  const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { restrictChars } = useFormHelpers();
 
   const truncateSignersList = (gnosisAddresses: string[], numOfSigners: number) => {
@@ -64,6 +64,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
 
   return (
     <StepWrapper
+      mode={mode}
       isSubDAO={isSubDAO}
       isFormSubmitting={!!isSubmitting || transactionPending}
       titleKey="titleSafeConfig"

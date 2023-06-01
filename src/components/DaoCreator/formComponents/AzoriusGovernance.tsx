@@ -17,11 +17,12 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
 export function AzoriusGovernance(props: ICreationStepProps) {
-  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
   return (
     <StepWrapper
+      mode={mode}
       titleKey="titleGovConfig"
       isSubDAO={isSubDAO}
       isFormSubmitting={!!isSubmitting || transactionPending}

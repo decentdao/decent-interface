@@ -28,7 +28,7 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
 function GuardDetails(props: ICreationStepProps) {
-  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode } = props;
   const {
     node: { safe },
     governance,
@@ -111,6 +111,7 @@ function GuardDetails(props: ICreationStepProps) {
 
   return (
     <StepWrapper
+      mode={mode}
       isSubDAO={isSubDAO}
       isFormSubmitting={!!isSubmitting || transactionPending}
       titleKey="titleGuardConfig"

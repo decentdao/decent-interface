@@ -5,6 +5,7 @@ interface IStepButtons extends ICreationStepProps {
   nextStep?: CreatorSteps;
   prevStep?: CreatorSteps;
   isLastStep?: boolean;
+  isNextDisabled?: boolean;
 }
 
 export function StepButtons({
@@ -17,6 +18,7 @@ export function StepButtons({
   nextStep,
   prevStep,
   isLastStep,
+  isNextDisabled,
 }: IStepButtons) {
   const { t } = useTranslation(['daoCreate', 'common']);
 
@@ -41,7 +43,7 @@ export function StepButtons({
       <Button
         w="full"
         type={buttonType}
-        isDisabled={transactionPending || isSubmitting || !!errors[step]}
+        isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
         onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
       >

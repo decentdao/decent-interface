@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
@@ -12,32 +12,59 @@ interface IStepWrapper {
   isSubDAO?: boolean;
   isFormSubmitting?: boolean;
   children: ReactNode;
+  mode?: 'edit' | 'create';
 }
 
-export function StepWrapper({ titleKey, isSubDAO, isFormSubmitting, children }: IStepWrapper) {
+export function StepWrapper({
+  titleKey,
+  isSubDAO,
+  isFormSubmitting,
+  children,
+  mode = 'create',
+}: IStepWrapper) {
   const {
     node: { daoAddress },
   } = useFractal();
   const { t } = useTranslation(['daoCreate']);
   const { push } = useRouter();
+
+  const isEdit = mode === 'edit';
   return (
     <Box>
-      <PageHeader
-        title={t(titleKey)}
-        hasDAOLink={!!isSubDAO}
-        breadcrumbs={[
-          {
-            terminus: t(!isSubDAO ? 'buttonCreate' : 'labelCreateSubDAOProposal'),
-            path: '',
-          },
-        ]}
-        ButtonIcon={Trash}
-        buttonVariant="secondary"
-        isButtonDisabled={isFormSubmitting}
-        buttonClick={() =>
-          push(!isSubDAO || !daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress))
-        }
-      />
+      {isEdit ? (
+        <Box marginBottom="2rem">
+          <Flex
+            alignItems="center"
+            w="full"
+          >
+            <Text
+              textStyle="text-2xl-mono-regular"
+              color="grayscale.100"
+            >
+              {t(titleKey)}
+            </Text>
+          </Flex>
+        </Box>
+      ) : (
+        <PageHeader
+          title={t(titleKey)}
+          hasDAOLink={!!isSubDAO}
+          breadcrumbs={[
+            {
+              terminus: t(!isSubDAO ? 'buttonCreate' : 'labelCreateSubDAOProposal'),
+              path: '',
+            },
+          ]}
+          ButtonIcon={Trash}
+          buttonVariant="secondary"
+          isButtonDisabled={isFormSubmitting}
+          buttonClick={() =>
+            push(
+              !isSubDAO || !daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress)
+            )
+          }
+        />
+      )}
       <Box
         bg="black.900-semi-transparent"
         rounded="md"
