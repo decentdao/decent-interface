@@ -18,8 +18,6 @@ const FILTERS_AZORIUS = [
 
   FractalProposalState.FAILED,
   FractalProposalState.EXPIRED,
-  FractalProposalState.CLOSED,
-  FractalProposalState.PENDING,
 ];
 
 const FILTERS_MULTISIG_BASE = [
@@ -28,8 +26,6 @@ const FILTERS_MULTISIG_BASE = [
   FractalProposalState.EXECUTED,
 
   FractalProposalState.REJECTED,
-  FractalProposalState.CLOSED,
-  FractalProposalState.PENDING,
 ];
 
 const FILTERS_MULTISIG_CHILD = [
@@ -41,12 +37,13 @@ const FILTERS_MULTISIG_CHILD = [
 
   FractalProposalState.REJECTED,
   FractalProposalState.EXPIRED,
-  FractalProposalState.CLOSED,
-  FractalProposalState.PENDING,
 ];
+
+const FILTERS_SNAPSHOT = [FractalProposalState.CLOSED, FractalProposalState.PENDING];
 
 export default function Proposals() {
   const {
+    node: { daoSnapshotURL },
     governance: { type },
     guardContracts,
   } = useFractal();
@@ -75,9 +72,12 @@ export default function Proposals() {
         }
         break;
     }
+    if (daoSnapshotURL) {
+      options = [...options, ...FILTERS_SNAPSHOT];
+    }
     setAllOptions(options);
     setFilters(options);
-  }, [guardContracts.freezeGuardContract, type]);
+  }, [daoSnapshotURL, guardContracts.freezeGuardContract, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {

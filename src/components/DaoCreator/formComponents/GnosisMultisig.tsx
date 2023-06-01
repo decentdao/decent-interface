@@ -163,7 +163,8 @@ export function GnosisMultisig(props: ICreationStepProps) {
       </Flex>
       <Divider
         color="chocolate.700"
-        mb={4}
+        mt="2rem"
+        mb="2rem"
       />
       <StepButtons
         {...props}

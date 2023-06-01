@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { ArrowDown, ArrowRight, Trash } from '@decent-org/fractal-ui';
 import { FormikErrors, FormikProps } from 'formik';
-import { useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BigNumberValuePair, CreateProposalForm, CreateProposalTransaction } from '../../types';
 import Transaction from './Transaction';
@@ -18,16 +18,18 @@ interface TransactionsProps extends FormikProps<CreateProposalForm> {
   isVisible: boolean;
   showBackButton: boolean;
   pendingTransaction: boolean;
+  expandedIndecies: number[];
+  setExpandedIndecies: Dispatch<SetStateAction<number[]>>;
 }
 function Transactions({
   values: { transactions },
   errors,
   setFieldValue,
   pendingTransaction,
+  expandedIndecies,
+  setExpandedIndecies,
 }: TransactionsProps) {
   const { t } = useTranslation(['proposal', 'common']);
-
-  const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 
   const removeTransaction = (transactionIndex: number) => {
     const transactionsArr = [...transactions];

@@ -72,7 +72,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       </Box>
       <Divider
         color="chocolate.700"
-        mb={4}
+        mb="2rem"
       />
       <LabelComponent
         label={t('snapshot')}
@@ -92,7 +92,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
       </LabelComponent>
       <Divider
         color="chocolate.700"
-        mb={4}
+        mt="2rem"
+        mb="2rem"
       />
       <StepButtons
         {...props}
