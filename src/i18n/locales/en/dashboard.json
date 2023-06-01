@@ -2,7 +2,7 @@
     "titleFavorites": "Favorites",
     "emptyFavorites": "No favorites",
     "errorInvalidSearch": "This is not a valid Ethereum address",
-    "errorFailedSearch": "Sorry, this address is not a Fractal or Safe{WALLET}",
+    "errorFailedSearch": "Sorry, this address is not a Fractal or Safe{Wallet}",
     "searchDAOPlaceholder": "Enter a Fractal DAO address",
     "titleGovernance": "Governance",
     "titleType": "Type",
