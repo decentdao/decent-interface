@@ -11,7 +11,6 @@ import { StepWrapper } from '../StepWrapper';
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
-  // @todo update labels for subDAOs
 
   // initialize Next button state
   useEffect(() => {

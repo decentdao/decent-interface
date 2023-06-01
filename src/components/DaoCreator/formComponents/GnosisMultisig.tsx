@@ -10,7 +10,6 @@ import {
 import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -18,9 +17,8 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
 export function GnosisMultisig(props: ICreationStepProps) {
-  const { t } = useTranslation(['daoCreate']);
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
-  const { restrictChars } = useFormHelpers();
+  const { t } = useTranslation('daoCreate');
 
   const truncateSignersList = (gnosisAddresses: string[], numOfSigners: number) => {
     const difference = gnosisAddresses.length - numOfSigners;
@@ -32,32 +30,48 @@ export function GnosisMultisig(props: ICreationStepProps) {
     return gnosisAddresses.concat(new Array(difference).fill(''));
   };
 
-  const handleSignersChanges = (
-    gnosisAddresses: string[],
-    numOfSigners?: number,
-    index?: number
-  ) => {
-    if (numOfSigners === undefined) {
-      setFieldValue('multisig.numOfSigners', numOfSigners);
+  // ensures no decimal places or numbers greater than 99
+  const validateNumber = (num: string, fieldValue: string) => {
+    let updatedNum = num;
+    if (updatedNum.includes('.')) {
+      updatedNum = updatedNum.split('.')[0];
     }
+    if (updatedNum.length > 2) {
+      updatedNum = updatedNum.substring(0, 2);
+    }
+    setFieldValue(fieldValue, Number(updatedNum).toString());
 
-    numOfSigners = Math.min(numOfSigners || 0, 99);
+    return updatedNum !== num;
+  };
+
+  const deleteIndex = (deletedIndex: number) => {
+    const addresses = values.multisig.trustedAddresses;
+    addresses.splice(deletedIndex, 1);
+    setFieldValue('multisig', {
+      ...values.multisig,
+      numOfSigners: --values.multisig.numOfSigners!,
+      trustedAddresses: addresses,
+    });
+  };
+
+  const validateTotalSigners = (numOfSigners: string) => {
+    if (validateNumber(numOfSigners, 'multisig.numOfSigners')) return;
+
+    const num = Number(numOfSigners);
+    let gnosisAddresses = values.multisig.trustedAddresses;
+
     const trustedAddressLength = gnosisAddresses.length;
 
-    if (numOfSigners && trustedAddressLength !== numOfSigners) {
+    if (trustedAddressLength !== num) {
       gnosisAddresses =
-        numOfSigners > trustedAddressLength
-          ? appendEmptySigners(gnosisAddresses, numOfSigners)
-          : truncateSignersList(gnosisAddresses, numOfSigners);
-
-      if (index !== undefined) {
-        gnosisAddresses.splice(index, 1);
-      }
+        num > trustedAddressLength
+          ? appendEmptySigners(gnosisAddresses, num)
+          : truncateSignersList(gnosisAddresses, num);
     }
 
     setFieldValue('multisig', {
       ...values.multisig,
-      numOfSigners: numOfSigners,
+      numOfSigners: num,
       trustedAddresses: gnosisAddresses,
     });
   };
@@ -79,10 +93,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
         >
           <NumberInput
             value={values.multisig.numOfSigners}
-            onChange={(_, inputNum) =>
-              handleSignersChanges(values.multisig.trustedAddresses, inputNum)
-            }
-            onKeyDown={restrictChars}
+            onChange={value => validateTotalSigners(value)}
           >
             <NumberInputField data-testid="gnosisConfig-numberOfSignerInput" />
           </NumberInput>
@@ -97,8 +108,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
         >
           <NumberInput
             value={values.multisig.signatureThreshold}
-            onKeyDown={restrictChars}
-            onChange={value => setFieldValue('multisig.signatureThreshold', value)}
+            onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
           >
             <NumberInputField data-testid="gnosisConfig-thresholdInput" />
           </NumberInput>
@@ -145,11 +155,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
                         }
                         type="button"
                         onClick={async () => {
-                          handleSignersChanges(
-                            values.multisig.trustedAddresses,
-                            --values.multisig.numOfSigners!,
-                            i
-                          );
+                          deleteIndex(i);
                         }}
                         data-testid={'multisig.numOfSigners-' + i}
                       />
