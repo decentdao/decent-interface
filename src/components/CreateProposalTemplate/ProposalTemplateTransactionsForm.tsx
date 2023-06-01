@@ -1,11 +1,13 @@
 import { Button, Box, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { FormikProps } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CreateProposalTemplateForm,
   CreateProposalTemplateFormState,
 } from '../../types/createProposalTemplate';
+import { scrollToBottom } from '../../utils/ui';
 import ProposalTemplateTransactions from './ProposalTemplateTransactions';
 import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
 
@@ -27,10 +29,15 @@ export default function ProposalTemplateTransactionsForm(
     canUserCreateProposal,
   } = props;
   const { t } = useTranslation(['proposalTemplate', 'proposal', 'common']);
+  const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 
   return (
     <Box>
-      <ProposalTemplateTransactions {...props} />
+      <ProposalTemplateTransactions
+        expandedIndecies={expandedIndecies}
+        setExpandedIndecies={setExpandedIndecies}
+        {...props}
+      />
       <VStack
         align="left"
         spacing={6}
@@ -38,9 +45,11 @@ export default function ProposalTemplateTransactionsForm(
       >
         <Button
           variant="text"
-          onClick={() =>
-            setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION])
-          }
+          onClick={() => {
+            setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION]);
+            setExpandedIndecies([transactions.length]);
+            scrollToBottom();
+          }}
           disabled={pendingTransaction}
           w="fit-content"
           pl={0}
