@@ -1,6 +1,5 @@
 import { Box, Button, Flex, IconButton, Text, Image, Spacer, HStack } from '@chakra-ui/react';
 import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
-import { is } from 'date-fns/locale';
 import { utils } from 'ethers';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -42,12 +41,13 @@ export function DAOInfoCard({
   fractalNode,
 }: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
   const {
-    node: { daoAddress, daoName, daoSnapshotURL },
+    node,
     action,
     readOnly: { user },
   } = useFractal();
 
   const { t } = useTranslation(['common']);
+  const { daoAddress, daoName, daoSnapshotURL } = node;
 
   const isCurrentDAO = safeAddress === daoAddress;
 
@@ -131,6 +131,7 @@ export function DAOInfoCard({
           <ManageDAOMenu
             parentAddress={parentAddress}
             safeAddress={safeAddress}
+            fractalNode={!isCurrentDAO ? fractalNode : node}
             freezeGuard={freezeGuard}
             guardContracts={guardContracts}
           />

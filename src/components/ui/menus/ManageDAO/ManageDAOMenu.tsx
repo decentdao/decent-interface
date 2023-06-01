@@ -2,6 +2,7 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -11,7 +12,13 @@ import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal'
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { FractalGuardContracts, FreezeGuard, GovernanceModuleType } from '../../../../types';
+import {
+  FractalGuardContracts,
+  FractalNode,
+  FreezeGuard,
+  GovernanceModuleType,
+} from '../../../../types';
+import { getAzoriusModuleFromModules } from '../../../../utils';
 import { ModalType } from '../../modals/ModalProvider';
 import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
@@ -20,6 +27,7 @@ interface IManageDAOMenu {
   parentAddress?: string | null;
   safeAddress: string;
   freezeGuard?: FreezeGuard;
+  fractalNode?: FractalNode;
   guardContracts: FractalGuardContracts;
 }
 
@@ -28,6 +36,7 @@ export function ManageDAOMenu({
   safeAddress,
   freezeGuard,
   guardContracts,
+  fractalNode,
 }: IManageDAOMenu) {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const { push } = useRouter();
@@ -41,13 +50,21 @@ export function ManageDAOMenu({
     governance: { type },
   } = useFractal();
 
-  useEffect(() => {
-    const verifyUserCanCreateProposal = async () => {
-      setCanUserCreateProposal(await getCanUserCreateProposal(safeAddress));
-    };
+  const { address: account } = useAccount();
 
-    verifyUserCanCreateProposal();
-  }, [getCanUserCreateProposal, safeAddress]);
+  useEffect(() => {
+    if (!fractalNode) {
+      return;
+    }
+    const azoriusModule = getAzoriusModuleFromModules(fractalNode.fractalModules);
+    if (azoriusModule) {
+      setCanUserCreateProposal(true);
+      return;
+    }
+    if (fractalNode.safe && account) {
+      setCanUserCreateProposal(fractalNode.safe.owners.includes(account!));
+    }
+  }, [getCanUserCreateProposal, fractalNode, account]);
 
   const handleNavigateToManageSigners = useMemo(
     () => () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
