@@ -22,7 +22,7 @@ export default function ModifyGovernancePage() {
   const isSigner = user.address && safe?.owners.includes(user.address);
 
   const handleDeployDAO: DAOTrigger = daoData => {
-    console.log(daoData);
+    console.log('TODO: Deploy Azorius Module', daoData);
   };
 
   return (
