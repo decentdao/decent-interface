@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { useProvider } from 'wagmi';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { BASE_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
@@ -45,6 +46,7 @@ export const useFractalNode = ({
   const { getDaoName } = useLazyDAOName();
   const { t } = useTranslation('dashboard');
   const { replace } = useRouter();
+  const provider = useProvider();
 
   const lookupModules = useFractalModules();
   const { setMethodOnInterval } = useUpdateTimer(currentValidAddress.current);
@@ -102,6 +104,7 @@ export const useFractalNode = ({
         });
       }
     },
+    context: { chainName: provider.network.name },
     pollInterval: ONE_MINUTE,
   });
 

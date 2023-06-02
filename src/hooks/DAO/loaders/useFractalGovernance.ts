@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef } from 'react';
+import { useProvider } from 'wagmi';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
@@ -17,6 +18,8 @@ export const useFractalGovernance = () => {
     governanceContracts,
     action,
   } = useFractal();
+
+  const provider = useProvider();
 
   const loadDAOProposals = useDAOProposals();
   const loadAzoriusStrategy = useAzoriusStrategy();
@@ -41,6 +44,7 @@ export const useFractalGovernance = () => {
         });
       }
     },
+    context: { chainName: provider.network.name },
     pollInterval: ONE_MINUTE,
   });
 
