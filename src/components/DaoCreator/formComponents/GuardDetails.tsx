@@ -265,6 +265,7 @@ function GuardDetails(props: ICreationStepProps) {
               ? CreatorSteps.MULTISIG_DETAILS
               : CreatorSteps.AZORIUS_DETAILS
           }
+          isEdit={mode === 'edit'}
           isLastStep
         />
       </Flex>

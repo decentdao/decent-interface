@@ -172,6 +172,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
         nextStep={CreatorSteps.FREEZE_DETAILS}
         prevStep={CreatorSteps.ESSENTIALS}
         isLastStep={!isSubDAO}
+        isEdit={mode === 'edit'}
       />
     </StepWrapper>
   );

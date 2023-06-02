@@ -136,6 +136,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           prevStep={CreatorSteps.TOKEN_DETAILS}
           nextStep={CreatorSteps.FREEZE_DETAILS}
           isLastStep={!isSubDAO}
+          isEdit={mode === 'edit'}
         />
       </Flex>
     </StepWrapper>

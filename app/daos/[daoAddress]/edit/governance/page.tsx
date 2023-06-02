@@ -1,6 +1,7 @@
 'use client';
 
 import { Box } from '@chakra-ui/react';
+import { CloseX } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import DaoCreator from '../../../../../src/components/DaoCreator';
@@ -29,7 +30,7 @@ export default function ModifyGovernancePage() {
     <Box>
       <PageHeader
         hasDAOLink
-        buttonText={t('cancel', { ns: 'common' })}
+        ButtonIcon={CloseX}
         buttonVariant="secondary"
         buttonClick={() => push(DAO_ROUTES.dao.relative(daoAddress))}
         isButtonDisabled={false}

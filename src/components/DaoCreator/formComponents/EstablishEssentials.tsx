@@ -2,6 +2,7 @@ import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
@@ -22,7 +23,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
   } = props;
 
   const {
-    node: { daoName, daoSnapshotURL },
+    node: { daoName, daoSnapshotURL, daoAddress },
   } = useFractal();
   // @todo update labels for subDAOs
 
@@ -42,6 +43,10 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
   }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit]);
 
+  const daoNameDisabled =
+    isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
+  const snapshotURLDisabled = isEdit && !!daoSnapshotURL;
+
   return (
     <StepWrapper
       mode={mode}
@@ -57,7 +62,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
         id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
         onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
-        disabled={isEdit && !!daoName}
+        disabled={daoNameDisabled}
         placeholder={t('daoNamePlaceholder')}
         testId="essentials-daoName"
       />
@@ -108,7 +113,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           <Input
             value={values.essentials.snapshotURL}
             onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
-            isDisabled={isEdit && !!daoSnapshotURL}
+            isDisabled={snapshotURLDisabled}
             data-testid="essentials-snapshotURL"
             placeholder="decent-dao.eth"
             maxLength={30}
@@ -123,6 +128,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         isNextDisabled={isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS}
+        isEdit={mode === 'edit'}
         nextStep={
           values.essentials.governance === GovernanceModuleType.MULTISIG
             ? CreatorSteps.MULTISIG_DETAILS
