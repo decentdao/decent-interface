@@ -63,6 +63,7 @@
     "helperFractalName": "What is your DAO called?",
     "titleProposalSettings": "Proposal Settings",
     "labelDeploySubDAO": "Create subDAO Proposal",
+    "labelDeployAzorius": "Create Azorius deployment Proposal",
     "titleAllocations": "Initial Token Allocations",
     "titleTokenParams": "Token Metadata",
     "titleSelectToken": "Select Token",
