@@ -27,7 +27,7 @@ export function StepButtons({
   const forwardButtonText =
     isLastStep && isSubDAO
       ? t('labelDeploySubDAO')
-      : isEdit
+      : isLastStep && isEdit
       ? t('labelDeployAzorius')
       : t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
   const buttonType = isLastStep ? 'submit' : 'button';

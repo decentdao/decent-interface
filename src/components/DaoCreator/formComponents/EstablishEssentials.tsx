@@ -32,16 +32,16 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const isEdit = mode === 'edit';
 
   useEffect(() => {
-    if (!isEdit && !daoName) {
+    if (!isEdit && (!daoName || createAccountSubstring(daoAddress!) === daoName)) {
       setFieldValue('essentials.daoName', '', true);
-    } else if (daoName) {
+    } else if (daoName && createAccountSubstring(daoAddress!) !== daoName) {
       setFieldValue('essentials.daoName', daoName, false);
     }
 
     if (daoSnapshotURL) {
       setFieldValue('essentials.snapshotURL', daoSnapshotURL, false);
     }
-  }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit]);
+  }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit, daoAddress]);
 
   const daoNameDisabled =
     isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
