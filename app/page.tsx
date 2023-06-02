@@ -51,7 +51,7 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         iconSrc: '/images/icon-decent.svg',
         titleKey: 'decentTitle',
         descKey: 'decentDesc',
-        address: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235', // TODO
+        address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525', // TODO
       },
       {
         iconSrc: '/images/icon-awakevc.svg',
@@ -68,7 +68,7 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         iconSrc: '/images/icon-decent.svg',
         titleKey: 'decentTitle',
         descKey: 'decentDesc',
-        address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525',
+        address: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235',
       },
       {
         iconSrc: '/images/icon-awakevc.svg',
