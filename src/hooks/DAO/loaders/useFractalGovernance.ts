@@ -35,13 +35,21 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
-      if (dao && dao.proposalTemplatesHash) {
-        const proposalTemplates = await ipfsClient.cat(dao.proposalTemplatesHash);
+      if (dao) {
+        const { proposalTemplatesHash } = dao;
+        if (proposalTemplatesHash) {
+          const proposalTemplates = await ipfsClient.cat(proposalTemplatesHash);
 
-        action.dispatch({
-          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-          payload: proposalTemplates || [],
-        });
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+            payload: proposalTemplates || [],
+          });
+        } else {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+            payload: [],
+          });
+        }
       }
     },
     context: { chainName: provider.network.name },

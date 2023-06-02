@@ -35,6 +35,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     handleChange,
     setFieldTouched,
     isSubmitting,
+    mode,
   } = props;
 
   const { t } = useTranslation('daoCreate');
@@ -85,6 +86,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   return (
     <>
       <StepWrapper
+        mode={mode}
         isSubDAO={isSubDAO}
         isFormSubmitting={!!isSubmitting || transactionPending}
         titleKey="titleAzoriusConfig"
