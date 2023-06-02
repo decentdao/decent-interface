@@ -42,10 +42,13 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfg = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
+// TODO add mainnetConfig to prod when we "release"
 // in the production version, set mainnet first so it defaults to that when disconnected
-export const supportedChains = isProd()
-  ? [mainnetConfig, goerliConfig]
+export const supportedChains: NetworkConfig[] = isProd()
+  ? [goerliConfig]
   : [goerliConfig, mainnetConfig];
+
+export const disconnectedChainId: number = supportedChains[0].chainId;
 
 const getNetworkConfig = (chainId: number) => {
   if (chainId === 31337) return goerliConfig;
