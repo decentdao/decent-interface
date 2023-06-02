@@ -1,15 +1,15 @@
-import Azorius from '@fractal-framework/fractal-contracts/deployments/goerli/Azorius.json';
-import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/goerli/AzoriusFreezeGuard.json';
-import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/goerli/ERC20Claim.json';
-import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/ERC20FreezeVoting.json';
-import FractalModule from '@fractal-framework/fractal-contracts/deployments/goerli/FractalModule.json';
-import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/goerli/FractalRegistry.json';
-import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/goerli/KeyValuePairs.json';
-import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/goerli/LinearERC20Voting.json';
-import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeGuard.json';
-import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeVoting.json';
-import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/goerli/VotesERC20.json';
-import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/goerli/VotesERC20Wrapper.json';
+import Azorius from '@fractal-framework/fractal-contracts/deployments/mainnet/Azorius.json';
+import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/mainnet/AzoriusFreezeGuard.json';
+import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20Claim.json';
+import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20FreezeVoting.json';
+import FractalModule from '@fractal-framework/fractal-contracts/deployments/mainnet/FractalModule.json';
+import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/mainnet/FractalRegistry.json';
+import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/mainnet/KeyValuePairs.json';
+import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/mainnet/LinearERC20Voting.json';
+import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/mainnet/MultisigFreezeGuard.json';
+import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/MultisigFreezeVoting.json';
+import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/mainnet/VotesERC20.json';
+import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/mainnet/VotesERC20Wrapper.json';
 import {
   getSafeSingletonDeployment,
   getProxyFactoryDeployment,
@@ -17,11 +17,6 @@ import {
 } from '@safe-global/safe-deployments';
 import { mainnet } from 'wagmi/chains';
 import { NetworkConfig } from '../../../types/network';
-
-// TODO
-// 1. deploy contracts to mainnet and update fractal-contracts version
-// 2. update to that version in this repo and swap above imports for /mainnet/
-// 3. update subgraph to support mainnet?
 
 const CHAIN_ID = 1;
 const SAFE_VERSION = '1.3.0';
