@@ -6,6 +6,7 @@ import FractalModule from '@fractal-framework/fractal-contracts/deployments/goer
 import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/goerli/FractalRegistry.json';
 import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/goerli/KeyValuePairs.json';
 import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/goerli/LinearERC20Voting.json';
+import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/goerli/ModuleProxyFactory.json';
 import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeGuard.json';
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeVoting.json';
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/goerli/VotesERC20.json';
@@ -47,7 +48,7 @@ export const goerliConfig: NetworkConfig = {
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
     })?.defaultAddress!,
-    zodiacModuleProxyFactory: '0x740020d3B1BF3E64e84dbA7175fC560B85EdB9bC',
+    zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     gnosisMultisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
