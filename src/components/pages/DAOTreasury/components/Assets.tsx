@@ -60,7 +60,7 @@ function CoinRow({
       align="top"
       marginBottom="0.75rem"
     >
-      <Box w="33%">
+      <Box w="35%">
         <HStack marginEnd="1rem">
           <Image
             src={asset.iconUri}
@@ -74,6 +74,8 @@ function CoinRow({
             textStyle="text-base-sans-regular"
             data-testid="link-token-symbol"
             noOfLines={2}
+            maxWidth="4.7rem"
+            isTruncated
           >
             {asset.address === ethers.constants.AddressZero ? (
               <EtherscanLinkAddress
@@ -93,7 +95,7 @@ function CoinRow({
           </Text>
         </HStack>
       </Box>
-      <Box w="37%">
+      <Box w="35%">
         <Text
           textStyle="text-base-sans-regular"
           color="grayscale.100"
