@@ -6,7 +6,7 @@
     "structure": "Structure",
     "structureDesc": "Compose subDAO hierarchies each with their own treasury, governance and permissions",
     "operate": "Operate",
-    "operateDesc": "Start with any (Gnosis) Safe. Then use our DAO modules & template builder to infinitely expand it's functionality",
+    "operateDesc": "Start with any Safe{WALLET}. Then use our DAO modules & template builder to infinitely expand it's functionality",
     "featuredTitle": "Featured DAOs",
     "featuredDesc": "Here are some organizations already composing unique subDAO hierarchies on Fractal",
     "decentTitle": "Decent DAO",

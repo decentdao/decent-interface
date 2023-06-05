@@ -9,7 +9,15 @@ import { ActivityAddress } from '../../Activity/ActivityAddress';
 import { Badge } from '../../ui/badges/Badge';
 import ContentBox from '../../ui/containers/ContentBox';
 
-function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigProposal }) {
+function OwnerInfoRow({
+  owner,
+  proposal,
+  isMe,
+}: {
+  owner: string;
+  proposal: MultisigProposal;
+  isMe: boolean;
+}) {
   const ownerConfirmed = proposal.confirmations.find(confirmInfo => confirmInfo.owner === owner);
 
   return (
@@ -18,7 +26,10 @@ function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigPr
       my="0.75rem"
     >
       <GridItem colSpan={1}>
-        <ActivityAddress address={owner} />
+        <ActivityAddress
+          address={owner}
+          isMe={isMe}
+        />
       </GridItem>
       <GridItem colSpan={1}>
         {ownerConfirmed && (
@@ -42,6 +53,7 @@ function OwnerInfoRow({ owner, proposal }: { owner: string; proposal: MultisigPr
 
 export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
   const {
+    readOnly: { user },
     node: { safe },
   } = useFractal();
   const { t } = useTranslation('proposal');
@@ -59,6 +71,7 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
               key={owner}
               owner={owner}
               proposal={proposal}
+              isMe={user.address === owner}
             />
           ))}
         </Box>

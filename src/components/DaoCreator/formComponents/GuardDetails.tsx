@@ -28,7 +28,7 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
 function GuardDetails(props: ICreationStepProps) {
-  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode } = props;
   const {
     node: { safe },
     governance,
@@ -111,6 +111,7 @@ function GuardDetails(props: ICreationStepProps) {
 
   return (
     <StepWrapper
+      mode={mode}
       isSubDAO={isSubDAO}
       isFormSubmitting={!!isSubmitting || transactionPending}
       titleKey="titleGuardConfig"
@@ -121,7 +122,7 @@ function GuardDetails(props: ICreationStepProps) {
       >
         {governanceFormType === GovernanceModuleType.MULTISIG && (
           <>
-            <ContentBoxTitle>{t('titleParentGovernance')}</ContentBoxTitle>
+            <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
             <LabelComponent
               label={t('labelTimelockPeriod')}
               helper={t('helperTimelockPeriod')}
@@ -264,6 +265,7 @@ function GuardDetails(props: ICreationStepProps) {
               ? CreatorSteps.MULTISIG_DETAILS
               : CreatorSteps.AZORIUS_DETAILS
           }
+          isEdit={mode === 'edit'}
           isLastStep
         />
       </Flex>

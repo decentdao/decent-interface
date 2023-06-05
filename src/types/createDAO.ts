@@ -21,6 +21,7 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
   isSubDAO?: boolean;
   step: CreatorSteps;
   updateStep: (newStep: CreatorSteps) => void;
+  mode?: 'edit' | 'create';
 }
 
 export interface CreatorFormState<T = BigNumberValuePair> {

@@ -13,10 +13,12 @@ function DaoCreator({
   deployDAO,
   pending,
   isSubDAO,
+  mode = 'create',
 }: {
   pending?: boolean;
   deployDAO: DAOTrigger;
   isSubDAO?: boolean;
+  mode?: 'create' | 'edit';
 }) {
   const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
   const { prepareMultisigFormData, prepareAzoriusFormData } = usePrepareFormData();
@@ -57,6 +59,7 @@ function DaoCreator({
             <StepController
               transactionPending={pending}
               isSubDAO={isSubDAO}
+              mode={mode}
               {...rest}
             />
           </form>

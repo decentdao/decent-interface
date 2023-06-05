@@ -43,7 +43,7 @@ const FEATURED_DAOS = [
     iconSrc: '/images/icon-awakevc.svg',
     titleKey: 'awakeTitle',
     descKey: 'awakeDesc',
-    address: '0xF2C7C6445BD4E2d79e0Ee362812BaDD8D227b02F', // TODO
+    address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a', // TODO
   },
 ];
 

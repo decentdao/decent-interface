@@ -72,14 +72,23 @@ function CoinRow({
           <Text
             height="auto"
             textStyle="text-base-sans-regular"
-            color="grayscale.100"
             data-testid="link-token-symbol"
             noOfLines={2}
           >
             {asset.address === ethers.constants.AddressZero ? (
-              <EtherscanLinkAddress address={safe}>{asset.symbol}</EtherscanLinkAddress>
+              <EtherscanLinkAddress
+                color="grayscale.100"
+                address={safe}
+              >
+                {asset.symbol}
+              </EtherscanLinkAddress>
             ) : (
-              <EtherscanLinkERC20 address={asset.address}>{asset.symbol}</EtherscanLinkERC20>
+              <EtherscanLinkERC20
+                color="grayscale.100"
+                address={asset.address}
+              >
+                {asset.symbol}
+              </EtherscanLinkERC20>
             )}
           </Text>
         </HStack>
