@@ -1,7 +1,7 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useDisconnect, useNetwork, useProvider } from 'wagmi';
+import { Chain, useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerli } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
@@ -48,7 +48,7 @@ export const supportedChains: NetworkConfig[] = isProd()
   ? [goerliConfig]
   : [goerliConfig, mainnetConfig];
 
-export const disconnectedChainId: number = supportedChains[0].chainId;
+export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
 
 const getNetworkConfig = (chainId: number) => {
   if (chainId === 31337) return goerliConfig;
@@ -67,8 +67,8 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   }, [provider]);
 
   useEffect(() => {
-    const supportedChainIds = supportedChains.map(c => c.chainId) || [];
-    const supportedChainNames = supportedChains.map(c => c.name) || [];
+    const supportedChainIds = supportedChains.map(c => c.chainId);
+    const supportedChainNames = supportedChains.map(c => c.name).join(', ');
 
     if (
       !!chain &&

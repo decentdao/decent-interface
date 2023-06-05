@@ -15,7 +15,7 @@ import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DOCS } from '../src/constants/url';
 import { useFractal } from '../src/providers/App/AppProvider';
-import { disconnectedChainId } from '../src/providers/NetworkConfig/NetworkConfigProvider';
+import { disconnectedChain } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 
 const VALUE_PROPS = [
   {
@@ -98,7 +98,7 @@ export default function HomePage() {
   }, [daoAddress, action]);
 
   const { chain } = useNetwork();
-  const features = FEATURED_DAOS.get(chain ? chain.id : disconnectedChainId);
+  const features = FEATURED_DAOS.get(chain ? chain.id : disconnectedChain.id);
 
   return (
     <ClientOnly>
