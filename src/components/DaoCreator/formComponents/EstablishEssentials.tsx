@@ -2,6 +2,8 @@ import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -10,15 +12,43 @@ import { StepWrapper } from '../StepWrapper';
 
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors } = props;
+  const {
+    values,
+    setFieldValue,
+    isSubmitting,
+    transactionPending,
+    isSubDAO,
+    errors,
+    mode = 'create',
+  } = props;
+
+  const {
+    node: { daoName, daoSnapshotURL, daoAddress },
+  } = useFractal();
 
   // initialize Next button state
+
+  const isEdit = mode === 'edit';
+
   useEffect(() => {
-    setFieldValue('essentials.daoName', '', true);
-  }, [setFieldValue]);
+    if (!isEdit && (!daoName || createAccountSubstring(daoAddress!) === daoName)) {
+      setFieldValue('essentials.daoName', '', true);
+    } else if (daoName && createAccountSubstring(daoAddress!) !== daoName) {
+      setFieldValue('essentials.daoName', daoName, false);
+    }
+
+    if (daoSnapshotURL) {
+      setFieldValue('essentials.snapshotURL', daoSnapshotURL, false);
+    }
+  }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit, daoAddress]);
+
+  const daoNameDisabled =
+    isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
+  const snapshotURLDisabled = isEdit && !!daoSnapshotURL;
 
   return (
     <StepWrapper
+      mode={mode}
       isSubDAO={isSubDAO}
       isFormSubmitting={!!isSubmitting || transactionPending}
       titleKey="titleEssentials"
@@ -31,7 +61,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
         id="searchEssentials-daoName"
         onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
         onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
-        disabled={false}
+        disabled={daoNameDisabled}
         placeholder={t('daoNamePlaceholder')}
         testId="essentials-daoName"
       />
@@ -82,7 +112,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           <Input
             value={values.essentials.snapshotURL}
             onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
-            isDisabled={false}
+            isDisabled={snapshotURLDisabled}
             data-testid="essentials-snapshotURL"
             placeholder="decent-dao.eth"
             maxLength={30}
@@ -96,6 +126,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
       />
       <StepButtons
         {...props}
+        isNextDisabled={isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS}
+        isEdit={mode === 'edit'}
         nextStep={
           values.essentials.governance === GovernanceModuleType.MULTISIG
             ? CreatorSteps.MULTISIG_DETAILS
