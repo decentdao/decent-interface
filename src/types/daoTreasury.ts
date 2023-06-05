@@ -73,7 +73,7 @@ export interface TokenInfo {
 }
 
 export interface AssetTransfer extends TransferResponse {
-  tokenInfo: TokenInfo;
+  tokenInfo?: TokenInfo;
 }
 
 export type AssetTotals = {
