@@ -52,10 +52,16 @@ export const useFractalGovernance = () => {
             payload: [],
           });
         }
+      } else {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: [],
+        });
       }
     },
     context: { chainName },
     pollInterval: ONE_MINUTE,
+    skip: !daoAddress,
   });
 
   useEffect(() => {
