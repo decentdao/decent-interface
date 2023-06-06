@@ -87,6 +87,8 @@ export const useFractalNode = ({
     return;
   }, []);
 
+  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
+
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
     onCompleted: async data => {
@@ -106,7 +108,7 @@ export const useFractalNode = ({
         });
       }
     },
-    context: { chainName: provider.network.name },
+    context: { chainName },
     pollInterval: ONE_MINUTE,
   });
 

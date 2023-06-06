@@ -27,6 +27,7 @@ export default function useDAOName({
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
   const provider = useProvider();
   const networkId = provider.network.chainId;
+
   const { data: ensName } = useEnsName({
     address: address as Address,
     chainId: networkId,

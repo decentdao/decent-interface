@@ -22,10 +22,12 @@ export function useFetchNodes(address?: string) {
       fractalAzoriusMasterCopyContract,
     },
   } = useFractal();
+
+  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
   const { data, error } = useQuery(DAOQueryDocument, {
     variables: { daoAddress: address },
     skip: address === safe?.address, // If address === safe.address - we already have hierarchy obtained in the context
-    context: { chainName: provider.network.name },
+    context: { chainName },
   });
 
   const lookupModules = useFractalModules();

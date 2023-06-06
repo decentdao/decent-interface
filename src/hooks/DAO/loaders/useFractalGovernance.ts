@@ -28,6 +28,8 @@ export const useFractalGovernance = () => {
 
   const ONE_MINUTE = 60 * 1000;
 
+  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
+
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
     onCompleted: async data => {
@@ -52,7 +54,7 @@ export const useFractalGovernance = () => {
         }
       }
     },
-    context: { chainName: provider.network.name },
+    context: { chainName },
     pollInterval: ONE_MINUTE,
   });
 
