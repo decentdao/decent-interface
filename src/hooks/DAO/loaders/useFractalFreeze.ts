@@ -124,7 +124,7 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
 
   useEffect(() => {
     if (
-      !guardContracts.freezeVotingType !== null &&
+      guardContracts.freezeVotingType !== null &&
       !!guardContracts.freezeVotingContract &&
       guardContracts.freezeVotingContract.asSigner.address !== loadKey.current &&
       loadOnMount
