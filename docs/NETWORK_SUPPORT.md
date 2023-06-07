@@ -5,7 +5,7 @@ Fractal currently supports:
 - [Goerli Testnet](https://goerli.net/)
 - [Ethereum Mainnet](https://ethereum.org)
 
-It is possible to easily deploy Fractal on any EVM chain that has [Safe{WALLET}](https://safe.global/wallet), [Wagmi](https://www.npmjs.com/package/@wagmi/chains), and [Graph](https://thegraph.com) support.
+It is possible to easily deploy Fractal on any EVM chain that has [Safe{Wallet}](https://safe.global/wallet), [Wagmi](https://www.npmjs.com/package/@wagmi/chains), and [Graph](https://thegraph.com) support.
 
 # Adding EVM network support
 

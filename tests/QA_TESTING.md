@@ -137,7 +137,6 @@ TODO more here
 
 ### Delegate Modal
 - [ ] token balance is shown
-- [ ] Voting Weight is shown (all tokens delegated to connected address from any address)
 - [ ] Delegated To is shown (who connected address delegates their tokens to)
 - [ ] Delegate to Self copies connected address into input field
 - [ ] Delegate Address field accepts any address or valid ENS
