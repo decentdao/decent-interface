@@ -81,12 +81,10 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         co = <SendAssetsModal close={cl} />;
         break;
       case ModalType.WRAP_TOKEN:
-        // @todo add title to translations
         ti = t('wrapTokenTitle');
         co = <WrapToken close={cl} />;
         break;
       case ModalType.UNWRAP_TOKEN:
-        // @todo add title to translations
         ti = t('unwrapTokenTitle');
         co = <UnwrapToken close={cl} />;
         break;

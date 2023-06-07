@@ -75,23 +75,6 @@ export function DelegateModal({ close }: { close: Function }) {
         </Text>
         <Text
           align="start"
-          marginBottom="0.5rem"
-        >
-          {t('titleWeight')}
-        </Text>
-        <Text
-          align="end"
-          color="grayscale.100"
-        >
-          {formatCoin(
-            azoriusGovernance.votesToken.votingWeight || BigNumber.from(0),
-            false,
-            azoriusGovernance.votesToken.decimals,
-            azoriusGovernance.votesToken.symbol
-          )}
-        </Text>
-        <Text
-          align="start"
           marginBottom="1rem"
         >
           {t('titleDelegatedTo')}
