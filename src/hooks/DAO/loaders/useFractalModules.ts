@@ -1,5 +1,5 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
-import { utils } from 'ethers';
+import { constants, utils } from 'ethers';
 import { useCallback } from 'react';
 import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
@@ -23,6 +23,7 @@ export const useFractalModules = () => {
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
         const filter = rpc.filters.ModuleProxyCreation(proxyAddress, null);
         return rpc.queryFilter(filter).then(proxiesCreated => {
+          if (proxiesCreated.length === 0) return constants.AddressZero;
           return proxiesCreated[0].args.masterCopy;
         });
       };

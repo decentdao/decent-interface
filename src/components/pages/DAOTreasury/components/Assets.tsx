@@ -100,6 +100,8 @@ function CoinRow({
           textStyle="text-base-sans-regular"
           color="grayscale.100"
           marginBottom="0.25rem"
+          maxWidth="23.8rem"
+          isTruncated
         >
           <Tooltip
             label={asset.fullCoinTotal}
