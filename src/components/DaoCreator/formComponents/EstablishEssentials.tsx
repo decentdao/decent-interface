@@ -25,7 +25,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const {
     node: { daoName, daoSnapshotURL, daoAddress },
   } = useFractal();
-  // @todo update labels for subDAOs
 
   // initialize Next button state
 

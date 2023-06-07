@@ -1,11 +1,9 @@
 {
     "delegateTitle": "Делегувати голосувальні токени",
     "titleBalance": "Баланс",
-    "titleWeight": "Вага Голосу",
     "titleDelegatedTo": "Делеговано до",
     "linkSelfDelegate": "Делегувати собі",
     "labelDelegateInput": "Адреса, кому делеговано",
-    "sublabelDelegateInput": "Для того щоб голосувати - ви маєте делегувати ваші токени самому собі, або довіренній особі за власним россудом. (Тільки ETH гаманець!)",
     "buttonDelegate": "Делегувати токени голосування",
     "sendAssetsTitle": "Відправити Активи",
     "selectLabel": "Оберіть актив",
