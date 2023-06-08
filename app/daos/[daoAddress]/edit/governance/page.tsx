@@ -9,12 +9,13 @@ import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import useDeployAzorius from '../../../../../src/hooks/DAO/useDeployAzorius';
+import { createAccountSubstring } from '../../../../../src/hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import { GovernanceModuleType, DAOTrigger, AzoriusGovernanceDAO } from '../../../../../src/types';
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoName, daoSnapshotURL },
     governance: { type },
     readOnly: { user },
   } = useFractal();
@@ -25,7 +26,11 @@ export default function ModifyGovernancePage() {
   const deployAzorius = useDeployAzorius();
 
   const handleDeployAzorius: DAOTrigger = daoData => {
-    deployAzorius(daoData as AzoriusGovernanceDAO, undefined);
+    deployAzorius(
+      daoData as AzoriusGovernanceDAO,
+      !daoName || createAccountSubstring(daoAddress!) === daoName,
+      !daoSnapshotURL
+    );
   };
 
   return (

@@ -44,6 +44,11 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.saltNum = getRandomBytes();
   }
 
+  public setSafeContract(safeAddress: string) {
+    const safeContract = GnosisSafe__factory.connect(safeAddress, this.signerOrProvider);
+    this.safeContract = safeContract;
+  }
+
   public async setupGnosisSafeData(): Promise<void> {
     const { predictedGnosisSafeAddress, createSafeTx } = await gnosisSafeData(
       this.baseContracts.multiSendContract,
@@ -54,14 +59,10 @@ export class TxBuilderFactory extends BaseTxBuilder {
       !!this.azoriusContracts
     );
 
-    const safeContract = GnosisSafe__factory.connect(
-      predictedGnosisSafeAddress,
-      this.signerOrProvider
-    );
-
     this.predictedGnosisSafeAddress = predictedGnosisSafeAddress;
     this.createSafeTx = createSafeTx;
-    this.safeContract = safeContract;
+
+    this.setSafeContract(predictedGnosisSafeAddress);
   }
 
   public createDaoTxBuilder(): DaoTxBuilder {

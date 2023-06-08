@@ -20,7 +20,7 @@ const useDeployAzorius = () => {
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { push } = useRouter();
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
     baseContracts: {
       multiSendContract,
       gnosisSafeFactoryContract,
@@ -45,8 +45,8 @@ const useDeployAzorius = () => {
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
 
   const deployAzorius = useCallback(
-    async (daoData: AzoriusGovernanceDAO, nonce: number | undefined) => {
-      if (!daoAddress || !canUserCreateProposal) {
+    async (daoData: AzoriusGovernanceDAO, shouldSetName?: boolean, shouldSetSnapshot?: boolean) => {
+      if (!daoAddress || !canUserCreateProposal || !safe) {
         return;
       }
       let azoriusContracts;
@@ -81,8 +81,11 @@ const useDeployAzorius = () => {
         undefined,
         undefined
       );
+
+      txBuilderFactory.setSafeContract(daoAddress);
+
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
-      const safeTx = await daoTxBuilder.buildAzoriusTx();
+      const safeTx = await daoTxBuilder.buildAzoriusTx(shouldSetName, shouldSetSnapshot, false);
 
       const proposalData: ProposalExecuteData = {
         targets: [multiSendContract.asSigner.address],
@@ -92,9 +95,10 @@ const useDeployAzorius = () => {
         description: '',
         documentationUrl: '',
       };
-      submitProposal({
+
+      await submitProposal({
         proposalData,
-        nonce,
+        nonce: safe.nonce,
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
@@ -125,6 +129,7 @@ const useDeployAzorius = () => {
       daoAddress,
       submitProposal,
       push,
+      safe,
     ]
   );
 
