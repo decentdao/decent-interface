@@ -74,7 +74,7 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         iconSrc: '/images/icon-awakevc.svg',
         titleKey: 'awakeTitle',
         descKey: 'awakeDesc',
-        address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a',
+        address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5',
       },
     ],
   ],
