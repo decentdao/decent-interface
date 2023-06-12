@@ -1,7 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useFractalNode } from '../../../hooks/DAO/loaders/useFractalNode';
+import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, WithError } from '../../../types';
 import { DAONodeCard } from '../../ui/cards/DAOInfoCard';
@@ -20,7 +20,7 @@ export function DaoNode({
   numberOfSiblings?: number;
 }) {
   const [fractalNode, setNode] = useState<FractalNode>();
-  const { loadDao } = useFractalNode({ loadOnMount: false });
+  const { loadDao } = useLoadDAONode();
   const [isChildrenExpanded, setIsChildrenExpanded] = useState(!parentAddress);
   const childrenExpansionToggle = () => {
     setIsChildrenExpanded(v => !v);
