@@ -35,7 +35,7 @@ export default function ProposalSummary({
     return voteTotal.div(azoriusGovernance.votesToken.totalSupply.div(100)).toNumber();
   };
 
-  if (!azoriusGovernance.votesToken.totalSupply) {
+  if (!azoriusGovernance.votesToken || !azoriusGovernance.votesToken.totalSupply) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
