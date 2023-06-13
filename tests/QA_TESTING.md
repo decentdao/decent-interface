@@ -9,7 +9,7 @@ https://app.staging.fractalframework.xyz/
 - [ ] Favorites menu appears and displays favorites
 - [ ] Favorites link to their respective DAO homepage
 - [ ] *Connect Wallet dropdown* -> *Connect* opens Connect a Wallet modal
-- [ ] *Connect Wallet dropdown* shows default network (Georli)
+- [ ] *Connect Wallet dropdown* shows default network (Goerli)
 - [ ] *Connect your wallet* in page content opens Connect a Wallet modal
 - [ ] FAQ, Discord, Docs links in page content are correct
 - [ ] no DAO related sidebar icons appear

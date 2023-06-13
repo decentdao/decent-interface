@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { useProvider } from 'wagmi';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
@@ -10,6 +11,7 @@ import { getAzoriusModuleFromModules } from '../../../utils';
 
 export function useFetchNodes(address?: string) {
   const [childNodes, setChildNodes] = useState<SafeInfoResponseWithGuard[]>();
+  const provider = useProvider();
 
   const {
     node: { safe, nodeHierarchy },
@@ -20,9 +22,12 @@ export function useFetchNodes(address?: string) {
       fractalAzoriusMasterCopyContract,
     },
   } = useFractal();
+
+  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
   const { data, error } = useQuery(DAOQueryDocument, {
     variables: { daoAddress: address },
-    skip: address === safe?.address, // If address === safe.address - we already have hierarchy obtained in the context
+    skip: address === safe?.address || !address, // If address === safe.address - we already have hierarchy obtained in the context
+    context: { chainName },
   });
 
   const lookupModules = useFractalModules();

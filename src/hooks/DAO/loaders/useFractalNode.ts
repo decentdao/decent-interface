@@ -4,11 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { useNetwork, useProvider } from 'wagmi';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { BASE_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { NodeAction } from '../../../providers/App/node/action';
+import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
@@ -27,6 +29,8 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const { getDaoName } = useLazyDAOName();
   const { t } = useTranslation('dashboard');
   const { replace } = useRouter();
+  const provider = useProvider();
+  const { chain } = useNetwork();
 
   const lookupModules = useFractalModules();
   const { setMethodOnInterval } = useUpdateTimer(currentValidAddress.current);
@@ -34,11 +38,11 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const invalidateDAO = useCallback(
     (errorMessage: string) => {
       // invalid DAO
-      toast(t(errorMessage), { toastId: 'invalid-dao' });
+      toast(errorMessage, { toastId: 'invalid-dao' });
       action.resetDAO();
       replace(BASE_ROUTES.landing);
     },
-    [action, replace, t]
+    [action, replace]
   );
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
@@ -64,6 +68,8 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
     return;
   }, []);
 
+  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
+
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
     onCompleted: async data => {
@@ -83,6 +89,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
         });
       }
     },
+    context: { chainName },
     pollInterval: ONE_MINUTE,
   });
 
@@ -110,20 +117,24 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
         try {
           const safe = await setMethodOnInterval(() => updateSafeInfo(_daoAddress), ONE_MINUTE);
           if (!safe) {
-            invalidateDAO('errorInvalidSearch');
+            invalidateDAO(t('errorInvalidSearch'));
             return;
           }
         } catch (e) {
           // network error
           logError(e);
-          invalidateDAO('errorFailedSearch');
+          invalidateDAO(
+            t('errorFailedSearch', { chain: chain ? chain.name : disconnectedChain.name })
+          );
         }
       } else {
         // invalid address
-        invalidateDAO('errorFailedSearch');
+        invalidateDAO(
+          t('errorFailedSearch', { chain: chain ? chain.name : disconnectedChain.name })
+        );
       }
     },
-    [invalidateDAO, updateSafeInfo, setMethodOnInterval, safeService]
+    [safeService, setMethodOnInterval, updateSafeInfo, invalidateDAO, t, chain]
   );
 
   useEffect(() => {
