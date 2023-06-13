@@ -85,13 +85,15 @@ const useDeployAzorius = () => {
       txBuilderFactory.setSafeContract(daoAddress);
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
-      const safeTx = await daoTxBuilder.buildAzoriusTx(shouldSetName, shouldSetSnapshot, false);
+      const safeTx = await daoTxBuilder.buildAzoriusTx(shouldSetName, shouldSetSnapshot, {
+        owners: safe.owners,
+      });
 
       const proposalData: ProposalExecuteData = {
         targets: [multiSendContract.asSigner.address],
         values: [BigNumber.from('0')],
         calldatas: [multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx])],
-        title: t('Change governance module to Azorius', { ns: 'proposalMetadata' }),
+        title: '',
         description: '',
         documentationUrl: '',
       };
