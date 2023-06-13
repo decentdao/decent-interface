@@ -33,14 +33,28 @@ export function DaoNode({
   useEffect(() => {
     if (safeAddress) {
       loadDao(utils.getAddress(safeAddress)).then(_node => {
-        if (!(_node as WithError).error) {
+        const errorNode = _node as WithError;
+        const emptyNode: FractalNode = {
+          daoName: null,
+          daoAddress: null,
+          safe: null,
+          fractalModules: [],
+          nodeHierarchy: {
+            parentAddress: null,
+            childNodes: [],
+          },
+        };
+
+        if (!errorNode.error) {
           setNode(_node as FractalNode);
+        } else if (errorNode.error === 'errorFailedSearch') {
+          setNode(emptyNode);
         }
       });
     }
   }, [loadDao, safeAddress]);
 
-  if (!fractalNode?.nodeHierarchy.childNodes) {
+  if (!fractalNode?.nodeHierarchy) {
     return (
       <Box
         h="6.25rem"
