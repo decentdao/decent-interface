@@ -1,9 +1,11 @@
 'use client';
 
-import { Center, VStack, Text, Button, Flex } from '@chakra-ui/react';
+import { Center, VStack, Text, Button, Flex, Box } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNetwork } from 'wagmi';
+import { goerli, mainnet } from 'wagmi/chains';
 import { AppFooter } from '../src/components/pages/AppHome/AppFooter';
 import { CTABox } from '../src/components/pages/AppHome/CTABox';
 import FeaturedDAOCard from '../src/components/pages/AppHome/FeaturedDAOCard';
@@ -13,6 +15,7 @@ import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DOCS } from '../src/constants/url';
 import { useFractal } from '../src/providers/App/AppProvider';
+import { disconnectedChain } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 
 const VALUE_PROPS = [
   {
@@ -32,20 +35,50 @@ const VALUE_PROPS = [
   },
 ];
 
-const FEATURED_DAOS = [
-  {
-    iconSrc: '/images/icon-decent.svg',
-    titleKey: 'decentTitle',
-    descKey: 'decentDesc',
-    address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525', // TODO
-  },
-  {
-    iconSrc: '/images/icon-awakevc.svg',
-    titleKey: 'awakeTitle',
-    descKey: 'awakeDesc',
-    address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a', // TODO
-  },
-];
+interface Feature {
+  iconSrc: string;
+  titleKey: string;
+  descKey: string;
+  address: string;
+}
+
+// featured DAOs are dependent on the connected chain
+const FEATURED_DAOS = new Map<number, Feature[]>([
+  [
+    goerli.id,
+    [
+      {
+        iconSrc: '/images/icon-decent.svg',
+        titleKey: 'decentTitle',
+        descKey: 'decentDesc',
+        address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525', // TODO
+      },
+      {
+        iconSrc: '/images/icon-awakevc.svg',
+        titleKey: 'awakeTitle',
+        descKey: 'awakeDesc',
+        address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a', // TODO
+      },
+    ],
+  ],
+  [
+    mainnet.id,
+    [
+      {
+        iconSrc: '/images/icon-decent.svg',
+        titleKey: 'decentTitle',
+        descKey: 'decentDesc',
+        address: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235',
+      },
+      {
+        iconSrc: '/images/icon-awakevc.svg',
+        titleKey: 'awakeTitle',
+        descKey: 'awakeDesc',
+        address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5',
+      },
+    ],
+  ],
+]);
 
 export default function HomePage() {
   const { t } = useTranslation('home');
@@ -63,6 +96,10 @@ export default function HomePage() {
       action.resetDAO();
     }
   }, [daoAddress, action]);
+
+  const { chain } = useNetwork();
+  const features = FEATURED_DAOS.get(chain ? chain.id : disconnectedChain.id);
+
   return (
     <ClientOnly>
       <Center>
@@ -142,39 +179,46 @@ export default function HomePage() {
               </Text>
             }
           />
-          <Text
-            paddingTop="3.5rem"
-            textStyle="text-lg-mono-bold"
-            color="grayscale.100"
-          >
-            {t('featuredTitle')}
-          </Text>
-          <Text
-            color="grayscale.500"
-            paddingBottom="1.5rem"
-          >
-            {t('featuredDesc')}
-          </Text>
-          <Flex
-            flexWrap="wrap"
-            paddingBottom="1.5rem"
-          >
-            {FEATURED_DAOS.map((feature, index) => {
-              return (
-                <FeaturedDAOCard
-                  width={{ sm: '100%', lg: '50%' }}
-                  key={feature.titleKey}
-                  iconSrc={feature.iconSrc}
-                  title={t(feature.titleKey)}
-                  desc={t(feature.descKey)}
-                  address={feature.address}
-                  marginBottom="2rem"
-                  paddingEnd={{ sm: '0rem', lg: index === 0 ? '0.56rem' : '0rem' }}
-                  paddingStart={{ sm: '0rem', lg: index === 1 ? '0.56rem' : '0rem' }}
-                />
-              );
-            })}
-          </Flex>
+          {features ? (
+            <>
+              <Text
+                paddingTop="3.5rem"
+                textStyle="text-lg-mono-bold"
+                color="grayscale.100"
+              >
+                {t('featuredTitle')}
+              </Text>
+              <Text
+                color="grayscale.500"
+                paddingBottom="1.5rem"
+              >
+                {t('featuredDesc')}
+              </Text>
+              <Flex
+                flexWrap="wrap"
+                paddingBottom="1.5rem"
+              >
+                {features.map((feature, index) => {
+                  return (
+                    <FeaturedDAOCard
+                      width={{ sm: '100%', lg: '50%' }}
+                      key={feature.titleKey}
+                      iconSrc={feature.iconSrc}
+                      title={t(feature.titleKey)}
+                      desc={t(feature.descKey)}
+                      address={feature.address}
+                      marginBottom="2rem"
+                      paddingEnd={{ sm: '0rem', lg: index === 0 ? '0.56rem' : '0rem' }}
+                      paddingStart={{ sm: '0rem', lg: index === 1 ? '0.56rem' : '0rem' }}
+                    />
+                  );
+                })}
+              </Flex>
+            </>
+          ) : (
+            // if there are no features just show padding
+            <Box h="2rem"></Box>
+          )}
           <CTABox
             leftSlot={
               <Text

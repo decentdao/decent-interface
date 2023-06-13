@@ -60,7 +60,7 @@ function CoinRow({
       align="top"
       marginBottom="0.75rem"
     >
-      <Box w="33%">
+      <Box w="35%">
         <HStack marginEnd="1rem">
           <Image
             src={asset.iconUri}
@@ -74,6 +74,8 @@ function CoinRow({
             textStyle="text-base-sans-regular"
             data-testid="link-token-symbol"
             noOfLines={2}
+            maxWidth="4.7rem"
+            isTruncated
           >
             {asset.address === ethers.constants.AddressZero ? (
               <EtherscanLinkAddress
@@ -93,11 +95,13 @@ function CoinRow({
           </Text>
         </HStack>
       </Box>
-      <Box w="37%">
+      <Box w="35%">
         <Text
           textStyle="text-base-sans-regular"
           color="grayscale.100"
           marginBottom="0.25rem"
+          maxWidth="23.8rem"
+          isTruncated
         >
           <Tooltip
             label={asset.fullCoinTotal}
@@ -182,20 +186,20 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
       >
         <EtherscanLinkAddress address={asset.address}>{name}</EtherscanLinkAddress>
       </Text>
-      <Text
-        textStyle="text-base-sans-regular"
-        color="grayscale.100"
-        data-testid="link-nft-id"
-        maxWidth="5rem"
-        noOfLines={1}
+      <EtherscanLinkERC721
+        address={asset.address}
+        tokenId={id}
       >
-        <EtherscanLinkERC721
-          address={asset.address}
-          tokenId={id}
+        <Text
+          textStyle="text-base-sans-regular"
+          color="grayscale.100"
+          data-testid="link-nft-id"
+          maxWidth="5rem"
+          noOfLines={1}
         >
           #{id}
-        </EtherscanLinkERC721>
-      </Text>
+        </Text>
+      </EtherscanLinkERC721>
     </HStack>
   );
 }
@@ -225,10 +229,10 @@ export function Assets() {
         {formatUSD(coinDisplay.totalFiatValue)}
       </Text>
       {coinDisplay.displayData.length > 0 && <CoinHeader />}
-      {coinDisplay.displayData.map(coin => {
+      {coinDisplay.displayData.map((coin, index) => {
         return (
           <CoinRow
-            key={coin.address}
+            key={index}
             safe={daoAddress!}
             totalFiat={coinDisplay.totalFiatValue}
             asset={coin}
@@ -236,9 +240,9 @@ export function Assets() {
         );
       })}
       {assetsNonFungible.length > 0 && <NFTHeader />}
-      {assetsNonFungible.map(asset => (
+      {assetsNonFungible.map((asset, index) => (
         <NFTRow
-          key={asset.id}
+          key={index}
           asset={asset}
           isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
         />

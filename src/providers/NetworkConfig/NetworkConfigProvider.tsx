@@ -1,10 +1,11 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useDisconnect, useNetwork, useProvider } from 'wagmi';
+import { Chain, useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { goerli } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
-import { goerliConfig } from './networks';
+import { isProd } from '../../utils';
+import { goerliConfig, mainnetConfig } from './networks';
 
 export const defaultState = {
   safeBaseURL: '',
@@ -41,7 +42,13 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfg = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
-export const supportedChains = [goerliConfig];
+// TODO add mainnetConfig to prod when we "release"
+// in the production version, set mainnet first so it defaults to that when disconnected
+export const supportedChains: NetworkConfig[] = isProd()
+  ? [goerliConfig]
+  : [goerliConfig, mainnetConfig];
+
+export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
 
 const getNetworkConfig = (chainId: number) => {
   if (chainId === 31337) return goerliConfig;
@@ -60,8 +67,8 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   }, [provider]);
 
   useEffect(() => {
-    const supportedChainIds = supportedChains.map(c => c.chainId) || [];
-    const supportedChainNames = supportedChains.map(c => c.name) || [];
+    const supportedChainIds = supportedChains.map(c => c.chainId);
+    const supportedChainNames = supportedChains.map(c => c.name).join(', ');
 
     if (
       !!chain &&

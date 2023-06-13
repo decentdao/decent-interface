@@ -6,18 +6,27 @@ import FractalModule from '@fractal-framework/fractal-contracts/deployments/goer
 import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/goerli/FractalRegistry.json';
 import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/goerli/KeyValuePairs.json';
 import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/goerli/LinearERC20Voting.json';
+import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/goerli/ModuleProxyFactory.json';
 import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeGuard.json';
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeVoting.json';
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/goerli/VotesERC20.json';
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/goerli/VotesERC20Wrapper.json';
+import {
+  getMultiSendCallOnlyDeployment,
+  getProxyFactoryDeployment,
+  getSafeSingletonDeployment,
+} from '@safe-global/safe-deployments';
 import { goerli } from 'wagmi/chains';
 import { NetworkConfig } from '../../../types/network';
+
+const CHAIN_ID = 5;
+const SAFE_VERSION = '1.3.0';
 
 export const goerliConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-goerli.safe.global',
   etherscanBaseURL: 'https://goerli.etherscan.io',
   etherscanAPIBaseUrl: 'https://api-goerli.etherscan.io',
-  chainId: 5,
+  chainId: CHAIN_ID,
   name: goerli.name,
   color: 'gold.300',
   nativeTokenSymbol: goerli.nativeCurrency.symbol,
@@ -33,11 +42,18 @@ export const goerliConfig: NetworkConfig = {
     multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    gnosisSafe: '0xd9Db270c1B5E3Bd161E8c8503c55cEABeE709552',
-    gnosisSafeFactory: '0xa6B71E26C5e0845f74c812102Ca7114b6a896AB2',
-    zodiacModuleProxyFactory: '0x740020d3B1BF3E64e84dbA7175fC560B85EdB9bC',
+    gnosisSafe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
+      ?.defaultAddress!,
+    gnosisSafeFactory: getProxyFactoryDeployment({
+      version: SAFE_VERSION,
+      network: CHAIN_ID.toString(),
+    })?.defaultAddress!,
+    zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
-    gnosisMultisend: '0x40A2aCCbd92BCA938b02010E17A5b8929b49130D',
+    gnosisMultisend: getMultiSendCallOnlyDeployment({
+      version: SAFE_VERSION,
+      network: CHAIN_ID.toString(),
+    })?.defaultAddress!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

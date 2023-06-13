@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef } from 'react';
+import { useProvider } from 'wagmi';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
@@ -18,12 +19,16 @@ export const useFractalGovernance = () => {
     action,
   } = useFractal();
 
+  const provider = useProvider();
+
   const loadDAOProposals = useDAOProposals();
   const loadAzoriusStrategy = useAzoriusStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
   const ipfsClient = useIPFSClient();
 
   const ONE_MINUTE = 60 * 1000;
+
+  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
 
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
@@ -47,9 +52,16 @@ export const useFractalGovernance = () => {
             payload: [],
           });
         }
+      } else {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+          payload: [],
+        });
       }
     },
+    context: { chainName },
     pollInterval: ONE_MINUTE,
+    skip: !daoAddress,
   });
 
   useEffect(() => {
