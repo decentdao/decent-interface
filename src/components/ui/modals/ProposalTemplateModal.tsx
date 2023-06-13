@@ -135,37 +135,40 @@ export default function ProposalTemplateModal({
       </Text>
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
-          {transaction.parameters.map((parameter, parameterIndex) => (
-            <Flex
-              key={parameterIndex}
-              width="100%"
-              flexWrap="wrap"
-              marginTop="1.5rem"
-            >
-              <InputComponent
-                label={parameter.label}
-                placeholder={parameter.signature}
-                value={parameter.value || ''}
-                isRequired={!!parameter.label}
-                testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
-                inputContainerProps={{
-                  width: '100%',
-                }}
-                gridContainerProps={{
-                  width: '100%',
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                }}
-                onChange={event =>
-                  handleParameterChange({
-                    transactionIndex,
-                    parameterIndex,
-                    value: event.target.value,
-                  })
-                }
-              />
-            </Flex>
-          ))}
+          {transaction.parameters.map(
+            (parameter, parameterIndex) =>
+              parameter.label && (
+                <Flex
+                  key={parameterIndex}
+                  width="100%"
+                  flexWrap="wrap"
+                  marginTop="1.5rem"
+                >
+                  <InputComponent
+                    label={parameter.label}
+                    placeholder={parameter.signature}
+                    value={parameter.value || ''}
+                    isRequired={!!parameter.label}
+                    testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
+                    inputContainerProps={{
+                      width: '100%',
+                    }}
+                    gridContainerProps={{
+                      width: '100%',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                    }}
+                    onChange={event =>
+                      handleParameterChange({
+                        transactionIndex,
+                        parameterIndex,
+                        value: event.target.value,
+                      })
+                    }
+                  />
+                </Flex>
+              )
+          )}
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
       ))}
