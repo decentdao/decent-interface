@@ -81,7 +81,6 @@ export default function ProposalTemplateModal({
 
     const proposalTransactions = filledProposalTransactions.map(
       ({ targetAddress, ethValue, functionName, parameters }) => {
-        console.log(parameters);
         return {
           targetAddress: utils.getAddress(targetAddress), // Safe proposal creation/execution might fail if targetAddress is not checksummed
           ethValue,
@@ -90,7 +89,7 @@ export default function ProposalTemplateModal({
           parameters: parameters
             .map(parameter =>
               isValidUrl(parameter.value!.trim())
-                ? encodeURIComponent(parameter.value!.trim())
+                ? encodeURIComponent(parameter.value!.trim()) // If parameter.value is valid URL with special symbols like ":" or "?" - decoding might fail, thus we need to encode URL
                 : parameter.value!.trim()
             )
             .join(', '),
