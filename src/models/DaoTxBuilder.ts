@@ -72,10 +72,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
     // transactions that must be called by safe
     this.internalTxs = [];
 
-    if (existingSafe) {
-      this.internalTxs = this.internalTxs.concat(this.buildSetMultiSendOwner(existingSafe.owners));
-    }
-
     if (shouldSetName) {
       this.internalTxs = this.internalTxs.concat(this.buildUpdateDAONameTx());
     }
@@ -111,7 +107,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
       azoriusTxBuilder.buildRemoveMultiSendOwnerTx(),
     ]);
 
-    const txs: SafeTransaction[] = existingSafe ? [] : [this.createSafeTx!];
+    const txs: SafeTransaction[] = !!existingSafe
+      ? [...azoriusTxBuilder.buildSetMultiSendOwner(existingSafe.owners)]
+      : [this.createSafeTx!];
 
     // build token wrapper if token is imported and not votes token (votes token contracts is already deployed)
     if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
@@ -224,28 +222,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
       0,
       false
     );
-  }
-
-  private buildSetMultiSendOwner(owners: string[]): SafeTransaction[] {
-    const removeOwnerTxs = owners.map(owner =>
-      buildContractCall(
-        this.safeContract!,
-        'removeOwner',
-        [this.baseContracts.multiSendContract.address, owner, 1],
-        0,
-        false
-      )
-    );
-    return [
-      buildContractCall(
-        this.safeContract!,
-        'addOwnerWithThreshold',
-        [this.baseContracts.multiSendContract.address, 1],
-        0,
-        false
-      ),
-      ...removeOwnerTxs,
-    ];
   }
 
   private buildExecInternalSafeTx(signatures: string): SafeTransaction {

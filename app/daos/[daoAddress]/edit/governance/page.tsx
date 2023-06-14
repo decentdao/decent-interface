@@ -29,7 +29,7 @@ export default function ModifyGovernancePage() {
     deployAzorius(
       daoData as AzoriusGovernanceDAO,
       !daoName || createAccountSubstring(daoAddress!) === daoName,
-      !daoSnapshotURL
+      !daoSnapshotURL && !!daoData.snapshotURL
     );
   };
 
