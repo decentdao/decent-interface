@@ -62,16 +62,29 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.setFractalModuleTxs();
   }
 
-  public async buildAzoriusTx(): Promise<string> {
+  public async buildAzoriusTx(
+    shouldSetName: boolean = true,
+    shouldSetSnapshot: boolean = true,
+    existingSafe?: { owners: string[] }
+  ): Promise<string> {
     const azoriusTxBuilder = this.txBuilderFactory.createAzoriusTxBuilder();
 
     // transactions that must be called by safe
-    this.internalTxs = [
-      this.buildUpdateDAONameTx(),
-      this.buildUpdateDAOSnapshotURLTx(),
+    this.internalTxs = [];
+    const txs: SafeTransaction[] = !!existingSafe ? [] : [this.createSafeTx!];
+
+    if (shouldSetName) {
+      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAONameTx());
+    }
+
+    if (shouldSetSnapshot) {
+      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAOSnapshotURLTx());
+    }
+
+    this.internalTxs = this.internalTxs.concat(
       azoriusTxBuilder.buildLinearVotingContractSetupTx(),
-      azoriusTxBuilder.buildEnableAzoriusModuleTx(),
-    ];
+      azoriusTxBuilder.buildEnableAzoriusModuleTx()
+    );
 
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
@@ -92,10 +105,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs = this.internalTxs.concat([
       azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
+      ...(!!existingSafe ? azoriusTxBuilder.buildRemoveOwners(existingSafe.owners) : []),
       azoriusTxBuilder.buildRemoveMultiSendOwnerTx(),
     ]);
-
-    const txs: SafeTransaction[] = [this.createSafeTx!];
 
     // build token wrapper if token is imported and not votes token (votes token contracts is already deployed)
     if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
@@ -129,6 +141,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     if (tokenClaimTx) {
       txs.push(tokenClaimTx);
     }
+
     return encodeMultiSend(txs);
   }
 

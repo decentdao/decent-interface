@@ -8,12 +8,14 @@ import DaoCreator from '../../../../../src/components/DaoCreator';
 import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
+import useDeployAzorius from '../../../../../src/hooks/DAO/useDeployAzorius';
+import { createAccountSubstring } from '../../../../../src/hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import { GovernanceModuleType, DAOTrigger } from '../../../../../src/types';
+import { GovernanceModuleType, DAOTrigger, AzoriusGovernanceDAO } from '../../../../../src/types';
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoName, daoSnapshotURL },
     governance: { type },
     readOnly: { user },
   } = useFractal();
@@ -21,9 +23,14 @@ export default function ModifyGovernancePage() {
   const { push } = useRouter();
   const isMultisig = type === GovernanceModuleType.MULTISIG;
   const isSigner = user.address && safe?.owners.includes(user.address);
+  const deployAzorius = useDeployAzorius();
 
   const handleDeployAzorius: DAOTrigger = daoData => {
-    console.log('TODO: Deploy Azorius Module', daoData);
+    deployAzorius(
+      daoData as AzoriusGovernanceDAO,
+      !daoName || createAccountSubstring(daoAddress!) === daoName,
+      !daoSnapshotURL && !!daoData.snapshotURL
+    );
   };
 
   return (

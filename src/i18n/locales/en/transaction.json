@@ -18,5 +18,6 @@
     "errorUserDeniedTransaction": "User rejected the transaction",
     "pendingTokenClaim": "Claiming {{ symbol }}",
     "failedTokenClaim": "Failed to claim {{ symbol }}",
-    "successTokenClaim": "You have successfully claimed {{ amount }} {{ symbol }}"
+    "successTokenClaim": "You have successfully claimed {{ amount }} {{ symbol }}",
+    "modifyGovernanceSetAzoriusProposalPendingMessage": "Submitting proposal to modify governance..."
 }
