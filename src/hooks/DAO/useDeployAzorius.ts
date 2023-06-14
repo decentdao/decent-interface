@@ -90,9 +90,15 @@ const useDeployAzorius = () => {
       });
 
       const proposalData: ProposalExecuteData = {
-        targets: [multiSendContract.asSigner.address],
-        values: [BigNumber.from('0')],
-        calldatas: [multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx])],
+        targets: [daoAddress, multiSendContract.asSigner.address],
+        values: [BigNumber.from('0'), BigNumber.from('0')],
+        calldatas: [
+          gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData(
+            'addOwnerWithThreshold',
+            [multiSendContract.asSigner.address, 1]
+          ),
+          multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx]),
+        ],
         title: '',
         description: '',
         documentationUrl: '',

@@ -71,6 +71,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     // transactions that must be called by safe
     this.internalTxs = [];
+    const txs: SafeTransaction[] = !!existingSafe ? [] : [this.createSafeTx!];
 
     if (shouldSetName) {
       this.internalTxs = this.internalTxs.concat(this.buildUpdateDAONameTx());
@@ -104,12 +105,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs = this.internalTxs.concat([
       azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
+      ...(!!existingSafe ? azoriusTxBuilder.buildRemoveOwners(existingSafe.owners) : []),
       azoriusTxBuilder.buildRemoveMultiSendOwnerTx(),
     ]);
-
-    const txs: SafeTransaction[] = !!existingSafe
-      ? [...azoriusTxBuilder.buildSetMultiSendOwner(existingSafe.owners)]
-      : [this.createSafeTx!];
 
     // build token wrapper if token is imported and not votes token (votes token contracts is already deployed)
     if (data.isTokenImported && !data.isVotesToken && data.tokenImportAddress) {
