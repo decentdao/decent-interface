@@ -21,7 +21,7 @@ export const encodeFunction = (
   _functionName: string,
   _functionSignature?: string,
   _parameters?: string
-): string => {
+) => {
   let functionSignature = `function ${_functionName}`;
   if (_functionSignature) {
     functionSignature = functionSignature.concat(`(${_functionSignature})`);
@@ -46,6 +46,6 @@ export const encodeFunction = (
     );
   } catch (e) {
     logError(e);
-    return '';
+    return;
   }
 };
