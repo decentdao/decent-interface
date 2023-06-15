@@ -42,10 +42,9 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfg = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
-// TODO add mainnetConfig to prod when we "release"
-// in the production version, set mainnet first so it defaults to that when disconnected
+// mainnet is first so it defaults to that when disconnected on production
 export const supportedChains: NetworkConfig[] = isProd()
-  ? [goerliConfig]
+  ? [mainnetConfig, goerliConfig]
   : [goerliConfig, mainnetConfig];
 
 export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
