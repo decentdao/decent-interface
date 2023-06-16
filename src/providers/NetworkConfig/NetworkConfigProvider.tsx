@@ -6,6 +6,7 @@ import { goerli } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
 import { goerliConfig, mainnetConfig } from './networks';
+import { polygonConfig } from './networks/polygon';
 
 export const defaultState = {
   safeBaseURL: '',
@@ -45,8 +46,8 @@ export const useNetworkConfg = (): NetworkConfig =>
 // TODO add mainnetConfig to prod when we "release"
 // in the production version, set mainnet first so it defaults to that when disconnected
 export const supportedChains: NetworkConfig[] = isProd()
-  ? [goerliConfig]
-  : [goerliConfig, mainnetConfig];
+  ? [goerliConfig, polygonConfig]
+  : [goerliConfig, mainnetConfig, polygonConfig];
 
 export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
 
@@ -75,6 +76,9 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
       !supportedChainIds.includes(chain.id) &&
       !process.env.NEXT_PUBLIC_TESTING_ENVIROMENT
     ) {
+      console.log('blah ' + chain?.id);
+      console.log('blah ' + supportedChainIds);
+
       toast(t('toastSwitchChain', { chainNames: supportedChainNames }), {
         toastId: 'switchChain',
       });
