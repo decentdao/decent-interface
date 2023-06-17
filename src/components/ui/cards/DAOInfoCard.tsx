@@ -11,7 +11,7 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 export interface InfoProps extends FlexProps {
   parentAddress?: string;
   node: FractalNode;
-  childCount: number;
+  childCount?: number;
   freezeGuard?: FreezeGuard;
   guardContracts?: FractalGuardContracts;
 }
@@ -95,7 +95,7 @@ export function DAOInfoCard({
             safeAddress={displayedAddress}
             data-testid="DAOInfo-favorite"
           />
-          {childCount > 0 && (
+          {childCount && childCount > 0 && (
             <Link href={DAO_ROUTES.hierarchy.relative(displayedAddress)}>
               <Box
                 bg="chocolate.500"

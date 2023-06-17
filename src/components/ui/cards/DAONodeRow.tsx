@@ -39,7 +39,6 @@ export function DAONodeRow(props: Props) {
       <DAOInfoCard
         parentAddress={props.parentAddress}
         node={props.node}
-        childCount={props.childCount}
         freezeGuard={props.freezeGuard}
         guardContracts={props.guardContracts}
       />

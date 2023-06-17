@@ -13,7 +13,7 @@ export function InfoDAO() {
       h="8.5rem"
       parentAddress={node.nodeHierarchy.parentAddress || undefined}
       node={node}
-      childCount={(node.nodeHierarchy.childNodes ?? []).length}
+      childCount={node.nodeHierarchy.childNodes.length}
       freezeGuard={guard}
       guardContracts={guardContracts}
     />
