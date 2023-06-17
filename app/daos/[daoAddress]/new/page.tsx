@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import DaoCreator from '../../../../src/components/DaoCreator';
+import { DAOCreateMode } from '../../../../src/components/DaoCreator/formComponents/EstablishEssentials';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
 import { useDAOProposals } from '../../../../src/hooks/DAO/loaders/useProposals';
@@ -37,6 +38,7 @@ export default function SubDaoCreate() {
         pending={pendingCreateTx || redirectPending}
         deployDAO={proposeSubDAO}
         isSubDAO={true}
+        mode={DAOCreateMode.SUBDAO}
       />
     </ClientOnly>
   );
