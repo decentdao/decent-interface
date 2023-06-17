@@ -18,7 +18,6 @@ import { useTranslation } from 'react-i18next';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DAOSearch } from '../../menus/DAOSearch';
-import ClientOnly from '../../utils/ClientOnly';
 import { NavigationLinks } from './NavigationLinks';
 
 function Navigation() {
@@ -32,7 +31,7 @@ function Navigation() {
 
   const showDAOLinks = !!daoAddress;
   return (
-    <ClientOnly>
+    <>
       <Flex
         alignItems="center"
         direction="column"
@@ -119,7 +118,7 @@ function Navigation() {
           />
         </Show>
       </Flex>
-    </ClientOnly>
+    </>
   );
 }
 
