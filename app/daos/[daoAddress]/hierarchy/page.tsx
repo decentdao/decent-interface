@@ -44,7 +44,7 @@ export default function HierarchyPage() {
         <Link
           color="gold.500"
           _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
-          href={DAO_ROUTES.proposalTemplateNew.relative(nodeHierarchy.parentAddress)}
+          href={DAO_ROUTES.hierarchy.relative(nodeHierarchy.parentAddress)}
         >
           {t('parentLink', { parent: daoRegistryName })}
         </Link>
