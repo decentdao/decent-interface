@@ -1,12 +1,7 @@
 import { Box, Flex, Text, Spacer, HStack, FlexProps, Link } from '@chakra-ui/react';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  FreezeGuard,
-  FractalGuardContracts,
-  FractalNode,
-  GovernanceModuleType,
-} from '../../../types';
+import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
 import Snapshot from '../badges/Snapshot';
 import FavoriteIcon from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';

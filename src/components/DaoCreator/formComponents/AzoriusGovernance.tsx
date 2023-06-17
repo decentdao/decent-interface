@@ -15,6 +15,7 @@ import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import { DAOCreateMode } from './EstablishEssentials';
 
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
@@ -136,7 +137,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           prevStep={CreatorSteps.TOKEN_DETAILS}
           nextStep={CreatorSteps.FREEZE_DETAILS}
           isLastStep={!isSubDAO}
-          isEdit={mode === 'edit'}
+          isEdit={mode === DAOCreateMode.EDIT}
         />
       </Flex>
     </StepWrapper>
