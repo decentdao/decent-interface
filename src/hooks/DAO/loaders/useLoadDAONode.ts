@@ -6,6 +6,8 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
+import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
@@ -16,6 +18,7 @@ export const useLoadDAONode = () => {
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument);
+  const { setValue, getValue } = useLocalStorage();
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
     if (!result.data) {
@@ -42,6 +45,10 @@ export const useLoadDAONode = () => {
 
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
+      const cached = getValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress);
+      if (cached) {
+        return cached;
+      }
       if (utils.isAddress(_daoAddress)) {
         try {
           const safe = await safeService.getSafeInfo(_daoAddress);
@@ -56,11 +63,15 @@ export const useLoadDAONode = () => {
           }
           const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
 
-          return Object.assign(graphNodeInfo, {
+          const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName,
             safe,
             fractalModules,
           });
+
+          setValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress, node, CacheExpiry.ONE_HOUR);
+
+          return node;
         } catch (e) {
           logError(e);
           return { error: 'errorInvalidSearch' };
@@ -70,7 +81,7 @@ export const useLoadDAONode = () => {
         return { error: 'errorFailedSearch' };
       }
     },
-    [safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
+    [getValue, safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName, setValue]
   );
 
   return { loadDao };

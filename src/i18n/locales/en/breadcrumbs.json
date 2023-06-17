@@ -9,5 +9,6 @@
     "proposalTemplates": "Proposal Templates",
     "proposalTemplate": "{{proposalTemplateTitle}}",
     "proposalTemplateNew": "New Proposal Template",
-    "modifyGovernance": "Modify Governance"
+    "modifyGovernance": "Modify Governance",
+    "parentLink": "{{parent}} (parent)"
 }

@@ -3,21 +3,25 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { initialGuardState } from '../../providers/App/guard/reducer';
 import { initialGuardContractsState } from '../../providers/App/guardContracts/reducer';
 import { FractalNode } from '../../types';
-import { SubDAOData } from '../../types/daoGeneral';
-import { FractalGuardContracts } from './../../types/fractal';
+import { DAOData } from '../../types/daoGeneral';
+import { FractalGuardContracts } from '../../types/fractal';
 import { useFractalFreeze } from './loaders/useFractalFreeze';
 import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 
-export function useSubDAOData(fractalNode?: FractalNode) {
+/**
+ * A hook for loading guard and freeze guard contract data for the provided
+ * FractalNode.
+ */
+export function useLoadDAOData(fractalNode?: FractalNode) {
   const {
     clients: { safeService },
   } = useFractal();
 
-  const [subDAOData, setSubDAOData] = useState<SubDAOData>();
+  const [daoData, setDAOData] = useState<DAOData>();
   const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
   const loadFractalFreezeGuard = useFractalFreeze({ loadOnMount: false });
 
-  const loadSubDAOData = useCallback(async () => {
+  const loadDAOData = useCallback(async () => {
     if (!safeService || !fractalNode) {
       return;
     }
@@ -39,7 +43,7 @@ export function useSubDAOData(fractalNode?: FractalNode) {
     if (!freezeGuard) {
       freezeGuard = initialGuardState;
     }
-    setSubDAOData({
+    setDAOData({
       safe,
       fractalModules,
       freezeGuardContracts: freezeGuardContracts,
@@ -48,8 +52,8 @@ export function useSubDAOData(fractalNode?: FractalNode) {
   }, [safeService, fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);
 
   useEffect(() => {
-    loadSubDAOData();
-  }, [loadSubDAOData]);
+    loadDAOData();
+  }, [loadDAOData]);
 
-  return { subDAOData };
+  return { daoData };
 }

@@ -1,94 +1,87 @@
-import { Box, Button, Flex, IconButton, Text, Image, Spacer, HStack } from '@chakra-ui/react';
-import { ArrowDownSm, ArrowRightSm } from '@decent-org/fractal-ui';
-import { utils } from 'ethers';
-import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { Box, Flex, Text, Spacer, HStack, FlexProps, Link } from '@chakra-ui/react';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { useSubDAOData } from '../../../hooks/DAO/useSubDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
-  SafeInfoResponseWithGuard,
   FreezeGuard,
   FractalGuardContracts,
   FractalNode,
+  GovernanceModuleType,
 } from '../../../types';
-import { NodeLineHorizontal } from '../../pages/DaoHierarchy/NodeLines';
+import Snapshot from '../badges/Snapshot';
 import FavoriteIcon from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
+import { BarLoader } from '../loaders/BarLoader';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
-interface IDAOInfoCard {
-  parentAddress?: string | null;
-  subDAOSafeInfo?: SafeInfoResponseWithGuard;
-  safeAddress: string | null;
-  toggleExpansion?: () => void;
-  expanded?: boolean;
-  numberOfChildrenDAO?: number;
-  viewChildren?: boolean;
-  depth?: number;
-  fractalNode?: FractalNode;
+export interface InfoProps extends FlexProps {
+  parentAddress?: string;
+  node: FractalNode;
+  childCount: number;
+  freezeGuard?: FreezeGuard;
+  guardContracts?: FractalGuardContracts;
 }
 
+/**
+ * Info card used on both the DAO homepage, as well as each DAO in the
+ * hierarchy page.
+ *
+ * It is *very* important to understand that all DAO info needs to be passed into
+ * this component, as this card is independent of your current DAO context, since
+ * it is used in the hierarchy, where there are multiple DAO nodes being displayed.
+ *
+ * Simply using the useFractal() hook to get info will end up with the current DAO's
+ * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
+ */
 export function DAOInfoCard({
   parentAddress,
-  safeAddress,
-  toggleExpansion,
-  expanded,
-  numberOfChildrenDAO,
+  node,
+  childCount,
   freezeGuard,
   guardContracts,
-  fractalNode,
-}: IDAOInfoCard & { freezeGuard?: FreezeGuard; guardContracts: FractalGuardContracts }) {
+  ...rest
+}: InfoProps) {
   const {
-    node,
+    node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
     action,
     readOnly: { user },
   } = useFractal();
 
-  const { t } = useTranslation(['common']);
-  const { daoAddress, daoName, daoSnapshotURL } = node;
+  // node hasn't loaded yet
+  if (!node.daoAddress) {
+    return (
+      <Flex
+        w="full"
+        minH="full"
+        alignItems="center"
+        {...rest}
+      >
+        <BarLoader />
+      </Flex>
+    );
+  }
 
-  const isCurrentDAO = safeAddress === daoAddress;
+  const displayedAddress = node.daoAddress;
+  const isCurrentDAO = displayedAddress === currentDAOAddress;
 
-  const canManageDAO = !!user.address;
-
-  if (!safeAddress) return null;
   return (
     <Flex
       w="full"
       minH="full"
+      {...rest}
     >
-      {!!toggleExpansion && (
-        <IconButton
-          alignSelf="center"
-          variant="ghost"
-          minWidth="0px"
-          aria-label="Toggle"
-          icon={
-            expanded ? (
-              <ArrowDownSm
-                boxSize="1.5rem"
-                mr="1.5rem"
-              />
-            ) : (
-              <ArrowRightSm
-                boxSize="1.5rem"
-                mr="1.5rem"
-              />
-            )
-          }
-          onClick={toggleExpansion}
-        />
-      )}
       <Flex
         flexDirection="column"
         gap="0.5rem"
       >
         <HStack>
           <Link
-            href={DAO_ROUTES.dao.relative(safeAddress)}
+            pointerEvents={isCurrentDAO ? 'none' : undefined}
+            href={DAO_ROUTES.dao.relative(displayedAddress)}
+            _hover={{ textDecoration: 'none' }}
             onClick={() => {
+              // if we're not on the current DAO, reset
+              // the DAO data, so the one you're clicking
+              // into will load properly
               if (!isCurrentDAO) {
                 action.resetDAO();
               }
@@ -100,26 +93,26 @@ export function DAOInfoCard({
               color="grayscale.100"
               data-testid="DAOInfo-name"
             >
-              {fractalNode?.daoName || daoName}
+              {node.daoName}
             </Text>
           </Link>
           <FavoriteIcon
-            safeAddress={safeAddress}
+            safeAddress={displayedAddress}
             data-testid="DAOInfo-favorite"
           />
-          {!!numberOfChildrenDAO && (
-            <Link href={DAO_ROUTES.hierarchy.relative(safeAddress)}>
+          {childCount > 0 && (
+            <Link href={DAO_ROUTES.hierarchy.relative(displayedAddress)}>
               <Box
                 bg="chocolate.500"
                 borderRadius="4px"
                 p="0.25rem 0.5rem"
               >
-                <Text textStyle="text-sm-mono-semibold">{numberOfChildrenDAO}</Text>
+                <Text textStyle="text-sm-mono-semibold">{childCount}</Text>
               </Box>
             </Link>
           )}
         </HStack>
-        <AddressCopier address={safeAddress} />
+        <AddressCopier address={displayedAddress} />
       </Flex>
       <Spacer />
       <Flex
@@ -127,75 +120,16 @@ export function DAOInfoCard({
         alignItems="end"
         justifyContent="space-between"
       >
-        {canManageDAO && (
+        {!!user.address && (
           <ManageDAOMenu
             parentAddress={parentAddress}
-            safeAddress={safeAddress}
-            fractalNode={!isCurrentDAO ? fractalNode : node}
+            fractalNode={node}
             freezeGuard={freezeGuard}
             guardContracts={guardContracts}
           />
         )}
-        {!isCurrentDAO && fractalNode
-          ? fractalNode.daoSnapshotURL
-          : daoSnapshotURL && (
-              <Button
-                onClick={() => window.open(`https://snapshot.org/#/${daoSnapshotURL}`)}
-                variant="secondary"
-                mt={5}
-                h={6}
-                w={32}
-              >
-                <Image
-                  src="/images/snapshot-icon.svg"
-                  alt="snapshot icon"
-                  mr={1}
-                />
-                {t('snapshot', { ns: 'common' })}
-              </Button>
-            )}
+        {node.daoSnapshotURL && <Snapshot snapshotURL={node.daoSnapshotURL} />}
       </Flex>
-    </Flex>
-  );
-}
-
-export function DAONodeCard(props: IDAOInfoCard) {
-  const {
-    node: { daoAddress: currentDAOAddress },
-    guardContracts,
-    guard,
-  } = useFractal();
-  const isCurrentDAO = utils.getAddress(props.safeAddress || '') === currentDAOAddress;
-  const { subDAOData } = useSubDAOData(
-    !isCurrentDAO && props.fractalNode ? props.fractalNode : undefined
-  );
-
-  const nodeGuardContracts =
-    !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuardContracts : guardContracts;
-  const nodeFreezeGuard =
-    !isCurrentDAO && !!subDAOData ? subDAOData.freezeGuard : !isCurrentDAO ? undefined : guard;
-  const border = isCurrentDAO ? { border: '1px solid', borderColor: 'drab.500' } : undefined;
-
-  return (
-    <Flex
-      mt="1rem"
-      minH="6.75rem"
-      bg={BACKGROUND_SEMI_TRANSPARENT}
-      p="1rem"
-      borderRadius="0.5rem"
-      flex={1}
-      position="relative"
-      {...border}
-    >
-      <NodeLineHorizontal
-        isCurrentDAO={isCurrentDAO}
-        isFirstChild={props.depth === 0 && props.parentAddress !== currentDAOAddress}
-      />
-      <DAOInfoCard
-        {...props}
-        guardContracts={nodeGuardContracts}
-        freezeGuard={nodeFreezeGuard}
-      />
     </Flex>
   );
 }
