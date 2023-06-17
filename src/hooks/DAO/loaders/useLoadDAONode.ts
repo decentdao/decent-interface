@@ -69,12 +69,14 @@ export const useLoadDAONode = () => {
             fractalModules,
           });
 
-          try {
-            // TODO have seen this error here, not sure what's causing this
-            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value
-            setValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress, node, CacheExpiry.ONE_HOUR);
-          } catch (e) {
-            logError(e);
+          if (graphNodeInfo.daoAddress) {
+            try {
+              // TODO have seen this error here, not sure what's causing this
+              // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value
+              setValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress, node, CacheExpiry.ONE_HOUR);
+            } catch (e) {
+              logError(e);
+            }
           }
 
           return node;
