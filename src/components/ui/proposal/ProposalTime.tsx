@@ -244,7 +244,7 @@ function ProposalTime({ proposal }: { proposal: FractalProposal }) {
             {daysLeft > 0 && `${zeroPad(daysLeft, 2)}:`}
             {hoursLeft > 0 && `${zeroPad(hoursLeft, 2)}:`}
             {minutesLeft > 0 && `${zeroPad(minutesLeft, 2)}:`}
-            {secondsLeft > 0 && `${zeroPad(secondsLeft, 2)}`}
+            {secondsLeft >= 0 && `${zeroPad(secondsLeft, 2)}`}
           </Text>
         </Flex>
       </Flex>
