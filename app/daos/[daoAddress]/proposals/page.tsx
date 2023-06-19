@@ -25,7 +25,7 @@ export default function ProposalsPage() {
   const delegate = useFractalModal(ModalType.DELEGATE);
   const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
   const unwrapTokenOpen = useFractalModal(ModalType.UNWRAP_TOKEN);
-  const { canVote } = useCastVote({});
+  const { canDelegate } = useCastVote({});
   const { canUserCreateProposal } = useSubmitProposal();
 
   const showWrapTokenButton = !!azoriusGovernance.votesToken?.underlyingTokenData;
@@ -45,8 +45,8 @@ export default function ProposalsPage() {
             },
           ]}
           buttonVariant="secondary"
-          buttonText={canVote ? t('delegate') : undefined}
-          buttonClick={canVote ? delegate : undefined}
+          buttonText={canDelegate ? t('delegate') : undefined}
+          buttonClick={canDelegate ? delegate : undefined}
           buttonTestId="link-delegate"
         >
           {showWrapTokenButton && (

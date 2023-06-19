@@ -36,7 +36,6 @@
     "createProposal": "Створити пропозицію",
     "labelAddTransaction": "+ Додати транзакцію",
     "buttonDelegate": "Делегувати токени",
-    "errorInvalidFragments": "Некорректа сигнатура функції",
     "proposalSummaryTitle": "Деталі пропозиціі",
     "proposalSummaryStartDate": "Початкова Дата",
     "proposalSummaryEndDate": "Кінцева Дата",

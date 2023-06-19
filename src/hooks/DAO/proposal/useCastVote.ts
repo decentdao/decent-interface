@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, GovernanceModuleType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
@@ -16,24 +15,22 @@ const useCastVote = ({
   const {
     governanceContracts: { ozLinearVotingContract },
     governance,
-    node: { safe },
+    readOnly: { user },
   } = useFractal();
-  const { address: account } = useAccount();
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
-  const canVote = useMemo(() => {
-    if (safe && account) {
-      if (governance.type === GovernanceModuleType.MULTISIG) {
-        return safe.owners.includes(account);
-      } else if (governance.type === GovernanceModuleType.AZORIUS) {
-        const azoriusGovernance = governance as AzoriusGovernance;
-        if (azoriusGovernance.votesToken && azoriusGovernance.votesToken.balance) {
-          return azoriusGovernance.votesToken.balance.gt(0);
-        }
-      }
+  const canDelegate = useMemo(() => {
+    if (governance.type === GovernanceModuleType.AZORIUS) {
+      // TODO ERC721 voting will need to be included here
+      const azoriusGovernance = governance as AzoriusGovernance;
+      return azoriusGovernance?.votesToken?.balance?.gt(0);
     }
     return false;
-  }, [account, governance, safe]);
+  }, [governance]);
+
+  const canVote = useMemo(() => {
+    return user.votingWeight.gt(0);
+  }, [user]);
 
   useEffect(() => {
     if (setPending) {
@@ -58,7 +55,7 @@ const useCastVote = ({
     },
     [contractCallCastVote, proposalId, t, ozLinearVotingContract]
   );
-  return { castVote, canVote };
+  return { castVote, canDelegate, canVote };
 };
 
 export default useCastVote;
