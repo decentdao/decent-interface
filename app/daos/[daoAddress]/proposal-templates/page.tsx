@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Show } from '@chakra-ui/react';
+import { Button, Show } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -24,27 +24,25 @@ export default function ProposalTemplatesPage() {
 
   return (
     <ClientOnly>
-      <Box>
-        <PageHeader
-          title={t('proposalTemplates', { ns: 'breadcrumbs' })}
-          breadcrumbs={[
-            {
-              terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
-              path: '',
-            },
-          ]}
-        >
-          {showCreateButton && (
-            <Link href={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
-              <Button minW={0}>
-                <AddPlus />
-                <Show above="sm">{t('create')}</Show>
-              </Button>
-            </Link>
-          )}
-        </PageHeader>
-        <ProposalTemplates />
-      </Box>
+      <PageHeader
+        title={t('proposalTemplates', { ns: 'breadcrumbs' })}
+        breadcrumbs={[
+          {
+            terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
+      >
+        {showCreateButton && (
+          <Link href={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
+            <Button minW={0}>
+              <AddPlus />
+              <Show above="sm">{t('create')}</Show>
+            </Button>
+          </Link>
+        )}
+      </PageHeader>
+      <ProposalTemplates />
     </ClientOnly>
   );
 }

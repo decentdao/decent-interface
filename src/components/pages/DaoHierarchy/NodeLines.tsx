@@ -32,41 +32,39 @@ export function NodeLineVertical({
   }, [showFullLength]);
 
   return (
-    <>
+    <Box
+      position="absolute"
+      h={`calc(100% - ${INFO_CARD_FULL_LENGTH})`}
+      w="100%"
+      zIndex={-1 - trueDepth}
+      bottom={0}
+      overflow="hidden"
+    >
       <Box
-        position="absolute"
-        h={`calc(100% - ${INFO_CARD_FULL_LENGTH})`}
-        w="100%"
-        zIndex={-1 - trueDepth}
-        bottom={0}
-        overflow="hidden"
+        position="relative"
+        height="100%"
       >
         <Box
-          position="relative"
-          height="100%"
-        >
-          <Box
-            borderRadius="100%"
-            boxSize="7px"
-            ml="1.80rem"
-            mb={1}
-            position="absolute"
-            zIndex={2}
-            bg={isCurrentDAO && trueDepth === 0 ? 'gold.500' : 'chocolate.400'}
-          />
-          <Box
-            position="absolute"
-            bottom={showFullLength ? 0 : undefined}
-            top={showFullLength ? undefined : 0}
-            h={lineHeight}
-            bg="chocolate.400"
-            mb="3.3rem"
-            w="1px"
-            ml={8}
-          />
-        </Box>
+          borderRadius="100%"
+          boxSize="7px"
+          ml="1.80rem"
+          mb={1}
+          position="absolute"
+          zIndex={2}
+          bg={isCurrentDAO && trueDepth === 0 ? 'gold.500' : 'chocolate.400'}
+        />
+        <Box
+          position="absolute"
+          bottom={showFullLength ? 0 : undefined}
+          top={showFullLength ? undefined : 0}
+          h={lineHeight}
+          bg="chocolate.400"
+          mb="3.3rem"
+          w="1px"
+          ml={8}
+        />
       </Box>
-    </>
+    </Box>
   );
 }
 

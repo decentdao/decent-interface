@@ -10,35 +10,27 @@ import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
+export enum DAOCreateMode {
+  ROOTDAO,
+  SUBDAO,
+  EDIT,
+}
+
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
-  const {
-    values,
-    setFieldValue,
-    isSubmitting,
-    transactionPending,
-    isSubDAO,
-    errors,
-    mode = 'create',
-  } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
 
   const {
     node: { daoName, daoSnapshotURL, daoAddress },
   } = useFractal();
 
-  // initialize Next button state
-
-  const isEdit = mode === 'edit';
+  const isEdit = mode === DAOCreateMode.EDIT;
 
   useEffect(() => {
-    if (!isEdit && (!daoName || createAccountSubstring(daoAddress!) === daoName)) {
-      setFieldValue('essentials.daoName', '', true);
-    } else if (daoName && createAccountSubstring(daoAddress!) !== daoName) {
+    if (isEdit) {
       setFieldValue('essentials.daoName', daoName, false);
-    }
-
-    if (daoSnapshotURL) {
-      setFieldValue('essentials.snapshotURL', daoSnapshotURL, false);
+      if (createAccountSubstring(daoAddress!) !== daoName)
+        setFieldValue('essentials.snapshotURL', daoSnapshotURL, false);
     }
   }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit, daoAddress]);
 
@@ -127,7 +119,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         isNextDisabled={isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS}
-        isEdit={mode === 'edit'}
+        isEdit={isEdit}
         nextStep={
           values.essentials.governance === GovernanceModuleType.MULTISIG
             ? CreatorSteps.MULTISIG_DETAILS
