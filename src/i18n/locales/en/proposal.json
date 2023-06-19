@@ -45,7 +45,7 @@
     "createProposal": "Create Proposal",
     "labelAddTransaction": "+ Add Transaction",
     "buttonDelegate": "Delegate tokens",
-    "errorInvalidFragments": "Invalid function signature",
+    "errorInvalidFragments": "Invalid combination of function signature and parameters",
     "proposalSummaryTitle": "Proposal Details",
     "proposalSummaryStartDate": "Start Date",
     "proposalSummaryEndDate": "End Date",
