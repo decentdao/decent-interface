@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef } from 'react';
-import { useProvider } from 'wagmi';
 import { DAOQueryDocument } from '../../../../.graphclient';
+import { useSubgraphChainName } from '../../../graphql/utils';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -19,8 +19,6 @@ export const useFractalGovernance = () => {
     action,
   } = useFractal();
 
-  const provider = useProvider();
-
   const loadDAOProposals = useDAOProposals();
   const loadAzoriusStrategy = useAzoriusStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
@@ -28,7 +26,7 @@ export const useFractalGovernance = () => {
 
   const ONE_MINUTE = 60 * 1000;
 
-  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
+  const chainName = useSubgraphChainName();
 
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },

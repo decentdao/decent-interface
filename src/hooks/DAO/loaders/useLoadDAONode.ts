@@ -2,6 +2,7 @@ import { useLazyQuery } from '@apollo/client';
 import { utils } from 'ethers';
 import { useCallback } from 'react';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
+import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, Node, WithError } from '../../../types';
@@ -17,7 +18,8 @@ export const useLoadDAONode = () => {
   } = useFractal();
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
-  const [getDAOInfo] = useLazyQuery(DAOQueryDocument);
+  const chainName = useSubgraphChainName();
+  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, { context: { chainName } });
   const { setValue, getValue } = useLocalStorage();
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
