@@ -13,20 +13,24 @@ export const useDecodeTransaction = () => {
   const decodeTransactions = useCallback(
     async (strategyAddress: string, proposalId: string, transactions: MetaTransaction[]) => {
       const apiUrl = buildGnosisApiUrl(safeBaseURL, '/data-decoder/');
-      const cachedTransactions = await getValue(strategyAddress + '_' + proposalId.toString());
+      const cachedTransactions = await getValue(
+        CacheKeys.DECODED_TRANSACTION_PREFIX + strategyAddress + '_' + proposalId.toString()
+      );
 
       if (!cachedTransactions) {
+        let cache = true;
         const decodedTransactions = await Promise.all(
           transactions.map(async tx => {
             try {
+              // a transaction without data is an Eth transfer
               if (!tx.data || tx.data.length <= 2) {
                 return {
                   target: tx.to,
                   value: tx.value.toString(),
-                  function: 'unknown',
-                  parameterTypes: [],
-                  parameterValues: [],
-                  decodingFailed: true,
+                  function: 'n/a',
+                  parameterTypes: ['n/a'],
+                  parameterValues: ['n/a'],
+                  decodingFailed: false,
                 };
               }
               const decodedData = (
@@ -51,6 +55,7 @@ export const useDecodeTransaction = () => {
 
               return transaction;
             } catch (e) {
+              cache = false;
               const transaction: DecodedTransaction = {
                 target: tx.to,
                 value: tx.value.toString(),
@@ -65,10 +70,12 @@ export const useDecodeTransaction = () => {
           })
         );
         const flattened = decodedTransactions.flat();
-        await setValue(
-          CacheKeys.DECODED_TRANSACTION_PREFIX + strategyAddress + '_' + proposalId.toString(),
-          flattened
-        );
+        if (cache) {
+          await setValue(
+            CacheKeys.DECODED_TRANSACTION_PREFIX + strategyAddress + '_' + proposalId.toString(),
+            flattened
+          );
+        }
         return flattened;
       }
 
