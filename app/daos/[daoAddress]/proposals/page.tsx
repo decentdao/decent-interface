@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
+import { Button, Flex, Show, Text } from '@chakra-ui/react';
 import { AddPlus, TokenPlaceholder } from '@decent-org/fractal-ui';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -36,68 +36,66 @@ export default function ProposalsPage() {
 
   return (
     <ClientOnly>
-      <Box>
-        <PageHeader
-          breadcrumbs={[
-            {
-              terminus: t('proposals', { ns: 'breadcrumbs' }),
-              path: '',
-            },
-          ]}
-          buttonVariant="secondary"
-          buttonText={canDelegate ? t('delegate') : undefined}
-          buttonClick={canDelegate ? delegate : undefined}
-          buttonTestId="link-delegate"
-        >
-          {showWrapTokenButton && (
-            <Button
-              minW={0}
-              onClick={wrapTokenOpen}
+      <PageHeader
+        breadcrumbs={[
+          {
+            terminus: t('proposals', { ns: 'breadcrumbs' }),
+            path: '',
+          },
+        ]}
+        buttonVariant="secondary"
+        buttonText={canDelegate ? t('delegate') : undefined}
+        buttonClick={canDelegate ? delegate : undefined}
+        buttonTestId="link-delegate"
+      >
+        {showWrapTokenButton && (
+          <Button
+            minW={0}
+            onClick={wrapTokenOpen}
+          >
+            <Flex
+              alignItems="center"
+              h="full"
             >
-              <Flex
-                alignItems="center"
-                h="full"
-              >
-                <TokenPlaceholder
-                  boxSize="1.25rem"
-                  mt="1"
-                />
-                <Text>
-                  <Show above="sm">{t('wrapToken')}</Show>
-                </Text>
-              </Flex>
-            </Button>
-          )}
-          {showUnWrapTokenButton && (
-            <Button
-              minW={0}
-              onClick={unwrapTokenOpen}
+              <TokenPlaceholder
+                boxSize="1.25rem"
+                mt="1"
+              />
+              <Text>
+                <Show above="sm">{t('wrapToken')}</Show>
+              </Text>
+            </Flex>
+          </Button>
+        )}
+        {showUnWrapTokenButton && (
+          <Button
+            minW={0}
+            onClick={unwrapTokenOpen}
+          >
+            <Flex
+              alignItems="center"
+              h="full"
             >
-              <Flex
-                alignItems="center"
-                h="full"
-              >
-                <TokenPlaceholder
-                  boxSize="1.25rem"
-                  mt="1"
-                />
-                <Text>
-                  <Show above="sm">{t('unwrapToken')}</Show>
-                </Text>
-              </Flex>
+              <TokenPlaceholder
+                boxSize="1.25rem"
+                mt="1"
+              />
+              <Text>
+                <Show above="sm">{t('unwrapToken')}</Show>
+              </Text>
+            </Flex>
+          </Button>
+        )}
+        {canUserCreateProposal && (
+          <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
+            <Button minW={0}>
+              <AddPlus />
+              <Show above="sm">{t('create')}</Show>
             </Button>
-          )}
-          {canUserCreateProposal && (
-            <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
-              <Button minW={0}>
-                <AddPlus />
-                <Show above="sm">{t('create')}</Show>
-              </Button>
-            </Link>
-          )}
-        </PageHeader>
-        <Proposals />
-      </Box>
+          </Link>
+        )}
+      </PageHeader>
+      <Proposals />
     </ClientOnly>
   );
 }

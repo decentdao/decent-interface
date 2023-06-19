@@ -30,6 +30,7 @@ export enum CacheKeys {
   DAO_NAME_PREFIX = 'dao_name_',
   PROPOSAL_STATE_PREFIX = 'prop_state_',
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
+  DAO_NODE_PREFIX = 'node_',
 }
 
 interface IndexedObject {

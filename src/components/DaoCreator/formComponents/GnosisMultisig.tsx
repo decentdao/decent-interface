@@ -15,6 +15,7 @@ import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import { DAOCreateMode } from './EstablishEssentials';
 
 export function GnosisMultisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
@@ -178,7 +179,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
         nextStep={CreatorSteps.FREEZE_DETAILS}
         prevStep={CreatorSteps.ESSENTIALS}
         isLastStep={!isSubDAO}
-        isEdit={mode === 'edit'}
+        isEdit={mode === DAOCreateMode.EDIT}
       />
     </StepWrapper>
   );
