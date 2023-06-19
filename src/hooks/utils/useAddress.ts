@@ -41,7 +41,7 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     // only continue with ENS checks if the chain actually supports ENS
-    if (chain && !supportsENS(chain?.id)) {
+    if (chain && !supportsENS(chain.id)) {
       return;
     }
 
