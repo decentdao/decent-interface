@@ -118,7 +118,10 @@ export function EstablishEssentials(props: ICreationStepProps) {
       />
       <StepButtons
         {...props}
-        isNextDisabled={isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS}
+        isNextDisabled={
+          values.essentials.daoName.length === 0 || // TODO formik should do this, not sure why it's enabled on first pass
+          (isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS)
+        }
         isEdit={isEdit}
         nextStep={
           values.essentials.governance === GovernanceModuleType.MULTISIG
