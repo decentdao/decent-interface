@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
+import { DAOCreateMode } from './formComponents/EstablishEssentials';
 
 interface IStepWrapper {
   titleKey: string;
   isSubDAO?: boolean;
   isFormSubmitting?: boolean;
   children: ReactNode;
-  mode?: 'edit' | 'create';
+  mode: DAOCreateMode;
 }
 
 export function StepWrapper({
@@ -20,7 +21,7 @@ export function StepWrapper({
   isSubDAO,
   isFormSubmitting,
   children,
-  mode = 'create',
+  mode,
 }: IStepWrapper) {
   const {
     node: { daoAddress },
@@ -28,7 +29,7 @@ export function StepWrapper({
   const { t } = useTranslation(['daoCreate']);
   const { push } = useRouter();
 
-  const isEdit = mode === 'edit';
+  const isEdit = mode === DAOCreateMode.EDIT;
   return (
     <Box>
       {isEdit ? (

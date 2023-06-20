@@ -2,10 +2,13 @@ import { useLazyQuery } from '@apollo/client';
 import { utils } from 'ethers';
 import { useCallback } from 'react';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
+import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
+import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
@@ -15,7 +18,9 @@ export const useLoadDAONode = () => {
   } = useFractal();
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
-  const [getDAOInfo] = useLazyQuery(DAOQueryDocument);
+  const chainName = useSubgraphChainName();
+  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, { context: { chainName } });
+  const { setValue, getValue } = useLocalStorage();
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
     if (!result.data) {
@@ -42,6 +47,10 @@ export const useLoadDAONode = () => {
 
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
+      const cached = getValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress);
+      if (cached) {
+        return cached;
+      }
       if (utils.isAddress(_daoAddress)) {
         try {
           const safe = await safeService.getSafeInfo(_daoAddress);
@@ -56,11 +65,23 @@ export const useLoadDAONode = () => {
           }
           const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
 
-          return Object.assign(graphNodeInfo, {
+          const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName,
             safe,
             fractalModules,
           });
+
+          if (graphNodeInfo.daoAddress) {
+            try {
+              // TODO have seen this error here, not sure what's causing this
+              // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value
+              setValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress, node, 2);
+            } catch (e) {
+              logError(e);
+            }
+          }
+
+          return node;
         } catch (e) {
           logError(e);
           return { error: 'errorInvalidSearch' };
@@ -70,7 +91,7 @@ export const useLoadDAONode = () => {
         return { error: 'errorFailedSearch' };
       }
     },
-    [safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
+    [getValue, safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName, setValue]
   );
 
   return { loadDao };

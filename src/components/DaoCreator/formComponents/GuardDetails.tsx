@@ -26,6 +26,7 @@ import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import { DAOCreateMode } from './EstablishEssentials';
 
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode } = props;
@@ -265,7 +266,7 @@ function GuardDetails(props: ICreationStepProps) {
               ? CreatorSteps.MULTISIG_DETAILS
               : CreatorSteps.AZORIUS_DETAILS
           }
-          isEdit={mode === 'edit'}
+          isEdit={mode === DAOCreateMode.EDIT}
           isLastStep
         />
       </Flex>

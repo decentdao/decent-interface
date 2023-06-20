@@ -4,9 +4,10 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useNetwork, useProvider } from 'wagmi';
+import { useNetwork } from 'wagmi';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { BASE_ROUTES } from '../../../constants/routes';
+import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { NodeAction } from '../../../providers/App/node/action';
@@ -29,7 +30,6 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const { getDaoName } = useLazyDAOName();
   const { t } = useTranslation('dashboard');
   const { replace } = useRouter();
-  const provider = useProvider();
   const { chain } = useNetwork();
 
   const lookupModules = useFractalModules();
@@ -68,7 +68,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
     return;
   }, []);
 
-  const chainName = provider.network.name === 'homestead' ? 'mainnet' : provider.network.name;
+  const chainName = useSubgraphChainName();
 
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },

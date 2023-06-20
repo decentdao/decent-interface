@@ -5,6 +5,7 @@ import { CloseX } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import DaoCreator from '../../../../../src/components/DaoCreator';
+import { DAOCreateMode } from '../../../../../src/components/DaoCreator/formComponents/EstablishEssentials';
 import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
@@ -51,7 +52,7 @@ export default function ModifyGovernancePage() {
       {isMultisig && isSigner ? (
         <DaoCreator
           pending={false}
-          mode="edit"
+          mode={DAOCreateMode.EDIT}
           deployDAO={handleDeployAzorius}
         />
       ) : (

@@ -1,8 +1,9 @@
 'use client';
 
+import { Box, BoxProps } from '@chakra-ui/react';
 import React, { useState, useEffect } from 'react';
 
-export default function ClientOnly({ children }: { children: React.ReactNode }) {
+export default function ClientOnly({ children, ...rest }: BoxProps) {
   // State / Props
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -14,5 +15,5 @@ export default function ClientOnly({ children }: { children: React.ReactNode }) 
   // Render
   if (!hasMounted) return null;
 
-  return <>{children}</>;
+  return <Box {...rest}>{children}</Box>;
 }

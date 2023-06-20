@@ -11,7 +11,6 @@ import {
   AzoriusProposal,
   FractalProposalState,
   AzoriusVoteChoice,
-  AzoriusGovernance,
 } from '../../../types';
 
 function Vote({
@@ -25,23 +24,18 @@ function Vote({
   const { t } = useTranslation(['common', 'proposal']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
   const {
-    governance,
     readOnly: { user },
   } = useFractal();
 
-  const azoriusGovernance = governance as AzoriusGovernance;
   const azoriusProposal = proposal as AzoriusProposal;
 
-  const castVote = useCastVote({
+  const { castVote, canVote } = useCastVote({
     proposalId: BigNumber.from(proposal.proposalId),
     setPending: setPending,
   });
 
   // if the user has no delegated tokens, don't show anything
-  if (
-    azoriusGovernance.votesToken.votingWeight &&
-    azoriusGovernance.votesToken?.votingWeight.eq(0)
-  ) {
+  if (canVote) {
     return null;
   }
 
