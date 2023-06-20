@@ -82,7 +82,7 @@ export function useDAOCreateTests() {
   const maxAllocationValidation = useMemo(() => {
     return {
       name: 'Token Supply validation',
-      message: t('errorOverallocated'),
+      message: t('errorAllocation'),
       test: function (value: string | undefined, context: AnyObject) {
         if (!value) return false;
 

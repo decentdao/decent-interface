@@ -44,7 +44,7 @@
     "freezeGuardDescription": "These configuration values may be changed later on by passing a proposal to do so on this child DAO",
     "errorConnectWallet": "Connect wallet to validate",
     "errorDuplicateAddress": "Duplicate Address",
-    "errorOverallocated": "Allocated more than supply",
+    "errorAllocation": "Invalid token allocation",
     "labelParentAllocation": "Parent token holder claiming",
     "helperParentAllocation": "The total number of tokens claimable by all parent token holders",
     "labelAddAllocation": "+ Add Allocation",
