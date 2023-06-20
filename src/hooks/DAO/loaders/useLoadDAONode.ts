@@ -7,7 +7,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
+import { CacheKeys } from '../../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
