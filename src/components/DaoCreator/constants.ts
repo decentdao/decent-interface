@@ -31,7 +31,7 @@ export const initialState: CreatorFormState = {
   },
   /**
    * Time periods in CreatorState are denoted in MINUTES in the UI,
-   * however they will be converted to SECONDS before submitting to
+   * however they will be converted to BLOCKS before submitting to
    * the DAO creation transaction.
    *
    * See {@link useBuildDAOTx} for more info.
@@ -50,18 +50,18 @@ export const initialState: CreatorFormState = {
       bigNumberValue: BigNumber.from(10080),
     },
     executionPeriod: {
-      value: '2800',
-      bigNumberValue: BigNumber.from(2800),
+      value: '2880',
+      bigNumberValue: BigNumber.from(2880),
     },
   },
   freeze: {
     executionPeriod: {
-      value: '2800',
-      bigNumberValue: BigNumber.from(2800),
+      value: '2880',
+      bigNumberValue: BigNumber.from(2880),
     },
     timelockPeriod: {
-      value: '1400',
-      bigNumberValue: BigNumber.from(1400),
+      value: '1440',
+      bigNumberValue: BigNumber.from(1440),
     },
     freezeVotesThreshold: {
       value: '1',
