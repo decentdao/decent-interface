@@ -144,7 +144,7 @@ function RemoveSignerModal({
             color="grayscale.100"
             mt={3}
             ml={2}
-          >{`${t('signersRequired1', { ns: 'modals' })} ${currentThreshold} ${t(
+          >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length - 1} ${t(
             'signersRequired2',
             { ns: 'modals' }
           )}`}</Text>

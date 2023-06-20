@@ -15,7 +15,7 @@ import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votesSummary, deadline, proposer, eventDate, transactionHash },
+  proposal: { startBlock, votesSummary, deadline, proposer, transactionHash },
 }: {
   proposal: AzoriusProposal;
 }) {
@@ -35,7 +35,7 @@ export default function ProposalSummary({
     return voteTotal.div(azoriusGovernance.votesToken.totalSupply.div(100)).toNumber();
   };
 
-  if (!azoriusGovernance.votesToken.totalSupply) {
+  if (!azoriusGovernance.votesToken || !azoriusGovernance.votesToken.totalSupply) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -56,16 +56,12 @@ export default function ProposalSummary({
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <InfoRow
-          property={t('created')}
-          value={format(new Date(eventDate), DEFAULT_DATE_TIME_FORMAT)}
-        />
-        <InfoRow
           property={t('proposalSummaryStartDate')}
           value={format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}
         />
         <InfoRow
           property={t('proposalSummaryEndDate')}
-          value={format(deadline, DEFAULT_DATE_TIME_FORMAT)}
+          value={format(deadline * 1000, DEFAULT_DATE_TIME_FORMAT)}
         />
         <Flex
           marginTop={4}

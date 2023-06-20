@@ -18,7 +18,7 @@ export interface TransferDisplayData {
   isLast: boolean;
   transactionHash: string;
   tokenId: string;
-  tokenInfo: TokenInfo;
+  tokenInfo?: TokenInfo;
 }
 
 export function useFormatTransfers(
@@ -29,13 +29,14 @@ export function useFormatTransfers(
   const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfg();
 
   for (let i = 0; i < transfers.length; i++) {
-    let transfer = transfers[i];
+    const transfer = transfers[i];
+    const info = transfer.tokenInfo;
 
     let imageSrc;
     switch (transfer.type) {
       case TransferType.ERC20_TRANSFER:
       case TransferType.ERC721_TRANSFER:
-        imageSrc = transfer.tokenInfo?.logoUri;
+        imageSrc = info ? info.logoUri : '';
         break;
       case TransferType.ETHER_TRANSFER:
         imageSrc = nativeTokenIcon;
@@ -43,7 +44,10 @@ export function useFormatTransfers(
       default:
         imageSrc = '/images/coin-icon-default.svg';
     }
-    let symbol = transfer.tokenInfo === null ? nativeTokenSymbol : transfer.tokenInfo.symbol;
+    let symbol =
+      transfer.type === TransferType.ETHER_TRANSFER
+        ? nativeTokenSymbol
+        : transfer?.tokenInfo?.symbol;
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
@@ -51,7 +55,7 @@ export function useFormatTransfers(
       image: imageSrc,
       assetDisplay:
         transfer.type === TransferType.ERC721_TRANSFER
-          ? transfer.tokenInfo.name + ' #' + transfer.tokenId
+          ? info?.name + ' #' + transfer.tokenId
           : formatCoin(transfer.value, true, transfer?.tokenInfo?.decimals, symbol),
       fullCoinTotal:
         transfer.type === TransferType.ERC721_TRANSFER

@@ -26,7 +26,6 @@
     "helperQuorum": "The percentage of total possible token votes required to pass a proposal",
     "governanceDescription": "These values can be changed later via proposal",
     "titleGuardConfig": "Configure Parent Controls",
-    "titleParentGovernance": "Parent Governance",
     "titleFreezeParams": "Freeze Parameters",
     "labelExecutionPeriod": "Execution Period",
     "helperExecutionPeriod": "The length of time (in minutes) a successful proposal must be executed within",
@@ -56,14 +55,15 @@
     "labelTokenSupply": "Token Supply",
     "helperTokenSupply": "Total available tokens",
     "labelMultisigGov": "Multisig",
-    "descMultisigGov": "Multisignature DAO governance on a Safe contract wallet",
+    "descMultisigGov": "Multisignature DAO governance on a Safe{Wallet}",
     "labelAzoriusGov": "Token Voting",
-    "descAzoriusGov": "ERC-20 token voting governance on a Safe contract wallet",
+    "descAzoriusGov": "ERC-20 token voting governance on a Safe{Wallet}",
     "labelFractalName": "Fractal Name",
     "daoNamePlaceholder": "New DAO",
     "helperFractalName": "What is your DAO called?",
     "titleProposalSettings": "Proposal Settings",
     "labelDeploySubDAO": "Create subDAO Proposal",
+    "labelDeployAzorius": "Create Azorius deployment Proposal",
     "titleAllocations": "Initial Token Allocations",
     "titleTokenParams": "Token Metadata",
     "titleSelectToken": "Select Token",
@@ -82,5 +82,5 @@
     "warningExistingToken": "This token must be wrapped in order to be used as a voting token",
     "warningExistingTokenTooltip": "Fractal will deploy a new ERC-20 governance token to wrap this one. Holders can deposit their tokens to vote with or withdraw them at any time.",
     "snapshot": "Snapshot",
-    "snapshotHelper": "Include your DAO's Snapshot ENS name"
+    "snapshotHelper": "Include your DAO's Snapshot space (ENS)"
 }

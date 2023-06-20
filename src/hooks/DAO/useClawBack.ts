@@ -5,17 +5,15 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SafeInfoResponseWithGuard, FractalModuleType } from '../../types';
-import { useFractalModules } from './loaders/useFractalModules';
+import { SafeInfoResponseWithGuard, FractalModuleType, FractalNode } from '../../types';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
-  childSafeAddress: string;
+  childSafeInfo?: FractalNode;
   parentAddress?: string | null;
 }
 
-export default function useClawBack({ childSafeAddress, parentAddress }: IUseClawBack) {
-  const [childSafeInfo, setChildSafeInfo] = useState<SafeInfoResponseWithGuard>();
+export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {
   const [parentSafeInfo, setParentSafeInfo] = useState<SafeInfoResponseWithGuard>();
   const [childSafeBalance, setChildSafeBalance] = useState<SafeBalanceResponse[]>([]);
 
@@ -25,13 +23,11 @@ export default function useClawBack({ childSafeAddress, parentAddress }: IUseCla
     clients: { safeService },
   } = useFractal();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
-  const lookupModules = useFractalModules();
   useEffect(() => {
     const loadData = async () => {
-      if (safeService) {
+      if (safeService && childSafeInfo?.daoAddress) {
         const { getAddress } = ethers.utils;
-        setChildSafeInfo(await safeService.getSafeInfo(getAddress(childSafeAddress)));
-        setChildSafeBalance(await safeService.getBalances(getAddress(childSafeAddress)));
+        setChildSafeBalance(await safeService.getBalances(getAddress(childSafeInfo.daoAddress)));
         if (parentAddress) {
           setParentSafeInfo(await safeService.getSafeInfo(getAddress(parentAddress)));
         }
@@ -39,13 +35,12 @@ export default function useClawBack({ childSafeAddress, parentAddress }: IUseCla
     };
 
     loadData();
-  }, [childSafeAddress, safeService, parentAddress]);
+  }, [childSafeInfo, safeService, parentAddress]);
 
   const handleClawBack = useCallback(async () => {
     if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
       const abiCoder = new ethers.utils.AbiCoder();
-      const modules = await lookupModules(childSafeInfo.modules);
-      const fractalModule = modules!.find(
+      const fractalModule = childSafeInfo.fractalModules!.find(
         module => module.moduleType === FractalModuleType.FRACTAL
       );
       const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
@@ -112,7 +107,6 @@ export default function useClawBack({ childSafeAddress, parentAddress }: IUseCla
     canUserCreateProposal,
     childSafeInfo,
     childSafeBalance,
-    lookupModules,
     parentAddress,
     parentSafeInfo,
     provider,

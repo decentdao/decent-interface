@@ -15,13 +15,15 @@ import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import { DAOCreateMode } from './EstablishEssentials';
 
 export function AzoriusGovernance(props: ICreationStepProps) {
-  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO } = props;
+  const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
   return (
     <StepWrapper
+      mode={mode}
       titleKey="titleGovConfig"
       isSubDAO={isSubDAO}
       isFormSubmitting={!!isSubmitting || transactionPending}
@@ -135,6 +137,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           prevStep={CreatorSteps.TOKEN_DETAILS}
           nextStep={CreatorSteps.FREEZE_DETAILS}
           isLastStep={!isSubDAO}
+          isEdit={mode === DAOCreateMode.EDIT}
         />
       </Flex>
     </StepWrapper>

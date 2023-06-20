@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
+import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -20,9 +21,12 @@ export function useFetchNodes(address?: string) {
       fractalAzoriusMasterCopyContract,
     },
   } = useFractal();
+
+  const chainName = useSubgraphChainName();
   const { data, error } = useQuery(DAOQueryDocument, {
     variables: { daoAddress: address },
-    skip: address === safe?.address, // If address === safe.address - we already have hierarchy obtained in the context
+    skip: address === safe?.address || !address, // If address === safe.address - we already have hierarchy obtained in the context
+    context: { chainName },
   });
 
   const lookupModules = useFractalModules();

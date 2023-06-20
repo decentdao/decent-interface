@@ -1,4 +1,5 @@
 import { Box, Button, Divider, Flex, Text, VStack } from '@chakra-ui/react';
+import { utils } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +8,7 @@ import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePreparePropos
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
+import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { InputComponent } from '../forms/InputComponent';
 
@@ -78,27 +80,21 @@ export default function ProposalTemplateModal({
     };
 
     const proposalTransactions = filledProposalTransactions.map(
-      ({ targetAddress, ethValue, functionName, parameters }) => ({
-        targetAddress,
-        ethValue,
-        functionName,
-        functionSignature: parameters
-          .map((parameter, parameterIndex) => {
-            if (parameterIndex !== parameters.length - 1) {
-              return `${parameter.signature.trim()}, `;
-            }
-            return parameter.signature.trim();
-          })
-          .join(),
-        parameters: parameters
-          .map((parameter, parameterIndex) => {
-            if (parameterIndex !== parameters.length - 1) {
-              return `${parameter.value!.trim()}, `;
-            }
-            return parameter.value!.trim();
-          })
-          .join(),
-      })
+      ({ targetAddress, ethValue, functionName, parameters }) => {
+        return {
+          targetAddress: utils.getAddress(targetAddress), // Safe proposal creation/execution might fail if targetAddress is not checksummed
+          ethValue,
+          functionName,
+          functionSignature: parameters.map(parameter => parameter.signature.trim()).join(', '),
+          parameters: parameters
+            .map(parameter =>
+              isValidUrl(parameter.value!.trim())
+                ? encodeURIComponent(parameter.value!.trim()) // If parameter.value is valid URL with special symbols like ":" or "?" - decoding might fail, thus we need to encode URL
+                : parameter.value!.trim()
+            )
+            .join(', '),
+        };
+      }
     );
     try {
       const proposalData = await prepareProposal({
@@ -135,37 +131,40 @@ export default function ProposalTemplateModal({
       </Text>
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
-          {transaction.parameters.map((parameter, parameterIndex) => (
-            <Flex
-              key={parameterIndex}
-              width="100%"
-              flexWrap="wrap"
-              marginTop="1.5rem"
-            >
-              <InputComponent
-                label={parameter.label}
-                placeholder={parameter.signature}
-                value={parameter.value || ''}
-                isRequired={!!parameter.label}
-                testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
-                inputContainerProps={{
-                  width: '100%',
-                }}
-                gridContainerProps={{
-                  width: '100%',
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                }}
-                onChange={event =>
-                  handleParameterChange({
-                    transactionIndex,
-                    parameterIndex,
-                    value: event.target.value,
-                  })
-                }
-              />
-            </Flex>
-          ))}
+          {transaction.parameters.map(
+            (parameter, parameterIndex) =>
+              parameter.label && (
+                <Flex
+                  key={parameterIndex}
+                  width="100%"
+                  flexWrap="wrap"
+                  marginTop="1.5rem"
+                >
+                  <InputComponent
+                    label={parameter.label}
+                    placeholder={parameter.signature}
+                    value={parameter.value || ''}
+                    isRequired={!!parameter.label}
+                    testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
+                    inputContainerProps={{
+                      width: '100%',
+                    }}
+                    gridContainerProps={{
+                      width: '100%',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                    }}
+                    onChange={event =>
+                      handleParameterChange({
+                        transactionIndex,
+                        parameterIndex,
+                        value: event.target.value,
+                      })
+                    }
+                  />
+                </Flex>
+              )
+          )}
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
       ))}
