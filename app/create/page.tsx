@@ -4,6 +4,7 @@ import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import DaoCreator from '../../src/components/DaoCreator';
+import { DAOCreateMode } from '../../src/components/DaoCreator/formComponents/EstablishEssentials';
 import ClientOnly from '../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../src/constants/routes';
 import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
@@ -51,6 +52,7 @@ export default function DaoCreatePage() {
       <DaoCreator
         pending={pending || redirectPending}
         deployDAO={deployDAO}
+        mode={DAOCreateMode.ROOTDAO}
       />
     </ClientOnly>
   );

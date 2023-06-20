@@ -1,8 +1,10 @@
 import { Button, Box, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { FormikProps } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalForm, CreateProposalState } from '../../types';
+import { scrollToBottom } from '../../utils/ui';
 import Transactions from './Transactions';
 import { DEFAULT_TRANSACTION } from './constants';
 
@@ -26,12 +28,17 @@ function TransactionsForm(props: TransactionsFormProps) {
     canUserCreateProposal,
   } = props;
   const { t } = useTranslation(['proposal', 'common']);
+  const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
 
   if (!isVisible) return null;
 
   return (
     <Box>
-      <Transactions {...props} />
+      <Transactions
+        expandedIndecies={expandedIndecies}
+        setExpandedIndecies={setExpandedIndecies}
+        {...props}
+      />
       <VStack
         align="left"
         spacing={6}
@@ -39,7 +46,11 @@ function TransactionsForm(props: TransactionsFormProps) {
       >
         <Button
           variant="text"
-          onClick={() => setFieldValue('transactions', [...transactions, DEFAULT_TRANSACTION])}
+          onClick={() => {
+            setFieldValue('transactions', [...transactions, DEFAULT_TRANSACTION]);
+            setExpandedIndecies([transactions.length]);
+            scrollToBottom();
+          }}
           isDisabled={pendingTransaction}
           w="fit-content"
           pl={0}

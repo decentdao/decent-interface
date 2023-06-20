@@ -1,6 +1,7 @@
 import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
+import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
 import { BigNumberValuePair } from './common';
 import { GovernanceModuleType } from './fractal';
 import { EthAddress } from './utils';
@@ -21,6 +22,7 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
   isSubDAO?: boolean;
   step: CreatorSteps;
   updateStep: (newStep: CreatorSteps) => void;
+  mode: DAOCreateMode;
 }
 
 export interface CreatorFormState<T = BigNumberValuePair> {

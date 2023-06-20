@@ -7,16 +7,19 @@ import { DAOTrigger, CreatorFormState, GovernanceModuleType } from '../../types'
 import StepController from './StepController';
 import { initialState } from './constants';
 
+import { DAOCreateMode } from './formComponents/EstablishEssentials';
 import { usePrepareFormData } from './hooks/usePrepareFormData';
 
 function DaoCreator({
   deployDAO,
   pending,
   isSubDAO,
+  mode,
 }: {
   pending?: boolean;
   deployDAO: DAOTrigger;
   isSubDAO?: boolean;
+  mode: DAOCreateMode;
 }) {
   const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
   const { prepareMultisigFormData, prepareAzoriusFormData } = usePrepareFormData();
@@ -57,6 +60,7 @@ function DaoCreator({
             <StepController
               transactionPending={pending}
               isSubDAO={isSubDAO}
+              mode={mode}
               {...rest}
             />
           </form>

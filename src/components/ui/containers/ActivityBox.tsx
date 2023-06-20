@@ -1,4 +1,4 @@
-import { Box, SlideFade } from '@chakra-ui/react';
+import { SlideFade } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { StyledBox } from './StyledBox';
 

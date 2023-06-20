@@ -5,6 +5,8 @@ interface IStepButtons extends ICreationStepProps {
   nextStep?: CreatorSteps;
   prevStep?: CreatorSteps;
   isLastStep?: boolean;
+  isNextDisabled?: boolean;
+  isEdit?: boolean;
 }
 
 export function StepButtons({
@@ -17,12 +19,16 @@ export function StepButtons({
   nextStep,
   prevStep,
   isLastStep,
+  isNextDisabled,
+  isEdit,
 }: IStepButtons) {
   const { t } = useTranslation(['daoCreate', 'common']);
 
   const forwardButtonText =
     isLastStep && isSubDAO
       ? t('labelDeploySubDAO')
+      : isLastStep && isEdit
+      ? t('labelDeployAzorius')
       : t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
   const buttonType = isLastStep ? 'submit' : 'button';
   return (
@@ -41,7 +47,7 @@ export function StepButtons({
       <Button
         w="full"
         type={buttonType}
-        isDisabled={transactionPending || isSubmitting || !!errors[step]}
+        isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
         onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
       >

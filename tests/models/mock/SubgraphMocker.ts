@@ -1,5 +1,5 @@
 import { Page, Request } from '@playwright/test';
-import { SUBGRAPH_API_URL } from '../../testUtils';
+import { SUBGRAPH_TEST_API_URL } from '../../testUtils';
 
 /**
  * @class SubgraphMocker
@@ -20,7 +20,7 @@ export class SubgraphMocker {
   }
 
   async mockWithHandler(handler: (request: Request) => object) {
-    await this.page.route(SUBGRAPH_API_URL, async (route, request) => {
+    await this.page.route(SUBGRAPH_TEST_API_URL, async (route, request) => {
       const mockedResult = handler(request);
       await route.fulfill({
         body: JSON.stringify(mockedResult),

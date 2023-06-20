@@ -23,19 +23,21 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         marginBottom={displayData.isLast ? '0rem' : '1rem'}
       >
         <HStack w="33%">
-          {displayData.eventType == TokenEventType.WITHDRAW ? (
-            <SquareSolidArrowUp
-              w="1.5rem"
-              h="1.5rem"
-              color="grayscale.100"
-            />
-          ) : (
-            <SquareSolidArrowDown
-              w="1.5rem"
-              h="1.5rem"
-              color="#60B55E"
-            />
-          )}
+          <EtherscanLinkTransaction txHash={displayData.transactionHash}>
+            {displayData.eventType == TokenEventType.WITHDRAW ? (
+              <SquareSolidArrowUp
+                w="1.5rem"
+                h="1.5rem"
+                color="grayscale.100"
+              />
+            ) : (
+              <SquareSolidArrowDown
+                w="1.5rem"
+                h="1.5rem"
+                color="#60B55E"
+              />
+            )}
+          </EtherscanLinkTransaction>
           <Box paddingStart="0.5rem">
             <Text
               textStyle="text-sm-sans-regular"
@@ -63,33 +65,31 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             w="1.5rem"
             h="1.5rem"
           />
-          <EtherscanLinkTransaction txHash={displayData.transactionHash}>
-            <Tooltip
-              label={
-                displayData.transferType === TransferType.ERC721_TRANSFER
-                  ? undefined
-                  : displayData.fullCoinTotal
+          <Tooltip
+            label={
+              displayData.transferType === TransferType.ERC721_TRANSFER
+                ? undefined
+                : displayData.fullCoinTotal
+            }
+            placement="top-start"
+          >
+            <Text
+              textStyle="text-base-sans-regular"
+              maxWidth="15rem"
+              noOfLines={1}
+              color={
+                displayData.eventType === TokenEventType.WITHDRAW ? 'grayscale.100' : '#60B55E'
               }
-              placement="top-start"
+              data-testid={
+                displayData.transferType === TransferType.ERC721_TRANSFER
+                  ? 'link-token-name'
+                  : 'link-token-amount'
+              }
             >
-              <Text
-                textStyle="text-base-sans-regular"
-                maxWidth="15rem"
-                noOfLines={1}
-                color={
-                  displayData.eventType === TokenEventType.WITHDRAW ? 'grayscale.100' : '#60B55E'
-                }
-                data-testid={
-                  displayData.transferType === TransferType.ERC721_TRANSFER
-                    ? 'link-token-name'
-                    : 'link-token-amount'
-                }
-              >
-                {(displayData.eventType == TokenEventType.WITHDRAW ? '- ' : '+ ') +
-                  displayData.assetDisplay}
-              </Text>
-            </Tooltip>
-          </EtherscanLinkTransaction>
+              {(displayData.eventType == TokenEventType.WITHDRAW ? '- ' : '+ ') +
+                displayData.assetDisplay}
+            </Text>
+          </Tooltip>
         </HStack>
         <HStack w="33%">
           <Spacer />
@@ -151,10 +151,10 @@ export function Transactions() {
 
   return (
     <Box>
-      {displayData.map(transfer => {
+      {displayData.map((transfer, index) => {
         return (
           <TransferRow
-            key={transfer.transactionHash}
+            key={index}
             displayData={transfer}
           />
         );

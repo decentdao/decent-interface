@@ -51,36 +51,34 @@ export default function ProposalDetailsPage({
 
   return (
     <ClientOnly>
-      <Box>
-        <PageHeader
-          title={t('proposalOverview')}
-          breadcrumbs={[
-            {
-              terminus: t('proposals', { ns: 'breadcrumbs' }),
-              path: DAO_ROUTES.proposals.relative(daoAddress),
-            },
-            {
-              terminus: t('proposal', {
-                ns: 'breadcrumbs',
-                proposalId,
-                proposalTitle: proposal?.metaData?.title || transactionDescription,
-              }),
-              path: '',
-            },
-          ]}
-        />
-        {proposal === undefined ? (
-          <Box>
-            <InfoBoxLoader />
-          </Box>
-        ) : proposal === null ? (
-          <EmptyBox emptyText={t('noProposal')} />
-        ) : azoriusProposal.govTokenAddress ? (
-          <AzoriusProposalDetails proposal={azoriusProposal} />
-        ) : (
-          <MultisigProposalDetails proposal={proposal} />
-        )}
-      </Box>
+      <PageHeader
+        title={t('proposalOverview')}
+        breadcrumbs={[
+          {
+            terminus: t('proposals', { ns: 'breadcrumbs' }),
+            path: DAO_ROUTES.proposals.relative(daoAddress),
+          },
+          {
+            terminus: t('proposal', {
+              ns: 'breadcrumbs',
+              proposalId,
+              proposalTitle: proposal?.metaData?.title || transactionDescription,
+            }),
+            path: '',
+          },
+        ]}
+      />
+      {proposal === undefined ? (
+        <Box>
+          <InfoBoxLoader />
+        </Box>
+      ) : proposal === null ? (
+        <EmptyBox emptyText={t('noProposal')} />
+      ) : azoriusProposal.govTokenAddress ? (
+        <AzoriusProposalDetails proposal={azoriusProposal} />
+      ) : (
+        <MultisigProposalDetails proposal={proposal} />
+      )}
     </ClientOnly>
   );
 }

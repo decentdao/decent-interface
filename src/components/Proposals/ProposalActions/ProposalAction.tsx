@@ -57,10 +57,11 @@ export function ProposalAction({
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
   const showActionButton =
-    proposal.state === FractalProposalState.ACTIVE ||
-    proposal.state === FractalProposalState.EXECUTABLE ||
-    proposal.state === FractalProposalState.TIMELOCKABLE ||
-    proposal.state === FractalProposalState.TIMELOCKED;
+    user.votingWeight.gt(0) &&
+    (proposal.state === FractalProposalState.ACTIVE ||
+      proposal.state === FractalProposalState.EXECUTABLE ||
+      proposal.state === FractalProposalState.TIMELOCKABLE ||
+      proposal.state === FractalProposalState.TIMELOCKED);
 
   const handleClick = () => {
     if (isSnapshotProposal) {

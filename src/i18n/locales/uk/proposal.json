@@ -11,15 +11,13 @@
     "helperEthValue": "Кількість ETH, що буде надіслана з цією транзакцією (з вашої скарбниці)",
     "ownerApproved": "Затвердженно",
     "stateModule": "Модуль",
-    "stateModuleTip": "Ця транзакція була виконана через модуль Safe.",
+    "stateModuleTip": "Ця транзакція була виконана через модуль Safe{Wallet}.",
     "stateActive": "Активні",
     "stateActiveTip": "Можна голосувати за цією пропозицією. Це - початкова стадія для усіх створенних пропозицій.",
-    "stateCanceled": "Відмінені",
     "stateRejected": "Відхилені",
     "stateRejectedTip": "Пропозиція відхилена через те, що інша пропозиція з таким самим nonce вже була виконана.",
     "stateExecutable": "Готове до виконання",
     "stateExecutableTip": "Ця пропозиція тепер може бути виконана ким завгодно.",
-    "stateUninitialized": "Не-інеційовані",
     "stateExecuted": "Виконано",
     "stateExecutedTip": "Цю пропозицією було виконано",
     "stateFailed": "Провалено",
@@ -38,7 +36,6 @@
     "createProposal": "Створити пропозицію",
     "labelAddTransaction": "+ Додати транзакцію",
     "buttonDelegate": "Делегувати токени",
-    "errorInvalidFragments": "Некорректа сигнатура функції",
     "proposalSummaryTitle": "Деталі пропозиціі",
     "proposalSummaryStartDate": "Початкова Дата",
     "proposalSummaryEndDate": "Кінцева Дата",
@@ -97,6 +94,5 @@
     "clawBackSuccessToastMessage": "Створення пропозиції повернення коштів успішне",
     "clawBackFailedToastMessage": "Халепка, помилка при створенні пропозиції повернення коштів",
     "proposalStartBlockNotFinalized": "Ви не можете голосувати прямо зараз оскільки початковий блок з ланки ще не фіналізовано",
-    "currentUserAlreadyVoted": "Схоже, ви вже голосували. Перевірте список голосів",
-    "customNonceError": "Власний nonce, що ви ввели менший за значенням ніш поточний nonce вашого Safe-y."
+    "currentUserAlreadyVoted": "Схоже, ви вже голосували. Перевірте список голосів"
 }

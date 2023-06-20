@@ -1,46 +1,67 @@
 import { Box } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useFractalNode } from '../../../hooks/DAO/loaders/useFractalNode';
+import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
+import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, WithError } from '../../../types';
-import { DAONodeCard } from '../../ui/cards/DAOInfoCard';
+import { DAONodeRow } from '../../ui/cards/DAONodeRow';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import { NodeLineVertical } from './NodeLines';
 
+/**
+ * A recursive component that displays a "hierarchy" of DAOInfoCards.
+ *
+ * The initial declaration of this component should provide the info of
+ * the DAO you would like to display at the top level of the hierarchy.
+ *
+ * From this initial DAO info, the component will get the DAO's children
+ * and display another DaoNode for each child, and so on for their children.
+ */
 export function DaoNode({
   parentAddress,
-  safeAddress,
-  trueDepth,
-  numberOfSiblings,
+  daoAddress,
+  depth,
+  siblingCount,
 }: {
-  parentAddress?: string | null;
-  safeAddress: string | null;
-  trueDepth: number;
-  numberOfSiblings?: number;
+  parentAddress?: string;
+  daoAddress?: string;
+  depth: number;
+  siblingCount: number;
 }) {
   const [fractalNode, setNode] = useState<FractalNode>();
-  const { loadDao } = useFractalNode({ loadOnMount: false });
-  const [isChildrenExpanded, setIsChildrenExpanded] = useState(!parentAddress);
-  const childrenExpansionToggle = () => {
-    setIsChildrenExpanded(v => !v);
-  };
+  const { loadDao } = useLoadDAONode();
+  const { daoData } = useLoadDAOData(fractalNode);
 
   const {
-    node: { daoAddress: currentDAOAddress },
+    node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
   } = useFractal();
 
+  const isCurrentDAO = daoAddress === currentDAOAddress;
+
   useEffect(() => {
-    if (safeAddress) {
-      loadDao(utils.getAddress(safeAddress)).then(_node => {
-        if (!(_node as WithError).error) {
+    if (daoAddress) {
+      loadDao(utils.getAddress(daoAddress)).then(_node => {
+        const errorNode = _node as WithError;
+        if (!errorNode.error) {
           setNode(_node as FractalNode);
+        } else if (errorNode.error === 'errorFailedSearch') {
+          setNode({
+            daoName: null,
+            daoAddress: null,
+            safe: null,
+            fractalModules: [],
+            nodeHierarchy: {
+              parentAddress: null,
+              childNodes: [],
+            },
+          });
         }
       });
     }
-  }, [loadDao, safeAddress]);
+  }, [loadDao, daoAddress]);
 
-  if (!fractalNode?.nodeHierarchy.childNodes) {
+  if (!fractalNode?.nodeHierarchy) {
     return (
       <Box
         h="6.25rem"
@@ -53,40 +74,35 @@ export function DaoNode({
 
   return (
     <Box position="relative">
-      <DAONodeCard
-        fractalNode={fractalNode}
+      <DAONodeRow
         parentAddress={parentAddress}
-        safeAddress={safeAddress}
-        toggleExpansion={
-          !!fractalNode?.nodeHierarchy.childNodes.length ? childrenExpansionToggle : undefined
-        }
-        expanded={isChildrenExpanded}
-        numberOfChildrenDAO={fractalNode?.nodeHierarchy.childNodes.length}
-        depth={trueDepth}
+        node={fractalNode}
+        childCount={fractalNode?.nodeHierarchy.childNodes.length}
+        guardContracts={daoData?.freezeGuardContracts}
+        freezeGuard={daoData?.freezeGuard}
+        depth={depth}
       />
 
       <NodeLineVertical
-        trueDepth={trueDepth}
-        numberOfSiblings={numberOfSiblings}
+        trueDepth={depth}
+        numberOfSiblings={siblingCount}
         numberOfChildren={fractalNode?.nodeHierarchy.childNodes.length}
-        isCurrentDAO={currentDAOAddress === utils.getAddress(safeAddress || '')}
+        isCurrentDAO={isCurrentDAO}
       />
-
-      {isChildrenExpanded &&
-        fractalNode?.nodeHierarchy.childNodes.map(childNode => (
-          <Box
-            key={childNode.daoAddress}
-            ml={24}
-            position="relative"
-          >
-            <DaoNode
-              safeAddress={childNode.daoAddress}
-              parentAddress={safeAddress}
-              trueDepth={trueDepth + 1}
-              numberOfSiblings={childNode?.nodeHierarchy.childNodes.length}
-            />
-          </Box>
-        ))}
+      {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
+        <Box
+          key={childNode.daoAddress}
+          ml={24}
+          position="relative"
+        >
+          <DaoNode
+            parentAddress={daoAddress}
+            daoAddress={childNode.daoAddress || undefined}
+            depth={depth + 1}
+            siblingCount={childNode?.nodeHierarchy.childNodes.length}
+          />
+        </Box>
+      ))}
     </Box>
   );
 }

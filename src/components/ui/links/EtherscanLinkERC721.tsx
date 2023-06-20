@@ -17,7 +17,7 @@ export default function EtherscanLinkERC721({ address, tokenId, children, ...res
 
   return (
     <EtherscanLinkBase
-      href={`${etherscanBaseURL}/${address}/${tokenId}`}
+      href={`${etherscanBaseURL}/token/${address}/?a=${tokenId}`}
       {...rest}
     >
       {children}

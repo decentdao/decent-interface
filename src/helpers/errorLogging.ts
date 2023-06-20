@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { BrowserTracing } from '@sentry/tracing';
-import { isProd, notProd } from '../utils/dev';
+import { isProd } from '../utils/dev';
 
 /**
  * Sentry key which allows pushing error events.  Since this only allows submission of new events,
@@ -15,7 +15,7 @@ const SENTRY_DSN_DEV =
  * Initializes error logging. We do not log Sentry data in production.
  */
 export function initErrorLogging() {
-  if (notProd()) {
+  if (!isProd()) {
     Sentry.init({
       dsn: SENTRY_DSN_DEV,
       integrations: [new BrowserTracing()],

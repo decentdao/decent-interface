@@ -90,6 +90,19 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     }
   }
 
+  public buildRemoveOwners(owners: string[]): SafeTransaction[] {
+    const removeOwnerTxs = owners.map(owner =>
+      buildContractCall(
+        this.safeContract!,
+        'removeOwner',
+        [this.baseContracts.multiSendContract.address, owner, 1],
+        0,
+        false
+      )
+    );
+    return removeOwnerTxs;
+  }
+
   public buildLinearVotingContractSetupTx(): SafeTransaction {
     return buildContractCall(
       this.linearVotingContract!,

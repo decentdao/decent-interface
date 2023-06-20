@@ -145,11 +145,14 @@ export const useValidationAddress = () => {
       name: 'New Signer Validation',
       message: t('alreadySigner', { ns: 'modals' }),
       test: async function (address: string | undefined) {
-        if (!address || !safe) return false;
+        if (!address || !safe || !signer) return false;
+        if (address.endsWith('.eth')) {
+          address = await signer.resolveName(address);
+        }
         return !safe.owners.includes(address);
       },
     };
-  }, [safe, t]);
+  }, [safe, signer, t]);
 
   const uniqueAddressValidationTest = useMemo(() => {
     return {

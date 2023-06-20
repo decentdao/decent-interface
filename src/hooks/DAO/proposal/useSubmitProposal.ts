@@ -2,7 +2,7 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer } from 'ethers';
-import { getAddress } from 'ethers/lib/utils.js';
+import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
@@ -18,6 +18,7 @@ import {
 } from '../../../types';
 import { buildGnosisApiUrl } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
+import { useDAOProposals } from '../loaders/useProposals';
 
 interface ISubmitProposal {
   proposalData: ProposalExecuteData | undefined;
@@ -49,6 +50,7 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
 
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
+  const loadDAOProposals = useDAOProposals();
 
   const {
     node: { safe, fractalModules },
@@ -160,6 +162,7 @@ export default function useSubmitProposal() {
           )
         );
         await new Promise(resolve => setTimeout(resolve, 1000));
+        await loadDAOProposals();
         if (successCallback) {
           successCallback(safeAddress);
         }
@@ -173,7 +176,7 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [chainId, multiSendContract, safeBaseURL, signerOrProvider]
+    [chainId, multiSendContract, safeBaseURL, signerOrProvider, loadDAOProposals]
   );
 
   const submitTokenVotingProposal = useCallback(
@@ -220,6 +223,7 @@ export default function useSubmitProposal() {
             })
           )
         ).wait();
+        await loadDAOProposals();
         if (successCallback) {
           successCallback(safeAddress!);
         }
@@ -233,7 +237,7 @@ export default function useSubmitProposal() {
         setPendingCreateTx(false);
       }
     },
-    []
+    [loadDAOProposals]
   );
 
   const submitProposal = useCallback(
@@ -250,7 +254,7 @@ export default function useSubmitProposal() {
         return;
       }
 
-      if (safeAddress && safeService) {
+      if (safeAddress && safeService && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
@@ -282,7 +286,7 @@ export default function useSubmitProposal() {
         }
       } else {
         if (!globalAzoriusContract || !freezeVotingContract || !safe?.address) {
-          submitMultisigProposal({
+          await submitMultisigProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,
@@ -292,7 +296,7 @@ export default function useSubmitProposal() {
             safeAddress: safe?.address,
           });
         } else {
-          submitTokenVotingProposal({
+          await submitTokenVotingProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,
@@ -329,7 +333,7 @@ export default function useSubmitProposal() {
       }
 
       return safeService
-        .getSafeInfo(safeAddress)
+        .getSafeInfo(getAddress(safeAddress))
         .then(safeInfo => safeInfo.owners.includes(user.address!));
     },
     [safeService, type, user]

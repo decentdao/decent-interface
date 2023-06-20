@@ -1,6 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
+import { useSubgraphChainName } from '../../../graphql/utils';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -25,6 +26,8 @@ export const useFractalGovernance = () => {
 
   const ONE_MINUTE = 60 * 1000;
 
+  const chainName = useSubgraphChainName();
+
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
     onCompleted: async data => {
@@ -32,16 +35,31 @@ export const useFractalGovernance = () => {
       const { daos } = data;
       const dao = daos[0];
 
-      if (dao && dao.proposalTemplatesHash) {
-        const proposalTemplates = await ipfsClient.cat(dao.proposalTemplatesHash);
+      if (dao) {
+        const { proposalTemplatesHash } = dao;
+        if (proposalTemplatesHash) {
+          const proposalTemplates = await ipfsClient.cat(proposalTemplatesHash);
 
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+            payload: proposalTemplates || [],
+          });
+        } else {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
+            payload: [],
+          });
+        }
+      } else {
         action.dispatch({
           type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES,
-          payload: proposalTemplates || [],
+          payload: [],
         });
       }
     },
+    context: { chainName },
     pollInterval: ONE_MINUTE,
+    skip: !daoAddress,
   });
 
   useEffect(() => {

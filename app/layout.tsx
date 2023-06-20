@@ -73,7 +73,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <meta
           property="og:image"
-          content="https://i.imgur.com/KBVPzJC.png"
+          content="https://app.fractalframework.xyz/images/hero_image.png"
         />
         <meta
           property="og:image:alt"
