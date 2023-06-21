@@ -24,6 +24,7 @@ jobs:
       - name: Install and Build
         run: |
           npm install
+          npm run graphql:build
           npm run build:ipfs
         env:
           NEXT_PUBLIC_INFURA_API_KEY: ${{ secrets.NEXT_PUBLIC_INFURA_API_KEY }}
