@@ -2,42 +2,10 @@ import { Context, createContext, ReactNode, useContext, useEffect, useState } fr
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { Chain, useDisconnect, useNetwork, useProvider } from 'wagmi';
-import { goerli } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
 import { goerliConfig, mainnetConfig } from './networks';
 import { polygonConfig } from './networks/polygon';
-
-export const defaultState = {
-  safeBaseURL: '',
-  etherscanBaseURL: '',
-  etherscanAPIBaseUrl: '',
-  chainId: 0,
-  name: '',
-  color: '',
-  nativeTokenSymbol: '',
-  nativeTokenIcon: '',
-  wagmiChain: goerli,
-  subgraphChainName: '',
-  contracts: {
-    gnosisSafe: '',
-    gnosisSafeFactory: '',
-    zodiacModuleProxyFactory: '',
-    linearVotingMasterCopy: '',
-    gnosisMultisend: '',
-    fractalAzoriusMasterCopy: '',
-    fractalModuleMasterCopy: '',
-    fractalRegistry: '',
-    votesERC20MasterCopy: '',
-    claimingMasterCopy: '',
-    multisigFreezeGuardMasterCopy: '',
-    azoriusFreezeGuardMasterCopy: '',
-    multisigFreezeVotingMasterCopy: '',
-    erc20FreezeVotingMasterCopy: '',
-    votesERC20WrapperMasterCopy: '',
-    keyValuePairs: '',
-  },
-};
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
 
@@ -52,8 +20,7 @@ export const supportedChains: NetworkConfig[] = isProd()
 export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
 
 const getNetworkConfig = (chainId: number) => {
-  if (chainId === 31337) return goerliConfig;
-  return supportedChains.find(chain => chain.chainId === chainId) || defaultState;
+  return supportedChains.find(chain => chain.chainId === chainId) || goerliConfig;
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
