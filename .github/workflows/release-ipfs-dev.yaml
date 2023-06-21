@@ -35,7 +35,7 @@ jobs:
         id: upload
         with:
           pin-name: 'app.dev.fractalframework.xyz'
-          path: 'out'
+          path: './out/'
           pinata-api-key: ${{ secrets.PINATA_API_KEY }}
           pinata-secret-api-key: ${{ secrets.PINATA_API_SECRET_KEY }}
 
