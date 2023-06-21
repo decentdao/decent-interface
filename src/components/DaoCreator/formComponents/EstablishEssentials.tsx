@@ -30,7 +30,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
     if (isEdit) {
       setFieldValue('essentials.daoName', daoName, false);
       if (createAccountSubstring(daoAddress!) !== daoName)
-        setFieldValue('essentials.snapshotURL', daoSnapshotURL, false);
+        setFieldValue('essentials.snapshotURL', daoSnapshotURL || '', false);
     }
   }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit, daoAddress]);
 
@@ -106,7 +106,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
             onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
             isDisabled={snapshotURLDisabled}
             data-testid="essentials-snapshotURL"
-            placeholder="decent-dao.eth"
+            placeholder="example.eth"
             maxLength={30}
           />
         </LabelWrapper>
@@ -118,7 +118,10 @@ export function EstablishEssentials(props: ICreationStepProps) {
       />
       <StepButtons
         {...props}
-        isNextDisabled={isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS}
+        isNextDisabled={
+          values.essentials.daoName.length === 0 || // TODO formik should do this, not sure why it's enabled on first pass
+          (isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS)
+        }
         isEdit={isEdit}
         nextStep={
           values.essentials.governance === GovernanceModuleType.MULTISIG
