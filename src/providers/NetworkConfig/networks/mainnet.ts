@@ -32,6 +32,7 @@ export const mainnetConfig: NetworkConfig = {
   nativeTokenSymbol: mainnet.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: mainnet,
+  subgraphChainName: 'mainnet',
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,
