@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
+  output: undefined,
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
