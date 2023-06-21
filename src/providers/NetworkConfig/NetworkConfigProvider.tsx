@@ -18,6 +18,7 @@ export const defaultState = {
   nativeTokenSymbol: '',
   nativeTokenIcon: '',
   wagmiChain: goerli,
+  subgraphChainName: '',
   contracts: {
     gnosisSafe: '',
     gnosisSafeFactory: '',
