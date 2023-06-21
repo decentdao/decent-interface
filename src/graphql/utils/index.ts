@@ -7,6 +7,8 @@ export const useSubgraphChainName = () => {
   const chainName = useMemo(() => {
     if (provider.network.name === 'homestead') {
       return 'mainnet';
+    } else if (provider.network.name === 'matic') {
+      return 'polygon';
     } else {
       return provider.network.name;
     }
