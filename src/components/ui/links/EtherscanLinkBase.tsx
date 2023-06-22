@@ -15,7 +15,7 @@ export default function EtherscanBase({ children, ...rest }: LinkProps) {
         label={t('etherscanTip')}
         placement="bottom"
       >
-        {children}
+        <>{children}</>
       </Tooltip>
     </ExternalLink>
   );
