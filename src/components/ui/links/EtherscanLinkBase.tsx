@@ -1,4 +1,4 @@
-import { LinkProps, Tooltip } from '@chakra-ui/react';
+import { Box, LinkProps, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import ExternalLink from './ExternalLink';
 
@@ -15,7 +15,8 @@ export default function EtherscanBase({ children, ...rest }: LinkProps) {
         label={t('etherscanTip')}
         placement="bottom"
       >
-        {children}
+        {/* Box here allows multiple children to be wrapped by a single tooltip */}
+        <Box>{children}</Box>
       </Tooltip>
     </ExternalLink>
   );
