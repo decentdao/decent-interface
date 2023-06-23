@@ -10,18 +10,17 @@ import {
   AlertTitle,
   Image,
 } from '@chakra-ui/react';
-import { LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSigner } from 'wagmi';
 import * as Yup from 'yup';
-import { TOOLTIP_MAXW } from '../../../constants/common';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
+import SupportTooltip from '../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
-import ModalTooltip from '../../ui/modals/ModalTooltip';
 import useAddSigner from './hooks/useAddSigner';
 
 function AddSignerModal({
@@ -115,19 +114,12 @@ function AddSignerModal({
                   {t('updateThreshold', { ns: 'modals' })}
                 </Text>
                 <Flex ref={tooltipContainer}>
-                  <ModalTooltip
+                  <SupportTooltip
                     containerRef={tooltipContainer}
                     label={t('updateSignersTooltip')}
-                    maxW={TOOLTIP_MAXW}
-                    placement="top"
-                  >
-                    <SupportQuestion
-                      boxSize="1.5rem"
-                      minWidth="auto"
-                      mx="2"
-                      mt="1"
-                    />
-                  </ModalTooltip>
+                    mx="2"
+                    mt="1"
+                  />
                 </Flex>
               </HStack>
               <HStack>
