@@ -1,6 +1,7 @@
 import { utils } from 'ethers';
 import { isAddress } from 'ethers/lib/utils';
 import { logError } from '../helpers/errorLogging';
+import { ActivityTransactionType } from '../types';
 
 export const isSameAddress = (addr1: string, addr2: string) => {
   if (!isAddress(addr1) || !isAddress(addr2)) {
@@ -49,3 +50,11 @@ export const encodeFunction = (
     return;
   }
 };
+
+export function isMultiSigTx(transaction: ActivityTransactionType): boolean {
+  return transaction.txType === 'MULTISIG_TRANSACTION';
+}
+
+export function isModuleTx(transaction: ActivityTransactionType): boolean {
+  return transaction.txType === 'MODULE_TRANSACTION';
+}
