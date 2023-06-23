@@ -10,14 +10,12 @@ import {
   AlertTitle,
   Alert,
 } from '@chakra-ui/react';
-import { SupportQuestion } from '@decent-org/fractal-ui';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, useEnsName, useProvider } from 'wagmi';
-import { TOOLTIP_MAXW } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
+import SupportTooltip from '../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
-import ModalTooltip from '../../ui/modals/ModalTooltip';
 import useRemoveSigner from './hooks/useRemoveSigner';
 
 function RemoveSignerModal({
@@ -104,19 +102,12 @@ function RemoveSignerModal({
           {t('updateThreshold', { ns: 'modals' })}
         </Text>
         <Flex ref={tooltipContainer}>
-          <ModalTooltip
+          <SupportTooltip
             containerRef={tooltipContainer}
             label={t('updateSignersTooltip')}
-            maxW={TOOLTIP_MAXW}
-            placement="top"
-          >
-            <SupportQuestion
-              boxSize="1.5rem"
-              minWidth="auto"
-              mx="2"
-              mt="1"
-            />
-          </ModalTooltip>
+            mx="2"
+            mt="1"
+          />
         </Flex>
       </HStack>
       <HStack>

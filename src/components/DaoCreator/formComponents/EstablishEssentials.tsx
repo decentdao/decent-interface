@@ -81,12 +81,14 @@ export function EstablishEssentials(props: ICreationStepProps) {
               description={t('descMultisigGov')}
               testId="choose-multisig"
               value={GovernanceModuleType.MULTISIG}
+              tooltip={t('tooltipMultisig')}
             />
             <RadioWithText
               label={t('labelAzoriusGov')}
               description={t('descAzoriusGov')}
               testId="choose-azorius"
               value={GovernanceModuleType.AZORIUS}
+              tooltip={t('tooltipTokenVoting')}
             />
           </RadioGroup>
         </LabelComponent>
