@@ -17,7 +17,6 @@
     "stateRejected": "Відхилені",
     "stateRejectedTip": "Пропозиція відхилена через те, що інша пропозиція з таким самим nonce вже була виконана.",
     "stateExecutable": "Готове до виконання",
-    "stateExecutableTip": "Ця пропозиція тепер може бути виконана ким завгодно.",
     "stateExecuted": "Виконано",
     "stateExecutedTip": "Цю пропозицією було виконано",
     "stateFailed": "Провалено",

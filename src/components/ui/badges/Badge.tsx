@@ -3,6 +3,7 @@ import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fra
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import { FractalProposalState, DAOState } from '../../../types';
+import { Green, Red } from '../colors';
 
 type BadgeType = { [key: string]: { Icon?: any; tooltipKey?: string; bg: string; color: string } };
 
@@ -10,7 +11,7 @@ const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
     Icon: ActiveTwo,
     tooltipKey: 'stateActiveTip',
-    bg: 'sand.700',
+    bg: Green._500,
     color: 'grayscale.black',
   },
   [FractalProposalState.TIMELOCKED]: {
@@ -22,25 +23,25 @@ const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.EXECUTED]: {
     Icon: DoubleCheck,
     tooltipKey: 'stateExecutedTip',
-    bg: 'sand.700',
+    bg: Green._600,
     color: 'grayscale.black',
   },
   [FractalProposalState.EXECUTABLE]: {
     Icon: Check,
     tooltipKey: 'stateExecutableTip',
-    bg: 'sand.700',
+    bg: Green._500,
     color: 'grayscale.black',
   },
   [FractalProposalState.FAILED]: {
     Icon: CloseX,
     tooltipKey: 'stateFailedTip',
-    bg: 'sand.700',
+    bg: Red._600,
     color: 'grayscale.black',
   },
   [FractalProposalState.TIMELOCKABLE]: {
     Icon: ClockTwo,
     tooltipKey: 'stateTimelockableTip',
-    bg: 'sand.700',
+    bg: Green._500,
     color: 'grayscale.black',
   },
   [FractalProposalState.MODULE]: {
@@ -51,25 +52,25 @@ const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.EXPIRED]: {
     Icon: ClockTwo,
     tooltipKey: 'stateExpiredTip',
-    bg: 'sand.700',
+    bg: Red._600,
     color: 'grayscale.black',
   },
   [FractalProposalState.REJECTED]: {
     Icon: CloseX,
     tooltipKey: 'stateRejectedTip',
-    bg: 'sand.700',
+    bg: Red._600,
     color: 'grayscale.black',
   },
   [FractalProposalState.PENDING]: {
     Icon: ClockTwo,
     tooltipKey: 'statePendingTip',
-    bg: 'sand.700',
+    bg: Green._500,
     color: 'grayscale.black',
   },
   [FractalProposalState.CLOSED]: {
     Icon: ClockTwo,
     tooltipKey: 'stateClosedTip',
-    bg: 'sand.700',
+    bg: Green._600,
     color: 'grayscale.black',
   },
   [DAOState.freezeInit]: {

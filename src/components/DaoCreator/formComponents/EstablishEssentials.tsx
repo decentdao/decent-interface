@@ -1,12 +1,14 @@
 import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
+import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
+import ExternalLink from '../../ui/links/ExternalLink';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
@@ -81,12 +83,30 @@ export function EstablishEssentials(props: ICreationStepProps) {
               description={t('descMultisigGov')}
               testId="choose-multisig"
               value={GovernanceModuleType.MULTISIG}
+              tooltip={
+                <Trans
+                  i18nKey="tooltipMultisig"
+                  ns="daoCreate"
+                >
+                  placeholder
+                  <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                </Trans>
+              }
             />
             <RadioWithText
               label={t('labelAzoriusGov')}
               description={t('descAzoriusGov')}
               testId="choose-azorius"
               value={GovernanceModuleType.AZORIUS}
+              tooltip={
+                <Trans
+                  i18nKey="tooltipTokenVoting"
+                  ns="daoCreate"
+                >
+                  placeholder
+                  <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                </Trans>
+              }
             />
           </RadioGroup>
         </LabelComponent>
