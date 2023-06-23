@@ -46,10 +46,11 @@ import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGloba
 import { BNFormattedPair } from './votingFungibleToken';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
- * (Safe) governance.
+ * (Safe) governance, as well as Snapshot specific states.
  *
  * @note it is required that Azorius-specific states match those on the Azorius contracts,
- * including casing.
+ * including casing and ordering.  States not specific to Azorius must be placed at the end
+ * of this enum.
  */
 export enum FractalProposalState {
   /**
@@ -66,13 +67,13 @@ export enum FractalProposalState {
    * time to initiate a freeze, if they choose to do so. A proposal stays timelocked for the duration
    * of its `timelockPeriod`.
    *
-   * All Azorius and multisig subDAOs.
+   * Azorius (all) and multisig *subDAO* proposals.
    */
   TIMELOCKED = 'stateTimeLocked',
 
   /**
    * Following the `TIMELOCKED` state, a passed proposal becomes `EXECUTABLE`, and can then finally
-   * be executed on chain by anyone.
+   * be executed on chain.
    *
    * Azorius / Multisig (all proposals).
    */
@@ -89,7 +90,7 @@ export enum FractalProposalState {
    * A passed proposal which is not executed before its `executionPeriod` has elapsed will be `EXPIRED`,
    * and can no longer be executed.
    *
-   * Azorius (all) / multisig subDAO.
+   * Azorius (all) and multisig *subDAO* proposals.
    */
   EXPIRED = 'stateExpired',
 
@@ -104,7 +105,7 @@ export enum FractalProposalState {
   /**
    * Proposal fails due to a proposal being executed with the same nonce.
    * A multisig proposal is off-chain, and is signed with a specific nonce.
-   * If a proposal with the same nonce is executed, any proposal with the same
+   * If a proposal with a nonce is executed, any proposal with the same or lesser
    * nonce will be impossible to execute, reguardless of how many signers it has.
    *
    * Multisig only.
@@ -120,23 +121,29 @@ export enum FractalProposalState {
   TIMELOCKABLE = 'stateTimelockable',
 
   /**
-   * Any Safe is able to have modules attached (e.g. Zodiac), which can act essentially as a backdoor,
+   * Any Safe is able to have modules attached (e.g. Azorius), which can act essentially as a backdoor,
    * executing transactions without needing the required signers.
    *
    * Safe Module 'proposals' in this sense are single state proposals that are already executed.
    *
-   * This is a rare case, as the Azorius module is shown using Azorius states, but other third party
-   * modules could potentially generate this state so we allow for badges to properly label
-   * this case in the UI.
+   * This is a rare case, but third party modules could potentially generate this state so we allow
+   * for badges to properly label this case in the UI.
    *
    * Third party Safe module transactions only.
    */
   MODULE = 'stateModule',
 
-  // Pending proposal state specific to Snapshot proposals
+  /**
+   * The proposal is pending, meaning it has been created, but voting has not yet begun. This state
+   * has nothing to do with Fractal, and is used for Snapshot proposals only, which appear if the
+   * DAO's snapshotURL is set.
+   */
   PENDING = 'statePending',
 
-  // Closed is proposal state specific to Snapshot proposals
+  /**
+   * The proposal is closed, and no longer able to be signed. This state has nothing to do with Fractal,
+   * and is used for Snapshot proposals only, which appear if the DAO's snapshotURL is set.
+   */
   CLOSED = 'stateClosed',
 }
 
