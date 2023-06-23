@@ -8,7 +8,7 @@ interface IRadioWithText {
   value?: any;
   disabled?: boolean;
   onClick?: () => void;
-  tooltip?: string;
+  tooltip?: React.ReactNode;
 }
 
 export function RadioWithText({
@@ -43,7 +43,13 @@ export function RadioWithText({
             >
               {label}
             </Text>
-            {tooltip && <SupportTooltip label={tooltip} />}
+            {tooltip && (
+              <SupportTooltip
+                label={tooltip}
+                closeDelay={1000}
+                pointerEvents={'all'}
+              />
+            )}
           </HStack>
           <Text
             textStyle="text-md-sans-regular"
