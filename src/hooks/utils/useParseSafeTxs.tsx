@@ -10,7 +10,7 @@ import { useMemo } from 'react';
 
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { AssetTotals, SafeTransferType, ActivityEventType, Activity } from '../../types';
-import { formatWeiToValue, parseDecodedData } from '../../utils';
+import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 
 export function useParseSafeTxs(
   transactions: AllTransactionsListResponse,
@@ -23,8 +23,8 @@ export function useParseSafeTxs(
     }
 
     return transactions.results.map((transaction, _, transactionArr) => {
-      const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
-      const isModuleTransaction = transaction.txType === 'MODULE_TRANSACTION';
+      const isMultiSigTransaction = isMultiSigTx(transaction);
+      const isModuleTransaction = isModuleTx(transaction);
       const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
       const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 

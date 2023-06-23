@@ -8,7 +8,7 @@ import {
 import { constants, BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useProvider } from 'wagmi';
-import { checkIsApproved, checkIsRejected } from '../../helpers/activity';
+import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
@@ -18,20 +18,20 @@ import {
   Activity,
   FractalProposalState,
 } from '../../types';
-import { formatWeiToValue, parseDecodedData } from '../../utils';
+import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 import { getTimeStamp } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+
+type FreezeGuardData = {
+  guardTimelockPeriod: BigNumber;
+  guardExecutionPeriod: BigNumber;
+  lastBlock: ethers.providers.Block;
+};
 
 export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfg();
   const provider = useProvider();
   const { guardContracts } = useFractal();
-
-  type FreezeGuardData = {
-    guardTimelockPeriod: BigNumber;
-    guardExecutionPeriod: BigNumber;
-    lastBlock: ethers.providers.Block;
-  };
 
   const getState = useCallback(
     async (
@@ -40,72 +40,69 @@ export const useSafeTransactions = () => {
       freezeGuardData?: FreezeGuardData
     ) => {
       if (freezeGuard && freezeGuardData) {
-        const { guardTimelockPeriod, guardExecutionPeriod, lastBlock } = freezeGuardData;
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
             if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
               return activity;
             }
-
-            if (activity.transaction.txType === 'MODULE_TRANSACTION') {
+            if (isModuleTx(activity.transaction)) {
               return {
                 ...activity,
                 state: FractalProposalState.MODULE,
               };
             }
-            const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
 
             const multiSigTransaction =
               activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
-            const eventNonce = multiSigTransaction.nonce;
-
-            const isRejected = checkIsRejected(
-              isMultiSigTransaction,
-              activityArr,
-              eventNonce,
-              multiSigTransaction
-            );
-
-            const isApproved = checkIsApproved(multiSigTransaction);
-            const timelockedTimestamp = await getTxTimelockedTimestamp(
-              activity,
-              freezeGuard,
-              provider
-            );
-
             let state: FractalProposalState;
 
             if (multiSigTransaction.isExecuted) {
+              // the transaction has already been executed
               state = FractalProposalState.EXECUTED;
-            } else if (timelockedTimestamp === 0) {
-              // Has not been timelocked
-              if (isRejected) {
-                state = FractalProposalState.REJECTED;
-              } else if (isApproved) {
-                state = FractalProposalState.TIMELOCKABLE;
-              } else {
-                state = FractalProposalState.ACTIVE;
-              }
+            } else if (isRejected(activityArr, multiSigTransaction)) {
+              // a different transaction with the same nonce has already
+              // been executed, so this is no longer valid
+              state = FractalProposalState.REJECTED;
             } else {
-              // Has been timelocked
-              const timeLockPeriodEnd = timelockedTimestamp + Number(guardTimelockPeriod);
-              if (lastBlock.timestamp > timeLockPeriodEnd) {
-                // Timelock has ended
-                const timelockPeriodEnd = timeLockPeriodEnd + Number(guardExecutionPeriod);
-                if (lastBlock.timestamp < timelockPeriodEnd) {
-                  // Within execution period
-                  state = FractalProposalState.EXECUTABLE;
+              // it's not executed or rejected, so we need to check the timelock status
+              const timelockedTimestamp = await getTxTimelockedTimestamp(
+                activity,
+                freezeGuard,
+                provider
+              );
+              if (timelockedTimestamp === 0) {
+                // not yet timelocked
+                if (isApproved(multiSigTransaction)) {
+                  // the proposal has enough signatures, so it can now be timelocked
+                  state = FractalProposalState.TIMELOCKABLE;
                 } else {
-                  // Execution period has ended
-                  state = FractalProposalState.EXPIRED;
+                  // not enough signatures on the proposal, it's still active
+                  state = FractalProposalState.ACTIVE;
                 }
               } else {
-                // Within timelock period
-                state = FractalProposalState.TIMELOCKED;
+                // the proposal has been timelocked
+
+                const timeLockPeriodEnd =
+                  timelockedTimestamp + Number(freezeGuardData.guardTimelockPeriod); // end stamp of *timelock* period
+                if (freezeGuardData.lastBlock.timestamp > timeLockPeriodEnd) {
+                  // Timelock has ended, check execution period
+                  if (
+                    freezeGuardData.lastBlock.timestamp <
+                    timeLockPeriodEnd + Number(freezeGuardData.guardExecutionPeriod) // end stamp of *execution* period
+                  ) {
+                    // Within execution period
+                    state = FractalProposalState.EXECUTABLE;
+                  } else {
+                    // Execution period has ended
+                    state = FractalProposalState.EXPIRED;
+                  }
+                } else {
+                  // Still within timelock period
+                  state = FractalProposalState.TIMELOCKED;
+                }
               }
             }
-
             return { ...activity, state };
           })
         );
@@ -114,36 +111,22 @@ export const useSafeTransactions = () => {
           if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
             return activity;
           }
-
-          if (activity.transaction.txType === 'MODULE_TRANSACTION') {
+          if (isModuleTx(activity.transaction)) {
             return {
               ...activity,
               state: FractalProposalState.MODULE,
             };
           }
 
-          const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
-
           const multiSigTransaction =
             activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
-          const eventNonce = multiSigTransaction.nonce;
-
-          const isRejected = checkIsRejected(
-            isMultiSigTransaction,
-            activityArr,
-            eventNonce,
-            multiSigTransaction
-          );
-
-          const isApproved = checkIsApproved(multiSigTransaction);
-
           let state;
-          if (isRejected) {
-            state = FractalProposalState.REJECTED;
-          } else if (multiSigTransaction.isExecuted) {
+          if (multiSigTransaction.isExecuted) {
             state = FractalProposalState.EXECUTED;
-          } else if (isApproved) {
+          } else if (isRejected(activityArr, multiSigTransaction)) {
+            state = FractalProposalState.REJECTED;
+          } else if (isApproved(multiSigTransaction)) {
             state = FractalProposalState.EXECUTABLE;
           } else {
             state = FractalProposalState.ACTIVE;
@@ -216,8 +199,8 @@ export const useSafeTransactions = () => {
           const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
           const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
-          const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
-          const isModuleTransaction = transaction.txType === 'MODULE_TRANSACTION';
+          const isMultiSigTransaction = isMultiSigTx(transaction);
+          const isModuleTransaction = isModuleTx(transaction);
 
           // @note for ethereum transactions event these are the execution date
           const eventDate = new Date(

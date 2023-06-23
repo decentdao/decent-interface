@@ -14,9 +14,10 @@ export const useFractalGovernance = () => {
   const loadKey = useRef<string>();
 
   const {
-    node: { daoAddress },
+    node: { daoAddress, nodeHierarchy },
     governanceContracts,
     action,
+    guardContracts,
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
@@ -65,7 +66,11 @@ export const useFractalGovernance = () => {
   useEffect(() => {
     const { isLoaded, azoriusContract } = governanceContracts;
 
-    const newLoadKey = daoAddress + (azoriusContract ? '1' : '0');
+    const newLoadKey =
+      daoAddress +
+      (azoriusContract ? '1' : '0') +
+      nodeHierarchy.parentAddress +
+      !!guardContracts.freezeGuardContract;
 
     if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
@@ -87,5 +92,7 @@ export const useFractalGovernance = () => {
     loadUnderlyingERC20Token,
     loadAzoriusStrategy,
     loadERC20Token,
+    nodeHierarchy.parentAddress,
+    guardContracts.freezeGuardContract,
   ]);
 };
