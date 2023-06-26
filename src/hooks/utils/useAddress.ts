@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useProvider } from 'wagmi';
+import { couldBeENS } from '../../utils/url';
 import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
 
@@ -37,8 +38,9 @@ const useAddress = (addressInput: string | undefined) => {
       setIsAddressLoading(false);
       return;
     }
-    const [, domain] = addressInput.split('.');
-    if (!domain || domain.length <= 2) {
+
+    // if it can't be an ENS address, validation is false
+    if (!couldBeENS(addressInput)) {
       setAddress(addressInput);
       setIsValidAddress(false);
       setIsAddressLoading(false);
