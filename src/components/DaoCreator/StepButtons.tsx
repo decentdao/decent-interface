@@ -41,7 +41,7 @@ export function StepButtons({
           disabled={true}
           onClick={() => updateStep(prevStep)}
         >
-          {t('prev', { ns: 'common' })}
+          {t('back', { ns: 'common' })}
         </Button>
       )}
       <Button
