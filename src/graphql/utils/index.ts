@@ -6,12 +6,13 @@ export const useSubgraphChainName = () => {
   const provider = useProvider();
 
   const subgraphChainName = useMemo(() => {
+    let chainName = provider.network.name;
     supportedChains.forEach(chain => {
       if (chain.chainId === provider.network.chainId) {
-        return chain.subgraphChainName;
+        chainName = chain.subgraphChainName;
       }
     });
-    return provider.network.name;
+    return chainName;
   }, [provider]);
 
   return subgraphChainName;
