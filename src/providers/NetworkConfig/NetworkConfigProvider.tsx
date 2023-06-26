@@ -14,7 +14,7 @@ export const useNetworkConfg = (): NetworkConfig =>
 
 // mainnet is first so it defaults to that when disconnected on production
 export const supportedChains: NetworkConfig[] = isProd()
-  ? [mainnetConfig, polygonConfig, goerliConfig]
+  ? [mainnetConfig, goerliConfig]
   : [goerliConfig, mainnetConfig, polygonConfig];
 
 export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
