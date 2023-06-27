@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useSigner } from 'wagmi';
 import { CreateProposalForm } from '../../../types';
 import { encodeFunction } from '../../../utils/crypto';
+import { couldBeENS } from '../../../utils/url';
 
 export function usePrepareProposal() {
   const { data: signer } = useSigner();
@@ -16,7 +17,7 @@ export function usePrepareProposal() {
       });
       const targets = await Promise.all(
         transactionsWithEncoding.map(tx => {
-          if (tx.targetAddress.endsWith('.eth')) {
+          if (couldBeENS(tx.targetAddress)) {
             return signer!.resolveName(tx.targetAddress);
           }
           return tx.targetAddress;

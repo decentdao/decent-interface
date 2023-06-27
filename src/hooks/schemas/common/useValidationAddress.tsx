@@ -6,9 +6,10 @@ import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AddressValidationMap } from '../../../types';
 import { Providers } from '../../../types/network';
+import { couldBeENS } from '../../../utils/url';
 
 export function validateENSName({ ensName }: { ensName: string }) {
-  if (!!ensName && ensName.trim() && ensName.endsWith('.eth') && [...ensName].length >= 7) {
+  if (couldBeENS(ensName)) {
     return {
       validation: {
         address: '',
@@ -35,7 +36,7 @@ export async function validateAddress({
   address: string;
   checkENS?: boolean;
 }) {
-  if (!!address && address.trim() && address.endsWith('.eth') && checkENS) {
+  if (couldBeENS(address) && checkENS) {
     const resolvedAddress = await signerOrProvider.resolveName(address).catch();
     if (resolvedAddress) {
       return {
@@ -146,7 +147,7 @@ export const useValidationAddress = () => {
       message: t('alreadySigner', { ns: 'modals' }),
       test: async function (address: string | undefined) {
         if (!address || !safe || !signer) return false;
-        if (address.endsWith('.eth')) {
+        if (couldBeENS(address)) {
           address = await signer.resolveName(address);
         }
         return !safe.owners.includes(address);
@@ -179,7 +180,7 @@ export const useValidationAddress = () => {
               return addressValidation.address;
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
-            if (address && address.endsWith('.eth')) {
+            if (couldBeENS(address)) {
               const { validation } = await validateAddress({ signerOrProvider, address });
               return validation.address;
             }
