@@ -32,6 +32,7 @@ export const goerliConfig: NetworkConfig = {
   nativeTokenSymbol: goerli.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: goerli,
+  subgraphChainName: 'goerli',
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,
