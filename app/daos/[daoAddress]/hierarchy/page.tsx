@@ -27,7 +27,7 @@ export default function HierarchyPage() {
     <ClientOnly>
       <PageHeader
         title={t('headerTitle', {
-          daoName: daoName,
+          daoName,
           subject: t('nodes'),
         })}
         breadcrumbs={[
