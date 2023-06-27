@@ -3,14 +3,15 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { formatCoinUnits } from '../../../../../utils';
 import EtherscanLinkERC20 from '../../../../ui/links/EtherscanLinkERC20';
 import { BarLoader } from '../../../../ui/loaders/BarLoader';
 
 type TokenData = {
   name: string;
   symbol: string;
-  totalSupply: number;
-  totalDelegated: number;
+  totalSupply: string;
+  totalDelegated: string;
   address: string;
 };
 
@@ -25,12 +26,19 @@ export function GovernanceTokenContainer() {
     const loadTokenData = async () => {
       if (!tokenContract) return;
 
+      const symbol = await tokenContract.asProvider.symbol();
+      const totalSupply = formatCoinUnits(
+        await tokenContract.asProvider.totalSupply(),
+        await tokenContract.asProvider.decimals(),
+        symbol
+      ).toString();
+
       const data: TokenData = {
         address: tokenContract.asProvider.address,
         name: await tokenContract.asProvider.name(),
-        symbol: await tokenContract.asProvider.symbol(),
-        totalSupply: (await tokenContract.asProvider.totalSupply()).toNumber(),
-        totalDelegated: (await tokenContract.asProvider.totalSupply()).toNumber(), // TODO: Seems like there's no way to easily "get" it and we need to derive this total from events?
+        symbol,
+        totalSupply,
+        totalDelegated: totalSupply, // TODO: Seems like there's no way to easily "get" it and we need to derive this total from events?
       };
       setTokenDetails(data);
     };
