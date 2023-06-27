@@ -26,7 +26,7 @@ export default function Treasury() {
       <PageHeader
         title={t('headerTitle', {
           ns: 'breadcrumbs',
-          daoName: daoName,
+          daoName,
           subject: t('treasury', { ns: 'breadcrumbs' }),
         })}
         address={daoAddress ? daoAddress : undefined}

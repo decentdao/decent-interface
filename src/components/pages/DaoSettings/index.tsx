@@ -4,8 +4,9 @@ import { Divider, Flex } from '@chakra-ui/react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceModuleType } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
-import { GovernanceTokenContainer, ModulesContainer } from './components';
-import ManageSigners from './components/ManageSigners';
+import { ModulesContainer } from './components/Modules';
+import SignersContainer from './components/Signers';
+import { GovernanceTokenContainer } from './components/Token';
 
 export function Settings() {
   const {
@@ -28,7 +29,7 @@ export function Settings() {
 
   return (
     <>
-      {type === GovernanceModuleType.AZORIUS ? <GovernanceTokenContainer /> : <ManageSigners />}
+      {type === GovernanceModuleType.AZORIUS ? <GovernanceTokenContainer /> : <SignersContainer />}
       <Divider
         color="chocolate.700"
         mt={10}

@@ -1,8 +1,8 @@
 import { Portal, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import AddSignerModal from '../../pages/DaoSettings/components/ManageSigners/modals/AddSignerModal';
-import RemoveSignerModal from '../../pages/DaoSettings/components/ManageSigners/modals/RemoveSignerModal';
+import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/AddSignerModal';
+import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';

@@ -31,7 +31,7 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
   );
 }
 
-function ManageSigners() {
+export default function SignersContainer() {
   const {
     node: { safe },
   } = useFractal();
@@ -143,5 +143,3 @@ function ManageSigners() {
     </Flex>
   );
 }
-
-export default ManageSigners;
