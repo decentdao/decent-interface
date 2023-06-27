@@ -14,7 +14,7 @@ function NoModuleAttached({ translationKey }: { translationKey: string }) {
     <Center>
       <Text
         color="chocolate.200"
-        textStyle="text-lg-mono-regular"
+        textStyle="text-lg-mono-bold"
       >
         {t(translationKey)}
       </Text>
@@ -56,7 +56,6 @@ export function ModulesContainer() {
         flexDirection="column"
         gap="1rem"
       >
-        <Text textStyle="text-lg-mono-medium">{}</Text>
         <Divider
           color="chocolate.700"
           mt={4}
@@ -83,7 +82,7 @@ export function ModulesContainer() {
         ) : (
           <BarLoader />
         )}
-        <Text textStyle="text-lg-mono-medium">{t('guardTitle')}</Text>
+        <Text textStyle="text-lg-mono-bold">{t('guardTitle')}</Text>
         <Divider
           color="chocolate.700"
           mt={4}

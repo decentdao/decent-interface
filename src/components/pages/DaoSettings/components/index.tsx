@@ -31,7 +31,7 @@ export function SettingsSection({
         minHeight="6.25rem"
         minWidth="65%"
       >
-        {contentHeader || <Text textStyle="text-lg-mono-medium">{contentTitle}</Text>}
+        {contentHeader || <Text textStyle="text-lg-mono-bold">{contentTitle}</Text>}
         <Divider
           marginTop="1rem"
           color="chocolate.700"

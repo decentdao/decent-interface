@@ -1,5 +1,5 @@
 import { Button, Flex, HStack, Radio, RadioGroup, Show, Text } from '@chakra-ui/react';
-import { AddPlus } from '@decent-org/fractal-ui';
+import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -69,7 +69,7 @@ export default function SignersContainer() {
       contentHeader={
         <Flex justifyContent="space-between">
           <Text
-            textStyle="text-lg-mono-medium"
+            textStyle="text-lg-mono-bold"
             color="grayscale.100"
           >
             {t('signers', { ns: 'common' })}
@@ -92,7 +92,7 @@ export default function SignersContainer() {
                 isDisabled={!enableRemove}
                 variant="tertiary"
               >
-                {/* {TODO: add Remove icon} */}
+                <Minus />
                 <Show above="sm">{t('remove')}</Show>
               </Button>
             </Flex>
