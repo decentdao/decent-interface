@@ -1,10 +1,10 @@
-import { Button, Divider, Flex, HStack, Radio, RadioGroup, Show, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Radio, RadioGroup, Show, Text } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
+import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
-import { StyledBox } from '../../../../ui/containers/StyledBox';
 import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { ModalType } from '../../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../ui/modals/useFractalModal';
@@ -64,11 +64,9 @@ export default function SignersContainer() {
   }, [account, signers]);
 
   return (
-    <Flex
-      gap={4}
-      alignItems="flex-start"
-    >
-      <StyledBox minWidth="65%">
+    <SettingsSection
+      contentTitle={t('signers', { ns: 'common' })}
+      contentHeader={
         <Flex justifyContent="space-between">
           <Text
             textStyle="text-lg-mono-medium"
@@ -100,26 +98,9 @@ export default function SignersContainer() {
             </Flex>
           )}
         </Flex>
-        <Divider
-          marginTop="1rem"
-          color="chocolate.700"
-        />
-        <RadioGroup
-          onChange={e => setSelectedSigner(e)}
-          value={selectedSigner}
-          mt={6}
-        >
-          {signers &&
-            signers.map(signer => (
-              <Signer
-                key={signer}
-                signer={signer}
-                disabled={!enableRemove}
-              />
-            ))}
-        </RadioGroup>
-      </StyledBox>
-      <StyledBox flexGrow={1}>
+      }
+      descriptionTitle={t('signersRequired', { ns: 'common' })}
+      descriptionHeader={
         <Flex justifyContent="space-between">
           <Text
             textStyle="text-base-sans-regular"
@@ -132,14 +113,23 @@ export default function SignersContainer() {
             color="grayscale.100"
           >{`${safe?.threshold}/${safe?.owners.length}`}</Text>
         </Flex>
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
-          mt={2}
-        >
-          {t('signersDescription')}
-        </Text>
-      </StyledBox>
-    </Flex>
+      }
+      descriptionText={t('signersDescription')}
+    >
+      <RadioGroup
+        onChange={e => setSelectedSigner(e)}
+        value={selectedSigner}
+        mt={6}
+      >
+        {signers &&
+          signers.map(signer => (
+            <Signer
+              key={signer}
+              signer={signer}
+              disabled={!enableRemove}
+            />
+          ))}
+      </RadioGroup>
+    </SettingsSection>
   );
 }
