@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
+import { couldBeENS } from '../../../utils/url';
 import { validateAddress } from '../common/useValidationAddress';
 
 /**
@@ -64,7 +65,7 @@ export function useDAOCreateTests() {
               return addressValidation.address;
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
-            if (address && address.endsWith('.eth')) {
+            if (couldBeENS(address)) {
               const { validation } = await validateAddress({ signerOrProvider, address });
               return validation.address;
             }

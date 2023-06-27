@@ -50,12 +50,15 @@ export function AppFooter({ ...rest }: BoxProps) {
         >
           |
         </Text>
-        <Text
-          color="gold.500"
+        <ExternalLink
+          href={
+            'https://github.com/decent-dao/fractal-interface/commit/' +
+            process.env.NEXT_PUBLIC_GIT_HASH
+          }
           textStyle="text-sm-mono-bold"
         >
           v{packageJson.version}
-        </Text>
+        </ExternalLink>
       </Flex>
     </Box>
   );
