@@ -26,6 +26,7 @@ export function ModulesContainer() {
   const { t } = useTranslation(['settings']);
   const {
     node: { fractalModules, isModulesLoaded, safe },
+    guardContracts: { freezeGuardContract, freezeVotingContract },
   } = useFractal();
 
   return (
@@ -55,20 +56,22 @@ export function ModulesContainer() {
       <Flex
         flexDirection="column"
         gap="1rem"
+        mt={4}
       >
         {isModulesLoaded ? (
           fractalModules.length > 0 ? (
-            fractalModules.map(({ moduleAddress, moduleType }) => (
+            fractalModules.map(({ moduleAddress, moduleType }, i) => (
               <Box
                 key={moduleAddress}
-                mt={5}
+                mt={1}
+                mb={i === 0 ? 1 : 4}
               >
                 <DisplayAddress address={moduleAddress}>
                   {moduleAddress}
                   {moduleType === FractalModuleType.AZORIUS
-                    ? '(Azorius Module)'
+                    ? ' (Azorius Module)'
                     : moduleType === FractalModuleType.FRACTAL
-                    ? '(Fractal Module)'
+                    ? ' (Fractal Module)'
                     : ''}
                 </DisplayAddress>
               </Box>
@@ -85,8 +88,11 @@ export function ModulesContainer() {
           mt={4}
         />
         {safe?.guard && safe?.guard !== ethers.constants.AddressZero ? (
-          <Box mt={4}>
-            <DisplayAddress address={safe.guard}>{safe.guard}</DisplayAddress>
+          <Box>
+            <DisplayAddress address={safe.guard}>
+              {safe.guard}
+              {!!freezeGuardContract || !!freezeVotingContract ? ' (Freeze Guard)' : ''}
+            </DisplayAddress>
           </Box>
         ) : (
           <NoModuleAttached translationKey="noGuardAttached" />

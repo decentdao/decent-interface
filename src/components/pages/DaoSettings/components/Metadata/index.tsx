@@ -1,10 +1,14 @@
 import { Flex, Text, Button, Divider } from '@chakra-ui/react';
+import { BigNumber } from 'ethers';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
+import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { ProposalExecuteData } from '../../../../../types';
 import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
 
@@ -13,10 +17,12 @@ export default function MetadataContainer() {
   const [snapshotURL, setSnapshotURL] = useState('');
   const [snapshotURLValid, setSnapshotURLValid] = useState<boolean>();
   const { t } = useTranslation('settings');
+  const { push } = useRouter();
 
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { canUserCreateProposal, submitProposal } = useSubmitProposal();
   const {
-    node: { daoName, daoSnapshotURL, daoAddress },
+    baseContracts: { fractalRegistryContract, keyValuePairsContract },
+    node: { daoName, daoSnapshotURL, daoAddress, safe },
     readOnly: {
       user: { votingWeight },
     },
@@ -44,6 +50,55 @@ export default function MetadataContainer() {
 
   const userHasVotingWeight = votingWeight.gt(0);
 
+  const submitProposalSuccessCallback = () => push(DAO_ROUTES.proposals.relative(daoAddress));
+
+  const handleEditDAOName = () => {
+    const proposalData: ProposalExecuteData = {
+      title: t('Update DAO Name'),
+      description: '',
+      documentationUrl: '',
+      targets: [fractalRegistryContract.asProvider.address],
+      values: [BigNumber.from(0)],
+      calldatas: [
+        fractalRegistryContract.asProvider.interface.encodeFunctionData('updateDAOName', [name]),
+      ],
+    };
+
+    submitProposal({
+      proposalData,
+      nonce: safe?.nonce,
+      pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+      successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+      failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+      successCallback: submitProposalSuccessCallback,
+    });
+  };
+
+  const handleEditDAOSnapshotURL = () => {
+    const proposalData: ProposalExecuteData = {
+      title: t('Update DAO Snapshot URL'),
+      description: '',
+      documentationUrl: '',
+      targets: [keyValuePairsContract.asProvider.address],
+      values: [BigNumber.from(0)],
+      calldatas: [
+        keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
+          ['snapshotURL'],
+          [snapshotURL],
+        ]),
+      ],
+    };
+
+    submitProposal({
+      proposalData,
+      nonce: safe?.nonce,
+      pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+      successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+      failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+      successCallback: submitProposalSuccessCallback,
+    });
+  };
+
   return (
     <SettingsSection
       contentTitle={t('daoMetadataTitle')}
@@ -63,6 +118,7 @@ export default function MetadataContainer() {
               variant="tertiary"
               disabled={name === daoName}
               isDisabled={name === daoName}
+              onClick={handleEditDAOName}
             >
               {t('proposeChanges')}
             </Button>
@@ -109,6 +165,7 @@ export default function MetadataContainer() {
             variant="tertiary"
             disabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
             isDisabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
+            onClick={handleEditDAOSnapshotURL}
           >
             {t('proposeChanges')}
           </Button>
