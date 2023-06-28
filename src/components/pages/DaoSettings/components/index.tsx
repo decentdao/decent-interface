@@ -34,7 +34,7 @@ export function SettingsSection({
         {contentHeader || <Text textStyle="text-lg-mono-bold">{contentTitle}</Text>}
         <Divider
           marginTop="1rem"
-          color="chocolate.700"
+          color="chocolate.400"
         />
         {children}
       </StyledBox>

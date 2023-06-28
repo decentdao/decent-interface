@@ -31,7 +31,10 @@ export default function MetadataContainer() {
     <SettingsSection
       contentTitle={t('daoMetadataTitle')}
       contentHeader={
-        <Flex justifyContent="space-between">
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+        >
           <Text
             textStyle="text-lg-mono-bold"
             color="grayscale.100"
@@ -69,11 +72,14 @@ export default function MetadataContainer() {
         }}
       />
       <Divider
-        color="chocolate.700"
+        color="chocolate.400"
         mt={4}
         mb={4}
       />
-      <Flex justifyContent="space-between">
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+      >
         <Text
           textStyle="text-lg-mono-bold"
           color="grayscale.100"

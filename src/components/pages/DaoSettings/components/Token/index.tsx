@@ -3,15 +3,14 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
-import { formatCoinUnits } from '../../../../../utils';
-import EtherscanLinkERC20 from '../../../../ui/links/EtherscanLinkERC20';
+import { formatCoin } from '../../../../../utils';
+import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { BarLoader } from '../../../../ui/loaders/BarLoader';
 
 type TokenData = {
   name: string;
   symbol: string;
   totalSupply: string;
-  totalDelegated: string;
   address: string;
 };
 
@@ -26,19 +25,21 @@ export function GovernanceTokenContainer() {
     const loadTokenData = async () => {
       if (!tokenContract) return;
 
-      const symbol = await tokenContract.asProvider.symbol();
-      const totalSupply = formatCoinUnits(
-        await tokenContract.asProvider.totalSupply(),
-        await tokenContract.asProvider.decimals(),
-        symbol
-      ).toString();
+      const tokenContractAsProvider = tokenContract.asProvider;
+      const symbol = await tokenContractAsProvider.symbol();
+      const totalSupply = formatCoin(
+        await tokenContractAsProvider.totalSupply(),
+        false,
+        await tokenContractAsProvider.decimals(),
+        symbol,
+        false
+      );
 
       const data: TokenData = {
         address: tokenContract.asProvider.address,
         name: await tokenContract.asProvider.name(),
         symbol,
         totalSupply,
-        totalDelegated: totalSupply, // TODO: Seems like there's no way to easily "get" it and we need to derive this total from events?
       };
       setTokenDetails(data);
     };
@@ -53,7 +54,10 @@ export function GovernanceTokenContainer() {
       descriptionText={t('governanceTokenDescription')}
     >
       {tokenDetails ? (
-        <Flex justifyContent="space-between">
+        <Flex
+          justifyContent="space-between"
+          mt={4}
+        >
           <Box>
             <Text
               textStyle="text-sm-mono-regular"
@@ -61,9 +65,9 @@ export function GovernanceTokenContainer() {
             >
               {t('governanceTokenNameLabel')}
             </Text>
-            <EtherscanLinkERC20 address={tokenDetails.address}>
-              {tokenDetails.name}
-            </EtherscanLinkERC20>
+            <Box mt={2}>
+              <DisplayAddress address={tokenDetails.address}>{tokenDetails.name}</DisplayAddress>
+            </Box>
           </Box>
           <Box>
             <Text
@@ -73,8 +77,9 @@ export function GovernanceTokenContainer() {
               {t('governanceTokenSymbolLabel')}
             </Text>
             <Text
-              textStyle="text-sm-mono-regular"
+              textStyle="text-base-sans-regular"
               color="grayscale.100"
+              mt={2}
             >
               {tokenDetails.symbol}
             </Text>
@@ -87,24 +92,11 @@ export function GovernanceTokenContainer() {
               {t('governanceTokenSupplyLabel')}
             </Text>
             <Text
-              textStyle="text-sm-mono-regular"
+              textStyle="text-base-sans-regular"
               color="grayscale.100"
+              mt={2}
             >
               {tokenDetails.totalSupply}
-            </Text>
-          </Box>
-          <Box>
-            <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
-            >
-              {t('governanceTokenDelegatedLabel')}
-            </Text>
-            <Text
-              textStyle="text-sm-mono-regular"
-              color="grayscale.100"
-            >
-              {tokenDetails.totalDelegated}
             </Text>
           </Box>
         </Flex>

@@ -4,7 +4,6 @@
   "governanceTokenNameLabel": "Name",
   "governanceTokenSymbolLabel": "Symbol",
   "governanceTokenSupplyLabel": "Total Supply",
-  "governanceTokenDelegatedLabel": "Total Delegated",
   "noModulesAttached": "No Modules Attached",
   "noGuardAttached": "No Guard Attached",
   "modulesTitle": "Modules",

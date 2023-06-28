@@ -1,17 +1,17 @@
-import { Flex, Text, Divider, Center } from '@chakra-ui/react';
+import { Box, Flex, Text, Divider, Center } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { FractalModuleType } from '../../../../../types';
-import EtherscanLinkAddress from '../../../../ui/links/EtherscanLinkAddress';
+import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { BarLoader } from '../../../../ui/loaders/BarLoader';
 
 function NoModuleAttached({ translationKey }: { translationKey: string }) {
   const { t } = useTranslation('settings');
 
   return (
-    <Center>
+    <Center my={4}>
       <Text
         color="chocolate.200"
         textStyle="text-lg-mono-bold"
@@ -56,25 +56,22 @@ export function ModulesContainer() {
         flexDirection="column"
         gap="1rem"
       >
-        <Divider
-          color="chocolate.700"
-          mt={4}
-          mb={4}
-        />
         {isModulesLoaded ? (
           fractalModules.length > 0 ? (
             fractalModules.map(({ moduleAddress, moduleType }) => (
-              <EtherscanLinkAddress
+              <Box
                 key={moduleAddress}
-                address={moduleAddress}
+                mt={5}
               >
-                {moduleAddress}
-                {moduleType === FractalModuleType.AZORIUS
-                  ? '(Azorius Module)'
-                  : moduleType === FractalModuleType.FRACTAL
-                  ? '(Fractal Module)'
-                  : ''}
-              </EtherscanLinkAddress>
+                <DisplayAddress address={moduleAddress}>
+                  {moduleAddress}
+                  {moduleType === FractalModuleType.AZORIUS
+                    ? '(Azorius Module)'
+                    : moduleType === FractalModuleType.FRACTAL
+                    ? '(Fractal Module)'
+                    : ''}
+                </DisplayAddress>
+              </Box>
             ))
           ) : (
             <NoModuleAttached translationKey="noModulesAttached" />
@@ -84,12 +81,13 @@ export function ModulesContainer() {
         )}
         <Text textStyle="text-lg-mono-bold">{t('guardTitle')}</Text>
         <Divider
-          color="chocolate.700"
+          color="chocolate.400"
           mt={4}
-          mb={4}
         />
         {safe?.guard && safe?.guard !== ethers.constants.AddressZero ? (
-          <EtherscanLinkAddress address={safe.guard}>{safe.guard}</EtherscanLinkAddress>
+          <Box mt={4}>
+            <DisplayAddress address={safe.guard}>{safe.guard}</DisplayAddress>
+          </Box>
         ) : (
           <NoModuleAttached translationKey="noGuardAttached" />
         )}

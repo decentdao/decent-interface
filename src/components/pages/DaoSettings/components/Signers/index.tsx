@@ -63,6 +63,7 @@ export default function SignersContainer() {
     setUserIsSigner(account && signers.includes(account));
   }, [account, signers]);
 
+  const removeDisabled = !enableRemove && !selectedSigner;
   return (
     <SettingsSection
       contentTitle={t('signers', { ns: 'common' })}
@@ -88,8 +89,8 @@ export default function SignersContainer() {
                 minW={0}
                 px={2}
                 onClick={removeSigner}
-                disabled={!enableRemove}
-                isDisabled={!enableRemove}
+                disabled={removeDisabled}
+                isDisabled={removeDisabled}
                 variant="tertiary"
               >
                 <Minus />
