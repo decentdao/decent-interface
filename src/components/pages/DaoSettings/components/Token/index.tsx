@@ -101,7 +101,14 @@ export function GovernanceTokenContainer() {
           </Box>
         </Flex>
       ) : (
-        <BarLoader />
+        <Flex
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="100px"
+        >
+          <BarLoader />
+        </Flex>
       )}
     </SettingsSection>
   );
