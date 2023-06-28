@@ -1,20 +1,25 @@
 import { Flex, Text, Button, Divider } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
 
 export default function MetadataContainer() {
   const [name, setName] = useState('');
   const [snapshotURL, setSnapshotURL] = useState('');
+  const [snapshotURLValid, setSnapshotURLValid] = useState<boolean>();
   const { t } = useTranslation('settings');
 
   const { canUserCreateProposal } = useSubmitProposal();
   const {
     node: { daoName, daoSnapshotURL, daoAddress },
+    readOnly: {
+      user: { votingWeight },
+    },
   } = useFractal();
 
   useEffect(() => {
@@ -26,6 +31,18 @@ export default function MetadataContainer() {
       setSnapshotURL(daoSnapshotURL);
     }
   }, [daoName, daoSnapshotURL, daoAddress]);
+
+  const handleSnapshotURLChange: ChangeEventHandler<HTMLInputElement> = e => {
+    if (couldBeENS(e.target.value)) {
+      setSnapshotURLValid(true);
+    } else {
+      setSnapshotURLValid(false);
+    }
+
+    setSnapshotURL(e.target.value);
+  };
+
+  const userHasVotingWeight = votingWeight.gt(0);
 
   return (
     <SettingsSection
@@ -44,8 +61,8 @@ export default function MetadataContainer() {
           {canUserCreateProposal && (
             <Button
               variant="tertiary"
-              disabled
-              isDisabled
+              disabled={name === daoName}
+              isDisabled={name === daoName}
             >
               {t('proposeChanges')}
             </Button>
@@ -58,6 +75,7 @@ export default function MetadataContainer() {
       <InputComponent
         isRequired={false}
         onChange={e => setName(e.target.value)}
+        disabled={!userHasVotingWeight}
         value={name}
         placeholder="Amazing DAO"
         testId="daoSettings.name"
@@ -89,8 +107,8 @@ export default function MetadataContainer() {
         {canUserCreateProposal && (
           <Button
             variant="tertiary"
-            disabled
-            isDisabled
+            disabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
+            isDisabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
           >
             {t('proposeChanges')}
           </Button>
@@ -98,8 +116,9 @@ export default function MetadataContainer() {
       </Flex>
       <InputComponent
         isRequired={false}
-        onChange={e => setSnapshotURL(e.target.value)}
+        onChange={handleSnapshotURLChange}
         value={snapshotURL}
+        disabled={!userHasVotingWeight}
         placeholder="example.eth"
         testId="daoSettings.snapshotUrl"
         gridContainerProps={{
