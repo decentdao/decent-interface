@@ -25,8 +25,10 @@ export enum FractalGovernanceAction {
   UPDATE_TIMELOCK_PERIOD = 'UPDATE_TIMELOCK_PERIOD',
   SET_TOKEN_DATA = 'SET_TOKEN_DATA',
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
+  SET_LOCKED_TOKEN_ACCOUNT_DATA = 'SET_LOCKED_TOKEN_ACCOUNT_DATA',
   SET_CLAIMING_CONTRACT = 'SET_CLAIMING_CONTRACT',
   RESET_TOKEN_ACCOUNT_DATA = 'RESET_TOKEN_ACCOUNT_DATA',
+  RESET_LOCKED_TOKEN_ACCOUNT_DATA = 'RESET_LOCKED_TOKEN_ACCOUNT_DATA',
   SET_UNDERLYING_TOKEN_DATA = 'SET_UNDERLYING_TOKEN_DATA',
 }
 
@@ -82,7 +84,14 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
       payload: VotesData;
     }
+  | {
+      type: FractalGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA;
+      payload: VotesData;
+    }
   | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: ERC20Claim }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
+    }
+  | {
+      type: FractalGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA;
     };

@@ -102,12 +102,19 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
+    case FractalGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA: {
+      const { lockedVotesToken } = state as AzoriusGovernance;
+      return { ...state, lockedVotesToken: { ...(lockedVotesToken || {}), ...action.payload } };
+    }
     case FractalGovernanceAction.SET_CLAIMING_CONTRACT: {
       return { ...state, tokenClaimContract: action.payload };
     }
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
+    }
+    case FractalGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA: {
+      return { ...state, lockedVotesToken: undefined };
     }
     default:
       return state;

@@ -15,13 +15,14 @@ export const useReadOnlyValues = () => {
     const isSigner = _account && node.safe?.owners.includes(_account);
     const tokenWeight =
       (governance as AzoriusGovernance).votesToken?.votingWeight || BigNumber.from(0);
+    const lockedTokenWeight = (governance as AzoriusGovernance).lockedVotesToken?.votingWeight;
 
     const votingWeight = () => {
       switch (governance.type) {
         case GovernanceModuleType.MULTISIG:
           return isSigner ? BigNumber.from(1) : BigNumber.from(0);
         case GovernanceModuleType.AZORIUS:
-          return tokenWeight;
+          return lockedTokenWeight || tokenWeight;
         default:
           return BigNumber.from(0);
       }

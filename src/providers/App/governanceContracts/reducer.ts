@@ -5,6 +5,7 @@ export const initialGovernanceContractsState: FractalGovernanceContracts = {
   ozLinearVotingContract: null,
   azoriusContract: null,
   tokenContract: null,
+  lockReleaseContract: null,
   isLoaded: false,
 };
 
