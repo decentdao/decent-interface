@@ -16,13 +16,13 @@ import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSigner } from 'wagmi';
 import * as Yup from 'yup';
-import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
-import { useFractal } from '../../../providers/App/AppProvider';
-import { couldBeENS } from '../../../utils/url';
-import SupportTooltip from '../../ui/badges/SupportTooltip';
-import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
-import { AddressInput } from '../../ui/forms/EthAddressInput';
-import useAddSigner from './hooks/useAddSigner';
+import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
+import { useFractal } from '../../../../../../providers/App/AppProvider';
+import { couldBeENS } from '../../../../../../utils/url';
+import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
+import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
+import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
+import useAddSigner from '../hooks/useAddSigner';
 
 function AddSignerModal({
   close,
