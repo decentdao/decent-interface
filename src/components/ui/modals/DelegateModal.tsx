@@ -20,13 +20,14 @@ export function DelegateModal({ close }: { close: Function }) {
 
   const {
     governance,
-    governanceContracts: { tokenContract },
+    governanceContracts: { tokenContract, lockReleaseContract },
     readOnly: { user },
   } = useFractal();
 
   const { data: signer } = useSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken.delegatee);
+  const lockedDelegateeDisplayName = useDisplayName(azoriusGovernance?.lockedVotesToken?.delegatee);
   const { delegateVote, contractCallPending } = useDelegateVote();
   const { addressValidationTest } = useValidationAddress();
 
@@ -39,6 +40,20 @@ export function DelegateModal({ close }: { close: Function }) {
     delegateVote({
       delegatee: validAddress,
       votingTokenContract: tokenContract?.asSigner,
+      successCallback: () => {
+        close();
+      },
+    });
+  };
+  const submitLockedDelegation = async (values: { address: string }) => {
+    if (!lockReleaseContract) return;
+    let validAddress = values.address;
+    if (couldBeENS(validAddress)) {
+      validAddress = await signer!.resolveName(values.address);
+    }
+    delegateVote({
+      delegatee: validAddress,
+      votingTokenContract: lockReleaseContract?.asSigner,
       successCallback: () => {
         close();
       },
@@ -93,6 +108,48 @@ export function DelegateModal({ close }: { close: Function }) {
           )}
         </Text>
       </SimpleGrid>
+      {azoriusGovernance.lockedVotesToken?.balance && (
+        <SimpleGrid
+          columns={2}
+          color="chocolate.200"
+        >
+          <Text
+            align="start"
+            marginBottom="0.5rem"
+          >
+            {t('titleLockedBalance')}
+          </Text>
+          <Text
+            align="end"
+            color="grayscale.100"
+          >
+            {formatCoin(
+              azoriusGovernance.lockedVotesToken.balance || BigNumber.from(0),
+              false,
+              azoriusGovernance.votesToken.decimals,
+              azoriusGovernance.votesToken.symbol
+            )}
+          </Text>
+          <Text
+            align="start"
+            marginBottom="1rem"
+          >
+            {t('titleDelegatedTo')}
+          </Text>
+          <Text
+            align="end"
+            color="grayscale.100"
+          >
+            {azoriusGovernance.lockedVotesToken.delegatee === constants.AddressZero ? (
+              '--'
+            ) : (
+              <EtherscanLinkAddress address={azoriusGovernance.lockedVotesToken.delegatee}>
+                {lockedDelegateeDisplayName.displayName}
+              </EtherscanLinkAddress>
+            )}
+          </Text>
+        </SimpleGrid>
+      )}
       <Divider
         color="chocolate.700"
         marginBottom="1rem"
@@ -104,7 +161,7 @@ export function DelegateModal({ close }: { close: Function }) {
         onSubmit={submitDelegation}
         validationSchema={delegationValidationSchema}
       >
-        {({ handleSubmit, setFieldValue, errors }) => (
+        {({ handleSubmit, setFieldValue, values, errors }) => (
           <form onSubmit={handleSubmit}>
             <Flex alignItems="center">
               <Text color="grayscale.100">{t('labelDelegateInput')}</Text>
@@ -136,10 +193,30 @@ export function DelegateModal({ close }: { close: Function }) {
               type="submit"
               marginTop="2rem"
               width="100%"
-              isDisabled={!!errors.address || contractCallPending}
+              isDisabled={
+                !!errors.address ||
+                contractCallPending ||
+                !values.address ||
+                azoriusGovernance.votesToken.balance?.isZero()
+              }
             >
               {t('buttonDelegate')}
             </Button>
+            {azoriusGovernance.lockedVotesToken?.balance && (
+              <Button
+                marginTop="2rem"
+                width="100%"
+                onClick={() => submitLockedDelegation({ address: values.address })}
+                isDisabled={
+                  !!errors.address ||
+                  contractCallPending ||
+                  !values.address ||
+                  azoriusGovernance.lockedVotesToken.balance?.isZero()
+                }
+              >
+                {t('buttonLockedDelegate')}
+              </Button>
+            )}
           </form>
         )}
       </Formik>

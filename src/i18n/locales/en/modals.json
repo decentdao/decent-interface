@@ -1,11 +1,13 @@
 {
   "delegateTitle": "Delegate Voting Tokens",
   "titleBalance": "Balance",
+  "titleLockedBalance": "Locked Balance",
   "titleDelegatedTo": "Delegated To",
   "linkSelfDelegate": "Delegate to Self",
   "labelDelegateInput": "Delegate Address",
   "sublabelDelegateInput": "Delegate your tokens to yourself or to a representative who can vote on your behalf. This does not transfer ownership of the tokens.",
   "buttonDelegate": "Delegate Voting Tokens",
+  "buttonLockedDelegate": "Delegate Locked Voting Tokens",
   "sendAssetsTitle": "Send Assets",
   "selectLabel": "Select Asset",
   "selectSublabel": "Available balance {{balance}}",

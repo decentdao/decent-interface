@@ -24,6 +24,7 @@ import SafeServiceClient, {
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
+import { LockRelease } from '../assets/typechain-types/dcnt';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
@@ -243,6 +244,7 @@ export interface FractalGovernanceContracts {
   ozLinearVotingContract: ContractConnection<LinearERC20Voting> | null;
   azoriusContract: ContractConnection<Azorius> | null;
   tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | null;
+  lockReleaseContract: ContractConnection<LockRelease> | null;
   underlyingTokenAddress?: string;
   isLoaded: boolean;
 }
@@ -298,6 +300,7 @@ export type FractalGovernance = AzoriusGovernance | SafeMultisigGovernance;
 export interface AzoriusGovernance extends Governance {
   votesStrategy: VotesStrategyAzorius;
   votesToken: VotesTokenData;
+  lockedVotesToken?: VotesTokenData;
 }
 export interface SafeMultisigGovernance extends Governance {}
 
