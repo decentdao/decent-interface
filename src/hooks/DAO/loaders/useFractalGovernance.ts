@@ -7,6 +7,7 @@ import { FractalGovernanceAction } from '../../../providers/App/governance/actio
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
+import { useLockRelease } from './governance/useLockRelease';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
@@ -23,6 +24,7 @@ export const useFractalGovernance = () => {
   const loadDAOProposals = useDAOProposals();
   const loadAzoriusStrategy = useAzoriusStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
+  const { loadLockedVotesToken } = useLockRelease({});
   const ipfsClient = useIPFSClient();
 
   const ONE_MINUTE = 60 * 1000;
@@ -64,7 +66,7 @@ export const useFractalGovernance = () => {
   });
 
   useEffect(() => {
-    const { isLoaded, azoriusContract } = governanceContracts;
+    const { isLoaded, azoriusContract, lockReleaseContract } = governanceContracts;
 
     const newLoadKey =
       daoAddress +
@@ -81,6 +83,9 @@ export const useFractalGovernance = () => {
         loadAzoriusStrategy();
         loadERC20Token();
         loadUnderlyingERC20Token();
+        if (lockReleaseContract) {
+          loadLockedVotesToken();
+        }
       }
     } else if (!isLoaded) {
       loadKey.current = undefined;
@@ -92,6 +97,7 @@ export const useFractalGovernance = () => {
     loadUnderlyingERC20Token,
     loadAzoriusStrategy,
     loadERC20Token,
+    loadLockedVotesToken,
     nodeHierarchy.parentAddress,
     guardContracts.freezeGuardContract,
   ]);
