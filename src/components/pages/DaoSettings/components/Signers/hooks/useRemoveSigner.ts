@@ -1,10 +1,10 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDAOProposals } from '../../../../hooks/DAO/loaders/useProposals';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { ProposalExecuteData } from '../../../../types';
+import { useDAOProposals } from '../../../../../../hooks/DAO/loaders/useProposals';
+import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useFractal } from '../../../../../../providers/App/AppProvider';
+import { ProposalExecuteData } from '../../../../../../types';
 
 const useRemoveSigner = ({
   prevSigner,
