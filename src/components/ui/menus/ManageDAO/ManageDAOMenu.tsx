@@ -79,8 +79,8 @@ export function ManageDAOMenu({
     }
   }, [getCanUserCreateProposal, fractalNode, account]);
 
-  const handleNavigateToManageSigners = useMemo(
-    () => () => push(DAO_ROUTES.manageSigners.relative(safeAddress)),
+  const handleNavigateToSettings = useMemo(
+    () => () => push(DAO_ROUTES.settings.relative(safeAddress)),
     [push, safeAddress]
   );
 
@@ -90,16 +90,6 @@ export function ManageDAOMenu({
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
       onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
-    };
-
-    const manageSignersOption = {
-      optionKey: 'optionManageSigners',
-      onClick: handleNavigateToManageSigners,
-    };
-
-    const viewSignersOption = {
-      optionKey: 'optionViewSigners',
-      onClick: handleNavigateToManageSigners,
     };
 
     const freezeOption = {
@@ -115,6 +105,11 @@ export function ManageDAOMenu({
     const modifyGovernanceOption = {
       optionKey: 'optionModifyGovernance',
       onClick: handleModifyGovernance,
+    };
+
+    const settingsOption = {
+      optionKey: 'optionSettings',
+      onClick: handleNavigateToSettings,
     };
 
     if (
@@ -135,9 +130,9 @@ export function ManageDAOMenu({
       freezeGuard.userHasVotes
     ) {
       if (governanceType === GovernanceModuleType.MULTISIG) {
-        return [createSubDAOOption, manageSignersOption, freezeOption, modifyGovernanceOption];
+        return [createSubDAOOption, freezeOption, modifyGovernanceOption, settingsOption];
       } else {
-        return [createSubDAOOption, freezeOption];
+        return [createSubDAOOption, freezeOption, settingsOption];
       }
     } else if (
       freezeGuard &&
@@ -151,14 +146,14 @@ export function ManageDAOMenu({
       freezeGuard.isFrozen &&
       freezeGuard.userHasVotes
     ) {
-      return [clawBackOption];
+      return [clawBackOption, settingsOption];
     } else {
       if (governanceType === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
-        return [createSubDAOOption, manageSignersOption, modifyGovernanceOption];
+        return [createSubDAOOption, modifyGovernanceOption, settingsOption];
       } else if (governanceType === GovernanceModuleType.MULTISIG) {
-        return [viewSignersOption];
+        return [settingsOption];
       } else {
-        return [createSubDAOOption];
+        return [createSubDAOOption, settingsOption];
       }
     }
   }, [
@@ -170,8 +165,8 @@ export function ManageDAOMenu({
     guardContracts?.freezeVotingContract?.asSigner,
     handleClawBack,
     canUserCreateProposal,
-    handleNavigateToManageSigners,
     handleModifyGovernance,
+    handleNavigateToSettings,
   ]);
 
   return (

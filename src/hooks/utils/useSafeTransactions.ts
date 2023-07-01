@@ -19,8 +19,8 @@ import {
   FractalProposalState,
 } from '../../types';
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
-import { getTimeStamp } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
   guardTimelockPeriod: BigNumber;
@@ -32,6 +32,7 @@ export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfg();
   const provider = useProvider();
   const { guardContracts } = useFractal();
+  const decode = useSafeDecoder();
 
   const getState = useCallback(
     async (
@@ -195,7 +196,7 @@ export const useSafeTransactions = () => {
       }
 
       const activities = await Promise.all(
-        transactions.results.map((transaction, _, transactionArr) => {
+        transactions.results.map(async (transaction, _, transactionArr) => {
           const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
           const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
@@ -281,7 +282,13 @@ export const useSafeTransactions = () => {
                     isMultiSigTransaction || isModuleTransaction
                   ),
                 }
-              : undefined;
+              : {
+                  decodedTransactions: await decode(
+                    multiSigTransaction.value,
+                    multiSigTransaction.to,
+                    multiSigTransaction.data
+                  ),
+                };
 
           const targets = metaData
             ? [...metaData.decodedTransactions.map(tx => tx.target)]
@@ -316,11 +323,9 @@ export const useSafeTransactions = () => {
       if (guardContracts.freezeGuardContract) {
         const blockNumber = await provider.getBlockNumber();
         freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
-        const timeLockPeriodBlock = await freezeGuard.timelockPeriod();
-        const texecutionPeriodBlock = await freezeGuard.executionPeriod();
         freezeGuardData = {
-          guardTimelockPeriod: BigNumber.from(await getTimeStamp(timeLockPeriodBlock, provider)),
-          guardExecutionPeriod: BigNumber.from(await getTimeStamp(texecutionPeriodBlock, provider)),
+          guardTimelockPeriod: BigNumber.from(await freezeGuard.timelockPeriod()),
+          guardExecutionPeriod: BigNumber.from(await freezeGuard.executionPeriod()),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
@@ -328,7 +333,14 @@ export const useSafeTransactions = () => {
       const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
-    [nativeTokenSymbol, provider, guardContracts, getTransferTotal, getState]
+    [
+      guardContracts.freezeGuardContract,
+      getState,
+      getTransferTotal,
+      decode,
+      nativeTokenSymbol,
+      provider,
+    ]
   );
   return { parseTransactions };
 };

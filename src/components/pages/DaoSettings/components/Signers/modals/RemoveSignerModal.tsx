@@ -13,10 +13,10 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, useEnsName, useProvider } from 'wagmi';
-import { useFractal } from '../../../providers/App/AppProvider';
-import SupportTooltip from '../../ui/badges/SupportTooltip';
-import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
-import useRemoveSigner from './hooks/useRemoveSigner';
+import { useFractal } from '../../../../../../providers/App/AppProvider';
+import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
+import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
+import useRemoveSigner from '../hooks/useRemoveSigner';
 
 function RemoveSignerModal({
   close,

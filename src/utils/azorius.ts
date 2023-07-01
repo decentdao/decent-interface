@@ -21,6 +21,7 @@ import {
   DataDecoded,
   FractalModuleData,
   FractalModuleType,
+  DecodedTransaction,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -192,16 +193,18 @@ export const parseDecodedData = (
     | SafeMultisigTransactionWithTransfersResponse
     | SafeMultisigTransactionResponse,
   isMultiSigTransaction: boolean
-) => {
+): DecodedTransaction[] => {
   const eventTransactionMap = new Map<number, any>();
   const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;
   if (dataDecoded && isMultiSigTransaction) {
-    const decodedTransaction = {
+    const decodedTransaction: DecodedTransaction = {
       target: multiSigTransaction.to,
       value: multiSigTransaction.value,
       function: dataDecoded.method,
       parameterTypes: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
-      parameterValues: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.value) : [],
+      parameterValues: dataDecoded.parameters
+        ? dataDecoded.parameters.map(p => p.value.toString())
+        : [],
     };
     eventTransactionMap.set(eventTransactionMap.size, {
       ...decodedTransaction,
