@@ -19,7 +19,6 @@ import {
   FractalProposalState,
 } from '../../types';
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
-import { getTimeStamp } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
 
 type FreezeGuardData = {
@@ -316,11 +315,9 @@ export const useSafeTransactions = () => {
       if (guardContracts.freezeGuardContract) {
         const blockNumber = await provider.getBlockNumber();
         freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
-        const timeLockPeriodBlock = await freezeGuard.timelockPeriod();
-        const texecutionPeriodBlock = await freezeGuard.executionPeriod();
         freezeGuardData = {
-          guardTimelockPeriod: BigNumber.from(await getTimeStamp(timeLockPeriodBlock, provider)),
-          guardExecutionPeriod: BigNumber.from(await getTimeStamp(texecutionPeriodBlock, provider)),
+          guardTimelockPeriod: BigNumber.from(await freezeGuard.timelockPeriod()),
+          guardExecutionPeriod: BigNumber.from(await freezeGuard.executionPeriod()),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
