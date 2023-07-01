@@ -38,11 +38,11 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
     let timeout = 0;
     const now = new Date();
     if (proposal.state === FractalProposalState.ACTIVE) {
-      timeout = proposal.deadline * 1000 - now.getTime();
+      timeout = proposal.deadlineMs - now.getTime();
     } else if (proposal.state === FractalProposalState.TIMELOCKED) {
       const timeLockNumber = timeLockPeriod?.value?.toNumber();
       timeout =
-        new Date((proposal.deadline + Number(timeLockNumber)) * 1000).getTime() - now.getTime();
+        new Date(proposal.deadlineMs + Number(timeLockNumber) * 1000).getTime() - now.getTime();
     }
 
     // Prevent setting too large timer
@@ -62,7 +62,7 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
   }, [
     proposal.state,
     proposal.proposalId,
-    proposal.deadline,
+    proposal.deadlineMs,
     updateProposalState,
   ]);
 
