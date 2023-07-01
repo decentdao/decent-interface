@@ -89,7 +89,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
     // then converts it to seconds, all on a 1 second interval
     const startCountdown = (initialTimeMs: number) => {
       countdownInterval = setInterval(() => {
-        setSecondsLeft((initialTimeMs - Date.now()) / 1000);
+        setSecondsLeft(Math.floor((initialTimeMs - Date.now()) / 1000));
       }, 1000);
     };
 
