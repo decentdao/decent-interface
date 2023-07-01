@@ -20,6 +20,7 @@ import {
 } from '../../types';
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
   guardTimelockPeriod: BigNumber;
@@ -31,6 +32,7 @@ export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfg();
   const provider = useProvider();
   const { guardContracts } = useFractal();
+  const decode = useSafeDecoder();
 
   const getState = useCallback(
     async (
@@ -194,7 +196,7 @@ export const useSafeTransactions = () => {
       }
 
       const activities = await Promise.all(
-        transactions.results.map((transaction, _, transactionArr) => {
+        transactions.results.map(async (transaction, _, transactionArr) => {
           const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
           const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
@@ -280,7 +282,13 @@ export const useSafeTransactions = () => {
                     isMultiSigTransaction || isModuleTransaction
                   ),
                 }
-              : undefined;
+              : {
+                  decodedTransactions: await decode(
+                    multiSigTransaction.value,
+                    multiSigTransaction.to,
+                    multiSigTransaction.data
+                  ),
+                };
 
           const targets = metaData
             ? [...metaData.decodedTransactions.map(tx => tx.target)]
@@ -325,7 +333,14 @@ export const useSafeTransactions = () => {
       const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
-    [nativeTokenSymbol, provider, guardContracts, getTransferTotal, getState]
+    [
+      guardContracts.freezeGuardContract,
+      getState,
+      getTransferTotal,
+      decode,
+      nativeTokenSymbol,
+      provider,
+    ]
   );
   return { parseTransactions };
 };

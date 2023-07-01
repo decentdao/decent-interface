@@ -104,12 +104,12 @@ export function useLazyDAOName() {
       // check if ens name resolves
       const ensName = await provider.lookupAddress(_address).catch(() => null);
       if (ensName) {
-        setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 60);
+        setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 5);
         return ensName;
       }
 
       if (_registryName) {
-        setValue(CacheKeys.DAO_NAME_PREFIX + _address, _registryName, 60);
+        setValue(CacheKeys.DAO_NAME_PREFIX + _address, _registryName, 5);
         return _registryName;
       }
 
