@@ -14,6 +14,7 @@ import {
   AzoriusProposal,
   FreezeGuardType,
 } from '../../../types';
+import { getAverageBlockTime } from '../../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../../utils/guard';
 
 export function useProposalCountdown(proposal: FractalProposal) {
@@ -105,7 +106,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
       const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
 
       const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
-      const votingDeadlineMs = (proposal as AzoriusProposal).deadlineMs; // TODO this can be undefined here right?
+      const votingDeadlineMs = (proposal as AzoriusProposal).deadlineMs;
+      const averageBlockTime = await getAverageBlockTime(provider);
 
       // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
       if (proposal.state === FractalProposalState.ACTIVE && votingDeadlineMs) {
@@ -122,18 +124,19 @@ export function useProposalCountdown(proposal: FractalProposal) {
         const safeGuard = freezeGuard as MultisigFreezeGuard;
         const timelockedTimestamp =
           (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;
-        const guardTimeLockPeriod = (await safeGuard.timelockPeriod()) * 1000;
+        const guardTimeLockPeriod = (await safeGuard.timelockPeriod()) * averageBlockTime * 1000;
         startCountdown(timelockedTimestamp + guardTimeLockPeriod);
-        // If the proposal is executing start the countdown (for safe multisig proposals with guards)
+        // If the proposal is executable start the countdown (for safe multisig proposals with guards)
       } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {
         let guardTimelockPeriod: number = 0;
         if (isSafeGuard) {
-          // @todo ~ test this timer.
           const safeGuard = freezeGuard as MultisigFreezeGuard;
           const timelockedTimestamp =
             (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;
-          const safeGuardTimelockPeriod = Number(await safeGuard.timelockPeriod()) * 1000;
-          const guardExecutionPeriod = Number(await safeGuard.executionPeriod()) * 1000;
+          const safeGuardTimelockPeriod =
+            Number(await safeGuard.timelockPeriod()) * averageBlockTime * 1000;
+          const guardExecutionPeriod =
+            Number(await safeGuard.executionPeriod()) * averageBlockTime * 1000;
           guardTimelockPeriod =
             timelockedTimestamp + safeGuardTimelockPeriod + guardExecutionPeriod;
 
