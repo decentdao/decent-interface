@@ -53,7 +53,7 @@ export function DelegateModal({ close }: { close: Function }) {
     }
     delegateVote({
       delegatee: validAddress,
-      votingTokenContract: lockReleaseContract?.asSigner,
+      votingTokenContract: lockReleaseContract.asSigner,
       successCallback: () => {
         close();
       },
