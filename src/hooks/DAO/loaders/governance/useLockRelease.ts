@@ -7,6 +7,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { DecentGovernanceAction } from '../../../../providers/App/governance/action';
 
 /**
+ * @link https://github.com/decent-dao/dcnt/blob/master/contracts/LockRelease.sol
  * This hook is specifically for the LockRelease.sol contract used for the DCNT token.
  */
 export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
