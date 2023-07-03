@@ -24,9 +24,9 @@ const useCastVote = ({
       // TODO ERC721 voting will need to be included here
       const azoriusGovernance = governance as AzoriusGovernance;
       const decentGovernance = governance as DecentGovernance;
-      const lockedReleaseBalance = decentGovernance?.lockedVotesToken?.balance?.gt(0);
-      const votesTokenBalance = azoriusGovernance?.votesToken?.balance?.gt(0);
-      return votesTokenBalance || lockedReleaseBalance;
+      const hasLockedTokenBalance = decentGovernance?.lockedVotesToken?.balance?.gt(0);
+      const hasVotesTokenBalance = azoriusGovernance?.votesToken?.balance?.gt(0);
+      return hasVotesTokenBalance || hasLockedTokenBalance;
     }
     return false;
   }, [governance]);
