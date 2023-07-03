@@ -25,23 +25,21 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       return;
     }
     const tokenAddress = tokenContract.asSigner.address;
-    try {
-      const [tokenName, tokenSymbol, tokenDecimals, totalSupply] = await Promise.all([
-        tokenContract.asSigner.name(),
-        tokenContract.asSigner.symbol(),
-        tokenContract.asSigner.decimals(),
-        tokenContract.asSigner.totalSupply(),
-      ]);
-      const tokenData = {
-        name: tokenName,
-        symbol: tokenSymbol,
-        decimals: tokenDecimals,
-        address: tokenAddress,
-        totalSupply,
-      };
-      isTokenLoaded.current = true;
-      action.dispatch({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
-    } catch (e) {}
+    const [tokenName, tokenSymbol, tokenDecimals, totalSupply] = await Promise.all([
+      tokenContract.asSigner.name(),
+      tokenContract.asSigner.symbol(),
+      tokenContract.asSigner.decimals(),
+      tokenContract.asSigner.totalSupply(),
+    ]);
+    const tokenData = {
+      name: tokenName,
+      symbol: tokenSymbol,
+      decimals: tokenDecimals,
+      address: tokenAddress,
+      totalSupply,
+    };
+    isTokenLoaded.current = true;
+    action.dispatch({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
   }, [tokenContract, action]);
 
   const loadUnderlyingERC20Token = useCallback(async () => {
