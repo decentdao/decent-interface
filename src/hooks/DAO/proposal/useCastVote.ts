@@ -2,9 +2,9 @@ import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../../types';
+import { AzoriusGovernance, DecentGovernance, GovernanceModuleType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
-// @todo add lockrelease delegation
+
 const useCastVote = ({
   proposalId,
   setPending,
@@ -23,7 +23,8 @@ const useCastVote = ({
     if (governance.type === GovernanceModuleType.AZORIUS) {
       // TODO ERC721 voting will need to be included here
       const azoriusGovernance = governance as AzoriusGovernance;
-      const lockedReleaseBalance = azoriusGovernance?.lockedVotesToken?.balance?.gt(0);
+      const decentGovernance = governance as DecentGovernance;
+      const lockedReleaseBalance = decentGovernance?.lockedVotesToken?.balance?.gt(0);
       const votesTokenBalance = azoriusGovernance?.votesToken?.balance?.gt(0);
       return votesTokenBalance || lockedReleaseBalance;
     }

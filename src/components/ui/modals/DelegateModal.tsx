@@ -9,7 +9,7 @@ import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance } from '../../../types';
+import { DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { couldBeENS } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
@@ -25,7 +25,7 @@ export function DelegateModal({ close }: { close: Function }) {
   } = useFractal();
 
   const { data: signer } = useSigner();
-  const azoriusGovernance = governance as AzoriusGovernance;
+  const azoriusGovernance = governance as DecentGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken.delegatee);
   const lockedDelegateeDisplayName = useDisplayName(azoriusGovernance?.lockedVotesToken?.delegatee);
   const { delegateVote, contractCallPending } = useDelegateVote();

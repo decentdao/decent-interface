@@ -296,10 +296,13 @@ export interface FractalTreasury {
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
 }
-export type FractalGovernance = AzoriusGovernance | SafeMultisigGovernance;
+export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;
 export interface AzoriusGovernance extends Governance {
   votesStrategy: VotesStrategyAzorius;
   votesToken: VotesTokenData;
+}
+
+export interface DecentGovernance extends AzoriusGovernance {
   lockedVotesToken?: VotesTokenData;
 }
 export interface SafeMultisigGovernance extends Governance {}

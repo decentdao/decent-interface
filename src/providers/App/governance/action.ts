@@ -25,15 +25,17 @@ export enum FractalGovernanceAction {
   UPDATE_TIMELOCK_PERIOD = 'UPDATE_TIMELOCK_PERIOD',
   SET_TOKEN_DATA = 'SET_TOKEN_DATA',
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
-  SET_LOCKED_TOKEN_ACCOUNT_DATA = 'SET_LOCKED_TOKEN_ACCOUNT_DATA',
   SET_CLAIMING_CONTRACT = 'SET_CLAIMING_CONTRACT',
   RESET_TOKEN_ACCOUNT_DATA = 'RESET_TOKEN_ACCOUNT_DATA',
-  RESET_LOCKED_TOKEN_ACCOUNT_DATA = 'RESET_LOCKED_TOKEN_ACCOUNT_DATA',
   SET_UNDERLYING_TOKEN_DATA = 'SET_UNDERLYING_TOKEN_DATA',
 }
 
+export enum DecentGovernanceAction {
+  RESET_LOCKED_TOKEN_ACCOUNT_DATA = 'RESET_LOCKED_TOKEN_ACCOUNT_DATA',
+  SET_LOCKED_TOKEN_ACCOUNT_DATA = 'SET_LOCKED_TOKEN_ACCOUNT_DATA',
+}
+
 export type FractalGovernanceActions =
-  | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotesStrategy }
   | {
       type: FractalGovernanceAction.SET_PROPOSALS;
       payload: { type: GovernanceModuleType; proposals: FractalProposal[] };
@@ -43,8 +45,12 @@ export type FractalGovernanceActions =
       payload: FractalProposal[];
     }
   | { type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES; payload: ProposalTemplate[] }
-  // @todo update with proposal type
   | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
+  | {
+      type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
+      payload: { state: FractalProposalState; proposalId: string };
+    }
+  | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotesStrategy }
   | {
       type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE;
       payload: {
@@ -54,11 +60,6 @@ export type FractalGovernanceActions =
         weight: BigNumber;
         votesSummary: ProposalVotesSummary;
       };
-    }
-  // @todo update with proposal state
-  | {
-      type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
-      payload: { state: FractalProposalState; proposalId: string };
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;
@@ -84,14 +85,17 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
       payload: VotesData;
     }
-  | {
-      type: FractalGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA;
-      payload: VotesData;
-    }
   | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: ERC20Claim }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
     }
+  | DecentGovernanceActions;
+
+export type DecentGovernanceActions =
   | {
-      type: FractalGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA;
+      type: DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA;
+      payload: VotesData;
+    }
+  | {
+      type: DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA;
     };

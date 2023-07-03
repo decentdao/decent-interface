@@ -4,7 +4,7 @@ import { useProvider } from 'wagmi';
 import { LockRelease } from '../../../../assets/typechain-types/dcnt';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { DecentGovernanceAction } from '../../../../providers/App/governance/action';
 
 /**
  * This hook is specifically for the LockRelease.sol contract used for the DCNT token.
@@ -26,7 +26,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
 
   const loadLockedVotesToken = useCallback(async () => {
     if (!lockReleaseContract || !account) {
-      action.dispatch({ type: FractalGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA });
+      action.dispatch({ type: DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA });
       return;
     }
     const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
@@ -51,7 +51,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
       isDelegatesSet: delegateChangeEvents.length > 0,
     };
     action.dispatch({
-      type: FractalGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA,
+      type: DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA,
       payload: tokenAccountData,
     });
   }, [lockReleaseContract, action, account]);

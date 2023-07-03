@@ -1,6 +1,14 @@
 import { FractalGovernance, AzoriusProposal, VOTE_CHOICES, SnapshotProposal } from '../../../types';
-import { AzoriusGovernance, GovernanceModuleType } from './../../../types/fractal';
-import { FractalGovernanceAction, FractalGovernanceActions } from './action';
+import {
+  AzoriusGovernance,
+  DecentGovernance,
+  GovernanceModuleType,
+} from './../../../types/fractal';
+import {
+  DecentGovernanceAction,
+  FractalGovernanceAction,
+  FractalGovernanceActions,
+} from './action';
 
 export const initialGovernanceState: FractalGovernance = {
   proposals: null,
@@ -102,10 +110,6 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
-    case FractalGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA: {
-      const { lockedVotesToken } = state as AzoriusGovernance;
-      return { ...state, lockedVotesToken: { ...(lockedVotesToken || {}), ...action.payload } };
-    }
     case FractalGovernanceAction.SET_CLAIMING_CONTRACT: {
       return { ...state, tokenClaimContract: action.payload };
     }
@@ -113,7 +117,12 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
     }
-    case FractalGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA: {
+    // Decent Governance only
+    case DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA: {
+      const { lockedVotesToken } = state as DecentGovernance;
+      return { ...state, lockedVotesToken: { ...(lockedVotesToken || {}), ...action.payload } };
+    }
+    case DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA: {
       return { ...state, lockedVotesToken: undefined };
     }
     default:

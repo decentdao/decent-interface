@@ -1,6 +1,12 @@
 import { BigNumber, utils } from 'ethers';
 import { useCallback } from 'react';
-import { Fractal, AzoriusGovernance, GovernanceModuleType, ReadOnlyState } from '../../types';
+import {
+  Fractal,
+  AzoriusGovernance,
+  GovernanceModuleType,
+  ReadOnlyState,
+  DecentGovernance,
+} from '../../types';
 
 /**
  * Sets "read only" values which are passed on to the FractalProvider.
@@ -15,7 +21,7 @@ export const useReadOnlyValues = () => {
     const isSigner = _account && node.safe?.owners.includes(_account);
     const tokenWeight =
       (governance as AzoriusGovernance).votesToken?.votingWeight || BigNumber.from(0);
-    const lockedTokenWeight = (governance as AzoriusGovernance).lockedVotesToken?.votingWeight;
+    const lockedTokenWeight = (governance as DecentGovernance).lockedVotesToken?.votingWeight;
 
     const votingWeight = () => {
       switch (governance.type) {
