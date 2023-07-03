@@ -79,7 +79,7 @@ export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
             {daysLeft > 0 && `${zeroPad(daysLeft)}:`}
             {hoursLeft > 0 && `${zeroPad(hoursLeft)}:`}
             {minutesLeft > 0 && `${zeroPad(minutesLeft)}:`}
-            {secondsLeft! >= 0 && `${zeroPad(secondsLeft!)}`}
+            {secondsLeft! >= 0 && `${zeroPad(secondsLeft! % 60)}`}
           </Text>
         </Flex>
       </Flex>
