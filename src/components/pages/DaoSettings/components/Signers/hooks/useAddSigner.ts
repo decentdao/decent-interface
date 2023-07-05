@@ -55,7 +55,6 @@ const useAddSigner = () => {
         pendingToastMessage: t('addSignerPendingToastMessage'),
         successToastMessage: t('addSignerSuccessToastMessage'),
         failedToastMessage: t('addSignerFailureToastMessage'),
-        safeAddress: daoAddress!,
       });
     },
     [gnosisSafeSingletonContract.asSigner.interface, submitProposal, t, loadDAOProposals]
