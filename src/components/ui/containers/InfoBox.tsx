@@ -5,7 +5,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 export function InfoBox({
   minWidth = '100%',
-  minHeight = '10.5rem',
+  minHeight = '10.6rem',
   children,
   to,
   ...rest

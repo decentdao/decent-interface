@@ -63,19 +63,7 @@ export const getEstimatedNumberOfBlocks = async (
   timeInMinutes: BigNumber,
   provider: Providers
 ): Promise<BigNumber> => {
-  if (!provider || !timeInMinutes) {
-    return BigNumber.from(0);
-  }
-
-  try {
-    const timeInSecondsNumber = timeInMinutes.toNumber() * 60;
-    const averageBlockTime = await getAverageBlockTime(provider);
-
-    const blocksToWait = Math.ceil(timeInSecondsNumber / averageBlockTime);
-    return BigNumber.from(blocksToWait);
-  } catch (error) {
-    // @todo maybe shouldn't return 0 here for error handling
-    logError(error);
-    return BigNumber.from(0);
-  }
+  const seconds = timeInMinutes.toNumber() * 60;
+  const averageBlockTime = await getAverageBlockTime(provider);
+  return BigNumber.from(Math.ceil(seconds / averageBlockTime));
 };
