@@ -26,6 +26,7 @@
     "from": "From",
     "execute": "Execute",
     "timelock": "Timelock",
+    "execution": "Execution",
     "move": "Move",
     "minutes": "Min",
     "quorum": "Quorum",

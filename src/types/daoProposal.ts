@@ -33,7 +33,8 @@ export interface AzoriusProposal extends GovernanceActivity {
   govTokenAddress: string | null;
   votesSummary: ProposalVotesSummary;
   votes: ProposalVote[];
-  deadline: number;
+  /** The deadline timestamp for the proposal, in milliseconds. */
+  deadlineMs: number;
   startBlock: BigNumber;
 }
 

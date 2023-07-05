@@ -15,7 +15,7 @@ import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votesSummary, deadline, proposer, transactionHash },
+  proposal: { startBlock, votesSummary, deadlineMs, proposer, transactionHash },
 }: {
   proposal: AzoriusProposal;
 }) {
@@ -61,7 +61,7 @@ export default function ProposalSummary({
         />
         <InfoRow
           property={t('proposalSummaryEndDate')}
-          value={format(deadline * 1000, DEFAULT_DATE_TIME_FORMAT)}
+          value={format(deadlineMs, DEFAULT_DATE_TIME_FORMAT)}
         />
         <Flex
           marginTop={4}
