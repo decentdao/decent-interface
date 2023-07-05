@@ -8,12 +8,12 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { CreateProposalMetadata } from '../../../../types';
+import { CreateProposalMetadata, MetaTransaction } from '../../../../types';
 
 import { AzoriusProposal, ProposalMetaData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
 import { useAsyncRetry } from '../../../utils/useAsyncRetry';
-import { useDecodeTransaction } from '../../../utils/useDecodeTransaction';
+import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 export const useAzoriusProposals = () => {
   const {
@@ -25,7 +25,18 @@ export const useAzoriusProposals = () => {
   const {
     network: { chainId },
   } = provider;
-  const decodeTransactions = useDecodeTransaction();
+  const decode = useSafeDecoder();
+  const decodeTransactions = useCallback(
+    async (transactions: MetaTransaction[]) => {
+      const decodedTransactions = await Promise.all(
+        transactions.map(async tx => {
+          return decode(tx.value.toString(), tx.to, tx.data);
+        })
+      );
+      return decodedTransactions.flat();
+    },
+    [decode]
+  );
 
   const loadAzoriusProposals = useCallback(async (): Promise<AzoriusProposal[]> => {
     if (!azoriusContract || !ozLinearVotingContract) {
@@ -43,11 +54,7 @@ export const useAzoriusProposals = () => {
         let metaData;
         if (args.metadata) {
           const metaDataEvent: CreateProposalMetadata = JSON.parse(args.metadata);
-          const decodedTransactions = await decodeTransactions(
-            strategyContract.address,
-            args.proposalId.toString(),
-            args.transactions
-          );
+          const decodedTransactions = await decodeTransactions(args.transactions);
           metaData = {
             title: metaDataEvent.title,
             description: metaDataEvent.description,
@@ -86,11 +93,7 @@ export const useAzoriusProposals = () => {
           description: metaDataEvent.description,
           documentationUrl: metaDataEvent.documentationUrl,
           transactions: transactions,
-          decodedTransactions: await decodeTransactions(
-            strategyAddress,
-            proposalId.toString(),
-            transactions
-          ),
+          decodedTransactions: await decodeTransactions(transactions),
         };
       }
       const strategyContract = getEventRPC<LinearERC20Voting>(

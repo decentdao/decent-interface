@@ -245,7 +245,7 @@ https://app.staging.fractalframework.xyz/daos/{address}
 - [ ] Proposals card displays Pending / Passed counts
 
 ## Manage Signers (Multisig)
-https://app.staging.fractalframework.xyz/daos/{address}/manage-signers
+https://app.staging.fractalframework.xyz/daos/{address}/settings
 
 - [ ] List of current signers appears
 - [ ] DAO Details displays correct signers required

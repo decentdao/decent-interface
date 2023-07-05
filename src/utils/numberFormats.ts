@@ -48,7 +48,8 @@ export const formatCoin = (
   rawBalance: BigNumber | string,
   truncate: boolean,
   decimals?: number,
-  symbol?: string
+  symbol?: string,
+  showSymbol: boolean = true
 ): string => {
   const amount = formatCoinUnits(rawBalance, decimals, symbol);
 
@@ -56,9 +57,13 @@ export const formatCoin = (
     maximumFractionDigits: !truncate ? 18 : amount > 1 ? 2 : 8,
   });
 
-  return symbol
-    ? coinFormatter.format(amount) + ' ' + symbol
-    : coinFormatter.format(amount) + ' ETH';
+  if (showSymbol) {
+    return symbol
+      ? coinFormatter.format(amount) + ' ' + symbol
+      : coinFormatter.format(amount) + ' ETH';
+  }
+
+  return coinFormatter.format(amount);
 };
 
 export const formatCoinFromAsset = (asset: SafeBalanceUsdResponse, truncate: boolean): string => {

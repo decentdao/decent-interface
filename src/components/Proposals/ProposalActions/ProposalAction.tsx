@@ -13,7 +13,7 @@ import {
   SnapshotProposal,
 } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
-import ProposalTime from '../../ui/proposal/ProposalTime';
+import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 import { Execute } from './Execute';
 import CastVote from './Vote';
 
@@ -142,7 +142,7 @@ export function ProposalAction({
               ns: proposal.state === FractalProposalState.ACTIVE ? 'common' : 'proposal',
             })}
           </Text>
-          <ProposalTime proposal={proposal} />
+          <ProposalCountdown proposal={proposal} />
         </Flex>
         <ProposalActions
           proposal={proposal}

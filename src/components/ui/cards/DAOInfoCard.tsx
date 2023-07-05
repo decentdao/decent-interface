@@ -66,7 +66,7 @@ export function DAOInfoCard({
     >
       <Flex
         flexDirection="column"
-        gap="0.5rem"
+        gap="0.4rem"
       >
         <HStack>
           <Link

@@ -19,12 +19,13 @@ import {
   FractalProposalState,
 } from '../../types';
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
-import { getTimeStamp } from '../../utils/contract';
+import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
-  guardTimelockPeriod: BigNumber;
-  guardExecutionPeriod: BigNumber;
+  guardTimelockPeriodMs: BigNumber;
+  guardExecutionPeriodMs: BigNumber;
   lastBlock: ethers.providers.Block;
 };
 
@@ -32,6 +33,7 @@ export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfg();
   const provider = useProvider();
   const { guardContracts } = useFractal();
+  const decode = useSafeDecoder();
 
   const getState = useCallback(
     async (
@@ -66,12 +68,9 @@ export const useSafeTransactions = () => {
               state = FractalProposalState.REJECTED;
             } else {
               // it's not executed or rejected, so we need to check the timelock status
-              const timelockedTimestamp = await getTxTimelockedTimestamp(
-                activity,
-                freezeGuard,
-                provider
-              );
-              if (timelockedTimestamp === 0) {
+              const timelockedTimestampMs =
+                (await getTxTimelockedTimestamp(activity, freezeGuard, provider)) * 1000;
+              if (timelockedTimestampMs === 0) {
                 // not yet timelocked
                 if (isApproved(multiSigTransaction)) {
                   // the proposal has enough signatures, so it can now be timelocked
@@ -84,12 +83,12 @@ export const useSafeTransactions = () => {
                 // the proposal has been timelocked
 
                 const timeLockPeriodEnd =
-                  timelockedTimestamp + Number(freezeGuardData.guardTimelockPeriod); // end stamp of *timelock* period
+                  timelockedTimestampMs + Number(freezeGuardData.guardTimelockPeriodMs); // end stamp of *timelock* period
                 if (freezeGuardData.lastBlock.timestamp > timeLockPeriodEnd) {
                   // Timelock has ended, check execution period
                   if (
                     freezeGuardData.lastBlock.timestamp <
-                    timeLockPeriodEnd + Number(freezeGuardData.guardExecutionPeriod) // end stamp of *execution* period
+                    timeLockPeriodEnd + Number(freezeGuardData.guardExecutionPeriodMs) // end stamp of *execution* period
                   ) {
                     // Within execution period
                     state = FractalProposalState.EXECUTABLE;
@@ -195,7 +194,7 @@ export const useSafeTransactions = () => {
       }
 
       const activities = await Promise.all(
-        transactions.results.map((transaction, _, transactionArr) => {
+        transactions.results.map(async (transaction, _, transactionArr) => {
           const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
           const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
@@ -281,7 +280,13 @@ export const useSafeTransactions = () => {
                     isMultiSigTransaction || isModuleTransaction
                   ),
                 }
-              : undefined;
+              : {
+                  decodedTransactions: await decode(
+                    multiSigTransaction.value,
+                    multiSigTransaction.to,
+                    multiSigTransaction.data
+                  ),
+                };
 
           const targets = metaData
             ? [...metaData.decodedTransactions.map(tx => tx.target)]
@@ -315,12 +320,15 @@ export const useSafeTransactions = () => {
 
       if (guardContracts.freezeGuardContract) {
         const blockNumber = await provider.getBlockNumber();
+        const averageBlockTime = await getAverageBlockTime(provider);
         freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
-        const timeLockPeriodBlock = await freezeGuard.timelockPeriod();
-        const texecutionPeriodBlock = await freezeGuard.executionPeriod();
         freezeGuardData = {
-          guardTimelockPeriod: BigNumber.from(await getTimeStamp(timeLockPeriodBlock, provider)),
-          guardExecutionPeriod: BigNumber.from(await getTimeStamp(texecutionPeriodBlock, provider)),
+          guardTimelockPeriodMs: BigNumber.from(
+            (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000
+          ),
+          guardExecutionPeriodMs: BigNumber.from(
+            (await freezeGuard.executionPeriod()) * averageBlockTime * 1000
+          ),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
@@ -328,7 +336,14 @@ export const useSafeTransactions = () => {
       const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
-    [nativeTokenSymbol, provider, guardContracts, getTransferTotal, getState]
+    [
+      guardContracts.freezeGuardContract,
+      getState,
+      getTransferTotal,
+      decode,
+      nativeTokenSymbol,
+      provider,
+    ]
   );
   return { parseTransactions };
 };
