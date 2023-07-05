@@ -55,7 +55,6 @@ const useRemoveSigner = ({
       pendingToastMessage: t('removeSignerPendingToastMessage'),
       successToastMessage: t('removeSignerSuccessToastMessage'),
       failedToastMessage: t('removeSignerFailureToastMessage'),
-      safeAddress: daoAddress!,
     });
   }, [
     gnosisSafeSingletonContract.asSigner.interface,
