@@ -26,7 +26,7 @@ export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
   const showCountdown = useMemo(
     () =>
       !!secondsLeft &&
-      secondsLeft > 0 && // TODO do we need this check
+      secondsLeft > 0 &&
       (state === FractalProposalState.ACTIVE ||
         state === FractalProposalState.TIMELOCKED ||
         state === FractalProposalState.EXECUTABLE),
