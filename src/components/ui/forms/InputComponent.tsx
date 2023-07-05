@@ -25,6 +25,7 @@ interface BaseProps {
   gridContainerProps?: GridProps;
   inputContainerProps?: GridItemProps;
   maxLength?: number;
+  helperSlot?: 'start' | 'end';
 }
 
 interface InputProps extends Omit<BaseProps, 'children'> {
@@ -58,6 +59,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
     gridContainerProps,
     inputContainerProps,
     disabled,
+    helperSlot = 'start',
   } = props;
   return (
     <Grid
@@ -76,12 +78,14 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
           <Text color={disabled ? 'grayscale.500' : 'grayscale.100'}>{label}</Text>
           {isRequired && <Text color="gold.500">*</Text>}
         </HStack>
-        <Text
-          color="grayscale.500"
-          mr={20}
-        >
-          {helper}
-        </Text>
+        {helperSlot === 'start' && (
+          <Text
+            color="grayscale.500"
+            mr={20}
+          >
+            {helper}
+          </Text>
+        )}
       </GridItem>
       <GridItem {...inputContainerProps}>
         <LabelWrapper
@@ -91,6 +95,16 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
           {children}
         </LabelWrapper>
       </GridItem>
+      {helperSlot === 'end' && (
+        <GridItem>
+          <Text
+            color="grayscale.500"
+            mr={20}
+          >
+            {helper}
+          </Text>
+        </GridItem>
+      )}
     </Grid>
   );
 }

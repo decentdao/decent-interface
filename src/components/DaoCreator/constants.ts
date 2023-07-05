@@ -35,7 +35,14 @@ export const initialState: CreatorFormState = {
     },
   },
   erc721Token: {
-    nfts: [],
+    nfts: [
+      {
+        tokenAddress: '',
+        tokenWeight: {
+          value: '',
+        },
+      },
+    ],
   },
   /**
    * Time periods in CreatorState are denoted in MINUTES in the UI,
