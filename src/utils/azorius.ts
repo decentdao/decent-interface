@@ -104,7 +104,7 @@ export const mapProposalCreatedEventToProposal = async (
     logError('Error while getting strategy quorum');
     quorum = BigNumber.from(0);
   }
-  const deadline = await getTimeStamp(endBlock, provider);
+  const deadlineSeconds = await getTimeStamp(endBlock, provider);
   const state = await getAzoriusProposalState(
     strategyContract,
     azoriusContract.asSigner,
@@ -142,7 +142,7 @@ export const mapProposalCreatedEventToProposal = async (
     proposer,
     startBlock: BigNumber.from(startBlock),
     transactionHash,
-    deadline: deadline,
+    deadlineMs: deadlineSeconds * 1000,
     state,
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
