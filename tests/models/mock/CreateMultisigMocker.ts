@@ -1,4 +1,4 @@
-import { Endpoint, GnosisMocker } from './GnosisMocker';
+import { Endpoint, SafeMocker } from './SafeMocker';
 import {
   createSafeInfo,
   EMPTY_TRANSACTIONS,
@@ -6,7 +6,7 @@ import {
 } from './data/creation';
 import { accounts } from './data/testSigners';
 
-export class CreateMultisigMocker extends GnosisMocker {
+export class CreateMultisigMocker extends SafeMocker {
   setMocks() {
     this.mock(Endpoint.SAFES_CREATED_LIST, SINGLE_OWNER_MULTISIG_CREATION);
     this.mockWithHandler(Endpoint.SAFE_INFO, request => {

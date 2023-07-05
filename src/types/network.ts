@@ -18,11 +18,11 @@ export type NetworkConfig = {
   wagmiChain: Chain;
   subgraphChainName: string;
   contracts: {
-    gnosisSafe: string;
-    gnosisSafeFactory: string;
+    safe: string;
+    safeFactory: string;
     zodiacModuleProxyFactory: string;
     linearVotingMasterCopy: string;
-    gnosisMultisend: string;
+    multisend: string;
     fractalAzoriusMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalRegistry: string;

@@ -147,7 +147,7 @@ export enum FractalProposalState {
   CLOSED = 'stateClosed',
 }
 
-export interface IGnosisFreezeGuard {
+export interface IFreezeGuard {
   freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
   freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
   freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
@@ -296,29 +296,37 @@ export interface FractalTreasury {
 }
 export type FractalGovernance = AzoriusGovernance | SafeMultisigGovernance;
 export interface AzoriusGovernance extends Governance {
-  votesStrategy: VotesStrategyAzorius;
-  votesToken: VotesTokenData;
+  votingStrategy: VotingStrategyAzorius;
+  votesToken: VotesTokenData | undefined;
 }
 export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
-  type?: GovernanceModuleType;
+  type?: GovernanceSelectionType;
   proposals: FractalProposal[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContract?: ERC20Claim;
 }
 
-export interface VotesStrategyAzorius extends VotesStrategy {}
+export interface VotingStrategyAzorius extends VotingStrategy {
+  strategyType?: VotingStrategyType;
+}
 
-export interface VotesStrategy<Type = BNFormattedPair> {
+export interface VotingStrategy<Type = BNFormattedPair> {
   votingPeriod?: Type;
   quorumPercentage?: Type;
   timeLockPeriod?: Type;
 }
 
-export enum GovernanceModuleType {
+export enum GovernanceSelectionType {
   MULTISIG = 'labelMultisigGov',
-  AZORIUS = 'labelAzoriusGov',
+  AZORIUS_ERC20 = 'labelAzoriusErc20Gov',
+  AZORIUS_ERC721 = 'labelAzoriusErc721Gov',
+}
+
+export enum VotingStrategyType {
+  LINEAR_ERC20 = 'labelLinearERC20',
+  LINEAR_ERC721 = 'labelLinearERC721',
 }
 
 export interface NodeHierarchy {
@@ -328,10 +336,10 @@ export interface NodeHierarchy {
 
 export interface FractalContracts {
   multiSendContract: ContractConnection<MultiSend>;
-  gnosisSafeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
+  safeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
-  gnosisSafeSingletonContract: ContractConnection<GnosisSafe>;
+  safeSingletonContract: ContractConnection<GnosisSafe>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;

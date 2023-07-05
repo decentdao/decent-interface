@@ -27,10 +27,10 @@ export type ContractConnection<T> = {
 
 export interface DAOContracts {
   multiSendContract: ContractConnection<MultiSend>;
-  gnosisSafeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
+  safeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
-  gnosisSafeSingletonContract: ContractConnection<GnosisSafe>;
+  safeSingletonContract: ContractConnection<GnosisSafe>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
@@ -46,8 +46,8 @@ export interface DAOContracts {
 export interface BaseContracts {
   fractalModuleMasterCopyContract: FractalModule;
   fractalRegistryContract: FractalRegistry;
-  gnosisSafeFactoryContract: GnosisSafeProxyFactory;
-  gnosisSafeSingletonContract: GnosisSafe;
+  safeFactoryContract: GnosisSafeProxyFactory;
+  safeSingletonContract: GnosisSafe;
   multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;
   multiSendContract: MultiSend;
   freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;

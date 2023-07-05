@@ -10,13 +10,19 @@ import {
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { buildContractCall, getRandomBytes } from '../helpers';
-import { BaseContracts, SafeTransaction, AzoriusGovernanceDAO, AzoriusContracts } from '../types';
+import {
+  BaseContracts,
+  SafeTransaction,
+  AzoriusGovernanceDAO,
+  AzoriusERC20DAO,
+  AzoriusContracts,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
-export class AzoriusTxBuilder extends BaseTxBuilder {
+export class AzoriusERC20TxBuilder extends BaseTxBuilder {
   private readonly safeContract: GnosisSafe;
-  private readonly predictedGnosisSafeAddress: string;
+  private readonly predictedSafeAddress: string;
 
   private encodedSetupTokenData: string | undefined;
   private encodedSetupERC20WrapperData: string | undefined;
@@ -42,9 +48,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     signerOrProvider: any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts,
-    daoData: AzoriusGovernanceDAO,
+    daoData: AzoriusERC20DAO,
     safeContract: GnosisSafe,
-    predictedGnosisSafeAddress: string,
+    predictedSafeAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string
   ) {
@@ -58,7 +64,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     );
 
     this.safeContract = safeContract;
-    this.predictedGnosisSafeAddress = predictedGnosisSafeAddress;
+    this.predictedSafeAddress = predictedSafeAddress;
     this.tokenNonce = getRandomBytes();
     this.claimNonce = getRandomBytes();
     this.strategyNonce = getRandomBytes();
@@ -200,7 +206,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildApproveClaimAllocation() {
-    const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
+    const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     return buildContractCall(
       this.votesTokenContract!,
       'approve',
@@ -225,7 +231,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public setEncodedSetupERC20WrapperData() {
-    const { tokenImportAddress } = this.daoData as AzoriusGovernanceDAO;
+    const { tokenImportAddress } = this.daoData as AzoriusERC20DAO;
 
     const encodedInitTokenData = defaultAbiCoder.encode(['address'], [tokenImportAddress!]);
 
@@ -260,7 +266,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   };
 
   private calculateTokenAllocations(
-    azoriusGovernanceDaoData: AzoriusGovernanceDAO
+    azoriusGovernanceDaoData: AzoriusERC20DAO
   ): [string[], BigNumber[]] {
     const tokenAllocationsOwners = azoriusGovernanceDaoData.tokenAllocations.map(
       tokenAllocation => tokenAllocation.address
@@ -283,7 +289,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   private setEncodedSetupTokenData() {
-    const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
+    const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     const [tokenAllocationsOwners, tokenAllocationsValues] =
       this.calculateTokenAllocations(azoriusGovernanceDaoData);
 
@@ -318,7 +324,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   private setEncodedSetupTokenClaimData() {
-    const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
+    const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     const encodedInitTokenData = defaultAbiCoder.encode(
       ['address', 'address', 'address', 'uint256'],
       [

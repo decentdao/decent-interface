@@ -6,21 +6,22 @@ import {
   SafeMultisigDAO,
   SafeTransaction,
   SubDAO,
-  AzoriusGovernanceDAO,
+  AzoriusERC721DAO,
   AzoriusContracts,
+  AzoriusERC20DAO,
 } from '../types';
-import { AzoriusTxBuilder as AzoriusTxBuilder } from './AzoriusTxBuilder';
+import { AzoriusERC20TxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
 import { FreezeGuardTxBuilder } from './FreezeGuardTxBuilder';
 import { MultisigTxBuilder } from './MultisigTxBuilder';
-import { gnosisSafeData } from './helpers/gnosisSafeData';
+import { safeData } from './helpers/safeData';
 
 export class TxBuilderFactory extends BaseTxBuilder {
   private readonly saltNum: string;
 
-  // Gnosis Safe Data
-  public predictedGnosisSafeAddress: string | undefined;
+  // Safe Data
+  public predictedSafeAddress: string | undefined;
   public createSafeTx: SafeTransaction | undefined;
   private safeContract: GnosisSafe | undefined;
 
@@ -28,7 +29,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO,
+    daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     parentAddress?: string,
     parentTokenAddress?: string
   ) {
@@ -49,20 +50,20 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.safeContract = safeContract;
   }
 
-  public async setupGnosisSafeData(): Promise<void> {
-    const { predictedGnosisSafeAddress, createSafeTx } = await gnosisSafeData(
+  public async setupSafeData(): Promise<void> {
+    const { predictedSafeAddress, createSafeTx } = await safeData(
       this.baseContracts.multiSendContract,
-      this.baseContracts.gnosisSafeFactoryContract,
-      this.baseContracts.gnosisSafeSingletonContract,
+      this.baseContracts.safeFactoryContract,
+      this.baseContracts.safeSingletonContract,
       this.daoData as SafeMultisigDAO,
       this.saltNum,
       !!this.azoriusContracts
     );
 
-    this.predictedGnosisSafeAddress = predictedGnosisSafeAddress;
+    this.predictedSafeAddress = predictedSafeAddress;
     this.createSafeTx = createSafeTx;
 
-    this.setSafeContract(predictedGnosisSafeAddress);
+    this.setSafeContract(predictedSafeAddress);
   }
 
   public createDaoTxBuilder(): DaoTxBuilder {
@@ -72,7 +73,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.azoriusContracts,
       this.daoData,
       this.saltNum,
-      this.predictedGnosisSafeAddress!,
+      this.predictedSafeAddress!,
       this.createSafeTx!,
       this.safeContract!,
       this,
@@ -107,14 +108,14 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public createAzoriusTxBuilder(): AzoriusTxBuilder {
-    return new AzoriusTxBuilder(
+  public createAzoriusTxBuilder(): AzoriusERC20TxBuilder {
+    return new AzoriusERC20TxBuilder(
       this.signerOrProvider,
       this.baseContracts,
       this.azoriusContracts!,
-      this.daoData as AzoriusGovernanceDAO,
+      this.daoData as AzoriusERC20DAO,
       this.safeContract!,
-      this.predictedGnosisSafeAddress!,
+      this.predictedSafeAddress!,
       this.parentAddress,
       this.parentTokenAddress
     );

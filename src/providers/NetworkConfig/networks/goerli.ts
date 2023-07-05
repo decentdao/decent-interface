@@ -43,15 +43,15 @@ export const goerliConfig: NetworkConfig = {
     multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    gnosisSafe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
+    safe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
       ?.defaultAddress!,
-    gnosisSafeFactory: getProxyFactoryDeployment({
+    safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
     })?.defaultAddress!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
-    gnosisMultisend: getMultiSendCallOnlyDeployment({
+    multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
     })?.defaultAddress!,

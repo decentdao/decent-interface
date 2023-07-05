@@ -23,7 +23,7 @@ import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import {
   CreateProposalForm,
   CreateProposalState,
-  GovernanceModuleType,
+  GovernanceSelectionType,
 } from '../../../../../src/types';
 
 const templateAreaTwoCol = '"content details"';
@@ -46,7 +46,10 @@ export default function ProposalCreatePage() {
 
   useEffect(() => {
     if (!type) return;
-    if (type === GovernanceModuleType.AZORIUS) {
+    if (
+      type === GovernanceSelectionType.AZORIUS_ERC20 ||
+      type === GovernanceSelectionType.AZORIUS_ERC721
+    ) {
       setFormState(CreateProposalState.METADATA_FORM);
     } else {
       setFormState(CreateProposalState.TRANSACTIONS_FORM);
@@ -131,7 +134,10 @@ export default function ProposalCreatePage() {
                         bg={BACKGROUND_SEMI_TRANSPARENT}
                       >
                         <ProposalHeader
-                          isAzorius={type === GovernanceModuleType.AZORIUS}
+                          isAzorius={
+                            type === GovernanceSelectionType.AZORIUS_ERC20 ||
+                            type === GovernanceSelectionType.AZORIUS_ERC721
+                          }
                           metadataTitle={
                             formState === CreateProposalState.TRANSACTIONS_FORM &&
                             !!values.proposalMetadata.title
@@ -152,7 +158,10 @@ export default function ProposalCreatePage() {
                         <TransactionsForm
                           isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                           setFormState={setFormState}
-                          showBackButton={type === GovernanceModuleType.AZORIUS}
+                          showBackButton={
+                            type === GovernanceSelectionType.AZORIUS_ERC20 ||
+                            type === GovernanceSelectionType.AZORIUS_ERC721
+                          }
                           pendingTransaction={pendingCreateTx}
                           canUserCreateProposal={canUserCreateProposal}
                           {...formikProps}

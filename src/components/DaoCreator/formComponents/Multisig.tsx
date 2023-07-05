@@ -17,18 +17,18 @@ import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
 
-export function GnosisMultisig(props: ICreationStepProps) {
+export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { t } = useTranslation('daoCreate');
 
-  const truncateSignersList = (gnosisAddresses: string[], numOfSigners: number) => {
-    const difference = gnosisAddresses.length - numOfSigners;
-    return gnosisAddresses.slice(0, gnosisAddresses.length - difference);
+  const truncateSignersList = (safeAddresses: string[], numOfSigners: number) => {
+    const difference = safeAddresses.length - numOfSigners;
+    return safeAddresses.slice(0, safeAddresses.length - difference);
   };
 
-  const appendEmptySigners = (gnosisAddresses: string[], numOfSigners: number) => {
-    const difference = numOfSigners - gnosisAddresses.length;
-    return gnosisAddresses.concat(new Array(difference).fill(''));
+  const appendEmptySigners = (safeAddresses: string[], numOfSigners: number) => {
+    const difference = numOfSigners - safeAddresses.length;
+    return safeAddresses.concat(new Array(difference).fill(''));
   };
 
   // ensures no decimal places or numbers greater than 99
@@ -59,21 +59,21 @@ export function GnosisMultisig(props: ICreationStepProps) {
     if (validateNumber(numOfSigners, 'multisig.numOfSigners')) return;
 
     const num = Number(numOfSigners);
-    let gnosisAddresses = values.multisig.trustedAddresses;
+    let safeAddresses = values.multisig.trustedAddresses;
 
-    const trustedAddressLength = gnosisAddresses.length;
+    const trustedAddressLength = safeAddresses.length;
 
     if (trustedAddressLength !== num) {
-      gnosisAddresses =
+      safeAddresses =
         num > trustedAddressLength
-          ? appendEmptySigners(gnosisAddresses, num)
-          : truncateSignersList(gnosisAddresses, num);
+          ? appendEmptySigners(safeAddresses, num)
+          : truncateSignersList(safeAddresses, num);
     }
 
     setFieldValue('multisig', {
       ...values.multisig,
       numOfSigners: num,
-      trustedAddresses: gnosisAddresses,
+      trustedAddresses: safeAddresses,
     });
   };
 
@@ -97,7 +97,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
             value={values.multisig.numOfSigners}
             onChange={value => validateTotalSigners(value)}
           >
-            <NumberInputField data-testid="gnosisConfig-numberOfSignerInput" />
+            <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
           </NumberInput>
         </LabelComponent>
         <LabelComponent
@@ -112,7 +112,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
             value={values.multisig.signatureThreshold}
             onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
           >
-            <NumberInputField data-testid="gnosisConfig-thresholdInput" />
+            <NumberInputField data-testid="safeConfig-thresholdInput" />
           </NumberInput>
         </LabelComponent>
         <Box my={4}>
@@ -140,7 +140,7 @@ export function GnosisMultisig(props: ICreationStepProps) {
                       {({ field }: FieldAttributes<any>) => (
                         <AddressInput
                           {...field}
-                          data-testid={'gnosisConfig-signer-' + i}
+                          data-testid={'safeConfig-signer-' + i}
                         />
                       )}
                     </Field>

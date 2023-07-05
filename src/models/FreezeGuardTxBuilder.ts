@@ -22,7 +22,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   // Salt used to generate transactions
   private readonly saltNum;
 
-  // Gnosis Safe Data
+  // Safe Data
   private readonly safeContract: GnosisSafe;
 
   // Freeze Voting Data
@@ -104,7 +104,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
             subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
             subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
             subDaoData.freezePeriod, // FreezePeriod
-            this.parentTokenAddress ?? this.parentAddress, // ParentGnosisSafe or Votes Token
+            this.parentTokenAddress ?? this.parentAddress, // Parent Safe or Votes Token
           ]
         ),
       ],
@@ -188,7 +188,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
             subDaoData.executionPeriod, // Execution Period
             this.parentAddress, // Owner -- Parent DAO
             this.freezeVotingAddress, // Freeze Voting
-            this.safeContract.address, // Gnosis Safe
+            this.safeContract.address, // Safe
           ]
         ),
       ]

@@ -21,7 +21,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
         isRequired
         disabled={true}
       >
-        <Field name="token.tokenName">
+        <Field name="erc20Token.tokenName">
           {({ field }: FieldAttributes<any>) => (
             <Input
               {...field}
@@ -39,8 +39,8 @@ export function VotesTokenImport(props: ICreationStepProps) {
         disabled={true}
       >
         <Input
-          name="token.tokenSymbol"
-          value={values.token.tokenSymbol}
+          name="erc20Token.tokenSymbol"
+          value={values.erc20Token.tokenSymbol}
           onChange={handleChange}
           maxLength={6}
           data-testid="tokenVoting-tokenSymbolInput"

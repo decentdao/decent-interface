@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import {
   DAOEssentials,
-  GovernanceModuleType,
   BigNumberValuePair,
   TokenCreationType,
+  GovernanceSelectionType,
 } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 import { useDAOCreateTests } from './useDAOCreateTests';
@@ -42,7 +42,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           }),
         }),
         multisig: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.MULTISIG,
+          is: ({ governance }: DAOEssentials) => governance === GovernanceSelectionType.MULTISIG,
           then: _schema =>
             _schema.shape({
               trustedAddresses: Yup.array()
@@ -65,8 +65,9 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               customNonce: Yup.number(),
             }),
         }),
-        token: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
+        erc20Token: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) =>
+            governance === GovernanceSelectionType.AZORIUS_ERC20,
           then: _schema =>
             _schema.shape({
               tokenName: Yup.string().when('tokenCreationType', {
@@ -114,7 +115,9 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         azorius: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceModuleType.AZORIUS,
+          is: ({ governance }: DAOEssentials) =>
+            governance === GovernanceSelectionType.AZORIUS_ERC20 ||
+            governance === GovernanceSelectionType.AZORIUS_ERC721,
           then: _schema =>
             _schema.shape({
               quorumPercentage: Yup.object().shape({ value: Yup.string().required() }),

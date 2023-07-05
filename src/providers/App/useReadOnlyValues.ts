@@ -1,6 +1,6 @@
 import { BigNumber, utils } from 'ethers';
 import { useCallback } from 'react';
-import { Fractal, AzoriusGovernance, GovernanceModuleType, ReadOnlyState } from '../../types';
+import { Fractal, AzoriusGovernance, GovernanceSelectionType, ReadOnlyState } from '../../types';
 
 /**
  * Sets "read only" values which are passed on to the FractalProvider.
@@ -18,9 +18,9 @@ export const useReadOnlyValues = () => {
 
     const votingWeight = () => {
       switch (governance.type) {
-        case GovernanceModuleType.MULTISIG:
+        case GovernanceSelectionType.MULTISIG:
           return isSigner ? BigNumber.from(1) : BigNumber.from(0);
-        case GovernanceModuleType.AZORIUS:
+        case GovernanceSelectionType.AZORIUS_ERC20:
           return tokenWeight;
         default:
           return BigNumber.from(0);
@@ -35,7 +35,9 @@ export const useReadOnlyValues = () => {
       dao: !node.daoAddress
         ? null // if there is no DAO connected, we return null for this
         : {
-            isAzorius: governance.type === GovernanceModuleType.AZORIUS,
+            isAzorius:
+              governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
+              governance.type === GovernanceSelectionType.AZORIUS_ERC721,
           },
     } as ReadOnlyState;
   }, []);

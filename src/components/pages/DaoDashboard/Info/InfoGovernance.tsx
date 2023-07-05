@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../../../types';
+import { AzoriusGovernance, GovernanceSelectionType } from '../../../../types';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 export function InfoGovernance() {
@@ -26,7 +26,8 @@ export function InfoGovernance() {
   }
 
   const governanceAzorius =
-    governance.type === GovernanceModuleType.AZORIUS
+    governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
+    governance.type === GovernanceSelectionType.AZORIUS_ERC721
       ? (governance as AzoriusGovernance)
       : undefined;
 
@@ -68,7 +69,7 @@ export function InfoGovernance() {
         </Text>
       </Flex>
 
-      {governanceAzorius?.votesStrategy?.votingPeriod && (
+      {governanceAzorius?.votingStrategy?.votingPeriod && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -84,11 +85,11 @@ export function InfoGovernance() {
             textStyle="text-base-sans-regular"
             color="grayscale.100"
           >
-            {governanceAzorius.votesStrategy.votingPeriod.formatted}
+            {governanceAzorius.votingStrategy.votingPeriod.formatted}
           </Text>
         </Flex>
       )}
-      {governanceAzorius?.votesStrategy?.quorumPercentage && (
+      {governanceAzorius?.votingStrategy?.quorumPercentage && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -104,7 +105,7 @@ export function InfoGovernance() {
             textStyle="text-base-sans-regular"
             color="grayscale.100"
           >
-            {governanceAzorius.votesStrategy.quorumPercentage.formatted}
+            {governanceAzorius.votingStrategy.quorumPercentage.formatted}
           </Text>
         </Flex>
       )}

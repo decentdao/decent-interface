@@ -1,22 +1,22 @@
 /**
- * builds url for gnosis api requests
+ * builds url for safe api requests
  * @param chainId current chain id
- * @param pathname gnosis path name for request
+ * @param pathname safe path name for request
  * @param queryParams object for requests
- * @param version gnosis api version (default: v1)
+ * @param version safe api version (default: v1)
  * @url https://safe-transaction-[network].safe.global/
  * @returns
  */
-export const buildGnosisApiUrl = (
+export const buildSafeApiUrl = (
   baseUrl: string,
   pathname: string,
   queryParams: { [key: string]: string } = {},
   version: 'v1' | 'v2' = 'v1'
 ) => {
-  const GNOSIS_URL = `${baseUrl}/api/${version}`;
+  const SAFE_URL = `${baseUrl}/api/${version}`;
   if (!Object.keys(queryParams).length) {
-    return `${GNOSIS_URL}${pathname}`;
+    return `${SAFE_URL}${pathname}`;
   }
   const query = new URLSearchParams({ ...queryParams });
-  return `${GNOSIS_URL}${pathname}?${query}`;
+  return `${SAFE_URL}${pathname}?${query}`;
 };

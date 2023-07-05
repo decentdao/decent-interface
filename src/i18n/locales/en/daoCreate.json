@@ -56,8 +56,10 @@
     "helperTokenSupply": "Total available tokens",
     "labelMultisigGov": "Multisig",
     "descMultisigGov": "Multisignature DAO governance on a Safe{Wallet}",
-    "labelAzoriusGov": "Token Voting",
-    "descAzoriusGov": "ERC-20 token voting governance on a Safe{Wallet}",
+    "labelAzoriusErc20Gov": "Token Voting",
+    "descAzoriusErc20Gov": "ERC-20 token voting governance on a Safe{Wallet}",
+    "labelAzoriusErc721Gov": "NFT Voting",
+    "descAzoriusErc721Gov": "Assign voting rights and ownership privileges to ERC-721 token holders",
     "labelFractalName": "Fractal Name",
     "daoNamePlaceholder": "New DAO",
     "helperFractalName": "What is your DAO called?",
@@ -84,5 +86,6 @@
     "snapshot": "Snapshot",
     "snapshotHelper": "Include your DAO's Snapshot space (ENS)",
     "tooltipMultisig": "Multisig is useful when you have a collection of decision makers that all need to weigh in. Learn more with <1>Fractal Docs</1>",
-    "tooltipTokenVoting": "Token Voting gives power to ERC-20 token holders to propose and vote on transactions. Learn more with <1>Fractal Docs</1>"
+    "tooltipTokenVoting": "Token Voting gives power to ERC-20 token holders to propose and vote on transactions. Learn more with <1>Fractal Docs</1>",
+    "tooltipNftVoting": "NFT Voting gives power to ERC-721 (aka NFT) holders to propose and vote on transactions. Multiple NFT addresses might be used. Learn more with <1>Fractal Docs</1>"
 }

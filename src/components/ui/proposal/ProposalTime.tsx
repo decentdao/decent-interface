@@ -13,7 +13,7 @@ import {
   AzoriusGovernance,
   FractalProposal,
   FractalProposalState,
-  GovernanceModuleType,
+  GovernanceSelectionType,
   AzoriusProposal,
   FreezeGuardType,
 } from '../../../types';
@@ -66,7 +66,7 @@ function useCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (governance.type === GovernanceModuleType.AZORIUS) {
+            if (governance.type === GovernanceSelectionType.AZORIUS_ERC20) {
               await updateProposalState(BigNumber.from(proposal.proposalId));
             } else {
               await loadDAOProposals();
@@ -115,7 +115,7 @@ function useCountdown(proposal: FractalProposal) {
       const azoriusDeadline = azoriusProposal.deadline
         ? azoriusProposal.deadline * 1000
         : undefined;
-      const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
+      const timeLockPeriod = azoriusGovernance.votingStrategy?.timeLockPeriod;
 
       // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
       if (proposal.state === FractalProposalState.ACTIVE && azoriusDeadline) {
@@ -166,11 +166,11 @@ function useCountdown(proposal: FractalProposal) {
   }, [
     azoriusProposal.deadline,
     proposal.state,
-    azoriusGovernance.votesStrategy,
+    azoriusGovernance.votingStrategy,
     freezeGuardContract,
     freezeGuardType,
     proposal.state,
-    azoriusGovernance.votesStrategy,
+    azoriusGovernance.votingStrategy,
     freezeGuardContract,
     freezeGuardType,
   ]);

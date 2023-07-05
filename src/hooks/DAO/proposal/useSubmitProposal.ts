@@ -14,9 +14,9 @@ import {
   FractalModuleType,
   MetaTransaction,
   ProposalExecuteData,
-  GovernanceModuleType,
+  GovernanceSelectionType,
 } from '../../../types';
-import { buildGnosisApiUrl } from '../../../utils';
+import { buildSafeApiUrl } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -80,7 +80,8 @@ export default function useSubmitProposal() {
 
   const { owners } = safe || {};
   const canUserCreateProposal = useMemo(
-    () => (type === GovernanceModuleType.AZORIUS ? true : owners?.includes(user.address || '')),
+    () =>
+      type === GovernanceSelectionType.AZORIUS_ERC20 ? true : owners?.includes(user.address || ''),
     [owners, type, user]
   );
 
@@ -145,11 +146,11 @@ export default function useSubmitProposal() {
       }
 
       try {
-        const gnosisContract = GnosisSafe__factory.connect(safeAddress, signerOrProvider);
+        const safeContract = GnosisSafe__factory.connect(safeAddress, signerOrProvider);
         await axios.post(
-          buildGnosisApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
+          buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(
-            gnosisContract,
+            safeContract,
             signerOrProvider as Signer & TypedDataSigner,
             chainId,
             {
@@ -328,7 +329,7 @@ export default function useSubmitProposal() {
         return false;
       }
 
-      if (type === GovernanceModuleType.AZORIUS) {
+      if (type === GovernanceSelectionType.AZORIUS_ERC20) {
         return true;
       }
 

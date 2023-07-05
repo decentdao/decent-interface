@@ -6,10 +6,10 @@ import { buildContractCall } from '../../helpers/crypto';
 import { SafeMultisigDAO } from '../../types';
 const { AddressZero, HashZero } = ethers.constants;
 
-export const gnosisSafeData = async (
+export const safeData = async (
   multiSendContract: MultiSend,
-  gnosisSafeFactoryContract: GnosisSafeProxyFactory,
-  gnosisSafeSingletonContract: GnosisSafe,
+  safeFactoryContract: GnosisSafeProxyFactory,
+  safeSingletonContract: GnosisSafe,
   daoData: SafeMultisigDAO,
   saltNum: string,
   hasAzorius?: boolean
@@ -23,7 +23,7 @@ export const gnosisSafeData = async (
         multiSendContract.address,
       ];
 
-  const createGnosisCalldata = gnosisSafeSingletonContract.interface.encodeFunctionData('setup', [
+  const createSafeCalldata = safeSingletonContract.interface.encodeFunctionData('setup', [
     signers,
     1, // Threshold
     AddressZero,
@@ -34,28 +34,28 @@ export const gnosisSafeData = async (
     AddressZero,
   ]);
 
-  const predictedGnosisSafeAddress = getCreate2Address(
-    gnosisSafeFactoryContract.address,
+  const predictedSafeAddress = getCreate2Address(
+    safeFactoryContract.address,
     solidityKeccak256(
       ['bytes', 'uint256'],
-      [solidityKeccak256(['bytes'], [createGnosisCalldata]), saltNum]
+      [solidityKeccak256(['bytes'], [createSafeCalldata]), saltNum]
     ),
     solidityKeccak256(
       ['bytes', 'uint256'],
-      [await gnosisSafeFactoryContract.proxyCreationCode(), gnosisSafeSingletonContract.address]
+      [await safeFactoryContract.proxyCreationCode(), safeSingletonContract.address]
     )
   );
 
   const createSafeTx = buildContractCall(
-    gnosisSafeFactoryContract,
+    safeFactoryContract,
     'createProxyWithNonce',
-    [gnosisSafeSingletonContract.address, createGnosisCalldata, saltNum],
+    [safeSingletonContract.address, createSafeCalldata, saltNum],
     0,
     false
   );
 
   return {
-    predictedGnosisSafeAddress,
+    predictedSafeAddress,
     createSafeTx,
   };
 };

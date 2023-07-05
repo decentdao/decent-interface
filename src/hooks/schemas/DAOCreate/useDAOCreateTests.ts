@@ -88,10 +88,10 @@ export function useDAOCreateTests() {
         if (!value) return false;
 
         const formData: CreatorFormState = context.from.reverse()[0].value;
-        const tokenSupply = formData.token.tokenSupply.bigNumberValue as BigNumber;
-        const tokenAllocations = formData.token.tokenAllocations;
+        const tokenSupply = formData.erc20Token.tokenSupply.bigNumberValue as BigNumber;
+        const tokenAllocations = formData.erc20Token.tokenAllocations;
         const parentAllocationAmount =
-          formData.token.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
+          formData.erc20Token.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
 
         const filteredAllocations = tokenAllocations.filter(
           allocation =>

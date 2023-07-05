@@ -2,7 +2,7 @@
 
 import { Divider, Flex } from '@chakra-ui/react';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { GovernanceModuleType } from '../../../types';
+import { GovernanceSelectionType } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 import MetadataContainer from './components/Metadata';
 import { ModulesContainer } from './components/Modules';
@@ -30,7 +30,11 @@ export function Settings() {
 
   return (
     <>
-      {type === GovernanceModuleType.AZORIUS ? <GovernanceTokenContainer /> : <SignersContainer />}
+      {type === GovernanceSelectionType.AZORIUS_ERC20 ? (
+        <GovernanceTokenContainer />
+      ) : (
+        <SignersContainer />
+      )}
       <Divider
         color="chocolate.700"
         mt={10}

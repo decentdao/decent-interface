@@ -4,7 +4,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { buildGnosisApiUrl } from '../../../utils';
+import { buildSafeApiUrl } from '../../../utils';
 import { useUpdateTimer } from './../../utils/useUpdateTimer';
 
 export const useFractalTreasury = () => {
@@ -30,12 +30,12 @@ export const useFractalTreasury = () => {
         return [];
       }),
       axios
-        .get(buildGnosisApiUrl(safeBaseURL, `/safes/${daoAddress}/collectibles/`, {}, 'v2'))
+        .get(buildSafeApiUrl(safeBaseURL, `/safes/${daoAddress}/collectibles/`, {}, 'v2'))
         .catch(e => {
           logError(e);
           return { data: [] };
         }),
-      axios.get(buildGnosisApiUrl(safeBaseURL, `/safes/${daoAddress}/transfers/`)).catch(e => {
+      axios.get(buildSafeApiUrl(safeBaseURL, `/safes/${daoAddress}/transfers/`)).catch(e => {
         logError(e);
         return { data: undefined };
       }),

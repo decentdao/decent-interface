@@ -2,7 +2,7 @@ import { Box, Divider, Flex, HStack, Text, VStack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../types';
+import { AzoriusGovernance, GovernanceSelectionType } from '../../types';
 import { BarLoader } from '../ui/loaders/BarLoader';
 
 export function ProposalDetails() {
@@ -35,7 +35,7 @@ export function ProposalDetails() {
         >
           <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
           <Divider color="chocolate.700" />
-          {type === GovernanceModuleType.MULTISIG ? (
+          {type === GovernanceSelectionType.MULTISIG ? (
             <HStack justifyContent="space-between">
               <Text color="chocolate.200">{t('labelProposalSigners')}</Text>
               <Text>
@@ -46,15 +46,15 @@ export function ProposalDetails() {
             <>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalVotingPeriod')}</Text>
-                <Text>{azoriusGovernance.votesStrategy.votingPeriod?.formatted}</Text>
+                <Text>{azoriusGovernance.votingStrategy.votingPeriod?.formatted}</Text>
               </HStack>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalQuorum')}</Text>
-                <Text>{azoriusGovernance.votesStrategy?.quorumPercentage?.formatted}</Text>
+                <Text>{azoriusGovernance.votingStrategy?.quorumPercentage?.formatted}</Text>
               </HStack>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalTimelock')}</Text>
-                <Text>{azoriusGovernance.votesStrategy?.timeLockPeriod?.formatted}</Text>
+                <Text>{azoriusGovernance.votingStrategy?.timeLockPeriod?.formatted}</Text>
               </HStack>
             </>
           )}

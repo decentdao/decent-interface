@@ -31,7 +31,7 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
   const azoriusGovernance = governance as AzoriusGovernance;
 
   useEffect(() => {
-    const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
+    const timeLockPeriod = azoriusGovernance.votingStrategy?.timeLockPeriod;
     if (!timeLockPeriod) {
       return;
     }

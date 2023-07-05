@@ -26,11 +26,11 @@ export default function useSafeContracts() {
 
   const {
     contracts: {
-      gnosisSafe,
-      gnosisSafeFactory,
+      safe,
+      safeFactory,
       zodiacModuleProxyFactory,
       linearVotingMasterCopy,
-      gnosisMultisend,
+      multisend,
       fractalAzoriusMasterCopy,
       fractalModuleMasterCopy,
       fractalRegistry,
@@ -48,13 +48,13 @@ export default function useSafeContracts() {
   const daoContracts = useMemo(() => {
     const signerOrProvider = signer || provider;
     const multiSendContract = {
-      asSigner: MultiSend__factory.connect(gnosisMultisend, signerOrProvider),
-      asProvider: MultiSend__factory.connect(gnosisMultisend, provider),
+      asSigner: MultiSend__factory.connect(multisend, signerOrProvider),
+      asProvider: MultiSend__factory.connect(multisend, provider),
     };
 
-    const gnosisSafeFactoryContract = {
-      asSigner: GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, signerOrProvider),
-      asProvider: GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, provider),
+    const safeFactoryContract = {
+      asSigner: GnosisSafeProxyFactory__factory.connect(safeFactory, signerOrProvider),
+      asProvider: GnosisSafeProxyFactory__factory.connect(safeFactory, provider),
     };
 
     const fractalAzoriusMasterCopyContract = {
@@ -67,9 +67,9 @@ export default function useSafeContracts() {
       asProvider: LinearERC20Voting__factory.connect(linearVotingMasterCopy, provider),
     };
 
-    const gnosisSafeSingletonContract = {
-      asSigner: GnosisSafe__factory.connect(gnosisSafe, signerOrProvider),
-      asProvider: GnosisSafe__factory.connect(gnosisSafe, provider),
+    const safeSingletonContract = {
+      asSigner: GnosisSafe__factory.connect(safe, signerOrProvider),
+      asProvider: GnosisSafe__factory.connect(safe, provider),
     };
 
     const zodiacModuleProxyFactoryContract = {
@@ -135,10 +135,10 @@ export default function useSafeContracts() {
 
     return {
       multiSendContract,
-      gnosisSafeFactoryContract,
+      safeFactoryContract,
       fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
-      gnosisSafeSingletonContract,
+      safeSingletonContract,
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       fractalRegistryContract,
@@ -152,12 +152,12 @@ export default function useSafeContracts() {
       keyValuePairsContract,
     };
   }, [
-    gnosisSafeFactory,
-    gnosisSafe,
+    safeFactory,
+    safe,
     zodiacModuleProxyFactory,
     linearVotingMasterCopy,
     fractalAzoriusMasterCopy,
-    gnosisMultisend,
+    multisend,
     fractalModuleMasterCopy,
     fractalRegistry,
     multisigFreezeGuardMasterCopy,

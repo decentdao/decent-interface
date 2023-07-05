@@ -38,7 +38,7 @@ export default function DaoCreatePage() {
       if (daoFound) {
         push(DAO_ROUTES.dao.relative(daoAddress));
       } else {
-        toast(t('failedIndexGnosis'), {
+        toast(t('failedIndexSafe'), {
           autoClose: false,
           closeOnClick: true,
           draggable: false,

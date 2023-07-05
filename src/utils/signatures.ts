@@ -1,6 +1,6 @@
 import { BigNumberish, Signer, utils } from 'ethers';
 import { logError } from '../helpers/errorLogging';
-import { GnosisTransaction } from '../types';
+import { SafeAPITransaction } from '../types';
 
 export const EIP_DOMAIN = {
   EIP712Domain: [
@@ -37,7 +37,7 @@ export interface SafeSignature {
 
 export const calculateSafeTransactionHash = (
   safeAddress: string,
-  safeTx: GnosisTransaction,
+  safeTx: SafeAPITransaction,
   chainId: BigNumberish
 ): string => {
   return utils._TypedDataEncoder.hash(
@@ -68,7 +68,7 @@ export const signHash = async (signer: Signer, hash: string): Promise<SafeSignat
 export const safeSignMessage = async (
   signer: Signer,
   safeAddress: string,
-  safeTx: GnosisTransaction,
+  safeTx: SafeAPITransaction,
   chainId?: BigNumberish
 ): Promise<SafeSignature> => {
   const cid = chainId || (await signer.provider!.getNetwork()).chainId;

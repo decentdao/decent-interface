@@ -15,7 +15,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  GovernanceModuleType,
+  GovernanceSelectionType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
@@ -50,7 +50,9 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentAzorius = type === GovernanceModuleType.AZORIUS;
+    const isParentAzorius =
+      type === GovernanceSelectionType.AZORIUS_ERC20 ||
+      type === GovernanceSelectionType.AZORIUS_ERC721;
     if (!isParentAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
@@ -66,7 +68,8 @@ function GuardDetails(props: ICreationStepProps) {
       let parentVotes: BigNumber;
 
       switch (type) {
-        case GovernanceModuleType.AZORIUS:
+        case GovernanceSelectionType.AZORIUS_ERC20:
+        case GovernanceSelectionType.AZORIUS_ERC721:
           if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
           const normalized = ethers.utils.formatUnits(
             azoriusGovernance.votesToken.totalSupply,
@@ -74,7 +77,7 @@ function GuardDetails(props: ICreationStepProps) {
           );
           parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           break;
-        case GovernanceModuleType.MULTISIG:
+        case GovernanceSelectionType.MULTISIG:
         default:
           if (!safe) return;
           parentVotes = BigNumber.from(safe.owners.length);
@@ -121,7 +124,7 @@ function GuardDetails(props: ICreationStepProps) {
         flexDirection="column"
         gap={8}
       >
-        {governanceFormType === GovernanceModuleType.MULTISIG && (
+        {governanceFormType === GovernanceSelectionType.MULTISIG && (
           <>
             <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
             <LabelComponent
@@ -262,7 +265,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === GovernanceModuleType.MULTISIG
+            governanceFormType === GovernanceSelectionType.MULTISIG
               ? CreatorSteps.MULTISIG_DETAILS
               : CreatorSteps.AZORIUS_DETAILS
           }

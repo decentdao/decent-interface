@@ -2,7 +2,7 @@ import { Flex, Text, Input, HStack, VStack } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { GovernanceModuleType } from '../../../types';
+import { GovernanceSelectionType } from '../../../types';
 import SupportTooltip from '../badges/SupportTooltip';
 
 export function CustomNonceInput({
@@ -19,7 +19,11 @@ export function CustomNonceInput({
   const { t } = useTranslation(['proposal']);
   const errorMessage = nonce && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
-  if (governance.type === GovernanceModuleType.AZORIUS) return null;
+  if (
+    governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
+    governance.type === GovernanceSelectionType.AZORIUS_ERC721
+  )
+    return null;
 
   return (
     <VStack alignItems="start">

@@ -123,7 +123,7 @@ export function TxActions({
       if (!signerOrProvider || !safe?.address || !multisigTx.confirmations) {
         return;
       }
-      const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
+      const safeContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
       const safeTx = buildSafeTransaction({
         ...multisigTx,
       });
@@ -135,7 +135,7 @@ export function TxActions({
       );
       contractCall({
         contractFn: () =>
-          gnosisContract.execTransaction(
+          safeContract.execTransaction(
             safeTx.to,
             safeTx.value,
             safeTx.data,

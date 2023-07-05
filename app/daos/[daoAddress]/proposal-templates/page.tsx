@@ -9,7 +9,7 @@ import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
-import { GovernanceModuleType } from '../../../../src/types';
+import { GovernanceSelectionType } from '../../../../src/types';
 
 export default function ProposalTemplatesPage() {
   const { t } = useTranslation();
@@ -20,7 +20,10 @@ export default function ProposalTemplatesPage() {
   } = useFractal();
   const { owners } = safe || {};
   const showCreateButton =
-    type === GovernanceModuleType.AZORIUS ? true : owners?.includes(user.address || '');
+    type === GovernanceSelectionType.AZORIUS_ERC20 ||
+    type === GovernanceSelectionType.AZORIUS_ERC721
+      ? true
+      : owners?.includes(user.address || '');
 
   return (
     <ClientOnly>

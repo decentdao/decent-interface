@@ -3,7 +3,7 @@ import { solidityKeccak256 } from 'ethers/lib/utils.js';
 import { useCallback } from 'react';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam } from '../../types';
-import { buildGnosisApiUrl, parseMultiSendTransactions } from '../../utils';
+import { buildSafeApiUrl, parseMultiSendTransactions } from '../../utils';
 import { CacheKeys } from './cache/cacheDefaults';
 import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
 
@@ -38,7 +38,7 @@ export const useSafeDecoder = () => {
       let decoded: DecodedTransaction | DecodedTransaction[];
       try {
         const decodedData = (
-          await axios.post(buildGnosisApiUrl(safeBaseURL, '/data-decoder/'), {
+          await axios.post(buildSafeApiUrl(safeBaseURL, '/data-decoder/'), {
             to: to,
             data: data,
           })

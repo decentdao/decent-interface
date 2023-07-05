@@ -30,14 +30,14 @@ const useDeployDAO = () => {
           return;
         }
 
-        const { predictedGnosisSafeAddress, safeTx } = builtSafeTx;
+        const { predictedSafeAddress, safeTx } = builtSafeTx;
 
         contractCallDeploy({
           contractFn: () => multiSendContract.asSigner.multiSend(safeTx),
-          pendingMessage: t('pendingDeployGnosis'),
-          failedMessage: t('failedDeployGnosis'),
-          successMessage: t('successDeployGnosis'),
-          successCallback: () => successCallback(predictedGnosisSafeAddress),
+          pendingMessage: t('pendingDeploySafe'),
+          failedMessage: t('failedDeploySafe'),
+          successMessage: t('successDeploySafe'),
+          successCallback: () => successCallback(predictedSafeAddress),
         });
       };
 
