@@ -20,6 +20,7 @@ export const DEFAULT_META_DATA = {
 };
 
 export const DEFAULT_PROPOSAL_TEMPLATE = {
+  nonce: undefined,
   proposalTemplateMetadata: DEFAULT_META_DATA,
   transactions: [DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION],
 };
