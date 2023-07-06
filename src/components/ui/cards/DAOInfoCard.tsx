@@ -115,13 +115,16 @@ export function DAOInfoCard({
         alignItems="end"
         justifyContent="space-between"
       >
-        {!!user.address && (
+        {!!user.address ? (
           <ManageDAOMenu
             parentAddress={parentAddress}
             fractalNode={node}
             freezeGuard={freezeGuard}
             guardContracts={guardContracts}
           />
+        ) : (
+          // empty box to keep snapshot bottom aligned
+          <Box />
         )}
         {node.daoSnapshotURL && <Snapshot snapshotURL={node.daoSnapshotURL} />}
       </Flex>
