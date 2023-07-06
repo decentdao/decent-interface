@@ -4,9 +4,6 @@ import { BigNumber } from 'ethers';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
-import { CacheKeys } from '../hooks/utils/cache/cacheDefaults';
-
-import { getValue } from '../hooks/utils/cache/useLocalStorage';
 import {
   FractalProposalState,
   ProposalVotesSummary,
@@ -27,18 +24,9 @@ import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
 
 export const getAzoriusProposalState = async (
-  strategy: LinearERC20Voting,
   azoriusContract: Azorius,
-  proposalId: BigNumber,
-  chainId: number
+  proposalId: BigNumber
 ): Promise<FractalProposalState> => {
-  const cache: FractalProposalState = getValue(
-    CacheKeys.PROPOSAL_STATE_PREFIX + strategy.address + proposalId,
-    chainId
-  );
-  if (cache) {
-    return cache;
-  }
   const state = await azoriusContract.proposalState(proposalId);
   return strategyFractalProposalStates[state];
 };
@@ -105,12 +93,7 @@ export const mapProposalCreatedEventToProposal = async (
     quorum = BigNumber.from(0);
   }
   const deadlineSeconds = await getTimeStamp(endBlock, provider);
-  const state = await getAzoriusProposalState(
-    strategyContract,
-    azoriusContract.asSigner,
-    proposalId,
-    chainId
-  );
+  const state = await getAzoriusProposalState(azoriusContract.asSigner, proposalId);
   const votes = await getProposalVotes(strategyContract, proposalId);
   const block = await provider.getBlock(startBlock);
   const votesSummary = {
