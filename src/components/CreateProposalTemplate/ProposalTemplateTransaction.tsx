@@ -1,5 +1,5 @@
 import { VStack, HStack, Text, Box, Flex, IconButton } from '@chakra-ui/react';
-import { AddPlus, Trash } from '@decent-org/fractal-ui';
+import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalTemplateTransaction } from '../../types/createProposalTemplate';
@@ -258,7 +258,7 @@ export default function ProposalTemplateTransaction({
                   borderRadius="100%"
                   variant="secondary"
                 >
-                  <Trash />
+                  <Minus />
                 </IconButton>
               </Flex>
             )}
