@@ -25,7 +25,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
     action,
   } = useFractal();
   const provider = useProvider();
-  const chainId = provider.network.chainId;
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
 
@@ -35,7 +34,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     governanceDispatch: action.dispatch,
-    chainId,
   });
 
   let updateStateInterval = useRef<NodeJS.Timer | undefined>();

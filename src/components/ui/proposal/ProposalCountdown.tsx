@@ -55,7 +55,7 @@ export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
       : null;
 
   const daysLeft = Math.floor(secondsLeft! / (60 * 60 * 24));
-  const hoursLeft = Math.floor(secondsLeft! / (60 * 60));
+  const hoursLeft = Math.floor((secondsLeft! / (60 * 60)) % 24);
   const minutesLeft = Math.floor((secondsLeft! / 60) % 60);
 
   return (
