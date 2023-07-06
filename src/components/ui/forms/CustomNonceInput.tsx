@@ -28,7 +28,7 @@ export function CustomNonceInput({
           <Text
             textStyle="text-md-sans-regular"
             whiteSpace="nowrap"
-            mt="1"
+            me="1"
           >
             {t('customNonce', { ns: 'proposal' })}
           </Text>

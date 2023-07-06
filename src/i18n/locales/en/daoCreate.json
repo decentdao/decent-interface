@@ -74,7 +74,7 @@
     "createSubDAOFailureToastMessage": "Deployment failed",
     "helperAllocations": "Unallocated tokens will be placed in your DAO's treasury",
     "labelSelectToken": "Select Token",
-    "helperSelectToken": "Create a new token or import an existing token to continue",
+    "helperSelectToken": "Create a new token or use an existing ERC-20 token for your DAO's governance",
     "radioLabelNewToken": "New Token",
     "radioLabelExistingToken": "Existing Token",
     "helperNewToken": "Create a new ERC-20 token to vote with",
