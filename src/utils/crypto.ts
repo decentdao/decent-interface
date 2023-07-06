@@ -44,7 +44,6 @@ export const encodeFunction = (
     ? splitIgnoreBrackets(_parameters).map(p => (p = p.trim()))
     : undefined;
 
-
   const parametersFixed: Array<string | string[]> | undefined = parameters ? [] : undefined;
   parameters?.forEach(param => {
     if (param.startsWith('[') && param.endsWith(']')) {
