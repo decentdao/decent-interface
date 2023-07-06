@@ -1,5 +1,5 @@
 import { IconButton, Box } from '@chakra-ui/react';
-import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
+import { LabelWrapper, Minus } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { Field, FieldAttributes } from 'formik';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -55,7 +55,7 @@ export function AzoriusTokenAllocation({
           _hover={{ color: 'gold.500-hover' }}
           mt={2}
           icon={
-            <Trash
+            <Minus
               fill="currentColor"
               boxSize="1.5rem"
             />
