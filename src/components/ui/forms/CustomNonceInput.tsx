@@ -24,7 +24,11 @@ export function CustomNonceInput({
   return (
     <VStack alignItems="start">
       <HStack fontSize="14px">
-        <Flex ref={containerRef}>
+        <Flex
+          ref={containerRef}
+          alignItems="center"
+          gap={2}
+        >
           <Text
             textStyle="text-md-sans-regular"
             whiteSpace="nowrap"
