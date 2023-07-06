@@ -82,14 +82,14 @@ export const useSafeTransactions = () => {
               } else {
                 // the proposal has been timelocked
 
-                const timeLockPeriodEnd =
-                  timelockedTimestampMs + Number(freezeGuardData.guardTimelockPeriodMs); // end stamp of *timelock* period
-                if (freezeGuardData.lastBlock.timestamp > timeLockPeriodEnd) {
+                const timeLockPeriodEndMs =
+                  timelockedTimestampMs + freezeGuardData.guardTimelockPeriodMs.toNumber();
+                const nowMs = freezeGuardData.lastBlock.timestamp * 1000;
+                if (nowMs > timeLockPeriodEndMs) {
                   // Timelock has ended, check execution period
-                  if (
-                    freezeGuardData.lastBlock.timestamp <
-                    timeLockPeriodEnd + Number(freezeGuardData.guardExecutionPeriodMs) // end stamp of *execution* period
-                  ) {
+                  const executionPeriodEndMs =
+                    timeLockPeriodEndMs + freezeGuardData.guardExecutionPeriodMs.toNumber();
+                  if (nowMs < executionPeriodEndMs) {
                     // Within execution period
                     state = FractalProposalState.EXECUTABLE;
                   } else {
