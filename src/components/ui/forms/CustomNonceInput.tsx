@@ -18,14 +18,19 @@ export function CustomNonceInput({
     node: { safe },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
-  const errorMessage = nonce && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
+  const errorMessage =
+    nonce !== undefined && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
   if (governance.type === GovernanceModuleType.AZORIUS) return null;
 
   return revealed ? (
     <VStack alignItems="start">
-      <HStack fontSize="14px">
+      <HStack
+        fontSize="14px"
+        justifyContent="flex-end"
+        alignSelf="flex-end"
+      >
         <Flex
           ref={containerRef}
           alignItems="center"
@@ -61,6 +66,7 @@ export function CustomNonceInput({
           <Text
             color="alert-red.normal"
             textStyle="text-md-sans-regular"
+            whiteSpace="pre-wrap"
           >
             {errorMessage}
           </Text>
