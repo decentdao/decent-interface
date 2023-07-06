@@ -27,7 +27,7 @@ export function RadioWithText({
         data-testid={testId}
         type="radio"
         isDisabled={disabled}
-        colorScheme="gold"
+        textColor="gold.500"
         borderColor="gold.500"
         size="lg"
         value={value}

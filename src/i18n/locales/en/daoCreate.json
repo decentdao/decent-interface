@@ -82,7 +82,7 @@
     "warningExistingToken": "This token must be wrapped in order to be used as a voting token",
     "warningExistingTokenTooltip": "Fractal will deploy a new ERC-20 governance token to wrap this one. Holders can deposit their tokens to vote with or withdraw them at any time.",
     "snapshot": "Snapshot",
-    "snapshotHelper": "Include your DAO's Snapshot space (ENS)",
+    "snapshotHelper": "Does your DAO already have a Snapshot space?",
     "tooltipMultisig": "Multisig is useful when you have a collection of decision makers that all need to weigh in. <1>Learn more</1>",
     "tooltipTokenVoting": "Token Voting gives power to ERC-20 token holders to propose and vote on transactions. <1>Learn more</1>",
     "toastDisconnected": "Connect an account to proceed!"

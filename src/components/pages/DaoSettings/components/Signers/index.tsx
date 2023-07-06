@@ -18,7 +18,7 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
       {!disabled && (
         <Radio
           value={signer}
-          colorScheme="gold"
+          textColor="gold.500"
           borderColor="gold.500"
           size="md"
         />
