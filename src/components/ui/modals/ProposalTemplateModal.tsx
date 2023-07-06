@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { InputComponent } from '../forms/InputComponent';
+import LineBreakBlock from '../utils/LineBreakBlock';
 
 interface IProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;
@@ -122,13 +123,12 @@ export default function ProposalTemplateModal({
 
   return (
     <Box>
-      <Text
+      <LineBreakBlock
         textStyle="text-base-mono-regular"
         color="grayscale.100"
         marginBottom="1.5rem"
-      >
-        {description}
-      </Text>
+        text={description}
+      />
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
           {transaction.parameters.map(
