@@ -4,11 +4,11 @@
     "errorLowSignerThreshold": "Threshold must be greater than 0",
     "errorHighSignerThreshold": "Threshold is too high",
     "labelSigners": "Total Signers",
-    "helperSigners": "The number of trusted users for this Multisig (max 99)",
+    "helperSigners": "The total number of possible signers (max 99)",
     "labelSigThreshold": "Signature Threshold",
-    "helperSigThreshold": "The number of signatures needed to approve a proposal",
+    "helperSigThreshold": "The number of signers needed to approve a proposal",
     "titleSignerAddresses": "Signer Addresses",
-    "subTitleSignerAddresses": "The following users are able to submit and approve proposals",
+    "subTitleSignerAddresses": "These users are able to submit and approve proposals",
     "titleEssentials": "Establish Essentials",
     "titleAzoriusConfig": "Configure Voting Token",
     "titleSafeConfig": "Configure Multisig",
@@ -59,7 +59,7 @@
     "labelAzoriusGov": "Token Voting",
     "descAzoriusGov": "ERC-20 token voting governance on a Safe{Wallet}",
     "labelFractalName": "Fractal Name",
-    "daoNamePlaceholder": "New DAO",
+    "daoNamePlaceholder": "My DAO Name",
     "helperFractalName": "What is your DAO called?",
     "titleProposalSettings": "Proposal Settings",
     "labelDeploySubDAO": "Create subDAO Proposal",
@@ -83,6 +83,6 @@
     "warningExistingTokenTooltip": "Fractal will deploy a new ERC-20 governance token to wrap this one. Holders can deposit their tokens to vote with or withdraw them at any time.",
     "snapshot": "Snapshot",
     "snapshotHelper": "Include your DAO's Snapshot space (ENS)",
-    "tooltipMultisig": "Multisig is useful when you have a collection of decision makers that all need to weigh in. Learn more with <1>Fractal Docs</1>",
-    "tooltipTokenVoting": "Token Voting gives power to ERC-20 token holders to propose and vote on transactions. Learn more with <1>Fractal Docs</1>"
+    "tooltipMultisig": "Multisig is useful when you have a collection of decision makers that all need to weigh in. <1>Learn more</1>",
+    "tooltipTokenVoting": "Token Voting gives power to ERC-20 token holders to propose and vote on transactions. <1>Learn more</1>"
 }
