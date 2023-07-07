@@ -1,5 +1,7 @@
-import { LinkProps, Tooltip } from '@chakra-ui/react';
+import { Box, LinkProps } from '@chakra-ui/react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import ModalTooltip from '../modals/ModalTooltip';
 import ExternalLink from './ExternalLink';
 
 /**
@@ -9,14 +11,19 @@ import ExternalLink from './ExternalLink';
  */
 export default function EtherscanBase({ children, ...rest }: LinkProps) {
   const { t } = useTranslation();
+  const containerRef = useRef<HTMLDivElement>(null);
   return (
     <ExternalLink {...rest}>
-      <Tooltip
-        label={t('etherscanTip')}
-        placement="bottom"
-      >
-        {children}
-      </Tooltip>
+      <Box ref={containerRef}>
+        <ModalTooltip
+          label={t('etherscanTip')}
+          placement="bottom"
+          containerRef={containerRef}
+        >
+          {/* Box here allows multiple children to be wrapped by a single tooltip */}
+          <Box>{children}</Box>
+        </ModalTooltip>
+      </Box>
     </ExternalLink>
   );
 }

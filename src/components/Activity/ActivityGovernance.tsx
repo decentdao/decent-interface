@@ -6,8 +6,8 @@ import { FractalProposal, ActivityEventType, SnapshotProposal } from '../../type
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { ProposalAction } from '../Proposals/ProposalActions/ProposalAction';
 import { Badge } from '../ui/badges/Badge';
+import { ProposalCountdown } from '../ui/proposal/ProposalCountdown';
 
-import ProposalTime from '../ui/proposal/ProposalTime';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescription } from './ActivityDescription';
 
@@ -41,7 +41,7 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
           gap={14}
           alignItems="center"
         >
-          <ProposalTime proposal={activity} />
+          <ProposalCountdown proposal={activity} />
           <ProposalAction proposal={activity} />
         </Flex>
       }

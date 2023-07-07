@@ -1,4 +1,5 @@
 import { VotesERC20 } from '@fractal-framework/fractal-contracts';
+import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
 import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
@@ -70,13 +71,21 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       return;
     }
     // @todo We could probably save on some requests here.
-    const [tokenBalance, tokenDelegatee, tokenVotingWeight, delegateChangeEvents] =
-      await Promise.all([
-        tokenContract.asSigner.balanceOf(account),
-        tokenContract.asSigner.delegates(account),
-        tokenContract.asSigner.getVotes(account),
-        tokenContract.asSigner.queryFilter(tokenContract.asSigner.filters.DelegateChanged()),
-      ]);
+    const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
+      tokenContract.asSigner.balanceOf(account),
+      tokenContract.asSigner.delegates(account),
+      tokenContract.asSigner.getVotes(account),
+    ]);
+
+    let delegateChangeEvents: DelegateChangedEvent[];
+    try {
+      delegateChangeEvents = await tokenContract.asSigner.queryFilter(
+        tokenContract.asSigner.filters.DelegateChanged()
+      );
+    } catch (e) {
+      delegateChangeEvents = [];
+    }
+
     const tokenAccountData = {
       balance: tokenBalance,
       delegatee: tokenDelegatee,

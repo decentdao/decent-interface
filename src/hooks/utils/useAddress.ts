@@ -1,6 +1,8 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useProvider } from 'wagmi';
+import { useNetwork, useProvider } from 'wagmi';
+import { supportsENS } from '../../helpers';
+import { couldBeENS } from '../../utils/url';
 import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
 
@@ -11,6 +13,7 @@ const useAddress = (addressInput: string | undefined) => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
   const { setValue, getValue } = useLocalStorage();
+  const { chain } = useNetwork();
 
   useEffect(() => {
     setIsAddressLoading(true);
@@ -37,8 +40,14 @@ const useAddress = (addressInput: string | undefined) => {
       setIsAddressLoading(false);
       return;
     }
-    const [, domain] = addressInput.split('.');
-    if (!domain || domain.length <= 2) {
+
+    // only continue with ENS checks if the chain actually supports ENS
+    if (chain && !supportsENS(chain.id)) {
+      return;
+    }
+
+    // if it can't be an ENS address, validation is false
+    if (!couldBeENS(addressInput)) {
       setAddress(addressInput);
       setIsValidAddress(false);
       setIsAddressLoading(false);
@@ -93,7 +102,7 @@ const useAddress = (addressInput: string | undefined) => {
       .finally(() => {
         setIsAddressLoading(false);
       });
-  }, [provider, addressInput, getValue, setValue]);
+  }, [provider, addressInput, getValue, setValue, chain]);
 
   return { address, isValidAddress, isAddressLoading };
 };

@@ -8,6 +8,7 @@ import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
 import { InfoProposals } from './InfoProposals';
 import { InfoTreasury } from './InfoTreasury';
+import { ParentLink } from './ParentLink';
 
 export function Info() {
   const {
@@ -18,6 +19,7 @@ export function Info() {
       flexDirection="column"
       minH="10.5rem"
     >
+      <ParentLink />
       <Flex
         flexWrap="wrap"
         gap="1rem"

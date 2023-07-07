@@ -32,8 +32,8 @@ export function InfoTreasury({}: IDAOGovernance) {
     <Box data-testid="dashboard-daoProposals">
       <Flex
         alignItems="center"
-        gap="0.5rem"
-        mb="1rem"
+        gap="0.4rem"
+        mb="0.5rem"
       >
         <Treasury />
         <Text

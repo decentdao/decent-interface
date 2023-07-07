@@ -12,13 +12,11 @@ const useSendAssets = ({
   asset,
   destinationAddress,
   nonce,
-  daoAddress,
 }: {
   transferAmount: BigNumber;
   asset: SafeBalanceUsdResponse;
   destinationAddress: string;
   nonce: number | undefined;
-  daoAddress: string | null;
 }) => {
   const { submitProposal } = useSubmitProposal();
 
@@ -59,7 +57,6 @@ const useSendAssets = ({
       pendingToastMessage: t('sendAssetsPendingToastMessage'),
       successToastMessage: t('sendAssetsSuccessToastMessage'),
       failedToastMessage: t('sendAssetsFailureToastMessage'),
-      safeAddress: daoAddress!,
     });
   }, [
     asset.tokenAddress,
@@ -67,7 +64,6 @@ const useSendAssets = ({
     asset?.token?.symbol,
     transferAmount,
     destinationAddress,
-    daoAddress,
     loadDAOProposals,
     t,
     submitProposal,

@@ -5,6 +5,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalTemplateForm } from '../../../types/createProposalTemplate';
+import { couldBeENS } from '../../../utils/url';
 import useSafeContracts from '../../safe/useSafeContracts';
 
 export default function useCreateProposalTemplate() {
@@ -34,7 +35,7 @@ export default function useCreateProposalTemplate() {
           transactions: await Promise.all(
             values.transactions.map(async tx => ({
               ...tx,
-              targetAddress: tx.targetAddress.endsWith('.eth')
+              targetAddress: couldBeENS(tx.targetAddress)
                 ? await signerOrProvider.resolveName(tx.targetAddress)
                 : tx.targetAddress,
               parameters: tx.parameters

@@ -11,6 +11,7 @@ import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
+import { couldBeENS } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
 import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
 
@@ -32,7 +33,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const submitDelegation = async (values: { address: string }) => {
     if (!tokenContract) return;
     let validAddress = values.address;
-    if (validAddress.endsWith('.eth')) {
+    if (couldBeENS(validAddress)) {
       validAddress = await signer!.resolveName(values.address);
     }
     delegateVote({

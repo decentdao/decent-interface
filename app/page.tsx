@@ -51,13 +51,13 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         iconSrc: '/images/icon-decent.svg',
         titleKey: 'decentTitle',
         descKey: 'decentDesc',
-        address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525', // TODO
+        address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525',
       },
       {
         iconSrc: '/images/icon-awakevc.svg',
         titleKey: 'awakeTitle',
         descKey: 'awakeDesc',
-        address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a', // TODO
+        address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a',
       },
     ],
   ],

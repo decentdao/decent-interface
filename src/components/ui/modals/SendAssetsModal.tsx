@@ -19,7 +19,7 @@ import { EthAddressInput } from '../forms/EthAddressInput';
 // @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
@@ -45,7 +45,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     asset: selectedAsset,
     destinationAddress: destination,
     nonce: nonceInput,
-    daoAddress: daoAddress,
   });
 
   const handleCoinChange = (index: string) => {
