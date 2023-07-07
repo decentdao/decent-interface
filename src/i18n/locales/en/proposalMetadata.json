@@ -8,5 +8,7 @@
   "Execution of this proposal will create a new proposal template, attached to this DAO.": "Execution of this proposal will create a new proposal template, attached to this DAO.",
   "Remove Proposal Template": "Remove Proposal Template",
   "Execution of this proposal will remove proposal template, attached to this DAO.": "Execution of this proposal will remove proposal template, attached to this DAO.",
-  "Change governance module to Azorius": "Change governance module to Azorius"
+  "Change governance module to Azorius": "Change governance module to Azorius",
+  "Update DAO Name": "Update DAO Name",
+  "Update DAO Snapshot Space": "Update DAO Snapshot Space"
 }

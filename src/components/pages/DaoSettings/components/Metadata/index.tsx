@@ -16,7 +16,7 @@ export default function MetadataContainer() {
   const [name, setName] = useState('');
   const [snapshotURL, setSnapshotURL] = useState('');
   const [snapshotURLValid, setSnapshotURLValid] = useState<boolean>();
-  const { t } = useTranslation('settings');
+  const { t } = useTranslation(['settings', 'proposalMetadata']);
   const { push } = useRouter();
 
   const { canUserCreateProposal, submitProposal } = useSubmitProposal();
@@ -54,7 +54,7 @@ export default function MetadataContainer() {
 
   const handleEditDAOName = () => {
     const proposalData: ProposalExecuteData = {
-      title: t('Update DAO Name'),
+      title: t('Update DAO Name', { ns: 'proposalMetadata' }),
       description: '',
       documentationUrl: '',
       targets: [fractalRegistryContract.asProvider.address],
@@ -76,7 +76,7 @@ export default function MetadataContainer() {
 
   const handleEditDAOSnapshotURL = () => {
     const proposalData: ProposalExecuteData = {
-      title: t('Update DAO Snapshot URL'),
+      title: t('Update DAO Snapshot Space', { ns: 'proposalMetadata' }),
       description: '',
       documentationUrl: '',
       targets: [keyValuePairsContract.asProvider.address],
@@ -101,7 +101,7 @@ export default function MetadataContainer() {
 
   return (
     <SettingsSection
-      contentTitle={t('daoMetadataTitle')}
+      contentTitle={''}
       contentHeader={
         <Flex
           justifyContent="space-between"
@@ -158,7 +158,7 @@ export default function MetadataContainer() {
           textStyle="text-lg-mono-bold"
           color="grayscale.100"
         >
-          {t('daoMetadataSnapshotURL')}
+          {t('daoMetadataSnapshot')}
         </Text>
         {canUserCreateProposal && (
           <Button

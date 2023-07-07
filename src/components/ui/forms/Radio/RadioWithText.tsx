@@ -28,6 +28,7 @@ export function RadioWithText({
         type="radio"
         isDisabled={disabled}
         textColor="gold.500"
+        colorScheme="blackAlpha"
         borderColor="gold.500"
         size="lg"
         value={value}

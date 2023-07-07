@@ -18,6 +18,7 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
       {!disabled && (
         <Radio
           value={signer}
+          colorScheme="blackAlpha"
           textColor="gold.500"
           borderColor="gold.500"
           size="md"
@@ -66,7 +67,7 @@ export default function SignersContainer() {
 
   return (
     <SettingsSection
-      contentTitle={t('signers', { ns: 'common' })}
+      contentTitle={''}
       contentHeader={
         <Flex justifyContent="space-between">
           <Text
