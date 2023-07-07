@@ -42,36 +42,28 @@ export function BigNumberInput({
   ...rest
 }: BigNumberInputProps) {
   const { t } = useTranslation('common');
-
-  const removeTrailingZeros = useCallback((input: string) => {
+  const removeTrailingZeros = (input: string) => {
     if (input.includes('.')) {
       const [leftDigits, rightDigits] = input.split('.');
       if (Number(rightDigits) === 0) {
-        return leftDigits;
+        return input.slice(0, leftDigits.length);
       }
-      // Replace any trailing zeros
-      const newRightDigits = rightDigits.replace(/0+$/, '');
-      // If there are no digits left after removing trailing zeros, return only the left part
-      if (newRightDigits.length === 0) {
-        return leftDigits;
-      }
-      // Return the string with the trailing zeros removed
-      return `${leftDigits}.${newRightDigits}`;
     }
     return input;
-  }, []);
+  };
 
   const [inputValue, setInputValue] = useState<string>();
 
-  // useEffect(() => {
-  //   setInputValue(
-  //     value
-  //       ? !value.isZero()
-  //         ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
-  //         : '0'
-  //       : ''
-  //   );
-  // }, [value, decimalPlaces]);
+  useEffect(() => {
+    if (!value || inputValue !== undefined) return;
+    setInputValue(
+      value
+        ? !value.isZero()
+          ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
+          : '0'
+        : ''
+    );
+  }, [value, decimalPlaces, inputValue]);
 
   // this will insure the caret in the input component does not shift to the end of the input when the value is changed
   const resetCaretPositionForInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,30 +148,25 @@ export function BigNumberInput({
   //set value to min if less than min, when focus is lost
   const onBlur = useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
-      let eventValue = event.target.value;
-      let bigNumberValue = utils.parseUnits(eventValue, decimalPlaces);
       if (min) {
+        const eventValue = event.target.value;
         const hasValidValue = eventValue && eventValue !== '.';
-        bigNumberValue = hasValidValue
+        const bigNumberValue = hasValidValue
           ? utils.parseUnits(eventValue, decimalPlaces)
           : BigNumber.from('0');
         const minBigNumber = hasValidValue
           ? utils.parseUnits(min, decimalPlaces)
           : BigNumber.from('0');
         if (bigNumberValue.lte(minBigNumber)) {
-          eventValue = min;
-          bigNumberValue = BigNumber.from(minBigNumber);
+          onChange({
+            value: min,
+            bigNumberValue: BigNumber.from(minBigNumber),
+          });
+          setInputValue(min);
         }
       }
-      eventValue = removeTrailingZeros(eventValue);
-      bigNumberValue = utils.parseUnits(eventValue, decimalPlaces);
-      onChange({
-        value: eventValue,
-        bigNumberValue,
-      });
-      setInputValue(eventValue);
     },
-    [decimalPlaces, min, onChange, removeTrailingZeros]
+    [decimalPlaces, min, onChange]
   );
 
   // if the decimalPlaces change, need to update the value
