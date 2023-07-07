@@ -8,7 +8,7 @@ import {
 import { constants, BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useProvider } from 'wagmi';
-import { checkIsApproved, checkIsRejected } from '../../helpers/activity';
+import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
@@ -18,20 +18,22 @@ import {
   Activity,
   FractalProposalState,
 } from '../../types';
-import { formatWeiToValue, parseDecodedData } from '../../utils';
-import { getTimeStamp } from '../../utils/contract';
+import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
+import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+import { useSafeDecoder } from './useSafeDecoder';
+
+type FreezeGuardData = {
+  guardTimelockPeriodMs: BigNumber;
+  guardExecutionPeriodMs: BigNumber;
+  lastBlock: ethers.providers.Block;
+};
 
 export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfg();
   const provider = useProvider();
   const { guardContracts } = useFractal();
-
-  type FreezeGuardData = {
-    guardTimelockPeriod: BigNumber;
-    guardExecutionPeriod: BigNumber;
-    lastBlock: ethers.providers.Block;
-  };
+  const decode = useSafeDecoder();
 
   const getState = useCallback(
     async (
@@ -40,72 +42,66 @@ export const useSafeTransactions = () => {
       freezeGuardData?: FreezeGuardData
     ) => {
       if (freezeGuard && freezeGuardData) {
-        const { guardTimelockPeriod, guardExecutionPeriod, lastBlock } = freezeGuardData;
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
             if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
               return activity;
             }
-
-            if (activity.transaction.txType === 'MODULE_TRANSACTION') {
+            if (isModuleTx(activity.transaction)) {
               return {
                 ...activity,
                 state: FractalProposalState.MODULE,
               };
             }
-            const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
 
             const multiSigTransaction =
               activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
-            const eventNonce = multiSigTransaction.nonce;
-
-            const isRejected = checkIsRejected(
-              isMultiSigTransaction,
-              activityArr,
-              eventNonce,
-              multiSigTransaction
-            );
-
-            const isApproved = checkIsApproved(multiSigTransaction);
-            const timelockedTimestamp = await getTxTimelockedTimestamp(
-              activity,
-              freezeGuard,
-              provider
-            );
-
             let state: FractalProposalState;
 
             if (multiSigTransaction.isExecuted) {
+              // the transaction has already been executed
               state = FractalProposalState.EXECUTED;
-            } else if (timelockedTimestamp === 0) {
-              // Has not been timelocked
-              if (isRejected) {
-                state = FractalProposalState.REJECTED;
-              } else if (isApproved) {
-                state = FractalProposalState.TIMELOCKABLE;
-              } else {
-                state = FractalProposalState.ACTIVE;
-              }
+            } else if (isRejected(activityArr, multiSigTransaction)) {
+              // a different transaction with the same nonce has already
+              // been executed, so this is no longer valid
+              state = FractalProposalState.REJECTED;
             } else {
-              // Has been timelocked
-              const timeLockPeriodEnd = timelockedTimestamp + Number(guardTimelockPeriod);
-              if (lastBlock.timestamp > timeLockPeriodEnd) {
-                // Timelock has ended
-                const timelockPeriodEnd = timeLockPeriodEnd + Number(guardExecutionPeriod);
-                if (lastBlock.timestamp < timelockPeriodEnd) {
-                  // Within execution period
-                  state = FractalProposalState.EXECUTABLE;
+              // it's not executed or rejected, so we need to check the timelock status
+              const timelockedTimestampMs =
+                (await getTxTimelockedTimestamp(activity, freezeGuard, provider)) * 1000;
+              if (timelockedTimestampMs === 0) {
+                // not yet timelocked
+                if (isApproved(multiSigTransaction)) {
+                  // the proposal has enough signatures, so it can now be timelocked
+                  state = FractalProposalState.TIMELOCKABLE;
                 } else {
-                  // Execution period has ended
-                  state = FractalProposalState.EXPIRED;
+                  // not enough signatures on the proposal, it's still active
+                  state = FractalProposalState.ACTIVE;
                 }
               } else {
-                // Within timelock period
-                state = FractalProposalState.TIMELOCKED;
+                // the proposal has been timelocked
+
+                const timeLockPeriodEndMs =
+                  timelockedTimestampMs + freezeGuardData.guardTimelockPeriodMs.toNumber();
+                const nowMs = freezeGuardData.lastBlock.timestamp * 1000;
+                if (nowMs > timeLockPeriodEndMs) {
+                  // Timelock has ended, check execution period
+                  const executionPeriodEndMs =
+                    timeLockPeriodEndMs + freezeGuardData.guardExecutionPeriodMs.toNumber();
+                  if (nowMs < executionPeriodEndMs) {
+                    // Within execution period
+                    state = FractalProposalState.EXECUTABLE;
+                  } else {
+                    // Execution period has ended
+                    state = FractalProposalState.EXPIRED;
+                  }
+                } else {
+                  // Still within timelock period
+                  state = FractalProposalState.TIMELOCKED;
+                }
               }
             }
-
             return { ...activity, state };
           })
         );
@@ -114,36 +110,22 @@ export const useSafeTransactions = () => {
           if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
             return activity;
           }
-
-          if (activity.transaction.txType === 'MODULE_TRANSACTION') {
+          if (isModuleTx(activity.transaction)) {
             return {
               ...activity,
               state: FractalProposalState.MODULE,
             };
           }
 
-          const isMultiSigTransaction = activity.transaction.txType === 'MULTISIG_TRANSACTION';
-
           const multiSigTransaction =
             activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
-          const eventNonce = multiSigTransaction.nonce;
-
-          const isRejected = checkIsRejected(
-            isMultiSigTransaction,
-            activityArr,
-            eventNonce,
-            multiSigTransaction
-          );
-
-          const isApproved = checkIsApproved(multiSigTransaction);
-
           let state;
-          if (isRejected) {
-            state = FractalProposalState.REJECTED;
-          } else if (multiSigTransaction.isExecuted) {
+          if (multiSigTransaction.isExecuted) {
             state = FractalProposalState.EXECUTED;
-          } else if (isApproved) {
+          } else if (isRejected(activityArr, multiSigTransaction)) {
+            state = FractalProposalState.REJECTED;
+          } else if (isApproved(multiSigTransaction)) {
             state = FractalProposalState.EXECUTABLE;
           } else {
             state = FractalProposalState.ACTIVE;
@@ -212,12 +194,12 @@ export const useSafeTransactions = () => {
       }
 
       const activities = await Promise.all(
-        transactions.results.map((transaction, _, transactionArr) => {
+        transactions.results.map(async (transaction, _, transactionArr) => {
           const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
           const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
-          const isMultiSigTransaction = transaction.txType === 'MULTISIG_TRANSACTION';
-          const isModuleTransaction = transaction.txType === 'MODULE_TRANSACTION';
+          const isMultiSigTransaction = isMultiSigTx(transaction);
+          const isModuleTransaction = isModuleTx(transaction);
 
           // @note for ethereum transactions event these are the execution date
           const eventDate = new Date(
@@ -298,7 +280,13 @@ export const useSafeTransactions = () => {
                     isMultiSigTransaction || isModuleTransaction
                   ),
                 }
-              : undefined;
+              : {
+                  decodedTransactions: await decode(
+                    multiSigTransaction.value,
+                    multiSigTransaction.to,
+                    multiSigTransaction.data
+                  ),
+                };
 
           const targets = metaData
             ? [...metaData.decodedTransactions.map(tx => tx.target)]
@@ -332,12 +320,15 @@ export const useSafeTransactions = () => {
 
       if (guardContracts.freezeGuardContract) {
         const blockNumber = await provider.getBlockNumber();
+        const averageBlockTime = await getAverageBlockTime(provider);
         freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
-        const timeLockPeriodBlock = await freezeGuard.timelockPeriod();
-        const texecutionPeriodBlock = await freezeGuard.executionPeriod();
         freezeGuardData = {
-          guardTimelockPeriod: BigNumber.from(await getTimeStamp(timeLockPeriodBlock, provider)),
-          guardExecutionPeriod: BigNumber.from(await getTimeStamp(texecutionPeriodBlock, provider)),
+          guardTimelockPeriodMs: BigNumber.from(
+            (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000
+          ),
+          guardExecutionPeriodMs: BigNumber.from(
+            (await freezeGuard.executionPeriod()) * averageBlockTime * 1000
+          ),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
@@ -345,7 +336,14 @@ export const useSafeTransactions = () => {
       const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
-    [nativeTokenSymbol, provider, guardContracts, getTransferTotal, getState]
+    [
+      guardContracts.freezeGuardContract,
+      getState,
+      getTransferTotal,
+      decode,
+      nativeTokenSymbol,
+      provider,
+    ]
   );
   return { parseTransactions };
 };

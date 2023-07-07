@@ -7,7 +7,7 @@ import {
   HStack,
   IconButton,
 } from '@chakra-ui/react';
-import { ArrowDown, ArrowRight, Trash } from '@decent-org/fractal-ui';
+import { ArrowDown, ArrowRight, Minus } from '@decent-org/fractal-ui';
 import { FormikErrors, FormikProps } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -83,7 +83,7 @@ function Transactions({
                   </AccordionButton>
                   {index !== 0 || transactions.length !== 1 ? (
                     <IconButton
-                      icon={<Trash boxSize="1.5rem" />}
+                      icon={<Minus boxSize="1.5rem" />}
                       aria-label={t('removetransactionlabel')}
                       variant="unstyled"
                       onClick={() => removeTransaction(index)}

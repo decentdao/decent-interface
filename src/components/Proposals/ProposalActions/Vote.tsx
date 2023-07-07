@@ -34,8 +34,8 @@ function Vote({
     setPending: setPending,
   });
 
-  // if the user has no delegated tokens, don't show anything
-  if (canVote) {
+  // if the user is not a signer or has no delegated tokens, don't show anything
+  if (!canVote) {
     return null;
   }
 

@@ -1,11 +1,12 @@
-import { Box, Flex, Input, RadioGroup, Text, Tooltip } from '@chakra-ui/react';
-import { LabelWrapper, SupportQuestion } from '@decent-org/fractal-ui';
+import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
+import { LabelWrapper } from '@decent-org/fractal-ui';
 import { constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { TokenCreationType, ICreationStepProps } from '../../../types';
+import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -93,7 +94,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       >
         <Flex
           flexDirection="column"
-          gap={8}
+          gap={4}
         >
           <ContentBoxTitle>{t('titleSelectToken')}</ContentBoxTitle>
           <LabelComponent
@@ -164,15 +165,10 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                       >
                         {t('warningExistingToken')}
                       </Text>
-                      <Tooltip
-                        maxW="18rem"
+                      <SupportTooltip
                         label={t('warningExistingTokenTooltip')}
-                      >
-                        <SupportQuestion
-                          boxSize="1.5rem"
-                          color="blue.400"
-                        />
-                      </Tooltip>
+                        color="blue.400"
+                      />
                     </Flex>
                   )}
                 </>

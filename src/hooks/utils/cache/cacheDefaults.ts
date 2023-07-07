@@ -25,12 +25,9 @@ export enum CacheExpiry {
 export enum CacheKeys {
   FAVORITES = 'favorites',
   AUDIT_WARNING_SHOWN = 'audit_warning_shown',
-  // name.eth -> 0x0 caching
-  ENS_RESOLVE_PREFIX = 'ens_resolve_',
+  ENS_RESOLVE_PREFIX = 'ens_resolve_', // name.eth -> 0x0 caching
   DAO_NAME_PREFIX = 'dao_name_',
-  PROPOSAL_STATE_PREFIX = 'prop_state_',
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
-  DAO_NODE_PREFIX = 'node_',
 }
 
 interface IndexedObject {

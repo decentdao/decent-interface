@@ -7,8 +7,6 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
@@ -20,7 +18,6 @@ export const useLoadDAONode = () => {
   const lookupModules = useFractalModules();
   const chainName = useSubgraphChainName();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, { context: { chainName } });
-  const { setValue, getValue } = useLocalStorage();
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
     if (!result.data) {
@@ -47,10 +44,6 @@ export const useLoadDAONode = () => {
 
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
-      const cached = getValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress);
-      if (cached) {
-        return cached;
-      }
       if (utils.isAddress(_daoAddress)) {
         try {
           const safe = await safeService.getSafeInfo(_daoAddress);
@@ -71,15 +64,8 @@ export const useLoadDAONode = () => {
             fractalModules,
           });
 
-          if (graphNodeInfo.daoAddress) {
-            try {
-              // TODO have seen this error here, not sure what's causing this
-              // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value
-              setValue(CacheKeys.DAO_NODE_PREFIX + _daoAddress, node, CacheExpiry.ONE_HOUR);
-            } catch (e) {
-              logError(e);
-            }
-          }
+          // TODO we could cache node here, but should be careful not to cache
+          // nodes that haven't fully loaded
 
           return node;
         } catch (e) {
@@ -91,7 +77,7 @@ export const useLoadDAONode = () => {
         return { error: 'errorFailedSearch' };
       }
     },
-    [getValue, safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName, setValue]
+    [safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
   );
 
   return { loadDao };

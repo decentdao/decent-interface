@@ -8,6 +8,9 @@ interface Props extends InfoProps {
   depth: number;
 }
 
+export const NODE_HEIGHT_REM = 6.75;
+export const NODE_MARGIN_TOP_REM = 1;
+
 /**
  * A DAO row within the DAO hierarchy, which displays the DAOInfoCard
  * and the horizontal line, as well as adding left margin to indent
@@ -23,8 +26,8 @@ export function DAONodeRow(props: Props) {
 
   return (
     <Flex
-      mt="1rem"
-      minH="6.75rem"
+      minH={NODE_HEIGHT_REM + 'rem'}
+      mt={NODE_MARGIN_TOP_REM + 'rem'}
       bg={BACKGROUND_SEMI_TRANSPARENT}
       p="1rem"
       borderRadius="0.5rem"

@@ -3,10 +3,12 @@
 import { ethers } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import DaoCreator from '../../src/components/DaoCreator';
 import { DAOCreateMode } from '../../src/components/DaoCreator/formComponents/EstablishEssentials';
 import ClientOnly from '../../src/components/ui/utils/ClientOnly';
-import { DAO_ROUTES } from '../../src/constants/routes';
+import { BASE_ROUTES, DAO_ROUTES } from '../../src/constants/routes';
 import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../src/hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../src/hooks/utils/useAsyncRetry';
@@ -21,6 +23,7 @@ export default function DaoCreatePage() {
   } = useFractal();
   const { toggleFavorite } = useAccountFavorites();
   const [redirectPending, setRedirectPending] = useState(false);
+  const { t } = useTranslation('transaction');
 
   const successCallback = useCallback(
     async (daoAddress: string) => {
@@ -29,16 +32,23 @@ export default function DaoCreatePage() {
       const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
         () => safeService.getSafeCreationInfo(getAddress(daoAddress)),
-        5
+        8
       );
+      toggleFavorite(daoAddress);
       if (daoFound) {
-        toggleFavorite(daoAddress);
         push(DAO_ROUTES.dao.relative(daoAddress));
       } else {
-        setRedirectPending(false);
+        toast(t('failedIndexGnosis'), {
+          autoClose: false,
+          closeOnClick: true,
+          draggable: false,
+          closeButton: false,
+          progress: 1,
+        });
+        push(BASE_ROUTES.landing);
       }
     },
-    [safeService, requestWithRetries, toggleFavorite, push]
+    [safeService, requestWithRetries, toggleFavorite, push, t]
   );
 
   const [deploy, pending] = useDeployDAO();

@@ -1,6 +1,7 @@
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
+import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -12,41 +13,17 @@ export async function getTxTimelockedTimestamp(
 ) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
-  const abiCoder = new ethers.utils.AbiCoder();
-  const freezeGuardTransactionHash = ethers.utils.solidityKeccak256(
-    ['bytes'],
-    [
-      abiCoder.encode(
-        [
-          'address',
-          'uint256',
-          'bytes32',
-          'uint256',
-          'uint256',
-          'uint256',
-          'uint256',
-          'address',
-          'address',
-        ],
-        [
-          multiSigTransaction.to,
-          multiSigTransaction.value,
-          ethers.utils.solidityKeccak256(['bytes'], [multiSigTransaction.data || '0x']),
-          multiSigTransaction.operation,
-          multiSigTransaction.safeTxGas,
-          multiSigTransaction.baseGas,
-          multiSigTransaction.gasPrice,
-          multiSigTransaction.gasToken,
-          multiSigTransaction.refundReceiver as string,
-        ]
-      ),
-    ]
+  const signatures = buildSignatureBytes(
+    multiSigTransaction.confirmations!.map(confirmation => ({
+      signer: confirmation.owner,
+      data: confirmation.signature,
+    }))
   );
+  const signaturesHash = ethers.utils.solidityKeccak256(['bytes'], [signatures]);
 
   const timelockedTimestamp = await getTimeStamp(
-    await freezeGuard.getTransactionTimelockedBlock(freezeGuardTransactionHash),
+    await freezeGuard.getTransactionTimelockedBlock(signaturesHash),
     provider
   );
-
   return timelockedTimestamp;
 }

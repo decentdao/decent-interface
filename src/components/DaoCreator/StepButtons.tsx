@@ -1,5 +1,7 @@
 import { Flex, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { useFractal } from '../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps } from '../../types';
 interface IStepButtons extends ICreationStepProps {
   nextStep?: CreatorSteps;
@@ -23,6 +25,9 @@ export function StepButtons({
   isEdit,
 }: IStepButtons) {
   const { t } = useTranslation(['daoCreate', 'common']);
+  const {
+    readOnly: { user },
+  } = useFractal();
 
   const forwardButtonText =
     isLastStep && isSubDAO
@@ -41,14 +46,22 @@ export function StepButtons({
           disabled={true}
           onClick={() => updateStep(prevStep)}
         >
-          {t('prev', { ns: 'common' })}
+          {t('back', { ns: 'common' })}
         </Button>
       )}
       <Button
         w="full"
         type={buttonType}
         isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
-        onClick={() => (!isLastStep && nextStep ? updateStep(nextStep) : {})}
+        onClick={() => {
+          if (!isLastStep && nextStep) {
+            updateStep(nextStep);
+          } else if (isLastStep && !user.address) {
+            toast(t('toastDisconnected'), {
+              closeOnClick: true,
+            });
+          }
+        }}
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
       >
         {forwardButtonText}

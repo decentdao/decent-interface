@@ -10,6 +10,7 @@ import {
   TokenCreationType,
 } from '../../../types';
 import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
+import { couldBeENS } from '../../../utils/url';
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
@@ -65,7 +66,7 @@ export function usePrepareFormData() {
     }: SafeMultisigDAO & { freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair> }) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
-          if (inputValue.endsWith('.eth')) {
+          if (couldBeENS(inputValue)) {
             const resolvedAddress = await signer!.resolveName(inputValue);
             return resolvedAddress;
           }
@@ -104,7 +105,7 @@ export function usePrepareFormData() {
       const resolvedTokenAllocations = await Promise.all(
         tokenAllocations.map(async allocation => {
           let address = allocation.address;
-          if (address.endsWith('.eth')) {
+          if (couldBeENS(address)) {
             address = await signer!.resolveName(allocation.address);
           }
           return { amount: allocation.amount.bigNumberValue!, address: address };

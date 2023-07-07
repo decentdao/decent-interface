@@ -7,7 +7,7 @@ export const useTimeHelpers = () => {
   const { t } = useTranslation('proposal');
   const getTimeDuration = useCallback(
     (_seconds: number | string | null | undefined): string | undefined => {
-      if (!_seconds) return;
+      if (_seconds === null || _seconds === undefined) return;
       if (Number(_seconds) === 0) return t('noTimeDifference');
       return formatDistance(0, Number(_seconds) * 1000, { includeSeconds: true, locale: locale });
     },

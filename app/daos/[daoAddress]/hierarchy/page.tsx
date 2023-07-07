@@ -27,7 +27,7 @@ export default function HierarchyPage() {
     <ClientOnly>
       <PageHeader
         title={t('headerTitle', {
-          daoName: daoName,
+          daoName,
           subject: t('nodes'),
         })}
         breadcrumbs={[
@@ -40,7 +40,6 @@ export default function HierarchyPage() {
       <DaoNode
         daoAddress={nodeHierarchy.parentAddress || daoAddress}
         depth={0}
-        siblingCount={0}
       />
     </ClientOnly>
   );
