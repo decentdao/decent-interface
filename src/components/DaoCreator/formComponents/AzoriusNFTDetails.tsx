@@ -92,6 +92,8 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                   setFieldValue(`erc721Token.nfts.${i}.tokenWeight`, valuePair)
                 }
                 data-testid={`erc721Token.nfts.${i}.tokenWeightInput`}
+                decimalPlaces={0}
+                min="1"
               />
             </LabelComponent>
             {values.erc721Token.nfts.length > 1 && (
