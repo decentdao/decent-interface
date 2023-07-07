@@ -1,14 +1,6 @@
 import { utils } from 'ethers';
-import { isAddress } from 'ethers/lib/utils';
 import { logError } from '../helpers/errorLogging';
 import { ActivityTransactionType } from '../types';
-
-export const isSameAddress = (addr1: string, addr2: string) => {
-  if (!isAddress(addr1) || !isAddress(addr2)) {
-    return false;
-  }
-  return addr1.toLowerCase() === addr2.toLowerCase();
-};
 
 /**
  * Encodes a smart contract function, given the provided function name, input types, and input values.

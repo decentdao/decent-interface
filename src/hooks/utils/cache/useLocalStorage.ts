@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheExpiry, IStorageValue, CACHE_DEFAULTS, keyInternal } from './cacheDefaults';
 
 export const setValue = (
@@ -56,7 +56,7 @@ export const getValue = (key: string, chainId: number): any => {
  * the value, array, or object you would like to cache.
  */
 export const useLocalStorage = () => {
-  const { chainId } = useNetworkConfg();
+  const { chainId } = useNetworkConfig();
 
   const set = useCallback(
     (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {

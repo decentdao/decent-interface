@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AzoriusProposal, FractalProposalState, AzoriusGovernance } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
@@ -21,7 +21,7 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
     action,
     readOnly: { user },
   } = useFractal();
-  const { chainId } = useNetworkConfg();
+  const { chainId } = useNetworkConfig();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     chainId,

@@ -27,11 +27,13 @@ export type NetworkConfig = {
     fractalModuleMasterCopy: string;
     fractalRegistry: string;
     votesERC20MasterCopy: string;
+    votingERC721MasterCopy: string;
     claimingMasterCopy: string;
     multisigFreezeGuardMasterCopy: string;
     azoriusFreezeGuardMasterCopy: string;
     multisigFreezeVotingMasterCopy: string;
     erc20FreezeVotingMasterCopy: string;
+    erc721FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
   };

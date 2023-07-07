@@ -14,11 +14,13 @@ import {
   ERC20Claim__factory,
   VotesERC20Wrapper__factory,
   KeyValuePairs__factory,
+  LinearERC721Voting__factory,
+  ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
-import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSafeContracts() {
   const provider = useProvider();
@@ -38,12 +40,14 @@ export default function useSafeContracts() {
       azoriusFreezeGuardMasterCopy,
       multisigFreezeVotingMasterCopy,
       erc20FreezeVotingMasterCopy,
+      erc721FreezeVotingMasterCopy,
       votesERC20MasterCopy,
       claimingMasterCopy,
       votesERC20WrapperMasterCopy,
+      votingERC721MasterCopy,
       keyValuePairs,
     },
-  } = useNetworkConfg();
+  } = useNetworkConfig();
 
   const daoContracts = useMemo(() => {
     const signerOrProvider = signer || provider;
@@ -65,6 +69,10 @@ export default function useSafeContracts() {
     const linearVotingMasterCopyContract = {
       asSigner: LinearERC20Voting__factory.connect(linearVotingMasterCopy, signerOrProvider),
       asProvider: LinearERC20Voting__factory.connect(linearVotingMasterCopy, provider),
+    };
+    const votingERC721MasterCopyContract = {
+      asSigner: LinearERC721Voting__factory.connect(votingERC721MasterCopy, signerOrProvider),
+      asProvider: LinearERC721Voting__factory.connect(votingERC721MasterCopy, provider),
     };
 
     const safeSingletonContract = {
@@ -113,6 +121,11 @@ export default function useSafeContracts() {
       asProvider: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, provider),
     };
 
+    const freezeERC721VotingMasterCopyContract = {
+      asSigner: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, signerOrProvider),
+      asProvider: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, provider),
+    };
+
     const votesTokenMasterCopyContract = {
       asSigner: VotesERC20__factory.connect(votesERC20MasterCopy, signerOrProvider),
       asProvider: VotesERC20__factory.connect(votesERC20MasterCopy, provider),
@@ -146,9 +159,11 @@ export default function useSafeContracts() {
       azoriusFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
+      freezeERC721VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
+      votingERC721MasterCopyContract,
       keyValuePairsContract,
     };
   }, [
@@ -167,6 +182,8 @@ export default function useSafeContracts() {
     votesERC20MasterCopy,
     claimingMasterCopy,
     votesERC20WrapperMasterCopy,
+    votingERC721MasterCopy,
+    erc721FreezeVotingMasterCopy,
     keyValuePairs,
     provider,
     signer,

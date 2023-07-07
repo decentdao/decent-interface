@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, FractalProposal, AzoriusProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 import useUpdateProposalState from './useUpdateProposalState';
@@ -12,7 +12,7 @@ export default function useExecuteProposal() {
 
   const { governanceContracts, action } = useFractal();
   const { azoriusContract } = governanceContracts;
-  const { chainId } = useNetworkConfg();
+  const { chainId } = useNetworkConfig();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     governanceDispatch: action.dispatch,

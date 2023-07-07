@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { logError } from '../../../helpers/errorLogging';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheExpiry, CACHE_DEFAULTS, IStorageValue, keyInternal } from './cacheDefaults';
 
 /**
@@ -129,7 +129,7 @@ export const getIndexedDBValue = async (
 };
 
 export const useIndexedDB = (objectStoreName: string) => {
-  const { chainId } = useNetworkConfg();
+  const { chainId } = useNetworkConfig();
 
   const set = useCallback(
     async (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {

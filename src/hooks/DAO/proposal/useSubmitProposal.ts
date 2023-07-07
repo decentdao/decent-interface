@@ -9,7 +9,7 @@ import { useProvider, useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   FractalModuleType,
   MetaTransaction,
@@ -76,7 +76,7 @@ export default function useSubmitProposal() {
   const provider = useProvider();
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { chainId, safeBaseURL } = useNetworkConfg();
+  const { chainId, safeBaseURL } = useNetworkConfig();
 
   const { owners } = safe || {};
   const canUserCreateProposal = useMemo(

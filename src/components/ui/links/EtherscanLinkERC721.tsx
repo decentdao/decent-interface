@@ -1,5 +1,5 @@
 import { LinkProps } from '@chakra-ui/react';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import EtherscanLinkBase from './EtherscanLinkBase';
 
 interface Props extends LinkProps {
@@ -9,7 +9,7 @@ interface Props extends LinkProps {
 }
 
 export default function EtherscanLinkERC721({ address, tokenId, children, ...rest }: Props) {
-  const { etherscanBaseURL } = useNetworkConfg();
+  const { etherscanBaseURL } = useNetworkConfig();
 
   if (!address || !tokenId) {
     return null;
