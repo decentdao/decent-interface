@@ -1,40 +1,29 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useMemo } from 'react';
+import { NODE_HEIGHT_REM, NODE_MARGIN_TOP_REM } from '../../ui/cards/DAONodeRow';
 
 interface INodeLine {
   isCurrentDAO?: boolean;
   trueDepth?: number;
   isFirstChild?: boolean;
-  numberOfSiblings?: number;
-  numberOfChildren?: number;
+  /**
+   * The number of descendents of the last child, used to calculate
+   * how much height to cut off the bottom of the vertical node line.
+   */
+  lastChildDescendants?: number;
 }
 
-const INFO_CARD_FULL_LENGTH = '7.45rem'; // + some margin
-const INFO_CARD_HALF_LENGTH = `calc(${INFO_CARD_FULL_LENGTH} / 2)`;
-
-export function NodeLineVertical({
-  isCurrentDAO,
-  trueDepth = 0,
-  numberOfSiblings,
-  numberOfChildren,
-}: INodeLine) {
-  const showFullLength = useMemo(
-    () =>
-      (numberOfSiblings && numberOfSiblings >= 1) || (numberOfChildren && numberOfChildren >= 2),
-    [numberOfSiblings, numberOfChildren]
-  );
-
+export function NodeLineVertical({ isCurrentDAO, trueDepth = 0, lastChildDescendants }: INodeLine) {
   const lineHeight = useMemo(() => {
-    if (showFullLength) {
-      return '100%';
-    }
-    return INFO_CARD_HALF_LENGTH;
-  }, [showFullLength]);
+    return `calc(100% - ${
+      (NODE_HEIGHT_REM + NODE_MARGIN_TOP_REM) * lastChildDescendants! + NODE_HEIGHT_REM / 2
+    }rem)`;
+  }, [lastChildDescendants]);
 
   return (
     <Box
       position="absolute"
-      h={`calc(100% - ${INFO_CARD_FULL_LENGTH})`}
+      h={`calc(100% - ${NODE_HEIGHT_REM + NODE_MARGIN_TOP_REM}rem)`}
       w="100%"
       zIndex={-1 - trueDepth}
       bottom={0}
@@ -55,8 +44,6 @@ export function NodeLineVertical({
         />
         <Box
           position="absolute"
-          bottom={showFullLength ? 0 : undefined}
-          top={showFullLength ? undefined : 0}
           h={lineHeight}
           bg="chocolate.400"
           mb="3.3rem"

@@ -22,16 +22,15 @@ export function DaoNode({
   parentAddress,
   daoAddress,
   depth,
-  siblingCount,
 }: {
   parentAddress?: string;
   daoAddress?: string;
   depth: number;
-  siblingCount: number;
 }) {
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(fractalNode);
+  const [lastChildDescendants, setLastChildDescendants] = useState<number>(0);
 
   const {
     node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
@@ -44,7 +43,30 @@ export function DaoNode({
       loadDao(utils.getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
-          setNode(_node as FractalNode);
+          // calculates the total number of descendants below the given node
+          const getTotalDescendants = (node: FractalNode): number => {
+            let count = node.nodeHierarchy.childNodes.length;
+            node.nodeHierarchy.childNodes.forEach(child => {
+              count += getTotalDescendants(child as FractalNode);
+            });
+            return count;
+          };
+
+          const fnode = _node as FractalNode;
+          setNode(fnode);
+          // calculate the total number of descendants of the last child
+          // in the current hierarchy level
+          // this allows us to properly calculate how far down the vertical
+          // line should extend
+          setLastChildDescendants(
+            fnode.nodeHierarchy.childNodes.length > 0
+              ? getTotalDescendants(
+                  fnode.nodeHierarchy.childNodes[
+                    fnode.nodeHierarchy.childNodes.length - 1
+                  ] as FractalNode
+                )
+              : 0
+          );
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({
             daoName: null,
@@ -59,7 +81,7 @@ export function DaoNode({
         }
       });
     }
-  }, [loadDao, daoAddress]);
+  }, [loadDao, daoAddress, fractalNode?.nodeHierarchy.childNodes, depth]);
 
   if (!fractalNode?.nodeHierarchy) {
     return (
@@ -85,8 +107,7 @@ export function DaoNode({
 
       <NodeLineVertical
         trueDepth={depth}
-        numberOfSiblings={siblingCount}
-        numberOfChildren={fractalNode?.nodeHierarchy.childNodes.length}
+        lastChildDescendants={lastChildDescendants}
         isCurrentDAO={isCurrentDAO}
       />
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
@@ -99,7 +120,6 @@ export function DaoNode({
             parentAddress={daoAddress}
             daoAddress={childNode.daoAddress || undefined}
             depth={depth + 1}
-            siblingCount={childNode?.nodeHierarchy.childNodes.length}
           />
         </Box>
       ))}
