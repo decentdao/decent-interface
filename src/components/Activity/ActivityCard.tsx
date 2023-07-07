@@ -42,7 +42,7 @@ export function ActivityCard({
             {isSnapshot && (
               <Image
                 src="/images/snapshot-icon-fill.svg"
-                alt={t('snapshotIconAlt')}
+                alt={t('snapshot')}
                 ml={1}
               />
             )}

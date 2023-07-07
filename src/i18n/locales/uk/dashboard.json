@@ -16,13 +16,9 @@
     "frozenDescription": "DAO Заморожено",
     "freezeButton": "Заморозити",
     "noVotesButton": "Користувач на має голосів",
-    "freezeDaysLeft": "Залишилось {{count}} днів",
     "tipFreeze": "{{amount}} необхідні голоси замороження",
     "proposalOnChainRejection": "що відхиляє транзакцію # {{proposalId}}",
     "proposalDescriptionCont": "що буде",
-    "timeRemaining": "{{time}} залишилось",
-    "labelUndoFreeze": "Розморозити",
-    "labelDAOFrozen": "{{daoName}} Заморожено! Бррррр",
     "moduleDescription_one": "Виконано {{count}} транзакцію через модуль за адресою",
     "moduleDescription_other": "Виконано {{count}} транзакцій через модуль за адресою(ми)"
 }
