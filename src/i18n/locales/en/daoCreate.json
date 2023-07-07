@@ -31,6 +31,8 @@
     "exampleVotingPeriod": "10,080 minutes = 1 week",
     "helperVotingPeriod": "The length of time (in minutes) voting is allowed after proposal creation",
     "helperQuorum": "The percentage of total possible token votes required to pass a proposal",
+    "quorumThreshold": "Approval Votes",
+    "helperQuorumThreshold": "How many approval votes out of total NFTs are needed to pass a proposal? ",
     "governanceDescription": "These values can be changed later via proposal",
     "titleGuardConfig": "Configure Parent Controls",
     "titleFreezeParams": "Freeze Parameters",

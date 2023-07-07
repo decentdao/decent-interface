@@ -59,6 +59,7 @@ export type ERC721TokenConfig<T = BigNumber> = {
 
 export type DAOGovernorERC721Token<T = BigNumber> = {
   nfts: ERC721TokenConfig<T>[];
+  quorumThreshold: T;
 };
 
 export type DAOGovernorModuleConfig<T = BigNumber> = {

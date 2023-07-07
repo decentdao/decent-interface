@@ -152,6 +152,7 @@ export function usePrepareFormData() {
       votingPeriod,
       freezeGuard,
       nfts,
+      quorumThreshold,
       ...rest
     }: AzoriusERC721DAO<BigNumberValuePair> &
       FreezeGuardConfigParam): Promise<AzoriusERC721DAO> => {
@@ -182,6 +183,7 @@ export function usePrepareFormData() {
         ),
         votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
         nfts: resolvedNFTs,
+        quorumThreshold: quorumThreshold.bigNumberValue!,
         ...freezeGuardData,
         ...rest,
       };

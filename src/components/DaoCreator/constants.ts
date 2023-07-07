@@ -43,6 +43,10 @@ export const initialState: CreatorFormState = {
         },
       },
     ],
+    quorumThreshold: {
+      value: '10',
+      bigNumberValue: BigNumber.from(10),
+    },
   },
   /**
    * Time periods in CreatorState are denoted in MINUTES in the UI,

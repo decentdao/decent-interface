@@ -180,6 +180,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildDeployStrategyTx(): SafeTransaction {
     const daoData = this.daoData as AzoriusGovernanceDAO;
+
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
@@ -412,6 +413,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       );
     } else if (azoriusGovernanceDaoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
       const daoData = azoriusGovernanceDaoData as AzoriusERC721DAO;
+
       const encodedStrategyInitParams = defaultAbiCoder.encode(
         ['address', 'address[]', 'uint256[]', 'address', 'uint32', 'uint256', 'uint256', 'uint256'],
         [
@@ -420,8 +422,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           daoData.nfts.map(nft => nft.tokenWeight), // governance tokens weights
           '0x0000000000000000000000000000000000000001', // Azorius module
           azoriusGovernanceDaoData.votingPeriod,
+          daoData.quorumThreshold, // quorom threshold. Since smart contract can't know total of NFTs minted - we need to provide it manually
           BigNumber.from(0), // proposer weight, how much is needed to create a proposal.
-          azoriusGovernanceDaoData.quorumPercentage, // quorom numerator, denominator is 1,000,000, so quorum percentage is 50%
           BigNumber.from(500000), // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
         ]
       );

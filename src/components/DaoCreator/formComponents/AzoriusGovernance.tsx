@@ -56,22 +56,38 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             {t('exampleVotingPeriod')}
           </Text>
         </LabelComponent>
-        <LabelComponent
-          label={t('quorum', { ns: 'common' })}
-          helper={t('helperQuorum')}
-          isRequired
-        >
-          <InputGroup>
+        {values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20 ? (
+          <LabelComponent
+            label={t('quorum', { ns: 'common' })}
+            helper={t('helperQuorum')}
+            isRequired
+          >
+            <InputGroup>
+              <BigNumberInput
+                value={values.azorius.quorumPercentage.bigNumberValue}
+                onChange={valuePair => setFieldValue('azorius.quorumPercentage', valuePair)}
+                max="100"
+                decimalPlaces={0}
+                data-testid="govConfig-quorumPercentage"
+              />
+              <InputRightElement>%</InputRightElement>
+            </InputGroup>
+          </LabelComponent>
+        ) : (
+          <LabelComponent
+            label={t('quorumThreshold')}
+            helper={t('helperQuorumThreshold')}
+            isRequired
+          >
             <BigNumberInput
-              value={values.azorius.quorumPercentage.bigNumberValue}
-              onChange={valuePair => setFieldValue('azorius.quorumPercentage', valuePair)}
+              value={values.erc721Token.quorumThreshold.bigNumberValue}
+              onChange={valuePair => setFieldValue('erc721Token.quorumThreshold', valuePair)}
               max="100"
               decimalPlaces={0}
-              data-testid="govConfig-quorumPercentage"
+              data-testid="govConfig-quorumThreshold"
             />
-            <InputRightElement>%</InputRightElement>
-          </InputGroup>
-        </LabelComponent>
+          </LabelComponent>
+        )}
         <LabelComponent
           label={t('labelTimelockPeriod')}
           helper={t('helperTimelockPeriod')}
