@@ -13,7 +13,7 @@ import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../src/hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../src/hooks/utils/useAsyncRetry';
 import { useFractal } from '../../src/providers/App/AppProvider';
-import { SafeMultisigDAO, AzoriusGovernanceDAO } from '../../src/types';
+import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../src/types';
 
 export default function DaoCreatePage() {
   const { push } = useRouter();
@@ -53,7 +53,7 @@ export default function DaoCreatePage() {
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployDAO = (daoData: SafeMultisigDAO | AzoriusGovernanceDAO) => {
+  const deployDAO = (daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO) => {
     deploy(daoData, successCallback);
   };
 

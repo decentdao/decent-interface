@@ -6,7 +6,6 @@ import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSc
 import { DAOTrigger, CreatorFormState, GovernanceSelectionType } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
-
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
 import { usePrepareFormData } from './hooks/usePrepareFormData';
 

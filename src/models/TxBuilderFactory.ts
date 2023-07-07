@@ -10,7 +10,7 @@ import {
   AzoriusContracts,
   AzoriusERC20DAO,
 } from '../types';
-import { AzoriusERC20TxBuilder } from './AzoriusTxBuilder';
+import { AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
 import { FreezeGuardTxBuilder } from './FreezeGuardTxBuilder';
@@ -108,8 +108,8 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public createAzoriusTxBuilder(): AzoriusERC20TxBuilder {
-    return new AzoriusERC20TxBuilder(
+  public createAzoriusTxBuilder(): AzoriusTxBuilder {
+    return new AzoriusTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
       this.azoriusContracts!,

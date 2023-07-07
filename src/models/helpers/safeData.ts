@@ -14,12 +14,10 @@ export const safeData = async (
   saltNum: string,
   hasAzorius?: boolean
 ) => {
-  const safeMultisigDAOData = daoData as SafeMultisigDAO;
-
   const signers = hasAzorius
     ? [multiSendContract.address]
     : [
-        ...safeMultisigDAOData.trustedAddresses.map(trustedAddress => trustedAddress),
+        ...daoData.trustedAddresses.map(trustedAddress => trustedAddress),
         multiSendContract.address,
       ];
 

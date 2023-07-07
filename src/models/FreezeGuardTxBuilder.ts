@@ -5,11 +5,22 @@ import {
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
+  ERC721FreezeVoting__factory,
+  MultisigFreezeVoting,
+  ERC20FreezeVoting,
+  ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { buildContractCall } from '../helpers';
-import { BaseContracts, SafeTransaction, SubDAO, AzoriusContracts } from '../types';
+import {
+  BaseContracts,
+  SafeTransaction,
+  SubDAO,
+  AzoriusContracts,
+  AzoriusGovernanceDAO,
+  VotingStrategyType,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import {
   buildDeployZodiacModuleTx,
@@ -131,17 +142,33 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
    */
 
   private setFreezeVotingTypeAndCallData() {
-    this.freezeVotingType = this.parentTokenAddress
-      ? ERC20FreezeVoting__factory
-      : MultisigFreezeVoting__factory;
+    if (this.parentTokenAddress) {
+      const daoData = this.daoData as AzoriusGovernanceDAO;
+      if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
+        this.freezeVotingType = ERC20FreezeVoting__factory;
+      } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
+        this.freezeVotingType = ERC721FreezeVoting__factory;
+      }
+    } else {
+      this.freezeVotingType = MultisigFreezeVoting__factory;
+    }
 
     this.freezeVotingCallData = this.freezeVotingType.createInterface().encodeFunctionData('owner');
   }
 
   private setFreezeVotingAddress() {
-    const freezeVotesMasterCopyContract = this.parentTokenAddress
-      ? this.baseContracts.freezeERC20VotingMasterCopyContract
-      : this.baseContracts.freezeMultisigVotingMasterCopyContract;
+    let freezeVotesMasterCopyContract:
+      | MultisigFreezeVoting
+      | ERC20FreezeVoting
+      | ERC721FreezeVoting = this.baseContracts.freezeMultisigVotingMasterCopyContract;
+    if (this.parentTokenAddress) {
+      const daoData = this.daoData as AzoriusGovernanceDAO;
+      if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
+        freezeVotesMasterCopyContract = this.baseContracts.freezeERC20VotingMasterCopyContract;
+      } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
+        freezeVotesMasterCopyContract = this.baseContracts.freezeERC721VotingMasterCopyContract;
+      }
+    }
 
     const freezeVotingByteCodeLinear = generateContractByteCodeLinear(
       freezeVotesMasterCopyContract.address.slice(2)

@@ -14,6 +14,8 @@ import {
   MultisigFreezeGuard,
   VotesERC20Wrapper,
   KeyValuePairs,
+  ERC721FreezeVoting,
+  LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import SafeServiceClient, {
   SafeMultisigTransactionWithTransfersResponse,
@@ -339,6 +341,7 @@ export interface FractalContracts {
   safeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
+  linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;
   safeSingletonContract: ContractConnection<GnosisSafe>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
@@ -347,6 +350,7 @@ export interface FractalContracts {
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
+  freezeERC721VotingMasterCopyContract: ContractConnection<ERC721FreezeVoting>;
   votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
   votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;

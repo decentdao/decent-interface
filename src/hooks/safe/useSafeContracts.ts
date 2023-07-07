@@ -44,7 +44,7 @@ export default function useSafeContracts() {
       votesERC20MasterCopy,
       claimingMasterCopy,
       votesERC20WrapperMasterCopy,
-      votingERC721MasterCopy,
+      linearVotingERC721MasterCopy,
       keyValuePairs,
     },
   } = useNetworkConfig();
@@ -70,9 +70,9 @@ export default function useSafeContracts() {
       asSigner: LinearERC20Voting__factory.connect(linearVotingMasterCopy, signerOrProvider),
       asProvider: LinearERC20Voting__factory.connect(linearVotingMasterCopy, provider),
     };
-    const votingERC721MasterCopyContract = {
-      asSigner: LinearERC721Voting__factory.connect(votingERC721MasterCopy, signerOrProvider),
-      asProvider: LinearERC721Voting__factory.connect(votingERC721MasterCopy, provider),
+    const linearVotingERC721MasterCopyContract = {
+      asSigner: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, signerOrProvider),
+      asProvider: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, provider),
     };
 
     const safeSingletonContract = {
@@ -163,7 +163,7 @@ export default function useSafeContracts() {
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
-      votingERC721MasterCopyContract,
+      linearVotingERC721MasterCopyContract,
       keyValuePairsContract,
     };
   }, [
@@ -182,7 +182,7 @@ export default function useSafeContracts() {
     votesERC20MasterCopy,
     claimingMasterCopy,
     votesERC20WrapperMasterCopy,
-    votingERC721MasterCopy,
+    linearVotingERC721MasterCopy,
     erc721FreezeVotingMasterCopy,
     keyValuePairs,
     provider,

@@ -1,16 +1,16 @@
 import { Flex, Input, Divider, Button } from '@chakra-ui/react';
-import { AddPlus } from '@decent-org/fractal-ui';
+import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
 export default function AzoriusNFTDetails(props: ICreationStepProps) {
-  const { transactionPending, isSubDAO, setFieldValue, values, handleChange, isSubmitting, mode } =
-    props;
+  const { transactionPending, isSubDAO, setFieldValue, values, isSubmitting, mode } = props;
   const { t } = useTranslation('daoCreate');
 
   const handleAddNFT = () => {
@@ -23,7 +23,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
   const handleRemoveNFT = (indexToRemove: number) => {
     setFieldValue(
       'erc721Token.nfts',
-      values.erc721Token.nfts.filter((nft, i) => i !== indexToRemove)
+      values.erc721Token.nfts.filter((_, i) => i !== indexToRemove)
     );
   };
 
@@ -80,19 +80,28 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
               gridContainerProps={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                width: '33.3%',
+                width: values.erc721Token.nfts.length > 1 ? '20%' : '33.3%',
               }}
               inputContainerProps={{
                 width: '100%',
               }}
             >
-              <Input
-                name={`erc721Token.nfts.${i}.tokenWeight`}
-                value={nft.tokenWeight.value}
-                onChange={handleChange}
+              <BigNumberInput
+                value={nft.tokenWeight.bigNumberValue}
+                onChange={valuePair =>
+                  setFieldValue(`erc721Token.nfts.${i}.tokenWeight`, valuePair)
+                }
                 data-testid={`erc721Token.nfts.${i}.tokenWeightInput`}
               />
             </LabelComponent>
+            {values.erc721Token.nfts.length > 1 && (
+              <Button
+                variant="text"
+                onClick={() => handleRemoveNFT(i)}
+              >
+                <Minus />
+              </Button>
+            )}
           </Flex>
         ))}
         <Button

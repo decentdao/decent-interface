@@ -22,6 +22,7 @@ const useBuildDAOTx = () => {
       safeFactoryContract,
       safeSingletonContract,
       linearVotingMasterCopyContract,
+      linearVotingERC721MasterCopyContract,
       fractalAzoriusMasterCopyContract,
       zodiacModuleProxyFactoryContract,
       fractalRegistryContract,
@@ -30,6 +31,7 @@ const useBuildDAOTx = () => {
       azoriusFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
+      freezeERC721VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
@@ -56,6 +58,7 @@ const useBuildDAOTx = () => {
         !multisigFreezeGuardMasterCopyContract ||
         !freezeMultisigVotingMasterCopyContract ||
         !freezeERC20VotingMasterCopyContract ||
+        !freezeERC721VotingMasterCopyContract ||
         !safeFactoryContract ||
         !safeSingletonContract ||
         !claimingMasterCopyContract ||
@@ -65,10 +68,14 @@ const useBuildDAOTx = () => {
         return;
       }
 
-      if (daoData.governance === GovernanceSelectionType.AZORIUS_ERC20) {
+      if (
+        daoData.governance === GovernanceSelectionType.AZORIUS_ERC20 ||
+        daoData.governance === GovernanceSelectionType.AZORIUS_ERC721
+      ) {
         if (
           !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
+          !linearVotingERC721MasterCopyContract ||
           !votesTokenMasterCopyContract ||
           !azoriusFreezeGuardMasterCopyContract ||
           !claimingMasterCopyContract
@@ -79,6 +86,7 @@ const useBuildDAOTx = () => {
         azoriusContracts = {
           fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
+          linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asSigner,
           azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
@@ -94,6 +102,7 @@ const useBuildDAOTx = () => {
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         multiSendContract: multiSendContract.asSigner,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
+        freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
         keyValuePairsContract: keyValuePairsContract.asSigner,
@@ -113,7 +122,8 @@ const useBuildDAOTx = () => {
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC20
+        daoData.governance === GovernanceSelectionType.AZORIUS_ERC20 ||
+        daoData.governance === GovernanceSelectionType.AZORIUS_ERC721
           ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 
@@ -133,6 +143,7 @@ const useBuildDAOTx = () => {
       multisigFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
+      freezeERC721VotingMasterCopyContract,
       safeFactoryContract,
       safeSingletonContract,
       claimingMasterCopyContract,
@@ -140,6 +151,7 @@ const useBuildDAOTx = () => {
       keyValuePairsContract,
       fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
+      linearVotingERC721MasterCopyContract,
       votesTokenMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
     ]

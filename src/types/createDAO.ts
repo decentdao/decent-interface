@@ -52,11 +52,13 @@ export type DAOGovernorERC20Token<T = BigNumber> = {
   parentAllocationAmount: T;
 };
 
+export type ERC721TokenConfig<T = BigNumber> = {
+  tokenAddress: string;
+  tokenWeight: T;
+};
+
 export type DAOGovernorERC721Token<T = BigNumber> = {
-  nfts: {
-    tokenAddress: string;
-    tokenWeight: T;
-  }[];
+  nfts: ERC721TokenConfig<T>[];
 };
 
 export type DAOGovernorModuleConfig<T = BigNumber> = {

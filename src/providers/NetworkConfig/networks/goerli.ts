@@ -7,7 +7,7 @@ import FractalModule from '@fractal-framework/fractal-contracts/deployments/goer
 import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/goerli/FractalRegistry.json';
 import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/goerli/KeyValuePairs.json';
 import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/goerli/LinearERC20Voting.json';
-import VotingERC721 from '@fractal-framework/fractal-contracts/deployments/goerli/LinearERC721Voting.json';
+import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/goerli/LinearERC721Voting.json';
 import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/goerli/ModuleProxyFactory.json';
 import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeGuard.json';
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/goerli/MultisigFreezeVoting.json';
@@ -40,7 +40,7 @@ export const goerliConfig: NetworkConfig = {
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
     votesERC20MasterCopy: VotesERC20.address,
-    votingERC721MasterCopy: VotingERC721.address,
+    linearVotingERC721MasterCopy: LinearVotingERC721.address,
     claimingMasterCopy: ERC20Claim.address,
     azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
     multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,

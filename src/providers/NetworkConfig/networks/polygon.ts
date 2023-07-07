@@ -25,7 +25,7 @@ export const polygonConfig: NetworkConfig = {
     fractalModuleMasterCopy: '',
     fractalRegistry: '',
     votesERC20MasterCopy: '',
-    votingERC721MasterCopy: '',
+    linearVotingERC721MasterCopy: '',
     claimingMasterCopy: '',
     azoriusFreezeGuardMasterCopy: '',
     multisigFreezeVotingMasterCopy: '',

@@ -8,6 +8,7 @@ import {
   AzoriusContracts,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  VotingStrategyType,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
@@ -83,14 +84,14 @@ export class DaoTxBuilder extends BaseTxBuilder {
     }
 
     this.internalTxs = this.internalTxs.concat(
-      azoriusTxBuilder.buildLinearVotingContractSetupTx(),
+      azoriusTxBuilder.buildVotingContractSetupTx(),
       azoriusTxBuilder.buildEnableAzoriusModuleTx()
     );
 
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
         azoriusTxBuilder.azoriusContract!.address,
-        azoriusTxBuilder.linearVotingContract!.address
+        azoriusTxBuilder.linearERC721VotingContract!.address
       );
 
       this.internalTxs = this.internalTxs.concat([
@@ -115,7 +116,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       txs.push(azoriusTxBuilder.buildCreateTokenWrapperTx());
     }
     // build token if token is not imported
-    if (!data.isTokenImported) {
+    if (!data.isTokenImported && data.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       txs.push(azoriusTxBuilder.buildCreateTokenTx());
     }
 
