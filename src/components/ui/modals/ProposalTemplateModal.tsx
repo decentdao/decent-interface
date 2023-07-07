@@ -129,6 +129,7 @@ export default function ProposalTemplateModal({
         marginBottom="1.5rem"
         text={description}
       />
+      <Divider color="chocolate.700" />
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
           {transaction.parameters.map(

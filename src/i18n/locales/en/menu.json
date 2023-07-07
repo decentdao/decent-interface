@@ -9,8 +9,6 @@
     "toastChainChanged": "Chain changed: {{chainName}}",
     "toastAccountRevoked": "Account access revoked",
     "toastAccountChanged": "Account changed",
-    "toastConnected": "Account connected",
-    "toastDisconnected": "Account disconnected",
     "network": "Network",
     "wallet": "Wallet",
     "titleManageDAO": "Manage DAO",
