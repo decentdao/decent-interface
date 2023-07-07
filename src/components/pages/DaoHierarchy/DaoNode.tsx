@@ -6,7 +6,6 @@ import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, WithError } from '../../../types';
 import { DAONodeRow } from '../../ui/cards/DAONodeRow';
-import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import { NodeLineVertical } from './NodeLines';
 
 /**
@@ -83,17 +82,6 @@ export function DaoNode({
     }
   }, [loadDao, daoAddress, fractalNode?.nodeHierarchy.childNodes, depth]);
 
-  if (!fractalNode?.nodeHierarchy) {
-    return (
-      <Box
-        h="6.25rem"
-        my={8}
-      >
-        <InfoBoxLoader />
-      </Box>
-    );
-  }
-
   return (
     <Box position="relative">
       <DAONodeRow
@@ -104,7 +92,6 @@ export function DaoNode({
         freezeGuard={daoData?.freezeGuard}
         depth={depth}
       />
-
       <NodeLineVertical
         trueDepth={depth}
         lastChildDescendants={lastChildDescendants}

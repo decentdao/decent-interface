@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Spacer, HStack, FlexProps, Link } from '@chakra-ui/react';
+import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center } from '@chakra-ui/react';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
@@ -10,7 +10,7 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 export interface InfoProps extends FlexProps {
   parentAddress?: string;
-  node: FractalNode;
+  node?: FractalNode;
   childCount?: number;
   freezeGuard?: FreezeGuard;
   guardContracts?: FractalGuardContracts;
@@ -42,15 +42,16 @@ export function DAOInfoCard({
   } = useFractal();
 
   // node hasn't loaded yet
-  if (!node.daoAddress) {
+  if (!node || !node.daoAddress) {
     return (
       <Flex
         w="full"
         minH="full"
-        alignItems="center"
         {...rest}
       >
-        <BarLoader />
+        <Center w="100%">
+          <BarLoader />
+        </Center>
       </Flex>
     );
   }
