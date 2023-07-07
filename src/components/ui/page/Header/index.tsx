@@ -11,7 +11,7 @@ function Header() {
         h="full"
         w="full"
         justifyContent="space-between"
-        px="0.5rem"
+        pe="0.5rem"
         alignItems="center"
       >
         <Show above="md">
