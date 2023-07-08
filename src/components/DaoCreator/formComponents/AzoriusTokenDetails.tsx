@@ -1,6 +1,6 @@
 import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { constants, ethers, utils } from 'ethers';
+import { BigNumber, constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider } from 'wagmi';
@@ -34,7 +34,6 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     values,
     errors,
     handleChange,
-    setFieldTouched,
     isSubmitting,
     mode,
   } = props;
@@ -51,8 +50,18 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     if (importAddress && !importError && utils.isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
       const tokenContract = new ethers.Contract(importAddress, erc20ABI, provider);
-      const name = await tokenContract.name();
-      const symbol = await tokenContract.symbol();
+      const name: string = await tokenContract.name();
+      const symbol: string = await tokenContract.symbol();
+      const decimals: number = await tokenContract.decimals();
+      const totalSupply: number = (await tokenContract.totalSupply()) / 10 ** decimals;
+      setFieldValue(
+        'token.tokenSupply',
+        {
+          value: totalSupply,
+          bigNumberValue: BigNumber.from(totalSupply),
+        },
+        true
+      );
       if (!isVotesToken) {
         setFieldValue('token.tokenName', 'Wrapped ' + name, true);
         setFieldValue('token.tokenSymbol', 'W' + symbol, true);
@@ -64,18 +73,11 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       }
     } else {
       setIsImportedVotesToken(false);
-      setFieldValue('token.tokenName', '', true);
-      setFieldValue('token.tokenSymbol', '', true);
     }
-    setTimeout(() => {
-      setFieldTouched('token.tokenSymbol', true, true);
-      setFieldTouched('token.tokenName', true, true);
-    }, 0);
   }, [
     checkVotesToken,
     errors?.token?.tokenImportAddress,
     setFieldValue,
-    setFieldTouched,
     provider,
     values.token.tokenImportAddress,
   ]);
@@ -125,6 +127,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                   setFieldValue('token.tokenImportAddress', '');
                   setFieldValue('token.tokenName', '');
                   setFieldValue('token.tokenSymbol', '');
+                  setFieldValue('token.tokenSupply', '');
                 }}
               />
               <RadioWithText
@@ -135,6 +138,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 onClick={() => {
                   setFieldValue('token.tokenName', '');
                   setFieldValue('token.tokenSymbol', '');
+                  setFieldValue('token.tokenSupply', '');
                 }}
               />
               {values.token.tokenCreationType === TokenCreationType.IMPORTED && (
