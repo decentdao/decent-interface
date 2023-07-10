@@ -24,6 +24,7 @@ export type CreateProposalTemplateMetadata = {
 export type CreateProposalTemplateForm = {
   transactions: CreateProposalTemplateTransaction[];
   proposalTemplateMetadata: CreateProposalTemplateMetadata;
+  nonce?: number;
 };
 
 export type ProposalTemplate = {

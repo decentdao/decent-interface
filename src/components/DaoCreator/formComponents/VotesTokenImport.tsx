@@ -42,8 +42,20 @@ export function VotesTokenImport(props: ICreationStepProps) {
           name="erc20Token.tokenSymbol"
           value={values.erc20Token.tokenSymbol}
           onChange={handleChange}
-          maxLength={6}
           data-testid="tokenVoting-tokenSymbolInput"
+          disabled={true}
+        />
+      </LabelComponent>
+      <LabelComponent
+        label={t('labelTokenSupply')}
+        helper={t('helperTokenSupply')}
+        isRequired
+        disabled={true}
+      >
+        <Input
+          value={values.token.tokenSupply.bigNumberValue?.toString()}
+          onChange={handleChange}
+          data-testid="tokenVoting-tokenSupplyInput"
           disabled={true}
         />
       </LabelComponent>

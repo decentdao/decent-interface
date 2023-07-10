@@ -1,6 +1,6 @@
 import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { constants, ethers, utils } from 'ethers';
+import { BigNumber, constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider } from 'wagmi';
@@ -34,7 +34,6 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     values,
     errors,
     handleChange,
-    setFieldTouched,
     isSubmitting,
     mode,
   } = props;
@@ -51,8 +50,18 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     if (importAddress && !importError && utils.isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
       const tokenContract = new ethers.Contract(importAddress, erc20ABI, provider);
-      const name = await tokenContract.name();
-      const symbol = await tokenContract.symbol();
+      const name: string = await tokenContract.name();
+      const symbol: string = await tokenContract.symbol();
+      const decimals: number = await tokenContract.decimals();
+      const totalSupply: number = (await tokenContract.totalSupply()) / 10 ** decimals;
+      setFieldValue(
+        'token.tokenSupply',
+        {
+          value: totalSupply,
+          bigNumberValue: BigNumber.from(totalSupply),
+        },
+        true
+      );
       if (!isVotesToken) {
         setFieldValue('erc20Token.tokenName', 'Wrapped ' + name, true);
         setFieldValue('erc20Token.tokenSymbol', 'W' + symbol, true);
@@ -64,18 +73,11 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       }
     } else {
       setIsImportedVotesToken(false);
-      setFieldValue('erc20Token.tokenName', '', true);
-      setFieldValue('erc20Token.tokenSymbol', '', true);
     }
-    setTimeout(() => {
-      setFieldTouched('erc20Token.tokenSymbol', true, true);
-      setFieldTouched('erc20Token.tokenName', true, true);
-    }, 0);
   }, [
     checkVotesToken,
     errors?.erc20Token?.tokenImportAddress,
     setFieldValue,
-    setFieldTouched,
     provider,
     values.erc20Token.tokenImportAddress,
   ]);
@@ -125,6 +127,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                   setFieldValue('erc20Token.tokenImportAddress', '');
                   setFieldValue('erc20Token.tokenName', '');
                   setFieldValue('erc20Token.tokenSymbol', '');
+                  setFieldValue('erc20Token.tokenSupply', '');
                 }}
               />
               <RadioWithText
@@ -135,6 +138,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 onClick={() => {
                   setFieldValue('erc20Token.tokenName', '');
                   setFieldValue('erc20Token.tokenSymbol', '');
+                  setFieldValue('erc20Token.tokenSupply', '');
                 }}
               />
               {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
