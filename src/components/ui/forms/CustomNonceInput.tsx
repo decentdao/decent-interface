@@ -1,5 +1,6 @@
 import { Flex, Text, Input, HStack, VStack } from '@chakra-ui/react';
-import { useRef } from 'react';
+import { Gear } from '@decent-org/fractal-ui';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceSelectionType } from '../../../types';
@@ -16,23 +17,25 @@ export function CustomNonceInput({
     governance,
     node: { safe },
   } = useFractal();
-  const { t } = useTranslation(['proposal']);
+  const { t } = useTranslation(['proposal', 'common']);
   const errorMessage = nonce && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
+
   if (
     governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
     governance.type === GovernanceSelectionType.AZORIUS_ERC721
   )
     return null;
 
-  return (
+  return revealed ? (
     <VStack alignItems="start">
       <HStack fontSize="14px">
         <Flex ref={containerRef}>
           <Text
             textStyle="text-md-sans-regular"
             whiteSpace="nowrap"
-            mt="1"
+            me="1"
           >
             {t('customNonce', { ns: 'proposal' })}
           </Text>
@@ -65,5 +68,20 @@ export function CustomNonceInput({
         </Flex>
       )}
     </VStack>
+  ) : (
+    <HStack
+      onClick={() => setRevealed(true)}
+      _hover={{ color: 'gold.500-hover' }}
+      cursor="pointer"
+    >
+      <Input
+        w="0"
+        marginEnd="-2.5rem"
+        visibility="hidden"
+        opacity="0"
+      />
+      <Gear />
+      <Text>{t('advanced', { ns: 'common' })}</Text>
+    </HStack>
   );
 }

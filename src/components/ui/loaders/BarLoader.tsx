@@ -20,7 +20,6 @@ export function BarLoader() {
       color="#FFF"
       position="relative"
       boxSizing="border-box"
-      margin="20px auto"
       sx={{
         '&::after, &::before': {
           content: '""',
@@ -40,6 +39,6 @@ export function BarLoader() {
           left: '-20px',
         },
       }}
-    ></Box>
+    />
   );
 }

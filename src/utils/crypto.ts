@@ -2,6 +2,16 @@ import { utils } from 'ethers';
 import { logError } from '../helpers/errorLogging';
 import { ActivityTransactionType } from '../types';
 
+function splitIgnoreBrackets(str: string): string[] {
+  const result = str
+    .match(/[^,\[\]]+|\[[^\]]*\]/g)!
+    .filter(match => {
+      return match.trim().length > 0;
+    })
+    .map(match => (match = match.trim()));
+  return result;
+}
+
 /**
  * Encodes a smart contract function, given the provided function name, input types, and input values.
  *
@@ -21,12 +31,20 @@ export const encodeFunction = (
   } else {
     functionSignature = functionSignature.concat('()');
   }
-  const parameters = !!_parameters ? _parameters.split(',').map(p => (p = p.trim())) : undefined;
+
+  const parameters = !!_parameters
+    ? splitIgnoreBrackets(_parameters).map(p => (p = p.trim()))
+    : undefined;
 
   const parametersFixed: Array<string | string[]> | undefined = parameters ? [] : undefined;
   parameters?.forEach(param => {
     if (param.startsWith('[') && param.endsWith(']')) {
-      parametersFixed!!.push(param.substring(1, param.length - 1).split(','));
+      parametersFixed!!.push(
+        param
+          .substring(1, param.length - 1)
+          .split(',')
+          .map(p => (p = p.trim()))
+      );
     } else {
       parametersFixed!!.push(param);
     }

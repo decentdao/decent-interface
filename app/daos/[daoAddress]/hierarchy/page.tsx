@@ -40,7 +40,6 @@ export default function HierarchyPage() {
       <DaoNode
         daoAddress={nodeHierarchy.parentAddress || daoAddress}
         depth={0}
-        siblingCount={0}
       />
     </ClientOnly>
   );

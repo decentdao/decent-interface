@@ -7,7 +7,7 @@ import {
   NumberInput,
   NumberInputField,
 } from '@chakra-ui/react';
-import { LabelWrapper, Trash } from '@decent-org/fractal-ui';
+import { LabelWrapper, Minus } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
@@ -150,7 +150,7 @@ export function Multisig(props: ICreationStepProps) {
                         variant="unstyled"
                         minW={16}
                         icon={
-                          <Trash
+                          <Minus
                             color="gold.500"
                             boxSize="1.5rem"
                           />

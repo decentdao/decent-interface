@@ -17,7 +17,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MultisigProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
-import ProposalTime from '../../ui/proposal/ProposalTime';
+import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 export function TxActions({
   proposal,
@@ -213,7 +213,7 @@ export function TxActions({
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Flex justifyContent="space-between">
         <Text textStyle="text-lg-mono-medium">{t(buttonProps[proposal.state!].pageTitle)}</Text>
-        <ProposalTime proposal={proposal} />
+        <ProposalCountdown proposal={proposal} />
       </Flex>
       <Box marginTop={4}>
         <Button

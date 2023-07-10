@@ -51,6 +51,7 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
   const loadDAOProposals = useDAOProposals();
+  const { data: signer } = useSigner();
 
   const {
     node: { safe, fractalModules },
@@ -63,18 +64,21 @@ export default function useSubmitProposal() {
   } = useFractal();
 
   const globalAzoriusContract = useMemo(() => {
+    if (!signer) {
+      return undefined;
+    }
     const azoriusModule = fractalModules?.find(
       module => module.moduleType === FractalModuleType.AZORIUS
     );
     if (!azoriusModule) {
       return undefined;
     }
-    return azoriusModule.moduleContract as Azorius;
-  }, [fractalModules]);
+    const moduleContract = azoriusModule.moduleContract as Azorius;
+    return moduleContract.connect(signer);
+  }, [fractalModules, signer]);
 
   const lookupModules = useFractalModules();
   const provider = useProvider();
-  const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { chainId, safeBaseURL } = useNetworkConfig();
 
@@ -286,7 +290,10 @@ export default function useSubmitProposal() {
           });
         }
       } else {
-        if (!globalAzoriusContract || !freezeVotingContract || !safe?.address) {
+        const votingStrategyAddress =
+          ozLinearVotingContract?.asSigner.address || freezeVotingContract?.asSigner.address;
+
+        if (!globalAzoriusContract || !votingStrategyAddress) {
           await submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -305,8 +312,8 @@ export default function useSubmitProposal() {
             nonce,
             successCallback,
             azoriusContract: globalAzoriusContract,
-            votingStrategyAddress: freezeVotingContract.asSigner.address,
-            safeAddress: safe.address,
+            votingStrategyAddress: votingStrategyAddress,
+            safeAddress: safe?.address,
           });
         }
       }
