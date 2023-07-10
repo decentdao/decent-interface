@@ -67,7 +67,7 @@ export default function SignersContainer() {
 
   return (
     <SettingsSection
-      contentTitle={t('signers', { ns: 'common' })}
+      contentTitle={''}
       contentHeader={
         <Flex justifyContent="space-between">
           <Text

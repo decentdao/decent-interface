@@ -53,7 +53,7 @@
   "unwrapTokenTitle": "Unwrap your token",
   "assetUnwrapTitle": "Asset to unwrap",
   "assetUnwrapAmountLabel": "How much would you like to unwrap?",
-  "assetUnwrapSubLabel": "UnWrap your ERC-20 token as an ERC-20 Voting token to use as governance",
+  "assetUnwrapSubLabel": "Unwrap your ERC-20 token as an ERC-20 Voting token to use as governance",
   "unwrapTokenPendingMessage": "Unwrapping tokens...",
   "unwrapTokenFailedMessage": "Failed to unwrap tokens",
   "unwrapTokenSuccessMessage": "Tokens unwrapped",
