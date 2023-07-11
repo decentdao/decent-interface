@@ -186,12 +186,13 @@ function ProposalVotes({
             gap={4}
           >
             {votes.map(vote => (
+              // TODO ERC721 NFT voting support (defaulting to 0 for total supply if it's not ERC20...)
               <ProposalVoteItem
                 key={vote.voter}
                 vote={vote}
-                govTokenTotalSupply={azoriusGovernance.votesToken.totalSupply}
-                govTokenDecimals={azoriusGovernance.votesToken.decimals}
-                govTokenSymbol={azoriusGovernance.votesToken.symbol}
+                govTokenTotalSupply={azoriusGovernance.votesToken?.totalSupply || BigNumber.from(0)}
+                govTokenDecimals={azoriusGovernance.votesToken?.decimals || 0}
+                govTokenSymbol={azoriusGovernance.votesToken?.symbol || ''}
               />
             ))}
           </Flex>
