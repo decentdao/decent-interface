@@ -62,7 +62,7 @@ export default function ProposalDetailsPage({
             terminus: t('proposal', {
               ns: 'breadcrumbs',
               proposalId,
-              proposalTitle: proposal?.metaData?.title || transactionDescription,
+              proposalTitle: proposal?.data?.title || transactionDescription,
             }),
             path: '',
           },

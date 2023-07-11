@@ -92,7 +92,7 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
 
 export default function ProposalExecutableCode({ proposal }: { proposal: FractalProposal }) {
   const { t } = useTranslation('proposal');
-  if (!proposal.metaData) {
+  if (!proposal.data) {
     return null;
   }
   return (
@@ -125,7 +125,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Fractal
                   gap={2}
                   flexDirection="column"
                 >
-                  {proposal.metaData?.decodedTransactions.map((tx, i) => (
+                  {proposal.data?.decodedTransactions.map((tx, i) => (
                     <TransactionBlock
                       transaction={tx}
                       key={i}

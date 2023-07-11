@@ -19,10 +19,8 @@ export type CreateProposalFunc = (proposal: {
   successCallback: () => void;
 }) => void;
 
-export type ProposalMetaData = {
-  title?: string;
-  description?: string;
-  documentationUrl?: string;
+export type ProposalData = {
+  metaData?: ProposalMetadata;
   transactions?: MetaTransaction[];
   decodedTransactions: DecodedTransaction[];
 };

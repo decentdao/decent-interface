@@ -80,7 +80,7 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
 
   const governanceActivity = activity as GovernanceActivity;
 
-  const azoriusTitle = (activity as AzoriusProposal).metaData?.title;
+  const azoriusTitle = (activity as AzoriusProposal).data?.title;
   if (azoriusTitle) {
     return (
       <>

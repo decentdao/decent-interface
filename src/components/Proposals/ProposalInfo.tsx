@@ -10,9 +10,9 @@ import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
   const azoriusProposal = proposal as AzoriusProposal;
   const { multisigMetadata } = useGetMultisigMetadata(proposal.proposalId, proposal.transaction);
-  const description = multisigMetadata?.description || azoriusProposal.metaData?.description;
+  const description = multisigMetadata?.description || azoriusProposal.data?.metaData?.description;
   const documentationUrl =
-    multisigMetadata?.documentationUrl || azoriusProposal.metaData?.documentationUrl;
+    multisigMetadata?.documentationUrl || azoriusProposal.data?.metaData?.documentationUrl;
   const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: documentationUrl });
 
   return (

@@ -10,7 +10,7 @@ import {
   ProposalVote,
   VOTE_CHOICES,
   ContractConnection,
-  ProposalMetaData,
+  ProposalData,
   AzoriusProposal,
   ActivityEventType,
   Parameter,
@@ -78,7 +78,7 @@ export const mapProposalCreatedEventToProposal = async (
   azoriusContract: ContractConnection<Azorius>,
   provider: Providers,
   chainId: number,
-  metaData?: ProposalMetaData
+  data?: ProposalData
 ) => {
   const { endBlock, startBlock, abstainVotes, yesVotes, noVotes } =
     await strategyContract.getProposalVotes(proposalId);
@@ -103,7 +103,7 @@ export const mapProposalCreatedEventToProposal = async (
     quorum,
   };
 
-  const targets = metaData ? metaData.decodedTransactions.map(tx => tx.target) : [];
+  const targets = data ? data.decodedTransactions.map(tx => tx.target) : [];
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
@@ -130,7 +130,7 @@ export const mapProposalCreatedEventToProposal = async (
     govTokenAddress: await strategyContract.governanceToken(),
     votes,
     votesSummary,
-    metaData,
+    data,
   };
 
   return proposal;
