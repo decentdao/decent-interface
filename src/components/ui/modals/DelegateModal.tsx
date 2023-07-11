@@ -26,7 +26,7 @@ export function DelegateModal({ close }: { close: Function }) {
 
   const { data: signer } = useSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
-  const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken.delegatee);
+  const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
   const { delegateVote, contractCallPending } = useDelegateVote();
   const { addressValidationTest } = useValidationAddress();
 

@@ -31,7 +31,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
     pending: approvalPending,
   } = useApproval(
     governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
-    azoriusGovernance.votesToken.address
+    azoriusGovernance.votesToken?.address
   );
 
   const { t } = useTranslation(['modals', 'treasury']);
@@ -59,7 +59,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
   );
 
   if (
-    !azoriusGovernance.votesToken.balance ||
+    !azoriusGovernance.votesToken?.balance ||
     !azoriusGovernance.votesToken.decimals ||
     azoriusGovernance.votesToken.balance?.isZero()
   ) {
@@ -87,8 +87,8 @@ export function UnwrapToken({ close }: { close: () => void }) {
             if (!amount) return false;
 
             if (amountBN.isZero()) return false;
-            if (azoriusGovernance.votesToken.balance!.isZero()) return false;
-            if (amountBN.gt(azoriusGovernance.votesToken.balance!!)) return false;
+            if (azoriusGovernance.votesToken?.balance!.isZero()) return false;
+            if (amountBN.gt(azoriusGovernance.votesToken?.balance!!)) return false;
             return true;
           },
         }),
@@ -106,7 +106,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
                 subLabel={t('assetUnwrapSubLabel')}
               >
                 <Input
-                  value={azoriusGovernance.votesToken.name}
+                  value={azoriusGovernance.votesToken?.name}
                   disabled={true}
                 />
               </LabelWrapper>
@@ -115,20 +115,20 @@ export function UnwrapToken({ close }: { close: () => void }) {
                 label={t('assetUnwrapAmountLabel')}
                 subLabel={t('selectSublabel', {
                   balance: formatCoin(
-                    azoriusGovernance.votesToken.balance!,
+                    azoriusGovernance.votesToken?.balance!,
                     false,
-                    azoriusGovernance.votesToken.decimals!,
+                    azoriusGovernance.votesToken?.decimals!,
                     azoriusGovernance.votesToken?.symbol
                   ),
                 })}
               >
                 <BigNumberInput
                   value={values.amount.bigNumberValue}
-                  decimalPlaces={azoriusGovernance.votesToken.decimals}
+                  decimalPlaces={azoriusGovernance.votesToken?.decimals}
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="unWrapToken-amount"
                   onKeyDown={restrictChars}
-                  maxValue={azoriusGovernance.votesToken.balance!}
+                  maxValue={azoriusGovernance.votesToken?.balance!}
                   isDisabled={!approved}
                 />
               </LabelWrapper>

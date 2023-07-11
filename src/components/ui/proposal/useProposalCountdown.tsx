@@ -10,9 +10,9 @@ import {
   AzoriusGovernance,
   FractalProposal,
   FractalProposalState,
-  GovernanceModuleType,
   AzoriusProposal,
   FreezeGuardType,
+  GovernanceSelectionType,
 } from '../../../types';
 import { blocksToSeconds } from '../../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../../utils/guard';
@@ -57,7 +57,10 @@ export function useProposalCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (governance.type === GovernanceModuleType.AZORIUS) {
+            if (
+              governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
+              governance.type === GovernanceSelectionType.AZORIUS_ERC721
+            ) {
               await updateProposalState(BigNumber.from(proposal.proposalId));
             } else {
               await loadDAOProposals();
@@ -103,7 +106,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
       const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
       const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
 
-      const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
+      const timeLockPeriod = azoriusGovernance.votingStrategy?.timeLockPeriod;
       const votingDeadlineMs = (proposal as AzoriusProposal).deadlineMs;
 
       // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
@@ -153,7 +156,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
       clearInterval(countdownInterval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposal.state, azoriusGovernance.votesStrategy, freezeGuardContract, freezeGuardType]);
+  }, [proposal.state, azoriusGovernance.votingStrategy, freezeGuardContract, freezeGuardType]);
 
   return secondsLeft;
 }
