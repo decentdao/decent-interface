@@ -1,7 +1,7 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { BigNumber, Signer } from 'ethers';
+import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -9,6 +9,7 @@ import { useProvider, useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
+import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   FractalModuleType,
@@ -19,6 +20,7 @@ import {
 import { buildSafeApiUrl } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
+import { MultisigMetadata } from './useGetMultisigMetadata';
 
 interface ISubmitProposal {
   proposalData: ProposalExecuteData | undefined;
@@ -81,6 +83,7 @@ export default function useSubmitProposal() {
   const provider = useProvider();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { chainId, safeBaseURL } = useNetworkConfig();
+  const ipfsClient = useIPFSClient();
 
   const { owners } = safe || {};
   const canUserCreateProposal = useMemo(
@@ -117,39 +120,50 @@ export default function useSubmitProposal() {
       }
 
       setPendingCreateTx(true);
-
-      let to, value, data, operation;
-      if (proposalData.targets.length > 1) {
-        if (!multiSendContract) {
-          toast.dismiss(toastId);
-          return;
-        }
-        // Need to wrap it in Multisend function call
-        to = multiSendContract.asSigner.address;
-
-        const tempData = proposalData.targets.map((target, index) => {
-          return {
-            to: target,
-            value: BigNumber.from(proposalData.values[index]),
-            data: proposalData.calldatas[index],
-            operation: 0,
-          } as MetaTransaction;
-        });
-
-        data = multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [
-          encodeMultiSend(tempData),
-        ]);
-
-        operation = 1;
-      } else {
-        // Single transaction to post
-        to = proposalData.targets[0];
-        value = BigNumber.from(proposalData.values[0]);
-        data = proposalData.calldatas[0];
-        operation = 0;
-      }
-
       try {
+        if (proposalData.title || proposalData.description || proposalData.documentationUrl) {
+          const metaData: MultisigMetadata = {
+            title: proposalData.title || '',
+            description: proposalData.description || '',
+            documentationUrl: proposalData.documentationUrl || '',
+          };
+          const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
+          proposalData.targets.push(safe?.address || '');
+          proposalData.values.push(BigNumber.from('0'));
+          proposalData.calldatas.push(new utils.AbiCoder().encode(['string'], [Hash]));
+        }
+
+        let to, value, data, operation;
+        if (proposalData.targets.length > 1) {
+          if (!multiSendContract) {
+            toast.dismiss(toastId);
+            return;
+          }
+          // Need to wrap it in Multisend function call
+          to = multiSendContract.asSigner.address;
+
+          const tempData = proposalData.targets.map((target, index) => {
+            return {
+              to: target,
+              value: BigNumber.from(proposalData.values[index]),
+              data: proposalData.calldatas[index],
+              operation: 0,
+            } as MetaTransaction;
+          });
+
+          data = multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [
+            encodeMultiSend(tempData),
+          ]);
+
+          operation = 1;
+        } else {
+          // Single transaction to post
+          to = proposalData.targets[0];
+          value = BigNumber.from(proposalData.values[0]);
+          data = proposalData.calldatas[0];
+          operation = 0;
+        }
+
         const safeContract = GnosisSafe__factory.connect(safeAddress, signerOrProvider);
         await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
@@ -181,7 +195,15 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [chainId, multiSendContract, safeBaseURL, signerOrProvider, loadDAOProposals]
+    [
+      signerOrProvider,
+      safeBaseURL,
+      chainId,
+      loadDAOProposals,
+      ipfsClient,
+      safe?.address,
+      multiSendContract,
+    ]
   );
 
   const submitTokenVotingProposal = useCallback(

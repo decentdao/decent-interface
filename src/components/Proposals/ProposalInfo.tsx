@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Text, Image } from '@chakra-ui/react';
+import { useGetMultisigMetadata } from '../../hooks/DAO/proposal/useGetMultisigMetadata';
 import { FractalProposal, AzoriusProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import { ModalType } from '../ui/modals/ModalProvider';
@@ -8,8 +9,10 @@ import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 
 export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
   const azoriusProposal = proposal as AzoriusProposal;
-  const description = azoriusProposal.metaData?.description;
-  const documentationUrl = azoriusProposal.metaData?.documentationUrl;
+  const { multisigMetadata } = useGetMultisigMetadata(proposal.proposalId, proposal.transaction);
+  const description = multisigMetadata?.description || azoriusProposal.metaData?.description;
+  const documentationUrl =
+    multisigMetadata?.documentationUrl || azoriusProposal.metaData?.documentationUrl;
   const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: documentationUrl });
 
   return (

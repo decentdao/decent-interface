@@ -3,7 +3,6 @@ import { BigNumberValuePair } from './common';
 export enum CreateProposalState {
   METADATA_FORM,
   TRANSACTIONS_FORM,
-  LOADING,
 }
 
 export interface CreateProposalTransaction<T = BigNumberValuePair> {
