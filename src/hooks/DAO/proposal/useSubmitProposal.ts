@@ -1,7 +1,7 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { BigNumber, Signer, utils } from 'ethers';
+import { BigNumber, constants, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -132,7 +132,7 @@ export default function useSubmitProposal() {
             documentationUrl: proposalData.metaData.documentationUrl || '',
           };
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
-          proposalData.targets.push(safe?.address || '');
+          proposalData.targets.push(constants.AddressZero);
           proposalData.values.push(BigNumber.from('0'));
           proposalData.calldatas.push(new utils.AbiCoder().encode(['string'], [Hash]));
         }
@@ -199,15 +199,7 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [
-      signerOrProvider,
-      safeBaseURL,
-      chainId,
-      loadDAOProposals,
-      ipfsClient,
-      safe?.address,
-      multiSendContract,
-    ]
+    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, multiSendContract]
   );
 
   const submitTokenVotingProposal = useCallback(
