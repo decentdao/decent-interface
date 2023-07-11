@@ -53,7 +53,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
         disabled={true}
       >
         <Input
-          value={values.token.tokenSupply.bigNumberValue?.toString()}
+          value={values.erc20Token.tokenSupply.bigNumberValue?.toString()}
           onChange={handleChange}
           data-testid="tokenVoting-tokenSupplyInput"
           disabled={true}
