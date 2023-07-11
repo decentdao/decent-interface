@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Text, Image } from '@chakra-ui/react';
-import { useGetMultisigMetadata } from '../../hooks/DAO/proposal/useGetMultisigMetadata';
-import { FractalProposal, AzoriusProposal } from '../../types';
+import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
+import { FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
@@ -8,12 +8,9 @@ import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 
 export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
-  const azoriusProposal = proposal as AzoriusProposal;
-  const { multisigMetadata } = useGetMultisigMetadata(proposal.proposalId, proposal.transaction);
-  const description = multisigMetadata?.description || azoriusProposal.data?.metaData?.description;
-  const documentationUrl =
-    multisigMetadata?.documentationUrl || azoriusProposal.data?.metaData?.documentationUrl;
-  const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: documentationUrl });
+  const metaData = useGetMetadata(proposal);
+
+  const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: metaData.documentationUrl });
 
   return (
     <Box>
@@ -25,8 +22,8 @@ export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
       </Flex>
       <Box mt={4}>
         <ActivityDescription activity={proposal} />
-        {description && <Text my={4}>{description}</Text>}
-        {documentationUrl && (
+        <Text my={4}>{metaData.description}</Text>
+        {metaData.documentationUrl && (
           <Button
             onClick={confirmUrl}
             variant="text"
@@ -41,7 +38,7 @@ export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
                 my={1}
                 mr={2}
               />
-              {documentationUrl}
+              {metaData.documentationUrl}
             </Flex>
           </Button>
         )}

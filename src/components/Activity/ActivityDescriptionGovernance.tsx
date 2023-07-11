@@ -1,14 +1,14 @@
 import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useGetMultisigMetadata } from '../../hooks/DAO/proposal/useGetMultisigMetadata';
+import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import {
   Activity,
   GovernanceActivity,
   MultisigProposal,
   ActivityEventType,
   TreasuryActivity,
-  AzoriusProposal,
   SnapshotProposal,
+  FractalProposal,
 } from '../../types';
 import { ActivityAddress } from './ActivityAddress';
 
@@ -22,25 +22,13 @@ const formatId = (proposalId: string) => {
   }
 };
 
-function TargetAddresses({ activity }: { activity: Activity }) {
-  const { t } = useTranslation('treasury');
+function TargetAddress({ activity }: { activity: Activity }) {
   const governanceActivity = activity as GovernanceActivity;
-  const txCount = governanceActivity.targets.length;
-
-  if (txCount > 1) {
-    return <Text>{t('addresses', { ns: 'treasury', numOfAddresses: txCount })}</Text>;
+  if (governanceActivity.targets.length === 1) {
+    return <ActivityAddress address={governanceActivity.targets[0]} />;
+  } else {
+    return null;
   }
-  return (
-    <>
-      {governanceActivity.targets.map((address, i, arr) => (
-        <ActivityAddress
-          key={address + i}
-          address={address}
-          addComma={i !== arr.length - 1}
-        />
-      ))}
-    </>
-  );
 }
 
 function OnChainRejectionMessage({ activity }: { activity: Activity }) {
@@ -60,10 +48,7 @@ function OnChainRejectionMessage({ activity }: { activity: Activity }) {
 
 export function ProposalTitle({ activity }: { activity: Activity }) {
   const { t } = useTranslation(['common', 'dashboard']);
-  const { multisigMetadata } = useGetMultisigMetadata(
-    (activity as GovernanceActivity).proposalId,
-    activity.transaction
-  );
+  const metaData = useGetMetadata(activity as FractalProposal);
 
   if (activity.eventType !== ActivityEventType.Governance) {
     return null;
@@ -78,34 +63,15 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
     );
   }
 
-  const governanceActivity = activity as GovernanceActivity;
-
-  const azoriusTitle = (activity as AzoriusProposal).data?.title;
-  if (azoriusTitle) {
-    return (
-      <>
-        <Text>{formatId(governanceActivity.proposalId)}</Text>
-        <Text>{azoriusTitle}</Text>
-      </>
-    );
-  }
-
   const treasuryActivity = activity as TreasuryActivity;
   const hasTransfers =
     treasuryActivity.transferAddresses && !!treasuryActivity.transferAddresses.length;
 
-  const title =
-    multisigMetadata?.title ||
-    t('proposalDescription', {
-      ns: 'dashboard',
-      count: governanceActivity.targets.length,
-    });
-
   return (
     <>
-      <Text>{formatId(governanceActivity.proposalId)}</Text>
-      <Text>{title}</Text>
-      {!multisigMetadata?.title && <TargetAddresses activity={activity} />}
+      <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
+      <Text>{metaData.title || metaData.description}</Text>
+      <TargetAddress activity={activity} />
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
       <OnChainRejectionMessage activity={activity} />
     </>

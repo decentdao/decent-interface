@@ -1,11 +1,8 @@
 import { utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import {
-  ActivityTransactionType,
-  ProposalMetadata,
-  SafeMultisigTransactionResponse,
-} from '../../../types';
+import { FractalProposal, ProposalMetadata, SafeMultisigTransactionResponse } from '../../../types';
 import { CacheKeys } from '../../utils/cache/cacheDefaults';
 import { DBObjectKeys, useIndexedDB } from '../../utils/cache/useLocalDB';
 
@@ -21,10 +18,7 @@ interface Transaction {
   data: string;
 }
 
-export const useGetMultisigMetadata = (
-  id: string | undefined,
-  transactionType: ActivityTransactionType | undefined
-) => {
+const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) => {
   const ipfsClient = useIPFSClient();
   const [multisigMetadata, setMultisigMetadata] = useState<undefined | ProposalMetadata | null>(
     undefined
@@ -32,13 +26,19 @@ export const useGetMultisigMetadata = (
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
   const fetchMultisigMetadata = useCallback(async () => {
-    const cached: ProposalMetadata = await getValue(CacheKeys.MULTISIG_METADATA_PREFIX + id);
+    if (!proposal) return;
+
+    const cached: ProposalMetadata = await getValue(
+      CacheKeys.MULTISIG_METADATA_PREFIX + proposal.proposalId
+    );
     if (cached) {
       setMultisigMetadata(cached);
       return;
     }
 
-    const transaction = transactionType as SafeMultisigTransactionResponse;
+    if (!proposal.transaction) return;
+
+    const transaction = proposal.transaction as SafeMultisigTransactionResponse;
 
     // transactionType either isn't SafeMultisigTransactionResponse, or
     // there is no dataDecoded field on it
@@ -48,6 +48,9 @@ export const useGetMultisigMetadata = (
     // transaction, which contains the IPFS hash as its data array
     const dataDecoded: DataDecoded = JSON.parse(JSON.stringify(transaction.dataDecoded));
     const transactions: Transaction[] = dataDecoded.parameters[0].valueDecoded;
+
+    if (!transactions) return;
+
     const encodedMetadata = transactions[transactions.length - 1].data;
 
     // if there is data there, see if it's the hash (it should be), then get the JSON
@@ -59,18 +62,35 @@ export const useGetMultisigMetadata = (
         const meta: ProposalMetadata = await ipfsClient.cat(ipfsHash);
 
         // cache the metadata JSON
-        await setValue(CacheKeys.MULTISIG_METADATA_PREFIX + id, meta);
+        await setValue(CacheKeys.MULTISIG_METADATA_PREFIX + proposal.proposalId, meta);
 
         setMultisigMetadata(meta);
       } catch (e) {
         setMultisigMetadata(null);
       }
     }
-  }, [getValue, id, ipfsClient, setValue, transactionType]);
+  }, [getValue, ipfsClient, proposal, setValue]);
 
   useEffect(() => {
-    if (multisigMetadata === undefined && id) fetchMultisigMetadata();
-  }, [multisigMetadata, fetchMultisigMetadata, id]);
+    if (multisigMetadata === undefined) fetchMultisigMetadata();
+  }, [multisigMetadata, fetchMultisigMetadata, proposal?.proposalId]);
 
   return { multisigMetadata };
+};
+
+export const useGetMetadata = (proposal: FractalProposal | null | undefined): ProposalMetadata => {
+  const { multisigMetadata } = useGetMultisigMetadata(proposal);
+  const { t } = useTranslation('dashboard');
+
+  return {
+    title: multisigMetadata?.title || proposal?.data?.metaData?.title || '',
+    description:
+      multisigMetadata?.description ||
+      proposal?.data?.metaData?.description ||
+      t('proposalDescription', {
+        count: proposal?.targets.length,
+      }),
+    documentationUrl:
+      multisigMetadata?.documentationUrl || proposal?.data?.metaData?.documentationUrl || '',
+  };
 };
