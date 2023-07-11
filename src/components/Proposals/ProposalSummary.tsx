@@ -26,7 +26,7 @@ export default function ProposalSummary({
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const getVotesPercentage = (voteTotal: BigNumber): number => {
     if (
-      !azoriusGovernance.votesToken.totalSupply ||
+      !azoriusGovernance.votesToken?.totalSupply ||
       azoriusGovernance.votesToken.totalSupply.eq(0)
     ) {
       return 0;
