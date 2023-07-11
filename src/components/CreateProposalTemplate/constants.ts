@@ -14,13 +14,11 @@ export const DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION: CreateProposalTemplateTransa
   ],
 };
 
-export const DEFAULT_META_DATA = {
-  title: '',
-  description: '',
-};
-
 export const DEFAULT_PROPOSAL_TEMPLATE = {
   nonce: undefined,
-  proposalTemplateMetadata: DEFAULT_META_DATA,
+  proposalTemplateMetadata: {
+    title: '',
+    description: '',
+  },
   transactions: [DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION],
 };
