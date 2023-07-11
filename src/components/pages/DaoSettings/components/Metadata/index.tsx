@@ -54,9 +54,11 @@ export default function MetadataContainer() {
 
   const handleEditDAOName = () => {
     const proposalData: ProposalExecuteData = {
-      title: t('Update DAO Name', { ns: 'proposalMetadata' }),
-      description: '',
-      documentationUrl: '',
+      metaData: {
+        title: t('Update DAO Name', { ns: 'proposalMetadata' }),
+        description: '',
+        documentationUrl: '',
+      },
       targets: [fractalRegistryContract.asProvider.address],
       values: [BigNumber.from(0)],
       calldatas: [
@@ -76,9 +78,11 @@ export default function MetadataContainer() {
 
   const handleEditDAOSnapshotURL = () => {
     const proposalData: ProposalExecuteData = {
-      title: t('Update DAO Snapshot Space', { ns: 'proposalMetadata' }),
-      description: '',
-      documentationUrl: '',
+      metaData: {
+        title: t('Update DAO Snapshot Space', { ns: 'proposalMetadata' }),
+        description: '',
+        documentationUrl: '',
+      },
       targets: [keyValuePairsContract.asProvider.address],
       values: [BigNumber.from(0)],
       calldatas: [

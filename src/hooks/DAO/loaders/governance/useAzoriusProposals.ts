@@ -8,7 +8,7 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { CreateProposalMetadata, MetaTransaction } from '../../../../types';
+import { ProposalMetadata, MetaTransaction } from '../../../../types';
 
 import { AzoriusProposal, ProposalMetaData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
@@ -53,7 +53,7 @@ export const useAzoriusProposals = () => {
       proposalCreatedEvents.map(async ({ args }) => {
         let metaData;
         if (args.metadata) {
-          const metaDataEvent: CreateProposalMetadata = JSON.parse(args.metadata);
+          const metaDataEvent: ProposalMetadata = JSON.parse(args.metadata);
           const decodedTransactions = await decodeTransactions(args.transactions);
           metaData = {
             title: metaDataEvent.title,
@@ -87,7 +87,7 @@ export const useAzoriusProposals = () => {
       let metaData: ProposalMetaData | undefined;
 
       if (_metadata) {
-        const metaDataEvent: CreateProposalMetadata = JSON.parse(_metadata);
+        const metaDataEvent: ProposalMetadata = JSON.parse(_metadata);
         metaData = {
           title: metaDataEvent.title,
           description: metaDataEvent.description,

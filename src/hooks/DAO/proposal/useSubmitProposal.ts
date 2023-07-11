@@ -16,11 +16,11 @@ import {
   MetaTransaction,
   ProposalExecuteData,
   GovernanceSelectionType,
+  ProposalMetadata,
 } from '../../../types';
 import { buildSafeApiUrl } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
-import { MultisigMetadata } from './useGetMultisigMetadata';
 
 interface ISubmitProposal {
   proposalData: ProposalExecuteData | undefined;
@@ -121,11 +121,15 @@ export default function useSubmitProposal() {
 
       setPendingCreateTx(true);
       try {
-        if (proposalData.title || proposalData.description || proposalData.documentationUrl) {
-          const metaData: MultisigMetadata = {
-            title: proposalData.title || '',
-            description: proposalData.description || '',
-            documentationUrl: proposalData.documentationUrl || '',
+        if (
+          proposalData.metaData.title ||
+          proposalData.metaData.description ||
+          proposalData.metaData.documentationUrl
+        ) {
+          const metaData: ProposalMetadata = {
+            title: proposalData.metaData.title || '',
+            description: proposalData.metaData.description || '',
+            documentationUrl: proposalData.metaData.documentationUrl || '',
           };
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
           proposalData.targets.push(safe?.address || '');
@@ -244,9 +248,9 @@ export default function useSubmitProposal() {
             '0x',
             transactions,
             JSON.stringify({
-              title: proposalData.title,
-              description: proposalData.description,
-              documentationUrl: proposalData.documentationUrl,
+              title: proposalData.metaData.title,
+              description: proposalData.metaData.description,
+              documentationUrl: proposalData.metaData.documentationUrl,
             })
           )
         ).wait();

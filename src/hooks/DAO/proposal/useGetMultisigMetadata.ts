@@ -1,15 +1,13 @@
 import { utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { ActivityTransactionType, SafeMultisigTransactionResponse } from '../../../types';
+import {
+  ActivityTransactionType,
+  ProposalMetadata,
+  SafeMultisigTransactionResponse,
+} from '../../../types';
 import { CacheKeys } from '../../utils/cache/cacheDefaults';
 import { DBObjectKeys, useIndexedDB } from '../../utils/cache/useLocalDB';
-
-export interface MultisigMetadata {
-  title: string;
-  description: string;
-  documentationUrl: string;
-}
 
 interface DataDecoded {
   parameters: Parameter[];
@@ -28,13 +26,13 @@ export const useGetMultisigMetadata = (
   transactionType: ActivityTransactionType | undefined
 ) => {
   const ipfsClient = useIPFSClient();
-  const [multisigMetadata, setMultisigMetadata] = useState<undefined | MultisigMetadata | null>(
+  const [multisigMetadata, setMultisigMetadata] = useState<undefined | ProposalMetadata | null>(
     undefined
   );
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
   const fetchMultisigMetadata = useCallback(async () => {
-    const cached: MultisigMetadata = await getValue(CacheKeys.MULTISIG_METADATA_PREFIX + id);
+    const cached: ProposalMetadata = await getValue(CacheKeys.MULTISIG_METADATA_PREFIX + id);
     if (cached) {
       setMultisigMetadata(cached);
       return;
@@ -58,7 +56,7 @@ export const useGetMultisigMetadata = (
       try {
         const decoded = new utils.AbiCoder().decode(['string'], encodedMetadata);
         const ipfsHash = (decoded as string[])[0];
-        const meta: MultisigMetadata = await ipfsClient.cat(ipfsHash);
+        const meta: ProposalMetadata = await ipfsClient.cat(ipfsHash);
 
         // cache the metadata JSON
         await setValue(CacheKeys.MULTISIG_METADATA_PREFIX + id, meta);

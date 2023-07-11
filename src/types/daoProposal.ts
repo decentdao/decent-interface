@@ -1,12 +1,11 @@
 import { BigNumber, BigNumberish } from 'ethers';
+import { ProposalMetadata } from './createProposal';
 import { GovernanceActivity } from './fractal';
 import { SafeMultisigConfirmationResponse } from './safeGlobal';
 import { MetaTransaction, DecodedTransaction } from './transaction';
 
 export interface ProposalExecuteData extends ExecuteData {
-  title: string;
-  description: string;
-  documentationUrl: string;
+  metaData: ProposalMetadata;
 }
 
 export interface ExecuteData {

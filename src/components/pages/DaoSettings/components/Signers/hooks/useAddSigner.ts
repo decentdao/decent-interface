@@ -40,9 +40,11 @@ const useAddSigner = () => {
         targets: [daoAddress!],
         values: [BigNumber.from('0')],
         calldatas: calldatas,
-        title: 'Add Signer',
-        description: description,
-        documentationUrl: '',
+        metaData: {
+          title: 'Add Signer',
+          description: description,
+          documentationUrl: '',
+        },
       };
 
       await submitProposal({

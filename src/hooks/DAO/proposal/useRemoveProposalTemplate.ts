@@ -29,7 +29,7 @@ export default function useRemoveProposalTemplate() {
         const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
 
         const proposal: ProposalExecuteData = {
-          ...proposalMetadata,
+          metaData: proposalMetadata,
           targets: [keyValuePairsContract.asProvider.address],
           values: [BigNumber.from(0)],
           calldatas: [

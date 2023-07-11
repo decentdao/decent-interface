@@ -104,9 +104,11 @@ const useDeployAzorius = () => {
           ]),
           multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx]),
         ],
-        title: '',
-        description: '',
-        documentationUrl: '',
+        metaData: {
+          title: '',
+          description: '',
+          documentationUrl: '',
+        },
       };
 
       await submitProposal({
