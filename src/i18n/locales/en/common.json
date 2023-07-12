@@ -41,6 +41,8 @@
     "errorInvalidENSAddress": "Invalid ENS name or address",
     "errorInvalidENSName": "Invalid ENS name",
     "errorInvalidERC20Address": "Invalid ERC-20 token address",
+    "errorInvalidERC721Address": "Invalid ERC-721 token address",
+    "errorMinimumValue": "This value can't be less then {{minValue}}",
     "errorInvalidAddress": "Invalid ETH address",
     "errorSentryFallbackTitle": "Oops!",
     "errorSentryFallbackMessage": "An unexpected error occurred. Try reloading or <1>ask the devs to do something</1>.",

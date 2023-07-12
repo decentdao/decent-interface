@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider, useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
+import { logError } from '../../../helpers/errorLogging';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { couldBeENS } from '../../../utils/url';
 import { validateAddress } from '../common/useValidationAddress';
@@ -22,6 +23,22 @@ export function useDAOCreateTests() {
   const { data: signer } = useSigner();
   const signerOrProvider = signer || provider;
   const { t } = useTranslation(['daoCreate', 'common']);
+
+  const minValueValidation = useMemo(
+    () => (minValue: number) => {
+      return {
+        name: 'Minimum value validation',
+        message: t('errorMinimumValue', { ns: 'common', minValue }),
+        test: function (value: string | undefined) {
+          if (value && Number(value) >= minValue) {
+            return true;
+          }
+          return false;
+        },
+      };
+    },
+    [t]
+  );
 
   const allocationValidationTest = useMemo(() => {
     return {
@@ -135,10 +152,37 @@ export function useDAOCreateTests() {
       },
     };
   }, [provider, t]);
+
+  const validERC721Address = useMemo(() => {
+    return {
+      name: 'ERC721 Address Validation',
+      message: t('errorInvalidERC721Address', { ns: 'common' }),
+      test: async function (address: string | undefined) {
+        if (address && utils.isAddress(address)) {
+          try {
+            // We're using this instead of erc721ABI from wagmi cause that one doesn't have supportsInterface for whatever reason
+            const erc165 = [
+              'function supportsInterface(bytes4 interfaceID) external view returns (bool)',
+            ];
+            const nftContract = new ethers.Contract(address, erc165, provider);
+            const supportsInterface = await nftContract.supportsInterface('0x80ac58cd'); // Exact same check we have in voting strategy contract
+            return supportsInterface;
+          } catch (error) {
+            logError(error);
+            return false;
+          }
+        }
+        return false;
+      },
+    };
+  }, [provider, t]);
+
   return {
+    minValueValidation,
     maxAllocationValidation,
     allocationValidationTest,
     uniqueAllocationValidationTest,
     validERC20Address,
+    validERC721Address,
   };
 }
