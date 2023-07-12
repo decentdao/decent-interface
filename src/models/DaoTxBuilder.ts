@@ -25,6 +25,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private predictedSafeAddress: string;
   private readonly createSafeTx: SafeTransaction;
   private readonly safeContract: GnosisSafe;
+  private readonly parentStrategyType?: VotingStrategyType;
 
   // Fractal Module Txs
   private enableFractalModuleTx: SafeTransaction | undefined;
@@ -43,7 +44,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     safeContract: GnosisSafe,
     txBuilderFactory: TxBuilderFactory,
     parentAddress?: string,
-    parentTokenAddress?: string
+    parentTokenAddress?: string,
+    parentStrategyType?: VotingStrategyType
   ) {
     super(
       signerOrProvider,
@@ -59,6 +61,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.safeContract = safeContract;
     this.txBuilderFactory = txBuilderFactory;
     this.saltNum = saltNum;
+    this.parentStrategyType = parentStrategyType;
 
     // Prep fractal module txs for setting up subDAOs
     this.setFractalModuleTxs();
@@ -91,7 +94,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
         azoriusTxBuilder.azoriusContract!.address,
-        azoriusTxBuilder.linearERC721VotingContract!.address
+        azoriusTxBuilder.linearERC721VotingContract!.address,
+        this.parentStrategyType
       );
 
       this.internalTxs = this.internalTxs.concat([

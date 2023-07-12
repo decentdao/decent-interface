@@ -3,7 +3,7 @@ import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contrac
 import axios from 'axios';
 import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
@@ -53,6 +53,7 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
 
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
+  const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const loadDAOProposals = useDAOProposals();
   const { data: signer } = useSigner();
 
@@ -87,11 +88,21 @@ export default function useSubmitProposal() {
   const ipfsClient = useIPFSClient();
 
   const { owners } = safe || {};
-  const canUserCreateProposal = useMemo(
-    () =>
-      type === GovernanceSelectionType.AZORIUS_ERC20 ? true : owners?.includes(user.address || ''),
-    [owners, type, user]
-  );
+  useEffect(() => {
+    const loadCanUserCreateProposal = async () => {
+      if (type === GovernanceSelectionType.MULTISIG) {
+        setCanUserCreateProposal(!!owners?.includes(user.address || ''));
+      } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+        if (ozLinearVotingContract && user.address) {
+          setCanUserCreateProposal(await ozLinearVotingContract?.asSigner.isProposer(user.address));
+        }
+      } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+        setCanUserCreateProposal(false); // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
+      }
+      setCanUserCreateProposal(false);
+    };
+    loadCanUserCreateProposal();
+  }, [owners, type, user, ozLinearVotingContract]);
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -349,22 +360,5 @@ export default function useSubmitProposal() {
     ]
   );
 
-  const getCanUserCreateProposal = useMemo(
-    () => async (safeAddress?: string) => {
-      if (!safeAddress || !user.address) {
-        return false;
-      }
-
-      if (type === GovernanceSelectionType.AZORIUS_ERC20) {
-        return true;
-      }
-
-      return safeService
-        .getSafeInfo(getAddress(safeAddress))
-        .then(safeInfo => safeInfo.owners.includes(user.address!));
-    },
-    [safeService, type, user]
-  );
-
-  return { submitProposal, pendingCreateTx, canUserCreateProposal, getCanUserCreateProposal };
+  return { submitProposal, pendingCreateTx, canUserCreateProposal };
 }

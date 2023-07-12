@@ -8,7 +8,6 @@ import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import {
@@ -47,7 +46,6 @@ export function ManageDAOMenu({
   fractalNode,
 }: IManageDAOMenu) {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
-  const { getCanUserCreateProposal } = useSubmitProposal();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
 
@@ -77,7 +75,7 @@ export function ManageDAOMenu({
     if (fractalNode.safe && account) {
       setCanUserCreateProposal(fractalNode.safe.owners.includes(account!));
     }
-  }, [getCanUserCreateProposal, fractalNode, account]);
+  }, [fractalNode, account]);
 
   const handleNavigateToSettings = useMemo(
     () => () => push(DAO_ROUTES.settings.relative(safeAddress)),

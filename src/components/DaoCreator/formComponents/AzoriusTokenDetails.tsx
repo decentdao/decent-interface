@@ -55,7 +55,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       const decimals: number = await tokenContract.decimals();
       const totalSupply: number = (await tokenContract.totalSupply()) / 10 ** decimals;
       setFieldValue(
-        'token.tokenSupply',
+        'erc20Token.tokenSupply',
         {
           value: totalSupply,
           bigNumberValue: BigNumber.from(totalSupply),

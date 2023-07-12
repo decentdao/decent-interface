@@ -16,6 +16,7 @@ export function InfoGovernance() {
     node: { daoAddress },
     governance,
     guardContracts,
+    readOnly: { dao },
   } = useFractal();
   const provider = useProvider();
   const { getTimeDuration } = useTimeHelpers();
@@ -34,10 +35,7 @@ export function InfoGovernance() {
           setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
           setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
         }
-      } else if (
-        governance.type == GovernanceSelectionType.AZORIUS_ERC20 ||
-        governance.type == GovernanceSelectionType.AZORIUS_ERC721
-      ) {
+      } else if (dao?.isAzorius) {
         const azoriusGovernance = governance as AzoriusGovernance;
         const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
         if (timelock?.value) {
@@ -56,6 +54,7 @@ export function InfoGovernance() {
     guardContracts.freezeGuardContract,
     provider,
     timelockPeriod,
+    dao,
   ]);
   setTimelockInfo();
 
@@ -72,11 +71,7 @@ export function InfoGovernance() {
     );
   }
 
-  const governanceAzorius =
-    governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
-    governance.type === GovernanceSelectionType.AZORIUS_ERC721
-      ? (governance as AzoriusGovernance)
-      : undefined;
+  const governanceAzorius = dao?.isAzorius ? (governance as AzoriusGovernance) : undefined;
 
   return (
     <Box

@@ -32,9 +32,9 @@ export function Settings() {
     <>
       {type === GovernanceSelectionType.AZORIUS_ERC20 ? (
         <GovernanceTokenContainer />
-      ) : (
+      ) : type === GovernanceSelectionType.MULTISIG ? (
         <SignersContainer />
-      )}
+      ) : null}
       <Divider
         color="chocolate.700"
         mt={10}

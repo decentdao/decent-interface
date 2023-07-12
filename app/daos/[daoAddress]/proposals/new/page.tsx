@@ -4,7 +4,7 @@ import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProposalDetails } from '../../../../../src/components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../../../../src/components/ProposalCreate/ProposalHeader';
@@ -43,6 +43,12 @@ export default function ProposalCreatePage() {
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
 
   const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
+  const isAzorius = useMemo(
+    () =>
+      type === GovernanceSelectionType.AZORIUS_ERC20 ||
+      type === GovernanceSelectionType.AZORIUS_ERC721,
+    [type]
+  );
 
   const successCallback = () => {
     if (daoAddress) {
@@ -122,10 +128,7 @@ export default function ProposalCreatePage() {
                         bg={BACKGROUND_SEMI_TRANSPARENT}
                       >
                         <ProposalHeader
-                          isAzorius={
-                            type === GovernanceSelectionType.AZORIUS_ERC20 ||
-                            type === GovernanceSelectionType.AZORIUS_ERC721
-                          }
+                          isAzorius={isAzorius}
                           metadataTitle={
                             formState === CreateProposalState.TRANSACTIONS_FORM &&
                             !!values.proposalMetadata.title

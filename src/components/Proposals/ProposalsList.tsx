@@ -2,24 +2,18 @@ import { Button, Box, Flex } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../constants/routes';
+import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
-import { FractalProposal, GovernanceSelectionType } from '../../types';
+import { FractalProposal } from '../../types';
 import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 
 export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
-    node: { daoAddress, safe },
-    governance: { type },
-    readOnly: { user },
+    node: { daoAddress },
   } = useFractal();
-
-  const showCreateButton =
-    type === GovernanceSelectionType.AZORIUS_ERC20 ||
-    type === GovernanceSelectionType.AZORIUS_ERC721
-      ? true
-      : safe?.owners.includes(user.address || '');
+  const { canUserCreateProposal } = useSubmitProposal();
 
   const { t } = useTranslation('proposal');
   return (
@@ -40,7 +34,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
         ))
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
-          {showCreateButton && (
+          {canUserCreateProposal && (
             <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
               <Button
                 variant="text"

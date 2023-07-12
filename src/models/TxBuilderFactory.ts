@@ -9,6 +9,7 @@ import {
   AzoriusERC721DAO,
   AzoriusContracts,
   AzoriusERC20DAO,
+  VotingStrategyType,
 } from '../types';
 import { AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -66,7 +67,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.setSafeContract(predictedSafeAddress);
   }
 
-  public createDaoTxBuilder(): DaoTxBuilder {
+  public createDaoTxBuilder(parentStrategyType?: VotingStrategyType): DaoTxBuilder {
     return new DaoTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
@@ -78,13 +79,15 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.safeContract!,
       this,
       this.parentAddress,
-      this.parentTokenAddress
+      this.parentTokenAddress,
+      parentStrategyType
     );
   }
 
   public createFreezeGuardTxBuilder(
     azoriusAddress?: string,
-    strategyAddress?: string
+    strategyAddress?: string,
+    parentStrategyType?: VotingStrategyType
   ): FreezeGuardTxBuilder {
     return new FreezeGuardTxBuilder(
       this.signerOrProvider,
@@ -96,7 +99,8 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.parentTokenAddress,
       this.azoriusContracts,
       azoriusAddress,
-      strategyAddress
+      strategyAddress,
+      parentStrategyType
     );
   }
 

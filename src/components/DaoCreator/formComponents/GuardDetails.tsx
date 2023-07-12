@@ -34,6 +34,7 @@ function GuardDetails(props: ICreationStepProps) {
     node: { safe },
     governance,
     governanceContracts: { azoriusContract },
+    readOnly: { dao },
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState(false);
@@ -50,14 +51,11 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentAzorius =
-      type === GovernanceSelectionType.AZORIUS_ERC20 ||
-      type === GovernanceSelectionType.AZORIUS_ERC721;
-    if (!isParentAzorius && isSubDAO && safe) {
+    if (!dao?.isAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
+  }, [isSubDAO, azoriusContract, type, setFieldValue, safe, dao]);
 
   useEffect(() => {
     // set the initial value for freezeGuard.freezeVotesThreshold

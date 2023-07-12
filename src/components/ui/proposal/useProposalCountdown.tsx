@@ -12,7 +12,6 @@ import {
   FractalProposalState,
   AzoriusProposal,
   FreezeGuardType,
-  GovernanceSelectionType,
 } from '../../../types';
 import { blocksToSeconds } from '../../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../../utils/guard';
@@ -23,6 +22,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
     guardContracts: { freezeGuardContract, freezeGuardType },
     governanceContracts,
     action,
+    readOnly: { dao },
   } = useFractal();
   const provider = useProvider();
 
@@ -57,10 +57,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (
-              governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
-              governance.type === GovernanceSelectionType.AZORIUS_ERC721
-            ) {
+            if (dao?.isAzorius) {
               await updateProposalState(BigNumber.from(proposal.proposalId));
             } else {
               await loadDAOProposals();
@@ -82,7 +79,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         clearInterval(updateStateInterval.current);
       }
     };
-  }, [secondsLeft, loadDAOProposals, proposal, updateProposalState, governance.type]);
+  }, [secondsLeft, loadDAOProposals, proposal, updateProposalState, governance.type, dao]);
 
   useEffect(() => {
     let countdownInterval: NodeJS.Timer | undefined;
