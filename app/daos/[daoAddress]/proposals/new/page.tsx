@@ -4,7 +4,7 @@ import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import AzoriusMetadata from '../../../../../src/components/ProposalCreate/AzoriusMetadata';
 import { ProposalDetails } from '../../../../../src/components/ProposalCreate/ProposalDetails';
@@ -43,18 +43,21 @@ export default function ProposalCreatePage() {
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
 
   const [formState, setFormState] = useState(CreateProposalState.LOADING);
+  const isAzorius = useMemo(
+    () =>
+      type === GovernanceSelectionType.AZORIUS_ERC20 ||
+      type === GovernanceSelectionType.AZORIUS_ERC721,
+    [type]
+  );
 
   useEffect(() => {
     if (!type) return;
-    if (
-      type === GovernanceSelectionType.AZORIUS_ERC20 ||
-      type === GovernanceSelectionType.AZORIUS_ERC721
-    ) {
+    if (isAzorius) {
       setFormState(CreateProposalState.METADATA_FORM);
     } else {
       setFormState(CreateProposalState.TRANSACTIONS_FORM);
     }
-  }, [type]);
+  }, [isAzorius, type]);
 
   const successCallback = () => {
     if (daoAddress) {
@@ -134,10 +137,7 @@ export default function ProposalCreatePage() {
                         bg={BACKGROUND_SEMI_TRANSPARENT}
                       >
                         <ProposalHeader
-                          isAzorius={
-                            type === GovernanceSelectionType.AZORIUS_ERC20 ||
-                            type === GovernanceSelectionType.AZORIUS_ERC721
-                          }
+                          isAzorius={isAzorius}
                           metadataTitle={
                             formState === CreateProposalState.TRANSACTIONS_FORM &&
                             !!values.proposalMetadata.title
@@ -158,10 +158,7 @@ export default function ProposalCreatePage() {
                         <TransactionsForm
                           isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                           setFormState={setFormState}
-                          showBackButton={
-                            type === GovernanceSelectionType.AZORIUS_ERC20 ||
-                            type === GovernanceSelectionType.AZORIUS_ERC721
-                          }
+                          showBackButton={isAzorius}
                           pendingTransaction={pendingCreateTx}
                           canUserCreateProposal={canUserCreateProposal}
                           {...formikProps}

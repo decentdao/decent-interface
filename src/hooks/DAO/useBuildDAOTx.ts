@@ -9,6 +9,7 @@ import {
   BaseContracts,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  AzoriusGovernance,
 } from '../../types';
 
 const useBuildDAOTx = () => {
@@ -37,7 +38,8 @@ const useBuildDAOTx = () => {
       votesERC20WrapperMasterCopyContract,
       keyValuePairsContract,
     },
-    readOnly: { user },
+    readOnly: { user, dao },
+    governance,
   } = useFractal();
 
   const buildDao = useCallback(
@@ -118,7 +120,14 @@ const useBuildDAOTx = () => {
       );
 
       await txBuilderFactory.setupSafeData();
-      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
+      let parentVotingStrategyType = undefined;
+
+      if (dao && dao.isAzorius) {
+        const azoriusGovernance = governance as AzoriusGovernance;
+        parentVotingStrategyType = azoriusGovernance.votingStrategy.strategyType;
+      }
+
+      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(parentVotingStrategyType);
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
@@ -154,6 +163,8 @@ const useBuildDAOTx = () => {
       linearVotingERC721MasterCopyContract,
       votesTokenMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
+      dao,
+      governance,
     ]
   );
 

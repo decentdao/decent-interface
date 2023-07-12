@@ -22,6 +22,8 @@ export const useReadOnlyValues = () => {
           return isSigner ? BigNumber.from(1) : BigNumber.from(0);
         case GovernanceSelectionType.AZORIUS_ERC20:
           return tokenWeight;
+        case GovernanceSelectionType.AZORIUS_ERC721:
+          return BigNumber.from(0);
         default:
           return BigNumber.from(0);
       }

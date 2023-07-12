@@ -502,7 +502,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         this.predictedTokenAddress!,
         this.signerOrProvider
       );
-    } else {
+    } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
       this.linearERC721VotingContract = LinearERC721Voting__factory.connect(
         this.predictedStrategyAddress!,
         this.signerOrProvider

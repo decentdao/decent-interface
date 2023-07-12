@@ -149,17 +149,6 @@ export enum FractalProposalState {
   CLOSED = 'stateClosed',
 }
 
-export interface IFreezeGuard {
-  freezeVotesThreshold: BigNumber; // Number of freeze votes required to activate a freeze
-  freezeProposalCreatedTime: BigNumber; // Block number the freeze proposal was created at
-  freezeProposalVoteCount: BigNumber; // Number of accrued freeze votes
-  freezeProposalPeriod: BigNumber; // Number of blocks a freeze proposal has to succeed
-  freezePeriod: BigNumber; // Number of blocks a freeze lasts, from time of freeze proposal creation
-  userHasFreezeVoted: boolean;
-  isFrozen: boolean;
-  userHasVotes: boolean;
-}
-
 export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
