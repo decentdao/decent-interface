@@ -1,11 +1,12 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { BigNumber, constants, Signer, utils } from 'ethers';
+import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
+import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -132,7 +133,7 @@ export default function useSubmitProposal() {
             documentationUrl: proposalData.metaData.documentationUrl || '',
           };
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
-          proposalData.targets.push(constants.AddressZero);
+          proposalData.targets.push(ADDRESS_MULTISIG_METADATA);
           proposalData.values.push(BigNumber.from('0'));
           proposalData.calldatas.push(new utils.AbiCoder().encode(['string'], [Hash]));
         }
