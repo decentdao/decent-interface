@@ -12,6 +12,7 @@ interface IStepWrapper {
   titleKey: string;
   isSubDAO?: boolean;
   isFormSubmitting?: boolean;
+  shouldWrapChildren?: boolean;
   children: ReactNode;
   mode: DAOCreateMode;
 }
@@ -22,6 +23,7 @@ export function StepWrapper({
   isFormSubmitting,
   children,
   mode,
+  shouldWrapChildren = true,
 }: IStepWrapper) {
   const {
     node: { daoAddress },
@@ -66,15 +68,19 @@ export function StepWrapper({
           }
         />
       )}
-      <Box
-        bg="black.900-semi-transparent"
-        rounded="md"
-        mt={8}
-        px={4}
-        py={8}
-      >
-        {children}
-      </Box>
+      {shouldWrapChildren ? (
+        <Box
+          bg="black.900-semi-transparent"
+          rounded="md"
+          mt={8}
+          px={4}
+          py={8}
+        >
+          {children}
+        </Box>
+      ) : (
+        children
+      )}
     </Box>
   );
 }

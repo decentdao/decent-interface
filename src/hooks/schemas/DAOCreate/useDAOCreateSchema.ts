@@ -131,7 +131,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     tokenWeight: Yup.object()
                       .required()
                       .shape({
-                        value: Yup.string().required().test(minValueValidation(1)), // Otherwise "0" treated as proper value
+                        value: Yup.string().test(minValueValidation(1)), // Otherwise "0" treated as proper value
                       }),
                   })
                 ),
