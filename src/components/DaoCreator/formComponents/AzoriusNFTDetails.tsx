@@ -3,6 +3,7 @@ import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, FormikErrors } from 'formik';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import {
   ICreationStepProps,
   CreatorSteps,
@@ -49,11 +50,10 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
         <Flex
           width="66%"
           flexDirection="column"
-          gap={8}
+          gap={5}
           alignItems="flex-start"
-          bg="black.900-semi-transparent"
-          rounded="md"
-          mt={8}
+          bg={BACKGROUND_SEMI_TRANSPARENT}
+          rounded="lg"
           px={4}
           py={8}
         >
@@ -88,7 +88,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                   gridContainerProps={{
                     display: 'flex',
                     flexWrap: 'wrap',
-                    width: '66.7%',
+                    width: '65%',
                   }}
                   inputContainerProps={{
                     width: '100%',
@@ -117,35 +117,35 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                   gridContainerProps={{
                     display: 'flex',
                     flexWrap: 'wrap',
-                    width: values.erc721Token.nfts.length > 1 ? '20%' : '33.3%',
+                    width: '35%',
                   }}
                   inputContainerProps={{
                     width: '100%',
                   }}
                 >
-                  <BigNumberInput
-                    value={nft.tokenWeight.bigNumberValue}
-                    onChange={valuePair =>
-                      setFieldValue(`erc721Token.nfts.${i}.tokenWeight`, valuePair)
-                    }
-                    data-testid={`erc721Token.nfts.${i}.tokenWeightInput`}
-                    decimalPlaces={0}
-                    min="1"
-                  />
-                </LabelComponent>
-                {values.erc721Token.nfts.length > 1 && (
-                  <Button
-                    variant="text"
-                    onClick={() => handleRemoveNFT(i)}
-                    alignSelf={isFirstElement ? 'flex-start' : 'center'}
-                    marginTop={isFirstElement ? 9 : 0}
-                  >
-                    <Minus
-                      width="16px"
-                      height="16px"
+                  <Flex>
+                    <BigNumberInput
+                      value={nft.tokenWeight.bigNumberValue}
+                      onChange={valuePair =>
+                        setFieldValue(`erc721Token.nfts.${i}.tokenWeight`, valuePair)
+                      }
+                      data-testid={`erc721Token.nfts.${i}.tokenWeightInput`}
+                      decimalPlaces={0}
+                      min="1"
                     />
-                  </Button>
-                )}
+                    {values.erc721Token.nfts.length > 1 && (
+                      <Minus
+                        cursor="pointer"
+                        color="gold.500"
+                        boxSize="1.5rem"
+                        ms="1.5rem"
+                        me="0.5rem"
+                        onClick={() => handleRemoveNFT(i)}
+                        alignSelf={'center'}
+                      />
+                    )}
+                  </Flex>
+                </LabelComponent>
               </Flex>
             );
           })}
@@ -160,11 +160,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
             />
             {t('addNFTButton')}
           </Button>
-          <Divider
-            color="chocolate.700"
-            mt="2rem"
-            mb="2rem"
-          />
+          <Divider color="chocolate.700" />
           <StepButtons
             {...props}
             prevStep={CreatorSteps.ESSENTIALS}
@@ -172,18 +168,16 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
           />
         </Flex>
         <Box
-          bg="black.900-semi-transparent"
-          rounded="md"
-          mt={8}
-          px={4}
-          py={8}
+          bg={BACKGROUND_SEMI_TRANSPARENT}
+          rounded="lg"
+          p={4}
           width="33%"
         >
           <ContentBoxTitle>{t('titleNFTDetails')}</ContentBoxTitle>
           <Divider
             color="chocolate.700"
-            mt="2rem"
-            mb="2rem"
+            mt="1rem"
+            mb="1rem"
           />
           {values.erc721Token.nfts.map((nft, i) => {
             const nftError = (

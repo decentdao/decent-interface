@@ -3,6 +3,7 @@ import { Trash } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
@@ -70,8 +71,8 @@ export function StepWrapper({
       )}
       {shouldWrapChildren ? (
         <Box
-          bg="black.900-semi-transparent"
-          rounded="md"
+          bg={BACKGROUND_SEMI_TRANSPARENT}
+          rounded="lg"
           mt={8}
           px={4}
           py={8}

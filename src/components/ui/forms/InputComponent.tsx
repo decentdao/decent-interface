@@ -81,7 +81,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
         {helperSlot === 'start' && (
           <Text
             color="grayscale.500"
-            mr={20}
+            mr={10}
           >
             {helper}
           </Text>
@@ -97,12 +97,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       </GridItem>
       {helperSlot === 'end' && (
         <GridItem>
-          <Text
-            color="grayscale.500"
-            mr={20}
-          >
-            {helper}
-          </Text>
+          <Text color="grayscale.500">{helper}</Text>
         </GridItem>
       )}
     </Grid>

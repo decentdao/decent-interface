@@ -4,6 +4,7 @@ import { BigNumber, constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider } from 'wagmi';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { TokenCreationType, ICreationStepProps } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
@@ -104,10 +105,10 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
             isRequired={false}
           >
             <RadioGroup
-              bg="black.900-semi-transparent"
+              bg={BACKGROUND_SEMI_TRANSPARENT}
               px={8}
               py={4}
-              rounded="md"
+              rounded="lg"
               display="flex"
               flexDirection="column"
               name="erc20Token.tokenCreationType"
@@ -182,8 +183,8 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         </Flex>
       </StepWrapper>
       <Box
-        bg="black.900-semi-transparent"
-        rounded="md"
+        bg={BACKGROUND_SEMI_TRANSPARENT}
+        rounded="lg"
         mt={8}
         px={4}
         py={8}
