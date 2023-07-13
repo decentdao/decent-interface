@@ -49,11 +49,10 @@ export function ProposalAction({
 }) {
   const {
     node: { daoAddress, daoSnapshotURL },
-    readOnly: { user },
+    readOnly: { user, dao },
   } = useFractal();
   const { push } = useRouter();
   const { t } = useTranslation();
-  const isAzoriusProposal = !!(proposal as AzoriusProposal).govTokenAddress;
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
   const showActionButton =
@@ -76,7 +75,7 @@ export function ProposalAction({
   };
 
   const hasVoted = useMemo(() => {
-    if (isAzoriusProposal) {
+    if (dao?.isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
       return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
     } else if (isSnapshotProposal) {
@@ -86,7 +85,7 @@ export function ProposalAction({
       const safeProposal = proposal as MultisigProposal;
       return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
     }
-  }, [isAzoriusProposal, isSnapshotProposal, proposal, user.address]);
+  }, [dao, isSnapshotProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -111,10 +110,10 @@ export function ProposalAction({
       if (hasVoted) {
         return t('details');
       }
-      return t(isAzoriusProposal ? 'vote' : 'sign');
+      return t(dao?.isAzorius ? 'vote' : 'sign');
     }
     return t('details');
-  }, [isSnapshotProposal, proposal.state, t, hasVoted, isAzoriusProposal]);
+  }, [isSnapshotProposal, proposal.state, t, hasVoted, dao]);
 
   if (!showActionButton) {
     if (!expandedView) {

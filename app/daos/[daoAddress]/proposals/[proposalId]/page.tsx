@@ -21,6 +21,7 @@ export default function ProposalDetailsPage({
   const {
     node: { daoAddress },
     governance: { proposals },
+    readOnly: { dao },
   } = useFractal();
 
   const [proposal, setProposal] = useState<FractalProposal | null>();
@@ -74,7 +75,7 @@ export default function ProposalDetailsPage({
         </Box>
       ) : proposal === null ? (
         <EmptyBox emptyText={t('noProposal')} />
-      ) : azoriusProposal.govTokenAddress ? (
+      ) : dao?.isAzorius ? (
         <AzoriusProposalDetails proposal={azoriusProposal} />
       ) : (
         <MultisigProposalDetails proposal={proposal} />

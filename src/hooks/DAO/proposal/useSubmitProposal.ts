@@ -33,7 +33,7 @@ interface ISubmitProposal {
   safeAddress?: string;
 }
 
-interface ISubmitTokenVotingProposal extends ISubmitProposal {
+interface ISubmitAzoriusProposal extends ISubmitProposal {
   /**
    * @param azoriusContract - provided Azorius contract.
    * Depending on safeAddress it's either picked from global context
@@ -58,7 +58,7 @@ export default function useSubmitProposal() {
     node: { safe, fractalModules },
     baseContracts: { multiSendContract },
     guardContracts: { freezeVotingContract },
-    governanceContracts: { ozLinearVotingContract },
+    governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance: { type },
     clients: { safeService },
     readOnly: { user },
@@ -86,19 +86,28 @@ export default function useSubmitProposal() {
   const { owners } = safe || {};
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      if (type === GovernanceSelectionType.MULTISIG) {
-        setCanUserCreateProposal(!!owners?.includes(user.address || ''));
-      } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
-        if (ozLinearVotingContract && user.address) {
-          setCanUserCreateProposal(await ozLinearVotingContract?.asSigner.isProposer(user.address));
+      if (user.address) {
+        if (type === GovernanceSelectionType.MULTISIG) {
+          setCanUserCreateProposal(!!owners?.includes(user.address));
+        } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+          if (ozLinearVotingContract) {
+            setCanUserCreateProposal(
+              await ozLinearVotingContract?.asSigner.isProposer(user.address)
+            );
+          }
+        } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+          if (erc721LinearVotingContract) {
+            setCanUserCreateProposal(
+              await erc721LinearVotingContract.asSigner.isProposer(user.address)
+            );
+          }
         }
-      } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
-        setCanUserCreateProposal(false); // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
       }
+
       setCanUserCreateProposal(false);
     };
     loadCanUserCreateProposal();
-  }, [owners, type, user, ozLinearVotingContract]);
+  }, [owners, type, user, ozLinearVotingContract, erc721LinearVotingContract]);
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -205,7 +214,7 @@ export default function useSubmitProposal() {
       successCallback,
       failedToastMessage,
       safeAddress,
-    }: ISubmitTokenVotingProposal) => {
+    }: ISubmitAzoriusProposal) => {
       if (!proposalData) {
         return;
       }
@@ -248,7 +257,7 @@ export default function useSubmitProposal() {
       } catch (e) {
         toast.dismiss(toastId);
         toast(failedToastMessage);
-        logError(e, 'Error during Azorius proposal creation');
+        logError(e, 'Error during Azorius ERC-20 proposal creation');
       } finally {
         setPendingCreateTx(false);
       }
