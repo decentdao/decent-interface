@@ -1,5 +1,5 @@
 import { FractalGovernance, AzoriusProposal, VOTE_CHOICES, SnapshotProposal } from '../../../types';
-import { AzoriusGovernance, GovernanceSelectionType } from './../../../types/fractal';
+import { AzoriusGovernance } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
@@ -39,8 +39,8 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_STRATEGY: {
       return {
         ...state,
-        type: GovernanceSelectionType.AZORIUS_ERC20,
-        votingStrategy: action.payload,
+        type: action.payload.governanceType,
+        votingStrategy: { ...action.payload.votingStrategy },
       };
     }
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
@@ -85,6 +85,10 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.UPDATE_VOTING_PERIOD: {
       const { votingStrategy } = state as AzoriusGovernance;
       return { ...state, votingStrategy: { ...votingStrategy, votingPeriod: action.payload } };
+    }
+    case FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD: {
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, quorumThreshold: action.payload } };
     }
     case FractalGovernanceAction.UPDATE_VOTING_QUORUM: {
       const { votingStrategy } = state as AzoriusGovernance;

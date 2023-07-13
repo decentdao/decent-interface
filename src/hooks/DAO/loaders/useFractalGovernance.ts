@@ -7,6 +7,7 @@ import { FractalGovernanceAction } from '../../../providers/App/governance/actio
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
+import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
@@ -22,6 +23,7 @@ export const useFractalGovernance = () => {
 
   const loadDAOProposals = useDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();
+  const loadERC721Strategy = useERC721LinearStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
   const ipfsClient = useIPFSClient();
 
@@ -64,7 +66,8 @@ export const useFractalGovernance = () => {
   });
 
   useEffect(() => {
-    const { isLoaded, azoriusContract } = governanceContracts;
+    const { isLoaded, azoriusContract, erc721LinearVotingContract, ozLinearVotingContract } =
+      governanceContracts;
 
     const newLoadKey =
       daoAddress +
@@ -78,9 +81,13 @@ export const useFractalGovernance = () => {
       loadDAOProposals();
 
       if (azoriusContract) {
-        loadERC20Strategy();
-        loadERC20Token();
-        loadUnderlyingERC20Token();
+        if (ozLinearVotingContract) {
+          loadERC20Strategy();
+          loadERC20Token();
+          loadUnderlyingERC20Token();
+        } else if (erc721LinearVotingContract) {
+          loadERC721Strategy();
+        }
       }
     } else if (!isLoaded) {
       loadKey.current = undefined;
@@ -94,5 +101,6 @@ export const useFractalGovernance = () => {
     loadERC20Token,
     nodeHierarchy.parentAddress,
     guardContracts.freezeGuardContract,
+    loadERC721Strategy,
   ]);
 };

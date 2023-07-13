@@ -151,6 +151,26 @@ export function InfoGovernance() {
           </Text>
         </Flex>
       )}
+      {governanceAzorius?.votingStrategy?.quorumThreshold && (
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          mb="0.25rem"
+        >
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {t('titleQuorum')}
+          </Text>
+          <Text
+            textStyle="text-base-sans-regular"
+            color="grayscale.100"
+          >
+            {governanceAzorius.votingStrategy.quorumThreshold.formatted}
+          </Text>
+        </Flex>
+      )}
       {timelockPeriod && (
         <Flex
           alignItems="center"

@@ -22,6 +22,7 @@ export enum FractalGovernanceAction {
   UPDATE_PROPOSAL_STATE = 'UPDATE_PROPOSAL_STATE',
   UPDATE_VOTING_PERIOD = 'UPDATE_VOTING_PERIOD',
   UPDATE_VOTING_QUORUM = 'UPDATE_VOTING_QUORUM',
+  UPDATE_VOTING_QUORUM_THRESHOLD = 'UPDATE_VOTING_QUORUM_THRESHOLD',
   UPDATE_TIMELOCK_PERIOD = 'UPDATE_TIMELOCK_PERIOD',
   SET_TOKEN_DATA = 'SET_TOKEN_DATA',
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
@@ -30,8 +31,13 @@ export enum FractalGovernanceAction {
   SET_UNDERLYING_TOKEN_DATA = 'SET_UNDERLYING_TOKEN_DATA',
 }
 
+type SetStrategyPayload = {
+  governanceType: GovernanceSelectionType;
+  votingStrategy: VotingStrategy;
+};
+
 export type FractalGovernanceActions =
-  | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotingStrategy }
+  | { type: FractalGovernanceAction.SET_STRATEGY; payload: SetStrategyPayload }
   | {
       type: FractalGovernanceAction.SET_PROPOSALS;
       payload: { type: GovernanceSelectionType; proposals: FractalProposal[] };
@@ -64,6 +70,10 @@ export type FractalGovernanceActions =
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_QUORUM;
+      payload: BigNumber;
+    }
+  | {
+      type: FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD;
       payload: BigNumber;
     }
   | {
