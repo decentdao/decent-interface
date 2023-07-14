@@ -11,6 +11,7 @@ import {
 import { Gear, LabelWrapper } from '@decent-org/fractal-ui';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
@@ -33,7 +34,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
   return (
     <Box>
       <ContentBoxTitle>{t('titleAllocations')}</ContentBoxTitle>
-      <FieldArray name="token.tokenAllocations">
+      <FieldArray name="erc20Token.tokenAllocations">
         {({ remove, push }) => (
           <Box my={4}>
             <Grid
@@ -56,9 +57,9 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
               </Text>
               <Box>{/* EMPTY */}</Box>
 
-              {values.token.tokenAllocations.map((tokenAllocation, index) => {
+              {values.erc20Token.tokenAllocations.map((tokenAllocation, index) => {
                 const tokenAllocationError = (
-                  errors?.token?.tokenAllocations as FormikErrors<
+                  errors?.erc20Token?.tokenAllocations as FormikErrors<
                     TokenAllocation<BigNumberValuePair>[] | undefined
                   >
                 )?.[index];
@@ -69,7 +70,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                     : null;
 
                 const amountErrorMessage =
-                  values.token.tokenSupply.value &&
+                  values.erc20Token.tokenSupply.value &&
                   tokenAllocationError?.amount?.value &&
                   !tokenAllocation.amount.bigNumberValue?.isZero()
                     ? tokenAllocationError.amount.value
@@ -82,8 +83,10 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                     remove={remove}
                     addressErrorMessage={addressErrorMessage}
                     amountErrorMessage={amountErrorMessage}
-                    amountInputValue={values.token.tokenAllocations[index].amount.bigNumberValue}
-                    allocationLength={values.token.tokenAllocations.length}
+                    amountInputValue={
+                      values.erc20Token.tokenAllocations[index].amount.bigNumberValue
+                    }
+                    allocationLength={values.erc20Token.tokenAllocations.length}
                     {...props}
                   />
                 );
@@ -111,7 +114,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                 <AccordionItem
                   borderTop="none"
                   borderBottom="none"
-                  bg="black.900-semi-transparent"
+                  bg={BACKGROUND_SEMI_TRANSPARENT}
                   my={8}
                   py={4}
                   rounded="lg"
@@ -137,16 +140,16 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                           <LabelWrapper
                             errorMessage={
                               (
-                                values.token.parentAllocationAmount?.bigNumberValue &&
-                                (errors.token?.parentAllocationAmount as any)
+                                values.erc20Token.parentAllocationAmount?.bigNumberValue &&
+                                (errors.erc20Token?.parentAllocationAmount as any)
                               )?.value
                             }
                           >
                             <BigNumberInput
                               data-testid="tokenVoting-parentTokenAllocationInput"
-                              value={values.token.parentAllocationAmount?.bigNumberValue}
+                              value={values.erc20Token.parentAllocationAmount?.bigNumberValue}
                               onChange={valuePair =>
-                                setFieldValue('token.parentAllocationAmount', valuePair)
+                                setFieldValue('erc20Token.parentAllocationAmount', valuePair)
                               }
                               isInvalid={false}
                             />

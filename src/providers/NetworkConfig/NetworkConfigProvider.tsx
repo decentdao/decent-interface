@@ -9,7 +9,7 @@ import { polygonConfig } from './networks/polygon';
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
 
-export const useNetworkConfg = (): NetworkConfig =>
+export const useNetworkConfig = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
 // mainnet is first so it defaults to that when disconnected on production

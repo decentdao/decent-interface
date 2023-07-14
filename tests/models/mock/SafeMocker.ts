@@ -14,7 +14,7 @@ export enum Endpoint {
   CONFIRM_TRANSACTION = 'v1/multisig-transactions/**/confirmations/*',
 }
 
-export abstract class GnosisMocker {
+export abstract class SafeMocker {
   readonly page: Page;
 
   constructor(page: Page) {

@@ -3,10 +3,9 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { DAOTrigger, CreatorFormState, GovernanceModuleType } from '../../types';
+import { DAOTrigger, CreatorFormState, GovernanceSelectionType } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
-
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
 import { usePrepareFormData } from './hooks/usePrepareFormData';
 
@@ -22,7 +21,8 @@ function DaoCreator({
   mode: DAOCreateMode;
 }) {
   const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
-  const { prepareMultisigFormData, prepareAzoriusFormData } = usePrepareFormData();
+  const { prepareMultisigFormData, prepareAzoriusERC20FormData, prepareAzoriusERC721FormData } =
+    usePrepareFormData();
   return (
     <Box>
       <Formik<CreatorFormState>
@@ -32,7 +32,7 @@ function DaoCreator({
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freeze : undefined;
           switch (choosenGovernance) {
-            case GovernanceModuleType.MULTISIG: {
+            case GovernanceSelectionType.MULTISIG: {
               const data = await prepareMultisigFormData({
                 ...values.essentials,
                 ...values.multisig,
@@ -41,11 +41,21 @@ function DaoCreator({
               deployDAO(data);
               return;
             }
-            case GovernanceModuleType.AZORIUS: {
-              const data = await prepareAzoriusFormData({
+            case GovernanceSelectionType.AZORIUS_ERC20: {
+              const data = await prepareAzoriusERC20FormData({
                 ...values.essentials,
                 ...values.azorius,
-                ...values.token,
+                ...values.erc20Token,
+                freezeGuard,
+              });
+              deployDAO(data);
+              return;
+            }
+            case GovernanceSelectionType.AZORIUS_ERC721: {
+              const data = await prepareAzoriusERC721FormData({
+                ...values.essentials,
+                ...values.azorius,
+                ...values.erc721Token,
                 freezeGuard,
               });
               deployDAO(data);

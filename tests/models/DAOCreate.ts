@@ -33,15 +33,15 @@ export class DAOCreate extends NavPage {
   }
 
   async fillTotalSigners(total: string) {
-    await this.fillTextByTestId('gnosisConfig-numberOfSignerInput', total);
+    await this.fillTextByTestId('safeConfig-numberOfSignerInput', total);
   }
 
   async fillThreshold(threshold: string) {
-    await this.fillTextByTestId('gnosisConfig-thresholdInput', threshold);
+    await this.fillTextByTestId('safeConfig-thresholdInput', threshold);
   }
 
   async fillMultisigSigner(index: number, address: string) {
-    await this.fillTextByTestId('gnosisConfig-signer-' + index, address);
+    await this.fillTextByTestId('safeConfig-signer-' + index, address);
   }
 
   async fillTokenName(name: string) {

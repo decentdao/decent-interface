@@ -24,7 +24,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
         helper={t('helperTokenName')}
         isRequired
       >
-        <Field name="token.tokenName">
+        <Field name="erc20Token.tokenName">
           {({ field }: FieldAttributes<any>) => (
             <Input
               {...field}
@@ -40,8 +40,8 @@ export function VotesTokenNew(props: ICreationStepProps) {
         isRequired
       >
         <Input
-          name="token.tokenSymbol"
-          value={values.token.tokenSymbol}
+          name="erc20Token.tokenSymbol"
+          value={values.erc20Token.tokenSymbol}
           onChange={handleChange}
           maxLength={6}
           data-testid="tokenVoting-tokenSymbolInput"
@@ -53,8 +53,8 @@ export function VotesTokenNew(props: ICreationStepProps) {
         isRequired
       >
         <BigNumberInput
-          value={values.token.tokenSupply.bigNumberValue}
-          onChange={valuePair => setFieldValue('token.tokenSupply', valuePair)}
+          value={values.erc20Token.tokenSupply.bigNumberValue}
+          onChange={valuePair => setFieldValue('erc20Token.tokenSupply', valuePair)}
           data-testid="tokenVoting-tokenSupplyInput"
           onKeyDown={restrictChars}
         />

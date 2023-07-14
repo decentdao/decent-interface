@@ -5,8 +5,10 @@ import {
   BaseContracts,
   SafeMultisigDAO,
   SafeTransaction,
-  AzoriusGovernanceDAO,
   AzoriusContracts,
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
+  VotingStrategyType,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
@@ -19,10 +21,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private txBuilderFactory: TxBuilderFactory;
 
-  // Gnosis Safe Data
-  private predictedGnosisSafeAddress: string;
+  // Safe Data
+  private predictedSafeAddress: string;
   private readonly createSafeTx: SafeTransaction;
   private readonly safeContract: GnosisSafe;
+  private readonly parentStrategyType?: VotingStrategyType;
 
   // Fractal Module Txs
   private enableFractalModuleTx: SafeTransaction | undefined;
@@ -34,14 +37,15 @@ export class DaoTxBuilder extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: SafeMultisigDAO | AzoriusGovernanceDAO,
+    daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
     saltNum: string,
-    predictedGnosisSafeAddress: string,
+    predictedSafeAddress: string,
     createSafeTx: SafeTransaction,
     safeContract: GnosisSafe,
     txBuilderFactory: TxBuilderFactory,
     parentAddress?: string,
-    parentTokenAddress?: string
+    parentTokenAddress?: string,
+    parentStrategyType?: VotingStrategyType
   ) {
     super(
       signerOrProvider,
@@ -52,11 +56,12 @@ export class DaoTxBuilder extends BaseTxBuilder {
       parentTokenAddress
     );
 
-    this.predictedGnosisSafeAddress = predictedGnosisSafeAddress;
+    this.predictedSafeAddress = predictedSafeAddress;
     this.createSafeTx = createSafeTx;
     this.safeContract = safeContract;
     this.txBuilderFactory = txBuilderFactory;
     this.saltNum = saltNum;
+    this.parentStrategyType = parentStrategyType;
 
     // Prep fractal module txs for setting up subDAOs
     this.setFractalModuleTxs();
@@ -82,14 +87,15 @@ export class DaoTxBuilder extends BaseTxBuilder {
     }
 
     this.internalTxs = this.internalTxs.concat(
-      azoriusTxBuilder.buildLinearVotingContractSetupTx(),
+      azoriusTxBuilder.buildVotingContractSetupTx(),
       azoriusTxBuilder.buildEnableAzoriusModuleTx()
     );
 
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
         azoriusTxBuilder.azoriusContract!.address,
-        azoriusTxBuilder.linearVotingContract!.address
+        azoriusTxBuilder.linearERC721VotingContract!.address,
+        this.parentStrategyType
       );
 
       this.internalTxs = this.internalTxs.concat([
@@ -101,7 +107,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         freezeGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
       ]);
     }
-    const data = this.daoData as AzoriusGovernanceDAO;
+    const data = this.daoData as AzoriusERC20DAO;
 
     this.internalTxs = this.internalTxs.concat([
       azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
@@ -114,7 +120,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       txs.push(azoriusTxBuilder.buildCreateTokenWrapperTx());
     }
     // build token if token is not imported
-    if (!data.isTokenImported) {
+    if (!data.isTokenImported && data.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       txs.push(azoriusTxBuilder.buildCreateTokenTx());
     }
 
@@ -123,7 +129,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
-    const parentAllocation = (this.daoData as AzoriusGovernanceDAO).parentAllocationAmount;
+    const parentAllocation = (this.daoData as AzoriusERC20DAO).parentAllocationAmount;
     if (this.parentTokenAddress && parentAllocation && !parentAllocation.isZero()) {
       tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
       const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();

@@ -9,8 +9,9 @@ import { useFractal } from '../../providers/App/AppProvider';
 import {
   BaseContracts,
   AzoriusContracts,
-  AzoriusGovernanceDAO,
   ProposalExecuteData,
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
 } from '../../types';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -23,8 +24,8 @@ const useDeployAzorius = () => {
     node: { daoAddress, safe },
     baseContracts: {
       multiSendContract,
-      gnosisSafeFactoryContract,
-      gnosisSafeSingletonContract,
+      safeFactoryContract,
+      safeSingletonContract,
       linearVotingMasterCopyContract,
       fractalAzoriusMasterCopyContract,
       zodiacModuleProxyFactoryContract,
@@ -45,7 +46,11 @@ const useDeployAzorius = () => {
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
 
   const deployAzorius = useCallback(
-    async (daoData: AzoriusGovernanceDAO, shouldSetName?: boolean, shouldSetSnapshot?: boolean) => {
+    async (
+      daoData: AzoriusERC20DAO | AzoriusERC721DAO,
+      shouldSetName?: boolean,
+      shouldSetSnapshot?: boolean
+    ) => {
       if (!daoAddress || !canUserCreateProposal || !safe) {
         return;
       }
@@ -63,8 +68,8 @@ const useDeployAzorius = () => {
       const baseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
         fractalRegistryContract: fractalRegistryContract.asSigner,
-        gnosisSafeFactoryContract: gnosisSafeFactoryContract.asSigner,
-        gnosisSafeSingletonContract: gnosisSafeSingletonContract.asSigner,
+        safeFactoryContract: safeFactoryContract.asSigner,
+        safeSingletonContract: safeSingletonContract.asSigner,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         multiSendContract: multiSendContract.asSigner,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
@@ -93,10 +98,10 @@ const useDeployAzorius = () => {
         targets: [daoAddress, multiSendContract.asSigner.address],
         values: [BigNumber.from('0'), BigNumber.from('0')],
         calldatas: [
-          gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData(
-            'addOwnerWithThreshold',
-            [multiSendContract.asSigner.address, 1]
-          ),
+          safeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
+            multiSendContract.asSigner.address,
+            1,
+          ]),
           multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx]),
         ],
         title: '',
@@ -123,8 +128,8 @@ const useDeployAzorius = () => {
       multisigFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
-      gnosisSafeFactoryContract,
-      gnosisSafeSingletonContract,
+      safeFactoryContract,
+      safeSingletonContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
       keyValuePairsContract,

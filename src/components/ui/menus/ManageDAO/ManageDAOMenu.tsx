@@ -8,7 +8,6 @@ import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import {
@@ -16,7 +15,7 @@ import {
   FractalModuleType,
   FractalNode,
   FreezeGuard,
-  GovernanceModuleType,
+  GovernanceSelectionType,
 } from '../../../../types';
 import { getAzoriusModuleFromModules } from '../../../../utils';
 import { ModalType } from '../../modals/ModalProvider';
@@ -28,7 +27,7 @@ interface IManageDAOMenu {
   fractalNode?: FractalNode;
   freezeGuard?: FreezeGuard;
   guardContracts?: FractalGuardContracts;
-  governanceType?: GovernanceModuleType;
+  governanceType?: GovernanceSelectionType;
 }
 
 /**
@@ -47,7 +46,6 @@ export function ManageDAOMenu({
   fractalNode,
 }: IManageDAOMenu) {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
-  const { getCanUserCreateProposal } = useSubmitProposal();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
 
@@ -58,10 +56,10 @@ export function ManageDAOMenu({
   });
   const safeAddress = fractalNode?.daoAddress;
 
-  let governanceType: GovernanceModuleType = GovernanceModuleType.MULTISIG;
+  let governanceType: GovernanceSelectionType = GovernanceSelectionType.MULTISIG;
   fractalNode?.fractalModules.forEach(_module => {
     if (_module.moduleType === FractalModuleType.AZORIUS) {
-      governanceType = GovernanceModuleType.AZORIUS;
+      governanceType = GovernanceSelectionType.AZORIUS_ERC20;
     }
   });
 
@@ -77,7 +75,7 @@ export function ManageDAOMenu({
     if (fractalNode.safe && account) {
       setCanUserCreateProposal(fractalNode.safe.owners.includes(account!));
     }
-  }, [getCanUserCreateProposal, fractalNode, account]);
+  }, [fractalNode, account]);
 
   const handleNavigateToSettings = useMemo(
     () => () => push(DAO_ROUTES.settings.relative(safeAddress)),
@@ -129,7 +127,7 @@ export function ManageDAOMenu({
       ) &&
       freezeGuard.userHasVotes
     ) {
-      if (governanceType === GovernanceModuleType.MULTISIG) {
+      if (governanceType === GovernanceSelectionType.MULTISIG) {
         return [createSubDAOOption, freezeOption, modifyGovernanceOption, settingsOption];
       } else {
         return [createSubDAOOption, freezeOption, settingsOption];
@@ -148,9 +146,9 @@ export function ManageDAOMenu({
     ) {
       return [clawBackOption, settingsOption];
     } else {
-      if (governanceType === GovernanceModuleType.MULTISIG && canUserCreateProposal) {
+      if (governanceType === GovernanceSelectionType.MULTISIG && canUserCreateProposal) {
         return [createSubDAOOption, modifyGovernanceOption, settingsOption];
-      } else if (governanceType === GovernanceModuleType.MULTISIG) {
+      } else if (governanceType === GovernanceSelectionType.MULTISIG) {
         return [settingsOption];
       } else {
         return [createSubDAOOption, settingsOption];

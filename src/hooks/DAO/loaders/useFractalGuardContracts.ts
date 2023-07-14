@@ -78,9 +78,9 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       } else {
         const hasNoGuard = _safe.guard === constants.AddressZero;
         const guardMasterCopyAddress = await getMasterCopyAddress(guard!);
-        const isGnosisGuard =
+        const isSafeGuard =
           guardMasterCopyAddress === multisigFreezeGuardMasterCopyContract.asSigner.address;
-        if (isGnosisGuard && !hasNoGuard) {
+        if (isSafeGuard && !hasNoGuard) {
           freezeGuardContract = {
             asSigner: multisigFreezeGuardMasterCopyContract.asSigner.attach(guard!),
             asProvider: multisigFreezeGuardMasterCopyContract.asProvider.attach(guard!),

@@ -3,6 +3,7 @@ import { Trash } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
@@ -12,6 +13,7 @@ interface IStepWrapper {
   titleKey: string;
   isSubDAO?: boolean;
   isFormSubmitting?: boolean;
+  shouldWrapChildren?: boolean;
   children: ReactNode;
   mode: DAOCreateMode;
 }
@@ -22,6 +24,7 @@ export function StepWrapper({
   isFormSubmitting,
   children,
   mode,
+  shouldWrapChildren = true,
 }: IStepWrapper) {
   const {
     node: { daoAddress },
@@ -66,15 +69,19 @@ export function StepWrapper({
           }
         />
       )}
-      <Box
-        bg="black.900-semi-transparent"
-        rounded="md"
-        mt={8}
-        px={4}
-        py={8}
-      >
-        {children}
-      </Box>
+      {shouldWrapChildren ? (
+        <Box
+          bg={BACKGROUND_SEMI_TRANSPARENT}
+          rounded="lg"
+          mt={8}
+          px={4}
+          py={8}
+        >
+          {children}
+        </Box>
+      ) : (
+        children
+      )}
     </Box>
   );
 }

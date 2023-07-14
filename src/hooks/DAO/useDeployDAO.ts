@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SafeMultisigDAO, AzoriusGovernanceDAO } from '../../types';
+import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
@@ -17,7 +17,7 @@ const useDeployDAO = () => {
 
   const deployDao = useCallback(
     (
-      daoData: SafeMultisigDAO | AzoriusGovernanceDAO,
+      daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
       successCallback: (daoAddress: string) => void
     ) => {
       const deploy = async () => {
@@ -30,14 +30,14 @@ const useDeployDAO = () => {
           return;
         }
 
-        const { predictedGnosisSafeAddress, safeTx } = builtSafeTx;
+        const { predictedSafeAddress, safeTx } = builtSafeTx;
 
         contractCallDeploy({
           contractFn: () => multiSendContract.asSigner.multiSend(safeTx),
-          pendingMessage: t('pendingDeployGnosis'),
-          failedMessage: t('failedDeployGnosis'),
-          successMessage: t('successDeployGnosis'),
-          successCallback: () => successCallback(predictedGnosisSafeAddress),
+          pendingMessage: t('pendingDeploySafe'),
+          failedMessage: t('failedDeploySafe'),
+          successMessage: t('successDeploySafe'),
+          successCallback: () => successCallback(predictedSafeAddress),
         });
       };
 

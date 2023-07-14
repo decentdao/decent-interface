@@ -23,14 +23,14 @@ const useRemoveSigner = ({
   const { t } = useTranslation(['modals']);
   const loadDAOProposals = useDAOProposals();
   const {
-    baseContracts: { gnosisSafeSingletonContract },
+    baseContracts: { safeSingletonContract },
   } = useFractal();
 
   const removeSigner = useCallback(async () => {
     const description = 'Remove Signers';
 
     const calldatas = [
-      gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData('removeOwner', [
+      safeSingletonContract.asSigner.interface.encodeFunctionData('removeOwner', [
         prevSigner,
         signerToRemove,
         BigNumber.from(threshold),
@@ -57,7 +57,7 @@ const useRemoveSigner = ({
       failedToastMessage: t('removeSignerFailureToastMessage'),
     });
   }, [
-    gnosisSafeSingletonContract.asSigner.interface,
+    safeSingletonContract.asSigner.interface,
     prevSigner,
     signerToRemove,
     threshold,

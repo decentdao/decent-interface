@@ -14,7 +14,7 @@ import { useSafeMultisigProposals } from '../../../hooks/DAO/loaders/governance/
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MultisigProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
@@ -35,7 +35,7 @@ export function TxActions({
   const { data: signer } = useSigner();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 
-  const { chainId } = useNetworkConfg();
+  const { chainId } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
@@ -123,7 +123,7 @@ export function TxActions({
       if (!signerOrProvider || !safe?.address || !multisigTx.confirmations) {
         return;
       }
-      const gnosisContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
+      const safeContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
       const safeTx = buildSafeTransaction({
         ...multisigTx,
       });
@@ -135,7 +135,7 @@ export function TxActions({
       );
       contractCall({
         contractFn: () =>
-          gnosisContract.execTransaction(
+          safeContract.execTransaction(
             safeTx.to,
             safeTx.value,
             safeTx.data,

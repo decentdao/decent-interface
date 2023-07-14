@@ -29,7 +29,7 @@ export function AzoriusTokenAllocation({
   return (
     <>
       <LabelWrapper errorMessage={addressErrorMessage}>
-        <Field name={`token.tokenAllocations.${index}.address`}>
+        <Field name={`erc20Token.tokenAllocations.${index}.address`}>
           {({ field }: FieldAttributes<any>) => (
             <AddressInput
               {...field}
@@ -41,7 +41,9 @@ export function AzoriusTokenAllocation({
       <LabelWrapper errorMessage={amountErrorMessage}>
         <BigNumberInput
           value={amountInputValue}
-          onChange={valuePair => setFieldValue(`token.tokenAllocations.${index}.amount`, valuePair)}
+          onChange={valuePair =>
+            setFieldValue(`erc20Token.tokenAllocations.${index}.amount`, valuePair)
+          }
           data-testid={'tokenVoting-tokenAllocationAmountInput-' + index}
           onKeyDown={restrictChars}
         />

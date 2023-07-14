@@ -1,9 +1,9 @@
 import { InfuraProvider } from '@ethersproject/providers';
 import { useMemo } from 'react';
-import { useNetworkConfg } from './NetworkConfigProvider';
+import { useNetworkConfig } from './NetworkConfigProvider';
 
 export const useEIP1193Providers = () => {
-  const { chainId } = useNetworkConfg();
+  const { chainId } = useNetworkConfig();
 
   // Unfortunately, useProvider from wagmi package does not return instance that compatible with EIP1193 standard
   // And that's required for Proxy Detection

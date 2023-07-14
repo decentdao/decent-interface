@@ -3,7 +3,6 @@ import { Gear } from '@decent-org/fractal-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { GovernanceModuleType } from '../../../types';
 import SupportTooltip from '../badges/SupportTooltip';
 
 export function CustomNonceInput({
@@ -14,15 +13,16 @@ export function CustomNonceInput({
   onChange: (nonce?: number) => void;
 }) {
   const {
-    governance,
     node: { safe },
+    readOnly: { dao },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
   const errorMessage =
     nonce !== undefined && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
-  if (governance.type === GovernanceModuleType.AZORIUS) return null;
+
+  if (dao?.isAzorius) return null;
 
   return revealed ? (
     <VStack alignItems="start">

@@ -22,7 +22,7 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
 
   const {
     node: { daoAddress },
-    baseContracts: { votesTokenMasterCopyContract, gnosisSafeSingletonContract },
+    baseContracts: { votesTokenMasterCopyContract, safeSingletonContract },
     guardContracts,
     action,
     readOnly: { user },
@@ -72,10 +72,10 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
       };
 
       if (freezeVotingType === FreezeVotingType.MULTISIG) {
-        const gnosisSafeContract = gnosisSafeSingletonContract!.asSigner.attach(
+        const safeContract = safeSingletonContract!.asSigner.attach(
           await (freezeVotingContract!.asSigner as MultisigFreezeVoting).parentGnosisSafe()
         );
-        const owners = await gnosisSafeContract.getOwners();
+        const owners = await safeContract.getOwners();
         userHasVotes = owners.find(owner => owner === account) !== undefined;
       } else if (freezeVotingType === FreezeVotingType.ERC20) {
         const votesTokenContract = votesTokenMasterCopyContract!.asSigner.attach(
@@ -109,7 +109,7 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, provider, gnosisSafeSingletonContract, votesTokenMasterCopyContract]
+    [account, provider, safeSingletonContract, votesTokenMasterCopyContract]
   );
 
   const setFractalFreezeGuard = useCallback(

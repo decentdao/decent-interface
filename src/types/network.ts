@@ -18,20 +18,22 @@ export type NetworkConfig = {
   wagmiChain: Chain;
   subgraphChainName: string;
   contracts: {
-    gnosisSafe: string;
-    gnosisSafeFactory: string;
+    safe: string;
+    safeFactory: string;
     zodiacModuleProxyFactory: string;
     linearVotingMasterCopy: string;
-    gnosisMultisend: string;
+    multisend: string;
     fractalAzoriusMasterCopy: string;
     fractalModuleMasterCopy: string;
     fractalRegistry: string;
     votesERC20MasterCopy: string;
+    linearVotingERC721MasterCopy: string;
     claimingMasterCopy: string;
     multisigFreezeGuardMasterCopy: string;
     azoriusFreezeGuardMasterCopy: string;
     multisigFreezeVotingMasterCopy: string;
     erc20FreezeVotingMasterCopy: string;
+    erc721FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
   };

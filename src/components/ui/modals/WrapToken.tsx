@@ -35,7 +35,7 @@ export function WrapToken({ close }: { close: () => void }) {
     pending: approvalPending,
   } = useApproval(
     governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
-    azoriusGovernance.votesToken.address,
+    azoriusGovernance.votesToken?.address,
     userBalance.bigNumberValue
   );
 
@@ -44,7 +44,7 @@ export function WrapToken({ close }: { close: () => void }) {
 
   const getUserUnderlyingTokenBalance = useCallback(async () => {
     if (
-      !azoriusGovernance.votesToken.decimals ||
+      !azoriusGovernance.votesToken?.decimals ||
       !azoriusGovernance.votesToken.underlyingTokenData ||
       !signer ||
       !account
@@ -65,7 +65,7 @@ export function WrapToken({ close }: { close: () => void }) {
           balance,
           false,
           decimals,
-          azoriusGovernance.votesToken.underlyingTokenData?.symbol
+          azoriusGovernance.votesToken?.underlyingTokenData?.symbol
         ),
         bigNumberValue: balance,
       });
@@ -101,7 +101,7 @@ export function WrapToken({ close }: { close: () => void }) {
   );
 
   if (
-    !azoriusGovernance.votesToken.decimals ||
+    !azoriusGovernance.votesToken?.decimals ||
     !azoriusGovernance.votesToken.underlyingTokenData ||
     userBalance.bigNumberValue?.isZero()
   ) {
@@ -148,7 +148,7 @@ export function WrapToken({ close }: { close: () => void }) {
                 subLabel={t('assetWrapSubLabel')}
               >
                 <Input
-                  value={azoriusGovernance.votesToken.underlyingTokenData?.name}
+                  value={azoriusGovernance.votesToken?.underlyingTokenData?.name}
                   disabled={true}
                 />
               </LabelWrapper>
@@ -159,7 +159,7 @@ export function WrapToken({ close }: { close: () => void }) {
               >
                 <BigNumberInput
                   value={values.amount.bigNumberValue}
-                  decimalPlaces={azoriusGovernance.votesToken.decimals}
+                  decimalPlaces={azoriusGovernance.votesToken?.decimals}
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="wrapToken-amount"
                   onKeyDown={restrictChars}

@@ -1,4 +1,4 @@
-import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TransferType, TokenInfo, AssetTransfer } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
 
@@ -26,7 +26,7 @@ export function useFormatTransfers(
   safeAddress: string
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
-  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfg();
+  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfig();
 
   for (let i = 0; i < transfers.length; i++) {
     const transfer = transfers[i];

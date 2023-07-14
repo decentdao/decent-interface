@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../../types';
+import { AzoriusGovernance, GovernanceSelectionType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 
 const useCastVote = ({
@@ -20,7 +20,7 @@ const useCastVote = ({
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
   const canDelegate = useMemo(() => {
-    if (governance.type === GovernanceModuleType.AZORIUS) {
+    if (governance.type === GovernanceSelectionType.AZORIUS_ERC20) {
       // TODO ERC721 voting will need to be included here
       const azoriusGovernance = governance as AzoriusGovernance;
       return azoriusGovernance?.votesToken?.balance?.gt(0);

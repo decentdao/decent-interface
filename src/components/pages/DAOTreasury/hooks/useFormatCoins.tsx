@@ -1,6 +1,6 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
-import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
 
 export interface TokenDisplayData {
@@ -15,7 +15,7 @@ export interface TokenDisplayData {
 }
 
 export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
-  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfg();
+  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfig();
   let totalFiatValue = 0;
   let displayData: TokenDisplayData[] = [];
   for (let i = 0; i < assets.length; i++) {
