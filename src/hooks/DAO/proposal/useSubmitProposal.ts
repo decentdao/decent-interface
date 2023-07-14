@@ -83,10 +83,10 @@ export default function useSubmitProposal() {
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { chainId, safeBaseURL } = useNetworkConfig();
 
-  const { owners } = safe || {};
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
       if (type === GovernanceSelectionType.MULTISIG) {
+        const { owners } = safe || {};
         setCanUserCreateProposal(!!owners?.includes(user.address || ''));
       } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
         if (ozLinearVotingContract && user.address) {
@@ -94,11 +94,12 @@ export default function useSubmitProposal() {
         }
       } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
         setCanUserCreateProposal(false); // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
+      } else {
+        setCanUserCreateProposal(false);
       }
-      setCanUserCreateProposal(false);
     };
     loadCanUserCreateProposal();
-  }, [owners, type, user, ozLinearVotingContract]);
+  }, [safe, type, user, ozLinearVotingContract]);
 
   const submitMultisigProposal = useCallback(
     async ({
