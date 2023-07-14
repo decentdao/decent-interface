@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 /**
@@ -10,6 +11,9 @@ import { useValidationAddress } from '../common/useValidationAddress';
 const useCreateProposalTemplateSchema = () => {
   const { t } = useTranslation('proposal');
   const { addressValidationTest } = useValidationAddress();
+  const {
+    node: { safe },
+  } = useFractal();
 
   const labelOrValueValidationTest: Yup.TestFunction<string | undefined, Yup.AnyObject> = (
     _,
@@ -59,8 +63,11 @@ const useCreateProposalTemplateSchema = () => {
           title: Yup.string().trim().required().max(50),
           description: Yup.string().trim().notRequired().max(300),
         }),
+        nonce: Yup.number()
+          .required()
+          .moreThan((!!safe && safe.nonce - 1) || 0),
       }),
-    [addressValidationTest, t]
+    [addressValidationTest, t, safe]
   );
   return { createProposalTemplateValidation };
 };

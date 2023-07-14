@@ -10,6 +10,7 @@ import ProposalTemplateDetails from '../../../../../src/components/CreateProposa
 import ProposalTemplateMetadata from '../../../../../src/components/CreateProposalTemplate/ProposalTemplateMetadata';
 import ProposalTemplateTransactionsForm from '../../../../../src/components/CreateProposalTemplate/ProposalTemplateTransactionsForm';
 import { DEFAULT_PROPOSAL_TEMPLATE } from '../../../../../src/components/CreateProposalTemplate/constants';
+import { CustomNonceInput } from '../../../../../src/components/ui/forms/CustomNonceInput';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../src/constants/common';
@@ -31,7 +32,6 @@ export default function CreateProposalTemplatePage() {
   const [formState, setFormState] = useState(CreateProposalTemplateFormState.METADATA_FORM);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const { push } = useRouter();
-
   const {
     node: { daoAddress, safe },
   } = useFractal();
@@ -58,7 +58,7 @@ export default function CreateProposalTemplatePage() {
             if (proposalData) {
               submitProposal({
                 proposalData,
-                nonce: safe?.nonce,
+                nonce: values?.nonce,
                 pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
                 successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
                 failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
@@ -70,6 +70,7 @@ export default function CreateProposalTemplatePage() {
       >
         {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
           const { handleSubmit } = formikProps;
+
           return (
             <form onSubmit={handleSubmit}>
               <Box>
@@ -123,16 +124,26 @@ export default function CreateProposalTemplatePage() {
                           />
                         ) : (
                           <>
-                            <Text
-                              textStyle="text-xl-mono-medium"
-                              mb={4}
+                            <Flex
+                              alignItems="center"
+                              justifyContent="space-between"
                             >
-                              {formikProps.values.proposalTemplateMetadata.title}
-                            </Text>
+                              <Text
+                                textStyle="text-xl-mono-medium"
+                                mb={4}
+                              >
+                                {formikProps.values.proposalTemplateMetadata.title}
+                              </Text>
+                              <CustomNonceInput
+                                nonce={formikProps.values.nonce}
+                                onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                              />
+                            </Flex>
                             <ProposalTemplateTransactionsForm
                               setFormState={setFormState}
                               canUserCreateProposal={canUserCreateProposal}
                               pendingTransaction={pendingCreateTx}
+                              safeNonce={safe?.nonce}
                               {...formikProps}
                             />
                           </>
