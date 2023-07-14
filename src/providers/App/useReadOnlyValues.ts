@@ -23,7 +23,7 @@ export const useReadOnlyValues = () => {
         case GovernanceSelectionType.AZORIUS_ERC20:
           return tokenWeight;
         case GovernanceSelectionType.AZORIUS_ERC721:
-          return BigNumber.from(0);
+          return BigNumber.from(0); // TODO this should be the sum of NFT weights here
         default:
           return BigNumber.from(0);
       }
