@@ -94,7 +94,6 @@ export function BigNumberInput({
 
   const processValue = useCallback(
     (event?: React.ChangeEvent<HTMLInputElement>, _value = '') => {
-      console.log(event?.target.value);
       let stringValue = _value;
       if (event) {
         stringValue = event.target.value;
@@ -185,6 +184,7 @@ export function BigNumberInput({
         value={inputValue}
         onChange={onChangeInput}
         onBlur={onBlur}
+        type="number"
         {...rest}
       />
       {maxValue && (
