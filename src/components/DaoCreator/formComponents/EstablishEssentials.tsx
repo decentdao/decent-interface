@@ -2,6 +2,7 @@ import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -81,10 +82,10 @@ export function EstablishEssentials(props: ICreationStepProps) {
           isRequired
         >
           <RadioGroup
-            bg="black.900-semi-transparent"
+            bg={BACKGROUND_SEMI_TRANSPARENT}
             px={8}
             py={4}
-            rounded="md"
+            rounded="lg"
             display="flex"
             flexDirection="column"
             name="governance"

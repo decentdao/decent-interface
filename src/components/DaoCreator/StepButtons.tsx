@@ -37,7 +37,10 @@ export function StepButtons({
       : t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
   const buttonType = isLastStep ? 'submit' : 'button';
   return (
-    <Flex alignItems="center">
+    <Flex
+      alignItems="center"
+      width="100%"
+    >
       {prevStep && (
         <Button
           data-testid="create-prevButton"

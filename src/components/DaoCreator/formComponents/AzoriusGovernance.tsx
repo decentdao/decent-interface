@@ -82,8 +82,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             <BigNumberInput
               value={values.erc721Token.quorumThreshold.bigNumberValue}
               onChange={valuePair => setFieldValue('erc721Token.quorumThreshold', valuePair)}
-              max="100"
               decimalPlaces={0}
+              min="1"
               data-testid="govConfig-quorumThreshold"
             />
           </LabelComponent>

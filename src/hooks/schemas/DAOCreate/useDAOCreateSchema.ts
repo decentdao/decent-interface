@@ -19,13 +19,17 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
     addressValidationTestSimple,
     addressValidationTest,
     uniqueAddressValidationTest,
+    uniqueNFTAddressValidationTest,
     ensNameValidationTest,
   } = useValidationAddress();
   const {
+    minValueValidation,
     maxAllocationValidation,
     allocationValidationTest,
     uniqueAllocationValidationTest,
     validERC20Address,
+    validERC721Address,
+    isBigNumberValidation,
   } = useDAOCreateTests();
 
   const { t } = useTranslation(['daoCreate']);
@@ -86,8 +90,8 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               }),
               tokenImportAddress: Yup.string().when('tokenCreationType', {
                 is: (value: TokenCreationType) => !!value && value === TokenCreationType.IMPORTED,
-                then: __schmema =>
-                  __schmema.test(addressValidationTestSimple).test(validERC20Address),
+                then: __schema =>
+                  __schema.test(addressValidationTestSimple).test(validERC20Address),
               }),
               parentAllocationAmount: Yup.object().when({
                 is: (value: BigNumberValuePair) => !!value.value,
@@ -112,6 +116,28 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     })
                   ),
               }),
+            }),
+        }),
+        erc721Token: Yup.object().when('essentials', {
+          is: ({ governance }: DAOEssentials) =>
+            governance === GovernanceSelectionType.AZORIUS_ERC721,
+          then: _schema =>
+            _schema.shape({
+              nfts: Yup.array()
+                .min(1)
+                .of(
+                  Yup.object().shape({
+                    tokenAddress: Yup.string()
+                      .test(addressValidationTestSimple)
+                      .test(uniqueNFTAddressValidationTest)
+                      .test(validERC721Address),
+                    tokenWeight: Yup.object()
+                      .required()
+                      .shape({
+                        value: Yup.string().test(isBigNumberValidation).test(minValueValidation(1)), // Otherwise "0" treated as proper value
+                      }),
+                  })
+                ),
             }),
         }),
         azorius: Yup.object().when('essentials', {
@@ -145,9 +171,13 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
       uniqueAddressValidationTest,
       addressValidationTestSimple,
       validERC20Address,
+      validERC721Address,
       maxAllocationValidation,
       allocationValidationTest,
       uniqueAllocationValidationTest,
+      uniqueNFTAddressValidationTest,
+      minValueValidation,
+      isBigNumberValidation,
     ]
   );
   return { createDAOValidation };
