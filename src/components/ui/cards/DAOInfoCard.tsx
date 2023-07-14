@@ -1,5 +1,6 @@
 import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center } from '@chakra-ui/react';
 import { DAO_ROUTES } from '../../../constants/routes';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
 import Snapshot from '../badges/Snapshot';
@@ -40,6 +41,8 @@ export function DAOInfoCard({
     action,
     readOnly: { user },
   } = useFractal();
+  // for non Fractal Safes
+  const { displayName } = useDisplayName(node?.daoAddress);
 
   // node hasn't loaded yet
   if (!node || !node.daoAddress) {
@@ -89,7 +92,7 @@ export function DAOInfoCard({
               color="grayscale.100"
               data-testid="DAOInfo-name"
             >
-              {node.daoName}
+              {node.daoName || displayName}
             </Text>
           </Link>
           <FavoriteIcon

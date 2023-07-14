@@ -1,7 +1,7 @@
 import { Button, Box, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { FormikProps } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   CreateProposalTemplateForm,
@@ -15,6 +15,7 @@ interface ProposalTemplateTransactionsFormProps extends FormikProps<CreatePropos
   pendingTransaction: boolean;
   setFormState: (state: CreateProposalTemplateFormState) => void;
   canUserCreateProposal?: boolean;
+  safeNonce?: number;
 }
 
 export default function ProposalTemplateTransactionsForm(
@@ -25,11 +26,18 @@ export default function ProposalTemplateTransactionsForm(
     setFormState,
     setFieldValue,
     values: { transactions },
-    errors: { transactions: transactionsError },
+    errors: { transactions: transactionsError, nonce: nonceError },
     canUserCreateProposal,
+    safeNonce,
   } = props;
   const { t } = useTranslation(['proposalTemplate', 'proposal', 'common']);
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
+
+  useEffect(() => {
+    if (safeNonce) {
+      setFieldValue('nonce', safeNonce);
+    }
+  }, [safeNonce, setFieldValue]);
 
   return (
     <Box>
@@ -86,7 +94,9 @@ export default function ProposalTemplateTransactionsForm(
           <Button
             w="100%"
             type="submit"
-            isDisabled={!canUserCreateProposal || !!transactionsError || pendingTransaction}
+            isDisabled={
+              !canUserCreateProposal || !!transactionsError || !!nonceError || pendingTransaction
+            }
           >
             {t('createProposal', { ns: 'proposal' })}
           </Button>
