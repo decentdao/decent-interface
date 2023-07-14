@@ -26,21 +26,21 @@ export function Info() {
         justifyContent="space-between"
         mb="1rem"
       >
-        <InfoBox minWidth={{ base: '100%', xl: '34.5%', '2xl': '41rem' }}>
+        <InfoBox minWidth={{ base: '100%', md: '48.75%', lg: '32%', xl: '37%', '2xl': '47%' }}>
           <InfoDAO />
         </InfoBox>
-        <InfoBox minWidth={{ base: '100%', lg: '34.5%', xl: '23.5%', '2xl': '14rem' }}>
+        <InfoBox minWidth={{ base: '100%', md: '48.75%', lg: '13rem', xl: '15rem' }}>
           <InfoGovernance />
         </InfoBox>
         <InfoBox
           to={DAO_ROUTES.proposals.relative(daoAddress)}
-          minWidth={{ base: '100%', lg: '30%', xl: '21%', '2xl': '10rem' }}
+          minWidth={{ base: '100%', md: '48.75%', lg: '10rem', xl: '12rem' }}
         >
           <InfoProposals />
         </InfoBox>
         <InfoBox
           to={DAO_ROUTES.treasury.relative(daoAddress)}
-          minWidth={{ base: '100%', lg: '30%', xl: '15%', '2xl': '9rem' }}
+          minWidth={{ base: '100%', md: '48.75%', lg: '12rem' }} // 12 rem
         >
           <InfoTreasury />
         </InfoBox>
