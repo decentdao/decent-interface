@@ -29,6 +29,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
     uniqueAllocationValidationTest,
     validERC20Address,
     validERC721Address,
+    isBigNumberValidation,
   } = useDAOCreateTests();
 
   const { t } = useTranslation(['daoCreate']);
@@ -133,7 +134,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     tokenWeight: Yup.object()
                       .required()
                       .shape({
-                        value: Yup.string().test(minValueValidation(1)), // Otherwise "0" treated as proper value
+                        value: Yup.string().test(isBigNumberValidation).test(minValueValidation(1)), // Otherwise "0" treated as proper value
                       }),
                   })
                 ),
@@ -176,6 +177,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
       uniqueAllocationValidationTest,
       uniqueNFTAddressValidationTest,
       minValueValidation,
+      isBigNumberValidation,
     ]
   );
   return { createDAOValidation };
