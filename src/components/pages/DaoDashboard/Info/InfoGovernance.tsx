@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../../../types';
+import { AzoriusGovernance, GovernanceSelectionType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
@@ -16,6 +16,7 @@ export function InfoGovernance() {
     node: { daoAddress },
     governance,
     guardContracts,
+    readOnly: { dao },
   } = useFractal();
   const provider = useProvider();
   const { getTimeDuration } = useTimeHelpers();
@@ -28,15 +29,15 @@ export function InfoGovernance() {
       const formatBlocks = async (blocks: number): Promise<string | undefined> => {
         return getTimeDuration(await blocksToSeconds(blocks, provider));
       };
-      if (governance.type == GovernanceModuleType.MULTISIG) {
+      if (governance.type == GovernanceSelectionType.MULTISIG) {
         if (guardContracts.freezeGuardContract) {
           const freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
           setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
           setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
         }
-      } else if (governance.type == GovernanceModuleType.AZORIUS) {
+      } else if (dao?.isAzorius) {
         const azoriusGovernance = governance as AzoriusGovernance;
-        const timelock = azoriusGovernance.votesStrategy?.timeLockPeriod;
+        const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
         if (timelock?.value) {
           setTimelockPeriod(await formatBlocks(timelock?.value.toNumber()));
         }
@@ -53,6 +54,7 @@ export function InfoGovernance() {
     guardContracts.freezeGuardContract,
     provider,
     timelockPeriod,
+    dao,
   ]);
   setTimelockInfo();
 
@@ -69,10 +71,7 @@ export function InfoGovernance() {
     );
   }
 
-  const governanceAzorius =
-    governance.type === GovernanceModuleType.AZORIUS
-      ? (governance as AzoriusGovernance)
-      : undefined;
+  const governanceAzorius = dao?.isAzorius ? (governance as AzoriusGovernance) : undefined;
 
   return (
     <Box
@@ -112,7 +111,7 @@ export function InfoGovernance() {
         </Text>
       </Flex>
 
-      {governanceAzorius?.votesStrategy?.votingPeriod && (
+      {governanceAzorius?.votingStrategy?.votingPeriod && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -128,11 +127,11 @@ export function InfoGovernance() {
             textStyle="text-base-sans-regular"
             color="grayscale.100"
           >
-            {governanceAzorius.votesStrategy.votingPeriod.formatted}
+            {governanceAzorius.votingStrategy.votingPeriod.formatted}
           </Text>
         </Flex>
       )}
-      {governanceAzorius?.votesStrategy?.quorumPercentage && (
+      {governanceAzorius?.votingStrategy?.quorumPercentage && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -148,7 +147,7 @@ export function InfoGovernance() {
             textStyle="text-base-sans-regular"
             color="grayscale.100"
           >
-            {governanceAzorius.votesStrategy.quorumPercentage.formatted}
+            {governanceAzorius.votingStrategy.quorumPercentage.formatted}
           </Text>
         </Flex>
       )}

@@ -15,7 +15,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  GovernanceModuleType,
+  GovernanceSelectionType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
@@ -34,6 +34,7 @@ function GuardDetails(props: ICreationStepProps) {
     node: { safe },
     governance,
     governanceContracts: { azoriusContract },
+    readOnly: { dao },
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState(false);
@@ -50,12 +51,11 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentAzorius = type === GovernanceModuleType.AZORIUS;
-    if (!isParentAzorius && isSubDAO && safe) {
+    if (!dao?.isAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
+  }, [isSubDAO, azoriusContract, type, setFieldValue, safe, dao]);
 
   useEffect(() => {
     // set the initial value for freezeGuard.freezeVotesThreshold
@@ -66,7 +66,8 @@ function GuardDetails(props: ICreationStepProps) {
       let parentVotes: BigNumber;
 
       switch (type) {
-        case GovernanceModuleType.AZORIUS:
+        case GovernanceSelectionType.AZORIUS_ERC20:
+        case GovernanceSelectionType.AZORIUS_ERC721:
           if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
           const normalized = ethers.utils.formatUnits(
             azoriusGovernance.votesToken.totalSupply,
@@ -74,7 +75,7 @@ function GuardDetails(props: ICreationStepProps) {
           );
           parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           break;
-        case GovernanceModuleType.MULTISIG:
+        case GovernanceSelectionType.MULTISIG:
         default:
           if (!safe) return;
           parentVotes = BigNumber.from(safe.owners.length);
@@ -121,7 +122,7 @@ function GuardDetails(props: ICreationStepProps) {
         flexDirection="column"
         gap={8}
       >
-        {governanceFormType === GovernanceModuleType.MULTISIG && (
+        {governanceFormType === GovernanceSelectionType.MULTISIG && (
           <>
             <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
             <LabelComponent
@@ -262,7 +263,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === GovernanceModuleType.MULTISIG
+            governanceFormType === GovernanceSelectionType.MULTISIG
               ? CreatorSteps.MULTISIG_DETAILS
               : CreatorSteps.AZORIUS_DETAILS
           }

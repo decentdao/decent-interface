@@ -4,6 +4,7 @@ import { BigNumber, constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20ABI, useProvider } from 'wagmi';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { TokenCreationType, ICreationStepProps } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
@@ -16,7 +17,7 @@ import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
 
 function TokenConfigDisplay(props: ICreationStepProps) {
-  switch (props.values.token.tokenCreationType) {
+  switch (props.values.erc20Token.tokenCreationType) {
     case TokenCreationType.NEW:
       return <VotesTokenNew {...props} />;
     case TokenCreationType.IMPORTED:
@@ -45,8 +46,8 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
 
   const updateImportFields = useCallback(async () => {
-    const importAddress = values.token.tokenImportAddress;
-    const importError = errors?.token?.tokenImportAddress;
+    const importAddress = values.erc20Token.tokenImportAddress;
+    const importError = errors?.erc20Token?.tokenImportAddress;
     if (importAddress && !importError && utils.isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
       const tokenContract = new ethers.Contract(importAddress, erc20ABI, provider);
@@ -55,7 +56,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       const decimals: number = await tokenContract.decimals();
       const totalSupply: number = (await tokenContract.totalSupply()) / 10 ** decimals;
       setFieldValue(
-        'token.tokenSupply',
+        'erc20Token.tokenSupply',
         {
           value: totalSupply,
           bigNumberValue: BigNumber.from(totalSupply),
@@ -63,23 +64,23 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         true
       );
       if (!isVotesToken) {
-        setFieldValue('token.tokenName', 'Wrapped ' + name, true);
-        setFieldValue('token.tokenSymbol', 'W' + symbol, true);
+        setFieldValue('erc20Token.tokenName', 'Wrapped ' + name, true);
+        setFieldValue('erc20Token.tokenSymbol', 'W' + symbol, true);
         setIsImportedVotesToken(false);
       } else {
         setIsImportedVotesToken(true);
-        setFieldValue('token.tokenName', name, true);
-        setFieldValue('token.tokenSymbol', symbol, true);
+        setFieldValue('erc20Token.tokenName', name, true);
+        setFieldValue('erc20Token.tokenSymbol', symbol, true);
       }
     } else {
       setIsImportedVotesToken(false);
     }
   }, [
     checkVotesToken,
-    errors?.token?.tokenImportAddress,
+    errors?.erc20Token?.tokenImportAddress,
     setFieldValue,
     provider,
-    values.token.tokenImportAddress,
+    values.erc20Token.tokenImportAddress,
   ]);
 
   useEffect(() => {
@@ -104,18 +105,18 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
             isRequired={false}
           >
             <RadioGroup
-              bg="black.900-semi-transparent"
+              bg={BACKGROUND_SEMI_TRANSPARENT}
               px={8}
               py={4}
-              rounded="md"
+              rounded="lg"
               display="flex"
               flexDirection="column"
-              name="token.tokenCreationType"
+              name="erc20Token.tokenCreationType"
               gap={4}
-              id="token.tokenCreationType"
-              value={values.token.tokenCreationType}
+              id="erc20Token.tokenCreationType"
+              value={values.erc20Token.tokenCreationType}
               onChange={value => {
-                setFieldValue('token.tokenCreationType', value);
+                setFieldValue('erc20Token.tokenCreationType', value);
               }}
             >
               <RadioWithText
@@ -124,10 +125,10 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 testId="choose-newToken"
                 value={TokenCreationType.NEW}
                 onClick={() => {
-                  setFieldValue('token.tokenImportAddress', '');
-                  setFieldValue('token.tokenName', '');
-                  setFieldValue('token.tokenSymbol', '');
-                  setFieldValue('token.tokenSupply', '');
+                  setFieldValue('erc20Token.tokenImportAddress', '');
+                  setFieldValue('erc20Token.tokenName', '');
+                  setFieldValue('erc20Token.tokenSymbol', '');
+                  setFieldValue('erc20Token.tokenSupply', '');
                 }}
               />
               <RadioWithText
@@ -136,28 +137,28 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                 testId="choose-existingToken"
                 value={TokenCreationType.IMPORTED}
                 onClick={() => {
-                  setFieldValue('token.tokenName', '');
-                  setFieldValue('token.tokenSymbol', '');
-                  setFieldValue('token.tokenSupply', '');
+                  setFieldValue('erc20Token.tokenName', '');
+                  setFieldValue('erc20Token.tokenSymbol', '');
+                  setFieldValue('erc20Token.tokenSupply', '');
                 }}
               />
-              {values.token.tokenCreationType === TokenCreationType.IMPORTED && (
+              {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
                 <>
                   <LabelWrapper
                     errorMessage={
-                      values.token.tokenImportAddress && errors?.token?.tokenImportAddress
-                        ? errors.token.tokenImportAddress
+                      values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress
+                        ? errors.erc20Token.tokenImportAddress
                         : undefined
                     }
                   >
                     <Input
-                      name="token.tokenImportAddress"
+                      name="erc20Token.tokenImportAddress"
                       onChange={handleChange}
-                      value={values.token.tokenImportAddress}
+                      value={values.erc20Token.tokenImportAddress}
                       placeholder={createAccountSubstring(constants.AddressZero)}
                     />
                   </LabelWrapper>
-                  {!isImportedVotesToken && !errors.token?.tokenImportAddress && (
+                  {!isImportedVotesToken && !errors.erc20Token?.tokenImportAddress && (
                     <Flex
                       gap={4}
                       alignItems="center"
@@ -182,8 +183,8 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         </Flex>
       </StepWrapper>
       <Box
-        bg="black.900-semi-transparent"
-        rounded="md"
+        bg={BACKGROUND_SEMI_TRANSPARENT}
+        rounded="lg"
         mt={8}
         px={4}
         py={8}

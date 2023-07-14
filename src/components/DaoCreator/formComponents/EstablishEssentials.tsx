@@ -2,10 +2,16 @@ import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, CreatorSteps, GovernanceModuleType } from '../../../types';
+import {
+  ICreationStepProps,
+  CreatorSteps,
+  VotingStrategyType,
+  GovernanceSelectionType,
+} from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import ExternalLink from '../../ui/links/ExternalLink';
@@ -40,6 +46,16 @@ export function EstablishEssentials(props: ICreationStepProps) {
     isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
   const snapshotURLDisabled = isEdit && !!daoSnapshotURL;
 
+  const handleGovernanceChange = (value: string) => {
+    if (value === GovernanceSelectionType.AZORIUS_ERC20) {
+      setFieldValue('azorius.votingStrategyType', VotingStrategyType.LINEAR_ERC20);
+    } else if (value === GovernanceSelectionType.AZORIUS_ERC721) {
+      setFieldValue('azorius.votingStrategyType', VotingStrategyType.LINEAR_ERC721);
+    }
+
+    setFieldValue('essentials.governance', value);
+  };
+
   return (
     <StepWrapper
       mode={mode}
@@ -66,23 +82,23 @@ export function EstablishEssentials(props: ICreationStepProps) {
           isRequired
         >
           <RadioGroup
-            bg="black.900-semi-transparent"
+            bg={BACKGROUND_SEMI_TRANSPARENT}
             px={8}
             py={4}
-            rounded="md"
+            rounded="lg"
             display="flex"
             flexDirection="column"
             name="governance"
             gap={4}
             id="governance"
             value={values.essentials.governance}
-            onChange={value => setFieldValue('essentials.governance', value)}
+            onChange={handleGovernanceChange}
           >
             <RadioWithText
               label={t('labelMultisigGov')}
               description={t('descMultisigGov')}
               testId="choose-multisig"
-              value={GovernanceModuleType.MULTISIG}
+              value={GovernanceSelectionType.MULTISIG}
               tooltip={
                 <Trans
                   i18nKey="tooltipMultisig"
@@ -94,13 +110,28 @@ export function EstablishEssentials(props: ICreationStepProps) {
               }
             />
             <RadioWithText
-              label={t('labelAzoriusGov')}
-              description={t('descAzoriusGov')}
+              label={t('labelAzoriusErc20Gov')}
+              description={t('descAzoriusErc20Gov')}
               testId="choose-azorius"
-              value={GovernanceModuleType.AZORIUS}
+              value={GovernanceSelectionType.AZORIUS_ERC20}
               tooltip={
                 <Trans
                   i18nKey="tooltipTokenVoting"
+                  ns="daoCreate"
+                >
+                  placeholder
+                  <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                </Trans>
+              }
+            />
+            <RadioWithText
+              label={t('labelAzoriusErc721Gov')}
+              description={t('descAzoriusErc721Gov')}
+              testId="choose-azorius-erc721"
+              value={GovernanceSelectionType.AZORIUS_ERC721}
+              tooltip={
+                <Trans
+                  i18nKey="tooltipNftVoting"
                   ns="daoCreate"
                 >
                   placeholder
@@ -140,13 +171,15 @@ export function EstablishEssentials(props: ICreationStepProps) {
         {...props}
         isNextDisabled={
           values.essentials.daoName.length === 0 || // TODO formik should do this, not sure why it's enabled on first pass
-          (isEdit && values.essentials.governance !== GovernanceModuleType.AZORIUS)
+          (isEdit && values.essentials.governance === GovernanceSelectionType.MULTISIG)
         }
         isEdit={isEdit}
         nextStep={
-          values.essentials.governance === GovernanceModuleType.MULTISIG
+          values.essentials.governance === GovernanceSelectionType.MULTISIG
             ? CreatorSteps.MULTISIG_DETAILS
-            : CreatorSteps.TOKEN_DETAILS
+            : values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
+            ? CreatorSteps.ERC20_DETAILS
+            : CreatorSteps.ERC721_DETAILS
         }
       />
     </StepWrapper>

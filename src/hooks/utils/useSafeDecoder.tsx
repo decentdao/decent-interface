@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { solidityKeccak256 } from 'ethers/lib/utils.js';
 import { useCallback } from 'react';
-import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam } from '../../types';
-import { buildGnosisApiUrl, parseMultiSendTransactions } from '../../utils';
+import { buildSafeApiUrl, parseMultiSendTransactions } from '../../utils';
 import { CacheKeys } from './cache/cacheDefaults';
 import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
 
@@ -11,7 +11,7 @@ import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
  * Handles decoding and caching transactions via the Safe API.
  */
 export const useSafeDecoder = () => {
-  const { safeBaseURL } = useNetworkConfg();
+  const { safeBaseURL } = useNetworkConfig();
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
   const decode = useCallback(
@@ -38,7 +38,7 @@ export const useSafeDecoder = () => {
       let decoded: DecodedTransaction | DecodedTransaction[];
       try {
         const decodedData = (
-          await axios.post(buildGnosisApiUrl(safeBaseURL, '/data-decoder/'), {
+          await axios.post(buildSafeApiUrl(safeBaseURL, '/data-decoder/'), {
             to: to,
             data: data,
           })

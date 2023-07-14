@@ -12,7 +12,7 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 import { blocksToSeconds } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
-export const useAzoriusStrategy = () => {
+export const useERC20LinearStrategy = () => {
   const {
     governanceContracts: { ozLinearVotingContract, azoriusContract },
     action,
@@ -23,7 +23,7 @@ export const useAzoriusStrategy = () => {
   } = provider;
   const { getTimeDuration } = useTimeHelpers();
 
-  const loadAzoriusStrategy = useCallback(async () => {
+  const loadERC20Strategy = useCallback(async () => {
     if (!ozLinearVotingContract || !azoriusContract) {
       return {};
     }
@@ -108,5 +108,5 @@ export const useAzoriusStrategy = () => {
     };
   }, [azoriusContract, chainId, action]);
 
-  return loadAzoriusStrategy;
+  return loadERC20Strategy;
 };

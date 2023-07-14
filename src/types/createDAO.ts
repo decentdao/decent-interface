@@ -3,12 +3,14 @@ import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
 import { BigNumberValuePair } from './common';
-import { GovernanceModuleType } from './fractal';
+import { GovernanceSelectionType, VotingStrategyType } from './fractal';
 import { EthAddress } from './utils';
+
 export enum CreatorSteps {
   ESSENTIALS = 'essentials',
   MULTISIG_DETAILS = 'multisig',
-  TOKEN_DETAILS = 'token',
+  ERC20_DETAILS = 'erc20Token',
+  ERC721_DETAILS = 'erc721Token',
   AZORIUS_DETAILS = 'azorius',
   FREEZE_DETAILS = 'freeze',
 }
@@ -27,19 +29,20 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
 
 export interface CreatorFormState<T = BigNumberValuePair> {
   essentials: DAOEssentials;
-  multisig: GnosisConfiguration;
-  token: DAOGovenorToken<T>;
-  azorius: DAOGovenorModuleConfig<T>;
+  multisig: SafeConfiguration;
+  azorius: DAOGovernorModuleConfig<T>;
+  erc20Token: DAOGovernorERC20Token<T>;
+  erc721Token: DAOGovernorERC721Token<T>;
   freeze: DAOFreezeGuardConfig<T>;
 }
 
 export type DAOEssentials = {
   daoName: string;
-  governance: GovernanceModuleType;
+  governance: GovernanceSelectionType;
   snapshotURL: string;
 };
 
-export type DAOGovenorToken<T = BigNumber> = {
+export type DAOGovernorERC20Token<T = BigNumber> = {
   tokenCreationType: TokenCreationType;
   tokenImportAddress?: string;
   tokenName: string;
@@ -49,7 +52,18 @@ export type DAOGovenorToken<T = BigNumber> = {
   parentAllocationAmount: T;
 };
 
-export type DAOGovenorModuleConfig<T = BigNumber> = {
+export type ERC721TokenConfig<T = BigNumber> = {
+  tokenAddress: string;
+  tokenWeight: T;
+};
+
+export type DAOGovernorERC721Token<T = BigNumber> = {
+  nfts: ERC721TokenConfig<T>[];
+  quorumThreshold: T;
+};
+
+export type DAOGovernorModuleConfig<T = BigNumber> = {
+  votingStrategyType: VotingStrategyType;
   quorumPercentage: T;
   timelock: T;
   votingPeriod: T;
@@ -64,7 +78,7 @@ export type DAOFreezeGuardConfig<T = BigNumber> = {
   freezePeriod: T;
 };
 
-export interface GnosisConfiguration {
+export interface SafeConfiguration {
   trustedAddresses: string[];
   signatureThreshold: number;
   numOfSigners?: number;
@@ -72,21 +86,30 @@ export interface GnosisConfiguration {
 }
 
 export interface SubDAO<T = BigNumber>
-  extends GnosisConfiguration,
+  extends SafeConfiguration,
     AzoriusGovernanceDAO<T>,
     DAOFreezeGuardConfig<T> {}
 
 export interface AzoriusGovernanceDAO<T = BigNumber>
-  extends DAOGovenorToken<T>,
-    DAOEssentials,
-    DAOGovenorModuleConfig<T> {
+  extends DAOEssentials,
+    DAOGovernorModuleConfig<T> {}
+
+export interface AzoriusERC20DAO<T = BigNumber>
+  extends AzoriusGovernanceDAO<T>,
+    DAOGovernorERC20Token<T> {
   isVotesToken?: boolean;
   isTokenImported?: boolean;
 }
 
-export interface SafeMultisigDAO extends DAOEssentials, GnosisConfiguration {}
+export interface AzoriusERC721DAO<T = BigNumber>
+  extends AzoriusGovernanceDAO<T>,
+    DAOGovernorERC721Token<T> {}
 
-export type DAOTrigger = (daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO) => void;
+export interface SafeMultisigDAO extends DAOEssentials, SafeConfiguration {}
+
+export type DAOTrigger = (
+  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO
+) => void;
 
 export type AddressValidationMap = Map<string, AddressValidation>;
 
@@ -115,5 +138,5 @@ export type CreateDAOFunc = (
 export type DeployDAOSuccessCallback = (daoAddress: string) => void;
 export type DAODetails = {
   daoName: string;
-  governance: GovernanceModuleType;
+  governance: GovernanceSelectionType;
 };

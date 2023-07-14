@@ -1,8 +1,9 @@
-import { Box, Divider, Flex, HStack, Text, VStack } from '@chakra-ui/react';
+import { Box, Divider, Flex, HStack, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../types';
+import { AzoriusGovernance, GovernanceSelectionType } from '../../types';
+import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
 import { BarLoader } from '../ui/loaders/BarLoader';
 
 export function ProposalDetails() {
@@ -29,13 +30,14 @@ export function ProposalDetails() {
           <BarLoader />
         </Flex>
       ) : (
-        <VStack
-          spacing={3}
-          align="left"
-        >
-          <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
-          <Divider color="chocolate.700" />
-          {type === GovernanceModuleType.MULTISIG ? (
+        <Box>
+          <ContentBoxTitle>{t('proposalSummaryTitle')}</ContentBoxTitle>
+          <Divider
+            color="chocolate.700"
+            mt="1rem"
+            mb="1rem"
+          />
+          {type === GovernanceSelectionType.MULTISIG ? (
             <HStack justifyContent="space-between">
               <Text color="chocolate.200">{t('labelProposalSigners')}</Text>
               <Text>
@@ -46,19 +48,19 @@ export function ProposalDetails() {
             <>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalVotingPeriod')}</Text>
-                <Text>{azoriusGovernance.votesStrategy.votingPeriod?.formatted}</Text>
+                <Text>{azoriusGovernance.votingStrategy.votingPeriod?.formatted}</Text>
               </HStack>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalQuorum')}</Text>
-                <Text>{azoriusGovernance.votesStrategy?.quorumPercentage?.formatted}</Text>
+                <Text>{azoriusGovernance.votingStrategy?.quorumPercentage?.formatted}</Text>
               </HStack>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalTimelock')}</Text>
-                <Text>{azoriusGovernance.votesStrategy?.timeLockPeriod?.formatted}</Text>
+                <Text>{azoriusGovernance.votingStrategy?.timeLockPeriod?.formatted}</Text>
               </HStack>
             </>
           )}
-        </VStack>
+        </Box>
       )}
     </Box>
   );

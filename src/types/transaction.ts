@@ -34,7 +34,7 @@ export type DecodedTxParam = {
   value: string;
 };
 
-export interface GnosisTransaction {
+export interface SafeAPITransaction {
   to: string; //'<checksummed address>'
   value: BigNumber; // Value in wei
   data: string; // '<0x prefixed hex string>'

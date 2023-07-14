@@ -5,7 +5,7 @@ import { useSubgraphChainName } from '../../../graphql/utils';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
+import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useLockRelease } from './governance/useLockRelease';
 import { useDAOProposals } from './useProposals';
@@ -22,7 +22,7 @@ export const useFractalGovernance = () => {
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
-  const loadAzoriusStrategy = useAzoriusStrategy();
+  const loadERC20Strategy = useERC20LinearStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
   const { loadLockedVotesToken } = useLockRelease({});
   const ipfsClient = useIPFSClient();
@@ -80,7 +80,7 @@ export const useFractalGovernance = () => {
       loadDAOProposals();
 
       if (azoriusContract) {
-        loadAzoriusStrategy();
+        loadERC20Strategy();
         loadERC20Token();
         loadUnderlyingERC20Token();
         if (lockReleaseContract) {
@@ -95,7 +95,7 @@ export const useFractalGovernance = () => {
     governanceContracts,
     loadDAOProposals,
     loadUnderlyingERC20Token,
-    loadAzoriusStrategy,
+    loadERC20Strategy,
     loadERC20Token,
     loadLockedVotesToken,
     nodeHierarchy.parentAddress,

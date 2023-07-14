@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SortBy, GovernanceModuleType, FractalProposalState } from '../../types';
+import { SortBy, GovernanceSelectionType, FractalProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
@@ -60,10 +60,11 @@ export default function Proposals() {
 
     let options;
     switch (type) {
-      case GovernanceModuleType.AZORIUS:
+      case GovernanceSelectionType.AZORIUS_ERC20:
+      case GovernanceSelectionType.AZORIUS_ERC721:
         options = FILTERS_AZORIUS;
         break;
-      case GovernanceModuleType.MULTISIG:
+      case GovernanceSelectionType.MULTISIG:
       default:
         if (guardContracts.freezeGuardContract) {
           options = FILTERS_MULTISIG_CHILD;

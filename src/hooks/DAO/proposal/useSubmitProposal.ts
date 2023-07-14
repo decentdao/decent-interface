@@ -3,20 +3,20 @@ import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contrac
 import axios from 'axios';
 import { BigNumber, Signer } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useProvider, useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   FractalModuleType,
   MetaTransaction,
   ProposalExecuteData,
-  GovernanceModuleType,
+  GovernanceSelectionType,
 } from '../../../types';
-import { buildGnosisApiUrl } from '../../../utils';
+import { buildSafeApiUrl } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -50,6 +50,7 @@ interface ISubmitTokenVotingProposal extends ISubmitProposal {
 
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
+  const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const loadDAOProposals = useDAOProposals();
   const { data: signer } = useSigner();
 
@@ -80,13 +81,25 @@ export default function useSubmitProposal() {
   const lookupModules = useFractalModules();
   const provider = useProvider();
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
-  const { chainId, safeBaseURL } = useNetworkConfg();
+  const { chainId, safeBaseURL } = useNetworkConfig();
 
-  const { owners } = safe || {};
-  const canUserCreateProposal = useMemo(
-    () => (type === GovernanceModuleType.AZORIUS ? true : owners?.includes(user.address || '')),
-    [owners, type, user]
-  );
+  useEffect(() => {
+    const loadCanUserCreateProposal = async () => {
+      if (type === GovernanceSelectionType.MULTISIG) {
+        const { owners } = safe || {};
+        setCanUserCreateProposal(!!owners?.includes(user.address || ''));
+      } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+        if (ozLinearVotingContract && user.address) {
+          setCanUserCreateProposal(await ozLinearVotingContract?.asSigner.isProposer(user.address));
+        }
+      } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+        setCanUserCreateProposal(false); // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
+      } else {
+        setCanUserCreateProposal(false);
+      }
+    };
+    loadCanUserCreateProposal();
+  }, [safe, type, user, ozLinearVotingContract]);
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -149,11 +162,11 @@ export default function useSubmitProposal() {
       }
 
       try {
-        const gnosisContract = GnosisSafe__factory.connect(safeAddress, signerOrProvider);
+        const safeContract = GnosisSafe__factory.connect(safeAddress, signerOrProvider);
         await axios.post(
-          buildGnosisApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
+          buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(
-            gnosisContract,
+            safeContract,
             signerOrProvider as Signer & TypedDataSigner,
             chainId,
             {
@@ -329,22 +342,5 @@ export default function useSubmitProposal() {
     ]
   );
 
-  const getCanUserCreateProposal = useMemo(
-    () => async (safeAddress?: string) => {
-      if (!safeAddress || !user.address) {
-        return false;
-      }
-
-      if (type === GovernanceModuleType.AZORIUS) {
-        return true;
-      }
-
-      return safeService
-        .getSafeInfo(getAddress(safeAddress))
-        .then(safeInfo => safeInfo.owners.includes(user.address!));
-    },
-    [safeService, type, user]
-  );
-
-  return { submitProposal, pendingCreateTx, canUserCreateProposal, getCanUserCreateProposal };
+  return { submitProposal, pendingCreateTx, canUserCreateProposal };
 }

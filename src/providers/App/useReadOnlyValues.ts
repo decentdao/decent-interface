@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import {
   Fractal,
   AzoriusGovernance,
-  GovernanceModuleType,
   ReadOnlyState,
   DecentGovernance,
+  GovernanceSelectionType,
 } from '../../types';
 
 /**
@@ -25,10 +25,12 @@ export const useReadOnlyValues = () => {
 
     const votingWeight = () => {
       switch (governance.type) {
-        case GovernanceModuleType.MULTISIG:
+        case GovernanceSelectionType.MULTISIG:
           return isSigner ? BigNumber.from(1) : BigNumber.from(0);
-        case GovernanceModuleType.AZORIUS:
+        case GovernanceSelectionType.AZORIUS_ERC20:
           return lockedTokenWeight || tokenWeight;
+        case GovernanceSelectionType.AZORIUS_ERC721:
+          return BigNumber.from(0);
         default:
           return BigNumber.from(0);
       }
@@ -42,7 +44,9 @@ export const useReadOnlyValues = () => {
       dao: !node.daoAddress
         ? null // if there is no DAO connected, we return null for this
         : {
-            isAzorius: governance.type === GovernanceModuleType.AZORIUS,
+            isAzorius:
+              governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
+              governance.type === GovernanceSelectionType.AZORIUS_ERC721,
           },
     } as ReadOnlyState;
   }, []);

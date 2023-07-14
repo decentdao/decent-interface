@@ -3,12 +3,12 @@ import SafeServiceClient from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
 import { useProvider, useSigner } from 'wagmi';
-import { useNetworkConfg } from '../../NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 export function useSafeService() {
   const provider = useProvider();
   const { data: signer } = useSigner();
-  const { safeBaseURL } = useNetworkConfg();
+  const { safeBaseURL } = useNetworkConfig();
 
   const safeService = useMemo(() => {
     const signerOrProvider = signer || provider;

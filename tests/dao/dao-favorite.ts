@@ -16,6 +16,6 @@ test.describe.skip('DAO Creation', () => {
       .clickFavoriteStar()
       .then(() => dao.clickAccountMenu().then(() => dao.clickFavoritesMenu()));
 
-    // TODO this star doesn't do anything yet for pure gnosis...
+    // TODO this star doesn't do anything yet for pure safe...
   });
 });

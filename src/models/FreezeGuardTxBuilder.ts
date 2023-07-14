@@ -5,11 +5,21 @@ import {
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
+  ERC721FreezeVoting__factory,
+  MultisigFreezeVoting,
+  ERC20FreezeVoting,
+  ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { buildContractCall } from '../helpers';
-import { BaseContracts, SafeTransaction, SubDAO, AzoriusContracts } from '../types';
+import {
+  BaseContracts,
+  SafeTransaction,
+  SubDAO,
+  AzoriusContracts,
+  VotingStrategyType,
+} from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import {
   buildDeployZodiacModuleTx,
@@ -22,7 +32,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   // Salt used to generate transactions
   private readonly saltNum;
 
-  // Gnosis Safe Data
+  // Safe Data
   private readonly safeContract: GnosisSafe;
 
   // Freeze Voting Data
@@ -38,6 +48,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private azoriusAddress: string | undefined;
   private strategyAddress: string | undefined;
 
+  private parentStrategyType: VotingStrategyType | undefined;
+
   constructor(
     signerOrProvider: any,
     baseContracts: BaseContracts,
@@ -48,7 +60,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     parentTokenAddress?: string,
     azoriusContracts?: AzoriusContracts,
     azoriusAddress?: string,
-    strategyAddress?: string
+    strategyAddress?: string,
+    parentStrategyType?: VotingStrategyType
   ) {
     super(
       signerOrProvider,
@@ -63,6 +76,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.saltNum = saltNum;
     this.azoriusAddress = azoriusAddress;
     this.strategyAddress = strategyAddress;
+    this.parentStrategyType = parentStrategyType;
 
     this.initFreezeVotesData();
   }
@@ -104,7 +118,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
             subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
             subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
             subDaoData.freezePeriod, // FreezePeriod
-            this.parentTokenAddress ?? this.parentAddress, // ParentGnosisSafe or Votes Token
+            this.parentTokenAddress ?? this.parentAddress, // Parent Safe or Votes Token
           ]
         ),
       ],
@@ -131,17 +145,31 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
    */
 
   private setFreezeVotingTypeAndCallData() {
-    this.freezeVotingType = this.parentTokenAddress
-      ? ERC20FreezeVoting__factory
-      : MultisigFreezeVoting__factory;
+    if (this.parentTokenAddress) {
+      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
+        this.freezeVotingType = ERC20FreezeVoting__factory;
+      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
+        this.freezeVotingType = ERC721FreezeVoting__factory;
+      }
+    } else {
+      this.freezeVotingType = MultisigFreezeVoting__factory;
+    }
 
     this.freezeVotingCallData = this.freezeVotingType.createInterface().encodeFunctionData('owner');
   }
 
   private setFreezeVotingAddress() {
-    const freezeVotesMasterCopyContract = this.parentTokenAddress
-      ? this.baseContracts.freezeERC20VotingMasterCopyContract
-      : this.baseContracts.freezeMultisigVotingMasterCopyContract;
+    let freezeVotesMasterCopyContract:
+      | MultisigFreezeVoting
+      | ERC20FreezeVoting
+      | ERC721FreezeVoting = this.baseContracts.freezeMultisigVotingMasterCopyContract;
+    if (this.parentTokenAddress) {
+      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
+        freezeVotesMasterCopyContract = this.baseContracts.freezeERC20VotingMasterCopyContract;
+      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
+        freezeVotesMasterCopyContract = this.baseContracts.freezeERC721VotingMasterCopyContract;
+      }
+    }
 
     const freezeVotingByteCodeLinear = generateContractByteCodeLinear(
       freezeVotesMasterCopyContract.address.slice(2)
@@ -188,7 +216,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
             subDaoData.executionPeriod, // Execution Period
             this.parentAddress, // Owner -- Parent DAO
             this.freezeVotingAddress, // Freeze Voting
-            this.safeContract.address, // Gnosis Safe
+            this.safeContract.address, // Safe
           ]
         ),
       ]

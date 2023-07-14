@@ -9,7 +9,7 @@ import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { DecentGovernance } from '../../../types';
+import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { couldBeENS } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
@@ -25,9 +25,11 @@ export function DelegateModal({ close }: { close: Function }) {
   } = useFractal();
 
   const { data: signer } = useSigner();
-  const azoriusGovernance = governance as DecentGovernance;
-  const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken.delegatee);
-  const lockedDelegateeDisplayName = useDisplayName(azoriusGovernance?.lockedVotesToken?.delegatee);
+  const azoriusGovernance = governance as AzoriusGovernance;
+
+  const decentGovernance = azoriusGovernance as DecentGovernance;
+  const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
+  const lockedDelegateeDisplayName = useDisplayName(decentGovernance?.lockedVotesToken?.delegatee);
   const { delegateVote, contractCallPending } = useDelegateVote();
   const { addressValidationTest } = useValidationAddress();
 
@@ -108,7 +110,7 @@ export function DelegateModal({ close }: { close: Function }) {
           )}
         </Text>
       </SimpleGrid>
-      {azoriusGovernance.lockedVotesToken?.balance && (
+      {decentGovernance.lockedVotesToken?.balance && (
         <SimpleGrid
           columns={2}
           color="chocolate.200"
@@ -124,7 +126,7 @@ export function DelegateModal({ close }: { close: Function }) {
             color="grayscale.100"
           >
             {formatCoin(
-              azoriusGovernance.lockedVotesToken.balance || BigNumber.from(0),
+              decentGovernance.lockedVotesToken.balance || BigNumber.from(0),
               false,
               azoriusGovernance.votesToken.decimals,
               azoriusGovernance.votesToken.symbol
@@ -140,10 +142,10 @@ export function DelegateModal({ close }: { close: Function }) {
             align="end"
             color="grayscale.100"
           >
-            {azoriusGovernance.lockedVotesToken.delegatee === constants.AddressZero ? (
+            {decentGovernance.lockedVotesToken.delegatee === constants.AddressZero ? (
               '--'
             ) : (
-              <EtherscanLinkAddress address={azoriusGovernance.lockedVotesToken.delegatee}>
+              <EtherscanLinkAddress address={decentGovernance.lockedVotesToken.delegatee}>
                 {lockedDelegateeDisplayName.displayName}
               </EtherscanLinkAddress>
             )}
@@ -197,12 +199,12 @@ export function DelegateModal({ close }: { close: Function }) {
                 !!errors.address ||
                 contractCallPending ||
                 !values.address ||
-                azoriusGovernance.votesToken.balance?.isZero()
+                azoriusGovernance.votesToken?.balance?.isZero()
               }
             >
               {t('buttonDelegate')}
             </Button>
-            {azoriusGovernance.lockedVotesToken?.balance && (
+            {decentGovernance.lockedVotesToken?.balance && (
               <Button
                 marginTop="2rem"
                 width="100%"
@@ -211,7 +213,7 @@ export function DelegateModal({ close }: { close: Function }) {
                   !!errors.address ||
                   contractCallPending ||
                   !values.address ||
-                  azoriusGovernance.lockedVotesToken.balance?.isZero()
+                  decentGovernance.lockedVotesToken.balance?.isZero()
                 }
               >
                 {t('buttonLockedDelegate')}

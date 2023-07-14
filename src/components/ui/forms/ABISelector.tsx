@@ -6,7 +6,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useEnsAddress } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useEIP1193Providers } from '../../../providers/NetworkConfig/utils';
 import { LabelComponent } from './InputComponent';
 
@@ -28,7 +28,7 @@ interface IABISelector {
 
 export default function ABISelector({ target, onChange, onFetchABI }: IABISelector) {
   const [abi, setABI] = useState<ABIElement[]>([]);
-  const { etherscanAPIBaseUrl } = useNetworkConfg();
+  const { etherscanAPIBaseUrl } = useNetworkConfig();
   const { t } = useTranslation('common');
   const { eip1193InfuraProvider } = useEIP1193Providers();
   const { data: ensAddress } = useEnsAddress({ name: target });

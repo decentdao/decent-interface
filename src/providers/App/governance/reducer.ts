@@ -2,7 +2,7 @@ import { FractalGovernance, AzoriusProposal, VOTE_CHOICES, SnapshotProposal } fr
 import {
   AzoriusGovernance,
   DecentGovernance,
-  GovernanceModuleType,
+  GovernanceSelectionType,
 } from './../../../types/fractal';
 import {
   DecentGovernanceAction,
@@ -14,7 +14,7 @@ export const initialGovernanceState: FractalGovernance = {
   proposals: null,
   proposalTemplates: null,
   type: undefined,
-  votesStrategy: undefined,
+  votingStrategy: undefined,
   votesToken: undefined,
 };
 
@@ -45,7 +45,11 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposalTemplates: action.payload };
     }
     case FractalGovernanceAction.SET_STRATEGY: {
-      return { ...state, type: GovernanceModuleType.AZORIUS, votesStrategy: action.payload };
+      return {
+        ...state,
+        type: GovernanceSelectionType.AZORIUS_ERC20,
+        votingStrategy: action.payload,
+      };
     }
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
       return { ...state, proposals: [...(proposals || []), ...action.payload] };
@@ -87,16 +91,16 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: updatedProposals };
     }
     case FractalGovernanceAction.UPDATE_VOTING_PERIOD: {
-      const { votesStrategy } = state as AzoriusGovernance;
-      return { ...state, votesStrategy: { ...votesStrategy, votingPeriod: action.payload } };
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, votingPeriod: action.payload } };
     }
     case FractalGovernanceAction.UPDATE_VOTING_QUORUM: {
-      const { votesStrategy } = state as AzoriusGovernance;
-      return { ...state, votesStrategy: { ...votesStrategy, votingQuorum: action.payload } };
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, votingQuorum: action.payload } };
     }
     case FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD: {
-      const { votesStrategy } = state as AzoriusGovernance;
-      return { ...state, votesStrategy: { ...votesStrategy, timelockPeriod: action.payload } };
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, timelockPeriod: action.payload } };
     }
     case FractalGovernanceAction.SET_TOKEN_DATA: {
       const { votesToken } = state as AzoriusGovernance;

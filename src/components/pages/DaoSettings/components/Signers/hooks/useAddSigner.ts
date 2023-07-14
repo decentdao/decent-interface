@@ -11,7 +11,7 @@ const useAddSigner = () => {
   const { t } = useTranslation(['modals']);
   const loadDAOProposals = useDAOProposals();
   const {
-    baseContracts: { gnosisSafeSingletonContract },
+    baseContracts: { safeSingletonContract },
   } = useFractal();
   const addSigner = useCallback(
     async ({
@@ -30,7 +30,7 @@ const useAddSigner = () => {
       const description = 'Add Signer';
 
       const calldatas = [
-        gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
+        safeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
           newSigner,
           BigNumber.from(threshold),
         ]),
@@ -57,7 +57,7 @@ const useAddSigner = () => {
         failedToastMessage: t('addSignerFailureToastMessage'),
       });
     },
-    [gnosisSafeSingletonContract.asSigner.interface, submitProposal, t, loadDAOProposals]
+    [safeSingletonContract.asSigner.interface, submitProposal, t, loadDAOProposals]
   );
 
   return addSigner;

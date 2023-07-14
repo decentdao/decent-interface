@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
-import { GovernanceModuleType } from '../../../types';
+import { GovernanceSelectionType } from '../../../types';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
@@ -26,7 +26,7 @@ export const useDAOProposals = () => {
         action.dispatch({
           type: FractalGovernanceAction.SET_PROPOSALS,
           payload: {
-            type: GovernanceModuleType.AZORIUS,
+            type: GovernanceSelectionType.AZORIUS_ERC20,
             proposals: await loadAzoriusProposals(),
           },
         });

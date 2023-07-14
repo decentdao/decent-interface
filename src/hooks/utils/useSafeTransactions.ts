@@ -10,7 +10,7 @@ import { useCallback } from 'react';
 import { useProvider } from 'wagmi';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
   SafeTransferType,
@@ -30,7 +30,7 @@ type FreezeGuardData = {
 };
 
 export const useSafeTransactions = () => {
-  const { nativeTokenSymbol } = useNetworkConfg();
+  const { nativeTokenSymbol } = useNetworkConfig();
   const provider = useProvider();
   const { guardContracts } = useFractal();
   const decode = useSafeDecoder();

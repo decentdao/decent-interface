@@ -8,19 +8,15 @@ import ProposalTemplates from '../../../../src/components/ProposalTemplates';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
+import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
-import { GovernanceModuleType } from '../../../../src/types';
 
 export default function ProposalTemplatesPage() {
   const { t } = useTranslation();
   const {
-    governance: { type },
-    node: { safe, daoAddress },
-    readOnly: { user },
+    node: { daoAddress },
   } = useFractal();
-  const { owners } = safe || {};
-  const showCreateButton =
-    type === GovernanceModuleType.AZORIUS ? true : owners?.includes(user.address || '');
+  const { canUserCreateProposal } = useSubmitProposal();
 
   return (
     <ClientOnly>
@@ -33,7 +29,7 @@ export default function ProposalTemplatesPage() {
           },
         ]}
       >
-        {showCreateButton && (
+        {canUserCreateProposal && (
           <Link href={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
             <Button minW={0}>
               <AddPlus />
