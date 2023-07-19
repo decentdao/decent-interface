@@ -33,6 +33,10 @@ export default function ProposalTemplateCard({
   const openProposalForm = useFractalModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {
     proposalTemplate,
   });
+  const openCopyTemplateForm = useFractalModal(ModalType.COPY_PROPOSAL_TEMPLATE, {
+    proposalTemplate,
+    templateIndex,
+  });
 
   const successCallback = () => {
     if (daoAddress) {
@@ -56,6 +60,11 @@ export default function ProposalTemplateCard({
     }
   };
 
+  const copyTemplateOption = {
+    optionKey: 'optionCopyTemplate',
+    onClick: openCopyTemplateForm,
+  };
+
   const manageTemplateOptions = [];
   if (canUserCreateProposal) {
     const removeTemplateOption = {
@@ -64,6 +73,8 @@ export default function ProposalTemplateCard({
     };
     manageTemplateOptions.push(removeTemplateOption);
   }
+
+  manageTemplateOptions.push(copyTemplateOption);
 
   return (
     <ContentBox

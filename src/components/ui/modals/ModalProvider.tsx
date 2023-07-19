@@ -5,6 +5,7 @@ import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/Ad
 import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
+import CopyProposalTemplateModal from './CopyProposalTemplateModal';
 import { DelegateModal } from './DelegateModal';
 import { ModalBase } from './ModalBase';
 import ProposalTemplateModal from './ProposalTemplateModal';
@@ -22,6 +23,7 @@ export enum ModalType {
   REMOVE_SIGNER,
   ADD_SIGNER,
   CREATE_PROPOSAL_FROM_TEMPLATE,
+  COPY_PROPOSAL_TEMPLATE,
   CONFIRM_MODIFY_GOVERNANCE,
 }
 
@@ -124,6 +126,16 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         co = (
           <ProposalTemplateModal
             proposalTemplate={current.props.proposalTemplate}
+            onClose={cl}
+          />
+        );
+        break;
+      case ModalType.COPY_PROPOSAL_TEMPLATE:
+        ti = t('copyProposalTemplate');
+        co = (
+          <CopyProposalTemplateModal
+            proposalTemplate={current.props.proposalTemplate}
+            templateIndex={current.props.templateIndex}
             onClose={cl}
           />
         );

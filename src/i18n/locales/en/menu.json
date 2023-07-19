@@ -15,6 +15,7 @@
     "optionInitiateFreeze": "Initiate a Freeze",
     "optionInitiateClawback": "Initiate Clawback",
     "optionRemoveTemplate": "Remove Template",
+    "optionCopyTemplate": "Copy Template to your DAO",
     "optionModifyGovernance": "Modify Governance",
     "optionSettings": "Settings"
 }
