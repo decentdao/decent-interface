@@ -25,5 +25,7 @@
     "submitProposalFromTemplate": "Submit and create proposal",
     "targetDAOAddressLabel": "DAO Address",
     "targetDAOAddressHelper": "Address of DAO where to copy this template.",
-    "copyTemplateSubmitButton": "Copy Proposal Template"
+    "copyTemplateSubmitButton": "Copy Proposal Template",
+    "showParameters": "Show Prefilled Parameters",
+    "hideParameters": "Hide Prefilled Parameters"
 }

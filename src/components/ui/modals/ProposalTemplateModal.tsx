@@ -28,6 +28,7 @@ export default function ProposalTemplateModal({
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
+  const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const { push } = useRouter();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
@@ -130,11 +131,17 @@ export default function ProposalTemplateModal({
         text={description}
       />
       <Divider color="chocolate.700" />
+      <Button
+        onClick={() => setShowAll(!showAll)}
+        variant="text"
+      >
+        {t(showAll ? 'hideParameters' : 'showParameters')}
+      </Button>
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
           {transaction.parameters.map(
             (parameter, parameterIndex) =>
-              parameter.label && (
+              (showAll || parameter.label) && (
                 <Flex
                   key={parameterIndex}
                   width="100%"
@@ -142,10 +149,11 @@ export default function ProposalTemplateModal({
                   marginTop="1.5rem"
                 >
                   <InputComponent
-                    label={parameter.label}
+                    label={parameter.label || parameter.signature}
                     placeholder={parameter.signature}
                     value={parameter.value || ''}
                     isRequired={!!parameter.label}
+                    disabled={!parameter.label}
                     testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
                     inputContainerProps={{
                       width: '100%',
