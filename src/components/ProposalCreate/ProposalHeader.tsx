@@ -25,6 +25,7 @@ export function ProposalHeader({
         <CustomNonceInput
           nonce={nonce}
           onChange={setNonce}
+          align="end"
         />
       )}
     </HStack>

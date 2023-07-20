@@ -1,4 +1,4 @@
-import { Flex, Text, Input, HStack, VStack } from '@chakra-ui/react';
+import { Text, Input, HStack, VStack, Flex } from '@chakra-ui/react';
 import { Gear } from '@decent-org/fractal-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,9 +6,11 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import SupportTooltip from '../badges/SupportTooltip';
 
 export function CustomNonceInput({
+  align = 'start',
   nonce,
   onChange,
 }: {
+  align?: 'start' | 'end';
   nonce: number | undefined;
   onChange: (nonce?: number) => void;
 }) {
@@ -25,43 +27,38 @@ export function CustomNonceInput({
   if (dao?.isAzorius) return null;
 
   return revealed ? (
-    <VStack alignItems="start">
-      <HStack fontSize="14px">
-        <Flex ref={containerRef}>
+    <VStack alignItems={align}>
+      <HStack>
+        <Flex
+          ref={containerRef}
+          me="0.5rem"
+        >
           <Text
+            alignSelf="center"
             textStyle="text-md-sans-regular"
-            me="1"
+            me="0.5rem"
           >
             {t('customNonce', { ns: 'proposal' })}
           </Text>
           <SupportTooltip
             containerRef={containerRef}
             label={t('customNonceTooltip', { ns: 'proposal' })}
-            mx="2"
-            mt="1"
           />
         </Flex>
         <Input
+          w="4.5rem"
           value={nonce}
           onChange={e => onChange(e.target.value ? Number(e.target.value) : undefined)}
           type="number"
-          width="6rem"
         />
       </HStack>
       {errorMessage && (
-        <Flex
-          width="100%"
-          fontSize="14px"
-          mt={2}
+        <Text
+          color="alert-red.normal"
+          textStyle="text-md-sans-regular"
         >
-          <Text
-            color="alert-red.normal"
-            textStyle="text-md-sans-regular"
-            whiteSpace="pre-wrap"
-          >
-            {errorMessage}
-          </Text>
-        </Flex>
+          {errorMessage}
+        </Text>
       )}
     </VStack>
   ) : (
