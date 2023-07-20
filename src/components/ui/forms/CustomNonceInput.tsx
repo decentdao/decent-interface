@@ -26,19 +26,10 @@ export function CustomNonceInput({
 
   return revealed ? (
     <VStack alignItems="start">
-      <HStack
-        fontSize="14px"
-        justifyContent="flex-end"
-        alignSelf="flex-end"
-      >
-        <Flex
-          ref={containerRef}
-          alignItems="center"
-          gap={2}
-        >
+      <HStack fontSize="14px">
+        <Flex ref={containerRef}>
           <Text
             textStyle="text-md-sans-regular"
-            whiteSpace="nowrap"
             me="1"
           >
             {t('customNonce', { ns: 'proposal' })}

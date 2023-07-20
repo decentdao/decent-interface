@@ -1,4 +1,4 @@
-import { HStack, Text } from '@chakra-ui/react';
+import { HStack, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 
@@ -17,12 +17,10 @@ export function ProposalHeader({
 
   return (
     <HStack mb={4}>
-      <Text
-        textStyle="text-xl-mono-medium"
-        width="full"
-      >
+      <Text textStyle="text-xl-mono-medium">
         {metadataTitle ? metadataTitle : t('proposal', { ns: 'proposal' })}
       </Text>
+      <Spacer />
       {!isAzorius && (
         <CustomNonceInput
           nonce={nonce}
