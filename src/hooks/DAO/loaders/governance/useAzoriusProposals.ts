@@ -25,7 +25,7 @@ export const useAzoriusProposals = () => {
     governance,
     action,
   } = useFractal();
-  const strategyType = (governance as AzoriusGovernance).votingStrategy.strategyType;
+  const strategyType = (governance as AzoriusGovernance).votingStrategy?.strategyType;
   const provider = useProvider();
   const {
     network: { chainId },
