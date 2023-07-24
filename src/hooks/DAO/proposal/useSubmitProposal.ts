@@ -16,7 +16,7 @@ import {
   ProposalExecuteData,
   GovernanceSelectionType,
 } from '../../../types';
-import { buildSafeApiUrl } from '../../../utils';
+import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -206,7 +206,7 @@ export default function useSubmitProposal() {
     [chainId, multiSendContract, safeBaseURL, signerOrProvider, loadDAOProposals]
   );
 
-  const submitTokenVotingProposal = useCallback(
+  const submitAzoriusProposal = useCallback(
     async ({
       proposalData,
       azoriusContract,
@@ -259,7 +259,7 @@ export default function useSubmitProposal() {
       } catch (e) {
         toast.dismiss(toastId);
         toast(failedToastMessage);
-        logError(e, 'Error during Azorius ERC-20 proposal creation');
+        logError(e, 'Error during Azorius proposal creation');
       } finally {
         setPendingCreateTx(false);
       }
@@ -285,9 +285,7 @@ export default function useSubmitProposal() {
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
-        const azoriusModule = modules.find(
-          module => module.moduleType === FractalModuleType.AZORIUS
-        );
+        const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule) {
           submitMultisigProposal({
             proposalData,
@@ -299,7 +297,13 @@ export default function useSubmitProposal() {
             safeAddress,
           });
         } else {
-          submitTokenVotingProposal({
+          const azoriusModuleContract = azoriusModule.moduleContract as Azorius;
+          const votingStrategyAddress = await azoriusModuleContract
+            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
+            .then(strategiesEnabled => {
+              return strategiesEnabled[0].args.strategy;
+            });
+          submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,
@@ -308,12 +312,14 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
             azoriusContract: azoriusModule.moduleContract as Azorius,
-            votingStrategyAddress: ozLinearVotingContract?.asSigner.address!,
+            votingStrategyAddress,
           });
         }
       } else {
         const votingStrategyAddress =
-          ozLinearVotingContract?.asSigner.address || freezeVotingContract?.asSigner.address;
+          ozLinearVotingContract?.asSigner.address ||
+          erc721LinearVotingContract?.asSigner.address ||
+          freezeVotingContract?.asSigner.address;
 
         if (!globalAzoriusContract || !votingStrategyAddress) {
           await submitMultisigProposal({
@@ -326,15 +332,15 @@ export default function useSubmitProposal() {
             safeAddress: safe?.address,
           });
         } else {
-          await submitTokenVotingProposal({
+          await submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,
             failedToastMessage,
             nonce,
             successCallback,
+            votingStrategyAddress,
             azoriusContract: globalAzoriusContract,
-            votingStrategyAddress: votingStrategyAddress,
             safeAddress: safe?.address,
           });
         }
@@ -347,7 +353,8 @@ export default function useSubmitProposal() {
       lookupModules,
       submitMultisigProposal,
       ozLinearVotingContract,
-      submitTokenVotingProposal,
+      erc721LinearVotingContract,
+      submitAzoriusProposal,
       safeService,
     ]
   );
