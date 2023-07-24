@@ -78,8 +78,6 @@ export const useFractalGovernance = () => {
     if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
 
-      loadDAOProposals();
-
       if (azoriusContract) {
         if (ozLinearVotingContract) {
           loadERC20Strategy();
@@ -89,6 +87,8 @@ export const useFractalGovernance = () => {
           loadERC721Strategy();
         }
       }
+
+      loadDAOProposals();
     } else if (!isLoaded) {
       loadKey.current = undefined;
     }

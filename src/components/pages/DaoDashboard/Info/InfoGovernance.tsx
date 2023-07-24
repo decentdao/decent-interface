@@ -127,7 +127,7 @@ export function InfoGovernance() {
             textStyle="text-base-sans-regular"
             color="grayscale.100"
           >
-            {governanceAzorius.votingStrategy.votingPeriod.formatted}
+            {governanceAzorius.votingStrategy?.votingPeriod?.formatted}
           </Text>
         </Flex>
       )}

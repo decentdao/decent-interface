@@ -7,12 +7,12 @@ import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typecha
 import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { BigNumber } from 'ethers';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { AzoriusGovernance, CreateProposalMetadata, MetaTransaction } from '../../../../types';
+import { CreateProposalMetadata, MetaTransaction, VotingStrategyType } from '../../../../types';
 
 import { AzoriusProposal, ProposalMetaData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
@@ -22,10 +22,17 @@ import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 export const useAzoriusProposals = () => {
   const {
     governanceContracts: { azoriusContract, ozLinearVotingContract, erc721LinearVotingContract },
-    governance,
     action,
   } = useFractal();
-  const strategyType = (governance as AzoriusGovernance).votingStrategy?.strategyType;
+  const strategyType = useMemo(() => {
+    if (ozLinearVotingContract) {
+      return VotingStrategyType.LINEAR_ERC20;
+    } else if (erc721LinearVotingContract) {
+      return VotingStrategyType.LINEAR_ERC721;
+    } else {
+      return undefined;
+    }
+  }, [ozLinearVotingContract, erc721LinearVotingContract]);
   const provider = useProvider();
   const {
     network: { chainId },

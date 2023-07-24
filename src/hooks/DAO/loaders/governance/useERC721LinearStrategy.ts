@@ -1,8 +1,10 @@
 import { Azorius, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
-import { VotingPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
-import { QuorumThresholdUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
+import {
+  VotingPeriodUpdatedEvent,
+  QuorumThresholdUpdatedEvent,
+} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { useProvider } from 'wagmi';
@@ -24,7 +26,7 @@ export const useERC721LinearStrategy = () => {
   } = provider;
   const { getTimeDuration } = useTimeHelpers();
 
-  const loadERC20Strategy = useCallback(async () => {
+  const loadERC721Strategy = useCallback(async () => {
     if (!erc721LinearVotingContract || !azoriusContract) {
       return {};
     }
@@ -113,5 +115,5 @@ export const useERC721LinearStrategy = () => {
     };
   }, [azoriusContract, chainId, action]);
 
-  return loadERC20Strategy;
+  return loadERC721Strategy;
 };
