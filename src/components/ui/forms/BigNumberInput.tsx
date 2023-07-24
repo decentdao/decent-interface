@@ -93,7 +93,8 @@ export function BigNumberInput({
   );
 
   const processValue = useCallback(
-    (event?: React.ChangeEvent<HTMLInputElement>, stringValue = '') => {
+    (event?: React.ChangeEvent<HTMLInputElement>, _value = '') => {
+      let stringValue = _value;
       if (event) {
         stringValue = event.target.value;
       }
@@ -108,6 +109,7 @@ export function BigNumberInput({
 
       const numberMask =
         decimalPlaces === 0 ? new RegExp('^\\d*$') : new RegExp('^\\d*(\\.\\d*)?$');
+
       if (!numberMask.test(stringValue)) {
         if (event) {
           resetCaretPositionForInput(event);
@@ -182,6 +184,7 @@ export function BigNumberInput({
         value={inputValue}
         onChange={onChangeInput}
         onBlur={onBlur}
+        type="number"
         {...rest}
       />
       {maxValue && (

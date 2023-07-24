@@ -83,31 +83,33 @@ export default function useSubmitProposal() {
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
   const { chainId, safeBaseURL } = useNetworkConfig();
 
-  const { owners } = safe || {};
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
       if (user.address) {
         if (type === GovernanceSelectionType.MULTISIG) {
+          const { owners } = safe || {};
           setCanUserCreateProposal(!!owners?.includes(user.address));
         } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
           if (ozLinearVotingContract) {
             setCanUserCreateProposal(
-              await ozLinearVotingContract?.asSigner.isProposer(user.address)
+              await ozLinearVotingContract.asSigner.isProposer(user.address)
             );
           }
         } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
           if (erc721LinearVotingContract) {
             setCanUserCreateProposal(
-              await erc721LinearVotingContract.asSigner.isProposer(user.address)
+              await erc721LinearVotingContract?.asSigner.isProposer(user.address)
             );
           }
+        } else {
+          setCanUserCreateProposal(false);
         }
+      } else {
+        setCanUserCreateProposal(false);
       }
-
-      setCanUserCreateProposal(false);
     };
     loadCanUserCreateProposal();
-  }, [owners, type, user, ozLinearVotingContract, erc721LinearVotingContract]);
+  }, [safe, type, user, ozLinearVotingContract, erc721LinearVotingContract]);
 
   const submitMultisigProposal = useCallback(
     async ({

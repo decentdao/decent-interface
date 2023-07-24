@@ -177,6 +177,24 @@ export function useDAOCreateTests() {
     };
   }, [provider, t]);
 
+  const isBigNumberValidation = useMemo(() => {
+    return {
+      name: 'BigNumber Validation',
+      message: t('errorInvalidBigNumber', { ns: 'common' }),
+      test: (value: string | undefined) => {
+        if (!value) {
+          return false;
+        }
+        try {
+          BigNumber.from(value);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+    };
+  }, [t]);
+
   return {
     minValueValidation,
     maxAllocationValidation,
@@ -184,5 +202,6 @@ export function useDAOCreateTests() {
     uniqueAllocationValidationTest,
     validERC20Address,
     validERC721Address,
+    isBigNumberValidation,
   };
 }

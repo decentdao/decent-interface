@@ -11,6 +11,7 @@ import {
 import { Gear, LabelWrapper } from '@decent-org/fractal-ui';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
@@ -113,7 +114,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                 <AccordionItem
                   borderTop="none"
                   borderBottom="none"
-                  bg="black.900-semi-transparent"
+                  bg={BACKGROUND_SEMI_TRANSPARENT}
                   my={8}
                   py={4}
                   rounded="lg"
