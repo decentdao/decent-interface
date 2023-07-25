@@ -37,7 +37,7 @@ function GuardDetails(props: ICreationStepProps) {
     readOnly: { dao },
   } = useFractal();
   const { type } = governance;
-  const [showCustomNonce, setShowCustomNonce] = useState(false);
+  const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const [totalParentVotes, setTotalParentVotes] = useState<BigNumber>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
@@ -51,11 +51,11 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    if (!dao?.isAzorius && isSubDAO && safe) {
+    if (showCustomNonce === undefined && !dao?.isAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, azoriusContract, type, setFieldValue, safe, dao]);
+  }, [isSubDAO, azoriusContract, type, setFieldValue, safe, dao, showCustomNonce]);
 
   useEffect(() => {
     // set the initial value for freezeGuard.freezeVotesThreshold

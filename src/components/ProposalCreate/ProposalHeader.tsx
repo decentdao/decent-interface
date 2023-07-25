@@ -19,12 +19,10 @@ export function ProposalHeader({
 
   return (
     <HStack mb={4}>
-      <Text
-        textStyle="text-xl-mono-medium"
-        marginEnd="0.5rem"
-      >
-        {metadataTitle ? metadataTitle : t('proposal')}
+      <Text textStyle="text-xl-mono-medium">
+        {metadataTitle ? metadataTitle : t('proposal', { ns: 'proposal' })}
       </Text>
+      <Spacer />
       {!isAzorius && (
         <Tooltip
           label={t('multisigMetadataWarning')}
@@ -42,6 +40,7 @@ export function ProposalHeader({
         <CustomNonceInput
           nonce={nonce}
           onChange={setNonce}
+          align="end"
         />
       )}
     </HStack>
