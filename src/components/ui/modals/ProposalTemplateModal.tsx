@@ -1,4 +1,13 @@
-import { Box, Button, Divider, Flex, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  FormLabel,
+  Switch,
+  VStack,
+} from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -28,6 +37,7 @@ export default function ProposalTemplateModal({
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
+  const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const { push } = useRouter();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
@@ -134,7 +144,7 @@ export default function ProposalTemplateModal({
         <VStack key={transactionIndex}>
           {transaction.parameters.map(
             (parameter, parameterIndex) =>
-              parameter.label && (
+              (showAll || parameter.label) && (
                 <Flex
                   key={parameterIndex}
                   width="100%"
@@ -142,10 +152,11 @@ export default function ProposalTemplateModal({
                   marginTop="1.5rem"
                 >
                   <InputComponent
-                    label={parameter.label}
+                    label={parameter.label || parameter.signature}
                     placeholder={parameter.signature}
                     value={parameter.value || ''}
                     isRequired={!!parameter.label}
+                    disabled={!parameter.label}
                     testId={`proposalTemplate.transactions.${transactionIndex}.parameters.${parameterIndex}`}
                     inputContainerProps={{
                       width: '100%',
@@ -169,6 +180,21 @@ export default function ProposalTemplateModal({
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
       ))}
+      <FormControl
+        my="1rem"
+        display="flex"
+        alignItems="center"
+      >
+        <FormLabel mb={0}>{t('showParameters')}</FormLabel>
+        <Switch
+          isChecked={showAll}
+          onChange={() => setShowAll(!showAll)}
+          colorScheme="gold"
+          bg="grayscale.300"
+          borderRadius="9999px"
+        />
+      </FormControl>
+      <Divider color="chocolate.700" />
       <Box marginTop="1.5rem">
         <CustomNonceInput
           nonce={nonce}

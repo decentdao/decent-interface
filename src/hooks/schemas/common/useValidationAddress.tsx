@@ -61,8 +61,8 @@ export async function validateAddress({
   if (isValidAddress) {
     return {
       validation: {
-        address: address,
-        isValidAddress: true,
+        address,
+        isValidAddress,
       },
       isValid: true,
     };
@@ -70,7 +70,7 @@ export async function validateAddress({
     return {
       validation: {
         address: '',
-        isValidAddress: false,
+        isValidAddress,
       },
       isValid: false,
     };
@@ -111,9 +111,9 @@ export const useValidationAddress = () => {
     return {
       name: 'ENS Name Validation',
       message: t('errorInvalidENSName', { ns: 'common' }),
-      test: async function (ensName: string | undefined) {
+      test: function (ensName: string | undefined) {
         if (!ensName) return false;
-        const { validation } = await validateENSName({ ensName });
+        const { validation } = validateENSName({ ensName });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(ensName, validation);
         }
