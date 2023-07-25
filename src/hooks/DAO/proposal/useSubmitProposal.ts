@@ -98,7 +98,7 @@ export default function useSubmitProposal() {
         } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
           if (erc721LinearVotingContract) {
             setCanUserCreateProposal(
-              await erc721LinearVotingContract?.asSigner.isProposer(user.address)
+              await erc721LinearVotingContract.asSigner.isProposer(user.address)
             );
           }
         } else {

@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
@@ -23,30 +23,33 @@ export function InfoGovernance() {
 
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
-
-  const setTimelockInfo = useCallback(async () => {
-    if (!timelockPeriod && !executionPeriod) {
-      const formatBlocks = async (blocks: number): Promise<string | undefined> => {
-        return getTimeDuration(await blocksToSeconds(blocks, provider));
-      };
-      if (governance.type == GovernanceSelectionType.MULTISIG) {
-        if (guardContracts.freezeGuardContract) {
-          const freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
-          setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
-          setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
+  useEffect(() => {
+    const setTimelockInfo = async () => {
+      if (!timelockPeriod && !executionPeriod) {
+        const formatBlocks = async (blocks: number): Promise<string | undefined> => {
+          return getTimeDuration(await blocksToSeconds(blocks, provider));
+        };
+        if (governance.type == GovernanceSelectionType.MULTISIG) {
+          if (guardContracts.freezeGuardContract) {
+            const freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
+            setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
+            setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
+          }
+        } else if (dao?.isAzorius) {
+          const azoriusGovernance = governance as AzoriusGovernance;
+          const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
+          if (timelock?.formatted) {
+            setTimelockPeriod(timelock.formatted);
+          }
+          // TODO Azorius execution period
+          // We don't have room to fit a 5th row on this card currently,
+          // so leaving this off until we can have a discussion with design
+          // setExecutionPeriod(await freezeGuard.executionPeriod());
         }
-      } else if (dao?.isAzorius) {
-        const azoriusGovernance = governance as AzoriusGovernance;
-        const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
-        if (timelock?.value) {
-          setTimelockPeriod(await formatBlocks(timelock?.value.toNumber()));
-        }
-        // TODO Azorius execution period
-        // We don't have room to fit a 5th row on this card currently,
-        // so leaving this off until we can have a discussion with design
-        // setExecutionPeriod(await freezeGuard.executionPeriod());
       }
-    }
+    };
+
+    setTimelockInfo();
   }, [
     executionPeriod,
     getTimeDuration,
@@ -56,7 +59,6 @@ export function InfoGovernance() {
     timelockPeriod,
     dao,
   ]);
-  setTimelockInfo();
 
   if (!daoAddress || !governance.type) {
     return (
