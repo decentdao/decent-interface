@@ -31,7 +31,7 @@ export default function ProposalTemplateDetails({
   values: { proposalTemplateMetadata, transactions },
 }: FormikProps<CreateProposalTemplateForm>) {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
-  const trimmedTitle = proposalTemplateMetadata.title.trim();
+  const trimmedTitle = proposalTemplateMetadata.title?.trim();
 
   return (
     <Box
@@ -68,50 +68,55 @@ export default function ProposalTemplateDetails({
           <LineBreakBlock
             textAlign="right"
             wordBreak="break-word"
-            text={proposalTemplateMetadata.description.trim()}
+            text={proposalTemplateMetadata.description?.trim()}
           />
         </HStack>
         <Divider color="chocolate.700" />
-        {transactions.map((transaction, i) => (
-          <Fragment key={i}>
-            <Text color="grayscale.500">{t('labelTargetAddress', { ns: 'proposal' })}</Text>
-            {transaction.targetAddress && (
-              <TransactionValueContainer>{transaction.targetAddress}</TransactionValueContainer>
-            )}
-            <Divider color="chocolate.700" />
-            <Text color="grayscale.500">{t('labelFunctionName', { ns: 'proposal' })}</Text>
-            {transaction.functionName && (
-              <TransactionValueContainer>{transaction.functionName}</TransactionValueContainer>
-            )}
-            {transaction.parameters.map((parameter, parameterIndex) => (
-              <Fragment key={parameterIndex}>
-                <Text color="grayscale.500">{t('parameter')}</Text>
-                {parameter.signature && (
-                  <TransactionValueContainer>{parameter.signature}</TransactionValueContainer>
-                )}
-                <Text color="grayscale.500">
-                  {!!parameter.label ? parameter.label : t('value')}
+        {transactions.map((transaction, i) => {
+          const valueBiggerThanZero = transaction.ethValue.bigNumberValue
+            ? transaction.ethValue.bigNumberValue.gt(0)
+            : false;
+          return (
+            <Fragment key={i}>
+              <Text color="grayscale.500">{t('labelTargetAddress', { ns: 'proposal' })}</Text>
+              {transaction.targetAddress && (
+                <TransactionValueContainer>{transaction.targetAddress}</TransactionValueContainer>
+              )}
+              <Divider color="chocolate.700" />
+              <Text color="grayscale.500">{t('labelFunctionName', { ns: 'proposal' })}</Text>
+              {transaction.functionName && (
+                <TransactionValueContainer>{transaction.functionName}</TransactionValueContainer>
+              )}
+              {transaction.parameters.map((parameter, parameterIndex) => (
+                <Fragment key={parameterIndex}>
+                  <Text color="grayscale.500">{t('parameter')}</Text>
+                  {parameter.signature && (
+                    <TransactionValueContainer>{parameter.signature}</TransactionValueContainer>
+                  )}
+                  <Text color="grayscale.500">
+                    {!!parameter.label ? parameter.label : t('value')}
+                  </Text>
+                  {(parameter.label || parameter.value) && (
+                    <TransactionValueContainer isValue={!!parameter.value}>
+                      {parameter.value || t('userInput')}
+                    </TransactionValueContainer>
+                  )}
+                </Fragment>
+              ))}
+              <Divider color="chocolate.700" />
+              <HStack justifyContent="space-between">
+                <Text color="grayscale.500">{t('eth')}</Text>
+                <Text
+                  textAlign="right"
+                  color={valueBiggerThanZero ? 'white' : 'grayscale.500'}
+                  wordBreak="break-all"
+                >
+                  {valueBiggerThanZero ? transaction.ethValue.value : 'n/a'}
                 </Text>
-                {(parameter.label || parameter.value) && (
-                  <TransactionValueContainer isValue={!!parameter.value}>
-                    {parameter.value || t('userInput')}
-                  </TransactionValueContainer>
-                )}
-              </Fragment>
-            ))}
-            <Divider color="chocolate.700" />
-            <HStack justifyContent="space-between">
-              <Text color="grayscale.500">{t('eth')}</Text>
-              <Text
-                textAlign="right"
-                color={transaction.ethValue.bigNumberValue?.gt(0) ? 'white' : 'grayscale.500'}
-                wordBreak="break-all"
-              >
-                {transaction.ethValue.bigNumberValue?.gt(0) ? transaction.ethValue.value : 'n/a'}
-              </Text>
-            </HStack>
-          </Fragment>
-        ))}
+              </HStack>
+            </Fragment>
+          );
+        })}
       </VStack>
     </Box>
   );

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useMemo, useCallback } from 'react';
 
 const INFURA_AUTH =
   'Basic ' +
@@ -10,17 +11,25 @@ const BASE_URL = 'https://ipfs.infura.io:5001/api/v0';
 const axiosClient = axios.create({ baseURL: BASE_URL, headers: { Authorization: INFURA_AUTH } });
 
 export default function useIPFSClient() {
-  const cat = async (hash: string) => {
+  const cat = useCallback(async (hash: string) => {
     const response = await axiosClient.post(`${BASE_URL}/cat?arg=${hash}`);
     return response.data;
-  };
+  }, []);
 
-  const add = async (data: string) => {
+  const add = useCallback(async (data: string) => {
     const formData = new FormData();
     formData.append('file', data);
     const response = await axiosClient.post(`${BASE_URL}/add`, formData);
     return response.data;
-  };
+  }, []);
 
-  return { cat, add };
+  const client = useMemo(
+    () => ({
+      cat,
+      add,
+    }),
+    [cat, add]
+  );
+
+  return client;
 }

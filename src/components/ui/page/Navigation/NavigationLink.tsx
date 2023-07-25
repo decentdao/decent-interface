@@ -62,7 +62,7 @@ export function NavigationLink({
               'g path': {
                 transitionProperty: 'all',
                 transitionDuration: '300ms',
-                transitionTimingFunction: 'easy-out',
+                transitionTimingFunction: 'ease-out',
               },
             }}
           />

@@ -67,7 +67,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       templateColumns={{ base: '1fr', md: '1fr 2fr' }}
       fontSize="14px"
       alignItems="start"
-      cursor={disabled ? 'not-allowed' : 'pointer'}
+      cursor={disabled ? 'not-allowed' : 'default'}
       {...gridContainerProps}
     >
       <GridItem>
